@@ -1,0 +1,27 @@
+{
+ "run_id": "1790327673-3886856",
+ "runner": "research/runners/_sleep_load_renorm_design.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_75c2e89f-181-3/research/runners/_sleep_load_renorm_design.py",
+  "--out",
+  "research/findings/raw/_sleep_forgetting_interference/design_fake_substrate.json"
+ ],
+ "git_sha": "cbeccb54c",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T05:14:33",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3211.5,
+ "corpus_check_query": "weak never-re-mentioned fact still recalled after 3 nights of sleep downscaling (SHY1 NO-GO); forgetting of a sleep-captured single-exposure fact over days; interference from later learning, whole-sto",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_forgetting_interference/design_fake_substrate.json"
+}

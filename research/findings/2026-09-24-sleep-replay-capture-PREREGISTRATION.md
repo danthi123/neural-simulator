@@ -8,6 +8,7 @@ seeds: [42, 43, 44, 100, 101, 102]
 artifacts:
   - research/findings/raw/_sleep_replay_capture/design_fake_substrate.json
   - research/findings/raw/_awake_replay_capture/design_fake_substrate.json
+  - research/findings/raw/_sleep_forgetting_interference/design_fake_substrate.json
 ---
 
 # PRE-REGISTRATION — a sleep route for ordinary facts under DA tag-and-capture (2026-09-24)
@@ -543,3 +544,256 @@ was 0.85 GB. The grader reads GO: G0, P1, I1, I2 and I3 hold, ARC1-ARC7 hold, an
   happen on the brain: the first late bout read 0.008269, not the fake curve's 0.042683, and the expression was held
   near 0.132748, not regrown. The fake curve overstated the read of a faint trace. On the brain, one hour of rest held
   what was left of a 3-h-old trace but did not bring it back.
+
+## Amendment 6 (2026-09-25, branch research/sleep-forgetting-interference) — the companion is later learning; the three-night criterion is withdrawn
+
+Committed on its own, BEFORE any run of the family it governs (no `--family fi` output exists at this commit). It
+governs code commit `cbeccb54c` on branch `research/sleep-forgetting-interference`, off `main` at `f793b6945` (the
+mechanism is `6a778561e`; `cbeccb54c` fixes the told-fact list). Every constant below is fixed there. Terms follow `docs/TERMS.md`: the mechanism depresses synapses of the same store, so it
+is not "consolidation".
+
+The one artifact committed with this amendment is a fake-substrate design sweep, run at `cbeccb54c`:
+`research/findings/raw/_sleep_forgetting_interference/design_fake_substrate.json`. It has no brain and no gate seed,
+and no gate reads it.
+
+### Why
+
+Amendment 1's item 2 read NO-GO at seed 42 on SHY1 alone (a de-risk, not a gate row;
+`research/findings/raw/_sleep_replay_capture_r2_smoke/seed42.json`). After three nights of `BRAIN_SLEEP_DOWNSCALING`
+the weak, never re-mentioned fact still recalled, with increment magnitude 0.756291 against a baseline of 0.757967.
+Amendment 3's horizon arm (`research/findings/raw/_sleep_replay_capture_r2_horizon_smoke/seed42/d10w_shy.json`)
+recalled it through night 6 and lost it on night 7. The constant was not retuned, and this amendment does not retune it.
+
+The wall question: what does the real system run alongside passive downscaling that this model replaced with a
+constant? Corpus check first: `bash tools/before_you_build.sh "weak never-re-mentioned fact still recalled after 3
+nights of sleep downscaling (SHY1 NO-GO); ..."` (logged). Three candidates, weighed against sources read for this
+amendment (binding: `research/biology/sleep-load-dependent-renormalization.md`, 12 sources, the local ones resolving):
+
+1. **Interference from later learning.** Everyday forgetting of recent memories is retroactive interference from
+   later memory formation, even when the later material is dissimilar (Wixted 2004, Annu Rev Psychol 55:235). At the
+   synapse, LTP decay is driven by later NMDA-receptor-dependent plasticity: blocking NMDA receptors for a week after
+   induction blocked the decay (Villarreal et al. 2002). Repeated enriched-environment exposure reversed LTP that was
+   otherwise stable for months (Abraham et al. 2002). The model's three-night protocol contains no later learning at all.
+2. **Competitive selection in sleep.** It is already in the model twice: untagged early LTP decays within hours
+   (`TAU_EARLY_H` 1.5 h), and the night's protection is the block's own reactivation read R_i. With one fact per
+   conversation there is nothing for the fact to compete with, so in the three-night protocol it cannot act. It acts
+   once later facts exist.
+3. **Homeostasis on the store's total, not per trace.** The night's renormalization is the price of the day's
+   plasticity. Sleep slow-wave activity after an enriched environment is "positively correlated with the amount of the
+   time spent exploring", and the decrease "is exponential and self-limiting" (Tononi & Cirelli 2014, Neuron 81:12). A
+   local learning task raises local slow-wave activity (Huber et al. 2004). Kandel ch.44: learning enlarges synapses,
+   "requiring that some excitatory inputs be reduced". The 0.18 of de Vivo et al. 2017 is a sleep-versus-wake
+   difference measured after normal waking, not after a day with no learning. As a constant, it charges a night after
+   a day with no learning the same 18 %.
+
+All three point to one variable the constant stood in for: how much the brain learns after the trace. The three-night
+protocol sets it to zero. **Built:** candidate 3 in a form that carries 1 and 2. The night's amplitude is the measured
+fraction of the store's strength that the preceding wake added, and the R_i protection decides which traces pay.
+**Not built, named next:** wake-time depotentiation by novel experience (Xu, Anwyl & Rowan 1998), and similarity-
+dependent overlap of later facts on the same synapses. The store gives every fact its own block, so neither has a
+substrate here yet.
+
+### Is the three-night criterion biologically justified? No
+
+- The three-night group is the minimum-interference condition: a fact, then three days with nothing else learned.
+  Wixted's account predicts little forgetting there. It explains why sleep, alcohol and benzodiazepines improve memory
+  for a recently learned list (they reduce later encoding). Under candidate 3, the nights after an empty day cost nothing.
+- People keep a sentence they were told a few times for longer than three days, while living an ordinary week full
+  of interference. In Rivera-Lares et al. 2022 (Mem Cognit 50:1706, full text), cued recall of sentences presented two to
+  six times was at floor by one week, so the authors moved to three days, where it was above floor. Fisher & Radvansky
+  2018 (J Mem Lang 102:130) found propositional (textbase) memory retained for about seven days and then dropped.
+  Forgetting in humans follows a power law (Buzsáki 2006, p.123), with no fixed number of days at which a memory is gone.
+
+**So SHY1 is withdrawn as a requirement.** SHY1 is "the weak, never re-mentioned fact is not recalled after three idle
+nights". The r2 rules are not edited: `grade_seed_r2` still computes SHY1, and any r2 row reads what it read. A
+SHY1 failure is to be read as "the fact is kept after three idle nights", which the biology above predicts. It does
+not show a defect, and it is not re-scored as a pass. `BRAIN_SLEEP_DOWNSCALING` keeps its constant. The seed-42 horizon (lost on
+night 7) is in the range the human data give, but for the wrong reason: with no later learning it should not fade at all.
+
+What the biology does require replaces SHY1. The fact is kept when nothing else is learned. It is lost as later
+learning accumulates, and faster the more is learned. Salience and re-mention protect it. The loss comes through the
+renormalization edge. That is the `fi` family below.
+
+### What was built (default OFF: `BRAIN_SLEEP_LOAD_RENORM`)
+
+- `webapp/sleep_replay_capture.py` (r3). The flag is read only inside an SWR epoch, so it is inert without
+  `BRAIN_SLEEP_REPLAY_CAPTURE`. After the night's reactivation, re-tag and SWR-coupled D1 drive:
+  - dW = sum over managed blocks written or rewritten after the previous night's epoch of mean_k |weight factor_k x
+    increment_k| at sleep onset: the learned strength the preceding wake added that is still expressed.
+  - W = sum over every store block, managed and build-time, of mean_k |w_k|: the store's total synaptic strength.
+  - delta = dW / W, clipped to [0, 1]. Each managed block's increment is multiplied by 1 - delta x (1 - R_i), with
+    r2's protection. The baseline and the build-time blocks are not depressed (r2's choice, and Tononi & Cirelli 2014:
+    renormalization must not make one "forget old friends").
+  - With both `BRAIN_SLEEP_DOWNSCALING` and this flag on, the measured delta replaces the constant.
+  - Each epoch records `load = {dW, W, delta_read, delta, lesioned, n_new_blocks, t_since}`.
+- `BRAIN_SLEEP_LOAD_RENORM_LESION=1` cuts the load edge: dW and W are still read and recorded, the applied delta is 0,
+  and every scale is 1.
+- Host steps, declared in the module docstring: the two sums, the ratio and the multiply.
+- `tests/test_sleep_load_renorm.py` (13 tests). With the flag off, the store hash equals the pre-branch module's, for the
+  route alone and for r2's constant downscaling. Both hashes were computed with `main:webapp/sleep_replay_capture.py`
+  swapped in and are pinned in the test. The tests also check that a night after an empty day depresses nothing, that
+  the old trace falls in dose order (0 > 1 > 3 facts a day), that the constant ignores the dose, and that the lesion
+  reads the load and applies nothing.
+- `research/runners/_da_tag_capture_chat_probe.py --family fi`: `FI_ARMS`, `grade_seed_fi`, `aggregate_fi`, and
+  selftest rows that read GO, NO-GO and UNDEFINED. No other family's arms, graders or aggregates change.
+- `research/runners/onebrain_regression_battery.py`: label-only groups `fiv`, `fil`, `fih`, `fis`, `fir` (below). None
+  is in `PROBE_TURNS`, so the regression battery is unchanged.
+
+### Constants (a priori; none fitted to a gate seed)
+
+| constant | value | where it comes from |
+|---|---|---|
+| night amplitude | dW / W, measured each night | Tononi & Cirelli 2014; Huber et al. 2004; Kandel ch.44 (no free constant) |
+| protection | 1 - delta (1 - R_i) | r2, unchanged (González-Rueda et al. 2018) |
+| nights | 7, recall asked each morning | the human horizon: at floor by one week (Rivera-Lares 2022; Fisher & Radvansky 2018) |
+| heavy dose | 3 facts a day on days 2-7 | the smallest daily count for which the fake predicts loss by night 7 over the whole recall band (below) |
+| low dose | 1 fact a day on days 2-7 | the smallest nonzero dose |
+
+The store holds 32 blocks (tiny-demo `k_max`); 5 are build-time. The heavy re-mention group writes 21, within capacity.
+
+### Design sweep (fake substrate; not brain evidence)
+
+`research/runners/_sleep_load_renorm_design.py` runs the real ledger, gamma calibration and sleep epochs, in constant
+or load mode, on a fake store. The store has five build-time blocks of unit magnitude (an assumption, declared) and a
+block per told fact. The read-back is the Hill curve fitted to the committed seed-42 (ratio, R) pairs, imported from the
+awake design runner. A fact counts as recalled while its increment-to-baseline ratio is above the midpoint of the band
+the seed-42 horizon arm measured: recalled at 0.638 on night 6, lost at 0.537 on night 7. <!--derived--> The Turrigiano
+pass is not modelled. It leaves every ratio unchanged but changes W, so the fake's delta is approximate.
+
+| row | first night not recalled (band) | ratio night 3 | ratio night 7 |
+|---|---|---|---|
+| constant (r2), no later learning, 10 nights | 7 (7-8) | 0.99741 | 0.543895 |
+| load, 0 facts a day | never | 1.28358 | 1.28358 |
+| load, 1 fact a day | never in 7 | 1.044618 | 0.774625 |
+| load, 2 facts a day | 7 (6 to later than 7) | 0.904428 | 0.569353 |
+| load, 3 facts a day | 6 (5-6) | 0.821384 | 0.460043 |
+| load, 4 facts a day | 5 (4-5) | 0.753466 | 0.389835 |
+| load, 3 a day, load edge cut | never | 1.461 | 1.461 |
+| load, 3 a day, salient telling | never in 7 | 1.624374 | 1.052703 |
+| load, 3 a day, re-mentioned after nights 1 and 2 | never in 7 (the re-mention blocks) | 0.874636, 1.200591 | 0.524126, 0.76307 |
+
+The fake reproduces the brain's r2 horizon: the constant loses the fact on night 7, as seed 42 did. On the telling
+night, the load read on the fake is delta 0.188877693 (dW 1.187710092 over W 6.288249694). That sits next to de Vivo's
+0.18 without being set to it. On the brain it is a prediction, not a calibration. Under load, nothing fades after an
+empty day. After that, the loss night moves earlier as the dose grows.
+
+### The told facts (the environment), checked before this commit
+
+Every told sentence uses an animate agent (dog, bird, fish, worm), `use` or `store`, and an inanimate patient (river,
+memory, spikes). None shares a content word with the fact. The tiny-demo's spiking comprehension gate does not store
+`eat` or `learn` sentences, animate patients, or most `words` patients. An environment check (tag-capture ledger on, no
+night, no recall of the fact, no gate read) stored each of the 18 sentences below as one new block, with no external rewrite,
+at seed 42 (all 18, in this order) and at seed 7 (13 of the 18; the other five were not tried there). The pool seeds were not checked. At a seed where a told sentence is not stored, the dose was
+not delivered, and I1 reads that seed UNDEFINED.
+
+Days 2-7, three a day, in order (`_FI_FACTS` in `research/runners/onebrain_regression_battery.py`):
+- day 2: the bird uses the river / the dog stores the memory / the fish stores the spikes;
+- day 3: the worm uses the river / the fish stores the memory / the dog uses the spikes;
+- day 4: the bird stores the spikes / the worm stores the memory / the dog uses the river;
+- day 5: the fish uses the river / the bird stores the memory / the dog stores the spikes;
+- day 6: the bird uses the spikes / the fish uses the spikes / the worm stores the spikes;
+- day 7: the dog uses the memory / the bird uses the memory / the fish uses the memory.
+
+The low dose tells the first six, one a day.
+
+### Arms (`--family fi`; each a fresh tiny-demo brain in its own subprocess; numpy; LTM off)
+
+Env as in the other families: `BRAIN_DA_TAG_CAPTURE_CLOCK=turn`, `BRAIN_LTM_SHIP_DEFAULT=0`, and the seed through
+`BRAIN_CHAT_SEED` (threaded to `cfg.seed`; never `actual_seed_used`). ON = `BRAIN_DA_TAG_CAPTURE=1`; RC =
+`BRAIN_SLEEP_REPLAY_CAPTURE=1`; LR = `BRAIN_SLEEP_LOAD_RENORM=1`; SHY = `BRAIN_SLEEP_DOWNSCALING=1`. Every group is the
+weak telling (as `d3w`), then seven nights. After each night the recall question is asked, which is a read-only probe
+in this model. On days 2-7 the group's facts are told after that morning's question.
+
+| group | telling | later facts | re-mention |
+|---|---|---|---|
+| `fiv` | weak | none | - |
+| `fil` | weak | 1 a day | - |
+| `fih` | weak | 3 a day | - |
+| `fis` | salient (as `d3c`) | 3 a day | - |
+| `fir` | weak | 3 a day | "the cat chases the ball" after nights 1 and 2, before that day's facts |
+
+| arm | group | env | role |
+|---|---|---|---|
+| `fiv_lr` | fiv | ON + RC + LR | FI1 |
+| `fil_lr` | fil | ON + RC + LR | FI3 (its ratio); outcome REPORTED |
+| `fih_lr_a` | fih | ON + RC + LR | FI2 |
+| `fih_lr_b` | fih | ON + RC + LR | G0 null rebuild |
+| `fih_lr_lesion` | fih | ON + RC + LR + `BRAIN_SLEEP_LOAD_RENORM_LESION=1` | FI4 |
+| `fih_shy` | fih | ON + RC + SHY | REPORTED (r2's constant under the same dose) |
+| `fis_lr` | fis | ON + RC + LR | FI5 |
+| `fir_lr` | fir | ON + RC + LR | FI6 |
+| `neu_imm_fi` | datni | ON + RC + LR | P1 |
+
+### Gates (per seed; `grade_seed_fi` implements them verbatim)
+
+The daily outcome is read at each morning's question: correct (recalled_svo = cat/chase/ball), abstain, confab or
+undefined. `fih_shy` enters no gate, error count, gamma check or UNDEFINED rule, except FI7, which reads every arm.
+
+**UNDEFINED** (never a pass or a fail) if any of:
+- G0: `fih_lr_a` and `fih_lr_b` differ in the daily outcomes, the daily recalled_svo, the ledger state at recall, the
+  per-block ledger summary, or the sleep record;
+- P1: `neu_imm_fi` is not correct;
+- I1: on a seven-night arm, fewer or more than seven epochs ran; a block had no substrate read; a load record is
+  present without LR or missing with it; a scale record is present without LR or SHY; a told sentence (fact or
+  re-mention) was not stored as exactly one new block; or on an LR arm the load read did not count the registered
+  dose: 1 new block on night 1, then the group's daily count, plus 1 on a re-mention day;
+- I2: the load lesion did not hold on the record. Every lesion epoch must read `lesioned`, an applied delta of 0,
+  every scale 1, and a read delta above 0 on nights 2-7. On an intact LR arm the applied delta must equal the read.
+- I3: `fiv_lr`, `fil_lr`, `fih_lr_a`, `fih_lr_b` and `fir_lr` differ in the outcome, the ledger blocks or the sleep
+  record at the first morning. They are the same brain until the first dose.
+- gamma differs across the gated arms; a gated arm errs; a gated daily outcome reads undefined.
+
+**GO for the seed** iff all of:
+- FI1 (kept when nothing else is learned): `fiv_lr` correct on all seven mornings;
+- FI2 (later learning erases it within a week): `fih_lr_a` abstains on the seventh morning;
+- FI3 (ordered by dose): at the seventh morning, the fact block's increment-to-baseline ratio is `fiv_lr` >
+  `fil_lr` > `fih_lr_a`;
+- FI4 (the load edge carries it): `fih_lr_lesion` correct on all seven mornings;
+- FI5 (salience protects): `fis_lr` correct on the seventh morning;
+- FI6 (re-mention protects): `fir_lr` correct on the seventh morning;
+- FI7: no confab on any morning of any arm, nor on `neu_imm_fi`.
+Otherwise NO-GO.
+
+**REPORTED, never gating.** Per arm:
+- the first morning the fact is not recalled;
+- whether it is recalled on the third morning (the human three-day anchor);
+- the fact block's ratio, R, delta, dW and W per night;
+- the managed block count per morning.
+Also the `fil_lr` and `fih_shy` outcomes.
+
+**Predictions** (from the fake; uncertain where noted):
+- FI1-FI7 hold.
+- `fih_lr_a` is still recalled on the third morning and first lost on night 5 or 6. This is uncertain: the brain's W
+  (Turrigiano, the true build-block magnitudes), its R for new facts and its DA-gated write gains differ from the fake.
+- `fil_lr` is recalled on all seven mornings.
+- `fih_shy` is first lost on night 7 or later, as the constant ignores the dose.
+- On the brain, delta on night 1 is close to 0.19.
+A NO-GO on FI2 would mean this renormalization, at the store's own measured load, does not erase a weak fact within a
+week at three facts a day. It would not mean that later learning does nothing: FI3 reports the ordering either way.
+
+**6-seed verdict** (`--family fi --aggregate research/findings/raw/_sleep_forgetting_interference`): GO iff all six
+seeds read GO; INCOMPLETE if a seed is missing; otherwise NO-GO. Reported with it: the one-sided exact sign-flip p over
+seeds for `fiv_lr` minus `fih_lr_a` correct on the seventh morning, and for `fih_lr_lesion` minus `fih_lr_a` (1/64 at
+6/6), and the first-lost night per seed for each arm.
+
+### What each gate can and cannot show
+
+- FI1 and FI2 together tie the loss to later learning: the same brain, the same telling, the same first night (I3).
+  FI4 ties it to the renormalization edge. Without the edge the same told facts leave the fact alone, so it is not lost
+  by crowding the store or by any other route.
+- FI3 is the dose-response on a continuous read. It holds even if the outcome boundary falls between doses.
+- FI5 and FI6 show that the loss is selective to the unrehearsed, unsalient trace. The protection is the r2 R_i read.
+  The salient trace starts larger and the re-mention writes fresh blocks.
+- Declared, not measured: whether this model's daily dose corresponds to any human day. The store grows by a block per
+  fact, so W grows with knowledge. A real brain renormalizes its total back each night, so this model's delta falls
+  faster with accumulated knowledge than a real brain's would. The bias is towards retention.
+- The told facts are dissimilar to the target. Similarity-dependent interference (A-B, A-C) is not tested here.
+
+### Compute for this amendment
+
+- A seed-42 smoke of `--family fi` runs AFTER this commit, under `bash tools/memcap.sh`, to
+  `research/findings/raw/_sleep_forgetting_interference_smoke`. It is a de-risk, not a gate row. If it forces a code
+  change, that change is Amendment 7, and the pin moves.
+- The six gate rows are pool runs at a full-SHA-pinned revision containing this amendment:
+  `--family fi --seed N --ltm off --workers 1 --out research/findings/raw/_sleep_forgetting_interference`. They are not
+  queued with this commit.

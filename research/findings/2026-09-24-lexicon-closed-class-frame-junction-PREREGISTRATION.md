@@ -12,7 +12,9 @@ seeds: [42, 43, 44, 100, 101, 102]
 verdict: PRE-REGISTRATION only; no evaluation run has happened. AMENDMENT 2 (2026-09-24) fixes 7 independent-review
   issues and adds 3 mechanism changes (short-term depression on FR->FJ, a sentence-boundary pause token, and a
   runner-side homeostatic settle for the learned_edge lesion), and runs the dev check at seed 7 AND seed 42 (neither
-  an evaluation seed). The six-seed evaluation is left for a later lane.
+  an evaluation seed). AMENDMENT 3 (2026-09-25) adds a parallel ELEMENTAL partial-match edge beside the junction
+  edge (new flag BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL, default OFF) and replaces G3 by a two-lesion
+  dissociation in which both lesions remove drive. The six-seed evaluation is left for a later lane.
 runner: research/runners/_lexicon_closed_class_parse_diag.py
 artifacts:
   - research/findings/raw/_lexicon_closed_class/diag_frame_s7_gt3.json
@@ -28,15 +30,16 @@ artifacts:
   - research/findings/raw/_lexicon_closed_class/drive_ratio_s7_amendment2.json
   - research/findings/raw/_lexicon_closed_class/or_match_factor_s7.json
   - research/findings/raw/_lexicon_closed_class/diag_frame_s42_v2_amendment2.json
-  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/dev_s7_summary.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/dev_s7_result.json
   - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/junction_s7.json
   - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/route_s7.json
   - research/findings/raw/_lexicon_closed_class/dev_s7/route_s7.json
   - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/and_population_trained_s7.json
-  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/dev_s42_summary.json
+  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/dev_s42_result.json
   - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/junction_s42.json
   - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/route_s42.json
   - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/and_population_trained_s42.json
+  - research/findings/raw/_lexicon_closed_class/frame_composition_s7_s42.json
 external:
   - "Mintz 2003, Frequent frames as a cue for grammatical categories in child directed speech, Cognition 90:91-117,
     doi:10.1016/s0010-0277(03)00140-9 (PMID 14597271). <!--derived--> A frame is two jointly occurring words with one word
@@ -463,3 +466,166 @@ weights instead of the intact circuit. No call site in this lane does that (`set
 `learned_edge` from an otherwise-intact lexicon), so this never fired -- confirmed by the reviewer reading every
 call site, not assumed. Fixed defensively: `_r4_homeostatic_settle` now asserts `self.lesion is None` on entry, so
 a future caller cannot introduce this silently.
+
+## AMENDMENT 3 (2026-09-25, before the mechanism below is built or run; committed on its own)
+
+Round 2 (research/findings/2026-09-25-lexicon-closed-class-frame-junction-dev-amendment2-s7-s42-NOT-READY.md)
+fixed the AND and R4, but at dev seeds 7 and 42 G2 failed on 'might', G4 failed (silent-NON 0.60 / 0.40 against
+v2's 0.11 / 0.18 at the same seeds), R3 read 0.25 / 0.50, and G3 moved in opposite directions at the two seeds.
+The lane's reading: the AND's selectivity costs recall, because every heard occurrence without BOTH frame
+neighbours among the 100 context words reaches no category pool at all. That is a trade that needs a partial-match
+pathway, not a retuned threshold.
+
+### What the junction layer cannot see (design evidence, before any build)
+
+`research/findings/raw/_lexicon_closed_class/frame_composition_s7_s42.json`
+(`_lexicon_closed_class_frame_composition.py`; a count over the presented occurrences, no circuit): of the 2,400
+occurrences the teacher curriculum presents, 1,413 (seed 7) and 1,381 (seed 42) are complete (-1,+1) frames.
+494 / 519 are left-only and 378 / 378 are right-only. So 36.3% (seed 7) and 37.4% (seed 42) of the curriculum's
+evidence is one-sided and drives no junction. <!--derived--> The same file lists the composition of every
+round-2 silent-NON word, and it shows that one-sidedness is only part of the silence. The median silent-NON word
+has 14.5 (seed 7) and 11 (seed 42) complete frames out of its 32 presented occurrences. <!--derived--> So a word
+can fire junctions and still leave both pools silent. The likely reason, not measured here: the junctions it
+fires carry little learned weight, because the 75-word curriculum rarely or never presented those (a, b) pairs.
+An elemental vote that also counts on complete frames addresses both causes. A vote gated off whenever a complete
+frame is heard would address only the first.
+
+### The companion process, and the candidates weighed
+
+The wall question: what does real cortex run alongside a strict coincidence detector, that the build replaced
+with a constant? Recorded in `research/biology/elemental-partial-match-beside-conjunction.md` (anchors resolve):
+
+- Kandel ch. 13: dendrites switch between passive and active integration depending on the timing and strength of
+  their inputs. A lone distal input produces only a very small somatic response: small, not zero. The junction is a
+  point neuron with a constant hyperpolarizing current (I_TONIC_J), so a lone afferent delivers exactly zero. The
+  passive single-input component was replaced by zero.
+- Marr 1969, section 4: every active input must be in at least one codon, and the codon size must depend on the
+  amount of input, so sparse input falls back to smaller codons. The strict junction layer drops every one-sided
+  occurrence.
+- Kandel ch. 52 (Fig. 52-11): an outcome can be predicted from each single cue or from the cue configuration;
+  both routes are used, sometimes competitively, sometimes cooperatively.
+
+Candidates:
+1. **Graded plateau threshold on the junction itself** (a lower, graded NMDA threshold so a lone input fires the
+   junction weakly). REJECTED. With one unit per (a, b) pair, a lone left afferent at a lowered threshold fires its
+   whole row of C=100 junctions, so a partial match would deliver up to about C times the drive of a full match.
+   That inverts the intended ordering. It also gives up the AND integrity round 2 established (0 and 1 lone-afferent
+   violations in 10,000 junctions).
+2. **A parallel single-context (elemental) pathway, weaker than the conjunction.** CHOSEN (below).
+3. **Frequency-dependent evidence accumulation** (a word heard in many one-sided frames eventually decides).
+   REJECTED as a standalone mechanism. Accumulation integrates evidence, but a one-sided occurrence delivers none:
+   the junctions stay silent, so there is nothing to accumulate unless candidate 2 already exists. The presentation
+   also samples K=32 occurrences whatever the word's corpus frequency, so "heard many times" is not visible to the
+   circuit as built. Recorded as a possible next rung if candidate 2's one-sided vote is too weak to decide.
+
+Also considered and not built: Marr's own implementation, a Golgi-like inhibitory regulator that silences a
+single-input code whenever the full conjunction is available (a GATED elemental vote). It needs a new calibrated
+inhibitory population (three new constants, and a race between a fast inhibitory unit and a slower relay). Its
+gate also silences the elemental vote exactly on complete frames whose junction was never trained, which is where
+held-out-noun recall (R3) needs general single-context evidence. It is the next rung if the ungated vote below
+costs precision.
+
+### The mechanism (flag BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL, default OFF)
+
+Read only when `BRAIN_LEARNED_REFERENT_JUNCTION=1` also routes the junction variant. Unset -> the AMENDMENT 2
+junction lexicon exactly (integrity smoke 1 below). `get_lexicon()` records the variant `junction_elemental`.
+
+- **ELEMENTAL EDGE (new).** FR(-1, a) and FR(+1, b), the same two afferent blocks the junctions read, project
+  directly to CN0 and CX0, all-to-all (2C x 2 N_CAT = 200 x 40 synapses). The -2/+2 afferents still project
+  nowhere. Start weights uniform with v2's jitter around v2's `W_INIT`; no short-term plasticity on these synapses
+  (v2's frame->category synapses had none). Learned by the same synapse-local Oja rule, with v2's own `ETA` and
+  `OJA_BETA`, unscaled, jointly with the junction edge, on the same teacher curriculum and epochs.
+- **WHY IT IS WEAKER, WITH NO NEW CONSTANT.** The junction edge keeps AMENDMENT 2's drive-matching boost
+  (S = DRIVE_MATCH_S, because junctions fire sparsely). The elemental edge gets none: its afferents are not sparse.
+  So the elemental vote is the unamplified component, and its weight relative to the conjunction follows from
+  constants already frozen (S; v2's W_INIT / ETA / OJA_BETA). No constant is chosen in this amendment, and none
+  may be changed after the dev check without a further amendment.
+- **Unchanged:** every AMENDMENT 2 constant (W_J, I_TONIC_J, T_ON_J, STP on FR->FJ only, DRIVE_MATCH_S and the
+  S-rescaled junction-edge constants), the pause-token environment, competition, read-out, abstain rule.
+- **LESIONS.** `learned_edge` restores BOTH learned edges to their start weights. AMENDMENT 2's one-time
+  homeostatic settle then scales both, per postsynaptic neuron, by the same factor (synaptic scaling is cell-wide;
+  Turrigiano & Nelson 2004, already cited). `afferent_zero` zeroes both learned edges. New:
+  `elemental` zeroes the elemental edge only, so the partial-match pathway is removed and the AND pathway kept.
+  `conjunctive` zeroes every FR->FJ weight, so no junction can fire (the AND is removed); the learned FJ->CN/CX
+  weights and the elemental edge are untouched. Each lesion is verified at measurement by the inherited
+  weight-hash check in `decide()`.
+- **Drive diagnostic (instrument).** For every queried word, the afferent drive into each pool:
+  sum over presynaptic units of (spikes / steps) x installed weight, averaged over the pool's 20 neurons, reported
+  per edge (junction, elemental) and in total. It is recorded per arm, with the arm mean over queried words. FR
+  and FJ spike trains are feed-forward and do not depend on the pools, so removing an edge can only lower this
+  drive. It is recorded so that this holds in data, not by argument.
+
+### G3 replaced by G3' for the `junction_elemental` variant (a dissociation in which both lesions remove drive)
+
+The 2x `coincidence` lesion raised drive about 380-fold and moved the parse in opposite directions at the two dev
+seeds (round 2). It is not run for this variant, and neither is `coincidence_matched`. G3' uses two lesions, and
+each REMOVES a pathway, so neither result can come from added drive:
+
+- **G3'a, the conjunction owns the exclusion.** Under `conjunctive`, the battery mismatch count exceeds the intact
+  arm's (`tools.lab.lever`, required=False), AND the arm-mean total afferent drive is <= the intact arm's. FAILS if
+  removing the AND leaves the parse as clean as intact.
+- **G3'b, the partial-match pathway owns the decisions the AND alone leaves silent.** Under `elemental`, the
+  silent-NON fraction exceeds the intact arm's, AND the arm-mean total afferent drive is <= the intact arm's. FAILS
+  if removing the elemental edge leaves as many NON words decided as intact.
+
+Per seed: G3' = G3'a AND G3'b. Evaluation: G3' PASSES iff it holds on at least 5 of 6 seeds. If the drive
+condition fails on a seed, G3' is VOID there (a bug, not a result), not a pass.
+
+**G1, G2, G4 unchanged.** G2: zero intact mismatches at seed 42 and at >= 5 of 6 seeds. G4: silent-NON fraction
+<= 0.30 at EVERY checked seed, v2's same-seed value printed beside it. G1: the route runner's R1-R4, with R4's
+`learned_edge` lesion now resetting both learned edges. `score()` scores the `junction_elemental` variant on G2,
+G3', G4 (and G1 from the route verdict); a mix of variants or constants across seeds is MIXED-INPUT.
+
+### Integrity smokes (must hold before the dev runs; not evidence)
+
+1. **Flag off -> the AMENDMENT 2 junction lexicon exactly, asserted in data at seed 7** (the full round-2 parse
+   costs a two-hour build, so this is the cheap form, declared): pre-change code (merge `db8db2a5b`) and
+   post-change code, `BRAIN_LEARNED_REFERENT_JUNCTION=1` and the new flag unset, must give an identical
+   connection-data hash after the build and an identical learned-edge weight hash after a short training (the
+   curriculum's first 4 words, 1 epoch). They must also return identical `decide()` outputs on a fixed probe list.
+2. **v2 default-off:** D0's pinned seed-7 hashes, as before.
+3. **Structure (unit tests):** exactly 2C x 2 N_CAT elemental synapses, only from the -1/+1 afferents; each lesion
+   hits its named edge and nothing else; `get_lexicon()` returns `junction_elemental` only with both flags set.
+
+### Dev check (seeds 7 AND 42, neither an evaluation seed; carries no evaluation weight)
+
+    bash tools/mem_ok.sh 4 && bash tools/memcap.sh 4 -- env SIM_BACKEND=numpy .venv/bin/python -u -m \
+        research.runners._lexicon_closed_class_junction_dev --elemental --seed 7 \
+        --corpus data/corpus/tinystories.txt --out research/findings/raw/_lexicon_closed_class/dev_s7_amendment3
+    (the same with --seed 42 and --out .../dev_s42_amendment3)
+
+It reports every gate per seed: D0, D1, D2 (the AND, plus under `conjunctive` no junction fires to its pair), G2,
+G3'a, G3'b, G4, and G1 R1-R4. No six-seed run and no default flip happen in this lane.
+
+### Stated in advance (risks this amendment expects, written before any run)
+
+- G2 risk: 'most'. At both dev seeds, 26 of its 32 presented occurrences are left-only, 24 of them with 'the' on
+  the left (frame_composition_s7_s42.json). Its decision will therefore rest mostly on the elemental 'the'-left
+  synapse, the same evidence that made v2 admit it. Attributive adjectives (crazy, wonderful, amazing) carry the same risk to
+  a lesser degree. If they are admitted, the gated elemental vote above is the next rung.
+- G4 may stay above 0.30 if the unamplified elemental vote is too weak to lift a pool above MIN_RATE on two
+  offsets. In that case the vote strength is the finding, not a constant to retune.
+- 'might' (round 2's G2 failure): its frequent neighbours (it / you on the left, be on the right) are non-noun
+  contexts in v2's evidence, so the elemental vote should push it toward CX. That is a prediction, not a promise.
+
+### Six-seed evaluation commands (NOT run here)
+
+    for S in 42 43 44 100 101 102; do
+      bash tools/mem_ok.sh 4 && bash tools/memcap.sh 4 -- env SIM_BACKEND=numpy BRAIN_LEARNED_REFERENT_JUNCTION=1 \
+        BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL=1 .venv/bin/python -u -m \
+        research.runners._lexicon_closed_class_parse_diag --seed $S --corpus data/corpus/tinystories.txt \
+        --lesions none,elemental,conjunctive \
+        --json research/findings/raw/_lexicon_closed_class/eval_a3/junction_elemental_s$S.json
+      bash tools/mem_ok.sh 4 && bash tools/memcap.sh 4 -- env SIM_BACKEND=numpy BRAIN_LEARNED_REFERENT_JUNCTION=1 \
+        BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL=1 .venv/bin/python -u -m \
+        research.runners._d6_learned_referent_env_flag_derisk --seed $S --corpus data/corpus/tinystories.txt \
+        --json research/findings/raw/_lexicon_closed_class/eval_a3_route/s$S.json
+    done
+    .venv/bin/python -m research.runners._d6_learned_referent_env_flag_derisk \
+        --score research/findings/raw/_lexicon_closed_class/eval_a3_route
+    .venv/bin/python -m research.runners._lexicon_closed_class_parse_diag \
+        --score research/findings/raw/_lexicon_closed_class/eval_a3 \
+        --route research/findings/raw/_lexicon_closed_class/eval_a3_route
+
+At most two at once. Each parse run is one lexicon build + train (about 1.6 h on numpy at the round-2 rate) plus
+three parse arms. Each route run trains a second lexicon at seed 42, the production singleton.

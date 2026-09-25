@@ -1,0 +1,28 @@
+{
+ "run_id": "1790334906-309880",
+ "runner": "research/runners/_da_tag_capture_chat_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a8d0b503-22a-1/research/runners/_da_tag_capture_chat_probe.py",
+  "--family",
+  "arc",
+  "--aggregate",
+  "research/findings/raw/_awake_replay_capture"
+ ],
+ "git_sha": "e4b5d807f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T07:15:06",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_awake_replay_capture/aggregate.json"
+}

@@ -44,7 +44,7 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
 UNSOUND: HTML blocks/unclosed comments hide a heading inside a Derived section; an inline marker pair hijacks an earlier
 standalone marker into a range; h1/setext/nested 'Derived' headings open oversized sections; container tables leak; the
 parser is an undeclared dependency. Four rounds of multi-line scoping all leaked, so round 5 SIMPLIFIES: a number is
-exempt only if <!--derived--> is on its own line (workflow `wrlt8b5ij`, opus review). Emitters migrate to per-line
+exempt only if <!--derived--> is on the SAME line as the number (workflow `wrlt8b5ij`, opus review). Emitters migrate to per-line
 marks; legacy findings are not rewritten (the gate checks newly added findings). Bake-off template fix merged
 (ed86e077f); the re-run is queued on the GPU after SETTLE A3.
 
@@ -53,6 +53,81 @@ BRAIN_AWAKE_REPLAY_CAPTURE default-OFF, review SOUND-WITH-ISSUES): seed-42 smoke
 recalled next day when the brain rests in between, and abstains with no rest / flag off / awake-edge lesion; 6 seeds
 queued at the pool front (30ba29d4b). Wave-3 builds (workflow `wqh2nr4ua`): slot-binder progress+latency (AMENDMENT 1
 steps), SETTLE A2 end-to-end webapp test, sleep-forgetting companion process (downscaling 3-night NO-GO).
+
+**🌙 05:40 progress:** merged wm referent->focus binding GO 6/6 (0e7e8bce8, independently re-derived; default-OFF;
+board #231). Claim-check: round 5 (same-line-only exemption) held under review; round 6 fixed its issues but its opus
+review found new fail-open regressions (normalization glues numbers) and false positives (155/353 recent findings fail;
+62% of flags are correct roundings) plus one broad citation matching 99.7% of random numbers, so NOTHING from rounds
+1-6 is merged; round 7 (workflow `wj0oc3fj5`, opus build + opus review) = precision-aware matching + a per-doc
+decoy-probe discriminating-power check + non-gluing normalization + GFM tables + synthesis hardening. Owner decision
+later: the round-6 retro listed ~73 existing findings that fail stricter checks (candidate real errors, not rewritten).
+B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the worktree re-run hit a missing .venv; fixed d85d6fef).
+
+**🌙 07:05 claim-check:** round 7 (branch research/claimcheck-r7 @ 4ff05b018: precision-aware matching cut rule-caused
+false positives to 10/353, but opus review UNSOUND with 6 regressions vs main, the worst a literal '<!--derived' in a
+code span hiding whole sections again). Every round that deleted or hid markup opened a hole, so round 8 FAILS CLOSED
+(workflow `w8v90ajxq`): every number in the raw file is checked, nothing is deleted or hidden; only an exact
+'<!--derived-->' comment outside code (markdown-it) exempts its own line/cell; precision-aware matching; per-claim
+chance rate. main keeps its current checker until a round reviews SOUND with no regression vs main or r5.
+
+**🌙 07:25 pool:** awake-rest replay arc family complete (6/6 seeds) -> scoring workflow `wb0hmbjy0` (scorer + verifier).
+"SATURATED" was partly false: pool41/pool42 ran 17 D6 N=2000 processes, 7 of them duplicates of cells already landed
+(same revision 24231d6d6) for 7-26 h. Stopped the 7 duplicates by hand; the 5 missing cells (s43 HEBB, s100 HEBB/FREEZE,
+s101 HEBB/FREEZE) keep running (the 26 h copies should land first). Root cause: pool_queue.sh's duplicate guard compares
+pool.running on the wrong field, so its running-set half never matches; fix + tests + opus review = workflow `wctjyd0sd`.
+SETTLE A2 6 seeds wait on pool memory budget (two 48 GB LTM-on seeds per AWS node; LTM-on seeds 43-101 ~3 h each, 102 queued).
+AWS: 2 x r7i.4xlarge, ~$2.05/h, projected ~$49 at the UTC day end (20:00 EDT): no room for a third node today.
+
+**🌙 07:45 wave 3 harvested:** merged slot-binder chain (bc41268df: progress+latency instrumentation, AMENDMENT 1 sizing,
+6-seed N=32 GO scope-limited; default-OFF) and sleep forgetting (df12ec1cc: BRAIN_SLEEP_LOAD_RENORM default-OFF, nightly
+downscaling = measured fraction the day added; Amendment 6 withdraws the 3-night criterion; seed-42 smoke holds every gate;
+6 fi-family seeds being provisioned at 2def39c76, then queued). SETTLE A2 webapp tests (research/settle-a2-webtest @
+f898a1da7, review SOUND): 2 of 3 tests never finished a real run, so they run now under memcap before any merge.
+SETTLE A3 GPU timing = UNDEFINED (M2 WTA +0.13 s inside the 0.3 s bound; whole-turn noise 4.7 s cannot resolve it):
+finding + Amendment 3 (resolvable instrument, preregistered before new data) = workflow `wu657bt94`. Gate gaps from
+tonight's reviews (amendment-to-existing-prereg ordering; stalled/duplicate pool jobs counted as saturation) = `wx8n9rwrn`.
+
+**🌙 08:00 awake-rest replay (arc) = NO-GO 5/6** (merged with this entry; independently re-derived; sign-flip p 1/32):
+seed 101 fails ARC1 alone -- its read starts lowest (0.207) and collapses to 0.031 over 48 bouts because each bout's
+re-induction scales with the current read (subcritical for a weak trace); lz_arc 0/6 against the design sweep. Next
+method (companion process: CA3 pattern completion makes a replay event near all-or-none) on DEV seeds + Amendment 7 =
+workflow `w1zb4w1ta` lane B; lane A = dup-guard fix round (review found 2 HIGH fail-open paths). fi-family 6 seeds queued.
+
+**☀️ 09:55 recovery:** the orchestrating session was killed at 07:51 (no kernel OOM logged; the SETTLE A2 web-test process
+died with it). GPU queue and pool kept running; orchestration stalled ~2 h. Saved every partial branch (settle-a3-amendment3
+@ b58e4080b, pool-dup-guard-fixround-wip @ 9460337de, claimcheck-r8 @ a960fa231) and resumed all six lanes in workflow
+`wjnk7jtnb` (SETTLE A3 amendment, dup-guard fix round, awake-replay completion, pool-stall detector + unrunnable-line
+check, prereg-amendment gate fix round after an UNSOUND review, claim-check r8). Found: the six SETTLE A2 lines (revision
+5b5ea1b74) sat 7.5 h because that revision was never provisioned on pool1/pool2 -- provisioning now. Merged lexicon round 3
+(d51e9c88b, dev NOT READY) + its scope correction (05eba333f). Web tests re-running. fi family running (30 arm files).
+
+**☀️ 10:15 pool1 recovered:** aws_idle_stop had STOPPED pool1 at 09:06 after it drained (last dispatch 07:35, load 11 -> 0)
+while 74 runnable B2b lines were queued; DA LTM-on seeds 43 and 101 had finished there but their last arm + seed JSON were
+never synced. Restarted the instance (new IP 3.95.2.187; .pool_ssh_config edited, backup .claude/worktrees/_pool_ssh_config.bak_0925),
+pulled both seeds (11/11 arms each, per-arm sidecars at cce3c1dbd): LTM-on now 5/6 (s102 running on pool2). Sync-before-stop,
+start/refresh and the 07:35-09:06 starvation diagnosis = workflow `wv0ey666y`. SETTLE A2 revision provisioned on pool2/41/42 (and pool1 next).
+
+**☀️ 10:40 AWS spend ledger:** spend jumped $28.22 -> $43.30 in 10 min: a test helper (tests/test_aws_pool_node_workflow.py::_run)
+wrote a stub instance 'i-existing' into the PRODUCTION ledger whenever the suite ran (40 rows 09-24, 4 today while the
+stop/start build ran it); aws-guard would have stopped both pool nodes at the $50 cap ~13:45. Stopped that build, removed the
+44 phantom rows (backup kept; real spend $28.58), fixed it at the write (e30a77172: record() refuses the production ledger
+under PYTEST_CURRENT_TEST; _run always isolates; mutation-verified), relaunched the build from its WIP branch (`wxyj13qt8`).
+SETTLE A2 six seeds dispatched to pool2 at 10:00.
+
+**☀️ 11:10 dispatcher bug:** root cause of the pool1/pool2 starvation 07:35-09:59 = pool_autodispatch.sh revision_available()
+ran ssh WITHOUT -n inside pop_job's candidate read-loop, so the first probe on a missing revision drained the queue scan
+(pop_job empty every cycle); partial reads also dispatched LINE FRAGMENTS as jobs (~10 since 09-24 16:06, one ran the tail of a
+pinned load_bearing_fraction command in the unpinned tree). Fixed on main (096dfdae0, ssh -n + a stdin-draining regression test),
+dispatcher restarted 11:05 on the fixed code. Follow-ups = workflow `wvh50k7ah`: stop/start fix round (review HIGH: idle-stop
+checks only the first instance -- same stdin class; ~/sim fallback path), fragment-job audit (what ran/wrote, findings at risk ->
+owner), and a static gate for ssh-in-a-read-loop across all shell scripts. SETTLE A2 webapp test 3 failed on its own setup
+(mood never reached '+'); fix + real re-run = `wouk2m2fs`. Scoring sleep r2 + LTM-on (both 6/6 landed) = `wl76o8lhg`.
+
+**☀️ 11:30 scored + merged:** DA tag-capture LTM-ON = GO 6/6 runner-level (702b5bbf0, p 1/64, re-derived; seeds 43/101 recovered
+from pool1 verified) -- flip leg 1 of 4 met for BRAIN_DA_TAG_CAPTURE; it must ship WITH BRAIN_SLEEP_REPLAY_CAPTURE (alone it
+loses an ordinary fact overnight). Sleep-replay r2 = NO-GO (df415f6ca; downscaling 0/6 as registered, 4 NO-GO SHY1 + 2 UNDEFINED;
+long delay NOT-RESCUED 6/6; offcheck IDENTICAL) -- superseded by the fi family (running). Next: the paired-flip pipeline
+(verify-go review -> combined no-regression battery with both ON -> production-default validation).
 
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
@@ -64,8 +139,8 @@ steps), SETTLE A2 end-to-end webapp test, sleep-forgetting companion process (do
 3. Score as they land (scorer + independent verifier each): sleep route rc family (6 seeds, 269ae8f76) and r2 family
    (6 seeds, 50c791bf9); DA LTM-on (seed 42 GO, 43-102 queued, mem_gb=48); wm-focus-bind (alive on pool1/2); A10 v4 arms;
    D6 N2000; SETTLE A3 GPU timing; the gap#4 dev runs the clamp lane queues.
-4. B2b: wave-1 lines age out at ~07:36 (12 h from 19:36). The wave script warns but does not requeue: requeue aged-out
-   lines per prereg A1.4(c) (at most twice) before then.
+4. ✅ B2b age-out risk resolved 06:10: every wave-1 line dispatched (92 dispatched, 76/258 lb.json landed); wave 2 (86 lines)
+   auto-queued 05:28 by the heartbeat's wave step; no queued b2b line is older than 1 h.
 5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404
    impractical; next = per-fact progress/latency logging + small-N latency runs, a small build for its lane). Bake-off
    started 03:08; then SETTLE A3, plastic-mask cupy test.
@@ -74,7 +149,19 @@ steps), SETTLE A2 end-to-end webapp test, sleep-forgetting companion process (do
    60K, recall OK). All 6 agentic tasks FAILED before any model turn: chat-template rejection of Claude Code's system
    messages (Qwen: 'System message must be at the beginning'; Devstral: 'Only user, assistant and tool roles'). Harness
    fix + GPU re-run: workflow `wqf40cc45`. default_profile NOT set until an agentic result exists.
+   RE-RUN RESULT 05:48 (templates fixed, run from main): Qwen3.8-27B IQ4_NL+MTP PASSES all 3 agentic tasks (T1 locate
+   162 s, T2 fix a planted bug without touching the test 332 s, T3 extend a test 198 s), 63.6 tok/s short, 48 tok/s at
+   60K, 2.6 GB VRAM headroom; tools/local_llm/default_profile = qwen38-27b-iq4nl-mtp. Devstral hit a separate
+   grammar-parse error (400 'failed to parse grammar'), so it is untested, not failed.
    When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
+   06:15: slot-binder sizing done (branch research/slotbinder-gate-sizing @ 835fc252e, held for the wave-3 review of the
+   progress-logging base): N=8/32 GO, N=128 NOT-YET only on parity_1_0 (the FHRR reference errs at scale; SlotBinder was
+   right in all 3 mismatches); budget 10 min/seed -> N=32 (3.6 min); 6-seed N=32 battery queued on the GPU (seed 42 running).
+   06:50: slot-binder N=32 battery GO 6/6 (scope-limited; recall ties FHRR exactly, ablation collapses recall to 0.0
+   on every seed; independently re-derived), branch research/score-slotbinder-n32-0925 @ 351a44599 held with the sizing
+   branch until the wave-3 review of the progress-logging base lands. Not a flip candidate (32 of 404 facts). gap#4:
+   AMENDMENT 7 registers a C26 full-size GPU transfer run (branch research/gap4-c26-fullsize @ 04e6def34); it is running
+   on the GPU now (its script names its pin A10_PIN_SHA).
 6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
 
 **🟢 UPDATE 01:25 (2026-09-25) — main 5ddff4934. RESUME HERE (the 00:45 block below still holds).**

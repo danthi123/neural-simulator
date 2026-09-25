@@ -60,6 +60,28 @@ r2 (branch research/sleep-replay-capture-r2; pre-registered as Amendment 1 of th
     magnitude-invariant read). Its host steps: the multiply, the constant, and the choice of R_i (the same cleanup
     margin the replay uses) as the protection read.
 
+r3 (branch research/sleep-forgetting-interference; pre-registered as Amendment 6 of the sleep-replay-capture prereg):
+  * LOAD-DEPENDENT RENORMALIZATION (`BRAIN_SLEEP_LOAD_RENORM`, default OFF, read only inside an epoch). r2 depressed
+    every night by the same constant SHY_DELTA whatever the day before had added -- a night after a day with no
+    learning at all cost a trace the same 18 %. In the synaptic-homeostasis account the night's depression is the
+    price of the day's plasticity: slow-wave activity rises with how much was explored/learned and the renormalization
+    is self-limiting (Tononi & Cirelli 2014, Neuron 81:12, PMC3921176: the SWA increase "is positively correlated with
+    the amount of the time spent exploring"; Huber et al. 2004, Nature 430:78: a local learning task raises local SWA;
+    Kandel 6e ch.44: synapses grown by learning require "that some excitatory inputs be reduced"). With the flag on
+    the night's amplitude is MEASURED on the store instead of fixed:
+        delta_n = dW_n / W_n, clipped to [0, 1]
+        dW_n = sum over managed blocks written (or rewritten) after the previous night's epoch of mean_k |wf_k * inc_k|
+               at sleep onset (the learned strength the preceding wake added that is still expressed)
+        W_n  = sum over EVERY store block (managed and build-time) of mean_k |w_k| at sleep onset (the store's total)
+    and each managed block's increment is multiplied by 1 - delta_n * (1 - R_i), the r2 protection unchanged. So later
+    learning is what forces an older trace down (retroactive interference through the shared renormalization: Wixted
+    2004, Annu Rev Psychol 55:235), a night after an empty day costs nothing, and the traces the night reactivates
+    strongly pay least (the competitive down-selection of Tononi & Cirelli 2014). Host steps, declared: the two sums,
+    the ratio, the multiply; the baseline and the build-time blocks are not depressed (r2's choice, and Tononi &
+    Cirelli 2014's "old friends" argument). With both sub-flags on, the measured amplitude replaces the constant.
+  * `BRAIN_SLEEP_LOAD_RENORM_LESION=1` cuts the load read's effect: dW_n and W_n are still read and recorded, the
+    applied delta is 0, so nothing is depressed.
+
 THE REPLAY-EDGE LESION. `BRAIN_SLEEP_REPLAY_CAPTURE_LESION=1` severs the reactivation's effect: the substrate reads
 still run (same compute, same substrate state) but R_eff = 0, so no replay tag is set and the SWR bout's DA stays
 tonic. The D1 pool is still read at tonic (it fires at its tonic rate + noise), exactly as the v3 lesions do.
@@ -96,7 +118,9 @@ This is a synaptic-capture route, not "consolidation" in the docs/TERMS.md sense
 CONTRACT. DEFAULT-OFF. With `BRAIN_SLEEP_REPLAY_CAPTURE` unset, `ChatTagCapture._catch_up` never enters its sleep
 branch, no replay tag is ever set (the ledger's `h_rep` branch is skipped), and no key is added to the reply: the
 tag-and-capture path is byte-identical (tests/test_sleep_replay_capture.py). Inert without `BRAIN_DA_TAG_CAPTURE`
-(there is no ledger to act on). No `sim/` edit; no edit to one_brain_composer.py.
+(there is no ledger to act on). No `sim/` edit; no edit to one_brain_composer.py. r3: with `BRAIN_SLEEP_LOAD_RENORM`
+unset the epoch runs the pre-r3 code path exactly -- the route alone and r2's constant downscaling reproduce the
+store hashes of the pre-branch module (pinned in tests/test_sleep_load_renorm.py).
 """
 from __future__ import annotations
 
@@ -137,6 +161,40 @@ def downscaling_enabled() -> bool:
     """r2 sub-flag, DEFAULT OFF, only read inside an SWR epoch (so inert without BRAIN_SLEEP_REPLAY_CAPTURE):
     `BRAIN_SLEEP_DOWNSCALING` arms the per-night synaptic downscaling of the managed blocks' learned increments."""
     return _truthy("BRAIN_SLEEP_DOWNSCALING")
+
+
+def load_renorm_enabled() -> bool:
+    """r3 sub-flag, DEFAULT OFF, only read inside an SWR epoch (so inert without BRAIN_SLEEP_REPLAY_CAPTURE):
+    `BRAIN_SLEEP_LOAD_RENORM` makes the night's downscaling amplitude the measured wake load dW/W instead of the
+    constant SHY_DELTA (it arms the downscaling step by itself; with BRAIN_SLEEP_DOWNSCALING also set it replaces the
+    constant)."""
+    return _truthy("BRAIN_SLEEP_LOAD_RENORM")
+
+
+def load_renorm_lesioned() -> bool:
+    """`BRAIN_SLEEP_LOAD_RENORM_LESION` cuts the load read -> depression edge (the read still runs; delta applied = 0)."""
+    return _truthy("BRAIN_SLEEP_LOAD_RENORM_LESION")
+
+
+def store_total_strength(comp) -> float:
+    """W: the store's total synaptic strength, sum over every store block (managed and build-time) of the mean
+    synaptic magnitude of its D trigger->readout synapses."""
+    D = int(comp.D)
+    n = len(comp.store_conns) // D
+    if n == 0:
+        return 0.0
+    mags = np.abs(np.array([complex(w) for (_p, _q, w) in comp.store_conns[:n * D]], dtype=np.complex128))
+    return float(mags.reshape(n, D).mean(axis=1).sum())
+
+
+def wake_potentiation(ledger, t_since: float) -> float:
+    """dW: the learned strength the wake added that is still expressed now -- over managed blocks written (or
+    rewritten, which resets t_w) after `t_since`, the mean |weight factor x increment| at the ledger's clock."""
+    tot = 0.0
+    for blk in ledger.blocks:
+        if blk["t_w"] > t_since:
+            tot += float(np.mean(np.abs(ledger.weight_factor(blk) * blk["inc"])))
+    return tot
 
 
 def sleep_onset_h() -> float:
@@ -255,7 +313,25 @@ class SleepReplayCapture:
         # increment by SHY_DELTA, except in proportion to how strongly that block's own reactivation drove the read-out
         # (Gonzalez-Rueda et al. 2018: inputs that contribute to postsynaptic spiking in Up states are protected).
         shy = None
-        if downscaling_enabled():
+        load = None
+        if load_renorm_enabled():
+            # (r3, sub-flag) LOAD-DEPENDENT RENORMALIZATION: the night's amplitude is the fraction of the store's total
+            # strength that the preceding wake added (read at sleep onset, before any depression), not a constant.
+            t_prev = self.epochs[-1]["t_h"] if self.epochs else -math.inf
+            d_w = wake_potentiation(ledger, t_prev)
+            w_tot = store_total_strength(comp)
+            delta_read = min(1.0, max(0.0, d_w / w_tot)) if w_tot > 0.0 else 0.0
+            delta = 0.0 if load_renorm_lesioned() else delta_read
+            shy = []
+            for blk, r in zip(ledger.blocks, R_eff):
+                s_i = 1.0 - delta * (1.0 - min(1.0, max(0.0, r)))
+                blk["inc"] = blk["inc"] * s_i
+                shy.append(round(s_i, 9))
+            load = {"dW": round(d_w, 9), "W": round(w_tot, 9), "delta_read": round(delta_read, 9),
+                    "delta": round(delta, 9), "lesioned": bool(load_renorm_lesioned()),
+                    "n_new_blocks": int(sum(1 for b in ledger.blocks if b["t_w"] > t_prev)),
+                    "t_since": (None if t_prev == -math.inf else round(float(t_prev), 9))}
+        elif downscaling_enabled():
             shy = []
             for blk, r in zip(ledger.blocks, R_eff):
                 s_i = 1.0 - SHY_DELTA * (1.0 - min(1.0, max(0.0, r)))
@@ -271,10 +347,15 @@ class SleepReplayCapture:
                             "no_reader": bool(any(r is None for r in R))})
         if shy is not None:
             self.epochs[-1]["shy_scale"] = shy
+        if load is not None:
+            self.epochs[-1]["load"] = load
 
     def summary(self) -> dict:
         out = {"on": True, "lesioned": replay_capture_lesioned(), "n_epochs": len(self.epochs),
                "episode_done": self.episode_done, "epochs": list(self.epochs)}
         if downscaling_enabled():
             out["downscaling"] = True
+        if load_renorm_enabled():
+            out["load_renorm"] = True
+            out["load_renorm_lesioned"] = bool(load_renorm_lesioned())
         return out

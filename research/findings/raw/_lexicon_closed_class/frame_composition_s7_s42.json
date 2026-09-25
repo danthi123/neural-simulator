@@ -1,0 +1,4943 @@
+{
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "k_occ": 32,
+ "ctx_c": 100,
+ "per_seed": {
+  "7": {
+   "curriculum": {
+    "complete": 1413,
+    "left_only": 494,
+    "right_only": 378,
+    "none": 115,
+    "n": 2400,
+    "one_sided_fraction": 0.36333333333333334,
+    "complete_fraction": 0.58875
+   },
+   "round2_artifact": "research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/junction_s7.json",
+   "round2_silent_non_words": [
+    "again",
+    "all",
+    "am",
+    "before",
+    "believe",
+    "chases",
+    "cleans",
+    "did",
+    "does",
+    "doing",
+    "everyone",
+    "expect",
+    "feed",
+    "goes",
+    "happened",
+    "happens",
+    "has",
+    "here",
+    "how",
+    "if",
+    "look",
+    "most",
+    "not",
+    "remind",
+    "rises",
+    "screaming",
+    "some",
+    "something",
+    "wakes",
+    "what",
+    "when",
+    "where",
+    "who",
+    "will"
+   ],
+   "words": {
+    "again": {
+     "complete": 7,
+     "left_only": 2,
+     "right_only": 23,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "them",
+        1
+       ],
+       [
+        "friends",
+        1
+       ],
+       [
+        "bird",
+        1
+       ],
+       [
+        "together",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "tim",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        6
+       ],
+       [
+        "so",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "play",
+        1
+       ],
+       [
+        "together",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        19
+       ],
+       [
+        "and",
+        4
+       ]
+      ]
+     }
+    },
+    "all": {
+     "complete": 18,
+     "left_only": 7,
+     "right_only": 6,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "together",
+        4
+       ],
+       [
+        "ball",
+        3
+       ],
+       [
+        "they",
+        2
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "so",
+        1
+       ],
+       [
+        "them",
+        1
+       ],
+       [
+        "play",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "of",
+        1
+       ],
+       [
+        "at",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "day",
+        8
+       ],
+       [
+        "the",
+        2
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "played",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "had",
+        1
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "not",
+        1
+       ],
+       [
+        "of",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "they",
+        3
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "there",
+        1
+       ],
+       [
+        "looked",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "day",
+        4
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ]
+     }
+    },
+    "am": {
+     "complete": 15,
+     "left_only": 17,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "i",
+        15
+       ]
+      ],
+      "complete_right": [
+       [
+        "the",
+        3
+       ],
+       [
+        "a",
+        3
+       ],
+       [
+        "too",
+        2
+       ],
+       [
+        "tom",
+        2
+       ],
+       [
+        "happy",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "tim",
+        1
+       ],
+       [
+        "so",
+        1
+       ],
+       [
+        "sad",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "i",
+        17
+       ]
+      ]
+     }
+    },
+    "amazing": {
+     "complete": 12,
+     "left_only": 2,
+     "right_only": 10,
+     "none": 8,
+     "context": {
+      "complete_left": [
+       [
+        "was",
+        4
+       ],
+       [
+        "is",
+        2
+       ],
+       [
+        "the",
+        2
+       ],
+       [
+        "so",
+        1
+       ],
+       [
+        "new",
+        1
+       ],
+       [
+        "are",
+        1
+       ],
+       [
+        "very",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        6
+       ],
+       [
+        "toy",
+        2
+       ],
+       [
+        "said",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "bird",
+        1
+       ],
+       [
+        "boy",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "very",
+        1
+       ],
+       [
+        "her",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "toy",
+        2
+       ],
+       [
+        "was",
+        1
+       ],
+       [
+        "day",
+        1
+       ],
+       [
+        "dog",
+        1
+       ]
+      ]
+     }
+    },
+    "before": {
+     "complete": 6,
+     "left_only": 0,
+     "right_only": 21,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "had",
+        2
+       ],
+       [
+        "but",
+        2
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "like",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        13
+       ],
+       [
+        "he",
+        3
+       ],
+       [
+        "a",
+        2
+       ],
+       [
+        "you",
+        2
+       ],
+       [
+        "they",
+        1
+       ]
+      ]
+     }
+    },
+    "believe": {
+     "complete": 7,
+     "left_only": 0,
+     "right_only": 21,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "not",
+        5
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "i",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "in",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "sam",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "what",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "it",
+        6
+       ],
+       [
+        "his",
+        6
+       ],
+       [
+        "her",
+        3
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "what",
+        1
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "that",
+        1
+       ]
+      ]
+     }
+    },
+    "chases": {
+     "complete": 32,
+     "left_only": 0,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "and",
+        20
+       ],
+       [
+        "he",
+        6
+       ],
+       [
+        "dog",
+        6
+       ]
+      ],
+      "complete_right": [
+       [
+        "them",
+        18
+       ],
+       [
+        "tom",
+        6
+       ],
+       [
+        "him",
+        5
+       ],
+       [
+        "the",
+        3
+       ]
+      ]
+     }
+    },
+    "cleans": {
+     "complete": 23,
+     "left_only": 0,
+     "right_only": 0,
+     "none": 9,
+     "context": {
+      "complete_left": [
+       [
+        "he",
+        12
+       ],
+       [
+        "she",
+        11
+       ]
+      ],
+      "complete_right": [
+       [
+        "his",
+        23
+       ]
+      ]
+     }
+    },
+    "crazy": {
+     "complete": 11,
+     "left_only": 12,
+     "right_only": 6,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "like",
+        2
+       ],
+       [
+        "and",
+        2
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "a",
+        2
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "go",
+        1
+       ],
+       [
+        "little",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "big",
+        2
+       ],
+       [
+        "toy",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "cat",
+        1
+       ],
+       [
+        "with",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "the",
+        5
+       ],
+       [
+        "a",
+        5
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "too",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "and",
+        1
+       ]
+      ]
+     }
+    },
+    "did": {
+     "complete": 26,
+     "left_only": 1,
+     "right_only": 5,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "he",
+        9
+       ],
+       [
+        "they",
+        6
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "tom",
+        2
+       ],
+       [
+        "and",
+        2
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "ball",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "ben",
+        1
+       ],
+       [
+        "we",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "not",
+        21
+       ],
+       [
+        "a",
+        2
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "it",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "you",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "not",
+        3
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "tim",
+        1
+       ]
+      ]
+     }
+    },
+    "does": {
+     "complete": 25,
+     "left_only": 1,
+     "right_only": 6,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "he",
+        10
+       ],
+       [
+        "she",
+        5
+       ],
+       [
+        "it",
+        4
+       ],
+       [
+        "tom",
+        2
+       ],
+       [
+        "dog",
+        1
+       ],
+       [
+        "boy",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "lily",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "not",
+        23
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "he",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "not",
+        4
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "that",
+        1
+       ]
+      ]
+     }
+    },
+    "doing": {
+     "complete": 26,
+     "left_only": 5,
+     "right_only": 1,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "you",
+        18
+       ],
+       [
+        "was",
+        5
+       ],
+       [
+        "were",
+        2
+       ],
+       [
+        "is",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        19
+       ],
+       [
+        "a",
+        2
+       ],
+       [
+        "up",
+        1
+       ],
+       [
+        "little",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "you",
+        4
+       ],
+       [
+        "we",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "it",
+        1
+       ]
+      ]
+     }
+    },
+    "everyone": {
+     "complete": 14,
+     "left_only": 3,
+     "right_only": 12,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "<pause>",
+        6
+       ],
+       [
+        "for",
+        2
+       ],
+       [
+        "to",
+        2
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "together",
+        1
+       ],
+       [
+        "big",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "was",
+        5
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "had",
+        1
+       ],
+       [
+        "in",
+        1
+       ],
+       [
+        "can",
+        1
+       ],
+       [
+        "loved",
+        1
+       ],
+       [
+        "he",
+        1
+       ],
+       [
+        "could",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "<pause>",
+        3
+       ]
+      ],
+      "right_only_right": [
+       [
+        "happy",
+        4
+       ],
+       [
+        "in",
+        1
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "played",
+        1
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "very",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ]
+      ]
+     }
+    },
+    "expect": {
+     "complete": 24,
+     "left_only": 2,
+     "right_only": 6,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "not",
+        20
+       ],
+       [
+        "you",
+        2
+       ],
+       [
+        "to",
+        2
+       ]
+      ],
+      "complete_right": [
+       [
+        "a",
+        7
+       ],
+       [
+        "to",
+        5
+       ],
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "the",
+        3
+       ],
+       [
+        "that",
+        2
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "tim",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "not",
+        2
+       ]
+      ],
+      "right_only_right": [
+       [
+        "the",
+        2
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "it",
+        1
+       ]
+      ]
+     }
+    },
+    "feed": {
+     "complete": 25,
+     "left_only": 5,
+     "right_only": 0,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "to",
+        19
+       ],
+       [
+        "and",
+        3
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "not",
+        1
+       ],
+       [
+        "we",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "the",
+        15
+       ],
+       [
+        "them",
+        4
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "from",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "tom",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "to",
+        4
+       ],
+       [
+        "and",
+        1
+       ]
+      ]
+     }
+    },
+    "goes": {
+     "complete": 16,
+     "left_only": 13,
+     "right_only": 3,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "he",
+        6
+       ],
+       [
+        "tom",
+        3
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "sam",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "to",
+        11
+       ],
+       [
+        "back",
+        2
+       ],
+       [
+        "very",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "up",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "and",
+        3
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "ben",
+        1
+       ],
+       [
+        "ball",
+        1
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "tim",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "to",
+        2
+       ],
+       [
+        "on",
+        1
+       ]
+      ]
+     }
+    },
+    "happened": {
+     "complete": 6,
+     "left_only": 1,
+     "right_only": 24,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "what",
+        4
+       ],
+       [
+        "had",
+        2
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        6
+       ]
+      ],
+      "left_only_left": [
+       [
+        "what",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        24
+       ]
+      ]
+     }
+    },
+    "happens": {
+     "complete": 17,
+     "left_only": 0,
+     "right_only": 14,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "what",
+        17
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        14
+       ],
+       [
+        "when",
+        3
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        13
+       ],
+       [
+        "we",
+        1
+       ]
+      ]
+     }
+    },
+    "has": {
+     "complete": 17,
+     "left_only": 8,
+     "right_only": 3,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "he",
+        5
+       ],
+       [
+        "it",
+        4
+       ],
+       [
+        "she",
+        3
+       ],
+       [
+        "and",
+        2
+       ],
+       [
+        "tom",
+        1
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "sam",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "a",
+        17
+       ]
+      ],
+      "left_only_left": [
+       [
+        "it",
+        6
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "she",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "a",
+        2
+       ],
+       [
+        "their",
+        1
+       ]
+      ]
+     }
+    },
+    "here": {
+     "complete": 16,
+     "left_only": 1,
+     "right_only": 12,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "up",
+        3
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "said",
+        2
+       ],
+       [
+        "you",
+        2
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "new",
+        2
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "in",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        7
+       ],
+       [
+        "you",
+        4
+       ],
+       [
+        "in",
+        1
+       ],
+       [
+        "max",
+        1
+       ],
+       [
+        "at",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "said",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "happy",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        7
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "too",
+        1
+       ],
+       [
+        "from",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ]
+     }
+    },
+    "how": {
+     "complete": 10,
+     "left_only": 3,
+     "right_only": 14,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "her",
+        3
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "tim",
+        1
+       ],
+       [
+        "saw",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "to",
+        6
+       ],
+       [
+        "did",
+        1
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "happy",
+        1
+       ],
+       [
+        "do",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "her",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "at",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "to",
+        11
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "spot",
+        1
+       ]
+      ]
+     }
+    },
+    "if": {
+     "complete": 13,
+     "left_only": 1,
+     "right_only": 17,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "said",
+        4
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "mom",
+        2
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "help",
+        1
+       ],
+       [
+        "have",
+        1
+       ],
+       [
+        "sad",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "you",
+        7
+       ],
+       [
+        "she",
+        3
+       ],
+       [
+        "they",
+        2
+       ],
+       [
+        "he",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "what",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "he",
+        7
+       ],
+       [
+        "you",
+        3
+       ],
+       [
+        "they",
+        3
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "i",
+        1
+       ]
+      ]
+     }
+    },
+    "look": {
+     "complete": 17,
+     "left_only": 10,
+     "right_only": 5,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "to",
+        7
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "they",
+        2
+       ],
+       [
+        "mom",
+        2
+       ],
+       [
+        "said",
+        2
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "at",
+        6
+       ],
+       [
+        "for",
+        5
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "what",
+        1
+       ],
+       [
+        "sue",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "lily",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "said",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "would",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "at",
+        5
+       ]
+      ]
+     }
+    },
+    "might": {
+     "complete": 10,
+     "left_only": 18,
+     "right_only": 1,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "it",
+        5
+       ],
+       [
+        "his",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "her",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "be",
+        5
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "not",
+        1
+       ],
+       [
+        "help",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "you",
+        9
+       ],
+       [
+        "it",
+        5
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "they",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "be",
+        1
+       ]
+      ]
+     }
+    },
+    "most": {
+     "complete": 6,
+     "left_only": 26,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "the",
+        6
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "fun",
+        2
+       ],
+       [
+        "was",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "the",
+        24
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "his",
+        1
+       ]
+      ]
+     }
+    },
+    "not": {
+     "complete": 5,
+     "left_only": 21,
+     "right_only": 2,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "did",
+        3
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "was",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "like",
+        3
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "play",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "did",
+        12
+       ],
+       [
+        "could",
+        4
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "is",
+        2
+       ],
+       [
+        "are",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "be",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ]
+      ]
+     }
+    },
+    "remind": {
+     "complete": 13,
+     "left_only": 6,
+     "right_only": 4,
+     "none": 9,
+     "context": {
+      "complete_left": [
+       [
+        "to",
+        10
+       ],
+       [
+        "and",
+        2
+       ],
+       [
+        "would",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "you",
+        8
+       ],
+       [
+        "her",
+        3
+       ],
+       [
+        "his",
+        2
+       ]
+      ],
+      "left_only_left": [
+       [
+        "to",
+        5
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "you",
+        4
+       ]
+      ]
+     }
+    },
+    "rises": {
+     "complete": 16,
+     "left_only": 0,
+     "right_only": 16,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "it",
+        16
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        16
+       ]
+      ],
+      "right_only_right": [
+       [
+        "to",
+        8
+       ],
+       [
+        "in",
+        8
+       ]
+      ]
+     }
+    },
+    "screaming": {
+     "complete": 8,
+     "left_only": 0,
+     "right_only": 23,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "was",
+        4
+       ],
+       [
+        "is",
+        3
+       ],
+       [
+        "him",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        7
+       ],
+       [
+        "with",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        14
+       ],
+       [
+        "in",
+        5
+       ],
+       [
+        "and",
+        4
+       ]
+      ]
+     }
+    },
+    "some": {
+     "complete": 2,
+     "left_only": 8,
+     "right_only": 4,
+     "none": 18,
+     "context": {
+      "complete_left": [
+       [
+        "have",
+        2
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "fun",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "have",
+        3
+       ],
+       [
+        "and",
+        2
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "with",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "on",
+        1
+       ],
+       [
+        "new",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "of",
+        1
+       ]
+      ]
+     }
+    },
+    "something": {
+     "complete": 5,
+     "left_only": 20,
+     "right_only": 4,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "saw",
+        2
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "like",
+        1
+       ],
+       [
+        "felt",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "in",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "fun",
+        1
+       ],
+       [
+        "like",
+        1
+       ],
+       [
+        "was",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "then",
+        11
+       ],
+       [
+        "do",
+        3
+       ],
+       [
+        "saw",
+        2
+       ],
+       [
+        "did",
+        1
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "but",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "new",
+        2
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "very",
+        1
+       ]
+      ]
+     }
+    },
+    "wakes": {
+     "complete": 15,
+     "left_only": 0,
+     "right_only": 17,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "tom",
+        5
+       ],
+       [
+        "spot",
+        5
+       ],
+       [
+        "he",
+        3
+       ],
+       [
+        "ben",
+        2
+       ]
+      ],
+      "complete_right": [
+       [
+        "up",
+        15
+       ]
+      ],
+      "right_only_right": [
+       [
+        "up",
+        17
+       ]
+      ]
+     }
+    },
+    "what": {
+     "complete": 10,
+     "left_only": 2,
+     "right_only": 17,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "said",
+        3
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "asked",
+        1
+       ],
+       [
+        "max",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "is",
+        3
+       ],
+       [
+        "are",
+        2
+       ],
+       [
+        "did",
+        1
+       ],
+       [
+        "a",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "do",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "saw",
+        1
+       ],
+       [
+        "them",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "was",
+        5
+       ],
+       [
+        "to",
+        3
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "tom",
+        1
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "are",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "he",
+        1
+       ]
+      ]
+     }
+    },
+    "when": {
+     "complete": 16,
+     "left_only": 3,
+     "right_only": 8,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "<pause>",
+        9
+       ],
+       [
+        "but",
+        2
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "happy",
+        1
+       ],
+       [
+        "spot",
+        1
+       ],
+       [
+        "day",
+        1
+       ],
+       [
+        "fun",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "they",
+        9
+       ],
+       [
+        "he",
+        3
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "it",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "but",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "he",
+        3
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ]
+     }
+    },
+    "where": {
+     "complete": 13,
+     "left_only": 1,
+     "right_only": 16,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "<pause>",
+        6
+       ],
+       [
+        "park",
+        1
+       ],
+       [
+        "them",
+        1
+       ],
+       [
+        "tree",
+        1
+       ],
+       [
+        "on",
+        1
+       ],
+       [
+        "sam",
+        1
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "looked",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "are",
+        3
+       ],
+       [
+        "can",
+        2
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "he",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "did",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "tree",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "it",
+        3
+       ],
+       [
+        "she",
+        3
+       ],
+       [
+        "all",
+        2
+       ],
+       [
+        "to",
+        2
+       ],
+       [
+        "they",
+        2
+       ],
+       [
+        "max",
+        1
+       ],
+       [
+        "he",
+        1
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "i",
+        1
+       ]
+      ]
+     }
+    },
+    "who": {
+     "complete": 10,
+     "left_only": 4,
+     "right_only": 11,
+     "none": 7,
+     "context": {
+      "complete_left": [
+       [
+        "girl",
+        4
+       ],
+       [
+        "boy",
+        2
+       ],
+       [
+        "friends",
+        2
+       ],
+       [
+        "cat",
+        1
+       ],
+       [
+        "sue",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "liked",
+        4
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "wanted",
+        1
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "did",
+        1
+       ],
+       [
+        "went",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "boy",
+        1
+       ],
+       [
+        "ben",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "was",
+        3
+       ],
+       [
+        "liked",
+        3
+       ],
+       [
+        "can",
+        1
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "loved",
+        1
+       ],
+       [
+        "wanted",
+        1
+       ],
+       [
+        "were",
+        1
+       ]
+      ]
+     }
+    },
+    "will": {
+     "complete": 10,
+     "left_only": 15,
+     "right_only": 3,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "i",
+        6
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "be",
+        4
+       ],
+       [
+        "help",
+        3
+       ],
+       [
+        "not",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "you",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "i",
+        11
+       ],
+       [
+        "he",
+        1
+       ],
+       [
+        "we",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "tom",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "be",
+        2
+       ],
+       [
+        "we",
+        1
+       ]
+      ]
+     }
+    },
+    "wonderful": {
+     "complete": 13,
+     "left_only": 11,
+     "right_only": 6,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "a",
+        10
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "be",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "time",
+        6
+       ],
+       [
+        "day",
+        4
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "toy",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "a",
+        5
+       ],
+       [
+        "the",
+        3
+       ],
+       [
+        "of",
+        1
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "do",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "time",
+        1
+       ],
+       [
+        "the",
+        1
+       ],
+       [
+        "on",
+        1
+       ]
+      ]
+     }
+    }
+   }
+  },
+  "42": {
+   "curriculum": {
+    "complete": 1381,
+    "left_only": 519,
+    "right_only": 378,
+    "none": 122,
+    "n": 2400,
+    "one_sided_fraction": 0.37375,
+    "complete_fraction": 0.5754166666666667
+   },
+   "round2_artifact": "research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/junction_s42.json",
+   "round2_silent_non_words": [
+    "about",
+    "am",
+    "before",
+    "crazy",
+    "discuss",
+    "happened",
+    "happens",
+    "here",
+    "how",
+    "if",
+    "most",
+    "not",
+    "rises",
+    "screaming",
+    "sings",
+    "some",
+    "something",
+    "tell",
+    "what",
+    "where",
+    "who",
+    "will",
+    "wonderful"
+   ],
+   "words": {
+    "about": {
+     "complete": 7,
+     "left_only": 1,
+     "right_only": 17,
+     "none": 7,
+     "context": {
+      "complete_left": [
+       [
+        "tim",
+        1
+       ],
+       [
+        "max",
+        1
+       ],
+       [
+        "all",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "sam",
+        1
+       ],
+       [
+        "happy",
+        1
+       ],
+       [
+        "were",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "the",
+        5
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "to",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "her",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "the",
+        6
+       ],
+       [
+        "what",
+        3
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "her",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "all",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "his",
+        1
+       ]
+      ]
+     }
+    },
+    "am": {
+     "complete": 18,
+     "left_only": 14,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "i",
+        18
+       ]
+      ],
+      "complete_right": [
+       [
+        "not",
+        4
+       ],
+       [
+        "a",
+        4
+       ],
+       [
+        "the",
+        2
+       ],
+       [
+        "sad",
+        2
+       ],
+       [
+        "too",
+        2
+       ],
+       [
+        "very",
+        1
+       ],
+       [
+        "tom",
+        1
+       ],
+       [
+        "so",
+        1
+       ],
+       [
+        "lily",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "i",
+        14
+       ]
+      ]
+     }
+    },
+    "amazing": {
+     "complete": 6,
+     "left_only": 9,
+     "right_only": 8,
+     "none": 9,
+     "context": {
+      "complete_left": [
+       [
+        "was",
+        2
+       ],
+       [
+        "his",
+        2
+       ],
+       [
+        "new",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "toy",
+        2
+       ],
+       [
+        "day",
+        1
+       ],
+       [
+        "time",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "his",
+        2
+       ],
+       [
+        "the",
+        2
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "big",
+        1
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "toy",
+        1
+       ],
+       [
+        "time",
+        1
+       ],
+       [
+        "he",
+        1
+       ]
+      ]
+     }
+    },
+    "before": {
+     "complete": 8,
+     "left_only": 1,
+     "right_only": 15,
+     "none": 8,
+     "context": {
+      "complete_left": [
+       [
+        "it",
+        3
+       ],
+       [
+        "girl",
+        1
+       ],
+       [
+        "friend",
+        1
+       ],
+       [
+        "time",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "that",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "they",
+        2
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "he",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "him",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        10
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "with",
+        1
+       ]
+      ]
+     }
+    },
+    "crazy": {
+     "complete": 15,
+     "left_only": 13,
+     "right_only": 2,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "the",
+        5
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "a",
+        2
+       ],
+       [
+        "like",
+        1
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "felt",
+        1
+       ],
+       [
+        "little",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        6
+       ],
+       [
+        "big",
+        5
+       ],
+       [
+        "day",
+        1
+       ],
+       [
+        "bird",
+        1
+       ],
+       [
+        "cat",
+        1
+       ],
+       [
+        "toy",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "the",
+        5
+       ],
+       [
+        "a",
+        3
+       ],
+       [
+        "his",
+        2
+       ],
+       [
+        "of",
+        1
+       ],
+       [
+        "too",
+        1
+       ],
+       [
+        "do",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "but",
+        1
+       ]
+      ]
+     }
+    },
+    "discuss": {
+     "complete": 13,
+     "left_only": 8,
+     "right_only": 2,
+     "none": 9,
+     "context": {
+      "complete_left": [
+       [
+        "to",
+        8
+       ],
+       [
+        "and",
+        5
+       ]
+      ],
+      "complete_right": [
+       [
+        "and",
+        3
+       ],
+       [
+        "the",
+        3
+       ],
+       [
+        "what",
+        2
+       ],
+       [
+        "them",
+        2
+       ],
+       [
+        "their",
+        2
+       ],
+       [
+        "with",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "and",
+        4
+       ],
+       [
+        "to",
+        4
+       ]
+      ],
+      "right_only_right": [
+       [
+        "and",
+        1
+       ],
+       [
+        "what",
+        1
+       ]
+      ]
+     }
+    },
+    "happened": {
+     "complete": 4,
+     "left_only": 0,
+     "right_only": 28,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "had",
+        2
+       ],
+       [
+        "what",
+        2
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        28
+       ]
+      ]
+     }
+    },
+    "happens": {
+     "complete": 18,
+     "left_only": 0,
+     "right_only": 13,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "what",
+        18
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        15
+       ],
+       [
+        "when",
+        3
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        12
+       ],
+       [
+        "we",
+        1
+       ]
+      ]
+     }
+    },
+    "here": {
+     "complete": 14,
+     "left_only": 1,
+     "right_only": 14,
+     "none": 3,
+     "context": {
+      "complete_left": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "play",
+        3
+       ],
+       [
+        "are",
+        1
+       ],
+       [
+        "on",
+        1
+       ],
+       [
+        "in",
+        1
+       ],
+       [
+        "be",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "up",
+        1
+       ],
+       [
+        "was",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        8
+       ],
+       [
+        "you",
+        3
+       ],
+       [
+        "but",
+        1
+       ],
+       [
+        "tom",
+        1
+       ],
+       [
+        "to",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "in",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        8
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "lily",
+        1
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "little",
+        1
+       ],
+       [
+        "with",
+        1
+       ]
+      ]
+     }
+    },
+    "how": {
+     "complete": 5,
+     "left_only": 3,
+     "right_only": 17,
+     "none": 7,
+     "context": {
+      "complete_left": [
+       [
+        "her",
+        1
+       ],
+       [
+        "saw",
+        1
+       ],
+       [
+        "was",
+        1
+       ],
+       [
+        "tim",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "to",
+        3
+       ],
+       [
+        "sad",
+        1
+       ],
+       [
+        "can",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "him",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "to",
+        13
+       ],
+       [
+        "it",
+        2
+       ],
+       [
+        "big",
+        1
+       ],
+       [
+        "his",
+        1
+       ]
+      ]
+     }
+    },
+    "if": {
+     "complete": 14,
+     "left_only": 1,
+     "right_only": 16,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "mom",
+        3
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "that",
+        2
+       ],
+       [
+        "sad",
+        1
+       ],
+       [
+        "asked",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "what",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "said",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "you",
+        6
+       ],
+       [
+        "i",
+        2
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "so",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "she",
+        5
+       ],
+       [
+        "he",
+        3
+       ],
+       [
+        "you",
+        3
+       ],
+       [
+        "i",
+        2
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "there",
+        1
+       ],
+       [
+        "we",
+        1
+       ]
+      ]
+     }
+    },
+    "might": {
+     "complete": 12,
+     "left_only": 12,
+     "right_only": 3,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "it",
+        2
+       ],
+       [
+        "his",
+        2
+       ],
+       [
+        "there",
+        2
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "ben",
+        1
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "their",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "her",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "be",
+        5
+       ],
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "not",
+        2
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "have",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "you",
+        5
+       ],
+       [
+        "it",
+        3
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "dog",
+        1
+       ],
+       [
+        "they",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "be",
+        2
+       ],
+       [
+        "have",
+        1
+       ]
+      ]
+     }
+    },
+    "most": {
+     "complete": 6,
+     "left_only": 26,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "the",
+        6
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "fun",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "the",
+        24
+       ],
+       [
+        "his",
+        1
+       ],
+       [
+        "their",
+        1
+       ]
+      ]
+     }
+    },
+    "not": {
+     "complete": 7,
+     "left_only": 22,
+     "right_only": 1,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "is",
+        2
+       ],
+       [
+        "did",
+        2
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "do",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "a",
+        2
+       ],
+       [
+        "like",
+        2
+       ],
+       [
+        "for",
+        1
+       ],
+       [
+        "be",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "did",
+        9
+       ],
+       [
+        "could",
+        6
+       ],
+       [
+        "was",
+        4
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "do",
+        1
+       ],
+       [
+        "and",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "be",
+        1
+       ]
+      ]
+     }
+    },
+    "rises": {
+     "complete": 13,
+     "left_only": 0,
+     "right_only": 19,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "it",
+        13
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        13
+       ]
+      ],
+      "right_only_right": [
+       [
+        "to",
+        12
+       ],
+       [
+        "in",
+        7
+       ]
+      ]
+     }
+    },
+    "screaming": {
+     "complete": 8,
+     "left_only": 0,
+     "right_only": 23,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "was",
+        5
+       ],
+       [
+        "is",
+        2
+       ],
+       [
+        "him",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "and",
+        3
+       ],
+       [
+        "with",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        15
+       ],
+       [
+        "in",
+        4
+       ],
+       [
+        "and",
+        4
+       ]
+      ]
+     }
+    },
+    "sings": {
+     "complete": 24,
+     "left_only": 8,
+     "right_only": 0,
+     "none": 0,
+     "context": {
+      "complete_left": [
+       [
+        "she",
+        13
+       ],
+       [
+        "and",
+        4
+       ],
+       [
+        "it",
+        4
+       ],
+       [
+        "mom",
+        3
+       ]
+      ],
+      "complete_right": [
+       [
+        "a",
+        8
+       ],
+       [
+        "<pause>",
+        4
+       ],
+       [
+        "her",
+        3
+       ],
+       [
+        "to",
+        3
+       ],
+       [
+        "and",
+        3
+       ],
+       [
+        "for",
+        2
+       ],
+       [
+        "happy",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "she",
+        5
+       ],
+       [
+        "and",
+        3
+       ]
+      ]
+     }
+    },
+    "some": {
+     "complete": 4,
+     "left_only": 10,
+     "right_only": 2,
+     "none": 16,
+     "context": {
+      "complete_left": [
+       [
+        "have",
+        2
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "but",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "of",
+        3
+       ],
+       [
+        "fun",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "it",
+        2
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "on",
+        1
+       ],
+       [
+        "him",
+        1
+       ],
+       [
+        "them",
+        1
+       ],
+       [
+        "found",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "but",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "for",
+        1
+       ],
+       [
+        "time",
+        1
+       ]
+      ]
+     }
+    },
+    "something": {
+     "complete": 8,
+     "left_only": 14,
+     "right_only": 3,
+     "none": 7,
+     "context": {
+      "complete_left": [
+       [
+        "for",
+        2
+       ],
+       [
+        "saw",
+        2
+       ],
+       [
+        "loved",
+        1
+       ],
+       [
+        "like",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "is",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "<pause>",
+        5
+       ],
+       [
+        "fun",
+        1
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "that",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "then",
+        4
+       ],
+       [
+        "but",
+        3
+       ],
+       [
+        "play",
+        1
+       ],
+       [
+        "with",
+        1
+       ],
+       [
+        "had",
+        1
+       ],
+       [
+        "have",
+        1
+       ],
+       [
+        "day",
+        1
+       ],
+       [
+        "there",
+        1
+       ],
+       [
+        "is",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "new",
+        2
+       ],
+       [
+        "fun",
+        1
+       ]
+      ]
+     }
+    },
+    "tell": {
+     "complete": 21,
+     "left_only": 3,
+     "right_only": 4,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "to",
+        12
+       ],
+       [
+        "they",
+        3
+       ],
+       [
+        "not",
+        1
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "i",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "and",
+        1
+       ],
+       [
+        "tom",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "her",
+        5
+       ],
+       [
+        "his",
+        4
+       ],
+       [
+        "them",
+        4
+       ],
+       [
+        "you",
+        3
+       ],
+       [
+        "the",
+        2
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "their",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "and",
+        1
+       ],
+       [
+        "to",
+        1
+       ],
+       [
+        "mom",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "you",
+        2
+       ],
+       [
+        "a",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ]
+     }
+    },
+    "what": {
+     "complete": 6,
+     "left_only": 2,
+     "right_only": 22,
+     "none": 2,
+     "context": {
+      "complete_left": [
+       [
+        "asked",
+        2
+       ],
+       [
+        "them",
+        1
+       ],
+       [
+        "ben",
+        1
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "said",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "do",
+        2
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "did",
+        1
+       ],
+       [
+        "she",
+        1
+       ],
+       [
+        "a",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "lily",
+        1
+       ],
+       [
+        "mom",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "was",
+        7
+       ],
+       [
+        "to",
+        4
+       ],
+       [
+        "the",
+        3
+       ],
+       [
+        "it",
+        3
+       ],
+       [
+        "his",
+        2
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "we",
+        1
+       ],
+       [
+        "are",
+        1
+       ]
+      ]
+     }
+    },
+    "where": {
+     "complete": 6,
+     "left_only": 0,
+     "right_only": 21,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "them",
+        2
+       ],
+       [
+        "<pause>",
+        2
+       ],
+       [
+        "back",
+        1
+       ],
+       [
+        "spot",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "i",
+        1
+       ],
+       [
+        "is",
+        1
+       ],
+       [
+        "are",
+        1
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "they",
+        1
+       ],
+       [
+        "he",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "the",
+        5
+       ],
+       [
+        "to",
+        4
+       ],
+       [
+        "it",
+        3
+       ],
+       [
+        "they",
+        3
+       ],
+       [
+        "he",
+        2
+       ],
+       [
+        "her",
+        2
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "she",
+        1
+       ]
+      ]
+     }
+    },
+    "who": {
+     "complete": 11,
+     "left_only": 5,
+     "right_only": 11,
+     "none": 5,
+     "context": {
+      "complete_left": [
+       [
+        "girl",
+        4
+       ],
+       [
+        "bird",
+        3
+       ],
+       [
+        "mom",
+        1
+       ],
+       [
+        "dog",
+        1
+       ],
+       [
+        "friend",
+        1
+       ],
+       [
+        "asked",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "liked",
+        3
+       ],
+       [
+        "loved",
+        3
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "had",
+        1
+       ],
+       [
+        "could",
+        1
+       ],
+       [
+        "she",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "one",
+        3
+       ],
+       [
+        "girl",
+        1
+       ],
+       [
+        "up",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "could",
+        3
+       ],
+       [
+        "was",
+        2
+       ],
+       [
+        "found",
+        1
+       ],
+       [
+        "have",
+        1
+       ],
+       [
+        "wanted",
+        1
+       ],
+       [
+        "had",
+        1
+       ],
+       [
+        "liked",
+        1
+       ],
+       [
+        "did",
+        1
+       ]
+      ]
+     }
+    },
+    "will": {
+     "complete": 13,
+     "left_only": 14,
+     "right_only": 1,
+     "none": 4,
+     "context": {
+      "complete_left": [
+       [
+        "i",
+        7
+       ],
+       [
+        "you",
+        2
+       ],
+       [
+        "we",
+        1
+       ],
+       [
+        "asked",
+        1
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "it",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "not",
+        5
+       ],
+       [
+        "be",
+        4
+       ],
+       [
+        "help",
+        2
+       ],
+       [
+        "it",
+        1
+       ],
+       [
+        "you",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "i",
+        8
+       ],
+       [
+        "we",
+        2
+       ],
+       [
+        "she",
+        2
+       ],
+       [
+        "you",
+        1
+       ],
+       [
+        "tom",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "you",
+        1
+       ]
+      ]
+     }
+    },
+    "wonderful": {
+     "complete": 13,
+     "left_only": 13,
+     "right_only": 5,
+     "none": 1,
+     "context": {
+      "complete_left": [
+       [
+        "a",
+        12
+       ],
+       [
+        "was",
+        1
+       ]
+      ],
+      "complete_right": [
+       [
+        "time",
+        8
+       ],
+       [
+        "day",
+        3
+       ],
+       [
+        "<pause>",
+        1
+       ],
+       [
+        "once",
+        1
+       ]
+      ],
+      "left_only_left": [
+       [
+        "a",
+        6
+       ],
+       [
+        "the",
+        3
+       ],
+       [
+        "her",
+        2
+       ],
+       [
+        "do",
+        1
+       ],
+       [
+        "so",
+        1
+       ]
+      ],
+      "right_only_right": [
+       [
+        "<pause>",
+        3
+       ],
+       [
+        "that",
+        1
+       ],
+       [
+        "the",
+        1
+       ]
+      ]
+     }
+    }
+   }
+  }
+ },
+ "corpus_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec"
+}

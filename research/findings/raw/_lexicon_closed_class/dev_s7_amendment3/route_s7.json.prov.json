@@ -1,0 +1,29 @@
+{
+ "run_id": "1790320337-3645677",
+ "runner": "research/runners/_lexicon_closed_class_junction_dev.py",
+ "argv": [
+  "-m",
+  "--elemental",
+  "--seed",
+  "7",
+  "--corpus",
+  "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+  "--out",
+  "research/findings/raw/_lexicon_closed_class/dev_s7_amendment3"
+ ],
+ "git_sha": "ea37170e6",
+ "git_dirty": true,
+ "started": "2026-09-25T03:12:17",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "corpus_check_age_s": 2052.0,
+ "corpus_check_query": "frame-junction lexicon AND coincidence detector precision/recall trade: too many closed-class words silent in both pools, held-out noun recall low, need partial-match pathway alongside strict two-inpu",
+ "corpus_check_fresh": true,
+ "corpus_check_age_measured_at": "run start",
+ "artifact": "research/findings/raw/_lexicon_closed_class/dev_s7_amendment3/route_s7.json",
+ "backfilled": true,
+ "backfill_reason": "--out names a directory, so research/runners/__init__.py stamped no sidecar; copied from this run's own runs.jsonl start record",
+ "git_dirty_note": "this lane's record: at launch the only untracked or modified paths were scratch files under .a3_scratch/ (never imported by the runner); tracked source equalled git_sha"
+}

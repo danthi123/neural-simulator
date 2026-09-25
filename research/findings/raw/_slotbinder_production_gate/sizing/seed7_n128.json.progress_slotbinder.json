@@ -1,0 +1,13 @@
+{
+  "seed": 7,
+  "phase": "teach",
+  "i": 128,
+  "n": 128,
+  "last_fact_seconds": 0.6676626205444336,
+  "elapsed_s": 99.50020980834961,
+  "avg_s_per_fact": 0.7773453891277313,
+  "eta_s": 0.0,
+  "updated_unix": 1790325681.3087208,
+  "sim_backend": "cupy",
+  "_sim_backend_note": "added post-hoc 2026-09-25: the run that produced this sidecar was launched with SIM_BACKEND=cupy (see the sibling .prov.json env.SIM_BACKEND and the main artifact's own sim_backend field) -- the sidecar itself did not record it at run time; the runner now stamps sim_backend into new sidecars directly."
+}
