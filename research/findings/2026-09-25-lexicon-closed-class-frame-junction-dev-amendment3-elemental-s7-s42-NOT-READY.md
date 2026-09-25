@@ -57,7 +57,11 @@ synapses, no STP). It is learned by the same Oja rule, jointly with the junction
 constants, unscaled. The junction edge keeps its drive-matching boost; the elemental edge gets none. That was the
 amendment's argument that the elemental vote would be the weaker one, with no new constant. G3 was replaced by G3':
 `conjunctive` zeroes every FR->FJ weight, and `elemental` zeroes the elemental edge. Each removes an edge, and the
-afferent drive into the pools is recorded per word and per edge, so a lesion cannot pass by adding drive.
+afferent drive into the pools is recorded per word and per edge. The VOID guard checks the arm-mean total drive
+(summed over edges, averaged over queried words) against the intact arm, as AMENDMENT 3 specifies, so a lesion
+cannot pass by raising that total. It does not check each word and edge separately: with no non-negativity floor on
+the weights, one word's edge drive could rise toward zero under a lesion without tripping VOID (review 2026-09-25;
+the measured drives here fall well clear of that boundary).
 
 ## Result (dev seeds only; not evidence for the six-seed gates)
 
