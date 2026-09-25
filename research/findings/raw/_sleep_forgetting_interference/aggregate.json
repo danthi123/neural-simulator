@@ -1,0 +1,112 @@
+{
+  "family": "fi",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "NO-GO",
+    "101": "NO-GO",
+    "102": "GO",
+    "42": "GO",
+    "43": "NO-GO",
+    "44": "GO"
+  },
+  "n_go": 3,
+  "verdict": "NO-GO",
+  "signflip_p_vacuum_minus_dose": 0.0625,
+  "signflip_p_lesion_minus_dose": 0.0625,
+  "diffs_vacuum_minus_dose": [
+    1,
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "diffs_lesion_minus_dose": [
+    1,
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "first_night_not_correct": {
+    "fiv_lr": {
+      "100": null,
+      "101": 1,
+      "102": null,
+      "42": null,
+      "43": 1,
+      "44": null
+    },
+    "fil_lr": {
+      "100": 5,
+      "101": 1,
+      "102": null,
+      "42": null,
+      "43": 1,
+      "44": 5
+    },
+    "fih_lr_a": {
+      "100": 3,
+      "101": 1,
+      "102": 5,
+      "42": 4,
+      "43": 1,
+      "44": 3
+    },
+    "fih_shy": {
+      "100": 4,
+      "101": 1,
+      "102": 6,
+      "42": 7,
+      "43": 1,
+      "44": 5
+    },
+    "fis_lr": {
+      "100": null,
+      "101": 5,
+      "102": null,
+      "42": null,
+      "43": null,
+      "44": null
+    },
+    "fir_lr": {
+      "100": 4,
+      "101": 1,
+      "102": null,
+      "42": null,
+      "43": 1,
+      "44": null
+    }
+  },
+  "preconditions": [
+    {
+      "name": "seed completeness (6/6 rows present: 42, 43, 44, 100, 101, 102; none missing)",
+      "ok": true
+    },
+    {
+      "name": "zero arm-level errors across all 54 arm files (6 seeds x 9 FI_ARMS)",
+      "ok": true
+    },
+    {
+      "name": "per-seed instrument integrity holds for all 6 seeds: G0 null-rebuild clean, P1 immediate-recall precondition met, gamma isolation consistent across gated arms, I1 (seven epochs, dose delivered, one new block per told sentence) held, I2 (load-lesion record clean) held, I3 (fiv_lr/fil_lr/fih_lr_a/fih_lr_b/fir_lr identical through night 1) held -- none of the six seeds read UNDEFINED",
+      "ok": true
+    },
+    {
+      "name": "registered code (FI_ARMS / grade_seed_fi / aggregate_fi in research/runners/_da_tag_capture_chat_probe.py) byte-identical between the pinned revision 2def39c76cb4d81ca1b907399d3e9482f62bfe42 recorded in every per-arm .prov.json and the scoring checkout ce570ab7b (research/score-fi-score-0925 branch point on main); the fi-relevant portion of research/runners/onebrain_regression_battery.py (_FI_FACTS and the fiv/fil/fih/fis/fir group/turn definitions) is also unchanged -- the only diff between the two revisions in that file is a 5-line comment added to an unrelated FACULTY_PROBES row (affect-drives-response), never read by the fi arms or grader",
+      "ok": true
+    },
+    {
+      "name": "every one of the 54 per-arm .prov.json files records git_sha=2def39c76cb4d81ca1b907399d3e9482f62bfe42 (single value, no seed or arm at a different revision), git_dirty=false, source_kind=git_archive, source_manifest_verified_at_start=true, source_manifest_verified_at_exit=true",
+      "ok": true
+    }
+  ],
+  "preconditions_note": "These are FAMILY-LEVEL instrument-integrity checks that earn the right to assert a mechanical roll-up at all (all true here, so this NO-GO is not itself an instrument failure). They are NOT the same as the per-seed FI1-FI7 outcome gates: 3 of the 6 seed rows (43, 100, 101) independently read seed_verdict=NO-GO on their own FI1/FI4 (43, 101) or FI6 (100) gates, which is a distinct, seed-level result already recorded honestly in seed_verdicts above and is not a failure of these family-level preconditions. See the finding doc for the per-seed breakdown and the reading of the 43/101 pattern."
+}
