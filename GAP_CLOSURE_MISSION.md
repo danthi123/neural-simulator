@@ -40,6 +40,14 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
 (research/claimcheck-audit-1..4) FINDING-DOC edits only (8 corrections + per-line marks) onto main, e.g. `git diff
 <base>..<audit> -- research/findings/` applied per branch; never merge the round-2 checker code they sit on.
 
+**🌙 03:55 claim-check:** round 4 (markdown-it-py scoping, branch @ dde18d553, 27 history cases all correct) re-review
+UNSOUND: HTML blocks/unclosed comments hide a heading inside a Derived section; an inline marker pair hijacks an earlier
+standalone marker into a range; h1/setext/nested 'Derived' headings open oversized sections; container tables leak; the
+parser is an undeclared dependency. Four rounds of multi-line scoping all leaked, so round 5 SIMPLIFIES: a number is
+exempt only if <!--derived--> is on its own line (workflow `wrlt8b5ij`, opus review). Emitters migrate to per-line
+marks; legacy findings are not rewritten (the gate checks newly added findings). Bake-off template fix merged
+(ed86e077f); the re-run is queued on the GPU after SETTLE A3.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
