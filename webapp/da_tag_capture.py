@@ -407,6 +407,12 @@ class SynapticTagCaptureLedger:
             self.p_max = max(self.p_max, self.p)
             for blk in self.blocks:
                 h = blk["h0"] * math.exp(-(self.t - blk["t_w"]) / self.tau_tag_h)
+                # SLEEP-REPLAY RE-TAG (webapp/sleep_replay_capture.py, default-OFF BRAIN_SLEEP_REPLAY_CAPTURE): an SWR
+                # reactivation re-sets the block's tag; the synapse's tag is the larger of its write tag and its replay
+                # tag. A block never replayed carries no "h_rep" key -> this branch is skipped -> byte-identical.
+                h_rep = blk.get("h_rep")
+                if h_rep is not None:
+                    h = np.maximum(h, h_rep * math.exp(-(self.t - blk["t_rep"]) / self.tau_tag_h))
                 z = blk["z"]
                 blk["z"] = z + (h_step / self.tau_z_h) * (_z_drift(z) + self.gamma * self.p * h)
             self.t += h_step
@@ -463,6 +469,8 @@ class SynapticTagCaptureLedger:
                 blk["t_w"] = float(t_h)
                 blk["h0"] = np.abs(cur).astype(np.float64)
                 blk["z"] = np.zeros(D, dtype=np.float64)
+                blk.pop("h_rep", None)         # a fresh increment carries no replay tag (no-op when never replayed)
+                blk.pop("t_rep", None)
                 n_rew += 1
             blk["last_w"] = cur
         self.n_external_rescales += n_scale
@@ -495,8 +503,13 @@ class SynapticTagCaptureLedger:
         self._write(comp)
 
     def summary(self) -> list:
-        return [{"block": i, "t_w": b["t_w"], "tag0_mean": float(np.mean(b["h0"])),
-                 "z_mean": float(np.mean(b["z"])), "z_min": float(np.min(b["z"])), "z_max": float(np.max(b["z"])),
-                 "frac_synapses_z_gt_half": float(np.mean(b["z"] > 0.5)),
-                 "inc_mag": float(np.mean(np.abs(b["inc"]))), "base_mag": float(np.mean(np.abs(b["base"])))}
-                for i, b in enumerate(self.blocks)]
+        out = [{"block": i, "t_w": b["t_w"], "tag0_mean": float(np.mean(b["h0"])),
+                "z_mean": float(np.mean(b["z"])), "z_min": float(np.min(b["z"])), "z_max": float(np.max(b["z"])),
+                "frac_synapses_z_gt_half": float(np.mean(b["z"] > 0.5)),
+                "inc_mag": float(np.mean(np.abs(b["inc"]))), "base_mag": float(np.mean(np.abs(b["base"])))}
+               for i, b in enumerate(self.blocks)]
+        for rec, b in zip(out, self.blocks):          # replay-tag fields only on a block an SWR re-tagged (flag ON)
+            if b.get("h_rep") is not None:
+                rec["tag_rep_mean"] = float(np.mean(b["h_rep"]))
+                rec["t_rep"] = float(b["t_rep"])
+        return out
