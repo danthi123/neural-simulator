@@ -180,6 +180,37 @@ turn, one reader per arm, WTA read with the arm's config, no exception); verdict
 any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
 The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
 
+**☀️ 13:35 lanes:** item-2 context delivered (the six-word marker IS on by default and gets glued onto 'I don't know' replies;
+mood also sets reply length + a warm/blunt instruction to the Qwen mouth on cupy; recommendation A+B+C, awaiting the owner's go on
+retiring the word). Merged the ssh-in-read-loop gate SR (4f77a5c7d). Fix round 3 (enqueue-time job-shape check: HIGH -- a subshell
+first command executed locally; fragment audit: evidence not committed; AWS stop/start: durable pause) = `wsogpg6ty`. Harvest census +
+scoring of unscored result sets = `wjiqn7u7e`. SlotBinder fast teach toward 404 facts = `w1v63a0sa`. GPU: dev-seed-7 run of the
+pair's rc family on CUPY (episodic store writes on cupy; the review's production-path gap) in worktree
+.claude/worktrees/pair-cupy-dev-4f77a5c7d -> research/findings/raw/_sleep_replay_capture_cupy_dev (dev record, not a gate row).
+
+**☀️ 13:55 merges + a gate gap:** merged dup-guard liveness (5c4be897e, 46 pool tests pass). gap#4 C25-C27 + C26 scoring (branch
+research/score-gap4-c26-0925 @ ed6758f61, verifier SOUND: UNDEFINED on interpretability; the sliding baseline removes the one-sided
+clamp saturation) is BLOCKED by gate CC: one C25 ckpt (1.08 h) carries no corpus_check_fresh although the lane ran a corpus check
+at 01:38 (logged in its worktree). Root cause: before_you_build.sh logs per-worktree (115 separate logs; main's last entry 09-24
+20:28) and pool/GPU jobs are never stamped -> fix = workflow `w6ceucy8n` (shared log, stamp propagation, gate accepts a real prior
+check from any log); merge after it lands. Merge aborted cleanly, 108 set-aside files restored. Fix round 4 (pool-stall 2 HIGH,
+prereg gate false positive, claim-check r8 non-ASCII regression, SETTLE A3 small items + M4 render=0) = `w8hj1o2ap`.
+
+**☀️ 14:05 awake-replay completion:** dev result (research/awake-replay-completion-r2 @ 111667aaa; dev seeds 1-15 only): completion
+rescued both weak dev seeds (2, 13), lesion-controlled, normal seeds unchanged, no confab -- but the NIGHT completion carried it.
+Review SOUND-WITH-ISSUES: the spiking item bank SATURATES at 300 pA and sometimes reinstates the WRONG word (seed 3: 'ball') = a
+false-memory risk; a host-argmax substitute passes every test; stale pin. NOT queued. Fix round (unsaturated bank, abstain when
+ambiguous, pin the spiking pick in tests, addendum before any gate run, re-pin) = workflow `wog6646nw`.
+
+**☀️ 14:10 HANDOFF MODE (owner, 2026-09-25 ~14:00):** Claude weekly usage at 71% (reset Tue 11:00). Finish in-flight work (not
+cut short), then hand compute supervision to the LOCAL model (Claude Code via `llm claude`, Qwen3.8-27B); keep Claude for high
+complexity. Policy: at most ONE more fix round per lane; then merge if nothing threatens results/safety, else park with the issue
+list; tooling polish (pool-stall, prereg-amendment gate, claim-check) parks first. OWNER DECISIONS: (1) AWS allowed through the
+weekend for batteries Claude queues, within $50/day, auto-stop on; (2) RETIRE the prepended affect-marker word from replies
+(option A; mood still computed internally; SETTLE A3 7.5 h run CANCELLED; SETTLE/congruence = measurement only); (3) the local
+model may commit harvested raw results + one-line board entries straight to main through the gates. Prep = workflow `werouis9k`
+(marker retirement, GPU<->local-model auto-swap, tools/status.sh + LOCAL_LLM_RUNBOOK.md, larger-context local-model scouting).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
