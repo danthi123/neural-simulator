@@ -2149,11 +2149,34 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_an
     for w in ("Wonderful", "Gladly", "Sure"):
         assert not d2["answer"].startswith(w)
 
-    # turn 3: strongly positive-sentiment content -> moves Gate-B's mood back positive.
-    res3 = client.post("/api/brain-chat", json={
-        "session": sess, "brain": "tiny-demo", "renderer": "stub",
-        "message": "this is a wonderful, delightful surprise"})
-    assert res3.status_code == 200, res3.text
+    # turn 3: strongly positive-sentiment content, REPEATED (bounded) until Gate-B's OWN mood genuinely reads
+    # '+'. `_SESSION_MOOD` is an EMA (`_update_session_mood`, decay 0.4): turn 1 drove it to ~-0.54, so a SINGLE
+    # positive turn only partially overcomes it (0.4*-0.54 + 0.6*~0.85 =~ +0.29) -- below the co-resident ladder's
+    # rung-1 recruitment magnitude, so the read is '0' (genuinely neutral, not "close to +"), not '+' (this is
+    # exactly what the 2026-09-25 run hit: affect4 read {differential 0.0, valence_sign '0', appraisal_valence
+    # 0.294, appraisal_hits []} on turn 4 below). A second positive turn compounds the same EMA to ~+0.63, which
+    # clears it. Vary the wording turn-to-turn (still a strongly-positive register) so the loop is not resting on
+    # one exact string. The bound (5) is generous; if Gate-B never reaches '+' the SETUP has failed and this must
+    # fail LOUDLY (never silently skip the congruent half) -- see the assert right after the loop.
+    _POSITIVE_TEXTS = (
+        "this is a wonderful, delightful surprise",
+        "this is absolutely wonderful, I am thrilled and overjoyed, what fantastic news",
+        "what a joyful, glorious, magnificent day this is",
+        "this is truly marvelous, I feel so happy and delighted",
+        "what wonderful, splendid, joyous news this is",
+    )
+    affect3 = {}
+    for _txt in _POSITIVE_TEXTS:
+        res3 = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": _txt})
+        assert res3.status_code == 200, res3.text
+        affect3 = res3.json().get("affect") or {}
+        if affect3.get("valence_sign") == "+":
+            break
+    assert affect3.get("valence_sign") == "+", (
+        "SETUP FAILED: repeated strongly-positive turns never moved Gate-B's own session mood to '+' "
+        f"(last read: {affect3}) -- the congruent half below cannot be exercised, so it is being reported as a "
+        "failure rather than silently passed")
 
     # turn 4: the SAME neutral recall -> Gate-B now reads positive too -> congruent -> the marker is KEPT.
     res4 = client.post("/api/brain-chat", json={
@@ -2168,7 +2191,14 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_an
     assert cg4["incongruent"] is False
     lead4 = (d4.get("affect_drives") or {}).get("lead") or ""
     assert lead4, "a congruent turn must keep its (non-empty) lead"
-    assert d4["answer"].startswith(lead4)
+    # NOT `.startswith(lead4)`: by the time Gate-B's own mood is genuinely positive (the loop above), this session
+    # has crossed multiple topics (day/surprise/dog), so the topic-swap ("On dog, then -- ", webapp/server.py
+    # ~6689), common-ground ("As for it -- ", ~6698) and GNW-stop ("Setting the held thread aside -- ", ~6757)
+    # leads can ALSO legitimately fire on this same turn -- production composes leads in a fixed onion order
+    # (gnw_stop outermost ... affect innermost, each `resp["answer"] = X_lead + resp["answer"]` in sequence), so
+    # affect's lead is not necessarily the first substring. This is documented, intentional composition (verified
+    # by reading webapp/server.py's lead-prepend chain), not a production bug -- "kept" means present, not first.
+    assert lead4 in d4["answer"], f"congruent turn's marker missing from the answer: {lead4!r} not in {d4['answer']!r}"
 
     client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
 
