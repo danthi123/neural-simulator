@@ -31,10 +31,10 @@ if [ "${1:-}" = "--probe-node" ]; then
   # so a stubbed `ssh` on PATH can assert -F is/isn't present without a real pool node or a real runner module.
   [ "$#" -eq 3 ] || { echo "usage: $0 --probe-node <node> <module>" >&2; exit 2; }
   n="$2"; MOD="$3"
-  if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+  if ! timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
     echo "UNREACHABLE"; exit 1
   fi
-  if timeout 25 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+  if timeout 25 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
        "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
        >/dev/null 2>&1; then echo OK; else echo BAD; fi
   exit 0
@@ -137,7 +137,7 @@ case "${1:-list}" in
            IS_REVISION=0; [ -n "$REMOTE_DIR" ] && IS_REVISION=1
            REMOTE_DIR="${REMOTE_DIR:-derisk-pool/sim}"
            for n in $(probe_nodes); do
-             if ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+             if ! timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
                NODE_UNREACH="$NODE_UNREACH $n"; continue
              fi
              # MISSING-REVISION-DIR IS "SKIP", NOT "BAD" (2026-09-23 fix round). A reachable node that simply has
@@ -158,11 +158,11 @@ case "${1:-list}" in
              # forever -- the job silently stranded. Both scripts now call the SAME
              # tools/pool_revision_marker.sh:revision_marker_probe_cmd so they can never ask two different
              # questions of the same directory again.
-             if [ "$IS_REVISION" = 1 ] && ! timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" \
+             if [ "$IS_REVISION" = 1 ] && ! timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$n" \
                   "$(revision_marker_probe_cmd "$REMOTE_DIR")" >/dev/null 2>&1; then
                NODE_SKIP="$NODE_SKIP $n"; continue
              fi
-             if RHELP=$(timeout 60 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+             if RHELP=$(timeout 60 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/$REMOTE_DIR && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" 2>/dev/null); then
                NODE_OK="$NODE_OK $n"; [ -z "${REMOTE_HELP:-}" ] && REMOTE_HELP="$RHELP"
              else NODE_BAD="$NODE_BAD $n"; fi
