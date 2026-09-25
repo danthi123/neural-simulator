@@ -172,32 +172,59 @@ per-organ drift probe -- but a battery PASS is not the same claim as "no other o
 the flag off"; that broader baseline (does drift already exist elsewhere, flag off) was not measured and
 is a gap this document does not close.
 
+## AMENDMENT 1 (2026-09-24, coordinator follow-up) — the gates below were WRONG before this
+## amendment and must not be used pre-amendment
+
+`research/findings/2026-09-24-plastic-mask-instrument-and-production-reachability.md` (companion
+document, read it first) found that the seed-42 live-chat smoke's zero drift was NOT evidence the
+flag is safe -- it was evidence the smoke's DEFAULT config (`BRAIN_ONEBRAIN_WAVE3_POOL` default-ON
+since 2026-09-17) never reaches the buggy code path at all for comprehension: production routes it
+through a merged pool where a DIFFERENT, pre-existing named gate (`"workspace_loop_fixed"`) already
+freezes the exact synapses in question, independent of this flag. A positive control confirmed the
+instrument and the flag both work correctly on the STANDALONE bridge (13.8->56.1 OFF, flat 0.0 ON,
+matching the original finding). **A drift probe run only in the default (wave3-pool-ON)
+configuration would read `frozen_max_abs_dw == 0.0` regardless of the flag, on every seed, and
+criterion 1 below would pass VACUOUSLY -- proving the smoke was undisturbed, not that the fix
+works.** Criterion 0 below is the fix; criteria 1-2 are unchanged but now explicitly scoped to
+the STANDALONE path, which is where the bug and the fix actually live.
+
 ## GO / NO-GO criteria for the flip (6 seeds: 42, 43, 44, 100, 101, 102)
 
-**GO** iff, on EVERY one of the 6 seeds, both hold:
+**Criterion 0 (NEW, precondition for criterion 1 to mean anything): the drift probe must be run in
+BOTH pool configurations** -- default (`BRAIN_ONEBRAIN_WAVE3_POOL` unset) AND standalone
+(`BRAIN_ONEBRAIN_WAVE3_POOL=0`, comprehension's documented escape hatch back to its pre-wave3-merge
+bridge) -- and must report which configuration each row measured. A battery/probe result that does
+not name its `BRAIN_ONEBRAIN_WAVE3_POOL` state is UNDEFINED, not a pass.
+
+**GO** iff, on EVERY one of the 6 seeds, in BOTH pool configurations:
 
 1. **Zero frozen-synapse drift with the flag ON.** `frozen_max_abs_dw == 0.0` (exact, SHA-style --
    not "small") for every named non-plastic pathway the drift probe reports (at minimum
    `sel_agent->sel_FS_agent`, `sel_FS_agent->sel_patient`, `sel_patient->sel_FS_patient`,
    `sel_FS_patient->sel_agent`), AND the companion plastic-pathway control
    (`plastic_max_abs_dw`, the `cue_*->sel_*` learned edges) moves by more than 0 (proves the run
-   fired and the flag did not silently freeze everything).
+   fired and the flag did not silently freeze everything). On the DEFAULT (wave3-pool) config this
+   is expected to hold trivially (both arms already read 0.0, per the companion finding) and is
+   NOT informative on its own; the STANDALONE-config row is the one that actually tests the fix.
 2. **No regression in the load-bearing battery with the flag ON.** The 6-seed
    `load_bearing_fraction` battery (exact command below) run with
    `BRAIN_ENFORCE_PLASTIC_MASK=1` must not reduce `robust_core_n` / raise the count of faculties
    whose `verdict` flips from `pass`/`regressed` to a worse category, relative to the existing
    production-default (flag-unset) 6-seed baseline aggregate already on record for this battery
    tag family. A faculty whose result is `UNRELIABLE` (per `load_bearing_fraction`'s own
-   `null_control_clean` field) on either arm is inconclusive for that faculty, not a pass.
+   `null_control_clean` field) on either arm is inconclusive for that faculty, not a pass. The
+   battery's OWN default config already runs wave3-pool-ON (production default) -- a
+   `BRAIN_ONEBRAIN_WAVE3_POOL=0` battery row is a DIFFERENT, additional measurement this
+   pre-registration does not yet script and would need its own `--extra-env` addition.
 
-**NO-GO / hold** if either seed shows nonzero frozen-synapse drift ON, or the battery shows a
-regression -- in which case the METHOD (this specific mask/gate wiring) is banked as insufficient
-for some additional write site, not the CAPABILITY (closing the drift bug) abandoned, per this
-repo's standing rule.
+**NO-GO / hold** if either seed shows nonzero frozen-synapse drift ON (in EITHER config), or the
+battery shows a regression -- in which case the METHOD (this specific mask/gate wiring) is banked
+as insufficient for some additional write site, not the CAPABILITY (closing the drift bug)
+abandoned, per this repo's standing rule.
 
-One seed (42, the smoke above) is explicitly NOT sufficient for either criterion
-(`feedback_6seed_validation`); it exists only to catch a gross wiring error before spending 6-seed
-compute.
+One seed (42, the smoke above, and the positive-control + other-organs diagnostics) is explicitly
+NOT sufficient for either criterion (`feedback_6seed_validation`); it exists only to catch a gross
+wiring error, or in this case an instrument/reachability gap, before spending 6-seed compute.
 
 ## Exact commands (prepared, NOT launched)
 
@@ -234,13 +261,19 @@ guard checks for.
 
 ## What would block a flip
 
-- **The seed-42 smoke's unexplained instrument gap (see above): the OFF arm did not reproduce ANY
-  drift on the `sel_*->sel_FS_*` pathways the original audit named, so this probe has not yet been
-  shown capable of detecting the bug it targets.** Run the positive-control check (mirror the
-  original 30-read `read_margin()` protocol against `corg.comp` directly, flag OFF) BEFORE queuing
-  the 6-seed battery; if it also reads 0.0, the wall-check applies (bank this specific probe/wiring
-  reading as insufficient, do not conclude the capability is closed) rather than treating either
-  arm's zero as a GO signal.
+- **RESOLVED (see AMENDMENT 1 above and the companion finding
+  `2026-09-24-plastic-mask-instrument-and-production-reachability.md`): the seed-42 smoke's
+  instrument gap.** The positive control confirms the instrument and the flag both work on the
+  standalone bridge; the smoke's zero was a REACHABILITY gap (production's default wave3 pool
+  never exercises the buggy code path for comprehension), not an instrument failure. Still blocks
+  a flip in the sense that Criterion 0 (both pool configs) must be run before the 6-seed drift
+  probe means anything -- see AMENDMENT 1.
+- **NEW: if the other-organs survey (Section 3 of the companion finding, pending) finds that NONE
+  of affect/curiosity/surprise/worldmodel/metacog exercises the buggy code path in default
+  production either, the flip changes nothing for CURRENT production and the priority framing
+  (not the correctness case) should be revisited with the owner before spending 6-seed compute on
+  a flag whose only reachable effect today is on the standalone/escape-hatch path and on
+  research/derisk scripts that construct these organs directly.**
 - Any nonzero `frozen_max_abs_dw` on any seed with the flag ON (the capability isn't actually
   closed by this wiring for some pathway shape not yet found -- e.g. a fourth Hebbian write site,
   or a non-Hebbian plasticity rule this flag doesn't touch: recall STDP/BDSP/BTSP already
