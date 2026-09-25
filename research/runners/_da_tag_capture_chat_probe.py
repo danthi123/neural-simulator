@@ -33,9 +33,12 @@ the replay edge remove that, and do the DA lesions still gate capture? Output de
   ... --family rc --aggregate research/findings/raw/_sleep_replay_capture
 Selftest (no brain):   ... --selftest
 Aggregate:             ... --aggregate research/findings/raw/_da_tag_capture_chat
-Byte-identical off vs the pinned pre-change SHA (two tiny-demo builds, exact sha256):
-  tools/memcap.sh 12 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --offcheck \
-      --pinned-sha 36a175534 --out research/findings/raw/_da_tag_capture_chat/offcheck.json
+R2 FAMILY (`--family r2`, branch research/sleep-replay-capture-r2, Amendment 1 of the sleep-replay-capture prereg):
+a fact told 4 h before sleep onset (awake world step), and three nights with sleep downscaling (BRAIN_SLEEP_DOWNSCALING).
+Byte-identical OFF (r2: a COUNTERFACTUAL built from the current tree -- HEAD vs HEAD minus the feature's own commits,
+plus a HEAD-vs-HEAD null control; three tiny-demo builds, exact sha256; replaces the stale fixed-pin check):
+  tools/memcap.sh 8 -- .venv/bin/python -u -m research.runners._da_tag_capture_chat_probe --offcheck \
+      --out research/findings/raw/_sleep_replay_capture_r2/offcheck_counterfactual.json
 """
 from __future__ import annotations
 
@@ -54,7 +57,8 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 
 SEEDS = [42, 43, 44, 100, 101, 102]
 FACT = ["cat", "chase", "ball"]
-PINNED_SHA = "36a175534"            # merge-base of this branch and origin/main (2026-09-24 Amendment 2, review
+PINNED_SHA = "36a175534"            # HISTORICAL ONLY (recorded in base-family seed files; r2 retired the pinned offcheck
+                                    #  for the counterfactual one, see `offcheck`). Was: merge-base of this branch and origin/main (2026-09-24 Amendment 2, review
                                     #  v2:2a37f2493): was f35196e66, a SHA that PREDATES this branch's own two
                                     #  origin/main merges, so webapp/server.py (+55/-1 between the two SHAs) could
                                     #  make branch-OFF differ from the pinned tree for reasons that are not this
@@ -100,6 +104,30 @@ RC_ARMS = [
     ("sal_night_rc_replaylesion", "datc_recall", {**ON, **RC, **RC_LES}),
 ]
 RC_OUT = "research/findings/raw/_sleep_replay_capture"
+# ── r2 FAMILY (`--family r2`; branch research/sleep-replay-capture-r2; Amendment 1 of the sleep-replay-capture prereg).
+# Item 1: the neutral telling, then 4 h AWAKE without conversation, then the night (group 'datl'). Item 2: three nights
+# with sleep downscaling (BRAIN_SLEEP_DOWNSCALING) for a weak telling (d3w), a salient one (d3c) and the weak one
+# re-mentioned on the next two days (d3r).
+SHY = {"BRAIN_SLEEP_DOWNSCALING": "1"}
+R2_ARMS = [
+    ("ld_ledger_off", "datl_recall", dict(OFF)),                          # today's production default (REPORTED)
+    ("ld_norc", "datl_recall", dict(ON)),
+    ("ld_rc", "datl_recall", {**ON, **RC}),
+    ("ld_rc_replaylesion", "datl_recall", {**ON, **RC, **RC_LES}),
+    ("neu_imm_rc", "datni_recall", {**ON, **RC}),                         # precondition (item 1)
+    ("d3w_rc", "d3w_recall", {**ON, **RC}),                               # precondition (item 2): kept w/o downscaling
+    ("d3w_shy_a", "d3w_recall", {**ON, **RC, **SHY}),
+    ("d3w_shy_b", "d3w_recall", {**ON, **RC, **SHY}),                     # null-control rebuild
+    ("d3c_shy", "d3c_recall", {**ON, **RC, **SHY}),
+    ("d3r_shy", "d3r_recall", {**ON, **RC, **SHY}),
+    # Amendment 3 (REPORTED only, never in a gate or an UNDEFINED rule): the ten-night horizon, a read-only daily probe
+    ("d10w_rc", "d10w_recall10", {**ON, **RC}),
+    ("d10w_shy", "d10w_recall10", {**ON, **RC, **SHY}),
+]
+HORIZON_ARMS = ("d10w_rc", "d10w_shy")
+HORIZON_NIGHTS = 10
+R2_OUT = "research/findings/raw/_sleep_replay_capture_r2"
+AWAKE_H = 4.0                        # == onebrain_regression_battery._run_world_step("awake_4h")
 LESION_HELD_MAX_RATIO = 0.25        # G6: lesion PRP p_max must stay below 25 % of the intact arm's (the D1 pool's
                                     #  tonic-rate noise floor gives a ~0.1 per turn at DA=0.5; see the prereg)
 
@@ -129,10 +157,14 @@ def _fact_block(resp):
 
 
 # ── arms ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
+def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
     sys.path.insert(0, _REPO)
-    arm_list = RC_ARMS if family == "rc" else ARMS
-    grader = grade_seed_rc if family == "rc" else grade_seed
+    arm_list = {"rc": RC_ARMS, "r2": R2_ARMS}.get(family, ARMS)
+    grader = {"rc": grade_seed_rc, "r2": grade_seed_r2}.get(family, grade_seed)
+    if only:                                   # a de-risk subset (never a gate row): run only these arms, do not grade
+        arm_list = [a for a in arm_list if a[0] in set(only)]
+        grader = lambda _res: {"partial": True, "arms_run": [a[0] for a in arm_list],   # noqa: E731
+                               "outcomes": {k: v["recall_outcome"] for k, v in _res["arms"].items()}}
     os.environ["BRAIN_CHAT_SEED"] = str(int(seed))       # every arm's worker inherits it (the battery's seed thread)
     if ltm == "off":                                     # the LTM tier is a separate routed store the ledger never
         os.environ["BRAIN_LTM_SHIP_DEFAULT"] = "0"       #  touches; its load does not fit the 15 GB pool nodes (declared)
@@ -155,8 +187,8 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
             arms[name] = rec
     res = {"seed": int(seed), "fact": FACT, "arms": {}, "pinned_sha": PINNED_SHA, "ltm": ltm,
            "backend": os.environ.get("SIM_BACKEND", "numpy"), "argv": list(sys.argv), "workers": int(workers)}
-    if family == "rc":
-        res["family"] = "rc"
+    if family in ("rc", "r2"):
+        res["family"] = family
     for name, a in arms.items():
         r = a["responses"] or {}
         rec = r.get(a["label"])
@@ -173,9 +205,16 @@ def run_seed(seed, out_dir, ltm="off", workers=1, family="base"):
                            .get("a_eff") for t in a["turns"]],
             "errors": [str(v.get("_error"))[:300] for v in r.values() if isinstance(v, dict) and v.get("_error")],
         }
-        if family == "rc":
+        if family in ("rc", "r2"):
             res["arms"][name]["sleep_replay_at_recall"] = _tc(rec).get("sleep_replay_capture")
             res["arms"][name]["blocks_at_recall"] = _tc(rec).get("blocks")
+        if family == "r2":
+            res["arms"][name]["awake_until_h"] = _tc(rec).get("awake_until_h")
+            if name in HORIZON_ARMS:
+                daily = [r.get("d10w_recall%d" % n) for n in range(1, HORIZON_NIGHTS + 1)]
+                res["arms"][name]["daily_outcomes"] = [outcome(d) for d in daily]
+                res["arms"][name]["daily_inc_mag"] = [((_tc(d).get("blocks") or [{}])[0].get("inc_mag")) for d in daily]
+                res["arms"][name]["daily_base_mag"] = [((_tc(d).get("blocks") or [{}])[0].get("base_mag")) for d in daily]
     res["gates"] = grader(res)
     json.dump(res, open(os.path.join(out_dir, "seed%d.json" % int(seed)), "w"), indent=2, default=str)
     print(json.dumps(res["gates"], indent=2, default=str), flush=True)
@@ -387,6 +426,129 @@ def aggregate_rc(d):
     return out
 
 
+def grade_seed_r2(res):
+    """The r2 family's pre-registered read (Amendment 1 of research/findings/2026-09-24-sleep-replay-capture-
+    PREREGISTRATION.md), verbatim. Item 1 (long delay) is REPORTED with its own verdict; item 2 (downscaling) is GATED.
+    Pure function of res["arms"]."""
+    A = res["arms"]
+    o = {k: v["recall_outcome"] for k, v in A.items()}
+    # the Amendment-3 horizon arms are REPORTED only: excluded from every error count, gate and UNDEFINED rule
+    errs = sum(len(v["errors"]) for k, v in A.items() if k not in HORIZON_ARMS)
+    g = {}
+    gam = [v["tag_capture_at_recall"].get("gamma") for k, v in A.items() if k not in HORIZON_ARMS
+           and (v.get("env") or {}).get("BRAIN_DA_TAG_CAPTURE") == "1" and v["tag_capture_at_recall"].get("gamma")]
+    g["G_isolation_gamma_consistent"] = bool(not gam or all(abs(x - gam[0]) < 1e-6 for x in gam))
+    # ── item 1: a fact told ~4 h before sleep onset (REPORTED) ──────────────────────────────────────────────────────
+    g["P1_immediate_precondition"] = bool(o["neu_imm_rc"] == "correct")
+    ld_ok = True
+    for k in ("ld_rc", "ld_rc_replaylesion"):
+        ep, aw = _epochs(A[k]), A[k].get("awake_until_h")
+        ld_ok &= bool(len(ep) == 1 and aw is not None and aw >= AWAKE_H and ep[0].get("t_h", -1) > aw
+                      and not ep[0].get("no_reader"))
+    e_les = _epochs(A["ld_rc_replaylesion"])
+    ld_ok &= bool(e_les and e_les[0].get("replay_lesioned") and all(r == 0.0 for r in e_les[0].get("R_eff") or [])
+                  and abs(e_les[0].get("da_swr", -1) - _DA_TONIC_REF) < 1e-9)
+    ld_ok &= bool(A["ld_norc"].get("awake_until_h") is not None)
+    g["I_LD_sleep_after_waking_and_lesion_held"] = bool(ld_ok)
+    e_ld = _epochs(A["ld_rc"])
+    g["LD_reported"] = {
+        "outcomes": {k: o[k] for k in ("ld_ledger_off", "ld_norc", "ld_rc", "ld_rc_replaylesion")},
+        "R_at_sleep_onset": (e_ld[0].get("R") if e_ld else None),
+        "da_swr": (e_ld[0].get("da_swr") if e_ld else None),
+        "sleep_onset_h_after_telling": ((e_ld[0].get("t_h") - (A["ld_rc"].get("blocks_at_recall") or [{}])[0]
+                                         .get("t_w", 0.0)) if e_ld and A["ld_rc"].get("blocks_at_recall") else None),
+        "frac_z_gt_half_at_recall": [b.get("frac_synapses_z_gt_half") for b in (A["ld_rc"].get("blocks_at_recall")
+                                                                                or [])]}
+    ld_undef = (not g["P1_immediate_precondition"]) or (not ld_ok) or errs > 0 or not g["G_isolation_gamma_consistent"] \
+        or any(o[k] == "undefined" for k in ("ld_ledger_off", "ld_norc", "ld_rc", "ld_rc_replaylesion"))
+    if ld_undef:
+        g["LD_verdict"] = "UNDEFINED"
+    elif o["ld_rc"] == "correct" and o["ld_norc"] == "abstain" and o["ld_rc_replaylesion"] == "abstain":
+        g["LD_verdict"] = "RESCUED"
+    elif o["ld_rc"] == "abstain" and o["ld_norc"] == "abstain":
+        g["LD_verdict"] = "NOT-RESCUED"
+    else:
+        g["LD_verdict"] = "OTHER"
+    # ── item 2: three nights with sleep downscaling (GATED) ────────────────────────────────────────────────────────
+    a, b = A["d3w_shy_a"], A["d3w_shy_b"]
+    g["G0_null_clean"] = bool(o["d3w_shy_a"] == o["d3w_shy_b"] and a["recalled_svo"] == b["recalled_svo"]
+                              and a["abstained"] == b["abstained"]
+                              and a["tag_capture_at_recall"] == b["tag_capture_at_recall"]
+                              and a.get("blocks_at_recall") == b.get("blocks_at_recall")
+                              and a.get("sleep_replay_at_recall") == b.get("sleep_replay_at_recall"))
+    g["P2_weak_fact_kept_without_downscaling"] = bool(o["d3w_rc"] == "correct")
+    inst = True
+    for k in ("d3w_rc", "d3w_shy_a", "d3w_shy_b", "d3c_shy", "d3r_shy"):
+        ep = _epochs(A[k])
+        shy_on = (A[k].get("env") or {}).get("BRAIN_SLEEP_DOWNSCALING") == "1"
+        # d3w/d3c: one idle stretch of three nights -> 3 epochs; d3r: a re-mention each day -> 3 one-night stretches
+        inst &= bool(len(ep) == 3 and all(not e.get("no_reader") for e in ep)
+                     and all(("shy_scale" in e) == shy_on for e in ep))
+    g["I_SHY_three_nights_and_scaling_as_armed"] = bool(inst)
+    g["SHY1_weak_unmentioned_fact_fades"] = bool(o["d3w_shy_a"] == "abstain")
+    g["SHY2_salient_fact_survives"] = bool(o["d3c_shy"] == "correct")
+    g["SHY3_remention_fact_survives"] = bool(o["d3r_shy"] == "correct")
+    g["SHY4_no_confab"] = bool(all(v != "confab" for v in o.values()))
+    g["SHY_reported"] = {k: {"R_per_night": [e.get("R") for e in _epochs(A[k])],
+                             "shy_scale_per_night": [e.get("shy_scale") for e in _epochs(A[k])],
+                             "inc_mag_at_recall": [bl.get("inc_mag") for bl in (A[k].get("blocks_at_recall") or [])],
+                             "base_mag_at_recall": [bl.get("base_mag") for bl in (A[k].get("blocks_at_recall") or [])],
+                             "frac_z_gt_half_at_recall": [bl.get("frac_synapses_z_gt_half")
+                                                          for bl in (A[k].get("blocks_at_recall") or [])]}
+                         for k in ("d3w_rc", "d3w_shy_a", "d3c_shy", "d3r_shy")}
+    undefined = (not g["G0_null_clean"]) or (not g["P2_weak_fact_kept_without_downscaling"]) or (not inst) \
+        or errs > 0 or not g["G_isolation_gamma_consistent"] \
+        or any(o[k] == "undefined" for k in ("d3w_rc", "d3w_shy_a", "d3w_shy_b", "d3c_shy", "d3r_shy"))
+    core = all(g[k] for k in ("SHY1_weak_unmentioned_fact_fades", "SHY2_salient_fact_survives",
+                              "SHY3_remention_fact_survives", "SHY4_no_confab"))
+    hz = {}
+    for k in HORIZON_ARMS:
+        if k not in A:
+            continue
+        daily = A[k].get("daily_outcomes") or []
+        first = next((i + 1 for i, v in enumerate(daily) if v != "correct"), None)
+        hz[k] = {"daily_outcomes": daily, "first_night_not_correct": first,
+                 "daily_inc_mag": A[k].get("daily_inc_mag"), "daily_base_mag": A[k].get("daily_base_mag"),
+                 "R_per_night": [e.get("R") for e in _epochs(A[k])], "errors": A[k].get("errors")}
+    g["SHY_horizon_reported"] = hz
+    g["outcomes"] = o
+    g["n_arm_errors"] = errs
+    g["seed_verdict"] = "UNDEFINED" if undefined else ("GO" if core else "NO-GO")
+    return g
+
+
+def aggregate_r2(d):
+    """6-seed combine for the r2 family: item 2 GO iff all 6 seeds GO; item 1 reported as a count per LD_verdict."""
+    rows = []
+    for p in sorted(glob.glob(os.path.join(d, "seed*.json"))):
+        try:
+            r = json.load(open(p))
+        except Exception:
+            continue
+        if r.get("family") == "r2":
+            rows.append(r)
+    for r in rows:
+        r["gates"] = grade_seed_r2(r)
+    verdicts = {r["seed"]: r["gates"]["seed_verdict"] for r in rows}
+    n_go = sum(1 for v in verdicts.values() if v == "GO")
+    complete = sorted(verdicts) == sorted(SEEDS)
+    fade = [int(r["gates"]["outcomes"]["d3w_rc"] == "correct") - int(r["gates"]["outcomes"]["d3w_shy_a"] == "correct")
+            for r in rows]
+    ld = {}
+    for r in rows:
+        ld[r["gates"]["LD_verdict"]] = ld.get(r["gates"]["LD_verdict"], 0) + 1
+    out = {"family": "r2", "seeds": sorted(verdicts), "seed_verdicts": verdicts, "n_go": n_go,
+           "verdict": "INCOMPLETE" if not complete else ("GO" if n_go == 6 else "NO-GO"),
+           "signflip_p_downscaling_fade": (seed_signflip_p(fade) if rows else None), "diffs_fade": fade,
+           "long_delay_verdict_counts": ld,
+           "horizon_first_night_not_correct": {k: {r["seed"]: (r["gates"].get("SHY_horizon_reported") or {})
+                                                   .get(k, {}).get("first_night_not_correct") for r in rows}
+                                               for k in HORIZON_ARMS}}
+    json.dump(out, open(os.path.join(d, "aggregate.json"), "w"), indent=2)
+    print(json.dumps(out, indent=2))
+    return out
+
+
 def seed_signflip_p(diffs):
     """One-sided exact sign-flip p over seeds for mean(diff) > 0 (the seed is the unit of replication)."""
     obs = sum(diffs)
@@ -520,50 +682,228 @@ def _offcheck_first_diff(pinned_replies, branch_replies):
     return None
 
 
-def offcheck(pinned_sha, out, ltm="off"):
+# ── byte-identical OFF against a COUNTERFACTUAL built from the CURRENT tree (r2 item 3; replaces the PINNED_SHA check) ─
+# WHY. A fixed historical pin conflates "this feature's own diff" with "everything else merged since" (Amendments 2 and
+# 4 of the chat-wire prereg: it went stale twice, the second time at 19 hunks of unrelated server.py changes). The
+# counterfactual here is derived on every run: the committed HEAD, and the committed HEAD with the feature's OWN commits
+# reverse-applied. Nothing else differs, so it cannot go stale as main moves.
+#   * feature commits = every non-merge commit reachable from HEAD that touches a FEATURE_MODULES file, or adds/removes
+#     a line matching FEATURE_HOOK_RE in a FEATURE_HOOK_FILES file (the call sites the feature added to shared code);
+#   * each is reverse-applied (newest first; a 3-way reverse, falling back per commit to a zero-context reverse that
+#     matches only the feature's own lines) into a temporary worktree under /home/dant123/Projects/sim/.claude/
+#     worktrees/, restricted to `production_scope()` -- webapp/, sim/, and the research/runners modules webapp imports.
+#     Everything else (the instrument, the battery harness, standalone runners, findings/tests/docs) stays at HEAD in
+#     both trees and so cannot confound the comparison; no feature reference may remain in the counterfactual webapp/;
+#   * a failed reverse-apply makes the check UNDEFINED (never a pass);
+#   * a same-tree NULL CONTROL (HEAD run twice) must be identical, else UNDEFINED (the reply is not deterministic
+#     enough for a byte check);
+#   * both temporary worktrees are removed afterwards.
+FEATURE_MODULES = ["webapp/da_tag_capture.py", "webapp/da_tag_capture_chat.py", "webapp/sleep_replay_capture.py"]
+FEATURE_HOOK_FILES = ["webapp/server.py", "webapp/continuous_engine.py"]
+FEATURE_HOOK_RE = r"da_tag_capture|sleep_replay_capture"
+REVERT_HELD_EQUAL = ["research/findings", "tests", "docs", "research/biology", "research/queue", "research/coordination",
+                     "research/runners/_da_tag_capture_chat_probe.py", "research/runners/onebrain_regression_battery.py",
+                     "research/runners/load_bearing_fraction.py"]
+
+
+def production_scope(repo=None):
+    """The paths whose reversal can change a /api/brain-chat reply: webapp/, sim/, and every research/runners module
+    some webapp/*.py imports (derived from the tree at `repo` on every call). Everything else a feature commit touched
+    (standalone runners, findings, tests, docs) is held equal in both trees."""
+    import re as _re
+    repo = repo or _REPO
+    mods = set()
+    pat = _re.compile(r"research\.runners(?:\.(\w+)|\s+import\s+([\w ,()]+))")
+    for root, _dirs, fnames in os.walk(os.path.join(repo, "webapp")):
+        for fn in fnames:
+            if not fn.endswith(".py"):
+                continue
+            with open(os.path.join(root, fn), errors="ignore") as fh:
+                for m in pat.finditer(fh.read()):
+                    if m.group(1):
+                        mods.add(m.group(1))
+                    elif m.group(2):
+                        mods.update(x.strip() for x in m.group(2).replace("(", " ").replace(")", " ").split(",")
+                                    if x.strip().split(" ")[0].isidentifier())
+    paths = ["webapp", "sim"]
+    for m in sorted(mods):
+        name = m.split(" ")[0]
+        if os.path.exists(os.path.join(repo, "research", "runners", name + ".py")):
+            paths.append("research/runners/%s.py" % name)
+    return [p for p in paths if p not in REVERT_HELD_EQUAL]
+_WT_PARENT = "/home/dant123/Projects/sim/.claude/worktrees"
+_OFF_ENV = ("BRAIN_DA_TAG_CAPTURE", "BRAIN_DA_TAG_CAPTURE_CLOCK", "BRAIN_DA_ENCODING_LESION", "BRAIN_DA_CAPTURE_LESION",
+            "BRAIN_SLEEP_REPLAY_CAPTURE", "BRAIN_SLEEP_REPLAY_CAPTURE_LESION", "BRAIN_SLEEP_DOWNSCALING")
+
+
+def _git(repo, *args, inp=None):
+    return subprocess.run(["git", "-C", repo] + list(args), capture_output=True, input=inp)
+
+
+def feature_commits(repo=None):
+    """The feature's own commits, newest first, derived from the tree at `repo` (default: this checkout)."""
+    repo = repo or _REPO
+    mods = set(_git(repo, "log", "--no-merges", "--format=%H", "HEAD", "--", *FEATURE_MODULES).stdout.decode().split())
+    hooks = set(_git(repo, "log", "--no-merges", "--format=%H", "-G", FEATURE_HOOK_RE, "HEAD", "--",
+                     *FEATURE_HOOK_FILES).stdout.decode().split())
+    sel = mods | hooks
+    order = _git(repo, "log", "--no-merges", "--format=%H", "HEAD").stdout.decode().split()
+    return [c for c in order if c in sel]
+
+
+def _corpus_src():
+    """data/corpus for the brain build: this checkout's, else the main checkout's (worktrees do not carry it)."""
+    own = os.path.join(_REPO, "data", "corpus")
+    if os.path.exists(own):
+        return os.path.realpath(own)
+    common = _git(_REPO, "rev-parse", "--git-common-dir").stdout.decode().strip()
+    return os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(os.path.join(_REPO, common))), "data", "corpus"))
+
+
+def _restore_files(wt, snap):
+    """Put the files of one commit's patch back to their pre-apply content (worktree + index)."""
+    for f, data in snap.items():
+        path = os.path.join(wt, f)
+        if data is None:
+            if os.path.exists(path):
+                os.remove(path)
+            _git(wt, "rm", "--cached", "-q", "--ignore-unmatch", "--", f)
+        else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "wb") as fh:
+                fh.write(data)
+            _git(wt, "add", "--", f)
+
+
+def build_counterfactual(wt, commits):
+    """Reverse-apply `commits` (newest first) into worktree `wt`, restricted to `production_scope(wt)` (everything else
+    stays at HEAD). Per commit: a 3-way reverse-apply first; if it conflicts (later, unrelated edits right next to a
+    feature hunk), that commit's partial application is rolled back and it is retried with a ZERO-CONTEXT reverse-apply,
+    which matches only the feature's own lines. Afterwards no feature reference may remain in webapp/
+    (`residual_feature_refs`), else the counterfactual is incomplete. Returns a dict; `ok` False on any failure."""
+    import re as _re
+    scope = production_scope(wt)
+    spec = scope              # an INCLUDE pathspec: only production-reachable paths are reverted
+    steps, ok = [], True
+    for c in commits:
+        rng = ("%s^" % c, c)
+        patch = _git(wt, "diff", "--binary", *rng, "--", *spec).stdout
+        if not patch.strip():
+            steps.append({"commit": c, "status": "nothing-in-scope"})
+            continue
+        files = _git(wt, "diff", "--name-only", *rng, "--", *spec).stdout.decode().split()
+        snap = {}
+        for f in files:
+            path = os.path.join(wt, f)
+            snap[f] = open(path, "rb").read() if os.path.exists(path) else None
+        r = _git(wt, "apply", "-R", "--3way", inp=patch)
+        conflicted = _git(wt, "diff", "--name-only", "--diff-filter=U").stdout.decode().split()
+        if r.returncode == 0 and not conflicted:
+            steps.append({"commit": c, "status": "reverted-3way"})
+            continue
+        _restore_files(wt, snap)
+        patch0 = _git(wt, "diff", "--binary", "-U0", *rng, "--", *spec).stdout
+        r0 = _git(wt, "apply", "-R", "--unidiff-zero", "--index", inp=patch0)
+        if r0.returncode == 0:
+            steps.append({"commit": c, "status": "reverted-zero-context", "3way_conflicted": conflicted})
+            continue
+        _restore_files(wt, snap)
+        ok = False
+        steps.append({"commit": c, "status": "FAILED", "conflicted": conflicted,
+                      "stderr_3way": r.stderr.decode(errors="replace")[-400:],
+                      "stderr_zero_context": r0.stderr.decode(errors="replace")[-400:]})
+        break
+    residual = []           # CODE references only (an import of a feature module); prose mentions do not count
+    pat = _re.compile(r"^\s*(?:from\s+[\w.]*\b(?:da_tag_capture\w*|sleep_replay_capture)\b"
+                      r"|(?:from\s+[\w.]+\s+import\s+[^#]*|import\s+[^#]*)\b(?:da_tag_capture\w*|sleep_replay_capture)\b)")
+    for root, _dirs, fnames in os.walk(os.path.join(wt, "webapp")):
+        for fn in fnames:
+            if fn.endswith(".py"):
+                path = os.path.join(root, fn)
+                with open(path, errors="ignore") as fh:
+                    for n, line in enumerate(fh, 1):
+                        if pat.search(line):
+                            residual.append("%s:%d" % (os.path.relpath(path, wt), n))
+    if residual:
+        ok = False
+    changed = _git(wt, "diff", "--name-status", "HEAD").stdout.decode().splitlines()
+    untracked = _git(wt, "ls-files", "--others", "--exclude-standard").stdout.decode().split()
+    return {"ok": ok, "steps": steps, "changed_vs_head": changed, "untracked": untracked,
+            "residual_feature_refs": residual[:50], "n_scope_paths": len(scope)}
+
+
+def _run_worker(tree, tag, td):
+    o = os.path.join(td, tag + ".json")
+    env = dict(os.environ)
+    for k in _OFF_ENV:
+        env.pop(k, None)
+    r = subprocess.run([sys.executable, "-u", os.path.abspath(__file__), "--offcheck-worker", tree, o],
+                       capture_output=True, text=True, env=env)
+    if r.returncode != 0 or not os.path.exists(o):
+        raise RuntimeError("offcheck worker %s failed: %s" % (tag, r.stderr[-2000:]))
+    return json.load(open(o))
+
+
+def offcheck(out, ltm="off"):
+    """Flag unset on HEAD vs HEAD with the feature reverted (+ a HEAD-vs-HEAD null control). See the block comment."""
     if ltm == "off":
         os.environ["BRAIN_LTM_SHIP_DEFAULT"] = "0"     # both trees; the workers inherit it (declared, as run_seed)
-    with tempfile.TemporaryDirectory() as td:
-        pin = os.path.join(td, "pinned")
-        os.makedirs(pin)
-        arc = subprocess.run(["git", "-C", _REPO, "archive", pinned_sha], capture_output=True)
-        if arc.returncode != 0:
-            raise RuntimeError("git archive failed: %s" % arc.stderr[-500:])
-        subprocess.run(["tar", "-x", "-C", pin], input=arc.stdout, check=True)
-        os.makedirs(os.path.join(pin, "data"), exist_ok=True)
-        os.symlink(os.path.realpath(os.path.join(_REPO, "data", "corpus")), os.path.join(pin, "data", "corpus"))
-        res = {"pinned_sha": pinned_sha, "branch_repo": _REPO, "ltm": ltm}
-        raw_replies = {}
-        for tag, repo in (("pinned", pin), ("branch", _REPO)):
-            o = os.path.join(td, tag + ".json")
-            r = subprocess.run([sys.executable, "-u", os.path.abspath(__file__), "--offcheck-worker", repo, o],
-                               capture_output=True, text=True)
-            if r.returncode != 0 or not os.path.exists(o):
-                raise RuntimeError("offcheck worker %s failed: %s" % (tag, r.stderr[-2000:]))
-            res[tag] = json.load(open(o))
-            raw_replies[tag] = res[tag].pop("replies", None)   # popped from `res` unconditionally; RE-ATTACHED
-            res[tag + "_ledger_scenario_sha256"] = _ledger_scenario_hash(repo)   # below IFF the shas mismatch
-        res["replies_identical"] = res["pinned"]["replies_sha256"] == res["branch"]["replies_sha256"]
-        res["store_identical"] = res["pinned"]["store_sha256"] == res["branch"]["store_sha256"]
-        res["v3_ledger_scenario_identical"] = (res["pinned_ledger_scenario_sha256"]
-                                              == res["branch_ledger_scenario_sha256"])
-        res["byte_identical_off"] = bool(res["replies_identical"] and res["store_identical"]
-                                         and res["v3_ledger_scenario_identical"])
-        # DIAGNOSABILITY (2026-09-24, Amendment 4 candidate fix): a mismatch used to be undiagnosable without a
-        # full, expensive two-tree re-run -- the raw replies were popped unconditionally, so a `replies_identical:
-        # false` verdict carried no way to tell WHICH turn differed or by what content. On a mismatch, keep both
-        # trees' full replies AND the index/content of the first turn that differs (a per-turn compare over the
-        # shorter list; an extra turn in one tree is reported at its own index with `None` on the other side).
-        # On a match, still pop them (the sha256 already proves equality; no need to bloat the committed artifact).
-        if not res["replies_identical"] and raw_replies.get("pinned") is not None and raw_replies.get("branch") is not None:
-            res["pinned"]["replies"] = raw_replies["pinned"]
-            res["branch"]["replies"] = raw_replies["branch"]
-            fd = _offcheck_first_diff(raw_replies["pinned"], raw_replies["branch"])
-            if fd is not None:
-                res["first_diff"] = fd
+    head = _git(_REPO, "rev-parse", "HEAD").stdout.decode().strip()
+    dirty = _git(_REPO, "status", "--porcelain", "--", "webapp", "sim", "research/runners").stdout.decode().split("\n")
+    commits = feature_commits()
+    tag = "offcheck-cf-%d" % os.getpid()
+    wt_head, wt_cf = os.path.join(_WT_PARENT, tag + "-head"), os.path.join(_WT_PARENT, tag + "-cf")
+    corpus = _corpus_src()
+    res = {"method": "counterfactual: HEAD vs HEAD minus the feature's own commits (built from the current tree)",
+           "head": head, "uncommitted_code_paths_ignored": [d for d in dirty if d.strip()], "ltm": ltm,
+           "feature_commits": commits, "reverted_scope": "production_scope(): webapp/, sim/, webapp-imported runners"}
+    try:
+        for wt in (wt_head, wt_cf):
+            r = _git(_REPO, "worktree", "add", "--detach", wt, head)
+            if r.returncode != 0:
+                raise RuntimeError("worktree add failed: %s" % r.stderr.decode(errors="replace")[-500:])
+            os.makedirs(os.path.join(wt, "data"), exist_ok=True)
+            os.symlink(corpus, os.path.join(wt, "data", "corpus"))
+        cf = build_counterfactual(wt_cf, commits)
+        res["counterfactual"] = cf
+        if not cf["ok"]:
+            res["byte_identical_off"] = None
+            res["verdict"] = "UNDEFINED: the feature's own diff did not reverse-apply cleanly on the current tree"
+        else:
+            with tempfile.TemporaryDirectory() as td:
+                a = _run_worker(wt_head, "head_a", td)
+                b = _run_worker(wt_head, "head_b", td)
+                c = _run_worker(wt_cf, "counterfactual", td)
+            res["null_replies_identical"] = a["replies_sha256"] == b["replies_sha256"]
+            res["null_store_identical"] = a["store_sha256"] == b["store_sha256"]
+            res["replies_identical"] = a["replies_sha256"] == c["replies_sha256"]
+            res["store_identical"] = a["store_sha256"] == c["store_sha256"]
+            res["head_run"] = {"replies_sha256": a["replies_sha256"], "store_sha256": a["store_sha256"],
+                               "n_store_conns": a["n_store_conns"]}
+            res["counterfactual_run"] = {"replies_sha256": c["replies_sha256"], "store_sha256": c["store_sha256"],
+                                         "n_store_conns": c["n_store_conns"]}
+            if not (res["null_replies_identical"] and res["null_store_identical"]):
+                res["byte_identical_off"] = None
+                res["verdict"] = "UNDEFINED: the same tree run twice differs (null control failed)"
+                fd = _offcheck_first_diff(a.get("replies") or [], b.get("replies") or [])
+                if fd is not None:
+                    res["null_first_diff"] = fd
+            else:
+                res["byte_identical_off"] = bool(res["replies_identical"] and res["store_identical"])
+                res["verdict"] = "IDENTICAL" if res["byte_identical_off"] else "DIFFERENT"
+                if not res["replies_identical"]:
+                    fd = _offcheck_first_diff(c.get("replies") or [], a.get("replies") or [])
+                    if fd is not None:
+                        res["first_diff"] = fd          # "pinned" = the counterfactual, "branch" = HEAD
+    finally:
+        for wt in (wt_head, wt_cf):
+            if os.path.exists(wt):
+                _git(_REPO, "worktree", "remove", "--force", wt)
+        _git(_REPO, "worktree", "prune")
+        res["temp_worktrees_removed"] = not (os.path.exists(wt_head) or os.path.exists(wt_cf))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     json.dump(res, open(out, "w"), indent=2)
-    print(json.dumps(res, indent=2))
+    print(json.dumps({k: v for k, v in res.items() if k not in ("counterfactual",)}, indent=2))
     return res
 
 
@@ -750,6 +1090,82 @@ def selftest():
         agg = aggregate_rc(_td)
         checks["rc aggregate: 6 designed-GO seeds -> GO, p=1/64"] = \
             agg["verdict"] == "GO" and abs(agg["signflip_p_rescue_on_vs_off"] - 1 / 64.0) < 1e-12
+    # ── r2 family: item 2 gated (GO / NO-GO / UNDEFINED), item 1 reported (RESCUED / NOT-RESCUED / UNDEFINED) ─────
+    def _r2_arm(name, env, outcome):
+        rec = _rc_arm(name, env, outcome)
+        rc_on = env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1"
+        ep0 = (_epochs(_rc_arm("x_night_x", env, outcome)) or [{}])[0]      # the synthetic epoch shape, lesion-aware
+        rec["sleep_replay_at_recall"] = ({"n_epochs": 0, "epochs": []} if rc_on else None)
+        shy_on = env.get("BRAIN_SLEEP_DOWNSCALING") == "1"
+        if name.startswith("ld_"):
+            rec["awake_until_h"] = 4.01 if env.get("BRAIN_DA_TAG_CAPTURE") == "1" else None
+            if rc_on:
+                rec["sleep_replay_at_recall"] = {"n_epochs": 1, "epochs": [dict(ep0, t_h=4.1)]}
+        if name.startswith("d3") and rc_on:
+            eps = []
+            for _n in range(3):
+                ep = dict(ep0)
+                if shy_on:
+                    ep["shy_scale"] = [0.9]
+                eps.append(ep)
+            rec["sleep_replay_at_recall"] = {"n_epochs": 3, "epochs": eps}
+        return rec
+    r2_designed = {"ld_ledger_off": "correct", "ld_norc": "abstain", "ld_rc": "abstain",
+                   "ld_rc_replaylesion": "abstain", "neu_imm_rc": "correct", "d3w_rc": "correct",
+                   "d3w_shy_a": "abstain", "d3w_shy_b": "abstain", "d3c_shy": "correct", "d3r_shy": "correct",
+                   "d10w_rc": "correct", "d10w_shy": "abstain"}
+    r2_ok = {n: _r2_arm(n, env, r2_designed[n]) for n, _l, env in R2_ARMS}
+    r2_ok["d10w_shy"]["daily_outcomes"] = ["correct"] * 6 + ["abstain"] * 4
+    g_r2 = grade_seed_r2({"arms": r2_ok})
+    checks["r2 grade: designed pattern -> item2 GO, item1 NOT-RESCUED"] = \
+        g_r2["seed_verdict"] == "GO" and g_r2["LD_verdict"] == "NOT-RESCUED"
+    checks["r2 horizon: first night not correct is read off the daily probe"] = \
+        g_r2["SHY_horizon_reported"]["d10w_shy"]["first_night_not_correct"] == 7
+    arms_x = dict(r2_ok)
+    arms_x["d10w_shy"] = dict(r2_ok["d10w_shy"], errors=["boom"], recall_outcome="undefined")
+    checks["r2 horizon: a horizon-arm error never touches the item-2 verdict (REPORTED only)"] = \
+        grade_seed_r2({"arms": arms_x})["seed_verdict"] == "GO"
+    arms_x = {k: v for k, v in r2_ok.items() if k not in HORIZON_ARMS}
+    checks["r2 horizon: arms absent (pre-Amendment-3 file) -> still graded"] = \
+        grade_seed_r2({"arms": arms_x})["seed_verdict"] == "GO"
+    for arm_name, bad, key, want in (("d3w_shy_a", "correct", "seed_verdict", "UNDEFINED"),   # a != b rebuild
+                                     ("d3c_shy", "abstain", "seed_verdict", "NO-GO"),         # salient lost
+                                     ("d3r_shy", "abstain", "seed_verdict", "NO-GO"),         # re-mention lost
+                                     ("d3w_rc", "abstain", "seed_verdict", "UNDEFINED"),      # nothing to fade
+                                     ("ld_rc", "correct", "LD_verdict", "RESCUED"),           # route on keeps it
+                                     ("neu_imm_rc", "abstain", "LD_verdict", "UNDEFINED")):
+        arms_x = dict(r2_ok)
+        arms_x[arm_name] = _r2_arm(arm_name, r2_ok[arm_name]["env"], bad)
+        checks["r2 grade: %s=%s -> %s %s" % (arm_name, bad, key, want)] = grade_seed_r2({"arms": arms_x})[key] == want
+    arms_x = dict(r2_ok)
+    arms_x["d3w_shy_a"] = _r2_arm("d3w_shy_a", r2_ok["d3w_shy_a"]["env"], "correct")
+    arms_x["d3w_shy_b"] = _r2_arm("d3w_shy_b", r2_ok["d3w_shy_b"]["env"], "correct")
+    checks["r2 grade: weak fact NOT faded (both rebuilds) -> NO-GO"] = grade_seed_r2({"arms": arms_x})["seed_verdict"] == "NO-GO"
+    arms_x = dict(r2_ok)
+    arms_x["ld_rc"] = _r2_arm("ld_rc", r2_ok["ld_rc"]["env"], "correct")
+    arms_x["ld_rc_replaylesion"] = _r2_arm("ld_rc_replaylesion", r2_ok["ld_rc_replaylesion"]["env"], "correct")
+    checks["r2 grade: long-delay kept even with the replay edge cut -> OTHER (not attributable to the route)"] = \
+        grade_seed_r2({"arms": arms_x})["LD_verdict"] == "OTHER"
+    arms_x = dict(r2_ok)
+    rec_x = dict(r2_ok["d3w_rc"])
+    rec_x["sleep_replay_at_recall"] = {"n_epochs": 1, "epochs": _epochs(r2_ok["d3w_rc"])[:1]}
+    arms_x["d3w_rc"] = rec_x
+    checks["r2 grade: only one night ran -> UNDEFINED"] = grade_seed_r2({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(r2_ok)
+    arms_x["ld_rc"] = dict(r2_ok["ld_rc"], sleep_replay_at_recall={"n_epochs": 1,
+                                                                   "epochs": [dict(_epochs(r2_ok["ld_rc"])[0], t_h=0.1)]})
+    checks["r2 grade: sleep before the waking interval ended -> LD UNDEFINED"] = \
+        grade_seed_r2({"arms": arms_x})["LD_verdict"] == "UNDEFINED"
+    # counterfactual offcheck: the feature's own commits are derived from the tree (never a fixed pin)
+    sc = production_scope()
+    checks["offcheck counterfactual: scope = production-reachable paths (webapp-imported runner in, instrument out)"] = \
+        ("webapp" in sc and "research/runners/_da_write_gain_spiking_derisk.py" in sc
+         and "research/runners/_da_tag_capture_chat_probe.py" not in sc
+         and "research/runners/onebrain_regression_battery.py" not in sc)
+    fc = feature_commits()
+    checks["offcheck counterfactual: feature commits derived from HEAD (>= the 5 known)"] = \
+        len(fc) >= 5 and all(any(c.startswith(k) for c in fc)
+                             for k in ("48bb87bef", "492231df3", "a201293f5", "daa4b382d", "fd664ef3f"))
     # _offcheck_first_diff (Amendment 4 candidate fix, 2026-09-24): a mismatch must be DIAGNOSABLE (which turn,
     # what content) without a full two-tree re-run. Both directions: identical lists -> None (never falsely
     # flags a diff); a real difference -> the correct index + both sides' content, including the "one tree ran
@@ -776,13 +1192,16 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--ltm", choices=["off", "on"], default="off")
     ap.add_argument("--workers", type=int, default=1)
-    ap.add_argument("--family", choices=["base", "rc"], default="base",
-                    help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS)")
+    ap.add_argument("--family", choices=["base", "rc", "r2"], default="base",
+                    help="base = the G0-G6 family (unchanged); rc = the sleep-replay-capture family (RC_ARMS); "
+                         "r2 = long delay + sleep downscaling (R2_ARMS)")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--only", default=None,
+                    help="comma list of arm names: run only these, ungraded (a de-risk subset, never a gate row)")
     ap.add_argument("--aggregate")
     ap.add_argument("--selftest", action="store_true")
-    ap.add_argument("--offcheck", action="store_true")
-    ap.add_argument("--pinned-sha", default=PINNED_SHA)
+    ap.add_argument("--offcheck", action="store_true",
+                    help="byte-identical OFF: HEAD vs HEAD minus the feature's own commits (counterfactual, r2)")
     ap.add_argument("--offcheck-worker", nargs=2)
     a = ap.parse_args()
     if a.offcheck_worker:
@@ -790,15 +1209,16 @@ def main():
     if a.selftest:
         return 0 if selftest() else 1
     if a.out is None:                                   # base keeps its pre-branch default exactly
-        a.out = RC_OUT if a.family == "rc" else "research/findings/raw/_da_tag_capture_chat"
+        a.out = {"rc": RC_OUT, "r2": R2_OUT}.get(a.family, "research/findings/raw/_da_tag_capture_chat")
     if a.offcheck:
-        return 0 if offcheck(a.pinned_sha, a.out, ltm=a.ltm)["byte_identical_off"] else 1
+        return 0 if offcheck(a.out, ltm=a.ltm)["byte_identical_off"] else 1
     if a.aggregate:
-        (aggregate_rc if a.family == "rc" else aggregate)(a.aggregate)
+        {"rc": aggregate_rc, "r2": aggregate_r2}.get(a.family, aggregate)(a.aggregate)
         return 0
     if a.seed is None:
         ap.error("--seed required")
-    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers, family=a.family)
+    run_seed(a.seed, a.out, ltm=a.ltm, workers=a.workers, family=a.family,
+             only=([x.strip() for x in a.only.split(",") if x.strip()] if a.only else None))
     return 0
 
 

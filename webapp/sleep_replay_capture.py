@@ -43,6 +43,23 @@ WHAT HAPPENS (only with the flag ON, only on a sleep-depth idle, only for blocks
   5. The existing v3 per-synapse late-phase dynamics then decide capture. Nothing here compares anything to a
      threshold; a block is kept only if its own synapses' z cross 1/2.
 
+r2 (branch research/sleep-replay-capture-r2; pre-registered as Amendment 1 of the sleep-replay-capture prereg):
+  * ONE EPOCH PER NIGHT. Before r2 an idle stretch ran one epoch in total, however many nights it spanned. Now night k
+    of an idle stretch starts at (end of waking) + sleep onset + k * NIGHT_PERIOD_H (24 h). Any protocol whose recall
+    comes within 24 h + sleep onset of the last turn (every one-night group) still runs exactly one epoch.
+  * THE END OF WAKING can be an environment mark (`da_tag_capture_chat.mark_awake`, the battery's `awake_*` world
+    step): the body stayed awake without conversing, so sleep onset is measured from the end of that interval.
+  * SLEEP DOWNSCALING (`BRAIN_SLEEP_DOWNSCALING`, default OFF, read only inside an epoch). After each night's
+    reactivation, every managed block's learned increment is multiplied by 1 - SHY_DELTA * (1 - R_i): the slow-wave
+    period depresses synapses by ~18 % (de Vivo et al. 2017, Science 355:507, "The axon-spine interface (ASI)
+    decreased ~18% after sleep compared with wake", PMC5313037), except in proportion to how strongly the block's own
+    reactivation drove the read-out (Gonzalez-Rueda et al. 2018, Neuron 97:1244, "connections contributing to
+    postsynaptic spiking are protected against this synaptic weakening", PMC5873548). Under the replay-edge lesion
+    R_eff = 0, so nothing is protected. The pre-existing baseline b is NOT downscaled (declared: in this model it
+    stands for strength that belongs to other memories; scaling it with the increment would be invisible to the
+    magnitude-invariant read). Its host steps: the multiply, the constant, and the choice of R_i (the same cleanup
+    margin the replay uses) as the protection read.
+
 THE REPLAY-EDGE LESION. `BRAIN_SLEEP_REPLAY_CAPTURE_LESION=1` severs the reactivation's effect: the substrate reads
 still run (same compute, same substrate state) but R_eff = 0, so no replay tag is set and the SWR bout's DA stays
 tonic. The D1 pool is still read at tonic (it fires at its tonic rate + noise), exactly as the v3 lesions do.
@@ -91,6 +108,8 @@ import numpy as np
 
 from webapp.da_tag_capture import (_DA_TONIC, CAPTURE_PROTOCOL_MIN, TAU_TAG_H, capture_lesioned, prp_da)
 
+NIGHT_PERIOD_H = 24.0                  # r2: a new night every 24 h of continued idle (the circadian period; host clock)
+SHY_DELTA = 0.18                       # r2 downscaling: de Vivo et al. 2017, axon-spine interface ~18% smaller after sleep
 SWR_BOUT_H = CAPTURE_PROTOCOL_MIN / 60.0   # the v3 canonical exposure (5 min), reused as the night's SWR bout
 SWR_SUBREAD_H = 30.0 / 3600.0          # == da_tag_capture_chat.TURN_DRIVE_H: one D1 read per 30 s of drive
 N_SWR_SUBREADS = int(round(SWR_BOUT_H / SWR_SUBREAD_H))   # 10
@@ -112,6 +131,12 @@ def replay_capture_enabled() -> bool:
 def replay_capture_lesioned() -> bool:
     """`BRAIN_SLEEP_REPLAY_CAPTURE_LESION` severs the reactivation -> synapse / DA edge (the reads still run)."""
     return _truthy("BRAIN_SLEEP_REPLAY_CAPTURE_LESION")
+
+
+def downscaling_enabled() -> bool:
+    """r2 sub-flag, DEFAULT OFF, only read inside an SWR epoch (so inert without BRAIN_SLEEP_REPLAY_CAPTURE):
+    `BRAIN_SLEEP_DOWNSCALING` arms the per-night synaptic downscaling of the managed blocks' learned increments."""
+    return _truthy("BRAIN_SLEEP_DOWNSCALING")
 
 
 def sleep_onset_h() -> float:
@@ -166,22 +191,30 @@ class SleepReplayCapture:
         self.reactivate_fn = reactivate_fn or reactivation_strength
         self.rng_ctx = rng_ctx or _NullCtx             # (seed, k) -> context manager (da_tag_capture_chat._private_rng)
         self.episode_key = None                        # the observed-turn count that started the current episode
-        self.episode_done = False
+        self.nights_done = 0                           # SWR epochs run in the current idle stretch (one per night)
         self.epochs: List[dict] = []
 
+    @property
+    def episode_done(self) -> bool:
+        return self.nights_done > 0
+
     def catch_up(self, ledger, comp, t_last_turn: float, episode_key, t_now: float) -> int:
-        """Run the current sleep episode's SWR epoch if it is due by `t_now` (event-driven). Returns #epochs run (0/1)."""
+        """Run every SWR epoch of the current idle stretch that is due by `t_now` (event-driven): night k starts at
+        t_last_turn + sleep onset + k * NIGHT_PERIOD_H. Returns #epochs run. (A one-night protocol -- recall within
+        24 h of the last turn -- runs exactly one, as before r2.)"""
         if episode_key != self.episode_key:
             self.episode_key = episode_key
-            self.episode_done = False
-        if self.episode_done:
-            return 0
-        t_s = float(t_last_turn) + sleep_onset_h()
-        if t_s > t_now:
-            return 0
-        self._epoch(ledger, comp, max(t_s, ledger.t))
-        self.episode_done = True
-        return 1
+            self.nights_done = 0
+        onset = sleep_onset_h()
+        ran = 0
+        while True:
+            t_s = float(t_last_turn) + onset + self.nights_done * NIGHT_PERIOD_H
+            if t_s > t_now:
+                break
+            self._epoch(ledger, comp, max(t_s, ledger.t))
+            self.nights_done += 1
+            ran += 1
+        return ran
 
     def _epoch(self, ledger, comp, t_s: float) -> None:
         # the store as it stands at t_s (decay / capture integrated up to the moment the SWR bout starts)
@@ -218,6 +251,16 @@ class SleepReplayCapture:
             a_eff = float(a) * cap_coupling
             ledger.drive.append((float(t0), float(t0) + SWR_SUBREAD_H, a_eff))
             a_log.append(a_eff)
+        # (6, r2, sub-flag) SLEEP DOWNSCALING: the night's slow-wave activity depresses every managed block's learned
+        # increment by SHY_DELTA, except in proportion to how strongly that block's own reactivation drove the read-out
+        # (Gonzalez-Rueda et al. 2018: inputs that contribute to postsynaptic spiking in Up states are protected).
+        shy = None
+        if downscaling_enabled():
+            shy = []
+            for blk, r in zip(ledger.blocks, R_eff):
+                s_i = 1.0 - SHY_DELTA * (1.0 - min(1.0, max(0.0, r)))
+                blk["inc"] = blk["inc"] * s_i
+                shy.append(round(s_i, 9))
         self.epochs.append({"episode": self.episode_key, "t_h": float(t_s),
                             "R": [None if r is None else round(r, 9) for r in R],
                             "R_eff": [round(r, 9) for r in R_eff], "sum_R_eff": round(sum_r, 9),
@@ -226,7 +269,12 @@ class SleepReplayCapture:
                             "pre_frac_z_gt_half": [round(v, 9) for v in pre_z],
                             "replay_lesioned": bool(coupling == 0.0), "capture_lesioned": bool(cap_coupling == 0.0),
                             "no_reader": bool(any(r is None for r in R))})
+        if shy is not None:
+            self.epochs[-1]["shy_scale"] = shy
 
     def summary(self) -> dict:
-        return {"on": True, "lesioned": replay_capture_lesioned(), "n_epochs": len(self.epochs),
-                "episode_done": self.episode_done, "epochs": list(self.epochs)}
+        out = {"on": True, "lesioned": replay_capture_lesioned(), "n_epochs": len(self.epochs),
+               "episode_done": self.episode_done, "epochs": list(self.epochs)}
+        if downscaling_enabled():
+            out["downscaling"] = True
+        return out

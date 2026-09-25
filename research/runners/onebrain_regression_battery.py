@@ -282,6 +282,47 @@ _EXTRA_TURNS += (_datc_group("datc", "datc", _DATC_SALIENT, True) + _datc_group(
                  + _datc_group("datci", "datci", _DATC_SALIENT, False)
                  + _datc_group("datni", "datni", _DATC_NEUTRAL, False))
 
+# ── SLEEP-ROUTE r2 GROUPS (label-only; research/runners/_da_tag_capture_chat_probe.py --family r2, branch
+# research/sleep-replay-capture-r2; gates in the sleep-replay-capture PREREGISTRATION, Amendment 1) ────────────────
+# 'datl' LONG DELAY: the neutral telling, then the brain stays AWAKE 4 h with no conversation (`_WORLD_AWAKE`: the
+#   environment clock moves, the body's awake mark is set, no idle tick runs), then the usual night, then recall. The
+#   fact is ~4 h old at sleep onset, past the ~2-3 h capture window.
+# 'd3w' / 'd3c' / 'd3r' THREE NIGHTS: a WEAK telling (the fact said last, after its words have habituated the brain's
+#   DA), a salient telling, and the weak telling RE-MENTIONED once on each of the two following days; three nights;
+#   recall after the third.
+_WORLD_AWAKE = "__world_step:awake_4h__"   # never sent to brain_chat: the worker runs the world step instead
+_DATC_WEAK = [
+    "the cat is here",
+    "the ball is here",
+    "the cat is here",
+    "the ball is here",
+    "the cat chases the ball",
+]
+_EXTRA_TURNS += ([("datl_t%d" % (i + 1), txt, "datl", i == 0, None, False) for i, txt in enumerate(_DATC_NEUTRAL)]
+                 + [("datl_awake", _WORLD_AWAKE, "datl", False, None, False),
+                    ("datl_night", _WORLD_NIGHT, "datl", False, None, False),
+                    ("datl_recall", _DATC_RECALL, "datl", False, None, False)])
+
+
+def _d3_group(prefix, texts, remention):
+    rows = [("%s_t%d" % (prefix, i + 1), txt, prefix, i == 0, None, False) for i, txt in enumerate(texts)]
+    for n in (1, 2, 3):
+        rows.append(("%s_night%d" % (prefix, n), _WORLD_NIGHT, prefix, False, None, False))
+        if remention and n < 3:
+            rows.append(("%s_remention%d" % (prefix, n), "the cat chases the ball", prefix, False, None, False))
+    rows.append(("%s_recall" % prefix, _DATC_RECALL, prefix, False, None, False))
+    return rows
+
+
+_EXTRA_TURNS += (_d3_group("d3w", _DATC_WEAK, False) + _d3_group("d3c", _DATC_SALIENT, False)
+                 + _d3_group("d3r", _DATC_WEAK, True))
+# 'd10w' HORIZON (r2 Amendment 3, REPORTED): the weak telling, then TEN nights, each followed by the recall question
+# (a read-only probe in this model: the store read writes nothing), so the night a fact stops being recalled is measured.
+_EXTRA_TURNS += ([("d10w_t%d" % (i + 1), txt, "d10w", i == 0, None, False) for i, txt in enumerate(_DATC_WEAK)]
+                 + [row for n in range(1, 11) for row in (("d10w_night%d" % n, _WORLD_NIGHT, "d10w", False, None, False),
+                                                          ("d10w_recall%d" % n, _DATC_RECALL, "d10w", False, None,
+                                                           False))])
+
 # ── D5-CONSOLIDATE / SLEEP-REPLAY DRIVING GROUPS (label-only; used only by load_bearing_fraction's new
 # lbf_rows/learning.py EXTRA_PROBES for "d5-consolidate" / "sleep-replay") ──────────────────────────────────────
 # Both faculties are gated on the SAME idle tick the DA tag-capture groups above already exercise (_WORLD_NIGHT ->
@@ -347,6 +388,7 @@ for _t in _lbf_rows_extra_turns():
         _EXTRA_TURNS.append(_t)          # in place: load_bearing_fraction imports this list by reference
         _known_labels.add(_t[0])
 _WORLD_STEPS = {t[0]: "overnight_24h" for t in _EXTRA_TURNS if t[1] == _WORLD_NIGHT}
+_WORLD_STEPS.update({t[0]: "awake_4h" for t in _EXTRA_TURNS if t[1] == _WORLD_AWAKE})   # r2 (label-only groups)
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
 
@@ -357,9 +399,17 @@ def _run_world_step(kind):
     makes it a sleep-depth tick (sleep replay, the Turrigiano pass, the tag-and-capture ledger when armed). Returns a
     trace (no reply: nothing is said)."""
     import time as _time
-    hours = {"overnight_24h": 24.0}[kind]
+    hours = {"overnight_24h": 24.0, "awake_4h": 4.0}[kind]
     from webapp import server as _S
     from webapp import continuous_engine as _CE
+    if kind == "awake_4h":
+        # (r2) the body stays AWAKE: only the environment clock moves and every live session's ledger is told the
+        # brain was awake through world-now. No idle tick runs (the engine would read >= SLEEP_IDLE_SEC of idle as
+        # sleep). A session without a ledger is untouched.
+        from webapp import da_tag_capture_chat as _DTC
+        _DTC.advance_world_clock_h(hours)
+        n_marked = sum(1 for _c in list(_S._BRAIN_CHATS.values()) if _DTC.mark_awake(_c) is not None)
+        return {"world_step": kind, "hours": hours, "n_sessions_marked_awake": int(n_marked)}
     try:
         from webapp import da_tag_capture_chat as _DTC
         _DTC.advance_world_clock_h(hours)

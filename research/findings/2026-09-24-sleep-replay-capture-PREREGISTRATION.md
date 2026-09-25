@@ -169,3 +169,143 @@ exact sign-flip p over seeds for RC1 and for RC5 (1/64 at 6/6).
   are the pool runs at a pinned revision containing this pre-registration. If the smoke forces any code change, that
   change is an amendment committed before the pool runs, and the pin moves with it.
 - Numpy CPU, one arm at a time per seed (`--workers 1`), each seed run under the pool's memory cap.
+
+## Amendment 1 (2026-09-24, r2) — long delay, sleep downscaling, a byte-identical-OFF check that cannot go stale
+
+Committed on its own, BEFORE any run it governs (no `--family r2` output and no counterfactual offcheck output exist
+at this commit). Governs code commit `1d011480a` on branch `research/sleep-replay-capture-r2` (off `main` at
+`acca762fa`). The review of the merged route (SOUND-WITH-ISSUES) asked for a long-delay arm on a real build; the
+owner's follow-up asked for sleep downscaling and a counterfactual offcheck.
+
+**What r2 changes for the rc family above: nothing it measures.** An idle stretch now runs one SWR epoch per night
+(t_ref + onset + k x 24 h). Every rc arm recalls within 24 h + onset of its last turn, so it still runs exactly one
+epoch (`test_one_night_protocol_still_one_epoch_three_nights_three`). The 6-seed rc run in flight at revision
+`269ae8f76` is not touched and its gates above stand.
+
+### Item 1 — a fact told ~4 h before sleep onset (REPORTED, not gated)
+
+Group `datl`: the neutral telling, then the `awake_4h` world step (environment clock +4 h, every live ledger marked
+awake through that time, no idle tick), then the usual 24 h night, then "what does the cat chase". Arms (`--family
+r2`): `ld_ledger_off` (ledger off: today's production default), `ld_norc` (ledger on, route off), `ld_rc` (route on),
+`ld_rc_replaylesion` (route on, replay edge cut), and `neu_imm_rc` (precondition: the neutral fact is recalled at once).
+
+Verdict per seed (`grade_seed_r2`, `LD_verdict`): UNDEFINED if `neu_imm_rc` is not correct, an arm errs or reads
+undefined, gamma differs across ledger-on arms, or the instrument fails (each route arm ran exactly one SWR epoch and
+it started AFTER the awake mark, which is >= 4 h; the replay lesion held on the record). Otherwise RESCUED iff `ld_rc`
+is correct and both `ld_norc` and `ld_rc_replaylesion` abstain; NOT-RESCUED iff `ld_rc` and `ld_norc` both abstain;
+OTHER for any other pattern.
+
+**Prediction: NOT-RESCUED**, with the reactivation read at sleep onset near baseline (the fake-substrate design sweep
+above captured nothing told 3 h or more before sleep).
+
+**Should it rescue? Stated before the run.** On the biology the route should NOT rescue this fact by itself. Late-phase
+capture of a weak input needs its tag to still be live, and Kandel ch.54 puts the window at 2-3 h. Human declarative
+memory gains from sleep "when sleep follows within a few hours of learning" (Gais, Lucas & Born 2006, Learn Mem 13:259,
+abstract via PubMed). What the biology does NOT support is the model's TOTAL loss: in Gais 2006 delayed sleep gives a
+smaller benefit, not zero retention. The model loses everything because it has none of the other routes a person has
+for a fact told in the morning: waking reactivation (thinking about it, retrieval re-tagging it, re-mention), and
+hippocampal-cortical transfer. Those are the named gap. A NOT-RESCUED reading is the route working as designed, and it
+does NOT show that forgetting the fact is correct.
+
+### Item 2 — three nights with sleep downscaling (GATED; `BRAIN_SLEEP_DOWNSCALING`, default OFF)
+
+Each night, after the reactivation, each managed block's learned increment is multiplied by 1 - 0.18 x (1 - R_i).
+The 0.18 is from de Vivo et al. 2017 (Science 355:507): the axon-spine interface was ~18% smaller after sleep.
+Protection by the block's own read R_i follows González-Rueda et al. 2018 (Neuron 97:1244): inputs that drive
+postsynaptic spiking are protected. Host steps, all declared in the module docstring: the multiply, the constant,
+and R_i (the replay's cleanup margin) as the protection read. The baseline is not downscaled.
+
+Groups: `d3w` WEAK telling (the four habituating turns come first, the fact is said last), three nights, recall;
+`d3c` salient telling, three nights, recall; `d3r` the weak telling, re-mentioned ("the cat chases the ball") after
+night 1 and after night 2, recall after night 3. Arms: `d3w_rc` (route on, downscaling OFF), `d3w_shy_a`, `d3w_shy_b`
+(null rebuild), `d3c_shy`, `d3r_shy` (route + downscaling ON).
+
+Per seed (`grade_seed_r2`, `seed_verdict`):
+- UNDEFINED if: `d3w_shy_a` and `d3w_shy_b` differ (outcome, recalled_svo, abstained, ledger state, block summaries,
+  sleep record); P2 `d3w_rc` is not correct (the weak fact must survive three nights WITHOUT downscaling, or a fade
+  under downscaling is not attributable to it); any three-night arm did not run exactly three epochs, or carries a
+  downscaling record without the flag, or lacks one with it; an arm errs or reads undefined; gamma differs.
+- GO iff SHY1 `d3w_shy_a` abstains (the weak, never re-mentioned fact fades), SHY2 `d3c_shy` correct (salient
+  survives), SHY3 `d3r_shy` correct (re-mentioned survives), SHY4 no confab in any arm. Otherwise NO-GO.
+- REPORTED: R, downscaling factor, increment and baseline magnitude per night and at recall, for each three-night arm.
+
+**Predictions.** SHY2 and SHY3 hold. **SHY1 is uncertain, and that is declared here.** With the reads the merged
+smoke measured (R about 0.3 for a unit-gain write, 0.43 for the neutral telling), each night multiplies the
+increment by 0.87-0.90. Three nights give 0.66-0.73 of it, and nothing measures where on the real substrate the
+read stops recalling. A NO-GO on SHY1 would mean that downscaling at the literature magnitude does not erase a
+sleep-captured weak fact within three nights. It would not mean that downscaling does nothing.
+
+6-seed verdict (`--family r2 --aggregate`): item 2 GO iff all six seeds GO, with a one-sided sign-flip p over seeds for
+"`d3w_rc` kept minus `d3w_shy_a` kept"; item 1 reported as counts of `LD_verdict`.
+
+### Item 3 — byte-identical OFF against a counterfactual built from the current tree
+
+`--offcheck` now compares the committed HEAD with the flags unset against HEAD with the feature's OWN commits
+reverse-applied, in two temporary worktrees under `/home/dant123/Projects/sim/.claude/worktrees/` that are removed
+afterwards. The feature commits are derived on every run: every non-merge commit that touches
+`webapp/da_tag_capture*.py` / `webapp/sleep_replay_capture.py`, or that adds or removes a `da_tag_capture` /
+`sleep_replay_capture` line in `webapp/server.py` / `webapp/continuous_engine.py`. Instrument, battery, findings,
+tests and docs are held equal in both trees. The same salient next-day conversation is hashed on each tree (replies
++ store synapses), and HEAD is also run twice as a null control.
+Verdict: IDENTICAL iff the null control is identical and both hashes match; DIFFERENT iff the null control is
+identical and a hash differs (the first differing turn is saved); UNDEFINED if the reverse-apply fails or the null
+control differs. Run once locally under `bash tools/memcap.sh 8 -- ... --offcheck`, output to a file named
+`offcheck_counterfactual` (JSON) in the directory `research/findings/raw/_sleep_replay_capture_r2/`.
+
+### Compute for this amendment
+
+A seed-42 smoke of `--family r2` (de-risk, NOT a gate row) goes to `research/findings/raw/_sleep_replay_capture_r2_smoke`.
+The six gate rows are pool runs at a pinned revision containing this amendment; if the smoke forces a code change, that
+is Amendment 2 and the pin moves.
+
+## Amendment 2 (2026-09-24, r2) — the counterfactual offcheck's construction, fixed before its first run
+
+Committed before the counterfactual offcheck has run. It changes only the item-3 instrument, not item 1 or 2. The
+seed-42 r2 smoke was already running at `2f3bd2087`. It is unaffected, because this edit touches only the offcheck
+functions of the probe, which its arm workers never import.
+
+A git-only dry run of Amendment 1's construction (no brain build) failed in two ways, and the check would have read
+UNDEFINED. **First, the reverse-apply conflicted in `webapp/server.py`.** Later, unrelated commits (the D6 chat
+observability block) inserted code right after the feature's hook hunks. So the 3-way reverse of `a201293f5` saw
+adjacent edits. **Second, a standalone runner would not reverse.** `492231df3` created
+`_da_encoding_natural_drive_synaptic.py`, and later non-feature commits edited it, so reversing its creation cannot
+apply. The construction is therefore now:
+- Revert only `production_scope()`: `webapp/`, `sim/`, and every `research/runners` module that a `webapp/*.py`
+  imports, derived from the tree on each run (123 paths at `2f3bd2087`). Everything else stays at HEAD in both
+  trees, including standalone runners, the instrument, the battery, findings, tests and docs. None of it is on the
+  `/api/brain-chat` reply path.
+- For each commit, try a 3-way reverse first. If it conflicts, roll that commit's partial application back and
+  retry with a zero-context reverse, which matches only the feature's own lines. If that also fails, the check
+  reads UNDEFINED.
+- No import of a feature module may remain in the counterfactual `webapp/`; otherwise UNDEFINED. Prose mentions in
+  other modules' docstrings do not count.
+
+Dry run with this construction, at HEAD `2f3bd2087`. Six feature commits were reversed: five by 3-way,
+`a201293f5` by zero-context. No residual import remained. Relative to HEAD, the counterfactual deletes
+`webapp/da_tag_capture*.py` and `webapp/sleep_replay_capture.py`. It restores the pre-isolation
+`_da_write_gain_spiking_derisk.py`, which is a pure refactor. It removes exactly the three `server.py` hook blocks
+and the one `continuous_engine.py` hook block, and nothing else. The verdict rule of Amendment 1 is unchanged.
+
+## Amendment 3 (2026-09-25, r2) — a REPORTED ten-night horizon for the downscaling NO-GO
+
+Committed before any run of the arms it adds. The seed-42 r2 smoke (a de-risk, not a gate row; artifacts committed
+at `27fe9202`) read item 2 NO-GO on SHY1 alone. The weak, never re-mentioned fact was still recalled after three
+nights of downscaling, as Amendment 1 had declared possible. Three nights leave open whether downscaling at the
+literature magnitude erases the fact at all, and when. Rather than retune the constant on a gate seed, this
+amendment MEASURES that horizon.
+
+- Group `d10w`: the weak telling, then ten nights, each followed by "what does the cat chase". In this model the
+  recall is a read-only probe: the store read writes nothing, and the question stores no fact. The daily question
+  is an observed turn, so it starts a new idle stretch, and the next night's epoch begins sleep-onset after it.
+- Arms `d10w_rc` (downscaling off) and `d10w_shy` (downscaling on), both route on. They are REPORTED ONLY: excluded
+  from every gate, error count, gamma check and UNDEFINED rule of item 2, so they cannot change a seed verdict. For
+  each arm and seed, `grade_seed_r2` reports the daily outcomes, the first night the fact is not recalled, and the
+  daily increment/baseline magnitude and read.
+- Predictions (from the three-night trajectory: increment x0.88 per night, and the read falls as it shrinks):
+  `d10w_rc` is recalled on all ten nights. For `d10w_shy`, the first night the fact is not recalled falls in 4-10,
+  or it is still recalled at night 10. Either is reported as measured.
+- Items 1 and 2 keep their Amendment-1 rules. Item 2's gate stays at three nights: this amendment does not move it.
+
+A seed-42 de-risk of just these two arms (`--only d10w_rc,d10w_shy`, ungraded) goes to
+`research/findings/raw/_sleep_replay_capture_r2_horizon_smoke`. The 6-seed pool lines run the full r2 family,
+horizon included, at a revision containing this amendment.

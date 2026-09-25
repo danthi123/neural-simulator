@@ -32,6 +32,15 @@ sources:
   - path: "PMC2596310"
     anchor: "is triggered if the total number of set tags is larger than a critical number"
     note: "Clopath, Ziegler, Vasilaki, Busing & Gerstner 2008, PLoS Comput Biol 4:e1000248 (doi 10.1371/journal.pcbi.1000248), Fig.1B legend; read in full text via PubMed Central 2026-09-24. Same paper, Discussion: 'The phasic dopamine signal caused by co-stimulation of dopaminergic input during tagging experiments is assumed to be proportional to the number of tags.' Basis of the SWR-coupled DA = f(reactivated tag mass)."
+  - path: "PMC5313037"
+    anchor: "The axon-spine interface (ASI) decreased ~18% after sleep compared with wake"
+    note: "de Vivo, Bellesi, Marshall, Bushong, Ellisman, Tononi & Cirelli 2017, Science 355:507 (doi 10.1126/science.aah5982), abstract, read via PubMed 2026-09-24: the decrease was proportional to size (scaling) and 'selective, sparing synapses that were large'. Source of SHY_DELTA = 0.18 per night (r2 sleep downscaling)."
+  - path: "PMC5873548"
+    anchor: "connections contributing to postsynaptic spiking are protected against this synaptic weakening"
+    note: "Gonzalez-Rueda, Pedrosa, Feord, Clopath & Paulsen 2018, Neuron 97:1244 (doi 10.1016/j.neuron.2018.01.047), abstract, read via PubMed 2026-09-24: in slow-wave Up states presynaptic activity alone depresses a synapse; inputs that drive the postsynaptic cell are spared. Basis of the per-block protection by the night's own reactivation read R_i."
+  - path: "PMC10807868"
+    anchor: "declarative memory is enhanced when sleep follows within a few hours of learning"
+    note: "Gais, Lucas & Born 2006, Learn Mem 13:259 (doi 10.1101/lm.132106), abstract, read via PubMed 2026-09-24: the human declarative benefit of sleep depends on sleep coming within a few hours of learning. Bears on r2 item 1 (a fact told 4 h before sleep onset). It shows a smaller BENEFIT with delayed sleep, not total loss."
 implemented_by:
   - webapp/sleep_replay_capture.py
   - webapp/da_tag_capture_chat.py
@@ -71,6 +80,17 @@ cycle 4, because a sub-threshold late-phase z is expressed in the weight and rai
 runaway). Real sleep runs a brake alongside, synaptic downscaling (Tononi & Cirelli, Kandel ch.44). Until that
 companion exists here, only the first-N3 epoch runs; with it, facts told <= 2 h before sleep are captured and facts told
 >= 3 h before are not (R 0.30 -> 0.17 across the boundary), in line with the 2-3 h capture window.
+
+## r2: the downscaling companion (default-OFF `BRAIN_SLEEP_DOWNSCALING`)
+
+The brake named above is now built as a sub-flag, one night at a time: after each night's reactivation, each managed
+block's learned increment is multiplied by 1 - 0.18 x (1 - R_i). The 18 % is de Vivo et al. 2017's sleep-vs-wake
+axon-spine-interface decrease; the protection by R_i follows González-Rueda et al. 2018 (inputs that drive the
+postsynaptic cell during slow-wave Up states are spared). Two modelling choices are declared, not sourced: R_i (the
+store's cleanup margin) stands in for "drove postsynaptic spiking", and the baseline synapses are not downscaled
+(they stand for other memories' strength; scaling them with the increment would not change the magnitude-invariant
+read). r2 also runs one replay epoch per NIGHT (every 24 h of idle) instead of one per idle stretch; later NREM cycles
+within a night are still not modeled.
 
 ⚠️ **Provenance honesty.** Clopath 2008 is not in the local corpus; its quotes were checked against the PMC full text
 (PMC2596310) on 2026-09-24, which is why its source is marked external. The SWR-coupled VTA/SNc burst itself (the
