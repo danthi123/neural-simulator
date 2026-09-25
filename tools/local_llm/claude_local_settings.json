@@ -30,7 +30,7 @@
       "Bash(git commit -q -m:*)",
       "Bash(git switch -c research/draft-:*)",
       "Bash(bash tools/push_both.sh:*)",
-      "Bash(bash tools/pool_provision.sh --revision:*)",
+      "Bash(bash tools/pool_provision.sh --revision * --isolated pool41 pool42)",
       "Edit(research/coordination/LOCAL_LLM_RUNBOOK.md)",
       "Edit(GAP_CLOSURE_MISSION.md)",
       "Edit(research/queue/.lane_waiver)",
@@ -51,7 +51,8 @@
       "Bash(sudo:*)",
       "Edit(sim/**)",
       "Edit(webapp/**)",
-      "Edit(tools/gates/**)"
+      "Edit(tools/gates/**)",
+      "Bash(POOL_PROVISION_ALLOW_STALE=1:*)"
     ]
   }
 }

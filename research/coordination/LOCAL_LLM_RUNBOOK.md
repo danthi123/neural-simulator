@@ -30,7 +30,9 @@ rows-landed vs expected, and recent failures.
    battery's `finding_template`, commit it there, push it. **Do not merge it.** A draft finding states what the
    artifact shows; it does not carry a verdict (GO/NO-GO) — that is Claude's or the owner's call.
 4. **Re-provision a revision** when `status.sh` or a dispatch log shows pool nodes pinned to a commit they don't
-   have: `bash tools/pool_provision.sh --revision <sha> pool40 pool41 pool42`.
+   have: `bash tools/pool_provision.sh --revision <sha> --isolated pool41 pool42` (ALWAYS `--isolated`: without it the
+   revision overwrites the nodes' shared `~/derisk-pool/sim` tree, and the pinned `revisions/<sha>` dir the jobs need is never
+   created). If it REFUSES as stale, that is a NEEDS CLAUDE item -- do not set POOL_PROVISION_ALLOW_STALE yourself.
 5. **Restart `pool-dispatch` / `pool-sync`** per the troubleshooting table below.
 6. **Queue ONLY the pre-approved lines** listed under "Queue next" below — nothing else, ever.
 
