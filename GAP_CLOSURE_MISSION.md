@@ -51,7 +51,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    default-OFF) launched 21:10. RESULT 22:19: branch @ 269ae8f76 (prereg ea8ee1bed), seed-42 smoke reads GO on every
    registered gate (ordinary fact: flag-off abstains, flag-on recalled; replay-edge and DA lesions abstain). 6 seeds
    queued at the pool front 22:30 (`--family rc`, mem_gb=2, ~1.5 h each); adversarial review running. Open: sleep
-   downscaling not built, so nothing is forgotten with the flag on.
+   downscaling and later sleep cycles are not modelled yet; whether anything is still forgotten with the flag on is untested.
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
