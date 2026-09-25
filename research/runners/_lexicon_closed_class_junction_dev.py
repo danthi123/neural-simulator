@@ -62,6 +62,14 @@ PINNED_OFF = {7: {"parse_sha256": "81737f9706d815e56244e7e1886aa622617fe72cc22a5
 def _dump(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     json.dump(obj, open(path, "w"), indent=1, default=str)
+    # `--out` names a DIRECTORY, which the provenance door cannot sidecar on its own (it stamps FILES named by an
+    # output flag); declare each written file so it gets a `.prov.json` at exit (AMENDMENT 3 dev check, found when
+    # its artifacts came back unstamped; they were backfilled by _lexicon_closed_class_a3_backfill_prov.py).
+    try:
+        from research.runners import declare_output
+        declare_output(path)
+    except Exception:  # noqa: BLE001 -- provenance must never be why a run dies
+        pass
     print("wrote", path, flush=True)
 
 
