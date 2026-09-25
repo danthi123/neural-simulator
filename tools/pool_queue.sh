@@ -51,6 +51,75 @@ malformed_depth() {
   ' "$Q"
 }
 
+strip_checked_reason_prefix() {
+  # strip_checked_reason_prefix <pool.running JOB field> -- pool_autodispatch.sh's pop_job() prepends
+  # "POOL_CHECKED_REASON=$(printf '%q' "$checked_reason") " to every job before it is either recorded
+  # in pool.running or dispatched (see pop_job, tools/pool_autodispatch.sh). We only need the BOUNDARY
+  # of that token to recover the underlying command -- not its decoded content -- so no unescaping is
+  # attempted; this just skips past it and prints what remains. Handles both forms bash's %q emits: a
+  # backslash-escaped token (the common case -- %q backslash-escapes space/$/'/"/(/)/;/etc. but leaves
+  # comma/colon bare, e.g. a reason like "D6 N=2000 OOM root-cause found: ... (2026-09-23 11:33, ...)")
+  # and a $'...' ANSI-C-quoted token (%q's fallback when the value holds control characters). A field
+  # with no such prefix at all is echoed back unchanged.
+  local s="$1" rest
+  case "$s" in
+    "POOL_CHECKED_REASON="*) s="${s#POOL_CHECKED_REASON=}" ;;
+    *) printf '%s' "$s"; return 0 ;;
+  esac
+  case "$s" in
+    \$\'*)
+      rest="${s#\$\'}"
+      while [ -n "$rest" ]; do
+        case "$rest" in
+          \\*) rest="${rest:2}" ;;             # an escaped pair inside the $'...' body -- keep both, move on
+          \'*) rest="${rest:1}"; break ;;      # the unescaped closing quote -- token ends here
+          *) rest="${rest:1}" ;;
+        esac
+      done
+      s="$rest"
+      ;;
+    *)
+      rest="$s"
+      while [ -n "$rest" ]; do
+        case "$rest" in
+          \\*) rest="${rest:2}" ;;             # backslash-escaped char (incl. an escaped space) -- part of the token
+          ' '*) break ;;                       # first UNescaped space -- the token/job separator
+          *) rest="${rest:1}" ;;
+        esac
+      done
+      s="$rest"
+      ;;
+  esac
+  while :; do   # drop the separating space(s) left before the job command
+    case "$s" in
+      ' '*) s="${s:1}" ;;
+      *) break ;;
+    esac
+  done
+  printf '%s' "$s"
+}
+
+job_liveness_on_node() {
+  # job_liveness_on_node <node> <exact pool.running JOB field text> -- echoes ALIVE, DEAD or UNREACH.
+  # The text is exactly what pool_autodispatch.sh:remote_launch_command base64-encoded into JOB_B64 for
+  # that dispatch (pop_job's output, byte-for-byte -- fill_node passes the identical string to both the
+  # CLAIMED/pool.running record and remote_launch_command), so a still-running process of that exact
+  # claim carries `JOB_B64=<same b64>` in its /proc/<pid>/environ for its whole lifetime (inherited
+  # through remote_launch_command's `setsid bash -c`). Same ssh/-F/timeout conventions as --probe-node.
+  local node="$1" job_text="$2" b64
+  b64=$(printf '%s' "$job_text" | base64 -w0)
+  if ! timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" true >/dev/null 2>&1; then
+    echo UNREACH; return 0
+  fi
+  if timeout 20 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=8 "$node" \
+       "for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null; done | grep -qxF 'JOB_B64=$b64'" \
+       >/dev/null 2>&1; then
+    echo ALIVE
+  else
+    echo DEAD
+  fi
+}
+
 case "${1:-list}" in
   add)   [ -n "${2:-}" ] || { echo "usage: pool_queue.sh add '<command>' --checked '<what the record says>'" >&2; exit 2; }
          # THE RECORD-CHECK GATE. --checked forces a sentence about what the existing record says BEFORE compute
@@ -194,22 +263,63 @@ case "${1:-list}" in
          # unserved: _b1_v1_selforg_onbridge_derisk --seeds 42 43 44 ran on pool41 AND pool42 concurrently,
          # _emerge72_construction_registry_derisk went out 4x and _self_schema_region_derisk 3x inside 90
          # minutes. A full queue and a busy pool looked like good utilisation and were re-deriving one result.
-         # Compare the COMMAND only (field 2, minus the #checked: annotation) against both the queue and the
-         # running set, so a re-run must be made deliberate rather than happening by accident.
+         # Compare the COMMAND only (minus queue metadata) against both the queue and the running set, so a
+         # re-run must be made deliberate rather than happening by accident.
+         #
+         # THE RUNNING-SET HALF NEVER MATCHED (bug measured 2026-09-25 07:20). A pool.running record is
+         # `date<TAB>node<TAB>job` (fill_node/CLAIMED, tools/pool_autodispatch.sh), so `cut -f2-` on it
+         # yields "<node>\t<job>", never a bare command -- and the job field itself carries a
+         # `POOL_CHECKED_REASON=<%q token> ` prefix the dispatcher's pop_job() adds, which the queue-only
+         # "#checked:" stripping never touches. The comparison was therefore comparing NEW_CMD against
+         # "<node>\t...POOL_CHECKED_REASON=...", which cannot ever be equal. Consequence: all 18 D6 N=2000
+         # cells were re-queued at 23:41-00:05 while the first dispatch (~05:00, same revision) was still
+         # alive on pool41/pool42; 7 duplicates ran 7-26h on 15 GB mini-PCs before being stopped by hand.
+         #
+         # FIX: parse the record correctly (strip_checked_reason_prefix, above) AND never trust a text match
+         # alone -- a stopped/crashed job leaves its pool.running line behind (nothing here retires it), so a
+         # text match is only a CANDIDATE; job_liveness_on_node (above) verifies against the claimed node's
+         # own /proc/*/environ before refusing. The queue-side comparison carries no such staleness problem
+         # (a queued line is retired the moment it is popped) and is left exactly as it was.
          NEW_CMD=$(printf '%s' "$2" | tr -s ' ')
          DUP=""
-         for f in "$Q" "${Q%.queue}.running"; do
-           [ -f "$f" ] || continue
+         if [ -f "$Q" ]; then
            while IFS= read -r line; do
              existing=$(printf '%s' "$line" | cut -f2- | sed 's/  #checked:.*//' | tr -s ' ')
-             [ "$existing" = "$NEW_CMD" ] && DUP="$f"
-           done < "$f"
-         done
+             [ "$existing" = "$NEW_CMD" ] && DUP="$Q"
+           done < "$Q"
+         fi
          if [ -n "$DUP" ] && [ "${FORCE_DUP:-0}" != "1" ]; then
-           echo "⛔ REFUSED: this exact command is already queued or running (in $(basename "$DUP"))." >&2
+           echo "⛔ REFUSED: this exact command is already queued (in $(basename "$DUP"))." >&2
            echo "   Re-running an identical job produces an identical result and starves another lane." >&2
            echo "   If the repeat is deliberate (a genuine replication), re-run with FORCE_DUP=1." >&2
            exit 2
+         fi
+         RUNNING_FILE="${Q%.queue}.running"
+         RUN_ALIVE_NODE=""; RUN_ALIVE_DATE=""; RUN_UNREACH_NODE=""; RUN_DEAD_NODE=""; RUN_DEAD_DATE=""
+         if [ -f "$RUNNING_FILE" ]; then
+           declare -A _RQ_LIVENESS=()   # node -> ALIVE|DEAD|UNREACH; one ssh per distinct node even with several matches
+           while IFS=$'\t' read -r rdate rnode rjob; do
+             [ -n "$rnode" ] && [ -n "$rjob" ] || continue
+             norm=$(strip_checked_reason_prefix "$rjob" | tr -s ' ')
+             [ "$norm" = "$NEW_CMD" ] || continue
+             if [ -z "${_RQ_LIVENESS[$rnode]+x}" ]; then
+               _RQ_LIVENESS[$rnode]=$(job_liveness_on_node "$rnode" "$rjob")
+             fi
+             case "${_RQ_LIVENESS[$rnode]}" in
+               ALIVE) RUN_ALIVE_NODE="$rnode"; RUN_ALIVE_DATE="$rdate" ;;
+               UNREACH) [ -n "$RUN_UNREACH_NODE" ] || RUN_UNREACH_NODE="$rnode" ;;
+               DEAD)    [ -n "$RUN_DEAD_NODE" ] || { RUN_DEAD_NODE="$rnode"; RUN_DEAD_DATE="$rdate"; } ;;
+             esac
+           done < "$RUNNING_FILE"
+         fi
+         if [ -n "$RUN_ALIVE_NODE" ]; then
+           echo "⛔ REFUSED: this exact command is already RUNNING on $RUN_ALIVE_NODE since $RUN_ALIVE_DATE; FORCE_DUP=1 only for a deliberate replication." >&2
+           [ "${FORCE_DUP:-0}" = "1" ] || exit 2
+         elif [ -n "$RUN_UNREACH_NODE" ]; then
+           echo "⛔ REFUSED: a matching claim exists on $RUN_UNREACH_NODE but it could not be reached to verify liveness; failing closed. FORCE_DUP=1 to override." >&2
+           [ "${FORCE_DUP:-0}" = "1" ] || exit 2
+         elif [ -n "$RUN_DEAD_NODE" ]; then
+           echo "ℹ️  a previous identical claim exists ($RUN_DEAD_NODE, $RUN_DEAD_DATE) but is no longer alive -- queueing." >&2
          fi
          # APPEND UNDER THE DISPATCHER'S LOCK (2026-09-24). pop_job rewrites the queue (awk > tmp; mv) under
          # "$Q.lock"; an unlocked append landing between its read and its mv went to the replaced inode and was lost.
