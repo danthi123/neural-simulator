@@ -273,6 +273,16 @@ SELFTEST_CASES = [
     dict(name="synthesis_frontmatter_verdict_field_bars", expect="FAIL", wrong_on=_THROUGH_R6,
          why="a frontmatter `verdict:` field is read",
          doc=_SYN + "verdict: GO\n---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_plural_verdict_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`6-seed GOs` is a verdict word too (a trailing plural `s` hid it)",
+         doc=_SYN + "---\n\n# Lanes A and B: 6-seed GOs\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_multiline_title_verdict_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="a quoted frontmatter title continued on an indented line still carries its verdict word",
+         doc=_SYN + "title: 'Lane A, six seeds,\n  GO'\n---\n\n# Notes\n\nArtifact: `%(art)s`\n\n"
+                    "The accuracy was 0.1525 here.\n"),
+    dict(name="r8_synthesis_html_heading_verdict_bars", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="an HTML `<h1>` heading is a heading",
+         doc=_SYN + "---\n\n<h1>Lane A 6-seed GO</h1>\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="row_trailing_marker_warns_that_it_exempts_nothing", expect="FAIL", wrong_on=_BEFORE_R6,
          expect_warning=("exempts NOTHING",),
          expect_output=("in the SAME cell",),
@@ -431,6 +441,24 @@ SELFTEST_CASES = [
          why="a zero-width character is a SPACE in the normalized copy, never deleted, so `acc<ZWSP>0.1525` keeps "
              "its number",
          doc=_HDR + "The acc" + ZWSP + "0.1525 here.\n"),
+    dict(name="r8_hidden_exempt_twin_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="the reader sees 0.1525 (split by emphasis); an exempt copy hidden in a comment on the same line must "
+             "not vouch for it -- a reader number is matched only to a VISIBLE raw number on its own line",
+         doc=_HDR + "The accuracy was 0.15**25** here. <!-- 0.1525 --> <!--derived-->\n"),
+    dict(name="r8_exempt_twin_on_another_line_cannot_vouch_for_a_split_number", expect="FAIL", wrong_on=_BEFORE_R6,
+         why="the same with the exempt copy on the previous line of the same paragraph",
+         doc=_HDR + "Ratio 0.1525 <!--derived-->\nand the accuracy was 0.15**25** here.\n"),
+    dict(name="r8_bold_derived_number_is_one_claim", expect="PASS", wrong_on=(),
+         why="a bold derived number is ONE claim (raw and reader readings agree on its line), so its marker exempts it",
+         doc=_HDR + "The ratio was **0.104615** here. <!--derived-->\n"),
+    dict(name="r8_invisible_between_minus_and_digits_keeps_sign", expect="FAIL", wrong_on=_BEFORE_R6,
+         why="`<MINUS><ZWSP>0.1625` shows -0.1625: the raw and normalized readings see an unsigned 0.1625 (the "
+             "positive baseline), the reader's reading glues the sign",
+         doc=_HDR + "The delta was " + MINUS + ZWSP + "0.1625 here.\n"),
+    dict(name="r8_bold_minus_before_digits_keeps_sign", expect="FAIL", wrong_on=_THROUGH_R6,
+         why="`<b>-</b>0.1625` shows -0.1625 with a bold minus (a markdown `**-**0.1625` is NOT emphasis -- the "
+             "closing `**` is not right-flanking -- so it renders its asterisks and is read as written)",
+         doc=_HDR + "The delta was <b>" + MINUS + "</b>0.1625 here.\n"),
     dict(name="r8_number_glued_after_a_letter_is_read", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
          why="`corr0.1525` -- every earlier revision's lookbehind treated a letter before the digits as an identifier "
              "and skipped the number (the corpus has one such measurement, `corr0.869`)",

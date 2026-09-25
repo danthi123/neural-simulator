@@ -214,8 +214,9 @@ LOW_COVERAGE_MIN_TOTAL = 30
 # =================================================================================================================
 SYNTH_RE = re.compile(r"^claim_check:[ \t]*[\"']?synthesis[\"']?[ \t]*$", re.M)
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
-_VERDICT_WORD_RE = re.compile(r"(?<![A-Za-z0-9])(no[ \t-]*go|go|pass(?:ed|es)?|fail(?:ed|s)?|refuted|confirmed)"
+_VERDICT_WORD_RE = re.compile(r"(?<![A-Za-z0-9])((?:no[ \t-]*)?gos?|pass(?:ed|es)?|fail(?:ed|s)?|refuted|confirmed)"
                               r"(?![A-Za-z0-9])", re.I)
+_HTML_HEADING_RE = re.compile(r"<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>", re.I | re.S)
 _ATX_ANY_RE = re.compile(r"^[ \t]{0,3}(#{1,6})(?:[ \t]+(.*?))?[ \t#]*$")
 _SETEXT_ANY_RE = re.compile(r"^[ \t]{0,3}(?:=+|-+)[ \t]*$")
 
@@ -502,35 +503,36 @@ def _resolve_boundaries(chars, lines):
             j += 1
         left = out[-1][0] if out else ""
         right = chars[j] if j < n else ""
-        if not (left in _DIGITISH and right in _DIGITISH and left and right):
+        # a dash before the digits glues too: `**-**0.1625` and `-<ZWSP>0.1625` show a SIGNED number
+        if not (left and right and (left in _DIGITISH or left in _DASH_CHARS) and right in _DIGITISH):
             out.append((" ", lines[i]))
         i = j
     return out
 
 
-def _reader_claims(tokens, rn_claims):
-    """Numbers only the READER's reading holds (a number split by markup or an invisible character). Additive:
-    compared by (value, decimals) against the raw/normalized claims of the same block, and every unmatched one is
-    returned as a claim of its own -- it can only ADD a failure."""
-    by_line = {}
+def _reader_claims(tokens, rn_claims, is_hidden):
+    """Numbers only the READER's reading holds (a number split by markup or an invisible character). Additive: each
+    reader number is matched to a raw/normalized claim with the same value and stated precision on the SAME physical
+    line that a reader can SEE (not inside a comment or hidden element); every unmatched one is returned as a claim
+    of its own, which is checked and can never be exempted. (Matching against a hidden copy -- `0.15**25** <!--
+    0.1525 --> <!--derived-->` -- or a copy on another line would let a hidden or exempt twin vouch for the number a
+    reader sees.) It can only ADD a failure."""
+    pool = Counter()
     for c in rn_claims:
-        by_line.setdefault(c.line, []).append(c)
+        if not is_hidden(c.start):
+            pool[(c.line, round(c.value, 12), c.decimals)] += 1
     extra = []
-    for l0, l1, ch, lns in _reader_segments(tokens):
+    for l0, _l1, ch, lns in _reader_segments(tokens):
         keep = _resolve_boundaries(ch, lns)
         if not keep:
             continue
         s = _n_copy("".join(c for c, _ in keep))
-        pool = Counter()
-        for li in range(l0, l1):
-            for c in by_line.get(li, ()):
-                pool[(round(c.value, 12), c.decimals)] += 1
         for (a, b, v, d, u, alts, txt) in _extract(s):
-            key = (round(v, 12), d)
+            line = l0 + keep[min(a, len(keep) - 1)][1]
+            key = (line, round(v, 12), d)
             if pool[key] > 0:
                 pool[key] -= 1
                 continue
-            line = l0 + keep[min(a, len(keep) - 1)][1]
             extra.append(Claim(None, None, line, v, d, u, alts, txt, "reader"))
     return extra
 
@@ -660,14 +662,17 @@ def _fm_value(fm, key):
     if not m:
         return ""
     v = m.group(1)
+    # Every indented line after the key continues its value -- a block scalar (`|`, `>`) or a multi-line plain or
+    # quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a continuation line is still read.
+    block = []
+    for ln in fm[m.end():].split("\n")[1:]:
+        if ln.startswith((" ", "\t")):
+            block.append(ln.strip())
+        else:
+            break
     if v in ("|", ">", "|-", ">-", "|+", ">+"):
-        block = []
-        for ln in fm[m.end():].split("\n")[1:]:
-            if ln.startswith((" ", "\t")) or not ln.strip():
-                block.append(ln.strip())
-            else:
-                break
-        v = " ".join(x for x in block if x)
+        v = ""
+    v = " ".join(x for x in [v] + block if x)
     v = v.strip().strip("\"'").strip()
     return "" if v in ("~", "null", "Null", "NULL") else v
 
@@ -710,6 +715,7 @@ def _synthesis_status(text, doc_path):
             probes.append(("heading on line %d" % (i + 1), h.group(2) or ""))
         elif i > 0 and _SETEXT_ANY_RE.match(ln) and lines[i - 1].strip():
             probes.append(("setext heading on line %d" % i, lines[i - 1]))
+    probes.extend(("HTML heading", m.group(1)) for m in _HTML_HEADING_RE.finditer(text))
     for where, s in probes:
         w = _verdict_word(s)
         if w:
@@ -923,7 +929,12 @@ def _scan(doc_path, tol=None):
             seen.setdefault(c.line, []).append(c)
             rn.append(c)
     rn.sort(key=lambda c: c.start)
-    extra = _reader_claims(toks_gfm, rn)
+    hidden_lines, hidden_spans = _hidden(text, toks_gfm, line_starts)
+
+    def is_hidden(pos):
+        return line_of(pos) in hidden_lines or _in_spans(hidden_spans, pos)
+
+    extra = _reader_claims(toks_gfm, rn, is_hidden)
 
     # ---- exemption: live markers, per cell, capped ---------------------------------------------------------------
     def cells(li):
@@ -964,10 +975,6 @@ def _scan(doc_path, tol=None):
     synthesis, _reason, synth_warn = _synthesis_status(text, doc_path)
     if synth_warn:
         warnings.append((1, "synthesis escape not applied", synth_warn))
-    hidden_lines, hidden_spans = _hidden(text, toks_gfm, line_starts)
-
-    def is_hidden(pos):
-        return line_of(pos) in hidden_lines or _in_spans(hidden_spans, pos)
 
     cited, ignored = set(), set()
     for m in PATH_RE.finditer(text):
