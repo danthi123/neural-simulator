@@ -1,0 +1,193 @@
+{
+  "seed": 42,
+  "role": "canonical_in_sample",
+  "frozen_constants_sha256": "d7d3e61afa31e21988cd878d6250b8f66437d486118af71420f576baa477bdd2",
+  "cusum_k": 0.001668,
+  "cusum_h": 0.016679,
+  "low_init": {
+    "seed": 42,
+    "g_init": 6000.0,
+    "converged": true,
+    "reason": "pinned at floor (fac_g=6000)",
+    "n_iters": 4,
+    "final_fac_g": 6000.0,
+    "final_rel": 0.3439,
+    "final_ceiling": 11000.0,
+    "cusum_k": 0.001668,
+    "cusum_h": 0.016679,
+    "alarms": [],
+    "trajectory": [
+      {
+        "iter": 0,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 1,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 1,
+        "alarm": false
+      },
+      {
+        "iter": 2,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 2,
+        "alarm": false
+      },
+      {
+        "iter": 3,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 3,
+        "alarm": false
+      }
+    ],
+    "read_out": "settled state (last iterate + its own measured rel); no running best"
+  },
+  "mid_init": {
+    "seed": 42,
+    "g_init": 8000.0,
+    "converged": true,
+    "reason": "pinned at floor (fac_g=6000)",
+    "n_iters": 8,
+    "final_fac_g": 6000.0,
+    "final_rel": 0.3439,
+    "final_ceiling": 11000.0,
+    "cusum_k": 0.001668,
+    "cusum_h": 0.016679,
+    "alarms": [],
+    "trajectory": [
+      {
+        "iter": 0,
+        "fac_g": 8000.0,
+        "rel": 0.345,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 1,
+        "fac_g": 7500.0,
+        "rel": 0.3456,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 2,
+        "fac_g": 7000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 3,
+        "fac_g": 6500.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 4,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 0,
+        "alarm": false
+      },
+      {
+        "iter": 5,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 1,
+        "alarm": false
+      },
+      {
+        "iter": 6,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 2,
+        "alarm": false
+      },
+      {
+        "iter": 7,
+        "fac_g": 6000.0,
+        "rel": 0.3439,
+        "cusum_S": 0.0,
+        "ceiling": 11000.0,
+        "streak": 3,
+        "alarm": false
+      }
+    ],
+    "read_out": "settled state (last iterate + its own measured rel); no running best"
+  },
+  "rerun_identical": true,
+  "climber": false,
+  "settled_fac_g": 6000.0,
+  "settled_rel_measured": 0.3439,
+  "converged_both": true,
+  "same_setpoint": true,
+  "intact_rel": 0.3439,
+  "intact_fired": true,
+  "lesion_rel": 0.0278,
+  "lesion_fired": false,
+  "load_bearing": true,
+  "frozen_passed": true,
+  "frozen_clause_fails": [],
+  "frozen_clauses": {
+    "fire_on_cue": true,
+    "persistence": true,
+    "no_fire_before": true,
+    "no_fire_wrongcue": true,
+    "no_intention_silent": true,
+    "lesion_holds": true,
+    "lesion_forgets": true,
+    "separation": true
+  },
+  "default_rel": 0.3439,
+  "margin_default": 0.1439,
+  "margin_settled": 0.1439,
+  "domain_bounded": true,
+  "max_fac_g_visited": 8000.0,
+  "scan": {
+    "6000.0": 0.3439,
+    "6500.0": 0.3439,
+    "7000.0": 0.3439,
+    "7500.0": 0.3456,
+    "8000.0": 0.345,
+    "8500.0": 0.3411,
+    "9000.0": 0.3378,
+    "9500.0": 0.3417,
+    "10000.0": 0.3433,
+    "10500.0": 0.3439,
+    "11000.0": 0.3483
+  },
+  "static_table_margin_DESCRIPTIVE": 0.1439,
+  "elapsed_s": 3199.1,
+  "revision": "2ba01783be41ff52f8d2af288899608b1a4c8058",
+  "margin_positive": true,
+  "margin_ge_default": true
+}
