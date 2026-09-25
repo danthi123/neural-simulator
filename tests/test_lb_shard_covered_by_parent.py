@@ -57,6 +57,16 @@ def _touch(path, mtime):
     os.utime(path, (mtime, mtime))
 
 
+def _touch_matching(path, mtime, fac):
+    """Write the OED side-file with content IDENTICAL to `_lb_report(fac)`'s own per_faculty entry -- what a real
+    parent process actually produces (verified against the real b2a0924 shards: oed_distributional*.json is
+    byte-for-byte the same dict as lb.json's per_faculty entry). Used for every case that should be admitted as
+    covered-by-parent; the plain `_touch` (empty `{}`) is kept for the off-allowlist/dirty-parent/foreign-content
+    cases, where rejection must hold regardless of content."""
+    _write(path, dict(_lb_report(fac)["per_faculty"][0]))
+    os.utime(path, (mtime, mtime))
+
+
 def _agg(tmp_path, tag, seeds, pin, base):
     out = str(tmp_path / "out" / "aggregate.json")
     a = argparse.Namespace(tag=tag, seeds=seeds, pin=pin, base=base, out=out)
@@ -74,8 +84,8 @@ def test_oed_file_with_no_sidecar_inside_parent_window_is_covered(tmp_path, caps
     _write(os.path.join(cell, "lb.json.prov.json"), _clean_prov(PIN, started_str))
     # lb.json.prov.json's own mtime (written by _stamp_outputs at the parent's exit) is "now" by default
     os.utime(os.path.join(cell, "lb.json.prov.json"), (start + 50.0, start + 50.0))
-    # oed_distributional.json: written mid-run, no sidecar of its own
-    _touch(os.path.join(cell, "oed_distributional.json"), start + 10.0)
+    # oed_distributional.json: written mid-run, no sidecar of its own, content matching lb.json's own entry
+    _touch_matching(os.path.join(cell, "oed_distributional.json"), start + 10.0, "open-ended-generation")
 
     result, _ = _agg(tmp_path, "t", [42], pin=PIN, base=str(tmp_path))
 
@@ -102,7 +112,8 @@ def test_seed_suffixed_oed_filename_matches_the_allowlist(tmp_path):
     _write(os.path.join(cell, "lb.json"), _lb_report("open-ended-generation"))
     _write(os.path.join(cell, "lb.json.prov.json"), _clean_prov(PIN, started_str))
     os.utime(os.path.join(cell, "lb.json.prov.json"), (start + 50.0, start + 50.0))
-    _touch(os.path.join(cell, "oed_distributional_s43.json"), start + 10.0)  # _seed_suffix(43) == "_s43"
+    _touch_matching(os.path.join(cell, "oed_distributional_s43.json"), start + 10.0,
+                     "open-ended-generation")  # _seed_suffix(43) == "_s43"
 
     result, _ = _agg(tmp_path, "t", [43], pin=PIN, base=str(tmp_path))
 
@@ -194,7 +205,8 @@ def test_pool_worker_started_in_a_different_timezone_is_still_covered(tmp_path, 
     _write(os.path.join(cell, "lb.json"), _lb_report("open-ended-generation"))
     _write(os.path.join(cell, "lb.json.prov.json"), _clean_prov(PIN, started_str))
     os.utime(os.path.join(cell, "lb.json.prov.json"), (real_exit, real_exit))
-    _touch(os.path.join(cell, "oed_distributional.json"), real_exit - 1.0)  # written just before the sidecar
+    _touch_matching(os.path.join(cell, "oed_distributional.json"), real_exit - 1.0,
+                     "open-ended-generation")  # written just before the sidecar
 
     result, _ = _agg(tmp_path, "t", [42], pin=PIN, base=str(tmp_path))
 
@@ -212,6 +224,78 @@ def test_direct_unit_no_lb_prov_at_all_yields_no_reason(tmp_path):
     _touch(os.path.join(cell, "oed_distributional.json"), time.time())
     missing_prov = os.path.join(cell, "lb.json.prov.json")
 
-    reason = lb_shard._covered_by_parent_reason(cell, "oed_distributional.json", missing_prov, lb_fails={})
+    reason = lb_shard._covered_by_parent_reason(cell, "oed_distributional.json", missing_prov, lb_fails={},
+                                                 lb_per_faculty=[])
 
     assert reason is None
+
+
+# --- direction 3: content binding (fix round, review PoC 2026-09-25) --------------------------------------------
+# The mtime window alone is NOT authorship. Both cases below satisfy allow-list + clean-parent + in-window mtime
+# (everything direction 1 required) and must STILL be rejected because the file's own content disagrees with the
+# cell's own lb.json per_faculty entry.
+
+def test_foreign_content_in_window_is_rejected_content_binding(tmp_path):
+    """The PoC this closes: a file that is NOT the parent's own measurement record -- a stray copy, a leftover
+    from an unrelated tool, or literally any other JSON -- placed in the cell directory with an mtime that
+    happens to fall inside the parent's run window, next to an otherwise-clean lb.json.prov.json. Everything
+    direction-1 checked (allow-list, clean parent, in-window mtime) passes; only content-binding catches this."""
+    cell = os.path.join(str(tmp_path), "t", "s42", "open-ended-generation")
+    start = time.time() - 100.0
+    started_str = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(start))
+    _write(os.path.join(cell, "lb.json"), _lb_report("open-ended-generation"))  # verdict "pass", load_bearing True
+    _write(os.path.join(cell, "lb.json.prov.json"), _clean_prov(PIN, started_str))
+    os.utime(os.path.join(cell, "lb.json.prov.json"), (start + 50.0, start + 50.0))
+    # allow-listed filename, in-window mtime, but content that disagrees with this cell's own lb.json entry
+    _write(os.path.join(cell, "oed_distributional.json"),
+           {"faculty": "open-ended-generation", "verdict": "regressed", "load_bearing": False})
+    os.utime(os.path.join(cell, "oed_distributional.json"), (start + 10.0, start + 10.0))
+
+    result, _ = _agg(tmp_path, "t", [42], pin=PIN, base=str(tmp_path))
+
+    prov = result["provenance"]
+    assert prov["n_covered_by_parent"] == 0
+    assert prov["n_invalid"] == 1
+    assert "s42/open-ended-generation" in prov["invalid_cells"]
+    assert "open-ended-generation" not in result["per_faculty"]
+
+
+def test_copied_real_file_into_another_cell_is_rejected(tmp_path):
+    """A real, internally-consistent oed_distributional.json from seed 42's cell, copied byte-for-byte into a
+    DIFFERENT cell's directory (seed 43), must not be laundered through covered-by-parent there just because the
+    destination cell also has a clean lb.json.prov.json and an in-window mtime. The copied file's content
+    (verdict "regressed") disagrees with seed 43's OWN lb.json entry (verdict "pass" via `_lb_report`), so it
+    fails content-binding against the cell it was copied INTO, even though it is a genuine, real artifact
+    somewhere else."""
+    real_content = {"faculty": "open-ended-generation", "kind": "neural-lesion", "verdict": "regressed",
+                     "load_bearing": True, "null_control_clean": True}
+
+    src_cell = os.path.join(str(tmp_path), "t", "s42", "open-ended-generation")
+    src_start = time.time() - 100.0
+    src_started_str = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(src_start))
+    _write(os.path.join(src_cell, "lb.json"), {"per_faculty": [real_content], "UNRELIABLE": False})
+    _write(os.path.join(src_cell, "lb.json.prov.json"), _clean_prov(PIN, src_started_str))
+    os.utime(os.path.join(src_cell, "lb.json.prov.json"), (src_start + 50.0, src_start + 50.0))
+    _write(os.path.join(src_cell, "oed_distributional.json"), real_content)
+    os.utime(os.path.join(src_cell, "oed_distributional.json"), (src_start + 10.0, src_start + 10.0))
+
+    # a DIFFERENT cell (seed 43) whose own lb.json entry disagrees (verdict "pass", not the copied "regressed")
+    dst_cell = os.path.join(str(tmp_path), "t", "s43", "open-ended-generation")
+    dst_start = time.time() - 100.0
+    dst_started_str = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(dst_start))
+    _write(os.path.join(dst_cell, "lb.json"), _lb_report("open-ended-generation"))
+    _write(os.path.join(dst_cell, "lb.json.prov.json"), _clean_prov(PIN, dst_started_str))
+    os.utime(os.path.join(dst_cell, "lb.json.prov.json"), (dst_start + 50.0, dst_start + 50.0))
+    _write(os.path.join(dst_cell, "oed_distributional.json"), real_content)  # COPIED byte-for-byte from src_cell
+    os.utime(os.path.join(dst_cell, "oed_distributional.json"), (dst_start + 10.0, dst_start + 10.0))
+
+    result, _ = _agg(tmp_path, "t", [42, 43], pin=PIN, base=str(tmp_path))
+
+    prov = result["provenance"]
+    # seed 42's cell is genuinely covered: its oed_distributional.json matches ITS OWN lb.json entry
+    assert "s42/open-ended-generation" in prov["covered_by_parent_cells"]
+    # seed 43's cell is NOT: the copied file's content doesn't match seed 43's own lb.json entry
+    assert "s43/open-ended-generation" in prov["invalid_cells"]
+    assert prov["n_covered_by_parent"] == 1
+    assert prov["n_invalid"] == 1
+    assert result["per_faculty"]["open-ended-generation"]["seeds_present"] == [42]

@@ -116,6 +116,36 @@ def test_declare_output_outside_raw_is_ignored_not_fatal(tmp_path, monkeypatch):
     assert not (tmp_path / "elsewhere.json.prov.json").exists()
 
 
+def test_declare_output_bad_path_does_not_disable_fresh_file_fallback(tmp_path, monkeypatch):
+    """Fix round (review 2026-09-25): a declare_output() registration that never validates (here: the file is
+    never written, simulating a typo'd path or a call site that runs before the write) must NOT disable the
+    fresh-file fallback for the REST of a run's genuine outputs when no argv --out/--output/--json flag is
+    present. Before this fix, `_declared_output_paths` set `seen=True` as soon as ANY value was registered via
+    declare_output(), regardless of whether it validated -- so this run's real, freshly-written artifact would
+    have gone permanently un-sidecared (declared=True, explicit_paths=[], so _stamp_outputs used `explicit_paths`
+    -- an empty list -- as `candidates` instead of falling back to `_fresh_output_paths()`)."""
+    raw = tmp_path / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    real_output = raw / "genuinely_written.json"
+    real_output.write_text("{}", encoding="utf-8")  # mtime is "now" -- fresh relative to _START below
+
+    monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
+    monkeypatch.setattr(provenance, "_RAW_DIR", str(raw))
+    monkeypatch.setattr(provenance, "_START", 0.0)
+    monkeypatch.setattr(provenance, "_EXTRA_DECLARED_OUTPUTS", [])
+
+    provenance.declare_output(str(raw / "typo_never_written.json"))  # never created -- fails validation
+    argv = ["load_bearing_fraction.py"]  # no output flag at all
+    _set_argv(monkeypatch, argv)
+    rec = _base_rec(tmp_path, argv)
+
+    made = provenance._stamp_outputs(rec)
+
+    assert made == [str(real_output)]
+    assert (raw / "genuinely_written.json.prov.json").exists()
+    assert not (raw / "typo_never_written.json.prov.json").exists()
+
+
 def test_declare_output_never_raises_on_a_bad_value(monkeypatch):
     monkeypatch.setattr(provenance, "_EXTRA_DECLARED_OUTPUTS", [])
     provenance.declare_output(123)       # not a string; str() still succeeds, so this just records "123"

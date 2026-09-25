@@ -74,6 +74,16 @@ def declare_output(path):
     applied again at sidecar time, so calling this before the file exists, or on a path outside `raw/`, is
     harmless. Never fatal, by the same contract as the rest of this module -- a bad PATH here must never be why
     the run it is instrumenting fails.
+
+    ONE PER-VALUE GUARANTEE (fix round, review 2026-09-25): a registration only counts as "declared" for the
+    PURPOSE OF DISABLING THE FRESH-FILE FALLBACK once IT ITSELF resolves to a real file under `raw/` at sidecar
+    time. A registration that never validates (a typo'd path, a call before the file was ever actually written,
+    a path outside `raw/`) is simply skipped -- it does NOT, by itself, turn off the fresh-file fallback for the
+    rest of a run's genuine, undeclared outputs. Before this guarantee, ANY call here -- valid or not -- set the
+    module-level "an output was declared" flag unconditionally, so one bad `declare_output()` call anywhere in a
+    run with no `--out`/`--output`/`--json` on argv silently made every OTHER real artifact of that run permanently
+    un-sidecared, with no error and no test (`_declared_output_paths` never distinguished "declared" from
+    "declared and real"). See `test_declare_output_bad_path_does_not_disable_fresh_file_fallback`.
     """
     try:
         _EXTRA_DECLARED_OUTPUTS.append(str(path))
@@ -321,11 +331,21 @@ def _resolved_backend():
 
 
 def _declared_output_paths(rec):
-    """Return (output_flag_seen, existing artifacts under raw named by argv).
+    """Return (declared, existing artifacts under raw named by argv or declare_output()).
 
     A fresh-file scan cannot establish ownership when several runners overlap:
     every process can see every peer's new artifact. Explicit output arguments
     are the stronger ownership record and are used whenever present.
+
+    `declared` (the first element) is True once at least one output path -- from an argv --out/--output/--json
+    flag OR a declare_output() registration -- VALIDATES (resolves under raw/, exists as a file, is not itself a
+    .prov.json). An argv flag alone sets it as soon as the flag is present (the declared path may not exist yet
+    at import time; the run is still trusted to write it by exit). A declare_output() registration is held to a
+    stricter bar: since the contract for calling it is "right after writing the file", a registration that never
+    validates is treated as if it had never been made, and does NOT flip `declared` -- otherwise one bad
+    declare_output() call (a typo, or a call before the file existed) would silently turn off the fresh-file
+    fallback for a run's entire remaining, undeclared output with no error and no replacement (see
+    declare_output's docstring).
     """
     argv = list(rec.get("argv") or ())
     cwd = rec.get("cwd") or os.getcwd()
@@ -355,13 +375,16 @@ def _declared_output_paths(rec):
         if (inside_raw and os.path.isfile(candidate)
                 and not candidate.endswith(".prov.json")):
             values.append(candidate)
-    # declare_output() registrations: same validation as an argv-declared path, and their presence marks this run
-    # as "declared" too, so a runner with NO --out/--output/--json flag but at least one declare_output() call
-    # still gets the explicit-path treatment instead of silently falling through to fresh-file scanning.
+    # declare_output() registrations: same validation as an argv-declared path. A registration marks this run as
+    # "declared" (so a runner with NO --out/--output/--json flag but at least one VALID declare_output() call
+    # still gets the explicit-path treatment instead of falling through to fresh-file scanning) ONLY once it
+    # actually validates -- a registration that fails validation (never became a real file under raw/, or points
+    # outside it) is silently skipped and must NOT flip `seen` on its own, or it would disable the fresh-file
+    # fallback for the rest of this run's genuine outputs with nothing to replace it (see declare_output's
+    # docstring: "ONE PER-VALUE GUARANTEE").
     for value in list(_EXTRA_DECLARED_OUTPUTS):
         if not value:
             continue
-        seen = True
         candidate = os.path.realpath(os.path.join(cwd, os.path.expanduser(value)))
         try:
             inside_raw = os.path.commonpath((raw, candidate)) == raw
@@ -369,6 +392,7 @@ def _declared_output_paths(rec):
             inside_raw = False
         if (inside_raw and os.path.isfile(candidate)
                 and not candidate.endswith(".prov.json")):
+            seen = True
             values.append(candidate)
     return seen, list(dict.fromkeys(values))
 
