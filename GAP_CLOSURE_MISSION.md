@@ -63,6 +63,13 @@ decoy-probe discriminating-power check + non-gluing normalization + GFM tables +
 later: the round-6 retro listed ~73 existing findings that fail stricter checks (candidate real errors, not rewritten).
 B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the worktree re-run hit a missing .venv; fixed d85d6fef).
 
+**🌙 07:05 claim-check:** round 7 (branch research/claimcheck-r7 @ 4ff05b018: precision-aware matching cut rule-caused
+false positives to 10/353, but opus review UNSOUND with 6 regressions vs main, the worst a literal '<!--derived' in a
+code span hiding whole sections again). Every round that deleted or hid markup opened a hole, so round 8 FAILS CLOSED
+(workflow `w8v90ajxq`): every number in the raw file is checked, nothing is deleted or hidden; only an exact
+'<!--derived-->' comment outside code (markdown-it) exempts its own line/cell; precision-aware matching; per-claim
+chance rate. main keeps its current checker until a round reviews SOUND with no regression vs main or r5.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
