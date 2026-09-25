@@ -1,0 +1,36 @@
+{
+ "run_id": "1790307262-2035555",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/4da72fd2316902697972917a72536d9e9def95ef/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_MULTIREF_FOCUS_BIND\": \"1\", \"BRAIN_MULTIREF_LESION_SCOPE\": \"recur\", \"BRAIN_MULTIREF_LESION\": \"1\"}",
+  "--turns",
+  "wmf_a1_intro,wmf_a1_ask",
+  "--out",
+  "/home/ubuntu/derisk-pool/revisions/4da72fd2316902697972917a72536d9e9def95ef/research/findings/raw/_load_bearing/wmb_focus/s44/on_lesion_rep_wmf_a1_s44.json"
+ ],
+ "git_sha": "4da72fd2316902697972917a72536d9e9def95ef",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "ea0d98256ea6fd9ff8f5a659cbb72fef8328a56a38ed04544a3a1b5b2388594f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T03:34:22",
+ "env": {
+  "LB_WMB_FOCUS_PROBE": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790299387044255241-1528",
+  "POOL_JOB_MEM_GB": "7",
+  "SIM_RUN_ID": "1790299387-1817215"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/wmb_focus/s44/on_lesion_rep_wmf_a1_s44.json"
+}
