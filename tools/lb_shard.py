@@ -11,6 +11,7 @@ would race on them.
   python tools/lb_shard.py jobs  --seeds 42 43 44 --tag allfixes [--root REMOTE_ROOT]   # print one shell job per line
   python tools/lb_shard.py jobs  --seeds 42 --tag T --no-fixes --probe-set thin            # production default, thin probes
   python tools/lb_shard.py aggregate --tag allfixes [--seeds ...]                       # robust core from shard outputs
+  python tools/lb_shard.py aggregate --tag T --pin <sha> [--expect-env BRAIN_X=1 ...]  # verified; flipcand arm (B2c)
 
 The ENV below is the ADEQUATE-probe configuration plus every fix merged on main as of 2026-09-23 (each flag must have
 code references on main — gates/finding_mechanism_on_main).
@@ -79,15 +80,44 @@ PIN_FILENAME = "PIN.txt"
 # default-battery-B2a-FAIL.md: 23/28 coverable faculties' seed-102 cell ran off a dirty local worktree with a
 # SHORT git_sha and source_kind null, and the aggregate read clean because it never looked).
 PROV_ARM_ALLOWED_BRAIN_KEYS = {"BRAIN_CHAT_SEED"}  # arm runners set this after import; lb.json's own env allows NONE
+# B2c (research/findings/2026-09-25-production-default-battery-B2c-paired-flip-PREREGISTRATION.md): a FLIP-CANDIDATE
+# arm runs with declared BRAIN_* flags in every process's env (`jobs --extra-env`). Under the plain pin rule every such
+# cell reads "stray BRAIN_* env key" and is excluded, so a flipcand arm could never be aggregated verified. An
+# EXPECTED env (`aggregate --expect-env K=V ...`, or the EXPECT_ENV.txt that `jobs --pin` writes beside PIN.txt) turns
+# those keys from forbidden into REQUIRED: every checked sidecar must carry each expected key with exactly the expected
+# value (the manipulation check at the provenance level: the flag reached every arm process), and no other BRAIN_* key
+# beyond it (+ BRAIN_CHAT_SEED on arm sidecars). No expected env == the B2b Amendment 1.2 rule, unchanged.
+EXPECT_ENV_FILENAME = "EXPECT_ENV.txt"
 
 
 def _pin_file(base, tag):
     return "%s/%s/%s" % (base, tag, PIN_FILENAME)
 
 
-def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
+def _expect_env_file(base, tag):
+    return "%s/%s/%s" % (base, tag, EXPECT_ENV_FILENAME)
+
+
+def parse_expect_env(items):
+    """`KEY=VAL` strings -> {KEY: VAL}. Only BRAIN_* keys are accepted: they are the only env class the pin rule
+    polices (an LB_* probe flag or a thread count is not a production flag). Raises ValueError on anything else, so a
+    typo cannot silently widen or narrow what a verified aggregate admits."""
+    out = {}
+    for kv in items or ():
+        k, sep, v = str(kv).strip().partition("=")
+        if not sep or not k.startswith("BRAIN_") or not v:
+            raise ValueError("expected-env entry %r is not BRAIN_<NAME>=<value>" % (kv,))
+        if k in out and out[k] != v:
+            raise ValueError("expected-env key %s given twice with different values" % k)
+        out[k] = v
+    return out
+
+
+def _prov_sidecar_fails(prov_path, pin, allow_brain_keys, expect_env=None):
     """Fields of ONE `.prov.json` sidecar that fail the pin rule. Empty list == this sidecar is a clean
-    measurement of `pin`. Never raises: an unreadable/missing sidecar is reported as a failure, not skipped."""
+    measurement of `pin`. Never raises: an unreadable/missing sidecar is reported as a failure, not skipped.
+    `expect_env` ({BRAIN_KEY: value}, default none): each key must be present with exactly that value, and is then
+    not a stray key; with none given the rule is exactly B2b Amendment 1.2's."""
     if not os.path.exists(prov_path):
         return ["missing"]
     try:
@@ -107,9 +137,15 @@ def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
     env = pj.get("env") or {}
     if env.get("SIM_BACKEND") != "numpy":
         fails.append("env.SIM_BACKEND=%r (want numpy)" % env.get("SIM_BACKEND"))
-    stray = sorted(k for k in env if k.startswith("BRAIN_") and k not in allow_brain_keys)
+    expect_env = expect_env or {}
+    stray = sorted(k for k in env if k.startswith("BRAIN_") and k not in allow_brain_keys and k not in expect_env)
     if stray:
         fails.append("stray BRAIN_* env key(s): %s" % ",".join(stray))
+    for k, v in sorted(expect_env.items()):
+        if k not in env:
+            fails.append("expected env %s=%s missing" % (k, v))
+        elif env.get(k) != v:
+            fails.append("env.%s=%r (want %r)" % (k, env.get(k), v))
     return fails
 
 
@@ -250,7 +286,7 @@ def _covered_by_parent_reason(cell_dir, fn, lb_prov_path, lb_fails, lb_per_facul
             % (file_mtime, start_epoch, exit_epoch))
 
 
-def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
+def cell_prov_fails(cell_dir, pin, lb_per_faculty=(), expect_env=None):
     """B2b Amendment 1.2's validity rule for the shard directory `cell_dir` (one faculty x one seed), against
     `pin`. `lb_per_faculty` is this cell's own lb.json `per_faculty` list (the caller already parsed lb.json to
     iterate it -- passed through rather than re-read here), used only for `_covered_by_parent_reason`'s content
@@ -260,11 +296,12 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
     import). `covered` is {filename: reason} for any file admitted with NO sidecar of its own via
     `_covered_by_parent_reason` -- reported, never silent, and never a reason to treat the cell as MORE trustworthy
     than its sidecars actually show (a covered file rides entirely on lb.json.prov.json's own clean verdict AND
-    its own content matching that same lb.json's `per_faculty` entry)."""
+    its own content matching that same lb.json's `per_faculty` entry). `expect_env` (B2c, default none) is applied
+    to EVERY checked sidecar, lb.json's and each arm's alike (see `_prov_sidecar_fails`)."""
     out = {}
     covered = {}
     lb_prov_path = os.path.join(cell_dir, "lb.json.prov.json")
-    lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set())
+    lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set(), expect_env=expect_env)
     if lb_fails:
         out["lb.json.prov.json"] = lb_fails
     try:
@@ -282,7 +319,7 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
                 continue
             out[fn + ".prov.json"] = ["missing"]
             continue
-        f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS)
+        f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS, expect_env=expect_env)
         if f:
             out[fn + ".prov.json"] = f
     return out, covered
@@ -321,6 +358,19 @@ def cmd_jobs(a):
         with open(pf, "w") as fh:
             fh.write(pin_arg.strip() + "\n")
         print("# pin recorded for tag %r: %s -> %s" % (a.tag, pin_arg, pf), file=sys.stderr)
+        # B2c: every BRAIN_* key the job lines carry is part of the tag's registered contract, recorded beside the pin
+        # so a flip-candidate arm aggregates verified by default (a --no-fixes base arm carries none and keeps the
+        # plain rule). A stale EXPECT_ENV.txt from an earlier `jobs --pin` of the same tag is removed when this call
+        # declares none.
+        ef = _expect_env_file(OUT_BASE, a.tag)
+        expected = {k: v for k, v in envd.items() if k.startswith("BRAIN_")}
+        if expected:
+            with open(ef, "w") as fh:
+                fh.write("".join("%s=%s\n" % kv for kv in sorted(expected.items())))
+            print("# expected BRAIN_* env recorded for tag %r: %s -> %s"
+                  % (a.tag, " ".join("%s=%s" % kv for kv in sorted(expected.items())), ef), file=sys.stderr)
+        elif os.path.exists(ef):
+            os.remove(ef)
 
 
 def cmd_aggregate(a):
@@ -335,6 +385,20 @@ def cmd_aggregate(a):
             recorded = ""
         if recorded:
             pin, pin_source = recorded, "file:%s" % pin_file
+    # B2c expected env: `--expect-env` wins (an empty `--expect-env` explicitly declares none); otherwise the
+    # EXPECT_ENV.txt `jobs --pin` recorded for this tag; otherwise none (the plain B2b Amendment 1.2 rule).
+    expect_arg = getattr(a, "expect_env", None)
+    expect_env, expect_source = {}, None
+    if expect_arg is not None:
+        expect_env, expect_source = parse_expect_env(expect_arg), "--expect-env"
+    else:
+        ef = _expect_env_file(base, a.tag)
+        if os.path.exists(ef):
+            try:
+                expect_env = parse_expect_env([ln for ln in open(ef).read().split() if ln.strip()])
+            except (OSError, ValueError) as e:
+                raise SystemExit("⛔ unreadable %s (%s) -- refusing to aggregate with a guessed expected env" % (ef, e))
+            expect_source = "file:%s" % ef
 
     rows = {}  # fac -> {seed: row}
     invalid_cells = {}  # "s<seed>/<fac>" -> {sidecar: [fail strings]}, EXCLUDED from `rows` -- never counted, never 0
@@ -353,7 +417,7 @@ def cmd_aggregate(a):
             fac, kind = p["faculty"], p.get("kind")
             if pin and kind in COVERABLE_KINDS:
                 n_checked += 1
-                fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))
+                fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []), expect_env=expect_env)
                 if fails:
                     invalid_cells["s%d/%s" % (seed, fac)] = fails
                     continue  # NOT a measurement of `pin` -- excluded, reported below, never scored 0
@@ -451,6 +515,12 @@ def cmd_aggregate(a):
             # verdict, and that distinction must survive into the artifact.
             "n_covered_by_parent": n_covered, "covered_by_parent_cells": covered_cells,
         }
+        if expect_env:
+            # B2c: named in the artifact, never folded in silently -- a verified flip-candidate aggregate must say
+            # which BRAIN_* flags it REQUIRED on every sidecar (keys absent when none was expected: B2a/B2b unchanged).
+            out["provenance"]["rule"] = "B2b Amendment 1.2 + B2c expected env"
+            out["provenance"]["expect_env"] = dict(sorted(expect_env.items()))
+            out["provenance"]["expect_env_source"] = expect_source
     else:
         out["provenance"] = {
             "status": "unverified", "pin": None, "pin_source": None,
@@ -465,6 +535,9 @@ def cmd_aggregate(a):
     if pin:
         print("provenance: pin=%s (%s) n_checked=%d n_valid=%d n_invalid=%d n_covered_by_parent=%d"
               % (pin, pin_source, n_checked, n_checked - n_invalid, n_invalid, n_covered))
+        if expect_env:
+            print("provenance: expected env (%s): %s"
+                  % (expect_source, " ".join("%s=%s" % kv for kv in sorted(expect_env.items()))))
         for k in sorted(invalid_cells):
             print("  INVALID %s: %s" % (k, "; ".join("%s[%s]" % (sc, ", ".join(fs))
                                                        for sc, fs in sorted(invalid_cells[k].items()))))
@@ -503,6 +576,11 @@ def main():
                         "env.SIM_BACKEND=numpy, no stray BRAIN_* key) is excluded and reported, never counted, "
                         "never scored 0. Defaults to the pin recorded by `jobs --pin` for this tag, if any; with "
                         "neither, prints a loud warning and marks the aggregate provenance 'unverified'.")
+    g.add_argument("--expect-env", nargs="*", default=None, metavar="BRAIN_KEY=VAL",
+                   help="B2c: BRAIN_* flags this tag's job lines carry (a flip-candidate arm). With --pin, every "
+                        "checked sidecar must hold each one with exactly that value and no other BRAIN_* key "
+                        "(+ BRAIN_CHAT_SEED on arm sidecars). Defaults to the %s `jobs --pin` recorded for this "
+                        "tag, if any; an empty --expect-env explicitly declares none." % EXPECT_ENV_FILENAME)
     g.add_argument("--base", default=OUT_BASE,
                    help="root directory holding <tag>/s<seed>/<faculty>/lb.json (default: %s). Override to "
                         "aggregate a shard tree checked out elsewhere (e.g. the primary checkout) without cd-ing "
