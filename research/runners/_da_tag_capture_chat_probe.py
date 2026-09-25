@@ -68,6 +68,12 @@ ARMS = [
     ("neu_imm_intact", "datni_recall", dict(ON)),
     ("sal_night_off_intact", "datc_recall", dict(OFF)),
     ("sal_night_off_lesion", "datc_recall", {**OFF, **LES}),
+    # neu_night_off_intact (branch research/da-tag-capture-ltm-on, 2026-09-24, Amendment 3): the plain telling's
+    # OWN companion-OFF control -- today's production default (no DA-tag-capture at all) tells the SAME neutral
+    # fact, sleeps, and is asked. Existed for the salient group (sal_night_off_*) since the original wiring but
+    # never for the neutral one, so nothing in this runner could show whether flipping BRAIN_DA_TAG_CAPTURE ON
+    # makes an ORDINARY (non-salient) fact WORSE off than it is today -- see g["ordinary_fact_flip_forgetting"].
+    ("neu_night_off_intact", "datn_recall", dict(OFF)),
 ]
 LESION_HELD_MAX_RATIO = 0.25        # G6: lesion PRP p_max must stay below 25 % of the intact arm's (the D1 pool's
                                     #  tonic-rate noise floor gives a ~0.1 per turn at DA=0.5; see the prereg)
@@ -205,6 +211,21 @@ def grade_seed(res):
             on_d1s.append(tc["d1_a_go"])
     g["G_isolation_gamma_consistent"] = bool((not on_gammas or all(abs(v - on_gammas[0]) < 1e-6 for v in on_gammas))
                                              and (not on_d1s or all(abs(v - on_d1s[0]) < 1e-6 for v in on_d1s)))
+    # ORDINARY_FACT_FLIP_FORGETTING (REPORTED, NOT gating -- branch research/da-tag-capture-ltm-on, 2026-09-24
+    # Amendment 3, board #227 item (c)): does flipping BRAIN_DA_TAG_CAPTURE ON cost a plainly-told fact its
+    # overnight survival, relative to TODAY'S production default (the flag off)? True iff the companion-OFF
+    # control recalls the neutral fact correctly (today's baseline: nothing decays it) AND the companion-ON
+    # arm does not (G3 already requires the ON arm to abstain here BY DESIGN -- that is the mechanism's own
+    # selectivity, not a bug -- so a True reading here is EXPECTED under a working mechanism, not a failure of
+    # it; it exists to make the flip's true cost to ordinary conversational recall visible in the record rather
+    # than assumed). Deliberately excluded from `core`/`seed_verdict`: it must never retroactively change the
+    # already-scored G0-G6 verdict of a seed*.json committed before this arm existed. `neu_night_off_intact` is
+    # ABSENT on every seed*.json committed under the prior finding (2026-09-24-da-tag-capture-chat-wire-6seed-
+    # GO-runner-level-ltm-off.md) -- reported None (undefined), never crashes aggregate()'s re-grade of those.
+    off_neu = A.get("neu_night_off_intact")
+    g["ordinary_fact_flip_forgetting"] = (None if off_neu is None else
+                                          bool(off_neu["recall_outcome"] == "correct"
+                                               and o.get("neu_night_intact") != "correct"))
     errs = sum(len(v["errors"]) for v in A.values())
     undefined = (not g["G0_null_clean"]) or (not g["P1_immediate_precondition"]) or g["G6_lesion_held"] is None \
         or errs > 0 or any(v == "undefined" for v in o.values()) or not g["G_isolation_gamma_consistent"]
@@ -472,6 +493,23 @@ def selftest():
     g_bad = grade_seed({"arms": arms_iso_bad})
     checks["grade: isolation gamma MISMATCH -> gate fails"] = g_bad["G_isolation_gamma_consistent"] is False
     checks["grade: isolation gamma mismatch -> seed UNDEFINED"] = g_bad["seed_verdict"] == "UNDEFINED"
+    # ordinary_fact_flip_forgetting (branch research/da-tag-capture-ltm-on, Amendment 3): must be able to read
+    # True (the flip costs a fact that today's default keeps), False (no such cost), and None (an artifact from
+    # before this arm existed) -- and must NEVER perturb seed_verdict (excluded from `core` by construction).
+    g_designed = grade_seed({"arms": arms_iso_ok})
+    checks["ordinary forgetting: designed-GO pattern (off=correct, on=abstain) -> True"] = \
+        g_designed["ordinary_fact_flip_forgetting"] is True and g_designed["seed_verdict"] == "GO"
+    arms_no_regress = dict(arms_iso_ok)
+    arms_no_regress["neu_night_intact"] = dict(base, recall_outcome="correct")  # ON arm ALSO keeps it -> no cost
+    g_no_regress = grade_seed({"arms": arms_no_regress})
+    checks["ordinary forgetting: off=correct, on=correct -> False (no regression)"] = \
+        g_no_regress["ordinary_fact_flip_forgetting"] is False
+    arms_old = {k: v for k, v in arms_iso_ok.items() if k != "neu_night_off_intact"}  # pre-branch artifact shape
+    g_old = grade_seed({"arms": arms_old})
+    checks["ordinary forgetting: arm absent (old artifact) -> None, not a crash"] = \
+        g_old["ordinary_fact_flip_forgetting"] is None
+    checks["ordinary forgetting: excluded from core -- absent arm still reads its ordinary seed_verdict"] = \
+        g_old["seed_verdict"] == g_designed["seed_verdict"]
     # aggregate() must RE-GRADE every seed.json with the CURRENT grade_seed, never trust a stored gates.seed_verdict
     # (2026-09-24, review v2:2a37f2493: the confounded research/findings/raw/_da_tag_capture_chat/seed42.json was
     # written under pre-fix code and its stored gates read seed_verdict=GO, but re-grading its own arms under the

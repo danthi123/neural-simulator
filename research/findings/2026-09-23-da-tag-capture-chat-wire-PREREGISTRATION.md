@@ -298,3 +298,94 @@ voiding scope. No `sim/` edit, no default flipped, no `research/queue/*` edit.
 point 1); the harvested seed-42 artifact once the in-flight `_verify` run lands (per point 2); a future
 `--offcheck` run (must use `--pinned-sha 36a175534`, per point 3); and any reader of `lbf_row_s42_ltmoff` or
 `research/findings/raw/_da_tag_capture_chat/seed42/*.json` (VOID, per point 4).
+
+### Amendment 3 (2026-09-24, branch `research/da-tag-capture-ltm-on`) — registering the flip-deciding LTM-ON
+### arm, and a new REPORTED (non-gating) diagnostic for board #227 item (c): does the flip cost an ordinary
+### fact its overnight survival relative to today's production default?
+
+Committed on its own, BEFORE either of the two things it registers has been run. Governs the code committed
+immediately before it on this branch (the two `research/runners/_da_tag_capture_chat_probe.py` additions
+below); every constant is fixed there.
+
+**1. The LTM-ON arm (the flip-deciding read, restated as a formal registration).** The 2026-09-24 GO finding
+(`2026-09-24-da-tag-capture-chat-wire-6seed-GO-runner-level-ltm-off.md`) scored ONLY the buffer-only arm
+(`--ltm off`, `BRAIN_LTM_SHIP_DEFAULT=0`) on all 6 seeds; the production default attaches the tiered
+`wikidata_100k` LTM (`BRAIN_LTM_SHIP_DEFAULT` unset, `--ltm on` on this runner), and that configuration has
+never been run. This amendment registers it under the IDENTICAL instrument, unchanged: the same 10 (now 11,
+per point 2) arms, the same seeds `[42, 43, 44, 100, 101, 102]`, the same gates (`G0`, `P1`, `G1`-`G6`,
+`G_isolation_gamma_consistent`) verbatim from `grade_seed`, and the same `--aggregate` 6/6 combine rule. No
+gate, arm, seed, fact, or conversation text differs between the LTM-off and LTM-on registrations; only the
+`--ltm` flag (and therefore whether `TieredFactStore` wraps the buffer in a routed `wikidata_100k` shard)
+differs. A `GO` under this registration is the flip-deciding read the prior finding's own "what this GO does
+NOT show" section named as still outstanding; a `NO-GO` or `UNDEFINED` blocks the flip exactly as it would
+have under the LTM-off registration.
+
+**Declared reasoning for why the buffer-only measurements below (point 2) are expected, not merely hoped, to
+transfer to LTM-on unchanged (checked, not assumed, by running point 2's new arm under `--ltm on` too, in the
+SAME 6-seed batch as point 1 -- no separate run).** `TieredFactStore.store()` (`research/runners/
+tiered_fact_store.py`) routes every WRITE to the buffer only; the LTM shard is read-only fallback on a buffer
+ABSTAIN (`_tiered`). `webapp/da_tag_capture_chat.py` `store_composer()` unwraps `TieredFactStore` to
+`.buffer` explicitly and the ledger only ever manages blocks written to THAT composer. So whether the LTM tier
+is attached cannot change which blocks the ledger manages or how they decay -- the LTM tier is inert with
+respect to this mechanism by construction, not by measurement. The one thing that could differ is DA level at
+the TELLING turn (if an LTM-backed recall earlier in the conversation changed downstream affect/expectation
+state) -- none of the arms below query the LTM before telling the fact, so this channel is not exercised
+either. Both premises are checked directly by running the SAME `neu_night_off_intact` / `neu_night_intact`
+contrast under `--ltm on`, not left as an unverified inference.
+
+**2. `neu_night_off_intact` + `ordinary_fact_flip_forgetting` (board #227 item (c), REPORTED, never gating).**
+Code added this branch, before this amendment, in `research/runners/_da_tag_capture_chat_probe.py`:
+- A new arm, `neu_night_off_intact` (group `datn`, env `OFF`): the plain telling's OWN companion-OFF control
+  -- today's production default (no DA-tag-capture wiring reachable at all) tells the SAME neutral fact,
+  sleeps, and is asked. The salient group already had this OFF control (`sal_night_off_intact`); the neutral
+  group did not, so nothing in this instrument could show what the flip actually costs an ORDINARY fact
+  relative to today's baseline.
+- A new `grade_seed` field, `ordinary_fact_flip_forgetting`: `True` iff `neu_night_off_intact` recalls
+  correctly (today's baseline: the plain fact is never touched by anything that decays it) AND
+  `neu_night_intact` does not (the companion-ON arm; `G3_neutral_not_kept` already requires this arm to
+  ABSTAIN as the mechanism's OWN by-design selectivity). `False` when the ON arm ALSO recalls correctly (no
+  cost). `None` on any `seed*.json` committed before this branch (the arm did not exist; `aggregate()`'s
+  re-grade of the six already-committed LTM-off files must read `None` here, not crash or silently score 0).
+
+**Why `True` here is an EXPECTED reading of a working mechanism, not evidence against the GO.** `G3` already
+requires the companion-ON neutral arm to abstain overnight -- that is the behavioral-tagging selectivity the
+whole mechanism is FOR (Moncada & Viola 2007; a plain telling near no salient event is not consolidated). A
+`True` `ordinary_fact_flip_forgetting` reading on every seed is therefore the ALREADY-KNOWN G3 result restated
+from the flip's own vantage point: it makes explicit, in the permanent record, that flipping
+`BRAIN_DA_TAG_CAPTURE` to production-default trades "every buffer-taught fact persists indefinitely" (today,
+measured: `research/runners/rf_phasor_composer.py`'s store has no decay path and `TieredFactStore.
+promote_buffer_to_ltm()` is declared "NOT auto-invoked in v1", so nothing removes a buffer entry absent this
+ledger) for "only a DA-salient telling persists." This is a real, load-bearing behavior change the flip
+decision must weigh with eyes open -- board #227 item (c) asks for exactly this visibility, not a fix. No
+other existing route was found to already cover it: `BRAIN_SLEEP_REPLAY` (`2026-08-26-gap5-sleep-replay-
+production-wirein-GO.md`) reactivates the EPISODIC organ's CA3 topic assemblies, a structurally separate
+store from the composer `store_conns` this ledger manages, and would not rescue a forgotten SVO fact here.
+
+**Excluded from `core`/`seed_verdict` by construction** (verified in `--selftest`, both directions): this
+field can never flip a seed between `GO`/`NO-GO`/`UNDEFINED`, and its `None` reading on an old artifact is
+inert under `aggregate()`'s re-grade. It changes no threshold, arm, or gate this document already registered.
+
+**Compute (registered before any run).** Seed 42 first, solo, to obtain a MEASURED (not estimated) peak RSS
+for `--ltm on` before dispatching the other 5 -- this box's own convention (`docs/BUILD_LANE_CHECKLIST.md`
+"pool lines declare their memory... a measured peak, rounded up"). Design-time evidence already on record
+(this document's own "LTM tier off in the measured arms" section) put a full `--ltm on` build over an 11 GB
+cap and over the 15 GB pool-node cap at BUILD time; the isolated `ShardedPhasorStore` build at the same
+78,857-fact scale separately measures ~3.78 GB marginal RSS above a ~1.1 GB no-LTM baseline
+(`2026-09-05-rank6-knowledge-core-substrate-write-scaled-derisk-mixed.md`), so the empirically-observed >11 GB
+full-build cost is NOT fully explained by the store's own marginal footprint alone -- an open gap, not
+papered over with a confident number. Runs on the AWS `r7i.4xlarge` CPU pool (128 GB RAM, 16 vCPU; declared
+in `GAP_CLOSURE_MISSION.md`'s compute-lanes section), `SIM_BACKEND=numpy`, one seed per instance-job, each
+under `tools/memcap.sh` at a cap this document does not fix in advance (the seed-42 job picks a conservative
+cap given the ~128 GB ceiling; the remaining 5 jobs' cap is corrected to the seed-42 MEASURED peak before they
+are queued, per the same convention `research/FAILURE_LOG.md` already recorded a violation of on
+2026-09-24 for a different lane's guessed `mem_gb`). No job in this compute plan is queued by this amendment.
+
+**What this amendment does NOT change:** the gates (`G0`-`G6`, `G_isolation_gamma_consistent`), the existing
+arms, the conversations, the fact, or any threshold in this document or Amendments 1-2 -- only registers the
+LTM-ON arm and adds the new arm + reported field above. No `sim/` edit, no default flipped, no existing
+`seed*.json`'s stored verdict is read as anything other than what Amendment 2's re-grade already made it.
+
+**Governs:** the LTM-ON 6-seed run (point 1) once queued; the `neu_night_off_intact` arm and
+`ordinary_fact_flip_forgetting` field on every run after this commit (point 2); and any reader of the prior
+GO finding, who must read its "what this GO does NOT show" LTM-on caveat as still accurate until point 1's
+own run lands and is scored.
