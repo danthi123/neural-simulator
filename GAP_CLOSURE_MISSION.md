@@ -211,6 +211,16 @@ weekend for batteries Claude queues, within $50/day, auto-stop on; (2) RETIRE th
 model may commit harvested raw results + one-line board entries straight to main through the gates. Prep = workflow `werouis9k`
 (marker retirement, GPU<->local-model auto-swap, tools/status.sh + LOCAL_LLM_RUNBOOK.md, larger-context local-model scouting).
 
+**☀️ 14:40 RESUME RECORD (5-hour usage at 92%, resets ~15:55):** if interrupted, after the reset: read each workflow journal under
+~/.claude/projects/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/subagents/workflows/<run>/journal.jsonl, salvage
+uncommitted work from .claude/worktrees/<run>-N (commit through gates, push), then resume with Workflow({scriptPath, resumeFromRunId}).
+Running: wf_69528e21-31b (pair: review-doc fix, B2c fix, production-path arms), wf_43f07082-768 (slotbinder fast teach),
+wf_99dde278-e1e (enqueue check / fragment audit / AWS r4), wf_84715f6a-68f (awake completion fix), wf_99bc7abf-15b (handoff prep:
+marker retirement, GPU<->llm swap, status+runbook, model scout), wf_87826bf5-9db (corpus-check shared log), wf_e650785f-7b8
+(condense CLAUDE.md + memory; owner approves before apply). STOPPED at 14:40 to save usage: wf_0d0ca4c2-1f4 (6/8 done: pool-stall,
+claim-check r8 and SETTLE A3 built + reviewed SOUND-WITH-ISSUES; the prereg-amendment gate lane is parked). Pending merge:
+research/score-gap4-c26-0925 and research/score--pmem-live-cliff-detector-v2-0925 (both wait on the corpus-check shared-log fix).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
