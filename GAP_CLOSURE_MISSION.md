@@ -52,6 +52,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    registered gate (ordinary fact: flag-off abstains, flag-on recalled; replay-edge and DA lesions abstain). 6 seeds
    queued at the pool front 22:30 (`--family rc`, mem_gb=2, ~1.5 h each); adversarial review running. Open: sleep
    downscaling and later sleep cycles are not modelled yet; whether anything is still forgotten with the flag on is untested.
+   MERGED 3bdf8b619 default-OFF (review SOUND-WITH-ISSUES: replay selection is the store's own resonate-and-fire read,
+   host steps declared). Follow-up: a real-brain long-delay arm (fact told hours before sleep, beyond the capture
+   window) and sleep downscaling, before any flip.
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
