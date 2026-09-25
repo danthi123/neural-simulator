@@ -51,6 +51,34 @@ _START = time.time()
 _START_UTC_NS = time.time_ns()
 _OUTPUT_FLAGS = frozenset(("--out", "--output", "--json"))
 _PRIVATE_PROVENANCE_PREFIX = "SIM_PROVENANCE_"
+# Extra output paths registered via declare_output() below, sidecared at exit exactly like an argv-declared
+# --out/--output/--json path (see declare_output's docstring for why this exists).
+_EXTRA_DECLARED_OUTPUTS = []
+
+
+def declare_output(path):
+    """Register PATH as an output this run owns, sidecared at exit alongside anything named by --out/--output/--json
+    on argv.
+
+    EARNED (2026-09-25, closing a provenance gap on the B2a/B2b load-bearing shards): a runner can write a real
+    artifact from the PARENT process to a path its own `--out` argument never names. `load_bearing_fraction.py`
+    writes `oed_distributional<seed>.json` into the same `out_dir` as its declared `--out lb.json`, from inside
+    `measure_open_ended_distributional()`, well before `main()` writes `lb.json` itself. `_declared_output_paths`
+    only ever sidecars paths named by an output FLAG on argv -- and once ANY output flag is present, the
+    fresh-file fallback that would otherwise have caught this file is switched OFF for the whole run, so the side
+    artifact was a silent, permanent orphan (no `.prov.json`, ever, from any run of that runner).
+
+    Call this once, right after writing the file, to make it a first-class declared output. It only registers the
+    path -- the same existence/location checks `_declared_output_paths` already applies to argv-declared paths
+    (must resolve under `research/findings/raw`, must exist as a file, must not itself be a `.prov.json`) are
+    applied again at sidecar time, so calling this before the file exists, or on a path outside `raw/`, is
+    harmless. Never fatal, by the same contract as the rest of this module -- a bad PATH here must never be why
+    the run it is instrumenting fails.
+    """
+    try:
+        _EXTRA_DECLARED_OUTPUTS.append(str(path))
+    except Exception:
+        pass
 
 
 def _provenance_v2_enabled():
@@ -319,6 +347,21 @@ def _declared_output_paths(rec):
                     break
         if not value:
             continue
+        candidate = os.path.realpath(os.path.join(cwd, os.path.expanduser(value)))
+        try:
+            inside_raw = os.path.commonpath((raw, candidate)) == raw
+        except ValueError:
+            inside_raw = False
+        if (inside_raw and os.path.isfile(candidate)
+                and not candidate.endswith(".prov.json")):
+            values.append(candidate)
+    # declare_output() registrations: same validation as an argv-declared path, and their presence marks this run
+    # as "declared" too, so a runner with NO --out/--output/--json flag but at least one declare_output() call
+    # still gets the explicit-path treatment instead of silently falling through to fresh-file scanning.
+    for value in list(_EXTRA_DECLARED_OUTPUTS):
+        if not value:
+            continue
+        seen = True
         candidate = os.path.realpath(os.path.join(cwd, os.path.expanduser(value)))
         try:
             inside_raw = os.path.commonpath((raw, candidate)) == raw

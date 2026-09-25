@@ -1187,7 +1187,17 @@ def measure_open_ended_distributional(out_dir, seed=42, repeats=1, n_attempts=No
     _sfx = _seed_suffix(seed)
     try:
         os.makedirs(out_dir, exist_ok=True)
-        json.dump(res, open(os.path.join(out_dir, "oed_distributional%s.json" % _sfx), "w"), indent=2, default=str)
+        _oed_path = os.path.join(out_dir, "oed_distributional%s.json" % _sfx)
+        json.dump(res, open(_oed_path, "w"), indent=2, default=str)
+        try:
+            # This file is written from THIS (parent) process outside anything named by --out/--output/--json on
+            # argv, so the provenance door's argv scan never sees it -- register it explicitly so it still gets a
+            # .prov.json sidecar (2026-09-25, closing the gap tools/lb_shard.py's cell_prov_fails found: every
+            # open-ended-generation cell was excluded from every pinned aggregate for want of this one line).
+            from research.runners import declare_output
+            declare_output(_oed_path)
+        except Exception:
+            pass
     except Exception:
         pass   # provenance convenience only -- never fail the measurement over a write error
     return res
