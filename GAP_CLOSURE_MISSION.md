@@ -15,6 +15,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
+**🌙 OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25) — work it in this order, re-arm the heartbeat on every expiry:**
+1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
+   wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
+   2026-09-25 B2a FAIL finding with a follow-up finding (never rewrite the FAIL doc's verdict in place).
+2. Harvest each workflow as it notifies, merge SOUND branches: `w2lnwio5g` (claim-check round 2 + hidden-number audit;
+   any verdict_at_risk doc comes to the owner, no autonomous retraction), `wkqok0g80` (oed provenance), `wf6m1hyvo`
+   (sleep r2 review + awake replay), `wr439l64n` (gap#4 clamp companion + SETTLE A2 wiring), lexicon round 2 agent.
+3. Score as they land (scorer + independent verifier each): sleep route rc family (6 seeds, 269ae8f76) and r2 family
+   (6 seeds, 50c791bf9); DA LTM-on (seed 42 GO, 43-102 queued, mem_gb=48); wm-focus-bind (alive on pool1/2); A10 v4 arms;
+   D6 N2000; SETTLE A3 GPU timing; the gap#4 dev runs the clamp lane queues.
+4. B2b: wave-1 lines age out at ~07:36 (12 h from 19:36). The wave script warns but does not requeue: requeue aged-out
+   lines per prereg A1.4(c) (at most twice) before then.
+5. GPU: slot-binder gate (seed 7) running since 21:00; then the local-LLM bake-off, SETTLE A3, plastic-mask cupy test.
+   When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
+6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
+
 **🟢 UPDATE 01:25 (2026-09-25) — main 5ddff4934. RESUME HERE (the 00:45 block below still holds).**
 - Merged: lb_shard aggregate `--pin` provenance gate + new gate LBP (0d2642ee6, review SOUND; the heartbeat now
   aggregates b2a0924 with `--pin 9db7613296c3...`); wm-focus-bind is ALIVE on pool1/pool2 (the scorer missed job
