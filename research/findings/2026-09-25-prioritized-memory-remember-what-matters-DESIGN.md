@@ -306,9 +306,10 @@ reference (`gates/consumer_hardware_reference`).
 - (c) *Read noise dominates: a read that uses the whole ensemble.* The completed-ensemble read (Step 4's `R_c`) serves
   both the replay and the post-telling encoding read, and the ensemble size D is an operating point measured against
   the one-3090 reference.
-- In every branch, (d): an encoding-state signal for attended assertions (acetylcholine raises afferent strength and
-  synaptic modification, Hasselmo 2006) as a spiking afferent onto the write, and Step 5's channels raising encoding
-  strength. The awake rest route (post-encoding rest helps, Tambini 2010; Dewar 2012) cannot rescue a trace encoded at
+- In every branch, (d): an encoding-state signal (acetylcholine raises afferent strength and synaptic modification,
+  Hasselmo 2006) as a spiking afferent onto the write, driven by the brain's own attention populations (the
+  biased-competition / GNW state), never by a host test of which turns are assertions; and Step 5's channels raising
+  encoding strength. The awake rest route (post-encoding rest helps, Tambini 2010; Dewar 2012) cannot rescue a trace encoded at
   noise, because its re-induction is proportional to R (the arc family's seed-101 miss), so it is not a candidate here.
 Lesion: the step's mechanism cut (the pre-step write). Gates first expected: WM0a, WM0c, WM2a.
 
