@@ -10,7 +10,7 @@
 # Orchestrator: add/edit rows here as batteries launch or land; see "Harvest recipes" in LOCAL_LLM_RUNBOOK.md
 # for any battery whose harvest needs more than the generic listing command below.
 name	raw_glob	expected_rows	harvest_cmd	finding_template
-fi	research/findings/raw/_sleep_forgetting_interference/**/*.json	6	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest fi	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
-settle_a2_wiring	research/findings/raw/_affect_marker_settle_congruence/wiring/**/*.json	6	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest settle_a2_wiring	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
-d6_n2000	research/findings/raw/_d6_capacity_curve/**/*.json	18	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest d6_n2000	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
-b2b_base	research/findings/raw/_load_bearing/_shards/b2b0924-base/**/*.json	258	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest b2b_base	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+fi	research/findings/raw/_sleep_forgetting_interference/seed*.json	6	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest fi	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+settle_a2_wiring	research/findings/raw/_affect_marker_settle_congruence/wiring/s*/*.json	18	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest settle_a2_wiring	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+d6_n2000	research/findings/raw/_d6_capacity_curve/s*_N2000_*.json	18	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest d6_n2000	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+b2b_base	research/findings/raw/_load_bearing/_shards/b2b0924-base/**/lb.json	258	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest b2b_base	research/findings/_templates/SCALED_12WORD_TEMPLATE.md

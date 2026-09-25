@@ -44,7 +44,8 @@ f=0
 if [ -f "$HOME/derisk-pool/sim/job_status.log" ]; then
   f=$(awk -F'\t' -v now="$(date +%s)" '
     $1=="v2" { if ($3!=0 && (now-$2)<=86400) c++; next }
-    { if ($1+0!=0) c++ }
+    # non-v2 lines carry no timestamp, so they cannot be placed in the last 24 h: not counted (2026-09-25:
+    # counting them reported 94 'failures' on pool42 whose real 24 h failures were 6 deliberate SIGTERMs)
     END { print c+0 }' "$HOME/derisk-pool/sim/job_status.log")
 fi
 echo "$r $f"
