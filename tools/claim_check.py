@@ -38,12 +38,16 @@ least as long as the opening one; an unclosed fence runs to the end of the docum
     list or a table (nothing between them: no heading, no other marker), the scope is that intro paragraph plus
     that list/table. Any other next sibling (a heading, a fence, a blockquote, another marker) gets no scope.
     A fenced block is never a sibling scope on its own, because an unclosed fence runs to the end of the file.
+    HTML-comment blocks straight after the marker (provenance notes, invisible when rendered) are skipped to
+    find the unit and are covered with it; a comment block with any visible text in it is a real sibling.
   * RANGE -- a standalone `<!--derived-->` followed later by `<!--/derived-->` exempts exactly the lines between.
     The close marker may share a line: text before it is inside the range, text after it is checked. A close
     pairs with the most recent unpaired standalone opener; an unpaired close does nothing.
   * SECTION -- a heading whose title starts with "Derived" (any level) exempts its section: up to the next
     heading of the same or a higher level (`#` is higher than `##`), or the end of the document.
-  * Markers inside fenced/indented code or inline code spans are text, not markers (the parser says so).
+  * Markers inside fenced/indented code or inline code spans are text, not markers (the parser says so). A
+    table row is parsed whole as inline text, because GFM drops a row's cells beyond the header's count and a
+    marker written after the last pipe would otherwise vanish.
 Two deliberate departures from pure render semantics, both in the direction of checking MORE, because the
 author and the reviewer read the SOURCE:
   * a lazy-continuation line (CommonMark "paragraph continuation text" that sits outside its list item's or
@@ -97,15 +101,20 @@ SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
 # MIN_CHECK_FRACTION of them FAILS. CALIBRATION (stated, not guessed): the round-1 retro-scan of the 353
 # research/findings/*.md added 2026-09-01..2026-09-25 found 71 legitimately all-derived short notes with up to 39
 # claims each, so the floor sits at 40, above that maximum and below the incident's scale (~43-53 claims, 336
-# artifact values). Re-measured under THIS checker on the same population: see
-# research/coordination/claimcheck_parser_retro_2026-09-25.tsv (header). An empirical ceiling over one dated
-# population, not a law: recalibrate if a later scan finds a legitimate all-derived doc above it.
+# artifact values). RE-MEASURED under THIS checker (2026-09-25, research/coordination/
+# claimcheck_parser_retro_2026-09-25.tsv): of the 351 docs added since 2026-09-01 still on disk, 80 check 0 of
+# their claims and the largest has 39; exactly one doc has >= 40 claims with < 5% checked (56 claims, 2 checked).
+# Over the WHOLE corpus, 16 docs have >= 40 claims with < 5% checked (40..85 claims); the other 15 were all added
+# before 2026-09-01 (2026-08-01..2026-08-27): the floor fits current authoring practice, not the older corpus.
+# GATE 2 checks only newly ADDED findings, so those legacy docs block nothing.
+# An empirical ceiling over dated populations, not a law: recalibrate if a new all-derived doc exceeds it.
 MIN_CHECK_FRACTION = 0.05
 LOW_COVERAGE_MIN_TOTAL = 40
 
 _UNESCAPED_PIPE = re.compile(r"(?<!\\)\|")
 _CLOSING_FENCE = re.compile(r"^(`{3,}|~{3,})[ \t]*$")
 _DERIVED_TITLE = re.compile(r"^[\s*_`]*derived\b", re.I)
+_COMMENT_ONLY = re.compile(r"^\s*<!--(?:(?!-->).)*-->\s*$", re.S)
 _LISTS = ("bullet_list", "ordered_list")
 
 
@@ -247,8 +256,26 @@ def derived_scope(text):
     src_lines = [("" if i <= fm_end else ln) for i, ln in enumerate(lines)]
     tokens = _parser().parse("\n".join(src_lines))
 
-    code_lines, lazy, pipeless, unclosed = set(), set(), set(), []
+    code_lines, lazy, pipeless, unclosed, table_lines = set(), set(), set(), [], set()
     headings, closes, inline_lines = [], [], set()
+    # YAML frontmatter is not markdown, so the parser never sees it; an inline marker there (`verdict: ... 0.97
+    # <!--derived-->`, common in this corpus) still exempts its own line, exactly as it always did.
+    inline_lines.update(i for i in range(fm_end + 1) if DERIVED_MARK in lines[i])
+
+    def _markers_in(inline_children, first_line):
+        for c in inline_children or ():
+            if c.type != "derived_marker":
+                continue
+            ln = first_line + c.meta["line_offset"]
+            if c.meta["kind"] == "open":
+                inline_lines.add(ln)
+            else:
+                # the FIRST textual close on the line: if an earlier one sat in a code span, splitting there only
+                # shortens the exempt part (checks more), never lengthens it
+                k = lines[ln].find(DERIVED_CLOSE)
+                if k >= 0:
+                    closes.append((ln, k, k + len(DERIVED_CLOSE)))
+
     for i, t in enumerate(tokens):
         if not t.map:
             continue
@@ -261,6 +288,13 @@ def derived_scope(text):
             lazy.update((t.meta or {}).get("lazy", ()))
         elif t.type == "table_open":
             pipeless.update(ln for ln in range(s, e) if not _UNESCAPED_PIPE.search(lines[ln]))
+            # GFM DROPS a row's cells beyond the header's count, so a marker written after a row's last pipe
+            # (`| a | 0.97 | <!--derived-->`, 107 corpus lines) never reaches a cell's inline token. Each row is
+            # therefore parsed WHOLE as inline text: markers inside code spans still stay text.
+            table_lines.update(range(s, e))
+            for ln in range(s, e):
+                for it in _parser().parseInline(lines[ln]):
+                    _markers_in(it.children, ln)
         elif t.type == "heading_open":
             title = tokens[i + 1].content if i + 1 < len(tokens) and tokens[i + 1].type == "inline" else ""
             headings.append((s, int(t.tag[1]), title))
@@ -274,19 +308,8 @@ def derived_scope(text):
                     closes.append((ln, k, k + len(DERIVED_CLOSE)))
                 if DERIVED_MARK in lines[ln]:
                     inline_lines.add(ln)
-        elif t.type == "inline":
-            for c in t.children or ():
-                if c.type != "derived_marker":
-                    continue
-                ln = s + c.meta["line_offset"]
-                if c.meta["kind"] == "open":
-                    inline_lines.add(ln)
-                else:
-                    # the FIRST textual close on the line: if an earlier one sat in a code span, splitting there
-                    # only shortens the exempt part (checks more), never lengthens it
-                    k = lines[ln].find(DERIVED_CLOSE)
-                    if k >= 0:
-                        closes.append((ln, k, k + len(DERIVED_CLOSE)))
+        elif t.type == "inline" and s not in table_lines:
+            _markers_in(t.children, s)
 
     root = SyntaxTreeNode(tokens)
     openers = [nd for nd in root.walk() if nd.type == "html_block" and nd.map and nd.content.strip() == DERIVED_MARK]
@@ -316,11 +339,18 @@ def derived_scope(text):
     for nd in openers:
         if id(nd) in paired:
             continue
-        sib = nd.next_sibling
+        sib, notes = nd.next_sibling, set()
+        # An HTML-comment block right after the marker (a provenance note; it renders as nothing) is part of the
+        # marker's annotation: skip it to find the unit, and cover its lines. ONE complete comment only -- a block
+        # with visible text around or between comments is a real sibling and ends the search.
+        while sib is not None and sib.type == "html_block" and sib.map and _COMMENT_ONLY.match(sib.content) \
+                and DERIVED_MARK not in sib.content and DERIVED_CLOSE not in sib.content:
+            notes.update(range(*sib.map))
+            sib = sib.next_sibling
         if sib is None or not sib.map or sib.type not in ("paragraph", "table") + _LISTS:
             blocks.append((nd.map[0], sib.type if sib is not None else None, set()))
             continue
-        cov = _unit(sib)
+        cov = _unit(sib) | notes
         if sib.type == "paragraph":
             nxt = sib.next_sibling
             if nxt is not None and nxt.map and nxt.type in ("table",) + _LISTS:
@@ -573,6 +603,13 @@ SELFTEST_CASES = [
     dict(name="derived_section_ends_at_h1", expect="FAIL", wrong_on=("main", "r1"),
          why="a `## Derived` section ends at the next heading of the same OR HIGHER level",
          doc=_HDR + "## Derived\nratio 0.104615\n# Results\nThe accuracy was 0.1525 here.\n"),
+    dict(name="comment_note_then_table", expect="PASS", wrong_on=("r2",),
+         why="an HTML-comment provenance note between the marker and its table is skipped and covered",
+         doc=_HDR + "<!--derived-->\n<!-- values below are rounded from the aggregate block,\n"
+                    "     e.g. 0.104615 is the mean ratio -->\n| metric | value |\n|---|---|\n| ratio | 0.207531 |\n"),
+    dict(name="comment_with_visible_text_is_a_sibling", expect="FAIL", wrong_on=("main", "r1", "r2", "r3"),
+         why="a comment block with visible text between comments is a real sibling, not a skipped note",
+         doc=_HDR + "<!--derived-->\n<!-- a --> The accuracy was 0.1525 here. <!-- b -->\n"),
     dict(name="low_coverage_overmarked", expect="FAIL", wrong_on=("main",),
          why="a substantial doc that exempts (almost) every claim fails whatever exempted them",
          doc=_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1)

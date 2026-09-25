@@ -150,6 +150,9 @@ _H = "# Some finding\n\nArtifact: `%(art)s`\n\n"
     # frontmatter is blanked for the parser: `derived: ...` + `---` is not a setext "Derived" heading
     ("frontmatter_is_not_a_heading",
      "---\nstatus: live\nderived: nothing\n---\n" + _H + "The accuracy was 0.1525 here.\n", {0.1525}),
+    # ... but an inline marker on a frontmatter line still exempts that line (and only that line)
+    ("frontmatter_inline_marker",
+     "---\nstatus: live\nverdict: GO at 0.104615 <!--derived-->\nheadline: 0.1525\n---\n" + _H, {0.1525}),
     # an unpaired close marker does nothing (a later number is still checked)
     ("unpaired_close_is_inert", _H + "Text. <!--/derived--> The accuracy was 0.1525.\n", {0.1525}),
     # PASS direction
@@ -162,6 +165,11 @@ _H = "# Some finding\n\nArtifact: `%(art)s`\n\n"
      _H + "<!--derived-->\nm | v\n--|--\nratio | 0.104615\n", set()),
     ("setext_derived_heading", _H + "Derived\n-------\nratio 0.104615\n\nNext\n----\naccuracy 0.170000\n", set()),
     ("short_all_derived_note", _H + "The ratio here is 0.104615. <!--derived-->\n", set()),
+    # GFM drops cells beyond the header's count; a marker after a row's last pipe still marks that row only
+    ("table_row_trailing_marker", _H + "| m | v |\n|---|---|\n| ratio | 0.104615 | <!--derived-->\n"
+                                       "| acc | 0.1525 |\n", {0.1525}),
+    # ... and inside a code span in a row it is text
+    ("table_row_marker_in_code_span", _H + "| m | v |\n|---|---|\n| `<!--derived-->` | 0.1525 |\n", {0.1525}),
 ])
 def test_spec_guard(name, body, flag, casedir):
     p = _doc(casedir, name, body)
