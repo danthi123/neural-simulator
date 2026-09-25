@@ -180,8 +180,27 @@ def _fact_block(resp):
     return blocks[0] if blocks else None
 
 
+# CORPUS GUARD (2026-09-25, awake-replay-capture Amendment 5). data/corpus/ is git-excluded, so a git WORKTREE has
+# none. Without it the ONEBRAIN XEDGE build fails and the brain degrades to standalone organs ("[webapp] ONEBRAIN XEDGE
+# build FAILED -> degrading to standalone organs") with no error in any arm record -- the first seed-42 arc smoke
+# launch ran that way until it was noticed in the log. The same four core files load_bearing_fraction's guard requires.
+CORPUS_CORE = ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")
+
+
+def corpus_missing(repo=None):
+    """The core corpus files absent from <repo>/data/corpus (default: this checkout)."""
+    repo = repo or _REPO
+    return [f for f in CORPUS_CORE if not os.path.exists(os.path.join(repo, "data", "corpus", f))]
+
+
 # ── arms ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 def run_seed(seed, out_dir, ltm="off", workers=1, family="base", only=None):
+    _miss = corpus_missing()
+    if _miss and os.environ.get("LB_ALLOW_NO_CORPUS") != "1":
+        print("⛔ _da_tag_capture_chat_probe: data/corpus/ is missing %s -- the brain would build without its cross-edge "
+              "and corpus-learned organs. Link or sync the corpus (tools/pool_provision.sh does it for the pool), or "
+              "set LB_ALLOW_NO_CORPUS=1 to measure the degraded brain on purpose." % _miss, file=sys.stderr)
+        raise SystemExit(3)
     sys.path.insert(0, _REPO)
     arm_list = {"rc": RC_ARMS, "r2": R2_ARMS, "arc": ARC_ARMS}.get(family, ARMS)
     grader = {"rc": grade_seed_rc, "r2": grade_seed_r2, "arc": grade_seed_arc}.get(family, grade_seed)

@@ -88,6 +88,8 @@ rest, read ~0.04) regrows to ~0.92 within one hour of rest. In the animal, what 
 the SWR's content among many recent assemblies (the most strongly bound become the burst initiators) and the synapse-by-
 synapse reversal of decaying E-LTP (the pattern is lost, not uniformly shrunk). Neither exists with one fact in a store
 whose decayed trace is a scaled copy of the full pattern. It is measured on the brain as a REPORTED arm (late rest).
+On the seed-42 brain smoke (prereg Amendment 5) the regrowth did NOT happen: the real composer read the 3-h-old trace
+at ~0.008 (the fake curve said ~0.043), and one hour of rest held the trace at ~13 % without bringing it back.
 
 **Rest dose.** On the fake substrate a rest bout every 5-30 min keeps the 4-h-old fact capturable and one per hour does
 not. The dose that the animal needs is not in any source read here; the brain measurement reports it.

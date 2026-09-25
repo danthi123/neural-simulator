@@ -75,7 +75,8 @@ regrows to ~0.92 within one hour of rest. The real companions that would brake i
 assemblies for the SWR's content (Buzsaki: the most strongly bound assemblies become the "burst initiators") and the
 synapse-by-synapse reversal of decaying E-LTP (the ledger shrinks the whole pattern uniformly instead) -- are absent
 with one fact in the store. Recorded, not hidden: the pre-registration amendment measures it on the brain as a
-REPORTED late-rest arm.
+REPORTED late-rest arm. On the seed-42 brain smoke (Amendment 5) it did NOT regrow: the composer's read of the
+3-h-old trace was 0.008, not the fake curve's 0.043, and an hour of rest held the trace at ~13 % without restoring it.
 
 HOST SHORTCUTS (declared, brain-based-only burn-down):
   - the idle tick and the awake/asleep decision are host clock (the engine's IDLE_SEC tick, the ledger's

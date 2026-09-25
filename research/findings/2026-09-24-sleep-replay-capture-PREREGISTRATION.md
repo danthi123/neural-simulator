@@ -513,3 +513,33 @@ REPORTED arms.
 - The six gate rows are pool runs at a full-SHA-pinned revision containing this amendment:
   `--family arc --seed N --ltm off --workers 1 --out research/findings/raw/_awake_replay_capture`. They are not queued
   with this commit.
+
+## Amendment 5 (2026-09-25, branch research/awake-replay-capture) — a corpus guard in the probe; the seed-42 smoke
+
+Committed before any gate row of the arc family runs (no pool line is queued). The change is to the instrument only:
+`run_seed` now refuses (exit code 3) when `data/corpus/` lacks the four core corpus files, as `load_bearing_fraction`
+already does. No arm, group, constant or gate changes. The pin for the six gate rows moves to a revision containing
+this amendment.
+
+**Why.** The first local launch of the seed-42 smoke ran from this branch's worktree, which has no `data/corpus/`
+(those files are excluded from version control). The brain's cross-edge build failed, and the brain degraded to
+standalone organs. No arm record carries an error; only a log line showed it. That launch was stopped after one arm,
+and its output was deleted. The smoke was re-run with the pool's five corpus files linked into the worktree
+(`tools/pool_provision.sh` ships the same files to the pool). Logged in `research/FAILURE_LOG.md`, closed by
+`tests/test_awake_replay_capture.py::test_probe_refuses_to_run_without_the_corpus`.
+
+**The seed-42 smoke** (a de-risk, not a gate row). Artifact: `research/findings/raw/_awake_replay_capture_smoke/seed42.json`.
+It ran at `84190dbae` with the corpus present, under `tools/memcap.sh 8` with one worker; the probe tree's peak RSS
+was 0.85 GB. The grader reads GO: G0, P1, I1, I2 and I3 hold, ARC1-ARC7 hold, and no arm confabulated.
+- `lr_arc_a`: correct, with 48 bouts. The read was 0.425497 at the first bout and 0.417001 at the last, and the
+  expression after the last bout was 0.929758. At sleep onset the read was 0.416992 and the SWR DA 0.808574; z was 0
+  at sleep onset and 1 at recall. `lr_arc_b` is identical.
+- `lr_noarc`, `lr_arc_lesion` and `ln_arc` abstain. Their sleep-onset read is 0.005609, the Amendment-1 value.
+- `lr_arc_sleeplesion` abstains, with the expression held at 0.929758 and the SWR DA at tonic. `lr_arc_dalesion`
+  abstains. `lsr_arc_sleeplesion` is correct, with z already at 1 at sleep onset (captured while awake).
+  `neu_imm_arc` is correct.
+- REPORTED: `lq_arc` (one rest tick per hour) abstains, as predicted. `lr_ledger_off` is correct, as predicted.
+  `lz_arc` (rest in the last hour only) abstains, AGAINST the prediction. The regrowth seen on the fake curve did not
+  happen on the brain: the first late bout read 0.008269, not the fake curve's 0.042683, and the expression was held
+  near 0.132748, not regrown. The fake curve overstated the read of a faint trace. On the brain, one hour of rest held
+  what was left of a 3-h-old trace but did not bring it back.

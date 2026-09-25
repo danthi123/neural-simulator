@@ -335,6 +335,22 @@ def test_constants_are_reused_not_new():
     assert "e_rep" not in inspect.getsource(T.SynapticTagCaptureLedger._integrate)   # z / tag ODEs untouched
 
 
+def test_probe_refuses_to_run_without_the_corpus(tmp_path, monkeypatch):
+    """Amendment 5: a worktree has no data/corpus/ (git-excluded); the brain then silently degrades to standalone
+    organs. The probe must refuse instead (unless LB_ALLOW_NO_CORPUS=1), and must run past the guard when present."""
+    from research.runners import _da_tag_capture_chat_probe as P
+    assert P.corpus_missing(str(tmp_path)) == list(P.CORPUS_CORE)
+    monkeypatch.setattr(P, "_REPO", str(tmp_path))
+    monkeypatch.delenv("LB_ALLOW_NO_CORPUS", raising=False)
+    with pytest.raises(SystemExit) as ex:
+        P.run_seed(42, str(tmp_path / "out"), family="arc")
+    assert ex.value.code == 3 and not (tmp_path / "out").exists()
+    (tmp_path / "data" / "corpus").mkdir(parents=True)
+    for f in P.CORPUS_CORE:
+        (tmp_path / "data" / "corpus" / f).write_text("x")
+    assert P.corpus_missing(str(tmp_path)) == []
+
+
 def test_battery_arc_groups_are_label_only_and_world_steps_resolve():
     from research.runners import onebrain_regression_battery as B
     from research.runners.load_bearing_fraction import turn_group
