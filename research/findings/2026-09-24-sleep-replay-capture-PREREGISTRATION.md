@@ -797,3 +797,209 @@ seeds for `fiv_lr` minus `fih_lr_a` correct on the seventh morning, and for `fih
 - The six gate rows are pool runs at a full-SHA-pinned revision containing this amendment:
   `--family fi --seed N --ltm off --workers 1 --out research/findings/raw/_sleep_forgetting_interference`. They are not
   queued with this commit.
+
+## Amendment 7 (2026-09-25, branch research/awake-replay-completion-r2) — pattern completion in both replay routes; the `arcc` family
+
+Committed on its own, BEFORE any gate-seed run of the family it governs: no `--family arcc` output exists at any gate
+seed, locally or on the pool, and no line of the family is queued. It governs the code at `524e2cfc1` on branch
+`research/awake-replay-completion-r2`. The family's code last changed at `28b4a7373` (off `main` at `05eba333f`);
+`524e2cfc1` merges `origin/main` at `4f77a5c7d` and touches none of the governed files (`webapp/replay_completion.py`,
+`webapp/awake_replay_capture.py`, `webapp/sleep_replay_capture.py`, `research/runners/_da_tag_capture_chat_probe.py`).
+Every constant below is fixed there. Terms follow `docs/TERMS.md`: both routes re-potentiate the same store, so
+neither is "consolidation". Amendment 6's conditional "Amendment 7" (a code change forced by the `fi` smoke) did not
+occur on `main` at `4f77a5c7d`; any such change now takes the next free number.
+
+The development evidence committed before this amendment is on dev seeds only (1-15; no gate seed was built by this
+arc; the dev instrument `research/runners/_awake_replay_completion_dev.py` refuses a gate seed):
+`research/findings/2026-09-25-awake-replay-completion-dev-seeds-partial.md`, artifacts
+`research/findings/raw/_awake_replay_completion_dev/scan/s*_arcc_scan.json`,
+`research/findings/raw/_awake_replay_completion_dev/arms/s*_arcc*.json` and
+`research/findings/raw/_awake_replay_completion_dev/arms_both/s*_*.json`.
+
+### What was seen before this amendment (disclosed)
+
+The arc family (Amendments 4-5) scored NO-GO 5/6 at pin `30ba29d4b`
+(`research/findings/2026-09-25-awake-replay-capture-arc-no-go-6seed.md`; per-seed rows
+`research/findings/raw/_awake_replay_capture/seed*.json`). Seed 101 failed ARC1 alone; every instrument gate and every
+other gate held there. The finding reports, for `lr_arc_a`, the read R at the first and the 48th awake bout and at
+sleep onset:
+
+| seed | R, 1st bout | R, 48th bout | R, sleep onset | `lr_arc_a` |
+|---|---|---|---|---|
+| 42 | 0.425496788 | 0.417000853 | 0.416991764 | correct |
+| 43 | 0.281844205 | 0.243238551 | 0.243230057 | correct |
+| 44 | 0.399221155 | 0.379019341 | 0.379019341 | correct |
+| 100 | 0.384405719 | 0.365946317 | 0.365946317 | correct |
+| 101 | 0.207451321 | 0.030467672 | 0.030533799 | abstain |
+| 102 | 0.494862092 | 0.487157562 | 0.487157612 | correct |
+
+REPORTED arms at six seeds: `lq_arc` 0/6 correct, `lz_arc` 0/6, `lr_ledger_off` 6/6. No other seed-101 per-arm value
+was read by this arc. So this amendment is written knowing which gate seed failed and how; the predictions below are
+stated with that knowledge.
+
+### Why
+
+Each awake bout re-induced e <- e + R (1 - e) with R the cleanup's decode margin, and between bouts e decays by
+exp(-5/90). A block is held only where R(e) (1 - e) >= ~0.057 e <!--derived-->; on seed 101 the margin was low
+enough that rest drove the trace down (subcritical). The wall question: what does the real system run alongside this
+that the code replaced with a linear proxy? Record checked first (`bash tools/before_you_build.sh "awake replay
+subcritical collapse weak trace"`, logged; the local corpus; the Kandel and Buzsaki passages read in the text). The
+margin is a read-out quantity (how close the nearest competitor word sits in the cleanup). A replay's LTP depends on
+how many of the trace's own pre/post pairs fire together (Sadowski et al. 2016), and a replay is a CA3 population burst
+that starts at a threshold (de la Prida et al. 2006) and completes the stored assembly from a partial cue (Kandel 6e
+ch.54; Nakazawa et al. 2002; Guzman et al. 2016). So once the partial trace still selects the fact, the whole ensemble
+is reinstated; the linear proxy omits the completion. Binding: `research/biology/awake-replay-pattern-completion.md`.
+
+The same proxy sits in the night's route (its re-tag is R x |inc| and its SWR DA is tonic + span x sum R). On dev
+seed 2 the awake completion alone (the first build, `938ee5ad5`) kept the trace expressed through the rest (0.982736605
+after the last bout, all three items reinstated) and the fact was still lost: the night read 0.106879619, the SWR DA
+was 0.579090918 and nothing was captured. A sleep SWR is the same CA3 burst, so the second build (`c1429b20a`)
+completes both routes, each under its own flag, with one lesion for both.
+
+Weighed and not built (evidence in the dev finding): replay prioritization (one managed fact, every bout already
+drives it: the arc family's I1 held on all six seeds); a longer tag lifetime (the night's re-tag and DA are set by the
+sleep-onset read, 0.030533799 on seed 101); retuning the margin (over 15 dev seeds the fresh margin spans
+0.034828016-0.603362074 and is set by read-out crosstalk, while R_c at full expression spans 0.560172503-0.816382696);
+routing through the CA3 superposed-fact attractor (a standalone binary k-WTA runner with no chat write path).
+
+What the dev seeds showed (`research/findings/raw/_awake_replay_completion_dev/arms_both/attribution.json` and the arm
+files beside it): on the two weak dev seeds (2 and 13) the margin routes abstain and both completions keep the fact; on
+seed 2 the rescue vanishes with the awake edge cut, with no rest, with the night's edge cut and with the DA-encoding
+lesion; normal dev seeds 7 and 11 recall either way; no arm confabulated; the completion-lesioned arm reproduces the
+pure margin-route arm field for field. The one-route arms split the rescue: on both weak dev seeds the NIGHT's
+completion alone rescued and the awake completion alone did not, because the awake margin route plateaued (e
+0.729794488 and 0.556871989 after the last bout) instead of collapsing as it did on seed 101. So which route carries
+the rescue on a gate seed is measured below, not assumed.
+
+### What was built (default OFF: `BRAIN_AWAKE_REPLAY_COMPLETION`, `BRAIN_SLEEP_REPLAY_COMPLETION`)
+
+- `webapp/replay_completion.py`, the completion read. The route's own read R runs unchanged and is recorded. Then,
+  per content role (agent, action, patient), the concept units' matched-filter drive from the same substrate read
+  drives the composer's Izhikevich concept bank (drive divided by its own peak, at the bank's graded operating point
+  `_margin_drive_pA`, for `_cleanup_window` steps). The unit that fires most is the reinstated item. A silent or tied
+  competition reinstates nothing for that role; a reserved slot is never reinstated. The reinstated items are re-bound
+  to their roles and bundled on the composer's resonate-and-fire work registers (`OneBrainComposer._compose_phases`,
+  the op that encoded the fact) and read back as spike phases. R_c = the in-phase coherence of that reinstated
+  pattern with the block's stored increment, clipped to [0, 1]. Polarity is not reinstated (its 2-word competition
+  resolves at any trace strength). Declared host shortcuts (module docstring): op dispatch, one pass, the peak
+  normalization, the largest-count read of the winner, the R_c arithmetic, and the ledger's bookkeeping crediting the
+  whole stored increment (the LTP a wrong item would write elsewhere is dropped).
+- Awake bouts (`BRAIN_AWAKE_REPLAY_COMPLETION`, needs `BRAIN_AWAKE_REPLAY_CAPTURE`): the bout induces
+  e <- e + R_c (1 - e) and re-sets the tag at the same level (the Amendment-4 law, R_c in place of R).
+- The night's epoch (`BRAIN_SLEEP_REPLAY_COMPLETION`, needs `BRAIN_SLEEP_REPLAY_CAPTURE`): the replay tag
+  R_c x |inc|, the SWR-coupled DA tonic + span x min(1, sum R_c) onto the same spiking D1 pool, and the downscaling
+  protection (unused in this family) take R_c in place of R. Both existing lesions act on it unchanged.
+- `BRAIN_REPLAY_COMPLETION_LESION=1`: every read above runs and is recorded; both routes use R. That is the
+  Amendment-4 awake route plus the rc night route.
+- Tests: `tests/test_awake_replay_completion.py` (18). With both flags unset, the store hash equals main's modules at
+  `05eba333f` on three fake scenarios (a mutation of the flag-off night path fails them); the lesion writes exactly the
+  margin routes' store; substrate tests on a real D=64 composer. The runner's `--selftest` covers the family's
+  designed GO, NO-GO and UNDEFINED fixtures.
+
+### Constants (a priori; none fitted to a gate seed)
+
+None new. Reused: the bout window, the rest protocol and the induction law of Amendment 4; the concept bank, its
+graded operating point `_margin_drive_pA` (measured 2026-09-05 for the metacog margin read) and `_cleanup_window`;
+`_compose_phases`. The ignition point is not a constant: it is where the block's own read stops selecting its items.
+
+### Arms (`--family arcc`; each a fresh tiny-demo brain in its own subprocess; numpy; LTM off)
+
+The 12 `ARC_ARMS` with the same names, groups and envs, plus `BRAIN_AWAKE_REPLAY_COMPLETION=1` on every arm that arms
+the awake route and `BRAIN_SLEEP_REPLAY_COMPLETION=1` on every arm that arms the night route (so `lr_noarc` has the
+same night as `lr_arc_a`; `lr_ledger_off` keeps its Amendment-4 env), and three attribution arms:
+
+| arm | group | env | role |
+|---|---|---|---|
+| `lr_arc_nocomp` | datr | ON + RC + ARC + both completion flags + `BRAIN_REPLAY_COMPLETION_LESION=1` | REPORTED outcome; instrument-gated |
+| `lr_arc_awakeonly` | datr | ON + RC + ARC + `BRAIN_AWAKE_REPLAY_COMPLETION=1` | REPORTED outcome; instrument-gated |
+| `lr_arc_sleeponly` | datr | ON + RC + ARC + `BRAIN_SLEEP_REPLAY_COMPLETION=1` | REPORTED outcome; instrument-gated |
+
+"Instrument-gated": the three count as gated arms for the instrument rules (I1, I2, I3, I4, gamma, errors,
+undefined) and are read by ARCC7; their outcomes enter no other behavioural gate.
+
+### Gates (per seed; `grade_seed_arcc` implements them verbatim)
+
+**UNDEFINED** if any Amendment-4 rule fires (G0, P1, I1, I2, I3, gamma, a gated arm errs or reads undefined), with the
+three attribution arms counted as gated arms for those rules, or if:
+- I4: the completion branch did not run as armed, read off the records. Every awake bout of an arm with the awake
+  completion flag, and every sleep epoch of an arm with the sleep completion flag, carries a completion record for
+  every block. On `lr_arc_nocomp` every bout and epoch used R; on the other completion arms every one used R_c (R_eff
+  equals the clipped value it should have used), unless that route's own edge is cut (then R_eff is 0, which I2
+  checks). A route without its flag carries no completion record.
+
+**GO for the seed** iff ARCC1-ARCC7 hold. They are ARC1-ARC7 of Amendment 4, read on these arms:
+- ARCC1 `lr_arc_a` correct AND `lr_noarc` abstain;
+- ARCC2 `lr_arc_lesion` abstain;
+- ARCC3 `ln_arc` abstain;
+- ARCC4 `lr_arc_sleeplesion` abstain;
+- ARCC5 `lr_arc_dalesion` abstain;
+- ARCC6 `lsr_arc_sleeplesion` correct;
+- ARCC7 no confab in any arm, the REPORTED and attribution arms included.
+Otherwise NO-GO.
+
+**REPORTED, never gating:** the outcomes of `lr_arc_nocomp`, `lr_arc_awakeonly`, `lr_arc_sleeponly`, `lq_arc`,
+`lz_arc`, `lr_ledger_off`; per seed `completion_load_bearing` = `lr_arc_a` correct AND `lr_arc_nocomp` abstain,
+`awake_completion_needed` = `lr_arc_a` correct AND `lr_arc_sleeponly` abstain, `night_completion_needed` = `lr_arc_a`
+correct AND `lr_arc_awakeonly` abstain; for `lr_arc_a`, the three attribution arms, `lz_arc` and `lq_arc`: R_c at the
+first and last bout, the items reinstated at the last bout, R_c and the items at sleep onset; every Amendment-4 field.
+
+**Predictions.**
+- ARCC1-ARCC7 hold on all six seeds, seed 101 included. The awake completion should hold `lr_arc_a`'s trace near
+  full expression from the first bout (on every dev seed R_c at e = 0.9 equalled its value at e = 1, at least
+  0.560172503), and the night's R_c at that expression should carry the SWR DA past the D1 Go boundary.
+- The main risk is ARCC1/ARCC2/ARCC3 through the NIGHT's completion: on `lr_noarc`, `lr_arc_lesion` and `ln_arc` the
+  trace is left at e ~0.07 <!--derived--> at sleep onset, and those arms abstain only if no item still resolves
+  there. R_c was 0 at e = 0.065-0.07 on every dev seed measured that low (2, 7, 13, 14, 15; seeds 1, 3-6 and 8-12
+  were scanned only down to e = 0.3). A gate seed whose items still resolve at e ~0.07 <!--derived--> would read NO-GO
+  (capture without rest), and that NO-GO would be a verdict on the ignition point, not on completion.
+- `lr_arc_nocomp` reproduces the arc family's `lr_arc_a`: correct on 42, 43, 44, 100, 102 and abstain on 101, so
+  `completion_load_bearing` on seed 101 only.
+- `lr_arc_awakeonly`: correct on all six. On seed 101 this is uncertain: the night reads the margin at e ~0.98
+  <!--derived-->, which was 0.207451321 at the first bout's e ~0.93 <!--derived-->, near the dev-estimated capture
+  point (~0.16 <!--derived-->).
+- `lr_arc_sleeponly`: correct on 42, 43, 44, 100, 102; on seed 101 no prediction. It is correct only if the margin
+  route leaves the trace above the night's ignition point; this arm measures that.
+- `lz_arc` and `lq_arc`: no prediction. With the awake completion a faint trace regrows whenever it still selects its
+  items (dev seed 7: R_c 0.474811300 at e = 0.15, 0 at e = 0.1), so either can now be correct. `lr_ledger_off`
+  correct.
+
+**6-seed verdict** (`--family arcc --aggregate research/findings/raw/_awake_replay_completion`): GO iff all six seeds
+read GO; INCOMPLETE if a seed is missing; otherwise NO-GO. Reported with it: the one-sided exact sign-flip p over seeds
+for `lr_arc_a` minus `lr_noarc` and for `lr_arc_a` minus `lr_arc_lesion` (1/64 at 6/6), the per-seed differences
+`lr_arc_a` minus each attribution arm, the counts `n_completion_load_bearing`, `n_awake_completion_needed`,
+`n_night_completion_needed`, and the REPORTED correct counts.
+
+**What makes it NO-GO**, concretely: any seed on which the completion arm does not keep the fact (ARCC1, first half),
+or keeps it without rest or with the awake edge cut (ARCC1 second half via `lr_noarc`, ARCC2, ARCC3), or keeps it
+without the night's replay edge or without DA (ARCC4, ARCC5), or loses the salient fact's waking capture (ARCC6), or
+confabulates anywhere (ARCC7). In particular, if seed 101 again abstains on `lr_arc_a`, the family is NO-GO; and if
+the night's completion captures a trace left without rest on any seed, the family is NO-GO.
+
+### What each gate can and cannot show
+
+- ARCC1-ARCC7 repeat Amendment 4's separation of the rescue from rest alone, the awake edge, the night's DA-coupled
+  capture and DA, now with both completions armed. A GO says the completion does not break any of them and that the
+  completion arms keep the fact on all six seeds.
+- The completion's causal share is read on `lr_arc_nocomp` (every read the same, both routes on R), and each route's
+  share on the two one-route arms. Their outcomes are REPORTED: on a seed whose margin read already holds the fact,
+  they are correct and the completion was not needed there. A GO with `completion_load_bearing` on no seed would
+  show the gates hold, not that the completion rescued anything on the gate seeds.
+- I4 shows on the record that each replay event used the quantity its arm armed. It cannot show that R_c measures
+  anything biological; the binding (`research/biology/awake-replay-pattern-completion.md`) and the declared host
+  shortcuts are where that is argued.
+- Not claimed: literal CA3 collaterals (the model's recurrent path is the fact's own readout -> cleanup -> re-bind
+  loop); many facts competing for rest replay (one fact per conversation); a lateral-inhibition WTA (the concept
+  bank's units are independent; near-ties resolve as no reinstatement).
+
+### Compute for this amendment
+
+- LTM off, as in the other families. No gate-seed smoke is scheduled: the dev seeds (not gate seeds) were the smoke.
+- The six gate rows are pool runs at the full SHA of THIS amendment's commit, provisioned as a `git_archive`
+  revision dir (`bash tools/pool_provision.sh --revision <that SHA> --isolated`), one worker, `mem_gb=2` (the
+  Amendment-5 smoke's probe tree peaked at 0.85 GB with one worker; arms run one at a time):
+  `--family arcc --seed N --ltm off --workers 1 --out research/findings/raw/_awake_replay_completion`. They are not
+  queued with this commit; the exact lines are in the dev finding, added in the commit after this one.
+- If `origin/main` has moved by the time the rows are provisioned (the provisioner refuses a revision that does not
+  contain it), the pin may move to a commit that only merges `main` and touches none of the governed files listed
+  above; the scoring finding states the new pin and that `git diff` between the two pins over those files is empty.
+  Any other change is Amendment 8, and the pin moves with it.
