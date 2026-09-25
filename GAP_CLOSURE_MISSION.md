@@ -129,6 +129,65 @@ loses an ordinary fact overnight). Sleep-replay r2 = NO-GO (df415f6ca; downscali
 long delay NOT-RESCUED 6/6; offcheck IDENTICAL) -- superseded by the fi family (running). Next: the paired-flip pipeline
 (verify-go review -> combined no-regression battery with both ON -> production-default validation).
 
+**☀️ 11:55 GPU + fix rounds:** C26 full-size GPU run finished (~11:45); GPU now runs a short SETTLE A3 crossover smoke
+(worktree .claude/worktrees/settle-a3x-smoke-b21140758; the Amendment-3 worker path had never executed). Reviews of the resumed
+lanes: SETTLE A3 SOUND-WITH-ISSUES, claim-check r8 SOUND-WITH-ISSUES (first round without an UNSOUND), prereg gate SOUND-WITH-ISSUES,
+dup-guard UNSOUND, pool-stall UNSOUND -> all five fix rounds + opus re-reviews and the gap#4 C25-C27 + C26 scoring = workflow
+`wag8gn2mw` (review texts saved as .claude/worktrees/_review_<lane>_2026-09-25.txt). Paired-flip legs (b)+(c) = `wq8hepp4u`;
+stdin-class fixes + fragment-job audit = `wvh50k7ah`; awake-completion still building in `wjnk7jtnb`. B2b wave 3 queued.
+
+**☀️ 12:10 SETTLE A2 never ran:** its six pool lines began with a prose label ('A2 wiring seed 42: mem_gb=8 && ...'), so bash ran
+`A2` and exited 127 at 09:59-10:00 -- nothing ran. Re-queued the six without the label at 12:05 (same pinned revision 5b5ea1b74).
+Fragment-job audit (research/dispatcher-fragment-audit @ 273cfc1b4, review SOUND-WITH-ISSUES): 14 fragments, 9 exit 127, 1 exit 2,
+4 ran load_bearing_fraction off-pin; every off-pin copy fails the pin rule and was replaced by the pinned full run; NO committed
+finding at risk. OWNER ITEMS before B2b is scored: B2b prereg A1.4(c) ruling for s43/d5-consolidate, s42/causal-whatif,
+s42/affect-appraisal-interoceptive (torn line ran off-pin, then the full line ran pinned on the same host, not logged as a rerun).
+Next rounds = workflow `w5lillvm5` (stop/start round 3, ssh-loop gate round 2 [was UNSOUND: scanned only added files], audit
+evidence made durable + PIN.txt, and a new enqueue-time 'first word must be runnable' check).
+
+**☀️ 12:15 memory pair NOT ready to flip:** verify-go review of BRAIN_DA_TAG_CAPTURE + BRAIN_SLEEP_REPLAY_CAPTURE (research/pair-verify-go
+@ 865dd6be6, opus re-review SOUND-WITH-ISSUES) = leg (b) NOT met: with both ON the next-day outcome is a step in the replay read R
+(lost <= 0.185, kept >= 0.209): the datn telling kept 6/6, the weak telling 4/6, a fact told 4 h before sleep 0/6; the production
+path (wall clock, 5-min pauses as sleep epochs, cupy, the episodic store which only writes on cupy, LTM on with the route armed) was
+never run. OWNER DECISION B2: is that forgetting acceptable at flip time, or does the flip wait for a further mechanism (fi family,
+awake-replay completion)? B2c combined-battery prereg (design (i): base + flipcand at F2 = fd29040db, ~15-17 h pool) reviewed
+SOUND-WITH-ISSUES; held, NOT queued until B3/B4 run. Workflow `wqjppzlyh`: review-doc fixes + B1 record corrections; B2c fixes;
+production-path arm set (B3 wall-clock day with a clock seam, B4 salient-vs-neutral + waking-only DA lesion, episodic-store arm,
+D3 cupy spec) with a prereg amendment + dev smoke.
+
+**☀️ 12:40 OWNER ITEMS (briefed 12:35; briefs = workflow `w9vezagal` journal):** (1) memory pair B2: accept the overnight
+forgetting at flip time or wait for a fix -- recommendation: no ruling until B3/B4 land (the 'weak telling lost' number was never
+checked against immediate recall); lean wait. (2) SETTLE A2 congruence mechanism: the prereg reserved it for the owner; an overnight
+lane wired a HOST if/lookup gate (default-OFF, 5b5ea1b74) without asking -- recommendation: keep it as a measurement-only interim,
+NEVER flip BRAIN_AFFECT_MARKER_CONGRUENCE or BRAIN_AFFECT_MARKER_SETTLE without explicit owner sign-off; the brain-based target is
+the speak/abstain race gating the marker. (3) B2b torn cells (s43/d5-consolidate, s42/causal-whatif, s42/affect-appraisal-interoceptive):
+recommendation: redo on a different host, log in b2b0924_reruns.tsv, one-line prereg amendment. (4) Legacy claim-check failures:
+recommendation: merge the 8 confirmed corrections from claimcheck-audit-1..4, add a dated scope note, no bulk-marking, no retractions.
+(5) flipdefaults-adequate unpinned reference: FYI; B2a pinned R2 independently confirms the three flips; accept with the caveat.
+
+**☀️ 13:05 OWNER RULINGS:** (1) memory pair: WAIT ON FIX -- "a certain degree of forgetting is acceptable ... What's important is
+that the brain should remember things that matter ... prioritizing what should be remembered and focusing on key details, while
+forgetting minor details over time ... not just stores info like a RAG system" (memory project_remember_what_matters). The target
+is PRIORITIZED retention (important facts + key details kept, minor details fade, gist survives), not every fact kept. (2) affect
+congruence: owner wants more context; stated view: feelings must shape HOW the brain speaks, not insert 'Wonderful!'-style words
+(memory feedback_affect_shapes_speech) -- context workflow `w4reqinlw`. (3) B2b torn cells: APPROVED as recommended. (4) legacy
+claim-check: APPROVED as recommended. Execution = workflow `wgw2xgcw9` (prioritized-memory research + design + registered
+'what-matters' test battery; B2b torn-cell redo with a node constraint + rerun log + amendment; claim-check corrections + scope note).
+
+**☀️ 13:15 SETTLE A3 smoke:** the Amendment-3 crossover worker runs end to end at b21140758 (cupy, Qwen renderer, planned arm every
+turn, one reader per arm, WTA read with the arm's config, no exception); verdict UNDEFINED as expected at 1 process/orientation
+(n=8). INSTRUMENT BUG: M4_render reads exactly 0.0 (se 0, resid 0) on every turn -- the render-time hook captures nothing; fix before
+any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
+The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
+
+**☀️ 13:35 lanes:** item-2 context delivered (the six-word marker IS on by default and gets glued onto 'I don't know' replies;
+mood also sets reply length + a warm/blunt instruction to the Qwen mouth on cupy; recommendation A+B+C, awaiting the owner's go on
+retiring the word). Merged the ssh-in-read-loop gate SR (4f77a5c7d). Fix round 3 (enqueue-time job-shape check: HIGH -- a subshell
+first command executed locally; fragment audit: evidence not committed; AWS stop/start: durable pause) = `wsogpg6ty`. Harvest census +
+scoring of unscored result sets = `wjiqn7u7e`. SlotBinder fast teach toward 404 facts = `w1v63a0sa`. GPU: dev-seed-7 run of the
+pair's rc family on CUPY (episodic store writes on cupy; the review's production-path gap) in worktree
+.claude/worktrees/pair-cupy-dev-4f77a5c7d -> research/findings/raw/_sleep_replay_capture_cupy_dev (dev record, not a gate row).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
