@@ -2150,12 +2150,14 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_an
         assert not d2["answer"].startswith(w)
 
     # turn 3: strongly positive-sentiment content, REPEATED (bounded) until Gate-B's OWN mood genuinely reads
-    # '+'. `_SESSION_MOOD` is an EMA (`_update_session_mood`, decay 0.4): turn 1 drove it to ~-0.54, so a SINGLE
-    # positive turn only partially overcomes it (0.4*-0.54 + 0.6*~0.85 =~ +0.29) -- below the co-resident ladder's
-    # rung-1 recruitment magnitude, so the read is '0' (genuinely neutral, not "close to +"), not '+' (this is
-    # exactly what the 2026-09-25 run hit: affect4 read {differential 0.0, valence_sign '0', appraisal_valence
-    # 0.294, appraisal_hits []} on turn 4 below). A second positive turn compounds the same EMA to ~+0.63, which
-    # clears it. Vary the wording turn-to-turn (still a strongly-positive register) so the loop is not resting on
+    # '+'. `_SESSION_MOOD` is an EMA (`_update_session_mood`, decay 0.4): turn 1 (appraisal -0.775) drove it to
+    # ~-0.465, so a SINGLE positive turn (appraisal ~+0.80) only partially overcomes it (total +0.294). The default
+    # path reads it through the interoceptive relay ladder (_appraisal_interoceptive_ladder_derisk), whose zero is
+    # the relay-rheobase band: the read stays '0' below an appraisal of about 0.5 (seed-42 ladder probe: 0.294 ->
+    # 0.0, 0.45 -> 0.020, 0.50 -> 0.038, 0.59 -> 0.050 against a tolerance of 0.03) -- genuinely neutral, not
+    # "close to +" (this is exactly what the 2026-09-25 run hit: affect4 read {differential 0.0, valence_sign '0',
+    # appraisal_valence 0.294, appraisal_hits []} on turn 4 below). A second positive turn brings the mood to
+    # ~+0.59, which reads '+'. (Numbers corrected per the 2026-09-25 review of 55a59e821.) Vary the wording turn-to-turn (still a strongly-positive register) so the loop is not resting on
     # one exact string. The bound (5) is generous; if Gate-B never reaches '+' the SETUP has failed and this must
     # fail LOUDLY (never silently skip the congruent half) -- see the assert right after the loop.
     _POSITIVE_TEXTS = (
