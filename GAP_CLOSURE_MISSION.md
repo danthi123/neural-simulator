@@ -221,6 +221,14 @@ marker retirement, GPU<->llm swap, status+runbook, model scout), wf_87826bf5-9db
 claim-check r8 and SETTLE A3 built + reviewed SOUND-WITH-ISSUES; the prereg-amendment gate lane is parked). Pending merge:
 research/score-gap4-c26-0925 and research/score--pmem-live-cliff-detector-v2-0925 (both wait on the corpus-check shared-log fix).
 
+**☀️ 14:50 HOLD (owner):** let the running local work finish, queue NOTHING new on the local machine/GPU (owner will game), then
+pause; the handoff wrap-up happens when the owner calls it. Harvest notices are recorded only. wf_99dde278-e1e finished: enqueue
+check (research/pool-enqueue-runnable-check @ 03c53f5f7) SOUND-WITH-ISSUES -- 1 MEDIUM (a multi-line job passes the check but the
+line-oriented queue splits it: refuse any job containing a newline) + LOWs; fragment audit (@ 34ae88a62) SOUND-WITH-ISSUES, LOWs only;
+AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-more-round rule; apply marker retirement + GPU<->llm
+auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
+live-check `llm claude`; then hand off.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
