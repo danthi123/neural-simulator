@@ -229,6 +229,16 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 18:00 CLEAN-BREAK RESULTS:** MERGED: claim-check corrections e8081c913, prereg-amendment-order gate ae5f2b22b,
+test isolation 6adb7d3df (full-suite collection clean again; the class predated today, fixed at the root in tests/conftest.py),
+D6 finding 58316ead8 (+ my false retroactive cost note CORRECTED 08388f74: a projection existed, the cells overran it), pair docs
+a053a021f (parked, default-off), B2b redo 8e1b584c5, awake-replay completion 72ffcde10 (renumbered Amendment 8 / Addendum 8a at
+merge). QUEUED on the pool: 3 B2b redo cells (FRONT=1, pool_node= a different host), 2 SETTLE A2 re-runs (17/18 landed), 6 arcc
+awake-replay gate seeds (revision f7693a36f). PARKED: claim-check round 8 (MEDIUM), pool-stall detector (HIGH). FINAL FIX ROUND
+running (wf_fb8debe7-bdc): fi finding, prioritized-memory design, SlotBinder. Local model: 128K q4 default (7a60ab2e6), runbook
+commands pre-approved; autoswap fixed live (aef773fdc); prompt-cache investigation still running (hypothesis: the template
+hoists every system message to the top, so the prefix changes each turn).
+
 **☀️ 17:05 OWNER RULINGS + CLEAN-BREAK WORK (owner done gaming, "run stuff at your discretion"):** condensed CLAUDE.md MERGED
 07d75f6f4 (owner approved); memory condense APPLIED (35 notes archived to memory/_archive_2026-09-25/, index 19.4K -> 6.1K chars).
 Rulings, recorded in memory: learning over time is Claude's call -> now IN SCOPE in parallel with scaffold retirement, chosen by
