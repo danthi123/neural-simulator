@@ -234,7 +234,9 @@ learning, prereg Amendment 6): aggregator reads NO-GO, 3/6 seeds GO (42, 44, 102
 101 fail on the FIRST morning in most arms (plain facts never recalled), which looks like an encoding miss upstream of forgetting;
 seed 100 loses the re-mentioned fact on night 4 (FI6). D6 capacity at N=2000 (18/18): recall holds to 2000 facts in HEBB and COPY;
 cost ceiling between 50 and 500 facts for both; HEBB vs COPY reads PARITY-BY-CONSTRUCTION (the finding must say what that means).
-Artifacts: `research/findings/raw/_sleep_forgetting_interference/aggregate.json`, `research/findings/raw/_d6_capacity_curve/score.json`.
+Committed fe1066f64: fi per-seed files + `research/findings/raw/_d6_capacity_curve/score.json`. The fi aggregate is NOT committed:
+its aggregator writes no `preconditions` block (gate verdict-preconditions), so the scoring step adds one after the independent
+check. Seven D6 N=2000 cells ran 14.6-31.0 h each with no cost projection; each now carries a retroactive note saying so.
 
 **☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
 (BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check

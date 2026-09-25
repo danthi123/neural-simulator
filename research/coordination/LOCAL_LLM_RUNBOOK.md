@@ -83,12 +83,14 @@ If a restart doesn't clear the symptom within one `status.sh` cycle, it's a NEED
 Run these ONLY when `status.sh` marks the battery READY. Save the output JSON where shown, `git add` it with the raw
 files, add ONE board line with the verdict string the command printed (copy it, do not interpret), commit, push.
 
-- **fi** (forgetting follows later learning; prereg `research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md`
-  Amendment 6): `.venv/bin/python -m research.runners._da_tag_capture_chat_probe --family fi --aggregate research/findings/raw/_sleep_forgetting_interference`
-- **d6_n2000** (memory capacity curve; prereg `research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md`):
-  `.venv/bin/python -m research.runners.d6_capacity_curve --score --arm-dir research/findings/raw/_d6_capacity_curve --json research/findings/raw/_d6_capacity_curve/score.json`
+- **fi** and **d6_n2000**: already harvested by Claude on 2026-09-25 (fe1066f64). Nothing to do.
 - **settle_a2_wiring** (only at 18/18; prereg `research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md`
   Amendment 2): `.venv/bin/python -m research.runners._affect_marker_settle_congruence --score-wiring --raw-dir research/findings/raw/_affect_marker_settle_congruence/wiring --seeds "42 43 44 100 101 102" --out research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json`
+- **When a harvest commit is blocked by `verdict-preconditions`** (a verdict file without a `preconditions` block):
+  unstage ONLY that verdict/aggregate file (`git reset <file>`), commit the per-seed raw files + board line, and add a
+  NEEDS CLAUDE line naming the file. Never hand-write a preconditions block.
+- **When blocked by `device-and-cost`** (a long run with no cost projection): do not edit the raw files; add a NEEDS CLAUDE
+  line and leave that battery uncommitted.
 - **b2b_base: DO NOT HARVEST.** Three of its cells need an owner-approved re-run first (see "Parked for Claude").
   Leave it at 256/258 or 258/258; Claude scores it.
 
