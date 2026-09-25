@@ -1,0 +1,3813 @@
+{
+ "backend": "numpy",
+ "backend_source": "per-shard provenance sidecars (lb.json.prov.json env.SIM_BACKEND)",
+ "host": "unrecorded",
+ "incomplete_faculties": [],
+ "ltm_mode": "off",
+ "ltm_n_facts_note": "not measured by this generic sidecar -- BRAIN_DATA_ROOT presence/absence (ltm_mode) is recorded; a per-shard fact COUNT needs the shard to query the data lake itself",
+ "mean_fraction": 0.9487179487179488,
+ "mean_fraction_3dp": 0.949,
+ "per_faculty": {
+  "affect-coloring": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "affect-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "affect-marker-spiking-wta": {
+   "dirty_seeds": [],
+   "n_load_bearing": 4,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "pass",
+    "43": "pass",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "bg-action-selection": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "common-ground-drives": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-learned-animacy-cue": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-learned-verb-selects": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "comprehension-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "confidence-forthcomingness": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "curiosity-followup": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "da-gated-encoding": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "pass",
+    "43": "pass",
+    "44": "pass",
+    "100": "pass",
+    "101": "pass",
+    "102": "pass"
+   }
+  },
+  "da-mode-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "discourse-register": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "episodic-memory": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "gnw-multistep-deliberation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "metacog-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "noncontradiction-gate": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "open-ended-generation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "pragmatic-implicature": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "prospective-memory": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "reconsolidation": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "self-initiated-utterance": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "source-provenance-honesty": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "surprise-monitor": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "swap-drives-response": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "not-exercised",
+    "43": "not-exercised",
+    "44": "not-exercised",
+    "100": "not-exercised",
+    "101": "not-exercised",
+    "102": "not-exercised"
+   }
+  },
+  "vision-identity-spiking-hmax": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  },
+  "wm-binding-advanced": {
+   "dirty_seeds": [],
+   "n_load_bearing": 0,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "not-exercised",
+    "43": "not-exercised",
+    "44": "not-exercised",
+    "100": "not-exercised",
+    "101": "not-exercised",
+    "102": "not-exercised"
+   }
+  },
+  "worldmodel-forward": {
+   "dirty_seeds": [],
+   "n_load_bearing": 6,
+   "seeds_present": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+   ],
+   "verdicts": {
+    "42": "regressed",
+    "43": "regressed",
+    "44": "regressed",
+    "100": "regressed",
+    "101": "regressed",
+    "102": "regressed"
+   }
+  }
+ },
+ "per_seed": {
+  "42": {
+   "load_bearing_fraction": 0.9230769230769231,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 24
+  },
+  "43": {
+   "load_bearing_fraction": 0.9230769230769231,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 24
+  },
+  "44": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "100": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "101": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  },
+  "102": {
+   "load_bearing_fraction": 0.9615384615384616,
+   "n_coverable_present": 28,
+   "n_exercised": 26,
+   "n_load_bearing": 25
+  }
+ },
+ "per_shard_prov": {
+  "s100/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s100/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s101/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s102/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s42/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s43/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/affect-coloring": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/affect-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/affect-marker-spiking-wta": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/bg-action-selection": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/common-ground-drives": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/comprehension-learned-animacy-cue": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/comprehension-learned-verb-selects": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/comprehension-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/confidence-forthcomingness": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/curiosity-followup": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/da-gated-encoding": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/da-mode-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/discourse-register": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/episodic-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/gnw-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/gnw-multistep-deliberation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/metacog-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/noncontradiction-gate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/one-brain-substrate": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/open-ended-generation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/pragmatic-implicature": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/prospective-memory": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/reconsolidation": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/self-initiated-utterance": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/source-provenance-honesty": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/surprise-monitor": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/swap-drives-response": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/value-driven-choice": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/vision-identity-spiking-hmax": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/wm-binding-advanced": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  },
+  "s44/worldmodel-forward": {
+   "backend": "numpy",
+   "env": {
+    "LB_AFFECT_DRIVE_PROBE": "1",
+    "LB_BG_SELECT_DRIVE_PROBE": "1",
+    "LB_CG_DRIVE_PROBE": "1",
+    "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+    "LB_EPISODIC_DRIVE_PROBE": "1",
+    "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+    "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+    "LB_PMEM_DRIVE_PROBE": "1",
+    "LB_SURPRISE_CONFIRM_PROBE": "1"
+   },
+   "host": "unrecorded",
+   "ltm_on": false,
+   "n_facts": null
+  }
+ },
+ "robust_core": [
+  "affect-coloring",
+  "affect-drives-response",
+  "bg-action-selection",
+  "common-ground-drives",
+  "comprehension-learned-animacy-cue",
+  "comprehension-learned-verb-selects",
+  "comprehension-monitor",
+  "confidence-forthcomingness",
+  "curiosity-followup",
+  "da-mode-drives-response",
+  "discourse-register",
+  "episodic-memory",
+  "gnw-multistep-deliberation",
+  "metacog-monitor",
+  "noncontradiction-gate",
+  "open-ended-generation",
+  "pragmatic-implicature",
+  "prospective-memory",
+  "reconsolidation",
+  "self-initiated-utterance",
+  "source-provenance-honesty",
+  "surprise-monitor",
+  "vision-identity-spiking-hmax",
+  "worldmodel-forward"
+ ],
+ "robust_core_n": 24,
+ "sd_fraction": 0.01813094310734736,
+ "sd_fraction_3dp": 0.018,
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "tag": "b2a0924",
+ "union_n": 25
+}

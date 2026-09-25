@@ -1,0 +1,1009 @@
+{
+ "backend": "numpy",
+ "backend_source": "all audited shards' lb.json.prov.json env.SIM_BACKEND (this table is a re-derivation from those sidecars, not itself a run)",
+ "cells": {
+  "affect-coloring": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "affect-drives-response": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "affect-marker-spiking-wta": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "bg-action-selection": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "valid": true
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "common-ground-drives": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "comprehension-learned-animacy-cue": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "comprehension-learned-verb-selects": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "comprehension-monitor": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "confidence-forthcomingness": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "valid": true
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "curiosity-followup": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "da-gated-encoding": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "da-mode-drives-response": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "discourse-register": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "episodic-memory": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "gnw-deliberation": {
+   "by_seed": {
+    "100": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "101": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "102": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "42": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "43": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "44": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    }
+   },
+   "coverable": false
+  },
+  "gnw-multistep-deliberation": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "metacog-monitor": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "noncontradiction-gate": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "one-brain-substrate": {
+   "by_seed": {
+    "100": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "101": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive",
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "42": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "43": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "44": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    }
+   },
+   "coverable": false
+  },
+  "open-ended-generation": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "valid": true
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "pragmatic-implicature": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "prospective-memory": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "reconsolidation": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "self-initiated-utterance": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "valid": true
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "source-provenance-honesty": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "surprise-monitor": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "swap-drives-response": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "value-driven-choice": {
+   "by_seed": {
+    "100": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "101": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "102": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "42": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "43": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    },
+    "44": {
+     "reason": [
+      "verdict=not-covered (thin/mechanism-only row, expected, not coverable)"
+     ],
+     "valid": false
+    }
+   },
+   "coverable": false
+  },
+  "vision-identity-spiking-hmax": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "valid": true
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "wm-binding-advanced": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  },
+  "worldmodel-forward": {
+   "by_seed": {
+    "100": {
+     "valid": true
+    },
+    "101": {
+     "valid": true
+    },
+    "102": {
+     "reason": [
+      "git_sha not M1-in-full",
+      "source manifest not verified",
+      "source_kind != git_archive"
+     ],
+     "valid": false
+    },
+    "42": {
+     "valid": true
+    },
+    "43": {
+     "valid": true
+    },
+    "44": {
+     "valid": true
+    }
+   },
+   "coverable": true
+  }
+ },
+ "evidence_samples": {
+  "s100_open_ended_generation_pinned_rerun (task-flagged cell)": {
+   "argv0": "/home/ubuntu/derisk-pool/revisions/9db7613296c3d02a161b36fb15da3983188b7902/research/runners/load_bearing_fraction.py",
+   "git_dirty": false,
+   "git_sha": "9db7613296c3d02a161b36fb15da3983188b7902",
+   "path": "research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json.prov.json",
+   "source_kind": "git_archive",
+   "source_manifest_verified_at_exit": true,
+   "source_manifest_verified_at_start": true,
+   "started": "2026-09-24T23:24:31",
+   "verdict": "VALID -- matches M1 in full, source_kind git_archive, both manifest checks true, SIM_BACKEND numpy, no BRAIN_* key. This is the pinned re-run (dispatched ~19:23) landing in the tree."
+  },
+  "s102_dirty_local_worktree_example (affect-coloring)": {
+   "argv0": "/home/dant123/Projects/sim/.claude/worktrees/b2a-local/research/runners/load_bearing_fraction.py",
+   "git_dirty": true,
+   "git_sha": "9db761329",
+   "path": "research/findings/raw/_load_bearing/_shards/b2a0924/s102/affect-coloring/lb.json.prov.json",
+   "source_kind": null,
+   "started": "2026-09-24T14:27:12"
+  }
+ },
+ "m1_full_sha": "9db7613296c3d02a161b36fb15da3983188b7902",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "summary": {
+  "fully_valid_coverable_faculties": [
+   "bg-action-selection",
+   "confidence-forthcomingness",
+   "open-ended-generation",
+   "self-initiated-utterance",
+   "vision-identity-spiking-hmax"
+  ],
+  "invalid_faculty_seed_pairs": {
+   "affect-coloring": [
+    102
+   ],
+   "affect-drives-response": [
+    102
+   ],
+   "affect-marker-spiking-wta": [
+    102
+   ],
+   "common-ground-drives": [
+    102
+   ],
+   "comprehension-learned-animacy-cue": [
+    102
+   ],
+   "comprehension-learned-verb-selects": [
+    102
+   ],
+   "comprehension-monitor": [
+    102
+   ],
+   "curiosity-followup": [
+    102
+   ],
+   "da-gated-encoding": [
+    102
+   ],
+   "da-mode-drives-response": [
+    102
+   ],
+   "discourse-register": [
+    102
+   ],
+   "episodic-memory": [
+    102
+   ],
+   "gnw-multistep-deliberation": [
+    102
+   ],
+   "metacog-monitor": [
+    102
+   ],
+   "noncontradiction-gate": [
+    102
+   ],
+   "pragmatic-implicature": [
+    102
+   ],
+   "prospective-memory": [
+    102
+   ],
+   "reconsolidation": [
+    102
+   ],
+   "source-provenance-honesty": [
+    102
+   ],
+   "surprise-monitor": [
+    102
+   ],
+   "swap-drives-response": [
+    102
+   ],
+   "wm-binding-advanced": [
+    102
+   ],
+   "worldmodel-forward": [
+    102
+   ]
+  },
+  "n_coverable_cells": 168,
+  "n_coverable_cells_invalid": 23,
+  "n_coverable_cells_valid": 145,
+  "n_coverable_faculties": 28,
+  "n_coverable_faculties_fully_valid_all_6_seeds": 5,
+  "n_coverable_faculties_with_ge1_invalid_seed": 23
+ },
+ "tag": "b2a0924",
+ "validity_rule": "Per B2a prereg (lb_shard.py aggregate has no such check) + B2b Amendment 1.2/1.3, applied here to every cell: lb.json.prov.json must record git_sha == M1 in FULL, source_kind == 'git_archive', source_manifest_verified_at_start/_at_exit == true, env.SIM_BACKEND == 'numpy', and env holds no BRAIN_* key; every arm sidecar (intact_a_*/intact_b_*/lesion_*[.repN]) in the cell's directory must meet the same sha/source_kind/manifest/backend rule and hold no BRAIN_* key except BRAIN_CHAT_SEED."
+}
