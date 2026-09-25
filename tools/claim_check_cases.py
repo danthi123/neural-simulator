@@ -1,8 +1,9 @@
 """SELFTEST REGISTRY for tools/claim_check.py (round 8). DATA ONLY -- no imports from claim_check.
 
 Every entry is one repro. `tests/test_claim_check_line_only.py` re-runs each against every historical revision in
-claim_check._HISTORY_SHAS (main, r1-r7, r8a, loaded from git) and asserts the recorded `wrong_on` equals the set that
-ACTUALLY gets the case wrong -- so "this used to pass, now it fails" is RE-DERIVED on every run, never remembered.
+claim_check._HISTORY_SHAS (main, r1-r7, r8a, r8b, loaded from git) and asserts the recorded `wrong_on` equals the set
+that ACTUALLY gets the case wrong -- so "this used to pass, now it fails" is RE-DERIVED on every run, never
+remembered.
 
 Keys: name, expect ('FAIL'|'PASS'), wrong_on, why; optional: doc (`%(art)s` = the cited artifact's path),
 artifact (default {"accuracy": 0.17, "baseline": 0.1625}), filename, expect_reason ('low_coverage' | 'too_broad' |
@@ -24,6 +25,11 @@ MINUS, EN_DASH, EM_DASH = U(0x2212), U(0x2013), U(0x2014)
 HYPHEN, MIDDLE_DOT, ARABIC_3, ARABIC_DECIMAL_SEP = U(0x2010), U(0x00B7), U(0x0663), U(0x066B)
 BOM = U(0xFEFF)
 DELTA = U(0x0394)
+ARABIC_6, DEVANAGARI_6, HANGUL_FILLER = U(0x0666), U(0x096C), U(0x3164)
+
+
+def _fullwidth_digits(s):
+    return "".join(U(0xFF10 + int(c)) if c.isdigit() else c for c in s)
 
 _HDR = "# Some finding\n\nArtifact: `%(art)s`\n\n"
 _BEFORE_R6 = ("main", "r1", "r2", "r3", "r4", "r5")
@@ -702,4 +708,80 @@ SELFTEST_CASES = [
              "cell; CommonMark reads one code span across the pipes. A marker is live only when BOTH parsers read a "
              "comment (an either-parser rule passes this doc)",
          doc=_HDR + "| a | b | c |\n|---|---|---|\n| `x | 0.1525 <!--derived--> | y` |\n"),
+    # =============================================================================================================
+    # round 8 fix pass as reviewed (57b1e5f01): the review's repros, each wrong on r8b and caught now. A number that
+    # holds a non-ASCII digit is read only in the normalized copies, which read one sign -- decided on the copy,
+    # where every dash is `-` and a filler is a space -- while main and round 5 read it (`\d` is any digit)
+    # unsigned or signed the other way.
+    # =============================================================================================================
+    dict(name="r8b_en_dash_before_a_non_ascii_digit_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a', 'r8b'),
+         must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `lesion" + EN_DASH + "0.1" + ARABIC_6 + "25` is +0.1625 to main and r5; r8b read only "
+             "-0.1625 (the copy's `-` after a letter) and passed a doc main fails",
+         doc=_HDR + "The lesion" + EN_DASH + "0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_ascii_hyphen_after_a_letter_before_a_non_ascii_digit_reads_both_signs", expect="FAIL",
+         wrong_on=('r7', 'r8a', 'r8b'), must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `acc-0.1" + ARABIC_6 + "25` -- main and r5 read no sign after a letter",
+         doc=_HDR + "The acc-0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_minus_sign_after_a_letter_before_a_non_ascii_digit_reads_both_signs", expect="FAIL",
+         wrong_on=('r7', 'r8a', 'r8b'), must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `x" + MINUS + "0.1" + ARABIC_6 + "25` -- U+2212 glued to a word is read both ways",
+         doc=_HDR + "The x" + MINUS + "0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_em_dash_after_a_space_before_a_devanagari_digit_reads_both_signs", expect="FAIL",
+         wrong_on=('r7', 'r8a', 'r8b'), must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `x " + EM_DASH + "0.1" + DEVANAGARI_6 + "25` -- an em dash in a sign position",
+         doc=_HDR + "The x " + EM_DASH + "0.1" + DEVANAGARI_6 + "25 here.\n"),
+    dict(name="r8b_en_dash_before_fullwidth_digits_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a', 'r8b'),
+         must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `lesion" + EN_DASH + "` then a fullwidth 0.1625 (ASCII dot) -- main and r5 read +0.1625",
+         doc=_HDR + "The lesion" + EN_DASH + _fullwidth_digits("0.1625") + " here.\n"),
+    dict(name="r8b_ascii_hyphen_after_a_hangul_filler_reads_both_signs", expect="FAIL", wrong_on=('r7', 'r8a', 'r8b'),
+         must_flag=(0.1625,), artifact=_NEG,
+         why="review r8b-1: `x`, U+3164 HANGUL FILLER, `-0.1" + ARABIC_6 + "25` -- the filler is a word character "
+             "to main (no sign), a space in the copy (a sign); main's side is decided on the ORIGINAL character",
+         doc=_HDR + "The x" + HANGUL_FILLER + "-0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_ascii_hyphen_after_a_paren_before_a_non_ascii_digit_reads_both_signs", expect="FAIL",
+         wrong_on=('r7', 'r8a', 'r8b'), must_flag=(-0.1625,), artifact={"x": 0.1625},
+         why="review r8b-1: `(a)-0.1" + ARABIC_6 + "25` -- main and r5 read -0.1625, round 8 a range (+0.1625)",
+         doc=_HDR + "The (a)-0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_minus_sign_after_a_space_before_a_non_ascii_digit_is_a_sign", expect="PASS", wrong_on=_BEFORE_R6,
+         artifact=_NEG,
+         why="the one intended difference holds for any digits: U+2212 after a space is a minus sign, read one way "
+             "(main and r1-r5 read +0.1625)",
+         doc=_HDR + "The delta " + MINUS + "0.1" + ARABIC_6 + "25 here.\n"),
+    dict(name="r8b_exponent_followed_by_a_fraction_hides_nothing", expect="FAIL", wrong_on=('r8a', 'r8b'),
+         must_flag=(0.1525,),
+         why="found by this round's differential fuzz against main's regex: in `1.8e-0.1525` the `0` was consumed "
+             "as the exponent of 1.8 (a 1-decimal number, not checked), so no reading held the 0.1525 main reads "
+             "after the `-`; an exponent is read now only when no `.digit` follows it",
+         doc=_HDR + "The fit was 1.8e-0.1525 here.\n"),
+    dict(name="r8b_scale_suffix_is_part_of_the_duplicate_key", expect="FAIL", wrong_on=_BEFORE_R6 + ('r8a',),
+         must_flag=(0.1525,), artifact={"x": 152.5},
+         why="review r8b-3: `0.1525k" + ARABIC_3 + "` is scaled (152.5, in the pool) in the raw reading and bare "
+             "(0.1525) in the copies, where the digit after `k` is ASCII; a duplicate key without the suffix keeps "
+             "only the first (a mutant that drops it passed --selftest)",
+         doc=_HDR + "The value 0.1525k" + ARABIC_3 + " here.\n"),
+    dict(name="r8b_synthesis_verdict_in_a_later_title_line_bars", expect="FAIL",
+         wrong_on=_ALL_BEFORE_R8 + ('r8a', 'r8b'),
+         why="review r8b-4: a YAML loader keeps the LAST of duplicate keys -- `title: notes` then `title: Lane A GO` "
+             "is a GO title; r8b read only the first",
+         doc="---\ntitle: notes\ntitle: Lane A GO\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n"
+             "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8b_synthesis_verdict_in_a_later_verdict_line_bars", expect="FAIL",
+         wrong_on=_ALL_BEFORE_R8 + ('r8a', 'r8b'),
+         why="the same for `verdict:` -- `verdict: pending` then `verdict: GO` (not the block's last line, which "
+             "the frontmatter's closing `---` makes a setext heading, already barred)",
+         doc="---\nverdict: pending\nverdict: GO\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n"
+             "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8b_synthesis_later_empty_reason_is_no_reason", expect="FAIL",
+         wrong_on=_ALL_BEFORE_R8 + ('r8a', 'r8b'),
+         why="the same first-key-only reading of `claim_check_reason:` -- a later empty one is what a YAML loader "
+             "keeps, so the escape has no reason",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\nclaim_check_reason:\nlane: x\n"
+             "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="r8b_synthesis_later_other_flag_is_not_synthesis", expect="FAIL",
+         wrong_on=_ALL_BEFORE_R8 + ('r8a', 'r8b'),
+         why="`claim_check: synthesis` then `claim_check: strict` -- a YAML loader keeps `strict`",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\nclaim_check: strict\n"
+             "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
 ]

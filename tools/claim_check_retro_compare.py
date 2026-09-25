@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Retro-compare tools/claim_check.py (the working copy, round 8) against main / r5 / r6 / r7 / r8a over findings,
+"""Retro-compare tools/claim_check.py (the working copy, round 8) against main / r5 / r6 / r7 / r8a / r8b over findings,
 with a CAUSE for every number round 8 fails, and the CALIBRATION of the per-precision chance limits (against false
 positives AND, with --replay, against wrong numbers let through) and LOW_COVERAGE_MIN_TOTAL.
 
@@ -43,14 +43,15 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 import tools.claim_check as cc                      # noqa: E402
 
-# r8a = round 8 as reviewed (654d95664); the working copy is reported as "r8".
-REVS = {"main": "7e2edc08e", "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664"}
+# r8a = round 8 as reviewed (654d95664), r8b = its fix pass as reviewed (57b1e5f01); the working copy is "r8".
+REVS = {"main": "7e2edc08e", "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664",
+        "r8b": "57b1e5f01"}
 _DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-")
 _ID_RE = re.compile(r"(?:\b(?:https?|ftp)://|\bwww\.)\S+|\barxiv[:\s]*\d{4}\.\d{4,5}|\bdoi[:\s]*10\.\d{4,9}/\S+|"
                     r"\b10\.\d{4,9}/\S+|[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.\w{1,5}\b", re.I)
 _CODE_SPAN_RE = re.compile(r"(`+)(.+?)\1")
 _MODS = {}
-FIELDS = ["path", "main", "r5", "r6", "r7", "r8a", "r8", "r8_fail_rules", "r8_failing_numbers", "r8_causes",
+FIELDS = ["path", "main", "r5", "r6", "r7", "r8a", "r8b", "r8", "r8_fail_rules", "r8_failing_numbers", "r8_causes",
           "r8_matched_only", "total", "checked", "exempt", "chance_p50", "chance_max", "synthesis"]
 
 

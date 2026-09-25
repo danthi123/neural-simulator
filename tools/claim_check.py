@@ -32,10 +32,14 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      mantissa). A number is measurement-shaped when its stated precision is >= 3 decimals (d = fraction digits
      minus the exponent). A dash/minus glyph directly before the digits is a SIGN unless a digit, `.`, `)`, `]`
      or `%` precedes it (then it is a range or a subtraction). Where main and round 5 decide a dash the other way
-     the RAW reading reads the number BOTH ways, each a claim: an ASCII hyphen after a word character or after
-     `)`, `]`, `%`; a true minus glyph (U+2212, U+2796, U+02D7) after a word character; and ANY other dash glyph
-     (en/em dash, hyphen, the small/fullwidth hyphen-minus, ...) in a sign position -- main and round 5 never read
-     a non-ASCII dash as a sign. Numbers are ALSO extracted from two lightly normalized COPIES in which every
+     EVERY reading of the source reads the number BOTH ways, each a claim: an ASCII hyphen after a word character
+     or after `)`, `]`, `%`; a true minus glyph (U+2212, U+2796, U+02D7) after a word character; and ANY other
+     dash glyph (en/em dash, hyphen, the small/fullwidth hyphen-minus, ...) in a sign position -- main and round 5
+     never read a non-ASCII dash as a sign. Main's side is decided on the ORIGINAL characters at the number's
+     offset, never on a normalized copy (where every dash is `-` and a filler is a space): a number holding a
+     non-ASCII digit is read only in the copies, and main reads it too (its regex takes a digit of any script).
+     The one intended difference: a true minus glyph after a space or punctuation IS a minus sign, read one way.
+     Numbers are ALSO extracted from two lightly normalized COPIES in which every
      character maps to exactly one character -- dash/minus variants to `-`, zero-width/format/combining/filler
      characters to a SPACE, any Unicode decimal digit to its ASCII digit, and dot-like characters between digits to
      `.` in one copy and every dot-like character to a SPACE in the other (the `.` copy turns `5`, U+00B7, U+0663,
@@ -68,9 +72,11 @@ round that did so opened a hole (see HISTORY): deleting `*`/`_` glued numbers to
      headline among many precise numbers passed.) The distribution is printed.
   5. KEPT FROM ROUND 5 / REQUIRED: WARNINGs for the inert scope idioms; strict UTF-8 and no bidirectional controls
      (UNREADABLE blocks); `claim_check: synthesis` applies only inside a CLOSED frontmatter block with a non-empty
-     `claim_check_reason:`, only where main and round 5 also read the flag (before the first `\n---` of a file
-     that starts with `---`: no byte-order mark, no quoted value), and never when the filename, the frontmatter
-     `title:`/`verdict:` (any key case, continuation lines included), or any heading -- as written, as rendered
+     `claim_check_reason:` (EVERY such line non-empty, and no other `claim_check:` value in the block: a YAML
+     loader keeps the last of duplicate keys), only where main and round 5 also read the flag (before the first
+     `\n---` of a file that starts with `---`: no byte-order mark, no quoted value), and never when the filename,
+     any frontmatter `title:`/`verdict:` line (any key case, continuation lines included), or any heading -- as
+     written, as rendered
      (`G**O**`, `G<!-- -->O`, `&#71;O`), or an HTML `<h1>`-`<h6>` -- carries a verdict word (GO(s), NO-GO, NOGO,
      PASS(ED/ES), FAIL(ED/S), REFUTED, CONFIRMED; case-insensitive, invisible characters removed); the
      LOW_COVERAGE floor on DISTINCT checked values seen outside HTML comments, link-reference lines and hidden
@@ -113,6 +119,16 @@ re-derived from git by tests/test_claim_check_line_only.py on every run):
      (`0.15<b>2</b>5<span class="u">k</span>`); several scans were quadratic (210 KB of `x <b y` took 198 s, one
      line of `<!--derived: x` never finished); and no registry case pinned the BOTH-parsers marker rule (an
      either-parser mutant passed the whole suite).
+  r8b (57b1e5f01, round 8's fix pass as reviewed): only the RAW reading read a number both ways, so a number
+     holding a non-ASCII digit -- read only in the normalized copies, one sign each, decided on the copy -- was
+     signed unlike main and r5 (`lesion`, U+2013, `0.1`, U+0666, `25` read -0.1625 only; `(a)-0.1`, U+0666, `25`
+     +0.1625 only; a Hangul filler before `-` is a letter to main and a space in the copy) and main and r5 failed
+     docs it passed; `title:`/`verdict:` were read from their FIRST line only (`title: notes` hid a later
+     `title: Lane A GO`); PATH_RE (the same in main) rescanned a run of path characters from every position (50 KB
+     of `[` 22.7 s, 100 KB 81 s), which the COST note blamed on markdown-it; the scale suffix in the duplicate
+     key was pinned only by a unit test (a mutant that dropped it passed --selftest and the CCT gate); and (found
+     by the differential fuzz against main's regex added for this round; r8a had it too) an exponent swallowed the
+     first digit of a following number, so `1.8e-0.1525` hid the 0.1525 main reads.
 
 CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --calibrate --replay`;
 outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2026-09-25.{tsv,txt}):
@@ -136,7 +152,9 @@ outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2
   * LOW_COVERAGE_MIN_TOTAL = 30: the largest non-synthesis doc since 2026-09-01 under 5% distinct-visible-checked
     has 27 numeric claims.
   * FAILURES on the same 360 findings (none re-gated: the gate checks only NEWLY ADDED findings): round 8 fails
-    153 (main 30, r5 138, r6 158, r7 107, r8a 122; r8a -> round 8: 31 newly fail, none newly pass). Of its 1,668
+    153 (main 30, r5 138, r6 158, r7 107, r8a 122, r8b 153; r8a -> round 8: 31 newly fail, none newly pass;
+    r8b -> round 8: no verdict and no flagged number changes -- no finding holds a number this round's fixes read
+    differently, and every number, cause and rate below is re-derived unchanged). Of its 1,668
     flagged numbers, 1,030 (62%) MATCHED at their written precision but are too broad -- by this checker's own
     logic that match does not show them correct, since a random number of their shape matches too (round 8 as
     reviewed called such numbers "correct"; r5: 939 of its 1,395 flags were roundings main's window rejects). By
@@ -150,12 +168,16 @@ than main's relative window for a coarse small number (0.477 matches a stored 0.
 a wrong coarse number that lands in the window of an unrelated cited value can pass where main fails it -- bounded
 per claim by rule 4, and in aggregate no more often than in main at any stated precision (CALIBRATION, measured
 above: at 3 decimals 3.89% / 4.88% of replayed wrong numbers against main's 7.59% / 5.07%).
-COST: every scan is linear in the size of the document. markdown-it's html_inline rule, which rescanned to the end
-of the paragraph from every unclosed `<!--`, `<?`, `<!X` or `<![CDATA[`, is guarded (`_html_inline_linear`, exact),
-and every regex that rescanned a line or the text from each candidate is replaced by an index-and-bisect emulation
-pinned against it by a differential test (the regexes stay here as the SPEC). 200 KB adversarial documents scan in
-0.3-4 s (round 8 as reviewed: 39 s to never finishing). Known residual: markdown-it-py's own link-label scan costs
-about 1.5 s per 100 KB of a paragraph dense with `[` (the same in round 8 as reviewed; main has no parser).
+COST: every scan in this file is linear in the size of the document, and each is timed on adversarial input by the
+tests (a claim of linearity is a hypothesis until measured: r8b's said so while its PATH_RE, as main's, took 22.7 s
+on 50 KB of `[` and 81 s on 100 KB). markdown-it's html_inline rule, which rescanned to the end of the paragraph
+from every unclosed `<!--`, `<?`, `<!X` or `<![CDATA[`, is guarded (`_html_inline_linear`, exact), and every regex
+that rescanned a line or the text from each candidate is replaced by an index-and-bisect emulation pinned against
+it by a differential test (the regexes stay here as the SPEC) -- PATH_RE included: a run-start lookbehind alone
+still rescans a chain `a/a/a/...` from every `/`, so `_path_spans` reads each chain once. 200 KB adversarial
+documents scan in 0.3-6 s. What remains is markdown-it-py's own parse, near linear and paid twice (CommonMark and
+GFM): about 1.4 s per 100 KB per parser of a paragraph of `[` (plain markdown-it the same; 6.3 s for 400 KB), 0.7 s
+per 100 KB of `[a](` -- main has no parser.
 CANNOT CATCH (known): a number spelled in words; a decimal comma; homoglyph letters for digits; digit-group
 separators (`0.152 5`); an integer mantissa with an exponent (`1525e-4`, as in main and r5); a wrong number within
 the matching window of an unrelated cited value whose own chance rate is under its limit; a wrong number within
@@ -224,16 +246,51 @@ _SIGN_CLASS = "".join(re.escape(c) for c in sorted(_DASH_CHARS))
 # number, a version or a date: `1.2.345`, `2026.09.25`) -- a LETTER or `_` before it does not hide it (`acc0.1525`,
 # `_0.1525_`, `corr0.869` are all read; the whole corpus holds 11 such tokens, 0 since 2026-09-01, half of them run-
 # name parameters like `sigma0.001` that must now be cited or marked). A number that starts with its dot is read
-# unless a letter, digit, dot or `_` precedes it (`p.347` is a page, `x.125` a field).
+# unless a letter, digit, dot or `_` precedes it (`p.347` is a page, `x.125` a field). An exponent is read only when
+# no `.digit` follows it: in `1.8e-0.1525` the `0` is not an exponent but the start of the 0.1525 main reads (the
+# `-` before it is neither a word character nor `.` to main's regex) -- consuming it hid that number from every
+# reading (found by the differential fuzz against main's regex).
 _NUM_RE = re.compile(r"(?:(?<![0-9.])([0-9]+)|(?<![A-Za-z0-9._]))\.([0-9]+)"
-                     r"(?:[eE]([+" + _SIGN_CLASS + r"]?[0-9]+))?(?![0-9])")
+                     r"(?:[eE]([+" + _SIGN_CLASS + r"]?[0-9]+)(?![.][0-9]))?(?![0-9])")
 NUM_RE = _NUM_RE                                   # public alias (tests use it to list a text's numbers)
 _MAGNITUDE = {"k": 1e3, "K": 1e3, "M": 1e6, "B": 1e9, "G": 1e9, "T": 1e12}
 _RANGE_LEFT = frozenset("0123456789.)]%")          # a dash after one of these is a range/subtraction, not a sign
 MIN_DECIMALS = 3                                   # >= 3 stated decimals => a measurement, not prose
 
 # Globs are allowed: a finding over N seeds cites one pattern, not N paths. Must contain a "/".
-PATH_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")
+# The SPEC; applied by _path_spans. The lookbehind starts a match only at the start of a run of path characters,
+# which finds the same matches (a match from inside a run extends to one from the run's start, and finditer tries
+# that first); without it each position of a 50 KB run of `[` or `a` rescanned the run (22-26 s).
+PATH_RE = re.compile(r"(?<![\w.\-*?\[\]])([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")
+_PATH_RUN_RE = re.compile(r"[\w.\-*?\[\]]+")
+
+
+def _path_spans(text):
+    """`[m.span(1) for m in PATH_RE.finditer(text)]` in linear time. The lookbehind alone leaves the regex quadratic
+    on a CHAIN of runs joined by single `/` (`a/a/a/...`: every run start rescans the chain to its end). A chain
+    R0/R1/.../Rm holds at most one match: from R0's start to the LAST `.json` in the last run Rk (k >= 1) that has
+    one after its first character (`.jsonl` when the `l` follows) -- the regex's greedy segments reach the furthest
+    such ending first, and a match starting anywhere later in the chain would end later still."""
+    out = []
+    chain = []
+
+    def flush():
+        for k in range(len(chain) - 1, 0, -1):
+            a, b = chain[k]
+            i = text.rfind(".json", a + 1, b)
+            if i >= 0:
+                out.append((chain[0][0], i + 6 if text.startswith(".jsonl", i) else i + 5))
+                return
+
+    for m in _PATH_RUN_RE.finditer(text):
+        a, b = m.span()
+        if chain and a == chain[-1][1] + 1 and text[a - 1] == "/":
+            chain.append((a, b))
+        else:
+            flush()
+            chain = [(a, b)]
+    flush()
+    return out
 VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 
 # =================================================================================================================
@@ -443,32 +500,51 @@ _WORDCHAR_RE = re.compile(r"\w")
 _MINUS_GLYPHS = frozenset("\u2212\u2796\u02d7")
 
 
-def _ambiguous_hyphen(s, a):
-    """True when the dash directly before the digits at `a` is read as a sign by one of main/round 5 and round 8 but
-    not the other, so the RAW reading reads the number BOTH ways (each reading a claim of its own):
+def _sign_here(s, a):
+    """Round 8's sign rule on string `s`: a dash/minus glyph directly before the digits at `a` is a sign unless a
+    digit, `.`, `)`, `]` or `%` precedes it (a range or a subtraction)."""
+    return a > 0 and s[a - 1] in _DASH_CHARS and (s[a - 2] if a >= 2 else " ") not in _RANGE_LEFT
+
+
+def _sign_main(orig, a):
+    """main's and round 5's sign for the number whose digits start at `a` of the ORIGINAL text. Their regex
+    `(?<![\\w.])(-?\\d+\\.\\d{3,})` reads only an ASCII hyphen-minus as a sign, and only when neither a (Unicode) word
+    character nor `.` precedes it; it reads digits of any script (`\\d`), so it reads `0.1`, U+0666, `25` too."""
+    if a < 1 or orig[a - 1] != "-":
+        return False
+    prev = orig[a - 2] if a >= 2 else " "
+    return not (prev == "." or _WORDCHAR_RE.match(prev))
+
+
+def _ambiguous_hyphen(s, a, orig=None):
+    """True when round 8's sign for the number at `a` of `s` (the raw text or a normalized copy) differs from the
+    sign main and round 5 read at the SAME offset of the ORIGINAL text `orig` (default `s`; a normalized copy maps
+    one character to one character, so the offsets agree), so the number is read BOTH ways, each reading a claim
+    of its own. On the raw text that is:
       * an ASCII hyphen-minus after a letter or `_` (`acc-0.1525`: main/round 5 read no sign) or after `)`, `]`, `%`
         (`(a)-0.1525`: main/round 5 read a sign, round 8 a range);
-      * a true minus glyph (U+2212, U+2796, U+02D7) after a word character (`x`, U+2212, `0.1625`): main/round 5 never read a
-        non-ASCII dash as a sign; after a space or punctuation it is a minus sign (every non-ASCII sign in the
-        findings since 2026-09-01 is U+2212 there);
-      * any OTHER dash glyph in a sign position (`lesion`, U+2013, `0.1625`; `x `, U+2014, `0.1625`): main/round 5 read no sign."""
-    if a < 1 or s[a - 1] not in _DASH_CHARS:
+      * a true minus glyph (U+2212, U+2796, U+02D7) after a word character (`x`, U+2212, `0.1625`): main/round 5
+        never read a non-ASCII dash as a sign;
+      * any OTHER dash glyph in a sign position (`lesion`, U+2013, `0.1625`; `x `, U+2014, `0.1625`).
+    In a normalized copy the dash is always `-` and a filler or an invisible character before it is a space, so
+    main's side MUST come from the original (`lesion`, U+2013, `0.1`, U+0666, `25` is read only in the copies:
+    decided there alone it read -0.1625 only, and a sign error main catches passed).
+    The one intended difference is not ambiguous: a true minus glyph after a space or punctuation IS a minus sign
+    (every non-ASCII sign in the findings since 2026-09-01 is U+2212 there; main and round 5 read it unsigned)."""
+    orig = s if orig is None else orig
+    mine = _sign_here(s, a)
+    if mine == _sign_main(orig, a):
         return False
-    dash = s[a - 1]
-    prev = s[a - 2] if a >= 2 else " "
-    if dash == "-":
-        return prev in ")]%" or (bool(_WORDCHAR_RE.match(prev)) and prev not in "0123456789")
-    if prev in _RANGE_LEFT:                              # a range/subtraction in every revision: never a sign
+    if mine and orig[a - 1] in _MINUS_GLYPHS and not _WORDCHAR_RE.match(orig[a - 2] if a >= 2 else " "):
         return False
-    if dash in _MINUS_GLYPHS:
-        return bool(_WORDCHAR_RE.match(prev))
     return True
 
 
-def _extract(s, both_signs=False):
+def _extract(s, both_signs=False, orig=None):
     """Every measurement-shaped number in string `s` -> list of (start, end, value, decimals, unit, alts, text).
-    `start` covers a sign when one is read. With `both_signs` (the RAW reading), a number behind an ambiguous ASCII
-    hyphen is read BOTH signed and unsigned -- each reading is a claim of its own, so a sign error main or round 5
+    `start` covers a sign when one is read. With `both_signs` (every reading of the source), a number whose sign
+    main or round 5 would read the other way (decided on `orig`, the original text `s` is a 1:1 copy of; default
+    `s`) is read BOTH signed and unsigned -- each reading is a claim of its own, so a sign error main or round 5
     would catch is never read away."""
     out = []
     for m in _NUM_RE.finditer(s):
@@ -481,17 +557,14 @@ def _extract(s, both_signs=False):
         if d < MIN_DECIMALS:
             continue
         mag = float((ip or "0") + "." + frac + ("e%d" % e if exp else ""))
-        neg, sa = False, a
-        if a > 0 and s[a - 1] in _DASH_CHARS:
-            prev = s[a - 2] if a >= 2 else " "
-            if prev not in _RANGE_LEFT:
-                neg, sa = True, a - 1
+        neg = _sign_here(s, a)
+        sa = a - 1 if neg else a
         alts = ()
         if b < len(s) and s[b] in _MAGNITUDE and (b + 1 >= len(s) or not (s[b + 1].isascii() and s[b + 1].isalnum())):
             alts = ((_MAGNITUDE[s[b]], s[b]),)
         suffix = alts[0][1] if alts else ""
         out.append((sa, b, -mag if neg else mag, d, 10.0 ** (-d), alts, ("-" if neg else "") + s[a:b] + suffix))
-        if both_signs and _ambiguous_hyphen(s, a):
+        if both_signs and _ambiguous_hyphen(s, a, orig):
             other = not neg
             out.append((a - 1 if other else a, b, -mag if other else mag, d, 10.0 ** (-d), alts,
                         ("-" if other else "") + s[a:b] + suffix))
@@ -1098,30 +1171,44 @@ def _in_spans(merged, pos):
 # =================================================================================================================
 # 5. synthesis
 # =================================================================================================================
+def _fm_values(fm, key):
+    """The value of EVERY `key:` line of frontmatter `fm`, in order ([] when there is none). A YAML loader keeps the
+    LAST of duplicate keys and a reader may take any of them, so each is read: reading only the first let
+    `title: notes` hide a later `title: Lane A GO` from the verdict-word bar.
+    The key is matched case-insensitively and quoted or not (`Title:`, `"title":`) -- barring is the fail-closed
+    direction, so every spelling a reader would take for the title is read.
+    (`^key:[ \t]*(.*?)[ \t]*$` rescanned the trailing blanks for every character of the value: quadratic on a long
+    line; the prefix is matched here and the value is the rest of its line with trailing blanks removed. Each
+    continuation scan stops at the first unindented line -- every key line is one -- so no line is scanned twice.)"""
+    out = []
+    n = len(fm)
+    for m in re.finditer(r"^[\"']?%s[\"']?[ \t]*:[ \t]*" % re.escape(key), fm, re.M | re.I):
+        e = fm.find("\n", m.end())
+        v = fm[m.end():n if e < 0 else e].rstrip(" \t")
+        # Every indented or blank line after the key continues its value -- a block scalar (`|`, `>`, blank lines
+        # included) or a multi-line plain or quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a
+        # continuation line is still read.
+        block = []
+        while e >= 0:
+            s = e + 1
+            e = fm.find("\n", s)
+            ln = fm[s:n if e < 0 else e]
+            if ln.startswith((" ", "\t")) or not ln.strip():
+                block.append(ln.strip())
+            else:
+                break
+        if v in ("|", ">", "|-", ">-", "|+", ">+"):
+            v = ""
+        v = " ".join(x for x in [v] + block if x)
+        v = v.strip().strip("\"'").strip()
+        out.append("" if v in ("~", "null", "Null", "NULL") else v)
+    return out
+
+
 def _fm_value(fm, key):
-    # The key is matched case-insensitively and quoted or not (`Title:`, `"title":`) -- barring is the fail-closed
-    # direction, so every spelling a reader would take for the title is read.
-    # (`^key:[ \t]*(.*?)[ \t]*$` rescanned the trailing blanks for every character of the value: quadratic on a long
-    # line; the prefix is matched here and the value is the rest of its line with trailing blanks removed.)
-    m = re.search(r"^[\"']?%s[\"']?[ \t]*:[ \t]*" % re.escape(key), fm, re.M | re.I)
-    if not m:
-        return ""
-    e = fm.find("\n", m.end())
-    v = fm[m.end():len(fm) if e < 0 else e].rstrip(" \t")
-    # Every indented or blank line after the key continues its value -- a block scalar (`|`, `>`, blank lines
-    # included) or a multi-line plain or quoted scalar (`title: 'Lane A` / `  GO'`) -- so a verdict word on a
-    # continuation line is still read.
-    block = []
-    for ln in fm[m.end():].split("\n")[1:]:
-        if ln.startswith((" ", "\t")) or not ln.strip():
-            block.append(ln.strip())
-        else:
-            break
-    if v in ("|", ">", "|-", ">-", "|+", ">+"):
-        v = ""
-    v = " ".join(x for x in [v] + block if x)
-    v = v.strip().strip("\"'").strip()
-    return "" if v in ("~", "null", "Null", "NULL") else v
+    """The FIRST `key:` value (see _fm_values), or ""."""
+    vals = _fm_values(fm, key)
+    return vals[0] if vals else ""
 
 
 def _verdict_word(s):
@@ -1223,13 +1310,20 @@ def _synthesis_status(text, doc_path, tokens=(), bom=False):
         return False, None, ("`claim_check: synthesis` must sit in the FIRST `---` block, before any other line "
                              "starting with `---`, with no byte-order mark before the file's first `---` -- ignored, "
                              "every number is checked")
-    reason = _fm_value(fm, "claim_check_reason")
-    if not reason:
+    # Duplicate keys: a YAML loader keeps the LAST, a reader may take any -- every one must agree with the escape.
+    flags = [v for v in _fm_values(fm, "claim_check") if v != "synthesis"]
+    if flags:
+        return False, None, ("declares `claim_check: synthesis` but another `claim_check:` line in the SAME "
+                             "frontmatter block reads %r -- ignored, every number is checked" % flags[0])
+    reasons = _fm_values(fm, "claim_check_reason")
+    reason = reasons[-1] if reasons else ""
+    if not reasons or not all(reasons):
         return False, None, ("declares `claim_check: synthesis` but no non-empty `claim_check_reason:` on the same "
-                             "line in the SAME frontmatter block -- falling back to the normal rules")
-    probes = [("filename", os.path.splitext(os.path.basename(doc_path))[0]),
-              ("frontmatter title:", _fm_value(fm, "title")),
-              ("frontmatter verdict:", _fm_value(fm, "verdict"))]
+                             "line in the SAME frontmatter block (every `claim_check_reason:` line must be non-empty)"
+                             " -- falling back to the normal rules")
+    probes = [("filename", os.path.splitext(os.path.basename(doc_path))[0])]
+    for key in ("title", "verdict"):
+        probes.extend(("frontmatter %s:" % key, v) for v in _fm_values(fm, key))
     lines = text.split("\n")
     for i, ln in enumerate(lines):
         h = _atx_text(ln)
@@ -1413,6 +1507,29 @@ def _read(doc_path):
     return text, None, bom
 
 
+def _source_claims(text, line_of=lambda pos: 0):
+    """The raw reading + both normalized copies of the SOURCE text (union, deduplicated, in source order). Every
+    reading reads a number BOTH ways where main or round 5 would read its sign the other way, deciding their side on
+    the ORIGINAL characters at the same offset (see _ambiguous_hyphen): a number that holds a non-ASCII digit is
+    read only in the copies, where every dash is `-` and a filler is a space."""
+    claims = []
+    for reading, s in (("raw", text), ("normalized", _n_copy(text)), ("normalized", _n_copy(text, True))):
+        for (a, b, v, d, u, alts, txt) in _extract(s, both_signs=True, orig=text):
+            claims.append(Claim(a, b, line_of(a), v, d, u, alts, txt, reading))
+    # Two readings of the SAME number end at the same offset with the same value, precision and scale suffix; a
+    # hash on exactly that is linear (a scan of every earlier claim on the line was quadratic: 11,000 numbers on one
+    # line took minutes). The suffix is part of the key: `0.1525k` followed by a non-ASCII digit is scaled in the raw
+    # reading and bare in the normalized one, and dropping either would check it more loosely.
+    seen, rn = set(), []
+    for c in claims:
+        key = (c.end, round(c.value, 12), c.decimals, c.alts)
+        if key not in seen:
+            seen.add(key)
+            rn.append(c)
+    rn.sort(key=lambda c: c.start)
+    return rn
+
+
 def _scan(doc_path, tol=None):
     """Pure computation, no printing -- shared by the CLI (`check`), tools/finding_lint.py and the retro script.
     `tol` (API only) replaces rule 3 with a fixed absolute tolerance."""
@@ -1463,22 +1580,7 @@ def _scan(doc_path, tol=None):
             warnings.append((li + 1, "not an exact marker",
                              "%r is not `<!--derived-->` or `<!--derived: note-->`, so it exempts NOTHING." % snippet))
 
-    # ---- claims: raw reading + normalized copy (union, deduplicated) ---------------------------------------------
-    claims = []
-    for reading, s in (("raw", text), ("normalized", _n_copy(text)), ("normalized", _n_copy(text, True))):
-        for (a, b, v, d, u, alts, txt) in _extract(s, both_signs=(reading == "raw")):
-            claims.append(Claim(a, b, line_of(a), v, d, u, alts, txt, reading))
-    # Two readings of the SAME number end at the same offset with the same value, precision and scale suffix; a
-    # hash on exactly that is linear (a scan of every earlier claim on the line was quadratic: 11,000 numbers on one
-    # line took minutes). The suffix is part of the key: `0.1525k` followed by a non-ASCII digit is scaled in the raw
-    # reading and bare in the normalized one, and dropping either would check it more loosely.
-    seen, rn = set(), []
-    for c in claims:
-        key = (c.end, round(c.value, 12), c.decimals, c.alts)
-        if key not in seen:
-            seen.add(key)
-            rn.append(c)
-    rn.sort(key=lambda c: c.start)
+    rn = _source_claims(text, line_of)
     hidden_lines, hidden_spans = _hidden(text, toks_gfm, line_starts)
 
     def is_hidden(pos):
@@ -1527,8 +1629,8 @@ def _scan(doc_path, tol=None):
         warnings.append((1, "synthesis escape not applied", synth_warn))
 
     cited, ignored = set(), set()
-    for m in PATH_RE.finditer(text):
-        (ignored if is_hidden(m.start()) else cited).add(m.group(1))
+    for a, b in _path_spans(text):
+        (ignored if is_hidden(a) else cited).add(text[a:b])
     ignored -= cited
     for p in sorted(ignored):
         warnings.append((0, "citation ignored",
@@ -1703,7 +1805,8 @@ def check(doc_path, tol=None, verbose=True):
 # loaded from git, and asserts the recorded `wrong_on` equals the set that ACTUALLY gets it wrong.
 # =================================================================================================================
 _HISTORY_SHAS = {"main": "7e2edc08e", "r1": "d4959ecb0", "r2": "6abb28469", "r3": "662e167e8", "r4": "214e509bf",
-                 "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664"}
+                 "r5": "4fda849d4", "r6": "f2b7db2b4", "r7": "4ff05b018", "r8a": "654d95664",
+                 "r8b": "57b1e5f01"}
 _DEFAULT_ARTIFACT = {"accuracy": 0.17, "baseline": 0.1625}
 WRONG_VALUES = {0.1525, 0.14, 1.23456, -0.1525, -0.1625, 0.153, 0.15925, 10.1525}
 

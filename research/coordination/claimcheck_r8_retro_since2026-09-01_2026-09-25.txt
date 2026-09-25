@@ -4,6 +4,7 @@ scanned 360 finding(s) since 2026-09-01
   FAIL r6   158
   FAIL r7   107
   FAIL r8a  122
+  FAIL r8b  153
   FAIL r8   153
   r8 failing docs by rule (a doc can fail on several): {'too_broad': 88, 'unsupported': 99, 'missing': 16}
   r8 failing docs on ONE rule only: {'too_broad': 47, 'unsupported': 55, 'missing': 3}
@@ -17,11 +18,13 @@ scanned 360 finding(s) since 2026-09-01
   r6 -> r8 verdict pairs: {('PASS', 'PASS'): 188, ('FAIL', 'FAIL'): 139, ('FAIL', 'PASS'): 19, ('PASS', 'FAIL'): 14}
   r7 -> r8 verdict pairs: {('PASS', 'PASS'): 206, ('PASS', 'FAIL'): 47, ('FAIL', 'FAIL'): 106, ('FAIL', 'PASS'): 1}
   r8a -> r8 verdict pairs: {('PASS', 'PASS'): 207, ('PASS', 'FAIL'): 31, ('FAIL', 'FAIL'): 122}
+  r8b -> r8 verdict pairs: {('PASS', 'PASS'): 207, ('FAIL', 'FAIL'): 153}
   main: 30 failing docs, 43 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 30, 'matched-at-precision': 9, 'not-a-claim-in-r8': 4}; 21% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 2
   r5: 138 failing docs, 1395 flagged numbers; what round 8 makes of them: {'matched-at-precision': 939, 'unsupported-in-r8': 356, 'not-a-claim-in-r8': 94, 'exempt-in-r8': 6}; 67% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 45
   r6: 158 failing docs, 1665 flagged numbers; what round 8 makes of them: {'matched-at-precision': 1037, 'unsupported-in-r8': 622, 'exempt-in-r8': 6}; 62% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 51
   r7: 107 failing docs, 563 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 549, 'legacy': 14}; 0% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 0
   r8a: 122 failing docs, 624 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 624}; 0% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 0
+  r8b: 153 failing docs, 624 flagged numbers; what round 8 makes of them: {'unsupported-in-r8': 624}; 0% matched at their written precision; docs failing ONLY on numbers matched at their written precision: 0
   chance over 4030 precision-tier matches: p50 0.020 p75 0.054 p90 0.160 p95 0.218 p99 0.572 max 0.867
   chance over 19 legacy-tier matches: p50 0.523 p75 1.000 p90 1.000 p95 1.000 p99 1.000 max 1.000
   CHANCE_MAX sweep (docs with >=1 matched claim above T / docs failing on breadth ALONE, i.e. no unsupported, missing, low-coverage):

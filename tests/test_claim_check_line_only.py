@@ -2,9 +2,9 @@
 
   1. REGISTRY: every tools/claim_check_cases.py entry gets its expected verdict for its stated reason (a FAIL case
      must flag its designated wrong number or trip its reason; a PASS case flags nothing).
-  2. HISTORY: every case is re-run through each earlier checker (main, r1-r7, r8a, read straight from git) and its
-     recorded `wrong_on` must equal the set of revisions that ACTUALLY get it wrong -- "this used to pass, now it
-     fails" is re-derived on every run, never remembered. Every round-7-review repro must be wrong on r7.
+  2. HISTORY: every case is re-run through each earlier checker (main, r1-r7, r8a, r8b, read straight from git) and
+     its recorded `wrong_on` must equal the set of revisions that ACTUALLY get it wrong -- "this used to pass, now
+     it fails" is re-derived on every run, never remembered. Every round-7-review repro must be wrong on r7.
   3. SPEC GUARDS for the round-8 contract: nothing deleted/hidden (the normalized copy is 1:1), markers verified by
      markdown-it, exact spellings only, cell scope + cap 8, precision-aware rounding, the per-claim chance rate.
   4. The four real findings with an odd number of fence lines behave like main or stricter.
@@ -15,6 +15,11 @@
      spelling-independent chance rate, dash signs read both ways where main/r5 differ, the dot-as-space copy, hidden
      citations opened, the suffix in both duplicate keys; every linear-time emulation pinned against the regex it
      replaces (random text), and adversarial 200 KB documents scanned within a killed-at-the-limit child process.
+  8. The review of the fix pass (57b1e5f01, "r8b"): every number main's own regex reads is a claim with main's value
+     and sign in some reading (a differential fuzz; main's side decided on the ORIGINAL characters; an exponent
+     never swallows the first digit of the next number), PATH_RE's
+     run-start lookbehind and its linear emulation (pinned against the regex, timed on runs and chains), every
+     frontmatter `title:`/`verdict:`/`claim_check_reason:`/`claim_check:` line read, linearly.
 """
 from __future__ import annotations
 
@@ -633,3 +638,125 @@ def test_cell_cuts_are_linear_on_one_long_line():
     """1 MB of `x <br y` on ONE line: the regex scanned to the end of the line from every `<br` (~70 s); the
     emulation takes a fraction of a second."""
     assert _finishes_within(cc._cell_cuts, ("x <br y " * 130000,), 20.0)
+
+
+# ---- 8. the review of the round-8 fix pass (57b1e5f01, "r8b" in the history) --------------------------------------
+# main's and round 5's number regex, verbatim from 7e2edc08e / 4fda849d4 (pinned against git by the test after it)
+MAIN_NUM_RE = re.compile(r"(?<![\w.])(-?\d+\.\d{3,})(?![\w])")
+_FW = "".join(chr(0xFF10 + i) for i in range(10))
+_SIGN_ALPHA = (["0", "1", "6", "25", ".", ".", "0.1", "-", "-", " ", "x", "a", "_", ")", "]", "%", "k", "e", "(",
+                "e-", "E+",
+                chr(0x0666), chr(0x0663), chr(0x096C), _FW[1], _FW[6], chr(0xFF0E), chr(0x3164), chr(0x200B),
+                chr(0x00B7)]
+               + [chr(c) for c in (0x2212, 0x2796, 0x02D7, 0x2013, 0x2014, 0x2010, 0xFF0D, 0xFE63)])
+
+
+def _sanctioned_minus(s, a):
+    """The one intended difference from main: a true minus glyph after a space or punctuation is a minus sign."""
+    return a >= 1 and s[a - 1] in cc._MINUS_GLYPHS and not re.match(r"\w", s[a - 2] if a >= 2 else " ")
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3])
+def test_every_number_main_reads_is_read_with_mains_sign(seed):
+    """A differential fuzz against main's own regex: every number main (and round 5) reads is also a claim of round
+    8, at the same end, with main's value AND sign -- whichever reading holds it (a number with a non-ASCII digit is
+    read only in the normalized copies). The fix pass read such a number with one sign, decided on the copy, so
+    `lesion`, U+2013, `0.1`, U+0666, `25` was -0.1625 only and a sign error main catches passed."""
+    rng = random.Random(seed)
+    missed = []
+    for _ in range(40000):
+        s = "".join(rng.choice(_SIGN_ALPHA) for _ in range(rng.randint(2, 12)))
+        have = {(c.end, round(c.value, 9)) for c in cc._source_claims(s)}
+        for m in MAIN_NUM_RE.finditer(s):
+            v = float(m.group(1))
+            a = m.start(1) + (1 if m.group(1).startswith("-") else 0)
+            if v >= 0 and _sanctioned_minus(s, a):
+                continue
+            if (m.end(1), round(v, 9)) not in have:
+                missed.append((s, v))
+    assert not missed, "main reads a number round 8 does not (text, value): %r" % missed[:5]
+
+
+def test_main_number_regex_is_mains(history):
+    assert history["main"].NUM_RE.pattern == history["r5"].NUM_RE.pattern == MAIN_NUM_RE.pattern
+
+
+def test_sign_decision_uses_the_original_characters():
+    """In a normalized copy every dash is `-` and a filler is a space: main's side of the sign comes from the
+    ORIGINAL text at the same offset."""
+    for text, main_signed, copy_alone in (("lesion" + chr(0x2013) + "0.1" + chr(0x666) + "25", False, True),
+                                          ("x " + chr(0x2014) + "0.1" + chr(0x96C) + "25", False, False),
+                                          ("x" + chr(0x3164) + "-0.1" + chr(0x666) + "25", False, False),
+                                          ("(a)-0.1" + chr(0x666) + "25", True, True)):
+        a = text.index("0.1")
+        assert cc._sign_main(text, a) is main_signed
+        assert cc._ambiguous_hyphen(cc._n_copy(text), a, text)
+        assert cc._ambiguous_hyphen(cc._n_copy(text), a) is copy_alone     # `x -`: the copy alone reads one sign
+    minus = "delta " + chr(0x2212) + "0.1" + chr(0x666) + "25"
+    assert not cc._ambiguous_hyphen(cc._n_copy(minus), minus.index("0.1"), minus)          # the intended sign
+    arabic_range = chr(0x663) + "-0.1" + chr(0x666) + "25"                                   # a range to both
+    assert not cc._ambiguous_hyphen(cc._n_copy(arabic_range), 2, arabic_range)
+
+
+_PATH_ORIG_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")    # main's PATH_RE, no lookbehind
+_PATH_ALPHA = ["a", "/", ".", "json", "jsonl", ".json", ".jsonl", " ", "[", "]", "l", "-", "*", "?", chr(0xE9),
+               chr(0x663), "\n", "//", "x.json", "/.json", "`", "(", "_", "s"]
+
+
+@pytest.mark.parametrize("seed", [0, 1])
+def test_path_spans_match_the_regex(seed):
+    """`_path_spans` is pinned against PATH_RE (the SPEC, with its run-start lookbehind) and against main's PATH_RE
+    without it -- the lookbehind finds the same matches."""
+    rng = random.Random(seed)
+    for _ in range(60000):
+        s = "".join(rng.choice(_PATH_ALPHA) for _ in range(rng.randint(1, 16)))
+        want = [m.span(1) for m in _PATH_ORIG_RE.finditer(s)]
+        assert [m.span(1) for m in cc.PATH_RE.finditer(s)] == want, s
+        assert cc._path_spans(s) == want, s
+
+
+def _path_spec_on(s):
+    return [m.span(1) for m in cc.PATH_RE.finditer(s)]
+
+
+def test_path_spec_regex_starts_only_at_a_run_start():
+    """The SPEC regex itself: with the run-start lookbehind a run of path characters is scanned from its start only
+    (without it, 100 KB of `[` took 81 s)."""
+    assert _finishes_within(_path_spec_on, ("[" * 100000,), 10.0)
+
+
+@pytest.mark.parametrize("unit", ["[", "a", "a/", "aaaa/", "a/b.jso"])
+def test_path_spans_are_linear(unit):
+    """PATH_RE rescanned a run of path characters from every position (50 KB of `[` 22.7 s, of `a` 26 s; the same in
+    main); with the run-start lookbehind alone a chain `a/a/a/...` was still rescanned from every `/`."""
+    assert _finishes_within(cc._path_spans, (unit * (400000 // len(unit)),), 10.0), unit
+
+
+@pytest.mark.parametrize("unit", ["[", "a", "a/"])
+def test_documents_dense_with_path_characters_scan_in_bounded_time(unit, casedir):
+    body = _H + unit * (200000 // len(unit)) + "\n"
+    path = cc._write_case(casedir, {"name": "path_slow_%d" % len(unit) + ("a" if "a" in unit else "b"), "doc": body})
+    # ~0.4-6 s now (a paragraph of `[` is markdown-it's own parse, twice); minutes before
+    assert _finishes_within(cc._scan, (path,), 30.0), unit
+
+
+def test_fm_values_reads_every_key_line():
+    fm = "title: notes\nTitle: Lane A GO\nverdict: x\n  continued\nother: y\nverdict:\n"
+    assert cc._fm_values(fm, "title") == ["notes", "Lane A GO"]
+    assert cc._fm_values(fm, "verdict") == ["x continued", ""]
+    assert cc._fm_value(fm, "title") == "notes" and cc._fm_values(fm, "missing") == []
+
+
+def test_fm_values_is_linear_over_many_key_lines():
+    """Each continuation scan stops at the next key line: 200,000 `title:` lines are read once each (a split of the
+    rest of the block per key line is quadratic)."""
+    assert _finishes_within(cc._fm_values, ("title: a\n" * 200000, "title"), 20.0)
+
+
+def test_every_r8b_review_repro_is_wrong_on_r8b_and_caught_now():
+    r8b = [c for c in CASES if c["name"].startswith("r8b_")]
+    assert len(r8b) >= 9
+    for c in r8b:
+        if c["expect"] == "PASS" or c["name"].endswith("_duplicate_key"):     # a control; a mutant pin (r8b is right)
+            continue
+        assert "r8b" in c["wrong_on"], c["name"]
