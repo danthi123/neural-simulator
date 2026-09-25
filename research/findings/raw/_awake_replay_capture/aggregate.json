@@ -1,0 +1,74 @@
+{
+  "family": "arc",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "GO",
+    "101": "NO-GO",
+    "102": "GO",
+    "42": "GO",
+    "43": "GO",
+    "44": "GO"
+  },
+  "n_go": 5,
+  "verdict": "NO-GO",
+  "signflip_p_rest_rescue_on_vs_off": 0.03125,
+  "signflip_p_rest_rescue_intact_vs_awake_lesion": 0.03125,
+  "diffs_on_minus_off": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "diffs_intact_minus_lesion": [
+    1,
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "reported_correct_counts": {
+    "lq_arc": 0,
+    "lz_arc": 0,
+    "lr_ledger_off": 6
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seed completeness",
+      "ok": true,
+      "detail": "all 6 registered seeds present (42,43,44,100,101,102), independently re-derived from raw arm JSON",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "zero arm errors",
+      "ok": true,
+      "detail": "0 arm errors across all 72 raw per-arm JSON files (12 arms x 6 seeds), independently scanned for _error",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no UNDEFINED seed",
+      "ok": true,
+      "detail": "G0/P1/I1/I2/I3/gamma UNDEFINED rules independently recomputed from raw JSON and hold (not UNDEFINED) on all 6 seeds",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "instrument gates hold (G0/P1/I1/I2/I3/gamma)",
+      "ok": true,
+      "detail": "independently recomputed from raw per-arm JSON (not imported from grade_seed_arc): G0 null-rebuild exact-match, P1 immediate-recall precondition, I1 awake-branch-as-scheduled, I2 lesions-held-at-measurement, I3 no-PRP-from-awake-bouts, gamma-consistent -- all True on all 6 seeds",
+      "note": "independent re-derivation, research/verify-awake-replay-arc-0925 branch, scratch_verify_arc.py"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+ "run_id": "1790334692-304922",
+ "runner": "research/runners/_da_tag_capture_chat_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_da_tag_capture_chat_probe.py",
+  "--family",
+  "arc",
+  "--aggregate",
+  "research/findings/raw/_awake_replay_capture"
+ ],
+ "git_sha": "e4b5d807f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T07:11:32",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 38610.9,
+ "corpus_check_query": "non-plastic synapse weights drift under repeated reads (plastic=False not enforced)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_awake_replay_capture/aggregate.json"
+}
