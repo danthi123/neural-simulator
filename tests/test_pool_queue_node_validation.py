@@ -70,3 +70,50 @@ def test_add_is_unaffected_for_a_line_with_no_pool_node_token(tmp_path):
     """Regression: opt-in behaviour must be preserved exactly, the same guarantee pop_job's own constraint gives."""
     res = _run(["add", "cd ~/derisk-pool/revisions/abc1234 && true", "--checked", "x"], tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
+
+
+def test_add_refuses_an_unknown_pool_node_named_only_in_the_checked_reason(tmp_path):
+    """Regression (follow-up review round, MEDIUM): every REAL B2b redo line
+    (research/coordination/b2b0924_reruns_commands.txt) declares `pool_node=` inside the --checked REASON ($4),
+    never in the command ($2) -- e.g. `--checked 'prereg ...; torn-cell redo ...; pool_node=pool41; mem_gb=8'`.
+    pop_job (tools/pool_autodispatch.sh) matches against the WHOLE stored queue line (command + '  #checked:' +
+    reason, exactly as `add` writes it below), so it sees pool_node= in either place. The old enqueue-time guard
+    only ever grepped "$2" (the raw command), so a typo'd `pool_node=` living in the --checked reason -- the
+    demonstrated real usage pattern -- slipped through with exit 0 and sat in the queue matching no real node,
+    unchanged from before the LOW fix was supposedly applied. This is the exact case; it must be REFUSED."""
+    res = _run(
+        [
+            "add",
+            "cd ~/derisk-pool/revisions/abc1234 && true",
+            "--checked",
+            "prereg some-doc.md AMENDMENT 2; torn-cell redo, different host; pool_node=pool14; mem_gb=8",
+        ],
+        tmp_path=tmp_path,
+    )
+    assert res.returncode == 2, (
+        f"expected REFUSED (exit 2) for an unknown pool_node named only in --checked, "
+        f"got exit {res.returncode}: stdout={res.stdout!r} stderr={res.stderr!r}"
+    )
+    assert "REFUSED" in res.stderr
+    assert "pool_node=pool14" in res.stderr
+    queue = tmp_path / "pool.queue"
+    assert not queue.exists() or queue.read_text() == "", (
+        "a line whose --checked reason names an unknown node must never reach the queue"
+    )
+
+
+def test_add_accepts_a_known_pool_node_named_only_in_the_checked_reason(tmp_path):
+    """Positive counterpart, same placement as the real B2b redo lines: a VALID node name declared only in the
+    --checked reason must still be accepted -- the fix must not overcorrect into refusing every reason-only
+    pool_node=, only unknown ones."""
+    res = _run(
+        [
+            "add",
+            "cd ~/derisk-pool/revisions/abc1234 && true",
+            "--checked",
+            "prereg some-doc.md AMENDMENT 2; torn-cell redo, different host; pool_node=pool41; mem_gb=8",
+        ],
+        tmp_path=tmp_path,
+    )
+    assert res.returncode == 0, res.stderr
+    assert "pool_node=pool41" in (tmp_path / "pool.queue").read_text()

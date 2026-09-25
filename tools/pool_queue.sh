@@ -186,7 +186,16 @@ case "${1:-list}" in
          # against the exact candidate list pop_job/probe_nodes already iterate (POOL_NODES default plus any
          # research/queue/.pool_extra_nodes entries), reusing node_in_list (below) so this can never drift from
          # the dup-guard's own node-membership logic.
-         WANT_NODE=$(printf '%s' "$2" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
+         #
+         # SCAN THE FULL STORED LINE, NOT JUST $2 (fix, follow-up review round): every real redo line in this
+         # branch (research/coordination/b2b0924_reruns_commands.txt) puts `pool_node=` in the --checked REASON
+         # ($4), not in the command ($2) -- e.g. `--checked '... pool_node=pool41; mem_gb=8'`. pop_job matches
+         # against the WHOLE stored queue line (command + "  #checked:$CHECKED", written below by this same
+         # `add`), so it sees pool_node= in either place; the old `grep` here only ever looked at "$2" and was
+         # therefore blind to the actual usage pattern it was built to guard -- a typo'd `pool_node=pool14` in a
+         # --checked reason enqueued clean (exit 0) instead of being refused. Build the identical string pop_job
+         # will later see (mirroring the `printf '%s\t%s  #checked:%s\n'` write further down) and grep THAT.
+         WANT_NODE=$(printf '%s  #checked:%s' "$2" "$CHECKED" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
          if [ -n "$WANT_NODE" ] && ! node_in_list "$WANT_NODE" "$(probe_nodes)"; then
            echo "⛔ REFUSED: pool_node=$WANT_NODE names no node this pool currently knows about." >&2
            echo "   Known nodes: $(probe_nodes)" >&2
