@@ -1,0 +1,3302 @@
+{
+ "runner": "research.runners.d6_capacity_curve",
+ "arm_dir": "research/findings/raw/_d6_capacity_curve",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "levels": [
+  5,
+  50,
+  500,
+  2000
+ ],
+ "per_level": {
+  "5": {
+   "42": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2767,
+      "encode_s_mean": 0.27634,
+      "encode_s_last_decile_mean": 0.279,
+      "encode_cpu_s_median": 0.2766,
+      "query_s_median": 0.3627,
+      "engram_read_s_median": 0.0342,
+      "engram_read_cpu_s_median": 0.0342,
+      "readtime_view_s_per_turn_projected": 0.171
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2755,
+      "encode_s_mean": 0.27490000000000003,
+      "encode_s_last_decile_mean": 0.2762,
+      "encode_cpu_s_median": 0.2755,
+      "query_s_median": 0.68325,
+      "engram_read_s_median": 0.0348,
+      "engram_read_cpu_s_median": 0.0348,
+      "readtime_view_s_per_turn_projected": 0.174
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.4,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.3234,
+      "encode_s_mean": 0.33415999999999996,
+      "encode_s_last_decile_mean": 0.3881,
+      "encode_cpu_s_median": 0.3234,
+      "query_s_median": 0.81655,
+      "engram_read_s_median": 0.0551,
+      "engram_read_cpu_s_median": 0.0545,
+      "readtime_view_s_per_turn_projected": 0.2755
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       8.6484375,
+       12.1748046875,
+       16.4580078125
+      ],
+      "loadavg_end": [
+       6.8154296875,
+       11.392578125,
+       16.06005859375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       9.0087890625,
+       9.70166015625,
+       14.7119140625
+      ],
+      "loadavg_end": [
+       11.98681640625,
+       10.423828125,
+       14.6943359375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "43": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2991,
+      "encode_s_mean": 0.29822,
+      "encode_s_last_decile_mean": 0.2956,
+      "encode_cpu_s_median": 0.2991,
+      "query_s_median": 0.6006,
+      "engram_read_s_median": 0.0368,
+      "engram_read_cpu_s_median": 0.0368,
+      "readtime_view_s_per_turn_projected": 0.184
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2943,
+      "encode_s_mean": 0.29464,
+      "encode_s_last_decile_mean": 0.2958,
+      "encode_cpu_s_median": 0.2942,
+      "query_s_median": 0.6810499999999999,
+      "engram_read_s_median": 0.0369,
+      "engram_read_cpu_s_median": 0.0369,
+      "readtime_view_s_per_turn_projected": 0.1845
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2242,
+      "encode_s_mean": 0.22089999999999996,
+      "encode_s_last_decile_mean": 0.2186,
+      "encode_cpu_s_median": 0.2242,
+      "query_s_median": 0.52115,
+      "engram_read_s_median": 0.0345,
+      "engram_read_cpu_s_median": 0.0345,
+      "readtime_view_s_per_turn_projected": 0.17250000000000001
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       8.6513671875,
+       24.234375,
+       33.97119140625
+      ],
+      "loadavg_end": [
+       7.8525390625,
+       22.787109375,
+       33.232421875
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       8.09619140625,
+       23.60107421875,
+       33.66064453125
+      ],
+      "loadavg_end": [
+       6.7294921875,
+       21.568359375,
+       32.6083984375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "44": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2794,
+      "encode_s_mean": 0.2858,
+      "encode_s_last_decile_mean": 0.2778,
+      "encode_cpu_s_median": 0.2794,
+      "query_s_median": 0.35009999999999997,
+      "engram_read_s_median": 0.0349,
+      "engram_read_cpu_s_median": 0.0349,
+      "readtime_view_s_per_turn_projected": 0.1745
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2744,
+      "encode_s_mean": 0.27458,
+      "encode_s_last_decile_mean": 0.274,
+      "encode_cpu_s_median": 0.2744,
+      "query_s_median": 0.34950000000000003,
+      "engram_read_s_median": 0.0343,
+      "engram_read_cpu_s_median": 0.0343,
+      "readtime_view_s_per_turn_projected": 0.17149999999999999
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2147,
+      "encode_s_mean": 0.21266,
+      "encode_s_last_decile_mean": 0.2151,
+      "encode_cpu_s_median": 0.2147,
+      "query_s_median": 0.34925,
+      "engram_read_s_median": 0.0344,
+      "engram_read_cpu_s_median": 0.0344,
+      "readtime_view_s_per_turn_projected": 0.172
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       3.02587890625,
+       10.8310546875,
+       24.828125
+      ],
+      "loadavg_end": [
+       3.017578125,
+       10.32275390625,
+       24.36181640625
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.63525390625,
+       4.1796875,
+       9.71240234375
+      ],
+      "loadavg_end": [
+       2.7607421875,
+       4.08349609375,
+       9.53271484375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "100": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2753,
+      "encode_s_mean": 0.27554,
+      "encode_s_last_decile_mean": 0.2765,
+      "encode_cpu_s_median": 0.2752,
+      "query_s_median": 0.53055,
+      "engram_read_s_median": 0.0346,
+      "engram_read_cpu_s_median": 0.0346,
+      "readtime_view_s_per_turn_projected": 0.173
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2719,
+      "encode_s_mean": 0.2712,
+      "encode_s_last_decile_mean": 0.2719,
+      "encode_cpu_s_median": 0.2719,
+      "query_s_median": 0.6792,
+      "engram_read_s_median": 0.0346,
+      "engram_read_cpu_s_median": 0.0346,
+      "readtime_view_s_per_turn_projected": 0.173
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.2,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.217,
+      "encode_s_mean": 0.21594000000000002,
+      "encode_s_last_decile_mean": 0.217,
+      "encode_cpu_s_median": 0.217,
+      "query_s_median": 0.5191,
+      "engram_read_s_median": 0.0345,
+      "engram_read_cpu_s_median": 0.0345,
+      "readtime_view_s_per_turn_projected": 0.17250000000000001
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.92138671875,
+       5.658203125,
+       18.87939453125
+      ],
+      "loadavg_end": [
+       3.677734375,
+       5.591796875,
+       18.4365234375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       3.37255859375,
+       5.20654296875,
+       17.63037109375
+      ],
+      "loadavg_end": [
+       3.58740234375,
+       5.1083984375,
+       17.26708984375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "101": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2802,
+      "encode_s_mean": 0.28086,
+      "encode_s_last_decile_mean": 0.2803,
+      "encode_cpu_s_median": 0.2802,
+      "query_s_median": 0.51895,
+      "engram_read_s_median": 0.0348,
+      "engram_read_cpu_s_median": 0.0348,
+      "readtime_view_s_per_turn_projected": 0.174
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2741,
+      "encode_s_mean": 0.27386,
+      "encode_s_last_decile_mean": 0.2741,
+      "encode_cpu_s_median": 0.2741,
+      "query_s_median": 0.67885,
+      "engram_read_s_median": 0.0346,
+      "engram_read_cpu_s_median": 0.0346,
+      "readtime_view_s_per_turn_projected": 0.173
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2125,
+      "encode_s_mean": 0.21181999999999998,
+      "encode_s_last_decile_mean": 0.2141,
+      "encode_cpu_s_median": 0.2125,
+      "query_s_median": 0.35235,
+      "engram_read_s_median": 0.0345,
+      "engram_read_cpu_s_median": 0.0345,
+      "readtime_view_s_per_turn_projected": 0.17250000000000001
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       5.80322265625,
+       7.28369140625,
+       8.970703125
+      ],
+      "loadavg_end": [
+       4.845703125,
+       6.9384765625,
+       8.81103515625
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.62744140625,
+       4.728515625,
+       7.57275390625
+      ],
+      "loadavg_end": [
+       2.927734375,
+       4.6357421875,
+       7.4658203125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "102": {
+    "void": [],
+    "n": 5,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2708,
+      "encode_s_mean": 0.27004,
+      "encode_s_last_decile_mean": 0.2702,
+      "encode_cpu_s_median": 0.2708,
+      "query_s_median": 0.51405,
+      "engram_read_s_median": 0.0339,
+      "engram_read_cpu_s_median": 0.0339,
+      "readtime_view_s_per_turn_projected": 0.16949999999999998
+     },
+     "FREEZE": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2725,
+      "encode_s_mean": 0.27192,
+      "encode_s_last_decile_mean": 0.2738,
+      "encode_cpu_s_median": 0.2725,
+      "query_s_median": 0.6811,
+      "engram_read_s_median": 0.0348,
+      "engram_read_cpu_s_median": 0.0348,
+      "readtime_view_s_per_turn_projected": 0.174
+     },
+     "COPY": {
+      "n_taught_probes": 5,
+      "n_nearmiss": 5,
+      "n_novel": 5,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.0,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.2166,
+      "encode_s_mean": 0.21539999999999998,
+      "encode_s_last_decile_mean": 0.2186,
+      "encode_cpu_s_median": 0.2166,
+      "query_s_median": 0.528,
+      "engram_read_s_median": 0.0351,
+      "engram_read_cpu_s_median": 0.0351,
+      "readtime_view_s_per_turn_projected": 0.1755
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.26123046875,
+       3.796875,
+       6.796875
+      ],
+      "loadavg_end": [
+       2.68603515625,
+       3.77880859375,
+       6.71044921875
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.24658203125,
+       3.0361328125,
+       5.8828125
+      ],
+      "loadavg_end": [
+       2.5048828125,
+       3.03125,
+       5.8046875
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  },
+  "50": {
+   "42": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.43325,
+      "encode_s_mean": 0.516638,
+      "encode_s_last_decile_mean": 0.7012799999999999,
+      "encode_cpu_s_median": 0.43320000000000003,
+      "query_s_median": 0.82195,
+      "engram_read_s_median": 0.0972,
+      "engram_read_cpu_s_median": 0.09395,
+      "readtime_view_s_per_turn_projected": 4.859999999999999
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4253,
+      "encode_s_mean": 0.42804799999999993,
+      "encode_s_last_decile_mean": 0.42312000000000005,
+      "encode_cpu_s_median": 0.4253,
+      "query_s_median": 0.3837,
+      "engram_read_s_median": 0.0596,
+      "engram_read_cpu_s_median": 0.0596,
+      "readtime_view_s_per_turn_projected": 2.98
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.56,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.3292,
+      "encode_s_mean": 0.329378,
+      "encode_s_last_decile_mean": 0.32936,
+      "encode_cpu_s_median": 0.3292,
+      "query_s_median": 0.38680000000000003,
+      "engram_read_s_median": 0.06035,
+      "engram_read_cpu_s_median": 0.06035,
+      "readtime_view_s_per_turn_projected": 3.0175
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.2177734375,
+       2.86962890625,
+       5.60302734375
+      ],
+      "loadavg_end": [
+       14.201171875,
+       9.2861328125,
+       7.552734375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       5.87548828125,
+       8.70361328125,
+       7.6533203125
+      ],
+      "loadavg_end": [
+       3.2744140625,
+       6.56396484375,
+       6.99560546875
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "43": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4392,
+      "encode_s_mean": 0.43924,
+      "encode_s_last_decile_mean": 0.44138,
+      "encode_cpu_s_median": 0.4392,
+      "query_s_median": 0.3872,
+      "engram_read_s_median": 0.060950000000000004,
+      "engram_read_cpu_s_median": 0.060950000000000004,
+      "readtime_view_s_per_turn_projected": 3.0475000000000003
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.42415,
+      "encode_s_mean": 0.42474999999999996,
+      "encode_s_last_decile_mean": 0.42828,
+      "encode_cpu_s_median": 0.42415,
+      "query_s_median": 0.3861,
+      "engram_read_s_median": 0.0609,
+      "engram_read_cpu_s_median": 0.0609,
+      "readtime_view_s_per_turn_projected": 3.045
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.34375,
+      "encode_s_mean": 0.346778,
+      "encode_s_last_decile_mean": 0.35022000000000003,
+      "encode_cpu_s_median": 0.34375,
+      "query_s_median": 0.38445,
+      "engram_read_s_median": 0.0611,
+      "engram_read_cpu_s_median": 0.0611,
+      "readtime_view_s_per_turn_projected": 3.055
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.31787109375,
+       4.17822265625,
+       5.86767578125
+      ],
+      "loadavg_end": [
+       2.59326171875,
+       3.64990234375,
+       5.43310546875
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       4.29345703125,
+       7.66650390625,
+       9.1396484375
+      ],
+      "loadavg_end": [
+       4.02783203125,
+       6.328125,
+       8.43798828125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "44": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.78,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4327,
+      "encode_s_mean": 0.4329,
+      "encode_s_last_decile_mean": 0.43163999999999997,
+      "encode_cpu_s_median": 0.4326,
+      "query_s_median": 0.3839,
+      "engram_read_s_median": 0.060649999999999996,
+      "engram_read_cpu_s_median": 0.060649999999999996,
+      "readtime_view_s_per_turn_projected": 3.0324999999999998
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.78,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.42185,
+      "encode_s_mean": 0.422304,
+      "encode_s_last_decile_mean": 0.42202,
+      "encode_cpu_s_median": 0.42185,
+      "query_s_median": 0.37945,
+      "engram_read_s_median": 0.0591,
+      "engram_read_cpu_s_median": 0.0591,
+      "readtime_view_s_per_turn_projected": 2.955
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.78,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.3423,
+      "encode_s_mean": 0.3430740000000001,
+      "encode_s_last_decile_mean": 0.34774000000000005,
+      "encode_cpu_s_median": 0.3423,
+      "query_s_median": 0.39075,
+      "engram_read_s_median": 0.0623,
+      "engram_read_cpu_s_median": 0.0623,
+      "readtime_view_s_per_turn_projected": 3.115
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       1.43896484375,
+       2.36865234375,
+       4.33544921875
+      ],
+      "loadavg_end": [
+       3.75341796875,
+       2.9755859375,
+       4.296875
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       3.4365234375,
+       4.712890625,
+       7.3271484375
+      ],
+      "loadavg_end": [
+       3.9970703125,
+       4.5029296875,
+       6.9052734375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "100": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4153,
+      "encode_s_mean": 0.41463399999999995,
+      "encode_s_last_decile_mean": 0.41974,
+      "encode_cpu_s_median": 0.4153,
+      "query_s_median": 0.3781,
+      "engram_read_s_median": 0.0574,
+      "engram_read_cpu_s_median": 0.0574,
+      "readtime_view_s_per_turn_projected": 2.87
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.431,
+      "encode_s_mean": 0.437458,
+      "encode_s_last_decile_mean": 0.43766,
+      "encode_cpu_s_median": 0.43095,
+      "query_s_median": 0.39775,
+      "engram_read_s_median": 0.06185,
+      "engram_read_cpu_s_median": 0.06185,
+      "readtime_view_s_per_turn_projected": 3.0925000000000002
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.32705,
+      "encode_s_mean": 0.326768,
+      "encode_s_last_decile_mean": 0.32699999999999996,
+      "encode_cpu_s_median": 0.32705,
+      "query_s_median": 0.3792,
+      "engram_read_s_median": 0.0593,
+      "engram_read_cpu_s_median": 0.0593,
+      "readtime_view_s_per_turn_projected": 2.965
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.34765625,
+       2.47021484375,
+       3.43603515625
+      ],
+      "loadavg_end": [
+       3.01416015625,
+       2.6845703125,
+       3.3759765625
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.6787109375,
+       2.666015625,
+       3.27099609375
+      ],
+      "loadavg_end": [
+       3.41455078125,
+       2.91162109375,
+       3.2744140625
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "101": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4283,
+      "encode_s_mean": 0.42729599999999995,
+      "encode_s_last_decile_mean": 0.4229200000000001,
+      "encode_cpu_s_median": 0.42825,
+      "query_s_median": 0.38075000000000003,
+      "engram_read_s_median": 0.0592,
+      "engram_read_cpu_s_median": 0.0592,
+      "readtime_view_s_per_turn_projected": 2.96
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.43705,
+      "encode_s_mean": 0.438604,
+      "encode_s_last_decile_mean": 0.44648000000000004,
+      "encode_cpu_s_median": 0.43705,
+      "query_s_median": 0.3905,
+      "engram_read_s_median": 0.05995,
+      "engram_read_cpu_s_median": 0.05995,
+      "readtime_view_s_per_turn_projected": 2.9975
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.64,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.3268,
+      "encode_s_mean": 0.326488,
+      "encode_s_last_decile_mean": 0.32502,
+      "encode_cpu_s_median": 0.3268,
+      "query_s_median": 0.37845,
+      "engram_read_s_median": 0.0593,
+      "engram_read_cpu_s_median": 0.0593,
+      "readtime_view_s_per_turn_projected": 2.965
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.8720703125,
+       2.77978515625,
+       3.16650390625
+      ],
+      "loadavg_end": [
+       2.9912109375,
+       2.8701171875,
+       3.13818359375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.6953125,
+       2.71044921875,
+       3.03759765625
+      ],
+      "loadavg_end": [
+       3.02490234375,
+       2.888671875,
+       3.05712890625
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "102": {
+    "void": [],
+    "n": 50,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.6,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.4356,
+      "encode_s_mean": 0.437146,
+      "encode_s_last_decile_mean": 0.44074,
+      "encode_cpu_s_median": 0.4356,
+      "query_s_median": 0.40315,
+      "engram_read_s_median": 0.0618,
+      "engram_read_cpu_s_median": 0.0618,
+      "readtime_view_s_per_turn_projected": 3.09
+     },
+     "FREEZE": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.6,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.42325,
+      "encode_s_mean": 0.42325,
+      "encode_s_last_decile_mean": 0.4255999999999999,
+      "encode_cpu_s_median": 0.4232,
+      "query_s_median": 0.3728,
+      "engram_read_s_median": 0.05985,
+      "engram_read_cpu_s_median": 0.05985,
+      "readtime_view_s_per_turn_projected": 2.9925
+     },
+     "COPY": {
+      "n_taught_probes": 50,
+      "n_nearmiss": 50,
+      "n_novel": 50,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.6,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 0.34299999999999997,
+      "encode_s_mean": 0.348146,
+      "encode_s_last_decile_mean": 0.34218000000000004,
+      "encode_cpu_s_median": 0.34299999999999997,
+      "query_s_median": 0.3873,
+      "engram_read_s_median": 0.0605,
+      "engram_read_cpu_s_median": 0.0605,
+      "readtime_view_s_per_turn_projected": 3.025
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": true,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": true,
+    "COPY_cost_ok": true,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       8.72412109375,
+       11.55126953125,
+       9.44384765625
+      ],
+      "loadavg_end": [
+       4.64501953125,
+       8.6259765625,
+       8.64599609375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       4.25732421875,
+       7.7958984375,
+       8.35693359375
+      ],
+      "loadavg_end": [
+       4.02197265625,
+       6.37060546875,
+       7.7412109375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  },
+  "500": {
+   "42": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 2.1147,
+      "encode_s_mean": 2.1708642,
+      "encode_s_last_decile_mean": 2.0823359999999997,
+      "encode_cpu_s_median": 2.11465,
+      "query_s_median": 0.8191999999999999,
+      "engram_read_s_median": 0.31955,
+      "engram_read_cpu_s_median": 0.31955,
+      "readtime_view_s_per_turn_projected": 159.775
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 2.0300000000000002,
+      "encode_s_mean": 2.0502822000000007,
+      "encode_s_last_decile_mean": 2.038002,
+      "encode_cpu_s_median": 2.0299,
+      "query_s_median": 1.0327000000000002,
+      "engram_read_s_median": 1.19205,
+      "engram_read_cpu_s_median": 1.1919,
+      "readtime_view_s_per_turn_projected": 596.025
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 4.383100000000001,
+      "encode_s_mean": 4.2851546,
+      "encode_s_last_decile_mean": 4.4454199999999995,
+      "encode_cpu_s_median": 4.3828499999999995,
+      "query_s_median": 2.57925,
+      "engram_read_s_median": 1.3558,
+      "engram_read_cpu_s_median": 1.3557000000000001,
+      "readtime_view_s_per_turn_projected": 677.9
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       3.9296875,
+       5.0830078125,
+       6.95751953125
+      ],
+      "loadavg_end": [
+       2.99560546875,
+       2.9560546875,
+       3.7275390625
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.97119140625,
+       2.94287109375,
+       2.86767578125
+      ],
+      "loadavg_end": [
+       8.01904296875,
+       8.029296875,
+       7.990234375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "43": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.77,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.654250000000001,
+      "encode_s_mean": 8.814946599999999,
+      "encode_s_last_decile_mean": 6.884569999999999,
+      "encode_cpu_s_median": 9.652999999999999,
+      "query_s_median": 2.48695,
+      "engram_read_s_median": 1.2953999999999999,
+      "engram_read_cpu_s_median": 1.2952,
+      "readtime_view_s_per_turn_projected": 647.6999999999999
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.77,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.26725,
+      "encode_s_mean": 6.606188,
+      "encode_s_last_decile_mean": 6.111298000000001,
+      "encode_cpu_s_median": 6.2666,
+      "query_s_median": 2.47835,
+      "engram_read_s_median": 1.31145,
+      "engram_read_cpu_s_median": 1.31145,
+      "readtime_view_s_per_turn_projected": 655.725
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.77,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 4.49525,
+      "encode_s_mean": 5.0767771999999995,
+      "encode_s_last_decile_mean": 6.165725999999999,
+      "encode_cpu_s_median": 4.49475,
+      "query_s_median": 2.5895,
+      "engram_read_s_median": 1.32465,
+      "engram_read_cpu_s_median": 1.32455,
+      "readtime_view_s_per_turn_projected": 662.325
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.9736328125,
+       2.94384765625,
+       2.86865234375
+      ],
+      "loadavg_end": [
+       8.025390625,
+       8.01171875,
+       8.00048828125
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       4.37353515625,
+       3.46484375,
+       3.076171875
+      ],
+      "loadavg_end": [
+       8.0341796875,
+       8.01171875,
+       8.00048828125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "44": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.18525,
+      "encode_s_mean": 6.2135164000000005,
+      "encode_s_last_decile_mean": 6.221115999999999,
+      "encode_cpu_s_median": 6.184900000000001,
+      "query_s_median": 2.4255,
+      "engram_read_s_median": 1.3197999999999999,
+      "engram_read_cpu_s_median": 1.3197,
+      "readtime_view_s_per_turn_projected": 659.9
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.617799999999999,
+      "encode_s_mean": 9.5423946,
+      "encode_s_last_decile_mean": 9.073256,
+      "encode_cpu_s_median": 9.61725,
+      "query_s_median": 2.779,
+      "engram_read_s_median": 2.03905,
+      "engram_read_cpu_s_median": 2.03895,
+      "readtime_view_s_per_turn_projected": 1019.525
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 1.57605,
+      "encode_s_mean": 1.6007959999999999,
+      "encode_s_last_decile_mean": 1.696924,
+      "encode_cpu_s_median": 1.57605,
+      "query_s_median": 0.8224,
+      "engram_read_s_median": 0.3304,
+      "engram_read_cpu_s_median": 0.3304,
+      "readtime_view_s_per_turn_projected": 165.20000000000002
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       4.50390625,
+       3.50732421875,
+       3.09228515625
+      ],
+      "loadavg_end": [
+       8.0166015625,
+       8.046875,
+       8.0068359375
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.26025390625,
+       2.72900390625,
+       3.57763671875
+      ],
+      "loadavg_end": [
+       3.0166015625,
+       3.0,
+       3.07861328125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "100": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.86,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.213699999999999,
+      "encode_s_mean": 6.8808482,
+      "encode_s_last_decile_mean": 5.9070540000000005,
+      "encode_cpu_s_median": 6.21335,
+      "query_s_median": 2.4175000000000004,
+      "engram_read_s_median": 1.3121,
+      "engram_read_cpu_s_median": 1.3119999999999998,
+      "readtime_view_s_per_turn_projected": 656.0500000000001
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.86,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.66295,
+      "encode_s_mean": 8.1377644,
+      "encode_s_last_decile_mean": 8.304314,
+      "encode_cpu_s_median": 9.6617,
+      "query_s_median": 2.47405,
+      "engram_read_s_median": 1.32575,
+      "engram_read_cpu_s_median": 1.32555,
+      "readtime_view_s_per_turn_projected": 662.875
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.86,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 4.48825,
+      "encode_s_mean": 4.398265599999999,
+      "encode_s_last_decile_mean": 4.562272,
+      "encode_cpu_s_median": 4.48795,
+      "query_s_median": 2.5879,
+      "engram_read_s_median": 1.33915,
+      "engram_read_cpu_s_median": 1.33905,
+      "readtime_view_s_per_turn_projected": 669.575
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       7.7158203125,
+       7.81005859375,
+       6.349609375
+      ],
+      "loadavg_end": [
+       8.0,
+       8.0048828125,
+       8.0
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.501953125,
+       2.81689453125,
+       2.9775390625
+      ],
+      "loadavg_end": [
+       8.07421875,
+       8.0478515625,
+       7.9736328125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "101": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.85,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.3632,
+      "encode_s_mean": 7.511542400000001,
+      "encode_s_last_decile_mean": 5.835174,
+      "encode_cpu_s_median": 6.3629999999999995,
+      "query_s_median": 2.4724,
+      "engram_read_s_median": 1.31675,
+      "engram_read_cpu_s_median": 1.31675,
+      "readtime_view_s_per_turn_projected": 658.375
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.85,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.2881,
+      "encode_s_mean": 6.2238342,
+      "encode_s_last_decile_mean": 6.518630000000001,
+      "encode_cpu_s_median": 6.287599999999999,
+      "query_s_median": 2.5997500000000002,
+      "engram_read_s_median": 1.9213,
+      "engram_read_cpu_s_median": 1.9210500000000001,
+      "readtime_view_s_per_turn_projected": 960.65
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.85,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 4.492,
+      "encode_s_mean": 4.402987199999999,
+      "encode_s_last_decile_mean": 4.504224,
+      "encode_cpu_s_median": 4.4918,
+      "query_s_median": 2.57515,
+      "engram_read_s_median": 1.3507,
+      "engram_read_cpu_s_median": 1.3506,
+      "readtime_view_s_per_turn_projected": 675.35
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       2.7822265625,
+       2.8701171875,
+       2.994140625
+      ],
+      "loadavg_end": [
+       8.0,
+       8.01806640625,
+       8.0
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       3.0498046875,
+       2.92431640625,
+       3.0107421875
+      ],
+      "loadavg_end": [
+       7.98193359375,
+       8.00390625,
+       7.9716796875
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "102": {
+    "void": [],
+    "n": 500,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.87,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.83325,
+      "encode_s_mean": 9.4541368,
+      "encode_s_last_decile_mean": 8.001414,
+      "encode_cpu_s_median": 9.8329,
+      "query_s_median": 2.65045,
+      "engram_read_s_median": 1.4377499999999999,
+      "engram_read_cpu_s_median": 1.43765,
+      "readtime_view_s_per_turn_projected": 718.8749999999999
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.87,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.46995,
+      "encode_s_mean": 8.912479,
+      "encode_s_last_decile_mean": 9.664152,
+      "encode_cpu_s_median": 9.4697,
+      "query_s_median": 4.02915,
+      "engram_read_s_median": 2.1971499999999997,
+      "engram_read_cpu_s_median": 2.197,
+      "readtime_view_s_per_turn_projected": 1098.5749999999998
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.87,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.568,
+      "encode_s_mean": 6.175651000000001,
+      "encode_s_last_decile_mean": 4.27453,
+      "encode_cpu_s_median": 6.5676000000000005,
+      "query_s_median": 2.4640500000000003,
+      "engram_read_s_median": 2.1131,
+      "engram_read_cpu_s_median": 2.1129,
+      "readtime_view_s_per_turn_projected": 1056.5500000000002
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       6.10302734375,
+       5.08935546875,
+       3.97119140625
+      ],
+      "loadavg_end": [
+       8.67822265625,
+       8.43017578125,
+       8.1748046875
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       7.56591796875,
+       7.88720703125,
+       7.9423828125
+      ],
+      "loadavg_end": [
+       8.06103515625,
+       8.03466796875,
+       8.00537109375
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  },
+  "2000": {
+   "42": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.97,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.19085,
+      "encode_s_mean": 9.9872696,
+      "encode_s_last_decile_mean": 9.689179000000001,
+      "encode_cpu_s_median": 9.19055,
+      "query_s_median": 2.8695500000000003,
+      "engram_read_s_median": 1.6203500000000002,
+      "engram_read_cpu_s_median": 1.6203500000000002,
+      "readtime_view_s_per_turn_projected": 3240.7000000000003
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.97,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.36685,
+      "encode_s_mean": 10.6694445,
+      "encode_s_last_decile_mean": 10.987150000000002,
+      "encode_cpu_s_median": 9.3667,
+      "query_s_median": 2.8095499999999998,
+      "engram_read_s_median": 1.5941,
+      "engram_read_cpu_s_median": 1.594,
+      "readtime_view_s_per_turn_projected": 3188.2000000000003
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.97,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 33.4906,
+      "encode_s_mean": 30.514875049999997,
+      "encode_s_last_decile_mean": 37.0891985,
+      "encode_cpu_s_median": 33.48905,
+      "query_s_median": 14.9617,
+      "engram_read_s_median": 11.2167,
+      "engram_read_cpu_s_median": 11.216149999999999,
+      "readtime_view_s_per_turn_projected": 22433.399999999998
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       9.4169921875,
+       9.26806640625,
+       9.3193359375
+      ],
+      "loadavg_end": [
+       10.19384765625,
+       10.12890625,
+       10.31689453125
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       7.49755859375,
+       7.86279296875,
+       7.9453125
+      ],
+      "loadavg_end": [
+       11.021484375,
+       10.61474609375,
+       10.31640625
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "43": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.94,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 15.14865,
+      "encode_s_mean": 24.901655399999996,
+      "encode_s_last_decile_mean": 8.513089,
+      "encode_cpu_s_median": 15.14785,
+      "query_s_median": 2.65975,
+      "engram_read_s_median": 1.35195,
+      "engram_read_cpu_s_median": 1.3519,
+      "readtime_view_s_per_turn_projected": 2703.9
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.94,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.4285,
+      "encode_s_mean": 11.422336849999999,
+      "encode_s_last_decile_mean": 9.10509,
+      "encode_cpu_s_median": 9.4282,
+      "query_s_median": 2.6266499999999997,
+      "engram_read_s_median": 1.43465,
+      "engram_read_cpu_s_median": 1.43455,
+      "readtime_view_s_per_turn_projected": 2869.3
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.94,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.462399999999999,
+      "encode_s_mean": 8.94603115,
+      "encode_s_last_decile_mean": 9.6575405,
+      "encode_cpu_s_median": 9.462150000000001,
+      "query_s_median": 3.0425500000000003,
+      "engram_read_s_median": 2.24425,
+      "engram_read_cpu_s_median": 2.2442,
+      "readtime_view_s_per_turn_projected": 4488.5
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       10.82373046875,
+       10.9150390625,
+       10.419921875
+      ],
+      "loadavg_end": [
+       1.0087890625,
+       1.00537109375,
+       1.16162109375
+      ]
+     },
+     "COPY": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       8.32568359375,
+       9.3037109375,
+       9.380859375
+      ],
+      "loadavg_end": [
+       11.00244140625,
+       11.01611328125,
+       11.0
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "44": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.89,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.24175,
+      "encode_s_mean": 10.6035267,
+      "encode_s_last_decile_mean": 8.9120075,
+      "encode_cpu_s_median": 9.241399999999999,
+      "query_s_median": 2.8868,
+      "engram_read_s_median": 1.53945,
+      "engram_read_cpu_s_median": 1.5394,
+      "readtime_view_s_per_turn_projected": 3078.9
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.89,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.411000000000001,
+      "encode_s_mean": 11.08429925,
+      "encode_s_last_decile_mean": 8.885020500000001,
+      "encode_cpu_s_median": 9.41015,
+      "query_s_median": 2.6904500000000002,
+      "engram_read_s_median": 1.4412500000000001,
+      "engram_read_cpu_s_median": 1.4412,
+      "readtime_view_s_per_turn_projected": 2882.5000000000005
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.89,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 6.8276,
+      "encode_s_mean": 7.862720100000001,
+      "encode_s_last_decile_mean": 6.9775665,
+      "encode_cpu_s_median": 6.827500000000001,
+      "query_s_median": 3.14095,
+      "engram_read_s_median": 1.71275,
+      "engram_read_cpu_s_median": 1.7127,
+      "readtime_view_s_per_turn_projected": 3425.5
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       8.3798828125,
+       9.29833984375,
+       9.37841796875
+      ],
+      "loadavg_end": [
+       9.5693359375,
+       9.86279296875,
+       10.0068359375
+      ]
+     },
+     "COPY": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       9.8134765625,
+       9.876953125,
+       9.677734375
+      ],
+      "loadavg_end": [
+       11.17333984375,
+       11.06591796875,
+       11.017578125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "100": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 51.25485,
+      "encode_s_mean": 49.28211554999999,
+      "encode_s_last_decile_mean": 62.614604,
+      "encode_cpu_s_median": 51.1894,
+      "query_s_median": 23.6721,
+      "engram_read_s_median": 13.2365,
+      "engram_read_cpu_s_median": 13.1256,
+      "readtime_view_s_per_turn_projected": 26473.0
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 37.339,
+      "encode_s_mean": 43.374443899999996,
+      "encode_s_last_decile_mean": 61.938339,
+      "encode_cpu_s_median": 37.3367,
+      "query_s_median": 16.65035,
+      "engram_read_s_median": 12.33755,
+      "engram_read_cpu_s_median": 12.336400000000001,
+      "readtime_view_s_per_turn_projected": 24675.100000000002
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.88,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 32.97025,
+      "encode_s_mean": 31.665497000000002,
+      "encode_s_last_decile_mean": 34.997963,
+      "encode_cpu_s_median": 32.9681,
+      "query_s_median": 26.0497,
+      "engram_read_s_median": 14.449349999999999,
+      "engram_read_cpu_s_median": 14.4489,
+      "readtime_view_s_per_turn_projected": 28898.699999999997
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       6.5166015625,
+       7.57421875,
+       7.8466796875
+      ],
+      "loadavg_end": [
+       11.0,
+       11.18505859375,
+       11.6806640625
+      ]
+     },
+     "COPY": {
+      "hostname": "node-dl4g243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       8.34326171875,
+       8.369140625,
+       8.16015625
+      ],
+      "loadavg_end": [
+       11.3271484375,
+       11.1748046875,
+       11.12060546875
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "101": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.93,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 39.39345,
+      "encode_s_mean": 44.2079606,
+      "encode_s_last_decile_mean": 56.974282,
+      "encode_cpu_s_median": 39.3885,
+      "query_s_median": 5.654249999999999,
+      "engram_read_s_median": 3.7398499999999997,
+      "engram_read_cpu_s_median": 3.73965,
+      "readtime_view_s_per_turn_projected": 7479.699999999999
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.93,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 50.67895,
+      "encode_s_mean": 49.757935100000005,
+      "encode_s_last_decile_mean": 61.536599,
+      "encode_cpu_s_median": 50.675799999999995,
+      "query_s_median": 13.595749999999999,
+      "engram_read_s_median": 13.1113,
+      "engram_read_cpu_s_median": 13.05655,
+      "readtime_view_s_per_turn_projected": 26222.6
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.93,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 7.1021,
+      "encode_s_mean": 8.6599501,
+      "encode_s_last_decile_mean": 9.66587,
+      "encode_cpu_s_median": 7.09815,
+      "query_s_median": 3.12925,
+      "engram_read_s_median": 1.7445,
+      "engram_read_cpu_s_median": 1.7444,
+      "readtime_view_s_per_turn_projected": 3489.0
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "node-dl5d243",
+      "cpu_count": 12,
+      "loadavg_start": [
+       7.97802734375,
+       8.0166015625,
+       8.0
+      ],
+      "loadavg_end": [
+       10.0,
+       10.00390625,
+       10.0
+      ]
+     },
+     "COPY": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       1.48388671875,
+       0.9091796875,
+       0.51708984375
+      ],
+      "loadavg_end": [
+       12.109375,
+       10.95849609375,
+       12.00830078125
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   },
+   "102": {
+    "void": [],
+    "n": 2000,
+    "cross_arm_identity": {
+     "substrate_threshold_sha256": true,
+     "probe_spec_hash": true,
+     "facts_hash": true,
+     "n_total": true
+    },
+    "summary": {
+     "HEBB": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.9,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.5617,
+      "encode_s_mean": 11.279337,
+      "encode_s_last_decile_mean": 9.624552,
+      "encode_cpu_s_median": 9.561399999999999,
+      "query_s_median": 2.89905,
+      "engram_read_s_median": 1.6124,
+      "engram_read_cpu_s_median": 1.61235,
+      "readtime_view_s_per_turn_projected": 3224.8
+     },
+     "FREEZE": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 0.0,
+      "abstain": 1.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 0.0,
+      "block_decode_ok": 0.0,
+      "engram_held": 0.0,
+      "mean_abs_w_probed": 0.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.9,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 9.59905,
+      "encode_s_mean": 11.5422721,
+      "encode_s_last_decile_mean": 9.021886,
+      "encode_cpu_s_median": 9.59595,
+      "query_s_median": 2.8533,
+      "engram_read_s_median": 1.6328,
+      "engram_read_cpu_s_median": 1.63275,
+      "readtime_view_s_per_turn_projected": 3265.6
+     },
+     "COPY": {
+      "n_taught_probes": 100,
+      "n_nearmiss": 100,
+      "n_novel": 100,
+      "recall": 1.0,
+      "abstain": 0.0,
+      "crossed_same_subject": 0.0,
+      "crossed_other_fact": 0.0,
+      "wrong_word": 0.0,
+      "yn_hit": 1.0,
+      "block_decode_ok": 1.0,
+      "engram_held": 1.0,
+      "mean_abs_w_probed": 1.0,
+      "nearmiss_false_accept": 0.0,
+      "novel_false_recall": 0.0,
+      "novel_shard_empty": 0.9,
+      "nearmiss_shard_empty": 0.0,
+      "encode_s_median": 7.0265,
+      "encode_s_mean": 8.55495165,
+      "encode_s_last_decile_mean": 9.390635999999999,
+      "encode_cpu_s_median": 7.0264,
+      "query_s_median": 3.2827,
+      "engram_read_s_median": 2.36985,
+      "engram_read_cpu_s_median": 2.3697,
+      "readtime_view_s_per_turn_projected": 4739.7
+     }
+    },
+    "freeze_null_ok": true,
+    "lever_moved": true,
+    "writes_during_probe_clean": true,
+    "rep_identical": null,
+    "status": "DEFINED",
+    "HEBB_recall_holds": true,
+    "COPY_recall_holds": true,
+    "HEBB_cost_ok": false,
+    "COPY_cost_ok": false,
+    "cost_hardware_class": {
+     "HEBB": "pool-cpu-shared",
+     "COPY": "pool-cpu-shared"
+    },
+    "cost_node": {
+     "HEBB": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       1.765625,
+       0.9775390625,
+       0.54150390625
+      ],
+      "loadavg_end": [
+       8.57080078125,
+       9.77734375,
+       10.111328125
+      ]
+     },
+     "COPY": {
+      "hostname": "ip-172-31-47-37",
+      "cpu_count": 16,
+      "loadavg_start": [
+       2.85791015625,
+       1.2568359375,
+       0.640625
+      ],
+      "loadavg_end": [
+       12.47802734375,
+       11.54150390625,
+       12.0966796875
+      ]
+     }
+    },
+    "recall_diff_HEBB_minus_COPY": 0.0,
+    "parity": true
+   }
+  }
+ },
+ "level_label_HEBB": {
+  "5": "RECALL-HOLDS",
+  "50": "RECALL-HOLDS",
+  "500": "RECALL-HOLDS",
+  "2000": "RECALL-HOLDS"
+ },
+ "level_label_COPY": {
+  "5": "RECALL-HOLDS",
+  "50": "RECALL-HOLDS",
+  "500": "RECALL-HOLDS",
+  "2000": "RECALL-HOLDS"
+ },
+ "parity_HEBB_vs_COPY": {
+  "5": "PARITY-BY-CONSTRUCTION",
+  "50": "PARITY-BY-CONSTRUCTION",
+  "500": "PARITY-BY-CONSTRUCTION",
+  "2000": "PARITY-BY-CONSTRUCTION"
+ },
+ "curve_HEBB": "RECALL-HOLDS-TO-2000",
+ "curve_COPY": "RECALL-HOLDS-TO-2000",
+ "level_label_HEBB_cost": {
+  "5": "COST-HOLDS",
+  "50": "COST-HOLDS",
+  "500": "COST-FAILS",
+  "2000": "COST-FAILS"
+ },
+ "level_label_COPY_cost": {
+  "5": "COST-HOLDS",
+  "50": "COST-HOLDS",
+  "500": "COST-FAILS",
+  "2000": "COST-FAILS"
+ },
+ "curve_HEBB_cost": "CEILING-BETWEEN-50-AND-500",
+ "curve_COPY_cost": "CEILING-BETWEEN-50-AND-500"
+}

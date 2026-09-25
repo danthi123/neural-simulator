@@ -18,8 +18,11 @@
 # A job line is a command run on the node, from ~/derisk-pool/sim. Lines starting with # are ignored.
 set -uo pipefail
 ROOT=/home/dant123/Projects/sim
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN tools/ dir (unlike $ROOT above,
+# this follows whichever checkout/worktree is actually running -- used below so the stale-HostName refresh
+# invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
 # shellcheck source=tools/pool_revision_marker.sh
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/pool_revision_marker.sh"
+source "$SELF_DIR/pool_revision_marker.sh"
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
@@ -45,6 +48,50 @@ GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS 
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+# reregister_stale_paused_nodes / PAUSE_MARK_DIR (2026-09-25 review, MEDIUM: "a cheap check in the dispatcher
+# cycle" + LOW: "fill_node never re-reads registration -- a cycle already running keeps filling the node through
+# the whole pause"). Sourced via $SELF_DIR (this checkout's own tools/, not the hardcoded $ROOT above -- same
+# reasoning as pool_revision_marker.sh's own sourcing just above). LOG left unset (default /dev/stderr inside
+# the library's own `${LOG:-...}` guards) -- this script has no log file of its own to reuse.
+# shellcheck source=tools/aws_stop_safety_lib.sh
+source "$SELF_DIR/aws_stop_safety_lib.sh"
+# STALE-HOSTNAME AUTO-REFRESH, DISPATCHER SIDE (2026-09-25 review, LOW: "spec gap"). tools/pool_sync.sh already
+# self-heals a stale ip (research/queue/.aws_<node> exists -> one `aws_pool_node.sh refresh <node>` + retry, see
+# its own header), but THIS dispatcher's own node_is_idle probe never did, even though the spec says every entry
+# point that finds a stale HostName should -- an AWS pool node whose ip changed (every stop/start, no Elastic IP
+# in this feature) between routine syncs stayed unreachable-to-dispatch until the NEXT pool_sync cadence noticed.
+# Overridable so tests never touch the shared production dir/marks.
+AWS_STATE_DIR_FOR_REFRESH="${POOL_AWS_STATE_DIR:-$ROOT/research/queue}"
+STALE_REFRESH_MARK_DIR="${POOL_STALE_REFRESH_MARK_DIR:-$ROOT/research/queue/.pool_stale_refresh}"
+STALE_REFRESH_RATE_S="${POOL_STALE_REFRESH_RATE_S:-300}"   # at most one refresh attempt per node per 5 min --
+# node_is_idle runs on every fill_node poll (POOL_DISPATCH_POLL, default 60s) for every configured node, so an
+# UN-rate-limited refresh would shell out to `aws describe-instances`/`aws ec2` on every single cycle for any
+# node that stays unreachable for a mundane reason (genuinely stopped, network blip) -- rate-limiting keeps this
+# self-heal cheap while still resolving a stale ip well within one routine pool_sync cadence (15 min).
+
+_maybe_refresh_stale_aws_node() {   # _maybe_refresh_stale_aws_node <node> -- called when node_is_idle's ssh
+  # probe fails for a node tools/aws_pool_node.sh manages (a research/queue/.aws_<node> state file exists). Best-
+  # effort, silent on failure (this is a self-heal, not a correctness gate -- node_is_idle already returns 1
+  # either way, so a failed refresh attempt changes nothing about THIS cycle's dispatch decision).
+  local node="$1" state="$AWS_STATE_DIR_FOR_REFRESH/.aws_$node" mark="$STALE_REFRESH_MARK_DIR/$node"
+  [ -f "$state" ] || return 0                                  # not an AWS-managed node -- nothing to refresh
+  grep -q '^# TORN DOWN' "$state" 2>/dev/null && return 0      # torn down -- refreshing a gone node is pointless
+  mkdir -p "$STALE_REFRESH_MARK_DIR" 2>/dev/null
+  if [ -f "$mark" ]; then
+    local last age
+    last=$(stat -c %Y "$mark" 2>/dev/null || stat -f %m "$mark" 2>/dev/null || echo 0)
+    age=$(( $(date +%s) - last ))
+    [ "$age" -lt "$STALE_REFRESH_RATE_S" ] && return 0         # rate-limited -- refreshed too recently
+  fi
+  touch "$mark" 2>/dev/null
+  # timeout 30 (2026-09-25 review, LOW/INFO): this runs INSIDE node_is_idle, on the MAIN dispatch loop, once per
+  # unreachable AWS-managed node per cycle -- a hung AWS API call inside `refresh` (describe-instances) had no
+  # bound at all and could stall dispatch for every OTHER node indefinitely. 30s comfortably covers `refresh`'s
+  # own normal (sub-few-second) runtime; a timed-out refresh changes nothing about THIS cycle's dispatch
+  # decision either way (best-effort/silent, exactly like any other refresh failure here).
+  AWS_POOL_NODE_STATE_FILE="$state" POOL_SSH_CONFIG="$POOL_SSH_CONFIG" \
+    timeout 30 bash "$SELF_DIR/aws_pool_node.sh" refresh "$node" >>"${POOL_STALE_REFRESH_LOG:-/dev/null}" 2>&1
+}
 
 refresh_ssh_f() {
   # Re-evaluate SSH_F EVERY cycle, not once at process start (2026-09-23 fix round). This dispatcher runs as a
@@ -72,6 +119,10 @@ cycle_setup() {
   # holds for both callers (the production loop runs after NODES= below; the test seam sets POOL_QUEUE_PATH/
   # POOL_EXTRA_NODES_FILE via env before this script even starts).
   refresh_ssh_f
+  # REREGISTER ANY STALE PAUSE, EVERY CYCLE (2026-09-25 review, MEDIUM: "a cheap check in the dispatcher cycle").
+  # Runs BEFORE CYCLE_NODES is computed below so a node this call just re-registered is picked up THIS cycle,
+  # not the next one.
+  reregister_stale_paused_nodes
   CYCLE_NODES="$NODES $(extra_nodes)"
   # Reset the per-cycle revision-availability cache (see its own comment, right before revision_available_cached())
   # so each cycle re-probes fresh (a node CAN gain a revision between cycles, e.g. aws_pool_node.sh's
@@ -217,7 +268,10 @@ node_is_idle() {
   # main's committed/lifetime-budget tracking + this branch's SSH_F routing), else it is empty and unchanged.
   local raw
   raw=$(timeout 12 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
-        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || return 1
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || {
+    _maybe_refresh_stale_aws_node "$node"   # 2026-09-25 review, LOW -- see its own comment above
+    return 1
+  }
   out=$(printf '%s\n' "$raw" | head -1)
   local committed
   committed=$(printf '%s\n' "$raw" | tail -n +2 | committed_from_environ)
@@ -267,6 +321,52 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   est=$(job_est_gb "$1"); jid="$(date +%s%N)-$RANDOM"
   printf "cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS='%s' OPENBLAS_NUM_THREADS='%s' MKL_NUM_THREADS='%s' NUMEXPR_NUM_THREADS='%s' JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
     "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64"
+}
+
+check_fast_fail() {
+  # check_fast_fail <node> <job-as-dispatched> -- READ-ONLY. Tails the node's OWN job_status.log for the v2
+  # record this exact dispatch produced and, when it died with rc=127 ("command not found") or rc=2 (a shell
+  # syntax/usage error) -- the signature of a job that never actually ran -- logs a LOUD line HERE (never
+  # remotely; this never writes anything to the node, and never touches remote_launch_command's wrapper).
+  #
+  # WHY (2026-09-25). Six SETTLE A2 pool lines and, independently, a bare `status` job in gpu_queue.log
+  # (2026-08-31/09-01, three separate cycles) all died this way in well under a second, and NOTHING said so
+  # louder than an ordinary v2 status row nobody was tailing -- the board and the claim record both said
+  # "dispatched" while nothing ran. tools/queue_job_shape_check.sh now refuses that SHAPE at enqueue time; this
+  # is the belt-and-suspenders net for whatever it cannot see from here (a module importable on this node's
+  # SHARED checkout but not on the pinned revision this job actually runs in, e.g.) -- it is deliberately not
+  # a substitute for the enqueue-time check, since a fast-fail already happened by the time this runs.
+  #
+  # Called from fill_node AFTER the existing POOL_DISPATCH_LAUNCH_SLEEP (default 5s, already there to "let the
+  # launch register") -- every real rc=127/2 in the historical record completed in well under 1s, so 5s is
+  # ample; a job that legitimately takes longer than that to even START is simply not yet in the log and this
+  # silently finds nothing (best-effort, never a false alarm).
+  #
+  # THIS DISPATCH'S record only (2026-09-25 fix round, review MEDIUM). <t0> is the local `date +%s` fill_node
+  # took just BEFORE its `ssh -f` launch. job_status.log is append-only and keeps every earlier attempt, so the
+  # first version (`grep -F <b64> | tail -1`, no time check) reported a re-dispatch of an identical job whose
+  # EARLIER attempt had died rc=127 as a new FAST-FAIL -- and its substring match could also hit a longer job
+  # whose base64 merely starts with this one's. A record now counts only when its job field is EXACTLY this
+  # job's base64 AND its timestamp is >= t0. The remote side stays a read-only grep; the exact-match and time
+  # filter run HERE, on its output. The record's timestamp is the node's clock: a node running more than a
+  # second or so behind this host makes a genuine fast-fail read as older than t0 and go unreported (a miss,
+  # never a false alarm). With no numeric <t0> there is no way to tell this dispatch from an earlier one, so it
+  # reports nothing.
+  local node="$1" job="$2" t0="${3:-}" job_b64 remote_cmd raw rec rc ts
+  [[ $t0 =~ ^[0-9]+$ ]] || return 0
+  job_b64=$(printf '%s' "$job" | base64 -w0) || return 0
+  remote_cmd=$(printf 'grep -F -- %q ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -n 50' "$job_b64")
+  raw=$(timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" "$remote_cmd" 2>/dev/null)
+  [ -n "$raw" ] || return 0
+  rec=$(printf '%s\n' "$raw" | awk -F'\t' -v b="$job_b64" -v t="$t0" \
+        '$1 == "v2" && $4 == b && $2 ~ /^[0-9]+$/ && $2 + 0 >= t + 0 {r = $0} END {if (r != "") print r}')
+  [ -n "$rec" ] || return 0
+  ts=$(printf '%s' "$rec" | cut -f2)
+  rc=$(printf '%s' "$rec" | cut -f3)
+  case "$rc" in
+    127|2)
+      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc $(( ts - t0 ))s after dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
+  esac
 }
 
 pop_job() {
@@ -377,8 +477,15 @@ fill_node() {
   # below calls the EXACT production code path -- including the real `JOB=$(pop_job ...)` command substitution
   # -- rather than a re-typed copy that could silently drift from what the live `while true` loop (at the bottom
   # of this file) runs.
-  local NODE="$1"
-  while node_is_idle "$NODE"; do
+  local NODE="$1" t0
+  # PAUSE-MARKER CHECK, EVERY ITERATION (2026-09-25 review, LOW: "the pause does not close the race at its
+  # source" -- CYCLE_NODES is built ONCE per cycle in cycle_setup, so a node paused (by
+  # tools/aws_stop_safety_lib.sh's pause_dispatch_for_node, for a sync-before-stop window) mid-cycle used to keep
+  # being filled for the REST of that cycle; the existing re-check-before-stop in aws_idle_stop.sh/aws_budget.sh
+  # only DETECTS a job that landed there, it never prevented one. Checking the CHEAP marker file first (before
+  # node_is_idle's ssh round trip) on every iteration -- not just once per cycle -- stops filling THIS node the
+  # INSTANT it is paused, closing the race within the same cycle it started in, not just the next one.
+  while [ ! -f "$PAUSE_MARK_DIR/$NODE" ] && node_is_idle "$NODE"; do
     JOB=$(pop_job "$NODE_BUDGET" "$NODE")
     [ -z "$JOB" ] && break
     echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
@@ -392,9 +499,11 @@ fill_node() {
       echo "[pool-dispatch] failed to encode job for $NODE" >&2
       break
     }
+    t0=$(date +%s)   # taken BEFORE the launch: check_fast_fail accepts only a status record written at/after it
     ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
     printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
     sleep "${POOL_DISPATCH_LAUNCH_SLEEP:-5}"     # let the launch register before this node's next capacity check
+    [ "${POOL_SKIP_FAST_FAIL_CHECK:-0}" = "1" ] || check_fast_fail "$NODE" "$JOB" "$t0"
   done
 }
 
@@ -444,6 +553,14 @@ if [ "${1:-}" = "--revision-available" ]; then
   # completion MARKER, not bare directory existence).
   [ "$#" -eq 3 ] || { echo "usage: $0 --revision-available <node> <sha>" >&2; exit 2; }
   revision_available "$2" "$3"; exit $?
+fi
+if [ "${1:-}" = "--check-fast-fail" ]; then
+  # TEST SEAM (2026-09-25): exercises the REAL check_fast_fail ssh call (same argv construction, including
+  # SSH_F) against one node/job pair, without a real node -- so a stubbed `ssh` on PATH can assert both the
+  # exact read-only grep probe it makes AND that a matching rc=127/2 record is logged loudly to stderr.
+  # <t0> is the dispatch time fill_node would pass (records older than it are earlier attempts, not this one).
+  { [ "$#" -eq 3 ] || [ "$#" -eq 4 ]; } || { echo "usage: $0 --check-fast-fail <node> <job> [<t0>]" >&2; exit 2; }
+  check_fast_fail "$2" "$3" "${4:-}"; exit 0
 fi
 if [ "${1:-}" = "--fill-node" ]; then
   # TEST SEAM (2026-09-23 fix round #3): calls cycle_setup then fill_node -- the SAME function the production

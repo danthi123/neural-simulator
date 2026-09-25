@@ -1,0 +1,135 @@
+{
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "complete_6seed": true,
+ "gate": {
+  "g1_mean": 0.8,
+  "g1_min": 0.75,
+  "g2_max": 0.6,
+  "g3_gap": 0.15,
+  "g4_agree": 0.95,
+  "g4_bacc": 0.8,
+  "g5_abstain": 1.0,
+  "g7_recover": 0.8,
+  "g7_base_max": 0.1,
+  "g7_lesion_max": 0.1,
+  "g7_fp_max": 0.2
+ },
+ "sim_backend": "numpy (per-seed runs on the pool with SIM_BACKEND=numpy; this scoring step is host-only)",
+ "preconditions": [
+  {
+   "name": "complete_6seed",
+   "ok": true
+  },
+  {
+   "name": "integrity_smokes_pass",
+   "ok": true
+  }
+ ],
+ "mechanism": "v1 = host-computed category (label-spreading), spike-RELAYED (amendment A1) \u2014 not a spiking decision",
+ "evidence_checks": [
+  "G1_learned_mean",
+  "G1_learned_min",
+  "G2_shuffled_mean",
+  "G3_gap_vs_best_control",
+  "G7_fp_in_scope_mean",
+  "G7_learned_recover_mean"
+ ],
+ "integrity_smokes": [
+  "G4_spiking_agree_min",
+  "G4_spiking_bacc_mean",
+  "G5_lesion_abstain_min",
+  "G6_deterministic_all",
+  "G7_hand_in_scope_mean",
+  "G7_lesion_in_scope_mean"
+ ],
+ "g6_status": "partial (graph not rebuilt in these artifacts)",
+ "checks": {
+  "G1_learned_mean": {
+   "value": 0.929421421771483,
+   "pass": true,
+   "kind": "evidence"
+  },
+  "G1_learned_min": {
+   "value": 0.9266625866993063,
+   "pass": true,
+   "kind": "evidence"
+  },
+  "G2_shuffled_mean": {
+   "value": 0.4941544753356258,
+   "pass": true,
+   "kind": "evidence"
+  },
+  "G3_gap_vs_best_control": {
+   "value": 0.39785267432146265,
+   "pass": true,
+   "kind": "evidence"
+  },
+  "G4_spiking_agree_min": {
+   "value": 1.0,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G4_spiking_bacc_mean": {
+   "value": 0.9263310774060994,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G5_lesion_abstain_min": {
+   "value": 1.0,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G6_deterministic_all": {
+   "value": true,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G7_learned_recover_mean": {
+   "value": 0.7777777777777777,
+   "pass": false,
+   "kind": "evidence"
+  },
+  "G7_hand_in_scope_mean": {
+   "value": 0.0,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G7_lesion_in_scope_mean": {
+   "value": 0.0,
+   "pass": true,
+   "kind": "integrity"
+  },
+  "G7_fp_in_scope_mean": {
+   "value": 0.0,
+   "pass": true,
+   "kind": "evidence"
+  }
+ },
+ "attribution_topical_bacc_mean": 0.4380014959880321,
+ "means": {
+  "bacc_learned": 0.929421421771483,
+  "bacc_shuffled": 0.4941544753356258,
+  "bacc_label_permuted": 0.5104257737366672,
+  "bacc_freq_only": 0.5315687474500204,
+  "bacc_topical": 0.4380014959880321,
+  "bacc_spiking": 0.9263310774060994,
+  "spiking_agree": 1.0,
+  "lesion_abstain_rate": 1.0
+ },
+ "per_seed_bacc_learned": {
+  "42": 0.9266625866993063,
+  "43": 0.9276971498513726,
+  "44": 0.9278865769073847,
+  "100": 0.931689689339628,
+  "101": 0.933234248411727,
+  "102": 0.9293582794194789
+ },
+ "verdict": "NO-GO"
+}

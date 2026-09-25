@@ -27,6 +27,18 @@ esac
 Q="${POOL_QUEUE_PATH:-$ROOT/research/queue/${LANE}.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 
+# SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). The gpu lane below appends DIRECTLY to the queue
+# file with no other validation -- unlike the pool lane (which delegates to pool_queue.sh add, itself now
+# gated the same way), so this is the ONLY check a gpu-lane line through this producer ever gets. Applied to
+# both lanes for one source of truth; the pool lane's delegation runs it again, harmlessly.
+# Sourced from THIS SCRIPT's own directory (not the hardcoded $ROOT above, which always points at the primary
+# checkout): a worktree developing/testing this file must exercise ITS OWN copy of the shared check, not a
+# primary checkout that may predate it.
+_HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=tools/queue_job_shape_check.sh
+source "$_HERE/queue_job_shape_check.sh"
+if ! SHAPE_MSG=$(queue_job_runnable_check "$CMD"); then echo "$SHAPE_MSG" >&2; exit 2; fi
+
 # INTERPRETER GUARD (2026-08-01, see pool_queue.sh + dispatcher_selftest.sh). Every research runner must go
 # through .venv/bin/python: bare `python` is absent on the pool nodes and is not the sanctioned local
 # interpreter either. A bare-python job validates fine (the checks shell out to .venv/bin/python) and then

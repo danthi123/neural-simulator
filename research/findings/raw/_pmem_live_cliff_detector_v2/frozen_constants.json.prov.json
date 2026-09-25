@@ -1,0 +1,7 @@
+{
+ "reconstructed": true,
+ "reconstructed_note": "frozen_constants.json (produced by a bare local --freeze call, per the v2 prereg's job order) predates per-artifact provenance sidecars and has none of its own. This sidecar was added 2026-09-25 during scoring, for research/findings/2026-09-25-pmem-live-cliff-detector-v2-UNDEFINED.md, not copied from the primary checkout (no such file exists there). sim_backend is INFERRED, not measured directly for this file: every one of the six calibration arms it was derived from (calib_s7..s12.json.prov.json) records env.SIM_BACKEND=numpy with source_kind=git_archive at the same pinned revision, and the runner's own os.environ.setdefault(\"SIM_BACKEND\",\"numpy\") means a local --freeze call (no explicit backend override) also ran on numpy.",
+ "sim_backend": "numpy",
+ "backend": "numpy",
+ "inputs": "calib_s7.json .. calib_s12.json"
+}

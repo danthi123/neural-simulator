@@ -1,0 +1,32 @@
+{
+ "run_id": "1790169910-3438868",
+ "runner": "research/runners/_lexicon_learned_referent_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/fc8a0e10a03c88bbb3231c27cc92a24a8e37b59e/research/runners/_lexicon_learned_referent_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "--corpus",
+  "/home/node/derisk-pool/corpus/tinystories.txt",
+  "--json",
+  "research/findings/raw/_lexicon_learned_referent/lexicon_referent_s42_43.json"
+ ],
+ "git_sha": "fc8a0e10a03c88bbb3231c27cc92a24a8e37b59e",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "06134fe05a3319f023e66dba8db4295fdd7644a5ad97ec4a3b8588ff1ffa5caa",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T09:25:10",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_learned_referent/lexicon_referent_s42_43.json"
+}

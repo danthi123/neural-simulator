@@ -1,0 +1,100 @@
+{
+  "seed": 7,
+  "pinned_revision": "46425c2b6b9e01a8d6b488b653d492ac65c2c765",
+  "per_faculty": {
+    "d5-consolidate": {
+      "turn": "d5c_recall2",
+      "fields": [
+        "episodic.graded_cue.depth_hold",
+        "answer"
+      ],
+      "kind": "whether-disable",
+      "flag": "BRAIN_D5_CONSOLIDATE",
+      "compare_verdict": "pass",
+      "diffs": [],
+      "change_kind": "none",
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "null_control_clean": true,
+      "attributable_fraction": null,
+      "lesion_rep0_verdict": "pass",
+      "reproduced": true,
+      "final_verdict": "pass",
+      "load_bearing": false,
+      "graded_field": "episodic.graded_cue.depth_hold",
+      "graded_field_by_arm": {
+        "intact_a": {
+          "present": false,
+          "value": null
+        },
+        "intact_b": {
+          "present": false,
+          "value": null
+        },
+        "lesion": {
+          "present": false,
+          "value": null
+        },
+        "lesion_rep0": {
+          "present": false,
+          "value": null
+        }
+      },
+      "teach_turn": "d5c_teach",
+      "teach_comprehended": false,
+      "teach_abstained": true,
+      "teach_margin": 0.09999999999999998,
+      "teach_threshold": 0.19999999999999998,
+      "held_through_tick_present": true,
+      "held_pre_tick": null,
+      "held_post_tick": null,
+      "held_lever_raises": true,
+      "held_lever_error": "lever 'd5-consolidate depth_hold (INTACT, pre-tick -> post-tick)' did not move (None -> None): both arms are identical, so any A/B over this is VOID. If the value is already set by the config, set it EXPLICITLY in both directions."
+    },
+    "sleep-replay": {
+      "turn": "slp_recall",
+      "fields": [
+        "episodic.graded_cue.depth_hold",
+        "answer"
+      ],
+      "kind": "whether-disable",
+      "flag": "BRAIN_SLEEP_REPLAY",
+      "compare_verdict": "pass",
+      "diffs": [],
+      "change_kind": "none",
+      "treatment_diffs": 0,
+      "control_diffs": 0,
+      "null_control_clean": true,
+      "attributable_fraction": null,
+      "lesion_rep0_verdict": "pass",
+      "reproduced": true,
+      "final_verdict": "pass",
+      "load_bearing": false,
+      "graded_field": "episodic.graded_cue.depth_hold",
+      "graded_field_by_arm": {
+        "intact_a": {
+          "present": false,
+          "value": null
+        },
+        "intact_b": {
+          "present": false,
+          "value": null
+        },
+        "lesion": {
+          "present": false,
+          "value": null
+        },
+        "lesion_rep0": {
+          "present": false,
+          "value": null
+        }
+      },
+      "teach_turn": "slp_teach2",
+      "teach_comprehended": false,
+      "teach_abstained": true,
+      "teach_margin": 0.09999999999999998,
+      "teach_threshold": 0.19999999999999998,
+      "held_through_tick_present": false
+    }
+  }
+}

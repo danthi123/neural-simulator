@@ -189,6 +189,31 @@ Command (verbatim; `<out>` is `research/findings/raw/_affect_marker_settle_congr
 `research/runners/_affect_marker_settle_congruence.py`, `tests/test_affect_marker_congruence_gate.py`), before any
 run against it.
 
+## Amendment 3 — A3's GPU timing run CANCELLED by owner decision (2026-09-25; branch research/retire-affect-marker-word)
+
+The owner, verbatim: "It would be weird for the brain's replies to just be adding 'wonderful!' randomly. Its speech
+should be influenced by its feelings, not just have a feeling-related word thrown in randomly." Approved option A:
+the affective-marker word (`affect_drives.lead`) STOPS being prepended to the answer surface by default (new flag
+`BRAIN_AFFECT_MARKER_SURFACE`, default OFF; `=1` restores the pre-2026-09-25 prepend byte-identically) — it is still
+COMPUTED and RECORDED every turn (the #81 felt-state read, the #86 spiking WTA selection, and the A2 congruence gate
+above are ALL unchanged code paths).
+
+**A3's premise no longer holds.** A3 exists to decide whether `BRAIN_AFFECT_MARKER_SETTLE`'s wall-clock overhead is
+small enough to flip its OWN default — a decision that only mattered because SETTLE's product payoff was a better
+WORD SHOWN to the user. With the word retired from the surface by owner decision, that payoff is gone: no product
+decision now depends on SETTLE's timing, so the queued A3 run (~7.5 GPU-hours, `tools/gpu_queue.sh`, 4 sequential
+cupy processes) is **CANCELLED** — not run, not deferred, not silently dropped: named here as withdrawn-by-decision.
+`BRAIN_AFFECT_MARKER_SETTLE` itself is untouched by this branch (still default OFF, still selectable for a future
+measurement-only comparison of INTERNAL marker quality if one is ever wanted).
+
+**A1 and A2 stand as measurement-only records.** Nothing in this amendment retracts A1's multi-turn-contrast result
+or A2's congruence-gate wiring/measurement — both describe the quality/congruence of the INTERNAL marker selection
+(`affect_drives.lead`, `affect_marker_congruence`), which is exactly what stays live and load-bearing in production
+(docs/PRODUCTION_INTEGRATION_LEDGER.yaml `affect-drives-response` / `affect-marker-spiking-wta` rows; the
+FACULTY_PROBES fields `load_bearing_fraction.py` reads for both rows were already the recorded fields, not
+`resp['answer']`, so the #1 load-bearing metric is UNCHANGED by this decision). They simply no longer feed a
+surface-default decision, since there is no surface default left to flip.
+
 ## Amendment log
 
 - A1, A2, A3 (this document, 2026-09-24): first amendment of the three preregistrations committed in 205604a80, b2e50bd37
@@ -196,3 +221,7 @@ run against it.
 - Amendment 2 (this document, 2026-09-25): A2 production wiring decided + wired (`BRAIN_AFFECT_MARKER_CONGRUENCE`,
   default OFF, `webapp/affect_drives_chat.congruence_gate`) + its production-path measurement registered, ahead of
   any run.
+- Amendment 3 (this document, 2026-09-25, branch research/retire-affect-marker-word): owner decision retires the
+  affect-marker word from the answer surface by default (`BRAIN_AFFECT_MARKER_SURFACE`, default OFF) — A3's queued
+  GPU timing run is CANCELLED (its premise, deciding a surface-default flip, no longer applies); A1/A2 stand as
+  measurement-only records of the internal marker selection/congruence, unaffected in status.

@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-09-24T21:16:10Z",
+ "updated_at": "2026-09-25T18:16:18Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -1206,7 +1206,7 @@
   {
    "at": "2026-09-07T08:34:04Z",
    "op": "create-task",
-   "args": "proj=2 title=Store the brain's knowledge as real synaptic weights — proven, approved, pending a fits-on-the-card check",
+   "args": "proj=2 title=Store the brain's knowledge as real synaptic weights \u2014 proven, approved, pending a fits-on-the-card check",
    "head": "ac933b03d"
   },
   {
@@ -1704,7 +1704,7 @@
   {
    "at": "2026-09-16T22:51:35Z",
    "op": "create-task",
-   "args": "proj=2 title=Semantic-recall ledger evidence was stale — fixed; real block is toy-only validation of the sharded-store unbind/cleanup",
+   "args": "proj=2 title=Semantic-recall ledger evidence was stale \u2014 fixed; real block is toy-only validation of the sharded-store unbind/cleanup",
    "head": "d43e02a44"
   },
   {
@@ -1728,7 +1728,7 @@
   {
    "at": "2026-09-17T05:37:49Z",
    "op": "create-task",
-   "args": "proj=2 title=The brain now runs 9 of its thinking parts on ONE shared spiking core (validated) — turning it on by default is next",
+   "args": "proj=2 title=The brain now runs 9 of its thinking parts on ONE shared spiking core (validated) \u2014 turning it on by default is next",
    "head": "7f1fb45ab"
   },
   {
@@ -2192,6 +2192,12 @@
    "op": "append-desc",
    "args": "task=225",
    "head": "067f6df5e"
+  },
+  {
+   "at": "2026-09-25T18:16:18Z",
+   "op": "append-desc",
+   "args": "task=224",
+   "head": "0c86f45ba"
   }
  ]
 }

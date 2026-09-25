@@ -1,0 +1,100 @@
+{
+ "provenance": {
+  "cmd": "python tools/queue_job_shape_replay.py --claims /home/dant123/Projects/sim/research/queue/pool.queue.claims --gpu-log /home/dant123/Projects/sim/research/queue/gpu_queue.log --out research/coordination/queue_shape_replay_2026-09-25.json --fixtures-dir tests/fixtures/queue_job_shapes",
+  "script": "tools/queue_job_shape_replay.py",
+  "check": "tools/queue_job_shape_check.sh",
+  "check_sha256": "4370762898690d571b35af7612061103f2e21e08bec716cd5ac3947e60b6de3c",
+  "device": "cpu (host bash; no simulator backend)",
+  "git_sha": "8a89dc11ad5ff4b63451961ddb06544bfc32b2c8",
+  "generated_utc": "2026-09-25T17:44:22+00:00"
+ },
+ "inputs": {
+  "claims": "/home/dant123/Projects/sim/research/queue/pool.queue.claims",
+  "gpu_log": "/home/dant123/Projects/sim/research/queue/gpu_queue.log"
+ },
+ "per_source": {
+  "pool.queue.claims": {
+   "lines": 2098,
+   "refused": 9
+  },
+  "gpu_queue.log": {
+   "lines": 608,
+   "refused": 3
+  }
+ },
+ "refused_total": 12,
+ "refused": [
+  {
+   "source": "pool.queue.claims",
+   "line": 1638,
+   "job": "& .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta && env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AF",
+   "message": "\u26d4 REFUSED: not valid shell syntax (bash -n): bash: -c: line 1: syntax error near unexpected token `&'\nbash: -c: line 1: `& .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-marker-spiking-wta && env SIM_BACKEND=numpy OMP"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1647,
+   "job": "earing_fraction --only curiosity-followup --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/curiosity-followup/lb.json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PRERE",
+   "message": "\u26d4 REFUSED: first word 'earing_fraction' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: ear"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1916,
+   "job": ".json  #checked:prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 1; B2b base; mem_gb=8",
+   "message": "\u26d4 REFUSED: first word '.json' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: .json  #check"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1923,
+   "job": "A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --r",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 4"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1924,
+   "job": "A2 wiring seed 43: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --r",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 4"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1925,
+   "job": "A2 wiring seed 44: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --r",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 4"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1926,
+   "job": "A2 wiring seed 100: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 1"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1927,
+   "job": "A2 wiring seed 101: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 1"
+  },
+  {
+   "source": "pool.queue.claims",
+   "line": 1928,
+   "job": "A2 wiring seed 102: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4 && env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners._affect_marker_settle_congruence --",
+   "message": "\u26d4 REFUSED: first word 'A2' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: A2 wiring seed 1"
+  },
+  {
+   "source": "gpu_queue.log",
+   "line": 672190,
+   "job": "status",
+   "message": "\u26d4 REFUSED: first word 'status' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: status"
+  },
+  {
+   "source": "gpu_queue.log",
+   "line": 711341,
+   "job": "status",
+   "message": "\u26d4 REFUSED: first word 'status' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: status"
+  },
+  {
+   "source": "gpu_queue.log",
+   "line": 760341,
+   "job": "status",
+   "message": "\u26d4 REFUSED: first word 'status' of the job's first command is not a shell builtin/keyword and does not resolve on PATH -- it would die instantly with \"command not found\" (rc=127), exactly like the 2026-09-25 SETTLE A2 lines and the historical `status` job in gpu_queue.log. First command: status"
+  }
+ ]
+}
