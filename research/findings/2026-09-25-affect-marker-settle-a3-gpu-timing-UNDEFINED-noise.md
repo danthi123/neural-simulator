@@ -161,9 +161,14 @@ turn of each run a washout, and an OLS on run means with process and run-slot fi
 also records render time, generate calls and tokens, the reply without its lead, CPU time, load average, CuPy pool
 bytes and max RSS, so a repeat of this noise can be attributed.
 
-`--selftest` (no brain build) passes: 12 A3 cases and 25 Amendment 3 cases, including each failing direction (a
+`--selftest` (no brain build) passes: 12 A3 cases and 26 Amendment 3 cases, including each failing direction (a
 0.58 s WTA -> NO-GO; +1.0 s outside the WTA -> NO-GO; +0.8 s carried into the next turn -> NO-GO; a true 0.30 s cost
 -> UNDEFINED, never GO; 5 s turn noise -> UNDEFINED; each lever, validity and balance failure -> UNDEFINED).
+A mutation check of the four comparisons in `decide_xo` found that dropping the M2 bound from either region left
+all 25 original cases passing, because every M2 case also moved M1. One case now pins M2 on its own (a +0.58 s WTA
+with the rest of the ON turn 0.6 s faster, so M1 stays inside the bound -> NO-GO). With it, each of six mutations
+(drop U1, L1, U2 or L2; loosen the PASS bound; tighten the FAIL bound) makes the selftest fail. The rule itself is
+unchanged.
 
 The run goes to the GPU queue from a clean checkout pinned at the head of `research/settle-a3-amendment3`
 (`<pin>`, with `data/corpus/tinystories.txt` symlinked in). `<a3x>` is

@@ -934,6 +934,12 @@ def selftest_xo() -> bool:
     check("process offsets of 15 s cancel inside each process -> still GO", s == "GO")
     s, _ = st(_xo_quad(wta_on=0.6))
     check("the WTA's own cost exceeds the bound (M2 +0.58) -> NO-GO", s == "NO-GO")
+    # M2 is gated on its own, not only through M1: a WTA over the bound whose ON turns are otherwise faster keeps M1
+    # inside the bound, so only the M2 comparisons can read NO-GO here. (Added 2026-09-25 after a mutation check:
+    # dropping U2 from PASS or L2 from FAIL left every earlier case passing, because each M2 case also moved M1.)
+    s, r = st(_xo_quad(wta_on=0.6, on_extra=-0.6))
+    check("the WTA costs +0.58 but the rest of the ON turn is 0.6 s faster (M1 ~-0.02) -> NO-GO, never GO",
+          s == "NO-GO" and r["metrics"]["M1_total"]["upper"] <= BOUND_S)
     s, _ = st(_xo_quad(on_extra=1.0))
     check("ON turns carry +1.0 s outside the WTA (M1 +1.13) -> NO-GO", s == "NO-GO")
     s, r = st(_xo_quad(carry=0.8))
