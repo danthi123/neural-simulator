@@ -59,7 +59,7 @@ The registered r2 code (`R2_ARMS`, `grade_seed_r2`, `aggregate_r2` in
 this worktree's checkout of `main` (`13dfae67f`): extracted and diffed directly (not inferred from a changelog),
 0 bytes differ in any of the three. The diff between the two revisions on this file is confined to the later
 `arc` and `fi` families (Amendments 4-6), which append new arms/graders and do not touch `R2_ARMS`,
-`grade_seed_r2` or `aggregate_r2`. `--selftest` (93 checks, no brain) also passes, including the r2-specific unit
+`grade_seed_r2` or `aggregate_r2`. `--selftest` (92 checks, no brain) also passes, including the r2-specific unit
 cases -- notably `[PASS] r2 grade: d3w_rc=abstain -> seed_verdict UNDEFINED`, the exact designed case that fires
 on two of the six real seeds below.
 

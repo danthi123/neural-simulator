@@ -125,9 +125,9 @@ Amendment 5 (2026-09-24) measured `ordinary_fact_flip_forgetting: True` on one s
 plainly-told neutral fact survives overnight under today's shipped default (`neu_night_off_intact`, `correct`)
 but is lost if `BRAIN_DA_TAG_CAPTURE` is flipped on (`neu_night_intact`, `abstain`) -- the mechanism's own
 by-design behavioral-tagging selectivity (Moncada & Viola 2007), not a defect. This task's brief describes a
-21:15 audit that found item (c) reading MISSING; no separate committed document under that timestamp was found
-in this repo's findings/coordination corpus, so this section is grounded in Amendment 5 plus the run below, not
-an unlocatable source.
+21:15 audit that found item (c) reading MISSING; its record is the board entry in `GAP_CLOSURE_MISSION.md`
+(the 2026-09-24 21:11 dispatch paragraph: "Audit verdict: an ordinary fact told once is NOT kept overnight"),
+located by the independent verifier. This section agrees with it and rests on Amendment 5 plus the run below.
 
 This run extends that result to all 6 seeds AND to the actual production LTM configuration (not just the
 LTM-off buffer-only arm): `grade_seed`'s `ordinary_fact_flip_forgetting` reads `True` on every one of the 6

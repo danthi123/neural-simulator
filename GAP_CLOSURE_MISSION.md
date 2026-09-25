@@ -123,6 +123,12 @@ checks only the first instance -- same stdin class; ~/sim fallback path), fragme
 owner), and a static gate for ssh-in-a-read-loop across all shell scripts. SETTLE A2 webapp test 3 failed on its own setup
 (mood never reached '+'); fix + real re-run = `wouk2m2fs`. Scoring sleep r2 + LTM-on (both 6/6 landed) = `wl76o8lhg`.
 
+**☀️ 11:30 scored + merged:** DA tag-capture LTM-ON = GO 6/6 runner-level (702b5bbf0, p 1/64, re-derived; seeds 43/101 recovered
+from pool1 verified) -- flip leg 1 of 4 met for BRAIN_DA_TAG_CAPTURE; it must ship WITH BRAIN_SLEEP_REPLAY_CAPTURE (alone it
+loses an ordinary fact overnight). Sleep-replay r2 = NO-GO (df415f6ca; downscaling 0/6 as registered, 4 NO-GO SHY1 + 2 UNDEFINED;
+long delay NOT-RESCUED 6/6; offcheck IDENTICAL) -- superseded by the fi family (running). Next: the paired-flip pipeline
+(verify-go review -> combined no-regression battery with both ON -> production-default validation).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
