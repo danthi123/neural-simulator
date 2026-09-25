@@ -24,10 +24,13 @@ artifacts:
   - research/findings/raw/_sleep_forgetting_interference/aggregate.json
 verdict: NO-GO 3/6 on the pre-registered per-seed gates FI1-FI7 (`n_go=3`; all six seeds present, zero
   UNDEFINED). Seeds 42, 44 and 102 read seed_verdict GO. Seeds 43 and 101 fail FI1 and FI4 on a night-1
-  sleep-replay-capture-margin miss for the neutral telling that is present with ZERO later learning -- outside
-  the load-renormalization mechanism this family exists to measure. Seed 100 fails FI6: the twice-re-mentioned
-  fact is lost by night 4 under the continuing 3-facts/day dose. Re-graded from the raw artifacts with the
-  registered `grade_seed_fi` / `aggregate_fi`, unmodified.
+  sleep-replay-capture-margin miss for the WEAK telling (`_DATC_WEAK`, the fact told last) that is present with
+  ZERO later learning -- outside the load-renormalization mechanism this family exists to measure. Seed 101 ALSO
+  fails FI5: its salient telling IS captured, but that block's own reactivation read collapses across the week
+  (0.291 -> 0.010 by night 6) and the `1 - delta(1-R)` protection collapses with it, losing the fact by morning 5.
+  Seed 100 fails FI6: the twice-re-mentioned fact is lost by night 4 under the continuing 3-facts/day dose, and
+  the failing read matches an older, weaker-margin duplicate block rather than the newest, strongest one.
+  Re-graded from the raw artifacts with the registered `grade_seed_fi` / `aggregate_fi`, unmodified.
 ---
 
 # Sleep forgetting-interference (`fi` family): NO-GO 3/6, as registered
@@ -61,6 +64,14 @@ does not touch `_FI_FACTS` (line 338) or the `fiv`/`fil`/`fih`/`fis`/`fir` group
 calls at line 362), which are unchanged. `aggregate_fi` itself does not import `onebrain_regression_battery.py` at
 all -- it re-grades the already-recorded `res["arms"]` of each `seed*.json` with the current `grade_seed_fi` -- so
 this comment-only diff cannot have affected the scoring below in any case.
+
+**Undeclared-until-now deviation from the registered command.** Amendment 6 registers `--workers 1` (line 798 of
+the prereg); every one of the six seeds' stored `argv` reads `--workers 3` instead (checked directly in each
+`seed*.json`). `--workers` only bounds how many of an arm's `ThreadPoolExecutor`-dispatched subprocesses run
+concurrently (`run_seed`, `research/runners/_da_tag_capture_chat_probe.py:258`); each of the 9 `FI_ARMS` is still
+its own subprocess regardless of the count, and `G0_null_clean` and `I3_identical_through_night1` both hold
+byte-for-byte above, so this deviation is not shown to have changed any result -- but it is a real deviation from
+the registered command and is declared here, not silently absorbed.
 
 ## Scoring: the registered `--aggregate` combine
 
@@ -100,56 +111,98 @@ not an instrument failure.
 `fiv_lr` (FI1: nothing else is ever learned in this arm) reads `abstain` on **every one of its seven mornings** on
 both seeds, starting at night 1 -- before a single later fact has been told. Because I3 holds, `fil_lr`,
 `fih_lr_a`, `fih_lr_b` and `fir_lr` are identical to `fiv_lr` through night 1 on these two seeds and so already
-read `abstain` at the first morning too, which is why FI4 (`fih_lr_lesion`, the load edge cut) also fails: the
-load-renormalization edge is irrelevant to a fact that was never captured in the first place.
+read `abstain` at the first morning too. `fih_lr_lesion` is **not** one of I3's checked arms (`same = (fiv_lr,
+fil_lr, fih_lr_a, fih_lr_b, fir_lr)`), so I3 says nothing about it -- but it independently shows the identical
+night-1 signature checked below (`z_mean` `3.8088625378623516e-10` / `1.0692804587972005e-11`, `R` `0.168587758` /
+`0.035599825`, `abstain` at recall 1 on both seeds), because the lesion only changes what a night does to the
+*applied* renormalization delta (it sets the applied scale to 1 and reads-but-does-not-apply the load); it does
+not touch the SWR-epoch capture step that sets `z`. FI4 fails for the same upstream reason as FI1 -- the
+load-renormalization edge genuinely is irrelevant to a fact that was never captured, but that is shown by the
+lesion arm's own night-1 record, not inferred from I3.
 
-**Ruling out an encoding miss.** `P1_immediate_precondition` holds on both seeds -- `neu_imm_fi` (a fresh brain,
-the same telling, recalled at once with no night) is correct. `n_managed_blocks_by_night` for `fiv_lr` is `1` on
-every one of the seven nights on both seeds -- the ledger created exactly one managed block for the fact, and it
-never disappears. The block's own increment-to-baseline ratio at recall 1 is `0.9561444027828692` (seed 43) and
-`0.9920212521528132` (seed 101) -- both close to the fresh-fact range the four GO seeds show at the same point
-(`1.305007482661105`, `1.0131071147025406`, `1.0254155897799755`, `1.209882425794491` for seeds 42, 44, 100, 102
-respectively). The fact was told, stored as one block with a substantial weight, and immediately recallable. It
-was not "never stored."
+**Ruling out an encoding miss (for the weak telling's storage, not its immediate recall).** `n_managed_blocks_by_night`
+for `fiv_lr` is `1` on every one of the seven nights on both seeds -- the ledger created exactly one managed block
+for the fact, and it never disappears. The block's own increment-to-baseline ratio at recall 1 is
+`0.9561444027828692` (seed 43) and `0.9920212521528132` (seed 101) -- both close to the fresh-fact range the four
+seeds where the fact was captured show at the same point (`1.305007482661105`, `1.0131071147025406`,
+`1.0254155897799755`, `1.209882425794491` for seeds 42, 44, 100, 102 respectively). The fact was told and stored
+as one block with a substantial weight; it was not "never stored." This does **not** show the block was
+immediately recallable: `P1_immediate_precondition` (`neu_imm_fi`, group `datni`) holds on both seeds, but that
+arm uses the NEUTRAL telling (`_DATC_NEUTRAL`, `datni_recall`), not the WEAK telling `fiv_lr`/`fil_lr`/`fih_lr_*`/
+`fir_lr` use (`_DATC_WEAK`). P1 shows the encoding-and-immediate-recall pathway works at all on these two seeds'
+builds; no arm in this family probes immediate recall of the weak telling itself, so "immediately recallable" is
+not directly measured here.
 
-**What actually differs: the SWR reactivation margin at night 1, and whether the block crosses into late-phase
-capture.** Every managed block records `z_mean`, the fraction of the block's synapses that have crossed into the
-late (protein-synthesis-independent, persistent) phase. At recall 1, `z_mean` is `1.0000000000508993` (seed 42),
-`0.999999999981423` (seed 44), `1.000000000015095` (seed 100) and `1.0000000000483527` (seed 102) -- captured. On
-seeds 43 and 101 it is `3.8088625378623516e-10` and `1.0692804587972005e-11` -- effectively zero: the block never
-left early phase. The one thing that differs at the moment of capture is the sleep epoch's own reactivation read,
-`R`: `0.356535268` / `0.310521057` / `0.320028458` / `0.423728264` on the four GO seeds against `0.168587758`
-(seed 43) and `0.035599825` (seed 101) -- roughly half to a twelfth as large. The resulting SWR-coupled DA
-(`da_swr`) is correspondingly lower (`0.624754941` and `0.526343871` against `0.763836098`-`0.813558916` on the
-GO seeds), and the D1-gated capture that Amendment 6's mechanism runs through never crosses whatever threshold
-turns early-phase expression into a permanent trace. The actual chat-turn reply at recall 1 on seed 43 is
-consistent with a genuine cue-matching miss, not silence: `"(I'd been mulling over dog.) As for it — I don't know
-about that."`, with `matched_fact_index: null` against `n_facts_scanned: 6` -- the store scanned all six blocks
-(five build-time plus the one managed block) and found nothing confident enough to answer with. Seed 101's
-`fiv_recall1` reads the same shape (`abstained: true`, `recalled_svo: null`, `matched_fact_index: null`,
-`n_facts_scanned: 6`).
+**What actually differs at recall: the SWR reactivation margin at night 1, whether the block ever crosses into
+late-phase capture, and what that means for what is EXPRESSED by morning.** Every managed block records `z_mean`,
+the fraction of the block's synapses that have crossed into the late (protein-synthesis-independent, persistent)
+phase. At recall 1, `z_mean` is `1.0000000000508993` (seed 42), `0.999999999981423` (seed 44),
+`1.000000000015095` (seed 100) and `1.0000000000483527` (seed 102) -- captured. On seeds 43 and 101 it is
+`3.8088625378623516e-10` and `1.0692804587972005e-11` -- effectively zero: the block never left early phase. The
+sleep epoch's own reactivation read, `R`, is `0.356535268` / `0.310521057` / `0.320028458` / `0.423728264` on the
+four seeds where the fact was captured, against `0.168587758` (seed 43) and `0.035599825` (seed 101) -- roughly
+half to a fifth as large; the resulting SWR-coupled DA (`da_swr`) is correspondingly lower (`0.624754941` and
+`0.526343871` against `0.729785582`-`0.813558916` on those four seeds, low end at seed 44 not seed 42), and the
+D1-gated capture that Amendment 6's mechanism runs through never crosses whatever threshold turns early-phase
+expression into a permanent trace (`a_eff_mean` `0.161502711` / `0.029512006`, `tag_rep_mean` -- the block's own
+replay tag -- `0.15702335749144491` / `0.03306745477406034`, both seeds).
 
-**This is not "seeds 43 and 101 cannot recall the fact"; it is specific to the neutral telling's margin.** The
-*salient* telling (`fis_lr`, the same fact inside surprising news) reaches `R = [0.388730055]` (seed 43) and
-`R = [0.290963714]` (seed 101) at its own night-1 epoch -- inside or above the GO seeds' neutral-telling range --
-and both cross into capture (`z_mean = 1.0000000001010352` and `1.0000000000866132`); `fis_lr` is correct at
-recall 1 on both seeds. The failure is a margin that sits close to a threshold for THIS content on THIS seed's
-heterogeneous population, not a broken seed: raise the drive (salience) and the same mechanism captures normally.
-This is the best-supported reading of "encoding miss (never stored) vs. immediate-read failure vs. something
-else": it is closest to an immediate-read failure, precisely localized to a capture event that fails to cross
-threshold at the very first night, upstream of the load-renormalization mechanism this family is built to
-measure. It is a property of the *sleep-replay-capture* route (`BRAIN_SLEEP_REPLAY_CAPTURE`, Amendment 1-5), not
-of `BRAIN_SLEEP_LOAD_RENORM` (this amendment).
+Because `z` never flips, the ratio quoted above (`0.956`/`0.992`, `|inc|/|base|` of the *stored* increment) is not
+what is expressed at the recall turn. `weight_factor(blk) = e + z * (1 - e)` (`webapp/da_tag_capture.py:493-495`),
+with `e = exp(-(t - t_w) / tau_early_h)` and `tau_early_h ≈ 1.5` h: at the ~24 h morning read, `e ≈ 1.1e-7` on a
+block with `z ≈ 0`, so the increment's expressed contribution to the stored weight is negligible by morning -- the
+early-phase trace itself has decayed away, on top of never having been tagged for late-phase persistence. This is
+consistent with the actual chat-turn reply at recall 1 on seed 43: `"(I'd been mulling over dog.) As for it — I
+don't know about that."`, `matched_fact_index: null` against `n_facts_scanned: 6`, and the spiking read-out firing
+`2/6880` readout neurons (`frac_fired = 0.00029069767441860465`) -- essentially nothing. Seed 101's `fiv_recall1`
+reads the same shape. This is a **night-1 sleep-replay-capture failure** (the reactivation read never gets the
+block's synapses to cross into persistence) **followed by ordinary early-phase decay** of whatever was written --
+not an encoding miss, and not "closest to an immediate-read failure" in the sense of a readout-side margin acting
+on an intact trace: the trace itself has decayed in expression by the time recall is asked.
+
+**This is not "seeds 43 and 101 cannot recall the fact"; it is specific to the weak telling's margin.** The
+*salient* telling (`fis_lr`, the same fact inside surprising news) reaches `R = [0.388730055]` (seed 43, inside
+the four captured seeds' weak-telling night-1 range above) and `R = [0.290963714]` (seed 101, BELOW that range)
+at its own night-1 epoch, and both cross into capture (`z_mean = 1.0000000001010352` and `1.0000000000866132`);
+`fis_lr` is correct at recall 1 on both seeds. Seed 101's capture despite the lower `R` tracks a larger salient
+tag, not a higher reactivation read: the salient block's `tag0_mean` is `2.1228416378885058` against the weak
+block's `1.0` on the same seed (seed 43: `2.2027627035027137` vs `1.0`). The failure is a margin specific to the
+weak telling's smaller tag on THIS seed's heterogeneous population, not a broken seed: raise the drive (salience,
+via a larger tag) and the same mechanism captures normally. It is a property of the *sleep-replay-capture* route
+(`BRAIN_SLEEP_REPLAY_CAPTURE`, Amendment 1-5), not of `BRAIN_SLEEP_LOAD_RENORM` (this amendment).
 
 **This same signature was already reported once, for the same two seeds and the same weak telling, in a sibling
-family.** `research/findings/2026-09-25-sleep-replay-capture-r2-NO-GO-6seed.md` ("Why P2 fails on two seeds")
-found `d3w_rc` (r2's own no-downscaling control, same content, no later learning at all) reading `abstain` on
-seeds 43 and 101 while its own increment-to-baseline ratio at recall was *above* 1.0 on both, and named it "a
-readout miss on the composer's cleanup margin", not a decayed trace. The `z_mean`/`R` breakdown above is a more
-precise account of the same phenomenon, now traced to a specific step (the sleep epoch's capture-threshold
-crossing) rather than only the recall turn's outcome. Seeds 43 and 101 failing FI1 is a **replication** of an
-already-reported per-seed fragility in this route's neutral-telling capture, not a new failure mode of the
-load-renormalization mechanism.
+family -- and this finding supersedes that reading.** `research/findings/2026-09-25-sleep-replay-capture-r2-NO-GO-6seed.md`
+("Why P2 fails on two seeds") found `d3w_rc` (r2's own no-downscaling control, same content, no later learning at
+all) reading `abstain` on seeds 43 and 101 while its own increment-to-baseline ratio at recall was *above* 1.0 on
+both, and named it "a readout miss on the composer's cleanup margin", explicitly not a decayed trace. `d3w_rc`'s
+own `z_mean` at recall is `8.674002122648018e-13` (seed 43) and `1.5650274174830834e-12` (seed 101) -- the same
+near-zero capture state measured here, with the same night-1 `R` (`0.168587758` / `0.035599825`, identical to
+`fiv_lr`'s, as I3-style identity through night 1 predicts for a shared seed and telling). The `z_mean`/`R`/
+`weight_factor` breakdown above contradicts "not a weak trace ... not mistaken for the fact decayed": the trace
+genuinely never crosses into persistence and its early-phase expression genuinely decays by the recall turn, so
+this finding's account **supersedes** r2's "readout margin" reading rather than merely refining it. Seeds 43 and
+101 failing FI1 is a **replication** of an already-reported per-seed fragility in this route's weak-telling
+capture, not a new failure mode of the load-renormalization mechanism.
+
+## Why seed 101 also fails FI5: the salient block's own protection collapses across the week
+
+Seed 101's `fis_lr` is correct at recall 1 (above) but is not the seed's only FI failure: it also fails FI5
+(salient kept under the dose), the one gate this finding's table shows failing on 101 and not on 43. This is a
+distinct mechanism from the night-1 capture-margin miss above -- the block IS captured (`z_mean ≈ 1` from night
+1) -- and it plays out entirely within the load-renormalization mechanism this amendment adds, not upstream of
+it. The block's own reactivation read collapses across the week: `R = [0.290963714, 0.260448706, 0.14836735,
+0.023063055, 0.022094502, 0.009963793, 0.032167699]` for nights 1-7. Because the protection is `1 - delta * (1 -
+R)`, a falling `R` weakens the protection every subsequent night regardless of `delta`: on night 2, `shy_scale =
+0.692666663` at `delta = 0.415567303`, consistent with `1 - 0.415567303 * (1 - 0.260448706) ≈ 0.693`. Once `R`
+collapses (night 4 onward, `R ≈ 0.02`), the block is renormalized at close to the full `delta` every night like an
+unprotected trace, and its ratio (`inc_mag/base_mag`) falls accordingly: `2.0236041350102183` (night 1) ->
+`1.0611021373623823` (night 3) -> `0.7063632341370527` (morning 5), where the reply first fails (`matched_fact_index: 5`, `verified: false` -> `abstain`) --
+matched but not confident enough to pass verification. The same matched-but-unverified pattern repeats at morning
+6, and by morning 7 the read finds nothing at all (`matched_fact_index: null`). FI5 was pre-registered as "salient
+telling, same dose -> kept"; on this one seed the salience tag captures the block but does not keep its own
+reactivation read high enough for the protection formula to hold it through a full week of continuing load -- a
+genuine limit of the built protection under this amendment's own mechanism, not a capture-margin artifact.
 
 ## Why seed 100 fails FI6: re-mention's own protection erodes under the continuing dose
 
@@ -158,17 +211,28 @@ before that day's three later facts. `n_managed_blocks_by_night` for seed 100 is
 1 (the original) at night 1, +1 (re-mention) +3 (day-2 facts) = 5 by night 2, +1 (re-mention) +3 (day-3 facts) = 9
 by night 3, then +3 a night through night 7, exactly the registered protocol. `daily_outcomes` are `correct,
 correct, correct, abstain, abstain, abstain, abstain` -- lost starting the fourth morning, one to two nights
-after the second re-mention. The tracked original block's own ratio falls every night: `1.0254155897799755` (night
-1) -> `0.7024895478071427` -> `0.49393965992299305` -> `0.40280562188118535` -> `0.34197805377694906` ->
+after the second re-mention. The *tracked original* block's own ratio falls every night: `1.0254155897799755`
+(night 1) -> `0.7024895478071427` -> `0.49393965992299305` -> `0.40280562188118535` -> `0.34197805377694906` ->
 `0.3015797022920384` -> `0.2691548021017118` (night 7), against a per-night renormalization delta of
-`0.1440927`, `0.452880123`, `0.307868533`, `0.188656302`, `0.152351566`, `0.121774295`, `0.110228511`. This is a
-genuine, monotone erosion under the mechanism the family measures, unlike seeds 43/101's all-or-nothing night-1
-miss: the re-mention writes fresh blocks (which reset their own R and start the same load-renormalization clock),
-but the continuing 3-facts/day dose renormalizes each of them in turn before their next re-mention, so by night 4
-none of the three related blocks (original + two re-mentions) clears the recall margin any longer. FI6 predicted
-re-mention would keep the fact through night 7 at this dose; on this one seed it does not, once re-mentioned
-blocks are treated by the same load edge as any other block. This is a genuine limit of the built protection, not
-an instrument defect (`I2_load_lesion_held` and `n_arm_errors=0` both hold for seed 100).
+`0.1440927`, `0.452880123`, `0.307868533`, `0.188656302`, `0.152351566`, `0.121774295`, `0.110228511`.
+
+That original block alone falling below margin is not the whole story: the second re-mention writes its own block
+(store position 5 of the night-4 record, i.e. fact index 10 counting the 5 build-time facts), and at morning 4
+its ratio is `0.9785813694572846` -- well inside the range seed 100's OTHER arms read as "correct" at a
+comparable point (`fil_lr` correct at `0.6875558289374295`, lost the next morning at `0.6085411651256613`;
+`fih_lr_a` already lost by `0.5357732936788184`; `fiv_lr` sits at a constant `1.0254155897799755`; `fis_lr`'s
+lowest point, night 7, is still correct at `1.0217791765005546`). The morning-4 read does not use that block: it
+matches an OLDER duplicate instead (store position 1, fact index 6, ratio `0.6023277961028686`, from the FIRST
+re-mention) -- `activity.matched_fact_index: 6`, `activity.abstained: false`, patient `ball` at confidence `1.0`,
+but the reply then fails verification (`verified: false`) and the arm abstains. The same match-then-fail-
+verification pattern repeats at morning 5 (matched to the original block, index 0); mornings 6-7 find no match at
+all (`matched_fact_index: null`). The loss on this seed therefore depends on WHICH of the fact's duplicate blocks
+the read settles on, not on every duplicate uniformly eroding below a shared recall margin -- the strongest
+duplicate (the second re-mention) was still comfortably above that margin when the read failed. This is still a
+genuine, mechanism-consistent finding, not an instrument defect (`I2_load_lesion_held` and `n_arm_errors=0` both
+hold for seed 100): it shows the re-mention protection is not robust to having several duplicate blocks of the
+same fact competing for the read once the load edge keeps eroding each of them, a failure mode the pre-registered
+gate did not anticipate and this scoring did not set out to characterize in more detail than "FI6 fails".
 
 ## On the three seeds where every FI gate holds, the mechanism behaves as pre-registered -- with earlier loss than predicted
 
@@ -184,6 +248,28 @@ dose than the fake-substrate design sweep anticipated on 2 of 3 GO seeds. `fih_s
 18% constant under the same dose) is lost later on every seed that reaches night 7 with it intact (e.g. seed 42:
 night 7, `fact_ratio_by_night[6] = 0.5371897300418954`) -- consistent with the constant ignoring the load and
 therefore charging every night the same amount regardless of how much was actually learned.
+
+**Other REPORTED, a-priori predictions, checked over all six seeds, not just the three GO seeds.** Amendment 6
+predicted `fil_lr` (1 fact/day) recalled on all seven mornings; it is on 2/6 seeds (42, 102) -- on 44 and 100 it is
+lost by night 5 (`0.6085411651256613` and below), and on 43/101 it is `abstain` from night 1 for the same
+capture-margin reason as `fiv_lr`. It predicted `fih_shy` first lost on night 7 or later; that holds on 1/6 (42)
+-- 44 loses it at night 5, 100 at night 4, 102 at night 6 (43/101 again `abstain` from night 1, so the SHY-specific
+prediction is not testable on them). It predicted the brain's night-1 `delta` close to `0.19`; the measured
+`fiv_lr` night-1 `delta` across all six seeds is `0.166166284` (42), `0.142042173` (43), `0.142236829` (44),
+`0.1440927` (100), `0.141486819` (101), `0.151454139` (102). <!--derived--> That is a 0.141-0.166 band (the min
+and max of the six values above), consistently below the fake-substrate sweep's `0.19`. None of these three misses changes any gate's pass/fail (`fil_lr`'s outcome is
+REPORTED, not gated; `fih_shy` enters no gate but FI7; the delta is REPORTED), but they are registered predictions
+that were not previously reported against the full six-seed data.
+
+The aggregate's own `first_night_not_correct` summary (`aggregate.json`, built by the registered `aggregate_fi`)
+carries this field for six of the nine arms (`fiv_lr`, `fil_lr`, `fih_lr_a`, `fih_shy`, `fis_lr`, `fir_lr`); it
+does not carry `fih_lr_lesion` or `fih_lr_b`, though the prereg asks for "the first-lost night per seed for each
+arm". Read directly from each seed's own (registered, unmodified) `grade_seed_fi(...)["reported"]` rather than
+from `aggregate.json`: `fih_lr_b`'s first-lost night is identical to `fih_lr_a`'s on every seed (`4, 1, 3, 3, 1, 5`
+for seeds 42/43/44/100/101/102), as G0's null-control equality requires. `fih_lr_lesion`'s is `None` (never lost)
+on the four seeds where the fact is captured, and night 1 on 43/101 -- the same capture-margin miss as `fiv_lr`,
+independent of the lesion, as shown above. Neither omission changes a gate verdict; both are declared here because
+`aggregate.json` itself does not carry them.
 
 ## Sign-flip p: diluted by the night-1 miss, not evidence the dose effect is absent
 
@@ -204,33 +290,50 @@ allowed to fade, without RAG. On the 3/6 seeds where every FI gate holds, this f
 that directive's shape: an unrehearsed, unimportant fact fades as later learning accumulates (FI2), the rate is
 ordered by how much is learned (FI3), and two independent importance signals -- telling it saliently (FI5) or
 re-mentioning it (FI6, on 5/6 seeds) -- protect it. That is a real, measured piece of evidence in the directive's
-direction, and it is built the way the directive asks: the amplitude is read from the brain's own store (`dW/W`),
-not a host-picked importance score.
+direction. The R_i protection read and the reactivation itself are read from the brain's own store; the amplitude
+that turns that read into a night's renormalization (the `dW`/`W` sums, their ratio `delta`, and the multiply
+`1 - delta(1-R)`) is declared, in the module's own docstring, as host arithmetic over synaptic quantities, not a
+computation the brain itself performs -- a documented shortcut under the brain-based-only standard, not something
+this finding should imply is fully synaptic.
 
-It does **not** show the directive is implemented. The 6-seed verdict is NO-GO: two of six seeds fail before the
-renormalization mechanism ever gets a chance to act (an unrelated capture-margin fragility in the upstream
-sleep-replay route), and a third shows the re-mention protection itself is not robust to a full week of continuing
-load. The mechanism scored here distinguishes exactly two categories of "important" (told saliently, or repeated)
-against one unrehearsed control; it has no notion of graded importance among many concurrently known facts, no
-interaction with genuine content-similarity interference (the told facts here are deliberately dissimilar to the
-target, per the prereg), and depends on a capture step (sleep-replay-capture) that this same scoring shows is not
-yet reliable across seeds for an ordinary neutral fact. Whatever downstream feature the memory entry describes as
-"waiting for this fix" should keep waiting: this is a directionally consistent building block, re-graded here as
-NOT YET a 6-seed-robust one.
+The owner's 2026-09-25 ruling was prompted by exactly the defect this family reproduces: it names the sibling r2
+route's result as losing the weak telling "2/6, through a single threshold on the replay read... forgetting that
+is not driven by what matters." `fi` reproduces that same defect, unchanged, on the same two seeds (43, 101) --
+Amendment 6 does not address it, because it targets the renormalization step downstream of capture, not the
+capture step itself.
+
+It does **not** show the directive is implemented. The 6-seed verdict is NO-GO: seeds 43 and 101 fail FI1/FI4
+before the renormalization mechanism ever gets a chance to act on the weak telling (a capture-margin fragility in
+the upstream sleep-replay route, not this amendment's mechanism); seed 101 ALSO fails FI5 through a failure
+internal to this amendment's own mechanism (its salient block's reactivation read collapses across the week and
+the protection collapses with it); and seed 100 shows the re-mention protection is not robust to a full week of
+continuing load once several duplicate blocks of the same fact compete for the read. The mechanism scored here
+distinguishes exactly two categories of "important" (told saliently, or repeated) against one unrehearsed control;
+it has no notion of graded importance among many concurrently known facts, no interaction with genuine
+content-similarity interference (the told facts here are deliberately dissimilar to the target, per the prereg),
+and depends on a capture step (sleep-replay-capture) that this same scoring shows is not yet reliable across seeds
+for an ordinary weak fact, nor -- on seed 101 -- reliably protective of a fact it did capture. Whatever downstream
+feature the memory entry describes as "waiting for this fix" should keep waiting: this is a directionally
+consistent building block, re-graded here as NOT YET a 6-seed-robust one.
 
 ## What this does and does not show
 
 FI1 and FI2 together, on the seeds where both are measurable (42, 44, 102), tie the loss to later learning: the
 same brain, the same telling, the same first night (I3), diverging only once later facts start. FI4 ties it to
 the renormalization edge specifically: cutting it keeps the fact all seven nights on those same seeds. FI3 is a
-genuine dose-response on a continuous read, not just a discrete pass/fail. It does **not** show that this
-family's night amplitude corresponds to any particular human day (declared already in the prereg: the store's W
-grows by a block per fact told, so this model's delta falls faster with accumulated knowledge than a
-renormalize-the-whole-brain system would, biasing toward retention). It does **not** show that re-mention is a
-reliable protection at this dose (seed 100). It does **not** show that the sleep-replay-capture route reliably
-captures an ordinary neutral fact at all (seeds 43, 101) -- a pre-existing property of an earlier amendment, not
-of the mechanism this amendment adds. Similarity-dependent interference (A-B, A-C) is not tested here, as the
-prereg states.
+genuine dose-response on a continuous read on the four seeds where the fact is captured (42, 44, 100, 102), not
+just a discrete pass/fail. On seeds 43 and 101, FI3 also reads "pass" by the gate's literal wording (`fiv_lr`'s
+ratio still exceeds `fil_lr`'s, which still exceeds `fih_lr_a`'s), but all three are `z ≈ 0`, never-expressed
+STORED increments on a block whose weight is already, in effect, indistinguishable from baseline at recall -- a
+pass with no behavioral meaning on those two seeds, since the ordering plays out entirely inside a quantity the
+composer never reads from. It does **not** show that this family's night amplitude corresponds to any particular
+human day (declared already in the prereg: the store's W grows by a block per fact told, so this model's delta
+falls faster with accumulated knowledge than a renormalize-the-whole-brain system would, biasing toward
+retention). It does **not** show that re-mention is a reliable protection at this dose once several duplicate
+blocks of the same fact compete for the read (seed 100), nor that salience is a reliable protection across a full
+week once captured (seed 101, FI5). It does **not** show that the sleep-replay-capture route reliably captures an
+ordinary weak fact at all (seeds 43, 101) -- a pre-existing property of an earlier amendment, not of the mechanism
+this amendment adds. Similarity-dependent interference (A-B, A-C) is not tested here, as the prereg states.
 
 ## Honest limits
 
@@ -238,20 +341,26 @@ prereg states.
   new brain build ran for this finding.
 - The night-1 capture-margin miss on seeds 43/101 is described here with more mechanistic detail (`z_mean`, `R`,
   `da_swr` at the exact epoch) than the prior r2 finding gave, but neither finding identifies WHY those two
-  seeds' heterogeneous builds put the neutral telling's reactivation margin below the effective threshold while
-  the salient telling's does not; that remains open.
+  seeds' heterogeneous builds put the weak telling's reactivation margin below the effective threshold while
+  the salient telling's (larger tag, on the same seeds) does not; that remains open.
+- Seed 101's FI5 failure (the salient block's own reactivation read collapsing across the week) is reported here
+  for the first time but not root-caused: why THIS seed's salient block's R falls from 0.29 to 0.01 while the
+  other three captured seeds' salient blocks hold up over the same week is not investigated.
 - Whether the store's own `dW/W` read is the right form of "how much was learned", versus a per-synapse or
   per-region measure, is a declared operating point in Amendment 6, not validated by this scoring.
 
 ## Next step
 
-The two failure modes point to two different next probes, neither of which this finding runs: (1) a fake- or
-brain-level sweep of the neutral telling's night-1 `R` across more seeds/build variants to characterize where the
+The three failure modes point to three different next probes, none of which this finding runs: (1) a fake- or
+brain-level sweep of the weak telling's night-1 `R` across more seeds/build variants to characterize where the
 capture threshold sits relative to typical `R`, since seeds 43/101 show the capture step itself -- not the
 renormalization step Amendment 6 added -- is the more fragile link for an ordinary fact; (2) an `fir`-style arm
 with re-mention continuing past night 2 (e.g. one re-mention per subsequent day) to test whether seed 100's night-4
 loss is a fixed limit of "re-mention twice" or recoverable with sustained rehearsal, which is closer to what a
-person actually does with something they consider worth remembering.
+person actually does with something they consider worth remembering; (3) a sweep of the salient block's own
+across-week `R` trajectory (seed 101 collapses from 0.29 to 0.01 by night 6 while the other three captured seeds'
+salient blocks hold above 0.27 at night 7) to characterize whether that collapse is a build-specific fragility or
+a general failure mode of leaving a captured trace's own protection to decay unrehearsed for a week.
 
 ## Flip candidacy
 
