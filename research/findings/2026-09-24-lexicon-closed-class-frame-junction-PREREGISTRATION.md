@@ -28,6 +28,15 @@ artifacts:
   - research/findings/raw/_lexicon_closed_class/drive_ratio_s7_amendment2.json
   - research/findings/raw/_lexicon_closed_class/or_match_factor_s7.json
   - research/findings/raw/_lexicon_closed_class/diag_frame_s42_v2_amendment2.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/dev_s7_summary.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/junction_s7.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/route_s7.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7/route_s7.json
+  - research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/and_population_trained_s7.json
+  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/dev_s42_summary.json
+  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/junction_s42.json
+  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/route_s42.json
+  - research/findings/raw/_lexicon_closed_class/dev_s42_amendment2/and_population_trained_s42.json
 external:
   - "Mintz 2003, Frequent frames as a cue for grammatical categories in child directed speech, Cognition 90:91-117,
     doi:10.1016/s0010-0277(03)00140-9 (PMID 14597271). <!--derived--> A frame is two jointly occurring words with one word
@@ -288,9 +297,9 @@ the 0.002 bar, a single borderline word, not a clean separation. `_parse_arm` no
 on every turn, its CN-CX rate margin and a `near_boundary` flag (margin < 1.5x DEAD_MARGIN). A new lesion kind
 `"coincidence_matched"` (`OR_MATCH_FACTOR`) was meant to run ALONGSIDE `"coincidence"` as a drive-matched control.
 `measure_or_match_factor` (dev seed 7, `or_match_factor_s7.json`) found it CANNOT be built as a single FR->FJ weight
-scale: mean FJ population rate over real curriculum presentations is FLAT (0.0053-0.0065 spikes/step) for factor
-1.02-1.1, then rises steeply -- 0.015 at 1.2, 0.256 at 1.4, >1.4 at 1.6+ -- crossing the intact arm's own rate
-(0.0053) only at 1.02/1.05 (tied, gap 0.000167), a factor that sits WELL INSIDE the zero-violation `and_population`
+scale: mean FJ population rate over real curriculum presentations is FLAT (0.005333-0.006333 spikes/step) for factor
+1.02-1.1, then rises steeply -- 0.01467 at 1.2, 0.25617 at 1.4, >1.4 at 1.6+ -- crossing the intact arm's own rate
+(0.005333) only at 1.02/1.05 (tied, gap 0.000167), a factor that sits WELL INSIDE the zero-violation `and_population`
 feasible band (W_J 2950-3000 at this bias) and so barely perturbs the AND at all. "Genuinely OR-like" and
 "drive-matched to intact" are not jointly reachable this way: by the time the factor breaks the AND, drive is
 already many times the intact rate. `OR_MATCH_FACTOR = 1.02` (ties -> the smaller value). **Read
@@ -400,7 +409,7 @@ W_INIT_J/ETA_J/OJA_BETA_J follow via the same S-rescaling AMENDMENT 1 defined.
 
 **B. R4 (untrained circuit must abstain): homeostatic synaptic SCALING, not a threshold.**
 (`FrameJunctionLexicon._r4_homeostatic_settle`, engaged once by `set_lesion("learned_edge")` before any `decide()`
-reads it.) Round 1's R4 lesion (uniform+jittered start weights) read 0.333 recovered-both-rate against the 0.20 bar
+reads it.) Round 1's R4 lesion (uniform+jittered start weights) read 0.33333 recovered-both-rate against the 0.20 bar
 -- the jitter does not average out over a single active junction per occurrence, so it decides some words for CN at
 random. FIX: a RUNNER-SIDE Turrigiano-style scale update, `scale = 1 + rate*(target_rate - actual_rate)` per
 postsynaptic CN0/CX0 neuron -- the IDENTICAL formula `sim/config.py`'s engine-level `enable_synaptic_scaling`

@@ -194,7 +194,10 @@ def main():
         summary["peak_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1)
     except Exception:  # noqa: BLE001
         summary["peak_rss_mb"] = None
-    _dump(os.path.join(out_dir, f"dev_s{seed}_summary.json"), summary)
+    # NAMED "_result", not "_summary": `.gitignore` excludes `*_summary.json` repo-wide, which silently dropped
+    # this exact file from version control in round 1 (worked around there by a manual rename before commit,
+    # replicated here in the filename itself so a future run does not need the same manual step).
+    _dump(os.path.join(out_dir, f"dev_s{seed}_result.json"), summary)
 
 
 if __name__ == "__main__":

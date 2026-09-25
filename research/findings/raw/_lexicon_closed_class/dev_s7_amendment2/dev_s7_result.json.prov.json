@@ -1,0 +1,34 @@
+{
+ "run_id": "1790304402-2766265",
+ "runner": "research.runners._lexicon_closed_class_junction_dev",
+ "argv": [
+  "-m",
+  "--seed",
+  "7",
+  "--corpus",
+  "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+  "--out",
+  "research/findings/raw/_lexicon_closed_class/dev_s7"
+ ],
+ "git_sha": "d0bde2432",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T22:46:42",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "note": "sidecar written post-hoc from research/findings/raw/_provenance/runs.jsonl (the --out is a directory, so research/runners/__init__.py's atexit sidecar hook never fires for it -- the SAME gap research/FAILURE_LOG.md already names for this exact runner, mitigated the same way).",
+ "artifact": "research/findings/raw/_lexicon_closed_class/dev_s7_amendment2/dev_s7_result.json",
+ "corpus_check_fresh": true,
+ "corpus_check_query": "frame-junction R4 learned_edge lesion recovers referents at random from uniform jittered start weights; most admitted as a referent because punctuation-stripped tokenizer splices sentence boundary into its right frame; frame-junction AND circuit fires to a single fast afferent (rate-dependent, not coincidence-only)",
+ "corpus_check_note": "checks run earlier in this same session (research/queue/.corpus_checks.jsonl: 1790300599, 1790304513, 1790304568) before the mechanism was built; this JSON is a directory-output artifact whose sidecar the atexit hook cannot stamp (research/FAILURE_LOG.md already names this gap for this exact runner), so the field is set here post-hoc rather than automatically."
+}
