@@ -53,7 +53,9 @@ at 0.17 (43) encoded it above noise and just under the pair's capture cliff, whe
 it. The encoded read was set by the seed's realization of the store (the slot's seeded baseline draw, the word codes,
 the read noise; which one is not in the record), not by anything the fact was worth. The read is a normalized margin,
 so it measures how cleanly a fact was written, not how strongly: the design reads importance at encoding on the
-written magnitude and noise-level encoding on the margin.
+written magnitude and noise-level encoding on the margin. The DA write gain itself mixes the brain's spiking novelty
+read with a host count of content words, so the design holds that count constant on every turn it compares (design
+doc section 5.1) and attributes each channel's encoding advantage by the channel's lesion.
 
 **The constants this replaces (read in the code).** The composer writes a told fact into the next free block at the
 DA write gain (`research/runners/one_brain_composer.py` `_write_block`); with the ledger on, the block's synapses carry

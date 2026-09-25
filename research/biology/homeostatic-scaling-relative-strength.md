@@ -29,8 +29,11 @@ strongly written, important facts is the live effect). With the DA tag-capture l
 drawn baseline plus its increment, so even a gain-1 fact sits above the set-point and is pulled down, and the
 ledger's replay re-tag (R x the rescaled increment) carries the scale into capture: in the fi records the scale was
 0.90-0.94 for a gain-1 fact and 0.79-0.83 for a salient one, about 13 % off the salient-to-neutral replay-tag ratio
-before the first sleep epoch (design doc section 3). It also runs on the first idle tick after a write, where the
-tissue's scaling develops over tens of hours.
+before the first sleep epoch (design doc section 3). That is the pass right after a write. A later pass lifts a block
+whose early phase has decayed without capture, since it then senses about the baseline alone, below the set-point
+(scale above 1; in the fi record of seed 43's `fih_lr_a`, block 0 was scaled up by about 1.16 between its first two
+recalls), so the pass also works against an ordinary fact fading. It also runs on the first idle tick after a write,
+where the tissue's scaling develops over tens of hours.
 
 **What the real system runs.** One multiplicative factor per neuron over all of its inputs, proportional to each
 synapse's strength (Turrigiano 1998), so a neuron that carries several memories keeps their order while its total
