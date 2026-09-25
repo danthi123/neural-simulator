@@ -80,14 +80,49 @@ If a restart doesn't clear the symptom within one `status.sh` cycle, it's a NEED
 <!-- ORCHESTRATOR: fill in a battery-specific recipe here ONLY if its registered `harvest_cmd` in
      handoff_batteries.tsv (the generic `battery_status.py --harvest <name>` listing) isn't enough. -->
 
-_(none registered yet — use each battery's `harvest_cmd` from `research/coordination/handoff_batteries.tsv`)_
+Run these ONLY when `status.sh` marks the battery READY. Save the output JSON where shown, `git add` it with the raw
+files, add ONE board line with the verdict string the command printed (copy it, do not interpret), commit, push.
+
+- **fi** (forgetting follows later learning; prereg `research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md`
+  Amendment 6): `.venv/bin/python -m research.runners._da_tag_capture_chat_probe --family fi --aggregate research/findings/raw/_sleep_forgetting_interference`
+- **d6_n2000** (memory capacity curve; prereg `research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md`):
+  `.venv/bin/python -m research.runners.d6_capacity_curve --score --arm-dir research/findings/raw/_d6_capacity_curve --json research/findings/raw/_d6_capacity_curve/score.json`
+- **settle_a2_wiring** (only at 18/18; prereg `research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md`
+  Amendment 2): `.venv/bin/python -m research.runners._affect_marker_settle_congruence --score-wiring --raw-dir research/findings/raw/_affect_marker_settle_congruence/wiring --seeds "42 43 44 100 101 102" --out research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json`
+- **b2b_base: DO NOT HARVEST.** Three of its cells need an owner-approved re-run first (see "Parked for Claude").
+  Leave it at 256/258 or 258/258; Claude scores it.
+
+## Commit blocked by an idle-compute check (lane-starvation / compute-idle-persistent)
+
+These checks refuse commits while pool/GPU capacity sits idle with ready work. Over the weekend capacity is idle BY
+DESIGN ("Queue next" is empty). The honest exception, then retry the commit:
+
+- If the owner is gaming (`bash tools/game.sh status` shows GAME_MODE on): write `research/queue/.lane_waiver` AND
+  `research/queue/.parallel_compute_waiver`, each containing `CLASS: OWNER-PAUSE` and one line
+  `reason=owner gaming (GAME_MODE on); weekend handoff, Queue next is empty`.
+- Otherwise: write the same two files with `CLASS: NO-READY-WORK` and a `checked=` line naming what you looked at, e.g.
+  `checked=<date time>: status.sh shows no READY battery beyond the one being committed; LOCAL_LLM_RUNBOOK Queue next is empty`.
+
+Never write anything in a waiver that is not true. Waivers expire after 6 h; write a fresh one when needed. If the
+check still refuses (its waiver budget is exhausted), that is a NEEDS CLAUDE item.
 
 ## Queue next
 
 <!-- ORCHESTRATOR: pre-approved queue lines go here, one per line, exact command text. The local model may
      queue ONLY what is listed here, verbatim. Empty = queue nothing. -->
 
-_(none pre-approved yet)_
+_(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
+lines here after the Tuesday reset.)_
+
+## Parked for Claude (after the Tuesday reset) — do NOT work on these
+
+- B2b torn-cell re-run (owner approved 2026-09-25): branch `research/b2b-torn-cells-redo` needs its review fixes, then the
+  redo is run and B2b is scored.
+- Merges waiting on the corpus-check shared-log fix: `research/score-gap4-c26-0925`, `research/score--pmem-live-cliff-detector-v2-0925`.
+- Interrupted builds: awake-replay completion fix (`research/awake-replay-completion-r2`), the memory pair's production-path
+  arms, the SlotBinder fast teach review (`research/slotbinder-fast-teach`, UNREVIEWED; touches sim/).
+- Designs with open review issues: prioritized memory (`research/prioritized-memory-design`), B2c combined battery
+  (`research/b2c-paired-flip-prereg-fixround1`), claim-check round 8, the prereg-amendment gate, the pool-stall detector.
 
 ## NEEDS CLAUDE
 
