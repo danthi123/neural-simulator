@@ -229,6 +229,14 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 19:05 HANDOFF READY (owner: 88% weekly usage; local model takes over at the owner's discretion):** since 18:20 MERGED:
+fi finding 690700816 (NO-GO 3/6, aggregate with checked preconditions), prioritized-memory DESIGN rev 4 7964590ef (+ open
+review issues listed at its top e7c7a281f), local-LLM prompt-cache fix 4c72a7f56 (template renders later system messages in
+place: reuse 0% -> 61%, bake-off 3/3 PASS ~2-3x faster; local model restarted on it). NOT merged: SlotBinder fast teach
+(unconditional cupy-subclass wrap on the production path, untested on cupy). Pool: B2b redo (3 cells), arcc awake-replay
+(6 seeds) dispatched; SETTLE A2 harvested. Local model: `llm claude` (fish function added), runbook commands pre-approved.
+Everything parked is listed in research/coordination/LOCAL_LLM_RUNBOOK.md "Parked for Claude".
+
 **☀️ 18:20 HARVEST:** SETTLE A2 wiring 18/18 (f0f47fc63) reads UNDEFINED: byte-identical-off holds on every valid seed, the gate
 suppresses real markers, 0 attribution problems, but the valence half is UNTESTED (Gate-B never read both signs). Measurement only:
 the marker word is retired (owner 2026-09-25). Artifact `research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json`.

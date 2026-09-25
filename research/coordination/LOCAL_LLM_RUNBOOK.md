@@ -136,8 +136,10 @@ lines here after the Tuesday reset.)_
   (00:54 pool2, 13:15 pool1/pool2), left partial arm files and no lb.json -- decide under prereg A1.4 whether a further
   re-run is allowed; (c) fill `research/coordination/b2b0924_reruns.tsv` results when the three redo cells land, then score.
 - Score the arcc awake-replay battery (6 seeds queued 18:05) once it lands; its aggregate needs a checked `preconditions` block.
-- SlotBinder fast teach (`research/slotbinder-fast-teach-final`, touches sim/): final fix round result pending at handoff --
-  merge only on an independent SOUND re-review; its GPU plan (AMENDMENT 3) needs explicit pass criteria first.
+- SlotBinder fast teach (`research/slotbinder-fast-teach-final` @ 06bf76489, touches sim/): NOT merged. Final re-review:
+  the change wraps `cp_plasticity_rate_gain` in a cupy subclass on EVERY bridge (flag on or off), never run on cupy, the
+  production default -- needs a flag-gated wrap + a cupy parity run; also stale '7.7-17x' title numbers and an
+  uncalibrated AMENDMENT 3 pass criterion. Issue list in workflow wf_fb8debe7-bdc.
 - B2c combined battery prereg (`research/b2c-paired-flip-prereg-fixround1`): open review issues.
 - Tooling: claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
   timeout on the live-node memory probe), issue lists in workflow wf_9944d7c2-aca; make `tools/gpu_queue.sh` and
