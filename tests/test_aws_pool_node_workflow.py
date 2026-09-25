@@ -11,6 +11,7 @@ from __future__ import annotations
 import os
 import stat
 import subprocess
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,9 +22,12 @@ def _run(args, bin_dir=None, env=None, tmp_path=None):
     full_env = dict(os.environ)
     if bin_dir is not None:
         full_env["PATH"] = f"{bin_dir}:{full_env.get('PATH', '')}"
-    if tmp_path is not None:
-        full_env.setdefault("AWS_BUDGET_LOG", str(tmp_path / "aws_budget.log"))
-        full_env.setdefault("AWS_SPEND_LEDGER", str(tmp_path / "aws_spend_ledger.jsonl"))
+    # Always isolate the spend ledger + budget log, even for callers that pass no tmp_path: several tests here
+    # call _run(...) without one, and on 2026-09-24/25 their stub instance "i-existing" was written into the
+    # PRODUCTION ledger (research/queue/.aws_spend_ledger.jsonl), adding ~$14.8 of phantom spend to "today".
+    iso = Path(tmp_path) if tmp_path is not None else Path(tempfile.mkdtemp(prefix="aws_pool_node_test_"))
+    full_env.setdefault("AWS_BUDGET_LOG", str(iso / "aws_budget.log"))
+    full_env.setdefault("AWS_SPEND_LEDGER", str(iso / "aws_spend_ledger.jsonl"))
     if env:
         full_env.update(env)
     return subprocess.run(["bash", str(SCRIPT), *args], cwd=ROOT, env=full_env,
