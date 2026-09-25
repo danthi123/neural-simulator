@@ -1,0 +1,39 @@
+{
+ "run_id": "1790277071-789386",
+ "runner": "research/runners/_tom_false_belief_chat_gate.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/b5a895471f2f2040fb61fc403aa76f8668c27cd5/research/runners/_tom_false_belief_chat_gate.py",
+  "--seed",
+  "7",
+  "--n-items",
+  "8",
+  "--backend",
+  "numpy",
+  "--json",
+  "research/findings/raw/_tom_false_belief_chat/gate_s7_pool_postfix.json"
+ ],
+ "git_sha": "b5a895471f2f2040fb61fc403aa76f8668c27cd5",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "a9980728132fef5a3f8a11be76f3fa05b55a4cf258b13e7484c92c06b02724d8",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T19:11:11",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790277071276737501-8719",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "4",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_tom_false_belief_chat/gate_s7_pool_postfix.json"
+}
