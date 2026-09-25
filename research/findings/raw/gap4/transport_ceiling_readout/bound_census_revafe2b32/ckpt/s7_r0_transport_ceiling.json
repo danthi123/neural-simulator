@@ -1,0 +1,172 @@
+{
+  "seed": 7,
+  "replicate": 0,
+  "arm": "transport_ceiling",
+  "feedback": "transport_ceiling",
+  "mode": "bdsp",
+  "git_sha": "afe2b323871b7363b0db119c05241ef147a84922",
+  "git_dirty": false,
+  "task_seed": 7,
+  "chance": 0.16666666666666666,
+  "oracle_heldout": 0.9629629629629629,
+  "n_inh": 54,
+  "inherit_heldout": 0.2222222222222222,
+  "train_acc": 0.19,
+  "train_chance": 0.1825,
+  "train_binom_p": 0.36850870073350295,
+  "ff_l1_norm_start": 85816.4765625,
+  "ff_l1_norm_end": 248437.640625,
+  "bound_census_start": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.826174199058945,
+        "max_abs_w": 7.642212867736816
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.0910208142274245,
+        "max_abs_w": 6.1226701736450195
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.806897088859993,
+        "max_abs_w": 7.648608684539795
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0
+  },
+  "bound_census_end": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.796875,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 11.489027038846366,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.22723388671875,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 10.8592558144461,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.8147051375280574,
+        "max_abs_w": 11.421306610107422
+      }
+    ],
+    "frac_at_bound_all_ff": 0.2888671875
+  },
+  "bound_check_at_build": true,
+  "decode_h2_train": 0.2975,
+  "decode_h2_heldout": 0.16666666666666666,
+  "mean_output_rate_heldout": 0.008436213991769546,
+  "pred_hist_train": [
+    102,
+    290,
+    4,
+    0,
+    0,
+    1,
+    2,
+    0,
+    1
+  ],
+  "true_hist_train": [
+    69,
+    73,
+    41,
+    43,
+    43,
+    39,
+    48,
+    44,
+    0
+  ],
+  "pred_hist_heldout": [
+    16,
+    38,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "true_hist_heldout": [
+    9,
+    9,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    0
+  ],
+  "mean_output_read_by_class_train": [
+    0.02439613526570048,
+    0.04029680365296804,
+    0.0,
+    0.0,
+    0.007364341085271319,
+    0.00021367521367521368,
+    0.0005208333333333333,
+    0.0001893939393939394,
+    null
+  ],
+  "mean_output_read_other_class_train": [
+    0.027341389728096677,
+    0.04156472986748216,
+    0.0007195914577530176,
+    0.0003034547152194211,
+    0.005859010270774977,
+    0.0012927054478301017,
+    0.001112689393939394,
+    0.00014044943820224718,
+    0.000375
+  ],
+  "read_quantity": "spikes",
+  "ff_weight_moved": 162621.1640625,
+  "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+  "eval_reads_left_weights_unchanged": true,
+  "no_weight_transport": false,
+  "ast_no_forward_W": true,
+  "thr_hash": "b7d34045c83c0f63",
+  "n_steps_train": 780000,
+  "n_steps_total": 798160,
+  "train_seconds": 809.5,
+  "elapsed_seconds": 829.3,
+  "ms_per_step": 1.039,
+  "peak_rss_mb": 110.4,
+  "backend": "numpy",
+  "fingerprint": "bd108215d75223ed"
+}

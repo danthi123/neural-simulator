@@ -1,0 +1,172 @@
+{
+  "seed": 7,
+  "replicate": 2,
+  "arm": "transport_ceiling",
+  "feedback": "transport_ceiling",
+  "mode": "bdsp",
+  "git_sha": "afe2b323871b7363b0db119c05241ef147a84922",
+  "git_dirty": false,
+  "task_seed": 20021,
+  "chance": 0.16666666666666666,
+  "oracle_heldout": 0.8888888888888888,
+  "n_inh": 54,
+  "inherit_heldout": 0.14814814814814814,
+  "train_acc": 0.14,
+  "train_chance": 0.1625,
+  "train_binom_p": 0.9029942705257241,
+  "ff_l1_norm_start": 85816.4765625,
+  "ff_l1_norm_end": 249341.125,
+  "bound_census_start": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.826174199058945,
+        "max_abs_w": 7.642212867736816
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.0910208142274245,
+        "max_abs_w": 6.1226701736450195
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.806897088859993,
+        "max_abs_w": 7.648608684539795
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0
+  },
+  "bound_census_end": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.18033854166666666,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 11.550297464097943,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.2479248046875,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 10.89933876788615,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.8069830543052174,
+        "max_abs_w": 9.094589233398438
+      }
+    ],
+    "frac_at_bound_all_ff": 0.1911328125
+  },
+  "bound_check_at_build": true,
+  "decode_h2_train": 0.29,
+  "decode_h2_heldout": 0.12962962962962962,
+  "mean_output_rate_heldout": 0.0026406035665294926,
+  "pred_hist_train": [
+    103,
+    102,
+    85,
+    21,
+    63,
+    25,
+    0,
+    0,
+    1
+  ],
+  "true_hist_train": [
+    58,
+    65,
+    47,
+    53,
+    41,
+    43,
+    46,
+    47,
+    0
+  ],
+  "pred_hist_heldout": [
+    13,
+    19,
+    12,
+    0,
+    9,
+    1,
+    0,
+    0,
+    0
+  ],
+  "true_hist_heldout": [
+    9,
+    9,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    0
+  ],
+  "mean_output_read_by_class_train": [
+    0.00043103448275862074,
+    0.0041025641025641026,
+    0.007092198581560284,
+    0.0014150943396226414,
+    0.0032520325203252032,
+    0.0015503875968992248,
+    0.0,
+    0.0,
+    null
+  ],
+  "mean_output_read_other_class_train": [
+    0.00043859649122807024,
+    0.004353233830845771,
+    0.005028328611898017,
+    0.002161383285302594,
+    0.0030872794800371403,
+    0.0017040149393090572,
+    0.0003295668549905838,
+    0.0002596789423984891,
+    0.0005208333333333333
+  ],
+  "read_quantity": "spikes",
+  "ff_weight_moved": 163524.6484375,
+  "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+  "eval_reads_left_weights_unchanged": true,
+  "no_weight_transport": false,
+  "ast_no_forward_W": true,
+  "thr_hash": "b7d34045c83c0f63",
+  "n_steps_train": 780000,
+  "n_steps_total": 798160,
+  "train_seconds": 1186.5,
+  "elapsed_seconds": 1216.2,
+  "ms_per_step": 1.524,
+  "peak_rss_mb": 110.3,
+  "backend": "numpy",
+  "fingerprint": "bd108215d75223ed"
+}

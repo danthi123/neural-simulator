@@ -1,0 +1,7 @@
+{
+  "note": "Backfilled by the scoring commit on branch research/score-gap4-census-0924 (2026-09-24). This per-replicate checkpoint predates per-shard provenance stamping -- research/runners/__init__.py stamps only the run's final --out artifact (here, gpu_s7_e40.json), not each intermediate checkpoint file written during training. The corpus-check fact below is the SAME one already recorded in that run's own aggregate sidecar, which covers this run and predates it: query 'gap4 transport ceiling' was checked at approximately 2026-09-24T11:56 EDT (gpu_s7_e40.json.prov.json: started 2026-09-24T21:00:38, corpus_check_age_s 32643.7), well before this GPU run started at 15:54:59 EDT the same day. No new corpus check was performed to produce this file; it records a pre-existing, already-committed fact.",
+  "backfilled_from": "research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json.prov.json",
+  "corpus_check_fresh": true,
+  "corpus_check_query": "gap4 transport ceiling",
+  "corpus_check_age_s_at_aggregate": 32643.7
+}

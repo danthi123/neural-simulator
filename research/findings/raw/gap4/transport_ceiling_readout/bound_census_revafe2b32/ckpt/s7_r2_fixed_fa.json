@@ -1,0 +1,172 @@
+{
+  "seed": 7,
+  "replicate": 2,
+  "arm": "fixed_fa",
+  "feedback": "fixed_fa",
+  "mode": "bdsp",
+  "git_sha": "afe2b323871b7363b0db119c05241ef147a84922",
+  "git_dirty": false,
+  "task_seed": 20021,
+  "chance": 0.16666666666666666,
+  "oracle_heldout": 0.8888888888888888,
+  "n_inh": 54,
+  "inherit_heldout": 0.18518518518518517,
+  "train_acc": 0.145,
+  "train_chance": 0.1625,
+  "train_binom_p": 0.845517689610785,
+  "ff_l1_norm_start": 85816.4765625,
+  "ff_l1_norm_end": 224172.8125,
+  "bound_census_start": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.826174199058945,
+        "max_abs_w": 7.642212867736816
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.0910208142274245,
+        "max_abs_w": 6.1226701736450195
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.806897088859993,
+        "max_abs_w": 7.648608684539795
+      }
+    ],
+    "frac_at_bound_all_ff": 0.0
+  },
+  "bound_census_end": {
+    "w_max": 12.0,
+    "w_min": -12.0,
+    "pathways": [
+      {
+        "pathway": "ff_0",
+        "post_is_hidden": true,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.2263454861111111,
+        "frac_at_or_below_w_min": 0.0006510416666666666,
+        "mean_abs_w": 9.696030433801248,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_1",
+        "post_is_hidden": true,
+        "n": 16384,
+        "frac_at_or_above_w_max": 0.22467041015625,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 9.884475048092638,
+        "max_abs_w": 11.999998092651367
+      },
+      {
+        "pathway": "ff_2",
+        "post_is_hidden": false,
+        "n": 4608,
+        "frac_at_or_above_w_max": 0.0,
+        "frac_at_or_below_w_min": 0.0,
+        "mean_abs_w": 3.8077808442308987,
+        "max_abs_w": 8.90268325805664
+      }
+    ],
+    "frac_at_bound_all_ff": 0.1846484375
+  },
+  "bound_check_at_build": true,
+  "decode_h2_train": 0.27,
+  "decode_h2_heldout": 0.1111111111111111,
+  "mean_output_rate_heldout": 0.0012688614540466393,
+  "pred_hist_train": [
+    293,
+    6,
+    39,
+    9,
+    51,
+    0,
+    2,
+    0,
+    0
+  ],
+  "true_hist_train": [
+    58,
+    65,
+    47,
+    53,
+    41,
+    43,
+    46,
+    47,
+    0
+  ],
+  "pred_hist_heldout": [
+    39,
+    0,
+    5,
+    3,
+    7,
+    0,
+    0,
+    0,
+    0
+  ],
+  "true_hist_heldout": [
+    9,
+    9,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    0
+  ],
+  "mean_output_read_by_class_train": [
+    0.0,
+    0.0001282051282051282,
+    0.0019503546099290778,
+    0.0,
+    0.0012195121951219512,
+    0.0,
+    0.0,
+    0.0,
+    null
+  ],
+  "mean_output_read_other_class_train": [
+    0.0005116959064327485,
+    0.00014925373134328358,
+    0.0017705382436260624,
+    0.0006243996157540827,
+    0.0017641597028783657,
+    0.0002334267040149393,
+    0.0008945386064030132,
+    4.721435316336166e-05,
+    0.0002708333333333333
+  ],
+  "read_quantity": "spikes",
+  "ff_weight_moved": 138356.3359375,
+  "ff_weight_moved_definition": "|L1 norm at end - L1 norm at start| over the feedforward weights (a change in L1 norm, not a total per-synapse change)",
+  "eval_reads_left_weights_unchanged": true,
+  "no_weight_transport": true,
+  "ast_no_forward_W": true,
+  "thr_hash": "b7d34045c83c0f63",
+  "n_steps_train": 780000,
+  "n_steps_total": 798160,
+  "train_seconds": 822.0,
+  "elapsed_seconds": 840.4,
+  "ms_per_step": 1.053,
+  "peak_rss_mb": 110.1,
+  "backend": "numpy",
+  "fingerprint": "bd108215d75223ed"
+}

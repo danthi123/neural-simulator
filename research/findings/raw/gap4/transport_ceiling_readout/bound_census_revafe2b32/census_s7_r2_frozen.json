@@ -1,0 +1,121 @@
+{
+  "probe": "gap4_transport_ceiling_readout",
+  "prereg": "research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md",
+  "fingerprint": "bd108215d75223ed",
+  "config": {
+    "seeds": [
+      7
+    ],
+    "replicates": [
+      2
+    ],
+    "arms": [
+      "frozen"
+    ],
+    "label": "BOUND_CENSUS",
+    "hidden": 32,
+    "pool_k": 4,
+    "n_hidden_layers": 2,
+    "settle_steps": 40,
+    "credit_steps": 25,
+    "epochs": 30,
+    "batch": 1,
+    "train_subsample": 400,
+    "lr": 5.0,
+    "bdsp_w_max": 12.0,
+    "beta": 1.0,
+    "p0": 0.3,
+    "in_current_pA": 520.0,
+    "in_bias_pA": 260.0,
+    "apical_gain_pA": 900.0,
+    "tonic_h_pA": 225.0,
+    "tonic_o_pA": 250.0,
+    "graded_credit": true,
+    "wpi_init": "noisy",
+    "wpi_lr": 0.2,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "read_window": 30,
+    "read_gain": 20.0,
+    "isi_steps": 0,
+    "eval_frozen": true,
+    "spi_silence": true,
+    "read_quantity": "spikes",
+    "no_structural": true,
+    "ff_w_init": 40.0,
+    "propagation_strength": 0.5,
+    "no_ff_stp": true,
+    "pbar_alpha": 0.0,
+    "hidden_lr_gain": 0.2,
+    "silent_stats": false,
+    "decode_ridge": 1.0,
+    "n_super": 24,
+    "n_members": 8,
+    "held_per_super": 3,
+    "n_prop": 3,
+    "member_id_dim": 3,
+    "n_obs": 14,
+    "noise": 0.02,
+    "oracle_epochs": 250,
+    "oracle_lr": 0.3,
+    "oracle_batch": 128,
+    "out": "research/findings/raw/gap4/transport_ceiling_readout/bound_census_revafe2b32/census_s7_r2_frozen.json",
+    "ckpt_dir": "research/findings/raw/gap4/transport_ceiling_readout/bound_census_revafe2b32/ckpt",
+    "aggregate_only": false,
+    "prereg_amendment": null,
+    "identity_selftest": false,
+    "guard_selftest": false,
+    "lesion_selftest": false,
+    "print_fingerprint": false,
+    "select_calibration": null
+  },
+  "per_seed": {
+    "7": {
+      "replicates": [
+        {
+          "replicate": 2,
+          "task_seed": 20021,
+          "chance": 0.16666666666666666,
+          "n_inh": 54,
+          "train_chance": 0.1625,
+          "oracle": 0.8888888888888888,
+          "arms_done": [
+            "frozen"
+          ],
+          "inherit_heldout": {
+            "frozen": 0.12962962962962962
+          },
+          "train_acc": {
+            "frozen": 0.265
+          },
+          "decode_h2_heldout": {
+            "frozen": 0.16666666666666666
+          }
+        }
+      ],
+      "n_replicates": 1,
+      "complete": false,
+      "n_ceiling_clears_chance": 0,
+      "n_interpretable": 0,
+      "n_fa_wall": 0,
+      "n_surpass": 0,
+      "mean_inherit_heldout": {
+        "frozen": 0.12962962962962962,
+        "fixed_fa": null,
+        "micro_inengine": null,
+        "transport_ceiling": null,
+        "micro_inengine_lesion": null,
+        "micro_inengine_freeze_spi": null
+      },
+      "micro_minus_fixed": null,
+      "fa_wall_coverage": "incomplete (0/3)",
+      "status": "INCOMPLETE"
+    }
+  },
+  "verdict": {
+    "scope": "de-risk (1 seed)",
+    "six_seed_rule_evaluable": false,
+    "status": "no 6-seed verdict (seeds incomplete); per-seed status only"
+  },
+  "NOTE": "UNDEFINED is not a negative. decode_h2 is an instrument (host ridge), never a pathway."
+}
