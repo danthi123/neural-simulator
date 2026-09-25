@@ -57,9 +57,19 @@ def test_flag_on_routes_only_generation_prompts(S, monkeypatch):
 def test_caller_is_short_circuited_behind_brain_open_ended():
     src = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                             "webapp", "server.py"), encoding="utf-8").read()
+    # The ONE clause allowed between the two is BRAIN_OPEN_ENDED_GATED's `and not _oeg_on()` (lane
+    # research/open-ended-gated-turn, default OFF): a pure env read, evaluated BEFORE _open_ended_brain_route on purpose
+    # so the gated turn never touches the route helper (which may read `chat`). Any other intervening clause, or the
+    # route helper moved ahead of the BRAIN_OPEN_ENDED check, still fails this pin.
     m = re.search(r'if \(os\.environ\.get\("BRAIN_OPEN_ENDED", "0"\)\.strip\(\)\.lower\(\) in '
-                  r'\("1", "true", "on", "yes"\)\s*\n\s*and not _open_ended_brain_route\(chat, msg\)\):', src)
+                  r'\("1", "true", "on", "yes"\)[ \t]*\n'
+                  r'(?:[ \t]*and not _oeg_on\(\)[ \t]*(?:#[^\n]*)?\n)?'
+                  r'[ \t]*and not _open_ended_brain_route\(chat, msg\)\):', src)
     assert m is not None, "the route must be AND-ed AFTER the BRAIN_OPEN_ENDED check (short-circuit on default path)"
+    if "def _oeg_on()" in src:
+        # the gated-turn reader, when present, must stay a pure env read defaulting OFF (it runs on the default path)
+        body = src.split("def _oeg_on()", 1)[1].split("\ndef ", 1)[0]
+        assert 'os.environ.get("BRAIN_OPEN_ENDED_GATED", "0")' in body and "chat" not in body
 
 
 # ── fix round (2026-09-23): the ACQUIRE route -- open-ended mode did not learn from being told ─────────────────────

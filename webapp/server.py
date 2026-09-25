@@ -3827,6 +3827,24 @@ def _open_ended_acquire_route(chat, msg) -> bool:
         return False
 
 
+def _oeg_on() -> bool:
+    """BRAIN_OPEN_ENDED_GATED (default OFF; webapp/open_ended_gated_turn.py, PREREG research/findings/2026-09-24-open-
+    ended-gated-turn-PREREGISTRATION.md). Off -> this env read is the whole cost: the module is never imported."""
+    return os.environ.get("BRAIN_OPEN_ENDED_GATED", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _oeg_mod():
+    from webapp import open_ended_gated_turn as _m
+    return _m
+
+
+def _oeg_kw(affect_info, affect_drives_info) -> dict:
+    """The live reads + getters the gated turn needs (only built when BRAIN_OPEN_ENDED_GATED is on)."""
+    return dict(affect_info=affect_info, affect_drives_info=affect_drives_info, seed=_brain_chat_seed(),
+                ltm_bundle_fn=_resolve_ltm_bundle,
+                get_warm_faculty=lambda: getattr(_get_warm_qwen_renderer(), "_fac", None))
+
+
 def _open_ended_brain_route(chat, msg) -> bool:
     """True -> skip the BRAIN_OPEN_ENDED free-talk block for this turn (either default-OFF route fires). Both flags OFF
     -> False without touching `chat`. Only ever evaluated when BRAIN_OPEN_ENDED is truthy (the caller short-circuits)."""
@@ -4747,6 +4765,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _gnw_multistep_mod.install_multistep_gate(chat)
         except Exception:
             pass
+    if _oeg_on():  # OPEN-ENDED GATED TURN (default-OFF): outermost per-call gate-trace wrapper + a fresh per-turn record
+        _oeg_mod().install(chat)
 
     # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
     # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +
@@ -5023,6 +5043,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # Cheap env read FIRST so the DEFAULT-OFF path imports NOTHING (the open_ended_chat module pulls in the de-risk
     # modules, one of which disables INFO logging process-wide at import) -> off is truly byte-identical + side-effect-free.
     if (os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes")
+            and not _oeg_on()   # BRAIN_OPEN_ENDED_GATED (default OFF) routes the open-ended turn through the gate instead
             and not _open_ended_brain_route(chat, msg)):
         try:
             from webapp import open_ended_chat as _OE
@@ -6420,6 +6441,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     rich.max_sentences, rich.max_elaborations = _saved_plan
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
+        if _oeg_on():  # OPEN-ENDED GATED TURN (default-OFF; webapp/open_ended_gated_turn.py): BG speak/abstain + off-KB reply
+            r = _oeg_mod().apply_rich(chat, msg, r, **_oeg_kw(affect_info, affect_drives_info))
         # CONFIDENCE CAPS FORTHCOMINGNESS, continued: read the SAME post-answer activity trace + metacog
         # confidence the E1 hedge below reads, ONCE (cached + reused at the hedge site so the organ's spiking
         # margin read never runs twice in one turn), and apply the cap BEFORE `facts`/`resp` are built off `r`
@@ -6718,6 +6741,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 if _gnw_stop_info.get("acted"):
                     resp["gnw_stop"] = _gnw_stop_info
         # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────
+        if _oeg_on():  # OPEN-ENDED GATED TURN trace (default-OFF)
+            _oeg_mod().attach(chat, resp)
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -6854,6 +6879,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics).note_topic(gate_svo[0])
         except Exception:
             pass
+
+    if _oeg_on():  # OPEN-ENDED GATED TURN (default-OFF; webapp/open_ended_gated_turn.py): BG speak/abstain + off-KB reply
+        answer, abstained, verified = _oeg_mod().apply_single(chat, msg, answer, abstained, verified, **_oeg_kw(affect_info, affect_drives_info))
 
     # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2) + RECONSOLIDATION (Gate-B, F): PREPEND the honest affect-
     # trajectory-violation notice (world-model), then the expectation-violation notice (surprise), then the
@@ -7048,6 +7076,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             if _gnw_stop_info.get("acted"):
                 _resp["gnw_stop"] = _gnw_stop_info
     # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────────
+    if _oeg_on():  # OPEN-ENDED GATED TURN trace (default-OFF)
+        _oeg_mod().attach(chat, _resp)
     return _safe_json_response(_resp, "single-fact")
 
 

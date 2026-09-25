@@ -1,0 +1,32 @@
+{
+ "run_id": "1790268602-213914",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "928d0d8237a3ad340810cde70addf542fbe9056b",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "91df27e7474b2ed35e5083b4d0202033f4e815be239d2111c760fd09bd79b365",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T16:50:02",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "oeg-smoke3_affect_lesion",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_MEM_GB": "12",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_open_ended_gated/smoke/s7/affect_lesion.json"
+}

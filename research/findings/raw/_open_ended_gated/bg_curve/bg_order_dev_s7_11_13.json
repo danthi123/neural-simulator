@@ -1,0 +1,94 @@
+{
+  "runner": "research.runners._open_ended_gated_turn_gate --bg-order",
+  "prereg": "research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md",
+  "backend": "numpy",
+  "n": 8,
+  "s_hi": 0.6666666666666666,
+  "seeds": [
+    7,
+    11,
+    13
+  ],
+  "per_seed": {
+    "7": {
+      "smoke_order_race1_s0": "STAY_SILENT",
+      "smoke_order_race2_s_hi": "STAY_SILENT",
+      "after_s0": [
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK"
+      ],
+      "fresh_consecutive": [
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK"
+      ]
+    },
+    "11": {
+      "smoke_order_race1_s0": "STAY_SILENT",
+      "smoke_order_race2_s_hi": "STAY_SILENT",
+      "after_s0": [
+        "STAY_SILENT",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK"
+      ],
+      "fresh_consecutive": [
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "STAY_SILENT",
+        "STAY_SILENT",
+        "STAY_SILENT"
+      ]
+    },
+    "13": {
+      "smoke_order_race1_s0": "STAY_SILENT",
+      "smoke_order_race2_s_hi": "SPEAK",
+      "after_s0": [
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK"
+      ],
+      "fresh_consecutive": [
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "SPEAK",
+        "STAY_SILENT",
+        "SPEAK",
+        "SPEAK",
+        "STAY_SILENT"
+      ]
+    }
+  },
+  "pooled_speak_after_s0": [
+    17,
+    24
+  ],
+  "pooled_speak_fresh_consecutive": [
+    15,
+    24
+  ]
+}

@@ -1,0 +1,626 @@
+{
+  "seed": 7,
+  "turns": [
+    "unknown",
+    "emo",
+    "sw_open",
+    "open",
+    "rich_open"
+  ],
+  "governed": false,
+  "prereg": "research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md",
+  "arms_present": {
+    "intact_a": true,
+    "intact_b": true,
+    "gate_lesion": true,
+    "affect_lesion": true,
+    "gnw_lesion": true
+  },
+  "conditioning": {
+    "unknown": {
+      "intact_a": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+        "abstained": true
+      },
+      "intact_b": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+        "abstained": true
+      },
+      "gate_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.5,
+          0.5
+        ],
+        "cut": {
+          "row_lesion": true,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.5,
+            0.5
+          ],
+          "baseline_applied": true,
+          "marker_lesion": true,
+          "affect_lesioned": false,
+          "ws_lesion": false,
+          "lever_moved": true
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+        "abstained": true
+      },
+      "affect_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": true,
+          "ws_lesion": false
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+        "abstained": true
+      },
+      "gnw_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": true
+        },
+        "answer": "(Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+        "abstained": true
+      }
+    },
+    "emo": {
+      "intact_a": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "+",
+        "marker_level": 2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.6666666666666666,
+          0.33333333333333337
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "salience_applied": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "Gladly! (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+        "abstained": true
+      },
+      "intact_b": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "+",
+        "marker_level": 2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.6666666666666666,
+          0.33333333333333337
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "salience_applied": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "Gladly! (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+        "abstained": true
+      },
+      "gate_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "+",
+        "marker_level": null,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.5,
+          0.5
+        ],
+        "cut": {
+          "row_lesion": true,
+          "salience_intact": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "salience_applied": [
+            0.5,
+            0.5
+          ],
+          "baseline_applied": true,
+          "marker_lesion": true,
+          "affect_lesioned": false,
+          "ws_lesion": null,
+          "lever_moved": true
+        },
+        "answer": "Gladly! (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+        "abstained": true
+      },
+      "affect_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": true,
+          "ws_lesion": null
+        },
+        "answer": "Gladly! (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+        "abstained": true
+      },
+      "gnw_lesion": {
+        "route": "offkb",
+        "familiarity_band": "novel",
+        "valence_sign": "+",
+        "marker_level": 2,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "hold",
+        "spoke": false,
+        "salience": [
+          0.6666666666666666,
+          0.33333333333333337
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "salience_applied": [
+            0.6666666666666666,
+            0.33333333333333337
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": null
+        },
+        "answer": "Gladly! (Holding \u2014 nothing salient to add to that.) My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+        "abstained": true
+      }
+    },
+    "sw_open": {
+      "intact_a": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          1.0,
+          0.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            1.0,
+            0.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "the dog chases the cat",
+        "abstained": false
+      },
+      "intact_b": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          1.0,
+          0.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            1.0,
+            0.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": false
+        },
+        "answer": "the dog chases the cat",
+        "abstained": false
+      },
+      "gate_lesion": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          0.5,
+          0.5
+        ],
+        "cut": {
+          "row_lesion": true,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            0.5,
+            0.5
+          ],
+          "baseline_applied": true,
+          "marker_lesion": true,
+          "affect_lesioned": false,
+          "ws_lesion": false,
+          "lever_moved": true
+        },
+        "answer": "the dog chases the cat",
+        "abstained": false
+      },
+      "affect_lesion": {
+        "route": "grounded",
+        "familiarity_band": "familiar",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "SPEAK",
+        "reply_kind": "grounded",
+        "spoke": true,
+        "salience": [
+          1.0,
+          0.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            1.0,
+            0.0
+          ],
+          "salience_applied": [
+            1.0,
+            0.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": true,
+          "ws_lesion": false
+        },
+        "answer": "the dog chases the cat",
+        "abstained": false
+      },
+      "gnw_lesion": {
+        "route": "withheld",
+        "familiarity_band": "novel",
+        "valence_sign": "0",
+        "marker_level": 0,
+        "bg_action": "STAY_SILENT",
+        "reply_kind": "withheld_abstain",
+        "spoke": false,
+        "salience": [
+          0.0,
+          1.0
+        ],
+        "cut": {
+          "row_lesion": false,
+          "salience_intact": [
+            0.0,
+            1.0
+          ],
+          "salience_applied": [
+            0.0,
+            1.0
+          ],
+          "baseline_applied": false,
+          "marker_lesion": false,
+          "affect_lesioned": false,
+          "ws_lesion": true
+        },
+        "answer": "I don't know about that.",
+        "abstained": true
+      }
+    },
+    "open": {
+      "intact_a": null,
+      "intact_b": null,
+      "gate_lesion": null,
+      "affect_lesion": null,
+      "gnw_lesion": null
+    },
+    "rich_open": {
+      "intact_a": null,
+      "intact_b": null,
+      "gate_lesion": null,
+      "affect_lesion": null,
+      "gnw_lesion": null
+    }
+  },
+  "changes_vs_intact": {
+    "gate_lesion": {
+      "emo": {
+        "marker_level": [
+          2,
+          null
+        ]
+      }
+    },
+    "affect_lesion": {
+      "emo": {
+        "valence_sign": [
+          "+",
+          "0"
+        ]
+      }
+    },
+    "gnw_lesion": {
+      "sw_open": {
+        "route": [
+          "grounded",
+          "withheld"
+        ],
+        "familiarity_band": [
+          "familiar",
+          "novel"
+        ],
+        "bg_action": [
+          "SPEAK",
+          "STAY_SILENT"
+        ],
+        "reply_kind": [
+          "grounded",
+          "withheld_abstain"
+        ],
+        "spoke": [
+          true,
+          false
+        ],
+        "answer": [
+          "the dog chases the cat",
+          "I don't know about that."
+        ]
+      }
+    }
+  },
+  "null_clean": true,
+  "rows": {
+    "open-ended-turn-faculty-drive": {
+      "faculty": "open-ended-turn-faculty-drive",
+      "turn": "unknown",
+      "fields": [
+        "open_ended_gated.bg_action",
+        "open_ended_gated.reply_kind",
+        "open_ended_gated.marker_level"
+      ],
+      "treatment_diffs": [],
+      "control_diffs": [],
+      "null_clean": true,
+      "exercised": true,
+      "attributable_fraction": null,
+      "load_bearing": false
+    },
+    "open-ended-turn-affect-drive": {
+      "faculty": "open-ended-turn-affect-drive",
+      "turn": "emo",
+      "fields": [
+        "open_ended_gated.bg_action",
+        "open_ended_gated.reply_kind"
+      ],
+      "treatment_diffs": [],
+      "control_diffs": [],
+      "null_clean": true,
+      "exercised": true,
+      "attributable_fraction": null,
+      "load_bearing": false
+    },
+    "open-ended-turn-gnw-drive": {
+      "faculty": "open-ended-turn-gnw-drive",
+      "turn": "sw_open",
+      "fields": [
+        "open_ended_gated.route",
+        "open_ended_gated.bg_action",
+        "open_ended_gated.reply_kind"
+      ],
+      "treatment_diffs": [
+        {
+          "field": "open_ended_gated.route",
+          "on": "grounded",
+          "off": "withheld"
+        },
+        {
+          "field": "open_ended_gated.bg_action",
+          "on": "SPEAK",
+          "off": "STAY_SILENT"
+        },
+        {
+          "field": "open_ended_gated.reply_kind",
+          "on": "grounded",
+          "off": "withheld_abstain"
+        }
+      ],
+      "control_diffs": [],
+      "null_clean": true,
+      "exercised": true,
+      "attributable_fraction": 1.0,
+      "load_bearing": true
+    }
+  },
+  "null_diffs": [],
+  "attribution": {
+    "gate_lesion": {
+      "n_changed_treatment": 1,
+      "n_changed_null": 0,
+      "attributable_fraction": 1.0
+    },
+    "affect_lesion": {
+      "n_changed_treatment": 1,
+      "n_changed_null": 0,
+      "attributable_fraction": 1.0
+    },
+    "gnw_lesion": {
+      "n_changed_treatment": 6,
+      "n_changed_null": 0,
+      "attributable_fraction": 1.0
+    }
+  },
+  "success_check": {
+    "conditioning_changes_under_affect_lesion": true,
+    "conditioning_changes_under_gnw_lesion": true,
+    "clean_null": true
+  }
+}

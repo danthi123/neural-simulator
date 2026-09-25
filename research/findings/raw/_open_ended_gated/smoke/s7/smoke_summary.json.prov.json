@@ -1,0 +1,29 @@
+{
+ "run_id": "1790271786-535929",
+ "runner": "research/runners/_open_ended_gated_turn_smoke.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4703a2bd-4dd-12/research/runners/_open_ended_gated_turn_smoke.py",
+  "--score",
+  "--seed",
+  "7"
+ ],
+ "git_sha": "4103b8212",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T13:43:06",
+ "env": {
+  "OMP_NUM_THREADS": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6316.1,
+ "corpus_check_query": "open-ended off-KB turn bypasses chat.gate GNW bus BG speak/abstain; brain state does not drive the open-ended reply",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_open_ended_gated/smoke/s7/smoke_summary.json"
+}

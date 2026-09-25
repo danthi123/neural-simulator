@@ -1,0 +1,212 @@
+{
+  "runner": "research.runners._open_ended_gated_turn_gate --bg-curve",
+  "prereg": "research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md",
+  "backend": "numpy",
+  "n_per_point": 8,
+  "grid": [
+    0.0,
+    0.15,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.67,
+    0.8,
+    1.0
+  ],
+  "seeds": [
+    7,
+    11,
+    13
+  ],
+  "per_seed": {
+    "7": {
+      "0.0": {
+        "SPEAK": 0,
+        "STAY_SILENT": 8,
+        "none": 0
+      },
+      "0.15": {
+        "SPEAK": 1,
+        "STAY_SILENT": 7,
+        "none": 0
+      },
+      "0.3": {
+        "SPEAK": 1,
+        "STAY_SILENT": 7,
+        "none": 0
+      },
+      "0.4": {
+        "SPEAK": 4,
+        "STAY_SILENT": 4,
+        "none": 0
+      },
+      "0.5": {
+        "SPEAK": 3,
+        "STAY_SILENT": 5,
+        "none": 0
+      },
+      "0.6": {
+        "SPEAK": 7,
+        "STAY_SILENT": 1,
+        "none": 0
+      },
+      "0.67": {
+        "SPEAK": 7,
+        "STAY_SILENT": 1,
+        "none": 0
+      },
+      "0.8": {
+        "SPEAK": 7,
+        "STAY_SILENT": 1,
+        "none": 0
+      },
+      "1.0": {
+        "SPEAK": 8,
+        "STAY_SILENT": 0,
+        "none": 0
+      }
+    },
+    "11": {
+      "0.0": {
+        "SPEAK": 0,
+        "STAY_SILENT": 7,
+        "none": 1
+      },
+      "0.15": {
+        "SPEAK": 0,
+        "STAY_SILENT": 8,
+        "none": 0
+      },
+      "0.3": {
+        "SPEAK": 4,
+        "STAY_SILENT": 3,
+        "none": 1
+      },
+      "0.4": {
+        "SPEAK": 4,
+        "STAY_SILENT": 4,
+        "none": 0
+      },
+      "0.5": {
+        "SPEAK": 5,
+        "STAY_SILENT": 3,
+        "none": 0
+      },
+      "0.6": {
+        "SPEAK": 6,
+        "STAY_SILENT": 1,
+        "none": 1
+      },
+      "0.67": {
+        "SPEAK": 7,
+        "STAY_SILENT": 1,
+        "none": 0
+      },
+      "0.8": {
+        "SPEAK": 6,
+        "STAY_SILENT": 2,
+        "none": 0
+      },
+      "1.0": {
+        "SPEAK": 8,
+        "STAY_SILENT": 0,
+        "none": 0
+      }
+    },
+    "13": {
+      "0.0": {
+        "SPEAK": 0,
+        "STAY_SILENT": 8,
+        "none": 0
+      },
+      "0.15": {
+        "SPEAK": 1,
+        "STAY_SILENT": 7,
+        "none": 0
+      },
+      "0.3": {
+        "SPEAK": 2,
+        "STAY_SILENT": 6,
+        "none": 0
+      },
+      "0.4": {
+        "SPEAK": 6,
+        "STAY_SILENT": 2,
+        "none": 0
+      },
+      "0.5": {
+        "SPEAK": 4,
+        "STAY_SILENT": 4,
+        "none": 0
+      },
+      "0.6": {
+        "SPEAK": 2,
+        "STAY_SILENT": 6,
+        "none": 0
+      },
+      "0.67": {
+        "SPEAK": 7,
+        "STAY_SILENT": 1,
+        "none": 0
+      },
+      "0.8": {
+        "SPEAK": 8,
+        "STAY_SILENT": 0,
+        "none": 0
+      },
+      "1.0": {
+        "SPEAK": 8,
+        "STAY_SILENT": 0,
+        "none": 0
+      }
+    }
+  },
+  "pooled": {
+    "0.0": {
+      "SPEAK": 0,
+      "STAY_SILENT": 23,
+      "none": 1
+    },
+    "0.15": {
+      "SPEAK": 2,
+      "STAY_SILENT": 22,
+      "none": 0
+    },
+    "0.3": {
+      "SPEAK": 7,
+      "STAY_SILENT": 16,
+      "none": 1
+    },
+    "0.4": {
+      "SPEAK": 14,
+      "STAY_SILENT": 10,
+      "none": 0
+    },
+    "0.5": {
+      "SPEAK": 12,
+      "STAY_SILENT": 12,
+      "none": 0
+    },
+    "0.6": {
+      "SPEAK": 15,
+      "STAY_SILENT": 8,
+      "none": 1
+    },
+    "0.67": {
+      "SPEAK": 21,
+      "STAY_SILENT": 3,
+      "none": 0
+    },
+    "0.8": {
+      "SPEAK": 21,
+      "STAY_SILENT": 3,
+      "none": 0
+    },
+    "1.0": {
+      "SPEAK": 24,
+      "STAY_SILENT": 0,
+      "none": 0
+    }
+  }
+}
