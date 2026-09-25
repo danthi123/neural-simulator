@@ -52,7 +52,9 @@ tokens (workflow `wk7t5ig9v`, opus build + opus review). When it merges: carry t
    D6 N2000; SETTLE A3 GPU timing; the gap#4 dev runs the clamp lane queues.
 4. B2b: wave-1 lines age out at ~07:36 (12 h from 19:36). The wave script warns but does not requeue: requeue aged-out
    lines per prereg A1.4(c) (at most twice) before then.
-5. GPU: slot-binder gate (seed 7) running since 21:00; then the local-LLM bake-off, SETTLE A3, plastic-mask cupy test.
+5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404
+   impractical; next = per-fact progress/latency logging + small-N latency runs, a small build for its lane). Bake-off
+   started 03:08; then SETTLE A3, plastic-mask cupy test.
    When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
 6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
 
