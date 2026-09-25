@@ -659,6 +659,18 @@ def check_process_xo(p: dict, renderer_required: str) -> dict:
     warm = list(rec.get("warmup_turns") or [])
     if [t.get("arm") for t in warm] != [orient, other]:
         probs.append("warm-up arms %s, expected %s" % ([t.get("arm") for t in warm], [orient, other]))
+    # Both warm-up turns must fully commit (valence, then arousal -- 2 WTA reads) before scoring starts (review
+    # LOW 2026-09-25). If the first axis does not select a word, `expression_lead` returns '' before the second
+    # axis reads, as A3 saw at one OFF warm index (1 read). A reader left with its arousal bridge unbuilt then
+    # builds it lazily inside the first SCORED turn of that arm -- extra build time on that arm only, biasing M1
+    # toward GO. Checked here rather than only requiring >=1 read, because 1 read is a valid OUTCOME on a scored
+    # turn (arousal genuinely not reached) but is exactly the failure this precondition exists to catch during
+    # warm-up, whose only job is to fully build both bridges before anything is scored.
+    for i, t in enumerate(warm):
+        if (t.get("n_wta_reads") or 0) != 2:
+            probs.append("warm-up turn %d (%s) made %r WTA read(s), expected 2 (both axes committed, both "
+                         "reader bridges built) before scoring -- an unbuilt bridge builds lazily inside the "
+                         "first scored turn of that arm" % (i, t.get("arm"), t.get("n_wta_reads")))
     for t in [rec.get("build_turn") or {}] + warm + turns:
         if t.get("http_status") != 200:
             probs.append("a turn returned HTTP %r" % t.get("http_status"))
@@ -859,7 +871,7 @@ def decide_xo(procs: list, *, renderer_required: str = "qwen", bound: float = BO
 def _xo_proc(pos, orient, *, runs=8, run_len=4, proc_off=0.0, idx_eff=None, wta_on=0.15, wta_off=0.02,
              on_extra=0.0, carry=0.0, noise=0.1, seed=0, neutral=(), renderer="off-bridge Qwen-0.5B (spiking forward)",
              backend="cupy", dirty=(), sha="abc", bad_cfg_turn=None, zero_read_turn=None, msg_tag="",
-             readers=None, complete=True, flip_arm_turn=None, err_turn=None):
+             readers=None, complete=True, flip_arm_turn=None, err_turn=None, warmup_reads=(2, 2)):
     """A synthetic process record for the selftest. wall = 30 + proc_off + idx_eff[k] + WTA + ON-extra
     + carry (if the previous turn was ON) + noise. Levels are 3 except the `neutral` indices (0)."""
     import numpy as np
@@ -887,6 +899,10 @@ def _xo_proc(pos, orient, *, runs=8, run_len=4, proc_off=0.0, idx_eff=None, wta_
                       "renderer": renderer, "http_status": 200, "answer_core_sha": "x", "load1_start": 1.0})
         prev_on = on
     base = {"http_status": 200, "renderer": renderer, "level": 0, "n_wta_reads": 0, "wta_configs": []}
+    # Warm-up turns are affective in production (they build each arm's reader BEFORE scoring starts) and a
+    # fully-committed affective turn reads both axes (valence, then arousal). n_wta_reads defaults to 2 here --
+    # the healthy case -- so `warmup_reads` need only be overridden to synthesize the under-read failure mode
+    # check_process_xo now catches (2026-09-25 fix round; see the docstring's warm-up precondition).
     rd = readers if readers is not None else [
         {"key": "42", "settle": False, "warmup": expected_config("off")[1], "washout": expected_config("off")[2]},
         {"key": "(42, 'settle')", "settle": True, "warmup": expected_config("on")[1], "washout": expected_config("on")[2]}]
@@ -894,13 +910,17 @@ def _xo_proc(pos, orient, *, runs=8, run_len=4, proc_off=0.0, idx_eff=None, wta_
            "plan": {"orient": orient, "runs": runs, "run_len": run_len, "arms": arms,
                     "msg_sha": [_sha1("m%d" % (k % 2)) for k in range(len(arms))]},
            "complete": complete, "worker_returncode": 0, "qwen_generate_wrapped": True,
-           "build_turn": dict(base, arm="off"), "warmup_turns": [dict(base, arm=orient), dict(base, arm=other)],
+           "build_turn": dict(base, arm="off"),
+           "warmup_turns": [dict(base, arm=orient, n_wta_reads=warmup_reads[0]),
+                            dict(base, arm=other, n_wta_reads=warmup_reads[1])],
            "run_turns": turns, "readers": rd}
     return {"pos": pos, "orient": orient, "rec": rec}
 
 
-def _xo_quad(orients=("off", "on", "on", "off"), offs=(4.7, -0.4, -1.8, 0.0), **kw):
-    """Four synthetic processes sharing the same per-index work (idx_eff), A3-sized process offsets by default."""
+def _xo_quad(orients=("off", "on", "on", "off"), offs=(4.7, -0.4, -1.8, 0.0), seed_offset=0, **kw):
+    """Four synthetic processes sharing the same per-index work (idx_eff), A3-sized process offsets by default.
+    `seed_offset` shifts all four processes' noise draws together (default 0 reproduces every pre-existing
+    case's exact seeds 0-3) -- used by `_xo_go_rate` to draw independent quads for a calibration rate."""
     runs, run_len = kw.get("runs", 8), kw.get("run_len", 4)
     idx = kw.pop("idx_eff", None)
     if idx is None:
@@ -910,8 +930,25 @@ def _xo_quad(orients=("off", "on", "on", "off"), offs=(4.7, -0.4, -1.8, 0.0), **
     for i, o in enumerate(orients):
         a = dict(kw)
         a.update(per.get(i, {}))
-        out.append(_xo_proc(i, o, proc_off=offs[i % len(offs)], idx_eff=idx, seed=i, **a))
+        out.append(_xo_proc(i, o, proc_off=offs[i % len(offs)], idx_eff=idx, seed=seed_offset + i, **a))
     return out
+
+
+def _xo_go_rate(*, n_reps=100, runs=8, true_cost=BOUND_S, noise=0.3, wta_on=0.15, wta_off=0.02, bound=BOUND_S,
+                orients=("off", "on", "on", "off"), offs=(4.7, -0.4, -1.8, 0.0)):
+    """CALIBRATION (review MEDIUM, 2026-09-25): GO rate over `n_reps` independent synthetic crossover datasets
+    whose TRUE whole-turn cost sits EXACTLY at `bound`. This is what pins the one-sided 95% bound's WIDTH --
+    `t = float(stats.t.ppf(1.0 - alpha, df))` in `_fe_fit` -- rather than only its sign: halving `t` (a mutant
+    that still passes every single-draw selftest case) makes every CI too narrow and drives this rate far above
+    its calibrated ~5%. seed_offset advances by 4 per rep so every rep draws fresh, independent noise."""
+    on_extra = true_cost - (wta_on - wta_off)
+    go = 0
+    for rep in range(int(n_reps)):
+        procs = _xo_quad(orients=orients, offs=offs, runs=runs, wta_on=wta_on, wta_off=wta_off,
+                         on_extra=on_extra, noise=noise, seed_offset=rep * 4)
+        if decide_xo(procs)["status"] == "GO":
+            go += 1
+    return go / float(n_reps)
 
 
 def selftest_xo() -> bool:
@@ -945,6 +982,16 @@ def selftest_xo() -> bool:
     s, r = st(_xo_quad(carry=0.8))
     check("SETTLE adds +0.8 s to the NEXT turn: the washout charges it to ON (M1 ~+0.93) -> NO-GO",
           s == "NO-GO" and r["metrics"]["M1_total"]["est"] > 0.6)
+    # Carry case NEAR the bound, low noise (review LOW 2026-09-25): the carry=0.8 case above reads NO-GO whether
+    # or not the washout is correctly excluded from scoring, because +0.93 clears 0.3 s either way -- it does not
+    # pin that the washout's carry-over is charged to the arm that CAUSES it rather than diluting the mean with
+    # an unwashed-out turn. A mutant `planned = list(range(K))` (washout turns scored) was HAND-VERIFIED (mutate,
+    # rerun, revert, diff back to clean) to flip this case's status (this exact case reads FAIL under it, while
+    # the carry=0.8 case above still reads "ok"); the assertion on M1's estimate (not just NO-GO) is what a
+    # looser mutant (washout still excluded, but off by one turn) would also miss.
+    s, r = st(_xo_quad(carry=0.25, noise=0.05))
+    check("carry near the bound (true M1 ~0.13+0.25=0.38): correctly washout-excluded -> NO-GO, M1 close to 0.38",
+          s == "NO-GO" and abs(r["metrics"]["M1_total"]["est"] - 0.38) < 0.08)
     s, _ = st(_xo_quad(on_extra=0.17, noise=0.3))
     check("true cost at the bound (0.30 s) with 0.3 s turn noise -> UNDEFINED, never GO", s == "UNDEFINED")
     s, _ = st(_xo_quad(noise=5.0))
@@ -986,6 +1033,21 @@ def selftest_xo() -> bool:
     check("processes ran different plans -> UNDEFINED", s == "UNDEFINED")
     s, _ = st(_xo_quad(orients=("on", "off", "off", "on"), wta_on=0.02))
     check("SETTLE costs nothing at all (orientations reversed) -> GO", s == "GO")
+    s, _ = st(_xo_quad(per_proc={1: {"warmup_reads": (1, 2)}}))       # process 1's OWN-orient warm-up under-reads
+    check("a warm-up turn made only 1 WTA read (arousal bridge not built before scoring) -> UNDEFINED",
+          s == "UNDEFINED")
+    s, _ = st(_xo_quad(per_proc={2: {"warmup_reads": (2, 1)}}))       # process 2's OTHER-arm warm-up under-reads
+    check("the OTHER arm's warm-up turn under-reads (either warm-up, either process) -> UNDEFINED",
+          s == "UNDEFINED")
+    # CALIBRATION (review MEDIUM 2026-09-25): pins the one-sided 95% bound's WIDTH, which the single-draw cases
+    # above cannot -- a true cost sitting exactly at the bound must read GO rarely, not routinely. `_fe_fit` uses
+    # `t = float(stats.t.ppf(1.0 - alpha, df))`; a mutant halving that `t` (`t = 0.5 * stats.t.ppf(...)`) narrows
+    # every CI and was HAND-VERIFIED (mutate, rerun, revert, diff back to clean) to push this rate to 0.24
+    # (24/100) -- far past the 0.10 ceiling below, while still passing every case above (each of those checks
+    # ONE draw's sign, not the bound's calibrated rate).
+    rate = _xo_go_rate(n_reps=100, runs=8, true_cost=BOUND_S, noise=0.3)
+    check("calibration: true whole-turn cost exactly at the %.2f s bound, runs=8, 100 reps -> GO rate <= 10%% "
+          "(observed %.0f%%; pins the CI width, not just its sign)" % (BOUND_S, 100 * rate), rate <= 0.10)
     print("SELFTEST (amendment 3)", "PASS" if ok else "FAIL")
     return bool(ok)
 

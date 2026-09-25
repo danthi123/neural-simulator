@@ -111,13 +111,19 @@ not verified: the reply text was not recorded. Amendment 3's instrument records 
 
 ## How many processes the A3 instrument would need
 
-**As written, no number.** NOISE is a RANGE of process medians. For n normal draws the expected range is d2(n)
-times the SD (d2 = 1.128, 2.059, 3.078 at n = 2, 4, 10). At the pooled SD of 2.45673 s the expected NOISE is <!--derived-->
-2.77120 s at n = 2, 5.05842 s at n = 4 and 7.56183 s at n = 10 per arm: it grows with n. If the true delta
-equals M2, PASS needs NOISE <= 0.3 - 0.13282 = 0.167 s. That is 16.6 times below the expected range at n = 2. <!--derived-->
-The chance that one arm's two-process range falls under 0.167 s is 2 Phi(0.167 / (sqrt(2) x 2.457)) - 1 = 0.038, <!--derived-->
-and for both arms 0.0015. FAIL needs M1 - NOISE > 0.3, so in expectation a real cost would need to be <!--derived-->
-above about 3 s before A3 could read NO-GO at n = 2. <!--derived-->
+**As written, no number.** NOISE is a RANGE of process medians. For n normal draws the expected range of ONE ARM
+is d2(n) times the SD (d2 = 1.128, 2.059, 3.078 at n = 2, 4, 10). At the pooled SD of 2.45673 s the expected <!--derived-->
+range of a single arm is 2.77120 s at n = 2, 5.05842 s at n = 4 and 7.56183 s at n = 10: it grows with n. <!--derived-->
+**Correction (2026-09-25 fix round after independent review): those three numbers are each ONE ARM's expected
+range. `decide()`'s own NOISE is the LARGER of the two arms' ranges** (`max over arms of (max - min)`), whose
+expectation is higher than either arm's alone. At n = 2 -- two independent range draws from the same pooled SD,
+each the absolute difference of an iid normal pair -- numerically integrating E[max(X, Y)] for X, Y iid
+half-normal(sigma x sqrt(2)) gives **3.92037 s**, about 1.596 x sigma, not the 2.77120 s of a single arm. <!--derived-->
+If the true delta equals M2, PASS needs NOISE <= 0.3 - 0.13282 = 0.167 s, 23.5 times below NOISE's own expected <!--derived-->
+value at n = 2. The chance that one arm's two-process range falls under 0.167 s is <!--derived-->
+2 Phi(0.167 / (sqrt(2) x 2.457)) - 1 = 0.038, and for both arms (NOISE's own event) 0.0015. FAIL needs <!--derived-->
+M1 - NOISE > 0.3, so in expectation a real cost would need to be above about **4.2 s** (0.3 + 3.92037, using <!--derived-->
+NOISE's own expectation rather than one arm's 2.77120 s) before A3 could read NO-GO at n = 2. <!--derived-->
 
 **Read as a standard error instead (the best case for a design that compares processes).** The arm difference of
 process medians has SE = sigma x sqrt(2 / n) per arm, so n = 2 (z sigma / margin)^2. With sigma = 2.45673 s: <!--derived-->
@@ -161,30 +167,77 @@ turn of each run a washout, and an OLS on run means with process and run-slot fi
 also records render time, generate calls and tokens, the reply without its lead, CPU time, load average, CuPy pool
 bytes and max RSS, so a repeat of this noise can be attributed.
 
-`--selftest` (no brain build) passes: 12 A3 cases and 26 Amendment 3 cases, including each failing direction (a
-0.58 s WTA -> NO-GO; +1.0 s outside the WTA -> NO-GO; +0.8 s carried into the next turn -> NO-GO; a true 0.30 s cost
--> UNDEFINED, never GO; 5 s turn noise -> UNDEFINED; each lever, validity and balance failure -> UNDEFINED).
+`--selftest` (no brain build) passes: 12 A3 cases and 30 Amendment 3 cases (26 as originally committed, plus 4 added
+in the 2026-09-25 fix round below), including each failing direction (a 0.58 s WTA -> NO-GO; +1.0 s outside the WTA
+-> NO-GO; +0.8 s carried into the next turn -> NO-GO; a true 0.30 s cost -> UNDEFINED, never GO; 5 s turn noise ->
+UNDEFINED; each lever, validity and balance failure -> UNDEFINED).
 A mutation check of the four comparisons in `decide_xo` found that dropping the M2 bound from either region left
 all 25 original cases passing, because every M2 case also moved M1. One case now pins M2 on its own (a +0.58 s WTA
 with the rest of the ON turn 0.6 s faster, so M1 stays inside the bound -> NO-GO). With it, each of six mutations
 (drop U1, L1, U2 or L2; loosen the PASS bound; tighten the FAIL bound) makes the selftest fail. The rule itself is
 unchanged.
 
-The run goes to the GPU queue from a clean checkout pinned at the head of `research/settle-a3-amendment3`
-(`<pin>`, with `data/corpus/tinystories.txt` symlinked in). `<a3x>` is
-`<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`, inside the pinned checkout so the provenance door
-writes its sidecars (the A3 run wrote to another worktree and got none). Projected about 7.3 hours:
+**Fix round after an independent review (2026-09-25, before any Amendment 3 gate data -- the smoke below is a
+pre-flight check, not the gate; see the dated addendum in Amendment 3 of the prereg for the full account).**
+Four gaps in the instrument itself, found by reading it adversarially rather than by new data:
+
+1. **The CI width was unpinned.** Every selftest case above checks one draw's SIGN (NO-GO/GO/UNDEFINED), not the
+   one-sided 95% bound's WIDTH -- `t = float(stats.t.ppf(1.0 - alpha, df))` in `_fe_fit` could be halved and every
+   case would still pass. A calibration case (`_xo_go_rate`, 100 independent synthetic reps at a true whole-turn
+   cost exactly at the 0.3 s bound, runs=8) now asserts the GO rate stays <= 10%; it reads 9% on the correct code,
+   and the halved-`t` mutant was hand-verified (mutate, rerun, revert, diff back to clean) to push it to 24%.
+2. **A washout-exclusion regression had no dedicated test.** The existing carry=0.8 case reads NO-GO whether or not
+   washout turns are correctly excluded from scoring (a true M1 of +0.93 s clears 0.3 s either way). A new case
+   near the bound (carry=0.25, noise=0.05, true M1 ~0.38 s) also asserts M1's estimate is close to 0.38 s, not just
+   its sign.
+3. **The warm-up precondition checked only which arm ran, not whether it fully ran.** If either warm-up turn's
+   first axis (valence) does not select a word, `expression_lead` returns '' before the arousal axis is read (1
+   read, not 2) -- exactly what A3 itself saw at one OFF warm index. That reader's arousal bridge is then built
+   LAZILY inside the first SCORED turn of that arm, adding one-time build latency to that arm's early scored turns
+   only, which would bias M1 toward GO. `check_process_xo` now requires `n_wta_reads == 2` on both warm-up turns
+   (both axes committed, both bridges built) before scoring; two new selftest cases (either warm-up turn, either
+   process, under-reading) assert UNDEFINED.
+4. **The crossover worker (`_worker_xo`) had never executed** -- no `--xo-worker`/`--xo-run` call appeared in any
+   provenance log, so the queued 7.5 h run would have been its first execution, including the
+   `_get_warm_qwen_renderer()._fac.model.generate` monkey-patch, a 192-turn single session under `memcap 20`, and
+   whether affect stays non-neutral over 96 repeats of each message. This is addressed procedurally, not by a code
+   change: a short `--xo-run --orient off,on --runs 4 --run-len 2` smoke against the Qwen renderer under
+   `mem_ok`/`memcap`, queued separately before the full run (see below for its result once read).
+
+The run goes to the GPU queue from a clean checkout **pinned by SHA, not a branch name** -- the previous draft of
+this section pinned "the head of `research/settle-a3-amendment3`", but a branch name is exactly as stable as
+whichever local checkout resolves it, and a stale worktree elsewhere (`b58e4080b`, from a killed session) still
+holds that local branch name pointed at an old commit. The pin here is `<PIN_SHA_PLACEHOLDER>` (the HEAD of this
+fix round; verify with `git log -1 --format=%H <PIN_SHA_PLACEHOLDER>` before using it), which both remotes carry
+identically (verified by `push_both.sh`). `data/corpus` is gitignored, so a fresh worktree needs it symlinked in
+from the primary checkout (the Qwen renderer reads `data/corpus/tinystories.txt` at load). Projected about 7.3-7.5
+hours. The full recipe, verbatim (worktree, symlink, memory wait, corpus check, then the queued job):
 
 ```
-cd <pin> && export XDG_RUNTIME_DIR=/run/user/1000; for i in $(seq 1 240); do bash tools/mem_ok.sh 16 4 >/dev/null 2>&1 && break; sleep 60; done; \
-  bash tools/mem_ok.sh 16 4 && SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- \
+# 1. Pinned worktree (detached HEAD at the exact commit, not a branch name).
+cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
+  git worktree add --detach /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER> \
+  <PIN_SHA_PLACEHOLDER>
+
+# 2. Corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt at load).
+mkdir -p /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/data && \
+  ln -s /home/dant123/Projects/sim/data/corpus \
+  /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/data/corpus
+
+# 3. Queue the run: mem_ok 16 4 wait, before_you_build (corpus-check gate), then the memcap-bounded run.
+bash tools/gpu_queue.sh add 'cd /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER> && \
+  until bash tools/mem_ok.sh 16 4 >/dev/null 2>&1; do sleep 60; done; \
+  bash tools/before_you_build.sh "affect-marker SETTLE A3 whole-turn GPU timing at the 0.3s bound (Amendment 3 within-process crossover)" >/dev/null 2>&1; \
+  SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- \
   /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 \
-  --orient off,on,on,off --runs 48 --run-len 4 --out-dir <a3x> --out <a3x>/verdict.json
+  --orient off,on,on,off --runs 48 --run-len 4 \
+  --out-dir /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x \
+  --out /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x/verdict.json'
 ```
 
-The queued form also runs `bash tools/before_you_build.sh "<question>"` inside `<pin>` after the memory wait and
-before the run, so the provenance door stamps a corpus check less than 24 h old on every artifact
-(`gates/corpus_check_required` refuses a run of more than 1 h without one; the door reads the pin's own log).
+Step 3's `before_you_build.sh` call runs inside the pinned worktree, after the memory wait and before the run, so
+the provenance door stamps a corpus check less than 24 h old on every artifact `gates/corpus_check_required`
+refuses a run of more than 1 h without one; the door reads the pin's own log, not the primary checkout's.
 
 If it reads UNDEFINED because turn noise stays high, the prereg names the next rung: variance control (a quiet
 machine window or CPU isolation), not a smaller bound or a looser rule.

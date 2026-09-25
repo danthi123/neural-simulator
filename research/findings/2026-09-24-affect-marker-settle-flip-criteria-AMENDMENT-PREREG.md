@@ -198,6 +198,18 @@ other precondition met: M2 (WTA-time delta) +0.133 s, M1 (total delta) -3.46 s, 
 records and decomposed their noise (finding `2026-09-25-affect-marker-settle-a3-gpu-timing-UNDEFINED-noise.md`,
 committed right after this section). The A3 rule above is not changed retroactively: the A3 run stays UNDEFINED.
 This amendment replaces the INSTRUMENT that decides precondition 3. The quantity and the bound do not change.
+**Stated plainly (review LOW, 2026-09-25): the DECISION STATISTIC changes too, and it is a less strict standard of
+evidence, adopted only after A3 read UNDEFINED.** A3 compared a worst-case RANGE of process medians against the
+bound (PASS needs M1 + NOISE <= bound, i.e. the observed delta plus the full spread of what was seen). This
+amendment instead uses one-sided 95% confidence bounds from an OLS fit (PASS needs the upper 95% bound <= bound).
+A calibration check (100 synthetic reps at a true whole-turn cost exactly at the bound, `_xo_go_rate` in the
+runner, added in the 2026-09-25 fix round below) reads a GO rate of 9% at that alpha -- so at the bound itself,
+this instrument reads GO on roughly 1 run in 11, where A3's worst-case range would essentially never resolve GO by
+chance. This is the SAME kind of change reviewers reject when made after a negative result without disclosure; it
+is disclosed here, in this amendment, before any Amendment 3 gate data exists (the smoke below is a pre-flight
+check, not the gate), and the reason is stated in the candidates weighed above: a worst-case range provably cannot
+resolve 0.3 s at any affordable process count, so a probabilistic bound is the only design that can decide this
+question at all.
 
 **Quantity (unchanged).** Criterion L (228ba16f0) as amended in A3: the warm affective turn total wall time of
 `webapp.server.brain_chat` on the default production path (cupy, tiny-demo, the Qwen renderer with the LLM on, `rich`
@@ -300,19 +312,68 @@ NO-GO: it adds more. UNDEFINED: the run could not tell. If turn noise is the rea
 control (a quiet-machine window or CPU isolation), not a smaller bound or a looser rule. The verdict is a 1-seed
 latency de-risk, as criterion L scopes it. It is not a capability claim.
 
-Commands (verbatim; `<pin>` is a clean checkout pinned at the commit that carries this section, with
-`data/corpus/tinystories.txt` symlinked in; `<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`):
+Commands (verbatim). The pin is a **SHA, not a branch name** (Addendum below): a branch name resolves relative to
+whichever checkout reads it, and a stale worktree elsewhere can hold it pointed at an old commit -- this is
+`<PIN_SHA_PLACEHOLDER>`, the HEAD of the 2026-09-25 fix round (Addendum below), which both remotes carry
+identically. `<pin>` is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>`
+(detached-HEAD worktree at that SHA); `<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`:
 ```
 # selftest (no brain build): both A3 and Amendment 3 verdicts through every failing direction
 .venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --selftest
-# the run (GPU queue, one job)
-SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- .venv/bin/python -u -m \
-  research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 --orient off,on,on,off --runs 48 --run-len 4 \
-  --out-dir <a3x> --out <a3x>/verdict.json
+
+# 1. pinned worktree + corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt)
+cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
+  git worktree add --detach <pin> <PIN_SHA_PLACEHOLDER> && \
+  mkdir -p <pin>/data && ln -s /home/dant123/Projects/sim/data/corpus <pin>/data/corpus
+
+# 2. the run (GPU queue, one job): mem_ok wait, before_you_build (corpus-check gate), then the memcap-bounded run
+bash tools/gpu_queue.sh add 'cd <pin> && until bash tools/mem_ok.sh 16 4 >/dev/null 2>&1; do sleep 60; done; \
+  bash tools/before_you_build.sh "affect-marker SETTLE A3 whole-turn GPU timing at the 0.3s bound (Amendment 3 within-process crossover)" >/dev/null 2>&1; \
+  SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- \
+  /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 \
+  --orient off,on,on,off --runs 48 --run-len 4 --out-dir <a3x> --out <a3x>/verdict.json'
+
 # score an existing raw dir again (no brain build)
 .venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --xo-score --raw-dir <a3x> \
   --seeds 42 --orient off,on,on,off --runs 48 --run-len 4 --out <a3x>/verdict.json
 ```
+
+**Addendum to Amendment 3 (2026-09-25, fix round after an independent review of this document and the runner; no
+Amendment 3 gate data exists yet -- the short smoke described below is a pre-flight check of the worker code
+path, never the decisive 576-scored-turn run -- so this instrument change is made before any data it would
+decide, per the standing rule that an instrument/rule change after review is allowed only in that window.** Every
+change is in `research/runners/_affect_marker_settle_gpu_timing.py`; none touches `sim/` or `webapp/`.
+
+1. **New precondition: both warm-up turns must each commit exactly 2 WTA reads.** `check_process_xo` previously
+   checked only which arm ran during warm-up, not whether it fully ran. If a warm-up turn's valence axis does not
+   select a word, `expression_lead` returns '' before the arousal axis is read (1 read, not 2) -- observed in A3
+   itself at one OFF warm index. A reader left with its arousal bridge unbuilt then builds it lazily inside the
+   first SCORED turn of that arm, adding one-time build latency to that arm's early scored turns only, which
+   would bias M1 toward GO without anything in the record flagging it. Unmet -> UNDEFINED, not a silent pass.
+2. **Calibration case (`_xo_go_rate`).** Every existing selftest case checks one synthetic draw's sign (does this
+   scenario read NO-GO/GO/UNDEFINED), which cannot pin the one-sided 95% bound's WIDTH -- halving
+   `t = float(stats.t.ppf(1.0 - alpha, df))` in `_fe_fit` passed every one of them. The new case runs 100
+   independent synthetic reps at a true whole-turn cost exactly at the 0.3 s bound (runs=8) and asserts the GO
+   rate stays <= 10%; it reads 9% on the correct code, and the halved-`t` mutant was hand-verified (mutate,
+   rerun, revert, diff back to clean) to push it to 24%. This is also why the false-GO rate stated above (roughly
+   1 in 11 at the bound) is now a measured number, not an assumption.
+3. **Carry case near the bound.** The existing carry=0.8 selftest case reads NO-GO whether or not washout turns
+   are correctly excluded from scoring (a true M1 of +0.93 s clears 0.3 s either way), so it does not test that
+   the washout's carry-over is charged to the arm that CAUSES it. A new case (carry=0.25, noise=0.05) asserts
+   both the NO-GO verdict and that M1's estimate lands near its true value (~0.38 s), which a washout-scoring
+   regression would move.
+4. **The crossover worker's first execution risk (`_worker_xo`, never run before this fix round) is addressed
+   procedurally, not by a code change:** a short `--xo-run --orient off,on --runs 4 --run-len 2` smoke against
+   the real Qwen renderer, queued separately and read before the full run (see the finding
+   `2026-09-25-affect-marker-settle-a3-gpu-timing-UNDEFINED-noise.md` for its result once available).
+5. **The pin is now a SHA, not a branch name** (both command blocks above), for the reason stated where they
+   appear: a branch name resolves relative to whichever checkout reads it, and a stale worktree elsewhere left it
+   pointed at an old commit.
+
+None of (1)-(3) touches the RULE (`decide_xo`'s GO/NO-GO/UNDEFINED regions) or the QUANTITY/bound stated at the
+top of this amendment -- they tighten what counts as a VALID process (1) and add tests that pin the instrument's
+already-stated behavior (2, 3) rather than changing it. `--selftest` (no brain build) passes 12 + 30 = 42 cases
+after this addendum (26 -> 30 Amendment 3 cases).
 
 ## Amendment log
 
@@ -324,3 +385,7 @@ SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- .venv/bin/python -
 - Amendment 3 (this document, 2026-09-25): A3's instrument replaced by a within-process crossover (`--xo-run`), written
   after the A3 run read UNDEFINED (M2 +0.133 s inside the bound, M1 not resolvable at NOISE 4.72 s) and before any new <!--derived-->
   data. Quantity and bound unchanged. <!--derived-->
+- Addendum to Amendment 3 (this document, 2026-09-25, fix round after independent review): a new warm-up
+  read-count precondition, a CI-width calibration selftest, a carry-near-bound selftest, and a SHA (not branch
+  name) pin -- before any Amendment 3 gate data. Quantity, bound and rule unchanged; see the addendum above for
+  each change and why.
