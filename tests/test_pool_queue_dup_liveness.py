@@ -353,39 +353,80 @@ def test_running_side_duplicate_detected_despite_incidental_trailing_space(tmp_p
     assert "RUNNING" in res.stderr
 
 
-# (j) issue #3 -- a claim on a node that is no longer a dispatch target at all (not in POOL_NODES,
-# not in the extra-nodes file) is retired: treated as dead WITHOUT contacting it, and queued.
-def test_claim_on_retired_node_is_queued_without_contacting_it(tmp_path):
+# (j) issue #3, REVISED 2026-09-25 second review round (MEDIUM: the old "never contact a retired
+# node" design fails OPEN against aws_pool_node.sh's `down`, which removes the node from
+# .pool_extra_nodes BEFORE its up-to-1800s drain even starts -- a live job can still be running on a
+# node that is no longer a dispatch target). A claim on a node that is no longer a dispatch target
+# (not in POOL_NODES, not in the extra-nodes file) IS now contacted; only when it is genuinely
+# UNREACHABLE is it treated as retired/dead.
+def test_claim_on_retired_node_that_is_unreachable_is_queued_after_being_contacted(tmp_path):
     bin_dir, ssh_log = _make_ssh_stub(tmp_path)
     job_field = _job_field()
     _seed_running(_default_running_path(tmp_path), "poolstale", job_field)
-    env = _base_env(tmp_path, ssh_log)   # default POOL_NODES = pool40 pool41 pool42; poolstale is not one
+    env = _base_env(tmp_path, ssh_log, unreachable="poolstale")   # poolstale not in default POOL_NODES either
     res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
     assert res.returncode == 0, res.stdout + res.stderr
     assert "no longer a dispatch target" in res.stderr
     assert "poolstale" in res.stderr
     assert CMD in (tmp_path / "pool.queue").read_text()
-    assert ssh_log.read_text() == "", f"a retired node must never be ssh'd: {ssh_log.read_text()!r}"
+    calls = [ln for ln in ssh_log.read_text().splitlines() if ln.strip()]
+    assert len(calls) == 1, calls   # contacted exactly once, unlike the old "never ssh'd" design
 
 
-# (k) issue #3 -- the narrow POOL_DUP_ASSUME_DEAD_NODES override treats a still-registered node as
-# dead without contacting it (an operator-known-dead node that IS still a probe target).
-def test_assume_dead_override_is_queued_without_contacting_it(tmp_path):
+# (j2) THE MEDIUM FAIL-OPEN ITSELF, reproduced: a node removed from the dispatch-target list (mid
+# aws_pool_node.sh `down` drain, or any other reason) that is STILL REACHABLE and still running the
+# identical job must refuse, exactly like any other alive claim -- being off the dispatch-target list
+# must never suppress the ALIVE check for a node that answers.
+def test_claim_on_retired_node_that_is_still_alive_refuses(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    job_field = _job_field()
+    _seed_running(_default_running_path(tmp_path), "poolstale", job_field)
+    env = _base_env(tmp_path, ssh_log, alive_b64={"poolstale": [_b64(job_field)]})
+    res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
+    assert res.returncode == 2, res.stdout + res.stderr
+    assert "poolstale" in res.stderr
+    assert "RUNNING" in res.stderr
+    assert (tmp_path / "pool.queue").read_text().strip() == ""
+
+
+# (k) issue #3, REVISED 2026-09-25 second review round (LOW-MEDIUM: POOL_DUP_ASSUME_DEAD_NODES stays
+# set for the rest of an exported shell, so a node listed there because it was briefly unreachable,
+# that later comes back with its job still alive, must not have the ALIVE check skipped just because
+# the variable is still set). The override now only converts an actual UNREACH result into
+# ASSUMED_DEAD -- it does not skip contacting the node.
+def test_assume_dead_override_on_an_unreachable_node_is_queued_after_being_contacted(tmp_path):
     bin_dir, ssh_log = _make_ssh_stub(tmp_path)
     job_field = _job_field()
     _seed_running(_default_running_path(tmp_path), "pool41", job_field)
-    env = _base_env(tmp_path, ssh_log, assume_dead="pool41")
+    env = _base_env(tmp_path, ssh_log, assume_dead="pool41", unreachable="pool41")
     res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
     assert res.returncode == 0, res.stdout + res.stderr
     assert "POOL_DUP_ASSUME_DEAD_NODES" in res.stderr
     assert "pool41" in res.stderr
     assert CMD in (tmp_path / "pool.queue").read_text()
-    assert ssh_log.read_text() == ""
+    calls = [ln for ln in ssh_log.read_text().splitlines() if ln.strip()]
+    assert len(calls) == 1, calls   # contacted exactly once, unlike the old "never ssh'd" design
+
+
+# (k2) THE LOW-MEDIUM FAIL-OPEN ITSELF, reproduced: a node listed in POOL_DUP_ASSUME_DEAD_NODES (e.g.
+# because it was briefly unreachable earlier in this shell) that answers and is still running the
+# identical job must refuse -- the override never skips the ALIVE check for a node that responds.
+def test_assume_dead_override_on_a_still_alive_node_refuses(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    job_field = _job_field()
+    _seed_running(_default_running_path(tmp_path), "pool41", job_field)
+    env = _base_env(tmp_path, ssh_log, assume_dead="pool41", alive_b64={"pool41": [_b64(job_field)]})
+    res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
+    assert res.returncode == 2, res.stdout + res.stderr
+    assert "pool41" in res.stderr
+    assert "RUNNING" in res.stderr
+    assert (tmp_path / "pool.queue").read_text().strip() == ""
 
 
 # (l) issue #3 -- neither the retired-node path nor POOL_DUP_ASSUME_DEAD_NODES may skip the ALIVE
-# check for a DIFFERENT matching node: a retired node and a genuinely alive node both carry a
-# matching record -> must still refuse, citing the alive one, and must not ssh the retired node.
+# check for a DIFFERENT matching node: an unreachable retired node and a genuinely alive node both
+# carry a matching record -> must still refuse, citing the alive one (the retired node IS contacted
+# under the revised design, but reports UNREACH and is retired, same as before it answers).
 def test_retired_node_does_not_suppress_a_different_nodes_alive_check(tmp_path):
     bin_dir, ssh_log = _make_ssh_stub(tmp_path)
     running_path = _default_running_path(tmp_path)
@@ -393,12 +434,12 @@ def test_retired_node_does_not_suppress_a_different_nodes_alive_check(tmp_path):
     live_field = _job_field(reason="live claim on a real node")
     _seed_running(running_path, "poolstale", stale_field)
     _seed_running(running_path, "pool41", live_field, append=True)
-    env = _base_env(tmp_path, ssh_log, alive_b64={"pool41": [_b64(live_field)]})
+    env = _base_env(tmp_path, ssh_log, unreachable="poolstale", alive_b64={"pool41": [_b64(live_field)]})
     res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
     assert res.returncode == 2, res.stdout + res.stderr
     assert "pool41" in res.stderr
     assert "RUNNING" in res.stderr
-    assert "poolstale" not in ssh_log.read_text()
+    assert "poolstale" in ssh_log.read_text()   # contacted (revised design), just reports UNREACH
 
 
 # (m) issue #7 -- POOL_RUNNING_PATH must be honoured, not silently ignored in favour of a path
@@ -415,6 +456,61 @@ def test_pool_running_path_env_var_is_honoured(tmp_path):
     # false and the running-side check would be skipped entirely (queued, wrongly).
     assert not _default_running_path(tmp_path).exists()
     env = _base_env(tmp_path, ssh_log, alive_b64={"pool41": [_b64(job_field)]}, running_path=custom_running)
+    res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
+    assert res.returncode == 2, res.stdout + res.stderr
+    assert "pool41" in res.stderr
+    assert "RUNNING" in res.stderr
+
+
+# (n) HIGH fail-open, 2026-09-25 SECOND opus review round: the awk PREFILTER compared the squeezed
+# NEW_CMD against the RAW (unsqueezed) pool.running line via `index($0, cmd)`, so a raw record whose
+# command contains a double space never became a CANDIDATE at all, regardless of how the per-record
+# comparison below would have normalized it. Replaying the fix read-only over the real 909-line
+# pool.running found 20 such records (including the flipdefaults-thin battery shards); the
+# byte-identical command could be re-added with ZERO ssh calls and no liveness check whatsoever.
+def test_prefilter_matches_running_record_with_double_space_in_command(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    double_space_cmd = "echo  dedup_test_job_A"   # two spaces; CMD (added below) has only one
+    job_field = _job_field(cmd=double_space_cmd)
+    _seed_running(_default_running_path(tmp_path), "pool41", job_field)
+    env = _base_env(tmp_path, ssh_log, alive_b64={"pool41": [_b64(job_field)]})
+    res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
+    assert res.returncode == 2, res.stdout + res.stderr
+    assert "pool41" in res.stderr
+    assert "RUNNING" in res.stderr
+
+
+# (o) HIGH fail-open, 2026-09-25 SECOND opus review round: awk's `-v cmd=value` performs POSIX
+# escape-sequence processing on `value`, so a NEW_CMD containing a literal backslash (e.g. a
+# two-character `\n`, not an actual newline) was silently turned into a control character before the
+# substring test ever ran -- one real pool.running record (on pool1) had this shape and was never a
+# candidate either, for the same "queues with zero ssh calls" reason.
+def test_prefilter_matches_running_record_containing_a_literal_backslash(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    backslash_cmd = r"echo dedup_test_job_A\nX"   # a literal backslash + 'n', not a real newline
+    job_field = _job_field(cmd=backslash_cmd)
+    _seed_running(_default_running_path(tmp_path), "pool41", job_field)
+    env = _base_env(tmp_path, ssh_log, alive_b64={"pool41": [_b64(job_field)]})
+    res = _run(["add", backslash_cmd, "--checked", CHECKED], bin_dir, env)
+    assert res.returncode == 2, res.stdout + res.stderr
+    assert "pool41" in res.stderr
+    assert "RUNNING" in res.stderr
+
+
+# (p) issue #6, closed 2026-09-25 second review round: the $'...'-ANSI-C-quoted branch of
+# strip_checked_reason_prefix (bash %q's fallback for a reason holding a control character) was
+# UNTESTED -- disabling that branch by mutation left all 16 then-existing tests passing. A reason
+# containing both a tab and a single quote forces %q into exactly this form.
+TAB_QUOTE_REASON = "it's\tdone now"
+
+
+def test_dollar_quote_reason_branch_is_exercised_and_refuses_when_alive(tmp_path):
+    bin_dir, ssh_log = _make_ssh_stub(tmp_path)
+    escaped = _q_reason(TAB_QUOTE_REASON)
+    assert escaped.startswith("$'"), f"this reason no longer forces %q's $'...' form: {escaped!r}"
+    job_field = _job_field(reason=TAB_QUOTE_REASON)
+    _seed_running(_default_running_path(tmp_path), "pool41", job_field)
+    env = _base_env(tmp_path, ssh_log, alive_b64={"pool41": [_b64(job_field)]})
     res = _run(["add", CMD, "--checked", CHECKED], bin_dir, env)
     assert res.returncode == 2, res.stdout + res.stderr
     assert "pool41" in res.stderr

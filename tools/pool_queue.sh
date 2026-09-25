@@ -347,7 +347,25 @@ case "${1:-list}" in
            # plainly could not match. One cheap awk pass narrows to lines that contain NEW_CMD as a
            # substring (necessary, not sufficient, for the normalized forms to be equal) before that
            # expensive per-line work runs on anything at all.
-           CANDIDATES=$(awk -F'\t' -v cmd="$NEW_CMD" 'NF>=3 && index($0, cmd) {print}' "$RUNNING_FILE")
+           #
+           # 2026-09-25 SECOND REVIEW ROUND -- HIGH fail-open in the prefilter itself, found by replaying
+           # it read-only over the real 909-line pool.running: `index($0, cmd)` compared the SQUEEZED
+           # NEW_CMD against the RAW (unsqueezed) line, so a raw record with a double space (20 real
+           # records, including the flipdefaults-thin battery shards) or a backslash (1 real record, on
+           # pool1) was never even a CANDIDATE -- the byte-identical command could be re-added with ZERO
+           # ssh calls and zero liveness check, though `strip_checked_reason_prefix`/`trim`/`tr -s ' '`
+           # below WOULD have normalized it to an exact match had the record ever reached that stage.
+           # Two independent causes: (a) `-v cmd=` compares against the raw line, which still has its
+           # original (unsqueezed) internal whitespace -- fixed by squeezing a COPY of the line the same
+           # way NEW_CMD was squeezed before the substring test, never touching $0 itself (the candidate
+           # line handed to the per-record loop below must stay byte-exact for strip_checked_reason_prefix
+           # to parse correctly); (b) awk's `-v var=value` performs POSIX escape-sequence processing on
+           # `value` (a literal `\n`/`\t`/`\\` in NEW_CMD becomes a real control character), so a NEW_CMD
+           # containing a backslash no longer matched the literal backslash in the file. ENVIRON (reading
+           # the SAME value back out of the process environment) is never escape-processed, so passing
+           # NEW_CMD through PQ_CMD in the environment instead of a -v assignment closes this too.
+           CANDIDATES=$(PQ_CMD="$NEW_CMD" awk -F'\t' \
+             'NF>=3{l=$0; gsub(/ +/," ",l); if (index(l, ENVIRON["PQ_CMD"])) print}' "$RUNNING_FILE")
            if [ -n "$CANDIDATES" ]; then
              declare -A _RQ_LIVESET=()   # node -> UNREACH | RETIRED | ASSUMED_DEAD | its live JOB_B64 set
              ASSUME_DEAD="${POOL_DUP_ASSUME_DEAD_NODES:-}"
@@ -357,21 +375,36 @@ case "${1:-list}" in
                norm=$(trim "$(strip_checked_reason_prefix "$rjob" | tr -s ' ')")
                [ "$norm" = "$NEW_CMD" ] || continue
                if [ -z "${_RQ_LIVESET[$rnode]+x}" ]; then
-                 # fix #3 (MEDIUM): a claim on a node that is no longer a dispatch target at all (removed
-                 # from .pool_extra_nodes, an idle-stopped AWS node) can never be live again from THIS
-                 # dispatcher's point of view -- ssh'ing it just to fail UNREACH forever was pointless and
-                 # left FORCE_DUP=1 (a blanket bypass of every check) as the only escape. Treat it as
-                 # retired = DEAD, with an info line, same as an explicit POOL_DUP_ASSUME_DEAD_NODES entry
-                 # (a narrow override for a node the operator knows is dead but that IS still a probe
-                 # target) -- neither path skips the ALIVE check for any OTHER node's matching claim.
-                 if node_in_list "$rnode" "$ASSUME_DEAD"; then
-                   echo "ℹ️  $rnode is listed in POOL_DUP_ASSUME_DEAD_NODES -- assuming its claim is dead without contacting it." >&2
-                   _RQ_LIVESET[$rnode]="ASSUMED_DEAD"
-                 elif ! node_in_list "$rnode" "$CURRENT_NODES"; then
-                   echo "ℹ️  $rnode is no longer a dispatch target (not in the current pool node list) -- its claim is retired." >&2
-                   _RQ_LIVESET[$rnode]="RETIRED"
+                 # fix #3 (MEDIUM) + LOW-MEDIUM (2026-09-25 second review round): a claim on a node that
+                 # is no longer a dispatch target (removed from .pool_extra_nodes) or one the operator has
+                 # listed in POOL_DUP_ASSUME_DEAD_NODES must still be CONTACTED -- never assumed dead on
+                 # the strength of the list alone. TWO real fail-opens the first version of this fix had:
+                 # (a) aws_pool_node.sh's `down` removes the node from .pool_extra_nodes FIRST, then drains
+                 # for up to 1800s -- if jobs are still running when the drain times out it refuses to
+                 # finish without --force and the node is left unregistered with a live job still on it;
+                 # marking it RETIRED without ever ssh'ing let that live duplicate through with 0 ssh calls.
+                 # (b) POOL_DUP_ASSUME_DEAD_NODES stays set for the rest of an exported shell -- a node
+                 # listed there because it was briefly unreachable, that later comes back with its job
+                 # still alive, must not have that ALIVE check skipped just because the variable is still
+                 # set. Fix: probe the node regardless of either list; only an actual UNREACH result (truly
+                 # unreachable, or a scan that never completed) is converted into RETIRED/ASSUMED_DEAD. A
+                 # node that answers -- even with an empty live set -- goes through the exact same
+                 # per-record ALIVE check as any other node, so neither list can ever suppress verifying a
+                 # claim that turns out to genuinely be alive; and neither path skips the ALIVE check for
+                 # any OTHER node's matching claim.
+                 _rq_liveset_probe=$(node_live_b64_set "$rnode")
+                 if [ "$_rq_liveset_probe" = "UNREACH" ]; then
+                   if node_in_list "$rnode" "$ASSUME_DEAD"; then
+                     echo "ℹ️  $rnode is listed in POOL_DUP_ASSUME_DEAD_NODES and could not be reached -- assuming its claim is dead." >&2
+                     _RQ_LIVESET[$rnode]="ASSUMED_DEAD"
+                   elif ! node_in_list "$rnode" "$CURRENT_NODES"; then
+                     echo "ℹ️  $rnode is no longer a dispatch target and could not be reached -- its claim is retired." >&2
+                     _RQ_LIVESET[$rnode]="RETIRED"
+                   else
+                     _RQ_LIVESET[$rnode]="UNREACH"
+                   fi
                  else
-                   _RQ_LIVESET[$rnode]=$(node_live_b64_set "$rnode")
+                   _RQ_LIVESET[$rnode]="$_rq_liveset_probe"
                  fi
                fi
                case "${_RQ_LIVESET[$rnode]}" in
