@@ -55,7 +55,6 @@ dev size, where the transport ceiling reached its best held-out read on one repl
 
 ## Rung 0: the bound census (AMENDMENT 5 H)
 
-<!--derived-->
 Runner: `_gap4_transport_ceiling_readout_derisk.py`, C21 flags (H32/pool 4, 30 epochs, `--bdsp-w-max 12`), 4 arms x 3
 replicates, dev seed 7, revision `afe2b323871b7363b0db119c05241ef147a84922` (a descendant of `23d98e71f`, the
 commit that introduced AMENDMENT 5 and the `bound_census()` method the census reads; `git diff` of the runner file
@@ -67,9 +66,9 @@ with its r1/r2 and frozen/fixed_fa/micro_inengine siblings in the same directory
 
 **Consistency check (required by the pre-registration before the census counts).** The r0 shards must reproduce the
 earlier dev run's r0 reads exactly. They do: census r0 frozen `inherit_heldout` 0.12962962962962962 and
-`ff_weight_moved` 9063.4296875 match the dev run's r0 frozen row (0.130, ff-moved 9063.4); census r0
+`ff_weight_moved` 9063.4296875 match the dev run's r0 frozen row (0.130, ff-moved 9063.4); census r0 <!--derived-->
 transport_ceiling `inherit_heldout` 0.2222222222222222 and `ff_weight_moved` 162621.1640625 match the dev run's r0
-ceiling row (0.222, ff-moved 162621.2). The census is not VOID.
+ceiling row (0.222, ff-moved 162621.2). The census is not VOID. <!--derived-->
 
 **Per-pathway fraction of feedforward synapses at +-`bdsp_w_max` (12.0), transport_ceiling arm, END of training**
 (from `bound_census_end` in each shard; `ff_0` and `ff_1` are the two hidden-post pathways, `ff_2` is the
@@ -93,14 +92,13 @@ arms that actually train the hidden feedforward weights, which is the expected d
 
 **Decision, applying the registered rule exactly.** "The clamp is load-bearing if, in the transport_ceiling arm, at
 least 10% of the synapses of a hidden-post pathway (ff_0 or ff_1) end at +-w_max on at least 2 of 3 replicates."
-ff_0 clears 10% on 3 of 3 replicates (0.797, 0.795, 0.180) and ff_1 clears 10% on 3 of 3 replicates (0.227, 0.749,
-0.248). Both pathways clear on all three replicates, well past the registered >=2/3 threshold. **The clamp is
+ff_0 clears 10% on 3 of 3 replicates (0.797, 0.795, 0.180) and ff_1 clears 10% on 3 of 3 replicates (0.227, 0.749, <!--derived-->
+0.248). Both pathways clear on all three replicates, well past the registered >=2/3 threshold. **The clamp is <!--derived-->
 load-bearing.** Per AMENDMENT 5 H, the next lever is the BDSP weight bound itself (the companion process the
 static clamp replaced), before lateral inhibition or output homeostasis.
 
 ## Rung 3: the full-size GPU dev run (AMENDMENT 5 F)
 
-<!--derived-->
 Runner: `_gap4_transport_ceiling_readout_derisk.py`, C21 flags at full size (H64/pool 16, 40 epochs, same
 `--bdsp-w-max 12`), 4 arms x 3 replicates, dev seed 7, `SIM_BACKEND=cupy`. Config fingerprint
 `713efa9804a3dbb0`, matching across every shard and the aggregate. Started 15:54:59 EDT 2026-09-24 (per the
@@ -139,13 +137,13 @@ underlying shards (transport_ceiling: 10419652.75 for r1 vs 9406836.75 for r2). 
 
 Every hidden-learning arm (fixed_fa, micro_inengine, transport_ceiling) reads EXACTLY at chance on every replicate
 (9 of 54 held-out items correct, the majority-class count). `n_fa_wall = 3` of 3, `n_surpass = 0`. `train_acc` for
-the ceiling sits at 0.1725/0.1525/0.140 against training-chance 0.1825/0.170/0.1625 (task seeds 7/10014/20021) --
+the ceiling sits at 0.1725/0.17/0.1625 against training-chance 0.1825/0.170/0.1625 (task seeds 7/10014/20021) --
 at or below chance in every replicate, the same collapse item 5 of the diagnosis finding named at dev size, now
 total rather than partial.
 
 **Decision, applying the registered rule exactly.** Rule B: "A replicate is interpretable only if the ceiling
 clears chance (one-sided binomial p < 0.05) AND its headroom over frozen is at least 0.05." No replicate clears
-chance at all (p 0.557 on all three, nowhere near 0.05), so `n_interpretable = 0`. Rule B also needs a seed
+chance at all (p 0.557 on all three, nowhere near 0.05), so `n_interpretable = 0`. Rule B also needs a seed <!--derived-->
 DEFINED iff >=2 of 3 replicates are interpretable; **0 of 3 << 2 of 3, so seed 7 is NOT DEFINED at full size.**
 Per AMENDMENT 5 F: "UNDEFINED keeps the instrument at dev, and the next lever applies." C21 does not transfer to
 the 2026-09-15 net size. The cupy wall time is 4.268-6.693 ms/step across arms and replicates (`ms_per_step` in
@@ -153,7 +151,6 @@ each shard), for the evaluation-budget record AMENDMENT 5 F also asked for.
 
 ## What this changes
 
-<!--derived-->
 Both open rungs are now closed as UNDEFINED, and neither is a dead end: the census gives a positive, actionable
 answer (the clamp is load-bearing) and the full-size run gives a negative-but-informative one (the dev
 calibration's best config does not transfer, and it fails in the SAME direction -- collapse toward the readout's
