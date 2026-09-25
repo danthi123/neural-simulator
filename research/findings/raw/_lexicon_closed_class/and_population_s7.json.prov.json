@@ -1,0 +1,35 @@
+{
+ "run_id": "1790298142-2548196",
+ "runner": "research/runners/lexicon_frame_junction.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/lexicon-closed-class/research/runners/lexicon_frame_junction.py",
+  "--and-population",
+  "--seed",
+  "7",
+  "--weights",
+  "250,300,350,400,500",
+  "--biases=-550,-600,-650,-700,-750,-800,-850,-900,-1000",
+  "--json",
+  "research/findings/raw/_lexicon_closed_class/and_population_s7.json"
+ ],
+ "git_sha": "e5f949ae7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T21:02:22",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_closed_class/and_population_s7.json"
+}

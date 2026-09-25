@@ -334,6 +334,49 @@ def and_smoke(lex, n_sample: int = 64, seed: int = 0):
             "and_holds": bool((left == 0).all() and (right == 0).all() and (both > 0).all())}
 
 
+def and_population(lex, sustain: int = None):
+    """The AND checked on EVERY junction at once. Junctions have no lateral or feedback input (only their two FR
+    afferents; FJ -> CN/CX is feed-forward), so driving ALL left (-1) afferents tests every junction's lone-left
+    response, ALL right (+1) afferents every lone-right response, and both sets together every pair, in parallel.
+    Uses the installed (possibly lesioned) weights. Returns per-junction violation counts."""
+    from sim.backend import to_host, from_host
+    C, sustain = lex.C, int(sustain or SUSTAIN_STEPS)
+    left = lex.fr[_OFF_L * C:(_OFF_L + 1) * C]
+    right = lex.fr[_OFF_R * C:(_OFF_R + 1) * C]
+
+    def run(drive, steps):
+        lex._reset_state()
+        cur = np.zeros(lex.n, dtype=np.float64)
+        cur[lex.fj] = lex.i_tonic
+        cur[drive] += lex.i_frame
+        dev = from_host(cur.astype(np.float32))
+        counts = np.zeros(lex.n)
+        for _ in range(steps):
+            lex.b.cp_external_input_current[:] = dev
+            lex.b._run_one_simulation_step()
+            counts += np.asarray(to_host(lex.b.cp_firing_states))
+        lex.b.cp_external_input_current[:] = 0.0
+        return counts[lex.fj], counts / steps
+
+    lone_l, rl = run(left, sustain)
+    lone_r, rr = run(right, sustain)
+    pair, _ = run(np.concatenate([left, right]), lex.t_on)
+    L2, R2 = (lone_l > 0).reshape(C, C), (lone_r > 0).reshape(C, C)     # [a, b]
+    rate_l, rate_r = rl[left], rr[right]
+    return {"n_junctions": int(len(lex.fj)), "lone_left_fired": int((lone_l > 0).sum()),
+            "lone_right_fired": int((lone_r > 0).sum()), "pair_silent": int((pair == 0).sum()),
+            "pair_spikes_mean": float(pair.mean()),
+            "and_violations": int(((lone_l > 0) | (lone_r > 0) | (pair == 0)).sum()),
+            "and_holds_all": bool(((lone_l == 0) & (lone_r == 0) & (pair > 0)).all()),
+            # afferent-level structure: a whole row (left word a) / column (right word b) firing alone
+            "lone_left_full_rows": [int(a) for a in np.nonzero(L2.sum(axis=1) == C)[0]],
+            "lone_right_full_cols": [int(b) for b in np.nonzero(R2.sum(axis=0) == C)[0]],
+            "left_afferent_rate": {"median": float(np.median(rate_l)), "max": float(rate_l.max()),
+                                   "argmax": int(rate_l.argmax())},
+            "right_afferent_rate": {"median": float(np.median(rate_r)), "max": float(rate_r.max()),
+                                    "argmax": int(rate_r.argmax())}}
+
+
 def calibrate_and(seed: int, env, weights, biases, n_sample: int = 64):
     """Dev-seed grid over (W_J, I_TONIC_J) on the UNTRAINED junction circuit: the AND smoke at each point.
     Selection rule (AMENDMENT 1): the weight whose feasible bias range (AND holds) is widest, and the middle bias
@@ -393,6 +436,8 @@ if __name__ == "__main__":
     ap.add_argument("--biases", default="-500,-600,-700,-800,-900")
     ap.add_argument("--n-sample", type=int, default=64)
     ap.add_argument("--drive-ratio", action="store_true")
+    ap.add_argument("--and-population", action="store_true",
+                    help="the AND on every junction at each (W_J, I_TONIC_J) grid point (--weights x --biases)")
     ap.add_argument("--corpus", default=L._DEFAULT_CORPUS)
     ap.add_argument("--json", default="")
     a = ap.parse_args()
@@ -409,6 +454,22 @@ if __name__ == "__main__":
         for r in out["rows"]:
             print(r, flush=True)
         print("choice:", out["choice"])
+        if a.json:
+            dst = a.json if os.path.isabs(a.json) else os.path.join(_REPO, a.json)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            json.dump(out, open(dst, "w"), indent=1)
+            print("wrote", dst)
+    if a.and_population:
+        rows = []
+        for w in [float(x) for x in a.weights.split(",")]:
+            lexp = FrameJunctionLexicon(a.seed, _Env(), w_j=w)
+            for bias in [float(x) for x in a.biases.split(",")]:
+                lexp.i_tonic = bias
+                rows.append({"w_j": w, "i_tonic": bias, **and_population(lexp)})
+                print(rows[-1], flush=True)
+        out = {"seed": a.seed, "rows": rows, "t_on_j": T_ON_J, "sustain_steps": SUSTAIN_STEPS,
+               "frozen": {"w_j": W_J, "i_tonic": I_TONIC_J}, "backend": os.environ.get("SIM_BACKEND"),
+               "elapsed_s": round(time.time() - t0, 1)}
         if a.json:
             dst = a.json if os.path.isabs(a.json) else os.path.join(_REPO, a.json)
             os.makedirs(os.path.dirname(dst), exist_ok=True)
