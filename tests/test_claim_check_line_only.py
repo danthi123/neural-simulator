@@ -1,26 +1,26 @@
-"""tools/claim_check.py derived-marker scoping (round 5, SAME-LINE-ONLY) -- both directions, one test per hole.
+"""tools/claim_check.py -- both directions, one test per hole, every historical claim RE-DERIVED from git.
 
-Round 5 replaces every earlier scope rule (main's standalone-marker-to-next-heading, and rounds 1-4's
-progressively more elaborate line-scanner / CommonMark-parser scoping) with NO scope at all: a number is exempt
-only when the literal `<!--derived-->` marker sits on ITS OWN physical line. Three layers here, mirroring the
-round-4 test file's own methodology:
+Round 5 made the derived-marker exemption same-line-only; round 6 narrowed it to the same table cell / <br>-segment
+and normalized numbers before matching; round 7 (this file's current contract) adds precision-aware matching,
+a per-doc discriminating-power check, normalization that never glues, GFM tables in every form, a hardened
+synthesis bar, hidden-carrier-aware coverage, and a CCT gate that reports the instrument's own failures verbatim.
+Layers:
 
-  1. every SELFTEST_CASES entry gives its expected verdict, and a FAIL case must flag its designated WRONG
-     number (0.1525 / 0.14 / 1.23456 -- never the placeholder "derived" numbers 0.104615 / 0.207531 / 0.311079,
-     which are legitimate values absent from the artifact, not smuggled wrong ones); a PASS case must flag
-     nothing.
-  2. HISTORY: every case is re-run through each earlier checker (main before round 5, and rounds 1-4, read
-     straight from git) -- the case's recorded `wrong_on` must equal the set of earlier revisions that actually
-     get it wrong, so "this used to pass, now it fails" is RE-DERIVED every run, never just remembered.
-  3. the four real findings with an odd number of fence lines behave like main or stricter (never looser): round
-     5 does no fence-awareness at all, so this is a basic sanity check that going simpler did not silently open
-     a hole main did not already have.
+  1. every SELFTEST_CASES entry gives its expected verdict for its DESIGNATED reason (claim_check.selftest());
+  2. HISTORY: every case is re-run through each earlier checker (main, r1-r6, read straight from git) -- the
+     case's recorded `wrong_on` must equal the set of revisions that actually get it wrong, so "this used to pass,
+     now it fails" is re-derived every run. A `kind='gate'` case is run against each revision's
+     tools/gates/claim_check_selftest.py (absent before r6 => wrong);
+  3. spec guards and warnings for the marker rule;
+  4. round 7 unit tests: rule A, rule B, normalization, hidden carriers, synthesis title, author-facing text.
 """
 from __future__ import annotations
 
 import importlib.util
 import json
 import os
+import random
+import re
 import subprocess
 import sys
 import tempfile
@@ -39,16 +39,14 @@ ODD_FENCE_DOCS = [
     "research/findings/2026-06-20-S5-divisive-norm-derisk.md",
     "research/findings/2026-06-26-multibridge-deep-knowledge-design.md",
 ]
+DOC_CASES = [c for c in cc.SELFTEST_CASES if c.get("kind") != "gate"]
+GATE_CASES = [c for c in cc.SELFTEST_CASES if c.get("kind") == "gate"]
 
 
 @pytest.fixture(scope="module")
 def casedir():
     with tempfile.TemporaryDirectory(dir=ROOT, prefix=".test_claim_check_line_only_") as d:
         yield d
-
-
-def _nums_in(text):
-    return {round(float(m), 6) for m in cc.NUM_RE.findall(text)}
 
 
 # ---- 1. the registry (both directions) -----------------------------------------------------------------------
@@ -63,38 +61,43 @@ def test_every_registry_case_names_a_real_historical_revision():
         assert set(c["wrong_on"]) <= set(cc._HISTORY_SHAS), c["name"]
 
 
-@pytest.mark.parametrize("case", cc.SELFTEST_CASES, ids=[c["name"] for c in cc.SELFTEST_CASES])
-def test_case_verdict_and_reason(case, casedir):
-    p = cc._write_case(casedir, case)
-    r = cc._scan(p)
-    got = cc._verdict(r)
-    assert got == case["expect"], case["why"]
-    flagged = {round(v, 6) for _ln, v, _c in r["unsupported"]}
-    if case["expect"] == "FAIL":
-        # a LOW COVERAGE case (e.g. low_coverage_overmarked) fails without any single "wrong" number -- the
-        # defect is the suppression ratio itself, not a specific unsupported value.
-        assert (flagged & cc.WRONG_VALUES) or r["low_coverage"], \
-            "must flag its designated wrong number or trip LOW COVERAGE: %s" % case["why"]
-    else:
-        assert not flagged and not r["low_coverage"], "a clean PASS case must flag nothing"
+def test_every_round6_review_issue_has_a_case_that_round6_gets_wrong():
+    """Round 7's contract (task G): each of the 11 review issues has at least one SELFTEST_CASES entry that fails on
+    f2b7db2b4 (recorded in wrong_on, and re-derived from git by test_case_wrong_on_is_re_derived)."""
+    covered = {c["issue"] for c in cc.SELFTEST_CASES if "issue" in c and "r6" in c["wrong_on"]}
+    assert covered == set(range(1, 12)), "issues without an r6-failing case: %s" % sorted(set(range(1, 12)) - covered)
+    with open(os.path.join(ROOT, "research/coordination/claimcheck_r7_review_issues.txt")) as fh:
+        assert len(json.load(fh)["issues"]) == 11
 
 
 # ---- 2. history: each case against every earlier checker, wrong_on RE-DERIVED, not remembered -----------------
-def _historical(tag, sha):
+def _git_show(sha, path):
     try:
-        src = subprocess.run(["git", "-C", ROOT, "show", "%s:tools/claim_check.py" % sha],
-                             capture_output=True, text=True, check=True).stdout
+        return subprocess.run(["git", "-C", ROOT, "show", "%s:%s" % (sha, path)],
+                              capture_output=True, text=True, check=True).stdout
     except (OSError, subprocess.CalledProcessError):
         return None
-    mod_path = os.path.join(ROOT, ".claim_check_hist_%s.py" % tag)
+
+
+def _exec_source(src, tag):
+    mod_path = os.path.join(ROOT, ".claim_check_hist_%s_%d.py" % (tag, os.getpid()))
     try:
-        open(mod_path, "w", encoding="utf-8").write(src)
+        with open(mod_path, "w", encoding="utf-8") as fh:
+            fh.write(src)
         spec = importlib.util.spec_from_file_location("claim_check_hist_%s" % tag, mod_path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
     finally:
         if os.path.exists(mod_path):
             os.remove(mod_path)
+    return mod
+
+
+def _historical(tag, sha):
+    src = _git_show(sha, "tools/claim_check.py")
+    if src is None:
+        return None
+    mod = _exec_source(src, tag)
     mod.ROOT = ROOT
     return mod
 
@@ -111,85 +114,81 @@ def history():
     return mods
 
 
-@pytest.mark.parametrize("case", cc.SELFTEST_CASES, ids=[c["name"] for c in cc.SELFTEST_CASES])
-def test_case_wrong_on_is_re_derived(case, casedir, history):
-    p = cc._write_case(casedir, case)
+def _wrong_set(case, history, casedir):
     wrong = set()
     for tag, mod in history.items():
-        # ROUND 6 (issue 8): round 4's `check()` lazily imports markdown-it-py; without the package installed,
-        # calling it raises ModuleNotFoundError for a reason that has NOTHING to do with any case's own bug,
-        # which would otherwise mark r4 "wrong" (or "right") by accident of environment rather than by the
-        # actual regression under test. Skip r4 specifically when the dependency is absent -- every other
-        # historical tag is still fully re-derived.
+        # round 4's check() lazily imports markdown-it-py; without it the verdict says nothing about the case.
         if tag == "r4" and not _MARKDOWN_IT_AVAILABLE:
             continue
-        try:
-            rc = mod.check(p, verbose=False)
-            got = "FAIL" if rc else "PASS"
-        except Exception:
-            # A crash also blocks a commit (an uncaught exception exits non-zero) -- treat it as equivalent to
-            # a clean FAIL return, not as "wrong for an unrelated reason". This matters for round 6's own new
-            # UTF-8 case: every pre-round-5 revision reads the doc with a bare `open(doc_path).read()` and
-            # CRASHES on invalid UTF-8 (which does block), while round 5 uniquely swallows it via
-            # errors="replace" and returns a clean, wrong PASS.
-            got = "FAIL"
-        if got != case["expect"]:
+        got, out = cc._case_outcome(case, mod, casedir)
+        if got != case["expect"] or any(o not in out for o in cc._expected_outputs(case)):
             wrong.add(tag)
-    assert wrong == set(case["wrong_on"]) - ({"r4"} if not _MARKDOWN_IT_AVAILABLE else set()), (
-        "recorded wrong_on=%s but this revision-set actually gets it wrong: %s (%s)"
-        % (sorted(case["wrong_on"]), sorted(wrong), case["why"]))
+    return wrong
 
 
-# ---- 3. spec guards: round 5's own contract, both directions --------------------------------------------------
+@pytest.mark.parametrize("case", DOC_CASES, ids=[c["name"] for c in DOC_CASES])
+def test_case_wrong_on_is_re_derived(case, casedir, history):
+    wrong = _wrong_set(case, history, casedir)
+    expected = set(case["wrong_on"]) - ({"r4"} if not _MARKDOWN_IT_AVAILABLE else set())
+    assert wrong == expected, ("recorded wrong_on=%s but this revision-set actually gets it wrong: %s (%s)"
+                               % (sorted(case["wrong_on"]), sorted(wrong), case["why"]))
+
+
+@pytest.mark.parametrize("case", GATE_CASES, ids=[c["name"] for c in GATE_CASES])
+def test_gate_case_wrong_on_is_re_derived(case):
+    wrong = set()
+    for tag, sha in cc._HISTORY_SHAS.items():
+        src = _git_show(sha, "tools/gates/claim_check_selftest.py")
+        if src is None:
+            wrong.add(tag)                          # no CCT gate at all: a broken instrument went unreported
+            continue
+        ok, _detail = cc._gate_case_ok(_exec_source(src, "gate_" + tag))
+        if not ok:
+            wrong.add(tag)
+    assert wrong == set(case["wrong_on"]), (case["wrong_on"], wrong)
+    import tools.gates.claim_check_selftest as gate
+    assert cc._gate_case_ok(gate)[0], "the CURRENT gate must pass its own case"
+
+
+# ---- 3. spec guards: the marker rule, both directions ----------------------------------------------------------
 _H = "# Some finding\n\nArtifact: `%(art)s`\n\n"
 
 
 @pytest.mark.parametrize("name,body,flagged_expected", [
-    # the ONE thing round 5 allows: marker and number on the same physical line
-    ("inline_marker_same_line_exempts", _H + "The ratio is 0.104615 here. <!--derived-->\n"
-                                             "The baseline was 0.162500 here.\n", set()),
-    # a marker on the line BEFORE a number does not reach it -- no exceptions, this is the whole point
+    ("inline_marker_same_segment_exempts", _H + "The ratio is 0.104615 here. <!--derived-->\n"
+                                                "The baseline was 0.162500 here.\n", set()),
     ("marker_one_line_early_does_not_reach", _H + "<!--derived-->\nThe accuracy was 0.1525 here.\n", {0.1525}),
-    # a marker on the line AFTER a number does not reach it either (no "look-back" any more than "look-forward")
     ("marker_one_line_late_does_not_reach", _H + "The accuracy was 0.1525 here.\n<!--derived-->\n", {0.1525}),
-    # ROUND 6 (issue 4): a table whose derived rows carry the marker IN THE SAME CELL as the value passes --
-    # exemption is now scoped to the marker's own CELL, not the whole row, so the marker must share a cell
-    # with the number it exempts.
     ("every_derived_table_row_marked_passes",
      _H + "| metric | value |\n|---|---|\n| ratio | 0.104615 <!--derived--> |\n"
           "| gap | 0.207531 <!--derived--> |\n| accuracy | 0.170000 |\n", set()),
-    # ... but ONE unmarked row in an otherwise-marked table is still checked (and flagged if wrong)
     ("one_unmarked_table_row_is_checked",
      _H + "| metric | value |\n|---|---|\n| ratio | 0.104615 <!--derived--> |\n| accuracy | 0.1525 |\n", {0.1525}),
-    # ROUND 6 (issue 4), the exact incident repro: a marker ALONE in its own trailing cell no longer reaches a
-    # DIFFERENT cell's number on the same row -- round 5's whole-line rule let this exempt the entire row.
     ("marker_in_separate_cell_does_not_reach_other_cells",
      _H + "| metric | value | delta |\n|---|---|---|\n| ratio | 0.1525 | 0.104615 | <!--derived--> |\n",
      {0.1525, 0.104615}),
-    # ROUND 6 (issue 4), repro 2: an HTML <br> renders as two lines to a reader though it is one physical line
-    # here -- a marker before the <br> must not reach a number after it.
     ("br_split_marker_does_not_reach_other_side",
      _H + "ratio 0.104615 <!--derived--><br>accuracy 0.1525\n", {0.1525}),
-    # ROUND 6 (issue 4): the cap on a marked line/cell's free exemption -- the 9th number is checked normally.
-    ("cap_bounds_a_marked_lines_free_exemption",
+    ("cap_bounds_a_marked_segments_free_exemption",
      _H + "vals 0.100001 0.100002 0.100003 0.100004 0.100005 0.100006 0.100007 0.100008 0.1525 <!--derived-->\n",
      {0.1525}),
-    # a marker inside a fenced code block is still just text on that line -- exempts nothing outside the fence
     ("marker_inside_fence_does_not_leak_out",
      _H + "```\n<!--derived-->\n```\nThe accuracy was 0.1525 here.\n", {0.1525}),
-    # a `# derived` code COMMENT is not a marker at all (the literal string must be `<!--derived-->`)
     ("hash_derived_comment_is_not_a_marker",
      _H + "```python\n# derived\n```\nThe accuracy was 0.1525 here.\n", {0.1525}),
+    ("derived_note_marker_exempts_its_segment",
+     _H + "The gap is 0.207531 here. <!--derived: 2 x 0.104615-->\nThe accuracy was 0.1525 here.\n", {0.1525}),
+    ("list_item_table_row_splits_cells",
+     _H + "- | seed | acc | ratio |\n  |---|---|---|\n  | 42 | 0.1525 | 0.104615 <!--derived--> |\n", {0.1525}),
+    ("negative_number_alone_in_a_cell_keeps_its_sign",
+     _H + "| a | b |\n|---|---|\n| delta |-0.1625|\n", {-0.1625}),
 ])
 def test_spec_guard(name, body, flagged_expected, casedir):
-    case = {"name": name, "doc": body}
-    p = cc._write_case(casedir, case)
+    p = cc._write_case(casedir, {"name": name, "doc": body})
     r = cc._scan(p)
-    flagged = {round(v, 6) for _ln, v, _c in r["unsupported"]}
-    assert flagged == flagged_expected, name
+    assert {round(v, 6) for _ln, v, _c in r["unsupported"]} == flagged_expected, name
 
 
-# ---- 4. WARNINGs for the now-inert pre-round-5 idioms: printed, never exempting ---------------------------------
 @pytest.mark.parametrize("name,body,warn_kind_substr", [
     ("standalone_marker_warns", _H + "<!--derived-->\nThe accuracy was 0.1525 here.\n", "standalone marker"),
     ("atx_derived_heading_warns", _H + "## Derived\nThe accuracy was 0.1525 here.\n", "heading"),
@@ -198,26 +197,22 @@ def test_spec_guard(name, body, flagged_expected, casedir):
     ("setext_derived_heading_warns", _H + "Derived\n=======\nThe accuracy was 0.1525 here.\n", "heading"),
     ("close_marker_warns", _H + "The ratio is 0.104615. <!--/derived-->\nThe accuracy was 0.1525 here.\n",
      "close marker"),
+    ("row_trailing_marker_warns", _H + "| a | b |\n|---|---|\n| 0.1525 | <!--derived--> |\n", "exempts nothing"),
 ])
 def test_inert_idiom_warns_but_does_not_exempt(name, body, warn_kind_substr, casedir):
-    case = {"name": name, "doc": body}
-    p = cc._write_case(casedir, case)
+    p = cc._write_case(casedir, {"name": name, "doc": body})
     r = cc._scan(p)
-    flagged = {round(v, 6) for _ln, v, _c in r["unsupported"]}
-    assert 0.1525 in flagged, "%s: the idiom must not exempt anything" % name
-    assert any(warn_kind_substr in kind.lower() for _ln, kind, _msg in r["warnings"]), \
-        "%s: expected a WARNING mentioning %r, got %s" % (name, warn_kind_substr, r["warnings"])
+    assert 0.1525 in {round(v, 6) for _ln, v, _c in r["unsupported"]}, "%s: the idiom must not exempt" % name
+    assert any(warn_kind_substr in kind.lower() for _ln, kind, _msg in r["warnings"]), r["warnings"]
 
 
 def test_clean_doc_has_no_warnings(casedir):
-    case = {"name": "clean_doc_no_warnings",
-            "doc": _H + "The ratio is 0.104615 here. <!--derived-->\nThe baseline was 0.162500 here.\n"}
-    p = cc._write_case(casedir, case)
-    r = cc._scan(p)
-    assert r["warnings"] == []
+    p = cc._write_case(casedir, {"name": "clean_doc_no_warnings", "doc": _H + "The ratio is 0.104615 here. "
+                                 "<!--derived-->\nThe baseline was 0.162500 here.\n"})
+    assert cc._scan(p)["warnings"] == []
 
 
-# ---- 5. the four real odd-fence docs: line-only must be at least as strict as main -----------------------------
+# ---- the four real odd-fence docs: no looser than main in VERDICT --------------------------------------------
 @pytest.fixture(scope="module")
 def main_module():
     mod = _historical("main_for_odd_fence", cc._HISTORY_SHAS["main"])
@@ -228,84 +223,138 @@ def main_module():
 
 @pytest.mark.parametrize("rel", ODD_FENCE_DOCS)
 def test_odd_fence_doc_behaves_like_main_or_stricter(rel, main_module):
+    """Round 5 does no fence-awareness at all, so going simpler must not open a hole main did not have. (Round 7
+    is looser than main BY DESIGN on correct roundings -- rule A -- but on these four docs not in verdict.)"""
     full = os.path.join(ROOT, rel)
     if not os.path.exists(full):
         pytest.skip("%s not present in this checkout" % rel)
-    rc_main = main_module.check(full, verbose=False)
-    rc_new = cc.check(full, verbose=False)
-    assert rc_new >= rc_main, (
-        "%s: main verdict=%s but round-5 verdict=%s -- round 5 must never be LOOSER than main"
-        % (rel, "FAIL" if rc_main else "PASS", "FAIL" if rc_new else "PASS"))
+    assert cc.check(full, verbose=False) >= main_module.check(full, verbose=False)
 
 
-# ---- 6. round 6 (2026-09-25): fixes from round 5's own SOUND-WITH-ISSUES review ---------------------------------
-
-# issue 1 -- strict UTF-8, a blocking UNREADABLE result instead of a silent errors="replace" false-pass.
+# ---- round 6 tests that still hold ------------------------------------------------------------------------------
 def test_invalid_utf8_is_unreadable_and_blocks(tmp_path):
     doc = tmp_path / "bad_utf8.md"
-    # a bare 0xAD byte (Latin-1 SOFT HYPHEN) is not valid UTF-8 on its own.
     doc.write_bytes(b"# f\n\nThe accuracy was 0.98" + b"\xad" + b"76 here.\n")
     r = cc._scan(str(doc))
-    assert r["unreadable"], "invalid UTF-8 must be reported, not silently decoded"
-    assert cc._verdict(r) == "FAIL"
-    assert cc.check(str(doc), verbose=False) == 1
+    assert r["unreadable"] and cc._verdict(r) == "FAIL" and cc.check(str(doc), verbose=False) == 1
 
 
 def test_valid_utf8_with_real_unicode_prose_is_unaffected(casedir):
-    # a legitimate em-dash / accented text doc must decode and scan normally -- strict decoding must not
-    # false-block ordinary valid UTF-8 content.
-    case = {"name": "valid_unicode_prose",
-            "doc": _H + "The accuracy improved — genuinely — to 0.170000 here.\n"}
-    p = cc._write_case(casedir, case)
+    p = cc._write_case(casedir, {"name": "valid_unicode_prose",
+                                 "doc": _H + "The accuracy improved — genuinely — to 0.170000 here.\n"})
     r = cc._scan(p)
-    assert not r["unreadable"]
-    assert cc._verdict(r) == "PASS"
+    assert not r["unreadable"] and cc._verdict(r) == "PASS"
 
 
-# issue 9 -- glob file-count and artifact value-pool caps.
 def test_glob_file_count_is_capped(tmp_path, monkeypatch):
     monkeypatch.setattr(cc, "MAX_GLOB_FILES", 3)
     for i in range(6):
         json.dump({"v": i + 0.123456}, open(tmp_path / ("f%d.json" % i), "w"))
-    pattern = os.path.join(str(tmp_path), "f*.json")
-    nums, verdicts, loaded, missing, capped = cc.load_artifacts([pattern])
-    assert len(loaded) == 3, "glob must be truncated to MAX_GLOB_FILES"
-    assert any("glob cap" in c for c in capped)
+    pool, _v, loaded, _m, capped = cc.load_artifacts([os.path.join(str(tmp_path), "f*.json")])
+    assert len(loaded) == 3 and any("glob cap" in c for c in capped)
 
 
-# issue 9 -- a citation hidden inside an HTML comment must be ignored, so it cannot silently validate a claim
-# that carries no VISIBLE citation. Needs a controlled artifact (unlike the shared %(art)s fixture), and needs
-# the historical modules to demonstrate the regression, so it lives here rather than in SELFTEST_CASES.
-def test_citation_inside_html_comment_is_ignored(casedir, history):
-    art_abs = os.path.join(casedir, "art.json")
-    if not os.path.exists(art_abs):
-        json.dump({"accuracy": 0.17, "baseline": 0.1625}, open(art_abs, "w"))
-    art_rel = os.path.relpath(art_abs, ROOT).replace(os.sep, "/")
-    doc_path = os.path.join(casedir, "hidden_citation.md")
-    # NO visible citation anywhere in the doc -- only inside an HTML comment.
-    open(doc_path, "w", encoding="utf-8").write(
-        "# Some finding\n\n<!-- see `%s` for context -->\n\nThe baseline was 0.162500 here.\n" % art_rel)
-    r = cc._scan(doc_path)
-    assert r["cited"] == [], "a citation living only inside an HTML comment must not be resolved"
-    assert cc._verdict(r) == "FAIL", "with no visible citation, the stated number must be UNSUPPORTED"
-    for tag, mod in history.items():
-        if tag == "r4" and not _MARKDOWN_IT_AVAILABLE:
-            continue
-        rc = mod.check(doc_path, verbose=False)
-        assert rc == 0, ("%s: a hidden HTML-comment citation used to be resolved, letting a claim with NO "
-                         "visible citation pass" % tag)
+# ---- 4. round 7 units --------------------------------------------------------------------------------------------
+def _num(text):
+    nums, _ids = cc._numbers_in(text)
+    return nums
 
 
-def test_artifact_value_pool_is_capped(tmp_path, monkeypatch):
-    # the cap is checked BETWEEN files (coarse but matches real usage: a citation attack pools many files, not
-    # one giant one) -- ten small files, each with a distinct value, cap well below the total.
-    monkeypatch.setattr(cc, "MAX_ARTIFACT_VALUES", 5)
-    paths = []
-    for i in range(10):
-        p = tmp_path / ("f%d.json" % i)
-        json.dump({"v": i + 0.111111}, open(p, "w"))
-        paths.append(str(p))
-    nums, verdicts, loaded, missing, capped = cc.load_artifacts(paths)
-    assert len(nums) <= 5
-    assert len(loaded) < len(paths), "loading must stop once the distinct-value pool cap is reached"
-    assert any("VALUE pool cap" in c for c in capped)
+@pytest.mark.parametrize("written,pool,rule", [
+    ("0.477", [0.4774], "rounding"),
+    ("0.4774", [0.4774], "exact"),
+    ("0.478", [0.4774], None),
+    ("0.163", [0.1625], "rounding"),            # a half boundary: half-up reading accepted
+    ("0.162", [0.1625], "rounding"),            # ... and half-even
+    ("12.3456", [12.3449], None),               # tighter than the old relative window
+    ("1.235", [1.23456789], "rounding"),
+    ("1.525e-1", [0.1525], "exact"),
+    ("9.876e-1", [0.98764], "rounding"),        # d = 3 - (-1) = 4
+])
+def test_rule_a_precision_aware(written, pool, rule):
+    (n,) = _num(written)
+    got = cc._match(n, sorted(pool))
+    assert (got.split("+")[0] if got else None) == rule, (written, pool, got)
+
+
+def test_rule_a_magnitude_suffix_reads_scaled_or_bare():
+    (n,) = _num("a 1.088B model")
+    assert cc._match(n, [1088000000.0]) == "exact+B"
+    assert cc._match(n, [1.088]) == "exact"
+    assert cc._match(n, [1.2e9]) is None
+
+
+def test_rule_b_is_deterministic_and_tracks_pool_breadth():
+    basis = _num("0.4774 0.5123 0.3350")
+    narrow = sorted([0.4774, 0.5123, 0.335])
+    broad = sorted(i / 10000.0 for i in range(10000))
+    r1, r2 = cc._chance_rate(basis, narrow), cc._chance_rate(basis, narrow)
+    assert r1 == r2 and r1 < 0.01
+    assert cc._chance_rate(basis, broad) > 0.99
+    assert cc._chance_rate([], broad) is None
+
+
+def test_rule_b_decoys_are_representable_for_pasted_17_decimal_floats():
+    """A pasted repr float states a unit below its own ULP; decoys must still move (round 7 bug found in retro:
+    every 16-17-decimal doc read chance 1.000)."""
+    basis = _num("0.30000000000000004")
+    assert cc._chance_rate(basis, [0.30000000000000004]) < 0.01
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("gain*0.1525", [0.1525]), ("**acc**0.1525", [0.1525]), ("&Delta;0.1525", [0.1525]),
+    ("x\\*0.1525", [0.1525]), ("n*-0.1625", [-0.1625]), ("Δ\u22120.1625", [-0.1625]),
+    ("0.412-0.498", [0.412, 0.498]), ("0.412 – 0.498", [0.412, 0.498]), ("lr0.001", []),
+    ("foo_0.125", []), ("4*0.170", [0.17]), ("0.15<b>25</b>", [0.1525]), ("0.15\u034f25", [0.1525]),
+    ("0\u00b71525", [0.1525]), ("see arXiv:2403.12345", []), ("doi:10.1038/415429a", []),
+    ("raw/sweep_0.125/x.json", []), ("-**0.1625**", [-0.1625]), ("\uff10.\uff11\uff15\uff12\uff15", [0.1525]),
+    ("-0.1625", [-0.1625]), ("\u22120.1625", [-0.1625]),       # a sign at SEGMENT START (round 7 bug, caught)
+    ("(0.5)-0.1625", [0.1625]), ("1.088B", [1.088]), ("3.490537...", [3.490537]),
+])
+def test_normalization_never_glues_and_never_hides(text, expected):
+    assert [round(n.value, 6) for n in _num(text)] == expected, text
+
+
+def test_normalization_property_markup_before_a_number_never_hides_it():
+    """Property (issue 3/4): whatever markup/invisible character sits between a word and a number, the number is
+    still found, with its sign."""
+    rng = random.Random(0)
+    seps = ["*", "**", "_", "`", "~~", "<b>", "</i>", "<wbr>", "&#8203;", "\u200b", "\u034f", "\ufe0f", "\u3164",
+            "&nbsp;", " ", "<span class=x>", "\\*"]
+    for _ in range(300):
+        word = rng.choice(["gain", "acc", "Δ", "n", "x"])
+        sep = "".join(rng.choice(seps) for _ in range(rng.randint(1, 3)))
+        sign = rng.choice(["", "-", "\u2212", "—" if word == "Δ" else "-"])
+        got = [round(n.value, 6) for n in _num(word + sep + sign + "0.1625")]
+        want = -0.1625 if sign else 0.1625
+        assert got == [want], (word, sep, sign, got)
+
+
+def test_hidden_spans_cover_every_carrier():
+    text = ("a <!-- c1 -->\n<!--\nmulti\n-->\n[//]: # (x)\n[ref]: http://x \"t\"\n<div hidden>h</div>\n"
+            "<span style=\"display:none\">s</span>\n<!-- unclosed")
+    kinds = {k for _a, _b, k in cc._hidden_spans(text)}
+    assert kinds == {"comment", "linkref", "hidden-element", "comment-unclosed"}
+    assert all(k != "marker" for k in kinds)
+    assert [k for _a, _b, k in cc._hidden_spans("x <!--derived: note--> y")] == ["marker"]
+
+
+@pytest.mark.parametrize("doc,src,title", [
+    ("---\ntitle: T GO\n---\n# Notes\n", "frontmatter title", "T GO"),
+    ("```\n# not a title\n```\n# Real\n", "H1", "Real"),
+    ("Real\n====\n", "setext H1", "Real"),
+    ("no heading at all\n", "filename", "some-file"),
+])
+def test_doc_title_chain(doc, src, title):
+    m = cc._FRONTMATTER_RE.match(doc)
+    assert cc._doc_title(doc, m, "x/some-file.md") == (src, title)
+
+
+# ---- issue 6: every author-facing message says the SAME thing about marker scope --------------------------------
+@pytest.mark.parametrize("rel", ["tools/githooks/pre-commit", "tools/finding_lint.py",
+                                 ".claude/skills/neural-simulator/SKILL.md", "tools/claim_check.py"])
+def test_author_facing_text_states_the_cell_rule(rel):
+    text = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+    assert "SAME table cell or <br>-segment" in text, rel
+    assert "on the SAME LINE as the number" not in text and "on THAT SAME PHYSICAL LINE" not in text, rel
+    assert not re.search(r"including every row of a derived table", text), rel

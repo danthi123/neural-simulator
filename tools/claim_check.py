@@ -18,239 +18,251 @@ Not "be plausible". Not "be remembered". Exist, in a file, that a reader can ope
     .venv/bin/python tools/claim_check.py research/findings/2026-07-31-foo.md
     .venv/bin/python tools/claim_check.py --selftest
 
-Exit 1 if a measurement-shaped number or a verdict word is unsupported by the cited artifacts.
+Exit 1 if a measurement-shaped number is unsupported by the cited artifacts, if the cited artifacts are too broad
+for a match to mean anything, or if a substantial document checks (almost) none of its numbers.
 
-CALIBRATION -- deliberately narrow, because a checker that cries wolf gets ignored (this project's own lesson,
-learned twice today). It checks ONLY:
-  * numbers with >= 3 decimal places, which are measurements rather than prose ("3 seeds", "97%" are ignored);
-  * verdict words that contradict a cited artifact's own verdict field.
-Derived values (ratios, differences, percentages) are legitimately absent from artifacts, so a `<!--derived-->`
-marker exempts a number FROM the check -- but (round 5, 2026-09-25) ONLY when the marker occurs on the SAME
-PHYSICAL LINE as the number. There is no other scope.
+WHAT IS CHECKED: numbers with >= 3 decimal places (measurements, not prose: "3 seeds", "97%" are ignored).
+A derived value (ratio, difference, mean over seeds, a figure quoted from another finding) legitimately lives in no
+artifact, so a `<!--derived-->` marker exempts it -- but ONLY a number in the SAME TABLE CELL, or the same
+`<br>`-separated segment of a line, as the marker, and at most MAX_EXEMPT_PER_LINE (8) numbers per cell/segment.
+There is no other scope: a marker alone on a line, a `## Derived` heading, a `<!--/derived-->` close marker, and a
+marker alone in a table row's last cell all exempt NOTHING, and `check()` prints a WARNING wherever it sees one.
+A comment whose text STARTS with `derived` (`<!--derived: 0.499 = 30.240 - 29.741-->`) is the same marker with a
+note attached; the note itself is never scanned.
 
-HISTORY -- why round 5 has no scope rule at all, when four earlier rounds each had one. Main's original rule let
-a marker ALONE on its own line open a scope lasting until the next `## ` heading; a scorer used that to hide
-three whole sections (0 of 336 artifact values checked, two wrong numbers passed). Every round since has been a
-markup-scope rule closing the previous hole and opening a new one of the same shape:
-  r1 (a line-scanner over headings/tables/close-markers): a `###` heading did not end an open scope (only `## `
-     did); a table followed by a wrong number with no blank line between them was absorbed into the table's
-     scope; a close marker sharing a line with other text let the text AFTER it pass too.
-  r2 (research/claimcheck-block-scope-round2): a `# derived` comment inside a FENCED CODE BLOCK was read as a
-     markdown heading, opening a section around ordinary code; a list's scope covered only its first bullet; a
-     fence ended an open list/paragraph early, closing real derived content prematurely.
-  r3 (research/claimcheck-block-scope-r3): the fence-open/closed boolean toggle desynced on an unmatched or
-     mismatched fence (```` closed by ```, or `~~~`), so a `## Results` heading sitting after a bogus "still
-     inside a fence" state was swallowed into the preceding "Derived" section.
-  r4 (research/claimcheck-parser-scope @ dde18d55395a2b8e99ac64b61b4939d33a90d132, rebuilt on a real CommonMark
-     parser -- markdown-it-py -- specifically to close the whole CLASS of line-scanner desync bugs above; REVIEWED
-     UNSOUND): an HTML block or an unclosed HTML comment / `<pre>` could still hide a `## Results` heading inside
-     a "Derived" section (the parser treats the swallowed heading text as inert block content, never emitting a
-     heading token for it); an inline close marker written on a LATER, unrelated line paired with the MOST
-     RECENT unpaired STANDALONE opener rather than anything nearby, hijacking an early opener into a range
-     spanning a real heading; an h1 or setext "Derived..." heading, or a `>`-nested `## Derived`, opened a
-     section with no container-aware end, so its "same-or-higher heading" boundary could sit arbitrarily far
-     away or leak straight out of the blockquote; a table nested inside a blockquote or list item was resolved
-     against the WRONG container's next-sibling, leaking scope past the list/blockquote that should have bounded
-     it; and markdown-it-py itself was an undeclared transitive dependency (present in the dev venv only because
-     someone had `pip install`ed it by hand -- a fresh checkout has no declared reason to have it).
-  r5 (2026-09-25, this file at 4fda849d4): deleted the scope concept entirely -- exempt iff the literal marker
-     sits on the number's own physical line, full stop. REVIEWED SOUND-WITH-ISSUES: the "physical line" boundary
-     itself held, but everything ELSE a document can do to a NUMBER (not to the marker's reach) was untested --
-     round 6 below closes those.
+HISTORY -- every round, and the hole each one left. Main (7e2edc08e) let a marker ALONE on its own line open a
+scope lasting until the next `## ` heading; a scorer used that to hide three whole sections (0 of 336 artifact
+values checked, two wrong numbers passed). Rounds 1-4 each tried a better multi-line scope rule and each leaked:
+  r1 (d4959ecb0, line-scanner): a `###` heading did not end a scope; a table followed by a wrong number with no
+     blank line absorbed it; text AFTER a mid-line close marker was swallowed too.
+  r2 (6abb28469): a `# derived` comment inside a code fence was read as a heading; a list's scope covered only its
+     first bullet; a fence ended an open list early.
+  r3 (662e167e8): the fence toggle desynced on a mismatched fence (```` vs ``` vs ~~~), swallowing a `## Results`.
+  r4 (214e509bf, a real CommonMark parser, REVIEWED UNSOUND): an unclosed HTML comment or `<pre>` hid a heading; a
+     late inline close marker hijacked an early opener; h1/setext/blockquoted "Derived" headings had no
+     container-aware end; a table in a list/blockquote resolved against the wrong container.
+  r5 (4fda849d4): deleted scope entirely -- exempt iff the marker is on the number's own PHYSICAL LINE. The review
+     found that boundary SOUND, but everything else a document can do to a NUMBER untested.
+  r6 (f2b7db2b4): strict UTF-8; per-cell/per-`<br>` exemption capped at 8; synthesis needs closed frontmatter + a
+     `claim_check_reason:` + no verdict title; normalization of emphasis/units/exponents/escapes/entities/Cf
+     characters/two dash glyphs; distinct-value coverage; comment citations ignored; glob and value-pool caps.
+     REVIEWED SOUND-WITH-ISSUES: 11 issues (research/coordination/claimcheck_r7_review_issues.txt), two of which
+     decided round 7's design -- (1) the value-pool cap was enforced only BETWEEN files, and a single broad
+     citation (a tracked 26 MB artifact pooling 732,007 distinct values) matches 99.7% of random wrong 4-decimal
+     numbers, so a cap on the pool size is the wrong tool; (8) 155 of the 353 findings added since 2026-09-01
+     FAIL under r6, and 62% of the numbers it flags are CORRECT roundings (a relative tolerance of 1e-4 rejects
+     0.477 for 0.4774).
 
-Every one of rounds 1-4 was the SAME failure shape: a rule that lets the marker on line N exempt a number on some
-line M != N, and a way to make the checker misjudge where N's influence stops. Round 5 deleted the concept
-instead of patching its boundary again: a number is exempt if and only if the literal string `<!--derived-->`
-occurs somewhere on ITS OWN physical line -- full stop. A marker alone on a line, a `## Derived`/setext/
-blockquoted heading, and a `<!--/derived-->` close marker are all now INERT (they exempt only the line they sit
-on, which typically holds no numbers); `check()` prints a non-blocking WARNING wherever it sees one of those
-spellings, because they meant something real for a year and an author should not be silently un-exempted.
+ROUND 6'S RETRO CLAIM, CORRECTED (issue 7). Round 6 said its 73 whole-corpus verdict flips were "EVERY one via a
+newly-caught UNSUPPORTED number (the cap, normalization and citation fixes)" and "candidate real errors". The
+round-6 review reverted each change one at a time and measured the causes: synthesis tightening 32, cell
+segmentation 24, NUM_RE widening 14, normalization 2, comment citations 1, the per-line cap and the artifact caps 0
+each; of the 1,074 numbers newly flagged in those docs, 597 were correct roundings of a cited value and 53 were
+arXiv/DOI identifiers, and 29 of the 73 flips had nothing else flagged. The claim was wrong. Round 7's retro is a
+committed script with a per-cause column: tools/claim_check_retro_compare.py.
 
-ROUND 6 (2026-09-25, this revision) -- round 5's review (SOUND-WITH-ISSUES) found the "same physical line" rule
-itself sound, but every adjacent surface unguarded. Ten fixes, each with its own selftest case declaring the
-revisions it corrects (`wrong_on`, re-derived from git every run like every case above):
+ROUND 7 (this revision) -- one design, seven parts:
+  A. PRECISION-AWARE MATCHING. A number written with d decimals (d = mantissa decimals minus the exponent) matches
+     an artifact value v when |x - v| <= 0.5 * 10^-d, i.e. v rounds to x at the precision the author stated (both
+     half-up and half-even readings are accepted at the exact boundary, so binary float representation cannot
+     decide it). Rule reported per number: `exact` or `rounding`. The legacy relative tolerance (1e-4 |x|, floor
+     5e-6) is NOT kept as a second rule -- DEVIATION from the task's "or within the existing tolerance", measured,
+     see CALIBRATION below: it is LOOSER than the stated precision exactly where it matters (|x| >= 5 at 3
+     decimals, |x| >= 0.5 at 4), which is where the review's `12.3456` vs `12.3449` wrong number passed.
+     `tol=` (API) still selects a fixed absolute tolerance. A glued magnitude suffix (`1.088B params`) is read as
+     the scaled value OR the bare mantissa (never silently as the bare mantissa only). Numbers inside a URL, a
+     DOI, an arXiv id or a cited file path are identifiers and are skipped (counted and printed).
+  B. DISCRIMINATING POWER, per document (replaces round 6's value-pool cap). After loading the cited pool,
+     CHANCE_DECOYS (400) decoys are drawn -- seeded, deterministic -- at the doc's OWN checked numbers' shapes:
+     decoy = x + k * 10^-d, k uniform in +-[1, CHANCE_WINDOW] (500), cycling over the checked numbers so each
+     claim contributes equally; each decoy is matched with rule A exactly like a real claim. The fraction that
+     match is the doc's CHANCE-MATCH RATE: the probability that a nearby WRONG number at this doc's own
+     precisions would be accepted. Above CHANCE_MAX the doc FAILS with "citations too broad to verify: cite the
+     specific artifact file(s)". The rate is printed for every doc.
+  C. NORMALIZATION THAT NEVER GLUES. Markup, emphasis, entities, tags and invisible characters are replaced by a
+     SEPARATOR, never deleted, so `gain*0.1525`, `**acc**0.1525`, `&Delta;0.1525`, `x\\*0.1525` all expose the
+     number. NFKC; every dash/minus variant (category Pd, U+2212, U+FE63, U+FF0D, U+02D7, U+2796) -> '-'; a '-'
+     directly before the digits (markup in between is transparent) is a SIGN unless an ASCII digit, '.', ')',
+     ']' or '%' precedes it (a range or subtraction); invisible characters beyond category Cf (Mn, Me, Co, Cn,
+     Cc, Hangul fillers U+115F/U+1160/U+3164/U+FFA0) are separators; U+00B7/U+2024/U+FE52/U+FF0E/U+066B between
+     digits are decimal points; Unicode decimal digits map to ASCII. Where a separator sits INSIDE a decimal
+     literal (`0.15<b>25</b>`, `0.15\\u200b25`, `0.15**25**`), the glued reading -- what a reader sees -- is
+     checked IN ADDITION (it can only add failures; it never replaces a number the separated reading found).
+  D. TABLES. A GFM table row is detected with or without leading pipes, inside blockquotes and list items (any
+     line in the block that follows a delimiter row, plus any line whose content starts with `|`); cells split on
+     `|`, and every line also splits on `<br ...>` and block-level HTML tags (`</p><p>`, `<td>`, `<li>` ...).
+     Splitting only narrows an exemption, so a misclassified prose line fails closed. The row-trailing form
+     `| ... | <!--derived--> |` stays INERT (choice made: no second scope rule); it prints a WARNING, and every
+     author-facing message now says "in the SAME table cell or <br>-segment as the number".
+  E. SYNTHESIS. `claim_check: synthesis` applies only with a properly closed frontmatter block, a non-empty
+     `claim_check_reason:` (whose regex no longer crosses a newline), and no verdict word -- matched
+     case-insensitively after stripping invisible characters (GO, NO-GO, NOGO, NO GO, PASS(ED), FAIL(ED),
+     REFUTED, CONFIRMED) -- in the doc's TITLE (frontmatter `title:`, else the first ATX/setext H1 outside code
+     fences and frontmatter, else the filename), nor (a stricter DEVIATION, same reason as the bar itself) in the
+     filename or a frontmatter `verdict:` field when the title came from elsewhere.
+  F. COVERAGE counts DISTINCT checked values that occur at least once OUTSIDE every hidden carrier: HTML comments
+     (multi-line, and an unclosed `<!--` to the end of the doc), link-reference definitions (`[//]: # (...)`),
+     and hidden elements (`hidden` attribute, `display:none`, `<script>`/`<style>`/`<template>`). Numbers inside
+     a carrier are still CHECKED (fail closed) -- only a derived-marker comment's own note is not scanned -- and a
+     citation inside a carrier does not count.
+  G. Every review issue has a SELFTEST_CASES entry whose `wrong_on` is re-derived from git on every test run; the
+     CCT registry gate reports this file's own selftest problems VERBATIM, labelled BROKEN INSTRUMENT.
 
-  1. STRICT UTF-8. Reading the doc with `errors="replace"` silently decoded invalid bytes instead of raising --
-     a regression relative to main, which crashed (blocking) on the same input. A doc that is not valid UTF-8
-     now reports a blocking UNREADABLE result instead of being silently scanned wrong or crashing uncaught.
-  2. (fixed in tools/githooks/pre-commit, not here) the hook's own hint text still described the pre-round-5
-     block-scope idiom as current practice.
-  3. (fixed in tools/gates/claim_check_selftest.py, not here) GATE 2 in the hook shells out to this file without
-     ever running `--selftest`, so the registry's "refuse a gate whose selftest cannot fail" rule never covered
-     it. A thin gates wrapper closes that.
-  4. PER-LINE EXEMPTION IS NOW BOUNDED, not blanket. Two narrowings, because either alone still leaks: (a) a
-     marked line/cell exempts at most MAX_EXEMPT_PER_LINE numbers -- past that, the doc is almost certainly using
-     the marker as a section-opener again, not marking individual values; (b) inside a markdown TABLE ROW, a
-     marker exempts only the CELL it sits in (split on `|`), and inside any line, only the segment before/after
-     an HTML `<br>` it sits in (a `<br>` renders as two lines to a reader even though it is one physical line to
-     this scanner) -- so a marker in a "delta" column can no longer excuse a wrong MEASURED number in an earlier
-     column. Splitting narrows the exemption only, so this fails closed even for a row this scanner misclassifies.
-  5. SYNTHESIS now requires (a) a PROPERLY CLOSED frontmatter block (`---` at position 0, and a LATER line that
-     is exactly `---`, not just the first `\n---` found anywhere in the doc -- an unclosed frontmatter block
-     could hide the flag past the real content), (b) a non-empty `claim_check_reason:` field in that SAME block
-     (a stated reason, not just the bare flag), and (c) is BARRED outright when the doc's own H1 title states a
-     verdict word (GO/NO-GO/PASS/FAIL/REFUTED/CONFIRMED) -- the exact incident shape this file exists to close
-     was a live verdict hiding wrong numbers behind a blanket exemption, and a verdict-bearing title is precisely
-     the case where every number must still be checked. A plain literature-survey doc with no such title, that
-     states why it is exempt, may still use the escape. Declaring the flag without satisfying (a)+(b) does not
-     block on its own -- it silently falls back to the normal per-line + LOW_COVERAGE rules (the strict default),
-     with a non-blocking WARNING explaining why the escape did not apply.
-  6. NORMALIZE BEFORE MATCHING. A number's own digits were escapable in ways NUM_RE never saw: markdown emphasis
-     (`_0.9876_`, `**0.9876**`), a glued unit (`0.9876ms`, `1.9876x`), scientific notation (`9.876e-1`), a
-     leading dot (`.9876`), a markdown backslash-escape (`0\\.9876`), an HTML numeric entity (`0&#46;9876`), an
-     empty inline tag splitting the digits (`0.9<!---->876`, `0.9<span></span>876`), a zero-width/soft-hyphen/
-     word-joiner character among the digits (any Unicode category Cf codepoint), and the two dash glyphs that
-     get typed in place of an ASCII minus (U+2212 MINUS SIGN, U+2013 EN DASH -- both were silently DROPPED,
-     turning a sign flip into a false match). `_normalize_for_numbers` folds all of these to plain ASCII digits
-     before NUM_RE ever runs, and NUM_RE itself now accepts a leading-dot mantissa, an optional exponent, and a
-     glued trailing unit. This normalized copy is used ONLY for number-scanning -- PATH_RE still runs against
-     the ORIGINAL text, so a real underscore inside a filename citation is untouched.
-  7. LOW_COVERAGE's fraction now counts only DISTINCT checked values (rounded to 6dp), not raw occurrences, and
-     ignores any number that appears only inside an HTML comment. Eleven literal copies of one real artifact
-     value, pasted inside `<!-- -->` purely to pad the "checked" count past the 5% floor, used to count as 11;
-     now they count as at most 1 distinct value, and if the comment is otherwise untouched they count as 0.
-  8. (fixed in tests/test_claim_check_line_only.py, not here) the historical-revision test depended on
-     markdown-it-py through round 4 even when nothing else needs it; missing the package turned 9 skips into
-     9 failures. The history fixture now drops round 4 from consideration when the package is not importable.
-  9. CITATIONS INSIDE HTML COMMENTS ARE IGNORED (the same comment-stripping as #7, applied before PATH_RE runs),
-     and artifact LOADING is capped: at most MAX_GLOB_FILES files per glob, and at most MAX_ARTIFACT_VALUES
-     DISTINCT values pooled across every cited artifact. Citing a handful of huge/unrelated raw directories used
-     to pool tens of thousands of values, at which point a random 4-decimal float has real odds of landing near
-     one of them by pure chance. The caps are calibrated against the corpus's own largest LEGITIMATE per-battery
-     citation (research/coordination/claimcheck_caps_calibration_2026-09-25.txt: 17 real glob citations expand
-     past 20 files; the biggest SPECIFIC per-battery one pools 8,266 distinct values across 481 files,
-     consol_opsweep_gpu; only the one deliberately whole-tree pattern, `raw/**/*.json`, goes further) --
-     comfortably below both caps, well below the scale of citing a whole raw/ tree. This is forward-only like
-     every other rule here: the gate only checks NEWLY ADDED findings, so an existing committed doc that already
-     relies on a huge citation is untouched.
- 10. (nit, not reproducible in this checkout -- see the round-6 commit message) a stray count of
-     tests/test_doc_rules.py's test functions was off by one in an earlier round's own report; the true count
-     (2) is what tests/test_doc_rules.py itself defines and is not restated elsewhere in this repo to drift.
-
-LOW COVERAGE (defense in depth, independent of the marker rule; unchanged in kind from the r4 draft, values
-recalibrated for the line-only rule below MIN_CHECK_FRACTION/LOW_COVERAGE_MIN_TOTAL). A non-synthesis doc with
-at least LOW_COVERAGE_MIN_TOTAL numeric claims that checked fewer than MIN_CHECK_FRACTION of them fails,
-whatever exempted the rest -- a substantial doc that marks (almost) every claim derived is not "clean", it is
-unchecked.
+CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --legacy-compare
+--attacks`; outputs committed as research/coordination/claimcheck_r7_calibration_since2026-09-01_2026-09-25.txt,
+claimcheck_r7_retro_since2026-09-01_2026-09-25.tsv and the whole-corpus pair). On the 353 findings added since
+2026-09-01, in the tracked tree:
+  * FAILS: main 31, r5 135, r6 155, round 7 108. Docs failing ONLY on numbers round 7 shows are correct roundings,
+    identifiers or misread signs: main 2, r5 51, r6 57; of r6's 1,651 flagged numbers, 1,093 (66%) are correct
+    (1,018 roundings, 67 identifiers). Round 7 flags no correct rounding by construction. Its 108 failures: 94
+    unsupported numbers (79 on that alone; 563 numbers, dominated by unmarked means/deltas and figures quoted
+    from other findings -- the marker contract working, not the rule misfiring), 17 missing artifacts (19 paths
+    absent from the tracked tree; 6 more exist only untracked in the main checkout; 1 is a seed-list shorthand
+    `..._seed42/43/44/100/101/102.json` that PATH_RE reads as one path), 13 too broad (7 on that alone). The
+    rule-caused residue: those 7 breadth-only docs, 2 docs failing only on an inequality bound (`exceeds
+    0.9999998`), and the 1 shorthand -- 10 of 353 (2.8%), against r6's 57 (16%).
+  * Rule A vs the legacy tolerance: keeping the old relative window as a second rule rescues 14 of 563 unsupported
+    numbers (4 docs) and adds 21 too-broad docs (13 -> 34; chance p90 0.122 -> 0.335, 17 docs >= 0.5). Dropped.
+  * CHANCE_MAX: rule B's rate over the 227 docs with a checked number: p50 0.015, p90 0.122, p95 0.203, max 0.645.
+    Docs above / failing on breadth alone: 5% 52/28, 10% 28/16, 15% 17/9, 20% 13/7, 25% 7/5. The task's 5% start
+    fails single-file citations of 67-129 values (a 3-decimal claim has 1,000 cells per unit, so ~N/1000 is the
+    floor for N cited values in range) -- a false positive by the task's own definition. 20% (= p95; every wrong
+    number caught at least 4 times in 5) is the calibrated bar. Against the review's scenarios with 40 random wrong
+    numbers: the 26 MB artifact accepts 40/40 at 3 and 4 decimals, rate 1.000 -> FAIL; the largest legitimate
+    battery glob accepts 20/40 at 3 decimals (rate 0.395 -> FAIL) and 6/40 at 4 decimals (0.145 -> the 6 wrong
+    numbers pass rule B, the other 34 are flagged); four raw directories accept 17/40 at 3 decimals (0.230 ->
+    FAIL) and 0/40 at 4.
+  * LOW_COVERAGE_MIN_TOTAL 80 -> 30: under round 7's counting, the largest non-synthesis doc with zero checked
+    visible values is 27 claims (since 2026-09-01 and whole corpus alike); 0 docs since 2026-09-01 newly fail.
+  * SYNTHESIS: 17 docs since 2026-09-01 (42 whole corpus) declare it and NONE has a `claim_check_reason:`, so all
+    lose the escape; 12 (31) flip from r5 PASS to FAIL. With a reason added, 5 (18) would still be barred by a
+    verdict word: 3 state real verdicts (`de-risk GO`, `6-seed GO`, a `no-go` filename), 1 is a noun (`hygiene
+    pass`), 1 names a lane (`satdiv-GO`). Words naming a gate (`GO gate`, `PASS criteria`) are not verdicts.
 """
 from __future__ import annotations
 
+import bisect
+import contextlib
 import glob
 import html
+import io
 import json
+import math
 import os
+import random
 import re
 import sys
 import unicodedata
+from collections import namedtuple
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# >=3 decimals => a measurement, not prose. "6 seeds", "97%", "2.5 months" are not claims about instrument output.
-# Round 6 widening (issue 6): `\d*` (not `\d+`) admits a leading-dot mantissa (`.9876`); the optional exponent
-# group admits scientific notation (`9.876e-1`); the trailing lookahead now forbids only another DIGIT (not a
-# dot, and not any word character), so a glued unit (`0.9876ms`, `1.9876x`) no longer hides the number -- the
-# unit is simply left out of the captured value. Excluding a trailing '.' here (as an earlier draft of this
-# round did) is WRONG, not merely over-cautious: it silently un-matches the single most common shape in this
-# corpus's prose, a measurement at the end of a sentence ("...the chance was 0.025."), which is how this exact
-# regression surfaced -- `tools/claim_check_retro_scan.py`'s round-5-vs-round-6 comparison found round 6 was
-# LOOSER on 5 real findings before this was caught, every one of them a sentence-final number. Applied to a
-# NORMALIZED copy of the text (see `_normalize_for_numbers`), never to the raw text used for citation parsing.
-NUM_RE = re.compile(r"(?<![\w.])(-?\d*\.\d{3,}(?:[eE][+-]?\d+)?)(?!\d)")
-# Globs are allowed: a finding over N seeds cites one pattern, not N paths.
-# Must contain a "/" -- a bare filename mentioned in prose ("as g5fix_d025_*.json shows") is a REFERENCE, not a
-# citation, and treating it as one reports a missing artifact that was never claimed to be a path.
+# ---- number syntax -------------------------------------------------------------------------------------------
+# Applied to the NORMALIZED scan copy of one segment (see `_numbers_in`), never to raw text. The lookbehind is
+# ASCII-only (round 7, issue 3): an ASCII letter/digit/underscore/dot glued BEFORE the digits makes the token an
+# identifier (`lr0.001`, `foo_0.125`), while a non-ASCII letter or symbol (`Δ0.1525`) does not -- `\w` is
+# Unicode-aware, so round 6 read `Δ0.1525` as an identifier and dropped it. The trailing lookahead forbids only
+# another digit: a glued unit (`0.9876ms`) or a sentence-final period is not part of the number.
+_NUM_CORE_RE = re.compile(r"(?<![A-Za-z0-9_.])([0-9]*)\.([0-9]{3,})(?:[eE]([+-]?[0-9]+))?(?![0-9])")
+NUM_RE = re.compile(r"(?<![A-Za-z0-9_.])(-?[0-9]*\.[0-9]{3,}(?:[eE][+-]?[0-9]+)?)(?![0-9])")   # public, simple
+# Globs are allowed: a finding over N seeds cites one pattern, not N paths. Must contain a "/" -- a bare filename
+# in prose is a REFERENCE, not a citation.
 PATH_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")
 VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 DERIVED_MARK = "<!--derived-->"
 DERIVED_CLOSE = "<!--/derived-->"          # no longer scopes anything -- matched only to print a WARNING
-SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
+SYNTH_RE = re.compile(r"^claim_check:[ \t]*[\"']?synthesis[\"']?[ \t]*$", re.M)
 
-# Pre-round-5 scope idioms that are now INERT. Matched loosely (a false-positive here only prints an extra
-# WARNING, never blocks), so an author who used one of these on purpose is told, not silently un-exempted.
-# A marker alone on its line (optionally inside a blockquote): main's old "open a block" idiom.
-_STANDALONE_MARKER_RE = re.compile(r"^\s*(?:>\s*)*" + re.escape(DERIVED_MARK) + r"\s*$")
-# An ATX heading (any level, optionally blockquoted, optional emphasis) titled "Derived...": the old "section".
+# A comment whose text starts with `derived` is a marker (`<!--derived-->`, `<!-- derived -->`,
+# `<!--derived: 0.499 = 30.240 - 29.741-->`); its own text is a NOTE and is never scanned for numbers.
+_MARKER_INNER_RE = re.compile(r"\s*derived\b", re.I)
+_STANDALONE_MARKER_RE = re.compile(r"^\s*(?:>\s*)*<!--\s*derived\b[^>]*-->\s*$", re.I)
 _ATX_DERIVED_RE = re.compile(r"^\s*(?:>\s*)*#{1,6}\s*[*_`]*\s*derived\b", re.I)
-# A setext heading is a title line followed immediately by a === / --- underline; checked with 1-line lookahead.
 _SETEXT_TITLE_RE = re.compile(r"^\s*(?:>\s*)*[*_`]*\s*derived\b", re.I)
 _SETEXT_UNDERLINE_RE = re.compile(r"^\s*(?:=+|-+)\s*$")
 
-# ROUND 6 (issue 4): a marked line/cell exempts at most this many numbers "for free". A doc that marks 9+
-# values on one line/cell is almost certainly re-inventing a block marker, not marking individual derived
-# numbers -- and past the cap, extra numbers are simply CHECKED like any unmarked claim (fails closed).
-MAX_EXEMPT_PER_LINE = 8
-# ROUND 6 (issue 9): a single glob citation loads at most this many files (sorted, deterministic), and the
-# POOL of distinct artifact values across every cited path in a doc is capped at this size. Calibrated
-# 2026-09-25 against the corpus's own largest legitimate per-battery citation (8,266 distinct values across
-# 481 files, `research/findings/raw/consol_opsweep_gpu/op*_seed42.json`; the next-largest real citations sit at
-# 4,459 and 1,384) -- both caps sit comfortably above every real citation measured, and far below the scale of
-# citing a whole `raw/` tree (a single-level `raw/**/*.json` already matches 7,000+ files). Forward-only: the
-# gate only checks NEWLY ADDED findings, so no existing committed doc is affected by this cap.
-MAX_GLOB_FILES = 1000
-MAX_ARTIFACT_VALUES = 15000
+MAX_EXEMPT_PER_LINE = 8          # per table cell / <br>-segment (the name is kept for API compatibility)
+MAX_GLOB_FILES = 1000            # a glob loads at most this many files (sorted, deterministic) -- a runtime bound
+MAX_ARTIFACT_BYTES = 200_000_000  # a single artifact larger than this is not loaded (reported as missing)
+LEGACY_TOLERANCE = False         # rule A's union with the pre-round-7 relative window: measured and rejected
 
-# ROUND 6 (issue 6): characters normalized away or mapped before NUM_RE ever sees a line. `<!--.*?-->` also
-# closes issues 7 and 9 (a number/citation hidden inside an ordinary HTML comment is invisible to both the
-# coverage fraction and PATH_RE) -- DOTALL because an HTML comment's own syntax is unambiguous even when it
-# spans a physical newline, unlike the interpretive "scope" markup rounds 1-4 tried and failed to bound.
-_HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
-_BR_RE = re.compile(r"<br\s*/?>", re.I)
-_EMPTY_SPAN_RE = re.compile(r"<span[^>]*>\s*</span>", re.I)
-# Markdown backslash-escapes of punctuation that matter to number syntax (`0\.9876`, `\-0.9876`).
-_BACKSLASH_ESCAPE_RE = re.compile(r"\\([.\-_*`])")
-# The two dash glyphs typed/pasted in place of an ASCII minus sign; both used to be silently DROPPED by the
-# old regex (neither is `-`), turning a claimed sign flip into a false positive match against a positive value.
-_DASH_CHARS = ("\u2212", "\u2013")         # U+2212 MINUS SIGN, U+2013 EN DASH
+# ---- B. discriminating power ------------------------------------------------------------------------------------
+CHANCE_DECOYS = 400
+CHANCE_WINDOW = 500              # decoy = x + k * 10^-d, 1 <= |k| <= CHANCE_WINDOW
+CHANCE_SEED = 20260925
+CHANCE_MAX = 0.20                # calibrated on the 353 findings since 2026-09-01 -- see docstring CALIBRATION
 
-# ROUND 6 (issue 5): synthesis now requires a PROPERLY CLOSED frontmatter block, not just "starts with ---".
-# `\A` anchors at the very first character; a later `\n---` found anywhere else in the doc (a horizontal rule,
-# or a second, unrelated frontmatter-shaped block near the end) no longer counts as the close.
-_FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---[ \t]*\n", re.S)
-_SYNTH_REASON_RE = re.compile(r"^claim_check_reason:\s*(\S.*?)\s*$", re.M)
-_TITLE_RE = re.compile(r"^#[ \t]+(.*?)\s*$", re.M)
+# ---- C. normalization tables ----------------------------------------------------------------------------------
+_DASHES = frozenset("\u2212\u02d7\u2796\ufe63\uff0d\u2010\u2011\u2012–—\u2015\u2e3a\u2e3b\ufe58\u2043")
+_DOTLIKE = frozenset("\u00b7\u2024\ufe52\uff0e\u066b\u2027\u2e31\u0387")
+_FILLERS = frozenset("\u115f\u1160\u3164\uffa0\u17b4\u17b5\u180e")
+_BLANKS = frozenset("\u2800\t")
+_INVISIBLE_CATS = frozenset(("Cf", "Mn", "Me", "Co", "Cn", "Cs"))
+_ASCII_PUNCT = frozenset("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
+_RANGE_LEFT = frozenset(".)]}%")     # a '-' after one of these (or a digit) is a range/subtraction, not a sign
+_MAGNITUDE = {"k": 1e3, "K": 1e3, "M": 1e6, "B": 1e9, "G": 1e9, "T": 1e12}
+_ENTITY_RE = re.compile(r"&(?:#[0-9]{1,7};?|#[xX][0-9a-fA-F]{1,6};?|[A-Za-z][A-Za-z0-9]{1,31};)")
+_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9:-]*(?:\s[^<>]*)?/?>")
+# Identifiers, not measurements: skipped (a URL, a DOI whose suffix has a letter, an arXiv id, a cited path).
+_ID_RES = (
+    re.compile(r"(?:\b(?:https?|ftp)://|\bwww\.)[^\s<>()\[\]{}\"'`|]+", re.I),
+    re.compile(r"\barxiv(?:\s*:\s*|\s+)[0-9]{4}\.[0-9]{4,5}(?:v[0-9]+)?", re.I),
+    re.compile(r"(?:\bdoi\s*:?\s*)?\b10\.[0-9]{4,9}/(?=[^\s<>()\[\]{}\"'`|]*[A-Za-z])[^\s<>()\[\]{}\"'`|]+", re.I),
+    re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json|md|py|npz|npy|pt|txt|tsv|csv|log|ya?ml|sh)\b"),
+)
 
-# LOW COVERAGE. CALIBRATION (2026-09-25, round 5, stated not guessed, re-derivable with
-# `tools/claim_check_retro_scan.py`; raw counts in research/coordination/claimcheck_lineonly_retro_2026-09-25.tsv).
-# Under a SAME-LINE-ONLY marker, "checked=0" no longer means "one block marker swept the whole doc" -- it now
-# means every single numeric line individually carries the literal marker, which is real, distributed authoring
-# effort, not a one-line shortcut. So the population changed shape from r4's calibration and had to be re-scanned,
-# not just ported: over the WHOLE research/findings/ corpus (2971 docs), the largest legitimately fully-marked
-# non-synthesis doc is 65 numeric claims (0 checked) -- a literature-citation doc where every quoted rate/constant
-# already carried its own inline marker (research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-
-# fallback-RESEARCH.md); the next doc down sits at 40, then a real gap to 27 and below. Restricted to CURRENT
-# practice (added since 2026-09-01, 353 docs, matching r4's own reasoning that current authoring practice is the
-# relevant population), the ceiling is lower still, at 27. No doc anywhere in the corpus combines >=60 numeric
-# claims with <10% checked except that one 65/0 literature doc -- i.e. the "0 of 336 checked" incident shape that
-# motivated this check in the first place no longer has a same-scale surviving example under line-only marking,
-# because the mechanism that produced it (one marker exempting hundreds of lines) no longer exists. The floor is
-# set at 80: comfortably above the observed whole-corpus ceiling (65) so genuinely, laboriously per-line-marked
-# docs never trip it, and far below the scale of the original incident, so a doc that reverts to marking
-# (almost) everything derived without doing that per-line work still gets caught. Re-scan and move the floor if
-# a new legitimate all-derived doc exceeds it. Round 6 (issue 7) changed WHAT is counted (distinct values outside
-# comments, not raw occurrences) but not the threshold itself; a round-5-vs-round-6 corpus retro-scan
-# (research/coordination/claimcheck_round6_retro_whole_corpus_2026-09-25.tsv, 2971 docs, and
-# claimcheck_round6_retro_since2026-09-01_2026-09-25.tsv, the 353 added since 2026-09-01) found 73 / 20
-# documents respectively whose verdict flips from round 5 -- EVERY one via a newly-caught UNSUPPORTED number
-# (issues 4/6/9's cap, normalization and citation fixes), never via LOW_COVERAGE alone (the whole-corpus TSV's
-# reason column contains the string "low_coverage" zero times). These are candidate real errors in EXISTING
-# findings, not a side-effect of the coverage-counting change, and (being pre-existing documents) the
-# forward-only gate never retroactively blocks any of them. One further flip runs the OTHER way (round 5 FAIL
-# -> round 6 PASS, 2026-06-17-offdiagonal-dendritic-derisk-NEGATIVE-ship-flat-cortex.md): round 5's own
-# dropped-sign bug (issue 6) compared a stated `-0.006` as if it were `+0.006` and failed to find a match;
-# round 6 parses the sign correctly and finds the artifact's own `"perm": -0.006` -- a correction, not a
-# regression (verified by reading the cited artifact directly, not just trusting the flip).
+_ID_NUMBERISH_RE = re.compile(r"[0-9]*\.[0-9]{3,}")
+
+# ---- D. segmentation ------------------------------------------------------------------------------------------
+_SEG_TAG_RE = re.compile(r"<\s*/?\s*(?:br|p|div|li|tr|td|th|table|thead|tbody|tfoot|ul|ol|dl|dt|dd|h[1-6]|hr|"
+                         r"blockquote|pre|section|article|header|footer|details|summary|caption|figure|figcaption)"
+                         r"\b[^>]*>", re.I)
+_DELIM_ROW_RE = re.compile(r"^\|?[ \t]*:?-+:?[ \t]*(?:\|[ \t]*:?-+:?[ \t]*)*\|?[ \t]*$")
+_CONTAINER_RE = re.compile(r"^(?:[ \t]*(?:>[ \t]?|[-*+][ \t]+|[0-9]{1,9}[.)][ \t]+))*[ \t]*")
+
+# ---- F. hidden carriers ---------------------------------------------------------------------------------------
+_LINKREF_RE = re.compile(r"^[ ]{0,3}\[(?!\^)[^\]\n]+\]:[ \t]*\S[^\n]*$", re.M)
+_HIDDEN_OPEN_RE = re.compile(r"<([A-Za-z][A-Za-z0-9-]*)\b(?=[^>]*(?:\bhidden\b|display\s*:\s*none|"
+                             r"visibility\s*:\s*hidden))[^>]*>|<(script|style|template|noscript)\b[^>]*>", re.I)
+_ZW = "\u200b"                   # blanking character for the SCAN copy: category Cf, so a soft separator
+
+# ---- E. synthesis ---------------------------------------------------------------------------------------------
+_FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
+_FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+_ATX_H1_RE = re.compile(r"^ {0,3}#(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*$")
+_SETEXT_H1_RE = re.compile(r"^ {0,3}=+[ \t]*$")
+_SETEXT_H2_RE = re.compile(r"^ {0,3}-+[ \t]*$")
+_ATX_ANY_RE = re.compile(r"^ {0,3}(#{2,6})(?:[ \t]+(.*?))?(?:[ \t]+#+)?[ \t]*$")
+_VERDICT_WORD_RE = re.compile(r"(?<![A-Za-z0-9])(no[- ]?go|go|pass(?:ed)?|fail(?:ed)?|refuted|confirmed)"
+                              r"(?![A-Za-z0-9])", re.I)
+_VERDICT_NOUN_RE = re.compile(r"(?:\s*/\s*(?:no[- ]?go|fail|pass)\b)?\s*[-/]?\s*(?:gates?|criteri(?:a|on)|bars?|"
+                              r"thresholds?|conditions?|rules?)\b", re.I)
+_VERDICT_HEADING_RE = re.compile(r"^\W*(?:verdict|result|results|outcome|conclusion|decision|status)\b", re.I)
+
+# LOW COVERAGE -- calibrated under round 7's counting (see docstring CALIBRATION): lowered from 80 to 30.
 MIN_CHECK_FRACTION = 0.05
-LOW_COVERAGE_MIN_TOTAL = 80
+LOW_COVERAGE_MIN_TOTAL = 30
+
+Num = namedtuple("Num", "value decimals unit alts text start end split truncated")
+
+
+# =================================================================================================================
+# artifacts
+# =================================================================================================================
+_ART_CACHE = {}
+_ART_CACHE_VALUES = [0]
+_ART_CACHE_LIMIT = 5_000_000
 
 
 def _flatten_numbers(obj, out):
-    """Every numeric leaf in an artifact, at any depth. Returns the count of RAW leaves visited (not the size of
-    `out`, which deduplicates) -- round 6 uses this to cap how many values a citation can pool (issue 9) without
-    needing a second pass over the same structure."""
+    """Every finite numeric leaf in an artifact, at any depth, at FULL precision (round 7: round 6 rounded to 6
+    decimals, which made a 7+-decimal claim unmatchable and a 6-decimal one mis-rounded). Returns the leaf count."""
     if isinstance(obj, bool):
         return 0
     if isinstance(obj, (int, float)):
-        out.add(round(float(obj), 6))
+        v = float(obj)
+        if v == v and v not in (float("inf"), float("-inf")):
+            out.add(v)
         return 1
     if isinstance(obj, dict):
         return sum(_flatten_numbers(v, out) for v in obj.values())
@@ -271,18 +283,43 @@ def _flatten_verdicts(obj, out):
             _flatten_verdicts(v, out)
 
 
+def _load_one(h):
+    st = os.stat(h)
+    key = (h, st.st_mtime_ns, st.st_size)
+    hit = _ART_CACHE.get(key)
+    if hit is not None:
+        return hit
+    if st.st_size > MAX_ARTIFACT_BYTES:
+        raise ValueError("larger than MAX_ARTIFACT_BYTES (%d)" % MAX_ARTIFACT_BYTES)
+    vals, verdicts = set(), []
+    if h.endswith(".jsonl"):
+        with open(h, encoding="utf-8") as fh:
+            for ln in fh:
+                ln = ln.strip()
+                if ln:
+                    d = json.loads(ln)
+                    _flatten_numbers(d, vals)
+                    _flatten_verdicts(d, verdicts)
+    else:
+        with open(h, encoding="utf-8") as fh:
+            d = json.load(fh)
+        _flatten_numbers(d, vals)
+        _flatten_verdicts(d, verdicts)
+    res = (frozenset(vals), tuple(verdicts))
+    if _ART_CACHE_VALUES[0] + len(vals) > _ART_CACHE_LIMIT:
+        _ART_CACHE.clear()
+        _ART_CACHE_VALUES[0] = 0
+    _ART_CACHE[key] = res
+    _ART_CACHE_VALUES[0] += len(vals)
+    return res
+
+
 def load_artifacts(paths):
-    """Round 6 (issue 9): a glob is capped at MAX_GLOB_FILES files (sorted, so the choice is deterministic), and
-    loading stops entirely once the DISTINCT value pool (`nums`) reaches MAX_ARTIFACT_VALUES -- a citation that
-    would blow past either cap is truncated, not silently allowed to pool unbounded values. `capped` reports
-    every truncation so an author can see it; it never blocks on its own (LOW_COVERAGE / unsupported still do
-    the actual gating)."""
-    nums, verdicts, loaded, missing, capped = set(), [], [], [], []
+    """Returns (pool, verdicts, loaded, missing, capped). `pool` is the SORTED list of distinct finite values of
+    every cited artifact. There is no value cap (round 7, issue 1): breadth is measured per doc by the
+    discriminating-power check instead. A glob loads at most MAX_GLOB_FILES files (a runtime bound, reported)."""
+    vals, verdicts, loaded, missing, capped = set(), [], [], [], []
     for p in paths:
-        if len(nums) >= MAX_ARTIFACT_VALUES:
-            capped.append("%s: artifact VALUE pool cap (%d distinct) already reached -- not loaded"
-                          % (p, MAX_ARTIFACT_VALUES))
-            continue
         full = p if os.path.isabs(p) else os.path.join(ROOT, p)
         is_glob = any(c in full for c in "*?[")
         hits = sorted(glob.glob(full)) if is_glob else ([full] if os.path.exists(full) else [])
@@ -294,143 +331,519 @@ def load_artifacts(paths):
                           % (p, len(hits), MAX_GLOB_FILES))
             hits = hits[:MAX_GLOB_FILES]
         for h in hits:
-            if len(nums) >= MAX_ARTIFACT_VALUES:
-                capped.append("%s: artifact VALUE pool cap (%d distinct) reached -- %s and any remaining "
-                              "file(s) not loaded" % (p, MAX_ARTIFACT_VALUES, os.path.relpath(h, ROOT)))
-                break
             try:
-                if h.endswith(".jsonl"):
-                    for ln in open(h):
-                        ln = ln.strip()
-                        if ln:
-                            d = json.loads(ln)
-                            _flatten_numbers(d, nums); _flatten_verdicts(d, verdicts)
-                else:
-                    d = json.load(open(h))
-                    _flatten_numbers(d, nums); _flatten_verdicts(d, verdicts)
+                v, vd = _load_one(h)
+                vals |= v
+                verdicts.extend(vd)
                 loaded.append(h)
             except Exception as e:                       # narrow enough to see; never silent
                 missing.append("%s (unreadable: %s)" % (p, type(e).__name__))
-    return nums, verdicts, loaded, missing, capped
+    return sorted(vals), verdicts, loaded, missing, capped
 
 
-def _strip_comments(s):
-    """Remove every `<!--...-->` span (round 6, issues 7+9): a number or citation living ONLY inside an
-    ordinary HTML comment is invisible prose, not a real claim -- it must not count toward LOW_COVERAGE's
-    numerator, and it must not resolve as a citation either. This runs on text that has ALREADY been checked
-    for the derived marker (the marker IS itself a comment), so stripping it afterwards is safe: `has_marker`
-    never depends on the stripped copy."""
-    return _HTML_COMMENT_RE.sub("", s)
+# =================================================================================================================
+# A. matching
+# =================================================================================================================
+def _any_within(pool, x, w):
+    i = bisect.bisect_left(pool, x - w)
+    return i < len(pool) and pool[i] <= x + w
 
 
-def _normalize_for_numbers(segment):
-    """Fold every escape in HISTORY item 6 to plain ASCII before NUM_RE runs. Order matters: entities first (so
-    a decoded `&#46;` behaves like a literal '.' for the later steps), then invisible/format characters, then
-    markdown escapes and empty decoy tags, then the dash glyphs, then emphasis markers. This is a SCAN-ONLY
-    copy -- PATH_RE and the marker/table/segment structure all still see the original text."""
-    s = html.unescape(segment)
-    s = "".join(ch for ch in s if unicodedata.category(ch) != "Cf")
-    s = _BACKSLASH_ESCAPE_RE.sub(r"\1", s)
-    s = _EMPTY_SPAN_RE.sub("", s)
-    for ch in _DASH_CHARS:
-        s = s.replace(ch, "-")
-    s = s.replace("_", "").replace("*", "")
-    return s
+def _readings(num):
+    """(value, unit, label) for every reading of a written number: the number itself, plus the scaled value when a
+    magnitude suffix is glued to it."""
+    out = [(num.value, num.unit, "")]
+    for scale, suf in num.alts:
+        out.append((num.value * scale, num.unit * scale, "+" + suf))
+    return out
 
 
-def _is_table_row(ln):
-    stripped = ln.lstrip()
-    return stripped.startswith("|") and stripped.count("|") >= 2
+def _slack(x):
+    """Float-representation noise only: a few ULPs of x (a 1e-12 absolute slack swallowed every decoy of a pasted
+    17-decimal float, whose stated precision is below 1e-12)."""
+    return 8.0 * math.ulp(x) if x else 8.0 * math.ulp(1e-300)
 
 
-def _segments(ln):
-    """Split a physical line into the independent scopes a <!--derived--> marker can reach (round 6, issue 4):
-    markdown table CELLS (split on `|`) and HTML `<br>` sub-lines (an HTML line break renders as two lines to a
-    reader even though it is one physical line to this line-based scanner). A marker in one segment must not
-    exempt a number in a different segment of the SAME physical line -- round 5's whole-line rule let a marker
-    in a trailing "delta" column excuse a wrong MEASURED number in an earlier column. Falls back to the whole
-    line as a single segment when neither structure is present, which is round 5's original behaviour."""
-    if _is_table_row(ln):
-        cells = ln.split("|")
-        out = []
-        for c in cells:
-            out.extend(_BR_RE.split(c))
-        return out
-    return _BR_RE.split(ln)
+def _match(num, pool, tol=None):
+    """Rule A. Returns the rule that matched ('exact' | 'rounding' | 'tolerance'), with a '+<suffix>' label for a
+    scaled reading, or None. 'tolerance' only when `tol` is given, or when LEGACY_TOLERANCE re-enables the
+    pre-round-7 relative window (switchable so tools/claim_check_retro_compare.py can MEASURE the choice)."""
+    for x, u, lab in _readings(num):
+        slack = _slack(x)
+        if tol is not None:
+            if _any_within(pool, x, tol + slack):
+                return "tolerance" + lab
+            continue
+        if _any_within(pool, x, slack):
+            return "exact" + lab
+        if _any_within(pool, x, 0.5 * u * (1 + 1e-9) + slack):
+            return "rounding" + lab
+        if num.truncated:                  # `3.490537...`: an explicit ellipsis states truncation toward zero
+            c = x + math.copysign(0.5 * u, x) if x else x
+            if _any_within(pool, c, 0.5 * u * (1 - 1e-9)):
+                return "truncation" + lab
+        if LEGACY_TOLERANCE and _any_within(pool, x, max(5e-6, 1e-4 * abs(x)) + slack):
+            return "tolerance" + lab
+    return None
 
 
-def _synthesis_status(text):
-    """Round 6 (issue 5). Returns (is_synthesis, reason, barred_warning):
-      * is_synthesis=False, barred_warning=None  -- no escape declared at all (the common case).
-      * is_synthesis=False, barred_warning=<str> -- the flag was declared but does not apply (no closed
-        frontmatter / no reason / a verdict-bearing title); falls back to the strict per-line + LOW_COVERAGE
-        rules, with the reason surfaced as a non-blocking WARNING.
-      * is_synthesis=True,  reason=<str>          -- the escape applies.
-    """
+def _chance_rate(basis, pool, tol=None):
+    """Rule B. Fraction of CHANCE_DECOYS decoys at the doc's own claim shapes that rule A would accept."""
+    if not basis or not pool:
+        return None if not basis else 0.0
+    rng = random.Random(CHANCE_SEED)
+    hits = 0
+    for i in range(CHANCE_DECOYS):
+        num = basis[i % len(basis)]
+        k = rng.randint(1, CHANCE_WINDOW) * (1 if rng.random() < 0.5 else -1)
+        # A decoy steps by the stated unit, but never by less than 12 significant digits: past that a float cannot
+        # represent the step at all (a pasted 17-decimal float's "unit" is below its own ULP).
+        step = max(num.unit, abs(num.value) * 1e-12)
+        decoy = num._replace(value=num.value + k * step)
+        if _match(decoy, pool, tol):
+            hits += 1
+    return hits / float(CHANCE_DECOYS)
+
+
+# =================================================================================================================
+# C. normalization of one segment, and number extraction
+# =================================================================================================================
+def _invisible(c):
+    return unicodedata.category(c) in _INVISIBLE_CATS or c in _FILLERS or (
+        unicodedata.category(c) == "Cc" and c not in "\t\n")
+
+
+def _identifier_spans(seg):
+    spans = []
+    for rx in _ID_RES:
+        spans.extend((m.start(), m.end()) for m in rx.finditer(seg))
+    spans.sort()
+    merged = []
+    for a, b in spans:
+        if merged and a <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], b))
+        else:
+            merged.append((a, b))
+    return merged
+
+
+def _normalize(seg):
+    """-> (chars, origins, kinds, n_identifiers). kinds: 'c' ordinary, 'l' literal (escaped / entity-decoded),
+    's' soft separator (markup that renders as NOTHING: a tag, an invisible character, a blanked comment),
+    'e' emphasis separator (`*`, `~`, a backtick, a non-intraword `_`). A separator is a SPACE in the scan text, so
+    it can never glue the characters on either side of it (round 7, issue 3)."""
+    ch, org, kd = [], [], []
+
+    def emit(c, o, k):
+        ch.append(c)
+        org.append(o)
+        kd.append(k)
+
+    def emit_char(c, o, literal):
+        if _invisible(c):
+            emit(" ", o, "s")
+            return
+        if unicodedata.category(c) == "No":           # superscripts/fractions: never glue them to a number
+            emit(" ", o, "c")
+            return
+        for c2 in unicodedata.normalize("NFKC", c):
+            cat = unicodedata.category(c2)
+            if _invisible(c2):
+                emit(" ", o, "s")
+            elif c2 in _DASHES or cat == "Pd":
+                emit("-", o, "l" if literal else "c")
+            elif cat == "Nd":
+                emit(str(unicodedata.decimal(c2)), o, "c")
+            elif c2 in _DOTLIKE:
+                emit(c2, o, "d")
+            elif cat == "Zs" or c2 in _BLANKS:
+                emit(" ", o, "c")
+            elif not literal and c2 in "*~`":
+                emit(" ", o, "e")
+            elif not literal and c2 == "_":
+                emit("_", o, "u")
+            else:
+                emit(c2, o, "l" if literal else "c")
+
+    ids = _identifier_spans(seg)
+    n_ids = sum(1 for a, b in ids if _ID_NUMBERISH_RE.search(seg, a, b))
+    idi, i, n = 0, 0, len(seg)
+    while i < n:
+        while idi < len(ids) and ids[idi][1] <= i:
+            idi += 1
+        if idi < len(ids) and ids[idi][0] <= i:
+            for j in range(i, ids[idi][1]):
+                emit(" ", j, "c")
+            i = ids[idi][1]
+            continue
+        c = seg[i]
+        if c == "\\" and i + 1 < n and seg[i + 1] in _ASCII_PUNCT:
+            emit_char(seg[i + 1], i + 1, True)
+            i += 2
+            continue
+        if c == "&":
+            m = _ENTITY_RE.match(seg, i)
+            if m:
+                dec = html.unescape(m.group(0))
+                if dec != m.group(0):
+                    for c2 in dec:
+                        emit_char(c2, i, True)
+                    i = m.end()
+                    continue
+        if c == "<":
+            m = _TAG_RE.match(seg, i)
+            if m:
+                emit(" ", i, "s")
+                i = m.end()
+                continue
+        emit_char(c, i, False)
+        i += 1
+
+    for p, k in enumerate(kd):                         # resolve context-dependent characters
+        prev = ch[p - 1] if p > 0 else ""
+        nxt = ch[p + 1] if p + 1 < len(ch) else ""
+        if k == "u":                                   # an intraword `_` is literal (CommonMark), else emphasis
+            if prev.isalnum() and nxt.isalnum():
+                kd[p] = "c"
+            else:
+                ch[p], kd[p] = " ", "e"
+        elif k == "d":                                 # a dot-like character between digits is a decimal point
+            ch[p], kd[p] = ("." if prev.isdigit() and nxt.isdigit() else " "), "c"
+    return ch, org, kd, n_ids
+
+
+def _is_sep(k):
+    return k == "s" or k == "e"
+
+
+def _extract(ch, org, kd):
+    s = "".join(ch)
+    out = []
+    for m in _NUM_CORE_RE.finditer(s):
+        a, b = m.start(), m.end()
+        exp = int(m.group(3)) if m.group(3) else 0
+        d = len(m.group(2)) - exp
+        mag = float(s[a:b])
+        j = a - 1
+        while j >= 0 and _is_sep(kd[j]):
+            j -= 1
+        neg, sa = False, a
+        if j >= 0 and ch[j] == "-":
+            k = j - 1
+            while k >= 0 and _is_sep(kd[k]):
+                k -= 1
+            prev = ch[k] if k >= 0 else " "            # start of segment: nothing before the dash, so a sign
+            if not (prev.isdigit() or prev in _RANGE_LEFT):
+                neg, sa = True, j
+        alts = ()
+        if b < len(s) and kd[b] == "c" and s[b] in _MAGNITUDE and (b + 1 >= len(s) or not s[b + 1].isalnum()):
+            alts = ((_MAGNITUDE[s[b]], s[b]),)
+        text = ("-" if neg else "") + s[a:b] + (alts[0][1] if alts else "")
+        truncated = s[b:b + 3] == "..."                # U+2026 is NFKC-folded to "..." already
+        out.append(Num(-mag if neg else mag, d, 10.0 ** (-d), alts, text, org[sa], org[b - 1] + 1, False,
+                       truncated))
+    return out
+
+
+def _glued(ch, org, kd):
+    """The reading a reader SEES where a separator sits inside a decimal literal: a soft separator (renders as
+    nothing) between [0-9.] and [0-9.] is dropped; an emphasis separator only when its left run already holds a
+    '.' or its right neighbour is '.' (so `4*0.03972` -- a multiplication -- is NOT glued into 40.03972)."""
+    n = len(ch)
+    keep = [True] * n
+    for p in range(n):
+        if not _is_sep(kd[p]):
+            continue
+        lft = p - 1
+        while lft >= 0 and _is_sep(kd[lft]):
+            lft -= 1
+        rgt = p + 1
+        while rgt < n and _is_sep(kd[rgt]):
+            rgt += 1
+        if lft < 0 or rgt >= n:
+            continue
+        L, R = ch[lft], ch[rgt]
+        if not ((L.isdigit() or L == ".") and (R.isdigit() or R == ".")):
+            continue
+        if kd[p] == "e":
+            q, run = lft, []
+            while q >= 0 and (ch[q].isdigit() or ch[q] == "." or _is_sep(kd[q])):
+                if not _is_sep(kd[q]):
+                    run.append(ch[q])
+                q -= 1
+            if "." not in run and R != ".":
+                continue
+        keep[p] = False
+    if all(keep):
+        return None
+    return ([c for c, k in zip(ch, keep) if k], [o for o, k in zip(org, keep) if k],
+            [x for x, k in zip(kd, keep) if k])
+
+
+def _numbers_in(seg):
+    """Every measurement-shaped number in one segment of text -> (list[Num], n_identifiers_skipped)."""
+    ch, org, kd, n_ids = _normalize(seg)
+    nums = _extract(ch, org, kd)
+    g = _glued(ch, org, kd)
+    if g is not None:
+        seen = {(x.start, x.end) for x in nums}
+        for x in _extract(*g):
+            if (x.start, x.end) not in seen and not any(y.start <= x.start < y.end for y in nums
+                                                          if abs(y.value - x.value) < 1e-15):
+                nums.append(x._replace(split=True))
+    nums.sort(key=lambda x: x.start)
+    return nums, n_ids
+
+
+# =================================================================================================================
+# F. hidden carriers, D. segmentation, E. synthesis
+# =================================================================================================================
+def _hidden_spans(text):
+    """(start, end, kind) for every region a READER cannot see. Over-inclusive on purpose: a region wrongly judged
+    hidden only loses its citations and its coverage credit (fails closed); its numbers are still checked."""
+    spans = []
+    i = 0
+    while True:
+        a = text.find("<!--", i)
+        if a < 0:
+            break
+        b = text.find("-->", a + 4)
+        if b < 0:
+            spans.append((a, len(text), "comment-unclosed"))
+            break
+        kind = "marker" if _MARKER_INNER_RE.match(text, a + 4) else "comment"
+        spans.append((a, b + 3, kind))
+        i = b + 3
+    spans.extend((m.start(), m.end(), "linkref") for m in _LINKREF_RE.finditer(text))
+    for m in _HIDDEN_OPEN_RE.finditer(text):
+        tag = (m.group(1) or m.group(2)).lower()
+        close = re.compile(r"</\s*%s\s*>" % re.escape(tag), re.I).search(text, m.end())
+        spans.append((m.start(), close.end() if close else len(text), "hidden-element"))
+    spans.sort()
+    return spans
+
+
+def _blank(text, spans, fill, keep_inner=False):
+    """Replace the characters of each span with `fill`, keeping newlines so line numbers never move."""
+    buf = list(text)
+    for a, b, kind in spans:
+        if keep_inner and kind in ("comment", "comment-unclosed"):
+            rng = list(range(a, min(a + 4, b)))
+            if kind == "comment":
+                rng += list(range(max(a + 4, b - 3), b))
+        elif keep_inner and kind != "marker":
+            continue
+        else:
+            rng = range(a, b)
+        for j in rng:
+            if buf[j] != "\n":
+                buf[j] = fill
+    return "".join(buf)
+
+
+def _merge(spans):
+    """Union of (start, end, kind) spans as sorted, disjoint (start, end) intervals."""
+    out = []
+    for a, b, _k in sorted(spans):
+        if out and a <= out[-1][1]:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+
+
+def _in_spans(merged, pos):
+    i = bisect.bisect_right(merged, (pos, float("inf"))) - 1
+    return i >= 0 and merged[i][0] <= pos < merged[i][1]
+
+
+def _table_rows(vis_lines):
+    rows = set()
+    stripped = [_CONTAINER_RE.sub("", ln, count=1) for ln in vis_lines]
+    n = len(stripped)
+    for i, s in enumerate(stripped):
+        if s.startswith("|"):
+            rows.add(i)
+        if "|" in s and _DELIM_ROW_RE.match(s):
+            if i > 0 and stripped[i - 1].strip():
+                rows.add(i - 1)
+            j = i
+            while j < n and stripped[j].strip():
+                rows.add(j)
+                j += 1
+    return rows
+
+
+def _segments(vis_line, table_row):
+    cuts = [(m.start(), m.end()) for m in _SEG_TAG_RE.finditer(vis_line)]
+    if table_row:
+        cuts += [(m.start(), m.end()) for m in re.finditer(r"\|", vis_line)]
+    cuts.sort()
+    segs, pos = [], 0
+    for a, b in cuts:
+        if a > pos:
+            segs.append((pos, a))
+        pos = max(pos, b)
+    segs.append((pos, len(vis_line)))
+    return [(a, b) for a, b in segs if b >= a]
+
+
+def _strip_invisible(s):
+    return "".join(" " if c in _DASHES else c for c in unicodedata.normalize(
+        "NFKC", "".join(c for c in (s or "") if not _invisible(c))))
+
+
+def _fm_value(fm, key):
+    m = re.search(r"^%s:[ \t]*(.*?)[ \t]*$" % re.escape(key), fm, re.M)
+    if not m:
+        return ""
+    v = m.group(1)
+    if v in ("|", ">", "|-", ">-", "|+", ">+"):
+        rest = fm[m.end():].split("\n")[1:]
+        block = []
+        for ln in rest:
+            if ln.startswith((" ", "\t")) or not ln.strip():
+                block.append(ln.strip())
+            else:
+                break
+        v = " ".join(x for x in block if x)
+    v = v.strip().strip("\"'").strip()
+    return "" if v in ("~", "null", "Null", "NULL") else v
+
+
+def _headings(text, fm_m):
+    """Every heading OUTSIDE code fences and the frontmatter, in order: (level, kind, text). ATX headings of any
+    level, setext H1 (`===`) and H2 (`---` under a paragraph line)."""
+    lines = text.split("\n")
+    start = fm_m.group(0).count("\n") if fm_m else 0
+    out, fence, prev = [], None, None
+    for ln in lines[start:]:
+        fm = _FENCE_RE.match(ln)
+        if fence:
+            if fm and fm.group(1)[0] == fence[0] and len(fm.group(1)) >= len(fence) and \
+                    not ln.strip()[len(fm.group(1)):].strip():
+                fence = None
+            prev = None
+            continue
+        if fm:
+            fence, prev = fm.group(1), None
+            continue
+        m = _ATX_H1_RE.match(ln)
+        if m:
+            out.append((1, "H1", m.group(1) or ""))
+            prev = None
+            continue
+        m = _ATX_ANY_RE.match(ln)
+        if m:
+            out.append((len(m.group(1)), "heading", m.group(2) or ""))
+            prev = None
+            continue
+        if prev is not None and _SETEXT_H1_RE.match(ln):
+            out.append((1, "setext H1", prev))
+            prev = None
+            continue
+        if prev is not None and _SETEXT_H2_RE.match(ln):
+            out.append((2, "setext heading", prev))
+            prev = None
+            continue
+        prev = ln.strip() if ln.strip() and not ln.startswith(("    ", "\t")) and not ln.lstrip().startswith(
+            (">", "#", "|", "- ", "* ", "+ ")) else None
+    return out
+
+
+def _doc_title(text, fm_m, doc_path):
+    """E. The doc's title: frontmatter `title:`, else the first ATX/setext H1 outside code fences and frontmatter,
+    else the filename."""
+    if fm_m:
+        t = _fm_value(fm_m.group(1), "title")
+        if t:
+            return "frontmatter title", t
+    for level, kind, t in _headings(text, fm_m):
+        if level == 1:
+            return kind, t
+    return "filename", os.path.splitext(os.path.basename(doc_path))[0]
+
+
+def _verdict_word(s):
+    """The first verdict word in `s` (case-insensitive, invisible characters stripped), skipping a word that NAMES a
+    gate rather than stating a verdict ("a GO gate", "PASS criteria", "the GO/NO-GO bar")."""
+    t = _strip_invisible(s).replace("_", " ")
+    for m in _VERDICT_WORD_RE.finditer(t):
+        if _VERDICT_NOUN_RE.match(t, m.end()):
+            continue
+        return m.group(1)
+    return None
+
+
+def _first_clause(s):
+    return re.split(r"\s(?:--|—|–)\s|[;(.:]\s", s or "", maxsplit=1)[0]
+
+
+def _synthesis_status(text, doc_path="document.md"):
+    """Returns (is_synthesis, reason, barred_warning). See docstring part E."""
     m = _FRONTMATTER_RE.match(text)
     if not m or not SYNTH_RE.search(m.group(1)):
         return False, None, None
     fm = m.group(1)
-    reason_m = _SYNTH_REASON_RE.search(fm)
-    reason = reason_m.group(1).strip() if reason_m else ""
+    reason = _fm_value(fm, "claim_check_reason")
     if not reason:
         return False, None, (
             "declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter "
-            "block -- falling back to the normal per-line rule (the escape needs a STATED reason)")
-    title_m = _TITLE_RE.search(text)
-    if title_m:
-        vm = VERDICT_RE.search(title_m.group(1))
-        if vm:
+            "block -- falling back to the normal rules (the escape needs a STATED reason)")
+    src, title = _doc_title(text, m, doc_path)
+    probes = [("title (%s)" % src, title)]
+    if src != "filename":
+        probes.append(("filename", os.path.splitext(os.path.basename(doc_path))[0]))
+    probes.append(("frontmatter verdict: (first clause)", _first_clause(_fm_value(fm, "verdict"))))
+    # Every H1 (a leading `# Notes` must not hide a later title), and any heading that announces a result.
+    probes.extend(("%s %r" % (kind, t[:60]), t) for lvl, kind, t in _headings(text, m)
+                  if lvl == 1 or _VERDICT_HEADING_RE.match(t))
+    for where, s in probes:
+        w = _verdict_word(s)
+        if w:
             return False, None, (
-                "declares `claim_check: synthesis` but its title states a verdict (%s) -- a verdict-bearing "
-                "document is BARRED from the synthesis escape and every number is checked, synthesis or not"
-                % vm.group(0))
+                "declares `claim_check: synthesis` but its %s states a verdict (%s) -- a verdict-bearing "
+                "document is BARRED from the synthesis escape and every number is checked" % (where, w))
     return True, reason, None
 
 
 def _line_warnings(lines):
-    """Lines using a pre-round-5 scope idiom that is now INERT -- for a non-blocking author-facing WARNING.
-    Never affects the pass/fail verdict; only what gets printed."""
+    """Pre-round-5 scope idioms that are INERT -- non-blocking author-facing WARNINGs, never a verdict change."""
     warnings = []
     n = len(lines)
     for i, ln in enumerate(lines):
         if _STANDALONE_MARKER_RE.match(ln):
             warnings.append((i + 1, "standalone marker",
-                              "a lone <!--derived--> no longer opens a scope -- it exempts only THIS line "
-                              "(which holds no numbers of its own). Put the marker on each derived line."))
+                             "a lone <!--derived--> exempts nothing (it opens no scope). Put the marker in the "
+                             "SAME table cell or <br>-segment as each derived number."))
         if DERIVED_CLOSE in ln:
             warnings.append((i + 1, "close marker",
-                              "<!--/derived--> no longer closes a range -- there are no ranges. Remove it, or "
-                              "put <!--derived--> on each derived line instead."))
+                             "<!--/derived--> closes nothing -- there are no ranges. Remove it, and put "
+                             "<!--derived--> in the same cell/segment as each derived number."))
         if _ATX_DERIVED_RE.match(ln):
             warnings.append((i + 1, "'Derived' heading",
-                              "a '## Derived'-style heading no longer opens a section. Put the marker on each "
-                              "derived line under it."))
+                             "a '## Derived'-style heading opens no section. Put the marker in the same cell/"
+                             "segment as each derived number under it."))
         elif i + 1 < n and _SETEXT_TITLE_RE.match(ln) and _SETEXT_UNDERLINE_RE.match(lines[i + 1]):
             warnings.append((i + 1, "'Derived' heading (setext)",
-                              "a setext 'Derived' heading no longer opens a section. Put the marker on each "
-                              "derived line under it."))
+                             "a setext 'Derived' heading opens no section. Put the marker in the same cell/"
+                             "segment as each derived number under it."))
     return warnings
 
 
+# =================================================================================================================
+# the scan
+# =================================================================================================================
 def _empty_scan_result(unreadable):
-    return dict(cited=[], nums=set(), loaded=[], missing=[], capped=[], checked=0, checked_distinct=0,
-                suppressed={"inline": 0, "synthesis": 0}, total_numeric=0, unsupported=[],
+    return dict(cited=[], nums=[], loaded=[], missing=[], capped=[], checked=0, checked_distinct=0,
+                checked_visible_distinct=0, suppressed={"inline": 0, "synthesis": 0}, total_numeric=0,
+                unsupported=[], records=[], matched={}, identifiers=0, chance=None, too_broad=False,
                 synthesis=False, low_coverage=False, marked_lines=[], warnings=[], unreadable=unreadable)
 
 
 def _scan(doc_path, tol=None):
-    """Pure computation, no printing -- shared by the CLI (`check`) and `tools/finding_lint.py`, so both see the
-    exact same structured verdict instead of finding_lint re-parsing this module's printed stdout.
-
-    tol=None => RELATIVE tolerance. An absolute 5e-4 let a fabricated 0.9999 match a stored 1.0, so the
-    checker's own negative control failed on first run: with ~1000 artifact values, near-misses are common and an
-    absolute window is far too loose. Relative tolerance scales with the claim. (Unchanged from main.)
-    """
-    # ROUND 6 (issue 1): STRICT UTF-8. Round 5 read with errors="replace", which silently decodes invalid bytes
-    # instead of raising -- main (and every earlier revision) crashed on the same input, which blocks a commit;
-    # round 5 uniquely did not. A doc that fails to decode now returns a blocking UNREADABLE result instead of
-    # either a crash or a silent, wrong scan.
+    """Pure computation, no printing -- shared by the CLI (`check`), `tools/finding_lint.py` and the retro script.
+    `tol=None` is rule A; a number passes `tol` as a fixed absolute tolerance instead."""
     try:
         raw = open(doc_path, "rb").read()
     except OSError as e:
@@ -440,141 +853,210 @@ def _scan(doc_path, tol=None):
     except UnicodeDecodeError as e:
         return _empty_scan_result("%s is not valid UTF-8 (%s at byte offset %d) -- fix the file's encoding "
                                   "before it can be checked" % (doc_path, e.reason, e.start))
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    text = text.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
     lines = text.split("\n")
+    synthesis, _reason, synth_barred = _synthesis_status(text, doc_path)
 
-    # ROUND 6 (issue 5): synthesis now requires a properly closed frontmatter block + a stated reason, and is
-    # barred outright from a verdict-bearing title. See `_synthesis_status`.
-    synthesis, _synth_reason, synth_barred = _synthesis_status(text)
+    hidden = _hidden_spans(text)
+    hidden_merged = _merge(hidden)
+    vis = _blank(text, hidden, " ")                       # what a reader sees (citations, table structure)
+    scan = _blank(text, hidden, _ZW, keep_inner=True)     # what is scanned for numbers
+    cited = sorted(set(PATH_RE.findall(vis)))
+    pool, _verdicts, loaded, missing, capped = load_artifacts(cited)
 
-    # ROUND 6 (issue 9): citations inside HTML comments are invisible -- strip comments before PATH_RE runs.
-    cited = sorted(set(PATH_RE.findall(_strip_comments(text))))
-    nums, verdicts, loaded, missing, capped = load_artifacts(cited)
+    line_starts, off = [], 0
+    for ln in lines:
+        line_starts.append(off)
+        off += len(ln) + 1
+    vis_lines = vis.split("\n")
+    scan_lines = scan.split("\n")
+    table_rows = _table_rows(vis_lines)
+    markers_by_line = {}
+    for a, _b, kind in hidden:
+        if kind == "marker":
+            li = bisect.bisect_right(line_starts, a) - 1
+            markers_by_line.setdefault(li, []).append(a - line_starts[li])
 
-    unsupported, checked = [], 0
-    checked_values = set()                 # ROUND 6 (issue 7): DISTINCT values, for the coverage fraction
+    records, unsupported, basis, warnings = [], [], [], []
     suppressed = {"inline": 0, "synthesis": 0}
-    marked_lines = []                      # 1-indexed lines carrying a literal <!--derived--> that exempted them
-    marked_lines_seen = set()
-
-    for i, ln in enumerate(lines, 1):
-        for seg in _segments(ln):
-            has_marker = DERIVED_MARK in seg               # checked on the RAW segment -- the marker IS a comment
-            scan_text = _normalize_for_numbers(_strip_comments(seg))
-            seg_matches = list(NUM_RE.finditer(scan_text))
-            if not seg_matches:
+    marked_lines, n_ids = [], 0
+    for li, vln in enumerate(vis_lines):
+        segs = _segments(vln, li in table_rows)
+        seg_markers = [0] * len(segs)
+        for col in markers_by_line.get(li, ()):
+            for si, (a, b) in enumerate(segs):
+                if a <= col < b or (si == len(segs) - 1 and col >= a):
+                    seg_markers[si] += 1
+                    break
+        sln = scan_lines[li]
+        for si, (a, b) in enumerate(segs):
+            nums, ids = _numbers_in(sln[a:b])
+            n_ids += ids
+            if seg_markers[si] and not nums and not ids and not _STANDALONE_MARKER_RE.match(lines[li]):
+                warnings.append((li + 1, "marker exempts nothing",
+                                 "this <!--derived--> sits in a %s that holds no number, so it exempts NOTHING -- "
+                                 "a marker exempts only numbers in its own table cell or <br>-segment (a marker "
+                                 "alone in a row's last cell does not reach the row's other cells)."
+                                 % ("table cell" if li in table_rows else "segment")))
+            if not nums:
                 continue
-            if has_marker:
-                if i not in marked_lines_seen:
-                    marked_lines_seen.add(i)
-                    marked_lines.append(i)
-                # ROUND 6 (issue 4): cap the free exemption; anything past it is CHECKED like an unmarked claim.
-                exempt, overflow = seg_matches[:MAX_EXEMPT_PER_LINE], seg_matches[MAX_EXEMPT_PER_LINE:]
-                suppressed["inline"] += len(exempt)
-                to_check = overflow
-                if to_check and synthesis:
-                    suppressed["synthesis"] += len(to_check)
-                    to_check = []
-            elif synthesis:
-                suppressed["synthesis"] += len(seg_matches)
-                to_check = []
-            else:
-                to_check = seg_matches
-            for m in to_check:
-                val = float(m.group(1))
-                checked += 1
-                checked_values.add(round(val, 6))
-                eps = tol if tol is not None else max(5e-6, 1e-4 * abs(val))
-                if not any(abs(val - a) <= eps for a in nums):
-                    unsupported.append((i, val, ln.strip()[:88]))
+            if seg_markers[si] and li + 1 not in marked_lines:
+                marked_lines.append(li + 1)
+            for idx, num in enumerate(nums):
+                pos = line_starts[li] + a + num.start
+                visible = not _in_spans(hidden_merged, pos)
+                rec = dict(line=li + 1, value=num.value, text=num.text, decimals=num.decimals, visible=visible,
+                           split=num.split, status=None, rule=None)
+                if seg_markers[si] and idx < MAX_EXEMPT_PER_LINE:
+                    rec["status"] = "exempt"
+                    suppressed["inline"] += 1
+                elif synthesis:
+                    rec["status"] = "synthesis"
+                    suppressed["synthesis"] += 1
+                else:
+                    rec["status"] = "checked"
+                    basis.append(num)
+                    rule = _match(num, pool, tol)
+                    rec["rule"] = rule
+                    if rule is None:
+                        rec["hint"] = _hint(num, pool, tol)
+                        unsupported.append((li + 1, num.value, lines[li].strip()[:88]))
+                records.append(rec)
 
     if synthesis and not cited:
         unsupported.append((0, 0.0, "synthesis doc cites NO artifact — the escape still requires citations"))
 
-    total_numeric = checked + suppressed["inline"] + suppressed["synthesis"]
-    # ROUND 6 (issue 7): the fraction counts DISTINCT checked values, not raw occurrences -- N copies of one
-    # real artifact value pasted in as padding used to count as N; now they count as at most 1.
+    checked_recs = [r for r in records if r["status"] == "checked"]
+    checked_distinct = {round(r["value"], 9) for r in checked_recs}
+    checked_vis_distinct = {round(r["value"], 9) for r in checked_recs if r["visible"]}
+    total_numeric = len(records)
     low_coverage = (not synthesis and total_numeric >= LOW_COVERAGE_MIN_TOTAL
-                    and (len(checked_values) / total_numeric) < MIN_CHECK_FRACTION)
+                    and (len(checked_vis_distinct) / float(total_numeric)) < MIN_CHECK_FRACTION)
+    matched = {}
+    for r in checked_recs:
+        k = (r["rule"] or "unmatched").split("+")[0]
+        matched[k] = matched.get(k, 0) + 1
+    chance = _chance_rate(basis, pool, tol) if basis else None
+    too_broad = chance is not None and chance > CHANCE_MAX
 
-    warnings = _line_warnings(lines)
+    warnings = _line_warnings(lines) + warnings
     if synth_barred:
         warnings.append((1, "synthesis escape not applied", synth_barred))
     for c in capped:
         warnings.append((0, "citation capped", c))
 
-    return dict(cited=cited, nums=nums, loaded=loaded, missing=missing, capped=capped, checked=checked,
-                checked_distinct=len(checked_values), suppressed=suppressed, total_numeric=total_numeric,
-                unsupported=unsupported, synthesis=synthesis, low_coverage=low_coverage,
-                marked_lines=marked_lines, warnings=warnings, unreadable=None)
+    return dict(cited=cited, nums=pool, loaded=loaded, missing=missing, capped=capped,
+                checked=len(checked_recs), checked_distinct=len(checked_distinct),
+                checked_visible_distinct=len(checked_vis_distinct), suppressed=suppressed,
+                total_numeric=total_numeric, unsupported=unsupported, records=records, matched=matched,
+                identifiers=n_ids, chance=chance, too_broad=too_broad, synthesis=synthesis,
+                low_coverage=low_coverage, marked_lines=marked_lines, warnings=warnings, unreadable=None)
+
+
+def _hint(num, pool, tol):
+    """Why an unsupported number is unsupported, when a cheap probe can tell: a sign flip, a split number, or a
+    near miss (the artifact holds a value one step away at the stated precision -- round it, do not truncate)."""
+    if num.split:
+        return "number split by markup (read as the glued value a reader sees)"
+    if num.value < 0 and _match(num._replace(value=-num.value), pool, tol):
+        return ("the artifact holds +%s: a dash directly before a number reads as a MINUS sign -- put a space "
+                "after a punctuation dash" % num.text.lstrip("-"))
+    if tol is None:
+        i = bisect.bisect_left(pool, num.value)
+        near = [pool[j] for j in (i - 1, i) if 0 <= j < len(pool)]
+        if near:
+            v = min(near, key=lambda a: abs(a - num.value))
+            if abs(v - num.value) <= 1.5 * num.unit:
+                return "near miss: the artifact holds %r, which rounds to %.*f at the stated precision" % (
+                    v, max(num.decimals, 0), v)
+    return ""
 
 
 def _verdict(r):
-    """The single FAIL/PASS rule, shared by `check()`, `selftest()` and the test suite, so none of them can
-    drift from what the others mean by "this document blocks the commit"."""
-    return "FAIL" if (r.get("unreadable") or r["missing"] or r["unsupported"] or r["low_coverage"]) else "PASS"
+    """The single FAIL/PASS rule, shared by `check()`, `selftest()` and the test suite."""
+    return "FAIL" if (r.get("unreadable") or r["missing"] or r["unsupported"] or r["low_coverage"]
+                      or r.get("too_broad")) else "PASS"
+
+
+TOO_BROAD_MSG = ("citations too broad to verify: cite the specific artifact file(s) -- a wrong number at this doc's "
+                 "precision would match the cited pool by chance more than %d%% of the time (or state each "
+                 "measurement at its full precision: one more decimal makes a match ~10x more specific)"
+                 % round(100 * CHANCE_MAX))
+
+FIX_HINT = ("fix the number, cite the artifact FILE that holds it (a path with a /), or mark a derived/quoted value "
+            "<!--derived--> in the SAME table cell or <br>-segment as the number (at most %d per cell; a marker "
+            "alone on a line or in a row's last cell exempts nothing)" % MAX_EXEMPT_PER_LINE)
 
 
 def check(doc_path, tol=None, verbose=True):
     r = _scan(doc_path, tol)
+    shown = os.path.relpath(doc_path, ROOT) if os.path.isabs(doc_path) else doc_path
     if r.get("unreadable"):
         if verbose:
-            shown = os.path.relpath(doc_path, ROOT) if os.path.isabs(doc_path) else doc_path
             print("claim_check: %s" % shown)
             print("  ⛔ UNREADABLE: %s" % r["unreadable"])
             print("  => ⛔ UNREADABLE — fix the file's encoding before it can be checked")
         return 1
-
-    checked, suppressed, total_numeric = r["checked"], r["suppressed"], r["total_numeric"]
-    unsupported, missing, loaded, cited = r["unsupported"], r["missing"], r["loaded"], r["cited"]
-    synthesis, low_coverage = r["synthesis"], r["low_coverage"]
-
+    fail = _verdict(r) == "FAIL"
     if verbose:
-        print("claim_check: %s" % os.path.relpath(doc_path, ROOT))
-        print("  cited artifacts : %d found, %d missing" % (len(loaded), len(missing)))
-        for mp in missing[:5]:
+        m = r["matched"]
+        print("claim_check: %s" % shown)
+        print("  cited artifacts : %d found, %d missing" % (len(r["loaded"]), len(r["missing"])))
+        for mp in r["missing"][:5]:
             print("      ⛔ MISSING  %s" % mp)
-        print("  measurements    : %d checked (%d distinct) against %d artifact values%s"
-              % (checked, r["checked_distinct"], len(r["nums"]),
-                 "   [synthesis: per-line rule suppressed, citations still required]" if synthesis else ""))
-        # ALWAYS printed (2026-07-31 rule, kept in round 5): how many numbers were exempted and on which lines --
-        # the incident this whole file exists to close reported "0 checked" with nothing to say WHY.
-        print("  exempted        : %d by inline <!--derived--> on line(s) %s, %d by synthesis, of %d numeric "
-              "claim(s) found"
-              % (suppressed["inline"], ", ".join(str(n) for n in r["marked_lines"]) if r["marked_lines"] else "-",
-                 suppressed["synthesis"], total_numeric))
+        print("  measurements    : %d checked (%d distinct, %d distinct outside hidden carriers) against %d "
+              "artifact values%s" % (r["checked"], r["checked_distinct"], r["checked_visible_distinct"],
+                                     len(r["nums"]), "   [synthesis: per-number rule suppressed, citations "
+                                                     "still required]" if r["synthesis"] else ""))
+        print("  matched         : %d exact, %d by rounding at the stated precision%s%s, %d unmatched"
+              % (m.get("exact", 0), m.get("rounding", 0),
+                 (", %d by stated truncation (...)" % m["truncation"]) if m.get("truncation") else "",
+                 (", %d by tolerance" % m["tolerance"]) if m.get("tolerance") else "", m.get("unmatched", 0)))
+        print("  exempted        : %d by <!--derived--> in the same cell/segment (line(s) %s), %d by synthesis, "
+              "of %d numeric claim(s); %d identifier(s) skipped (URL/DOI/arXiv/path)"
+              % (r["suppressed"]["inline"], ", ".join(str(n) for n in r["marked_lines"]) or "-",
+                 r["suppressed"]["synthesis"], r["total_numeric"], r["identifiers"]))
+        if r["chance"] is None:
+            print("  chance match    : n/a (no checked number to draw decoys from)")
+        else:
+            print("  chance match    : %.1f%% of %d decoys at this doc's own precisions would pass (limit %.0f%%)"
+                  % (100 * r["chance"], CHANCE_DECOYS, 100 * CHANCE_MAX))
+            if r["too_broad"]:
+                print("      ⛔ %s" % TOO_BROAD_MSG)
         for lineno, kind, msg in r["warnings"]:
-            print("      ⚠️  WARNING line %-4d %-24s no longer exempts anything — %s" % (lineno, kind, msg))
-        for lineno, val, ctx in unsupported[:12]:
-            print("      ⛔ line %-4d %-14g not in any cited artifact | %s" % (lineno, val, ctx))
-        if len(unsupported) > 12:
-            print("      ... and %d more" % (len(unsupported) - 12))
-        if low_coverage:
-            print("      ⛔ LOW COVERAGE: only %d/%d (%.0f%%) DISTINCT numeric value(s) were actually checked "
-                  "-- the rest were marked <!--derived--> on their own line/cell (or hidden in a comment). A "
-                  "doc this size should not be almost entirely derived; mark the specific derived numbers, not "
-                  "the whole document."
-                  % (r["checked_distinct"], total_numeric,
-                     100.0 * r["checked_distinct"] / total_numeric if total_numeric else 0.0))
-
-    fail = bool(missing) or bool(unsupported) or low_coverage
-    if verbose:
-        if not cited:
+            print("      ⚠️  WARNING line %-4d %-24s %s" % (lineno, kind, msg))
+        hints = {(x["line"], x["value"]): x.get("hint", "") for x in r["records"] if x["status"] == "checked"}
+        for lineno, val, ctx in r["unsupported"][:12]:
+            h = hints.get((lineno, val), "")
+            print("      ⛔ line %-4d %-14g not in any cited artifact | %s%s" % (lineno, val, ctx,
+                                                                              ("\n           -> " + h) if h else ""))
+        if len(r["unsupported"]) > 12:
+            print("      ... and %d more" % (len(r["unsupported"]) - 12))
+        if r["low_coverage"]:
+            print("      ⛔ LOW COVERAGE: only %d/%d (%.0f%%) DISTINCT numeric value(s) outside hidden carriers were "
+                  "actually checked -- the rest were marked <!--derived--> or hidden. A doc this size should not be "
+                  "almost entirely derived; mark the specific derived numbers, not the whole document."
+                  % (r["checked_visible_distinct"], r["total_numeric"],
+                     100.0 * r["checked_visible_distinct"] / r["total_numeric"] if r["total_numeric"] else 0.0))
+        if not r["cited"]:
             print("  ⚠️  NO ARTIFACT CITED — a findings doc with no artifact path cannot be checked at all.")
-        print("  => %s" % ("⛔ UNSUPPORTED CLAIMS (or missing artifacts) — fix, cite, or mark <!--derived--> "
-                           "on the SAME LINE as the number"
+        print("  => %s" % (("⛔ UNSUPPORTED CLAIMS, missing artifacts, or citations too broad — " + FIX_HINT)
                            if fail else "✔ every measurement traces to a cited artifact"))
-    return 0 if not fail else 1
+    return 1 if fail else 0
 
 
 # ---------------------------------------------------------------------------------------------------------------
 # SELFTEST REGISTRY. `tests/test_claim_check_line_only.py` re-runs every case here against the historical
-# revisions named in `wrong_on` (loaded straight from git, not retyped), so the "this used to pass, now it
-# fails" claim is re-derived every run rather than remembered. `%(art)s` is a cited artifact holding
-# accuracy=0.17 and baseline=0.1625; 0.1525 / 0.140 / 1.23456 / -0.1525 are WRONG numbers (not in the artifact);
-# 0.104615 / 0.207531 / 0.311079 are legitimately derived ones.
+# revisions in _HISTORY_SHAS (loaded straight from git, not retyped) and asserts the recorded `wrong_on` equals the
+# set that ACTUALLY gets it wrong, so "this used to pass, now it fails" is re-derived every run. `%(art)s` is the
+# cited artifact: {"accuracy": 0.17, "baseline": 0.1625} unless a case supplies its own `artifact`. 0.1525 / 0.140 /
+# 1.23456 / -0.1525 / -0.1625 are WRONG numbers; 0.104615 / 0.207531 / 0.311079 are legitimately derived ones.
+# Optional keys: `issue` (the round-6 review issue a case pins), `artifact`, `expect_reason` ('too_broad' |
+# 'low_coverage'), `expect_output` (a substring check()'s printed report must contain), `kind='gate'`.
 # ---------------------------------------------------------------------------------------------------------------
 _HDR = "# Some finding\n\nArtifact: `%(art)s`\n\n"
+_ALL_BEFORE_R6 = ("main", "r1", "r2", "r3", "r4", "r5")
+_ALL = _ALL_BEFORE_R6 + ("r6",)
 SELFTEST_CASES = [
     # --- main's original hole -------------------------------------------------------------------------------
     dict(name="incident_standalone_marker_after_heading", expect="FAIL", wrong_on=("main",),
@@ -587,8 +1069,7 @@ SELFTEST_CASES = [
          why="r1's hole: only `## ` ended an open scope, so a `### ` heading right after a marker did not",
          doc=_HDR + "<!--derived-->\n### A subheading, not a level-2 one\nThe accuracy was 0.1525 here.\n"),
     dict(name="r1_table_then_wrong_number_no_blank_line", expect="FAIL", wrong_on=("main", "r1"),
-         why="r1's hole: a table right after a marker absorbed a wrong number on the very next line, no blank "
-             "line needed",
+         why="r1's hole: a table right after a marker absorbed a wrong number on the very next line",
          doc=_HDR + "<!--derived-->\n| metric | value |\n|---|---|\n| ratio | 0.104615 |\n"
                     "The accuracy was 0.1525 here.\n"),
     dict(name="r1_close_marker_midline_trailing_checked", expect="FAIL", wrong_on=("main", "r1"),
@@ -596,254 +1077,489 @@ SELFTEST_CASES = [
          doc=_HDR + "<!--derived-->\nThe ratio is 0.104615 here. <!--/derived--> The real accuracy is 0.1525 here.\n"),
     # --- r2: fence/list handling -------------------------------------------------------------------------------
     dict(name="r2_hash_derived_comment_in_fence_read_as_heading", expect="FAIL", wrong_on=("r2",),
-         why="r2's hole: a `# derived` comment inside a FENCED code block was read as a markdown heading, "
-             "opening a Derived section around ordinary code",
+         why="r2's hole: a `# derived` comment inside a FENCED code block was read as a markdown heading",
          doc=_HDR + "```python\n# derived thresholds below\nvalue = 1.23456\n```\nThe accuracy was 0.1525 here.\n"),
     # --- r3: fence-open/closed boolean toggle --------------------------------------------------------------
     dict(name="r3_mismatched_fence_swallows_heading", expect="FAIL", wrong_on=("r3",),
-         why="r3's hole: a `~~~` fence is not closed by a ` ``` ` fence, so the toggle thought the doc was still "
-             "inside a fence and the `## Results` heading after the REAL close never ended the Derived section",
+         why="r3's hole: a `~~~` fence is not closed by a ` ``` ` fence, so the `## Results` heading after the REAL "
+             "close never ended the Derived section",
          doc=_HDR + "## Derived\nratio 0.104615\n~~~\n```\n~~~\n## Results\nThe accuracy was 0.1525 here.\n"),
-    # --- r4 (research/claimcheck-parser-scope @ dde18d55395a2b8e99ac64b61b4939d33a90d132) -- REVIEWED UNSOUND --
+    # --- r4 (REVIEWED UNSOUND) -----------------------------------------------------------------------------------
     dict(name="r4_unclosed_html_comment_hides_results_heading", expect="FAIL", wrong_on=("r4",),
-         why="r4's hole: an unclosed HTML comment right after a Derived section swallows the `## Results` "
-             "heading as inert block content, so the parser never emits a heading token to end the section",
+         why="r4's hole: an unclosed HTML comment swallows the `## Results` heading as inert block content",
          doc=_HDR + "## Derived\nratio 0.104615\n<!-- note, never closed\n## Results\n"
                     "The accuracy was 0.1525 here.\n"),
     dict(name="r4_later_inline_close_hijacks_earlier_standalone_across_heading", expect="FAIL", wrong_on=("r4",),
-         why="r4's hole: a close marker embedded in an unrelated LATER paragraph paired with the most recent "
-             "unpaired STANDALONE opener rather than anything nearby, stretching an early range across a real "
-             "heading and a wrong number in between",
+         why="r4's hole: a late close marker paired with the most recent unpaired STANDALONE opener, stretching a "
+             "range across a real heading and a wrong number in between",
          doc=_HDR + "<!--derived-->\nratio 0.104615\n\n## Results\nThe accuracy was 0.1525 here.\n\n"
                     "A later aside adds a note, value 0.207531 here. <!--/derived-->\n"),
     dict(name="r4_h1_derived_heading_oversized_section", expect="FAIL", wrong_on=("r2", "r3", "r4"),
          why="an h1 'Derived' heading has no same-or-higher heading after it in a short doc, so its section ran "
-             "to end of document (r2/r3's simpler heading match also treats it as opening a section here)",
+             "to end of document",
          doc=_HDR + "# Derived\nratio 0.104615\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="r4_setext_derived_heading_oversized_section", expect="FAIL", wrong_on=("r4",),
-         why="r4's hole: a setext ('Derived\\n=======') heading was never checked for at all, so nothing ever "
-             "closed the section it should have opened -- OR (this exact case) opened one no scope rule saw, "
-             "leaving a wrong number unchecked by coincidence of a totally different bug; either way the wrong "
-             "number here must be caught",
+         why="r4's hole: a setext ('Derived\\n=======') heading; the wrong number after it must be caught",
          doc=_HDR + "Derived\n=======\nratio 0.104615\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="r4_blockquoted_derived_heading_leaks_scope", expect="FAIL", wrong_on=("r4",),
-         why="r4's hole: a `## Derived` heading nested inside a blockquote was still recognised as a top-level "
-             "heading token (the flat token stream is not container-aware), so its section boundary leaked "
-             "straight out of the blockquote into ordinary top-level prose",
+         why="r4's hole: a `## Derived` heading inside a blockquote leaked its section out of the blockquote",
          doc=_HDR + "> ## Derived\n> ratio 0.104615\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="r4_list_item_table_leaks_scope_to_sibling_item", expect="FAIL", wrong_on=("main", "r1", "r4"),
-         why="r4's hole: a marker's list-scope legitimately covers a table NESTED in its first item, but the "
-             "same scope then leaks to a SIBLING item's wrong number too -- a table inside a list/blockquote "
-             "item should not license the whole list around it",
+         why="r4's hole: a table nested in a list item licensed the whole list, leaking to a sibling item",
          doc=_HDR + "<!--derived-->\n- item one:\n  | metric | value |\n  |---|---|\n  | ratio | 0.104615 |\n"
                     "- item two: accuracy 0.1525\n"),
-    # --- round 5's own contract: inline-only marking, both directions -----------------------------------------
+    # --- round 5's own contract --------------------------------------------------------------------------------
     dict(name="line_marked_derived_number_passes", expect="PASS", wrong_on=(),
-         why="the ONE thing the new rule allows: the marker on the SAME physical line as the number",
+         why="the ONE thing the rule allows: the marker in the SAME segment as the number",
          doc=_HDR + "The ratio is 0.104615 here. <!--derived-->\nThe baseline was 0.162500 here.\n"),
     dict(name="table_with_marker_in_same_cell_as_value_passes", expect="PASS", wrong_on=(),
-         why="round 6: a table whose derived rows carry the marker IN THE SAME CELL as the value passes -- the "
-             "cell-scoping fix (issue 4) narrows exemption to the marker's own cell, so the marker must now "
-             "share a cell with the number it exempts, not merely share the row",
+         why="round 6: a table whose derived rows carry the marker IN THE SAME CELL as the value passes",
          doc=_HDR + "| metric | value |\n|---|---|\n| ratio | 0.104615 <!--derived--> |\n"
                     "| gap | 0.207531 <!--derived--> |\n| accuracy | 0.170000 |\n"),
     dict(name="marker_on_wrong_line_does_not_reach_over", expect="FAIL", wrong_on=("main", "r1", "r2", "r3", "r4"),
-         why="round 5's own rule: a marker one line away from the number it was meant to cover does not reach "
-             "it -- every earlier round's whole point was letting a marker reach beyond its own line",
+         why="round 5's own rule: a marker one line away from the number does not reach it",
          doc=_HDR + "<!--derived-->\nThe accuracy was 0.1525 here.\n"),
     dict(name="standalone_marker_and_derived_heading_now_inert_but_do_not_crash",
          expect="FAIL", wrong_on=("main", "r1", "r2", "r3", "r4"),
-         why="a standalone marker AND a '## Derived' heading both present, neither doing anything under line-"
-             "only -- a wrong number right after them is still caught, though every one of the five earlier "
-             "revisions treated this doc's tail as an open Derived section with nothing left to close it",
+         why="a standalone marker AND a '## Derived' heading, neither doing anything -- the wrong number is caught",
          doc=_HDR + "## Derived\n<!--derived-->\nThe accuracy was 0.1525 here.\n"),
-    dict(name="low_coverage_overmarked", expect="FAIL", wrong_on=("main",),
-         why="a substantial doc that marks (almost) every claim derived fails on LOW COVERAGE regardless of "
-             "what exempted them",
+    dict(name="low_coverage_overmarked", expect="FAIL", wrong_on=("main",), expect_reason="low_coverage",
+         why="a substantial doc that marks (almost) every claim derived fails on LOW COVERAGE",
          doc=_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1)
-                                for i in range(LOW_COVERAGE_MIN_TOTAL + 5)) + "\n"),
-    # --- round 6, issue 4: bounded per-line/per-cell exemption --------------------------------------------------
-    dict(name="cap_exempts_only_first_8_numbers_on_a_marked_line", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 4): a marked line's free exemption is capped at MAX_EXEMPT_PER_LINE=8 -- a 9th "
-             "(wrong) number on the same marked line must still be checked, not swept in for free the way a "
-             "block-scope marker used to sweep in an entire section",
+                                for i in range(85)) + "\n"),
+    # --- round 6 (round 5's review) --------------------------------------------------------------------------
+    dict(name="cap_exempts_only_first_8_numbers_on_a_marked_line", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a marked line's free exemption is capped at 8 -- a 9th (wrong) number is checked",
          doc=_HDR + "The values are 0.100001, 0.100002, 0.100003, 0.100004, 0.100005, 0.100006, 0.100007, "
                     "0.100008, and 0.1525 here. <!--derived-->\n"),
-    dict(name="table_row_marker_exempts_only_its_own_cell", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 4), the exact incident repro: a <!--derived--> marker alone in a trailing 'delta' "
-             "cell used to exempt the WHOLE row -- a wrong MEASURED number in an earlier, unmarked cell of the "
-             "SAME physical line must now still be checked",
+    dict(name="table_row_marker_exempts_only_its_own_cell", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6, the incident repro: a marker alone in a trailing cell used to exempt the WHOLE row",
          doc=_HDR + "| 42 | 0.1525 | 0.104615 | <!--derived--> |\n"),
-    dict(name="br_split_line_marker_does_not_reach_the_other_side", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 4), repro 2: an HTML <br> renders as two lines to a reader even though it is one "
-             "PHYSICAL line to this scanner -- a marker before the <br> must not reach a wrong number after it",
+    dict(name="br_split_line_marker_does_not_reach_the_other_side", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a marker before a <br> must not reach a wrong number after it",
          doc=_HDR + "ratio 0.104615 <!--derived--><br>accuracy 0.1525\n"),
-    # --- round 6, issue 6: normalize before matching ------------------------------------------------------------
-    dict(name="underscore_emphasis_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): NUM_RE's old word-boundary lookaround treated `_0.1525_` as glued to its "
-             "emphasis markers and never matched it at all -- a wrong number wrapped in markdown emphasis was "
-             "completely invisible, not merely exempt",
+    dict(name="underscore_emphasis_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `_0.1525_` (emphasis) used to be invisible to the number regex",
          doc=_HDR + "The accuracy was _0.1525_ here.\n"),
-    dict(name="glued_unit_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): a unit glued directly onto the number (`0.1525ms`) used to fail the trailing "
-             "word-boundary check and vanish entirely",
+    dict(name="glued_unit_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a unit glued onto the number (`0.1525ms`) used to hide it",
          doc=_HDR + "The latency was 0.1525ms here.\n"),
-    dict(name="leading_dot_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): NUM_RE required at least one leading digit before the dot, so `.1525` (no "
-             "leading zero) was invisible",
+    dict(name="leading_dot_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `.1525` (no leading zero) used to be invisible",
          doc=_HDR + "The drop was .1525 here.\n"),
-    dict(name="markdown_escaped_dot_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): a markdown backslash-escaped decimal point (`0\\.1525`) broke the digit run "
-             "and the number was never matched",
+    dict(name="markdown_escaped_dot_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `0\\.1525` broke the digit run",
          doc=_HDR + "The accuracy was 0\\.1525 here.\n"),
-    dict(name="html_entity_dot_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): an HTML numeric entity in place of the decimal point (`0&#46;1525`) broke the "
-             "digit run the same way",
+    dict(name="html_entity_dot_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `0&#46;1525` broke the digit run",
          doc=_HDR + "The accuracy was 0&#46;1525 here.\n"),
-    dict(name="empty_comment_mid_number_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): an empty HTML comment spliced into the middle of the digits (`0.15<!---->25`) "
-             "split the number into two unmatched fragments",
+    dict(name="empty_comment_mid_number_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `0.15<!---->25` split the number into two unmatched fragments",
          doc=_HDR + "The accuracy was 0.15<!---->25 here.\n"),
-    dict(name="empty_span_mid_number_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): an empty <span></span> spliced into the digits does the same split",
+    dict(name="empty_span_mid_number_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: an empty <span></span> spliced into the digits",
          doc=_HDR + "The accuracy was 0.15<span></span>25 here.\n"),
-    dict(name="zero_width_space_mid_number_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): a zero-width space (U+200B, Unicode category Cf) inside the digits is "
-             "invisible to a reader but broke the digit run for NUM_RE",
+    dict(name="zero_width_space_mid_number_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a zero-width space (U+200B, Cf) inside the digits",
          doc=_HDR + "The accuracy was 0.15\u200b25 here.\n"),
-    dict(name="soft_hyphen_mid_number_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): a genuine Unicode soft hyphen (U+00AD, category Cf) inside the digits is the "
-             "same class of invisible break (distinct from issue 1's INVALID-UTF-8-byte case, which is about "
-             "decode failure, not a valid codepoint that happens to be invisible)",
+    dict(name="soft_hyphen_mid_number_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a soft hyphen (U+00AD, Cf) inside the digits",
          doc=_HDR + "The accuracy was 0.15\u00ad25 here.\n"),
-    dict(name="scientific_notation_no_longer_hides_a_wrong_number", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): scientific notation (`1.525e-1` = 0.1525) was never matched at all -- the "
-             "exponent suffix broke the old trailing word-boundary check",
+    dict(name="scientific_notation_no_longer_hides_a_wrong_number", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `1.525e-1` (= 0.1525) was never matched",
          doc=_HDR + "The accuracy was 1.525e-1 here.\n"),
-    dict(name="typographic_minus_sign_flip_no_longer_passes", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): U+2212 MINUS SIGN is not `-`, so the old regex silently dropped the sign and "
-             "matched `0.1625` (POSITIVE, == the cited baseline) out of a claimed `\u22120.1625` (NEGATIVE) -- a "
-             "real sign flip against the cited artifact used to read as a clean, wrongly-supported match",
+    dict(name="typographic_minus_sign_flip_no_longer_passes", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: U+2212 was dropped, so `\u22120.1625` matched the POSITIVE baseline",
          doc=_HDR + "The delta was \u22120.1625 here.\n"),
-    dict(name="en_dash_sign_flip_no_longer_passes", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 6): U+2013 EN DASH is the same class of dropped-sign bug as the typographic minus",
-         doc=_HDR + "The delta was \u20130.1625 here.\n"),
-    # --- round 6, issue 7: LOW_COVERAGE counts distinct values outside comments ----------------------------------
-    dict(name="comment_hidden_decoys_no_longer_pad_coverage", expect="FAIL", wrong_on=("main", "r1", "r2", "r3",
-                                                                                        "r4", "r5"),
-         why="round 6 (issue 7), the exact incident repro (scaled down): many marked-derived lines plus a "
-             "handful of the SAME real artifact value pasted inside HTML comments used to count each hidden "
-             "COPY toward the checked fraction, clearing the LOW_COVERAGE floor on padding alone; now a "
-             "comment-hidden number counts zero times and repeats of one value count once",
+    dict(name="en_dash_sign_flip_no_longer_passes", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: U+2013 EN DASH, the same dropped-sign bug",
+         doc=_HDR + "The delta was –0.1625 here.\n"),
+    dict(name="comment_hidden_decoys_no_longer_pad_coverage", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         expect_reason="low_coverage",
+         why="round 6: copies of a real value pasted inside HTML comments used to pad the checked fraction",
          doc=(_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1)
-                                 for i in range(LOW_COVERAGE_MIN_TOTAL))
-              + "\n\n" + "\n".join("<!-- padding citation of 0.170000 -->" for _ in range(6)) + "\n"),
-         ),
-    # issue 9's citation-inside-comment fix needs a CONTROLLED artifact (a real value the hidden citation would
-    # spuriously validate) rather than the shared %(art)s fixture every other case uses, so it is a dedicated
-    # pytest test (test_citation_inside_html_comment_is_ignored in tests/test_claim_check_line_only.py) instead
-    # of a SELFTEST_CASES entry here.
-    # --- round 6, issue 5: synthesis needs closed frontmatter + a reason + is barred on a verdict title ----------
-    dict(name="synthesis_without_closed_frontmatter_is_not_exempt", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 5): `claim_check: synthesis` appearing after an UNCLOSED frontmatter block (no "
-             "later bare `---` line) used to exempt the whole doc via the old `text.split(\"\\n---\", 1)` "
-             "first-occurrence split; it no longer does, so the wrong number below is checked normally",
+                                 for i in range(80))
+              + "\n\n" + "\n".join("<!-- padding citation of 0.170000 -->" for _ in range(6)) + "\n")),
+    dict(name="synthesis_without_closed_frontmatter_is_not_exempt", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: `claim_check: synthesis` after an UNCLOSED frontmatter block no longer exempts",
          doc="---\ntitle: not really frontmatter, never closed\n\n# A doc\n\nArtifact: `%(art)s`\n\n"
              "claim_check: synthesis\n\nThe accuracy was 0.1525 here.\n"),
-    dict(name="synthesis_without_reason_is_not_exempt", expect="FAIL",
-         wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 5): a properly closed frontmatter declaring the flag but NO `claim_check_reason:` "
-             "used to exempt everything on the flag alone; it now falls back to the strict rule",
-         doc="---\nclaim_check: synthesis\n---\n\n# A doc\n\nArtifact: `%(art)s`\n\n"
-             "The accuracy was 0.1525 here.\n"),
-    dict(name="synthesis_barred_by_verdict_title", expect="FAIL", wrong_on=("main", "r1", "r2", "r3", "r4", "r5"),
-         why="round 6 (issue 5): a verdict-bearing title (GO) is BARRED from the synthesis escape outright, "
-             "even with a closed frontmatter and a stated reason -- the exact incident shape this whole file "
-             "exists to close was a live verdict hiding wrong numbers behind a blanket exemption",
+    dict(name="synthesis_without_reason_is_not_exempt", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: the flag without a `claim_check_reason:` no longer exempts",
+         doc="---\nclaim_check: synthesis\n---\n\n# A doc\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_barred_by_verdict_title", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="round 6: a verdict-bearing title (GO) is BARRED from the synthesis escape",
          doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes several prior runs\n---\n\n"
              "# Lane A 6-seed GO\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
     dict(name="synthesis_with_closed_frontmatter_and_reason_passes", expect="PASS", wrong_on=(),
-         why="round 6 (issue 5): the escape still works for a genuine literature/synthesis doc: closed "
-             "frontmatter, a stated reason, a non-verdict title",
+         why="the escape still works for a genuine literature doc: closed frontmatter, a reason, a neutral title",
          doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes several prior runs, no new measurements\n"
              "---\n\n# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+
+    # =========================================================================================================
+    # ROUND 7 -- one or more cases per issue of round 6's review (research/coordination/claimcheck_r7_review_
+    # issues.json). Each `wrong_on` is re-derived from git by the test suite, r6 included.
+    # =========================================================================================================
+    # --- issue 1: a single broad citation matches wrong numbers by chance -------------------------------------
+    dict(name="broad_single_artifact_fails_as_too_broad", issue=1, expect="FAIL", expect_reason="too_broad",
+         wrong_on=_ALL,
+         why="issue 1: ONE cited file holding a dense series (10,000 values, one per 0.0001) accepts the wrong "
+             "0.1523 by pure chance; round 6's value cap was checked only BETWEEN files (and 10,000 is under it), "
+             "and a cap is the wrong tool anyway -- the per-doc chance-match rate (~100% here) fails the doc",
+         artifact={"series": [round(i / 10000.0, 4) for i in range(10000)]},
+         doc=_HDR + "The accuracy was 0.1523 here.\n"),
+    # --- issue 2: table rows in other GFM forms, and other line-break tags ---------------------------------------
+    dict(name="pipeless_table_row_marker_exempts_only_its_own_cell", issue=2, expect="FAIL", wrong_on=_ALL,
+         why="issue 2: a GFM table row WITHOUT leading pipes (under a `---|---` delimiter row) is still a row; "
+             "the trailing marker must not reach the wrong 0.1525 in an earlier cell",
+         doc=_HDR + "seed | acc | ratio | note\n---|---|---|---\n42 | 0.1525 | 0.104615 | <!--derived-->\n"),
+    dict(name="blockquoted_table_row_marker_exempts_only_its_own_cell", issue=2, expect="FAIL", wrong_on=_ALL,
+         why="issue 2: a table row inside a blockquote (`> | ... |`) is still a row",
+         doc=_HDR + "> | seed | acc | ratio | note |\n> |---|---|---|---|\n> | 42 | 0.1525 | 0.104615 | "
+                    "<!--derived--> |\n"),
+    dict(name="br_with_attributes_splits_the_line", issue=2, expect="FAIL", wrong_on=_ALL,
+         why="issue 2: `<br class=x>` is a line break too (round 6's regex matched only `<br>`/`<br/>`)",
+         doc=_HDR + "ratio 0.104615 <!--derived--><br class=x>accuracy 0.1525\n"),
+    dict(name="paragraph_close_open_splits_the_line", issue=2, expect="FAIL", wrong_on=_ALL,
+         why="issue 2: `</p><p>` renders as two paragraphs; a marker in one must not reach the other",
+         doc=_HDR + "ratio 0.104615 <!--derived--></p><p>accuracy 0.1525\n"),
+    # --- issue 3: round 6's normalization GLUED a number to the character before it ------------------------------
+    dict(name="star_glued_word_exposes_number", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: deleting `*` turned `gain*0.1525` into `gain0.1525`, an identifier -- a separator does not",
+         doc=_HDR + "The gain*0.1525 here.\n"),
+    dict(name="bold_word_glued_number_exposed", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `**acc**0.1525` renders as acc0.1525 with the number visible",
+         doc=_HDR + "Final **acc**0.1525 here.\n"),
+    dict(name="entity_letter_before_number_exposed", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `&Delta;0.1525` decodes to a NON-ASCII letter, which the old Unicode \\w lookbehind treated "
+             "as an identifier character",
+         doc=_HDR + "The shift &Delta;0.1525 here.\n"),
+    dict(name="escaped_star_before_number_exposed", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `x\\*0.1525` is a LITERAL asterisk; round 6 unescaped then deleted it, gluing x0.1525",
+         doc=_HDR + "The product x\\*0.1525 here.\n"),
+    dict(name="star_before_signed_number_keeps_sign", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `n*-0.1625` glued to `n-0.1625` read as +0.1625 (the positive baseline)",
+         doc=_HDR + "The term n*-0.1625 here.\n"),
+    dict(name="comment_opener_in_code_span_leaves_number_visible", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `` `<!--` 0.1525 `-->` `` is two code spans around VISIBLE text; round 6 stripped it as a "
+             "comment",
+         doc=_HDR + "Write `<!--` 0.1525 `-->` here.\n"),
+    dict(name="escaped_comment_opener_leaves_number_visible", issue=3, expect="FAIL", wrong_on=("r6",),
+         why="issue 3: `\\<!-- 0.1525 -->` is literal visible text, not a comment",
+         doc=_HDR + "Literal \\<!-- 0.1525 --> here.\n"),
+    dict(name="multiplication_star_is_not_glued", issue=3, expect="PASS", wrong_on=("r6",),
+         why="issue 3, the corpus instance: `4*0.170` is a multiplication; round 6 glued it into 40.170",
+         doc=_HDR + "The product 4*0.170 here.\n"),
+    # --- issue 4: dash variants, a letter before a signed number, invisible characters, tags, decimal points ------
+] + [
+    dict(name="minus_variant_u%04x_keeps_sign" % ord(c), issue=4, expect="FAIL", wrong_on=_ALL,
+         why="issue 4: U+%04X before the digits is a minus sign; round 6 read `%s0.1625` as +0.1625" % (ord(c), c),
+         doc=_HDR + "The delta was " + c + "0.1625 here.\n")
+    for c in ("\u2010", "\u2011", "\u2012", "—", "\ufe63", "\uff0d", "\u02d7", "\u2796")
+] + [
+    dict(name="letter_before_minus_sign_keeps_sign", issue=4, expect="FAIL", wrong_on=_ALL,
+         why="issue 4: `Δ\u22120.1625` -- a letter directly before a signed number; the sign must survive",
+         doc=_HDR + "The shift Δ\u22120.1625 here.\n"),
+] + [
+    dict(name="invisible_u%04x_mid_number" % ord(c), issue=4, expect="FAIL", wrong_on=_ALL,
+         why="issue 4: U+%04X is invisible but not category Cf; inside the digits it hid the number" % ord(c),
+         doc=_HDR + "The accuracy was 0.15" + c + "25 here.\n")
+    for c in ("\u034f", "\ufe0f", "\ufe00", "\u3164", "\u115f")
+] + [
+    dict(name="tag_%s_mid_number" % tag_name, issue=4, expect="FAIL", wrong_on=_ALL,
+         why="issue 4: a non-empty or non-span inline tag (%s) inside the digits hid the number" % tag,
+         doc=_HDR + "The accuracy was " + tag + " here.\n")
+    for tag_name, tag in (("b", "0.15<b>25</b>"), ("wbr", "0.15<wbr>25"), ("i", "0.15<i></i>25"),
+                          ("sup", "0.15<sup></sup>25"), ("a", "0.15<a></a>25"))
+] + [
+    dict(name="decimal_point_u%04x" % ord(c), issue=4, expect="FAIL", wrong_on=_ALL,
+         why="issue 4: U+%04X is read as a decimal point; `0%s1525` was invisible" % (ord(c), c),
+         doc=_HDR + "The accuracy was 0" + c + "1525 here.\n")
+    for c in ("\uff0e", "\u2024", "\ufe52", "\u00b7")
+] + [
+    # --- issue 5: the synthesis verdict bar was bypassable -----------------------------------------------------
+    dict(name="synthesis_frontmatter_title_beats_leading_notes_h1", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a leading `# Notes` H1 won over the real (frontmatter) title stating GO",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\ntitle: Lane A 6-seed GO\n---\n\n"
+             "# Notes\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_later_heading_verdict_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a leading `# Notes` H1 hid a later heading stating the verdict",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n# Notes\n\n"
+             "## Result: 6-seed GO\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_hash_line_in_code_fence_is_not_the_title", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a `# comment` inside a code fence was taken as the title",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n```bash\n# run it\n```\n\n"
+             "# Lane A 6-seed GO\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_yaml_comment_is_not_the_title", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a `# comment` inside the YAML frontmatter was taken as the title",
+         doc="---\n# yaml comment\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n"
+             "# Lane A 6-seed GO\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_setext_title_verdict_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a setext H1 title was never read",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\nLane A 6-seed GO\n"
+             "================\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_lowercase_verdict_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: the bar was case-sensitive (`no-go` passed)",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n# Lane A: no-go at 6 seeds"
+             "\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_nogo_without_hyphen_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: `NOGO` (no hyphen) matched neither GO nor NO-GO",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n# Lane A NOGO\n\n"
+             "Artifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_zero_width_verdict_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a zero-width space inside the verdict word (`G\\u200bO`) hid it",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n# Lane A G\u200bO\n\n"
+             "Artifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_empty_reason_does_not_capture_next_key", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: `\\s*` crossed the newline, so an EMPTY `claim_check_reason:` captured the next key",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason:\nlane: gap#5\n---\n\n# A literature summary\n\n"
+             "Artifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_filename_verdict_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         filename="survey-lane-a-6seed-GO.md",
+         why="issue 5: the filename (what retrieval surfaces) was never read",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\n---\n\n# A literature summary\n\n"
+             "Artifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    dict(name="synthesis_frontmatter_verdict_field_bars", issue=5, expect="FAIL", wrong_on=_ALL,
+         why="issue 5: a frontmatter `verdict:` field was never read",
+         doc="---\nclaim_check: synthesis\nclaim_check_reason: quotes prior runs\nverdict: GO\n---\n\n"
+             "# A literature summary\n\nArtifact: `%(art)s`\n\nThe accuracy was 0.1525 here.\n"),
+    # --- issue 6: the row-trailing marker is inert -- say so, precisely ---------------------------------------------
+    dict(name="row_trailing_marker_warns_that_it_exempts_nothing", issue=6, expect="FAIL", wrong_on=_ALL,
+         expect_output=("exempts NOTHING", "in the SAME table cell or <br>-segment as the number"),
+         why="issue 6: a marker alone in a row's last cell is inert; the author must be TOLD so (WARNING), and the "
+             "closing message must name the cell rule, not 'same line'",
+         doc=_HDR + "| seed | acc | ratio | note |\n|---|---|---|---|\n| 42 | 0.170 | 0.1525 | <!--derived--> |\n"),
+    # --- issue 7: a correct rounding is not a candidate error, and the report says which rule matched ----------
+    dict(name="correct_rounding_is_reported_as_rounding", issue=7, expect="PASS", wrong_on=_ALL,
+         expect_output="1 by rounding",
+         why="issue 7: round 6's retro called flagged numbers like this 'candidate real errors'; 1.235 is the "
+             "correct 3-decimal rounding of the cited 1.23456789",
+         artifact={"loss": 1.23456789},
+         doc=_HDR + "The loss was 1.235 here.\n"),
+    # --- issue 8: false positives on legitimate docs -------------------------------------------------------------
+    dict(name="three_decimal_rounding_of_four_decimal_value_passes", issue=8, expect="PASS", wrong_on=_ALL,
+         why="issue 8: relative tolerance 1e-4 rejected 0.477 for a cited 0.4774",
+         artifact={"acc": 0.4774}, doc=_HDR + "The accuracy was 0.477 here.\n"),
+    dict(name="arxiv_id_is_not_a_measurement", issue=8, expect="PASS", wrong_on=_ALL,
+         why="issue 8: an arXiv id (2403.12345) is an identifier, not a measurement",
+         doc=_HDR + "Method from arXiv:2403.12345; accuracy 0.170 here.\n"),
+    dict(name="doi_is_not_a_measurement", issue=8, expect="PASS", wrong_on=_ALL,
+         why="issue 8: a DOI prefix (10.1038) is an identifier",
+         doc=_HDR + "Ernst & Banks 2002, doi:10.1038/415429a; accuracy 0.170 here.\n"),
+    dict(name="url_number_is_not_a_measurement", issue=8, expect="PASS", wrong_on=_ALL,
+         why="issue 8: a number inside a URL is an identifier",
+         doc=_HDR + "See https://arxiv.org/abs/2403.12345 -- accuracy 0.170 here.\n"),
+    dict(name="magnitude_suffix_is_scaled_not_stripped", issue=8, expect="PASS", wrong_on=("r6",),
+         why="issue 8: `1.088B params` was read as 1.088",
+         artifact={"n_params": 1088000000}, doc=_HDR + "A 1.088B params model here.\n"),
+    dict(name="precision_aware_is_tighter_at_four_decimals", issue=8, expect="FAIL", wrong_on=_ALL,
+         why="issue 8: at |x| >= 0.5 a 4-decimal claim got a relative window WIDER than its stated precision -- "
+             "12.3456 passed for a cited 12.3449",
+         artifact={"x": 12.3449}, doc=_HDR + "The value was 12.3456 here.\n"),
+    # --- issue 9: hidden carriers, coverage --------------------------------------------------------------------
+    dict(name="multiline_comment_values_do_not_pad_coverage", issue=9, expect="FAIL", expect_reason="low_coverage",
+         wrong_on=_ALL,
+         why="issue 9: 11 DISTINCT real values inside a MULTI-LINE comment counted as checked (round 6 stripped "
+             "comments per line)",
+         artifact={"v": [round(0.3001 + i / 10000.0, 4) for i in range(11)]},
+         doc=(_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(80))
+              + "\n\n<!--\n" + "\n".join("%.4f" % (0.3001 + i / 10000.0) for i in range(11)) + "\n-->\n")),
+    dict(name="linkref_comment_values_do_not_pad_coverage", issue=9, expect="FAIL", expect_reason="low_coverage",
+         wrong_on=_ALL,
+         why="issue 9: `[//]: # (...)` is an invisible link-reference 'comment'",
+         artifact={"v": [round(0.3001 + i / 10000.0, 4) for i in range(11)]},
+         doc=(_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(80))
+              + "\n\n" + "\n".join("[//]: # (padding %.4f)" % (0.3001 + i / 10000.0) for i in range(11)) + "\n")),
+    dict(name="hidden_div_values_do_not_pad_coverage", issue=9, expect="FAIL", expect_reason="low_coverage",
+         wrong_on=_ALL,
+         why="issue 9: `<div hidden>` content is invisible",
+         artifact={"v": [round(0.3001 + i / 10000.0, 4) for i in range(11)]},
+         doc=(_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(80))
+              + "\n\n<div hidden>\n" + "\n".join("%.4f" % (0.3001 + i / 10000.0) for i in range(11))
+              + "\n</div>\n")),
+    dict(name="derived_note_comment_is_not_scanned", issue=9, expect="PASS", wrong_on=_ALL,
+         why="issue 9: a multi-line `<!--derived: ...-->` note is the marker plus the author's derivation -- its "
+             "own numbers are not claims (4 corpus docs were false-flagged by it)",
+         doc=_HDR + "The ratio is 0.104615 here. <!--derived: 0.104615 = 0.17 / 1.625, and\n"
+                    "the gap 0.207531 below is its double -->\nThe baseline was 0.162500 here.\n"),
+    dict(name="hidden_citation_in_hidden_div_is_ignored", issue=9, expect="FAIL", wrong_on=_ALL,
+         why="issue 9: a citation inside `<div hidden>` is one no reader can see",
+         artifact={"accuracy": 0.17, "baseline": 0.1625},
+         must_flag=(0.1625,),
+         doc="# Some finding\n\n<div hidden>see `%(art)s`</div>\n\nThe baseline was 0.162500 here.\n"),
+    dict(name="seventy_nine_all_marked_claims_fail_coverage", issue=9, expect="FAIL", expect_reason="low_coverage",
+         wrong_on=("main", "r5", "r6"),
+         why="issue 9: a doc with 79 numeric claims, EVERY one marked derived, passed (the floor was 80); round 7's "
+             "floor is 30, above the largest legitimately all-marked doc since 2026-09-01 (27 claims)",
+         doc=_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(79)) + "\n"),
+    # --- issue 10: pin round 6's fixes in THIS registry ---------------------------------------------------------
+    dict(name="visible_copies_of_one_value_count_once", issue=10, expect="FAIL", expect_reason="low_coverage",
+         wrong_on=_ALL_BEFORE_R6,
+         why="issue 10: round 6's DISTINCT counting (6 VISIBLE copies of 0.170000 count once) was pinned by nothing",
+         doc=(_HDR + "\n\n".join("The value was 0.%06d here. <!--derived-->" % (i * 7 + 1) for i in range(80))
+              + "\n\n" + "\n".join("The accuracy was 0.170000 here." for _ in range(6)) + "\n")),
+    dict(name="hidden_citation_in_html_comment_is_ignored", issue=10, expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="issue 10: round 6's comment-citation fix, moved from pytest into this registry with its own artifact",
+         artifact={"accuracy": 0.17, "baseline": 0.1625},
+         must_flag=(0.1625,),
+         doc="# Some finding\n\n<!-- see `%(art)s` for context -->\n\nThe baseline was 0.162500 here.\n"),
+    dict(name="hidden_citation_in_linkref_comment_is_ignored", issue=10, expect="FAIL", wrong_on=_ALL,
+         why="issue 10: the same hidden citation in a `[//]: # (...)` link-reference comment",
+         artifact={"accuracy": 0.17, "baseline": 0.1625},
+         must_flag=(0.1625,),
+         doc="# Some finding\n\n[//]: # (see `%(art)s`)\n\nThe baseline was 0.162500 here.\n"),
+    # --- issue 11: the CCT gate must report a broken instrument verbatim -----------------------------------------
+    dict(name="cct_gate_reports_broken_instrument_verbatim", issue=11, kind="gate", expect="PASS", wrong_on=_ALL,
+         why="issue 11: with claim_check's selftest broken, the gate must pass the problems through VERBATIM "
+             "labelled BROKEN INSTRUMENT, and must not fail its OWN selftest (which made the registry skip "
+             "check() and mislabel the regression a 'false positive')", doc=""),
+    # --- round 7 guards: behaviour kept on purpose -----------------------------------------------------------------
+    dict(name="hyphen_range_is_not_a_sign", expect="PASS", wrong_on=(),
+         why="a '-' after a digit is a range or a subtraction, not a sign",
+         doc=_HDR + "Between 0.1625-0.170 here.\n"),
+    dict(name="explicit_ellipsis_states_truncation", expect="PASS", wrong_on=(),
+         why="`3.490537...` states a TRUNCATION (the correct rounding of 3.4905378 is 3.490538); the ellipsis is "
+             "the author saying so, and rule A accepts it only then",
+         artifact={"x": 3.4905378}, doc=_HDR + "Seed 42 read `3.490537...` here.\n"),
+    dict(name="truncation_without_ellipsis_is_a_misstatement", issue=8, expect="FAIL", must_flag=(3.490537,),
+         wrong_on=_ALL,
+         why="the same truncation WITHOUT the ellipsis claims 3.4905365-3.4905375, which excludes the cited "
+             "3.4905378 -- the relative tolerance used to accept it",
+         artifact={"x": 3.4905378}, doc=_HDR + "Seed 42 read 3.490537 here.\n"),
+    dict(name="punctuation_dash_glued_to_number_reads_as_minus", expect="FAIL", wrong_on=_ALL,
+         expect_output="reads as a MINUS sign",
+         why="fail-closed choice: an em dash glued to a number is read as a minus; the report says why",
+         doc=_HDR + "The baseline—0.1625—was stable.\n"),
 ]
 
 _HISTORY_SHAS = {"main": "7e2edc08e", "r1": "d4959ecb0", "r2": "6abb28469", "r3": "662e167e8", "r4": "214e509bf",
-                  "r5": "4fda849d4"}
+                 "r5": "4fda849d4", "r6": "f2b7db2b4"}
+_DEFAULT_ARTIFACT = {"accuracy": 0.17, "baseline": 0.1625}
+WRONG_VALUES = {0.1525, 0.14, 1.23456, -0.1525, -0.1625, 12.3456}
 
 
 def _write_case(d, case):
     """Write one selftest case (and its artifact) under directory `d`, which must be inside ROOT: PATH_RE drops
     a leading '/', so a real finding's ROOT-relative citation is the only form that resolves the same way."""
-    art_abs = os.path.join(d, "art.json")
+    art_obj = case.get("artifact")
+    art_abs = os.path.join(d, ("art_%s.json" % case["name"]) if art_obj is not None else "art.json")
     if not os.path.exists(art_abs):
-        json.dump({"accuracy": 0.17, "baseline": 0.1625}, open(art_abs, "w"))
+        with open(art_abs, "w") as fh:
+            json.dump(art_obj if art_obj is not None else _DEFAULT_ARTIFACT, fh)
     art = os.path.relpath(art_abs, ROOT).replace(os.sep, "/")
-    path = os.path.join(d, case["name"] + ".md")
-    open(path, "w", encoding="utf-8").write(case["doc"] % {"art": art})
+    path = os.path.join(d, case.get("filename", case["name"] + ".md"))
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(case["doc"] % {"art": art})
     return path
 
 
-#  the r1-r4 reconstruction cases above use placeholder "derived" numbers (0.104615/0.207531/0.311079) that are
-# themselves UNMARKED on their own line in those historical docs -- under line-only they are correctly flagged
-# too (that IS the round-5 behaviour: a marker that does not sit on a number's own line no longer reaches it).
-# So the FAIL check below only requires the WRONG number to be among the flagged ones, not that flagged == wrong.
-WRONG_VALUES = {0.1525, 0.14, 1.23456, -0.1525, -0.1625}
+def _gate_case_ok(gate_mod):
+    """Issue 11, evaluated against ANY revision of tools/gates/claim_check_selftest.py: with a BROKEN claim_check
+    injected, the gate's check() must pass the problems through VERBATIM labelled BROKEN INSTRUMENT, and the
+    gate's own selftest() must NOT fail (a real regression is the instrument's problem, not the wrapper's)."""
+    import types
+    broken = types.SimpleNamespace(
+        selftest=lambda: ["SELFTEST BROKEN: case demo expected FAIL, got PASS (demo)"],
+        SELFTEST_CASES=[dict(name="demo", expect="FAIL", why="demo", doc="")])
+    healthy = types.SimpleNamespace(selftest=lambda: [], SELFTEST_CASES=[dict(name="demo", expect="FAIL",
+                                                                              why="demo", doc="")])
+    saved = getattr(gate_mod, "claim_check", None)
+    try:
+        gate_mod.claim_check = broken
+        probs = list(gate_mod.check(None))
+        st = list(gate_mod.selftest())
+        gate_mod.claim_check = healthy
+        clean = list(gate_mod.check(None))
+    except Exception as e:
+        return False, "gate raised %s: %s" % (type(e).__name__, e)
+    finally:
+        gate_mod.claim_check = saved
+    ok = (bool(probs) and all("BROKEN INSTRUMENT" in p for p in probs)
+          and any("SELFTEST BROKEN: case demo expected FAIL, got PASS (demo)" in p for p in probs)
+          and not st and not clean)
+    return ok, "check(broken)=%s selftest(broken)=%s check(healthy)=%s" % (probs, st, clean)
+
+
+def _expected_outputs(case):
+    eo = case.get("expect_output") or ()
+    return (eo,) if isinstance(eo, str) else tuple(eo)
+
+
+def _case_outcome(case, mod, casedir):
+    """(verdict, output) for one case against a claim_check MODULE of any revision -- only `check()` is assumed."""
+    p = _write_case(casedir, case)
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            rc = mod.check(p, verbose=True)
+        got = "FAIL" if rc else "PASS"
+    except Exception as e:
+        # A crash also blocks a commit (an uncaught exception exits non-zero) -- equivalent to a FAIL return.
+        got = "FAIL"
+        buf.write("CRASH %s: %s" % (type(e).__name__, e))
+    return got, buf.getvalue()
 
 
 def selftest():
     """Same contract as `tools/gates/*.selftest()`: a list of problems, empty means the check is trustworthy.
-    Runs every SELFTEST_CASES entry in both directions: a FAIL case must flag its designated WRONG number (or
-    trip LOW COVERAGE), a PASS case must flag nothing at all."""
+    Runs every SELFTEST_CASES entry in both directions: a FAIL case must fail for its DESIGNATED reason (its wrong
+    number flagged, or LOW COVERAGE, or TOO BROAD), a PASS case must flag nothing at all."""
     import tempfile
     problems = []
+    me = sys.modules[__name__]
     with tempfile.TemporaryDirectory(dir=ROOT, prefix=".claim_check_selftest_") as d:
         for case in SELFTEST_CASES:
-            p = _write_case(d, case)
-            r = _scan(p)
-            got = _verdict(r)
+            if case.get("kind") == "gate":
+                if ROOT not in sys.path:
+                    sys.path.insert(0, ROOT)
+                import importlib
+                gate = importlib.import_module("tools.gates.claim_check_selftest")
+                ok, detail = _gate_case_ok(gate)
+                if not ok:
+                    problems.append("SELFTEST BROKEN: case %s (%s): %s" % (case["name"], case["why"], detail))
+                continue
+            got, out = _case_outcome(case, me, d)
             if got != case["expect"]:
                 problems.append("SELFTEST BROKEN: case %s expected %s, got %s (%s)"
                                 % (case["name"], case["expect"], got, case["why"]))
                 continue
+            missing_out = [o for o in _expected_outputs(case) if o not in out]
+            if missing_out:
+                problems.append("SELFTEST BROKEN: case %s: report lacks %r (%s)"
+                                % (case["name"], missing_out, case["why"]))
+                continue
+            r = _scan(_write_case(d, case))
             flagged = {round(v, 6) for _ln, v, _c in r["unsupported"]}
+            reason = case.get("expect_reason")
             if case["expect"] == "FAIL":
-                if not (flagged & WRONG_VALUES) and not r["low_coverage"]:
+                if case.get("must_flag"):
+                    if not {round(v, 6) for v in case["must_flag"]} <= flagged:
+                        problems.append("SELFTEST BROKEN: case %s failed but did not flag %s: flagged=%s"
+                                        % (case["name"], case["must_flag"], flagged))
+                elif reason == "too_broad":
+                    if not r["too_broad"]:
+                        problems.append("SELFTEST BROKEN: case %s failed but not as TOO BROAD (chance=%s)"
+                                        % (case["name"], r["chance"]))
+                elif reason == "low_coverage":
+                    if not r["low_coverage"]:
+                        problems.append("SELFTEST BROKEN: case %s failed but not on LOW COVERAGE" % case["name"])
+                elif not (flagged & WRONG_VALUES) and not r["low_coverage"]:
                     problems.append("SELFTEST BROKEN: case %s failed but never flagged its designated wrong "
                                     "number (%s): flagged=%s" % (case["name"], sorted(WRONG_VALUES), flagged))
-            elif flagged:
+            elif flagged or r["low_coverage"] or r["too_broad"]:
                 problems.append("SELFTEST BROKEN: case %s is supposed to PASS clean but flagged: %s"
                                 % (case["name"], sorted(flagged)))
 
-        # ROUND 6 (issue 1): the UNREADABLE case needs raw, deliberately-invalid bytes -- it cannot go through
-        # `_write_case`, which writes valid UTF-8 text. 0xAD is a bare Latin-1 SOFT HYPHEN byte, invalid on its
-        # own as UTF-8 (it is not a valid single-byte sequence and does not start a valid multi-byte one).
+        # ROUND 6 (issue 1 of round 5's review): the UNREADABLE case needs raw, deliberately-invalid bytes.
         bad_path = os.path.join(d, "invalid_utf8.md")
         art_rel = os.path.relpath(os.path.join(d, "art.json"), ROOT).replace(os.sep, "/")
-        open(bad_path, "wb").write(
-            ("# Some finding\n\nArtifact: `%s`\n\nThe accuracy was 0.98" % art_rel).encode("utf-8")
-            + b"\xad" + "76 here.\n".encode("utf-8"))
+        with open(bad_path, "wb") as fh:
+            fh.write(("# Some finding\n\nArtifact: `%s`\n\nThe accuracy was 0.98" % art_rel).encode("utf-8")
+                     + b"\xad" + "76 here.\n".encode("utf-8"))
         r = _scan(bad_path)
         if not r.get("unreadable"):
-            problems.append("SELFTEST BROKEN: invalid UTF-8 (a bare Latin-1 soft-hyphen byte) did not report "
-                            "UNREADABLE -- round 5's errors=\"replace\" regression (issue 1) is back")
+            problems.append("SELFTEST BROKEN: invalid UTF-8 did not report UNREADABLE (round 5's errors=\"replace\" "
+                            "regression is back)")
         elif _verdict(r) != "FAIL":
             problems.append("SELFTEST BROKEN: an UNREADABLE result must still be a blocking FAIL")
     return problems

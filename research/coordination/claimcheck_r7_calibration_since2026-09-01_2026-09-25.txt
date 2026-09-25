@@ -1,0 +1,40 @@
+scanned 353 finding(s) dated >= 2026-09-01
+  main FAIL  31 / 353; failing ONLY on numbers the current checker shows are correct: 2; of its 43 flagged numbers, 11 (26%) are correct roundings/identifiers
+  r5   FAIL 135 / 353; failing ONLY on numbers the current checker shows are correct: 51; of its 1381 flagged numbers, 986 (71%) are correct roundings/identifiers
+  r6   FAIL 155 / 353; failing ONLY on numbers the current checker shows are correct: 57; of its 1651 flagged numbers, 1093 (66%) are correct roundings/identifiers
+  cur  FAIL 108 / 353; failing on breadth alone (chance-match rule): 7
+  cur failures by rule (a doc can fail several): {'unsupported': 94, 'missing': 17, 'too_broad': 13}
+  cur failures by rule combination: {'unsupported': 79, 'missing + unsupported': 10, 'too_broad': 7, 'missing': 6, 'unsupported + too_broad': 5, 'missing + too_broad': 1}
+  what cur does with the 1651 numbers r6 flagged: {'rounding': 1018, 'still-unsupported': 549, 'identifier': 67, 'exempt': 8, 'exact': 4, 'exact+M': 2, 'not-a-number': 1, 'sign-read': 1, 'truncation': 1}
+  cur rule A over all checked numbers: {'checked': 4379, 'exact': 1944, 'rounding': 1867, 'unsupported': 563, 'identifiers': 116}
+  chance-match rate over 227 docs with >=1 checked number: min 0.000  p50 0.015  p90 0.122  p95 0.203  p99 0.505  max 0.645
+      [0.00, 0.01): 92
+      [0.01, 0.02): 31
+      [0.02, 0.05): 49
+      [0.05, 0.10): 27
+      [0.10, 0.20): 15
+      [0.20, 0.50): 10
+      [0.50, 1.01): 3
+  CHANCE_MAX sensitivity (docs above the threshold / of those, docs that would fail on breadth ALONE):
+      0.05:  52 /  28
+      0.10:  28 /  16
+      0.15:  17 /   9
+      0.20:  13 /   7   <- CHANCE_MAX
+      0.25:   7 /   5
+      0.30:   7 /   5
+  coverage: largest non-synthesis doc with ZERO checked visible values: 27 numeric claims (2026-09-05-shared-spiking-salience-afferent-wired-GO.md); LOW_COVERAGE_MIN_TOTAL = 30
+  synthesis: 17 doc(s) declare it, 17 refused the escape ({'no reason': 17}); with a claim_check_reason ADDED, 5 would still be barred by a verdict word; verdict flips among declarers: r6 14 FAIL, cur 13 FAIL
+      barred even with a reason: 2026-09-02-onebrain-flip-verify-harness-and-regression-battery -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-09-05-scaffold-backlog-hygiene-and-diversified-ready-next -- declares `claim_check: synthesis` but its title (H1) states a verdict (pass) -- a verdict-bearing document is BARRED from 
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6 -- declares `claim_check: synthesis` but its filename states a verdict (no-go) -- a verdict-bearing document is BARRED from t
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-sc -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-perception-binding-negative-fixed- -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+  WITH the legacy relative tolerance as a second rule-A window: FAIL 123 / 353 (too_broad 34, unsupported docs 90, unsupported numbers 549; chance p90 0.335, docs >= 0.5: 17)
+  broad-citation scenarios (40 random WRONG numbers each; chance = rule B's decoy estimate):
+      26 MB single artifact            d=3 pool= 992924 chance=1.000  wrong numbers accepted 40/40 -> FAIL (TOO BROAD)
+      26 MB single artifact            d=4 pool= 992924 chance=1.000  wrong numbers accepted 40/40 -> FAIL (TOO BROAD)
+      consol_opsweep_gpu battery glob  d=3 pool=   8832 chance=0.395  wrong numbers accepted 20/40 -> FAIL (TOO BROAD)
+      consol_opsweep_gpu battery glob  d=4 pool=   8832 chance=0.145  wrong numbers accepted  6/40 -> FAIL
+      4 raw directories                d=3 pool=   1737 chance=0.230  wrong numbers accepted 17/40 -> FAIL (TOO BROAD)
+      4 raw directories                d=4 pool=   1737 chance=0.043  wrong numbers accepted  0/40 -> FAIL
+wrote research/coordination/claimcheck_r7_retro_since2026-09-01_2026-09-25.tsv

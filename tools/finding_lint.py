@@ -289,7 +289,8 @@ def scaffold_claim_check(finding_path, unsupported, missing, artifact_paths, do_
                  "/".join("%.4g" % x for x in vals)))
         else:
             emit("    line %-4s %-12s is in no cited artifact. Either cite the artifact FILE that holds "
-                 "it (a path with a '/'), or mark it <!--derived--> inline on the same line." % (lineno, valstr))
+                 "it (a path with a '/'), or mark it <!--derived--> in the SAME table cell or <br>-segment as "
+                 "the number (a marker alone in a row's last cell exempts nothing)." % (lineno, valstr))
     if mean_hits:
         agg_rel = _suggest_aggregate_path(finding_path)
         emit("    FIX (the aggregate miss): means over seeds belong in an aggregate JSON you cite.")
@@ -485,9 +486,14 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
         if cc_result.get("unreadable"):
             probs.append("UNREADABLE: %s" % cc_result["unreadable"])
         if cc_result["low_coverage"]:
-            checked, total = cc_result["checked"], cc_result["total_numeric"]
-            probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked -- mark the specific derived "
-                        "numbers inline, not (almost) the whole doc" % (checked, total))
+            checked = cc_result.get("checked_visible_distinct", cc_result["checked"])
+            total = cc_result["total_numeric"]
+            probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked (distinct, outside hidden carriers) -- "
+                        "mark the specific derived numbers in their own cells, not (almost) the whole doc"
+                        % (checked, total))
+        if cc_result.get("too_broad"):
+            probs.append("CITATIONS TOO BROAD: %s (chance-match %.0f%%)"
+                         % (claim_check.TOO_BROAD_MSG, 100 * cc_result["chance"]))
         probs = probs or ["a measurement is unsupported by the cited artifacts (see claim_check)"]
         blocking_gates.append({"name": "claim-check", "class_id": "G2", "problems": probs, "kind": "claim"})
     if not g4_ok:

@@ -1,0 +1,45 @@
+scanned 2967 finding(s) dated >= 0000-00-00
+  main FAIL 1337 / 2967; failing ONLY on numbers the current checker shows are correct: 121; of its 21232 flagged numbers, 3969 (19%) are correct roundings/identifiers
+  r5   FAIL 1689 / 2967; failing ONLY on numbers the current checker shows are correct: 246; of its 26914 flagged numbers, 8286 (31%) are correct roundings/identifiers
+  r6   FAIL 1761 / 2967; failing ONLY on numbers the current checker shows are correct: 270; of its 28429 flagged numbers, 9234 (32%) are correct roundings/identifiers
+  cur  FAIL 1522 / 2967; failing on breadth alone (chance-match rule): 23
+  cur failures by rule (a doc can fail several): {'unsupported': 1436, 'missing': 163, 'too_broad': 47, 'low_coverage': 1}
+  cur failures by rule combination: {'unsupported': 1314, 'missing + unsupported': 99, 'missing': 61, 'too_broad': 23, 'unsupported + too_broad': 21, 'missing + too_broad': 2, 'unsupported + low_coverage': 1, 'missing + unsupported + too_broad': 1}
+  what cur does with the 28429 numbers r6 flagged: {'still-unsupported': 19160, 'rounding': 8340, 'identifier': 853, 'exact': 27, 'sign-read-checked': 19, 'exempt': 10, 'not-a-number': 6, 'rounding+B': 6, 'exact+B': 4, 'exact+M': 2, 'sign-read': 1, 'truncation': 1}
+  cur rule A over all checked numbers: {'checked': 39822, 'exact': 10017, 'rounding': 10592, 'unsupported': 19208, 'identifiers': 954}
+  chance-match rate over 1963 docs with >=1 checked number: min 0.000  p50 0.000  p90 0.065  p95 0.122  p99 0.318  max 0.905
+      [0.00, 0.01): 1239
+      [0.01, 0.02): 163
+      [0.02, 0.05): 288
+      [0.05, 0.10): 154
+      [0.10, 0.20): 71
+      [0.20, 0.50): 40
+      [0.50, 1.01): 8
+  CHANCE_MAX sensitivity (docs above the threshold / of those, docs that would fail on breadth ALONE):
+      0.05: 257 / 108
+      0.10: 117 /  52
+      0.15:  72 /  32
+      0.20:  47 /  23   <- CHANCE_MAX
+      0.25:  29 /  13
+      0.30:  24 /  11
+  coverage: largest non-synthesis doc with ZERO checked visible values: 27 numeric claims (2026-09-05-shared-spiking-salience-afferent-wired-GO.md); LOW_COVERAGE_MIN_TOTAL = 30
+  synthesis: 42 doc(s) declare it, 42 refused the escape ({'no reason': 42}); with a claim_check_reason ADDED, 18 would still be barred by a verdict word; verdict flips among declarers: r6 35 FAIL, cur 34 FAIL
+      barred even with a reason: 2026-08-11-rolegate-competitive-forward-stabilizer-eliminates- -- declares `claim_check: synthesis` but its frontmatter verdict: (first clause) states a verdict (GO) -- a verdict-bearing d
+      barred even with a reason: 2026-08-11-rolegate-hidden-layer-chained-FA-sigmaprime-transpo -- declares `claim_check: synthesis` but its frontmatter verdict: (first clause) states a verdict (GO) -- a verdict-bearing d
+      barred even with a reason: 2026-08-11-rolegate-transport-free-feedback-alignment-reliabil -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-11-rolegate-variable-subject-position-credit-test-NEGA -- declares `claim_check: synthesis` but its frontmatter verdict: (first clause) states a verdict (GO) -- a verdict-bearing d
+      barred even with a reason: 2026-08-13-fluid-mouth-endtoend-substrate-read-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-full-substrate-pipeline-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-graded-conductance-read-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-input-projection-substrate-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-read-parity-close-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-rh-shunt-GO.md -- declares `claim_check: synthesis` but its filename states a verdict (GO) -- a verdict-bearing document is BARRED from the 
+      barred even with a reason: 2026-08-13-fluid-mouth-signed-read-parity-BOUNDARY.md -- declares `claim_check: synthesis` but its frontmatter verdict: (first clause) states a verdict (GO) -- a verdict-bearing d
+      barred even with a reason: 2026-08-13-fluid-mouth-upstream-output-projection-GO.md -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-08-13-fluid-mouth-wkv-state-graded-conductance-integrator -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-09-02-onebrain-flip-verify-harness-and-regression-battery -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-09-05-scaffold-backlog-hygiene-and-diversified-ready-next -- declares `claim_check: synthesis` but its title (H1) states a verdict (pass) -- a verdict-bearing document is BARRED from 
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6 -- declares `claim_check: synthesis` but its filename states a verdict (no-go) -- a verdict-bearing document is BARRED from t
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-sc -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+      barred even with a reason: 2026-09-23-cpu-lane-harvest-perception-binding-negative-fixed- -- declares `claim_check: synthesis` but its title (H1) states a verdict (GO) -- a verdict-bearing document is BARRED from th
+wrote research/coordination/claimcheck_r7_retro_whole_corpus_2026-09-25.tsv

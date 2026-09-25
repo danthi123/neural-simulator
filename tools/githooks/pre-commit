@@ -46,11 +46,14 @@ STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/find
 if [ -n "$STAGED" ]; then
   if ! echo "$STAGED" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
     echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"
-    sed 's/^/   /' /tmp/_precommit_claims.out | tail -28
+    sed 's/^/   /' /tmp/_precommit_claims.out | tail -34
     echo
-    echo "   Fix ONE of:  cite the artifact that contains the number (a path with a / in it);"
+    echo "   Fix ONE of:  cite the artifact FILE that contains the number (a path with a / in it);"
     echo "                save the aggregate you computed and cite THAT (means over seeds live in no per-seed file);"
-    echo "                mark a derived/quoted value with <!--derived--> on the SAME line as the number (there is no block scope)."
+    echo "                mark a derived/quoted value with <!--derived--> in the SAME table cell or <br>-segment as the number"
+    echo "                (at most 8 per cell; a marker alone on a line or in a row's last cell exempts nothing)."
+    echo "   'citations too broad': cite the specific file(s), or state each number at its full precision."
+    echo "   'claim_check: synthesis' also needs a non-empty 'claim_check_reason:' and no verdict word in the title."
     echo "   Deliberate override: git commit --no-verify"
     exit 1
   fi

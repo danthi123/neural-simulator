@@ -1,60 +1,65 @@
-"""CLASS CCT — claim_check's own selftest was never wired into the gate registry.
+"""CLASS CCT — claim_check's own selftest, wired into the gate registry.
 
-WHY (round 6, 2026-09-25 -- round 5's own SOUND-WITH-ISSUES review, issue 3). GATE 2 in
-tools/githooks/pre-commit shells out to `tools/claim_check.py` directly against staged findings, but never runs
-`claim_check.py --selftest`. This registry's own founding rule -- refuse to trust a gate whose selftest cannot
-FAIL in the failing direction (failure class 3, `gates/__init__`) -- therefore never covered claim_check at
-all: a broken claim_check (round 5's own `errors="replace"` regression, which silently turned a blocking crash
-into a clean, wrong PASS) would have shipped with nothing in THIS registry noticing, even though
-`claim_check.selftest()` itself is perfectly capable of catching that exact class of regression.
+WHY (round 6, 2026-09-25). GATE 2 in tools/githooks/pre-commit shells out to `tools/claim_check.py` against staged
+findings but never runs `claim_check.py --selftest`, so the registry's founding rule -- refuse to trust a gate whose
+selftest cannot FAIL in the failing direction -- never covered claim_check at all.
 
-This is a THIN wrapper, deliberately: every actual check is `tools.claim_check.selftest()` (round 6 closes it
-with one SELFTEST_CASES entry per fix, cross-checked against every historical revision in git). There is
-exactly one place the logic lives; this module's only job is to make the registry's `run_all()` -- and
-therefore `tools/githooks/pre-commit` GATE 5 -- actually run it on every commit, and BLOCK when it fails.
-
-NOT the same thing as GATE 2 (which scans staged findings' actual claims): GATE 2 asks "are THESE documents'
-numbers supported"; this gate asks "is the INSTRUMENT that answers that question still trustworthy right now".
+ROUND 7 (issue 11 of round 6's review). Round 6's version put the REAL `claim_check.selftest()` inside THIS gate's
+`selftest()` ("the unmodified registry must report clean"). So when claim_check itself regressed, the registry saw
+THIS WRAPPER fail its selftest, labelled the regression "problems against the UNMODIFIED registry (false
+positive)", skipped `check()`, and the one message that says what broke never printed. Now:
+  * `check()` runs claim_check's selftest and passes every problem through VERBATIM, each labelled
+    "BROKEN INSTRUMENT", so a regression blocks the commit with its own words;
+  * `selftest()` proves only the WRAPPER's mechanics, with injected fake instruments (a broken one must be
+    reported verbatim, a healthy one must be clean, a crashing one must be reported) -- it never depends on the
+    real claim_check's current health, which is `check()`'s job.
+The same behaviour is pinned from the other side by claim_check's own SELFTEST_CASES entry
+`cct_gate_reports_broken_instrument_verbatim`, re-derived against round 6's copy of this file from git.
 """
 from __future__ import annotations
+
+import types
 
 import tools.claim_check as claim_check
 
 NAME = "claim-check-selftest"
 CLASS_ID = "CCT"
 BLOCKING = True
+_LABEL = ("BROKEN INSTRUMENT: tools/claim_check.py's own selftest fails, so GATE 2's verdicts on findings cannot "
+          "be trusted until it is fixed -- ")
 
 
-def check(paths):
-    """Ignores `paths` -- this is a registry-level health check on claim_check ITSELF (GATE 2 already scans
-    staged findings directly; this only asks whether that scan is trustworthy). Returns claim_check's own
-    selftest problems, which BLOCKS the commit if the instrument itself is broken."""
-    return list(claim_check.selftest())
+def check(paths, _cc=None):
+    """Ignores `paths`: a registry-level health check on claim_check ITSELF. Returns its selftest problems
+    verbatim, labelled, which BLOCKS the commit."""
+    cc = _cc if _cc is not None else claim_check
+    try:
+        problems = list(cc.selftest())
+    except Exception as e:                     # a crashing instrument is as broken as a failing one -- and LOUD
+        problems = ["claim_check.selftest() CRASHED: %s: %s" % (type(e).__name__, e)]
+    return [_LABEL + p for p in problems]
 
 
 def selftest():
-    """The registry's contract: demonstrate FAILING in the failing direction. We cannot re-introduce round 5's
-    actual regression here without editing tools/claim_check.py, so instead we corrupt one SELFTEST_CASES
-    entry's own recorded expectation (the same mechanism a real regression would trip: `selftest()` compares
-    the actual scan verdict against what a case DECLARES it should be) and confirm this wrapper surfaces it,
-    then confirm the real, unmodified registry reports clean."""
+    """The registry's contract (demonstrate FAILING in the failing direction), on the wrapper alone."""
     problems = []
-    if not claim_check.SELFTEST_CASES:
-        return ["no SELFTEST_CASES to verify against -- claim_check.selftest() would trivially pass"]
+    msg = "SELFTEST BROKEN: case demo expected FAIL, got PASS (demo)"
+    broken = types.SimpleNamespace(selftest=lambda: [msg])
+    healthy = types.SimpleNamespace(selftest=lambda: [])
 
-    case = claim_check.SELFTEST_CASES[0]
-    original = case["expect"]
-    case["expect"] = "FAIL" if original == "PASS" else "PASS"
-    try:
-        broken = check(None)
-    finally:
-        case["expect"] = original             # never leave shared module state mutated
-    if not broken:
-        problems.append("did NOT detect a deliberately corrupted SELFTEST_CASES expectation -- this wrapper "
-                        "cannot be trusted to catch a real claim_check regression")
+    def _boom():
+        raise RuntimeError("instrument exploded")
+    crashing = types.SimpleNamespace(selftest=_boom)
 
-    clean = check(None)
-    if clean:
-        problems.append("reported problems against the UNMODIFIED selftest registry (false positive): %s"
-                        % clean)
+    got = check(None, _cc=broken)
+    if not got or not all(p.startswith("BROKEN INSTRUMENT") for p in got) or not any(msg in p for p in got):
+        problems.append("did NOT pass a broken instrument's selftest problem through verbatim with the BROKEN "
+                        "INSTRUMENT label: %s" % got)
+    if check(None, _cc=healthy):
+        problems.append("reported problems for a HEALTHY fake instrument")
+    crashed = check(None, _cc=crashing)
+    if not crashed or "CRASHED" not in crashed[0]:
+        problems.append("did not report a CRASHING instrument: %s" % crashed)
+    if not hasattr(claim_check, "selftest") or not getattr(claim_check, "SELFTEST_CASES", None):
+        problems.append("tools/claim_check.py exposes no selftest()/SELFTEST_CASES to wrap")
     return problems

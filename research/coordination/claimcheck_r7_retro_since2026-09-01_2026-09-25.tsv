@@ -1,0 +1,354 @@
+path	main	r5	r6	cur	cur_fail_rules	chance_rate	checked	exact	rounding	unsupported	identifiers	r6_flagged	r6_flag_causes	synthesis	synthesis_note
+research/findings/2026-09-01-184-tieredfactstore-ltm-trace-propagation-fix.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	0	0		False	
+research/findings/2026-09-01-D6-wm-emergent-free-slot-competitive-register-allocation-6seed-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-affect-marker-spiking-wta-default-on-flip-GO.md	PASS	PASS	PASS	PASS		0.0025	3	3	0	0	0	0		False	
+research/findings/2026-09-01-batch-sentence-rendering-6seed-not-byte-identical-NOGO.md	PASS	PASS	FAIL	PASS		0.0375	12	0	12	0	0	4	rounding:4	False	
+research/findings/2026-09-01-batch-sentence-rendering-rich-chat-2x-to-3x-byte-identical.md	PASS	PASS	FAIL	PASS		0.0225	6	0	6	0	0	3	rounding:3	False	
+research/findings/2026-09-01-board91-memory-separator-readfix-cuerelative-bias-NOGO-intrinsic-heterogeneity-confirmed-write-read-mismatch.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-board91-memory-separator-readfix-popstate-reset-NOGO-relocalizes-to-consolidation-induced-generic-capture.md	PASS	FAIL	FAIL	PASS		0.0500	2	0	2	0	0	2	rounding:2	False	
+research/findings/2026-09-01-brain-native-plausibility-spiking-synaptic-gate-qualified.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-common-ground-audience-design-drive-soak-GO.md	PASS	PASS	PASS	PASS		0.0425	11	11	0	0	0	0		False	
+research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-confidence-forthcomingness-kb-relation-realtraffic-tracepropagation-residual.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-confidence-forthcomingness-ltm-elaboration-load-bearing-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-confidence-metacog-margin-norm-calibration-at-scale-discriminates-not-byte-id-off.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-declarative-cross-edge-functional-gate-read-credit-livedrive-GO.md	PASS	FAIL	FAIL	PASS		0.0300	28	19	9	0	0	11	exempt:1;not-a-number:1;rounding:9	False	
+research/findings/2026-09-01-entity-aliasing-verified-against-shipped-scale-alias-bundle.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-generative-cortex-token-supply-lever-broad-domain-plateau-is-starvation-not-capacity-wall.md	PASS	FAIL	FAIL	FAIL	unsupported(5)	0.0900	53	5	43	5	8	24	rounding:19;still-unsupported:5	False	
+research/findings/2026-09-01-negation-generate-wiring-stale-claim-closed-plus-hebbian-plausibility-qualified.md	PASS	PASS	PASS	PASS		0.0000	6	6	0	0	0	0		False	
+research/findings/2026-09-01-nl-parser-kb-relation-question-routing-comprehension-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-np-entailment-copula-coverage-widening.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-np-entailment-moat-gate-wired-into-live-open-ended-postfilter.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-np-entailment-participial-pronoun-coverage-widening.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-onebrain-crossedge-curiosity-d6wm-semantic-drop-GO.md	PASS	PASS	PASS	PASS		0.0100	8	2	6	0	0	0		False	
+research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0025	42	24	15	3	1	3	still-unsupported:3	False	
+research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-production-wire-GO.md	PASS	PASS	PASS	PASS		0.0025	28	14	14	0	0	0		False	
+research/findings/2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(6)	0.0100	51	19	26	6	0	11	rounding:5;still-unsupported:6	False	
+research/findings/2026-09-01-onebrain-merge-pool1-composer-cleanup-regions-declarative-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-plausibility-ensemble-read-host-parity-generation-all6-default-on-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-production-default-flip-plan.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-read-fidelity-learned-whitened-opponent-read-NOGO-residual-is-read-architecture-not-estimator.md	PASS	FAIL	FAIL	PASS		0.1675	34	3	31	0	0	25	rounding:25	False	
+research/findings/2026-09-01-read-fidelity-separate-trace-recall-read-GO-upstream-shaping-closes-read-power-residual.md	PASS	FAIL	FAIL	PASS		0.0325	26	13	13	0	0	7	rounding:7	False	
+research/findings/2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-decode-escalation-fix.md	PASS	PASS	PASS	PASS		0.0150	17	17	0	0	0	0		False	
+research/findings/2026-09-01-source-provenance-honesty-129-default-on-flip-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-surprise-episodic-encode-decision-crossedge-GO.md	PASS	FAIL	FAIL	PASS		0.0075	41	35	6	0	2	6	rounding:6	False	
+research/findings/2026-09-01-vision-lindiscrim-opsweep-board135-znorm-dominates-small-nonoverfit-lift-not-capability-crossing.md	PASS	PASS	PASS	PASS		0.0125	32	32	0	0	0	0		False	
+research/findings/2026-09-01-vision-readout-side-exhausted-satdiv-plus-ridge-plateau-points-to-S2-template-learning.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-vision-s2-bcm-template-learning-NOGO-collapses-without-competition-underperforms-baseline-with-it.md	PASS	PASS	PASS	PASS		0.0350	23	23	0	0	0	0		False	
+research/findings/2026-09-01-w5-affective-tom-other-model-graded-circumplex-upgrade-GO.md	PASS	PASS	PASS	PASS		0.0175	11	11	0	0	0	0		False	
+research/findings/2026-09-01-wkv-fact-to-sentence-lexicon-and-np-lever.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-wkv-fact-to-svo-clause-first-lever-investigation.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-wkv-mouth-fact-sentence-wirein.md	PASS	PASS	PASS	PASS		0.0050	3	3	0	0	0	0		False	
+research/findings/2026-09-01-wkv-mouth-invocab-scope-leadin-loophole-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-01-wkv-mouth-learned-head-6seed-ab-through-fixed-default-path-GO.md	PASS	PASS	PASS	PASS		0.0850	47	24	23	0	0	0		False	
+research/findings/2026-09-02-c1-surprise-worldmodel-wired-flip-ready.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0075	5	2	2	1	0	2	rounding:1;still-unsupported:1	False	
+research/findings/2026-09-02-c2-metacog-error-gated-port-second-negative.md	PASS	FAIL	FAIL	FAIL	unsupported(2)	0.0575	14	0	12	2	0	12	rounding:10;still-unsupported:2	False	
+research/findings/2026-09-02-c2-metacog-read-isolation-fix-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(8)	0.0700	22	0	14	8	0	20	rounding:12;still-unsupported:8	False	
+research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0375	28	2	25	1	2	16	identifier:2;rounding:13;still-unsupported:1	False	
+research/findings/2026-09-02-confidence-forthcomingness-100k-6seed-GO.md	PASS	PASS	PASS	PASS		0.0000	1	0	1	0	0	0		False	
+research/findings/2026-09-02-crossedge-arousal-surprise-derisk-PARTIAL-smoke-go.md	PASS	FAIL	FAIL	PASS		0.0075	4	2	2	0	0	2	rounding:2	False	
+research/findings/2026-09-02-crossedge-surprise-metacog-derisk-SMOKE-GO-PARTIAL.md	PASS	FAIL	FAIL	FAIL	unsupported(4)	0.0100	19	1	14	4	0	15	rounding:11;still-unsupported:4	False	
+research/findings/2026-09-02-crossedge-surprise-worldmodel-derisk-SMOKE-GO-partial-pending-6seed.md	PASS	FAIL	FAIL	PASS		0.0050	8	0	8	0	0	8	rounding:8	False	
+research/findings/2026-09-02-cupy-scan-vectorize-byteidentical-fix-queued-for-cupy-latency-reverify.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-cupy-scan-vectorize-latency-result-ACCEPT.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-escalation-gating-tighten-latency-correctness-safe-not-the-lever.md	PASS	FAIL	FAIL	FAIL	unsupported(4)	0.0050	17	13	0	4	0	4	still-unsupported:4	False	
+research/findings/2026-09-02-generative-cortex-capacity-vs-tokens-larger-capacity-wins-d96-nears-its-ceiling.md	PASS	FAIL	FAIL	FAIL	unsupported(22)	0.0750	78	54	2	22	3	23	rounding:2;still-unsupported:21	False	
+research/findings/2026-09-02-integrated-brain-scale-probe-BUILT-scoping.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-integration-program-6seed-harvest-singlepool-GO-C1-GO-C2-NOGO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-memory-separator-continuous-ring-screen-parameter-map.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0050	4	0	3	1	0	4	rounding:3;still-unsupported:1	False	
+research/findings/2026-09-02-onebrain-crossedge-curiosity-d6wm-semantic-drop-read-isolation-reverify-GO-survives.md	PASS	FAIL	FAIL	FAIL	unsupported(6)	0.0025	13	1	6	6	0	6	still-unsupported:6	False	
+research/findings/2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md	PASS	PASS	FAIL	FAIL	unsupported(4)	0.0025	45	19	22	4	0	4	still-unsupported:4	False	
+research/findings/2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md	PASS	FAIL	FAIL	FAIL	unsupported(13)	0.0025	44	17	14	13	0	14	rounding:1;still-unsupported:13	False	
+research/findings/2026-09-02-onebrain-crossregion-integration-DESIGN-ranked-crossedges.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-onebrain-flip-verify-harness-and-regression-battery-BUILT-derisk-GO.md	PASS	PASS	FAIL	PASS			0	0	0	0	1	1	identifier:1	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-02-onebrain-r4-selfschema-production-wirein-read-isolation-reverify-GO-survives-floor-residual-worsens.md	PASS	PASS	PASS	PASS		0.0025	8	5	3	0	0	0		False	
+research/findings/2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0325	41	11	28	1	0	11	rounding:10;still-unsupported:1	False	
+research/findings/2026-09-02-onebrain-surprise-episodic-crossedge-readisolation-fix-still-UNDEFINED.md	PASS	FAIL	FAIL	FAIL	unsupported(12)	0.0175	57	15	30	12	0	15	rounding:3;still-unsupported:12	False	
+research/findings/2026-09-02-onebrain-twopool-merge-organ-read-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0000	1	0	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-02-onebrain-wave2-selfschema-curiosity-causalwhatif-merge-SMOKE-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-open-ended-episodic-writeback-R1-rung1.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-open-ended-pipeline-integration-rung2-state-writes-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-open-ended-pipeline-integration-rung3-deeper-folds-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-open-ended-qwen-routed-fact-clause-fallback.md	PASS	PASS	PASS	PASS		0.0025	2	2	0	0	0	0		False	
+research/findings/2026-09-02-pmem-wave3-pool-faculty-alive-and-answer-GO.md	FAIL	FAIL	FAIL	FAIL	missing(1)		0	0	0	0	0	0		False	
+research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(14)	0.0250	80	1	65	14	0	23	rounding:8;sign-read:1;still-unsupported:14	False	
+research/findings/2026-09-02-read-isolation-audit-29runner-followup-map-plus-a-bigger-adjacent-bug.md	PASS	PASS	PASS	PASS		0.0050	12	12	0	0	0	0		False	
+research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0075	15	8	4	3	0	3	still-unsupported:3	False	
+research/findings/2026-09-02-regression-battery-thin-probes-lifted.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-self-taught-mouth-vocab-coverage-for-chat-INSUFFICIENT.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-02-sim-deterministic-matvec-all-conductance-paths-megakernel-v1-closed-premise-corrected.md	PASS	PASS	PASS	PASS			0	0	0	0	1	0		False	
+research/findings/2026-09-02-spiking-expectation-rpe-read-isolation-fix-PARTIAL-demotion-still-boundary.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0100	63	1	59	3	0	22	rounding:19;still-unsupported:3	False	
+research/findings/2026-09-02-subword-self-taught-mouth-design-SUBWORD-CLOSES-OOV-TRAINING-QUEUED.md	PASS	PASS	PASS	PASS			0	0	0	0	1	0		False	
+research/findings/2026-09-03-OPEN-FLUENCY-BREAKTHROUGH-linattn-deployable-spiking-mouth-beats-trigram-6of6.md	PASS	FAIL	FAIL	FAIL	unsupported(4)	0.0400	13	9	0	4	0	4	still-unsupported:4	False	
+research/findings/2026-09-03-affect-wiring-into-wkv-mouth-GO.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0000	1	0	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-03-content-addressable-read-without-order-underfits-fluency-NO-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(10)	0.0125	18	8	0	10	0	10	still-unsupported:10	False	
+research/findings/2026-09-03-crossedge4-pragmatic-metacog-coupling-DESIGN.md	PASS	PASS	FAIL	FAIL	unsupported(1)	0.0850	3	2	0	1	0	1	still-unsupported:1	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-03-gnw-bus-family-retire-status-ledger-drift-CORRECTED.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-03-linattn-mouth-broad-scope-coverage-threshold.md	PASS	PASS	PASS	PASS		0.0025	1	1	0	0	0	0		False	
+research/findings/2026-09-03-linattn-mouth-generation-coherence-viable-with-caveats.md	PASS	PASS	PASS	PASS		0.0425	8	8	0	0	0	0		False	
+research/findings/2026-09-03-linattn-mouth-live-brain-grounded-honest-verification-PARTIAL-affect-gap.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	0	0		False	
+research/findings/2026-09-03-linattn-production-mouth-wiring-DESIGN.md	PASS	PASS	FAIL	FAIL	unsupported(3)	0.0150	21	18	0	3	0	3	still-unsupported:3	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md	PASS	PASS	FAIL	FAIL	unsupported(3)	0.0300	10	7	0	3	4	7	identifier:4;still-unsupported:3	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-03-on-bridge-spiking-LP-max-curiosity-DESIGN.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-03-on-bridge-spiking-LP-max-curiosity-selection-layer-6seed-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-03-one-brain-mouth-integration-ROADMAP.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-verdict.md	PASS	FAIL	FAIL	FAIL	unsupported(13)	0.0375	21	8	0	13	0	13	still-unsupported:13	False	
+research/findings/2026-09-03-satdiv-readout-mostly-in-control-BORDERLINE-refined.md	PASS	FAIL	FAIL	FAIL	unsupported(2)	0.0325	36	34	0	2	0	2	still-unsupported:2	False	
+research/findings/2026-09-03-spiking-content-addressable-read-DESIGN.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(13)	0.0375	13	0	0	13	24	37	identifier:24;still-unsupported:13	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-03-spiking-depth-tokens-closing-fluency-gap-milestone.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(12)	0.0000	12	0	0	12	2	14	identifier:2;still-unsupported:12	False	
+research/findings/2026-09-03-spiking-divnorm-gate-NO-GO-cross-channel-pool-over-suppresses.md	FAIL	FAIL	FAIL	FAIL	missing(4);unsupported(10)	0.0000	10	0	0	10	0	10	still-unsupported:10	False	
+research/findings/2026-09-03-spiking-mouth-ssm-dualnonneg-fluency-NO-GO-first-brain-based-baseline.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(12)	0.0000	12	0	0	12	0	12	still-unsupported:12	False	
+research/findings/2026-09-03-trigram-baseline-strength-characterization-not-saturated-tokenization-sensitive.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(27)	0.0150	45	18	0	27	2	27	identifier:2;still-unsupported:25	False	
+research/findings/2026-09-03-vision-configural-binding-PARTIAL-3of6-below-5of6-gate-anticheats-confirm-genuine-signal.md	PASS	PASS	PASS	PASS		0.0175	32	32	0	0	0	0		False	
+research/findings/2026-09-03-vision-configural-binding-crossing-is-mostly-capacity-anticheat-caught-it.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0200	65	64	0	1	2	3	identifier:2;still-unsupported:1	False	
+research/findings/2026-09-03-wkv-fluency-crux-simplewiki-bpe-NO-GO-loses-to-trigram.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(11)	0.0000	11	0	0	11	0	11	still-unsupported:11	False	
+research/findings/2026-09-04-affect-coupling-neural-not-host-PARTIAL.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-affect-neural-default-on-negpa-sweep-NOT-READY.md	PASS	PASS	PASS	PASS		0.0050	3	3	0	0	0	0		False	
+research/findings/2026-09-04-da-gated-encoding-wave0-gap4a-currency-reverify-GO.md	PASS	PASS	PASS	PASS		0.0000	5	5	0	0	0	0		False	
+research/findings/2026-09-04-fluency-scale-wt103-linattn-below-trigram-on-broad-domain.md	PASS	PASS	PASS	PASS		0.0025	37	37	0	0	0	0		False	
+research/findings/2026-09-04-generative-wander-production-scale-6seed-PARTIAL-blend-balance-collapse.md	PASS	PASS	PASS	PASS		0.0225	55	55	0	0	0	0		False	
+research/findings/2026-09-04-generator-trace-mislabel-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-gnw-lc-ne-adaptive-gain-swap-eviction-GO.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0275	8	2	5	1	0	11	exempt:5;rounding:5;still-unsupported:1	False	
+research/findings/2026-09-04-gpu-queue-dispatcher-tracking-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md	PASS	PASS	FAIL	PASS		0.0375	10	5	5	0	0	5	rounding:5	False	
+research/findings/2026-09-04-linattn-flip-confirmation-affect-still-hollow-live-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0000	1	0	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-04-linattn-shunt-gain-tier1-PARTIAL-5of6.md	FAIL	FAIL	FAIL	FAIL	unsupported(24)	0.0500	90	52	14	24	0	31	rounding:7;still-unsupported:24	False	
+research/findings/2026-09-04-onebrain-stage1-qwen-fallback-retire-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	3	0		False	
+research/findings/2026-09-04-onebrain-stage2-touchpoint-a-fact-clause-BUILD-AHEAD.md	FAIL	FAIL	FAIL	FAIL	missing(1)		0	0	0	0	2	0		False	
+research/findings/2026-09-04-onebrain-stage2-touchpoint-a-fact-clause-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-recall-gate-reaches-real-ltm-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-slotbinder-L2-sparse-fanout-derisk-GO-fits-3090-and-composes.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md	FAIL	FAIL	FAIL	FAIL	missing(2);unsupported(2)	0.0025	10	5	3	2	0	1	rounding:1	False	
+research/findings/2026-09-04-vision-crossing-heldout-scramble-anticheat-PARTIAL.md	PASS	PASS	PASS	PASS		0.0100	7	7	0	0	0	0		False	
+research/findings/2026-09-04-vsa-composer-learned-retirement-ROADMAP.md	PASS	PASS	FAIL	FAIL	unsupported(4)	0.1300	14	3	7	4	2	11	identifier:2;rounding:5;still-unsupported:4	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-04-wkv-mouth-bpe-caps-fix-GO.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	0	0		False	
+research/findings/2026-09-05-affect-experienced-opponent-gate-needs-embodiment-BOUNDARY.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0250	16	9	4	3	0	7	rounding:4;still-unsupported:3	False	
+research/findings/2026-09-05-affect-gate-embodied-US-necessary-not-sufficient-concept-code-must-be-grounded-BOUNDARY.md	PASS	FAIL	FAIL	PASS		0.0225	11	9	2	0	0	2	rounding:2	False	
+research/findings/2026-09-05-affect-gate-grounded-concept-code-lifts-ceiling-requirements-derisk-PARTIAL.md	PASS	FAIL	FAIL	PASS		0.0225	56	13	43	0	0	40	rounding:40	False	
+research/findings/2026-09-05-affect-grounded-experience-stream-hebbian-convergence-teaches-separable-code-derisk-PARTIAL.md	PASS	FAIL	FAIL	PASS		0.0450	26	7	19	0	0	17	rounding:17	False	
+research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md	PASS	FAIL	FAIL	PASS		0.0200	10	0	10	0	0	10	rounding:10	False	
+research/findings/2026-09-05-affect-noise-robust-homeostatic-three-factor-convergence-clears-strict-bar-derisk-GO.md	PASS	FAIL	FAIL	PASS		0.0650	35	6	29	0	0	14	rounding:14	False	
+research/findings/2026-09-05-affect-onsubstrate-noise-robust-convergence-spiking-port-built-mechanism-realized-strict-zeroFP-structural-boundary-6seed-queued-BOUNDARY.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0050	14	8	5	1	0	6	rounding:5;still-unsupported:1	False	
+research/findings/2026-09-05-d5-depth-hold-direct-read-NO-GO-cross-topic-baseline-not-comparable.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0050	38	0	35	3	0	5	rounding:2;still-unsupported:3	False	
+research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md	FAIL	FAIL	FAIL	FAIL	unsupported(2)	0.0150	28	11	15	2	0	2	still-unsupported:2	False	
+research/findings/2026-09-05-deltanet-delta-rule-write-on-linattn-BUILT-wt103-direction-test-queued.md	PASS	PASS	PASS	PASS		0.0200	8	8	0	0	4	0		False	
+research/findings/2026-09-05-deltanet-wt103-direction-test-modest-lift-below-bar-NO-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0100	10	9	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md	PASS	FAIL	FAIL	PASS		0.0050	4	3	1	0	0	1	rounding:1	False	
+research/findings/2026-09-05-eval-corpus-instrument-and-token-supply-decisive-test-queued.md	PASS	PASS	PASS	PASS		0.0075	6	6	0	0	1	0		False	
+research/findings/2026-09-05-gateB-appraisal-interoceptive-afferent-derisk-GO.md	PASS	PASS	PASS	PASS		0.0000	19	11	8	0	0	0		False	
+research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md	PASS	PASS	PASS	FAIL	unsupported(2)	0.0025	26	0	24	2	0	0		False	
+research/findings/2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0475	6	0	5	1	0	6	rounding:5;still-unsupported:1	False	
+research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-PRODUCTION-FLIP-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md	PASS	FAIL	FAIL	PASS		0.1275	14	4	10	0	0	10	rounding:10	False	
+research/findings/2026-09-05-hippokey-hippo-ssm-content-addressable-attention-NO-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(10)	0.0700	18	8	0	10	0	10	still-unsupported:10	False	
+research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	0	0		False	
+research/findings/2026-09-05-linattn-check-b-dropped-nogo-recovered-and-reproduced.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md	PASS	FAIL	FAIL	FAIL	unsupported(3);too_broad(0.338)	0.3375	32	3	26	3	0	23	rounding:20;still-unsupported:3	False	
+research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(2)	0.1125	12	2	8	2	0	9	rounding:7;still-unsupported:2	False	
+research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md	PASS	FAIL	FAIL	FAIL	unsupported(5)	0.1775	33	3	25	5	1	27	identifier:1;rounding:21;still-unsupported:5	False	
+research/findings/2026-09-05-mouth-broad-domain-fluency-deep-research-ladder.md	PASS	PASS	FAIL	FAIL	unsupported(6)	0.0125	6	0	0	6	7	13	identifier:7;still-unsupported:6	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-05-mouth-objective-lever-flat-on-broad-domain-architecture-is-wrong-axis-NO-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(6)	0.0075	19	13	0	6	0	6	still-unsupported:6	False	
+research/findings/2026-09-05-mouth-token-scaling-step1-simplewiki-domain-mix-NO-GO.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(19)	0.0050	24	5	0	19	0	19	still-unsupported:19	False	
+research/findings/2026-09-05-onebrain-fact-shard-dg-ca3-sublinear-spiking-retrieval-derisk-GO.md	PASS	FAIL	FAIL	PASS		0.0025	5	0	5	0	0	1	rounding:1	False	
+research/findings/2026-09-05-onebrain-fact-shard-wirein-production-composer.md	PASS	FAIL	FAIL	PASS		0.0200	10	0	10	0	0	6	rounding:6	False	
+research/findings/2026-09-05-onebrain-single-pool-production-flip-derisk-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-own-voice-fluency-reaim-objective-and-capacity-ROADMAP.md	PASS	PASS	FAIL	FAIL	unsupported(9)	0.0775	17	8	0	9	2	11	identifier:2;still-unsupported:9	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-05-per-step-kernel-profile-composer-latency-reducible-GPU.md	PASS	FAIL	FAIL	PASS		0.0000	8	0	8	0	0	3	rounding:3	False	
+research/findings/2026-09-05-rank10-curiosity-graded-novelty-familiarity-scaffold-derisk-GO.md	PASS	PASS	PASS	PASS		0.0100	8	2	6	0	0	0		False	
+research/findings/2026-09-05-rank11-topic-swap-scaffold-backlog-item-already-integrated.md	PASS	FAIL	FAIL	PASS		0.0300	6	1	4	0	0	5	rounding:4;truncation:1	False	
+research/findings/2026-09-05-rank13-selfid-anaphora-PRODUCTION-FLIP-NO-GO-stale-referent-selfalias-misroute.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank13-selfid-anaphora-production-flip-CORRECTED-DIAGNOSIS.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md	PASS	PASS	PASS	PASS		0.0200	5	3	2	0	0	0		False	
+research/findings/2026-09-05-rank2-integrated-loop-at-scale-answer-preservation-UNDEFINED-recall-incomplete.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank2-integrated-loop-webapp-thread-derisk.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank23-vision-cluster-grouping-decision-spiking-wta-derisk-GO.md	PASS	PASS	PASS	PASS		0.0050	3	0	3	0	0	0		False	
+research/findings/2026-09-05-rank6-knowledge-core-substrate-write-scaled-derisk-mixed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-rank6-shardedphasorstore-pickle-fix-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-scaffold-backlog-hygiene-and-diversified-ready-next-rungs-PLANNING.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-05-selfschema-authorship-neural-turnclass-derisk-PARTIAL.md	PASS	PASS	PASS	PASS		0.0025	27	22	5	0	0	0		False	
+research/findings/2026-09-05-shared-salience-afferent-production-default-flip-GO.md	PASS	FAIL	FAIL	PASS		0.0625	57	13	44	0	0	34	rounding:34	False	
+research/findings/2026-09-05-shared-spiking-salience-afferent-wired-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-latency.md	PASS	PASS	FAIL	FAIL	unsupported(1)	0.0000	1	0	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-05-value-choice-real-critic-neural-salience-context-6seed-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-06-metacog-accumulation-to-bound-6seed-PARTIAL.md	PASS	FAIL	FAIL	FAIL	too_broad(0.487)	0.4875	19	0	19	0	0	9	rounding:9	False	
+research/findings/2026-09-06-mouth-fineweb-edu-corpus-quality-lift-GO-direction.md	PASS	FAIL	FAIL	FAIL	unsupported(8)	0.0225	21	13	0	8	0	8	still-unsupported:8	False	
+research/findings/2026-09-06-mouth-token-scaling-fineweb-pipeline-and-grid-spec.md	PASS	PASS	PASS	PASS		0.0200	1	1	0	0	5	0		False	
+research/findings/2026-09-06-vllm-sleep-mode-pilot-prep-complete-gpu-test-pending.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-07-fork-emergence-gradient-place-familiarity-affect.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-08-affect-opponent-columnar-spiking-worst-case-unchanged-BOUNDARY.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0475	49	13	35	1	1	32	rounding:31;still-unsupported:1	False	
+research/findings/2026-09-08-gnw-congruence-spiking-PRODUCTION-FLIP-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-08-joint-attention-rung1-sts-tpj-onsubstrate-synapse-6seed-GO.md	PASS	PASS	FAIL	PASS		0.0200	44	40	4	0	1	4	rounding:4	False	
+research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md	PASS	FAIL	FAIL	FAIL	unsupported(5)	0.0425	55	12	35	5	0	10	rounding:7;still-unsupported:3	False	
+research/findings/2026-09-08-onebrain-curiosity-d6-semantic-drop-competitive-allocation-confound-CLOSED.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-08-onebrain-kmax-loadpath-thread-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0500	27	5	21	1	0	21	rounding:20;still-unsupported:1	False	
+research/findings/2026-09-08-plastic-mask-stdp-residual-CORRECTED-test-instrument-not-a-gap.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md	PASS	PASS	PASS	PASS		0.0000	11	3	8	0	0	0		False	
+research/findings/2026-09-08-rank1-yesno-multiblock-rung-GO.md	PASS	PASS	FAIL	FAIL	unsupported(8)	0.0000	8	0	0	8	0	8	still-unsupported:8	False	
+research/findings/2026-09-08-rank6-substrate-store-cupy-vram-measured-GO.md	PASS	PASS	PASS	PASS		0.0075	9	8	1	0	0	0		False	
+research/findings/2026-09-09-gap4-dendritic-urbanczik-senn-read-snr-clean-NO-GO-second-read-lever.md	PASS	PASS	PASS	PASS		0.0175	3	3	0	0	0	0		False	
+research/findings/2026-09-09-mouth-token-scaling-fineweb-edu-same-domain-DEEP-MARGIN-LIFT-direction-GO.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(11)	0.0075	18	7	0	11	0	11	still-unsupported:11	False	
+research/findings/2026-09-09-order-consolidation-v10-indegree-law-scale-invariant-6seed-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-09-rank14-question-route-selection-wta-derisk-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-09-rank14-question-route-selection-wta-wirein-default-off.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-09-scaffold-retirement-flips-composer-onebrain-and-substrate-store-LTM-no-regression-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-09-spiking-anaphor-detection-CA3-pattern-completion-6seed-GO.md	PASS	PASS	PASS	PASS		0.0000	27	27	0	0	0	0		False	
+research/findings/2026-09-09-spiking-anaphor-detection-wirein-both-callsites-default-off.md	PASS	FAIL	FAIL	PASS		0.0025	41	38	3	0	0	3	rounding:3	False	
+research/findings/2026-09-09-spiking-habituation-synaptic-depression-novelty-mechanism-6seed-GO.md	PASS	PASS	PASS	PASS		0.0075	42	42	0	0	0	0		False	
+research/findings/2026-09-09-spiking-novelty-wirein-engagement-of-default-off.md	PASS	FAIL	FAIL	PASS		0.0525	54	10	44	0	0	44	rounding:44	False	
+research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md	PASS	PASS	FAIL	FAIL	unsupported(6)	0.0075	35	29	0	6	0	6	still-unsupported:6	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-09-vision-configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md	PASS	PASS	FAIL	FAIL	unsupported(2)	0.0175	31	29	0	2	0	2	still-unsupported:2	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-09-vision-configural-binding-triple-order-conjunction-NEXT-MECHANISM-PREREGISTERED.md	PASS	PASS	PASS	PASS		0.0200	15	15	0	0	0	0		False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-15-gap4-inengine-selfpredict-interneuron-UNDEFINED-transport-ceiling-foreclosed.md	FAIL	FAIL	FAIL	FAIL	missing(5)	0.0950	15	1	14	0	0	14	rounding:14	False	
+research/findings/2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0125	7	5	1	1	0	2	rounding:1;still-unsupported:1	False	
+research/findings/2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md	PASS	FAIL	FAIL	FAIL	too_broad(0.245)	0.2450	19	2	17	0	0	8	exact+M:2;rounding:6	False	
+research/findings/2026-09-16-biased-competition-content-bias-target-RETIRED.md	PASS	FAIL	FAIL	PASS			0	0	0	0	1	2	identifier:2	False	
+research/findings/2026-09-16-gap5-forward-band-homeostatic-scaling-ltu-NO-GO-redirect-read-noise-floor.md	PASS	FAIL	FAIL	PASS		0.0650	5	2	3	0	0	3	rounding:3	False	
+research/findings/2026-09-16-graded-bias-regression-FIXED-designed-cross-inhibition-restored-fs7.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-16-host-removal-novelty-anaphor-qroute-RETIRED-byte-identical-differential-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md	PASS	FAIL	FAIL	PASS		0.1025	1	0	1	0	0	1	rounding:1	False	
+research/findings/2026-09-16-pool-harvest-vision-satdiv-ridge-lifts-off-borderline-touchpointa-multiseed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-16-rank7-affect-xinh-competition-strength-sweep-EXHAUSTED-confirms-park.md	PASS	FAIL	FAIL	FAIL	unsupported(6)	0.0100	18	0	12	6	0	18	rounding:12;still-unsupported:6	False	
+research/findings/2026-09-16-vision-nglimpses-temporal-evidence-integration-lifts-capability-2of6-to-4of6.md	PASS	FAIL	FAIL	PASS		0.1450	7	2	5	0	0	5	rounding:5	False	
+research/findings/2026-09-16-wirein-flips-biased-competition-gnw-stop-conflict-scaled-DEFAULT-ON-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-affect-grounded-experience-stream-300k-PARTIAL-noise-robustness-not-data-scale.md	PASS	FAIL	FAIL	PASS		0.0325	9	2	7	0	0	7	rounding:7	False	
+research/findings/2026-09-17-affect-noise-robustness-multicue-learned-reliability-mechanism-validated-strict-bar-PARTIAL.md	PASS	FAIL	FAIL	PASS		0.0600	26	3	23	0	5	26	identifier:5;rounding:21	False	
+research/findings/2026-09-17-biased-competition-shared-pool-Nway-divisive-closes-3referent-residual-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-da-write-gain-spiking-host-formula-circularity-closed-GO.md	PASS	FAIL	FAIL	PASS		0.0300	2	0	2	0	0	1	rounding:1	False	
+research/findings/2026-09-17-gap5-read-noise-floor-instrument-lane-is-read-noise-dominated-K18.md	PASS	FAIL	FAIL	PASS		0.0150	2	0	2	0	0	1	rounding:1	False	
+research/findings/2026-09-17-learned-spiking-constituent-boundary-segmentation-retires-host-segment-clause-GO.md	PASS	FAIL	FAIL	PASS		0.0425	8	1	7	0	1	6	identifier:1;rounding:5	False	
+research/findings/2026-09-17-mouth-token-supply-n2M-CAPACITY-SATURATED-at-small-sizes-lever-is-parameters-not-tokens.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0875	1	0	0	1	1	2	identifier:1;still-unsupported:1	False	
+research/findings/2026-09-17-multi-turn-agent-v2-host-anaphor-list-RETIRED-byte-identical.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-onebrain-11organ-flip-integrated-battery-da-mode-engagement-regression-HELD-default-off.md	FAIL	FAIL	FAIL	FAIL	unsupported(11)	0.0025	11	0	0	11	0	11	still-unsupported:11	False	
+research/findings/2026-09-17-onebrain-wave1-wave2-organ-merge-9-organs-one-pool-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-onebrain-wave3-organ-merge-ALL-11-organs-one-pool-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-segmentation-verb-object-residual-is-non-existent-baseline-already-detects-lateral-competition-lever-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0325	14	1	12	1	0	11	rounding:10;still-unsupported:1	False	
+research/findings/2026-09-17-spiking-anaphor-detection-extended-gendered-pronouns-he-she-him-her-GO.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-17-vision-s2-sail-anti-hebbian-decorrelation-learning-NOGO-underperforms-frozen-random-like-BCM.md	PASS	FAIL	FAIL	PASS		0.1225	2	0	2	0	0	2	rounding:2	False	
+research/findings/2026-09-17-vision-s2-template-learning-all-three-classes-NOGO-residual-is-DATA-limited-frozen-random-satdiv-GO.md	PASS	FAIL	FAIL	FAIL	unsupported(1);too_broad(0.245)	0.2450	18	1	16	1	0	17	rounding:16;still-unsupported:1	False	
+research/findings/2026-09-17-vision-satdiv-divisive-norm-is-the-decisive-lever-for-position-invariant-readout-binding-not-load-bearing-GO.md	PASS	FAIL	FAIL	PASS		0.1425	5	0	5	0	0	5	rounding:5	False	
+research/findings/2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md	PASS	FAIL	FAIL	FAIL	unsupported(6)	0.0125	15	5	4	6	0	8	rounding:2;still-unsupported:6	False	
+research/findings/2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md	FAIL	FAIL	FAIL	FAIL	missing(1)		0	0	0	0	0	0		False	
+research/findings/2026-09-20-hollow-affect-coloring-drive-diagnosis-and-probe-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	1	0		False	
+research/findings/2026-09-20-hollow-bg-action-selection-drive-diagnosis-and-probe-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-20-hollow-common-ground-drives-drive-diagnosis-and-probe-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	2	0		False	
+research/findings/2026-09-20-hollow-discourse-register-drive.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-20-hollow-episodic-drive-diagnosis-and-probe-fix.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0000	2	1	0	1	0	1	still-unsupported:1	False	
+research/findings/2026-09-20-hollow-noncontradiction-gate-drive-diagnosis-and-probe-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	1	0		False	
+research/findings/2026-09-20-hollow-set-attack-6of9-probe-artifacts-verified.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-20-hollow-surprise-monitor-confirm-probe-fix.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-20-load-bearing-fraction-6seed-0.59-robust-core-14.md	PASS	PASS	PASS	PASS		0.0000	2	2	0	0	0	0		False	
+research/findings/2026-09-20-prospective-memory-drive-v2-intervening-turns-flip.md	PASS	PASS	PASS	PASS		0.0100	17	15	2	0	2	0		False	
+research/findings/2026-09-20-scaling-3seed-confirm-nogo-capacity-saturated.md	PASS	PASS	PASS	PASS		0.0150	3	3	0	0	0	0		False	
+research/findings/2026-09-21-load-bearing-borderline-operating-point-diagnosis.md	PASS	FAIL	FAIL	PASS		0.0550	19	2	17	0	0	17	rounding:17	False	
+research/findings/2026-09-21-load-bearing-fraction-6seed-adequate-0.85-robust-core-20.md	PASS	FAIL	FAIL	FAIL	unsupported(5)	0.0000	8	0	3	5	0	5	still-unsupported:5	False	
+research/findings/2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw.md	PASS	FAIL	FAIL	PASS		0.0700	1	0	1	0	0	1	rounding:1	False	
+research/findings/2026-09-22-affect-tone-decode-ceiling-diagnosis-distribution-shift-INPROGRESS.md	FAIL	FAIL	FAIL	FAIL	missing(1);too_broad(0.203)	0.2025	31	2	29	0	0	13	rounding:13	False	
+research/findings/2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0225	39	17	19	3	0	21	rounding:18;still-unsupported:3	False	
+research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0325	11	6	4	1	0	5	rounding:4;still-unsupported:1	False	
+research/findings/2026-09-22-metacog-graded-marker-go-6seed.md	FAIL	FAIL	FAIL	FAIL	missing(1);unsupported(2)	0.0425	40	28	10	2	0	11	rounding:9;still-unsupported:2	False	
+research/findings/2026-09-22-prospective-memory-facilitation-load-bearing-6seed.md	FAIL	FAIL	FAIL	FAIL	unsupported(6)	0.0750	16	2	8	6	0	13	rounding:8;still-unsupported:5	False	
+research/findings/2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6.md	PASS	PASS	PASS	FAIL	unsupported(2)	0.0000	20	18	0	2	0	0		False	
+research/findings/2026-09-23-affect-conditioned-mouth-live-valence-diagnosis-and-staged-derisk.md	FAIL	FAIL	FAIL	FAIL	unsupported(7)	0.1475	8	0	1	7	0	10	exempt:2;rounding:1;still-unsupported:7	False	
+research/findings/2026-09-23-affect-marker-settle-deliberation-and-rest-oplevel-go-6seed.md	PASS	FAIL	FAIL	PASS		0.0650	40	16	24	0	0	24	rounding:24	False	
+research/findings/2026-09-23-affect-marker-settle-fullbrain-contrast-PARTIAL-6seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-affect-tone-neural-coupling-6seed-subdelta-NOGO.md	FAIL	FAIL	FAIL	PASS			0	0	0	0	4	4	identifier:4	False	
+research/findings/2026-09-23-allfixes-adequate-battery-6seed-robust-core-24.md	PASS	PASS	PASS	PASS		0.0025	6	0	6	0	0	0		False	
+research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md	PASS	PASS	PASS	PASS		0.0025	7	6	1	0	0	0		False	
+research/findings/2026-09-23-ca3-superposed-fact-attractor-capacity-PREREGISTRATION.md	PASS	PASS	PASS	FAIL	too_broad(0.215)	0.2150	1	1	0	0	0	0		False	
+research/findings/2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6seed-no-go.md	PASS	PASS	FAIL	FAIL	unsupported(1)	0.0225	21	1	19	1	0	19	rounding:18;still-unsupported:1	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-pending.md	PASS	PASS	FAIL	FAIL	unsupported(44)	0.0050	94	2	48	44	0	53	rounding:9;still-unsupported:44	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-scored-6seed-GO.md	PASS	PASS	FAIL	FAIL	unsupported(17);too_broad(0.305)	0.3050	96	2	77	17	0	32	rounding:15;still-unsupported:17	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-23-cpu-lane-harvest-perception-binding-negative-fixed-unconfirmed-competitive.md	PASS	PASS	FAIL	FAIL	unsupported(19)	0.0150	59	40	0	19	0	19	still-unsupported:19	False	declares `claim_check: synthesis` but no non-empty `claim_check_reason:` in the SAME frontmatter block -- falling back to the normal rules (the escape needs a STATED reason)
+research/findings/2026-09-23-curiosity-metacog-lowconfidence-coupling-6seed-NOGO-banked-G4-instrument-defect.md	PASS	FAIL	FAIL	PASS		0.0175	12	8	4	0	0	4	rounding:4	False	
+research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0125	2	0	1	1	0	1	rounding:1	False	
+research/findings/2026-09-23-d6-learn-through-use-hebbian-fact-write-s42-smoke-C3-NOGO-host-kb-familiarity-leak.md	PASS	PASS	PASS	PASS		0.0225	8	6	2	0	0	0		False	
+research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md	FAIL	FAIL	FAIL	FAIL	unsupported(2)	0.0000	2	0	0	2	0	1	still-unsupported:1	False	
+research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md	PASS	PASS	PASS	PASS		0.0000	2	1	1	0	0	0		False	
+research/findings/2026-09-23-da-encoding-natural-drive-24h-persistence-PREREGISTRATION.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0475	2	0	1	1	0	2	rounding:1;still-unsupported:1	False	
+research/findings/2026-09-23-da-encoding-natural-drive-v1-D64-UNDEFINED-immediate-recall-precondition.md	PASS	FAIL	FAIL	FAIL	too_broad(0.542)	0.5425	12	0	12	0	0	11	rounding:11	False	
+research/findings/2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level.md	PASS	FAIL	FAIL	FAIL	too_broad(0.505)	0.5050	14	0	14	0	0	13	rounding:13	False	
+research/findings/2026-09-23-da-encoding-natural-drive-v2-production-D128-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level.md	PASS	FAIL	FAIL	FAIL	too_broad(0.365)	0.3650	28	0	28	0	0	23	rounding:23	False	
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-PREREGISTRATION.md	PASS	FAIL	FAIL	FAIL	unsupported(9)	0.1875	20	1	10	9	0	19	rounding:10;still-unsupported:9	False	
+research/findings/2026-09-23-da-tag-capture-chat-wire-PREREGISTRATION.md	PASS	FAIL	FAIL	PASS		0.1625	4	1	3	0	0	2	rounding:2	False	
+research/findings/2026-09-23-episodic-s100-cupy-repeats-7of7-loadbearing-robust-core-23.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-flip-validated-fixes-production-default-validation-prereg.md	PASS	PASS	PASS	PASS		0.0075	2	2	0	0	0	0		False	
+research/findings/2026-09-23-live-homeostat-nogo-6seed.md	PASS	PASS	PASS	PASS		0.0150	51	51	0	0	0	0		False	
+research/findings/2026-09-23-onebrain-affect-ladder-onto-cortical-pool-plus-arousal-surprise-synapse-BUILT-6seed-scored-NOT-ALL-GO.md	FAIL	FAIL	FAIL	FAIL	missing(1)	0.0550	17	0	17	0	0	15	rounding:15	False	
+research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-bypass.md	FAIL	FAIL	FAIL	FAIL	unsupported(5)	0.0175	7	1	1	5	0	6	rounding:1;still-unsupported:5	False	
+research/findings/2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md	PASS	PASS	PASS	PASS		0.0000	24	3	21	0	0	0		False	
+research/findings/2026-09-23-operating-point-stabilizer-go-6seed.md	PASS	FAIL	FAIL	FAIL	unsupported(2)	0.0575	44	40	2	2	0	4	rounding:2;still-unsupported:2	False	
+research/findings/2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-swap-drives-adequate-probe-s42-smoke-loadbearing-6seed-staged.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md	PASS	PASS	PASS	PASS		0.0050	47	47	0	0	0	0		False	
+research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-PREREGISTERED.md	PASS	PASS	PASS	PASS		0.0025	15	15	0	0	0	0		False	
+research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-PREREGISTERED.md	FAIL	FAIL	FAIL	FAIL	unsupported(2)	0.0075	6	4	0	2	0	6	exact:4;still-unsupported:2	False	
+research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0075	2	2	0	0	0	0		False	
+research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md	PASS	FAIL	FAIL	FAIL	unsupported(1)	0.0225	6	2	3	1	0	4	rounding:3;still-unsupported:1	False	
+research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-affect-tone-selection-content-locked-PREREG.md	PASS	FAIL	FAIL	PASS		0.0875	17	16	1	0	3	4	identifier:3;rounding:1	False	
+research/findings/2026-09-24-ai-teacher-chat-only-synaptic-learning-GO-6seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-ai-teacher-environment-PREREGISTRATION.md	PASS	FAIL	FAIL	FAIL	unsupported(3)	0.0025	3	0	0	3	0	3	still-unsupported:3	False	
+research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md	PASS	FAIL	FAIL	FAIL	too_broad(0.645)	0.6450	8	2	6	0	0	5	rounding:5	False	
+research/findings/2026-09-24-chat-time-plasticity-audit-shared-cfg-hebbian-kill-and-the-local-freeze-fix.md	PASS	PASS	PASS	PASS		0.0225	2	0	2	0	0	0		False	
+research/findings/2026-09-24-content-provenance-learned-facts-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-content-provenance-learned-facts-prod-and-qwenforced-GO-6seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-curiosity-metacog-commitment-veto-v5-6seed-NOGO-1of6-g13-setpoint-residual.md	PASS	FAIL	FAIL	PASS		0.1225	24	0	24	0	0	16	rounding:16	False	
+research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md	PASS	FAIL	FAIL	PASS		0.0800	12	0	12	0	3	11	rounding:11	False	
+research/findings/2026-09-24-curiosity-metacog-lcne-phasic-gain-v4-6seed-NOGO-3of6-gain-holds-circuit-residual.md	PASS	FAIL	FAIL	PASS		0.0425	30	2	28	0	0	21	rounding:21	False	
+research/findings/2026-09-24-d6-chat-wire-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-d6-multiref-wm-learned-referent-env-flag-route-PREREGISTERED.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-da-tag-capture-chat-wire-6seed-GO-runner-level-ltm-off.md	PASS	PASS	PASS	PASS		0.0075	19	0	19	0	0	0		False	
+research/findings/2026-09-24-flip-validated-fixes-production-default-battery-GO.md	PASS	PASS	PASS	PASS		0.0075	4	2	2	0	0	0		False	
+research/findings/2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED.md	PASS	PASS	PASS	PASS		0.0025	43	43	0	0	0	0		False	
+research/findings/2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md	PASS	FAIL	FAIL	FAIL	unsupported(3);too_broad(0.203)	0.2025	60	16	41	3	0	39	rounding:36;still-unsupported:3	False	
+research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md	PASS	FAIL	FAIL	FAIL	unsupported(14);too_broad(0.223)	0.2225	84	23	47	14	0	56	rounding:42;still-unsupported:14	False	
+research/findings/2026-09-24-gnw-continuous-swap-branchpoint-fork-instrument-GO-6seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-gnw-continuous-swap-branchpoint-snapshot-fork-instrument-PREREGISTERED.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-language-learned-referent-production-route-GO-6seed.md	PASS	FAIL	FAIL	PASS		0.0000	12	7	5	0	0	5	rounding:5	False	
+research/findings/2026-09-24-lbf-proposed-lesion-knobs-conflict-kb-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-lbf-rows-live-organs-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-learning-rows-d5-consolidate-sleep-replay-lbf-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-PREREGISTRATION.md	FAIL	FAIL	FAIL	FAIL	missing(2)	0.1075	17	2	15	0	6	8	rounding:8	False	
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-dev-s7-not-ready.md	PASS	FAIL	FAIL	PASS		0.1175	8	0	8	0	0	8	rounding:8	False	
+research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md	PASS	FAIL	FAIL	PASS		0.0075	2	2	0	0	2	2	identifier:2	False	
+research/findings/2026-09-24-open-ended-gated-turn-seed7-smoke-and-flag-off-identity.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0000	2	2	0	0	0	0		False	
+research/findings/2026-09-24-plastic-mask-instrument-and-production-reachability.md	PASS	PASS	PASS	PASS		0.0000	2	2	0	0	0	0		False	
+research/findings/2026-09-24-production-chat-phase-timing-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-1.md	PASS	PASS	PASS	PASS		0.0025	7	0	7	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-2.md	PASS	PASS	PASS	PASS		0.0000	8	8	0	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-3.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-4.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0000	2	2	0	0	0	0		False	
+research/findings/2026-09-24-reward-value-spiking-afferent-seed7-derisk-PARTIAL.md	PASS	PASS	PASS	PASS		0.0000	58	57	1	0	0	0		False	
+research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0050	38	8	30	0	0	0		False	
+research/findings/2026-09-24-slotbinder-l3-cupy-latency-derisk-PREREG.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-slotbinder-l3-cupy-latency-derisk-candidate-2seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-slotbinder-l3-gpu-latency-GO-6seed.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-slotbinder-production-composer-gate-PREREG.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-swap-drives-adequate-probe-6seed-status-1-of-6-verified.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-NEUTRAL-6seed.md	PASS	PASS	PASS	PASS		0.0025	6	6	0	0	0	0		False	
+research/findings/2026-09-24-vision-readout-port-homeostasis-6seed-PORT-REPAIRED-capability-short.md	PASS	PASS	PASS	PASS		0.0475	25	25	0	0	0	0		False	
+research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-plasticity-PREREGISTERED.md	PASS	PASS	PASS	PASS		0.0150	17	17	0	0	1	0		False	
+research/findings/2026-09-24-wm-binding-ordinary-content-probe-6seed-NOGO-held-state-does-not-reach-an-ordinary-reply.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
+research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0025	1	0	1	0	0	0		False	
+research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	1	0		False	
+research/findings/2026-09-24-xedge-in-wave3-seed7-derisk-G1-registered-FAIL-equal-pass-control-identical.md	PASS	PASS	PASS	PASS		0.0000	8	8	0	0	0	0		False	
+research/findings/2026-09-25-lexicon-closed-class-frame-junction-dev-amendment2-s7-s42-NOT-READY.md	PASS	PASS	PASS	PASS		0.0675	17	1	16	0	0	0		False	
+research/findings/2026-09-25-production-default-battery-B2a-FAIL.md	PASS	PASS	PASS	PASS		0.0025	7	7	0	0	0	0		False	
+research/findings/2026-09-25-production-default-battery-B2a-rescored-PASS.md	PASS	PASS	PASS	PASS		0.0050	4	4	0	0	0	0		False	
+research/findings/2026-09-25-sleep-replay-capture-rc-GO-6seed.md	PASS	PASS	PASS	PASS		0.0000	9	9	0	0	0	0		False	
