@@ -56,8 +56,8 @@ Storage that is append-only, equal-strength and never forgets is itself a failur
   strengthens it, related memories support each other, and what is kept moves over nights into slower, integrated
   knowledge. Knowledge is learned into synapses and changes with use.
 
-What "RAG-like" means here, measured: today's production default writes every told fact at full strength and keeps it
-forever (no ledger), and a re-told fact is appended as a new block (research/findings/2026-09-25-sleep-forgetting-interference-fi-seed42-smoke.md:
+What "RAG-like" means here, measured: today's production default writes every told fact once (scaled only by the DA
+write gain) and never weakens it (no ledger), and a re-told fact is appended as a new block (research/findings/2026-09-25-sleep-forgetting-interference-fi-seed42-smoke.md:
 on the re-mention arm the recall matched the day-3 re-mention block while the original fell like an unmentioned
 fact's). The pair adds forgetting, but through one threshold that does not look at importance (section 2).
 
@@ -136,7 +136,7 @@ existing organ to memory. Biology entries are the five listed in the frontmatter
 Each step is brain-based: neurons, synapses and neuromodulators decide; host code only for the world (the
 conversation, the test questions), the body (the sleep/wake clock) and the clock. The ledger's per-synapse state
 equations (tag, PRP, late phase) stay host-integrated synaptic state, the same category as every plasticity rule in
-the engine, declared; moving them onto the substrate is the pair's own backlog (review section 5, items 1-3 and 8) and
+the engine, declared; moving them onto the substrate is the pair's own backlog (review section 5, items 1, 3 and 8) and
 not part of this plan. Every step is default OFF, byte-identical off, with its own lesion, its own biology binding and
 its own prereg committed before any run.
 
@@ -205,8 +205,8 @@ Gates first expected: WM1, WM3, WM7 for E, F and G.
 peripheral detail are stored on separate synapse sets (separate managed blocks linked by the shared agent code), each
 with its own tag, capture and replay read (no min over roles). The Step-5a local gain decides which component a
 salient moment favours. The gist that survives a lost detail is carried by the episodic organ's topic familiarity and
-the common-ground referent, which get a decay of their own (today the episodic organ keeps every topic, equal and
-permanent). The reply for "familiar but not recalled" is a functional read-out (section 8). Gates first expected: WM9,
+the common-ground referent, which get a decay of their own (Amendment 7 predicts that the episodic organ, not managed
+by the ledger, keeps every topic it formed; its `wd_epi` arm will measure it). The reply for "familiar but not recalled" is a functional read-out (section 8). Gates first expected: WM9,
 WM3 peripheral for F.
 
 **Step 7 -- replay-written transfer to a slow cortical store** (`gist-detail-graded-forgetting`; CLS). Replay
@@ -259,8 +259,12 @@ the existing override to at least the block count; P0 below).
   patient), the peripheral question (the aside's patient), then the referential probe ("you mentioned the <agent>",
   read on the episodic organ's `in_memory`). BT facts: central only.
 - **Delay arms** (each arm runs the shared prefix and is probed only at its delay, so earlier probes cannot act as
-  retrieval practice): `imm` (right after each telling; the P1 arm), `d1h` (21:00, day 1), `d4h` (24:00, awake, no
-  sleep yet), `n1`, `n3`, `n7` (08:00 after 1, 3 and 7 nights).
+  retrieval practice): `d1h` (21:00, day 1), `d4h` (24:00, awake, no sleep yet), `n1`, `n3`, `n7` (08:00 after 1, 3
+  and 7 nights).
+- **Learned first (P1):** in every arm, right after each telling, the composer's own non-writing decode of the new
+  block(s) (the read the sleep route already uses) must return the told roles. It runs identically in every arm, so
+  the shared prefix stays identical. A behavioural `imm` arm (a chat probe right after each telling; it diverges after
+  its first probe) is REPORTED beside it.
 - **Other arms:** `n1_b` (G0 null rebuild of `n1`); lesion arms at `n7` (wa: L-DA as the waking-only DA lesion with
   the SWR edge spared, Amendment 7's knob; L-NE; L-REL; L-PRIO) (wb: L-RECON; L-TOPIC; L-SCHEMA; L-PRIO), where L-PRIO
   cuts every importance edge, the replay bias and the re-induction on repetition and recall, while keeping the
@@ -313,8 +317,8 @@ gate.
   or final store.
 - **U1 P0 input and capacity:** a telling did not store the registered number of blocks; the managed-block count
   exceeded `k_max`; a scripted re-telling, practice recall or rest pause did not happen; a world step failed.
-- **U2 P1 learned first:** in `imm`, any target fact's central or peripheral probe was not correct (the brain cannot
-  forget what it never learned). The seed is UNDEFINED for that group.
+- **U2 P1 learned first:** the post-telling decode of any target fact's core or aside block did not return the told
+  roles (the brain cannot forget what it never learned). The seed is UNDEFINED for that group.
 - **U3 lesion held:** a lesion did not hold on the record at every turn and epoch (docs/TERMS.md "lesion"); that
   lesion's WM7 row is UNDEFINED.
 - **U4 run integrity:** a gated arm errs, or a probe reads undefined.
@@ -347,11 +351,11 @@ interference tellings, about 40 probes), so an `n7` arm is estimated at about 45
 after it (several epochs a night; the per-epoch cost is measured on the dev smoke before the six rows are queued);
 shorter delay arms 15-50 min. Estimates only:
 
-- Step 0 baselines: 2 configs x {imm, n1, n7} x 2 groups = 12 arms per seed, about 7 CPU-h per seed, about 42 CPU-h
+- Step 0 baselines: 2 configs x {d1h, n1, n7} x 2 groups = 12 arms per seed, about 7 CPU-h per seed, about 42 CPU-h
   for six seeds: about 3.5 h of wall time on the pool at 12 concurrent workers (four pool nodes x 3, the fi layout).
 - The full battery (after Step 4): 13 arms per group, 26 per seed, about 27 CPU-h per seed, about 160 CPU-h for six
   seeds: about 13 h on the pool, about 8 h with local cores added under `tools/memcap.sh`.
-- The reference-3090 subset (the episodic organ writes by default on cupy): wa `imm`, `n1`, `n7`, L-PRIO for six
+- The reference-3090 subset (the episodic organ writes by default on cupy): wa `d1h`, `n1`, `n7`, L-PRIO for six
   seeds, 24 arms through `tools/gpu_queue.sh`, roughly 12-24 GPU-h.
 - On-demand AWS CPU inside the owner's approved daily cap is an overflow option, not needed.
 - A seed-7 dev smoke precedes every six-seed set; a full-brain snapshot fork at the branch points (the GNW fork
@@ -397,8 +401,8 @@ until then (the owner's "wait on fix").
   episodic-agreement arm are infrastructure this battery reuses. For the flip: WD2 REPORTED, NR binding, SN1 and SN2
   the first WM1 / WM7 instance, `cu` required for D3 and for the episodic organ's gist role. Its registered NR
   response (Fonseca 2004 PRP competition) is Step 2 here: consistent, not superseded.
-- **Awake-rest replay capture (`BRAIN_AWAKE_REPLAY_CAPTURE`, arc family NO-GO, 5 of 6 seeds passed): superseded in role** by Step 4's awake
-  bursts that bias the night; the code stays, it is not a flip candidate on its own.
+- **Awake-rest replay capture (`BRAIN_AWAKE_REPLAY_CAPTURE`, arc family NO-GO, 5 of 6 seeds passed): superseded in
+  role** by Step 4's awake bursts that bias the night; the code stays, it is not a flip candidate on its own.
 - **r2 constant downscaling (NO-GO 0/6): superseded** by r3, already.
 - **The pair's flip: on hold** until Steps 1-4 and the gates of section 6 hold.
 
