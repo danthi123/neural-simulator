@@ -115,6 +115,15 @@ HOST SHORTCUTS (declared, brain-based-only burn-down):
   - the per-synapse ODEs are the v3 host-integrated ones.
 This is a synaptic-capture route, not "consolidation" in the docs/TERMS.md sense (no transfer, no source lesion).
 
+PATTERN-COMPLETION SUB-FLAG (branch research/awake-replay-completion; default OFF: `BRAIN_SLEEP_REPLAY_COMPLETION`). The
+epoch's R_i is a decode margin, so a fact whose trace IS still expressed but whose words sit close to other words in
+the cleanup is re-tagged weakly and releases little DA (measured on dev seed 2 with the awake completion keeping the
+trace at 0.98: night read 0.107, SWR DA 0.579, not captured). With the sub-flag armed the epoch runs
+webapp/replay_completion.py (the spiking item competition + the substrate re-bind of the reinstated ensemble) and uses
+R_c, the reinstated ensemble's coherence with the block's increment, for the re-tag, the SWR-coupled DA and the
+downscaling protection; `BRAIN_REPLAY_COMPLETION_LESION` keeps every read and uses R. Unset -> nothing is imported and
+the epoch's pre-branch code path runs (pinned in tests/test_awake_replay_completion.py).
+
 CONTRACT. DEFAULT-OFF. With `BRAIN_SLEEP_REPLAY_CAPTURE` unset, `ChatTagCapture._catch_up` never enters its sleep
 branch, no replay tag is ever set (the ledger's `h_rep` branch is skipped), and no key is added to the reply: the
 tag-and-capture path is byte-identical (tests/test_sleep_replay_capture.py). Inert without `BRAIN_DA_TAG_CAPTURE`
@@ -195,6 +204,15 @@ def wake_potentiation(ledger, t_since: float) -> float:
         if blk["t_w"] > t_since:
             tot += float(np.mean(np.abs(ledger.weight_factor(blk) * blk["inc"])))
     return tot
+
+
+def _sleep_completion_enabled() -> bool:
+    """`BRAIN_SLEEP_REPLAY_COMPLETION` (default OFF; branch research/awake-replay-completion, webapp/replay_completion.py)
+    -- read here so the flag-off epoch imports nothing new. With it armed the night's SWR reactivation is a pattern-
+    completion event: the epoch uses R_c (the reinstated ensemble's coherence with the block's increment) where it used
+    the margin R, for the re-tag, the SWR-coupled DA and the downscaling protection. `BRAIN_REPLAY_COMPLETION_LESION`
+    keeps every read and uses R."""
+    return os.environ.get("BRAIN_SLEEP_REPLAY_COMPLETION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def sleep_onset_h() -> float:
@@ -283,12 +301,21 @@ class SleepReplayCapture:
         pre_z = [float(np.mean(b["z"] > 0.5)) for b in ledger.blocks]
         # (2) SWR reactivation of every managed block, read back by the store's own cleanup
         R = []
-        for i in range(len(ledger.blocks)):
-            with self.rng_ctx(self.seed, _K_REACT + e_idx * 1000 + i):
-                r = self.reactivate_fn(comp, ledger.block_offset + i)
-            R.append(None if r is None else float(r))
+        comp_rec = None
+        if _sleep_completion_enabled():
+            # PATTERN COMPLETION (default-OFF `BRAIN_SLEEP_REPLAY_COMPLETION`, webapp/replay_completion.py; branch
+            # research/awake-replay-completion): the same read R, then the spiking item competition + the substrate
+            # re-bind of the reinstated ensemble; the epoch re-tags, releases DA and protects with R_c instead of R.
+            from webapp import replay_completion as _C
+            R, R_read, comp_rec = _C.read_blocks(comp, ledger, self.rng_ctx, self.seed, _K_REACT + e_idx * 1000)
+        else:
+            for i in range(len(ledger.blocks)):
+                with self.rng_ctx(self.seed, _K_REACT + e_idx * 1000 + i):
+                    r = self.reactivate_fn(comp, ledger.block_offset + i)
+                R.append(None if r is None else float(r))
+            R_read = R
         coupling = 0.0 if replay_capture_lesioned() else 1.0
-        R_eff = [coupling * (0.0 if r is None else r) for r in R]
+        R_eff = [coupling * (0.0 if r is None else r) for r in R_read]
         # (3) re-tag: the replay tag, never below what is left of an earlier replay tag
         for blk, r in zip(ledger.blocks, R_eff):
             h_new = r * np.abs(blk["inc"]).astype(np.float64)
@@ -345,6 +372,10 @@ class SleepReplayCapture:
                             "pre_frac_z_gt_half": [round(v, 9) for v in pre_z],
                             "replay_lesioned": bool(coupling == 0.0), "capture_lesioned": bool(cap_coupling == 0.0),
                             "no_reader": bool(any(r is None for r in R))})
+        if comp_rec is not None:                       # completion record: only ever present with the flag ON
+            from webapp import replay_completion as _C
+            self.epochs[-1]["completion"] = _C.record(comp_rec)
+            self.epochs[-1]["completion_lesioned"] = bool(_C.completion_lesioned())
         if shy is not None:
             self.epochs[-1]["shy_scale"] = shy
         if load is not None:

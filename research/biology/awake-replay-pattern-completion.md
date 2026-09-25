@@ -1,7 +1,7 @@
 ---
 type: biology
 id: awake-replay-pattern-completion
-mechanism: An awake sharp-wave-ripple reactivation is a population burst of the CA3 recurrent network that starts once firing reaches a threshold; the recurrent connections of the stored assembly then complete it, so a partial trace that still selects the memory reinstates the whole ensemble, and the LTP the replay induces scales with the number of co-active pairs in the reinstated ensemble, not with how decisively the partial trace decodes
+mechanism: A sharp-wave-ripple reactivation (in quiet rest or in NREM sleep) is a population burst of the CA3 recurrent network that starts once firing reaches a threshold; the recurrent connections of the stored assembly then complete it, so a partial trace that still selects the memory reinstates the whole ensemble, and the LTP / tag the replay sets (and the DA it co-releases, in the sleep route's model) scales with the number of co-active pairs in the reinstated ensemble, not with how decisively the partial trace decodes
 status: established
 last_verified: 2026-09-25
 sources:
@@ -13,7 +13,7 @@ sources:
     note: "ch.54 (p.1360), Marr's proposal: during retrieval 'the reactivation of a subset of this stored cell assembly would be sufficient to activate the entire original neural ensemble that encodes the memory because of the strong recurrent connections between the cells of the ensemble. This restoration is referred to as pattern completion.' THE load-bearing claim for this module: the reinstated ensemble is the whole assembly, not a copy scaled by the cue."
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "platform with fewer spatial cues, their performance"
-    note: "ch.54 (p.1360-1361): CA3-specific NMDA-receptor knockout mice find the platform with the full cue set but are impaired 'with fewer spatial cues' -- completion from a partial cue needs the recurrent synapses' LTP. The lesion logic behind BRAIN_AWAKE_REPLAY_COMPLETION_LESION (every read kept, the completion's effect cut)."
+    note: "ch.54 (p.1360-1361): CA3-specific NMDA-receptor knockout mice find the platform with the full cue set but are impaired 'with fewer spatial cues' -- completion from a partial cue needs the recurrent synapses' LTP. The lesion logic behind BRAIN_REPLAY_COMPLETION_LESION (every read kept, the completion's effect cut)."
   - path: ~/Projects/sim-catalog/references/textbooks/buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt
     anchor: "wave emerges in the excitatory recurrent circuits of the CA3 region"
     note: "p.345: 'In the intact brain, the endogenous hippocampal sharp wave emerges in the excitatory recurrent circuits of the CA3 region', from 'the synchronous bursting of CA3 pyramidal cells' -- the replay event IS a recurrent-network burst."
@@ -39,8 +39,9 @@ sources:
     anchor: "Objects that were remembered less well were replayed more during the subsequent rest period"
     note: "Schapiro, McDevitt, Rogers, Mednick & Norman 2018, Nat Commun 9:3920 (doi 10.1038/s41467-018-06213-1), abstract via PubMed 2026-09-25: awake human hippocampal replay PRIORITIZES weakly learned items, and replay predicts later memory. Evidence against the Amendment-4 linear proxy (under it the weakest trace is replayed least and collapses); weighed as the alternative 'replay prioritization' in the body."
 implemented_by:
-  - webapp/awake_replay_completion.py
+  - webapp/replay_completion.py
   - webapp/awake_replay_capture.py
+  - webapp/sleep_replay_capture.py
 findings:
   - research/findings/2026-09-25-awake-replay-capture-arc-no-go-6seed.md
   - research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md
@@ -55,8 +56,12 @@ early LTP at each 5-min bout in proportion to the partial trace's cleanup DECODE
 margin is a read-out quantity: it says how close the most similar OTHER vocabulary word comes to the fact's word at
 the cleanup. A replay event's LTP depends on something else.
 
+**The same proxy sits in the night's route.** The sleep epoch re-tags with R x |inc| and co-releases DA
+tonic + span x sum R. On dev seed 2 the awake completion kept the trace expressed (0.98 at the last bout, all three items
+reinstated) but the night read 0.107, the SWR DA was 0.579 and the fact was not captured.
+
 **What the real system runs alongside this that the code replaced with a linear proxy.** CA3 pattern completion. A
-replay event is a population burst of the CA3 recurrent network (Buzsaki p.345) that starts once population firing
+replay event, awake or asleep, is a population burst of the CA3 recurrent network (Buzsaki p.345) that starts once population firing
 crosses a threshold (de la Prida et al. 2006), and a reactivated subset of a stored assembly activates the whole
 ensemble through the assembly's recurrent connections (Kandel ch.54; Nakazawa et al. 2002; Guzman et al. 2016). The
 LTP a replay induces grows with the number of co-active pre/post pairs (Sadowski et al. 2016). So once the partial
@@ -73,7 +78,9 @@ nearest competitor word sits; when the trace no longer selects it, nothing of it
 - The reinstated items are re-bound and bundled on the composer's own resonate-and-fire work registers
   (`_compose_phases`, the op that encoded the fact) and read back as spike phases: the reinstated ensemble.
 - R_c = its in-phase coherence with the block's stored increment (Sadowski's pairing count). The bout induces
-  e <- e + R_c (1 - e). `BRAIN_AWAKE_REPLAY_COMPLETION_LESION` keeps every read and induces with R instead.
+  e <- e + R_c (1 - e) (`BRAIN_AWAKE_REPLAY_COMPLETION`). The night's SWR epoch, with its own flag
+  (`BRAIN_SLEEP_REPLAY_COMPLETION`), uses R_c for its re-tag, its SWR-coupled DA and its downscaling protection.
+  `BRAIN_REPLAY_COMPLETION_LESION` keeps every read and uses R in both routes.
 - No new constant. The threshold is where the partial trace stops selecting its own items (the decayed increment
   against the baseline and the vocabulary crosstalk), not a set number.
 - No `constraints_config` / `protocol`: nothing here is a config scalar the checker can compare.

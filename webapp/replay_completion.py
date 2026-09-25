@@ -1,30 +1,38 @@
-"""PATTERN COMPLETION FOR THE AWAKE-REST REPLAY ROUTE: an awake reactivation reinstates the stored fact's whole ensemble
-once its partial trace still selects the fact's own items, instead of re-inducing early LTP in proportion to the
-partial trace's decode margin (DEFAULT-OFF: `BRAIN_AWAKE_REPLAY_COMPLETION`, needs `BRAIN_AWAKE_REPLAY_CAPTURE`).
+"""PATTERN COMPLETION IN SWR REPLAY (the DA tag-and-capture routes): a replay event reinstates the stored fact's whole
+ensemble once its partial trace still selects the fact's own items, instead of reactivating it in proportion to the
+partial trace's decode margin. Two default-OFF flags, one per replay route that reads a block:
+  `BRAIN_AWAKE_REPLAY_COMPLETION` -- the quiet-rest bouts of webapp/awake_replay_capture.py (needs
+                                     `BRAIN_AWAKE_REPLAY_CAPTURE`);
+  `BRAIN_SLEEP_REPLAY_COMPLETION` -- the night's SWR epoch of webapp/sleep_replay_capture.py (needs
+                                     `BRAIN_SLEEP_REPLAY_CAPTURE`).
 Branch research/awake-replay-completion.
 
-WHY (the wall, measured). The awake-rest route (webapp/awake_replay_capture.py) scored NO-GO 5/6
+WHY (the wall, measured). The awake-rest route scored NO-GO 5/6
 (research/findings/2026-09-25-awake-replay-capture-arc-no-go-6seed.md): on one gate seed the long-delay fact's read R
 started at 0.207 (0.28-0.49 on the other five) and fell to 0.031 across the 48 five-minute bouts, while the other
 seeds lost a few percent. Each bout re-induces e <- e + R (1 - e) with R the smallest cleanup decisiveness margin
 (peak - runner_up) / peak over agent/action/patient. Between bouts e decays by exp(-5 min / 1.5 h) = 0.946, so a
 block holds only if R(e) (1 - e) >= ~0.057 e at some e; a block whose margin is low at every e has no upper fixed
-point and the loop that should keep it amplifies its decay instead (subcritical).
+point and the loop that should keep it amplifies its decay instead (subcritical). The night's route has the same
+proxy: its re-tag is R x |inc| and its SWR-coupled DA is tonic + span x sum R, so a low-margin fact that rest DID keep
+expressed is still not captured (measured on dev seed 2 with the awake completion alone: expression 0.98 at the last
+bout, all three items reinstated, night read 0.107, SWR DA 0.579, not captured).
 
 THE WALL QUESTION: what does the real system run alongside this that the code replaced with a linear proxy? The
 margin is a READ-OUT quantity: how far the fact's word stands above the most similar OTHER word of the vocabulary in
 the cleanup. How strongly a reactivation re-induces LTP is a PARTICIPATION quantity: how many of the trace's own
 synapses see their pre and post cells fire together in the replay event (Sadowski, Jones & Mellor 2016: the induced
-change scales with the number of LTP-competent pairings). In the hippocampus the two come apart because of pattern
-completion: a replay event is a population burst of the CA3 recurrent network that starts at a threshold level of
-firing (de la Prida et al. 2006), and "the reactivation of a subset of this stored cell assembly would be sufficient
-to activate the entire original neural ensemble" (Kandel 6e ch.54, Marr's proposal; Nakazawa et al. 2002; Guzman et
-al. 2016). So once the partial trace still selects the fact, the whole ensemble fires; how close the runner-up word
-happens to be does not scale the burst. The linear proxy R_eff = margin omits the completion. Biology binding:
-research/biology/awake-replay-pattern-completion.md.
+change scales with the number of LTP-competent pairings); and the DA the event co-releases is, in the sleep route's
+own model, proportional to the tags the reactivation sets (Clopath et al. 2008). In the hippocampus the two come apart
+because of pattern completion: a replay event -- awake or asleep -- is a population burst of the CA3 recurrent network
+that starts at a threshold level of firing (de la Prida et al. 2006), and "the reactivation of a subset of this
+stored cell assembly would be sufficient to activate the entire original neural ensemble" (Kandel 6e ch.54, Marr's
+proposal; Nakazawa et al. 2002; Guzman et al. 2016). So once the partial trace still selects the fact, the whole
+ensemble fires; how close the runner-up word happens to be does not scale the burst. The linear proxy (reactivation
+= margin) omits the completion. Biology binding: research/biology/awake-replay-pattern-completion.md.
 
-WHAT HAPPENS (only with the flag ON, only inside an awake bout of webapp/awake_replay_capture.py):
-  1. PARTIAL CUE. The bout's own read runs unchanged (the block's trigger is driven through the store, unbound per
+WHAT HAPPENS (only with a flag ON, only inside that route's replay event):
+  1. PARTIAL CUE. The route's own read runs unchanged (the block's trigger is driven through the store, unbound per
      role and read by the cleanup: `sleep_replay_capture.reactivation_strength`, R). It is kept on the record.
   2. ITEM COMPETITION (spiking). The same substrate read gives each concept unit its matched-filter drive (the
      rectified cleanup membrane; `_role_scores`, the ops of `OneBrainComposer._block_role_scores`). Per role the
@@ -39,43 +47,48 @@ WHAT HAPPENS (only with the flag ON, only inside an awake bout of webapp/awake_r
      increment, Re(mean_k conj(d_k) z_k) clipped to [0, 1] (d = inc / |inc|): the fraction of the block's synapses
      whose post cell reinstates in phase with the synapse's increment (Sadowski's LTP-competent pairings). When the
      three content items are reinstated correctly the reinstated pattern is the stored composite less its polarity
-     component (R_c ~0.79 on a D=64 composer; see COMPLETION_ROLES); a wrong item lowers it; a trace that no longer
+     component (R_c ~0.75-0.79 measured; see COMPLETION_ROLES); a wrong item lowers it; a trace that no longer
      selects its items reinstates an unrelated pattern and R_c ~ 0. Unlike the margin R, R_c knows WHICH items the
      read selected: a decayed block whose cleanup confidently selects a wrong word (or a reserved slot) has a margin R
      but no coherence with its own increment.
-  5. The bout then applies the Amendment-4 induction with R_c in place of R: e <- e + R_c (1 - e), the tag re-set to
-     the same level. Nothing else changes: no PRP, z untouched, the awake-edge lesion still zeroes R_eff.
+  5. The route then uses R_c where it used R, and nothing else changes. Awake bout: e <- e + R_c (1 - e), the tag
+     re-set to the same level (no PRP, z untouched, the awake-edge lesion still zeroes R_eff). Night epoch: the replay
+     tag R_c x |inc|, the SWR-coupled DA tonic + span x min(1, sum R_c) onto the same spiking D1 pool, and (under the
+     downscaling sub-flags) the protection 1 - delta (1 - R_c); both replay/DA lesions act on it unchanged.
 
 THE THRESHOLD IS NOT A CONSTANT. Whether a partial trace ignites is decided by whether its own read still selects the
 fact's items in the spiking competition, i.e. by the ratio of the decayed increment to the baseline synapses and to
 the vocabulary's crosstalk on that block. No threshold, gain or iteration count is added.
 
-THE COMPLETION LESION. `BRAIN_AWAKE_REPLAY_COMPLETION_LESION=1` cuts the completion's effect: every read above still
-runs (same compute, same substrate state) and is recorded, but the bout uses the partial cue's own R, i.e. exactly the
-Amendment-4 route.
+THE COMPLETION LESION. `BRAIN_REPLAY_COMPLETION_LESION=1` cuts the completion's effect in BOTH routes: every read
+above still runs (same compute, same substrate state) and is recorded, but each route uses the partial cue's own R,
+i.e. exactly the Amendment-4 awake route and the rc/r2 night route.
 
 HOST SHORTCUTS (declared, brain-based-only burn-down):
   - the op sequencing (read -> competition -> re-bind -> read-back) is host dispatch of substrate ops, as every
     composer op is; ONE pass (T = 1): no multi-cycle settle within the ripple;
   - the per-role peak normalization of the drive (the divisive feedback-inhibition stand-in the composer's spiking
-    cleanup already uses) and the read of the winner as the unit with the largest spike count;
+    cleanup already uses) and the read of the winner as the unit with the largest spike count; the bank's units are
+    independent (no lateral inhibition), so near-ties resolve as no reinstatement and an equal drive still picks the
+    bank's most excitable unit;
   - R_c is host arithmetic on the reinstated spike phases against the ledger's stored increment (the same class as
-    the Amendment-4 margin arithmetic);
+    the margin arithmetic it replaces);
   - the reinstated pattern is credited to the ledger only along the stored increment: a wrong item's LTP (the
-    component orthogonal to the increment) is DROPPED, which can only understate confabulation risk; every bout
-    records the reinstated items and R_c so a wrong completion is visible on the record;
-  - the roles completed are the fact roles plus polarity (the roles a plain chat fact binds); a reserved (unrecruited)
-    cleanup slot or a word without a code is never reinstated (no code growth from this read).
+    component orthogonal to the increment) is DROPPED, which can only understate confabulation risk; every replay
+    event records the reinstated items and R_c so a wrong completion is visible on the record;
+  - the roles completed are the three content roles; a reserved (unrecruited) cleanup slot or a word without a code
+    is never reinstated (no code growth from this read).
   - NOT MODELLED: literal CA3-CA3 collaterals. The composer store has no recurrent collaterals; the model's recurrent
     path for a stored fact is its own readout -> unbind -> cleanup -> re-bind loop, whose forward half every recall
     already runs. The repo's CA3 superposed-fact attractor (research/runners/ca3_superposed_fact_attractor.py) is a
-    standalone binary k-WTA runner with its own EC codes and no chat write path, so the awake read cannot route
+    standalone binary k-WTA runner with its own EC codes and no chat write path, so the replay read cannot route
     through it without a second store; not used.
-This is reactivation-driven re-potentiation in the same store, not "consolidation" in the docs/TERMS.md sense.
+This is reactivation-driven re-potentiation / capture in the same store, not "consolidation" in the docs/TERMS.md
+sense.
 
-CONTRACT. DEFAULT-OFF. With `BRAIN_AWAKE_REPLAY_COMPLETION` unset nothing here runs: the awake bout takes its
-Amendment-4 path verbatim (tests/test_awake_replay_completion.py pins the store hash against the pre-branch bout).
-Inert without `BRAIN_AWAKE_REPLAY_CAPTURE` (no bout runs). No `sim/` edit; no edit to one_brain_composer.py.
+CONTRACT. DEFAULT-OFF. With both flags unset nothing here runs: the awake bout and the night epoch take their
+pre-branch paths verbatim (tests/test_awake_replay_completion.py pins both against the pre-branch methods' store hash
+and records). No `sim/` edit; no edit to one_brain_composer.py.
 """
 from __future__ import annotations
 
@@ -86,12 +99,12 @@ import numpy as np
 
 from webapp.sleep_replay_capture import FACT_ROLES, reactivation_strength
 
-# The fact's CONTENT roles -- the same three the Amendment-4 read R takes its minimum over. Polarity is bound in the
+# The fact's CONTENT roles -- the same three the margin read R takes its minimum over. Polarity is bound in the
 # stored composite too, but its 2-word competition resolves whatever the trace strength (AFFIRM wins at any e, even on
 # the bare baseline), so reinstating it would add an unconditional floor to R_c that carries no evidence that THIS
 # fact's ensemble ignited. Measured before this was fixed (a D=64 composer, dev seed 7): with polarity in, R_c = 0.081
 # on the bare baseline (e = 0), from the polarity item alone. So the reinstated ensemble is the content items only; a
-# fully reinstated fact then reads R_c < 1 (three of the four bound roles), which the induction law takes as it is.
+# fully reinstated fact then reads R_c < 1 (three of the four bound roles), which each route takes as it is.
 COMPLETION_ROLES = FACT_ROLES
 
 
@@ -99,14 +112,41 @@ def _truthy(name: str) -> bool:
     return os.environ.get(name, "0").strip().lower() in ("1", "true", "on", "yes")
 
 
-def completion_enabled() -> bool:
-    """Master flag, DEFAULT OFF. `BRAIN_AWAKE_REPLAY_COMPLETION` in {1,true,on,yes}."""
+def awake_completion_enabled() -> bool:
+    """DEFAULT OFF. `BRAIN_AWAKE_REPLAY_COMPLETION` in {1,true,on,yes}: the awake bouts complete."""
     return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION")
 
 
+def sleep_completion_enabled() -> bool:
+    """DEFAULT OFF. `BRAIN_SLEEP_REPLAY_COMPLETION` in {1,true,on,yes}: the night's SWR epoch completes."""
+    return _truthy("BRAIN_SLEEP_REPLAY_COMPLETION")
+
+
 def completion_lesioned() -> bool:
-    """`BRAIN_AWAKE_REPLAY_COMPLETION_LESION` cuts the completion's effect (the reads still run): R_eff = R."""
-    return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION_LESION")
+    """`BRAIN_REPLAY_COMPLETION_LESION` cuts the completion's effect in both routes (the reads still run): R_eff = R."""
+    return _truthy("BRAIN_REPLAY_COMPLETION_LESION")
+
+
+def read_blocks(comp, ledger, rng_ctx, seed, k_base):
+    """The completion read of every managed block, each inside rng_ctx(seed, k_base + i) exactly as the route's own
+    read loop. Returns (R list, R_read list, records): R = the partial cue's read, R_read = what the route uses (R_c,
+    or R under the completion lesion), records = the per-block completion dicts."""
+    use_c = not completion_lesioned()
+    R, R_read, recs = [], [], []
+    for i in range(len(ledger.blocks)):
+        with rng_ctx(seed, k_base + i):
+            c = completion_read(comp, ledger.block_offset + i, ledger.blocks[i])
+        recs.append(c)
+        R.append(None if c is None else float(c["R"]))
+        R_read.append(None if c is None else (float(c["R_c"]) if use_c else float(c["R"])))
+    return R, R_read, recs
+
+
+def record(recs) -> list:
+    """The per-block completion record a route stores (rounded like the route's own fields)."""
+    return [None if c is None else {"R_c": round(c["R_c"], 9), "coherence_abs": round(c["coherence_abs"], 9),
+                                    "items": c["items"], "spikes": c["spikes"], "n_items": c["n_items"]}
+            for c in recs]
 
 
 def _role_scores(comp, block_idx: int) -> Optional[dict]:

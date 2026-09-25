@@ -1,13 +1,16 @@
-"""Pattern completion for the awake-rest replay route (webapp/awake_replay_completion.py, default-OFF
-BRAIN_AWAKE_REPLAY_COMPLETION; branch research/awake-replay-completion).
+"""Pattern completion in the replay routes (webapp/replay_completion.py; default-OFF BRAIN_AWAKE_REPLAY_COMPLETION for
+the awake bouts and BRAIN_SLEEP_REPLAY_COMPLETION for the night's epoch; branch research/awake-replay-completion).
 
 Two layers:
   * WIRING + LEDGER DYNAMICS on a fake store (no brain build): the read-back is a steep Hill curve of the expressed
     increment-to-baseline ratio, chosen so the Amendment-4 margin route is SUBCRITICAL on it (fresh read ~0.19 falling
-    below 0.06 over the 48 bouts -- the shape the failing gate seed reported: 0.207 -> 0.031), and the completion read is a fake that reinstates the ensemble (R_c = 0.786, the measured value for a fully
-    reinstated three-role fact) while the expressed ratio is above an ignition ratio. Pinned: flag OFF is
-    byte-identical to the pre-branch bout; the completion lesion writes exactly what the Amendment-4 route writes;
-    the low-margin block collapses on the margin route and is held by completion; the awake-edge lesion still cuts it.
+    below 0.06 over the 48 bouts -- the shape the failing gate seed reported: 0.207 -> 0.031), and the completion
+    read is a fake that reinstates the ensemble (R_c = 0.786, the measured value for a fully
+    reinstated three-role fact) while the expressed ratio is above an ignition ratio. Pinned: flags OFF are
+    byte-identical to the pre-branch bout AND to the pre-branch night (store hashes computed with main's modules at
+    05eba333f); the completion lesion writes exactly what the margin routes write; the low-margin block collapses on
+    the margin route and is held by completion; a VERY low-margin block (a night read below the DA capture point) is
+    held awake but lost at night unless the night completes too; the awake-edge lesion still cuts it.
   * THE SUBSTRATE READ on a real (small, D=64) OneBrainComposer: `_role_scores` is the composer's own block read; a
     fully expressed block reinstates its own three items through the spiking competition and the substrate re-bind
     (R_c = the three-role composite's coherence with the stored increment); the bare baseline does not; a silent or
@@ -29,7 +32,7 @@ _REPO = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _REPO)
 
 from webapp import awake_replay_capture as A               # noqa: E402
-from webapp import awake_replay_completion as C            # noqa: E402
+from webapp import replay_completion as C                  # noqa: E402
 from webapp import da_tag_capture as T                     # noqa: E402
 from webapp import da_tag_capture_chat as W                # noqa: E402
 from webapp import sleep_replay_capture as S               # noqa: E402
@@ -37,8 +40,9 @@ from webapp import sleep_replay_capture as S               # noqa: E402
 FLAGS = ("BRAIN_DA_TAG_CAPTURE", "BRAIN_DA_TAG_CAPTURE_CLOCK", "BRAIN_SLEEP_REPLAY_CAPTURE",
          "BRAIN_SLEEP_REPLAY_CAPTURE_LESION", "BRAIN_DA_CAPTURE_LESION", "BRAIN_DA_ENCODING_LESION",
          "BRAIN_SLEEP_DOWNSCALING", "BRAIN_AWAKE_REPLAY_CAPTURE", "BRAIN_AWAKE_REPLAY_CAPTURE_LESION",
-         "BRAIN_AWAKE_REPLAY_COMPLETION", "BRAIN_AWAKE_REPLAY_COMPLETION_LESION")
+         "BRAIN_AWAKE_REPLAY_COMPLETION", "BRAIN_SLEEP_REPLAY_COMPLETION", "BRAIN_REPLAY_COMPLETION_LESION")
 STEEP = (0.28, 1.7, 4.0)    # (max read, half ratio, Hill n): a low-margin block whose read falls fast with its trace
+VLOW = (0.10, 1.7, 4.0)     # a very-low-margin block: its read at the kept expression is below the night's capture
 R_FULL = 2.19
 IGNITE_RATIO = 0.5          # the fake's ignition point (the expressed increment-to-baseline ratio)
 RC_FULL = 0.786             # measured: a fully reinstated three-role fact on a D=64 composer (the substrate test)
@@ -47,6 +51,13 @@ BOUT_H = 5.0 / 60.0
 RC = {"BRAIN_SLEEP_REPLAY_CAPTURE": "1"}
 ARC = {"BRAIN_AWAKE_REPLAY_CAPTURE": "1"}
 ARCC = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
+SLPC = {"BRAIN_SLEEP_REPLAY_COMPLETION": "1"}
+LESC = {"BRAIN_REPLAY_COMPLETION_LESION": "1"}
+# store hashes of the fake scenarios below, computed with main's webapp/awake_replay_capture.py and
+# webapp/sleep_replay_capture.py at 05eba333f (the pre-branch modules), flags as named
+PRE_BRANCH_SHA = {"rc_arc_rest_night": "949dceb043ab5936b4dd8e4c935210aba7fd375624625435af434ff571844723",
+                  "rc_rest_night": "a5e63512023e45bedca6573deb6edcb7a14c33bff2a28e303d6533386974dfe7",
+                  "rc_arc_rest_night_vlow": "e9a9323aad5fe8ca1b0a01be390215454989874d744da3f6b0322187acfdbe5a"}
 
 
 class FakeD1:
@@ -59,6 +70,7 @@ class FakeD1:
 
 class LowMarginComposer:
     """Block-major store; its read-back is the STEEP Hill curve of the expressed ratio read off the store synapses."""
+    CURVE = STEEP
 
     def __init__(self, D=64, seed=0):
         self.D, self.store_conns, self.n_reads, self.L = D, [], 0, None
@@ -76,7 +88,7 @@ class LowMarginComposer:
         return float(abs(np.mean(np.conj(d) * (w - b["base"]))) / np.mean(np.abs(b["base"])))
 
     def margin(self, i):
-        Rm, c, n = STEEP
+        Rm, c, n = self.CURVE
         x = self.ratio(i)
         return Rm * x ** n / (c ** n + x ** n)
 
@@ -118,13 +130,20 @@ def _store_hash(comp):
                                       for (p, q, w) in comp.store_conns]).encode()).hexdigest()
 
 
-def _tell(monkeypatch, env=None, fact_turn=2):
+class VeryLowMarginComposer(LowMarginComposer):
+    """A block whose night read at the kept expression (~0.93) is ~0.07 -- below the SWR DA capture point (the miss dev
+    seed 2 showed on the brain: night read 0.107, SWR DA 0.579, not captured; the fake's increment is ~2x the brain's,
+    so its tag is larger and its read has to be lower for the same miss)."""
+    CURVE = VLOW
+
+
+def _tell(monkeypatch, env=None, fact_turn=2, composer=LowMarginComposer):
     monkeypatch.setattr(C, "completion_read", fake_completion_read)   # the wiring layer's fake substrate read
     monkeypatch.setenv("BRAIN_DA_TAG_CAPTURE", "1")
     monkeypatch.setenv("BRAIN_DA_TAG_CAPTURE_CLOCK", "turn")
     for k, v in (env or {}).items():
         monkeypatch.setenv(k, v)
-    comp = LowMarginComposer()
+    comp = composer()
     comp.store(1.0)                                   # build-time knowledge: unmanaged (block_offset)
     chat = Chat(comp)
     for i, da in enumerate(NEUTRAL):
@@ -226,18 +245,79 @@ def test_completion_flag_without_the_awake_route_is_inert(monkeypatch):
     assert _store_hash(comp2) == h
 
 
-def test_completion_lesion_writes_exactly_what_the_margin_route_writes(monkeypatch):
+def test_completion_lesion_writes_exactly_what_the_margin_routes_write(monkeypatch):
     chat, cap, comp = _tell(monkeypatch, env={**RC, **ARC})
     _rest(chat); _night(chat)
     h_arc = _store_hash(comp)
     R_arc = [x["R"] for x in cap._arc.summary()["bouts"]]
+    ep_arc = cap._src.summary()["epochs"]
     monkeypatch.setattr(W, "_WORLD_OFFSET_H", 0.0)
-    chat2, cap2, comp2 = _tell(monkeypatch, env={**RC, **ARC, **ARCC, "BRAIN_AWAKE_REPLAY_COMPLETION_LESION": "1"})
+    chat2, cap2, comp2 = _tell(monkeypatch, env={**RC, **ARC, **ARCC, **SLPC, **LESC})
     _rest(chat2); _night(chat2)
     bo = cap2._arc.summary()["bouts"]
     assert all(x["completion"] is not None and x["completion_lesioned"] for x in bo)        # the reads ran ...
     assert all(x["R_eff"] == [round(min(1.0, max(0.0, x["R"][0])), 9)] for x in bo)        # ... induced with R ...
-    assert [x["R"] for x in bo] == R_arc and _store_hash(comp2) == h_arc                   # ... = the margin route
+    ep = cap2._src.summary()["epochs"]
+    assert len(ep) == 1 and ep[0]["completion"] is not None and ep[0]["completion_lesioned"]
+    assert ep[0]["R_eff"] == ep[0]["R"] and ep[0]["da_swr"] == ep_arc[0]["da_swr"]         # ... the night used R ...
+    assert [x["R"] for x in bo] == R_arc and _store_hash(comp2) == h_arc                   # ... = the margin routes
+
+
+def _run_hash(monkeypatch, env, composer=LowMarginComposer, rest=True):
+    """The long-delay telling, then 4 h awake WITH quiet rest (rest=True: the arc family's datr) or WITHOUT an idle
+    tick (rest=False: datl), then the night. Returns (store hash, capture state)."""
+    monkeypatch.setattr(W, "_WORLD_OFFSET_H", 0.0)
+    chat, cap, comp = _tell(monkeypatch, env=env, composer=composer)
+    if rest:
+        _rest(chat)
+    else:
+        W.advance_world_clock_h(4.0)
+        W.mark_awake(chat)
+    _night(chat)
+    return _store_hash(comp), cap
+
+
+@pytest.mark.parametrize("key,env,composer", [
+    ("rc_arc_rest_night", {**RC, **ARC}, LowMarginComposer),
+    ("rc_rest_night", RC, LowMarginComposer),
+    ("rc_arc_rest_night_vlow", {**RC, **ARC}, VeryLowMarginComposer)])
+def test_flags_off_reproduce_the_pre_branch_store_hashes(monkeypatch, key, env, composer):
+    """Both completion flags unset: the awake bouts AND the night epoch run their pre-branch code paths exactly (the
+    hashes were computed with main's modules at 05eba333f, see PRE_BRANCH_SHA)."""
+    h, cap = _run_hash(monkeypatch, env, composer)
+    assert h == PRE_BRANCH_SHA[key]
+    assert all("completion" not in e for e in cap._src.summary()["epochs"])
+    if hasattr(cap, "_arc"):
+        assert all("completion" not in x for x in cap._arc.summary()["bouts"])
+
+
+def test_night_completion_flag_alone_leaves_the_awake_route_on_its_margin(monkeypatch):
+    h_off, cap_off = _run_hash(monkeypatch, {**RC, **ARC})
+    h_on, cap_on = _run_hash(monkeypatch, {**RC, **ARC, **SLPC})
+    assert [x["R_eff"] for x in cap_on._arc.summary()["bouts"]] == [x["R_eff"] for x in cap_off._arc.summary()["bouts"]]
+    assert all("completion" not in x for x in cap_on._arc.summary()["bouts"])
+    assert cap_on._src.summary()["epochs"][0]["completion"] is not None
+
+
+def test_a_very_low_margin_fact_kept_awake_is_lost_at_night_unless_the_night_completes(monkeypatch):
+    """Dev seed 2's shape: the awake completion keeps the trace expressed, but the night's margin read (and so its re-tag
+    and SWR DA) is below the capture point; with the night's completion the reinstated ensemble sets the tag and the DA."""
+    _h, cap = _run_hash(monkeypatch, {**RC, **ARC, **ARCC}, VeryLowMarginComposer)
+    bo, ep = cap._arc.summary()["bouts"], cap._src.summary()["epochs"]
+    assert bo[-1]["early_after"][0] > 0.9                                   # kept through the rest ...
+    assert ep[0]["R"][0] < 0.13 and ep[0]["da_swr"] < T.prp_threshold()     # ... but the night reads it weakly ...
+    assert not _kept(cap)                                                   # ... and does not capture it
+    _h, cap2 = _run_hash(monkeypatch, {**RC, **ARC, **ARCC, **SLPC}, VeryLowMarginComposer)
+    ep2 = cap2._src.summary()["epochs"]
+    assert ep2[0]["R_eff"] == [RC_FULL] and ep2[0]["da_swr"] > T.prp_threshold()
+    assert _kept(cap2)
+
+
+def test_night_completion_does_not_capture_without_rest(monkeypatch):
+    _h, cap = _run_hash(monkeypatch, {**RC, **ARC, **ARCC, **SLPC}, rest=False)
+    ep = cap._src.summary()["epochs"]
+    assert cap._arc.summary()["n_bouts"] == 0                               # 4 h awake, no idle tick: no bout
+    assert len(ep) == 1 and ep[0]["completion"][0]["R_c"] == 0.0 and not _kept(cap)
 
 
 # ── flag ON: a low-margin block is subcritical on the margin route and held by completion ─────────────────────────────

@@ -157,17 +157,29 @@ ARC_REPORTED_ARMS = ("lq_arc", "lz_arc", "lr_ledger_off")
 ARC_BOUTS = {"datr_recall": 48, "datcr_recall": 48, "datq_recall": 4, "datz_recall": 12, "datl_recall": 0,
              "datni_recall": 0}                        # == the battery's rest ticks (one bout per tick, 5-min limit)
 ARC_OUT = "research/findings/raw/_awake_replay_capture"
-# ── AWAKE-REPLAY COMPLETION FAMILY (`--family arcc`; branch research/awake-replay-completion,
-# webapp/awake_replay_completion.py; gates pre-registered as Amendment 7 of research/findings/2026-09-24-sleep-replay-
-# capture-PREREGISTRATION.md). The arc family's arms, groups and gates, with BRAIN_AWAKE_REPLAY_COMPLETION added to
-# every arm that arms the awake route, plus one arm with the completion edge cut (lr_arc_nocomp: every read runs, the
-# bout induces with the partial cue's own read = the Amendment-4 route). Arm names are kept so grade_seed_arc applies
-# verbatim; grade_seed_arcc adds I4 (the completion record held) on top.
-ARCC = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
-ARCC_LES = {"BRAIN_AWAKE_REPLAY_COMPLETION_LESION": "1"}
-ARCC_ARMS = ([(n, lab, ({**env, **ARCC} if env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1" else dict(env)))
-              for (n, lab, env) in ARC_ARMS]
-             + [("lr_arc_nocomp", "datr_recall", {**ON, **RC, **ARC, **ARCC, **ARCC_LES})])
+# ── REPLAY-COMPLETION FAMILY (`--family arcc`; branch research/awake-replay-completion, webapp/replay_completion.py;
+# gates pre-registered as Amendment 7 of research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md). The arc
+# family's arms, groups and gates, with pattern completion armed in every replay route an arm arms:
+# BRAIN_AWAKE_REPLAY_COMPLETION on every arm with the awake route, BRAIN_SLEEP_REPLAY_COMPLETION on every arm with the
+# night route (so lr_noarc's night is the same night as lr_arc_a's), plus one arm with the completion edge cut in both
+# routes (lr_arc_nocomp: every read runs, each route uses the partial cue's own read = the Amendment-4 + rc routes).
+# Arm names are kept so grade_seed_arc applies verbatim; grade_seed_arcc adds I4 (the completion records held).
+ARCC_AWAKE = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
+ARCC_SLEEP = {"BRAIN_SLEEP_REPLAY_COMPLETION": "1"}
+ARCC_LES = {"BRAIN_REPLAY_COMPLETION_LESION": "1"}
+
+
+def _arcc_env(env):
+    out = dict(env)
+    if env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1":
+        out.update(ARCC_AWAKE)
+    if env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1":
+        out.update(ARCC_SLEEP)
+    return out
+
+
+ARCC_ARMS = ([(n, lab, _arcc_env(env)) for (n, lab, env) in ARC_ARMS]
+             + [("lr_arc_nocomp", "datr_recall", {**_arcc_env({**ON, **RC, **ARC}), **ARCC_LES})])
 ARCC_OUT = "research/findings/raw/_awake_replay_completion"
 # ── FORGETTING-INTERFERENCE FAMILY (`--family fi`; branch research/sleep-forgetting-interference, the r3 sub-flag
 # BRAIN_SLEEP_LOAD_RENORM of webapp/sleep_replay_capture.py; gates pre-registered as Amendment 6 of the sleep-replay-
@@ -795,42 +807,51 @@ def aggregate_arc(d):
 
 
 def grade_seed_arcc(res):
-    """The awake-replay completion family's pre-registered gates (Amendment 7 of research/findings/2026-09-24-sleep-
+    """The replay-completion family's pre-registered gates (Amendment 7 of research/findings/2026-09-24-sleep-
     replay-capture-PREREGISTRATION.md), verbatim: every arc-family gate as `grade_seed_arc` computes it on the
     completion arms (ARCC1-ARCC7 == ARC1-ARC7 on these arms; G0/P1/I1/I2/I3/gamma unchanged), plus
 
-      I4 (UNDEFINED if it fails) -- the completion branch ran as armed, read off the records: every bout of an arm with
-          BRAIN_AWAKE_REPLAY_COMPLETION=1 carries a completion record for every block; the bout induced with R_c (the
-          completion arms) or with R (lr_arc_nocomp, the completion lesion) -- R_eff equals the clipped value it should
-          have used, unless the awake edge itself is cut (then R_eff = 0, checked by I2); an arm without the flag
-          carries no completion record.
+      I4 (UNDEFINED if it fails) -- the completion branch ran as armed in each route, read off the records: every
+          awake bout of an arm with BRAIN_AWAKE_REPLAY_COMPLETION=1, and every sleep epoch of an arm with
+          BRAIN_SLEEP_REPLAY_COMPLETION=1, carries a completion record for every block; it used R_c (the completion
+          arms) or R (lr_arc_nocomp, BRAIN_REPLAY_COMPLETION_LESION) -- R_eff equals the value it should have used,
+          unless that route's own edge is cut (then R_eff = 0, checked by I2); a route without its flag carries no
+          completion record.
 
     lr_arc_nocomp's OUTCOME enters no behavioural gate (on a seed whose margin read already rescues, it is correct; on
     one whose read collapses, it abstains). It is REPORTED, with `completion_load_bearing` = lr_arc_a correct AND
     lr_arc_nocomp abstain. ARCC7 (no confab) reads every arm, lr_arc_nocomp included."""
     g = grade_seed_arc(res)
     A = res["arms"]
-    held = True
-    for k, arm in A.items():
-        env = arm.get("env") or {}
-        bo = _bouts(arm)
-        comp_on = env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1" and env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1"
-        les = env.get("BRAIN_AWAKE_REPLAY_COMPLETION_LESION") == "1"
-        edge_cut = env.get("BRAIN_AWAKE_REPLAY_CAPTURE_LESION") == "1"
-        for x in bo:
+
+    def _route_held(events, on, les, edge_cut):
+        ok = True
+        for x in events:
             recs = x.get("completion")
-            if not comp_on:
-                held &= recs is None
+            if not on:
+                ok &= recs is None
                 continue
             if not isinstance(recs, list) or len(recs) != len(x.get("R") or []) or any(c is None for c in recs):
-                held = False
+                ok = False
                 continue
-            held &= bool(x.get("completion_lesioned")) == les
+            ok &= bool(x.get("completion_lesioned")) == les
             if edge_cut:
                 continue
             for c, r, re_ in zip(recs, x.get("R") or [], x.get("R_eff") or []):
                 want = min(1.0, max(0.0, (r if les else c.get("R_c")) or 0.0))
-                held &= abs(float(re_) - want) < 1e-6
+                ok &= abs(float(re_) - want) < 1e-6
+        return ok
+
+    held = True
+    for k, arm in A.items():
+        env = arm.get("env") or {}
+        les = env.get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
+        held &= _route_held(_bouts(arm), env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1"
+                            and env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1", les,
+                            env.get("BRAIN_AWAKE_REPLAY_CAPTURE_LESION") == "1")
+        held &= _route_held(_epochs(arm), env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1"
+                            and env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1", les,
+                            env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1")
     g["I4_completion_record_held"] = bool(held)
     o = g["outcomes"]
     g["completion_load_bearing"] = bool(o.get("lr_arc_a") == "correct" and o.get("lr_arc_nocomp") == "abstain")
@@ -841,6 +862,11 @@ def grade_seed_arcc(res):
             g["reported"][k]["R_c_first_bout"] = [None if c is None else c.get("R_c") for c in first]
             g["reported"][k]["R_c_last_bout"] = [None if c is None else c.get("R_c") for c in last]
             g["reported"][k]["items_last_bout"] = [None if c is None else c.get("items") for c in last]
+        ep = _epochs(A.get(k))
+        if ep and g["reported"].get(k) is not None:
+            night = ep[0].get("completion") or [None]
+            g["reported"][k]["R_c_at_sleep_onset"] = [None if c is None else c.get("R_c") for c in night]
+            g["reported"][k]["items_at_sleep_onset"] = [None if c is None else c.get("items") for c in night]
     if g["seed_verdict"] != "UNDEFINED" and not g["I4_completion_record_held"]:
         g["seed_verdict"] = "UNDEFINED"
     return g
@@ -1706,8 +1732,8 @@ def selftest():
     # ── arcc family (awake replay + pattern completion, Amendment 7): GO, NO-GO and UNDEFINED, incl. the I4 record ────
     def _arcc_arm(name, label, env, outcome):
         rec = _arc_arm(name, label, env, outcome)
+        les = env.get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
         on = env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1" and env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1"
-        les = env.get("BRAIN_AWAKE_REPLAY_COMPLETION_LESION") == "1"
         cut = env.get("BRAIN_AWAKE_REPLAY_CAPTURE_LESION") == "1"
         if on and rec.get("awake_replay_at_recall"):
             bo = []
@@ -1717,14 +1743,27 @@ def selftest():
                     x["R_eff"] = [0.4 if les else 0.79]
                 bo.append(x)
             rec["awake_replay_at_recall"] = dict(rec["awake_replay_at_recall"], bouts=bo)
+        s_on = env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1" and env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1"
+        s_cut = env.get("BRAIN_SLEEP_REPLAY_CAPTURE_LESION") == "1"
+        if s_on and _epochs(rec):
+            eps = []
+            for e in _epochs(rec):
+                e = dict(e, completion=[{"R_c": 0.79, "items": {}, "n_items": 3}], completion_lesioned=les)
+                r0 = (e.get("R") or [0.4])[0]
+                if not s_cut:
+                    e["R_eff"] = [r0 if les else 0.79]
+                eps.append(e)
+            rec["sleep_replay_at_recall"] = dict(rec["sleep_replay_at_recall"], epochs=eps)
         return rec
     arcc_designed = dict(arc_designed, lr_arc_nocomp="abstain")
     arcc_ok = {n: _arcc_arm(n, lab, env, arcc_designed[n]) for n, lab, env in ARCC_ARMS}
-    checks["arcc arms: every awake arm carries the completion flag; nocomp adds the lesion; the rest unchanged"] = (
+    checks["arcc arms: each route armed with its completion flag; nocomp adds the lesion; the rest unchanged"] = (
         all((env.get("BRAIN_AWAKE_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_AWAKE_REPLAY_CAPTURE") == "1")
+            and (env.get("BRAIN_SLEEP_REPLAY_COMPLETION") == "1") == (env.get("BRAIN_SLEEP_REPLAY_CAPTURE") == "1")
             for _n, _l, env in ARCC_ARMS)
         and [n for n, _l, _e in ARCC_ARMS] == [n for n, _l, _e in ARC_ARMS] + ["lr_arc_nocomp"]
-        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_nocomp"].get("BRAIN_AWAKE_REPLAY_COMPLETION_LESION") == "1")
+        and dict((n, e) for n, _l, e in ARCC_ARMS)["lr_arc_nocomp"].get("BRAIN_REPLAY_COMPLETION_LESION") == "1"
+        and all(e.get("BRAIN_REPLAY_COMPLETION_LESION") != "1" for n, _l, e in ARCC_ARMS if n != "lr_arc_nocomp"))
     g_ok = grade_seed_arcc({"arms": arcc_ok})
     checks["arcc grade: designed-GO pattern -> GO, completion load-bearing reported"] = (
         g_ok["seed_verdict"] == "GO" and g_ok["I4_completion_record_held"] and g_ok["completion_load_bearing"])
@@ -1757,6 +1796,18 @@ def selftest():
     arms_x["lr_arc_a"] = dict(arcc_ok["lr_arc_a"], awake_replay_at_recall={"n_bouts": 48, "bouts": bo})
     arms_x["lr_arc_b"] = dict(arms_x["lr_arc_a"])
     checks["arcc grade: a completion arm induced with R, not R_c -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    eps = [dict(e) for e in _epochs(arcc_ok["lr_arc_a"])]
+    eps[0].pop("completion")
+    arms_x["lr_arc_a"] = dict(arcc_ok["lr_arc_a"], sleep_replay_at_recall={"n_epochs": 1, "epochs": eps})
+    arms_x["lr_arc_b"] = dict(arms_x["lr_arc_a"])
+    checks["arcc grade: a sleep epoch without its completion record -> UNDEFINED (I4)"] = \
+        grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
+    arms_x = dict(arcc_ok)
+    eps = [dict(e, R_eff=[0.79]) for e in _epochs(arcc_ok["lr_arc_nocomp"])]
+    arms_x["lr_arc_nocomp"] = dict(arcc_ok["lr_arc_nocomp"], sleep_replay_at_recall={"n_epochs": 1, "epochs": eps})
+    checks["arcc grade: the night used R_c under the completion lesion -> UNDEFINED (I4)"] = \
         grade_seed_arcc({"arms": arms_x})["seed_verdict"] == "UNDEFINED"
     arms_x = dict(arcc_ok)
     arms_x["lr_ledger_off"] = dict(arcc_ok["lr_ledger_off"], awake_replay_at_recall=arcc_ok["lr_arc_a"]["awake_replay_at_recall"])

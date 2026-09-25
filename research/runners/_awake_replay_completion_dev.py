@@ -9,7 +9,7 @@ handler, tells the fact exactly as the battery's `datr` group does, and then
 
   1. maps the read R as a function of the block's early-phase expression e (the store block is rewritten as
      base + e * inc for each e on a grid, read, and restored -- read-only for the ledger), together with the per-role
-     decoded words and margins, and the completion read of webapp/awake_replay_completion.py when armed;
+     decoded words and margins, and the completion read of webapp/replay_completion.py when a completion flag is armed;
   2. runs the battery's own `awake_rest_4h` world step (48 idle ticks of 5 min), the night and the recall question,
      and records every awake bout, the sleep epoch and the recall outcome.
 
@@ -19,10 +19,15 @@ It refuses a gate seed. Output: one JSON per seed. Use under tools/memcap.sh (on
       research.runners._awake_replay_completion_dev --seed 7 --arm arc \
       --out research/findings/raw/_awake_replay_completion_dev/scan/s7_arc.json
 
-ARMS (env on top of ON + RC, as the arc family): arc (the Amendment-4 route), arcc (+ completion), arcc_lesion
-(+ completion, awake edge cut), arcc_nocomp (+ completion flag but the completion edge cut), noarc (ON + RC, no awake
-route), arcc_dalesion (+ BRAIN_DA_ENCODING_LESION), arcc_sleeplesion (+ BRAIN_SLEEP_REPLAY_CAPTURE_LESION),
-arcc_norest (the datl group: 4 h awake without an idle tick), off (ledger off).
+ARMS (env on top of ON + RC, as the arc family; "both" = BRAIN_AWAKE_REPLAY_COMPLETION + BRAIN_SLEEP_REPLAY_COMPLETION):
+arc (the Amendment-4 route), arcc (both), arcc_awake (awake completion only), arcc_sleep (night completion only),
+arcc_nocomp (both flags + BRAIN_REPLAY_COMPLETION_LESION: every read runs, both routes use R), arcc_lesion (both,
+awake edge cut), noarc_c (no awake route, night completion), arcc_dalesion (both + BRAIN_DA_ENCODING_LESION),
+arcc_sleeplesion (both + BRAIN_SLEEP_REPLAY_CAPTURE_LESION), arcc_norest (both, the datl group: 4 h awake without an
+idle tick), arcc_late / arc_late (the datz group: 3 h without rest, then 1 h of rest), off (ledger off).
+Artifacts under research/findings/raw/_awake_replay_completion_dev/arms/ were run at commit 938ee5ad5, where `arcc`
+meant the AWAKE completion only (== `arcc_awake` here) and `arcc_nocomp` used BRAIN_AWAKE_REPLAY_COMPLETION_LESION
+(the lesion's former name; the night used R then as now). arms_both/ holds the runs of this version.
 """
 from __future__ import annotations
 
@@ -36,17 +41,22 @@ GATE_SEEDS = (42, 43, 44, 100, 101, 102)
 ON = {"BRAIN_DA_TAG_CAPTURE": "1", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}
 RC = {"BRAIN_SLEEP_REPLAY_CAPTURE": "1"}
 ARC = {"BRAIN_AWAKE_REPLAY_CAPTURE": "1"}
-ARCC = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
+CA = {"BRAIN_AWAKE_REPLAY_COMPLETION": "1"}
+CS = {"BRAIN_SLEEP_REPLAY_COMPLETION": "1"}
+LES = {"BRAIN_REPLAY_COMPLETION_LESION": "1"}
 ARMS = {
     "arc": ({**ON, **RC, **ARC}, "datr"),
-    "arcc": ({**ON, **RC, **ARC, **ARCC}, "datr"),
-    "arcc_lesion": ({**ON, **RC, **ARC, **ARCC, "BRAIN_AWAKE_REPLAY_CAPTURE_LESION": "1"}, "datr"),
-    "arcc_nocomp": ({**ON, **RC, **ARC, **ARCC, "BRAIN_AWAKE_REPLAY_COMPLETION_LESION": "1"}, "datr"),
+    "arcc": ({**ON, **RC, **ARC, **CA, **CS}, "datr"),
+    "arcc_awake": ({**ON, **RC, **ARC, **CA}, "datr"),
+    "arcc_sleep": ({**ON, **RC, **ARC, **CS}, "datr"),
+    "arcc_nocomp": ({**ON, **RC, **ARC, **CA, **CS, **LES}, "datr"),
+    "arcc_lesion": ({**ON, **RC, **ARC, **CA, **CS, "BRAIN_AWAKE_REPLAY_CAPTURE_LESION": "1"}, "datr"),
     "noarc": ({**ON, **RC}, "datr"),
-    "arcc_dalesion": ({**ON, **RC, **ARC, **ARCC, "BRAIN_DA_ENCODING_LESION": "1"}, "datr"),
-    "arcc_sleeplesion": ({**ON, **RC, **ARC, **ARCC, "BRAIN_SLEEP_REPLAY_CAPTURE_LESION": "1"}, "datr"),
-    "arcc_norest": ({**ON, **RC, **ARC, **ARCC}, "datl"),
-    "arcc_late": ({**ON, **RC, **ARC, **ARCC}, "datz"),
+    "noarc_c": ({**ON, **RC, **CS}, "datr"),
+    "arcc_dalesion": ({**ON, **RC, **ARC, **CA, **CS, "BRAIN_DA_ENCODING_LESION": "1"}, "datr"),
+    "arcc_sleeplesion": ({**ON, **RC, **ARC, **CA, **CS, "BRAIN_SLEEP_REPLAY_CAPTURE_LESION": "1"}, "datr"),
+    "arcc_norest": ({**ON, **RC, **ARC, **CA, **CS}, "datl"),
+    "arcc_late": ({**ON, **RC, **ARC, **CA, **CS}, "datz"),
     "arc_late": ({**ON, **RC, **ARC}, "datz"),
     "off": ({"BRAIN_DA_TAG_CAPTURE": "0", "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn"}, "datr"),
 }
@@ -76,8 +86,9 @@ def curve(seed, chat, grid=E_GRID):
     comp = store_composer(chat)
     j = L.block_offset
     comp_mod = None
-    if os.environ.get("BRAIN_AWAKE_REPLAY_COMPLETION", "0").strip().lower() in ("1", "true", "on", "yes"):
-        from webapp import awake_replay_completion as comp_mod
+    if any(os.environ.get(f, "0").strip().lower() in ("1", "true", "on", "yes")
+           for f in ("BRAIN_AWAKE_REPLAY_COMPLETION", "BRAIN_SLEEP_REPLAY_COMPLETION")):
+        from webapp import replay_completion as comp_mod
     rows = []
     for n, e in enumerate(grid):
         _set_block_expression(L, comp, e)
@@ -170,6 +181,11 @@ def run(seed, arm, out, scan=False):
     return out_d
 
 
+def _z_at_recall(d):
+    bl = (d or {}).get("blocks_at_recall") or []
+    return float(bl[0]["frac_synapses_z_gt_half"]) if bl else None
+
+
 def _last_expression(d):
     b = ((d or {}).get("awake_replay") or {}).get("bouts") or []
     return float(b[-1]["early_after"][0]) if b else None
@@ -191,12 +207,20 @@ def attribute(out_dir):
     out = {}
     for seed, arms in sorted(runs.items()):
         rec = {"outcomes": {a: d.get("outcome") for a, d in arms.items()},
-               "e_last": {a: _last_expression(d) for a, d in arms.items()}}
+               "e_last": {a: _last_expression(d) for a, d in arms.items()},
+               "z_at_recall": {a: _z_at_recall(d) for a, d in arms.items()}}
         t = rec["e_last"].get("arcc")
-        for ctrl in ("arcc_nocomp", "arcc_lesion"):
+        for ctrl in ("arcc_nocomp", "arcc_lesion", "arcc_sleep"):
             c = rec["e_last"].get(ctrl)
             if t is not None and c is not None:
-                rec["attributable_to_vs_" + ctrl] = attributable_to("seed %d e_last arcc vs %s" % (seed, ctrl), t, c)
+                rec["attributable_to_e_last_vs_" + ctrl] = attributable_to(
+                    "seed %d e_last arcc vs %s" % (seed, ctrl), t, c)
+        t = rec["z_at_recall"].get("arcc")
+        for ctrl in ("arcc_nocomp", "arcc_awake", "arcc_sleep", "arcc_lesion"):
+            c = rec["z_at_recall"].get(ctrl)
+            if t is not None and c is not None:
+                rec["attributable_to_z_vs_" + ctrl] = attributable_to(
+                    "seed %d captured fraction arcc vs %s" % (seed, ctrl), t, c)
         out[seed] = rec
     json.dump(out, open(os.path.join(out_dir, "attribution.json"), "w"), indent=1, default=str)
     return out

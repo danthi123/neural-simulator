@@ -95,10 +95,11 @@ transfer, no source lesion); the capture itself stays the v3 / sleep-route mecha
 PATTERN-COMPLETION SUB-FLAG (branch research/awake-replay-completion; default OFF: `BRAIN_AWAKE_REPLAY_COMPLETION`). The
 arc family's NO-GO 5/6 (research/findings/2026-09-25-awake-replay-capture-arc-no-go-6seed.md) is a subcritical loop on
 a low-margin block: the induction scales with the decode margin R. With the sub-flag armed each bout also runs
-webapp/awake_replay_completion.py (a spiking item competition + the substrate re-bind of the reinstated ensemble) and
+webapp/replay_completion.py (a spiking item competition + the substrate re-bind of the reinstated ensemble) and
 induces with R_c, the reinstated ensemble's in-phase coherence with the block's increment, instead of R;
-`BRAIN_AWAKE_REPLAY_COMPLETION_LESION=1` keeps every read but induces with R (this module's Amendment-4 path). Unset ->
-the branch below is never entered and nothing is imported.
+`BRAIN_REPLAY_COMPLETION_LESION=1` keeps every read but induces with R (this module's Amendment-4 path). The night's
+epoch has its own flag (`BRAIN_SLEEP_REPLAY_COMPLETION`, webapp/sleep_replay_capture.py). Unset -> the branch below is
+never entered and nothing is imported.
 
 CONTRACT. DEFAULT-OFF. With `BRAIN_AWAKE_REPLAY_CAPTURE` unset, `ChatTagCapture.tick` never enters its awake branch,
 no block ever carries "e_rep" (so `SynapticTagCaptureLedger.early_expression` returns the write's value bit for bit),
@@ -139,12 +140,12 @@ def awake_replay_lesioned() -> bool:
 
 def _completion_enabled() -> bool:
     """`BRAIN_AWAKE_REPLAY_COMPLETION` (default OFF; branch research/awake-replay-completion) -- read here so the
-    flag-off bout imports nothing new (webapp/awake_replay_completion.py)."""
+    flag-off bout imports nothing new (webapp/replay_completion.py)."""
     return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION")
 
 
 def _completion_lesioned() -> bool:
-    return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION_LESION")
+    return _truthy("BRAIN_REPLAY_COMPLETION_LESION")
 
 
 class _NullCtx:
@@ -200,17 +201,10 @@ class AwakeReplayCapture:
         R = []
         comp_rec = None
         if _completion_enabled():
-            # PATTERN COMPLETION (default-OFF `BRAIN_AWAKE_REPLAY_COMPLETION`, webapp/awake_replay_completion.py): the
-            # same read R, then the spiking item competition + the substrate re-bind of the reinstated ensemble, R_c.
-            from webapp import awake_replay_completion as _C
-            comp_rec = []
-            for i in range(len(ledger.blocks)):
-                with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
-                    c = _C.completion_read(comp, ledger.block_offset + i, ledger.blocks[i])
-                comp_rec.append(c)
-                R.append(None if c is None else float(c["R"]))
-            use_c = not _C.completion_lesioned()
-            R_read = [(None if c is None else (c["R_c"] if use_c else c["R"])) for c in comp_rec]
+            # PATTERN COMPLETION (default-OFF `BRAIN_AWAKE_REPLAY_COMPLETION`, webapp/replay_completion.py): the same read
+            # R, then the spiking item competition + the substrate re-bind of the reinstated ensemble, R_c.
+            from webapp import replay_completion as _C
+            R, R_read, comp_rec = _C.read_blocks(comp, ledger, self.rng_ctx, self.seed, _K_AWAKE + b_idx * 1000)
         else:
             for i in range(len(ledger.blocks)):
                 with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
@@ -241,9 +235,8 @@ class AwakeReplayCapture:
                            "p_at_bout": round(float(ledger.p), 12), "n_drive_entries": len(ledger.drive),
                            "lesioned": bool(coupling == 0.0), "no_reader": bool(any(r is None for r in R))})
         if comp_rec is not None:                       # completion record: only ever present with the flag ON
-            self.bouts[-1]["completion"] = [None if c is None else {
-                "R_c": round(c["R_c"], 9), "coherence_abs": round(c["coherence_abs"], 9), "items": c["items"],
-                "spikes": c["spikes"], "n_items": c["n_items"]} for c in comp_rec]
+            from webapp import replay_completion as _C
+            self.bouts[-1]["completion"] = _C.record(comp_rec)
             self.bouts[-1]["completion_lesioned"] = bool(_completion_lesioned())
 
     def summary(self) -> dict:
