@@ -8,6 +8,54 @@ runner / commit that produced it.
 For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs/SCIENCE_ROADMAP.md)
 (in particular [Pillar 4: Reward-Driven Learning Architecture](../../docs/SCIENCE_ROADMAP.md#pillar-4-reward-driven-learning-architecture)).
 
+## 2026-09-25 claim-check spot audit — scope note
+
+Four parallel branches (`research/claimcheck-audit-1..4`, run against an interim round-2 `tools/claim_check.py`
+that was itself found to have false-positive/false-negative block-boundary bugs and was **not merged**) spot-audited
+roughly 690 `<!--derived-->`-marked numbers across the 2026-09 findings corpus. Outcome (owner-ruled 2026-09-25):
+**8 confirmed transcription/rounding errors**, corrected in place (each now carries its own dated `## Corrections`
+section — see [2026-09-02 generative-cortex capacity](2026-09-02-generative-cortex-capacity-vs-tokens-larger-capacity-wins-d96-nears-its-ceiling.md),
+[2026-09-08 onebrain-crossedge curiosity](2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md),
+[2026-09-15 token-supply scaling](2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md),
+[2026-09-05 GNW congruence](2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md),
+[2026-09-02 onebrain-r4 selfschema](2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md),
+[2026-09-02 R3v2/R3v3 read-isolation refix](2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md),
+[2026-09-17 affect-grounded experience stream](2026-09-17-affect-grounded-experience-stream-300k-PARTIAL-noise-robustness-not-data-scale.md),
+[2026-09-23 DA-encoding natural-drive v3](2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level.md)),
+**0 verdicts changed** by any of the 8 (each was an illustrative range bound, a full-precision citation, or a
+non-gate-reading field), and **19 numbers the audit could not trace to any cited artifact** (arXiv/DOI ids
+mis-parsed as decimals by the checker's regex, uncommitted/UNARCHIVED scratch-script output the doc itself
+disclaims, a rotated log file, or an external-literature figure). Per the owner's ruling: **no bulk-marking of
+unchecked numbers and no retractions** — the 19 are listed below as a known-untraceable set, not a fabrication
+claim, and stand unmarked in their source documents.
+
+**This was a spot audit, not a full re-verification** of the corpus: older findings were sampled, not
+exhaustively re-checked, so an unflagged old number is not thereby confirmed. `tools/claim_check.py` (the
+pre-commit gate) guards **new and edited findings only**; it does not retroactively re-scan history. Further
+auditing of the remaining corpus is low-priority background work, not blocking.
+
+**The 19 untraceable numbers** (doc:line — value(s) — why):
+
+1. `2026-09-01-declarative-cross-edge-functional-gate-read-credit-livedrive-GO.md:128-129` — 0.0067 (marginal seed-101 agent shift "at 3 reads") — the doc's own prose says this is from a pre-final coactivity/read tuning sweep, not the committed 6-read artifact.
+2. `2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md:99` — 0.746 (min_d_true, bisection step 1) — the doc's own prose says this whole section's numbers come from ad-hoc scratch diagnostic scripts, never saved to an artifact.
+3. `2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md:91` — -0.02 (seed43 scale=2.0 scout delta_intact) — the doc's own prose says the scale=2.0 column is UNARCHIVED (throwaway diagnostic script).
+4. `2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md:92` — -0.019 (seed101 scale=2.0 scout delta_intact) — same UNARCHIVED column as #3.
+5. `2026-09-17-learned-spiking-constituent-boundary-segmentation-retires-host-segment-clause-GO.md:71` — 1911.09 — not a measurement; the arXiv id 1911.09230, mis-parsed as a decimal once its covering marker was removed.
+6. `2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO.md:149-155` — 0.004/0.008/0.005/-0.018/0.0016/0.021/0.024 — sec.4 ad hoc pre-registration/calibration numbers the doc itself says are "not the cited artifact" (uncommitted throwaway scripts).
+7. `2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md:134` — 2503.09218 — an arXiv paper id, misparsed as a decimal.
+8. `2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md:136` — 1903.09215 — an arXiv paper id, same false-positive shape as #7.
+9. `2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-verdict.md:42` — 0.794/0.633/0.661 — external-literature BLiMP figures (a causal+masked hybrid vs n-gram/LSTM), not in any repo artifact.
+10. `2026-09-17-affect-noise-robustness-multicue-...-PARTIAL.md:61` — 0.01/0.088/0.186 — per-seed budget24->32 deltas; the cited artifact only holds the budget=32 run, no budget=24 per-seed field found.
+11. `2026-09-17-affect-noise-robustness-multicue-...-PARTIAL.md:73,74,76` — 10.1038/10.3389/10.1038/10.1093 — DOI publisher-prefix numbers misparsed as decimals, not measurements.
+12. `2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md:139` — 0.17/0.1625 — "training chance" figures (majority-class rate of the 400 training items) not stored as a field in any cited artifact.
+13. `2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md:141` — 0.065 — a binomial p-value for replicate r1's frozen readout; not a stored field, and the audit could not reproduce it from the stored counts/chance with a plain binomial or normal-approx test.
+14. `research/findings/2026-09-02-crossedge-surprise-metacog-derisk-SMOKE-GO-PARTIAL.md:75` — 0.678, +0.1032, -0.0088, -0.1120 (seed-7 calibration row) — the doc itself says this is non-persisted console output, not in any artifact.
+15. `research/findings/2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md:79-80` — 0.090625, 0.093125, 0.0925, 0.09375 (`--selftest` console output) — the doc says this was not saved to a JSON artifact.
+16. `research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md:44,49` — 0.825 (quoted "type-2 AUC ~0.825") — traces to a DIFFERENT finding (2026-08-18 self-organized metacog monitor's mean type2_AUC), not the docstring the doc attributes it to (which only has the range 0.67-0.82); no JSON artifact for the point value.
+17. `research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md:96` — 0.867, 0.058 (hand-built decisive/tied dev test cases) — not found in any test file, runner, or artifact; never persisted.
+18. `research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md:41-42,44,321` — 0.163, 0.152 (2026-09-15 gpu_queue seed-42/43 TRAIN-accuracy lines) — `research/queue/gpu_queue.log` has since rotated away; genuinely unrecoverable.
+19. `2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md:65` — 0.001 ("the fix's whole measurable effect is a sub-0.001 wobble on F2's numbers") — several per-seed `delta_agent_intact`/`delta_patient_intact` shifts in the cited BEFORE/AFTER artifacts exceed 0.001 (up to ~0.0045 on seed 101); left unmarked, not verdict-bearing (R3v2 stays a confirmed NO-GO regardless of this characterization).
+
 ## At a glance
 
 | Date | Finding | Verdict |

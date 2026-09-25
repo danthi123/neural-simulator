@@ -54,7 +54,7 @@ per-config means are saved in `research/findings/raw/_gencortex_scaling/_aggrega
 (token counts = max_train_sents x ~48 tokens/passage; NLL = `wkv_deep_nll`, seed sd <=0.009 everywhere.)
 
 - **Still descending everywhere the slope is measurable** (6/6 per config; wt103/d192 reached only 1 point so no
-  slope). The top-segment slope stays positive (~0.036-0.048 nats/doubling) — no flattening yet.
+  slope). The top-segment slope stays positive (~0.036-0.045 nats/doubling; see Corrections) — no flattening yet.
 - **More params -> lower NLL** at matched tokens (fineweb d96 3.976 > d192 3.928 > d384 3.906), and **wt103 is
   easier than fineweb** (3.785 vs 3.976 at d96) — both expected; the sweep's instrument is behaving sanely.
 - **d96 reached tok/param ~21.8**, right at Chinchilla's ~20 compute-optimal ratio, and is STILL descending — the
@@ -87,3 +87,7 @@ bumped to 2000000 so future stocks are correct. When those land, this becomes th
 Vocab is capped at 2000, so generated samples are mostly `<unk>` — this sweep measures the **NLL scaling trend**, not
 fluency; that is the correct instrument for the token-supply question and not a defect. No fluency/consciousness claim.
 Functional read-outs only.
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- "top-segment slope stays positive (~0.036-0.048 nats/doubling)": upper bound `0.048` -> `0.045` (the correct upper bound: max per-config `top_slope_mean` across the 4 configs with a measurable slope is 0.0452, `wt103/d96`, in `research/findings/raw/_gencortex_scaling/_aggregate_6seed.json`; rounds to 0.045, not 0.048); illustrative range only, does not change the "still descending everywhere, no flattening" claim or any gate/verdict. <!--derived-->
