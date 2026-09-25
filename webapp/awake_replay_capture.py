@@ -92,6 +92,14 @@ HOST SHORTCUTS (declared, brain-based-only burn-down):
 This is reactivation-driven re-potentiation in the same store, not "consolidation" in the docs/TERMS.md sense (no
 transfer, no source lesion); the capture itself stays the v3 / sleep-route mechanism.
 
+PATTERN-COMPLETION SUB-FLAG (branch research/awake-replay-completion; default OFF: `BRAIN_AWAKE_REPLAY_COMPLETION`). The
+arc family's NO-GO 5/6 (research/findings/2026-09-25-awake-replay-capture-arc-no-go-6seed.md) is a subcritical loop on
+a low-margin block: the induction scales with the decode margin R. With the sub-flag armed each bout also runs
+webapp/awake_replay_completion.py (a spiking item competition + the substrate re-bind of the reinstated ensemble) and
+induces with R_c, the reinstated ensemble's in-phase coherence with the block's increment, instead of R;
+`BRAIN_AWAKE_REPLAY_COMPLETION_LESION=1` keeps every read but induces with R (this module's Amendment-4 path). Unset ->
+the branch below is never entered and nothing is imported.
+
 CONTRACT. DEFAULT-OFF. With `BRAIN_AWAKE_REPLAY_CAPTURE` unset, `ChatTagCapture.tick` never enters its awake branch,
 no block ever carries "e_rep" (so `SynapticTagCaptureLedger.early_expression` returns the write's value bit for bit),
 no substrate read is made and no key is added to the reply: byte-identical (tests/test_awake_replay_capture.py). Inert
@@ -127,6 +135,16 @@ def awake_replay_enabled() -> bool:
 def awake_replay_lesioned() -> bool:
     """`BRAIN_AWAKE_REPLAY_CAPTURE_LESION` severs the reactivation -> early-LTP / tag edge (the reads still run)."""
     return _truthy("BRAIN_AWAKE_REPLAY_CAPTURE_LESION")
+
+
+def _completion_enabled() -> bool:
+    """`BRAIN_AWAKE_REPLAY_COMPLETION` (default OFF; branch research/awake-replay-completion) -- read here so the
+    flag-off bout imports nothing new (webapp/awake_replay_completion.py)."""
+    return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION")
+
+
+def _completion_lesioned() -> bool:
+    return _truthy("BRAIN_AWAKE_REPLAY_COMPLETION_LESION")
 
 
 class _NullCtx:
@@ -180,12 +198,27 @@ class AwakeReplayCapture:
         pre_z = [float(np.mean(b["z"] > 0.5)) for b in ledger.blocks]
         # (2) reactivation of every managed block, read back by the store's own cleanup (the sleep route's read)
         R = []
-        for i in range(len(ledger.blocks)):
-            with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
-                r = self.reactivate_fn(comp, ledger.block_offset + i)
-            R.append(None if r is None else float(r))
+        comp_rec = None
+        if _completion_enabled():
+            # PATTERN COMPLETION (default-OFF `BRAIN_AWAKE_REPLAY_COMPLETION`, webapp/awake_replay_completion.py): the
+            # same read R, then the spiking item competition + the substrate re-bind of the reinstated ensemble, R_c.
+            from webapp import awake_replay_completion as _C
+            comp_rec = []
+            for i in range(len(ledger.blocks)):
+                with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
+                    c = _C.completion_read(comp, ledger.block_offset + i, ledger.blocks[i])
+                comp_rec.append(c)
+                R.append(None if c is None else float(c["R"]))
+            use_c = not _C.completion_lesioned()
+            R_read = [(None if c is None else (c["R_c"] if use_c else c["R"])) for c in comp_rec]
+        else:
+            for i in range(len(ledger.blocks)):
+                with self.rng_ctx(self.seed, _K_AWAKE + b_idx * 1000 + i):
+                    r = self.reactivate_fn(comp, ledger.block_offset + i)
+                R.append(None if r is None else float(r))
+            R_read = R
         coupling = 0.0 if awake_replay_lesioned() else 1.0
-        R_eff = [coupling * (0.0 if r is None else min(1.0, max(0.0, r))) for r in R]
+        R_eff = [coupling * (0.0 if r is None else min(1.0, max(0.0, r))) for r in R_read]
         # (3) reactivation-induced early LTP + a fresh tag at the same level; z untouched; nothing when R_eff == 0
         post_e = []
         for blk, r, e in zip(ledger.blocks, R_eff, pre_e):
@@ -207,8 +240,17 @@ class AwakeReplayCapture:
                            "pre_frac_z_gt_half": [round(v, 9) for v in pre_z],
                            "p_at_bout": round(float(ledger.p), 12), "n_drive_entries": len(ledger.drive),
                            "lesioned": bool(coupling == 0.0), "no_reader": bool(any(r is None for r in R))})
+        if comp_rec is not None:                       # completion record: only ever present with the flag ON
+            self.bouts[-1]["completion"] = [None if c is None else {
+                "R_c": round(c["R_c"], 9), "coherence_abs": round(c["coherence_abs"], 9), "items": c["items"],
+                "spikes": c["spikes"], "n_items": c["n_items"]} for c in comp_rec]
+            self.bouts[-1]["completion_lesioned"] = bool(_completion_lesioned())
 
     def summary(self) -> dict:
-        return {"on": True, "lesioned": awake_replay_lesioned(), "n_bouts": len(self.bouts),
-                "n_ticks_asleep": self.n_ticks_asleep, "n_ticks_rate_limited": self.n_ticks_rate_limited,
-                "bout_h": AWAKE_BOUT_H, "bouts": list(self.bouts)}
+        out = {"on": True, "lesioned": awake_replay_lesioned(), "n_bouts": len(self.bouts),
+               "n_ticks_asleep": self.n_ticks_asleep, "n_ticks_rate_limited": self.n_ticks_rate_limited,
+               "bout_h": AWAKE_BOUT_H, "bouts": list(self.bouts)}
+        if _completion_enabled():                      # only with BRAIN_AWAKE_REPLAY_COMPLETION armed
+            out["completion"] = True
+            out["completion_lesioned"] = bool(_completion_lesioned())
+        return out
