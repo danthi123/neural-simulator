@@ -52,6 +52,12 @@ NORMAL_START = re.compile(
     r"^(cd |SIM_BACKEND=|CUDA_VISIBLE_DEVICES=|: |mkdir |\.venv/bin/python |env |LANE=|bash |OMP_NUM_THREADS=|"
     r"mem_gb=\d+ )")
 ASSIGN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+# shell operators that separate one command from the next: skipped as WORD BOUNDARIES in first_command_word, so a
+# NAME=value assignment following one is still recognised as a fresh assignment run (fix round r2, review LOW item:
+# `X=1 && cmd` used to read first_word="&&" -> misclassified "command-not-found" even though `cmd` runs). Bare `&`
+# is deliberately EXCLUDED here -- classify() special-cases it itself (a backgrounded assignment), and returning it
+# unskipped from first_command_word is what lets that special case fire; see classify()'s own comment.
+SHELL_OPERATORS = ("&&", "||", ";", "|")
 OUT_FLAGS = ("--out", "--json", "--out-dir", "--output")
 SHARD_RE = re.compile(r"research/findings/raw/_load_bearing/_shards/([^/]+)/(s\d+)/([^/]+)/lb\.json")
 
@@ -101,13 +107,16 @@ def strip_checked(job):
 
 
 def first_command_word(executed):
-    """First word bash would EXECUTE after leading NAME=value assignments (and a bare `&` separator)."""
+    """First word bash would EXECUTE after leading NAME=value assignments and any `&&`/`||`/`;`/`|` operator (each
+    treated as a WORD BOUNDARY: an assignment immediately after one still counts as a fresh assignment, not a stray
+    token). A bare `&` separator is returned AS THE WORD, not skipped -- classify()'s own special case for a
+    backgrounded assignment (`POOL_CHECKED_REASON=x & rest`) depends on seeing it."""
     try:
         toks = shlex.split(executed, posix=True)
     except ValueError as e:
         return None, "shlex:%s" % e
     for i, t in enumerate(toks):
-        if ASSIGN.match(t):
+        if t in SHELL_OPERATORS or ASSIGN.match(t):
             continue
         return t, None
     return None, "assignments-only"
@@ -219,6 +228,7 @@ def scan_shard_tag(tag, pin):
 
 
 def main():
+    global LIVE_ROOT
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--queue-dir", default=os.path.join(LIVE_ROOT, "research/queue"))
     ap.add_argument("--since", default=DEFAULT_SINCE, help="epoch or ISO local time (default %(default)s)")
@@ -229,7 +239,13 @@ def main():
     ap.add_argument("--node-outputs", default=None,
                     help="dir of <node>/research/findings/raw/_load_bearing/... cells copied read-only from the "
                          "nodes' UNPINNED trees; each is run through the pin rule of its tag (pins from --scan-shards)")
+    ap.add_argument("--root", default=None,
+                    help="override LIVE_ROOT (the local repo root that --scan-shards/local_cell_report read shard "
+                         "cells from) with a different absolute path; TESTS ONLY -- production runs omit this and "
+                         "get the real checkout, exactly as before this flag existed")
     a = ap.parse_args()
+    if a.root:
+        LIVE_ROOT = os.path.abspath(a.root)
     qd = a.queue_dir
     since = _epoch(a.since)
 
@@ -244,6 +260,12 @@ def main():
     with open(os.path.join(qd, "dispatch.log"), encoding="utf-8", errors="replace") as fh:
         dlog = fh.read().split("\n")
 
+    # KNOWN LIMIT (fix round r2, review LOW item, not fixed this round -- see that round's commit message): the
+    # node's job_status.log is keyed by the EXECUTED TEXT's own base64, not a per-dispatch id, so two DIFFERENT
+    # dispatches that happen to run byte-identical text collapse onto the same key here and `rc_of`/`node_status`
+    # then reports BOTH records for either occurrence, with no timestamp-based disambiguation. None of the 20
+    # records this audit committed collide (verified: 20 distinct keys, see `research/findings/raw/
+    # _dispatcher_fragment_audit/node_evidence/`), so no fragment or SETTLE-A2 record in this finding is affected.
     status = {}
     if a.node_status:
         for p in glob.glob(os.path.join(a.node_status, "*.job_status.log")):
@@ -262,6 +284,19 @@ def main():
         st = strip_checked(job)
         return [r for r in running if abs(r[1] - ts) <= 5 and r[3].endswith(st)]
 
+    # KNOWN LIMITS of the proper-suffix rule below (fix round r2, review LOW item -- documented rather than
+    # silently assumed away; NOT implemented as code this round, see that round's commit message for why):
+    #   (a) false-flag risk -- a genuinely complete, unpinned claim whose text happens to equal the tail of some
+    #       OTHER known (pinned) line would be counted as a fragment of that line, even though bash executed it as
+    #       its own whole command. Nothing here distinguishes "tail of a real line, dispatched whole" from "tail of
+    #       a real line, dispatched as a mid-line fragment" by TEXT alone.
+    #   (b) false-miss risk -- a fragment whose PARENT line was removed from every queue file (claims, live queue,
+    #       .unchecked, .malformed) before this scan ever saw it leaves no known full line for the suffix test to
+    #       match against, so it is invisible to this detector.
+    #   A second, INDEPENDENT detector (dispatch-adjacency: flag every dispatch that immediately follows a
+    #   same-node "revision ... not provisioned" probe line, the one moment the underlying bug can act) would
+    #   cross-check both risks and was run BY HAND for this audit's 14 fragments (agreement recorded in the
+    #   finding's Plain statement / Summary) but is not yet implemented as a second code path here.
     frag_jobs = {job for n, ts, job in claims if any(k != job and k.endswith(job) for k in known)}
     frags, odd = [], []
     pre_cutoff_frags = 0
