@@ -1,0 +1,341 @@
+{
+ "arm": "HEARD",
+ "env": {
+  "BRAIN_D6_HEBBIAN_STORE": "1",
+  "BRAIN_D6_ENGRAM_VOCAB": "1",
+  "BRAIN_D6_ENGRAM_READTIME": "1",
+  "BRAIN_D6_HEBBIAN_FREEZE": "1"
+ },
+ "ltm": "off",
+ "variant": "prod",
+ "seed": "101",
+ "spiking_mouth_recall_env": null,
+ "backend": "numpy",
+ "cuda_visible": null,
+ "turns": [
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "d5c1bc90c0b9a32e63bbf0a7b70b39b51eb46ce3ce9c979795d791b71b79d7e3",
+   "phase": "teach",
+   "label": "t_wug",
+   "message": "the wug and the dax",
+   "elapsed_s": 50.5,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about cow yet: what can you tell me about cow?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "c8b929d23adf063ddc07b446221ab6fe9a78fc894b17b86a1372ba5fa923eaf1",
+   "phase": "teach",
+   "label": "t_cow",
+   "message": "the cow and the moon",
+   "elapsed_s": 13.9,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bee yet: what can you tell me about bee?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "c47e6a8b200f1d627652648e88f2ecdf67328dbbdd4d8599e77f4d61886ecb36",
+   "phase": "teach",
+   "label": "t_bee",
+   "message": "the bee and the stone",
+   "elapsed_s": 13.8,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "the dog chases the cat the cat eats the fish \u2014 worth going further here.",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 2,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "23129a928af0780343ace26a8a2f8e701cb9d1c7eebb0b31f92275cad33b46c1",
+   "phase": "read",
+   "label": "d1",
+   "message": "what does the dog chase",
+   "elapsed_s": 698.7,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 On cat, then \u2014 the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "fish"
+   ],
+   "supporting_facts": [
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "d8f6ad172294c6a8bd4feceb92738ff03f233660885b57f27c4e388905d3c629",
+   "phase": "read",
+   "label": "d2",
+   "message": "what does the cat eat",
+   "elapsed_s": 36.2,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "1f6fe1c6c69014164d080db6da2938a3cda9b915c38c8da06d42be502f40bc59",
+   "phase": "probe",
+   "label": "p_wug",
+   "message": "what does the wug eat",
+   "elapsed_s": 10.7,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "8308cdf606c526b044ec052ec7db391e7841183128c511d5dbabd90ff3f1d1b2",
+   "phase": "probe",
+   "label": "p_cow",
+   "message": "what does the cow eat",
+   "elapsed_s": 10.7,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bee yet: what can you tell me about bee?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "45c4f11d507fb8a11d723be9e77eeb46fd288b7fd3af872b854fad1e40a2325c",
+   "phase": "probe",
+   "label": "p_bee",
+   "message": "what does the bee make",
+   "elapsed_s": 11.0,
+   "n_qwen_calls": 0
+  }
+ ],
+ "qwen_calls": [],
+ "write_log": [],
+ "taught_blocks_after_teach": {
+  "wug": {
+   "found": false,
+   "agent": "wug",
+   "patient": "dax"
+  },
+  "cow": {
+   "found": false,
+   "agent": "cow",
+   "patient": "moon"
+  },
+  "bee": {
+   "found": false,
+   "agent": "bee",
+   "patient": "stone"
+  }
+ },
+ "taught_blocks_at_probe": {
+  "wug": {
+   "found": false,
+   "agent": "wug",
+   "patient": "dax"
+  },
+  "cow": {
+   "found": false,
+   "agent": "cow",
+   "patient": "moon"
+  },
+  "bee": {
+   "found": false,
+   "agent": "bee",
+   "patient": "stone"
+  }
+ },
+ "ablation": [],
+ "counter_installed": true,
+ "store_writes_after_teach_primary": [],
+ "homeostatic_calls_after_teach": 0,
+ "qwen_alone": {},
+ "errors": [],
+ "build_s": 139.0,
+ "source": "tiny-demo",
+ "renderer_class": "QwenRenderer",
+ "qwen_device": "cpu",
+ "ltm_attached": false,
+ "composer_class": "Pool1BoundOneBrainComposer",
+ "n_kb_at_session_start": 5,
+ "kb_at_session_start": [
+  [
+   0,
+   "brain",
+   "use",
+   "spikes",
+   "AFFIRM"
+  ],
+  [
+   1,
+   "brain",
+   "learn",
+   "words",
+   "AFFIRM"
+  ],
+  [
+   2,
+   "brain",
+   "store",
+   "memory",
+   "AFFIRM"
+  ],
+  [
+   3,
+   "dog",
+   "chase",
+   "cat",
+   "AFFIRM"
+  ],
+  [
+   4,
+   "cat",
+   "eat",
+   "fish",
+   "AFFIRM"
+  ]
+ ],
+ "kb_final_primary": [
+  [
+   0,
+   "brain",
+   "use",
+   "spikes",
+   "AFFIRM"
+  ],
+  [
+   1,
+   "brain",
+   "learn",
+   "words",
+   "AFFIRM"
+  ],
+  [
+   2,
+   "brain",
+   "store",
+   "memory",
+   "AFFIRM"
+  ],
+  [
+   3,
+   "dog",
+   "chase",
+   "cat",
+   "AFFIRM"
+  ],
+  [
+   4,
+   "cat",
+   "eat",
+   "fish",
+   "AFFIRM"
+  ]
+ ],
+ "d6_ops": {
+  "engram_reads": 5,
+  "view_cache_hits": 33,
+  "turn_refreshes": 8,
+  "retractions": 0,
+  "ablations": 0
+ },
+ "elapsed_s": 984.6
+}

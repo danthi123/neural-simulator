@@ -1,0 +1,1627 @@
+{
+ "arm": "USE",
+ "env": {
+  "BRAIN_D6_HEBBIAN_STORE": "1",
+  "BRAIN_D6_ENGRAM_VOCAB": "1",
+  "BRAIN_D6_ENGRAM_READTIME": "1",
+  "BRAIN_D6_HEBBIAN_FREEZE": "0"
+ },
+ "ltm": "off",
+ "variant": "qwenforced",
+ "seed": "101",
+ "spiking_mouth_recall_env": "0",
+ "backend": "numpy",
+ "cuda_visible": null,
+ "turns": [
+  {
+   "answer": "Wug eats dax. The dog chased the cat. The cat eats fish.",
+   "abstained": false,
+   "recalled_svo": [
+    "wug",
+    "eat",
+    "dax"
+   ],
+   "supporting_facts": [
+    [
+     "wug",
+     "eat",
+     "dax"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 3,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 5,
+   "full_sha256": "bd345130507d3ea3b508173c5e328cc070b1733919b9f9318d70dc4d29525534",
+   "phase": "teach",
+   "label": "t_wug",
+   "message": "the wug eats the dax",
+   "elapsed_s": 437.8,
+   "n_qwen_calls": 4
+  },
+  {
+   "answer": "The sentence \"Cow eats moon\" is a metaphorical expression meaning to consume or eat something related to the celestial body of",
+   "abstained": false,
+   "recalled_svo": [
+    "cow",
+    "eat",
+    "moon"
+   ],
+   "supporting_facts": [
+    [
+     "cow",
+     "eat",
+     "moon"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 6,
+   "full_sha256": "6292ddd8ee9ba9b99f2276ab4e1c7a665a6eb667a5e1256b3143b611f2e78aa0",
+   "phase": "teach",
+   "label": "t_cow",
+   "message": "the cow eats the moon",
+   "elapsed_s": 105.4,
+   "n_qwen_calls": 2
+  },
+  {
+   "answer": "A bee made a stone. \u2014 worth going further here.",
+   "abstained": false,
+   "recalled_svo": [
+    "bee",
+    "make",
+    "stone"
+   ],
+   "supporting_facts": [
+    [
+     "bee",
+     "make",
+     "stone"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 7,
+   "full_sha256": "f25e093f1736029381d12bd8afb79a3ea5736084ff180b0d2fefb740e59d2d7c",
+   "phase": "teach",
+   "label": "t_bee",
+   "message": "the bee makes the stone",
+   "elapsed_s": 49.8,
+   "n_qwen_calls": 1
+  },
+  {
+   "answer": "The dog chased the cat.",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "facb05298ae72554bfd998a10c22eae0227bf725d93ef6097333f577c72982fe",
+   "phase": "read",
+   "label": "d1",
+   "message": "what does the dog chase",
+   "elapsed_s": 186.6,
+   "n_qwen_calls": 1
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 On cat, then \u2014 The cat eats fish. \u2014 worth going further here.",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "fish"
+   ],
+   "supporting_facts": [
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "ee30c45eb3a84d6181251f617caf3ef9f17c6677966db928e1ce4fd001f5cab3",
+   "phase": "read",
+   "label": "d2",
+   "message": "what does the cat eat",
+   "elapsed_s": 39.1,
+   "n_qwen_calls": 1
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 On wug, then \u2014 Wug eats dax.",
+   "abstained": false,
+   "recalled_svo": [
+    "wug",
+    "eat",
+    "dax"
+   ],
+   "supporting_facts": [
+    [
+     "wug",
+     "eat",
+     "dax"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 5,
+   "full_sha256": "0dfa896ff77976f76d0b61b9a4a083fd55ae00717410a1459918ae2718bcfc9f",
+   "phase": "probe",
+   "label": "p_wug",
+   "message": "what does the wug eat",
+   "elapsed_s": 45.5,
+   "n_qwen_calls": 2
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 On cow, then \u2014 The sentence \"Cow eats moon\" is a metaphorical expression meaning to consume or eat something related to the celestial body of",
+   "abstained": false,
+   "recalled_svo": [
+    "cow",
+    "eat",
+    "moon"
+   ],
+   "supporting_facts": [
+    [
+     "cow",
+     "eat",
+     "moon"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 6,
+   "full_sha256": "789c5e76a7bb1864f53b3987d6cf64f01448c09c25847ddc61c3cee52f366304",
+   "phase": "probe",
+   "label": "p_cow",
+   "message": "what does the cow eat",
+   "elapsed_s": 49.5,
+   "n_qwen_calls": 2
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 On bee, then \u2014 A bee made a stone.",
+   "abstained": false,
+   "recalled_svo": [
+    "bee",
+    "make",
+    "stone"
+   ],
+   "supporting_facts": [
+    [
+     "bee",
+     "make",
+     "stone"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 7,
+   "full_sha256": "9fef70700b3dc46d3a2f868f92d33073bbb2ec86ab33583ee8194000b75533f4",
+   "phase": "probe",
+   "label": "p_bee",
+   "message": "what does the bee make",
+   "elapsed_s": 40.2,
+   "n_qwen_calls": 1
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cow, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "7eab6dc240be15bb8638d1e968ba3eebd73bb81ad50318a62402a6ac0f8ea2b1",
+   "phase": "untaught",
+   "label": "u01",
+   "message": "what does the cow drink",
+   "elapsed_s": 10.9,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bee, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "987385b7c0b3121a21ecf6f0f13331039c9af2848b31d7bcf898f90dac96334d",
+   "phase": "untaught",
+   "label": "u02",
+   "message": "what does the bee eat",
+   "elapsed_s": 10.4,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On wug, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "da07968cee5399ced09b1eb5d92374859cafc353267b4df92d9ced5ea6be120b",
+   "phase": "untaught",
+   "label": "u03",
+   "message": "what does the wug drink",
+   "elapsed_s": 10.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "c87c8df3dcf6a6d26ed38503723ad6d0568843fec07de83516bcc743d103b76d",
+   "phase": "untaught",
+   "label": "u04",
+   "message": "what does the cat drink",
+   "elapsed_s": 10.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "c0988f9eda6faf428ed3b22fee0e9c604fcb5a03a6712948d6e2163cb73b1f28",
+   "phase": "untaught",
+   "label": "u05",
+   "message": "what does the dog eat",
+   "elapsed_s": 11.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "f8ad7d0c54fd68f42c618839e9dbb8cf60c78a638bfd47dbeeff980de41394da",
+   "phase": "untaught",
+   "label": "u06",
+   "message": "what does the bird eat",
+   "elapsed_s": 10.4,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cow, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "e9cbadc627c3f0a4347d043caa562a718dcde20e376336a4b21cfb423ca9a58b",
+   "phase": "untaught",
+   "label": "u07",
+   "message": "what does the cow make",
+   "elapsed_s": 10.1,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "5155bb5e68dc3905689e25d179dd67597e0d95ab926b0bd08f5e3c4a9e3b4767",
+   "phase": "untaught",
+   "label": "u08",
+   "message": "what does the dog drink",
+   "elapsed_s": 9.9,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "8254b6920da2104537bcf9ef9103d5465e9f71d1d19e990abbd6eaaba2866811",
+   "phase": "untaught",
+   "label": "u09",
+   "message": "what does the horse eat",
+   "elapsed_s": 9.1,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bird yet: what can you tell me about bird?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "7095ac0ee00db60189268e9a15d8d7f390c2a3e0dc716ef3ff0beaf40711c5d2",
+   "phase": "untaught",
+   "label": "u10",
+   "message": "what does the bird build",
+   "elapsed_s": 9.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "289851276432bb86eae18d8a9a50bb471b38c6b61647f45aeded100de820be4b",
+   "phase": "untaught",
+   "label": "u11",
+   "message": "what does the lion eat",
+   "elapsed_s": 9.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about spider yet: what can you tell me about spider?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "7f38be1cff79dccd68439ac6874a0fbcbdf76b57ae88ecb9396facbe0dad3014",
+   "phase": "untaught",
+   "label": "u12",
+   "message": "what does the spider spin",
+   "elapsed_s": 9.6,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about farmer yet: what can you tell me about farmer?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "f887024559a1cae727d239ee860b7caf8587bc7f372d47287c2cb8df7b0c321f",
+   "phase": "untaught",
+   "label": "u13",
+   "message": "what does the farmer grow",
+   "elapsed_s": 9.5,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about baker yet: what can you tell me about baker?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "d0e22c4207bc22efa096dabff50c3088ca5ee02fa6f9a66dda35a96ca7534c08",
+   "phase": "untaught",
+   "label": "u14",
+   "message": "what does the baker bake",
+   "elapsed_s": 9.6,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about monkey yet: what can you tell me about monkey?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "849292f7ab0efe3036e51efe5b698c25dbea0ee5179c468c9ed1ff44245adc58",
+   "phase": "untaught",
+   "label": "u15",
+   "message": "what does the monkey eat",
+   "elapsed_s": 9.4,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rabbit yet: what can you tell me about rabbit?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "bdc2ff9e65118be4ddaa8b88786a8f5c27ae777d8cde4fef033e92af2175ff21",
+   "phase": "untaught",
+   "label": "u16",
+   "message": "what does the rabbit eat",
+   "elapsed_s": 9.2,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "64c780f18d386fa3fe313f76813d252ab5c949a53fa0c86057074c7d81ae75f1",
+   "phase": "untaught",
+   "label": "u17",
+   "message": "what is the capital of france",
+   "elapsed_s": 9.3,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wrote yet: what can you tell me about wrote?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "8917e59dfe261adc5bba289684eebf8eb7a34811a29b5479884c1a8f77d39fcd",
+   "phase": "untaught",
+   "label": "u18",
+   "message": "who wrote hamlet",
+   "elapsed_s": 9.2,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about color yet: what can you tell me about color?",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "4a1a36a1cccffec745cdd6b03cea277b7a17e3d777ba97b8f42dd306436f5ea7",
+   "phase": "untaught",
+   "label": "u19",
+   "message": "what color is the sky",
+   "elapsed_s": 8.2,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about many yet: what can you tell me about many? \u2014 worth going further here.",
+   "abstained": true,
+   "recalled_svo": null,
+   "supporting_facts": [],
+   "verified": false,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 0,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": null,
+   "full_sha256": "837cf822992764111db400009ded421b47133bdefbd459f96be88c60a6e76cdf",
+   "phase": "untaught",
+   "label": "u20",
+   "message": "how many legs does a spider have",
+   "elapsed_s": 9.2,
+   "n_qwen_calls": 0
+  },
+  {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 The cat eats the moon. \u2014 worth going further here.",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "moon"
+   ],
+   "supporting_facts": [
+    [
+     "cat",
+     "eat",
+     "moon"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "591d0b25277d06848fcc4b9ccc23ace233784b65a03c9c6be33be17c2e630249",
+   "phase": "secondary",
+   "label": "s_teach",
+   "message": "the cat eats the moon",
+   "elapsed_s": 68.7,
+   "n_qwen_calls": 1
+  },
+  {
+   "answer": "As for it \u2014 The cat eats the moon.",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "moon"
+   ],
+   "supporting_facts": [
+    [
+     "cat",
+     "eat",
+     "moon"
+    ]
+   ],
+   "verified": true,
+   "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+   "rich": true,
+   "n_sentences": 1,
+   "derived": false,
+   "derived_from": null,
+   "followup": false,
+   "source": "tiny-demo",
+   "matched_fact_index": 4,
+   "full_sha256": "13f540eb034c57f53d2025629aef784f292291114d21a0a572a76ec8ad8ceb56",
+   "phase": "secondary",
+   "label": "s_probe",
+   "message": "what does the cat eat",
+   "elapsed_s": 357.2,
+   "n_qwen_calls": 1
+  }
+ ],
+ "qwen_calls": [
+  {
+   "phase": "teach",
+   "turn": "t_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (wug, eat, dax) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "I ate dinner."
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nWrite exactly one short sentence that means 'wug eat dax'. Use the words wug, eat, and dax. Reply with only the sentence, nothing else.\nassistant\n"
+   ],
+   "completions": [
+    "Wug eats dax."
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (dog, chase, cat) into one short grammatical sentence. Keep the same verb 'chase'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The dog chased the cat."
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cat, eat, fish) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The cat eats fish."
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_cow",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cow, eat, moon) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "Cows eat the full moon."
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_cow",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nWrite exactly one short sentence that means 'cow eat moon'. Use the words cow, eat, and moon. Reply with only the sentence, nothing else.\nassistant\n"
+   ],
+   "completions": [
+    "The sentence \"Cow eats moon\" is a metaphorical expression meaning to consume or eat something related to the celestial body of"
+   ]
+  },
+  {
+   "phase": "teach",
+   "turn": "t_bee",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (bee, make, stone) into one short grammatical sentence. Keep the same verb 'make'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "A bee made a stone."
+   ]
+  },
+  {
+   "phase": "read",
+   "turn": "d1",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (dog, chase, cat) into one short grammatical sentence. Keep the same verb 'chase'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The dog chased the cat."
+   ]
+  },
+  {
+   "phase": "read",
+   "turn": "d2",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cat, eat, fish) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The cat eats fish."
+   ]
+  },
+  {
+   "phase": "probe",
+   "turn": "p_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (wug, eat, dax) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "I ate dinner."
+   ]
+  },
+  {
+   "phase": "probe",
+   "turn": "p_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nWrite exactly one short sentence that means 'wug eat dax'. Use the words wug, eat, and dax. Reply with only the sentence, nothing else.\nassistant\n"
+   ],
+   "completions": [
+    "Wug eats dax."
+   ]
+  },
+  {
+   "phase": "probe",
+   "turn": "p_cow",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cow, eat, moon) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "Cows eat the full moon."
+   ]
+  },
+  {
+   "phase": "probe",
+   "turn": "p_cow",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nWrite exactly one short sentence that means 'cow eat moon'. Use the words cow, eat, and moon. Reply with only the sentence, nothing else.\nassistant\n"
+   ],
+   "completions": [
+    "The sentence \"Cow eats moon\" is a metaphorical expression meaning to consume or eat something related to the celestial body of"
+   ]
+  },
+  {
+   "phase": "probe",
+   "turn": "p_bee",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (bee, make, stone) into one short grammatical sentence. Keep the same verb 'make'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "A bee made a stone."
+   ]
+  },
+  {
+   "phase": "secondary",
+   "turn": "s_teach",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cat, eat, moon) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The cat eats the moon."
+   ]
+  },
+  {
+   "phase": "secondary",
+   "turn": "s_probe",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nTurn the triple (cat, eat, moon) into one short grammatical sentence. Keep the same verb 'eat'. Reply with only the sentence.\nassistant\n"
+   ],
+   "completions": [
+    "The cat eats the moon."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "p_wug",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the wug eat?\nassistant\n"
+   ],
+   "completions": [
+    "The WUG (Wuxi University of Technology) is an educational institution located in Wuxi, Jiangsu Province"
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "p_cow",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the cow eat?\nassistant\n"
+   ],
+   "completions": [
+    "The cow eats grass and other plants for food."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "p_bee",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the bee make?\nassistant\n"
+   ],
+   "completions": [
+    "The bee makes honeycomb, which is a product of its digestive system and reproductive capabilities. This process involves wax, pollen"
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u01",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the cow drink?\nassistant\n"
+   ],
+   "completions": [
+    "The cow drinks milk, which is an essential nutrient for its health and well-being."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u02",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the bee eat?\nassistant\n"
+   ],
+   "completions": [
+    "The bees consume nectar as their primary food source for honey production and other essential nutrients."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u03",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the wug drink?\nassistant\n"
+   ],
+   "completions": [
+    "The WUG drinks water."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u04",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the cat drink?\nassistant\n"
+   ],
+   "completions": [
+    "The cat drinks water."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u05",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the dog eat?\nassistant\n"
+   ],
+   "completions": [
+    "The dog eats food such as bones, meat, vegetables, and fruits to maintain its health and well-being."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u06",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the bird eat?\nassistant\n"
+   ],
+   "completions": [
+    "The bird eats insects and small animals for food."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u07",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the cow make?\nassistant\n"
+   ],
+   "completions": [
+    "The cow makes milk, which is an essential product for human consumption and industrial use."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u08",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the dog drink?\nassistant\n"
+   ],
+   "completions": [
+    "The dog drinks water."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u09",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the horse eat?\nassistant\n"
+   ],
+   "completions": [
+    "The horse eats grass and hay for food."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u10",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the bird build?\nassistant\n"
+   ],
+   "completions": [
+    "The bird builds nests to provide a safe and sheltered place for their young to grow up safely."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u11",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the lion eat?\nassistant\n"
+   ],
+   "completions": [
+    "The lion eats meat, particularly game animals such as gazelles, wildebeest, and zebras."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u12",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the spider spin?\nassistant\n"
+   ],
+   "completions": [
+    "The spider spins silk to create and maintain its web."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u13",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the farmer grow?\nassistant\n"
+   ],
+   "completions": [
+    "The farmer grows crops such as wheat, rice, corn, and vegetables like tomatoes, beans, and carrots."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u14",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the baker bake?\nassistant\n"
+   ],
+   "completions": [
+    "The baker bakes bread."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u15",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the monkey eat?\nassistant\n"
+   ],
+   "completions": [
+    "The monkey eats leaves and fruits from trees."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u16",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the rabbit eat?\nassistant\n"
+   ],
+   "completions": [
+    "The rabbit eats grass and other vegetation for food."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u17",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what is the capital of france?\nassistant\n"
+   ],
+   "completions": [
+    "The capital of France is Paris."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u18",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: who wrote hamlet?\nassistant\n"
+   ],
+   "completions": [
+    "Hamlet was written by William Shakespeare, an English playwright and poet from the 17th century."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u19",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what color is the sky?\nassistant\n"
+   ],
+   "completions": [
+    "The sky is typically blue or azure, but it can vary depending on the time of day and location."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "u20",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: how many legs does a spider have?\nassistant\n"
+   ],
+   "completions": [
+    "A spider has eight legs."
+   ]
+  },
+  {
+   "phase": "qwen_alone",
+   "turn": "s_probe",
+   "prompts": [
+    "system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\nuser\nAnswer in one short sentence: what does the cat eat?\nassistant\n"
+   ],
+   "completions": [
+    "The cat eats food such as fish, vegetables, and fruits."
+   ]
+  }
+ ],
+ "write_log": [
+  {
+   "block": 5,
+   "method": "hebbian",
+   "via": "store",
+   "phase": "teach",
+   "turn": "t_wug",
+   "encode": {
+    "frozen": false,
+    "steps": 208,
+    "block": 5,
+    "phase_lock_steps": 184,
+    "n_saturated": 128,
+    "mean_abs_w": 1.0,
+    "min_abs_w": 0.9999999999999998
+   },
+   "fillers": [
+    "wug",
+    "eat",
+    "dax",
+    "AFFIRM"
+   ]
+  },
+  {
+   "block": 6,
+   "method": "hebbian",
+   "via": "store",
+   "phase": "teach",
+   "turn": "t_cow",
+   "encode": {
+    "frozen": false,
+    "steps": 208,
+    "block": 6,
+    "phase_lock_steps": 184,
+    "n_saturated": 128,
+    "mean_abs_w": 1.0,
+    "min_abs_w": 0.9999999999999998
+   },
+   "fillers": [
+    "cow",
+    "eat",
+    "moon",
+    "AFFIRM"
+   ]
+  },
+  {
+   "block": 7,
+   "method": "hebbian",
+   "via": "store",
+   "phase": "teach",
+   "turn": "t_bee",
+   "encode": {
+    "frozen": false,
+    "steps": 208,
+    "block": 7,
+    "phase_lock_steps": 184,
+    "n_saturated": 128,
+    "mean_abs_w": 1.0,
+    "min_abs_w": 0.9999999999999998
+   },
+   "fillers": [
+    "bee",
+    "make",
+    "stone",
+    "AFFIRM"
+   ]
+  },
+  {
+   "block": 8,
+   "method": "hebbian",
+   "via": "store",
+   "phase": "secondary",
+   "turn": "s_teach",
+   "encode": {
+    "frozen": false,
+    "steps": 208,
+    "block": 8,
+    "phase_lock_steps": 184,
+    "n_saturated": 128,
+    "mean_abs_w": 1.0,
+    "min_abs_w": 0.9999999999999998
+   },
+   "fillers": [
+    "cat",
+    "eat",
+    "moon",
+    "AFFIRM"
+   ]
+  }
+ ],
+ "taught_blocks_after_teach": {
+  "wug": {
+   "found": true,
+   "agent": "wug",
+   "patient": "dax",
+   "block": 5,
+   "mean_abs_w": 1.809077,
+   "n_syn": 128
+  },
+  "cow": {
+   "found": true,
+   "agent": "cow",
+   "patient": "moon",
+   "block": 6,
+   "mean_abs_w": 1.779477,
+   "n_syn": 128
+  },
+  "bee": {
+   "found": true,
+   "agent": "bee",
+   "patient": "stone",
+   "block": 7,
+   "mean_abs_w": 2.081401,
+   "n_syn": 128
+  }
+ },
+ "taught_blocks_at_probe": {
+  "wug": {
+   "found": true,
+   "agent": "wug",
+   "patient": "dax",
+   "block": 5,
+   "mean_abs_w": 1.809077,
+   "n_syn": 128
+  },
+  "cow": {
+   "found": true,
+   "agent": "cow",
+   "patient": "moon",
+   "block": 6,
+   "mean_abs_w": 1.779477,
+   "n_syn": 128
+  },
+  "bee": {
+   "found": true,
+   "agent": "bee",
+   "patient": "stone",
+   "block": 7,
+   "mean_abs_w": 2.081401,
+   "n_syn": 128
+  }
+ },
+ "ablation": [],
+ "counter_installed": true,
+ "store_writes_after_teach_primary": [],
+ "homeostatic_calls_after_teach": 0,
+ "qwen_alone": {
+  "p_wug": {
+   "question": "what does the wug eat",
+   "answer": "The WUG (Wuxi University of Technology) is an educational institution located in Wuxi, Jiangsu Province",
+   "full": "The WUG (Wuxi University of Technology) is an educational institution located in Wuxi, Jiangsu Province",
+   "secs": 7.51
+  },
+  "p_cow": {
+   "question": "what does the cow eat",
+   "answer": "The cow eats grass and other plants for food.",
+   "full": "The cow eats grass and other plants for food.",
+   "secs": 4.48
+  },
+  "p_bee": {
+   "question": "what does the bee make",
+   "answer": "The bee makes honeycomb, which is a product of its digestive system and reproductive capabilities. This process involves wax, pollen",
+   "full": "The bee makes honeycomb, which is a product of its digestive system and reproductive capabilities. This process involves wax, pollen",
+   "secs": 7.3
+  },
+  "u01": {
+   "question": "what does the cow drink",
+   "answer": "The cow drinks milk, which is an essential nutrient for its health and well-being.",
+   "full": "The cow drinks milk, which is an essential nutrient for its health and well-being.",
+   "secs": 6.12
+  },
+  "u02": {
+   "question": "what does the bee eat",
+   "answer": "The bees consume nectar as their primary food source for honey production and other essential nutrients.",
+   "full": "The bees consume nectar as their primary food source for honey production and other essential nutrients.",
+   "secs": 6.26
+  },
+  "u03": {
+   "question": "what does the wug drink",
+   "answer": "The WUG drinks water.",
+   "full": "The WUG drinks water.",
+   "secs": 3.78
+  },
+  "u04": {
+   "question": "what does the cat drink",
+   "answer": "The cat drinks water.",
+   "full": "The cat drinks water.",
+   "secs": 3.51
+  },
+  "u05": {
+   "question": "what does the dog eat",
+   "answer": "The dog eats food such as bones, meat, vegetables, and fruits to maintain its health and well-being.",
+   "full": "The dog eats food such as bones, meat, vegetables, and fruits to maintain its health and well-being.",
+   "secs": 7.19
+  },
+  "u06": {
+   "question": "what does the bird eat",
+   "answer": "The bird eats insects and small animals for food.",
+   "full": "The bird eats insects and small animals for food.",
+   "secs": 4.88
+  },
+  "u07": {
+   "question": "what does the cow make",
+   "answer": "The cow makes milk, which is an essential product for human consumption and industrial use.",
+   "full": "The cow makes milk, which is an essential product for human consumption and industrial use.",
+   "secs": 6.28
+  },
+  "u08": {
+   "question": "what does the dog drink",
+   "answer": "The dog drinks water.",
+   "full": "The dog drinks water.",
+   "secs": 3.58
+  },
+  "u09": {
+   "question": "what does the horse eat",
+   "answer": "The horse eats grass and hay for food.",
+   "full": "The horse eats grass and hay for food.",
+   "secs": 4.36
+  },
+  "u10": {
+   "question": "what does the bird build",
+   "answer": "The bird builds nests to provide a safe and sheltered place for their young to grow up safely.",
+   "full": "The bird builds nests to provide a safe and sheltered place for their young to grow up safely.",
+   "secs": 6.64
+  },
+  "u11": {
+   "question": "what does the lion eat",
+   "answer": "The lion eats meat, particularly game animals such as gazelles, wildebeest, and zebras.",
+   "full": "The lion eats meat, particularly game animals such as gazelles, wildebeest, and zebras.",
+   "secs": 7.3
+  },
+  "u12": {
+   "question": "what does the spider spin",
+   "answer": "The spider spins silk to create and maintain its web.",
+   "full": "The spider spins silk to create and maintain its web.",
+   "secs": 4.79
+  },
+  "u13": {
+   "question": "what does the farmer grow",
+   "answer": "The farmer grows crops such as wheat, rice, corn, and vegetables like tomatoes, beans, and carrots.",
+   "full": "The farmer grows crops such as wheat, rice, corn, and vegetables like tomatoes, beans, and carrots.",
+   "secs": 7.55
+  },
+  "u14": {
+   "question": "what does the baker bake",
+   "answer": "The baker bakes bread.",
+   "full": "The baker bakes bread.",
+   "secs": 3.84
+  },
+  "u15": {
+   "question": "what does the monkey eat",
+   "answer": "The monkey eats leaves and fruits from trees.",
+   "full": "The monkey eats leaves and fruits from trees.",
+   "secs": 4.49
+  },
+  "u16": {
+   "question": "what does the rabbit eat",
+   "answer": "The rabbit eats grass and other vegetation for food.",
+   "full": "The rabbit eats grass and other vegetation for food.",
+   "secs": 4.71
+  },
+  "u17": {
+   "question": "what is the capital of france",
+   "answer": "The capital of France is Paris.",
+   "full": "The capital of France is Paris.",
+   "secs": 4.28
+  },
+  "u18": {
+   "question": "who wrote hamlet",
+   "answer": "Hamlet was written by William Shakespeare, an English playwright and poet from the 17th century.",
+   "full": "Hamlet was written by William Shakespeare, an English playwright and poet from the 17th century.",
+   "secs": 6.87
+  },
+  "u19": {
+   "question": "what color is the sky",
+   "answer": "The sky is typically blue or azure, but it can vary depending on the time of day and location.",
+   "full": "The sky is typically blue or azure, but it can vary depending on the time of day and location.",
+   "secs": 7.32
+  },
+  "u20": {
+   "question": "how many legs does a spider have",
+   "answer": "A spider has eight legs.",
+   "full": "A spider has eight legs.",
+   "secs": 3.79
+  },
+  "s_probe": {
+   "question": "what does the cat eat",
+   "answer": "The cat eats food such as fish, vegetables, and fruits.",
+   "full": "The cat eats food such as fish, vegetables, and fruits.",
+   "secs": 4.98
+  }
+ },
+ "errors": [],
+ "build_s": 95.7,
+ "source": "tiny-demo",
+ "renderer_class": "QwenRenderer",
+ "qwen_device": "cpu",
+ "ltm_attached": false,
+ "composer_class": "Pool1BoundOneBrainComposer",
+ "n_kb_at_session_start": 5,
+ "kb_at_session_start": [
+  [
+   0,
+   "brain",
+   "use",
+   "spikes",
+   "AFFIRM"
+  ],
+  [
+   1,
+   "brain",
+   "learn",
+   "words",
+   "AFFIRM"
+  ],
+  [
+   2,
+   "brain",
+   "store",
+   "memory",
+   "AFFIRM"
+  ],
+  [
+   3,
+   "dog",
+   "chase",
+   "cat",
+   "AFFIRM"
+  ],
+  [
+   4,
+   "cat",
+   "eat",
+   "fish",
+   "AFFIRM"
+  ]
+ ],
+ "kb_final_primary": [
+  [
+   0,
+   "brain",
+   "use",
+   "spikes",
+   "AFFIRM"
+  ],
+  [
+   1,
+   "brain",
+   "learn",
+   "words",
+   "AFFIRM"
+  ],
+  [
+   2,
+   "brain",
+   "store",
+   "memory",
+   "AFFIRM"
+  ],
+  [
+   3,
+   "dog",
+   "chase",
+   "cat",
+   "AFFIRM"
+  ],
+  [
+   4,
+   "cat",
+   "eat",
+   "fish",
+   "AFFIRM"
+  ],
+  [
+   5,
+   "wug",
+   "eat",
+   "dax",
+   "AFFIRM"
+  ],
+  [
+   6,
+   "cow",
+   "eat",
+   "moon",
+   "AFFIRM"
+  ],
+  [
+   7,
+   "bee",
+   "make",
+   "stone",
+   "AFFIRM"
+  ]
+ ],
+ "kb_final": [
+  [
+   0,
+   "brain",
+   "use",
+   "spikes",
+   "AFFIRM"
+  ],
+  [
+   1,
+   "brain",
+   "learn",
+   "words",
+   "AFFIRM"
+  ],
+  [
+   2,
+   "brain",
+   "store",
+   "memory",
+   "AFFIRM"
+  ],
+  [
+   3,
+   "dog",
+   "chase",
+   "cat",
+   "AFFIRM"
+  ],
+  [
+   4,
+   "cat",
+   "eat",
+   "fish",
+   "AFFIRM"
+  ],
+  [
+   5,
+   "wug",
+   "eat",
+   "dax",
+   "AFFIRM"
+  ],
+  [
+   6,
+   "cow",
+   "eat",
+   "moon",
+   "AFFIRM"
+  ],
+  [
+   7,
+   "bee",
+   "make",
+   "stone",
+   "AFFIRM"
+  ],
+  [
+   8,
+   "cat",
+   "eat",
+   "moon",
+   "AFFIRM"
+  ]
+ ],
+ "d6_ops": {
+  "engram_reads": 35,
+  "view_cache_hits": 125,
+  "turn_refreshes": 30,
+  "retractions": 0,
+  "ablations": 0
+ },
+ "elapsed_s": 1802.0
+}
