@@ -1,0 +1,59 @@
+{
+  "family": "r2",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "NO-GO",
+    "101": "UNDEFINED",
+    "102": "NO-GO",
+    "42": "NO-GO",
+    "43": "UNDEFINED",
+    "44": "NO-GO"
+  },
+  "n_go": 0,
+  "verdict": "NO-GO",
+  "signflip_p_downscaling_fade": 1.0,
+  "diffs_fade": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "long_delay_verdict_counts": {
+    "NOT-RESCUED": 6
+  },
+  "horizon_first_night_not_correct": {
+    "d10w_rc": {
+      "100": null,
+      "101": 1,
+      "102": null,
+      "42": null,
+      "43": 1,
+      "44": null
+    },
+    "d10w_shy": {
+      "100": 4,
+      "101": 1,
+      "102": 6,
+      "42": 7,
+      "43": 1,
+      "44": 5
+    }
+  },
+  "preconditions": [
+    {"name": "seed completeness (6/6 rows present, none missing)", "ok": true},
+    {"name": "zero arm-level errors across all 72 arm files (6 seeds x 12 R2_ARMS)", "ok": true},
+    {"name": "gamma isolation consistent across companion-ON arms, every seed", "ok": true},
+    {"name": "registered code (R2_ARMS / grade_seed_r2 / aggregate_r2) byte-identical between the pinned revision 50c791bf9215df97404a9bf05e3ce40a9a257606 and the scoring checkout", "ok": true},
+    {"name": "every per-arm .prov.json records git_sha=50c791bf9215df97404a9bf05e3ce40a9a257606, source_kind=git_archive, manifest verified at start and exit", "ok": true}
+  ],
+  "preconditions_note": "These are FAMILY-LEVEL instrument-integrity checks that earn the right to assert a mechanical roll-up at all (all true here, so this NO-GO is not itself an instrument failure). They are NOT the same as per-seed outcome gates: 2 of the 6 seed rows (43, 101) independently read seed_verdict=UNDEFINED (P2 precondition failed: the weak fact did not survive 3 nights even WITHOUT downscaling on those two seeds), which is a distinct, seed-level UNDEFINED already recorded honestly in seed_verdicts above and is not counted as a failure of these family-level preconditions. See the finding doc for the full disclosure."
+}
