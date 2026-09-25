@@ -257,3 +257,31 @@ control differs. Run once locally under `bash tools/memcap.sh 8 -- ... --offchec
 A seed-42 smoke of `--family r2` (de-risk, NOT a gate row) goes to `research/findings/raw/_sleep_replay_capture_r2_smoke`.
 The six gate rows are pool runs at a pinned revision containing this amendment; if the smoke forces a code change, that
 is Amendment 2 and the pin moves.
+
+## Amendment 2 (2026-09-24, r2) — the counterfactual offcheck's construction, fixed before its first run
+
+Committed before the counterfactual offcheck has run. It changes only the item-3 instrument, not item 1 or 2. The
+seed-42 r2 smoke was already running at `2f3bd2087`. It is unaffected, because this edit touches only the offcheck
+functions of the probe, which its arm workers never import.
+
+A git-only dry run of Amendment 1's construction (no brain build) failed in two ways, and the check would have read
+UNDEFINED. **First, the reverse-apply conflicted in `webapp/server.py`.** Later, unrelated commits (the D6 chat
+observability block) inserted code right after the feature's hook hunks. So the 3-way reverse of `a201293f5` saw
+adjacent edits. **Second, a standalone runner would not reverse.** `492231df3` created
+`_da_encoding_natural_drive_synaptic.py`, and later non-feature commits edited it, so reversing its creation cannot
+apply. The construction is therefore now:
+- Revert only `production_scope()`: `webapp/`, `sim/`, and every `research/runners` module that a `webapp/*.py`
+  imports, derived from the tree on each run (123 paths at `2f3bd2087`). Everything else stays at HEAD in both
+  trees, including standalone runners, the instrument, the battery, findings, tests and docs. None of it is on the
+  `/api/brain-chat` reply path.
+- For each commit, try a 3-way reverse first. If it conflicts, roll that commit's partial application back and
+  retry with a zero-context reverse, which matches only the feature's own lines. If that also fails, the check
+  reads UNDEFINED.
+- No import of a feature module may remain in the counterfactual `webapp/`; otherwise UNDEFINED. Prose mentions in
+  other modules' docstrings do not count.
+
+Dry run with this construction, at HEAD `2f3bd2087`. Six feature commits were reversed: five by 3-way,
+`a201293f5` by zero-context. No residual import remained. Relative to HEAD, the counterfactual deletes
+`webapp/da_tag_capture*.py` and `webapp/sleep_replay_capture.py`. It restores the pre-isolation
+`_da_write_gain_spiking_derisk.py`, which is a pure refactor. It removes exactly the three `server.py` hook blocks
+and the one `continuous_engine.py` hook block, and nothing else. The verdict rule of Amendment 1 is unchanged.

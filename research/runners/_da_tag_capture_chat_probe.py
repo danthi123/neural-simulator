@@ -661,9 +661,11 @@ def _offcheck_first_diff(pinned_replies, branch_replies):
 # reverse-applied. Nothing else differs, so it cannot go stale as main moves.
 #   * feature commits = every non-merge commit reachable from HEAD that touches a FEATURE_MODULES file, or adds/removes
 #     a line matching FEATURE_HOOK_RE in a FEATURE_HOOK_FILES file (the call sites the feature added to shared code);
-#   * each is reverse-applied (newest first, `git apply -R --3way`) into a temporary worktree under
-#     /home/dant123/Projects/sim/.claude/worktrees/, EXCEPT the paths in REVERT_HELD_EQUAL (the instrument itself, the
-#     battery harness, findings/tests/docs), which stay at HEAD in both trees and so cannot confound the comparison;
+#   * each is reverse-applied (newest first; a 3-way reverse, falling back per commit to a zero-context reverse that
+#     matches only the feature's own lines) into a temporary worktree under /home/dant123/Projects/sim/.claude/
+#     worktrees/, restricted to `production_scope()` -- webapp/, sim/, and the research/runners modules webapp imports.
+#     Everything else (the instrument, the battery harness, standalone runners, findings/tests/docs) stays at HEAD in
+#     both trees and so cannot confound the comparison; no feature reference may remain in the counterfactual webapp/;
 #   * a failed reverse-apply makes the check UNDEFINED (never a pass);
 #   * a same-tree NULL CONTROL (HEAD run twice) must be identical, else UNDEFINED (the reply is not deterministic
 #     enough for a byte check);
@@ -674,6 +676,33 @@ FEATURE_HOOK_RE = r"da_tag_capture|sleep_replay_capture"
 REVERT_HELD_EQUAL = ["research/findings", "tests", "docs", "research/biology", "research/queue", "research/coordination",
                      "research/runners/_da_tag_capture_chat_probe.py", "research/runners/onebrain_regression_battery.py",
                      "research/runners/load_bearing_fraction.py"]
+
+
+def production_scope(repo=None):
+    """The paths whose reversal can change a /api/brain-chat reply: webapp/, sim/, and every research/runners module
+    some webapp/*.py imports (derived from the tree at `repo` on every call). Everything else a feature commit touched
+    (standalone runners, findings, tests, docs) is held equal in both trees."""
+    import re as _re
+    repo = repo or _REPO
+    mods = set()
+    pat = _re.compile(r"research\.runners(?:\.(\w+)|\s+import\s+([\w ,()]+))")
+    for root, _dirs, fnames in os.walk(os.path.join(repo, "webapp")):
+        for fn in fnames:
+            if not fn.endswith(".py"):
+                continue
+            with open(os.path.join(root, fn), errors="ignore") as fh:
+                for m in pat.finditer(fh.read()):
+                    if m.group(1):
+                        mods.add(m.group(1))
+                    elif m.group(2):
+                        mods.update(x.strip() for x in m.group(2).replace("(", " ").replace(")", " ").split(",")
+                                    if x.strip().split(" ")[0].isidentifier())
+    paths = ["webapp", "sim"]
+    for m in sorted(mods):
+        name = m.split(" ")[0]
+        if os.path.exists(os.path.join(repo, "research", "runners", name + ".py")):
+            paths.append("research/runners/%s.py" % name)
+    return [p for p in paths if p not in REVERT_HELD_EQUAL]
 _WT_PARENT = "/home/dant123/Projects/sim/.claude/worktrees"
 _OFF_ENV = ("BRAIN_DA_TAG_CAPTURE", "BRAIN_DA_TAG_CAPTURE_CLOCK", "BRAIN_DA_ENCODING_LESION", "BRAIN_DA_CAPTURE_LESION",
             "BRAIN_SLEEP_REPLAY_CAPTURE", "BRAIN_SLEEP_REPLAY_CAPTURE_LESION", "BRAIN_SLEEP_DOWNSCALING")
@@ -703,27 +732,76 @@ def _corpus_src():
     return os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(os.path.join(_REPO, common))), "data", "corpus"))
 
 
+def _restore_files(wt, snap):
+    """Put the files of one commit's patch back to their pre-apply content (worktree + index)."""
+    for f, data in snap.items():
+        path = os.path.join(wt, f)
+        if data is None:
+            if os.path.exists(path):
+                os.remove(path)
+            _git(wt, "rm", "--cached", "-q", "--ignore-unmatch", "--", f)
+        else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "wb") as fh:
+                fh.write(data)
+            _git(wt, "add", "--", f)
+
+
 def build_counterfactual(wt, commits):
-    """Reverse-apply `commits` (newest first) into worktree `wt`, holding REVERT_HELD_EQUAL at HEAD. Returns a dict
-    with the per-commit outcome and the list of paths the counterfactual changes; `ok` False on any failure."""
-    excludes = [":(exclude)%s" % p for p in REVERT_HELD_EQUAL]
+    """Reverse-apply `commits` (newest first) into worktree `wt`, restricted to `production_scope(wt)` (everything else
+    stays at HEAD). Per commit: a 3-way reverse-apply first; if it conflicts (later, unrelated edits right next to a
+    feature hunk), that commit's partial application is rolled back and it is retried with a ZERO-CONTEXT reverse-apply,
+    which matches only the feature's own lines. Afterwards no feature reference may remain in webapp/
+    (`residual_feature_refs`), else the counterfactual is incomplete. Returns a dict; `ok` False on any failure."""
+    import re as _re
+    scope = production_scope(wt)
+    spec = scope              # an INCLUDE pathspec: only production-reachable paths are reverted
     steps, ok = [], True
     for c in commits:
-        patch = _git(wt, "diff", "--binary", "%s^" % c, c, "--", ".", *excludes).stdout
+        rng = ("%s^" % c, c)
+        patch = _git(wt, "diff", "--binary", *rng, "--", *spec).stdout
         if not patch.strip():
             steps.append({"commit": c, "status": "nothing-in-scope"})
             continue
+        files = _git(wt, "diff", "--name-only", *rng, "--", *spec).stdout.decode().split()
+        snap = {}
+        for f in files:
+            path = os.path.join(wt, f)
+            snap[f] = open(path, "rb").read() if os.path.exists(path) else None
         r = _git(wt, "apply", "-R", "--3way", inp=patch)
         conflicted = _git(wt, "diff", "--name-only", "--diff-filter=U").stdout.decode().split()
-        if r.returncode != 0 or conflicted:
-            ok = False
-            steps.append({"commit": c, "status": "FAILED", "conflicted": conflicted,
-                          "stderr": r.stderr.decode(errors="replace")[-600:]})
-            break
-        steps.append({"commit": c, "status": "reverted"})
+        if r.returncode == 0 and not conflicted:
+            steps.append({"commit": c, "status": "reverted-3way"})
+            continue
+        _restore_files(wt, snap)
+        patch0 = _git(wt, "diff", "--binary", "-U0", *rng, "--", *spec).stdout
+        r0 = _git(wt, "apply", "-R", "--unidiff-zero", "--index", inp=patch0)
+        if r0.returncode == 0:
+            steps.append({"commit": c, "status": "reverted-zero-context", "3way_conflicted": conflicted})
+            continue
+        _restore_files(wt, snap)
+        ok = False
+        steps.append({"commit": c, "status": "FAILED", "conflicted": conflicted,
+                      "stderr_3way": r.stderr.decode(errors="replace")[-400:],
+                      "stderr_zero_context": r0.stderr.decode(errors="replace")[-400:]})
+        break
+    residual = []           # CODE references only (an import of a feature module); prose mentions do not count
+    pat = _re.compile(r"^\s*(?:from\s+[\w.]*\b(?:da_tag_capture\w*|sleep_replay_capture)\b"
+                      r"|(?:from\s+[\w.]+\s+import\s+[^#]*|import\s+[^#]*)\b(?:da_tag_capture\w*|sleep_replay_capture)\b)")
+    for root, _dirs, fnames in os.walk(os.path.join(wt, "webapp")):
+        for fn in fnames:
+            if fn.endswith(".py"):
+                path = os.path.join(root, fn)
+                with open(path, errors="ignore") as fh:
+                    for n, line in enumerate(fh, 1):
+                        if pat.search(line):
+                            residual.append("%s:%d" % (os.path.relpath(path, wt), n))
+    if residual:
+        ok = False
     changed = _git(wt, "diff", "--name-status", "HEAD").stdout.decode().splitlines()
     untracked = _git(wt, "ls-files", "--others", "--exclude-standard").stdout.decode().split()
-    return {"ok": ok, "steps": steps, "changed_vs_head": changed, "untracked": untracked}
+    return {"ok": ok, "steps": steps, "changed_vs_head": changed, "untracked": untracked,
+            "residual_feature_refs": residual[:50], "n_scope_paths": len(scope)}
 
 
 def _run_worker(tree, tag, td):
@@ -750,7 +828,7 @@ def offcheck(out, ltm="off"):
     corpus = _corpus_src()
     res = {"method": "counterfactual: HEAD vs HEAD minus the feature's own commits (built from the current tree)",
            "head": head, "uncommitted_code_paths_ignored": [d for d in dirty if d.strip()], "ltm": ltm,
-           "feature_commits": commits, "held_equal": REVERT_HELD_EQUAL}
+           "feature_commits": commits, "reverted_scope": "production_scope(): webapp/, sim/, webapp-imported runners"}
     try:
         for wt in (wt_head, wt_cf):
             r = _git(_REPO, "worktree", "add", "--detach", wt, head)
@@ -1040,6 +1118,11 @@ def selftest():
     checks["r2 grade: sleep before the waking interval ended -> LD UNDEFINED"] = \
         grade_seed_r2({"arms": arms_x})["LD_verdict"] == "UNDEFINED"
     # counterfactual offcheck: the feature's own commits are derived from the tree (never a fixed pin)
+    sc = production_scope()
+    checks["offcheck counterfactual: scope = production-reachable paths (webapp-imported runner in, instrument out)"] = \
+        ("webapp" in sc and "research/runners/_da_write_gain_spiking_derisk.py" in sc
+         and "research/runners/_da_tag_capture_chat_probe.py" not in sc
+         and "research/runners/onebrain_regression_battery.py" not in sc)
     fc = feature_commits()
     checks["offcheck counterfactual: feature commits derived from HEAD (>= the 5 known)"] = \
         len(fc) >= 5 and all(any(c.startswith(k) for c in fc)
