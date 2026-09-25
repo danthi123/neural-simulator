@@ -1,66 +1,96 @@
-# doc_path<TAB>line=value[<TAB>line=value ...]  -- docs that PASS main's tools/claim_check.py (pre-round-1,
-# block-until-heading scope) and FAIL research/claimcheck-block-scope's tools/claim_check.py (round 2: any
-# heading level closes scope; a block closes at its own table/paragraph boundary; a close marker works
-# anywhere on a line). Scanned: research/findings/*.md added since 2026-09-01 on main (git log --since=2026-09-01
-# --diff-filter=A --name-only), 351 candidates, 348 present on disk, run from inside the
-# research/claimcheck-block-scope-round2 worktree so cited artifact paths resolve. A row with no line=value
-# columns did not occur in this scan (all 58 newly-failing docs fail via genuinely-exposed unsupported numbers,
-# zero via MISSING-artifact or LOW_COVERAGE alone) -- see retro_scan.py's console summary in the branch history.
-research/findings/2026-09-01-board91-memory-separator-readfix-popstate-reset-NOGO-relocalizes-to-consolidation-induced-generic-capture.md	90=0.437	90=0.9
-research/findings/2026-09-01-declarative-cross-edge-functional-gate-read-credit-livedrive-GO.md	128=0.0067	129=0.0067
-research/findings/2026-09-01-generative-cortex-token-supply-lever-broad-domain-plateau-is-starvation-not-capacity-wall.md	123=0.24	123=0.252	125=0.791	125=0.296
-research/findings/2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO.md	149=0.004	149=0.008	150=0.005	151=-0.018	154=0.0016	155=0.021	155=0.024
-research/findings/2026-09-01-read-fidelity-learned-whitened-opponent-read-NOGO-residual-is-read-architecture-not-estimator.md	114=0.121	114=1.007	114=0.567	114=0.692	114=0.518	114=0.676	114=0.63	114=0.68	115=0.663	115=0.652	115=0.683	115=0.58	115=0.712	115=0.702	116=0.53	116=1.573	116=0.801	116=0.975	116=0.664	116=0.755	131=0.975	133=0.755	133=0.702	133=0.68
-research/findings/2026-09-01-read-fidelity-separate-trace-recall-read-GO-upstream-shaping-closes-read-power-residual.md	98=0.894	99=0.858	100=0.832	101=0.854	102=0.869	103=0.848	115=0.832
-research/findings/2026-09-02-c2-metacog-error-gated-port-second-negative.md	69=0.0097	69=0.0423
-research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md	66=0.062	66=0.144	66=0.497	67=0.062	67=0.144	67=0.395	69=0.062	69=0.144	71=0.062	72=0.261	72=0.062	72=0.278	73=0.497	73=0.395	134=2503.09218	136=1903.09215
-research/findings/2026-09-02-crossedge-surprise-metacog-derisk-SMOKE-GO-PARTIAL.md	76=0.678	76=0.1032	76=-0.0088	76=-0.112	77=0.615	77=-0.0092	77=-0.1053	77=-0.0051	78=0.659	78=0.1078	78=0.0033	80=0.615	80=0.659	83=-0.105	86=-0.005
-research/findings/2026-09-02-generative-cortex-capacity-vs-tokens-larger-capacity-wins-d96-nears-its-ceiling.md	140=3.9516	140=3.8802	140=3.8433	140=3.8178	140=3.8029	141=0.2623	141=0.2619	141=0.2528	141=0.2341	143=3.8029	145=0.0148	160=4.1388	160=3.8243	161=0.313	161=0.3015	161=0.3264	165=0.0506	169=0.033	169=0.076	179=3.8029	179=0.1129	182=0.1292	183=0.1584
-research/findings/2026-09-02-memory-separator-continuous-ring-screen-parameter-map.md	27=0.0486	27=0.0489
-research/findings/2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md	113=0.008
-research/findings/2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md	99=0.0006	101=0.956	101=1.013	109=3.553
-research/findings/2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md	99=0.746
-research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md	63=0.0017	63=0.00198	66=0.001	90=0.2043	90=0.3512	91=1.845	91=0.1728	91=0.2849	92=0.2345	92=0.3434	93=2.506	93=0.2266	93=0.3421	94=2.987	94=0.2723	94=0.418	95=2.739	95=0.251	95=0.3809	109=0.0122	109=0.0142	109=0.0186	109=0.0208
-research/findings/2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-verdict.md	32=0.347	32=0.147	41=0.125	42=0.794	42=0.633	42=0.661
-research/findings/2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md	218=10.1016
-research/findings/2026-09-05-affect-experienced-opponent-gate-needs-embodiment-BOUNDARY.md	81=0.0068	82=0.089	169=0.294	170=0.088	172=0.0068	188=0.294
-research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md	71=0.01	71=0.02	72=0.147	72=0.167	73=0.02	73=0.02	74=0.147	74=0.167	75=0.294	75=0.324
-research/findings/2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md	83=0.0007	83=0.0545	83=0.27	83=0.306	83=0.225	83=0.287
-research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md	46=0.825	50=0.959	50=0.954	50=0.825	99=0.867	99=0.058	136=0.026	137=0.306	137=0.444	137=0.139	138=0.487	138=0.087	139=0.53	139=0.084	143=0.542	143=0.586	144=0.043	149=0.585	149=0.618	149=0.525	150=0.53	151=0.553
-research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md	230=0.45	230=0.336	230=0.413	231=0.442	231=0.396	231=0.482	231=0.368	232=0.504	232=0.615
-research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md	56=0.959	56=0.954	58=0.786	58=0.946	58=0.156	60=0.946	60=0.457	60=0.805	60=0.41	80=0.504	80=0.504	80=0.615
-research/findings/2026-09-05-shared-salience-afferent-production-default-flip-GO.md	109=1.049	112=1.049	133=0.791	134=0.0462	136=0.791	136=0.046
-research/findings/2026-09-08-affect-opponent-columnar-spiking-worst-case-unchanged-BOUNDARY.md	54=0.01	55=0.059	57=0.059	58=0.049	59=0.118	66=0.0095	72=0.02	72=0.049	72=0.02	72=0.433	72=0.059	72=0.608	73=0.029	73=0.586	73=0.02	73=0.618	74=0.118	75=0.059	75=0.02	75=0.118	75=0.029	75=0.01	76=0.01	76=0.02	77=0.118	77=0.029	77=0.01	77=0.608
-research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md	65=1.622	65=1.648	66=1.661	92=-0.02	93=-0.019	110=3.491	112=3.001	113=2.774	114=3.298
-research/findings/2026-09-09-spiking-anaphor-detection-wirein-both-callsites-default-off.md	97=0.867
-research/findings/2026-09-09-spiking-novelty-wirein-engagement-of-default-off.md	93=0.674	95=0.32	95=0.605	95=0.33	95=0.951	95=0.927
-research/findings/2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md	40=0.027	65=0.029
-research/findings/2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md	49=3.928	52=3.726	54=0.009	57=0.036	57=0.048	58=3.928
-research/findings/2026-09-16-gap5-forward-band-homeostatic-scaling-ltu-NO-GO-redirect-read-noise-floor.md	43=0.586	43=0.798
-research/findings/2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md	54=-0.017
-research/findings/2026-09-16-rank7-affect-xinh-competition-strength-sweep-EXHAUSTED-confirms-park.md	45=0.029	45=0.057	45=0.201	46=0.032	46=0.067	46=0.201	47=0.032	47=0.067	47=0.201	48=0.032	48=0.067	48=0.201	49=0.032	49=0.067	49=0.201	50=0.032	50=0.067	50=0.201
-research/findings/2026-09-16-vision-nglimpses-temporal-evidence-integration-lifts-capability-2of6-to-4of6.md	49=0.53	50=0.556	51=0.538	54=0.556	59=0.556
-research/findings/2026-09-17-affect-grounded-experience-stream-300k-PARTIAL-noise-robustness-not-data-scale.md	37=0.049	37=0.049
-research/findings/2026-09-17-affect-noise-robustness-multicue-learned-reliability-mechanism-validated-strict-bar-PARTIAL.md	50=0.01	52=0.01	52=0.539	57=0.225	57=0.306	57=0.186	57=0.279	58=0.893	61=0.618	61=0.431	61=0.618	61=0.618	61=0.627	62=0.01	62=0.088	62=0.186	64=0.088	64=0.059	64=0.059
-research/findings/2026-09-17-gap5-read-noise-floor-instrument-lane-is-read-noise-dominated-K18.md	38=0.0745
-research/findings/2026-09-17-learned-spiking-constituent-boundary-segmentation-retires-host-segment-clause-GO.md	61=0.975	61=0.973	61=0.938	61=0.998	62=0.659
-research/findings/2026-09-17-mouth-token-supply-n2M-CAPACITY-SATURATED-at-small-sizes-lever-is-parameters-not-tokens.md	47=0.076	50=2203.15556
-research/findings/2026-09-17-segmentation-verb-object-residual-is-non-existent-baseline-already-detects-lateral-competition-lever-NOGO.md	44=0.976	44=0.976	44=0.997	44=0.971	44=0.899	44=0.965	44=0.899	46=0.998	55=0.976	55=0.818	55=0.659
-research/findings/2026-09-17-vision-s2-sail-anti-hebbian-decorrelation-learning-NOGO-underperforms-frozen-random-like-BCM.md	47=0.354	49=0.479
-research/findings/2026-09-17-vision-s2-template-learning-all-three-classes-NOGO-residual-is-DATA-limited-frozen-random-satdiv-GO.md	60=0.457	60=0.51	60=0.438	60=0.49	60=0.479	60=0.448	61=0.477	63=0.457	63=0.238	82=0.391	82=0.471	82=0.477	83=0.517	83=0.543
-research/findings/2026-09-17-vision-satdiv-divisive-norm-is-the-decisive-lever-for-position-invariant-readout-binding-not-load-bearing-GO.md	55=0.477	55=0.278	55=0.233	56=0.373	57=0.347
-research/findings/2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md	59=3.928	65=-0.408	65=-0.082	65=4.826	65=4.802
-research/findings/2026-09-21-load-bearing-fraction-6seed-adequate-0.85-robust-core-20.md	19=0.8077	19=0.8846	19=0.8846
-research/findings/2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw.md	58=0.337
-research/findings/2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO.md	100=0.0109	101=0.0006
-research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md	69=0.033	69=0.044
-research/findings/2026-09-23-affect-marker-settle-deliberation-and-rest-oplevel-go-6seed.md	59=0.0682	117=0.0682	117=0.044	117=0.147	118=0.033	118=0.137	119=0.0703	119=0.04	119=0.142	120=0.0639	120=0.16	120=0.158	121=0.0685	121=0.038	121=0.138	122=0.0691	122=0.04	122=0.146	135=0.137	135=0.158	140=0.0097
-research/findings/2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level.md	66=0.047	66=0.071
-research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level.md	60=0.056	60=0.07	103=0.187
-research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-PREREGISTRATION.md	115=0.187	116=0.068	117=0.0018	117=0.554	117=0.0023
-research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md	80=0.126	83=0.295	83=0.084	84=0.241
-research/findings/2026-09-24-affect-tone-selection-content-locked-PREREG.md	151=-0.157
-research/findings/2026-09-24-ai-teacher-environment-PREREGISTRATION.md	163=1.504	170=1.723	170=1.504
-research/findings/2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md	84=0.0917	86=0.0548	87=0.0093	87=0.0091	89=0.159	90=0.429	93=0.002	100=0.142	109=0.242	109=0.273	110=0.142	112=0.222	113=0.167	113=0.093	137=0.222	137=0.13	138=0.222	139=0.17	139=0.1625	141=0.065
-research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md	37=0.093	37=0.167	37=0.167	42=0.163	43=0.152	173=0.05	173=0.002	210=0.096	210=0.005	212=0.035	212=0.083	277=0.204	277=0.168	278=0.265	319=0.1825	319=0.17	319=0.1625	320=0.1825	320=0.1725	320=0.195	320=0.19	320=0.1975	320=0.17	320=0.1775	320=0.155	320=0.1825	320=0.165	320=0.1725	320=0.185	320=0.195	320=0.165	320=0.1575	321=0.17	321=0.1625	321=0.1725	321=0.1825	321=0.11	321=0.098	323=0.18	323=0.203	324=0.163	324=0.152	324=0.1825	324=0.19
-research/findings/2026-09-24-lexicon-closed-class-frame-junction-dev-s7-not-ready.md	70=0.333	76=0.233	76=0.147
+# doc_path<TAB>round3=<STATUS><TAB>line=value[<TAB>line=value ...]  -- docs that PASS main's
+# tools/claim_check.py (pre-round-1, block-until-heading scope) and FAILED
+# research/claimcheck-block-scope-round2's tools/claim_check.py (round 2: any heading level closes scope; a
+# block closes at its own table/paragraph boundary; a close marker works anywhere on a line). Scanned:
+# research/findings/*.md added since 2026-09-01 on main (git log --since=2026-09-01 --diff-filter=A
+# --name-only), 351 candidates, 348 present on disk at scan time, run from inside the
+# research/claimcheck-block-scope-round2 worktree so cited artifact paths resolve. The `line=value` columns are
+# round 2's own reported "unsupported" hits and are UNCHANGED from the original 2026-09-25 scan (reproducible,
+# not in question).
+#
+# CORRECTED 2026-09-25, round-3 review (research/claimcheck-block-scope-r3). The original header here asserted
+# "all 58 newly-failing docs fail via genuinely-exposed unsupported numbers, zero via MISSING-artifact or
+# LOW_COVERAGE alone" -- worded as if "round 2's checker flags this value as unsupported" were PROOF the flag
+# is a genuine error. That begs the question under review: round 2 had its own corpus-verified false-positive
+# bug (a marker's block protected only ONE first-encountered unit -- a list got no persistent kind the way a
+# table did, so "marker + intro sentence + list" or a list's own 2nd+ bullet fell outside protection). The
+# MECHANICAL part of the old claim was correct and is RE-VERIFIED below, not just re-asserted: of these 58 rows,
+# 57 fail via `unsupported` alone and 1 via `unsupported`+`low_coverage` together -- ZERO via missing-artifact
+# ALONE or low-coverage ALONE (re-run against round 2's own `_scan()`, 2026-09-25 round-3). What was NOT
+# verified, and should not have been implied, is that a value the checker calls "unsupported" is thereby a
+# REAL error -- 3 rows were spot-checked line-by-line and are exactly the false-positive shape (correctly
+# `<!--derived-->`-marked, legitimately-derived per-seed re-quotes, not previously-hidden real errors): line 19
+# of 2026-09-21-load-bearing-fraction-6seed-adequate-0.85-robust-core-20.md (in this scan's window, below) plus
+# two docs from BEFORE the 2026-09-01 window this scan used (2026-08-01-W5-affective-theory-of-mind-6seed-GO.md,
+# 2026-08-06-replay-consolidation-selective-CA1-to-cortex-reinstatement-research-gate.md).
+#
+# RE-DERIVED, not asserted: each row below now carries a `round3=<STATUS>` field, computed by running the SAME
+# doc through research/claimcheck-block-scope-r3's fixed `tools/claim_check.py` (a list gets a persistent
+# block_kind exactly like a table's; fenced code blocks are transparent to heading/scope logic -- neither bug
+# round 2 had). RESOLVED means the fix's own re-scan found NO unsupported/missing/low_coverage for that doc --
+# i.e. this row's flags are now confirmed to have been exactly the list-scope false-positive shape. Of 58: 21
+# RESOLVED, 37 STILL_FLAGGED (with the round-3 `_scan()`'s own reason: unsupported / missing / low_coverage,
+# same three-way split re-derived, not assumed). STILL_FLAGGED is NOT itself a verification that a row is a
+# genuine error -- it only means the round-3 fence/list fixes do not explain it; one was spot-checked
+# (2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md line 99, value 0.746: no
+# <!--derived--> marker anywhere near it in the source doc -- an unmarked claim, a document-authoring issue,
+# not a scope bug) and the rest are unverified individually; each would need its own line-by-line check before
+# being called a real error, exactly the discipline this correction restores.
+research/findings/2026-09-01-board91-memory-separator-readfix-popstate-reset-NOGO-relocalizes-to-consolidation-induced-generic-capture.md	round3=STILL_FLAGGED(unsupported)	90=0.437	90=0.9
+research/findings/2026-09-01-declarative-cross-edge-functional-gate-read-credit-livedrive-GO.md	round3=STILL_FLAGGED(unsupported)	128=0.0067	129=0.0067
+research/findings/2026-09-01-generative-cortex-token-supply-lever-broad-domain-plateau-is-starvation-not-capacity-wall.md	round3=STILL_FLAGGED(unsupported)	123=0.24	123=0.252	125=0.791	125=0.296
+research/findings/2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO.md	round3=STILL_FLAGGED(unsupported)	149=0.004	149=0.008	150=0.005	151=-0.018	154=0.0016	155=0.021	155=0.024
+research/findings/2026-09-01-read-fidelity-learned-whitened-opponent-read-NOGO-residual-is-read-architecture-not-estimator.md	round3=STILL_FLAGGED(unsupported)	114=0.121	114=1.007	114=0.567	114=0.692	114=0.518	114=0.676	114=0.63	114=0.68	115=0.663	115=0.652	115=0.683	115=0.58	115=0.712	115=0.702	116=0.53	116=1.573	116=0.801	116=0.975	116=0.664	116=0.755	131=0.975	133=0.755	133=0.702	133=0.68
+research/findings/2026-09-01-read-fidelity-separate-trace-recall-read-GO-upstream-shaping-closes-read-power-residual.md	round3=STILL_FLAGGED(unsupported)	98=0.894	99=0.858	100=0.832	101=0.854	102=0.869	103=0.848	115=0.832
+research/findings/2026-09-02-c2-metacog-error-gated-port-second-negative.md	round3=STILL_FLAGGED(unsupported)	69=0.0097	69=0.0423
+research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md	round3=STILL_FLAGGED(unsupported)	66=0.062	66=0.144	66=0.497	67=0.062	67=0.144	67=0.395	69=0.062	69=0.144	71=0.062	72=0.261	72=0.062	72=0.278	73=0.497	73=0.395	134=2503.09218	136=1903.09215
+research/findings/2026-09-02-crossedge-surprise-metacog-derisk-SMOKE-GO-PARTIAL.md	round3=STILL_FLAGGED(unsupported)	76=0.678	76=0.1032	76=-0.0088	76=-0.112	77=0.615	77=-0.0092	77=-0.1053	77=-0.0051	78=0.659	78=0.1078	78=0.0033	80=0.615	80=0.659	83=-0.105	86=-0.005
+research/findings/2026-09-02-generative-cortex-capacity-vs-tokens-larger-capacity-wins-d96-nears-its-ceiling.md	round3=STILL_FLAGGED(unsupported)	140=3.9516	140=3.8802	140=3.8433	140=3.8178	140=3.8029	141=0.2623	141=0.2619	141=0.2528	141=0.2341	143=3.8029	145=0.0148	160=4.1388	160=3.8243	161=0.313	161=0.3015	161=0.3264	165=0.0506	169=0.033	169=0.076	179=3.8029	179=0.1129	182=0.1292	183=0.1584
+research/findings/2026-09-02-memory-separator-continuous-ring-screen-parameter-map.md	round3=RESOLVED	27=0.0486	27=0.0489
+research/findings/2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md	round3=STILL_FLAGGED(unsupported+low_coverage)	113=0.008
+research/findings/2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md	round3=STILL_FLAGGED(unsupported)	99=0.0006	101=0.956	101=1.013	109=3.553
+research/findings/2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md	round3=STILL_FLAGGED(unsupported)	99=0.746
+research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md	round3=STILL_FLAGGED(unsupported)	63=0.0017	63=0.00198	66=0.001	90=0.2043	90=0.3512	91=1.845	91=0.1728	91=0.2849	92=0.2345	92=0.3434	93=2.506	93=0.2266	93=0.3421	94=2.987	94=0.2723	94=0.418	95=2.739	95=0.251	95=0.3809	109=0.0122	109=0.0142	109=0.0186	109=0.0208
+research/findings/2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-verdict.md	round3=STILL_FLAGGED(unsupported)	32=0.347	32=0.147	41=0.125	42=0.794	42=0.633	42=0.661
+research/findings/2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md	round3=RESOLVED	218=10.1016
+research/findings/2026-09-05-affect-experienced-opponent-gate-needs-embodiment-BOUNDARY.md	round3=STILL_FLAGGED(unsupported)	81=0.0068	82=0.089	169=0.294	170=0.088	172=0.0068	188=0.294
+research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md	round3=STILL_FLAGGED(unsupported)	71=0.01	71=0.02	72=0.147	72=0.167	73=0.02	73=0.02	74=0.147	74=0.167	75=0.294	75=0.324
+research/findings/2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md	round3=STILL_FLAGGED(unsupported)	83=0.0007	83=0.0545	83=0.27	83=0.306	83=0.225	83=0.287
+research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md	round3=STILL_FLAGGED(unsupported)	46=0.825	50=0.959	50=0.954	50=0.825	99=0.867	99=0.058	136=0.026	137=0.306	137=0.444	137=0.139	138=0.487	138=0.087	139=0.53	139=0.084	143=0.542	143=0.586	144=0.043	149=0.585	149=0.618	149=0.525	150=0.53	151=0.553
+research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md	round3=STILL_FLAGGED(unsupported)	230=0.45	230=0.336	230=0.413	231=0.442	231=0.396	231=0.482	231=0.368	232=0.504	232=0.615
+research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md	round3=STILL_FLAGGED(unsupported)	56=0.959	56=0.954	58=0.786	58=0.946	58=0.156	60=0.946	60=0.457	60=0.805	60=0.41	80=0.504	80=0.504	80=0.615
+research/findings/2026-09-05-shared-salience-afferent-production-default-flip-GO.md	round3=STILL_FLAGGED(unsupported)	109=1.049	112=1.049	133=0.791	134=0.0462	136=0.791	136=0.046
+research/findings/2026-09-08-affect-opponent-columnar-spiking-worst-case-unchanged-BOUNDARY.md	round3=STILL_FLAGGED(unsupported)	54=0.01	55=0.059	57=0.059	58=0.049	59=0.118	66=0.0095	72=0.02	72=0.049	72=0.02	72=0.433	72=0.059	72=0.608	73=0.029	73=0.586	73=0.02	73=0.618	74=0.118	75=0.059	75=0.02	75=0.118	75=0.029	75=0.01	76=0.01	76=0.02	77=0.118	77=0.029	77=0.01	77=0.608
+research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md	round3=STILL_FLAGGED(unsupported)	65=1.622	65=1.648	66=1.661	92=-0.02	93=-0.019	110=3.491	112=3.001	113=2.774	114=3.298
+research/findings/2026-09-09-spiking-anaphor-detection-wirein-both-callsites-default-off.md	round3=STILL_FLAGGED(unsupported)	97=0.867
+research/findings/2026-09-09-spiking-novelty-wirein-engagement-of-default-off.md	round3=STILL_FLAGGED(unsupported)	93=0.674	95=0.32	95=0.605	95=0.33	95=0.951	95=0.927
+research/findings/2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md	round3=STILL_FLAGGED(unsupported)	40=0.027	65=0.029
+research/findings/2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md	round3=STILL_FLAGGED(unsupported)	49=3.928	52=3.726	54=0.009	57=0.036	57=0.048	58=3.928
+research/findings/2026-09-16-gap5-forward-band-homeostatic-scaling-ltu-NO-GO-redirect-read-noise-floor.md	round3=RESOLVED	43=0.586	43=0.798
+research/findings/2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md	round3=STILL_FLAGGED(unsupported)	54=-0.017
+research/findings/2026-09-16-rank7-affect-xinh-competition-strength-sweep-EXHAUSTED-confirms-park.md	round3=STILL_FLAGGED(unsupported)	45=0.029	45=0.057	45=0.201	46=0.032	46=0.067	46=0.201	47=0.032	47=0.067	47=0.201	48=0.032	48=0.067	48=0.201	49=0.032	49=0.067	49=0.201	50=0.032	50=0.067	50=0.201
+research/findings/2026-09-16-vision-nglimpses-temporal-evidence-integration-lifts-capability-2of6-to-4of6.md	round3=STILL_FLAGGED(unsupported)	49=0.53	50=0.556	51=0.538	54=0.556	59=0.556
+research/findings/2026-09-17-affect-grounded-experience-stream-300k-PARTIAL-noise-robustness-not-data-scale.md	round3=RESOLVED	37=0.049	37=0.049
+research/findings/2026-09-17-affect-noise-robustness-multicue-learned-reliability-mechanism-validated-strict-bar-PARTIAL.md	round3=RESOLVED	50=0.01	52=0.01	52=0.539	57=0.225	57=0.306	57=0.186	57=0.279	58=0.893	61=0.618	61=0.431	61=0.618	61=0.618	61=0.627	62=0.01	62=0.088	62=0.186	64=0.088	64=0.059	64=0.059
+research/findings/2026-09-17-gap5-read-noise-floor-instrument-lane-is-read-noise-dominated-K18.md	round3=RESOLVED	38=0.0745
+research/findings/2026-09-17-learned-spiking-constituent-boundary-segmentation-retires-host-segment-clause-GO.md	round3=RESOLVED	61=0.975	61=0.973	61=0.938	61=0.998	62=0.659
+research/findings/2026-09-17-mouth-token-supply-n2M-CAPACITY-SATURATED-at-small-sizes-lever-is-parameters-not-tokens.md	round3=RESOLVED	47=0.076	50=2203.15556
+research/findings/2026-09-17-segmentation-verb-object-residual-is-non-existent-baseline-already-detects-lateral-competition-lever-NOGO.md	round3=RESOLVED	44=0.976	44=0.976	44=0.997	44=0.971	44=0.899	44=0.965	44=0.899	46=0.998	55=0.976	55=0.818	55=0.659
+research/findings/2026-09-17-vision-s2-sail-anti-hebbian-decorrelation-learning-NOGO-underperforms-frozen-random-like-BCM.md	round3=RESOLVED	47=0.354	49=0.479
+research/findings/2026-09-17-vision-s2-template-learning-all-three-classes-NOGO-residual-is-DATA-limited-frozen-random-satdiv-GO.md	round3=RESOLVED	60=0.457	60=0.51	60=0.438	60=0.49	60=0.479	60=0.448	61=0.477	63=0.457	63=0.238	82=0.391	82=0.471	82=0.477	83=0.517	83=0.543
+research/findings/2026-09-17-vision-satdiv-divisive-norm-is-the-decisive-lever-for-position-invariant-readout-binding-not-load-bearing-GO.md	round3=RESOLVED	55=0.477	55=0.278	55=0.233	56=0.373	57=0.347
+research/findings/2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md	round3=RESOLVED	59=3.928	65=-0.408	65=-0.082	65=4.826	65=4.802
+research/findings/2026-09-21-load-bearing-fraction-6seed-adequate-0.85-robust-core-20.md	round3=RESOLVED	19=0.8077	19=0.8846	19=0.8846
+research/findings/2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw.md	round3=RESOLVED	58=0.337
+research/findings/2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO.md	round3=RESOLVED	100=0.0109	101=0.0006
+research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md	round3=RESOLVED	69=0.033	69=0.044
+research/findings/2026-09-23-affect-marker-settle-deliberation-and-rest-oplevel-go-6seed.md	round3=STILL_FLAGGED(unsupported)	59=0.0682	117=0.0682	117=0.044	117=0.147	118=0.033	118=0.137	119=0.0703	119=0.04	119=0.142	120=0.0639	120=0.16	120=0.158	121=0.0685	121=0.038	121=0.138	122=0.0691	122=0.04	122=0.146	135=0.137	135=0.158	140=0.0097
+research/findings/2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level.md	round3=RESOLVED	66=0.047	66=0.071
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level.md	round3=STILL_FLAGGED(unsupported)	60=0.056	60=0.07	103=0.187
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-PREREGISTRATION.md	round3=RESOLVED	115=0.187	116=0.068	117=0.0018	117=0.554	117=0.0023
+research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md	round3=RESOLVED	80=0.126	83=0.295	83=0.084	84=0.241
+research/findings/2026-09-24-affect-tone-selection-content-locked-PREREG.md	round3=RESOLVED	151=-0.157
+research/findings/2026-09-24-ai-teacher-environment-PREREGISTRATION.md	round3=STILL_FLAGGED(unsupported)	163=1.504	170=1.723	170=1.504
+research/findings/2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md	round3=STILL_FLAGGED(unsupported)	84=0.0917	86=0.0548	87=0.0093	87=0.0091	89=0.159	90=0.429	93=0.002	100=0.142	109=0.242	109=0.273	110=0.142	112=0.222	113=0.167	113=0.093	137=0.222	137=0.13	138=0.222	139=0.17	139=0.1625	141=0.065
+research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md	round3=STILL_FLAGGED(unsupported)	37=0.093	37=0.167	37=0.167	42=0.163	43=0.152	173=0.05	173=0.002	210=0.096	210=0.005	212=0.035	212=0.083	277=0.204	277=0.168	278=0.265	319=0.1825	319=0.17	319=0.1625	320=0.1825	320=0.1725	320=0.195	320=0.19	320=0.1975	320=0.17	320=0.1775	320=0.155	320=0.1825	320=0.165	320=0.1725	320=0.185	320=0.195	320=0.165	320=0.1575	321=0.17	321=0.1625	321=0.1725	321=0.1825	321=0.11	321=0.098	323=0.18	323=0.203	324=0.163	324=0.152	324=0.1825	324=0.19
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-dev-s7-not-ready.md	round3=STILL_FLAGGED(unsupported)	70=0.333	76=0.233	76=0.147
