@@ -1,0 +1,25 @@
+{
+ "run_id": "1790358902-3176349",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "ccb38be4b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T13:55:02",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5667.8,
+ "corpus_check_query": "wall-clock production path multi-epoch sleep replay capture resurrection of decayed fact",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pair_production_path_smoke/laneA_sn.log"
+}

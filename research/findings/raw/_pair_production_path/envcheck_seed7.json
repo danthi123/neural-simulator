@@ -1,0 +1,708 @@
+{
+ "sim_backend": "numpy",
+ "elapsed_seconds": 1365.1,
+ "runner": ".scratch/envcheck.py: an uncommitted dev script (full text under script), launched 2026-09-25 12:26 from this worktree at 381f608e3 (the branch base: main 9d06baeac + the review merge), before any Amendment-7 code was imported",
+ "what": "Amendment 7 environment check: dev seed 7, not a gate seed, not a gate row. Real brain_chat, tiny-demo, numpy, stub renderer; BRAIN_DA_TAG_CAPTURE=1, CLOCK=turn, BRAIN_SLEEP_REPLAY_CAPTURE=1, LTM off; one session, no night.",
+ "seed": 7,
+ "script": "\"\"\"Environment check (dev seed 7, not a gate row): are the B3-day told facts stored as one block each and recalled at\nonce; which stretch sentences store nothing; how long does a turn and an idle tick take on numpy.\"\"\"\nimport json\nimport os\nimport sys\nimport time\n\nos.environ.setdefault(\"SIM_BACKEND\", \"numpy\")\nos.environ.setdefault(\"BRAIN_CHAT_RENDERER\", \"stub\")\nos.environ.setdefault(\"SIM_DISABLE_LLM\", \"1\")\nos.environ[\"BRAIN_CHAT_SEED\"] = \"7\"\nos.environ[\"BRAIN_LTM_SHIP_DEFAULT\"] = \"0\"\nos.environ[\"BRAIN_DA_TAG_CAPTURE\"] = \"1\"\nos.environ[\"BRAIN_DA_TAG_CAPTURE_CLOCK\"] = \"turn\"\nos.environ[\"BRAIN_SLEEP_REPLAY_CAPTURE\"] = \"1\"\nsys.path.insert(0, os.getcwd())\nfrom webapp.server import brain_chat, BrainChatRequest  # noqa: E402\nfrom webapp import server as S, continuous_engine as CE  # noqa: E402\n\nturns = [\n    \"the cat is here\", \"the ball is here\", \"the cat chases the ball\", \"the cat is here\", \"the ball is here\",\n    \"what does the cat chase\",\n    \"Guess what, something unbelievable happened at the circus today!\",\n    \"You will never believe this crazy story, it is absolutely amazing!\",\n    \"the dog stores the memory\",\n    \"Everyone in the audience was screaming and laughing in total shock!\",\n    \"Honestly it was the most astonishing spectacle anybody has ever witnessed!\",\n    \"what does the dog store\",\n    \"the bird is here\", \"the river is here\", \"the bird uses the river\", \"the bird is here\", \"the river is here\",\n    \"what does the bird use\",\n    \"the cat is here\", \"the ball is here\", \"the bird is here\", \"the river is here\", \"the dog is here\",\n    \"the memory is here\", \"hello\", \"that is nice\",\n    \"what does the cat chase\", \"what does the dog store\", \"what does the bird use\",\n    \"you mentioned the cat\", \"you mentioned the dog\", \"you mentioned the bird\",\n]\nout = []\nfor i, m in enumerate(turns):\n    t0 = time.time()\n    r = json.loads(brain_chat(BrainChatRequest(session=\"env\", message=m, brain=\"tiny-demo\", renderer=\"stub\",\n                                               rich=False, reset=(i == 0))).body)\n    dt = time.time() - t0\n    tc = r.get(\"da_tag_capture\") or {}\n    rec = {\"i\": i, \"msg\": m, \"sec\": round(dt, 2), \"recalled_svo\": r.get(\"recalled_svo\"),\n           \"abstained\": r.get(\"abstained\"), \"answer\": (r.get(\"answer\") or \"\")[:90],\n           \"da\": ((r.get(\"da_drives\") or {}).get(\"da_level\")),\n           \"new_blocks\": tc.get(\"new_blocks_this_turn\"), \"n_managed\": tc.get(\"n_managed_blocks\"),\n           \"episodic\": (r.get(\"episodic\") or None), \"da_enc\": r.get(\"da_encoding\")}\n    out.append(rec)\n    print(json.dumps(rec, default=str), flush=True)\nlast = max(v for v in CE._LAST_REQUEST.values() if v is not None)\nfor lab, dt_s in ((\"idle20\", 20.0), (\"idle40\", 40.0), (\"sleep300\", 300.0), (\"sleep320\", 320.0)):\n    t0 = time.time()\n    n = CE.tick_idle_sessions(S._SESSION_MOOD, S._get_affect_organ, now=last + dt_s,\n                              selfinit_getter=S._get_selfinit_organ,\n                              episodic_getter=S._get_episodic_organ_existing, chat_getter=S._get_chat_existing)\n    print(json.dumps({\"tick\": lab, \"sec\": round(time.time() - t0, 3), \"n\": n}), flush=True)\njson.dump(out, open(sys.argv[1], \"w\"), indent=1, default=str)\n",
+ "turns": [
+  {
+   "i": 0,
+   "msg": "the cat is here",
+   "sec": 132.79,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "I don't know about that.",
+   "da": 0.3819311519838911,
+   "new_blocks": 0,
+   "n_managed": 0,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.498273310310804,
+    "da_level": 0.3819311519838911,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 1,
+   "msg": "the ball is here",
+   "sec": 9.53,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ball yet: what c",
+   "da": 0.507420643982044,
+   "new_blocks": 0,
+   "n_managed": 0,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.7409965466206219,
+    "da_level": 0.507420643982044,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 2,
+   "msg": "the cat chases the ball",
+   "sec": 70.62,
+   "recalled_svo": [
+    "cat",
+    "chase",
+    "ball"
+   ],
+   "abstained": false,
+   "answer": "As for it \u2014 the cat chases the ball",
+   "da": 0.49066071817999285,
+   "new_blocks": 1,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.7202762703502712,
+    "da_level": 0.49066071817999285,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 3,
+   "msg": "the cat is here",
+   "sec": 8.38,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "As for it \u2014 I don't know about that.",
+   "da": 0.20114547100337019,
+   "new_blocks": 0,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.2348297977306366,
+    "da_level": 0.20114547100337019,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 4,
+   "msg": "the ball is here",
+   "sec": 8.86,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 On ball, then \u2014 I don't know about that.",
+   "da": 0.04616293556102311,
+   "new_blocks": 0,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.04616293556102311,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 5,
+   "msg": "what does the cat chase",
+   "sec": 549.81,
+   "recalled_svo": [
+    "cat",
+    "chase",
+    "ball"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat chases the ball",
+   "da": 0.048848645796570306,
+   "new_blocks": 0,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.048848645796570306,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 6,
+   "msg": "Guess what, something unbelievable happened at the circus today!",
+   "sec": 9.4,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "ball"
+   ],
+   "abstained": false,
+   "answer": "perhaps the dog chases the ball  [a guess from what I've learned -- not something I was ta",
+   "da": 0.7905688460684012,
+   "new_blocks": 0,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.232363098174642,
+    "da_level": 0.7905688460684012,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 7,
+   "msg": "You will never believe this crazy story, it is absolutely amazing!",
+   "sec": 165.09,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about never ye",
+   "da": 0.9510256201910905,
+   "new_blocks": 0,
+   "n_managed": 1,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.466206216082881,
+    "da_level": 0.9510256201910905,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 8,
+   "msg": "the dog stores the memory",
+   "sec": 18.88,
+   "recalled_svo": [
+    "dog",
+    "store",
+    "memory"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 On dog, then \u2014 Gladly! the dog stores the memory! \u2014 worth ",
+   "da": 0.8498971892489666,
+   "new_blocks": 1,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.3300444005920085,
+    "da_level": 0.8498971892489666,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 9,
+   "msg": "Everyone in the audience was screaming and laughing in total shock!",
+   "sec": 11.28,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about everyone",
+   "da": 1.0322526542274661,
+   "new_blocks": 0,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.626048347311298,
+    "da_level": 1.0322526542274661,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 10,
+   "msg": "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+   "sec": 18.75,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about honestly",
+   "da": 1.0407838051678688,
+   "new_blocks": 0,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.6408485446472625,
+    "da_level": 1.0407838051678688,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 11,
+   "msg": "what does the dog store",
+   "sec": 40.01,
+   "recalled_svo": [
+    "dog",
+    "store",
+    "memory"
+   ],
+   "abstained": false,
+   "answer": "As for it \u2014 Gladly! the dog stores the memory! \u2014 worth going further here.",
+   "da": 0.7772059031603259,
+   "new_blocks": 0,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 2.199802664035521,
+    "da_level": 0.7772059031603259,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 12,
+   "msg": "the bird is here",
+   "sec": 17.49,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about bird yet",
+   "da": 0.649471723185269,
+   "new_blocks": 0,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.9807597434632465,
+    "da_level": 0.649471723185269,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 13,
+   "msg": "the river is here",
+   "sec": 9.44,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about river ye",
+   "da": 0.6135263076167505,
+   "new_blocks": 0,
+   "n_managed": 2,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.9037987173162305,
+    "da_level": 0.6135263076167505,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 14,
+   "msg": "the bird uses the river",
+   "sec": 24.93,
+   "recalled_svo": [
+    "bird",
+    "use",
+    "river"
+   ],
+   "abstained": false,
+   "answer": "Gladly! the bird uses the river!",
+   "da": 0.5920425612841373,
+   "new_blocks": 1,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.8949185989146518,
+    "da_level": 0.5920425612841373,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 15,
+   "msg": "the bird is here",
+   "sec": 9.78,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 On bird, then \u2014 Gladly! I don't know about that.",
+   "da": 0.2524180743744322,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.3206709422792302,
+    "da_level": 0.2524180743744322,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 16,
+   "msg": "the river is here",
+   "sec": 9.77,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 On river, then \u2014 Gladly! I don't know about that.",
+   "da": 0.05655382960901135,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.05655382960901135,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 17,
+   "msg": "what does the bird use",
+   "sec": 30.25,
+   "recalled_svo": [
+    "bird",
+    "use",
+    "river"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bird, then \u2014 Gladly! the bird uses the rive",
+   "da": 0.04905012064262366,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.04905012064262366,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 18,
+   "msg": "the cat is here",
+   "sec": 17.71,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 Gladly! I don't know about that",
+   "da": 0.43294413206420795,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.628515046867291,
+    "da_level": 0.43294413206420795,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 19,
+   "msg": "the ball is here",
+   "sec": 17.72,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On ball, then \u2014 Gladly! I don't know about tha",
+   "da": 0.47837394375977627,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.7143561914158858,
+    "da_level": 0.47837394375977627,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 20,
+   "msg": "the bird is here",
+   "sec": 17.63,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bird, then \u2014 Gladly! I don't know about tha",
+   "da": 0.15566304168071235,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.148988653182042,
+    "da_level": 0.15566304168071235,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 21,
+   "msg": "the river is here",
+   "sec": 18.18,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On river, then \u2014 Gladly! I don't know about th",
+   "da": 0.1323228649676539,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.125308337444499,
+    "da_level": 0.1323228649676539,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 22,
+   "msg": "the dog is here",
+   "sec": 14.33,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 Gladly! I don't know about that",
+   "da": 0.12128948090263861,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.0927479033053775,
+    "da_level": 0.12128948090263861,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 23,
+   "msg": "the memory is here",
+   "sec": 10.94,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Setting the held thread aside \u2014 On memory, then \u2014 Gladly! I don't know about that.",
+   "da": 0.4453797109243425,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.628515046867291,
+    "da_level": 0.4453797109243425,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 24,
+   "msg": "hello",
+   "sec": 9.77,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about hello ye",
+   "da": 0.5321635954020011,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.7972372964972871,
+    "da_level": 0.5321635954020011,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 25,
+   "msg": "that is nice",
+   "sec": 10.88,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "Gladly! I don't know about that. My curiosity is piqued \u2014 I haven't learned about nice yet",
+   "da": 0.4315469383478606,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.625555007400099,
+    "da_level": 0.4315469383478606,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 26,
+   "msg": "what does the cat chase",
+   "sec": 25.92,
+   "recalled_svo": [
+    "cat",
+    "chase",
+    "ball"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 Gladly! the cat chases the ball",
+   "da": 0.3864375239006433,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.5663542180562402,
+    "da_level": 0.3864375239006433,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 27,
+   "msg": "what does the dog store",
+   "sec": 25.39,
+   "recalled_svo": [
+    "dog",
+    "store",
+    "memory"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 Gladly! the dog stores the memo",
+   "da": 0.34696714063760786,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.4775530340404535,
+    "da_level": 0.34696714063760786,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 28,
+   "msg": "what does the bird use",
+   "sec": 25.08,
+   "recalled_svo": [
+    "bird",
+    "use",
+    "river"
+   ],
+   "abstained": false,
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bird, then \u2014 Gladly! the bird uses the rive",
+   "da": 0.19743392513987065,
+   "new_blocks": 0,
+   "n_managed": 3,
+   "episodic": null,
+   "da_enc": {
+    "on": true,
+    "g": 1.22890971879625,
+    "da_level": 0.19743392513987065,
+    "lesioned": false
+   }
+  },
+  {
+   "i": 29,
+   "msg": "you mentioned the cat",
+   "sec": 5.29,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking c",
+   "da": null,
+   "new_blocks": null,
+   "n_managed": null,
+   "episodic": {
+    "topic": "cat",
+    "slot": null,
+    "formed": false,
+    "in_memory": false,
+    "apical_cue": 0.0,
+    "apical_perm": 0.0,
+    "apical_nocue": 0.0,
+    "graded_cue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_perm": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_nocue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "reason": "no-store-yet",
+    "kind": "recall"
+   },
+   "da_enc": null
+  },
+  {
+   "i": 30,
+   "msg": "you mentioned the dog",
+   "sec": 5.38,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "I don't recall us discussing dog \u2014 no assembly completes for that cue (a genuine spiking c",
+   "da": null,
+   "new_blocks": null,
+   "n_managed": null,
+   "episodic": {
+    "topic": "dog",
+    "slot": null,
+    "formed": false,
+    "in_memory": false,
+    "apical_cue": 0.0,
+    "apical_perm": 0.0,
+    "apical_nocue": 0.0,
+    "graded_cue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_perm": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_nocue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "reason": "no-store-yet",
+    "kind": "recall"
+   },
+   "da_enc": null
+  },
+  {
+   "i": 31,
+   "msg": "you mentioned the bird",
+   "sec": 5.81,
+   "recalled_svo": null,
+   "abstained": true,
+   "answer": "I don't recall us discussing bird \u2014 no assembly completes for that cue (a genuine spiking ",
+   "da": null,
+   "new_blocks": null,
+   "n_managed": null,
+   "episodic": {
+    "topic": "bird",
+    "slot": null,
+    "formed": false,
+    "in_memory": false,
+    "apical_cue": 0.0,
+    "apical_perm": 0.0,
+    "apical_nocue": 0.0,
+    "graded_cue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_perm": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "graded_nocue": {
+     "depth_rest": 0.0,
+     "depth_hold": 0.0,
+     "soft": 0.0
+    },
+    "reason": "no-store-yet",
+    "kind": "recall"
+   },
+   "da_enc": null
+  }
+ ],
+ "idle_tick_timing_s": [
+  {
+   "tick": "idle20",
+   "sec": 9.118,
+   "n": 1
+  },
+  {
+   "tick": "idle40",
+   "sec": 0.268,
+   "n": 1
+  },
+  {
+   "tick": "sleep300",
+   "sec": 0.312,
+   "n": 1
+  },
+  {
+   "tick": "sleep320",
+   "sec": 0.266,
+   "n": 1
+  }
+ ]
+}
