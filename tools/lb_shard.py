@@ -16,11 +16,14 @@ The ENV below is the ADEQUATE-probe configuration plus every fix merged on main 
 code references on main — gates/finding_mechanism_on_main).
 """
 import argparse
+import calendar
+import fnmatch
 import glob
 import json
 import os
 import shlex
 import sys
+import time
 
 # fixes (mechanisms whose 6-seed GOs make up robust core 23/24). Three of these became production default-ON on
 # 2026-09-23 (branch research/flip-validated-fixes); passing them explicitly is then redundant but harmless.
@@ -110,15 +113,160 @@ def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
     return fails
 
 
-def cell_prov_fails(cell_dir, pin):
+# covered-by-parent (research/oed-provenance-coverage, closing research/FAILURE_LOG.md's oed-provenance-coverage
+# row): filenames a parent load_bearing_fraction.py process may write directly from inside its own measurement
+# function, with no sidecar of its own, that are still admissible as a measurement of `pin` PROVIDED the enclosing
+# cell's lb.json.prov.json passes the full pin rule, the file's own mtime falls inside that parent process's run
+# window (_covered_by_parent_reason), AND (fix round, review PoC 2026-09-25) the file's OWN CONTENT matches the
+# cell's own lb.json `per_faculty` entry for that faculty on every field in `_CONTENT_BOUND_FIELDS`
+# (_content_matches_parent). The mtime window alone is NOT authorship: a foreign or copied file with an
+# in-window mtime sitting next to a clean lb.json.prov.json proves nothing about who wrote it -- only matching
+# CONTENT (the same faculty/verdict/load_bearing/diffs/... the parent process itself recorded in lb.json) does.
+# Going forward `research.runners.declare_output` closes this at the source (the file gets its own sidecar like
+# any other declared output); this allow-list exists only because shards predate that fix and their producing
+# code is pinned -- they cannot be cheaply re-run to pick it up. Growing this list is a real claim about a NEW
+# parent-written artifact; start narrow and extend only against a confirmed case, never speculatively.
+_PARENT_COVERED_ALLOWLIST = ("oed_distributional*.json",)
+# Fields checked, verified 2026-09-25 against the real b2a0924 shards (s42/s43/s44/s100/s101/s102's
+# open-ended-generation cells): on every real cell, oed_distributional*.json is byte-for-byte the SAME dict as
+# lb.json's own `per_faculty` entry for that faculty (a superset of this list also matches, but these are the
+# fields that carry the substantive measurement result -- the ones a foreign or merely-timing-coincident file
+# cannot be expected to reproduce by accident).
+_CONTENT_BOUND_FIELDS = ("faculty", "verdict", "load_bearing", "diffs", "treatment_diffs", "control_diffs",
+                         "attributable_fraction", "null_control_clean", "lesion_reproduced")
+# Tolerance for filesystem mtime / wall-clock granularity (whole-second `started` strings, coarse mtimes on some
+# filesystems) around the parent run's window. A couple of seconds cannot turn an unrelated LATER process into a
+# false "covered" -- real reruns are seconds-to-hours apart, never sub-2s -- so this loosens flakiness, not the
+# actual property being checked (same-process authorship).
+_COVERED_WINDOW_SLACK_S = 2.0
+
+
+def _parent_run_window(lb_prov_path):
+    """(start_epoch, exit_epoch) for the process that wrote the `lb.json` sidecared at `lb_prov_path`, or None if
+    either bound cannot be read cleanly -- covered-by-parent must never be granted from a value that failed to
+    parse.
+
+    A v1 sidecar (the default -- SIM_PROVENANCE_V2 unset) records only a START time (`started`, whole-second
+    resolution -- research/runners/__init__.py's `_record_start`/`_stamp_outputs`); there is no recorded end time,
+    so the sidecar FILE's own mtime (the moment `_stamp_outputs` wrote it, at the parent's atexit) is the best
+    available stand-in for "when the parent process exited". A v2 sidecar (SIM_PROVENANCE_V2=1) records
+    `started_utc_ns`/`ended_utc_ns` directly and those are used instead when both are present.
+
+    TIMEZONE (earned running this against the real B2a shards, 2026-09-25): `started` is formatted via
+    `time.strftime(..., time.localtime(_START))` on WHICHEVER machine ran the shard -- a pool/cloud worker's local
+    zone need not match the machine running `aggregate`. A pool shard's sidecar read `started="...T21:00:51"`
+    (that worker's UTC clock) while re-parsing it with `time.mktime` on this machine (America/New_York, EDT)
+    produced a start 4 HOURS AFTER the sidecar's own exit-time mtime -- every real cell failed the plain
+    `exit_epoch < start_epoch` sanity check before the window check ever ran. Both plausible readings
+    (this-machine-local via `time.mktime`, and UTC via `calendar.timegm` -- the common cloud-instance default) are
+    computed and the EARLIER one is used as the lower bound: whichever reading is the true one, the real start is
+    then always >= this value, so a genuinely covered file is never pushed outside its own window by a TZ guess."""
+    try:
+        pj = json.load(open(lb_prov_path))
+    except Exception:
+        return None
+    try:
+        if (pj.get("schema") == "sim-run-provenance-v2"
+                and isinstance(pj.get("started_utc_ns"), (int, float))
+                and isinstance(pj.get("ended_utc_ns"), (int, float))):
+            return pj["started_utc_ns"] / 1e9, pj["ended_utc_ns"] / 1e9
+        started = pj.get("started")
+        if not started:
+            return None
+        struct = time.strptime(started, "%Y-%m-%dT%H:%M:%S")
+        candidates = []
+        for to_epoch in (time.mktime, calendar.timegm):
+            try:
+                candidates.append(to_epoch(struct))
+            except Exception:
+                pass
+        if not candidates:
+            return None
+        start_epoch = min(candidates)
+        exit_epoch = os.path.getmtime(lb_prov_path)
+        if exit_epoch < start_epoch:
+            return None
+        return start_epoch, exit_epoch
+    except Exception:
+        return None
+
+
+def _content_matches_parent(candidate_path, lb_per_faculty):
+    """True if the JSON object at `candidate_path` carries, on every field in `_CONTENT_BOUND_FIELDS`, the exact
+    same value as SOME entry in `lb_per_faculty` (the enclosing cell's own lb.json `per_faculty` list) -- i.e. the
+    parent process's own measurement record, not merely a file that happens to sit in the same directory during
+    the parent's run window. This is the binding that closes the mtime-coincidence gap (review PoC 2026-09-25): a
+    foreign file, or a real file copied byte-for-byte from a DIFFERENT cell, will disagree with THIS cell's own
+    lb.json entry on at least one of these fields (its own faculty name, if nothing else) and is rejected here
+    even when the window/allow-list checks alone would have admitted it. Never raises: an unreadable or
+    non-dict candidate is "no match", not an error -- the caller stays invalid, never crashes the aggregate."""
+    try:
+        obj = json.load(open(candidate_path))
+    except Exception:
+        return False
+    if not isinstance(obj, dict):
+        return False
+    for entry in lb_per_faculty or ():
+        if not isinstance(entry, dict):
+            continue
+        if all(entry.get(f) == obj.get(f) for f in _CONTENT_BOUND_FIELDS):
+            return True
+    return False
+
+
+def _covered_by_parent_reason(cell_dir, fn, lb_prov_path, lb_fails, lb_per_faculty=()):
+    """None (not eligible -- stays invalid) or a human-readable reason string `fn` (which has NO `.prov.json` of
+    its own) counts as 'covered-by-parent': written by the SAME process that wrote `lb.json` in `cell_dir`. ALL
+    must hold: `lb_fails` (lb.json.prov.json's own pin-rule check) is empty -- an unclean parent proves nothing
+    about what it wrote; `fn` matches `_PARENT_COVERED_ALLOWLIST`; the file's mtime falls inside the parent run's
+    recorded window (with `_COVERED_WINDOW_SLACK_S` slack); the file's mtime is at or before
+    `lb.json.prov.json`'s own write time (ruling out an unrelated LATER process reusing the same directory); AND
+    `fn`'s own content matches some entry of `lb_per_faculty` (this cell's own lb.json `per_faculty` list) on
+    every field in `_CONTENT_BOUND_FIELDS` (`_content_matches_parent`) -- the mtime window is a NECESSARY but not
+    SUFFICIENT condition; a foreign or copied-from-elsewhere file with a coincidentally in-window mtime must still
+    fail here."""
+    if lb_fails:
+        return None
+    if not any(fnmatch.fnmatch(fn, pat) for pat in _PARENT_COVERED_ALLOWLIST):
+        return None
+    window = _parent_run_window(lb_prov_path)
+    if window is None:
+        return None
+    start_epoch, exit_epoch = window
+    try:
+        file_mtime = os.path.getmtime(os.path.join(cell_dir, fn))
+        sidecar_mtime = os.path.getmtime(lb_prov_path)
+    except OSError:
+        return None
+    slack = _COVERED_WINDOW_SLACK_S
+    if not (start_epoch - slack <= file_mtime <= exit_epoch + slack):
+        return None
+    if not (file_mtime <= sidecar_mtime + slack):
+        return None
+    if not _content_matches_parent(os.path.join(cell_dir, fn), lb_per_faculty):
+        return None
+    return ("covered-by-parent: no own sidecar, but written by the same process as lb.json.prov.json "
+            "(mtime %.0f in parent window [%.0f, %.0f]), content matches this cell's own lb.json entry"
+            % (file_mtime, start_epoch, exit_epoch))
+
+
+def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
     """B2b Amendment 1.2's validity rule for the shard directory `cell_dir` (one faculty x one seed), against
-    `pin`. Returns {sidecar_name: [fail strings]}; an empty dict means the whole cell is a clean measurement of
-    `pin`. Checks `lb.json.prov.json` (no BRAIN_* key allowed) and every OTHER non-`.prov.json` file's own
-    `<name>.prov.json` sidecar (BRAIN_CHAT_SEED allowed -- `main()` sets it after import)."""
+    `pin`. `lb_per_faculty` is this cell's own lb.json `per_faculty` list (the caller already parsed lb.json to
+    iterate it -- passed through rather than re-read here), used only for `_covered_by_parent_reason`'s content
+    binding. Returns (fails, covered). `fails` is {sidecar_name: [fail strings]}; an empty dict means every checked
+    sidecar is a clean measurement of `pin`. Checks `lb.json.prov.json` (no BRAIN_* key allowed) and every OTHER
+    non-`.prov.json` file's own `<name>.prov.json` sidecar (BRAIN_CHAT_SEED allowed -- `main()` sets it after
+    import). `covered` is {filename: reason} for any file admitted with NO sidecar of its own via
+    `_covered_by_parent_reason` -- reported, never silent, and never a reason to treat the cell as MORE trustworthy
+    than its sidecars actually show (a covered file rides entirely on lb.json.prov.json's own clean verdict AND
+    its own content matching that same lb.json's `per_faculty` entry)."""
     out = {}
-    f = _prov_sidecar_fails(os.path.join(cell_dir, "lb.json.prov.json"), pin, allow_brain_keys=set())
-    if f:
-        out["lb.json.prov.json"] = f
+    covered = {}
+    lb_prov_path = os.path.join(cell_dir, "lb.json.prov.json")
+    lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set())
+    if lb_fails:
+        out["lb.json.prov.json"] = lb_fails
     try:
         names = sorted(os.listdir(cell_dir))
     except OSError:
@@ -126,11 +274,18 @@ def cell_prov_fails(cell_dir, pin):
     for fn in names:
         if fn in ("lb.json", "lb.json.prov.json") or fn.endswith(".prov.json"):
             continue
-        f = _prov_sidecar_fails(os.path.join(cell_dir, fn + ".prov.json"), pin,
-                                 allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS)
+        own_sidecar = os.path.join(cell_dir, fn + ".prov.json")
+        if not os.path.exists(own_sidecar):
+            reason = _covered_by_parent_reason(cell_dir, fn, lb_prov_path, lb_fails, lb_per_faculty)
+            if reason is not None:
+                covered[fn] = reason
+                continue
+            out[fn + ".prov.json"] = ["missing"]
+            continue
+        f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS)
         if f:
             out[fn + ".prov.json"] = f
-    return out
+    return out, covered
 
 
 def faculty_keys():
@@ -183,6 +338,7 @@ def cmd_aggregate(a):
 
     rows = {}  # fac -> {seed: row}
     invalid_cells = {}  # "s<seed>/<fac>" -> {sidecar: [fail strings]}, EXCLUDED from `rows` -- never counted, never 0
+    covered_cells = {}  # "s<seed>/<fac>" -> {filename: reason}, INCLUDED in `rows` -- reported, never silent
     n_checked = 0
     for path in glob.glob("%s/%s/s*/*/lb.json" % (base, a.tag)):
         seed = int(path.split("/")[-3][1:])
@@ -197,10 +353,12 @@ def cmd_aggregate(a):
             fac, kind = p["faculty"], p.get("kind")
             if pin and kind in COVERABLE_KINDS:
                 n_checked += 1
-                fails = cell_prov_fails(cell_dir, pin)
+                fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))
                 if fails:
                     invalid_cells["s%d/%s" % (seed, fac)] = fails
                     continue  # NOT a measurement of `pin` -- excluded, reported below, never scored 0
+                if covered:
+                    covered_cells["s%d/%s" % (seed, fac)] = covered
             rows.setdefault(fac, {})[seed] = {
                 "kind": kind, "verdict": p.get("verdict"), "load_bearing": p.get("load_bearing"),
                 "null_clean": p.get("null_control_clean"), "unreliable": bool(rep.get("UNRELIABLE"))}
@@ -280,11 +438,18 @@ def cmd_aggregate(a):
     # with its failing fields. Without a pin (none passed, none recorded for this tag), nothing was checked --
     # that is reported loudly rather than silently, exactly the silence that let B2a's 23 off-pin cells through.
     n_invalid = len(invalid_cells)
+    n_covered = len(covered_cells)
     if pin:
         out["provenance"] = {
             "status": "verified", "pin": pin, "pin_source": pin_source, "rule": "B2b Amendment 1.2",
             "n_cells_checked": n_checked, "n_valid": n_checked - n_invalid, "n_invalid": n_invalid,
             "invalid_cells": invalid_cells,
+            # covered-by-parent (research/oed-provenance-coverage): cells counted as VALID above where at least
+            # one file had no sidecar of its own but was admitted via cell_prov_fails's allow-list + run-window
+            # check (see tools/lb_shard.py's _covered_by_parent_reason). Named here, not folded silently into
+            # n_valid with no trace -- a covered cell's validity rests entirely on lb.json.prov.json's own clean
+            # verdict, and that distinction must survive into the artifact.
+            "n_covered_by_parent": n_covered, "covered_by_parent_cells": covered_cells,
         }
     else:
         out["provenance"] = {
@@ -298,11 +463,14 @@ def cmd_aggregate(a):
     json.dump(out, open(dest, "w"), indent=1, sort_keys=True)
     print(json.dumps({k: out[k] for k in ("robust_core_n", "union_n", "mean_fraction", "incomplete_faculties")}))
     if pin:
-        print("provenance: pin=%s (%s) n_checked=%d n_valid=%d n_invalid=%d"
-              % (pin, pin_source, n_checked, n_checked - n_invalid, n_invalid))
+        print("provenance: pin=%s (%s) n_checked=%d n_valid=%d n_invalid=%d n_covered_by_parent=%d"
+              % (pin, pin_source, n_checked, n_checked - n_invalid, n_invalid, n_covered))
         for k in sorted(invalid_cells):
             print("  INVALID %s: %s" % (k, "; ".join("%s[%s]" % (sc, ", ".join(fs))
                                                        for sc, fs in sorted(invalid_cells[k].items()))))
+        for k in sorted(covered_cells):
+            print("  COVERED-BY-PARENT %s: %s" % (k, "; ".join("%s[%s]" % (fn, reason)
+                                                    for fn, reason in sorted(covered_cells[k].items()))))
     else:
         print("⛔ provenance: unverified -- %s" % out["provenance"]["warning"], file=sys.stderr)
     print("wrote", dest)
