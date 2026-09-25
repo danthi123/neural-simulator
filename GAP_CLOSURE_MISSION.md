@@ -15,7 +15,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 UPDATE ~20:25 (2026-09-24) — main 2a84f80e1. RESUME HERE (supersedes the 17:15 block below).**
+**🟢 UPDATE (2026-09-24 night, provenance-fix scoring) — RESUME HERE (supersedes the 20:25 block's item-4 CA3 line).**
+- **CA3 superposed-fact-attractor capacity grid: SCORED, GO 6/6.** All 9 pre-registered gates (G1-G9) pass 6/6, 0
+  missing, 0 UNDEFINED, `k_fit` 0.13 (band 0.1-0.3), scored ONLY over provenance-clean cells: the 18 seeds-101/102
+  reruns are now verified via `research/queue/dispatch.log` (54/54 CA3 lines, all pinned to
+  `ab2adcf51bb452f322fabe94b5668335c7d687a7`) and `research/queue/pool_sync.log`, closing the provenance gap that
+  rejected the earlier unmerged `3e81251ee9`. Finding:
+  `research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md`.
+  Default-off standalone research runner — no production default to flip. Item 4 below's "CA3 reruns" is DONE; its
+  other pending scores (SETTLE multi-turn seeds 44/100-102, AI-teacher SHAM arms, affect vocab seed 102, D6 N2000,
+  A10 v4 arms, wm-focus-bind 6-seed) remain open.
+
+**🟢 UPDATE ~20:25 (2026-09-24) — main 2a84f80e1. (history: supersedes the 17:15 block below.)**
 - **Merged since 17:15 (all default-OFF, review SOUND):** content-provenance test, wm referent focus binding, SETTLE
   multi-turn instrument, AI teacher, A10 reward/value afferent + follow-ups, A9 gap#4 transport ceiling, REQUIRED_ENV
   opt-in rows, A3 open-ended gated turn (its coin-flip faculty-drive row PARKED). Scored: curiosity v5 NO-GO 1/6; DA

@@ -1,0 +1,524 @@
+{
+ "grid_dir": "research/findings/raw/_ca3_superposed_fact_attractor/scored_54cell_valid_provenance",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "missing": [],
+ "verdict": {
+  "G1_learns": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ],
+    "43": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ],
+    "44": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ],
+    "100": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ],
+    "101": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ],
+    "102": [
+     true,
+     [
+      1.0,
+      1.0
+     ]
+    ]
+   }
+  },
+  "G2_cliff": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     {
+      "sparse_dg": 0.0,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.0,
+      "sparse_dg_hub": 0.0,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.0,
+      "sparse_dg_c2_hub": 0.0
+     }
+    ],
+    "43": [
+     true,
+     {
+      "sparse_dg": 0.0,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.0,
+      "sparse_dg_hub": 0.0,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.0,
+      "sparse_dg_c2_hub": 0.0
+     }
+    ],
+    "44": [
+     true,
+     {
+      "sparse_dg": 0.0,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.005,
+      "sparse_dg_hub": 0.0,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.005,
+      "sparse_dg_c2_hub": 0.0
+     }
+    ],
+    "100": [
+     true,
+     {
+      "sparse_dg": 0.0,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.0,
+      "sparse_dg_hub": 0.0,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.0,
+      "sparse_dg_c2_hub": 0.005
+     }
+    ],
+    "101": [
+     true,
+     {
+      "sparse_dg": 0.01,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.0,
+      "sparse_dg_hub": 0.005,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.0,
+      "sparse_dg_c2_hub": 0.0
+     }
+    ],
+    "102": [
+     true,
+     {
+      "sparse_dg": 0.005,
+      "sparse_dg_c2": 0.0,
+      "sparse_dg_recx2": 0.0,
+      "dense_nodg": 0.005,
+      "sparse_dg_hub": 0.0,
+      "dense_nodg_hub": 0.0,
+      "sparse_nodg_hub": 0.0,
+      "sparse_dg_c2_hub": 0.0
+     }
+    ]
+   }
+  },
+  "G3_companion_capacity": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     3.8704742716737983
+    ],
+    "43": [
+     true,
+     3.496743128962429
+    ],
+    "44": [
+     true,
+     4.038866682017429
+    ],
+    "100": [
+     true,
+     3.672383713533287
+    ],
+    "101": [
+     true,
+     3.785989203108715
+    ],
+    "102": [
+     true,
+     3.477611520368371
+    ]
+   }
+  },
+  "G4_capacity_law": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     2.046187110818682
+    ],
+    "43": [
+     true,
+     2.078826475384215
+    ],
+    "44": [
+     true,
+     2.0993316063334504
+    ],
+    "100": [
+     true,
+     1.79277886389332
+    ],
+    "101": [
+     true,
+     1.963659753962574
+    ],
+    "102": [
+     true,
+     1.9492933266310482
+    ]
+   }
+  },
+  "G5_recurrent_loadbearing": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     {
+      "P50_intact": 8262.427892481064,
+      "P50_rec_zero": 5279.346901574199,
+      "P50_rec_shuffle": 3386.3445963368263,
+      "attributable_linear_frac": 0.3610416973952068
+     }
+    ],
+    "43": [
+     true,
+     {
+      "P50_intact": 8232.625246418966,
+      "P50_rec_zero": 5520.447568369063,
+      "P50_rec_shuffle": 3461.9231747813224,
+      "attributable_linear_frac": 0.3294426257565468
+     }
+    ],
+    "44": [
+     true,
+     {
+      "P50_intact": 8118.587781536184,
+      "P50_rec_zero": 5877.739531418047,
+      "P50_rec_shuffle": 3396.6681743997724,
+      "attributable_linear_frac": 0.27601453730837505
+     }
+    ],
+    "100": [
+     true,
+     {
+      "P50_intact": 8996.63642850344,
+      "P50_rec_zero": 5877.739531418047,
+      "P50_rec_shuffle": 3358.5385951767207,
+      "attributable_linear_frac": 0.34667366208153094
+     }
+    ],
+    "101": [
+     true,
+     {
+      "P50_intact": 8355.167990302185,
+      "P50_rec_zero": 5629.860856117151,
+      "P50_rec_shuffle": 3457.987471618651,
+      "attributable_linear_frac": 0.3261822069105359
+     }
+    ],
+    "102": [
+     true,
+     {
+      "P50_intact": 8387.243560129962,
+      "P50_rec_zero": 5576.405610870548,
+      "P50_rec_shuffle": 3477.3618000607134,
+      "attributable_linear_frac": 0.33513250558516744
+     }
+    ]
+   }
+  },
+  "G6_cost_flat_INTEGRITY": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 6,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     {
+      "ratio": 1.4035037706999767,
+      "mem_const": true
+     }
+    ],
+    "43": [
+     true,
+     {
+      "ratio": 0.9294529966126707,
+      "mem_const": true
+     }
+    ],
+    "44": [
+     true,
+     {
+      "ratio": 0.6317958684470655,
+      "mem_const": true
+     }
+    ],
+    "100": [
+     true,
+     {
+      "ratio": 0.7495898314252231,
+      "mem_const": true
+     }
+    ],
+    "101": [
+     true,
+     {
+      "ratio": 0.9739200399522793,
+      "mem_const": true
+     }
+    ],
+    "102": [
+     true,
+     {
+      "ratio": 0.6843312772679404,
+      "mem_const": true
+     }
+    ]
+   }
+  },
+  "G7_palimpsest": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     {
+      "bounded": 0.84,
+      "unbounded": 0.0
+     }
+    ],
+    "43": [
+     true,
+     {
+      "bounded": 0.75,
+      "unbounded": 0.01
+     }
+    ],
+    "44": [
+     true,
+     {
+      "bounded": 0.84,
+      "unbounded": 0.0
+     }
+    ],
+    "100": [
+     true,
+     {
+      "bounded": 0.88,
+      "unbounded": 0.0
+     }
+    ],
+    "101": [
+     true,
+     {
+      "bounded": 0.89,
+      "unbounded": 0.0
+     }
+    ],
+    "102": [
+     true,
+     {
+      "bounded": 0.8,
+      "unbounded": 0.0
+     }
+    ]
+   }
+  },
+  "G8_shared_crosstalk": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     -0.4875629398854132
+    ],
+    "43": [
+     true,
+     -0.4809822948478494
+    ],
+    "44": [
+     true,
+     -0.48223204000724323
+    ],
+    "100": [
+     true,
+     -0.4818238841555012
+    ],
+    "101": [
+     true,
+     -0.4844475057590178
+    ],
+    "102": [
+     true,
+     -0.48825070856389985
+    ]
+   }
+  },
+  "G9_hub_limit_not_synaptic": {
+   "n_pass": 6,
+   "n_undefined": 0,
+   "need": 5,
+   "passed": true,
+   "per_seed": {
+    "42": [
+     true,
+     1.1015536249277096
+    ],
+    "43": [
+     true,
+     1.1440549876219013
+    ],
+    "44": [
+     true,
+     1.102936934231756
+    ],
+    "100": [
+     true,
+     1.1273921224236318
+    ],
+    "101": [
+     true,
+     1.1366426635816471
+    ],
+    "102": [
+     true,
+     1.100021940047548
+    ]
+   }
+  }
+ },
+ "k_fit": 0.1298669499528569,
+ "k_fit_arm_pair": [
+  "sparse_dg",
+  "sparse_dg_recx2"
+ ],
+ "k_marginal_per_seed": {
+  "42": 0.13306663206299066,
+  "43": 0.12887124503173575,
+  "44": 0.13086265487397808,
+  "100": 0.11127923744425104,
+  "101": 0.13090714696595585,
+  "102": 0.12774412622280729
+ },
+ "k_allfanin_per_arm_DESCRIPTIVE_ONLY": [
+  {
+   "seed": 42,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.1902494329716511
+  },
+  {
+   "seed": 42,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.1616580325173209
+  },
+  {
+   "seed": 43,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.18956320168610744
+  },
+  {
+   "seed": 43,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.15921722335892158
+  },
+  {
+   "seed": 44,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.1869373920192882
+  },
+  {
+   "seed": 44,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.15890002344663312
+  },
+  {
+   "seed": 100,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.20715520927359213
+  },
+  {
+   "seed": 100,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.15921722335892158
+  },
+  {
+   "seed": 101,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.19238485263930832
+  },
+  {
+   "seed": 101,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.16164599980263208
+  },
+  {
+   "seed": 102,
+   "arm": "sparse_dg",
+   "k_allfanin": 0.19312341992865564
+  },
+  {
+   "seed": 102,
+   "arm": "sparse_dg_recx2",
+   "k_allfanin": 0.16043377307573145
+  }
+ ],
+ "gpu_point_extrapolation": {
+  "note": "EXTRAPOLATION from the fitted MARGINAL k (recurrent-edge marginal capacity law, fit from the per-seed CONTRAST between ('sparse_dg', 'sparse_dg_recx2')), not a measurement; the a-scaling from 0.01 to 0.005 is itself UNTESTED -- no arm varies a with the DG held fixed in the uniform regime",
+  "n_ca3": 100000,
+  "c_rec": 10000,
+  "a": 0.005,
+  "predicted_P50_facts": 49021.959602796655,
+  "recurrent_synapses": 1000000000,
+  "bits_per_recurrent_synapse": 0.0005375642342156872
+ }
+}
