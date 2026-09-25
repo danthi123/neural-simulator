@@ -37,7 +37,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 4. Score as they land: SETTLE multi-turn seeds 44/100-102; AI-teacher SHAM arms; CA3 reruns; affect seed 102; D6 N2000;
    A10 v4 arms; wm-focus-bind 6-seed.
 5. Flip candidates that clear 6-seed GO + B2b no-regression: flip them myself (owner authorization 2026-09-23).
-6. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
+6. DA tag-capture (#227) flip path, branch `research/da-tag-capture-ltm-on` @ cce3c1dbd (prereg Amendment 3): LTM-ON
+   seed-42 run queued at the pool front with `mem_gb=48` (it measures the real peak; queue seeds 43-102 from that
+   number). Offcheck at pin 36a175534 is running in the lane's worktree. Audit verdict: an ordinary fact told once is
+   NOT kept overnight with the ledger on, and no replay/repetition route reaches that store, so a flip would make ordinary
+   facts forgettable. Build lane `research/sleep-replay-capture` (brain-driven reactivation during the night tick,
+   default-OFF) launched 21:15.
+7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
    The bound census (rung 0) sits at pool queue positions 7-9. When it lands, write ONE finding covering rung 0 +
