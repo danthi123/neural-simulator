@@ -23,11 +23,24 @@ already uses for idle CPU lanes, just fed by this script's own idle-dedicated-co
 agent-floor signal (fewer than AGENT_FLOOR concurrent agents) is reported persistently too
 (`gates/agent_floor_persistent`, non-blocking) but NOT escalated to a hard block here — see that gate's
 docstring for why forcing a minimum agent count to commit is a judgement call left for owner review.
+2026-09-25 (pool_stall_check.py): `lanes_pool` below counted a process the instant `pgrep` saw it, with no
+check that it was doing anything the record does not already have or that it was still inside its own
+historical running time -- the exact hole that let a live-but-stalled pool (7 of 17 D6 processes DUPLICATES of
+cells whose output had already landed at the same pinned revision, running 7-26h) read `✓ SATURATED`.
+`pool_stall_summary()` runs `tools/pool_stall_check.py`'s read-only DUP-OF-LANDED / OVERDUE check every cycle
+and subtracts flagged lanes from `lanes_pool` before the SATURATED/UNDER-PARALLELIZED decision below, printing
+them as a standalone ⚠ line -- never blocking, never killing anything (that tool is read-only by design).
 """
 import json, os, re, subprocess, sys, time
 
 import parallel_state
 import waiver_history
+
+try:
+    import pool_stall_check
+except Exception as _e:                # exit-0-always: say so loudly instead of silently losing the signal
+    pool_stall_check = None
+    print("⚠ parallel_audit: could not import pool_stall_check (%s) -- stall/dup detection disabled" % _e)
 
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
@@ -119,6 +132,28 @@ def pool_idle():
     return idle, lanes, up
 
 
+def pool_stall_summary(nodes=None, timeout=12):
+    """Read-only DUP-OF-LANDED / OVERDUE check across the pool (tools/pool_stall_check.py). Returns
+    (flagged_count, lines) -- lines to print, one summary plus one per flagged job (capped). NEVER raises: this
+    runs inside the exit-0-always heartbeat, so a failure here must degrade to "0 flagged, say why" rather than
+    take the whole cycle down with it."""
+    if pool_stall_check is None:
+        return 0, []
+    try:
+        report = pool_stall_check.check_all(nodes=nodes, timeout=timeout)
+    except Exception as e:
+        return 0, ["⚠ pool-stall-check failed to run (%s) -- treating as 0 flagged, not silently OK" % e]
+    flagged = report.get("flagged", [])
+    lines = []
+    if flagged:
+        lines.append("⚠ %s" % report.get("summary_line", "pool stall check flagged %d job(s)" % len(flagged)))
+        for row in flagged[:6]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_row(row))
+        if len(flagged) > 6:
+            lines.append("   ⚠ ... and %d more (run: python -m tools.pool_stall_check)" % (len(flagged) - 6))
+    return len(flagged), lines
+
+
 def active_agents(base=None):
     # Count in-flight Claude subagents by their transcript activity. Agent .output files under a session's
     # tasks/ dir are SYMLINKS to the growing JSONL transcript; backgrounded bash/monitor .output files are
@@ -168,6 +203,12 @@ def main():
     nproc, load1, idle_local, lanes_local = local_idle()
     gpu = gpu_state()
     idle_pool, lanes_pool, pool_up = pool_idle()
+    # DUP-OF-LANDED / OVERDUE lanes are NOT real coverage of the frontier -- a duplicate re-deriving a landed
+    # result, or a job stuck well past its own history, occupies a core without doing anything the record does
+    # not already have. Excluding them here (not bumping idle_pool -- this tool never kills anything, so the
+    # core is not actually free) is what stops them being counted toward SATURATED (2026-09-25).
+    flagged_pool, stall_lines = pool_stall_summary(POOL)
+    lanes_pool = max(0, lanes_pool - flagged_pool)
     n_open, top = open_tasks()
     agents = active_agents()
 
@@ -222,6 +263,8 @@ def main():
     if game_paused:
         print("🎮 GAME PAUSE (GAME_MODE set) — the local GPU is the owner's game (excused from idle-parallelization); "
               "the mini-PC pool + build/research agents are separate/GPU-free and STILL enforced below.")
+    for _stall_line in stall_lines:
+        print(_stall_line)
 
     # WAIVER SURFACING (2026-09-23, closes the "printed correctly, read past" shape for the escape hatches
     # THEMSELVES, not just the stall they excuse): a live .parallel_compute_waiver / .lane_waiver is easy to
