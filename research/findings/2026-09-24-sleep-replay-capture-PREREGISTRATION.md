@@ -797,3 +797,240 @@ seeds for `fiv_lr` minus `fih_lr_a` correct on the seventh morning, and for `fih
 - The six gate rows are pool runs at a full-SHA-pinned revision containing this amendment:
   `--family fi --seed N --ltm off --workers 1 --out research/findings/raw/_sleep_forgetting_interference`. They are not
   queued with this commit.
+
+## Amendment 7 (2026-09-25, branch research/pair-production-path-arms) — the pair on its production path
+
+Committed on its own, BEFORE any run of the families it governs (no `pp`, `sn` or `cu` output exists at this commit).
+It governs code commit `6e436d14e` on branch `research/pair-production-path-arms`, off `main` at `9d06baeac`, with the
+review branch `research/pair-verify-go` at `865dd6be6` merged in. Every constant below is fixed there. The runner is
+the sibling `research/runners/_pair_production_path_probe.py` (families `pp`, `sn`, `cu`); the groups are in
+`research/runners/onebrain_regression_battery.py`. The amendment number is claimed on this branch; if the fi branch
+lands its own Amendment 7 first, this one is renumbered at merge, with no content change. Terms follow
+`docs/TERMS.md`: the mechanism under test is capture in the same store, not "consolidation", and "GO" below means a
+gate's own verdict only.
+
+The one artifact committed with this amendment is a fake-substrate design day, run at `6e436d14e`:
+`research/findings/raw/_pair_production_path/design_fake_substrate.json`. It has no brain and no gate seed, and no
+gate reads it. Its provenance sidecar reads `git_dirty: true`: the worktree held an untracked scratch folder (the
+environment-check script below), nothing tracked was modified.
+
+### What was seen before this registration (disclosed)
+
+This amendment is written by the same lane that read the review, so everything below was known when the gates were
+set. From `research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md` and its opus re-review:
+- the three registered GOs: DA tag-capture LTM-off 6/6, LTM-on 6/6, and the sleep route's rc family 6/6; <!--derived-->
+- with both flags on, the next-day outcome is a step function of R, the store's cleanup margin at the one SWR epoch:
+  across 24 seed x telling cells, all cells at R 0.185 or below were lost and all at 0.209 or above were kept; <!--derived-->
+- the weak telling (`d3w` / `d10w`, the fact said last after its words habituated the DA) was not recalled after the
+  first night on seeds 43 and 101 (kept on 4 of 6), and no arm had ever read it immediately or with the ledger off; <!--derived-->
+- a fact told 4 h before sleep onset was lost on 6 of 6 seeds with both flags on, while today's default kept it; <!--derived-->
+- the r2 downscaling family read NO-GO (0/6 GO: 4 seeds NO-GO on SHY1, 2 UNDEFINED on P2); the arc family read
+  NO-GO 5/6. <!--derived-->
+
+Before this commit I also ran, at seed 7 (the dev seed, never a gate seed), an environment check of the day's told
+facts through the real handler (ledger on, turn clock, route on, no night): "the dog stores the memory" (inside the
+datc frame) and "the bird uses the river" (after "the bird is here" / "the river is here") were each stored as one new
+block and recalled at once; the stretch sentences ("the X is here" for words the day already used, plus "hello" and
+"that is nice") stored nothing, with brain DA between 0.12 and 0.53, below the Go boundary. <!--derived-->
+Its output, with the script's full text, is committed with this amendment as a dev record:
+`research/findings/raw/_pair_production_path/envcheck_seed7.json` (it ran at the branch base `381f608e3`, before the
+Amendment-7 code). It also timed the idle tick on numpy: 9.1 s for the first tick after a turn (a wander), about 0.3 s
+for later ones. The referential probes read `formed: false` there, as expected on numpy without the forced write. <!--derived-->
+The fake design day then changed the order of the day (next section). No brain arm of any family below has run.
+
+### Why (review items B3, B4, D3 and the missed episodic angle)
+
+Every earlier family ran the scripted turn clock, numpy, one fact per conversation and one SWR epoch per protocol.
+Production runs the wall clock (`BRAIN_DA_TAG_CAPTURE_CLOCK` unset), counts any idle of 5 min or more as sleep (so a
+day with pauses runs several epochs), ticks the continuous engine every 20 s of idle, builds the episodic organ's
+store only on cupy (so the default-ON episodic fixes and the #64 sleep replay never ran in any earlier arm), and runs
+cupy, where `_private_rng` used to leave the cupy stream reseeded. Asked "what does the real system run alongside this
+that the earlier arms replaced with a constant?", the answer here is the protocol itself: the day's clock, its pauses,
+the other facts sharing the PRP pool and the replay DA, and the episodic organ.
+
+### What was built (default OFF; code `6e436d14e`)
+
+- `webapp/da_tag_capture_chat.py`: `set_wall_clock(fn)` / `_wall_now()`, an environment seam for the ledger's wall
+  clock. Unset, it reads `time.time()` at the same two sites as before (`tests/test_pair_production_path.py`).
+  `_private_rng` swaps the cupy device RandomState for a private one and puts the original object back on exit;
+  `BRAIN_DA_TAG_CAPTURE_CUPY_NO_RESTORE=1` (default OFF, measurement only) reproduces the old reseed.
+- `webapp/sleep_replay_capture.py`: `BRAIN_DA_ENCODING_LESION_SPARE_SWR=1` (default OFF, read only inside an epoch).
+  With `BRAIN_DA_ENCODING_LESION=1` it makes a WAKING-ONLY DA lesion: the waking write gain and the waking D1 drive stay
+  pinned, the SWR bout's D1 read sees the route's own DA. It never lifts `BRAIN_DA_CAPTURE_LESION`.
+- The virtual wall clock (`_VWALL`, environment code) and the world steps `vclock:start` / `vclock:idle:<s>`: a turn
+  takes no virtual time; an idle interval runs `continuous_engine.tick_idle_sessions` at every IDLE_SEC (20 s) after
+  the last request, as the server loop does, thinned to one tick per hour after the first hour of a stretch (declared:
+  the mood has then relaxed to RELAX^180 of its start, the wander budget is spent, the Turrigiano pass has run, and
+  the ledger is event-driven).
+
+### The day (group `wd`; every `pp` arm runs it)
+
+Virtual times from the first turn. A 40-s gap (one idle tick) separates turns inside a burst.
+1. Fact C told plainly (the datn pattern with bird / river), asked at once ("what does the bird use").
+2. A stretch of 44 turns every 4 min (never an idle of 5 min), then C asked again at ~3.06 h: the DECAY probe. <!--derived-->
+3. Pause 1, 25 min (epoch 1). Fact A told plainly (the datn telling), asked at once. Pause 2, 7 min (epoch 2).
+4. A stretch of 37 turns every 4 min, then A asked at ~6.18 h: the PRE-B probe (what the route alone left of A). <!--derived-->
+5. Fact B told inside the surprising-news frame of `datc` ("the dog stores the memory"), asked at once. Pause 3,
+   10 min (epoch 3).
+6. Evening: each fact asked, each followed by a referential probe ("you mentioned the cat / dog / bird"). An 11-h
+   night (epoch 4). The same six probes next morning. Three idle days (epochs 5-7). The same six probes on day 5.
+The order is the one the fake design day forced. An earlier order (A, pause, B, pause, C) captured every fact
+through the shared PRP pool: an SWR bout's PRP and a salient telling's PRP both last about TAU_PRP_H (1 h), so any
+fact told within the hour after either is captured (behavioural tagging), and nothing was left to decay or to test
+the replay edge on. In the registered order C is told before any epoch or salient event, A's pre-B probe reads before
+B's PRP, and B comes ~2.7 h after A.
+
+### Arms
+
+Env as in the other families: `BRAIN_LTM_SHIP_DEFAULT=0`, the seed through `BRAIN_CHAT_SEED` (threaded to `cfg.seed`;
+never `actual_seed_used`). WALL = `BRAIN_DA_TAG_CAPTURE=1`, `BRAIN_DA_TAG_CAPTURE_CLOCK=wall`; TURN = the same with
+`turn`; RC = `BRAIN_SLEEP_REPLAY_CAPTURE=1`; OFF = `BRAIN_DA_TAG_CAPTURE=0`, `BRAIN_SLEEP_REPLAY_CAPTURE=0` (explicit).
+
+| family | arm | group | env | role |
+|---|---|---|---|---|
+| pp | `wd_a` | wd | WALL + RC | WD1, WD2, NR |
+| pp | `wd_b` | wd | WALL + RC | G0 null rebuild, NR |
+| pp | `wd_replaylesion` | wd | WALL + RC + `BRAIN_SLEEP_REPLAY_CAPTURE_LESION=1` | WD5 |
+| pp | `wd_ledger_off` | wd | OFF (wall) | REPORTED: today's default; WD4 reads it |
+| pp | `wd_epi` | wd | WALL + RC + `BRAIN_EPISODIC_STORE=1` | EP |
+| sn | `lsal_rc_a` / `_b` | datcl | TURN + RC | SN1 / G0 |
+| sn | `lneu_rc` | datl | TURN + RC | SN1 |
+| sn | `lsal_rc_wakelesion` | datcl | TURN + RC + `BRAIN_DA_ENCODING_LESION=1` + `..._SPARE_SWR=1` | SN2 |
+| sn | `sal_imm_rc` / `neu_imm_rc` | datci / datni | TURN + RC | P1 |
+| sn | `lsal_rc_dalesion` | datcl | TURN + RC + `BRAIN_DA_ENCODING_LESION=1` | REPORTED |
+| sn | `sal_rc_wakelesion` | datc | TURN + RC + waking-only lesion | REPORTED (review I-3) |
+| sn | `lsal_ledger_off` | datcl | OFF (turn) | REPORTED |
+| sn | `wk_imm_rc` / `wk_imm_off` | dwi | TURN + RC / OFF | REPORTED: the weak telling read at once |
+| sn | `wk_night_rc` / `wk_night_off` | dwn | TURN + RC / OFF | REPORTED: the weak telling next day |
+| cu | `cu_off_a` / `_b` | datc | OFF (turn) | G0 on cupy |
+| cu | `cu_on` | datc | TURN + RC | CU1, CU2 |
+| cu | `cu_neu_rc` / `cu_neu_norc` | datn | TURN + RC / TURN | CU3 |
+| cu | `cu_on_norestore` | datc | TURN + RC + `BRAIN_DA_TAG_CAPTURE_CUPY_NO_RESTORE=1` | REPORTED |
+| cu | `cu_wd` | wd | WALL + RC (episodic store at its cupy default) | REPORTED |
+
+`datcl` is the datc telling, 4 h awake without conversation (the r2 `awake_4h` step), the night, recall; `dwi` is the
+weak telling asked at once; `dwn` the weak telling, one night, recall. The `sn` and `cu` families stay on the turn
+clock on purpose: the long-delay contrast needs the environment's awake mark, which production does not have, and
+the cupy question is about the backend, not the clock. The `wd` day carries the wall clock for both.
+
+### Gates
+
+Outcome of a recall question: correct, abstain, GUESS (the brain flags its reply as a guess: `hypothesis`, or the
+"a guess from what I've learned" disclaimer; the seed-7 check produced one on a news sentence), confab (a wrong triple
+not flagged), undefined. "Not recalled" is abstain or guess. A referential probe reads the episodic organ's
+`in_memory`.
+
+**pp, sub-verdict WD** (`grade_seed_pp`). UNDEFINED if: G0 (`wd_a` and `wd_b` differ in any probe's outcome, triple,
+abstain flag or episodic read, the sleep record, the final blocks or the ledger state); P1 (any fact not correct at
+its immediate probe in `wd_a`); I1 (on every ledger-ON arm: the ledger's clock is not `wall`, a world step failed, a
+telling did not store exactly one block, the final managed-block count is not 3, the epochs are not exactly the 7 at
+the registered times (each pause of 5 min or more: last turn + 5 min, + 24 h per further night inside the interval),
+a block had no substrate read, or the replay lesion did not hold on every epoch of the lesion arm; on `wd_ledger_off`:
+a world step failed or any reply carries a ledger); gamma differs across the ledger-ON arms; a gated arm errs; a probe
+reads undefined.
+GO iff all of:
+- WD1 (salient kept): `wd_a` B correct next morning and on day 5;
+- WD2 (ordinary kept on the production path): `wd_a` A correct at the pre-B probe, next morning and on day 5;
+- WD4: no confab on any probe of any `pp` arm;
+- WD5 (the replay edge carries A): `wd_replaylesion` A not recalled at the pre-B probe.
+
+**pp, sub-verdict NR** (no resurrection of a decayed fact). On `wd_a` and `wd_b`, no fact is not recalled at one probe
+and correct at a later one (no fact is re-told in this protocol). UNDEFINED if WD is UNDEFINED, or if no fact in
+`wd_a` is ever not recalled before its last probe (nothing decayed, so nothing could be resurrected). The replay-lesion
+arm's trajectory is REPORTED only (after B's news a decayed A may be captured by B's PRP there).
+
+**pp, sub-verdict EP** (the episodic organ vs the composer, `wd_epi`). UNDEFINED if the episodic organ never wrote
+(the evening referential probe for the cat reads `formed` not true), if `wd_epi` fails I1, errs, or a probe reads
+undefined. GO iff EP1: next morning and on day 5, for every fact the composer answers correctly, the referential probe
+for its agent reads `in_memory` true. REPORTED: the cases where the composer does not recall and the episodic organ
+does (predicted for any fact the composer loses), the disclosure text, and whether `wd_epi`'s composer outcomes equal
+`wd_a`'s.
+
+**sn** (`grade_seed_sn`). The REPORTED arms enter no gate, error count, gamma check or UNDEFINED rule, except SN3.
+UNDEFINED if: G0 (`lsal_rc_a` / `_b` differ in outcome, triple, abstain flag, ledger state, blocks or sleep record);
+P1 (`sal_imm_rc` or `neu_imm_rc` not correct); I1 (a long-delay gated arm did not run exactly one epoch after an awake
+mark of at least 4 h; an immediate arm ran an epoch; a lesion did not hold on the record: on the waking-only lesion
+every turn's D1 read at tonic, every turn's write gain pinned at 1 and marked lesioned, and the epoch marked
+`da_lesion_spares_swr` with the D1 read equal to the SWR DA; on the intact arms no turn lesioned and every epoch's D1
+read equal to its SWR DA); gamma differs; a gated arm errs; a gated outcome reads undefined.
+GO iff SN1 (`lsal_rc_a` correct AND `lneu_rc` not recalled: the salient-vs-neutral separation at long delay inside
+one family, both flags intact), SN2 (`lsal_rc_wakelesion` not recalled: waking salience stays load-bearing under the
+pair, with the SWR DA edge intact), and SN3 (no confab on any arm). REPORTED: each REPORTED arm's outcome, R, SWR DA,
+D1 read and z at sleep onset and at recall; per-turn DA.
+
+**cu** (`grade_seed_cu`, the reference 3090). UNDEFINED if: the backend is not cupy; `cu_off_a` / `_b` differ in the
+outcome, the triple, any turn's DA or any turn's answer (cupy not reproducible at this revision); gamma or d1_a_go
+differ across the ledger-ON arms; a gated arm errs; a gated outcome reads undefined.
+GO iff CU2 (no drift: every turn's brain DA in `cu_on` equals `cu_off_a`'s, and the first two answers match), CU3
+(`cu_neu_rc` correct AND `cu_neu_norc` not recalled: the capture edge on cupy) and CU4 (no confab). REPORTED: CU1,
+gamma and d1_a_go on cupy against the numpy value 32.7735; the R and SWR DA at `cu_neu_rc`'s epoch; the number of turns
+whose DA differs from OFF in `cu_on_norestore` (the drift the fix removes) against `cu_on`; the `cu_wd` day read
+(outcomes, episodic reads, I1).
+
+**6-seed verdicts** (`--family X --aggregate <dir>`): per family and per pp sub-verdict, GO iff all six seeds read GO;
+INCOMPLETE if a seed is missing; otherwise NO-GO. Reported with them: the one-sided exact sign-flip p over seeds for
+`wd_a` minus `wd_replaylesion` (A next morning) and for `lsal_rc_a` minus `lsal_rc_wakelesion` (1/64 at 6/6).
+
+### Predictions (from the fake design day and the review's numbers; uncertain where noted)
+
+- WD GO. On the fake, A is captured at pause 2 and kept, B is captured awake, and with the replay edge cut A reads at
+  the noise floor by the pre-B probe (coherence 0.216 vs 0.796 intact). <!--derived-->
+- NR NO-GO. On the fake, C decays (coherence 0.086 at its decay probe) and is then captured during the first night:
+  its replay read stays at the noise floor (R 0.050 at pause 3, 0.103 at night onset) but the bout's DA is at the
+  ceiling (1.24) because A and B replay strongly, and the shared PRP pool captures C's small replay tag; C reads 0.802
+  next morning. This is the multi-epoch cross-capture the review's I-1 scope note asked about. Uncertain on the brain:
+  its decayed-block R is lower (0.004 to 0.058 in the review's table) than the fake's. <!--derived-->
+- EP GO: the episodic organ is not managed by the ledger, so it keeps every topic it formed. If the composer loses a
+  fact, the episodic organ will still say the topic was discussed (REPORTED as a disagreement).
+- SN GO: `lsal_rc_a` kept on its waking capture (as ARC6), `lneu_rc` lost (as r2 `ld_rc`, 0/6), the waking-only
+  lesion loses the salient fact (no waking capture; ~4-h-old trace at sleep onset). REPORTED `sal_rc_wakelesion`:
+  kept where the review's DA-lesion R was above the 0.209 edge (seeds 42, 44, 100, 102), lost at 43 and 101. The weak
+  telling: read at once on every seed with the ledger off; with the pair on, uncertain at 43 and 101 (the opus
+  re-review's point: seed 101's fresh read was at noise); next day kept 4 of 6 with the pair, 6 of 6 with the ledger
+  off. <!--derived-->
+- CU: CU2 and CU3 hold; gamma on cupy differs from the numpy value (a different D1 pool draw), which is why it is
+  reported rather than gated; whether the old reseed drifted any other organ is unknown (it does only if that organ
+  draws from the global cupy stream).
+
+### If the day loses or resurrects facts (THE LAW, fixed now)
+
+A NO-GO here is a verdict on this method, not on keeping ordinary facts or on keeping decayed ones decayed. The
+responses are fixed before any run, so they cannot be chosen after the data:
+- NR NO-GO (a decayed fact captured by other facts' replay DA): the companion the model replaced with a constant is
+  COMPETITION FOR PRPs. The model's PRP pool is one cell-wide scalar that capture never depletes, so a strongly
+  replayed fact pays nothing for PRPs that a weakly tagged synapse then also uses. In the tissue, tagged synapses
+  compete for a limited PRP supply and the strongly tagged ones win it (Fonseca, Nagerl, Morris & Bonhoeffer 2004,
+  Neuron 44:1011, PMID 15603743; already named as the next method in the v3 prereg). The second named companion is
+  the night's downscaling set by the day's load (r3, `BRAIN_SLEEP_LOAD_RENORM`, built, its fi family in flight). Not a
+  response: raising a threshold, retuning gamma, or changing the replay-to-DA map.
+- WD2 NO-GO (an ordinary fact lost on the production path): the named companions are awake replay during the day's
+  quiet gaps (built, `BRAIN_AWAKE_REPLAY_CAPTURE`, arc 5/6) and the hippocampal replay of the episodic trace, which
+  on the production path (#64) replays the day's episodes at the same sleep ticks but has no edge to the composer
+  ledger's re-tag.
+- EP NO-GO (the episodic organ says a fact the composer answers was not discussed): an instrument finding about the
+  episodic write on numpy before it is a finding about the pair; its first read is the `cu_wd` arm on cupy.
+Each response is its own registered amendment and family, with a biology binding in `research/biology/` first.
+
+### What each gate can and cannot show
+
+- WD2 with WD5 ties the production-path retention of A to the replay edge: the same day, the same pauses, only the
+  edge cut. WD1 shows the salient fact survives the day's several epochs. Neither says anything about many facts a
+  day; three facts share one PRP pool here.
+- NR is behavioural and needs a decayed fact; the ledger's expressed fraction per block and probe is REPORTED beside
+  it. It cannot tell a resurrection by cross-capture from one by another route; the epoch record and the lesion arm
+  are what say which.
+- EP reads topic-level familiarity only (the episodic organ keys on the agent), not the fact's content.
+- The virtual wall clock makes the numpy day reproducible and independent of machine speed; it gives a turn no
+  virtual duration, and the thinned tick cadence after the first hour of a stretch is declared, not measured.
+- Not tested: LTM on with the route armed (D1), concurrency of an idle tick with a turn (D4), many managed facts
+  (D6), the combined no-regression battery (leg c).
+
+### Compute for this amendment
+
+- A dev-seed smoke (seed 7, numpy, under `bash tools/memcap.sh` after `bash tools/mem_ok.sh`) of `pp` (the arms the
+  memory budget allows) and `sn` runs AFTER this commit, to `research/findings/raw/_pair_production_path_smoke`. It is
+  a dev record, never a gate row, and seed 7 is not a gate seed. If it forces a code change, that change is a new
+  amendment and the pin moves.
+- The six gate rows per family are pool runs (pp, sn) and a local 3090 gpu_queue job (cu) at a full-SHA-pinned
+  revision containing this amendment. They are not queued with this commit; the exact lines are in the smoke's dev
+  record.
