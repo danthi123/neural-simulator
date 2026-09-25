@@ -3,9 +3,9 @@
   "cmd": "python tools/ssh_stdin_gate_replay.py --n 2000 --all-refs --compare-old a497db159 --out research/coordination/sr_gate_replay_2026-09-25.json",
   "script": "tools/ssh_stdin_gate_replay.py",
   "device": "cpu (host python; no simulator backend)",
-  "gate_at": "0db1a99414b39672354da2bfa9dee0c770232e35",
-  "git_sha": "0db1a99414b39672354da2bfa9dee0c770232e35",
-  "generated_utc": "2026-09-25T16:52:17+00:00"
+  "gate_at": "27bafc805ac0c6398eb8d5a96baa36abff99e4b0",
+  "git_sha": "27bafc805ac0c6398eb8d5a96baa36abff99e4b0",
+  "generated_utc": "2026-09-25T16:57:37+00:00"
  },
  "refs": "all",
  "commits_touching_sh": 486,
@@ -32,7 +32,7 @@
     "tools/pool_sync.sh": "M"
    },
    "problems": [
-    "tools/aws_idle_stop.sh:58 -- `pool_sync.sh` (a script that runs ssh on its own stdin) reads fd 0 in sync_node_before_stop(), called from the `while read` loop at line 179: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: bash \"$ROOT/tools/pool_sync.sh\" >>\"$LOG\" 2>&1; then",
+    "tools/aws_idle_stop.sh:58 -- `pool_sync.sh` (a script that runs ssh on its own stdin) reads fd 0 via sync_node_before_stop(), which a `while read` loop calls at line 179: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: bash \"$ROOT/tools/pool_sync.sh\" >>\"$LOG\" 2>&1; then",
     "tools/aws_idle_stop.sh:147 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:151 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:163 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\"
@@ -66,7 +66,7 @@
     "tools/pool_queue.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -81,7 +81,7 @@
     "tools/pool_queue.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -95,7 +95,7 @@
     "tools/pool_autodispatch.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 297: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -175,7 +175,7 @@
     "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)",
@@ -208,7 +208,7 @@
     "tools/aws_idle_stop.sh:100 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: la=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:104 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: ncpu=$(ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
     "tools/aws_idle_stop.sh:116 -- `ssh` (no -n/-f) reads fd 0 inside a `while read` loop: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: if ssh -i \"$state_key\" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \\",
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)",
@@ -285,7 +285,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -313,7 +313,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -341,7 +341,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -355,7 +355,7 @@
     "tools/pool_autodispatch.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -383,7 +383,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -410,7 +410,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -428,7 +428,7 @@
     "tools/pool_revision_marker.sh": "A"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:105 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 293: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -472,7 +472,7 @@
     "tools/workflow_check.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:107 -- `ssh` (no -n/-f) reads fd 0 in revision_available_cached(), called from the `while read` loop at line 276: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:107 -- `ssh` (no -n/-f) reads fd 0 via revision_available_cached(), which a `while read` loop calls at line 276: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -486,7 +486,7 @@
     "tools/pool_autodispatch.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 in revision_available(), called from the `while read` loop at line 216: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 via revision_available(), which a `while read` loop calls at line 216: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -504,7 +504,7 @@
     "tools/pool_sync.sh": "M"
    },
    "problems": [
-    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 in revision_available(), called from the `while read` loop at line 192: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
+    "tools/pool_autodispatch.sh:70 -- `ssh` (no -n/-f) reads fd 0 via revision_available(), which a `while read` loop calls at line 192: no `-n`, no stdin redirect (</dev/null, <&N, < file, <<<), not fed by a pipe, so it drains the loop's input and truncates the scan (the 2026-09-25 b2b_queue_next_wave.sh / pool_autodispatch.sh / aws_idle_stop.sh incidents). Fix: `ssh -n`, or `</dev/null` on the call. Near: timeout 10 ssh \"${SSH_F[@]}\" -o BatchMode=yes -o ConnectTimeout=6 \"$node\" \\"
    ],
    "review": [
     "TRUE POSITIVE, incident 2: revision_available() ssh without -n, called from pop_job's while-read loop (fixed 096dfdae0)"
@@ -824,7 +824,7 @@
   }
  ],
  "rsync_in_read_loop_sites_not_flagged": [],
- "seconds": 29.6,
+ "seconds": 30.5,
  "old_gate": {
   "rev": "a497db159",
   "commits_blocked_as_wired_added_only": 10,
