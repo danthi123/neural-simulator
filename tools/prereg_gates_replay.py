@@ -23,6 +23,7 @@ usage: .venv/bin/python tools/prereg_gates_replay.py [--n 2500] [--ref origin/ma
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import subprocess
@@ -147,8 +148,15 @@ def main(argv=None):
     shas = _run("rev-list", "-n", str(a.n), tip)[0].split()
     base_mod = _gate_at(a.baseline) if a.baseline else None
     rows, n_merges, head_only = replay_pra(shas, base_mod)
-    out = {"ref": a.ref, "tip": tip, "gate_rev": _run("rev-parse", "HEAD")[0].strip(), "n_commits": len(shas),
-           "n_merges": n_merges,
+    head = _run("rev-parse", "HEAD")[0].strip()
+    dirty = bool(_run("status", "--porcelain", "--", "tools/gates/prereg_amendment_order.py",
+                      "tools/gates/prereg_before_run.py", "tools/prereg_gates_replay.py")[0].strip())
+    out = {"provenance": {"cmd": "python tools/prereg_gates_replay.py " + " ".join(sys.argv[1:] if argv is None else argv),
+                          "script": "tools/prereg_gates_replay.py",
+                          "device": "cpu (host python; no simulator backend)",
+                          "git_sha": head, "gate_files_dirty": dirty,
+                          "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")},
+           "ref": a.ref, "tip": tip, "n_commits": len(shas), "n_merges": n_merges,
            "pra": {"n_candidates": len(rows), "n_block": sum(r["block"] for r in rows),
                    "blocks": [r["sha"] for r in rows if r["block"]],
                    "merges_blocked": [r["sha"] for r in rows if r["merge"] and r["block"]],

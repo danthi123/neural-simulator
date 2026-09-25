@@ -31,6 +31,11 @@ it (`prereg_amendment_order._detect_invocation`: the nearest ancestor `git` proc
     BEFORE the command, because `--continue` runs the hook as `merge`): judged against HEAD, with a prereg whose
     staged blob equals MERGE_HEAD's exempt (`_merged_in_unchanged`, 2026-09-24).
   * anything else, and whenever the command cannot be read: HEAD, as before.
+REPLAY (`tools/prereg_gates_replay.py` at origin/main 9ef541c18, the last 2500 commits, 542 merges; output
+research/coordination/prereg_gates_replay_2026-09-25.json): the 7 non-merge blocks are unchanged by this fix (a
+replayed commit's parent is what `--amend` is now judged against). 71 merge trees (35 of them after the 2026-09-24
+exemption landed, 3d880f46a) are ones the pre-fix gate blocked during a clean `git merge`; with the exemption, i.e. as
+a conflicted merge finished by `git commit`, 0 block. The fixed gate checks neither clean merge.
 
 WHAT THIS GATE CANNOT CATCH.
   * A prereg committed first, then EDITED after the run -- a MODIFIED prereg is CLASS PRA's scope

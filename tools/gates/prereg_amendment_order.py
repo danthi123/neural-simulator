@@ -105,15 +105,20 @@ WHAT THIS GATE CANNOT CATCH (stated, not hidden).
   * A `GIT_INDEX_FILE` pointing OUTSIDE the repo's git dir (a hand-set custom index) is not honoured; the default
     index is read instead. git itself never does this for `commit`, `commit -a` or `commit -- <paths>`.
 
-REPLAY (2026-09-25, re-run after the second fix round at origin/main d98913868: the last 2500 commits, 536 of them
-merges; the gate's own `_evaluate` on each commit's real trees, merges judged against every parent as a `git commit`
-with MERGE_HEAD would be -- a clean auto-merge is not checked at all, so this is the stricter reading). Truth = a new
-amendment/log entry or an edit to a committed amendment's text, landing with run data. 36 commits modified a prereg
-while writing under raw/; 19 BLOCK, all true by that definition (TP 19, FP 0), and none of the other 17 is a miss
-(FN 0): 10 wrote only `_provenance/runs.jsonl`, 1 is a record subsection (414e1ba4f), 6 append results to the
-ORIGINAL registration with no amendment (the declared blind spot above). No merge blocks; judged against HEAD alone,
-19 merges would have. The grammar added in this round (qualified, erratum and glued forms) changes no verdict in the
-window, and now recognises 4 of the review's 5 latent forms (`Instrument revision` is declared above instead).
+REPLAY (2026-09-25, re-run after the third fix round with `tools/prereg_gates_replay.py --baseline 297e10c76` at
+origin/main 9ef541c18: the last 2500 commits, 542 of them merges; the gate's own `_evaluate` on each commit's real
+trees, merges judged against every parent as a `git commit` / `git merge --continue` with MERGE_HEAD would be -- a
+clean auto-merge is not checked at all, so this is the stricter reading; output
+research/coordination/prereg_gates_replay_2026-09-25.json). Truth = a new amendment/log entry or an edit to a
+committed amendment's text, landing with run data. 36 commits modified a prereg while writing under raw/ (the same 36
+as the round-2 replay at d98913868, all inside the window read by hand then); 19 BLOCK, all true by that definition
+(TP 19, FP 0), and none of the other 17 is a miss (FN 0): 10 wrote only `_provenance/runs.jsonl`, 1 is a record
+subsection (414e1ba4f), 6 append results to the ORIGINAL registration with no amendment (the declared blind spot
+above). No merge blocks; judged against HEAD alone, 20 merges would have. Against the round-2 gate: 0 verdict
+differences, and 0 of the 109 prereg files at the tip change their amendment-entry lists under this round's grammar
+(the qualified-ID rule only removes results headings, which no prereg in the corpus has yet). Round 2's grammar
+(qualified, erratum and glued forms) recognises 4 of that review's 5 latent forms (`Instrument revision` is declared
+above instead).
 WHAT THE 19 ARE (each commit's amendment text and data list read by hand -- a judgement, not a measurement):
 0 are GOVERNED-data blocks (runs made under a rule that the same commit's amendment text sets: the ordering failure
 the gate exists for). All 19 are RECORDED-data blocks: the data were produced before or beside the amendment and it
@@ -127,9 +132,13 @@ governed scorer, was CODE, which no prereg-text gate can see; 4cf8c0237 later di
 MUTATION-VERIFY. tests/test_gate_prereg_amendment_order.py::test_selftest_kills_mutants applies each listed mutant
 and requires selftest() -- the registry's only trust signal -- to FAIL on it: among them check() returning early on
 empty `paths`, the M status filter, the raw filter, the detector unwired, bold entries, GIT_INDEX_FILE, merge
-parents, the clean-auto-merge rule, the amend rule and its flag parser, prereg rename detection, the record
-exemption (removed, or applied to any label saying `record`), N3, N4, the provenance exclusion, the escape
-(removed, or matched on any line), and fail-closed for git errors and an unreadable MERGE_HEAD.
+parents, the clean-auto-merge rule, the command consulted before MERGE_HEAD (fails open on `git merge --continue`),
+the amend rule (against HEAD, or HEAD^ for an amended merge) and its flag parser (abbreviations, and option values
+including abbreviated ones and `-U`), prereg rename detection, the record exemption (removed, or applied to any
+label saying `record`), the qualified-ID rule, the qualifier stop-list, N3, N4, the provenance exclusion, the escape
+(removed, or matched on any line), and fail-closed for git errors and an unreadable MERGE_HEAD. Hook-level mutants
+(the same file, `test_real_hook_scenarios_fail_under_mutant`) show the real-hook merge, amend, `merge --continue` and
+`--mess --amend` tests each depend on their fix.
 """
 from __future__ import annotations
 
