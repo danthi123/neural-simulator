@@ -45,6 +45,12 @@ Usage (numpy backend; the corpus is untracked -- pass the full 19,971,040-byte f
   BRAIN_LEARNED_REFERENT_JUNCTION=1 ... --seed <S> --lesions none,coincidence --json <dir>/junction_s<S>.json
   python -m research.runners._lexicon_closed_class_parse_diag --score <dir> [--route <route runner out dir>]
   python -m research.runners._lexicon_closed_class_parse_diag --selftest
+  # AMENDMENT 3 (elemental partial-match edge; arms intact + the two drive-REMOVING G3' lesions):
+  BRAIN_LEARNED_REFERENT_JUNCTION=1 BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL=1 ... --seed <S> \
+      --lesions none,elemental,conjunctive --json <dir>/junction_elemental_s<S>.json
+  (score() detects variant `junction_elemental` and scores G2, G3', G4, and G1 from --route.) Every queried word
+  also records `drive` (the afferent drive into each pool per edge; the junction lexicon's `drive_of`), and every
+  arm its `mean_afferent_drive` -- G3''s drive condition.
 """
 from __future__ import annotations
 
@@ -198,6 +204,10 @@ def _parse_arm(lex, arm, gt_class, gt_pos, token_gt=None):
             queried[lw] = {"decision": dec[0], "rate_cn": rn0, "rate_cx": rx0,
                            "margin": None if (rn0 is None or rx0 is None) else rn0 - rx0,
                            "heard": int(len(lex.env.pos.get(lw, ())))}
+            # AMENDMENT 3 instrument (junction lexicon only; v2 has no drive_of): the afferent drive into each pool.
+            # Not part of the decisions hash below (that pins the 4 original fields only).
+            drive_of = getattr(lex, "drive_of", None)
+            queried[lw]["drive"] = drive_of(lw) if drive_of is not None else None
     changed = [r for r in turns if r["changed"]]
     mism = [r for r in turns if not r["match"]]
     parse_blob = json.dumps([(r["label"], r["off"], r["on"]) for r in turns], sort_keys=True).encode()
@@ -229,6 +239,10 @@ def _parse_arm(lex, arm, gt_class, gt_pos, token_gt=None):
     # reading at the SAME seed (never a cross-seed or absolute bar chosen after the fact).
     non_queried = {w: q for w, q in queried.items() if q["gt_class"] == NON and q["heard"] > 0}
     silent_non = sorted(w for w, q in non_queried.items() if q["silent"])
+    # AMENDMENT 3 (G3' drive condition): the arm mean of each afferent-drive component over the queried words that
+    # were presented (None for a lexicon without the instrument, e.g. v2).
+    drives = [q["drive"] for q in queried.values() if q.get("drive")]
+    mean_drive = ({k: float(sum(d[k] for d in drives) / len(drives)) for k in drives[0]} if drives else None)
     return {
         "arm": arm, "cap": cap,
         "n_turns": len(turns), "n_changed": len(changed), "n_mismatch": len(mism),
@@ -244,6 +258,7 @@ def _parse_arm(lex, arm, gt_class, gt_pos, token_gt=None):
         "admitted_margins": admitted_margins,
         "n_non_heard": len(non_queried), "silent_non_words": silent_non,
         "silent_non_fraction": (len(silent_non) / len(non_queried)) if non_queried else None,
+        "mean_afferent_drive": mean_drive, "n_drive_words": len(drives),
         "tom_fb_on": None if tom is None else tom["on"],
         "tom_fb_anne_kept": None if tom is None else ("anne" in tom["on"]),
         "parse_sha256": hashlib.sha256(parse_blob).hexdigest(),
@@ -282,6 +297,7 @@ def run(seed: int, corpus: str, lesions=(None,)):
     _clean_env()
     out = {"seed": seed, "variant": getattr(lex, "variant", "frame"),
            "junction_flag": os.environ.get("BRAIN_LEARNED_REFERENT_JUNCTION"),
+           "elemental_flag": os.environ.get("BRAIN_LEARNED_REFERENT_JUNCTION_ELEMENTAL"),
            "arms": arms, "build_train_s": t_build, "git_sha": _git_sha()}
     # AMENDMENT 2 (review issue #6): record the junction variant's own frozen constants on every run, so score()
     # can refuse to pool seeds that ran under different constants/code as MIXED-INPUT (below) instead of silently
@@ -292,6 +308,13 @@ def run(seed: int, corpus: str, lesions=(None,)):
                             "DRIVE_MATCH_S": J.DRIVE_MATCH_S, "OR_LESION_FACTOR": J.OR_LESION_FACTOR,
                             "OR_MATCH_FACTOR": getattr(J, "OR_MATCH_FACTOR", None),
                             "stp_enabled": getattr(J, "STP_ENABLED", None)}
+    elif out["variant"] == "junction_elemental":
+        # AMENDMENT 3: a separate branch, so the round-2 junction artifacts' constants blob is unchanged.
+        from research.runners import lexicon_frame_junction as J
+        out["constants"] = {"W_J": J.W_J, "I_TONIC_J": J.I_TONIC_J, "T_ON_J": J.T_ON_J,
+                            "DRIVE_MATCH_S": J.DRIVE_MATCH_S, "stp_enabled": J.STP_ENABLED, "elemental": True,
+                            "W_INIT_E": J.W_INIT_E, "ETA_E": J.ETA_E, "OJA_BETA_E": J.OJA_BETA_E,
+                            "ELEMENTAL_JITTER_SEED": J.ELEMENTAL_JITTER_SEED}
     # headline copy of the intact arm (the first arm) for readability
     first = arms[next(iter(arms))]
     for k in ("n_turns", "n_changed", "n_mismatch", "offending_words", "unknown_admits", "parse_sha256",
@@ -314,6 +337,98 @@ def run(seed: int, corpus: str, lesions=(None,)):
 
 EVAL_SEEDS = [42, 43, 44, 100, 101, 102]
 PRODUCTION_SEED = 42
+G4_SILENT_NON_MAX = 0.30          # AMENDMENT 2's G4 bar, unchanged by AMENDMENT 3
+ELEMENTAL_ARMS = ("intact", "elemental", "conjunctive")
+
+
+def g3prime_seed(arms):
+    """AMENDMENT 3's G3' at one seed, from the parse arms `intact`, `elemental`, `conjunctive` (pure; the dev script
+    and score() share it). G3'a: the `conjunctive` lesion (no junction can fire) raises the battery mismatch count.
+    G3'b: the `elemental` lesion raises the silent-NON fraction. Each lesion must also not RAISE the arm-mean total
+    afferent drive (it removes an edge); if either drive condition fails the seed is VOID (a bug, not a result)."""
+    from tools.lab import lever
+    a_i, a_e, a_c = arms["intact"], arms["elemental"], arms["conjunctive"]
+
+    def _total(a):
+        d = a.get("mean_afferent_drive")
+        return None if not d else d.get("total")
+    t_i, t_e, t_c = _total(a_i), _total(a_e), _total(a_c)
+    drive_ok_c = t_i is not None and t_c is not None and t_c <= t_i + 1e-9
+    drive_ok_e = t_i is not None and t_e is not None and t_e <= t_i + 1e-9
+    moved_a = bool(lever("G3'a: conjunctive lesion -> battery parse mismatches", a_i["n_mismatch"],
+                         a_c["n_mismatch"], required=False)) and a_c["n_mismatch"] > a_i["n_mismatch"]
+    s_i, s_e = a_i.get("silent_non_fraction"), a_e.get("silent_non_fraction")
+    moved_b = (s_i is not None and s_e is not None
+               and bool(lever("G3'b: elemental lesion -> silent-NON fraction", s_i, s_e, required=False))
+               and s_e > s_i)
+    void = not (drive_ok_c and drive_ok_e)
+    return {"g3a_conjunctive_raises_mismatch": moved_a, "g3b_elemental_raises_silent_non": moved_b,
+            "drive_total": {"intact": t_i, "elemental": t_e, "conjunctive": t_c},
+            "drive_not_raised": {"conjunctive": drive_ok_c, "elemental": drive_ok_e},
+            "void": void, "g3prime_pass": bool(moved_a and moved_b and not void),
+            "mismatch": {"intact": a_i["n_mismatch"], "elemental": a_e["n_mismatch"],
+                         "conjunctive": a_c["n_mismatch"]},
+            "silent_non_fraction": {"intact": s_i, "elemental": s_e, "conjunctive": a_c.get("silent_non_fraction")}}
+
+
+def _score_elemental(M, route_dir):
+    """AMENDMENT 3 scoring of the `junction_elemental` variant: G2 (unchanged), G3' (replaces G3), G4 (AMENDMENT 2,
+    every seed), G1 from the route runner's own verdict when `route_dir` is given."""
+    complete = (len(M) == len(EVAL_SEEDS)
+                and all(d.get("variant") == "junction_elemental" and set(ELEMENTAL_ARMS) <= set(d["arms"])
+                        for d in M.values()))
+    rows = {}
+    for s, d in M.items():
+        arms = d["arms"]
+        a_i = arms.get("intact")
+        row = {"g2_pass": a_i is not None and a_i["n_mismatch"] == 0,
+               "intact_mismatch": None if a_i is None else a_i["n_mismatch"],
+               "offending": None if a_i is None else a_i["offending_words"],
+               "silent_non_fraction": None if a_i is None else a_i.get("silent_non_fraction"),
+               "tom_fb_anne_kept": None if a_i is None else a_i["tom_fb_anne_kept"]}
+        sf = row["silent_non_fraction"]
+        row["g4_pass"] = sf is not None and sf <= G4_SILENT_NON_MAX
+        row["g3prime"] = g3prime_seed(arms) if set(ELEMENTAL_ARMS) <= set(arms) else None
+        row["g3prime_pass"] = bool(row["g3prime"] and row["g3prime"]["g3prime_pass"])
+        rows[s] = row
+    n_g2 = sum(r["g2_pass"] for r in rows.values())
+    n_g3 = sum(r["g3prime_pass"] for r in rows.values())
+    n_g4 = sum(r["g4_pass"] for r in rows.values())
+    g2 = bool(rows.get(PRODUCTION_SEED, {}).get("g2_pass")) and n_g2 >= 5
+    g3 = n_g3 >= 5
+    g4 = n_g4 == len(EVAL_SEEDS)
+    return complete, rows, (n_g2, g2), (n_g3, g3), (n_g4, g4)
+
+
+def _score_with_elemental(M, variants, route_dir):
+    """score() for AMENDMENT 3's `junction_elemental` runs: the same provenance / MIXED-INPUT / G1 logic as the
+    junction path, G2 + G3' + G4 as pre-registered. A mix of variants across seeds is MIXED-INPUT."""
+    complete, rows, g2t, g3t, g4t = _score_elemental(M, route_dir)
+    inputs_required = sorted({(d.get("corpus_sha256"), d.get("fixture_sha256"), d.get("corpus_pos_map_sha256"),
+                              d.get("closed_class_sha256")) for d in M.values()}, key=str)
+    inputs = sorted({(d.get("corpus_sha256"), d.get("fixture_sha256"), d.get("corpus_pos_map_sha256"),
+                      d.get("closed_class_sha256"), d.get("token_fixture_sha256"),
+                      json.dumps(d.get("constants"), sort_keys=True) if d.get("constants") else None,
+                      d.get("git_sha")) for d in M.values()}, key=str)
+    one_input = (len(variants) == 1 and len(inputs_required) == 1 and None not in inputs_required[0]
+                 and len(inputs) == 1)
+    g1 = None
+    if route_dir:
+        vpath = os.path.join(route_dir, "verdict.json")
+        if os.path.exists(vpath):
+            rv = json.load(open(vpath))
+            g1 = rv.get("verdict") == "GO"
+            route_corpus = {tuple(i)[1] for i in rv.get("inputs", [])}
+            if one_input and route_corpus != {inputs[0][0]}:
+                one_input = False
+    passed = g2t[1] and g3t[1] and g4t[1]
+    verdict = ("INCOMPLETE" if (not complete or (route_dir is not None and g1 is None))
+               else "MIXED-INPUT" if not one_input
+               else ("GO" if (passed and (g1 if route_dir else False)) else
+                     ("G2+G3'+G4 PASS, G1 NOT SCORED" if (passed and not route_dir) else "NO-GO")))
+    return {"verdict": verdict, "variant": "junction_elemental", "complete_6seed": complete, "one_input": one_input,
+            "G1_route_go": g1, "G2_parse_match": g2t, "G3prime_dissociation": g3t, "G4_silent_non": g4t,
+            "per_seed": rows, "inputs": [list(i) for i in inputs]}
 
 
 def score(src, route_dir=None):
@@ -333,6 +448,9 @@ def score(src, route_dir=None):
         if "arms" in d:
             per[int(d["seed"])] = d
     M = {s: per[s] for s in EVAL_SEEDS if s in per}
+    variants = {d.get("variant") for d in M.values()}
+    if "junction_elemental" in variants:
+        return _score_with_elemental(M, variants, route_dir)
     complete = (len(M) == len(EVAL_SEEDS)
                 and all(d.get("variant") == "junction" and {"intact", "coincidence"} <= set(d["arms"])
                         for d in M.values()))
