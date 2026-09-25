@@ -1,0 +1,87 @@
+{
+ "probe": "affect_marker_settle_congruence_wiring",
+ "amendment": "Amendment 2 (2026-09-25)",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_valid": 6,
+ "byte_identical_off": true,
+ "valence_half": "UNTESTED",
+ "non_vacuous": true,
+ "non_vacuous_instances": [
+  "s42/mt_emo2",
+  "s42/mt_neg1",
+  "s42/mt_emo3",
+  "s43/mt_emo2",
+  "s43/mt_neg1",
+  "s43/mt_emo3",
+  "s44/mt_emo1",
+  "s44/mt_emo2",
+  "s44/mt_neg1",
+  "s44/mt_emo3",
+  "s100/mt_emo1",
+  "s100/mt_emo2",
+  "s100/mt_emo3",
+  "s101/mt_emo1",
+  "s101/mt_emo2",
+  "s101/mt_neg1",
+  "s101/mt_emo3",
+  "s102/mt_emo1",
+  "s102/mt_emo2",
+  "s102/mt_neg1",
+  "s102/mt_emo3"
+ ],
+ "attribution_problems": [],
+ "status": "UNDEFINED",
+ "go": false,
+ "per_seed": {
+  "42": {
+   "seed": 42,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  },
+  "43": {
+   "seed": 43,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  },
+  "44": {
+   "seed": 44,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  },
+  "100": {
+   "seed": 100,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  },
+  "101": {
+   "seed": 101,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  },
+  "102": {
+   "seed": 102,
+   "valid": true,
+   "problems": [],
+   "byte_identical_off": true,
+   "byte_identical_off_diffs": []
+  }
+ },
+ "rule": "GO iff byte-identical-off holds on every valid seed AND both Gate-B signs are exercised AND the gate suppresses >=1 real production marker AND every suppression's declared reason matches its turn's own abstained/valence-sign fields. NO-GO iff preconditions+non-vacuous+valence-half hold but an attribution mismatch is found. UNDEFINED otherwise."
+}

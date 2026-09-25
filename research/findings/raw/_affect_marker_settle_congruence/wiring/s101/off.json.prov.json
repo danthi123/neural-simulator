@@ -1,0 +1,40 @@
+{
+ "run_id": "1790371063-3712466",
+ "runner": "research/runners/_affect_marker_settle_congruence.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/5b5ea1b7447b24d0978189fb53557a57b88952d4/research/runners/_affect_marker_settle_congruence.py",
+  "--worker-wiring",
+  "--env",
+  "{\"BRAIN_AFFECT_MARKER_CONGRUENCE\": \"0\"}",
+  "--out",
+  "research/findings/raw/_affect_marker_settle_congruence/wiring/s101/off.json"
+ ],
+ "git_sha": "5b5ea1b7447b24d0978189fb53557a57b88952d4",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "629241abc80936a500934dc1733cc014433515a33d7b3b75d8f8b276a5f39468",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T17:17:43",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790369868164660702-8806",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "8",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790369868-3692764",
+  "BRAIN_CHAT_SEED": "101"
+ },
+ "host": "node-dl4g243",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_settle_congruence/wiring/s101/off.json"
+}

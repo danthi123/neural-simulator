@@ -1,0 +1,32 @@
+{
+ "run_id": "1790374394-209975",
+ "runner": "research/runners/_affect_marker_settle_congruence.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_affect_marker_settle_congruence.py",
+  "--score-wiring",
+  "--raw-dir",
+  "research/findings/raw/_affect_marker_settle_congruence/wiring",
+  "--seeds",
+  "42 43 44 100 101 102",
+  "--out",
+  "research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json"
+ ],
+ "git_sha": "c47641840",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T18:13:14",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5904.8,
+ "corpus_check_query": "a told fact is recallable at once but encoded too weakly to be replayed: encoding strength set by the seed not importance",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json"
+}
