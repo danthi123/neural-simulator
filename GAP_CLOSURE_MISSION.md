@@ -88,6 +88,9 @@ B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the w
    60K, 2.6 GB VRAM headroom; tools/local_llm/default_profile = qwen38-27b-iq4nl-mtp. Devstral hit a separate
    grammar-parse error (400 'failed to parse grammar'), so it is untested, not failed.
    When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
+   06:15: slot-binder sizing done (branch research/slotbinder-gate-sizing @ 835fc252e, held for the wave-3 review of the
+   progress-logging base): N=8/32 GO, N=128 NOT-YET only on parity_1_0 (the FHRR reference errs at scale; SlotBinder was
+   right in all 3 mismatches); budget 10 min/seed -> N=32 (3.6 min); 6-seed N=32 battery queued on the GPU (seed 42 running).
 6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
 
 **🟢 UPDATE 01:25 (2026-09-25) — main 5ddff4934. RESUME HERE (the 00:45 block below still holds).**
