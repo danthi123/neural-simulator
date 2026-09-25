@@ -39,11 +39,21 @@ WORLD CLOCK (the environment -- legitimate host code). `BRAIN_DA_TAG_CAPTURE_CLO
           turn lasts exactly 30 s whatever the machine's compute time, so a battery arm on a slow pool machine and one
           on a fast box see the same world. Used by the load-bearing battery probe.
 `advance_world_clock_h(h)` is the environment jump (the battery's simulated night). Never called in production.
+WALL-CLOCK SEAM (branch research/pair-production-path-arms, 2026-09-25; review B3 of
+research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md): the "wall" clock reads `_wall_now()`,
+which is `time.time()` unless the ENVIRONMENT installed another source with `set_wall_clock(fn)`. Production never
+calls it (so the wall path is byte-identical: `time.time()` read at the same two sites). The battery's virtual-day world
+steps install a deterministic virtual wall clock so a wall-clock arm on numpy is reproducible and machine-speed-free.
 
 DETERMINISM. The D1 reader's first build and every D1 read run inside `_private_rng(seed, k)`: the global numpy +
 python RNG state is saved, seeded from (seed, k), and restored -- so the ledger never perturbs another organ's RNG
-stream and two builds at one seed read identical D1 rates (numpy backend: exact; on cupy the cupy global stream is also
-reseeded and cannot be restored -- flag-ON only, declared). The reader itself is built in an ISOLATED cache namespace
+stream and two builds at one seed read identical D1 rates (numpy backend: exact). On cupy (branch
+research/pair-production-path-arms, review D3) the cupy global RandomState object of the current device is SWAPPED for a
+private one seeded from (seed, k) and the original object is put back on exit, so the cupy stream every other organ
+draws from is left exactly where it was (before this fix it was reseeded and never restored). The draws inside the
+context are the same as before (a fresh RandomState(s) and a reseed to s give one stream).
+`BRAIN_DA_TAG_CAPTURE_CUPY_NO_RESTORE=1` (default OFF, measurement-only) reproduces the pre-fix reseed, so a cupy arm can
+measure the drift the fix removes. Numpy: the cupy branch is never entered. The reader itself is built in an ISOLATED cache namespace
 (`SpikingD1Activation(..., isolated=True)` -> `_da_write_gain_spiking_derisk._get_isolated_reader`), not the shared
 one production's `BRAIN_DA_ENCODING_SPIKING_GAIN` read populates -- see that function's docstring for the 2026-09-23
 fix (review v2:dd14adaf7): sharing the production cache made gamma/d1_a_go track which arm happened to build the
@@ -79,6 +89,25 @@ from webapp.da_tag_capture import (_DA_TONIC, SpikingD1Activation, SynapticTagCa
 TURN_DRIVE_H = 30.0 / 3600.0      # == research/runners/_da_encoding_natural_drive_persistence.TURN_H (v3)
 D1_READER_SEED = 42               # the production write-gain reader seed (as in the v3 runner)
 _WORLD_OFFSET_H = 0.0             # environment clock jump; only the battery's scripted night moves it
+_WALL_CLOCK = None                # environment wall-clock source (seconds); None -> time.time (production)
+
+
+def set_wall_clock(fn):
+    """ENVIRONMENT seam: make the "wall" clock read `fn()` (seconds) instead of `time.time()`. `None` restores
+    `time.time`. Returns the previous source. Never called in production."""
+    global _WALL_CLOCK
+    prev = _WALL_CLOCK
+    _WALL_CLOCK = fn
+    return prev
+
+
+def _wall_now() -> float:
+    return time.time() if _WALL_CLOCK is None else float(_WALL_CLOCK())
+
+
+def _cupy_no_restore() -> bool:
+    """`BRAIN_DA_TAG_CAPTURE_CUPY_NO_RESTORE` (default OFF, measurement-only): reproduce the pre-fix cupy reseed."""
+    return os.environ.get("BRAIN_DA_TAG_CAPTURE_CUPY_NO_RESTORE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def _replay_capture_enabled() -> bool:
@@ -131,7 +160,8 @@ def mark_awake(chat) -> Optional[float]:
 
 
 class _private_rng:
-    """Save the global numpy + python RNG, seed a private stream from (seed, k), restore on exit."""
+    """Save the global numpy + python RNG, seed a private stream from (seed, k), restore on exit. On a cupy backend the
+    device's global RandomState object is swapped for a private one and put back on exit (see DETERMINISM above)."""
 
     def __init__(self, seed: int, k: int):
         self.s = (int(seed) * 1000003 + int(k) * 7919 + 17) % (2 ** 32)
@@ -140,13 +170,22 @@ class _private_rng:
         import random as _random
         self._np = np.random.get_state()
         self._py = _random.getstate()
+        self._xp = None
+        self._xp_rs = None
         np.random.seed(self.s)
         _random.seed(self.s)
         try:
             from sim.backend import get_backend
             xp, _ = get_backend()
             if xp is not np and hasattr(xp, "random"):
-                xp.random.seed(self.s)
+                xr = xp.random
+                if (not _cupy_no_restore() and hasattr(xr, "get_random_state") and hasattr(xr, "set_random_state")
+                        and hasattr(xr, "RandomState")):
+                    self._xp_rs = xr.get_random_state()          # the object other organs draw from, untouched
+                    xr.set_random_state(xr.RandomState(self.s))
+                    self._xp = xp
+                else:
+                    xr.seed(self.s)                               # pre-fix behaviour (declared; measurement knob)
         except Exception:
             pass
         return self
@@ -155,6 +194,11 @@ class _private_rng:
         import random as _random
         np.random.set_state(self._np)
         _random.setstate(self._py)
+        if self._xp is not None:
+            try:
+                self._xp.random.set_random_state(self._xp_rs)
+            except Exception:
+                pass
         return False
 
 
@@ -175,7 +219,7 @@ class ChatTagCapture:
         self.ledger = SynapticTagCaptureLedger(self.seed, gamma=self.gamma, d1=self.d1,
                                                block_offset=len(comp.store_conns) // comp.D)
         self.mode = clock_mode()
-        self.t0_wall = time.time()
+        self.t0_wall = _wall_now()
         self.t0_offset = _WORLD_OFFSET_H
         self.n_turns = 0
         self.t_turn = 0.0
@@ -184,7 +228,7 @@ class ChatTagCapture:
         jump = _WORLD_OFFSET_H - self.t0_offset
         if self.mode == "turn":
             return self.n_turns * TURN_DRIVE_H + jump
-        return (time.time() - self.t0_wall) / 3600.0 + jump
+        return (_wall_now() - self.t0_wall) / 3600.0 + jump
 
     def _catch_up(self, comp, t: float) -> None:
         # SLEEP-REPLAY CAPTURE (default-OFF `BRAIN_SLEEP_REPLAY_CAPTURE`, webapp/sleep_replay_capture.py): before the

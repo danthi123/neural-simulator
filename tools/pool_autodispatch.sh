@@ -405,9 +405,19 @@ pop_job() {
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
   # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
   # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
-  local max_gb="${1:-999}" cand sha
+  local max_gb="${1:-999}" cand sha want_node
   while IFS= read -r cand; do
     [ "$(job_est_gb "$cand")" -le "$max_gb" ] || continue
+    # NODE CONSTRAINT (2026-09-25, B2b torn-cell re-run safety: research/coordination/b2b0924_reruns.tsv). A line
+    # may declare `pool_node=<name>` anywhere in its text -- typically in the --checked reason, alongside
+    # mem_gb=N, the same way that token is already read "anywhere in the line" (see job_est_gb above) -- to
+    # require that ONLY that node may pop it. Use case: re-running a cell on a host DIFFERENT from the one whose
+    # torn dispatcher-fragment first executed it (A1.4(b) of the B2b prereg's Amendment 2), without falling back
+    # to a manual, unlogged ssh launch. OPT-IN: a line with no token is scanned exactly as before. `continue`
+    # past a mismatch (leaving it queued for its named node), the same shape as the revision-dir skip below --
+    # never popped-and-lost for a node it does not name.
+    want_node=$(printf '%s' "$cand" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
+    if [ -n "$want_node" ] && [ -n "$node" ] && [ "$want_node" != "$node" ]; then continue; fi
     # REVISION-DIR SEAM (2026-09-23 fix round). A job pinned to `cd ~/derisk-pool/revisions/<sha>` must never be
     # popped for a node that does not have that revision -- that would remove it from the queue (below) with no
     # node able to run it, i.e. lose it. `continue` past it (leaving it in the queue) and keep scanning for a

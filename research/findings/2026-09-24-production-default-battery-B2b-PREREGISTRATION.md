@@ -289,6 +289,15 @@ b2b0924-base lines are still fresh in the queue, and records every add in
 b2b0924-base line is checked to start with `cd ~/derisk-pool/revisions/<F> && ` and to end with `/lb.json  #checked:`,
 which catches the torn-line class that hit B2a.
 
+**Correction (2026-09-25, per `research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md` "Findings at risk"
+item 4):** the claim just above, that this shape check "catches the torn-line class that hit B2a," is wrong. The
+tearing happens at `pop_job`'s READ (the pre-096dfdae0 stdin-drain bug), never in the queued line itself, so this
+check -- which only ever sees the intact, correctly-shaped line already sitting in `pool.queue` -- cannot see a
+fragment that pop_job never wrote back to the queue at all. It catches a different defect (a malformed line staged
+by a human/script), not this one. The actual defect is fixed at its source in `096dfdae0` (`ssh -n` in
+`revision_available`) and guarded going forward by `tools/queue_job_shape_check.sh` at enqueue time plus
+`check_fast_fail` at dispatch time (both merged to main 2026-09-25).
+
 ### A1.9 Comparison with B2a (amends "Reported")
 
 Items (i) and (ii) stand, for the base arm only. A B2a cell enters the comparison only if its sidecars meet A1.2 rules
@@ -305,3 +314,35 @@ Reporting the #1 metric, the lesion-verified load-bearing fraction, at F over th
 over n_exercised, its mean and SD, the robust core, the union, and each faculty's count. Nothing more. It licenses no
 default flip and says nothing about BRAIN_LEARNED_REFERENT_LEXICON. A FAIL names each row that the shipped revision
 cannot measure as registered; each is a defect at F for that row's lane.
+
+## Amendment 2 (2026-09-25, written after `research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md`, before any redo)
+
+**Owner note:** the owner approved this class of fix "as recommended" and asked for "a one-line amendment"; this
+entry runs longer than one line because it also has to state the re-run's launch path and the disposition of the
+already-banked same-host verdicts, both needed for a later reader to trust the redo. Flagging the length here for
+awareness rather than shortening it at the cost of leaving those two facts unstated.
+
+A dispatcher-popped command fragment (the pre-096dfdae0 stdin-drain bug that audit describes) that ran a real
+load-bearing measurement and wrote a cell -- claims 1627, 1631 and 1635 there, for `s43/d5-consolidate`,
+`s42/causal-whatif` and `s42/affect-appraisal-interoceptive` -- is a torn attempt under A1.3: class E (its sidecar
+fails A1.2 rule 1, wrong `git_sha` in an unpinned `~/derisk-pool/sim` tree), so it counts as the cell's FIRST
+attempt, not as a line that "never ran." Each cell's registered full line then ran, unaltered, on the SAME host as
+its fragment (pool2, pool1, pool2 respectively) -- that is an invalid same-host re-run under A1.4(b), which requires
+"never the host of the first attempt." This adopts Reading 1 of that audit's "Findings at risk" item 1: each of
+these three cells needs one more re-run, on a host different from its own fragment's, logged in
+`research/coordination/b2b0924_reruns.tsv`. For this dispatcher-accident class specifically, the re-run may be
+QUEUED with the `pool_node=<name>` constraint (`tools/pool_autodispatch.sh`'s `pop_job`, added 2026-09-25) rather
+than run by direct ssh, since the dispatcher can now pin a host; A1.4(b)'s memory guard
+(`bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 --`) is kept in front of the job's `env` prefix regardless of
+which path launches it.
+
+The three same-host F verdicts this amendment voids (claims 1852, 1806, 1810 -- `pass`/`regressed`/`regressed` as
+read from their banked `lb.json`) were already on disk when this amendment was written. They are kept (moved aside
+per A1.4(a), never deleted) and reported as what they are -- an invalid same-host re-run, not a second data point --
+whatever the redo itself reads; they are never scored into the aggregate.
+
+A1.4(a)'s move destination for a cell's first attempt is `_b2b0924_attempt1/...`. For these three cells specifically,
+that path holds the voided SAME-HOST F run (the thing this amendment invalidates), not the fragment -- the fragment
+is the true first attempt under this amendment's own reasoning above, and its evidence is preserved separately and
+durably at `research/findings/raw/_dispatcher_fragment_audit/node_evidence/` (the audit's own committed record), not
+moved into `_b2b0924_attempt1/`.

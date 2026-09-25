@@ -1,0 +1,101 @@
+# B2b torn-cell redo: exact commands for the orchestrator (owner-approved 2026-09-25, "approved as recommended").
+# PREPARED, NOT RUN by the branches that authored this file (research/b2b-torn-cells-redo,
+# research/b2b-torn-cells-redo-final): live research/queue/*, the dispatcher/pool-sync services and the pool
+# nodes are out of scope for a worktree-isolated session. Run these from the PRIMARY checkout
+# (/home/dant123/Projects/sim), in order, AFTER merging this branch.
+#
+# Background: research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md found that a dispatcher-popped command
+# fragment (pre-096dfdae0 stdin-drain bug) ran a real load-bearing measurement for each of these 3 cells, on the
+# SAME host as the full line that later (correctly) measured them at F. Prereg Amendment 2 (2026-09-24 B2b
+# PREREGISTRATION doc) classifies the fragment as the cell's first attempt (class E) -- so the same-host full run
+# is an invalid re-run under A1.4(b), which requires a host different from the first attempt. Each cell needs one
+# more re-run, on a genuinely different host, before the aggregate is scored.
+#
+# NODE STATUS AT WRITE TIME (2026-09-25, this fix round): pool40 may be down; pool41/pool42 (mini-PCs) are up;
+# AWS pool1/pool2 are STOPPED. The redo lines below are pinned to pool41/pool42 accordingly -- pool1/pool2 (the
+# two hosts each fragment ran on) are excluded by construction, so this also happens to satisfy "different host"
+# even once AWS is back up.
+
+# ---- STEP 1: move the current banked cell aside on ALL copies (A1.4(a)) -- the local primary checkout, the
+# node's PINNED revision dir it was scored from, AND the node's UNPINNED ~/derisk-pool/sim tree (the fragment's
+# OWN leftover output). 2026-09-25 review MEDIUM: the fragment audit's "Findings at risk" item 3 found these
+# three cells' fragment output still sitting in pool1's/pool2's unpinned trees, and tools/pool_sync.sh pulls
+# BOTH the unpinned tree and every ~/derisk-pool/revisions/*/research/findings/raw/ tree into the SAME local
+# path (pool_sync.sh:70,128-149) -- so leaving either node copy in place lets the next ~15-min pool-sync.timer
+# cycle silently resurrect it under the local path Step 1's own move just emptied.
+#
+# ORDER CLOSES THE RACE (no service needs to be stopped): do BOTH node-side moves (1a, 1b) before the local move
+# (1c). rsync -au only ever copies a file back when it is MISSING locally and still PRESENT on a node; moving the
+# node copies away first means that by the time the local copy disappears (1c), nothing remote can repopulate it,
+# whatever pool-sync.timer's cadence happens to be. (An equally valid alternative, if preferred:
+# `systemctl --user stop pool-sync.timer`, do 1a-1c in any order, `systemctl --user start pool-sync.timer`.)
+#
+# The fragment's own lb.json + sidecar (moved aside in 1b) are NOT the only copy of that evidence -- the audit
+# already committed them durably at research/findings/raw/_dispatcher_fragment_audit/node_evidence/pool{1,2}/... --
+# so 1b is node hygiene, matching that finding's own note ("the owner may remove those ... whenever convenient").
+# Moved aside here (never deleted), consistent with this procedure's kept-not-deleted rule throughout.
+
+# 1a. Node side, PINNED revision dir (the copy the invalid same-host F run actually used):
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43/d5-consolidate'
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool1 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/causal-whatif'
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/affect-appraisal-interoceptive'
+
+# 1b. Node side, UNPINNED ~/derisk-pool/sim tree (the fragment's own output; `|| true` on the `[ -d ... ]` guard
+# because a node may have already been cleaned up by hand -- this step must be idempotent, never fail the batch):
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/sim && mkdir -p research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s43 research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s42 && { [ -d research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate ] && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s43/d5-consolidate || true; }; { [ -d research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive ] && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s42/affect-appraisal-interoceptive || true; }'
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool1 'cd ~/derisk-pool/sim && mkdir -p research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s42 && { [ -d research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif ] && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif research/findings/raw/_load_bearing/_b2b0924_fragment_node_copy/b2b0924-base/s42/causal-whatif || true; }'
+
+# 1c. Local (primary checkout) -- LAST, per the ordering note above:
+mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43
+mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43/d5-consolidate
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/causal-whatif
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/affect-appraisal-interoceptive
+
+# ---- STEP 2 (MANDATORY, not conditional -- 2026-09-25 review MEDIUM): restart the dispatcher so pop_job's
+# pool_node= constraint (this branch) is definitely the code actually running before ANY redo line is queued. A
+# dispatcher process already running from before this merge has the OLD pop_job in its memory image (bash does
+# not hot-reload a sourced/running script) and would ignore pool_node= entirely -- a redo queued under a stale
+# dispatcher could land right back on its own fragment's host, silently invalidating the redo again.
+
+systemctl --user restart pool-dispatch.service
+
+# Verify BOTH before Step 3 -- either alone can mislead (the unit can restart from a checkout whose file lacks
+# the change; the file can carry the change without the service having restarted since):
+systemctl --user show -p ExecMainStartTimestamp --value pool-dispatch.service
+#   ^ must be AFTER this branch's merge commit time
+grep -c 'want_node' tools/pool_autodispatch.sh
+#   ^ must be >= 1 -- confirms the checkout the service just (re)started from has pop_job's node constraint
+
+# ---- STEP 3: queue the three redo lines (unaltered job text from cd to --out, plus the A1.4(b) memory guard and
+# the pool_node= constraint so each can ONLY land on a host different from its own fragment's).
+#
+# FRONT=1 (2026-09-25 review MEDIUM, liveness): pool.running shows only 3 of 254 prior b2b0924-base dispatches
+# ever went to pool41/pool42 -- first-fit (tools/pool_autodispatch.sh:239-246) keeps handing a busy mini-PC every
+# smaller line ahead of these instead, so appended at the tail they risk sitting past POOL_JOB_MAX_AGE (12 h,
+# A1.8) and never running. FRONT=1 puts each at the head of the queue instead (an existing pool_queue.sh add
+# option, unrelated to the ordering in Step 1/1a-1c above). AWS pool1/pool2 are stopped at write time, so pinning
+# to the OTHER AWS node (the review's alternative fix) is not available right now.
+
+FRONT=1 bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only d5-consolidate --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s43/d5-consolidate, different host than the pool2 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool41; mem_gb=8'
+
+FRONT=1 bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only causal-whatif --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s42/causal-whatif, different host than the pool1 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool42; mem_gb=8'
+
+FRONT=1 bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-appraisal-interoceptive --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s42/affect-appraisal-interoceptive, different host than the pool2 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool41; mem_gb=8'
+
+# ---- STEP 3b: b2b_queue_next_wave.sh --status (or a fresh --dry-run/queue call) would otherwise misreport these
+# three lines as "malformed (torn / wrong pin / wrong reason)", because check_queued_lines only recognised
+# Amendment 1's --checked reason (2026-09-25 review LOW; fixed in this branch to accept either reason) -- no
+# action needed here, just do not treat that script's OLD behaviour as a signal something is wrong with the redo.
+
+# ---- STEP 4: once each redo's lb.json lands, fill in the PENDING columns of research/coordination/b2b0924_reruns.tsv
+# (rerun_start_time from dispatch.log / the sidecar's start time, rerun_result from the cell's verdict).
+#
+# If `bash tools/mem_ok.sh 8 2` refuses when a line pops (node memory dropped between dispatch and launch), the
+# job exits before the runner starts: a dispatch record exists but no lb.json ever will for that attempt. The
+# prereg's A1.4(c) ("never reached a node") was written for a stale/lost queue line, not this case (there IS a
+# dispatch record), and A1.4 does not otherwise say whether a memory-guard refusal consumes the cell's one re-run
+# -- do not assume either reading; flag it to the owner and re-queue only after that call.

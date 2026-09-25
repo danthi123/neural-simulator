@@ -58,11 +58,29 @@ echo "[b2b-wave] $TAG: fresh-queued=$fresh stale-queued=$stale dispatched-ever=$
 [ "$stale" -gt 0 ] && echo "[b2b-wave] ⚠ $stale stale $TAG line(s) will never dispatch -- apply prereg A1.4 (c)" >&2
 
 check_queued_lines() {
-  # Every queued b2b0924-base line must be whole: pinned cd at the head, lb.json + the checked reason at the tail.
-  local bad
+  # Every queued b2b0924-base line must be whole: pinned cd at the head, lb.json + a recognised checked reason at
+  # the tail. Accepts EITHER Amendment 1's fixed REASON (the base-arm wave lines) OR any reason beginning with
+  # Amendment 2's shared prefix (2026-09-25 review LOW: a torn-cell REDO line's reason is per-cell -- it names
+  # the specific fragment claim and host, so it can never match one fixed REASON string -- matching Amendment 2's
+  # own shared, distinctive prefix instead avoids this script reporting a valid, differently-worded redo line as
+  # a false "malformed (torn / wrong pin / wrong reason)" alarm; see
+  # research/coordination/b2b0924_reruns_commands.txt for the exact redo lines this must accept).
+  local bad amendment2_prefix="prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F ${F:0:9}) AMENDMENT 2;"
   bad=$(awk -F'\t' -v t="/_shards/$TAG/" 'NF>1 && index($2,t)' "$Q" | cut -f2- \
-        | awk -v head="cd ~/derisk-pool/revisions/$F && " -v tail="/lb.json  #checked:$REASON" \
-              'index($0,head)!=1 || substr($0, length($0)-length(tail)+1) != tail' | wc -l)
+        | awk -v head="cd ~/derisk-pool/revisions/$F && " -v marker="/lb.json  #checked:" \
+              -v reason1="$REASON" -v a2prefix="$amendment2_prefix" '
+          {
+            ok = 0
+            if (index($0, head) == 1) {
+              midx = index($0, marker)
+              if (midx > 0) {
+                reason = substr($0, midx + length(marker))
+                if (reason == reason1) ok = 1
+                else if (index(reason, a2prefix) == 1) ok = 1
+              }
+            }
+            if (!ok) print
+          }' | wc -l)
   if [ "$bad" -gt 0 ]; then
     echo "[b2b-wave] ⛔ $bad queued $TAG line(s) are malformed (torn / wrong pin / wrong reason)" >&2; return 1
   fi

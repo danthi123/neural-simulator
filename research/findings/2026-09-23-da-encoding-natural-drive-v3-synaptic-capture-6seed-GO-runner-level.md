@@ -49,7 +49,7 @@ found in v2 (`2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level
 | 43 | 0.798 | 0.411 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.060 / 0.0066 |
 | 44 | 0.897 | 0.413 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.068 / 0.0038 |
 | 100 | 0.897 | 0.335 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.070 / 0.0030 |
-| 101 | 0.897 | 0.573 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.067 / 0.0030 |
+| 101 | 0.897 | 0.573 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.066 / 0.0030 |
 | 102 | 0.792 | 0.196 | 4/4 | 0/4 | 0/4 | 0/4 | 4/4 / 4/4 | 0.056 / 0.0036 |
 
 - **All six seeds GO; the aggregate is GO.** No seed UNDEFINED. With the seed as the unit (the four facts of one
@@ -119,3 +119,7 @@ was informative in the kernel sense but, on this drive, only seed 42's neutral c
 3. The other late-phase routes (repetition-triggered PRP, sleep replay) so ordinary facts that matter are kept, and
    PRP competition between tagged synapses (Fonseca et al. 2004).
 4. Move the per-synapse late-phase state into the spiking substrate's own synapse kernel.
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- Seed 101 "salient PRP max (intact)": 0.067 -> 0.066 (`gates.salient_p_max_intact` = 0.066491, from `research/findings/raw/_da_encoding_natural_drive_v3/seed101.json`); does not change any verdict or the "0.056-0.070 intact" range quoted elsewhere in this document (0.066 is still inside that range, and no gate in `aggregate.json` reads this field). <!--derived-->

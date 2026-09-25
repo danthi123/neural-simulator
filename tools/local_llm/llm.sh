@@ -178,7 +178,11 @@ cmd_claude() {
   ctx="${CLAUDE_CODE_MAX_CONTEXT_TOKENS:-$(served_ctx)}"
   [ -n "$ctx" ] && ctxenv=("CLAUDE_CODE_MAX_CONTEXT_TOKENS=$ctx")
   if [ "${LLM_CLAUDE_FULL:-0}" != 1 ]; then
-    trim=(--strict-mcp-config --settings '{"enabledPlugins":{"bio-research@inline":false}}'
+    # claude_local_settings.json: the bio-research plugin off (trim) + pre-approved runbook commands and explicit denies
+    # (no --no-verify / force-push / merge / AWS / sim/ webapp/ tools/gates/ edits), so a session following
+    # research/coordination/LOCAL_LLM_RUNBOOK.md is not stalled by a permission prompt for `bash tools/status.sh`
+    # (the 2026-09-25 live test was: every command was permission-blocked in -p mode).
+    trim=(--strict-mcp-config --settings "$HERE/claude_local_settings.json"
           --disallowedTools WebSearch ReportFindings)
   fi
   env "${ctxenv[@]}" \

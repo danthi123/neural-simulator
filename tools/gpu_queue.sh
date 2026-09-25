@@ -94,6 +94,15 @@ LLM_UNIT="local-llm"
 LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # CONTENTS = the profile to restore; presence == "gpu_queue stopped it; restore when idle"
 LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}        # TEST-ONLY override (shared name with llm.sh); NEVER set in production
 export LOCAL_LLM_SYSTEMCTL                                   # llm.sh (invoked as a subprocess below) must see the same stub
+# The dispatcher runs as a SYSTEM unit (gpu-queue-dispatch.service, User=dant123) whose environment has no
+# XDG_RUNTIME_DIR / DBUS_SESSION_BUS_ADDRESS, so every `systemctl --user` call failed ("Failed to connect to user
+# scope bus") and llm_is_active() read the live local model as inactive: the autoswap never stopped it and the
+# queued job waited forever for VRAM (caught live 2026-09-25 17:12; the stubbed tests could not see it). Point
+# the user-bus variables at this user's own runtime dir when they are unset (exported, so llm.sh sees them too).
+if [ -z "${XDG_RUNTIME_DIR:-}" ] && [ -d "/run/user/$(id -u)" ]; then export XDG_RUNTIME_DIR="/run/user/$(id -u)"; fi
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && [ -S "${XDG_RUNTIME_DIR:-/nonexistent}/bus" ]; then
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+fi
 
 llm_is_active() { "$LOCAL_LLM_SYSTEMCTL" --user is-active --quiet "$LLM_UNIT" 2>/dev/null; }
 

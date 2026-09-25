@@ -394,6 +394,177 @@ _EXTRA_TURNS += (_arc_group("datr", _DATC_NEUTRAL, [("rest", _WORLD_AWAKE_REST)]
 _AWAKE_STEP_KINDS = {"awake_4h": (4.0, None), "awake_3h": (3.0, None), "awake_rest_4h": (4.0, 5.0 / 60.0),
                      "awake_rest_hourly_4h": (4.0, 1.0), "awake_rest_1h": (1.0, 5.0 / 60.0)}
 
+# ── PAIR PRODUCTION-PATH GROUPS (label-only; research/runners/_da_tag_capture_chat_probe.py --family pp / sn, branch
+# research/pair-production-path-arms; gates in the sleep-replay-capture PREREGISTRATION, Amendment 7; review items
+# B3/B4 of research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md) ─────────────────────────────
+# 'wd' A REALISTIC DAY ON THE WALL CLOCK. The tag-capture ledger's default "wall" clock reads the ENVIRONMENT's virtual
+# wall clock (`_VWALL`, installed by the group's first step through webapp.da_tag_capture_chat.set_wall_clock): a turn
+# takes no virtual time, and every gap between turns is an idle interval the continuous engine ticks through at the
+# SERVER'S OWN cadence (a tick every IDLE_SEC after the last request, as webapp/server.py's loop does), thinned to one
+# tick per hour after the first hour of an idle stretch (by then the mood has relaxed to RELAX^180 of its start, the
+# wander budget is spent and the Turrigiano pass has run; the ledger is event-driven, so its integral does not depend
+# on the cadence). Nothing marks the brain awake or asleep: any idle of SLEEP_IDLE_SEC or more is sleep, as in production.
+#   morning: fact C told plainly (the datn pattern, other words), asked at once, then 3 h of conversation with a turn
+#   every 4 min (no pause of 5 min: the fact told early in a conversation that runs on), C asked again (the DECAY
+#   probe), then a 25-min pause (the first SWR epoch of the day: C is ~3 h old);
+#   fact A told plainly (the datn telling), asked at once, then a 7-min pause (an epoch while A is minutes old),
+#   ~2.5 h more conversation, A asked (the PRE-B probe: what the replay route alone left of A), then
+#   fact B told inside surprising news (the datc frame), asked at once, then a 10-min pause;
+#   evening: every fact asked, with a referential probe for each ("you mentioned the cat"); an 11-h night; the same
+#   six probes next morning; three days of idle (72 h); the same six probes on day 5.
+# WHY THIS ORDER (the fake-substrate design day, research/findings/raw/_pair_production_path/design_fake_substrate.json):
+# an SWR bout's PRP lasts ~TAU_PRP_H (1 h) after a pause and a salient telling's PRP likewise, so a fact told within the
+# hour after either is captured through the shared PRP pool (behavioural tagging). The first order tried (A, pause, B,
+# pause, C) captured every fact that way and left nothing to decay. Here C is told before any epoch or salient event,
+# A's pre-B probe reads before B's PRP, and the 7-min pause after A is where the other facts' residual tags meet a
+# high-R replay (the cross-capture the review's I-1 scope note asks about).
+# Between turns inside a burst the user takes 40 s (one idle tick at IDLE_SEC). Sentences in the 3-h stretch reuse words
+# the day has already introduced, so they store nothing and carry little novelty (checked at seed 7 before the prereg).
+_VCLOCK_START = "__world_step:vclock:start__"
+
+
+def _vidle(seconds):
+    return "__world_step:vclock:idle:%d__" % int(seconds)
+
+
+_WD_TELL = {
+    "A": list(_DATC_NEUTRAL),
+    "B": [_DATC_SALIENT[0], _DATC_SALIENT[1], "the dog stores the memory", _DATC_SALIENT[3], _DATC_SALIENT[4]],
+    "C": ["the bird is here", "the river is here", "the bird uses the river", "the bird is here", "the river is here"],
+}
+WD_FACTS = {"A": ["cat", "chase", "ball"], "B": ["dog", "store", "memory"], "C": ["bird", "use", "river"]}
+_WD_Q = {"A": "what does the cat chase", "B": "what does the dog store", "C": "what does the bird use"}
+_WD_REF = {"A": "you mentioned the cat", "B": "you mentioned the dog", "C": "you mentioned the bird"}
+_WD_STRETCH = ["the cat is here", "the ball is here", "the bird is here", "the river is here", "the dog is here",
+               "the memory is here"]
+WD_GAP_S = 40                 # the user's reply gap inside a burst
+WD_STRETCH_GAP_S = 240        # a turn every 4 min in the long stretch (below SLEEP_IDLE_SEC: never sleep)
+WD_STRETCH_TURNS = 44         # 45 gaps x 4 min after C's immediate probe -> C is ~3 h old at its decay probe
+WD_STRETCH2_TURNS = 37        # 38 gaps x 4 min after A's pause -> A's own tag is ~2.6 h old when B's news arrives
+WD_PAUSES_S = {"p1": 25 * 60, "p2": 7 * 60, "p3": 10 * 60}
+WD_NIGHT_S = 11 * 3600
+WD_IDLE_DAYS_S = 72 * 3600
+WD_PROBE_SETS = ("eve", "morn", "d5")
+
+
+def _wd_group(prefix="wd"):
+    rows = [("%s_vclock" % prefix, _VCLOCK_START, prefix, False, None, False)]
+    n = [0]
+
+    def turn(text, label=None, first=False):
+        n[0] += 1
+        rows.append((label or "%s_t%d" % (prefix, n[0]), text, prefix, first, None, False))
+
+    def step(seconds, name=None):
+        n[0] += 1
+        rows.append((name or "%s_s%d" % (prefix, n[0]), _vidle(seconds), prefix, False, None, False))
+
+    def tell(fact, first=False):
+        for i, txt in enumerate(_WD_TELL[fact]):
+            turn(txt, first=(first and i == 0))
+            step(WD_GAP_S)
+        turn(_WD_Q[fact], label="%s_q%s_imm" % (prefix, fact))
+
+    def stretch(n_turns, k0=0):
+        for k in range(n_turns):
+            step(WD_STRETCH_GAP_S)
+            turn(_WD_STRETCH[(k0 + k) % len(_WD_STRETCH)])
+        step(WD_STRETCH_GAP_S)
+
+    tell("C", first=True)
+    stretch(WD_STRETCH_TURNS)
+    turn(_WD_Q["C"], label="%s_qC_decay" % prefix)
+    step(WD_PAUSES_S["p1"], name="%s_p1" % prefix)
+    tell("A")
+    step(WD_PAUSES_S["p2"], name="%s_p2" % prefix)
+    stretch(WD_STRETCH2_TURNS, k0=WD_STRETCH_TURNS)
+    turn(_WD_Q["A"], label="%s_qA_preB" % prefix)
+    tell("B")
+    step(WD_PAUSES_S["p3"], name="%s_p3" % prefix)
+    for ps, gap_after in (("eve", WD_NIGHT_S), ("morn", WD_IDLE_DAYS_S), ("d5", None)):
+        for j, fact in enumerate(("A", "B", "C")):
+            turn(_WD_Q[fact], label="%s_q%s_%s" % (prefix, fact, ps))
+            step(WD_GAP_S)
+            turn(_WD_REF[fact], label="%s_r%s_%s" % (prefix, fact, ps))
+            if j < 2:
+                step(WD_GAP_S)
+        if gap_after is not None:
+            step(gap_after, name="%s_%s" % (prefix, "night" if ps == "eve" else "idle3d"))
+    return rows
+
+
+_EXTRA_TURNS += _wd_group("wd")
+# 'datcl' the salient telling (the datc frame), then 4 h AWAKE with no conversation, the night, recall: the salient
+#   counterpart of 'datl', so a salient-vs-neutral long-delay contrast runs inside ONE family with both flags intact.
+# 'dwi' the weak telling (as d3w / d10w), asked at once (never read before on the brain); 'dwn' the weak telling, one
+#   night, recall (the ledger-off next-day arm the weak telling never had).
+_EXTRA_TURNS += ([("datcl_t%d" % (i + 1), txt, "datcl", i == 0, None, False) for i, txt in enumerate(_DATC_SALIENT)]
+                 + [("datcl_awake", _WORLD_AWAKE, "datcl", False, None, False),
+                    ("datcl_night", _WORLD_NIGHT, "datcl", False, None, False),
+                    ("datcl_recall", _DATC_RECALL, "datcl", False, None, False)])
+_EXTRA_TURNS += (_datc_group("dwi", "dwi", _DATC_WEAK, False) + _datc_group("dwn", "dwn", _DATC_WEAK, True))
+
+
+class _VirtualWall:
+    """The ENVIRONMENT's wall clock for a virtual day (seconds since the session began). Turns take no virtual time; the
+    `vclock:idle:<s>` world steps between them advance it. Installed into the tag-capture ledger by `vclock:start`."""
+
+    def __init__(self):
+        self.t = 0.0
+
+    def now(self):
+        return self.t
+
+
+_VWALL = _VirtualWall()
+VCLOCK_THIN_AFTER_S = 3600.0   # after the first hour of an idle stretch, one tick per hour (declared above)
+
+
+def _vidle_tick_offsets(seconds):
+    """Offsets (s, from the last request) of the idle ticks the server loop runs in an idle interval of `seconds`: every
+    IDLE_SEC strictly before the interval ends, thinned to one per hour after the first hour."""
+    from webapp import continuous_engine as _CE
+    step = float(_CE.IDLE_SEC)
+    out, k = [], 1
+    while k * step < min(float(seconds), VCLOCK_THIN_AFTER_S) - 1e-9:
+        out.append(k * step)
+        k += 1
+    h = VCLOCK_THIN_AFTER_S
+    while h < float(seconds) - 1e-9:
+        if not out or h > out[-1] + 1e-9:
+            out.append(h)
+        h += 3600.0
+    return out
+
+
+def _run_vclock_step(kind):
+    """The virtual-day world steps (group 'wd'). `vclock:start` installs the virtual wall clock; `vclock:idle:<s>` passes
+    <s> seconds of idle after the last turn, running the engine's idle tick at each server-loop offset."""
+    from webapp import da_tag_capture_chat as _DTC
+    if kind == "vclock:start":
+        _VWALL.t = 0.0
+        _DTC.set_wall_clock(_VWALL.now)
+        return {"world_step": kind, "virtual_t_s": _VWALL.t}
+    seconds = float(kind.rsplit(":", 1)[1])
+    from webapp import server as _S
+    from webapp import continuous_engine as _CE
+    import time as _time
+    t_start = _VWALL.t
+    _last = [v for v in _CE._LAST_REQUEST.values() if v is not None]
+    real_last = max(_last) if _last else _time.time()
+    offs = _vidle_tick_offsets(seconds)
+    n_ticked = 0
+    for dt in offs:
+        _VWALL.t = t_start + dt
+        n_ticked += int(_CE.tick_idle_sessions(_S._SESSION_MOOD, _S._get_affect_organ, now=real_last + dt,
+                                               selfinit_getter=_S._get_selfinit_organ,
+                                               episodic_getter=_S._get_episodic_organ_existing,
+                                               chat_getter=_S._get_chat_existing) or 0)
+    _VWALL.t = t_start + seconds
+    return {"world_step": kind, "seconds": seconds, "n_ticks": len(offs), "n_session_ticks": n_ticked,
+            "n_sleep_depth_ticks": sum(1 for d in offs if d >= _CE.SLEEP_IDLE_SEC),
+            "virtual_t_start_s": t_start, "virtual_t_end_s": _VWALL.t}
+
 # ── D5-CONSOLIDATE / SLEEP-REPLAY DRIVING GROUPS (label-only; used only by load_bearing_fraction's new
 # lbf_rows/learning.py EXTRA_PROBES for "d5-consolidate" / "sleep-replay") ──────────────────────────────────────
 # Both faculties are gated on the SAME idle tick the DA tag-capture groups above already exercise (_WORLD_NIGHT ->
@@ -464,6 +635,8 @@ _WORLD_STEPS.update({t[0]: {_WORLD_AWAKE_REST: "awake_rest_4h", _WORLD_AWAKE_RES
                             _WORLD_AWAKE_3H: "awake_3h", _WORLD_AWAKE_REST_1H: "awake_rest_1h"}[t[1]]
                      for t in _EXTRA_TURNS
                      if t[1] in (_WORLD_AWAKE_REST, _WORLD_AWAKE_REST_HOURLY, _WORLD_AWAKE_3H, _WORLD_AWAKE_REST_1H)})
+_WORLD_STEPS.update({t[0]: t[1][len("__world_step:"):-2] for t in _EXTRA_TURNS
+                     if isinstance(t[1], str) and t[1].startswith("__world_step:vclock:")})   # pair production path
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
 
@@ -474,6 +647,8 @@ def _run_world_step(kind):
     makes it a sleep-depth tick (sleep replay, the Turrigiano pass, the tag-and-capture ledger when armed). Returns a
     trace (no reply: nothing is said)."""
     import time as _time
+    if kind.startswith("vclock:"):             # the pair's production-path day (group 'wd'; virtual wall clock)
+        return _run_vclock_step(kind)
     hours = {"overnight_24h": 24.0, "awake_4h": 4.0}[kind] if kind in ("overnight_24h", "awake_4h") \
         else _AWAKE_STEP_KINDS[kind][0]
     from webapp import server as _S

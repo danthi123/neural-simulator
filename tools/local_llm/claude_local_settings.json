@@ -1,0 +1,57 @@
+{
+  "enabledPlugins": {
+    "bio-research@inline": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(bash tools/status.sh)",
+      "Bash(bash tools/status.sh:*)",
+      "Bash(bash tools/game.sh status)",
+      "Bash(bash tools/gpu_queue.sh status)",
+      "Bash(bash tools/pool_queue.sh depth)",
+      "Bash(bash tools/aws_budget.sh status)",
+      "Bash(bash tools/local_llm/llm.sh status)",
+      "Bash(systemctl --user status:*)",
+      "Bash(systemctl --user is-active:*)",
+      "Bash(systemctl --user restart pool-dispatch)",
+      "Bash(systemctl --user restart pool-sync)",
+      "Bash(.venv/bin/python tools/battery_status.py:*)",
+      "Bash(.venv/bin/python tools/check_docs.py)",
+      "Bash(.venv/bin/python -m research.runners._affect_marker_settle_congruence --score-wiring:*)",
+      "Bash(.venv/bin/python -m research.runners._da_tag_capture_chat_probe --family:*)",
+      "Bash(.venv/bin/python -m research.runners.d6_capacity_curve --score:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git restore --staged:*)",
+      "Bash(git commit -m:*)",
+      "Bash(git commit -q -m:*)",
+      "Bash(git switch -c research/draft-:*)",
+      "Bash(bash tools/push_both.sh:*)",
+      "Bash(bash tools/pool_provision.sh --revision:*)",
+      "Edit(research/coordination/LOCAL_LLM_RUNBOOK.md)",
+      "Edit(GAP_CLOSURE_MISSION.md)",
+      "Edit(research/queue/.lane_waiver)",
+      "Edit(research/queue/.parallel_compute_waiver)"
+    ],
+    "deny": [
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(rm -rf:*)",
+      "Bash(aws:*)",
+      "Bash(bash tools/aws_pool_node.sh:*)",
+      "Bash(bash tools/aws_gpu.sh:*)",
+      "Bash(sudo:*)",
+      "Edit(sim/**)",
+      "Edit(webapp/**)",
+      "Edit(tools/gates/**)"
+    ]
+  }
+}

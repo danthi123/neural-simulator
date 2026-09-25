@@ -1,9 +1,13 @@
 # Local-LLM weekend runbook
 
-**Who this is for:** a LOCAL model (Qwen3.8-27B, 64K context, run via `bash tools/local_llm/llm.sh claude`)
+**Who this is for:** a LOCAL model (Qwen3.8-27B, 128K context since 2026-09-25, run via `bash tools/local_llm/llm.sh claude`)
 supervising this repo's compute while the owner is away and Claude usage is conserved. **Keep everything you
 read SHORT** — you have far less context than Claude does. Read `tools/status.sh`'s output first, always; only
 open a file below it when `status.sh` tells you something needs attention.
+
+The commands this runbook uses are pre-approved in `tools/local_llm/claude_local_settings.json` (loaded by `llm.sh claude`);
+anything else asks for permission, and the explicit denies (--no-verify, force-push, merge, AWS, sim/ webapp/ tools/gates/
+edits) are refused outright.
 
 Start here every session: `bash tools/status.sh` (read-only, <=40 lines, ~10s). It shows the GPU queue, the
 pool queue + per-node state, AWS spend vs cap, whether the local-llm unit is up, every registered battery's
@@ -127,6 +131,9 @@ lines here after the Tuesday reset.)_
 - Scoring findings, harvested but not yet written: fi (aggregate reads NO-GO 3/6; seeds 43 and 101 look like an encoding
   miss, not forgetting; needs the independent check + `preconditions` block) and D6 at N=2000 (recall holds to 2000; cost
   ceiling 50-500; explain HEBB vs COPY PARITY-BY-CONSTRUCTION).
+- Make `tools/gpu_queue.sh` and `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script (FAILURE_LOG
+  2026-09-25); claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
+  timeout on the live-node memory probe) are parked with their final-review issue lists in workflow wf_9944d7c2-aca.
 - Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (FAILURE_LOG 2026-09-25; if a
   commit in a worktree is blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two
   LOW review notes (validate the profile name before writing the restore marker; `|| true` on the test-only stop path).

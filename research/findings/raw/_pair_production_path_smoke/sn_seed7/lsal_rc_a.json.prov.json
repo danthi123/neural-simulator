@@ -1,0 +1,41 @@
+{
+ "run_id": "1790355138-2208262",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_69528e21-31b-3/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\", \"BRAIN_SLEEP_REPLAY_CAPTURE\": \"1\"}",
+  "--turns",
+  "datcl_t1,datcl_t2,datcl_t3,datcl_t4,datcl_t5,datcl_awake,datcl_night,datcl_recall",
+  "--out",
+  "research/findings/raw/_pair_production_path_smoke/sn_seed7/lsal_rc_a.json"
+ ],
+ "git_sha": "ccb38be4b",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T12:52:18",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1790355138-2208211",
+  "BRAIN_CHAT_SEED": "7",
+  "BRAIN_LTM_SHIP_DEFAULT": "0",
+  "NUMEXPR_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2757.3,
+ "corpus_check_query": "wall-clock production path multi-epoch sleep replay capture resurrection of decayed fact",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pair_production_path_smoke/sn_seed7/lsal_rc_a.json"
+}
