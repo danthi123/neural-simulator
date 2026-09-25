@@ -202,10 +202,13 @@ This amendment replaces the INSTRUMENT that decides precondition 3. The quantity
 evidence, adopted only after A3 read UNDEFINED.** A3 compared a worst-case RANGE of process medians against the
 bound (PASS needs M1 + NOISE <= bound, i.e. the observed delta plus the full spread of what was seen). This
 amendment instead uses one-sided 95% confidence bounds from an OLS fit (PASS needs the upper 95% bound <= bound).
-A calibration check (100 synthetic reps at a true whole-turn cost exactly at the bound, `_xo_go_rate` in the
-runner, added in the 2026-09-25 fix round below) reads a GO rate of 9% at that alpha -- so at the bound itself,
-this instrument reads GO on roughly 1 run in 11, where A3's worst-case range would essentially never resolve GO by
-chance. This is the SAME kind of change reviewers reject when made after a negative result without disclosure; it
+A calibration check (`_xo_go_rate` in the runner, added in the 2026-09-25 fix round below and tightened to 1000
+independent synthetic reps in the SECOND 2026-09-25 fix round after review) reads a GO rate of 5.1% at a true
+whole-turn cost exactly at the bound -- i.e. this instrument reads GO on roughly 1 run in 20 at the bound itself,
+matching its nominal one-sided alpha=0.05, where A3's worst-case range would essentially never resolve GO by
+chance. (An earlier, 100-rep draw of the same check read 9% -- within that small sample's own binomial noise, not
+a second measured rate; see Addendum item 2 below.) This is the SAME kind of change reviewers reject when made
+after a negative result without disclosure; it
 is disclosed here, in this amendment, before any Amendment 3 gate data exists (the smoke below is a pre-flight
 check, not the gate), and the reason is stated in the candidates weighed above: a worst-case range provably cannot
 resolve 0.3 s at any affordable process count, so a probabilistic bound is the only design that can decide this
@@ -312,18 +315,25 @@ NO-GO: it adds more. UNDEFINED: the run could not tell. If turn noise is the rea
 control (a quiet-machine window or CPU isolation), not a smaller bound or a looser rule. The verdict is a 1-seed
 latency de-risk, as criterion L scopes it. It is not a capability claim.
 
+**HELD (owner, 2026-09-25): do not queue the run below.** The owner is reconsidering the prepended affect-marker
+design itself (it may be retired from replies) independent of what this instrument would read.
+
 Commands (verbatim). The pin is a **SHA, not a branch name** (Addendum below): a branch name resolves relative to
-whichever checkout reads it, and a stale worktree elsewhere can hold it pointed at an old commit -- this is
-`8dd9c1ed0`, the HEAD of the 2026-09-25 fix round (Addendum below), which both remotes carry
-identically. `<pin>` is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0`
-(detached-HEAD worktree at that SHA); `<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`:
+whichever checkout reads it, and a stale worktree elsewhere can hold it pointed at an old commit. **A literal SHA
+written here drifted stale across three straight fix rounds (8dd9c1ed0, then ce4afac2b, then the b21140758 smoke
+worktree) before this round replaced it with `<pin>`/`<that SHA>` symbols (review LOW 2026-09-25) -- resolve the
+SHA at QUEUE TIME, never from a value written in this document:** `git fetch origin research/settle-a3-amendment3
+gitea && git log -1 --format=%H origin/research/settle-a3-amendment3` (verify
+`gitea/research/settle-a3-amendment3` reads the SAME SHA -- `push_both.sh` keeps both remotes identical). `<pin>`
+is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<that SHA>` (detached-HEAD worktree at it);
+`<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`:
 ```
 # selftest (no brain build): both A3 and Amendment 3 verdicts through every failing direction
 .venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --selftest
 
 # 1. pinned worktree + corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt)
 cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
-  git worktree add --detach <pin> 8dd9c1ed0 && \
+  git worktree add --detach <pin> <that SHA> && \
   mkdir -p <pin>/data && ln -s /home/dant123/Projects/sim/data/corpus <pin>/data/corpus
 
 # 2. the run (GPU queue, one job): mem_ok wait, before_you_build (corpus-check gate), then the memcap-bounded run
@@ -352,11 +362,18 @@ change is in `research/runners/_affect_marker_settle_gpu_timing.py`; none touche
    would bias M1 toward GO without anything in the record flagging it. Unmet -> UNDEFINED, not a silent pass.
 2. **Calibration case (`_xo_go_rate`).** Every existing selftest case checks one synthetic draw's sign (does this
    scenario read NO-GO/GO/UNDEFINED), which cannot pin the one-sided 95% bound's WIDTH -- halving
-   `t = float(stats.t.ppf(1.0 - alpha, df))` in `_fe_fit` passed every one of them. The new case runs 100
-   independent synthetic reps at a true whole-turn cost exactly at the 0.3 s bound (runs=8) and asserts the GO
-   rate stays <= 10%; it reads 9% on the correct code, and the halved-`t` mutant was hand-verified (mutate,
-   rerun, revert, diff back to clean) to push it to 24%. This is also why the false-GO rate stated above (roughly
-   1 in 11 at the bound) is now a measured number, not an assumption.
+   `t = float(stats.t.ppf(1.0 - alpha, df))` in `_fe_fit` passed every one of them. The case originally ran 100
+   independent synthetic reps at a true whole-turn cost exactly at the 0.3 s bound (runs=8) and asserted the GO
+   rate stays <= 10%; it read 9% on the correct code, and the halved-`t` mutant was hand-verified (mutate, rerun,
+   revert, diff back to clean) to push it to 24%. **Revised in the SECOND 2026-09-25 fix round (review LOW): a
+   ceiling alone lets an OVER-conservative mutant (`t` inflated, e.g. `t * 1.5`) pass unnoticed while still
+   silently widening every CI (wastes GPU time, never corrupts a verdict, so nothing else here catches it) --
+   and a fixed 100-rep draw's own binomial noise (95% CI roughly 4-16% around a true ~5%) meant the "9%" was
+   never a precise measurement of the rate in the first place.** `n_reps` raised to 1000 (~4 s) and the assertion
+   changed to a two-sided `0.025 <= rate <= 0.08` band (a CHOSEN threshold, not a measurement) around the nominal <!--derived-->
+   one-sided alpha=0.05: the correct code now reads 5.1%; the halved-`t` mutant reads ~9.2%, and a lighter
+   `t * 0.8` mutant (which the old <=10% ceiling alone would have passed) reads ~8.9% -- both hand-verified
+   (mutate, rerun, revert, diff back to clean) to clear the new 8% ceiling.
 3. **Carry case near the bound.** The existing carry=0.8 selftest case reads NO-GO whether or not washout turns
    are correctly excluded from scoring (a true M1 of +0.93 s clears 0.3 s either way), so it does not test that
    the washout's carry-over is charged to the arm that CAUSES it. A new case (carry=0.25, noise=0.05) asserts
@@ -370,10 +387,37 @@ change is in `research/runners/_affect_marker_settle_gpu_timing.py`; none touche
    appear: a branch name resolves relative to whichever checkout reads it, and a stale worktree elsewhere left it
    pointed at an old commit.
 
-None of (1)-(3) touches the RULE (`decide_xo`'s GO/NO-GO/UNDEFINED regions) or the QUANTITY/bound stated at the
-top of this amendment -- they tighten what counts as a VALID process (1) and add tests that pin the instrument's
-already-stated behavior (2, 3) rather than changing it. `--selftest` (no brain build) passes 12 + 30 = 42 cases
-after this addendum (26 -> 30 Amendment 3 cases).
+**SECOND fix round (2026-09-25, after review of the round above), still before any Amendment 3 gate data:**
+
+6. **`_worker_xo` now fails fast on an under-read warm-up**, instead of only rejecting the finished record after
+   burning the rest of the process's GPU time on a run already doomed to UNDEFINED (review LOW: this is
+   procedurally the same failure (1) above catches after the fact, addressed here at the SOURCE). Extracted the
+   condition into a pure `_bad_warmup_reads(warmup_turns)` helper (unit-tested in
+   `tests/test_affect_marker_settle_gpu_timing_xo.py` without a GPU) so the worker itself needs no test harness
+   change to stay covered.
+7. **New precondition: at least one real `model.generate()` call somewhere in the process when the Qwen renderer
+   is required.** Root cause of the orchestrator's "M4_render reads exactly 0.0 (se 0, resid 0) on every turn"
+   finding against the b21140758 smoke: every one of its turns read `abstained: True` (the affect-exclamation
+   messages match no stored fact in the tiny-demo brain), and an abstain's reply is the HOST-composed curiosity
+   follow-up (`curiosity_production_organ.followup_question`) -- `MoodConditionedRenderer.render_svo`, and
+   therefore `model.generate()` and the `timed_generate` wrapper around it, is only ever reached for a
+   GATE-MATCHED fact. The wrapper is not broken; `check_process_xo`'s existing `renderer` check is a static
+   per-response identity label, not evidence Qwen actually ran, and had no precondition catching this. Unmet
+   (zero `n_gen_calls` across build + warm-up + every scored turn) -> UNDEFINED.
+8. **The queued-recipe pin is now resolved AT QUEUE TIME, never written into this document as a literal SHA**
+   (review LOW 2026-09-25: a literal SHA drifted stale across three straight fix rounds -- 8dd9c1ed0, then
+   ce4afac2b, then the b21140758 smoke worktree -- and the paired finding's fully-expanded literal path made
+   `tools/claim_check.py` treat a not-yet-existing future artifact as a cited one, 1 UNSUPPORTED). Both documents'
+   command blocks now use `<pin>`/`<that SHA>`/`<a3x>` symbols exclusively (the prereg's own pre-existing style);
+   the resolving command (`git log -1 --format=%H origin/research/settle-a3-amendment3`, cross-checked against
+   `gitea`) is stated in prose, outside any fenced code block.
+
+None of (1)-(3), (6), (7) or (8) touches the RULE (`decide_xo`'s GO/NO-GO/UNDEFINED regions) or the QUANTITY/bound
+stated at the top of this amendment -- they tighten what counts as a VALID process ((1), (6), (7)), add tests that
+pin the instrument's already-stated behavior ((2), (3), and the mutation tests in
+`tests/test_affect_marker_settle_gpu_timing_xo.py`) rather than changing it, and fix a documentation-only
+citation/pin-drift regression ((8)). `--selftest` (no brain build) passes 12 + 31 = 43 cases after both fix rounds
+(26 -> 30 -> 31 Amendment 3 cases).
 
 ## Amendment log
 
@@ -389,3 +433,13 @@ after this addendum (26 -> 30 Amendment 3 cases).
   read-count precondition, a CI-width calibration selftest, a carry-near-bound selftest, and a SHA (not branch
   name) pin -- before any Amendment 3 gate data. Quantity, bound and rule unchanged; see the addendum above for
   each change and why.
+- Second addendum to Amendment 3 (this document, 2026-09-25, fix round after review of the addendum above): the
+  crossover worker now fails fast on an under-read warm-up instead of only rejecting the finished record; a new
+  precondition rejects a process that never actually invoked `model.generate()` when the Qwen renderer is
+  required (the b21140758 smoke's M4_render finding); the calibration case widened from a ceiling-only 100-rep
+  check to a two-sided 1000-rep floor+ceiling; the false-GO-rate prose above corrected to the 1000-rep 5.1%
+  measurement; and both documents' queued-recipe pin switched from a literal SHA (stale twice already) to
+  resolve-at-queue-time symbols, fixing a `claim_check` false-citation regression in the paired finding.
+  Quantity, bound and rule unchanged; still before any Amendment 3 gate data; the 7.3-7.5 h run itself stays
+  HELD pending the owner's affect-marker-design reconsideration. See addendum items (6)-(8) and the revised (2)
+  above.

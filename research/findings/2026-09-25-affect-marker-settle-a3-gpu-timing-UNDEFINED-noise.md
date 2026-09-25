@@ -204,35 +204,39 @@ Four gaps in the instrument itself, found by reading it adversarially rather tha
    change: a short `--xo-run --orient off,on --runs 4 --run-len 2` smoke against the Qwen renderer under
    `mem_ok`/`memcap`, queued separately before the full run (see below for its result once read).
 
-The run goes to the GPU queue from a clean checkout **pinned by SHA, not a branch name** -- the previous draft of
+**HELD (owner, 2026-09-25): the 7.3-7.5 h full run below is NOT queued.** The owner is reconsidering the
+prepended affect-marker design itself (it may be retired from replies), independent of what this instrument
+would read -- do not queue it until that is decided. The recipe is kept, verbatim, for when it un-holds.
+
+The run goes to the GPU queue from a clean checkout **pinned by SHA, not a branch name** -- an earlier draft of
 this section pinned "the head of `research/settle-a3-amendment3`", but a branch name is exactly as stable as
-whichever local checkout resolves it, and a stale worktree elsewhere (`b58e4080b`, from a killed session) still
-holds that local branch name pointed at an old commit. The pin here is `8dd9c1ed0` (the HEAD of this
-fix round; verify with `git log -1 --format=%H 8dd9c1ed0` before using it), which both remotes carry
-identically (verified by `push_both.sh`). `data/corpus` is gitignored, so a fresh worktree needs it symlinked in
-from the primary checkout (the Qwen renderer reads `data/corpus/tinystories.txt` at load). Projected about 7.3-7.5
-hours. The full recipe, verbatim (worktree, symlink, memory wait, corpus check, then the queued job):
+whichever local checkout resolves it, and a stale worktree elsewhere (`b58e4080b`, from a killed session) has
+already held that local branch name pointed at an old commit once. **A literal SHA drifted stale here twice
+across three fix rounds (8dd9c1ed0, then ce4afac2b) before this round replaced it with `<pin>`/`<a3x>` symbols
+(prereg's own style, review LOW 2026-09-25) -- resolve `<pin>`'s SHA at QUEUE TIME, never from a value written in
+this document:** `git fetch origin research/settle-a3-amendment3 gitea && git log -1 --format=%H
+origin/research/settle-a3-amendment3` (verify `gitea/research/settle-a3-amendment3` reads the SAME SHA --
+`push_both.sh` keeps both remotes identical). `<pin>` is
+`/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<that SHA>` (a detached-HEAD worktree at it); `<a3x>`
+is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`. `data/corpus` is gitignored, so a fresh
+worktree needs it symlinked in from the primary checkout (the Qwen renderer reads `data/corpus/tinystories.txt`
+at load). Projected about 7.3-7.5 hours. The full recipe, verbatim (worktree, symlink, memory wait, corpus check,
+then the queued job):
 
 ```
-# 1. Pinned worktree (detached HEAD at the exact commit, not a branch name).
+# 1. Pinned worktree (detached HEAD at the exact commit resolved above, not a branch name).
 cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
-  git worktree add --detach /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0 \
-  8dd9c1ed0
+  git worktree add --detach <pin> <that SHA>
 
 # 2. Corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt at load).
-mkdir -p /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/data && \
-  ln -s /home/dant123/Projects/sim/data/corpus \
-  /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/data/corpus
+mkdir -p <pin>/data && ln -s /home/dant123/Projects/sim/data/corpus <pin>/data/corpus
 
 # 3. Queue the run: mem_ok 16 4 wait, before_you_build (corpus-check gate), then the memcap-bounded run.
-bash tools/gpu_queue.sh add 'cd /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0 && \
-  until bash tools/mem_ok.sh 16 4 >/dev/null 2>&1; do sleep 60; done; \
+bash tools/gpu_queue.sh add 'cd <pin> && until bash tools/mem_ok.sh 16 4 >/dev/null 2>&1; do sleep 60; done; \
   bash tools/before_you_build.sh "affect-marker SETTLE A3 whole-turn GPU timing at the 0.3s bound (Amendment 3 within-process crossover)" >/dev/null 2>&1; \
   SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- \
   /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 \
-  --orient off,on,on,off --runs 48 --run-len 4 \
-  --out-dir /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/research/findings/raw/_affect_marker_settle_gpu_timing/a3x \
-  --out /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/research/findings/raw/_affect_marker_settle_gpu_timing/a3x/verdict.json'
+  --orient off,on,on,off --runs 48 --run-len 4 --out-dir <a3x> --out <a3x>/verdict.json'
 ```
 
 Step 3's `before_you_build.sh` call runs inside the pinned worktree, after the memory wait and before the run, so
@@ -244,3 +248,27 @@ machine window or CPU isolation), not a smaller bound or a looser rule.
 
 Lever count against this defect (the A3 timing could not resolve the bound): one, the instrument redesign. No
 mechanism lever was tried, because the defect is in the measurement.
+
+## Smoke read (b21140758, 2 processes, `--orient off,on --runs 4 --run-len 2`) + re-score at this round's HEAD
+
+Re-scored with `--xo-score --raw-dir <smoke a3x_smoke dir> --orient off,on --runs 4 --run-len 2`: **UNDEFINED**,
+same as read at b21140758, but now for the PRECISE reason (addendum item 7 above) rather than only "1
+process/orientation" (still also true: 1 off + 1 on is short of the required >= 2 per orientation) --
+`check_process_xo` flags BOTH processes' only problem as "zero Qwen `model.generate()` calls recorded across
+build+warmup+run turns" (verified directly against the raw records: `n_gen_calls`/`gen_calls` are 0/`[]` on every
+turn of both `xo_00_off.json` and `xo_01_on.json`, matching `generated_tokens_total_by_arm: {"off": 0, "on": 0}`
+in the smoke's own verdict.json diagnostics).
+
+Warm-up read count (Addendum item 6's precondition): **both processes' both warm-up turns read `n_wta_reads == 2`**
+(00_off: off-arm 2, on-arm 2; 01_on: on-arm 2, off-arm 2) -- the under-read failure mode A3 hit did not recur here.
+
+Memory extrapolation to 194 turns (linear, from the post-warm-up slope over this smoke's 8 scored turns --
+**a short window, 24x shorter than 194, so this rules out only a GROSS per-turn leak, not a slow one**): both
+`maxrss_kb` and `cupy_pool_used_bytes` are EXACTLY FLAT from the second warm-up turn through all 8 scored turns in
+BOTH processes (00_off: maxrss 11,135,748 KB / pool 3,840,247,296 B unchanged across 9 turns, one 512 B pool
+readout noise blip; 01_on: maxrss 11,269,628 KB / pool identical) <!--derived-->, i.e. a measured per-turn slope
+of 0 in this window. Extrapolating that (zero) slope to turn 194 predicts NO further growth --
+maxrss ~11.1-11.3 GB, cupy pool ~3.84 GB, both comfortably inside `memcap 20`'s 20 GB cap -- but a small per-turn
+leak below this window's detection floor (e.g. a few MB/turn) is NOT ruled out by 8 turns; it would total at most
+a few hundred MB over 194 turns even so, still well inside the cap. This is a memory-headroom read only, not a
+substitute for actually running the full length.

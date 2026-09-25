@@ -435,6 +435,15 @@ def _sha1(s) -> str:
     return hashlib.sha1(str(s or "").encode("utf-8")).hexdigest()
 
 
+def _bad_warmup_reads(warmup_turns: list) -> list:
+    """PURE (no GPU, no `_turn`): which of `warmup_turns` made != 2 WTA reads (review LOW, 2026-09-25 -- the
+    warm-up's only job is to fully commit both axes, valence then arousal, for BOTH arms' readers BEFORE any
+    scoring starts; A3 saw exactly a 1-read OFF warm-up at one index). Extracted out of `_worker_xo` so the
+    fail-fast condition is unit-testable without a GPU/subprocess (`test_affect_marker_settle_gpu_timing_xo.py`
+    exercises this function directly instead of the whole worker)."""
+    return [t for t in warmup_turns if (t.get("n_wta_reads") or 0) != 2]
+
+
 def _worker_xo(orient: str, out_path: str, renderer: str, runs: int, run_len: int) -> int:
     """Subprocess entry: ONE tiny-demo brain; SETTLE toggled per turn; every turn timed and its work recorded."""
     os.environ.setdefault("SIM_BACKEND", "cupy")
@@ -547,6 +556,18 @@ def _worker_xo(orient: str, out_path: str, renderer: str, runs: int, run_len: in
         rec["build_turn"] = _turn(NEU_TEXT, True, "off")
         rec["warmup_turns"] = [_turn(EMO_TEXT, False, orient), _turn(EMO2_TEXT, False, other)]
         _dump()
+        # FAIL FAST on an under-read warm-up (review LOW, 2026-09-25, Addendum item 6): the warm-up's ONLY job is
+        # to fully commit both axes (valence, then arousal -- 2 WTA reads) for BOTH arms' readers before any
+        # scoring starts. A3 saw exactly this at one OFF warm index (1 read); `check_process_xo` already rejects
+        # the finished record for it, but without this check the worker still burns the full ~run_len*runs of GPU
+        # time on a process that was already doomed to UNDEFINED, and the reader left unbuilt biases the
+        # process's own early scored turns (extra lazy-build latency) rather than cleanly aborting. Abort here
+        # instead: cheaper, and the partial record still carries the diagnosis.
+        bad_warmup = _bad_warmup_reads(rec["warmup_turns"])
+        if bad_warmup:
+            raise RuntimeError(
+                "warm-up turn(s) made != 2 WTA reads (both axes not committed / both reader bridges not built): "
+                + "; ".join("arm=%s n_wta_reads=%r" % (t.get("arm"), t.get("n_wta_reads")) for t in bad_warmup))
         for k, arm in enumerate(arms):
             t = _turn(xo_message(k), False, arm)
             t.update({"index": k, "run": k // run_len, "pos_in_run": k % run_len,
@@ -691,6 +712,27 @@ def check_process_xo(p: dict, renderer_required: str) -> dict:
     rcfg = sorted((bool(r.get("settle")), r.get("warmup"), r.get("washout")) for r in (rec.get("readers") or []))
     if rcfg != sorted([expected_config("on"), expected_config("off")]):
         probs.append("cached readers %s, expected one per arm %s" % (rcfg, [expected_config("off"), expected_config("on")]))
+    # THE RENDERER WAS NEVER ACTUALLY EXERCISED (orchestrator finding, 2026-09-25; the b21140758 smoke read
+    # M4_render == 0.0 with se=0/resid=0 on EVERY turn -- diagnosed via _grounded_lang_integration_derisk's
+    # `SpikingQwenFaculty.model.generate` wrapper path in `_worker_xo`'s `timed_generate`). The wrapper itself is
+    # sound (it appends to `gen_trace` unconditionally whenever `model.generate` runs -- see `timed_generate`
+    # above); the smoke's turns read `abstained: True` on every one of them, and an abstain's reply is the HOST-
+    # composed curiosity follow-up (`curiosity_production_organ.followup_question`, webapp/server.py's
+    # `_curiosity_followup`) -- `MoodConditionedRenderer.render_svo` (and therefore `model.generate`) is only
+    # ever reached for a GATE-MATCHED fact, which an abstain by definition has none of. The `renderer` field the
+    # OTHER check above validates is a static per-response identity label (which renderer this session is
+    # configured to use), not evidence the renderer ran -- it reads "qwen" even when `model.generate` was called
+    # zero times. Left unchecked, a process could run its whole plan without ever exercising the Qwen render
+    # path (M4 vacuously 0.0, M1 missing the very cost criterion L's "reply's renderer is the Qwen renderer"
+    # precondition exists to require) and still report every OTHER precondition met. Require at least one real
+    # `model.generate` call somewhere in the process (build + warm-up + every scored turn) whenever the Qwen
+    # renderer is required; unmet -> UNDEFINED, exactly like every other precondition here.
+    if renderer_required == "qwen":
+        gen_calls_total = sum(int(t.get("n_gen_calls") or 0) for t in [rec.get("build_turn") or {}] + warm + turns)
+        if gen_calls_total == 0:
+            probs.append("zero Qwen model.generate() calls recorded across build+warmup+run turns -- the "
+                         "renderer field says %r but was never actually exercised (every turn abstained?); "
+                         "M4_render is vacuous, not a measured near-zero cost" % renderer_required)
     uniq = []
     for q in probs:                              # a failure repeated on 190 turns is one problem
         if q not in uniq:
@@ -871,7 +913,8 @@ def decide_xo(procs: list, *, renderer_required: str = "qwen", bound: float = BO
 def _xo_proc(pos, orient, *, runs=8, run_len=4, proc_off=0.0, idx_eff=None, wta_on=0.15, wta_off=0.02,
              on_extra=0.0, carry=0.0, noise=0.1, seed=0, neutral=(), renderer="off-bridge Qwen-0.5B (spiking forward)",
              backend="cupy", dirty=(), sha="abc", bad_cfg_turn=None, zero_read_turn=None, msg_tag="",
-             readers=None, complete=True, flip_arm_turn=None, err_turn=None, warmup_reads=(2, 2)):
+             readers=None, complete=True, flip_arm_turn=None, err_turn=None, warmup_reads=(2, 2),
+             render_zero=False):
     """A synthetic process record for the selftest. wall = 30 + proc_off + idx_eff[k] + WTA + ON-extra
     + carry (if the previous turn was ON) + noise. Levels are 3 except the `neutral` indices (0)."""
     import numpy as np
@@ -894,7 +937,8 @@ def _xo_proc(pos, orient, *, runs=8, run_len=4, proc_off=0.0, idx_eff=None, wta_
                       "msg_sha": _sha1("m%d%s" % (k % 2, msg_tag if k == 5 else "")),
                       "wall_s": wall, "wta_s": wta, "n_wta_reads": n_reads,
                       "wta_configs": [list(cfg)] if n_reads else [], "wta_errors": 1 if err_turn == k else 0,
-                      "render_s": 1.0, "n_gen_calls": 1, "gen_calls": [[1, 12, 40]], "level": lvl,
+                      "render_s": 0.0 if render_zero else 1.0, "n_gen_calls": 0 if render_zero else 1,
+                      "gen_calls": [] if render_zero else [[1, 12, 40]], "level": lvl,
                       "lead": "Wonderful! " if lvl else "", "reason": "graded_affect", "abstained": True,
                       "renderer": renderer, "http_status": 200, "answer_core_sha": "x", "load1_start": 1.0})
         prev_on = on
@@ -1039,15 +1083,24 @@ def selftest_xo() -> bool:
     s, _ = st(_xo_quad(per_proc={2: {"warmup_reads": (2, 1)}}))       # process 2's OTHER-arm warm-up under-reads
     check("the OTHER arm's warm-up turn under-reads (either warm-up, either process) -> UNDEFINED",
           s == "UNDEFINED")
-    # CALIBRATION (review MEDIUM 2026-09-25): pins the one-sided 95% bound's WIDTH, which the single-draw cases
-    # above cannot -- a true cost sitting exactly at the bound must read GO rarely, not routinely. `_fe_fit` uses
-    # `t = float(stats.t.ppf(1.0 - alpha, df))`; a mutant halving that `t` (`t = 0.5 * stats.t.ppf(...)`) narrows
-    # every CI and was HAND-VERIFIED (mutate, rerun, revert, diff back to clean) to push this rate to 0.24
-    # (24/100) -- far past the 0.10 ceiling below, while still passing every case above (each of those checks
-    # ONE draw's sign, not the bound's calibrated rate).
-    rate = _xo_go_rate(n_reps=100, runs=8, true_cost=BOUND_S, noise=0.3)
-    check("calibration: true whole-turn cost exactly at the %.2f s bound, runs=8, 100 reps -> GO rate <= 10%% "
-          "(observed %.0f%%; pins the CI width, not just its sign)" % (BOUND_S, 100 * rate), rate <= 0.10)
+    # THE RENDERER WAS NEVER EXERCISED (orchestrator finding, 2026-09-25; b21140758 smoke: M4_render == 0.0,
+    # se=0, resid=0 on every turn -- every turn abstained, so the host-composed curiosity follow-up answered,
+    # never `model.generate()`). Mutation-verify: comment out the `check_process_xo` block this case exists for
+    # and this quad (otherwise identical to the very first, clean-GO case) reads GO instead of UNDEFINED.
+    s, _ = st(_xo_quad(render_zero=True))
+    check("zero Qwen model.generate() calls in every turn of every process (renderer required but never fired) "
+          "-> UNDEFINED, not a silently-passing GO", s == "UNDEFINED")
+    # CALIBRATION (review MEDIUM 2026-09-25, tightened to a two-sided floor+ceiling in this fix round -- review
+    # LOW: a one-sided <=10% ceiling alone lets an OVER-conservative mutant (a `t` inflated rather than shrunk)
+    # pass every case here while still silently widening every CI, which would waste GPU time chasing an
+    # unnecessarily loose bound rather than corrupting one). 1000 independent reps (~4 s) pins the WIDTH much
+    # tighter than 100 did: the correct code reads ~5.1% (nominal alpha=0.05); `t` HALVED reads ~9.2%; `t` *0.8
+    # reads ~8.9%; both HAND-VERIFIED (mutate, rerun, revert, diff back to clean) to clear the 8% ceiling. No
+    # over-conservative mutant is caught by the ceiling alone, hence the floor.
+    rate = _xo_go_rate(n_reps=1000, runs=8, true_cost=BOUND_S, noise=0.3)
+    check("calibration: true whole-turn cost exactly at the %.2f s bound, runs=8, 1000 reps -> GO rate in "
+          "[2.5%%, 8%%] (observed %.1f%%; pins the CI width both narrow AND loose, not just its sign)"
+          % (BOUND_S, 100 * rate), 0.025 <= rate <= 0.08)
     print("SELFTEST (amendment 3)", "PASS" if ok else "FAIL")
     return bool(ok)
 
