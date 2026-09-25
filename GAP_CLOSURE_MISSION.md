@@ -23,7 +23,7 @@ the checker's round-2 re-review found a NEW fence hole (a '# derived' comment in
 exemption) and list false positives, so round 3 runs (workflow `wou3e7upy`); the checker branch and the 4 audit branches
 (research/claimcheck-audit-1..4) are held until round 3 reviews SOUND, then merge together.
 
-**🌙 03:00 progress:** merged gap#4 clamp companion (2af73bfdd): the saturation is a DRIFT from C21's constant BDSP
+**🌙 02:45 progress:** merged gap#4 clamp companion (2af73bfdd): the saturation is a DRIFT from C21's constant BDSP
 baseline p0=0.3; the fix is Payeur's sliding burst baseline (EMA ratio, default-OFF engine knob
 cfg.bdsp_pbar_ratio_tau_ms); smoke: weights stay near the start mean (+0.1/+0.3 vs +3.3/+4.3), train acc 0.21 vs chance
 0.18; relaxing the clamp to 48 does NOT stop the drift. 36 dev-seed-7 runs (C25-C27, AMENDMENT 6) queued at the pool tail.
