@@ -1,0 +1,214 @@
+{
+  "seed": 7,
+  "fanout": 32,
+  "sim_backend": "numpy",
+  "per_n": {
+    "8": {
+      "n_facts": 8,
+      "sampled_corpus_indices": [
+        90,
+        231,
+        248,
+        272,
+        311,
+        335,
+        358,
+        375
+      ],
+      "n_teach": 8,
+      "n_query": 8,
+      "ablation": true,
+      "paths": {
+        "off": {
+          "sparse_step": false,
+          "build_s": 0.92470383644104,
+          "nnz": 566400,
+          "n_neurons": 1464,
+          "sparse_activity_step_dispatches": false,
+          "thresholds_sha256": "58f3f9ccf6947f934e562ee8bbaf6304fc3142d858005752b7da2a19d7d11c09",
+          "teach_seconds": [
+            0.9551701545715332,
+            0.9407939910888672,
+            1.052196741104126,
+            1.063476324081421,
+            1.0068979263305664,
+            1.0028328895568848,
+            1.0217554569244385,
+            1.0069758892059326
+          ],
+          "teach_s_per_fact_mean": 1.0062624216079712,
+          "weights_after_teach_sha256": "4d991f2c0c2d3605e3d1cc995695a7adc6732c166e1d6c47186ad3720264447d",
+          "intact": {
+            "answers": [
+              "music",
+              "picture",
+              "control",
+              "goodbye",
+              "bit",
+              "moment",
+              "kitchen",
+              "dog"
+            ],
+            "reads": 53,
+            "seconds": 9.29936170578003,
+            "s_per_read": 0.17545965482603829
+          },
+          "probes": {
+            "pairs": [
+              [
+                "say",
+                "enjoy"
+              ],
+              [
+                "people",
+                "take"
+              ]
+            ],
+            "answers": [
+              null,
+              null
+            ],
+            "reads": 17,
+            "seconds": 4.280443906784058
+          },
+          "weights_after_queries_sha256": "ee429694d481d35933d2b3713185d4c0379cfe8b8aa0309ffd6ece5e2f9923a8",
+          "ablation": {
+            "answers": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ],
+            "reads": 72,
+            "seconds": 14.526757955551147,
+            "s_per_read": 0.2017605271604326
+          },
+          "weights_after_ablation_sha256": "77dcfb36ad76cc73ac5dc44879d38b31fe8cb644873bc42fb216d23d64be4bc3",
+          "final_state_sha256": {
+            "cp_membrane_potential_v": "05e456656bd2dab2bfcd0b415de8fce6bbf27162d1d147fe6474cfe3c9033cc2",
+            "cp_recovery_variable_u": "2b8bffdbb77156bb36f739075e0fcca0dee755f1a2ebb0f0600e16f5d0f094b9",
+            "cp_firing_states": "a0d884bedacd4c95bd65601f0a35c8b4e10ca7f3dea05edb2e882f748c44cd2c",
+            "cp_prev_firing_states": "a0d884bedacd4c95bd65601f0a35c8b4e10ca7f3dea05edb2e882f748c44cd2c",
+            "cp_conductance_g_e": "6916e2ac26ab31408c4bebb0ba700265cfec0f9506b26869bc88f96ec834e5f9",
+            "cp_conductance_g_i": "0404c19e0464b9646a6aaadfc08180452dd69bc985144d2d1a5e015317855bda",
+            "cp_conductance_g_nmda": "ad901c5d0db94a403ce19e1a64a1d311e8ad58367e9c422754fce46ddfb338f0",
+            "cp_conductance_g_nmda_rise": "8c7817b52e18bd26d093d946630182315766582c7367f2771bb1cd9e8a614fd9",
+            "cp_conductance_g_nmda_recurrent": "34e8615711eaf75b9e2b66e36287702dea83efb2e01ffcfee98f72ff6492d9e3",
+            "cp_conductance_g_nmda_recurrent_rise": "dd27aa81fbbfece59fc9962f392ac9f3f27ea68402229efadd307114c38d86a3"
+          },
+          "total_sim_steps": 7280,
+          "total_seconds": 36.156662940979004,
+          "ms_per_step": 4.966574579804808,
+          "ms_per_step_teach": 5.031312108039856,
+          "ms_per_step_read": 4.386491370650957
+        },
+        "on": {
+          "sparse_step": true,
+          "build_s": 0.5156476497650146,
+          "nnz": 566400,
+          "n_neurons": 1464,
+          "sparse_activity_step_dispatches": true,
+          "thresholds_sha256": "58f3f9ccf6947f934e562ee8bbaf6304fc3142d858005752b7da2a19d7d11c09",
+          "teach_seconds": [
+            0.0858917236328125,
+            0.08240222930908203,
+            0.08851051330566406,
+            0.11792826652526855,
+            0.14970970153808594,
+            0.14192748069763184,
+            0.16618824005126953,
+            0.21190381050109863
+          ],
+          "teach_s_per_fact_mean": 0.13055774569511414,
+          "weights_after_teach_sha256": "4d991f2c0c2d3605e3d1cc995695a7adc6732c166e1d6c47186ad3720264447d",
+          "intact": {
+            "answers": [
+              "music",
+              "picture",
+              "control",
+              "goodbye",
+              "bit",
+              "moment",
+              "kitchen",
+              "dog"
+            ],
+            "reads": 53,
+            "seconds": 1.3132171630859375,
+            "s_per_read": 0.02477768232237618
+          },
+          "probes": {
+            "pairs": [
+              [
+                "say",
+                "enjoy"
+              ],
+              [
+                "people",
+                "take"
+              ]
+            ],
+            "answers": [
+              null,
+              null
+            ],
+            "reads": 17,
+            "seconds": 0.43962979316711426
+          },
+          "weights_after_queries_sha256": "ee429694d481d35933d2b3713185d4c0379cfe8b8aa0309ffd6ece5e2f9923a8",
+          "ablation": {
+            "answers": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ],
+            "reads": 72,
+            "seconds": 0.9685509204864502,
+            "s_per_read": 0.013452096117867364
+          },
+          "weights_after_ablation_sha256": "77dcfb36ad76cc73ac5dc44879d38b31fe8cb644873bc42fb216d23d64be4bc3",
+          "final_state_sha256": {
+            "cp_membrane_potential_v": "05e456656bd2dab2bfcd0b415de8fce6bbf27162d1d147fe6474cfe3c9033cc2",
+            "cp_recovery_variable_u": "2b8bffdbb77156bb36f739075e0fcca0dee755f1a2ebb0f0600e16f5d0f094b9",
+            "cp_firing_states": "a0d884bedacd4c95bd65601f0a35c8b4e10ca7f3dea05edb2e882f748c44cd2c",
+            "cp_prev_firing_states": "a0d884bedacd4c95bd65601f0a35c8b4e10ca7f3dea05edb2e882f748c44cd2c",
+            "cp_conductance_g_e": "6916e2ac26ab31408c4bebb0ba700265cfec0f9506b26869bc88f96ec834e5f9",
+            "cp_conductance_g_i": "0404c19e0464b9646a6aaadfc08180452dd69bc985144d2d1a5e015317855bda",
+            "cp_conductance_g_nmda": "ad901c5d0db94a403ce19e1a64a1d311e8ad58367e9c422754fce46ddfb338f0",
+            "cp_conductance_g_nmda_rise": "8c7817b52e18bd26d093d946630182315766582c7367f2771bb1cd9e8a614fd9",
+            "cp_conductance_g_nmda_recurrent": "34e8615711eaf75b9e2b66e36287702dea83efb2e01ffcfee98f72ff6492d9e3",
+            "cp_conductance_g_nmda_recurrent_rise": "dd27aa81fbbfece59fc9962f392ac9f3f27ea68402229efadd307114c38d86a3"
+          },
+          "total_sim_steps": 7280,
+          "total_seconds": 3.765859842300415,
+          "ms_per_step": 0.5172884398764306,
+          "ms_per_step_teach": 0.6527887284755707,
+          "ms_per_step_read": 0.6194420580594044
+        }
+      },
+      "equal": {
+        "thresholds": true,
+        "weights_after_teach": true,
+        "intact_answers": true,
+        "intact_reads": true,
+        "probe_answers": true,
+        "weights_after_queries": true,
+        "final_state": true,
+        "ablation_answers": true,
+        "weights_after_ablation": true,
+        "all": true
+      },
+      "speedup_teach": 7.707412656755367,
+      "speedup_overall_per_step": 9.60117063700712
+    }
+  },
+  "verdict": "EQUIVALENT (bit-identical)"
+}

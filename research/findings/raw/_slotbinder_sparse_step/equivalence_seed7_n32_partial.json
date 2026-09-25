@@ -1,0 +1,238 @@
+{
+  "seed": 7,
+  "fanout": 32,
+  "sim_backend": "numpy",
+  "per_n": {
+    "32": {
+      "n_facts": 32,
+      "sampled_corpus_indices": [
+        2,
+        21,
+        46,
+        51,
+        85,
+        101,
+        109,
+        110,
+        114,
+        119,
+        134,
+        178,
+        183,
+        191,
+        193,
+        202,
+        218,
+        223,
+        233,
+        234,
+        256,
+        285,
+        293,
+        310,
+        315,
+        318,
+        320,
+        335,
+        337,
+        351,
+        352,
+        395
+      ],
+      "n_teach": 8,
+      "n_query": 8,
+      "ablation": true,
+      "paths": {
+        "off": {
+          "sparse_step": false,
+          "build_s": 2.6515746116638184,
+          "nnz": 2265600,
+          "n_neurons": 5204,
+          "sparse_activity_step_dispatches": false,
+          "thresholds_sha256": "0457e65e0f5d116ac6872da3b463849ec5fed1cb552008094e75bad43b56b300",
+          "teach_seconds": [
+            4.8310630321502686,
+            4.149205923080444,
+            3.8960022926330566,
+            5.126717805862427,
+            4.80369234085083,
+            4.817186117172241,
+            4.965284109115601,
+            4.873060941696167
+          ],
+          "teach_s_per_fact_mean": 4.682776570320129,
+          "weights_after_teach_sha256": "d322cda2f917948c2d6cdfc5ffdcc862a392d53121d4e2fb0572f37922921cf5",
+          "intact": {
+            "answers": [
+              "mom",
+              "tree",
+              "floor",
+              "moment",
+              "shop",
+              "road",
+              "part",
+              "music"
+            ],
+            "reads": 53,
+            "seconds": 40.59200096130371,
+            "s_per_read": 0.765886810590636
+          },
+          "probes": {
+            "pairs": [
+              [
+                "shop",
+                "girl"
+              ],
+              [
+                "girl",
+                "fly"
+              ]
+            ],
+            "answers": [
+              null,
+              null
+            ],
+            "reads": 18,
+            "seconds": 13.646156787872314
+          },
+          "weights_after_queries_sha256": "007c7e44ed25fea6bd2a6d697179c3cd4787fad97b1a102d689dd958c7fbd27c",
+          "ablation": {
+            "answers": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ],
+            "reads": 64,
+            "seconds": 45.336859464645386,
+            "s_per_read": 0.7083884291350842
+          },
+          "weights_after_ablation_sha256": "d7486d9efec98bb6f51f884905206e0eb75988f3317a01efa3f7087532ef5cb1",
+          "final_state_sha256": {
+            "cp_membrane_potential_v": "e9de5b7d0e48b2d6d5ab81fc56a5e485b15bd0c118c95d19aeb4e09398aa96e1",
+            "cp_recovery_variable_u": "f125c00b2a0aa90a610f0a502f1a76ee08ed7edba060a41f5654111057cc82b8",
+            "cp_firing_states": "e478d0b7b95369933d2099b89a14d842bd49ec8ea5fadb9beed262862bbf64ae",
+            "cp_prev_firing_states": "e478d0b7b95369933d2099b89a14d842bd49ec8ea5fadb9beed262862bbf64ae",
+            "cp_conductance_g_e": "c5917ecac1c25d9ff1d179bb7cb9e074dce57e813c0458325eda205c6521ee07",
+            "cp_conductance_g_i": "d0fa70fab7b93a0ce700148a375ffa2f1d514b5383de044e77632564921fdc63",
+            "cp_conductance_g_nmda": "d9751f6536d1067993d8461e19ec360e534fdc63b1fa1313e16104b80e84dfbd",
+            "cp_conductance_g_nmda_rise": "f05a798c1510334d88b22266394b5157b8de4f6a29bf46ee01fa2984026ce477",
+            "cp_conductance_g_nmda_recurrent": "0267fdfb1b84b64812b62a233798ef1fcf5342b15f2b69ef3ecb66bfd4706dea",
+            "cp_conductance_g_nmda_recurrent_rise": "f33250d4204cf046979c5f85ad00bb61944096b8cb8cc8ac39627e125c3620c0"
+          },
+          "total_sim_steps": 7000,
+          "total_seconds": 137.03722977638245,
+          "ms_per_step": 19.57674711091178,
+          "ms_per_step_teach": 23.413882851600647,
+          "ms_per_step_read": 19.1471702647659
+        },
+        "on": {
+          "sparse_step": true,
+          "build_s": 2.471505880355835,
+          "nnz": 2265600,
+          "n_neurons": 5204,
+          "sparse_activity_step_dispatches": true,
+          "thresholds_sha256": "0457e65e0f5d116ac6872da3b463849ec5fed1cb552008094e75bad43b56b300",
+          "teach_seconds": [
+            0.2927680015563965,
+            0.25830674171447754,
+            0.24714994430541992,
+            0.288254976272583,
+            0.25708580017089844,
+            0.2600696086883545,
+            0.28371238708496094,
+            0.307375431060791
+          ],
+          "teach_s_per_fact_mean": 0.27434036135673523,
+          "weights_after_teach_sha256": "d322cda2f917948c2d6cdfc5ffdcc862a392d53121d4e2fb0572f37922921cf5",
+          "intact": {
+            "answers": [
+              "mom",
+              "tree",
+              "floor",
+              "moment",
+              "shop",
+              "road",
+              "part",
+              "music"
+            ],
+            "reads": 53,
+            "seconds": 2.752615213394165,
+            "s_per_read": 0.0519361361017767
+          },
+          "probes": {
+            "pairs": [
+              [
+                "shop",
+                "girl"
+              ],
+              [
+                "girl",
+                "fly"
+              ]
+            ],
+            "answers": [
+              null,
+              null
+            ],
+            "reads": 18,
+            "seconds": 0.8113837242126465
+          },
+          "weights_after_queries_sha256": "007c7e44ed25fea6bd2a6d697179c3cd4787fad97b1a102d689dd958c7fbd27c",
+          "ablation": {
+            "answers": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ],
+            "reads": 64,
+            "seconds": 2.3507184982299805,
+            "s_per_read": 0.036729976534843445
+          },
+          "weights_after_ablation_sha256": "d7486d9efec98bb6f51f884905206e0eb75988f3317a01efa3f7087532ef5cb1",
+          "final_state_sha256": {
+            "cp_membrane_potential_v": "e9de5b7d0e48b2d6d5ab81fc56a5e485b15bd0c118c95d19aeb4e09398aa96e1",
+            "cp_recovery_variable_u": "f125c00b2a0aa90a610f0a502f1a76ee08ed7edba060a41f5654111057cc82b8",
+            "cp_firing_states": "e478d0b7b95369933d2099b89a14d842bd49ec8ea5fadb9beed262862bbf64ae",
+            "cp_prev_firing_states": "e478d0b7b95369933d2099b89a14d842bd49ec8ea5fadb9beed262862bbf64ae",
+            "cp_conductance_g_e": "c5917ecac1c25d9ff1d179bb7cb9e074dce57e813c0458325eda205c6521ee07",
+            "cp_conductance_g_i": "d0fa70fab7b93a0ce700148a375ffa2f1d514b5383de044e77632564921fdc63",
+            "cp_conductance_g_nmda": "d9751f6536d1067993d8461e19ec360e534fdc63b1fa1313e16104b80e84dfbd",
+            "cp_conductance_g_nmda_rise": "f05a798c1510334d88b22266394b5157b8de4f6a29bf46ee01fa2984026ce477",
+            "cp_conductance_g_nmda_recurrent": "0267fdfb1b84b64812b62a233798ef1fcf5342b15f2b69ef3ecb66bfd4706dea",
+            "cp_conductance_g_nmda_recurrent_rise": "f33250d4204cf046979c5f85ad00bb61944096b8cb8cc8ac39627e125c3620c0"
+          },
+          "total_sim_steps": 7000,
+          "total_seconds": 8.109440326690674,
+          "ms_per_step": 1.1584914752415247,
+          "ms_per_step_teach": 1.3717018067836761,
+          "ms_per_step_read": 1.2984034025444176
+        }
+      },
+      "equal": {
+        "thresholds": true,
+        "weights_after_teach": true,
+        "intact_answers": true,
+        "intact_reads": true,
+        "probe_answers": true,
+        "weights_after_queries": true,
+        "final_state": true,
+        "ablation_answers": true,
+        "weights_after_ablation": true,
+        "all": true
+      },
+      "speedup_teach": 17.069222141290894,
+      "speedup_overall_per_step": 16.898481800938914
+    }
+  },
+  "verdict": "EQUIVALENT (bit-identical)"
+}

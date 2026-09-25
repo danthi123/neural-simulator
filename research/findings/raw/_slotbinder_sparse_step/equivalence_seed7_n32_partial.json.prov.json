@@ -1,0 +1,40 @@
+{
+ "run_id": "1790368477-3956545",
+ "runner": "research/runners/_slotbinder_sparse_step_equivalence.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/cb-slotbinder/research/runners/_slotbinder_sparse_step_equivalence.py",
+  "--seed",
+  "7",
+  "--n-facts",
+  "32",
+  "--fanout",
+  "32",
+  "--teach-facts",
+  "8",
+  "--queries",
+  "8",
+  "--out",
+  "research/findings/raw/_slotbinder_sparse_step/equivalence_seed7_n32_partial.json"
+ ],
+ "git_sha": "010f6c117",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T16:34:37",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 72545.8,
+ "corpus_check_query": "non-plastic synapse weights drift under repeated reads (plastic=False not enforced)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_slotbinder_sparse_step/equivalence_seed7_n32_partial.json"
+}
