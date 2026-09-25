@@ -178,7 +178,7 @@ def run_claim_check(finding_path):
     r = claim_check._scan(finding_path)
     unsupported = list(r["unsupported"])           # [(lineno, val, ctx), ...] -- val is already a float
     missing = list(r["missing"])
-    rc = 1 if (missing or unsupported or r["low_coverage"]) else 0
+    rc = 1 if claim_check._verdict(r) == "FAIL" else 0
     return rc, unsupported, missing, r
 
 
@@ -482,6 +482,8 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
     if cc_rc != 0:
         probs = ["line %s: %s  (%s)" % (n, v, c[:60]) for n, v, c in cc_unsupported] \
             + ["MISSING artifact: %s" % m for m in cc_missing]
+        if cc_result.get("unreadable"):
+            probs.append("UNREADABLE: %s" % cc_result["unreadable"])
         if cc_result["low_coverage"]:
             checked, total = cc_result["checked"], cc_result["total_numeric"]
             probs.append("LOW COVERAGE: only %d/%d numeric claim(s) checked -- mark the specific derived "

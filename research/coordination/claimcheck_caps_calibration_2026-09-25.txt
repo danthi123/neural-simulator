@@ -1,0 +1,28 @@
+# claim_check round 6 cap calibration (2026-09-25)
+# Every glob citation in research/findings/*.md that expands to more than 20 files, largest first.
+# Columns: n_files  distinct_values(sampled up to 2000 files)  citation  finding
+
+  7133     40222  research/findings/raw/**/*.json                                         research/findings/2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-the-frozen-hidden-control-was-never-run.md
+   737      4459  research/findings/raw/g11_bg/g11_seed*.json                             research/findings/2026-04-27-task-adaptive-curriculum.md
+   481      8266  research/findings/raw/consol_opsweep_gpu/op*_seed42.json                research/findings/2026-07-25-consolidation-opsweep-downtime-MANIFEST.md
+   120      1384  research/findings/raw/_sleep_replay_capture/seed*/*.json                research/findings/2026-09-25-sleep-replay-capture-rc-GO-6seed.md
+    96      3163  research/findings/raw/gap5_density/*.json                               research/findings/2026-07-31-gap5-stepC-control-void-at-small-dW-and-the-fix.md
+    83       391  research/findings/raw/g11_bg/text_eval_*.json                           research/findings/2026-05-05-I-to-W-also-fails-permuted-label.md
+    72       597  research/findings/raw/_content_provenance/s*.json                       research/findings/2026-09-24-content-provenance-learned-facts-prod-and-qwenforced-GO-6seed.md
+    70       359  research/findings/raw/g11_bg/text_eval_*_seed*.json                     research/findings/2026-05-03-permuted-label-control-NEGATIVE.md
+    70       564  research/findings/raw/_content_provenance_qwenforced/s*.json            research/findings/2026-09-24-content-provenance-learned-facts-prod-and-qwenforced-GO-6seed.md
+    67       769  research/findings/raw/_gencortex_scaling/*.json                         research/findings/2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md
+    57      1950  research/findings/raw/_trainedsel_scale/*.json                          research/findings/2026-07-13-PAST-RESERVOIR-trained-selssm-over-fixed-reservoir-lifts-margin-over-bag-robust.md
+    48       360  research/findings/raw/g11_bg/clusterG_*_seed*.json                      research/findings/2026-05-01-cluster-g-nmda-breakthrough.md
+    48       103  research/findings/raw/continual/cfe_*.json                              research/findings/2026-08-11-continual-forgetting-eval-is-not-the-7-crux-word-learning-retention-robust.md
+    38        71  research/findings/raw/_htmsparse/corpus_*.json                          research/findings/2026-07-14-grow-to-context-corpus-structured-sparse-pool-GO.md
+    36        77  research/findings/raw/_htmsparse/online_*.json                          research/findings/2026-07-14-online-grow-to-context-emergent-6seed-GO.md
+    24      1748  research/findings/raw/consol_opsweep_gpu/twosided_*.json                research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md
+    24      1748  research/findings/raw/consol_opsweep_gpu/twosided_*.json                research/findings/2026-07-25-consolidation-two-sided-read-generalization-derisk.md
+
+Chosen caps: MAX_GLOB_FILES=1000, MAX_ARTIFACT_VALUES=15000 (distinct pool).
+Rationale: both caps sit comfortably above every real per-battery citation measured above (the largest
+is 481 files / ~8,266 distinct values, consol_opsweep_gpu), and well below the scale of citing a whole
+raw/ tree (a single-level raw/**/*.json glob alone already matches thousands of files). Forward-only:
+tools/githooks/pre-commit GATE 2 only checks NEWLY ADDED findings, so no existing committed doc citing
+one of the patterns above is retroactively affected by this cap.

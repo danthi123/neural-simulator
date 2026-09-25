@@ -1,0 +1,354 @@
+path	date	r5_verdict	r6_verdict	flip	r6_fail_reason
+research/findings/2026-09-01-184-tieredfactstore-ltm-trace-propagation-fix.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-D6-wm-emergent-free-slot-competitive-register-allocation-6seed-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-affect-marker-spiking-wta-default-on-flip-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-batch-sentence-rendering-6seed-not-byte-identical-NOGO.md	2026-09-01	PASS	FAIL	PASS->FAIL	unsupported(4)
+research/findings/2026-09-01-batch-sentence-rendering-rich-chat-2x-to-3x-byte-identical.md	2026-09-01	PASS	FAIL	PASS->FAIL	unsupported(3)
+research/findings/2026-09-01-board91-memory-separator-readfix-cuerelative-bias-NOGO-intrinsic-heterogeneity-confirmed-write-read-mismatch.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-board91-memory-separator-readfix-popstate-reset-NOGO-relocalizes-to-consolidation-induced-generic-capture.md	2026-09-01	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-01-brain-native-plausibility-spiking-synaptic-gate-qualified.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-common-ground-audience-design-drive-soak-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-confidence-forthcomingness-kb-relation-realtraffic-tracepropagation-residual.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-confidence-forthcomingness-ltm-elaboration-load-bearing-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-confidence-metacog-margin-norm-calibration-at-scale-discriminates-not-byte-id-off.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-declarative-cross-edge-functional-gate-read-credit-livedrive-GO.md	2026-09-01	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-01-entity-aliasing-verified-against-shipped-scale-alias-bundle.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-generative-cortex-token-supply-lever-broad-domain-plateau-is-starvation-not-capacity-wall.md	2026-09-01	FAIL	FAIL		unsupported(24)
+research/findings/2026-09-01-negation-generate-wiring-stale-claim-closed-plus-hebbian-plausibility-qualified.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-nl-parser-kb-relation-question-routing-comprehension-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-np-entailment-copula-coverage-widening.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-np-entailment-moat-gate-wired-into-live-open-ended-postfilter.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-np-entailment-participial-pronoun-coverage-widening.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-onebrain-crossedge-curiosity-d6wm-semantic-drop-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md	2026-09-01	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-production-wire-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO.md	2026-09-01	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-01-onebrain-merge-pool1-composer-cleanup-regions-declarative-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-plausibility-ensemble-read-host-parity-generation-all6-default-on-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-production-default-flip-plan.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-read-fidelity-learned-whitened-opponent-read-NOGO-residual-is-read-architecture-not-estimator.md	2026-09-01	FAIL	FAIL		unsupported(25)
+research/findings/2026-09-01-read-fidelity-separate-trace-recall-read-GO-upstream-shaping-closes-read-power-residual.md	2026-09-01	FAIL	FAIL		unsupported(7)
+research/findings/2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-decode-escalation-fix.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-source-provenance-honesty-129-default-on-flip-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-surprise-episodic-encode-decision-crossedge-GO.md	2026-09-01	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-01-vision-lindiscrim-opsweep-board135-znorm-dominates-small-nonoverfit-lift-not-capability-crossing.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-vision-readout-side-exhausted-satdiv-plus-ridge-plateau-points-to-S2-template-learning.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-vision-s2-bcm-template-learning-NOGO-collapses-without-competition-underperforms-baseline-with-it.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-w5-affective-tom-other-model-graded-circumplex-upgrade-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-fact-to-sentence-lexicon-and-np-lever.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-fact-to-svo-clause-first-lever-investigation.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-mouth-fact-sentence-wirein.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-mouth-invocab-scope-leadin-loophole-fix.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-01-wkv-mouth-learned-head-6seed-ab-through-fixed-default-path-GO.md	2026-09-01	PASS	PASS		
+research/findings/2026-09-02-c1-surprise-worldmodel-wired-flip-ready.md	2026-09-02	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-02-c2-metacog-error-gated-port-second-negative.md	2026-09-02	FAIL	FAIL		unsupported(12)
+research/findings/2026-09-02-c2-metacog-read-isolation-fix-GO.md	2026-09-02	FAIL	FAIL		unsupported(20)
+research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-PARTIAL.md	2026-09-02	FAIL	FAIL		unsupported(16)
+research/findings/2026-09-02-confidence-forthcomingness-100k-6seed-GO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-crossedge-arousal-surprise-derisk-PARTIAL-smoke-go.md	2026-09-02	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-02-crossedge-surprise-metacog-derisk-SMOKE-GO-PARTIAL.md	2026-09-02	FAIL	FAIL		unsupported(15)
+research/findings/2026-09-02-crossedge-surprise-worldmodel-derisk-SMOKE-GO-partial-pending-6seed.md	2026-09-02	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-02-cupy-scan-vectorize-byteidentical-fix-queued-for-cupy-latency-reverify.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-cupy-scan-vectorize-latency-result-ACCEPT.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-escalation-gating-tighten-latency-correctness-safe-not-the-lever.md	2026-09-02	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-02-generative-cortex-capacity-vs-tokens-larger-capacity-wins-d96-nears-its-ceiling.md	2026-09-02	FAIL	FAIL		unsupported(23)
+research/findings/2026-09-02-integrated-brain-scale-probe-BUILT-scoping.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-integration-program-6seed-harvest-singlepool-GO-C1-GO-C2-NOGO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-memory-separator-continuous-ring-screen-parameter-map.md	2026-09-02	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-02-onebrain-crossedge-curiosity-d6wm-semantic-drop-read-isolation-reverify-GO-survives.md	2026-09-02	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md	2026-09-02	PASS	FAIL	PASS->FAIL	unsupported(4)
+research/findings/2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md	2026-09-02	FAIL	FAIL		unsupported(14)
+research/findings/2026-09-02-onebrain-crossregion-integration-DESIGN-ranked-crossedges.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-onebrain-flip-verify-harness-and-regression-battery-BUILT-derisk-GO.md	2026-09-02	PASS	FAIL	PASS->FAIL	unsupported(1)
+research/findings/2026-09-02-onebrain-r4-selfschema-production-wirein-read-isolation-reverify-GO-survives-floor-residual-worsens.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-onebrain-r4-selfschema-provenance-read-isolation-fix-flips-GO-to-NOGO.md	2026-09-02	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-02-onebrain-surprise-episodic-crossedge-readisolation-fix-still-UNDEFINED.md	2026-09-02	FAIL	FAIL		unsupported(15)
+research/findings/2026-09-02-onebrain-twopool-merge-organ-read-GO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md	2026-09-02	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-02-onebrain-wave2-selfschema-curiosity-causalwhatif-merge-SMOKE-GO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-open-ended-episodic-writeback-R1-rung1.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-open-ended-pipeline-integration-rung2-state-writes-GO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-open-ended-pipeline-integration-rung3-deeper-folds-GO.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-open-ended-qwen-routed-fact-clause-fallback.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-pmem-wave3-pool-faculty-alive-and-answer-GO.md	2026-09-02	FAIL	FAIL		missing(1)
+research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md	2026-09-02	FAIL	FAIL		unsupported(23)
+research/findings/2026-09-02-read-isolation-audit-29runner-followup-map-plus-a-bigger-adjacent-bug.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md	2026-09-02	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-02-regression-battery-thin-probes-lifted.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-self-taught-mouth-vocab-coverage-for-chat-INSUFFICIENT.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-sim-deterministic-matvec-all-conductance-paths-megakernel-v1-closed-premise-corrected.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-02-spiking-expectation-rpe-read-isolation-fix-PARTIAL-demotion-still-boundary.md	2026-09-02	FAIL	FAIL		unsupported(22)
+research/findings/2026-09-02-subword-self-taught-mouth-design-SUBWORD-CLOSES-OOV-TRAINING-QUEUED.md	2026-09-02	PASS	PASS		
+research/findings/2026-09-03-OPEN-FLUENCY-BREAKTHROUGH-linattn-deployable-spiking-mouth-beats-trigram-6of6.md	2026-09-03	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-03-affect-wiring-into-wkv-mouth-GO.md	2026-09-03	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-03-content-addressable-read-without-order-underfits-fluency-NO-GO.md	2026-09-03	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-03-crossedge4-pragmatic-metacog-coupling-DESIGN.md	2026-09-03	PASS	FAIL	PASS->FAIL	unsupported(1)
+research/findings/2026-09-03-gnw-bus-family-retire-status-ledger-drift-CORRECTED.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-linattn-mouth-broad-scope-coverage-threshold.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-linattn-mouth-generation-coherence-viable-with-caveats.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-linattn-mouth-live-brain-grounded-honest-verification-PARTIAL-affect-gap.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-linattn-production-mouth-wiring-DESIGN.md	2026-09-03	PASS	FAIL	PASS->FAIL	unsupported(3)
+research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md	2026-09-03	PASS	FAIL	PASS->FAIL	unsupported(7)
+research/findings/2026-09-03-on-bridge-spiking-LP-max-curiosity-DESIGN.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-on-bridge-spiking-LP-max-curiosity-selection-layer-6seed-GO.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-one-brain-mouth-integration-ROADMAP.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-verdict.md	2026-09-03	FAIL	FAIL		unsupported(13)
+research/findings/2026-09-03-satdiv-readout-mostly-in-control-BORDERLINE-refined.md	2026-09-03	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-03-spiking-content-addressable-read-DESIGN.md	2026-09-03	FAIL	FAIL		unsupported(37)
+research/findings/2026-09-03-spiking-depth-tokens-closing-fluency-gap-milestone.md	2026-09-03	FAIL	FAIL		unsupported(14)
+research/findings/2026-09-03-spiking-divnorm-gate-NO-GO-cross-channel-pool-over-suppresses.md	2026-09-03	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-03-spiking-mouth-ssm-dualnonneg-fluency-NO-GO-first-brain-based-baseline.md	2026-09-03	FAIL	FAIL		unsupported(12)
+research/findings/2026-09-03-trigram-baseline-strength-characterization-not-saturated-tokenization-sensitive.md	2026-09-03	FAIL	FAIL		unsupported(27)
+research/findings/2026-09-03-vision-configural-binding-PARTIAL-3of6-below-5of6-gate-anticheats-confirm-genuine-signal.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-vision-configural-binding-crossing-is-mostly-capacity-anticheat-caught-it.md	2026-09-03	PASS	PASS		
+research/findings/2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md	2026-09-03	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-03-wkv-fluency-crux-simplewiki-bpe-NO-GO-loses-to-trigram.md	2026-09-03	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-04-affect-coupling-neural-not-host-PARTIAL.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-affect-neural-default-on-negpa-sweep-NOT-READY.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-da-gated-encoding-wave0-gap4a-currency-reverify-GO.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-fluency-scale-wt103-linattn-below-trigram-on-broad-domain.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-generative-wander-production-scale-6seed-PARTIAL-blend-balance-collapse.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-generator-trace-mislabel-fix.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-gnw-lc-ne-adaptive-gain-swap-eviction-GO.md	2026-09-04	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-04-gpu-queue-dispatcher-tracking-fix.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md	2026-09-04	PASS	FAIL	PASS->FAIL	unsupported(5)
+research/findings/2026-09-04-linattn-flip-confirmation-affect-still-hollow-live-NOGO.md	2026-09-04	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-04-linattn-shunt-gain-tier1-PARTIAL-5of6.md	2026-09-04	FAIL	FAIL		unsupported(31)
+research/findings/2026-09-04-onebrain-stage1-qwen-fallback-retire-GO.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-onebrain-stage2-touchpoint-a-fact-clause-BUILD-AHEAD.md	2026-09-04	FAIL	FAIL		missing(1)
+research/findings/2026-09-04-onebrain-stage2-touchpoint-a-fact-clause-GO.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-recall-gate-reaches-real-ltm-GO.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-slotbinder-L2-sparse-fanout-derisk-GO-fits-3090-and-composes.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md	2026-09-04	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-04-vision-crossing-heldout-scramble-anticheat-PARTIAL.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-04-vsa-composer-learned-retirement-ROADMAP.md	2026-09-04	PASS	FAIL	PASS->FAIL	unsupported(11)
+research/findings/2026-09-04-wkv-mouth-bpe-caps-fix-GO.md	2026-09-04	PASS	PASS		
+research/findings/2026-09-05-affect-experienced-opponent-gate-needs-embodiment-BOUNDARY.md	2026-09-05	FAIL	FAIL		unsupported(7)
+research/findings/2026-09-05-affect-gate-embodied-US-necessary-not-sufficient-concept-code-must-be-grounded-BOUNDARY.md	2026-09-05	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-05-affect-gate-grounded-concept-code-lifts-ceiling-requirements-derisk-PARTIAL.md	2026-09-05	FAIL	FAIL		unsupported(40)
+research/findings/2026-09-05-affect-grounded-experience-stream-hebbian-convergence-teaches-separable-code-derisk-PARTIAL.md	2026-09-05	FAIL	FAIL		unsupported(17)
+research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md	2026-09-05	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-05-affect-noise-robust-homeostatic-three-factor-convergence-clears-strict-bar-derisk-GO.md	2026-09-05	FAIL	FAIL		unsupported(14)
+research/findings/2026-09-05-affect-onsubstrate-noise-robust-convergence-spiking-port-built-mechanism-realized-strict-zeroFP-structural-boundary-6seed-queued-BOUNDARY.md	2026-09-05	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-05-d5-depth-hold-direct-read-NO-GO-cross-topic-baseline-not-comparable.md	2026-09-05	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md	2026-09-05	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-05-deltanet-delta-rule-write-on-linattn-BUILT-wt103-direction-test-queued.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-deltanet-wt103-direction-test-modest-lift-below-bar-NO-GO.md	2026-09-05	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md	2026-09-05	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-05-eval-corpus-instrument-and-token-supply-decisive-test-queued.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-gateB-appraisal-interoceptive-afferent-derisk-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-gnw-congruence-spiking-read-rank8-derisk-GO.md	2026-09-05	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-PRODUCTION-FLIP-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md	2026-09-05	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-05-hippokey-hippo-ssm-content-addressable-attention-NO-GO.md	2026-09-05	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-linattn-check-b-dropped-nogo-recovered-and-reproduced.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-metacog-accumulation-to-bound-middle-band-PARTIAL.md	2026-09-05	FAIL	FAIL		unsupported(23)
+research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md	2026-09-05	FAIL	FAIL		unsupported(9)
+research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md	2026-09-05	FAIL	FAIL		unsupported(27)
+research/findings/2026-09-05-mouth-broad-domain-fluency-deep-research-ladder.md	2026-09-05	PASS	FAIL	PASS->FAIL	unsupported(13)
+research/findings/2026-09-05-mouth-objective-lever-flat-on-broad-domain-architecture-is-wrong-axis-NO-GO.md	2026-09-05	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-05-mouth-token-scaling-step1-simplewiki-domain-mix-NO-GO.md	2026-09-05	FAIL	FAIL		unsupported(19)
+research/findings/2026-09-05-onebrain-fact-shard-dg-ca3-sublinear-spiking-retrieval-derisk-GO.md	2026-09-05	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-05-onebrain-fact-shard-wirein-production-composer.md	2026-09-05	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-05-onebrain-single-pool-production-flip-derisk-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-own-voice-fluency-reaim-objective-and-capacity-ROADMAP.md	2026-09-05	PASS	FAIL	PASS->FAIL	unsupported(11)
+research/findings/2026-09-05-per-step-kernel-profile-composer-latency-reducible-GPU.md	2026-09-05	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-05-rank10-curiosity-graded-novelty-familiarity-scaffold-derisk-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank11-topic-swap-scaffold-backlog-item-already-integrated.md	2026-09-05	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-05-rank13-selfid-anaphora-PRODUCTION-FLIP-NO-GO-stale-referent-selfalias-misroute.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank13-selfid-anaphora-production-flip-CORRECTED-DIAGNOSIS.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank16-rank20-rank10-production-flip-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank2-integrated-loop-at-scale-answer-preservation-UNDEFINED-recall-incomplete.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank2-integrated-loop-webapp-thread-derisk.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank23-vision-cluster-grouping-decision-spiking-wta-derisk-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank6-knowledge-core-substrate-write-scaled-derisk-mixed.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-rank6-shardedphasorstore-pickle-fix-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-scaffold-backlog-hygiene-and-diversified-ready-next-rungs-PLANNING.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-selfschema-authorship-neural-turnclass-derisk-PARTIAL.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-shared-salience-afferent-production-default-flip-GO.md	2026-09-05	FAIL	FAIL		unsupported(34)
+research/findings/2026-09-05-shared-spiking-salience-afferent-wired-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-latency.md	2026-09-05	PASS	FAIL	PASS->FAIL	unsupported(1)
+research/findings/2026-09-05-value-choice-real-critic-neural-salience-context-6seed-GO.md	2026-09-05	PASS	PASS		
+research/findings/2026-09-06-metacog-accumulation-to-bound-6seed-PARTIAL.md	2026-09-06	FAIL	FAIL		unsupported(9)
+research/findings/2026-09-06-mouth-fineweb-edu-corpus-quality-lift-GO-direction.md	2026-09-06	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-06-mouth-token-scaling-fineweb-pipeline-and-grid-spec.md	2026-09-06	PASS	PASS		
+research/findings/2026-09-06-vllm-sleep-mode-pilot-prep-complete-gpu-test-pending.md	2026-09-06	PASS	PASS		
+research/findings/2026-09-07-fork-emergence-gradient-place-familiarity-affect.md	2026-09-07	PASS	PASS		
+research/findings/2026-09-08-affect-opponent-columnar-spiking-worst-case-unchanged-BOUNDARY.md	2026-09-08	FAIL	FAIL		unsupported(32)
+research/findings/2026-09-08-gnw-congruence-spiking-PRODUCTION-FLIP-GO.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-08-joint-attention-rung1-sts-tpj-onsubstrate-synapse-6seed-GO.md	2026-09-08	PASS	FAIL	PASS->FAIL	unsupported(4)
+research/findings/2026-09-08-onebrain-crossedge-curiosity-to-d6wm-retuned-6-6-GO-via-training-drive-not-episode-count.md	2026-09-08	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-08-onebrain-curiosity-d6-semantic-drop-competitive-allocation-confound-CLOSED.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-08-onebrain-kmax-loadpath-thread-GO.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-08-order-consolidation-v9-true-sparsity-scaleup-NO-GO-readout-threshold-not-mechanism.md	2026-09-08	FAIL	FAIL		unsupported(21)
+research/findings/2026-09-08-plastic-mask-stdp-residual-CORRECTED-test-instrument-not-a-gap.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-08-rank1-composer-rebuild-rf-to-onebrain-real-bundle-parity-GO.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-08-rank1-yesno-multiblock-rung-GO.md	2026-09-08	PASS	FAIL	PASS->FAIL	unsupported(8)
+research/findings/2026-09-08-rank6-substrate-store-cupy-vram-measured-GO.md	2026-09-08	PASS	PASS		
+research/findings/2026-09-09-gap4-dendritic-urbanczik-senn-read-snr-clean-NO-GO-second-read-lever.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-mouth-token-scaling-fineweb-edu-same-domain-DEEP-MARGIN-LIFT-direction-GO.md	2026-09-09	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-09-order-consolidation-v10-indegree-law-scale-invariant-6seed-GO.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-rank14-question-route-selection-wta-derisk-GO.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-rank14-question-route-selection-wta-wirein-default-off.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-scaffold-retirement-flips-composer-onebrain-and-substrate-store-LTM-no-regression-GO.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-spiking-anaphor-detection-CA3-pattern-completion-6seed-GO.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-spiking-anaphor-detection-wirein-both-callsites-default-off.md	2026-09-09	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-09-spiking-habituation-synaptic-depression-novelty-mechanism-6seed-GO.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-09-spiking-novelty-wirein-engagement-of-default-off.md	2026-09-09	FAIL	FAIL		unsupported(44)
+research/findings/2026-09-09-vision-configural-binding-attention-gated-readout-NEXT-MECHANISM-PREREGISTERED.md	2026-09-09	PASS	FAIL	PASS->FAIL	unsupported(6)
+research/findings/2026-09-09-vision-configural-binding-competitive-selection-NEXT-MECHANISM-PREREGISTERED.md	2026-09-09	PASS	FAIL	PASS->FAIL	unsupported(2)
+research/findings/2026-09-09-vision-configural-binding-triple-order-conjunction-NEXT-MECHANISM-PREREGISTERED.md	2026-09-09	PASS	PASS		
+research/findings/2026-09-15-gap4-inengine-selfpredict-interneuron-UNDEFINED-transport-ceiling-foreclosed.md	2026-09-15	FAIL	FAIL		unsupported(14)
+research/findings/2026-09-15-rank7-affect-opponent-gain-sweep-mistargeted-boundary-reproduced-6seed.md	2026-09-15	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-15-token-supply-scaling-6seed-lever-confirmed-descending-load-cap-found.md	2026-09-15	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-16-biased-competition-content-bias-target-RETIRED.md	2026-09-16	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-16-gap5-forward-band-homeostatic-scaling-ltu-NO-GO-redirect-read-noise-floor.md	2026-09-16	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-16-graded-bias-regression-FIXED-designed-cross-inhibition-restored-fs7.md	2026-09-16	PASS	PASS		
+research/findings/2026-09-16-host-removal-novelty-anaphor-qroute-RETIRED-byte-identical-differential-GO.md	2026-09-16	PASS	PASS		
+research/findings/2026-09-16-onebrain-xedge-curiosity-d6-base-rung-DEFAULT-ON-flip-GO.md	2026-09-16	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-16-pool-harvest-vision-satdiv-ridge-lifts-off-borderline-touchpointa-multiseed.md	2026-09-16	PASS	PASS		
+research/findings/2026-09-16-rank7-affect-xinh-competition-strength-sweep-EXHAUSTED-confirms-park.md	2026-09-16	FAIL	FAIL		unsupported(18)
+research/findings/2026-09-16-vision-nglimpses-temporal-evidence-integration-lifts-capability-2of6-to-4of6.md	2026-09-16	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-16-wirein-flips-biased-competition-gnw-stop-conflict-scaled-DEFAULT-ON-GO.md	2026-09-16	PASS	PASS		
+research/findings/2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md	2026-09-16	PASS	PASS		
+research/findings/2026-09-17-affect-grounded-experience-stream-300k-PARTIAL-noise-robustness-not-data-scale.md	2026-09-17	FAIL	FAIL		unsupported(7)
+research/findings/2026-09-17-affect-noise-robustness-multicue-learned-reliability-mechanism-validated-strict-bar-PARTIAL.md	2026-09-17	FAIL	FAIL		unsupported(26)
+research/findings/2026-09-17-biased-competition-shared-pool-Nway-divisive-closes-3referent-residual-GO.md	2026-09-17	PASS	PASS		
+research/findings/2026-09-17-da-write-gain-spiking-host-formula-circularity-closed-GO.md	2026-09-17	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-17-gap5-read-noise-floor-instrument-lane-is-read-noise-dominated-K18.md	2026-09-17	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-17-learned-spiking-constituent-boundary-segmentation-retires-host-segment-clause-GO.md	2026-09-17	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-17-mouth-token-supply-n2M-CAPACITY-SATURATED-at-small-sizes-lever-is-parameters-not-tokens.md	2026-09-17	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-17-multi-turn-agent-v2-host-anaphor-list-RETIRED-byte-identical.md	2026-09-17	PASS	PASS		
+research/findings/2026-09-17-onebrain-11organ-flip-integrated-battery-da-mode-engagement-regression-HELD-default-off.md	2026-09-17	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-17-onebrain-wave1-wave2-organ-merge-9-organs-one-pool-GO.md	2026-09-17	PASS	PASS		
+research/findings/2026-09-17-onebrain-wave3-organ-merge-ALL-11-organs-one-pool-GO.md	2026-09-17	PASS	PASS		
+research/findings/2026-09-17-segmentation-verb-object-residual-is-non-existent-baseline-already-detects-lateral-competition-lever-NOGO.md	2026-09-17	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-17-spiking-anaphor-detection-extended-gendered-pronouns-he-she-him-her-GO.md	2026-09-17	PASS	PASS		
+research/findings/2026-09-17-vision-s2-sail-anti-hebbian-decorrelation-learning-NOGO-underperforms-frozen-random-like-BCM.md	2026-09-17	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-17-vision-s2-template-learning-all-three-classes-NOGO-residual-is-DATA-limited-frozen-random-satdiv-GO.md	2026-09-17	FAIL	FAIL		unsupported(17)
+research/findings/2026-09-17-vision-satdiv-divisive-norm-is-the-decisive-lever-for-position-invariant-readout-binding-not-load-bearing-GO.md	2026-09-17	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-18-scaling-go-no-go-raw-scale-falsified-lever-is-data-do-not-buy-hardware-yet.md	2026-09-18	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-19-load-bearing-fraction-baseline-16of26-first-reading.md	2026-09-19	FAIL	FAIL		missing(1)
+research/findings/2026-09-20-hollow-affect-coloring-drive-diagnosis-and-probe-fix.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-bg-action-selection-drive-diagnosis-and-probe-fix.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-common-ground-drives-drive-diagnosis-and-probe-fix.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-discourse-register-drive.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-episodic-drive-diagnosis-and-probe-fix.md	2026-09-20	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-20-hollow-noncontradiction-gate-drive-diagnosis-and-probe-fix.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-set-attack-6of9-probe-artifacts-verified.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-hollow-surprise-monitor-confirm-probe-fix.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-load-bearing-fraction-6seed-0.59-robust-core-14.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-prospective-memory-drive-v2-intervening-turns-flip.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-20-scaling-3seed-confirm-nogo-capacity-saturated.md	2026-09-20	PASS	PASS		
+research/findings/2026-09-21-load-bearing-borderline-operating-point-diagnosis.md	2026-09-21	FAIL	FAIL		unsupported(17)
+research/findings/2026-09-21-load-bearing-fraction-6seed-adequate-0.85-robust-core-20.md	2026-09-21	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-21-open-ended-generation-single-turn-not-load-bearing-spiking-plausibility-gate-masks-draw.md	2026-09-21	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-22-affect-tone-decode-ceiling-diagnosis-distribution-shift-INPROGRESS.md	2026-09-22	FAIL	FAIL		unsupported(13)
+research/findings/2026-09-22-affect-tone-open-output-directional-6seed-positive-asymmetric-NOGO.md	2026-09-22	FAIL	FAIL		unsupported(21)
+research/findings/2026-09-22-borderline-separability-stabilizer-is-buildable.md	2026-09-22	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-22-metacog-graded-marker-go-6seed.md	2026-09-22	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-22-prospective-memory-facilitation-load-bearing-6seed.md	2026-09-22	FAIL	FAIL		unsupported(13)
+research/findings/2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6.md	2026-09-22	PASS	PASS		
+research/findings/2026-09-23-affect-conditioned-mouth-live-valence-diagnosis-and-staged-derisk.md	2026-09-23	FAIL	FAIL		unsupported(10)
+research/findings/2026-09-23-affect-marker-settle-deliberation-and-rest-oplevel-go-6seed.md	2026-09-23	FAIL	FAIL		unsupported(24)
+research/findings/2026-09-23-affect-marker-settle-fullbrain-contrast-PARTIAL-6seed.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-affect-tone-neural-coupling-6seed-subdelta-NOGO.md	2026-09-23	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-23-allfixes-adequate-battery-6seed-robust-core-24.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-allfixes-settle-battery-6seed-robust-core-25.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-ca3-superposed-fact-attractor-capacity-PREREGISTRATION.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-cpu-lane-harvest-curiosity-metacog-conflict-xedge-6seed-no-go.md	2026-09-23	PASS	FAIL	PASS->FAIL	unsupported(19)
+research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-pending.md	2026-09-23	PASS	FAIL	PASS->FAIL	unsupported(53)
+research/findings/2026-09-23-cpu-lane-harvest-language-lexicon-referent-v2-S2-scored-6seed-GO.md	2026-09-23	PASS	FAIL	PASS->FAIL	unsupported(32)
+research/findings/2026-09-23-cpu-lane-harvest-perception-binding-negative-fixed-unconfirmed-competitive.md	2026-09-23	PASS	FAIL	PASS->FAIL	unsupported(19)
+research/findings/2026-09-23-curiosity-metacog-lowconfidence-coupling-6seed-NOGO-banked-G4-instrument-defect.md	2026-09-23	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-23-d6-capacity-curve-PREREGISTRATION.md	2026-09-23	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-23-d6-learn-through-use-hebbian-fact-write-s42-smoke-C3-NOGO-host-kb-familiarity-leak.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-d6-learn-through-use-v2-PREREGISTRATION-readtime-view-and-engram-ablation.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md	2026-09-23	FAIL	FAIL		unsupported(1)
+research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-da-encoding-natural-drive-24h-persistence-PREREGISTRATION.md	2026-09-23	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-23-da-encoding-natural-drive-v1-D64-UNDEFINED-immediate-recall-precondition.md	2026-09-23	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-23-da-encoding-natural-drive-v2-D128-6seed-GO-runner-level.md	2026-09-23	FAIL	FAIL		unsupported(13)
+research/findings/2026-09-23-da-encoding-natural-drive-v2-production-D128-PREREGISTRATION.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-6seed-GO-runner-level.md	2026-09-23	FAIL	FAIL		unsupported(23)
+research/findings/2026-09-23-da-encoding-natural-drive-v3-synaptic-capture-PREREGISTRATION.md	2026-09-23	FAIL	FAIL		unsupported(19)
+research/findings/2026-09-23-da-tag-capture-chat-wire-PREREGISTRATION.md	2026-09-23	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-23-episodic-s100-cupy-repeats-7of7-loadbearing-robust-core-23.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-flip-validated-fixes-production-default-validation-prereg.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-live-homeostat-nogo-6seed.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-onebrain-affect-ladder-onto-cortical-pool-plus-arousal-surprise-synapse-BUILT-6seed-scored-NOT-ALL-GO.md	2026-09-23	FAIL	FAIL		unsupported(15)
+research/findings/2026-09-23-open-ended-generation-production-turn-draw-lesion-seed42-and-open-ended-mode-bypass.md	2026-09-23	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-23-open-ended-production-turn-a3-6seed-harvest-NO-GO.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-operating-point-stabilizer-go-6seed.md	2026-09-23	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-23-swap-drives-adequate-probe-PREREGISTRATION.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-swap-drives-adequate-probe-s42-smoke-loadbearing-6seed-staged.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-vision-attention-gated-soft-readout-spiking-port-collapse-NOGO-banked.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-vision-configural-binding-attention-gated-soft-readout-PREREGISTERED.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-23-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-PREREGISTERED.md	2026-09-23	FAIL	FAIL		unsupported(6)
+research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md	2026-09-23	PASS	PASS		
+research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md	2026-09-24	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-affect-tone-selection-content-locked-PREREG.md	2026-09-24	FAIL	FAIL		unsupported(4)
+research/findings/2026-09-24-ai-teacher-chat-only-synaptic-learning-GO-6seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-ai-teacher-environment-PREREGISTRATION.md	2026-09-24	FAIL	FAIL		unsupported(3)
+research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md	2026-09-24	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-24-chat-time-plasticity-audit-shared-cfg-hebbian-kill-and-the-local-freeze-fix.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-content-provenance-learned-facts-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-content-provenance-learned-facts-prod-and-qwenforced-GO-6seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-curiosity-metacog-commitment-veto-v5-6seed-NOGO-1of6-g13-setpoint-residual.md	2026-09-24	FAIL	FAIL		unsupported(16)
+research/findings/2026-09-24-curiosity-metacog-lcne-modulator-6seed-NOGO-calibration-seed-only.md	2026-09-24	FAIL	FAIL		unsupported(11)
+research/findings/2026-09-24-curiosity-metacog-lcne-phasic-gain-v4-6seed-NOGO-3of6-gain-holds-circuit-residual.md	2026-09-24	FAIL	FAIL		unsupported(21)
+research/findings/2026-09-24-d6-chat-wire-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-d6-multiref-wm-learned-referent-env-flag-route-PREREGISTERED.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-da-tag-capture-chat-wire-6seed-GO-runner-level-ltm-off.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-flip-validated-fixes-production-default-battery-GO.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-gap4-transport-ceiling-instrument-diagnosed-dev-seed7-UNDEFINED.md	2026-09-24	FAIL	FAIL		unsupported(39)
+research/findings/2026-09-24-gap4-transport-ceiling-readout-lever-PREREGISTRATION.md	2026-09-24	FAIL	FAIL		unsupported(56)
+research/findings/2026-09-24-gnw-continuous-swap-branchpoint-fork-instrument-GO-6seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-gnw-continuous-swap-branchpoint-snapshot-fork-instrument-PREREGISTERED.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-language-learned-referent-production-route-GO-6seed.md	2026-09-24	FAIL	FAIL		unsupported(5)
+research/findings/2026-09-24-lbf-proposed-lesion-knobs-conflict-kb-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-lbf-rows-live-organs-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-learning-rows-d5-consolidate-sleep-replay-lbf-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-PREREGISTRATION.md	2026-09-24	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-dev-s7-not-ready.md	2026-09-24	FAIL	FAIL		unsupported(8)
+research/findings/2026-09-24-open-ended-gated-turn-PREREGISTRATION.md	2026-09-24	FAIL	FAIL		unsupported(2)
+research/findings/2026-09-24-open-ended-gated-turn-seed7-smoke-and-flag-off-identity.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-plastic-mask-instrument-and-production-reachability.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-production-chat-phase-timing-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-production-default-battery-B2a-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-1.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-2.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-3.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-4.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-reward-value-spiking-afferent-seed7-derisk-PARTIAL.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-slotbinder-l3-cupy-latency-derisk-PREREG.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-slotbinder-l3-cupy-latency-derisk-candidate-2seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-slotbinder-l3-gpu-latency-GO-6seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-slotbinder-production-composer-gate-PREREG.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-swap-drives-adequate-probe-6seed-status-1-of-6-verified.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-NEUTRAL-6seed.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-vision-readout-port-homeostasis-6seed-PORT-REPAIRED-capability-short.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-plasticity-PREREGISTERED.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-wm-binding-ordinary-content-probe-6seed-NOGO-held-state-does-not-reach-an-ordinary-reply.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-24-xedge-in-wave3-seed7-derisk-G1-registered-FAIL-equal-pass-control-identical.md	2026-09-24	PASS	PASS		
+research/findings/2026-09-25-lexicon-closed-class-frame-junction-dev-amendment2-s7-s42-NOT-READY.md	2026-09-25	PASS	PASS		
+research/findings/2026-09-25-production-default-battery-B2a-FAIL.md	2026-09-25	PASS	PASS		
+research/findings/2026-09-25-production-default-battery-B2a-rescored-PASS.md	2026-09-25	PASS	PASS		
+research/findings/2026-09-25-sleep-replay-capture-rc-GO-6seed.md	2026-09-25	PASS	PASS		
