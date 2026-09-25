@@ -1,0 +1,400 @@
+{
+  "seed": 7,
+  "n_facts": 8,
+  "fanout": 32,
+  "sim_backend": "cupy",
+  "sampled_corpus_indices": [
+    90,
+    231,
+    248,
+    272,
+    311,
+    335,
+    358,
+    375
+  ],
+  "missing_real_codes_for": [],
+  "bundle_dir": "/home/dant123/.cache/slotbinder_production_gate/seed7_n8",
+  "bundle_staging_build_seconds": 50.93423247337341,
+  "arms": {
+    "slotbinder": {
+      "composer_kind_requested": "slotbinder",
+      "composer_class_resolved": "SlotBinderComposer",
+      "source": "developed-brain:/home/dant123/.cache/slotbinder_production_gate/seed7_n8",
+      "build_seconds": 2.5693235397338867,
+      "per_fact": [
+        {
+          "agent": "people",
+          "action": "enjoy",
+          "expected_patient": "music",
+          "got_patient": "music",
+          "hit": true,
+          "query_latency_s": 0.12900686264038086
+        },
+        {
+          "agent": "telescope",
+          "action": "take",
+          "expected_patient": "picture",
+          "got_patient": "picture",
+          "hit": true,
+          "query_latency_s": 0.18425679206848145
+        },
+        {
+          "agent": "army",
+          "action": "take",
+          "expected_patient": "control",
+          "got_patient": "control",
+          "hit": true,
+          "query_latency_s": 0.22522687911987305
+        },
+        {
+          "agent": "boy",
+          "action": "say",
+          "expected_patient": "goodbye",
+          "got_patient": "goodbye",
+          "hit": true,
+          "query_latency_s": 0.24991750717163086
+        },
+        {
+          "agent": "computer",
+          "action": "use",
+          "expected_patient": "bit",
+          "got_patient": "bit",
+          "hit": true,
+          "query_latency_s": 0.286151647567749
+        },
+        {
+          "agent": "mom",
+          "action": "think",
+          "expected_patient": "moment",
+          "got_patient": "moment",
+          "hit": true,
+          "query_latency_s": 0.36081981658935547
+        },
+        {
+          "agent": "mom",
+          "action": "come",
+          "expected_patient": "kitchen",
+          "got_patient": "kitchen",
+          "hit": true,
+          "query_latency_s": 0.46961474418640137
+        },
+        {
+          "agent": "cat",
+          "action": "say",
+          "expected_patient": "dog",
+          "got_patient": "dog",
+          "hit": true,
+          "query_latency_s": 0.4308431148529053
+        }
+      ],
+      "moat_probe": {
+        "agent": "say",
+        "action": "enjoy",
+        "abstained": true,
+        "query_latency_s": 0.32431745529174805
+      },
+      "mismatch_probe": {
+        "agent": "people",
+        "action_from_other_fact": "take",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 0.3616600036621094
+      },
+      "recall_accuracy": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "gpu_mem_after_build_and_queries": {
+        "cupy_used_bytes": 33539584,
+        "cupy_total_bytes": 74436608,
+        "nvidia_smi_used_mib": 3151,
+        "nvidia_smi_total_mib": 24576
+      },
+      "ablation_zeroed_synapses": {
+        "nnz": 566400,
+        "nonzero_weights_before_zeroing": 566400,
+        "recall_accuracy": 0.0,
+        "per_fact": [
+          {
+            "agent": "people",
+            "action": "enjoy",
+            "expected_patient": "music",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "telescope",
+            "action": "take",
+            "expected_patient": "picture",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "army",
+            "action": "take",
+            "expected_patient": "control",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "boy",
+            "action": "say",
+            "expected_patient": "goodbye",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "computer",
+            "action": "use",
+            "expected_patient": "bit",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "mom",
+            "action": "think",
+            "expected_patient": "moment",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "mom",
+            "action": "come",
+            "expected_patient": "kitchen",
+            "got_patient": null,
+            "hit": false
+          },
+          {
+            "agent": "cat",
+            "action": "say",
+            "expected_patient": "dog",
+            "got_patient": null,
+            "hit": false
+          }
+        ]
+      },
+      "wall_clock_s": 8.668172597885132
+    },
+    "rf": {
+      "composer_kind_requested": "rf",
+      "composer_class_resolved": "Pool1BoundComposer",
+      "source": "developed-brain:/home/dant123/.cache/slotbinder_production_gate/seed7_n8",
+      "build_seconds": 0.002573251724243164,
+      "per_fact": [
+        {
+          "agent": "people",
+          "action": "enjoy",
+          "expected_patient": "music",
+          "got_patient": "music",
+          "hit": true,
+          "query_latency_s": 0.38686132431030273
+        },
+        {
+          "agent": "telescope",
+          "action": "take",
+          "expected_patient": "picture",
+          "got_patient": "picture",
+          "hit": true,
+          "query_latency_s": 0.3766796588897705
+        },
+        {
+          "agent": "army",
+          "action": "take",
+          "expected_patient": "control",
+          "got_patient": "control",
+          "hit": true,
+          "query_latency_s": 0.3766896724700928
+        },
+        {
+          "agent": "boy",
+          "action": "say",
+          "expected_patient": "goodbye",
+          "got_patient": "goodbye",
+          "hit": true,
+          "query_latency_s": 0.36981797218322754
+        },
+        {
+          "agent": "computer",
+          "action": "use",
+          "expected_patient": "bit",
+          "got_patient": "bit",
+          "hit": true,
+          "query_latency_s": 0.3714447021484375
+        },
+        {
+          "agent": "mom",
+          "action": "think",
+          "expected_patient": "moment",
+          "got_patient": "moment",
+          "hit": true,
+          "query_latency_s": 0.391770601272583
+        },
+        {
+          "agent": "mom",
+          "action": "come",
+          "expected_patient": "kitchen",
+          "got_patient": "kitchen",
+          "hit": true,
+          "query_latency_s": 0.402362585067749
+        },
+        {
+          "agent": "cat",
+          "action": "say",
+          "expected_patient": "dog",
+          "got_patient": "dog",
+          "hit": true,
+          "query_latency_s": 0.4214930534362793
+        }
+      ],
+      "moat_probe": {
+        "agent": "say",
+        "action": "enjoy",
+        "abstained": true,
+        "query_latency_s": 0.27150869369506836
+      },
+      "mismatch_probe": {
+        "agent": "people",
+        "action_from_other_fact": "take",
+        "did_not_leak_fact0_patient": true,
+        "query_latency_s": 0.2714111804962158
+      },
+      "recall_accuracy": 1.0,
+      "moat_pass": true,
+      "mismatch_pass": true,
+      "gpu_mem_after_build_and_queries": {
+        "cupy_used_bytes": 5265408,
+        "cupy_total_bytes": 10132992,
+        "nvidia_smi_used_mib": 3066,
+        "nvidia_smi_total_mib": 24576
+      },
+      "wall_clock_s": 3.657273054122925
+    }
+  },
+  "flagoff_check": null,
+  "parity": {
+    "rows": [
+      {
+        "agent": "people",
+        "action": "enjoy",
+        "expected_patient": "music",
+        "slotbinder_answer": "music",
+        "fhrr_answer": "music",
+        "match": true
+      },
+      {
+        "agent": "telescope",
+        "action": "take",
+        "expected_patient": "picture",
+        "slotbinder_answer": "picture",
+        "fhrr_answer": "picture",
+        "match": true
+      },
+      {
+        "agent": "army",
+        "action": "take",
+        "expected_patient": "control",
+        "slotbinder_answer": "control",
+        "fhrr_answer": "control",
+        "match": true
+      },
+      {
+        "agent": "boy",
+        "action": "say",
+        "expected_patient": "goodbye",
+        "slotbinder_answer": "goodbye",
+        "fhrr_answer": "goodbye",
+        "match": true
+      },
+      {
+        "agent": "computer",
+        "action": "use",
+        "expected_patient": "bit",
+        "slotbinder_answer": "bit",
+        "fhrr_answer": "bit",
+        "match": true
+      },
+      {
+        "agent": "mom",
+        "action": "think",
+        "expected_patient": "moment",
+        "slotbinder_answer": "moment",
+        "fhrr_answer": "moment",
+        "match": true
+      },
+      {
+        "agent": "mom",
+        "action": "come",
+        "expected_patient": "kitchen",
+        "slotbinder_answer": "kitchen",
+        "fhrr_answer": "kitchen",
+        "match": true
+      },
+      {
+        "agent": "cat",
+        "action": "say",
+        "expected_patient": "dog",
+        "slotbinder_answer": "dog",
+        "fhrr_answer": "dog",
+        "match": true
+      }
+    ],
+    "parity_rate": 1.0
+  },
+  "latency_slotbinder_per_fact_query_s": {
+    "p50": 0.26803457736968994,
+    "p95": 0.45604467391967773,
+    "mean": 0.29197967052459717,
+    "max": 0.46961474418640137,
+    "min": 0.12900686264038086,
+    "n": 8
+  },
+  "latency_fhrr_per_fact_query_s": {
+    "p50": 0.38177549839019775,
+    "p95": 0.41479738950729367,
+    "mean": 0.3871399462223053,
+    "max": 0.4214930534362793,
+    "min": 0.36981797218322754,
+    "n": 8
+  },
+  "ablation_collapses_recall": true,
+  "verdict_criteria": {
+    "recall_ge_fhrr": true,
+    "parity_1_0": true,
+    "slotbinder_moat_pass": true,
+    "slotbinder_mismatch_pass": true,
+    "fhrr_moat_pass": true,
+    "fhrr_mismatch_pass": true,
+    "ablation_falsifies_intact_pass": true
+  },
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "name": "recall_ge_fhrr",
+      "ok": true
+    },
+    {
+      "name": "parity_1_0",
+      "ok": true
+    },
+    {
+      "name": "slotbinder_moat_pass",
+      "ok": true
+    },
+    {
+      "name": "slotbinder_mismatch_pass",
+      "ok": true
+    },
+    {
+      "name": "fhrr_moat_pass",
+      "ok": true
+    },
+    {
+      "name": "fhrr_mismatch_pass",
+      "ok": true
+    },
+    {
+      "name": "ablation_falsifies_intact_pass",
+      "ok": true
+    }
+  ],
+  "_preconditions_note": "added post-hoc 2026-09-25 by the gate-sizing amendment commit, mirroring this same artifact's own verdict_criteria field (already computed by the run) into the schema tools/gates/verdict_preconditions.py requires -- no measurement changed, see the runner source for the matching forward-fix."
+}

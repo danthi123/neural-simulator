@@ -156,21 +156,89 @@ running the three N values in sequence via `tools/gpu_queue.sh`, each writing it
 `research/findings/raw/_slotbinder_production_gate/sizing/seed7_n<N>.json`. See the commit history for the exact
 queued command line.
 
-**Item (3), the largest-N-within-budget registration -- DRAFT, TO BE COMPLETED WHEN THE SMALL-N RUNS LAND.** This
-paragraph is a placeholder marking what the completed amendment will contain, not yet a result:
-- per N in {8, 32, 128}: `build_seconds` (the real teach cost for that arm), mean/max per-fact teach seconds (from
-  the new progress lines/sidecar), mean per-query latency (slotbinder and FHRR arms), and whether the teach-cost
-  trend across N is linear or worse-than-linear in N (a superlinear trend would mean the per-fact cost itself
-  grows with corpus size already taught, a qualitatively different residual from the NOGO's own per-fact-constant
-  extrapolation);
-- a stated wall-clock budget (TBD once the N=8/32/128 numbers exist -- candidates to choose between at that time
-  include a single-session bound and a queued-overnight bound; this document will say which and why, not assume
-  one now) and the largest N whose three arms (slotbinder + FHRR + the ablation re-query) are projected to finish
-  within it, extrapolated from the measured per-fact trend;
-- an explicit statement of whether the measured GPU per-fact teach cost confirms, refutes, or refines the working
-  hypothesis above (i.e., whether the per-step simulation cost the 2026-09-05 finding identified on CPU is in fact
-  the dominant GPU cost too, or whether something else -- e.g. GPU kernel-launch overhead specific to this
-  network's small size -- turns out to dominate instead).
+**Item (3), the largest-N-within-budget registration -- COMPLETE (2026-09-25).** The N=8/32/128 seed-7 runs
+item (2) queued landed on the GPU 2026-09-25 04:28-05:25 (rc 0, all three). Artifacts are copied into this repo
+(not left in the run's scratch worktree) at `research/findings/raw/_slotbinder_production_gate/sizing/seed7_n8.json`,
+`research/findings/raw/_slotbinder_production_gate/sizing/seed7_n32.json`,
+`research/findings/raw/_slotbinder_production_gate/sizing/seed7_n128.json` (each with its `.prov.json` sidecar;
+the two smaller runs also carry a `.progress_slotbinder.json` sidecar), cited throughout this item.
 
-**This section is committed BEFORE the N=8/32/128 runs it registers are dispatched**, per this project's
-prereg-amendments-before-runs discipline; the runs are queued by the same commit, not run ahead of it.
+**Why N=128 reads NOT-YET -- a gate criterion, not a missing arm and not a timeout.** Both arms (slotbinder, rf)
+ran to completion and wrote a full result; six of the seven `verdict_criteria` in `seed7_n128.json` read `true`.
+The ONE `false` is `parity_1_0`: `parity.parity_rate` is 0.9765625 <!--derived--> (125/128 <!--derived--> rows
+matched the FHRR reference arm's answer). Reading the three mismatching rows in `seed7_n128.json:parity.rows`
+(filtered to `match: false`): `(agent=atom, action=share)`, expected `electron` -- SlotBinder answered `electron`
+(correct) while FHRR abstained (`None`); and `(agent=man, action=place)`, expected `penis`, sampled twice --
+SlotBinder answered `penis` (correct) both times while FHRR answered `atom` (wrong, cross-fact leakage) both
+times. **In all three mismatches SlotBinder's own answer was the correct one and the FHRR reference arm was
+wrong** -- `recall_ge_fhrr` still reads `true` (SlotBinder 0.7421875 >= FHRR 0.71875, both from repeated
+(agent,action) keys mapping to different patients in the real sampled corpus, an ambiguity in the facts
+themselves and not a composer defect). But `parity_1_0` is written as an EXACT match to the reference arm's
+own answer on every question (see the runner's `_parity`/`verdict_criteria` above), so a case where the
+*reference* arm degrades at this larger vocab/fact scale still reads NOT-YET under this gate's fixed wording.
+This is a genuine, measured criterion failure specific to N=128 (parity held 1.0 at both N=8 and N=32) -- not a
+missing arm (both ran) and not a wall-clock timeout (the run finished; see the table below).
+
+**Per-N wall-clock, all three arms (bundle-staging the sample bundle + the slotbinder arm [build, N per-fact
+queries, moat probe, mismatch probe, the zeroed-synapse ablation re-query] + the rf reference arm), read
+directly from the three artifacts' `bundle_staging_build_seconds` and per-arm `build_seconds`/`wall_clock_s`:**
+
+| N | bundle_staging_s | slotbinder build_s | slotbinder wall_s | rf build_s | rf wall_s | TOTAL (3 arms) | parity_rate | verdict |
+|---|---|---|---|---|---|---|---|---|
+| 8 | 50.934 | 2.5693 | 8.668 | 0.002573 | 3.6573 | 63.260 s <!--derived--> (1.05 min <!--derived-->) | 1.0 | GO |
+| 32 | 94.054 | 20.618 | 111.135 | 0.006879 | 12.020 | 217.210 s <!--derived--> (3.62 min <!--derived-->) | 1.0 | GO |
+| 128 | 238.833 | 99.528 | 2645.566 | 0.087416 | 82.554 | 2966.953 s <!--derived--> (49.45 min <!--derived-->) | 0.9765625 | NOT-YET |
+
+**The per-query cost curve is accelerating, not constant or linear.** Mean per-fact query latency
+(`latency_slotbinder_per_fact_query_s.mean` in each artifact) is 0.292 / 1.109 / 6.037 s at N=8/32/128; its
+p95 (`...p95`) is 0.456 / 1.8784 / 14.201 s. Fitting TOTAL wall-clock (the table above) as a power law over all
+three points gives `total(N) ~= 2.804 * N^1.388` seconds <!--derived-->, but the LOCAL slope between the two
+LARGEST measured points (32->128) is steeper still: quadrupling N multiplied TOTAL wall-clock by ~13.66x
+<!--derived--> (local exponent ~=1.886 <!--derived-->), versus only ~3.43x <!--derived--> (local exponent
+~=0.890 <!--derived-->, i.e. SUB-linear) when quadrupling N from 8 to 32. This is convex, accelerating growth in
+log-log space, not a single power law -- consistent with fixed per-process overhead (CUDA context, bundle load,
+kernel warm-up) dominating at small N and shrinking as a fraction of the total as N grows, while a cost that
+itself scales with the built network's own size (`K=5N`) takes over at larger N. **The global 3-point fit
+therefore UNDERSTATES cost near and past N=128 and must not be used to extrapolate beyond the measured range.**
+
+**This confirms, in a refined form, AMENDMENT 2's working hypothesis.** Per-fact TEACH cost (`build_seconds`)
+does NOT hold the trend implied by "linear in `_store_pair` call count alone": its local exponent falls from
+~=1.502 <!--derived--> (8->32) to ~=1.136 <!--derived--> (32->128) -- decelerating TOWARD linear as N grows, the
+opposite of what a network-size-dependent per-step cost acting on the TEACH path alone would predict. The
+RECALL side is where the network-size effect shows up: mean per-query latency's local exponent RISES from
+~=0.963 <!--derived--> (8->32, near-linear) to ~=1.222 <!--derived--> (32->128, clearly super-linear), and its
+tail is worse -- p95's local exponent rises from ~=1.021 <!--derived--> to ~=1.459 <!--derived-->. A fixed
+per-call/kernel-launch overhead would keep per-query latency roughly FLAT in N; it instead accelerates, so the
+per-step simulation cost at the built network's own size is the dominant driver of the recall-side growth,
+exactly as the 2026-09-05 CPU finding's per-step-cost mechanism predicts -- refined here to show it is the
+QUERY/recall path, not the teach path, where that cost currently bites hardest on this GPU path.
+
+One further, UNEXPLAINED cost asymmetry is noted here (not gating this document, flagged for a future
+amendment): the post-ablation re-query loop costs MORE than the intact per-fact query loop, increasingly so --
+computed as slotbinder `wall_clock_s` minus `build_seconds` minus the summed `per_fact` query latencies minus
+the moat/mismatch probe latencies, the implied ablation-loop time is ~3.077 <!--derived-->/ ~51.642
+<!--derived-->/ ~1757.377 <!--derived--> seconds at N=8/32/128 -- at N=128 this is ~66.4% <!--derived--> of the
+slotbinder arm's OWN wall-clock (larger than build + intact queries combined) and ~59.2% <!--derived--> of the
+seed's TOTAL (3-arm) wall-clock. Why zeroed synapses would make queries slower, not faster or unchanged, is an
+open question this amendment does not resolve.
+
+**Wall-clock budget and the chosen N.** Budget: <=10 minutes (600 s) per seed for the three arms combined
+<!--derived-->, chosen so the registered 6-seed battery finishes inside a single `tools/gpu_queue.sh` session
+rather than requiring an overnight reservation -- this is a SIZING decision (pick the largest N that still
+exercises a genuine multi-fact real sub-corpus with comfortable margin), not a push toward N=404 (already
+measured impractical by AMENDMENT 1's 6h08m stall). Against that budget: N=8 (63.260 s <!--derived-->) and N=32
+(217.210 s <!--derived-->) both fit comfortably; N=128 (2966.953 s = 49.45 min <!--derived-->) does not.
+Independently of the budget, N=128 is ALSO excluded on gate-criteria grounds (`parity_1_0: false`, above) --
+registering a 6-seed battery at an N that already fails one of the gate's own fixed criteria on the dev seed
+would not be a genuine test of the battery, it would be re-running a known failure mode six more times.
+
+**Chosen N = 32.** It is the largest of the three measured sizes that is BOTH within the stated budget AND a
+full dev-seed GO (all seven `verdict_criteria` true, `parity_rate` 1.0, `ablation_falsifies_intact_pass` true).
+Projected 6-seed wall-clock at N=32, sequential through `tools/gpu_queue.sh`: 6 x 217.210 s <!--derived--> ~=
+1303.26 s <!--derived--> (~21.72 min <!--derived-->) of GPU time total, plus each seed's own bundle-sampling
+variance (a different 32-fact sample per seed) -- comfortably inside a single queue session.
+
+**This section is committed BEFORE the 6-seed battery it registers is queued**, per this project's
+prereg-amendments-before-runs discipline; the queued commands are added by `tools/gpu_queue.sh add` right after
+this commit, not run ahead of it. (The N=8/32/128 sizing runs item (2) registered were themselves queued and
+landed before this completion -- see the artifact paths and timestamps above.)

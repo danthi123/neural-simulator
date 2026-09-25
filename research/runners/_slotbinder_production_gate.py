@@ -220,6 +220,7 @@ def _progress_instrumented_slotbinder_store(seed, n_expect, progress_path=None, 
                 with open(progress_path, "w") as fh:
                     json.dump({"seed": seed, "phase": label, "i": i, "n": n, "last_fact_seconds": dt,
                               "elapsed_s": elapsed, "avg_s_per_fact": avg, "eta_s": eta_s,
+                              "sim_backend": os.environ.get("SIM_BACKEND", ""),
                               "updated_unix": time.time()}, fh)
             except Exception:
                 pass  # the sidecar is a cheap convenience; never load-bearing on the gate's own JSON result
@@ -454,6 +455,13 @@ def main():
         "ablation_falsifies_intact_pass": ablation_collapses,
     }
 
+    # AMENDMENT 1 completion (2026-09-25): a `preconditions` list mirroring `verdict_criteria`, in the shape
+    # `tools/gates/verdict_preconditions.py` requires of any artifact asserting a top-level GO/NO-GO verdict
+    # -- this runner does not (yet) build on `tools.verdict.Verdict` itself, but the criteria it already
+    # computes ARE the preconditions that earned the verdict, so they are mirrored here rather than left
+    # implicit (an unguarded verdict is the defect that gate exists to catch).
+    preconditions = [{"name": k, "ok": v} for k, v in verdict_criteria.items()]
+
     summary = {
         "seed": args.seed, "n_facts": args.n_facts, "fanout": args.fanout,
         "sim_backend": os.environ.get("SIM_BACKEND", ""),
@@ -465,6 +473,7 @@ def main():
         "latency_fhrr_per_fact_query_s": lat_rf,
         "ablation_collapses_recall": ablation_collapses,
         "verdict_criteria": verdict_criteria,
+        "preconditions": preconditions,
         "verdict": "GO" if all(v is True for v in verdict_criteria.values()) else "NOT-YET",
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)

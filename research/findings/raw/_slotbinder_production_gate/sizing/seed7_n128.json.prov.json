@@ -1,0 +1,37 @@
+{
+ "run_id": "1790325342-3821630",
+ "runner": "research/runners/_slotbinder_production_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_75c2e89f-181-1/research/runners/_slotbinder_production_gate.py",
+  "--seed",
+  "7",
+  "--n-facts",
+  "128",
+  "--fanout",
+  "32",
+  "--renderer",
+  "stub",
+  "--out",
+  "research/findings/raw/_slotbinder_production_gate/sizing/seed7_n128.json"
+ ],
+ "git_sha": "6dce93b0c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T04:35:42",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4097.2,
+ "corpus_check_query": "slotbinder production gate runner has no per-fact progress / per-query latency visibility, dev seed-7 run silent for 6h08m and was stopped",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_slotbinder_production_gate/sizing/seed7_n128.json"
+}
