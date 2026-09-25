@@ -1,0 +1,43 @@
+{
+ "run_id": "1790327118-2582861",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/30ba29d4b4fa5c5d9b069a83ef9e317f75ba67c5/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\", \"BRAIN_SLEEP_REPLAY_CAPTURE\": \"1\", \"BRAIN_AWAKE_REPLAY_CAPTURE\": \"1\", \"BRAIN_SLEEP_REPLAY_CAPTURE_LESION\": \"1\"}",
+  "--turns",
+  "datcr_t1,datcr_t2,datcr_t3,datcr_t4,datcr_t5,datcr_rest,datcr_night,datcr_recall",
+  "--out",
+  "research/findings/raw/_awake_replay_capture/seed44/lsr_arc_sleeplesion.json"
+ ],
+ "git_sha": "30ba29d4b4fa5c5d9b069a83ef9e317f75ba67c5",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "554972ff89c210c39d945d1d10ce0e646abcc068a060ec929c9ecd2080d714bf",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T09:05:18",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790324596119554253-10446",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "2",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790324596-2511466",
+  "BRAIN_CHAT_SEED": "44",
+  "BRAIN_LTM_SHIP_DEFAULT": "0"
+ },
+ "host": "ip-172-31-47-57",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_awake_replay_capture/seed44/lsr_arc_sleeplesion.json"
+}
