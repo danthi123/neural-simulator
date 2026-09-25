@@ -78,6 +78,15 @@ pool.running on the wrong field, so its running-set half never matches; fix + te
 SETTLE A2 6 seeds wait on pool memory budget (two 48 GB LTM-on seeds per AWS node; LTM-on seeds 43-101 ~3 h each, 102 queued).
 AWS: 2 x r7i.4xlarge, ~$2.05/h, projected ~$49 at the UTC day end (20:00 EDT): no room for a third node today.
 
+**🌙 07:45 wave 3 harvested:** merged slot-binder chain (bc41268df: progress+latency instrumentation, AMENDMENT 1 sizing,
+6-seed N=32 GO scope-limited; default-OFF) and sleep forgetting (df12ec1cc: BRAIN_SLEEP_LOAD_RENORM default-OFF, nightly
+downscaling = measured fraction the day added; Amendment 6 withdraws the 3-night criterion; seed-42 smoke holds every gate;
+6 fi-family seeds being provisioned at 2def39c76, then queued). SETTLE A2 webapp tests (research/settle-a2-webtest @
+f898a1da7, review SOUND): 2 of 3 tests never finished a real run, so they run now under memcap before any merge.
+SETTLE A3 GPU timing = UNDEFINED (M2 WTA +0.13 s inside the 0.3 s bound; whole-turn noise 4.7 s cannot resolve it):
+finding + Amendment 3 (resolvable instrument, preregistered before new data) = workflow `wu657bt94`. Gate gaps from
+tonight's reviews (amendment-to-existing-prereg ordering; stalled/duplicate pool jobs counted as saturation) = `wx8n9rwrn`.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
