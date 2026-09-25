@@ -207,8 +207,8 @@ Four gaps in the instrument itself, found by reading it adversarially rather tha
 The run goes to the GPU queue from a clean checkout **pinned by SHA, not a branch name** -- the previous draft of
 this section pinned "the head of `research/settle-a3-amendment3`", but a branch name is exactly as stable as
 whichever local checkout resolves it, and a stale worktree elsewhere (`b58e4080b`, from a killed session) still
-holds that local branch name pointed at an old commit. The pin here is `<PIN_SHA_PLACEHOLDER>` (the HEAD of this
-fix round; verify with `git log -1 --format=%H <PIN_SHA_PLACEHOLDER>` before using it), which both remotes carry
+holds that local branch name pointed at an old commit. The pin here is `8dd9c1ed0` (the HEAD of this
+fix round; verify with `git log -1 --format=%H 8dd9c1ed0` before using it), which both remotes carry
 identically (verified by `push_both.sh`). `data/corpus` is gitignored, so a fresh worktree needs it symlinked in
 from the primary checkout (the Qwen renderer reads `data/corpus/tinystories.txt` at load). Projected about 7.3-7.5
 hours. The full recipe, verbatim (worktree, symlink, memory wait, corpus check, then the queued job):
@@ -216,23 +216,23 @@ hours. The full recipe, verbatim (worktree, symlink, memory wait, corpus check, 
 ```
 # 1. Pinned worktree (detached HEAD at the exact commit, not a branch name).
 cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
-  git worktree add --detach /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER> \
-  <PIN_SHA_PLACEHOLDER>
+  git worktree add --detach /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0 \
+  8dd9c1ed0
 
 # 2. Corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt at load).
-mkdir -p /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/data && \
+mkdir -p /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/data && \
   ln -s /home/dant123/Projects/sim/data/corpus \
-  /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/data/corpus
+  /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/data/corpus
 
 # 3. Queue the run: mem_ok 16 4 wait, before_you_build (corpus-check gate), then the memcap-bounded run.
-bash tools/gpu_queue.sh add 'cd /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER> && \
+bash tools/gpu_queue.sh add 'cd /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0 && \
   until bash tools/mem_ok.sh 16 4 >/dev/null 2>&1; do sleep 60; done; \
   bash tools/before_you_build.sh "affect-marker SETTLE A3 whole-turn GPU timing at the 0.3s bound (Amendment 3 within-process crossover)" >/dev/null 2>&1; \
   SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- \
   /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 \
   --orient off,on,on,off --runs 48 --run-len 4 \
-  --out-dir /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x \
-  --out /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x/verdict.json'
+  --out-dir /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/research/findings/raw/_affect_marker_settle_gpu_timing/a3x \
+  --out /home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0/research/findings/raw/_affect_marker_settle_gpu_timing/a3x/verdict.json'
 ```
 
 Step 3's `before_you_build.sh` call runs inside the pinned worktree, after the memory wait and before the run, so

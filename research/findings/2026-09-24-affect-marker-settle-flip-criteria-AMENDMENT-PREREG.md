@@ -314,8 +314,8 @@ latency de-risk, as criterion L scopes it. It is not a capability claim.
 
 Commands (verbatim). The pin is a **SHA, not a branch name** (Addendum below): a branch name resolves relative to
 whichever checkout reads it, and a stale worktree elsewhere can hold it pointed at an old commit -- this is
-`<PIN_SHA_PLACEHOLDER>`, the HEAD of the 2026-09-25 fix round (Addendum below), which both remotes carry
-identically. `<pin>` is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-<PIN_SHA_PLACEHOLDER>`
+`8dd9c1ed0`, the HEAD of the 2026-09-25 fix round (Addendum below), which both remotes carry
+identically. `<pin>` is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x-run-8dd9c1ed0`
 (detached-HEAD worktree at that SHA); `<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`:
 ```
 # selftest (no brain build): both A3 and Amendment 3 verdicts through every failing direction
@@ -323,7 +323,7 @@ identically. `<pin>` is `/home/dant123/Projects/sim/.claude/worktrees/settle-a3x
 
 # 1. pinned worktree + corpus symlink (data/ is gitignored; the Qwen renderer reads data/corpus/tinystories.txt)
 cd /home/dant123/Projects/sim && git fetch origin research/settle-a3-amendment3 && \
-  git worktree add --detach <pin> <PIN_SHA_PLACEHOLDER> && \
+  git worktree add --detach <pin> 8dd9c1ed0 && \
   mkdir -p <pin>/data && ln -s /home/dant123/Projects/sim/data/corpus <pin>/data/corpus
 
 # 2. the run (GPU queue, one job): mem_ok wait, before_you_build (corpus-check gate), then the memcap-bounded run
