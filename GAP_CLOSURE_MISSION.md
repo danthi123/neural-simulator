@@ -54,6 +54,15 @@ recalled next day when the brain rests in between, and abstains with no rest / f
 queued at the pool front (30ba29d4b). Wave-3 builds (workflow `wqh2nr4ua`): slot-binder progress+latency (AMENDMENT 1
 steps), SETTLE A2 end-to-end webapp test, sleep-forgetting companion process (downscaling 3-night NO-GO).
 
+**🌙 05:40 progress:** merged wm referent->focus binding GO 6/6 (0e7e8bce8, independently re-derived; default-OFF;
+board #231). Claim-check: round 5 (same-line-only exemption) held under review; round 6 fixed its issues but its opus
+review found new fail-open regressions (normalization glues numbers) and false positives (155/353 recent findings fail;
+62% of flags are correct roundings) plus one broad citation matching 99.7% of random numbers, so NOTHING from rounds
+1-6 is merged; round 7 (workflow `wj0oc3fj5`, opus build + opus review) = precision-aware matching + a per-doc
+decoy-probe discriminating-power check + non-gluing normalization + GFM tables + synthesis hardening. Owner decision
+later: the round-6 retro listed ~73 existing findings that fail stricter checks (candidate real errors, not rewritten).
+B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the worktree re-run hit a missing .venv; fixed d85d6fef).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
