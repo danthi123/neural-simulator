@@ -16,6 +16,8 @@ artifacts:
   - research/findings/raw/_lexicon_closed_class/diag_frame_s7_gt3.json
   - research/findings/raw/_lexicon_closed_class/diag_frame_s7.json
   - research/findings/raw/_lexicon_closed_class/frame_proxy_s7.json
+  - research/findings/raw/_lexicon_closed_class/and_calibration_s7.json
+  - research/findings/raw/_lexicon_closed_class/drive_ratio_s7.json
 external:
   - "Mintz 2003, Frequent frames as a cue for grammatical categories in child directed speech, Cognition 90:91-117,
     doi:10.1016/s0010-0277(03)00140-9 (PMID 14597271). <!--derived--> A frame is two jointly occurring words with one word
@@ -207,3 +209,41 @@ explicitly; this is declared and used only in dev. No six-seed run and no defaul
   leaves the room"; 'east' in "in the east" is UNKNOWN and not counted either way. A closed-class word that is in
   neither the inventory nor a map would also be UNKNOWN: every UNKNOWN admission is listed per seed for review.
 - Functional read-outs only.
+
+## AMENDMENT 1 (2026-09-24, before any trained junction lexicon was scored; gates G1-G3 unchanged)
+
+Calibration at dev seed 7 showed that the mechanism as written cannot run. Three changes follow. Each is fixed
+by a rule stated here, and none was chosen by a gate.
+
+**What had been seen when this was written.** The AND calibration grid (`and_calibration_s7.json`), the drive
+ratio (`drive_ratio_s7.json`), and two 2-epoch training probes at seed 7 (scratch, not committed). The first
+probe, at v2's weight scale, left every curriculum word abstaining. The second, drive-matched, decided 73 of 75
+curriculum words correctly and printed the decisions for owl, apple, when, most, wonderful, crazy, what, who,
+before and today. No constant below was chosen from those decisions.
+
+1. **Occurrence window T_ON_J = 50 steps for the junction variant** (v2 keeps 10). An unbiased sweep (weights 2 to
+   128, not committed) never fired a junction within 10 steps of onset, even to the pair. In the committed grid the
+   slowest sampled junction's first spike to a pair came 19 to 43 steps after onset. <!--derived--> The frame
+   afferents first fire about 4 steps after onset, and the RS unit integrates. So no AND can complete inside a
+   10-step occurrence. 50 ms per heard occurrence is still about 5 times shorter than a spoken word. Presentations
+   get 5 times longer, which is accepted (speed is secondary).
+2. **Junction threshold: a constant hyperpolarizing current I_TONIC_J on every junction, plus W_J.** It stands in for
+   tonic inhibition; without it, a lone afferent held for a few occurrences fires its junctions at any weight
+   that lets a pair fire in time. Target (i) is restated so it covers sustained input. On every sampled junction
+   (64, seed 7), a lone left or right afferent held for 150 steps gives 0 spikes, and the pair fires within one
+   T_ON_J window. Selection rule: take the weight whose feasible bias range is widest (ties go to the smaller
+   weight) and the middle of that range. Result: W_J = 300, I_TONIC_J = -650 pA (feasible -600..-700 at W_J 300;
+   -800..-900 at 400; none at 500).
+3. **Drive matching of the learned edge.** Junctions fire about 27.5 times less often than v2's frame afferents
+   (`drive_ratio_s7.json`: 0.0191 vs 0.526 spikes per step, curriculum, untrained). <!--derived--> At v2's scale the pools stay
+   silent after training. With S = 27.53, the start weight is S x W_INIT, the Oja rate S^2 x ETA and the
+   normalisation OJA_BETA / S^2. This rescaling maps the junction Oja update onto v2's at matched aggregate drive
+   (dW_J = S x dW). S is a measured ratio, not a tuned value.
+
+Target (ii) as first written ("the pools fire above MIN_RATE during teaching") cannot fail, because the teacher
+current drives them. It is dropped as a calibration target. Curriculum training accuracy is reported in the dev
+check, not used to set anything.
+
+The integrity smoke's AND check uses the restated target (i) on 256 sampled junctions at the frozen constants.
+The `coincidence` lesion is unchanged (every FR -> FJ weight x 2, so a lone afferent delivers what the pair did).
+Evaluation cost rises: one junction lexicon build + train takes about 15 minutes on numpy per seed.

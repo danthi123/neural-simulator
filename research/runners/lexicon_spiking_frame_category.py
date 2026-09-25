@@ -210,6 +210,8 @@ def _synapse_slots(b, pre_idx, post_groups):
 class SpikingFrameCategoryLexicon:
     """See module docstring. `train(labels_per_replica)` then `classify(word)` / `decide(word)`."""
 
+    variant = "frame"   # get_lexicon() rebuilds the singleton when the requested variant differs
+
     def __init__(self, seed: int, env: FrameEnvironment, n_replicas: int = 1, *, eta=ETA, oja_beta=OJA_BETA,
                  teacher_i=TEACHER_I, i_frame=I_FRAME, k_occ=K_OCC, t_on=T_ON, epochs=EPOCHS):
         from sim.backend import to_host
@@ -429,15 +431,30 @@ def seed_curriculum(env: FrameEnvironment, k_seed=None, cv_seed=None):
 _LEXICON = None
 
 
+def _junction_requested() -> bool:
+    """`BRAIN_LEARNED_REFERENT_JUNCTION` in {1,true,yes,on} -> the frame-junction variant
+    (`lexicon_frame_junction.FrameJunctionLexicon`; pre-registration
+    research/findings/2026-09-24-lexicon-closed-class-frame-junction-PREREGISTRATION.md). DEFAULT OFF: unset -> the
+    v2 lexicon below, and the junction module is never imported."""
+    v = os.environ.get("BRAIN_LEARNED_REFERENT_JUNCTION")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def get_lexicon(seed: int = 42, corpus_path=None, max_chars: int = 8_000_000, top_v: int = 2000):
-    """The process-shared DEPLOYMENT lexicon (built + trained once, lazily): all 38 + 37 seeds, R=1."""
+    """The process-shared DEPLOYMENT lexicon (built + trained once, lazily): all 38 + 37 seeds, R=1. The variant
+    follows `BRAIN_LEARNED_REFERENT_JUNCTION` (default: v2, this module's class)."""
     global _LEXICON
-    if _LEXICON is None:
+    want = "junction" if _junction_requested() else "frame"
+    if _LEXICON is None or getattr(_LEXICON, "variant", "frame") != want:
         from research.runners._comprehension_learned_animacy_cue_derisk import load_tokens, build_vocab
         tokens = load_tokens(corpus_path or _DEFAULT_CORPUS, max_chars)
         vocab, _ = build_vocab(tokens, top_v)
         env = FrameEnvironment(tokens, vocab + [w for w in HAND_NOUN_SEEDS + NONNOUN_SEEDS if w not in vocab])
-        lex = SpikingFrameCategoryLexicon(seed, env, n_replicas=1)
+        if want == "junction":
+            from research.runners.lexicon_frame_junction import FrameJunctionLexicon
+            lex = FrameJunctionLexicon(seed, env, n_replicas=1)
+        else:
+            lex = SpikingFrameCategoryLexicon(seed, env, n_replicas=1)
         words, labels = seed_curriculum(env)
         lex.train(words, labels[:, None])
         _LEXICON = lex
