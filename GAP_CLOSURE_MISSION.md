@@ -70,6 +70,14 @@ code span hiding whole sections again). Every round that deleted or hid markup o
 '<!--derived-->' comment outside code (markdown-it) exempts its own line/cell; precision-aware matching; per-claim
 chance rate. main keeps its current checker until a round reviews SOUND with no regression vs main or r5.
 
+**🌙 07:25 pool:** awake-rest replay arc family complete (6/6 seeds) -> scoring workflow `wb0hmbjy0` (scorer + verifier).
+"SATURATED" was partly false: pool41/pool42 ran 17 D6 N=2000 processes, 7 of them duplicates of cells already landed
+(same revision 24231d6d6) for 7-26 h. Stopped the 7 duplicates by hand; the 5 missing cells (s43 HEBB, s100 HEBB/FREEZE,
+s101 HEBB/FREEZE) keep running (the 26 h copies should land first). Root cause: pool_queue.sh's duplicate guard compares
+pool.running on the wrong field, so its running-set half never matches; fix + tests + opus review = workflow `wctjyd0sd`.
+SETTLE A2 6 seeds wait on pool memory budget (two 48 GB LTM-on seeds per AWS node; LTM-on seeds 43-101 ~3 h each, 102 queued).
+AWS: 2 x r7i.4xlarge, ~$2.05/h, projected ~$49 at the UTC day end (20:00 EDT): no room for a third node today.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
