@@ -6,7 +6,7 @@ scanned 353 finding(s) dated >= 2026-09-01
   cur failures by rule (a doc can fail several): {'unsupported': 94, 'missing': 17, 'too_broad': 13}
   cur failures by rule combination: {'unsupported': 79, 'missing + unsupported': 10, 'too_broad': 7, 'missing': 6, 'unsupported + too_broad': 5, 'missing + too_broad': 1}
   what cur does with the 1651 numbers r6 flagged: {'rounding': 1018, 'still-unsupported': 549, 'identifier': 67, 'exempt': 8, 'exact': 4, 'exact+M': 2, 'not-a-number': 1, 'sign-read': 1, 'truncation': 1}
-  cur rule A over all checked numbers: {'checked': 4379, 'exact': 1944, 'rounding': 1867, 'unsupported': 563, 'identifiers': 116}
+  cur rule A over all checked numbers: {'checked': 4379, 'exact': 1944, 'rounding': 1867, 'unsupported': 563, 'identifiers': 117}
   chance-match rate over 227 docs with >=1 checked number: min 0.000  p50 0.015  p90 0.122  p95 0.203  p99 0.505  max 0.645
       [0.00, 0.01): 92
       [0.01, 0.02): 31

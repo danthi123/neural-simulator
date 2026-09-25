@@ -1308,7 +1308,7 @@ research/findings/2026-07-06-objrel-tie-break-recovery-real-but-mechanism-is-a-M
 research/findings/2026-07-06-objrel-trained-readout-NOT-surpass-DALE-SHIFT-diagnosis.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
 research/findings/2026-07-07-D1-microcircuit-noise-robust-deep-credit-clears-bar-on-spikes.md	FAIL	FAIL	FAIL	FAIL	unsupported(28)	0.0400	31	1	2	28	0	30	rounding:2;still-unsupported:28	False	
 research/findings/2026-07-07-D1-spiking-bdsp-burstprop-mechanism-ports-accuracy-noise-limited.md	FAIL	FAIL	FAIL	FAIL	unsupported(10)	0.0600	13	1	2	10	0	12	rounding:2;still-unsupported:10	False	
-research/findings/2026-07-07-D2-feedback-alignment-depth-stability-research-gate.md	FAIL	FAIL	FAIL	FAIL	unsupported(6)	0.0000	6	0	0	6	24	30	identifier:24;still-unsupported:6	False	
+research/findings/2026-07-07-D2-feedback-alignment-depth-stability-research-gate.md	FAIL	FAIL	FAIL	FAIL	unsupported(5)	0.0000	5	0	0	5	25	30	identifier:25;still-unsupported:5	False	
 research/findings/2026-07-07-D2-rung1-depth3-rate-reference-burstprop-depth-fragile-FA-alignment-degrades.md	FAIL	FAIL	FAIL	FAIL	unsupported(12)	0.0000	12	0	0	12	0	12	still-unsupported:12	False	
 research/findings/2026-07-07-D2-rung2-learned-apical-feedback-lifts-deep-credit-alignment-transport-free.md	FAIL	FAIL	FAIL	FAIL	unsupported(50)	0.0000	50	0	0	50	0	50	still-unsupported:50	False	
 research/findings/2026-07-07-GNW-rung1-spiking-ignition-6seed-GO.md	FAIL	FAIL	FAIL	FAIL	unsupported(9)	0.0000	9	0	0	9	0	9	still-unsupported:9	False	
@@ -1499,7 +1499,7 @@ research/findings/2026-07-11-the-long-range-wall-is-the-fading-STATE-not-the-cre
 research/findings/2026-07-12-RUNG5-open-vocab-spiking-spellout-6seed-GO.md	FAIL	FAIL	FAIL	FAIL	unsupported(7)	0.0000	7	0	0	7	0	7	still-unsupported:7	False	
 research/findings/2026-07-12-cue-task-is-wrong-instrument-the-learn-Win-benefit-is-prediction-generalization-strong-rate-headroom.md	FAIL	FAIL	FAIL	FAIL	unsupported(5)	0.0150	29	12	12	5	0	17	rounding:12;still-unsupported:5	False	
 research/findings/2026-07-12-deep-credit-on-spikes-FA-family-exhausted-BurstCCN-mechanism-gate.md	FAIL	FAIL	FAIL	FAIL	unsupported(10)	0.0000	10	0	0	10	1	11	identifier:1;still-unsupported:10	False	
-research/findings/2026-07-12-deep-credit-on-spikes-external-scan-verdict-genuine-open-frontier-ranked-complementary-levers.md	FAIL	FAIL	FAIL	FAIL	unsupported(1)	0.0000	1	0	0	1	9	10	identifier:9;still-unsupported:1	False	
+research/findings/2026-07-12-deep-credit-on-spikes-external-scan-verdict-genuine-open-frontier-ranked-complementary-levers.md	FAIL	FAIL	FAIL	PASS			0	0	0	0	10	10	identifier:10	False	
 research/findings/2026-07-12-dendritic-per-compartment-gain-SURPASSES-the-point-neuron-confound-suppression-boundary-on-the-spiking-generalization-task.md	FAIL	FAIL	FAIL	FAIL	unsupported(20)	0.0200	31	2	9	20	0	29	rounding:9;still-unsupported:20	False	
 research/findings/2026-07-12-devnorm-input-normalization-does-NOT-transfer-to-generation-common-tokens-are-predictive.md	FAIL	FAIL	FAIL	FAIL	unsupported(4)	0.0000	12	8	0	4	0	4	still-unsupported:4	False	
 research/findings/2026-07-12-multitimescale-reservoir-read-beats-single-and-size-matched-flat-6seed-GO-the-external-scan-1-lever.md	FAIL	FAIL	FAIL	FAIL	unsupported(10)	0.0000	10	0	0	10	1	11	identifier:1;still-unsupported:10	False	
@@ -2957,7 +2957,7 @@ research/findings/2026-09-24-swap-drives-adequate-probe-6seed-status-1-of-6-veri
 research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
 research/findings/2026-09-24-vision-configural-binding-spiking-feedback-divisive-gain-control-readout-NEUTRAL-6seed.md	PASS	PASS	PASS	PASS		0.0025	6	6	0	0	0	0		False	
 research/findings/2026-09-24-vision-readout-port-homeostasis-6seed-PORT-REPAIRED-capability-short.md	PASS	PASS	PASS	PASS		0.0475	25	25	0	0	0	0		False	
-research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-plasticity-PREREGISTERED.md	PASS	PASS	PASS	PASS		0.0150	17	17	0	0	1	0		False	
+research/findings/2026-09-24-vision-readout-port-homeostasis-intrinsic-plasticity-PREREGISTERED.md	PASS	PASS	PASS	PASS		0.0150	17	17	0	0	2	0		False	
 research/findings/2026-09-24-wm-binding-ordinary-content-probe-6seed-NOGO-held-state-does-not-reach-an-ordinary-reply.md	PASS	PASS	PASS	PASS			0	0	0	0	0	0		False	
 research/findings/2026-09-24-wm-binding-ordinary-content-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0025	1	0	1	0	0	0		False	
 research/findings/2026-09-24-wm-referent-focus-bind-anaphor-probe-PREREGISTRATION.md	PASS	PASS	PASS	PASS		0.0000	1	1	0	0	1	0		False	

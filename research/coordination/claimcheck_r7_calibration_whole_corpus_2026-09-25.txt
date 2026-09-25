@@ -1,14 +1,14 @@
 scanned 2967 finding(s) dated >= 0000-00-00
-  main FAIL 1337 / 2967; failing ONLY on numbers the current checker shows are correct: 121; of its 21232 flagged numbers, 3969 (19%) are correct roundings/identifiers
-  r5   FAIL 1689 / 2967; failing ONLY on numbers the current checker shows are correct: 246; of its 26914 flagged numbers, 8286 (31%) are correct roundings/identifiers
-  r6   FAIL 1761 / 2967; failing ONLY on numbers the current checker shows are correct: 270; of its 28429 flagged numbers, 9234 (32%) are correct roundings/identifiers
-  cur  FAIL 1522 / 2967; failing on breadth alone (chance-match rule): 23
-  cur failures by rule (a doc can fail several): {'unsupported': 1436, 'missing': 163, 'too_broad': 47, 'low_coverage': 1}
-  cur failures by rule combination: {'unsupported': 1314, 'missing + unsupported': 99, 'missing': 61, 'too_broad': 23, 'unsupported + too_broad': 21, 'missing + too_broad': 2, 'unsupported + low_coverage': 1, 'missing + unsupported + too_broad': 1}
-  what cur does with the 28429 numbers r6 flagged: {'still-unsupported': 19160, 'rounding': 8340, 'identifier': 853, 'exact': 27, 'sign-read-checked': 19, 'exempt': 10, 'not-a-number': 6, 'rounding+B': 6, 'exact+B': 4, 'exact+M': 2, 'sign-read': 1, 'truncation': 1}
-  cur rule A over all checked numbers: {'checked': 39822, 'exact': 10017, 'rounding': 10592, 'unsupported': 19208, 'identifiers': 954}
-  chance-match rate over 1963 docs with >=1 checked number: min 0.000  p50 0.000  p90 0.065  p95 0.122  p99 0.318  max 0.905
-      [0.00, 0.01): 1239
+  main FAIL 1337 / 2967; failing ONLY on numbers the current checker shows are correct: 122; of its 21232 flagged numbers, 3971 (19%) are correct roundings/identifiers
+  r5   FAIL 1689 / 2967; failing ONLY on numbers the current checker shows are correct: 247; of its 26914 flagged numbers, 8288 (31%) are correct roundings/identifiers
+  r6   FAIL 1761 / 2967; failing ONLY on numbers the current checker shows are correct: 271; of its 28429 flagged numbers, 9236 (32%) are correct roundings/identifiers
+  cur  FAIL 1521 / 2967; failing on breadth alone (chance-match rule): 23
+  cur failures by rule (a doc can fail several): {'unsupported': 1435, 'missing': 163, 'too_broad': 47, 'low_coverage': 1}
+  cur failures by rule combination: {'unsupported': 1313, 'missing + unsupported': 99, 'missing': 61, 'too_broad': 23, 'unsupported + too_broad': 21, 'missing + too_broad': 2, 'unsupported + low_coverage': 1, 'missing + unsupported + too_broad': 1}
+  what cur does with the 28429 numbers r6 flagged: {'still-unsupported': 19158, 'rounding': 8340, 'identifier': 855, 'exact': 27, 'sign-read-checked': 19, 'exempt': 10, 'not-a-number': 6, 'rounding+B': 6, 'exact+B': 4, 'exact+M': 2, 'sign-read': 1, 'truncation': 1}
+  cur rule A over all checked numbers: {'checked': 39820, 'exact': 10017, 'rounding': 10592, 'unsupported': 19206, 'identifiers': 957}
+  chance-match rate over 1962 docs with >=1 checked number: min 0.000  p50 0.000  p90 0.065  p95 0.122  p99 0.318  max 0.905
+      [0.00, 0.01): 1238
       [0.01, 0.02): 163
       [0.02, 0.05): 288
       [0.05, 0.10): 154

@@ -138,6 +138,20 @@ claimcheck_r7_retro_since2026-09-01_2026-09-25.tsv and the whole-corpus pair). O
     lose the escape; 12 (31) flip from r5 PASS to FAIL. With a reason added, 5 (18) would still be barred by a
     verdict word: 3 state real verdicts (`de-risk GO`, `6-seed GO`, a `no-go` filename), 1 is a noun (`hygiene
     pass`), 1 names a lane (`satdiv-GO`). Words naming a gate (`GO gate`, `PASS criteria`) are not verdicts.
+
+VERIFICATION of round 7's first commit (00aa451da) by adversarial probes against r6 found four fail-open
+regressions, all fixed here and pinned as cases: a NON-empty comment inside a number (`0.15<!-- x -->25`; the
+reader's reading, with every hidden carrier rendered as nothing, is now scanned too); a `|` inside a comment in a
+table row (GFM splits cells before inline parsing, so pipes cut on the RAW line); `10.1525/s` taken for a bare DOI;
+and a bidirectional override that displays stored digits in another order (the doc is refused). A seeded
+differential fuzz (tests/test_claim_check_fuzz.py; 10,000 contexts per direction during verification) then found
+`Δ_0.1525_`, and after that 0 fail-open and 0 false positives.
+
+CANNOT CATCH (known, not chased): a number spelled in words; a decimal COMMA (`0,1525`, ambiguous with thousands
+separators); homoglyph letters for digits (`O.1525`, Cyrillic O); a wrong number that happens to lie within
+half a unit of an unrelated cited value (bounded per doc by rule B, at most CHANCE_MAX); a wrong claim about a
+value that IS in the cited artifact but belongs to a different quantity (existence is not agreement --
+gates/stated_value_mismatch's job).
 """
 from __future__ import annotations
 
@@ -207,7 +221,11 @@ _TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9:-]*(?:\s[^<>]*)?/?>")
 _ID_RES = (
     re.compile(r"(?:\b(?:https?|ftp)://|\bwww\.)[^\s<>()\[\]{}\"'`|]+", re.I),
     re.compile(r"\barxiv(?:\s*:\s*|\s+)[0-9]{4}\.[0-9]{4,5}(?:v[0-9]+)?", re.I),
-    re.compile(r"(?:\bdoi\s*:?\s*)?\b10\.[0-9]{4,9}/(?=[^\s<>()\[\]{}\"'`|]*[A-Za-z])[^\s<>()\[\]{}\"'`|]+", re.I),
+    # a DOI after `doi:`/`doi.org/`; a BARE one only when its suffix is 6+ characters holding a letter AND a digit
+    # (`10.1038/415429a`), so a measurement with a unit (`10.1525/s`, `10.1525/step`) is never skipped
+    re.compile(r"(?:\bdoi\s*:?\s*|\bdoi\.org/)10\.[0-9]{4,9}/[^\s<>()\[\]{}\"'`|]+", re.I),
+    re.compile(r"\b10\.[0-9]{4,9}/(?=[^\s<>()\[\]{}\"'`|]*[A-Za-z])(?=[^\s<>()\[\]{}\"'`|]*[0-9])"
+               r"[^\s<>()\[\]{}\"'`|]{6,}"),
     re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json|md|py|npz|npy|pt|txt|tsv|csv|log|ya?ml|sh)\b"),
 )
 
@@ -225,6 +243,7 @@ _LINKREF_RE = re.compile(r"^[ ]{0,3}\[(?!\^)[^\]\n]+\]:[ \t]*\S[^\n]*$", re.M)
 _HIDDEN_OPEN_RE = re.compile(r"<([A-Za-z][A-Za-z0-9-]*)\b(?=[^>]*(?:\bhidden\b|display\s*:\s*none|"
                              r"visibility\s*:\s*hidden))[^>]*>|<(script|style|template|noscript)\b[^>]*>", re.I)
 _ZW = "\u200b"                   # blanking character for the SCAN copy: category Cf, so a soft separator
+_BIDI_RE = re.compile("[\u202a-\u202e\u2066-\u2069]")
 
 # ---- E. synthesis ---------------------------------------------------------------------------------------------
 _FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
@@ -502,8 +521,9 @@ def _normalize(seg):
     for p, k in enumerate(kd):                         # resolve context-dependent characters
         prev = ch[p - 1] if p > 0 else ""
         nxt = ch[p + 1] if p + 1 < len(ch) else ""
-        if k == "u":                                   # an intraword `_` is literal (CommonMark), else emphasis
-            if prev.isalnum() and nxt.isalnum():
+        if k == "u":                                   # an intraword `_` is literal (CommonMark), else emphasis --
+            # but only after an ASCII letter/digit: `foo_0.125` is an identifier, `Δ_0.1525` is a symbol and a number
+            if prev.isascii() and prev.isalnum() and nxt.isalnum():
                 kd[p] = "c"
             else:
                 ch[p], kd[p] = " ", "e"
@@ -674,10 +694,14 @@ def _table_rows(vis_lines):
     return rows
 
 
-def _segments(vis_line, table_row):
+def _segments(vis_line, table_row, raw_line=None):
+    """Independent exemption scopes of one line, as (start, end) columns. Line-breaking tags cut where they RENDER
+    (on the visible line: a `<br>` or `<div>` inside a hidden carrier renders nothing), while a table row's `|`
+    cuts on the RAW line (GFM splits a row into cells before any inline parsing, so a `|` inside a comment still
+    separates cells for a reader). Every cut only narrows an exemption."""
     cuts = [(m.start(), m.end()) for m in _SEG_TAG_RE.finditer(vis_line)]
     if table_row:
-        cuts += [(m.start(), m.end()) for m in re.finditer(r"\|", vis_line)]
+        cuts += [(m.start(), m.end()) for m in re.finditer(r"\|", raw_line if raw_line is not None else vis_line)]
     cuts.sort()
     segs, pos = [], 0
     for a, b in cuts:
@@ -854,13 +878,21 @@ def _scan(doc_path, tol=None):
         return _empty_scan_result("%s is not valid UTF-8 (%s at byte offset %d) -- fix the file's encoding "
                                   "before it can be checked" % (doc_path, e.reason, e.start))
     text = text.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
+    bidi = _BIDI_RE.search(text)
+    if bidi:
+        # A bidirectional embedding/override/isolate control makes the SCREEN order of digits differ from the
+        # stored order (`\u202e5251.0` displays as 0.1525): no reading of the stored text is the one a reader sees.
+        return _empty_scan_result("%s contains a bidirectional control character (U+%04X, line %d) that can "
+                                  "reorder digits on screen -- remove it" % (
+                                      doc_path, ord(bidi.group(0)), text.count("\n", 0, bidi.start()) + 1))
     lines = text.split("\n")
     synthesis, _reason, synth_barred = _synthesis_status(text, doc_path)
 
     hidden = _hidden_spans(text)
     hidden_merged = _merge(hidden)
     vis = _blank(text, hidden, " ")                       # what a reader sees (citations, table structure)
-    scan = _blank(text, hidden, _ZW, keep_inner=True)     # what is scanned for numbers
+    scan = _blank(text, hidden, _ZW, keep_inner=True)     # what is scanned for numbers (carrier content kept)
+    seen = _blank(text, hidden, _ZW)                       # the reader's reading: carriers render as NOTHING
     cited = sorted(set(PATH_RE.findall(vis)))
     pool, _verdicts, loaded, missing, capped = load_artifacts(cited)
 
@@ -869,6 +901,7 @@ def _scan(doc_path, tol=None):
         line_starts.append(off)
         off += len(ln) + 1
     vis_lines = vis.split("\n")
+    seen_lines = seen.split("\n")
     scan_lines = scan.split("\n")
     table_rows = _table_rows(vis_lines)
     markers_by_line = {}
@@ -881,7 +914,7 @@ def _scan(doc_path, tol=None):
     suppressed = {"inline": 0, "synthesis": 0}
     marked_lines, n_ids = [], 0
     for li, vln in enumerate(vis_lines):
-        segs = _segments(vln, li in table_rows)
+        segs = _segments(vln, li in table_rows, lines[li])
         seg_markers = [0] * len(segs)
         for col in markers_by_line.get(li, ()):
             for si, (a, b) in enumerate(segs):
@@ -891,6 +924,12 @@ def _scan(doc_path, tol=None):
         sln = scan_lines[li]
         for si, (a, b) in enumerate(segs):
             nums, ids = _numbers_in(sln[a:b])
+            # ... plus any number that only exists in the READER's reading, where a hidden carrier inside a
+            # decimal literal renders as nothing (`0.15<!-- x -->25` shows 0.1525).
+            spans = {(x.start, x.end, x.value) for x in nums}
+            extra = [x for x in _numbers_in(seen_lines[li][a:b])[0] if (x.start, x.end, x.value) not in spans]
+            if extra:
+                nums = sorted(nums + [x._replace(split=True) for x in extra], key=lambda x: x.start)
             n_ids += ids
             if seg_markers[si] and not nums and not ids and not _STANDALONE_MARKER_RE.match(lines[li]):
                 warnings.append((li + 1, "marker exempts nothing",
@@ -1413,6 +1452,35 @@ SELFTEST_CASES = [
          why="issue 11: with claim_check's selftest broken, the gate must pass the problems through VERBATIM "
              "labelled BROKEN INSTRUMENT, and must not fail its OWN selftest (which made the registry skip "
              "check() and mislabel the regression a 'false positive')", doc=""),
+    # --- round 7's own verification (adversarial probes of the first r7 commit, 00aa451da) ------------------------
+    dict(name="nonempty_comment_mid_number_is_read_as_the_reader_sees_it", expect="FAIL",
+         wrong_on=_ALL_BEFORE_R6,
+         why="r7 regression caught in verification: keeping comment CONTENT for scanning left `0.15<!-- x -->25` "
+             "as three fragments, while a reader sees 0.1525 (r6 stripped the comment and caught it); the "
+             "reader's reading, with every hidden carrier rendered as nothing, is now scanned too",
+         doc=_HDR + "The accuracy was 0.15<!-- x -->25 here.\n"),
+    dict(name="hidden_element_mid_number_is_read_as_the_reader_sees_it", expect="FAIL", wrong_on=_ALL,
+         why="the same with a hidden element: `0.15<div hidden>9</div>25` shows 0.1525",
+         doc=_HDR + "The accuracy was 0.15<div hidden>9</div>25 here.\n"),
+    dict(name="pipe_inside_comment_still_splits_a_table_row", expect="FAIL", wrong_on=_ALL_BEFORE_R6,
+         why="r7 regression caught in verification: GFM splits a row into cells BEFORE inline parsing, so a `|` "
+             "inside a comment separates cells for a reader; cutting on the comment-blanked line merged the wrong "
+             "0.1525 into the marker's cell",
+         doc=_HDR + "| a | b | c |\n|---|---|---|\n| 42 | 0.1525 <!-- | --> 0.104615 <!--derived--> |\n"),
+    dict(name="measurement_with_a_slash_unit_is_not_a_doi", expect="FAIL", wrong_on=(),
+         why="r7 regression caught in verification: `10.1525/s` matched the bare-DOI pattern and was skipped; a "
+             "bare DOI now needs a 6+ character suffix holding a letter AND a digit",
+         doc=_HDR + "Throughput 10.1525/s here.\n", must_flag=(10.1525,)),
+    dict(name="nonascii_letter_underscore_number_is_a_number", expect="FAIL", wrong_on=_ALL,
+         why="found by the fuzz (tests/test_claim_check_fuzz.py): `\\u0394_0.1525_` -- an intraword `_` is an "
+             "identifier character only after an ASCII letter/digit (`foo_0.125`); after a symbol letter it is "
+             "emphasis or a separator and the number is a claim",
+         doc=_HDR + "The shift Δ_0.1525_ here.\n"),
+    dict(name="bidi_override_is_unreadable", expect="FAIL", wrong_on=_ALL,
+         why="a bidirectional override (`\\u202e5251.0\\u202c`) DISPLAYS as 0.1525 while storing 5251.0 -- no "
+             "reading of the stored text is the reader's; the doc is refused as unreadable",
+         doc=_HDR + "The accuracy was \u202e5251.0\u202c here.\n", expect_output="bidirectional control",
+         expect_reason="unreadable"),
     # --- round 7 guards: behaviour kept on purpose -----------------------------------------------------------------
     dict(name="hyphen_range_is_not_a_sign", expect="PASS", wrong_on=(),
          why="a '-' after a digit is a range or a subtraction, not a sign",
@@ -1543,6 +1611,10 @@ def selftest():
                 elif reason == "low_coverage":
                     if not r["low_coverage"]:
                         problems.append("SELFTEST BROKEN: case %s failed but not on LOW COVERAGE" % case["name"])
+                elif reason == "unreadable":
+                    if not r.get("unreadable"):
+                        problems.append("SELFTEST BROKEN: case %s failed but was not refused as UNREADABLE"
+                                        % case["name"])
                 elif not (flagged & WRONG_VALUES) and not r["low_coverage"]:
                     problems.append("SELFTEST BROKEN: case %s failed but never flagged its designated wrong "
                                     "number (%s): flagged=%s" % (case["name"], sorted(WRONG_VALUES), flagged))
