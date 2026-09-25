@@ -498,6 +498,47 @@ def test_check_provisioned_timeout_is_none(monkeypatch):
     assert psc.check_provisioned("pool40", "abc1234") is None
 
 
+# ------------------------------------------------------------------------------------- probe_live_node_budget_gb
+# (HIGH-1/MEDIUM fix, 2026-09-25 review -- the capacity_stalled evidence check's live-budget probe)
+
+def _write_fake_autodispatch_script(root):
+    tools_dir = root / "tools"
+    tools_dir.mkdir(parents=True, exist_ok=True)
+    (tools_dir / "pool_autodispatch.sh").write_text("#!/usr/bin/env bash\n")
+
+
+def test_probe_live_node_budget_gb_parses_idle_output(monkeypatch, tmp_path):
+    _write_fake_autodispatch_script(tmp_path)
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, "idle budget=7GB\n"))
+    assert psc.probe_live_node_budget_gb("pool40", root=str(tmp_path)) == 7
+
+
+def test_probe_live_node_budget_gb_parses_busy_output(monkeypatch, tmp_path):
+    _write_fake_autodispatch_script(tmp_path)
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, "busy/unreachable (budget=0GB)\n"))
+    assert psc.probe_live_node_budget_gb("pool40", root=str(tmp_path)) == 0
+
+
+def test_probe_live_node_budget_gb_unparseable_stdout_is_none(monkeypatch, tmp_path):
+    _write_fake_autodispatch_script(tmp_path)
+    monkeypatch.setattr(psc.subprocess, "run", lambda *a, **k: _FakeCompleted(0, "garbage\n"))
+    assert psc.probe_live_node_budget_gb("pool40", root=str(tmp_path)) is None
+
+
+def test_probe_live_node_budget_gb_timeout_is_none(monkeypatch, tmp_path):
+    _write_fake_autodispatch_script(tmp_path)
+
+    def boom(*a, **k):
+        raise psc.subprocess.TimeoutExpired(cmd="bash", timeout=20)
+    monkeypatch.setattr(psc.subprocess, "run", boom)
+    assert psc.probe_live_node_budget_gb("pool40", root=str(tmp_path)) is None
+
+
+def test_probe_live_node_budget_gb_missing_script_is_none(tmp_path):
+    # root has no tools/pool_autodispatch.sh at all -- must degrade to None, never raise or shell out.
+    assert psc.probe_live_node_budget_gb("pool40", root=str(tmp_path / "no-tools-dir")) is None
+
+
 def test_all_mem_totals_splits_reachable_and_unreachable(monkeypatch):
     def fake_probe(node, timeout=10, connect_timeout=6):
         return {"pool40": 15, "pool41": 8}.get(node)
@@ -541,14 +582,25 @@ def test_check_queue_not_flagged_unrunnable_when_one_capable_node_has_the_marker
                          ({"pool1": 32, "pool41": 15}, []))
     monkeypatch.setattr(psc, "check_provisioned",
                          lambda node, s, timeout=10, connect_timeout=6: node == "pool1")
-    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q), now=now)
+    # HIGH-1 fix (2026-09-25 review): capacity_stalled now requires EVIDENCE the line is actually being skipped
+    # -- fake a live --node-budget confirmation (real headroom below what this line needs) rather than letting a
+    # real ssh/subprocess call happen from a pure-logic test.
+    monkeypatch.setattr(psc, "probe_live_node_budget_gb", lambda node, **k: 0)
+    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q),
+                              claims_path_=str(tmp_path / "no-such-claims"), now=now)
     assert report["unrunnable"] == []
     # HIGH-2 fix (2026-09-25 review): a capable+provisioned node no longer silences the line unconditionally as
     # "clean" -- at 1h old (>= the default membudget_min_age_h) something OTHER than provisioning must be
     # keeping it queued, so it is reported as capacity_stalled instead (the exact "revision on the mini-PCs,
     # 7.5h old" incident state the review replayed, which used to read clean).
     assert len(report["capacity_stalled"]) == 1
-    assert report["capacity_stalled"][0]["provisioned_node"] == "pool1"
+    row = report["capacity_stalled"][0]
+    assert row["provisioned_node"] == "pool1"
+    # MEDIUM fix (2026-09-25 review): once aged into capacity_stalled, the OTHER capable node (pool41, confirmed
+    # NOT to have the revision) must be named too -- the old code stopped probing at the first True and never
+    # learned this, so the real fix (provision pool41) was never suggested.
+    assert row["missing_on_nodes"] == ["pool41"]
+    assert "pool41" in row["fix_cmd"]
     assert "stalled on live capacity" in report["summary_line"]
 
 
@@ -702,13 +754,16 @@ def test_check_queue_probes_each_node_sha_pair_once_even_across_several_lines(tm
     assert calls == [("pool1", sha)]   # one probe reused for both lines, not two
 
 
-def test_check_queue_stops_probing_at_first_true(tmp_path, monkeypatch):
-    # LOW-3 fix: probing must stop the instant a capable node reads True -- the remaining capable nodes' status
-    # is never consulted on that branch, so probing them was pure cost.
+def test_check_queue_stops_probing_at_first_true_when_too_young_for_capacity_check(tmp_path, monkeypatch):
+    # LOW-3 fix: probing must stop the instant a capable node reads True, WHILE the line is not yet old enough to
+    # need the capacity_stalled evidence check (MEDIUM fix, 2026-09-25 review -- see the companion test below,
+    # which pins the opposite: once a line IS old enough, the remaining capable nodes ARE probed). 40 minutes
+    # clears the default unrunnable_min_age (30 min, so the line reaches the provisioning check at all) but stays
+    # under the default membudget_min_age (60 min, so capacity_stalled is never evaluated).
     now = int(time.time())
     sha = "5" * 40
     q = tmp_path / "pool.queue"
-    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=4 python3 -m research.runners.x\n" % (now - 3600, sha))
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=4 python3 -m research.runners.x\n" % (now - 2400, sha))
     calls = []
 
     def fake_check_provisioned(node, s, timeout=10, connect_timeout=6):
@@ -717,8 +772,76 @@ def test_check_queue_stops_probing_at_first_true(tmp_path, monkeypatch):
     monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6:
                          ({"pool1": 32, "pool41": 15, "pool42": 15}, []))
     monkeypatch.setattr(psc, "check_provisioned", fake_check_provisioned)
-    psc.check_queue(nodes=["pool1", "pool41", "pool42"], queue_path_=str(q), now=now)
+    report = psc.check_queue(nodes=["pool1", "pool41", "pool42"], queue_path_=str(q), now=now)
     assert calls == ["pool1"]   # pool41/pool42 never probed once pool1 read True
+    assert report["capacity_stalled"] == []   # too young for the capacity check to even run
+
+
+def test_check_queue_capacity_stalled_probes_remaining_capable_nodes_once_aged(tmp_path, monkeypatch):
+    # MEDIUM fix (2026-09-25 review): once a line has aged into a capacity_stalled INCIDENT worth reporting, the
+    # remaining capable nodes ARE probed too (the (node, sha) cache bounds this to nodes x shas) so the report
+    # can name every node CONFIRMED missing the revision -- the real fix -- instead of repeating the one node
+    # that happens to have it (the "revision on the mini-PCs, never probed pool1/pool2" incident state).
+    now = int(time.time())
+    sha = "6" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=4 python3 -m research.runners.x\n" % (now - 7200, sha))
+    calls = []
+
+    def fake_check_provisioned(node, s, timeout=10, connect_timeout=6):
+        calls.append(node)
+        return node == "pool1"   # only pool1 has it; pool41/pool42 are confirmed missing
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6:
+                         ({"pool1": 32, "pool41": 15, "pool42": 15}, []))
+    monkeypatch.setattr(psc, "check_provisioned", fake_check_provisioned)
+    monkeypatch.setattr(psc, "probe_live_node_budget_gb", lambda node, **k: 0)   # evidence: live budget too small
+    report = psc.check_queue(nodes=["pool1", "pool41", "pool42"], queue_path_=str(q),
+                              claims_path_=str(tmp_path / "no-such-claims"), now=now)
+    assert set(calls) == {"pool1", "pool41", "pool42"}   # ALL capable nodes probed, not just the first True
+    assert len(report["capacity_stalled"]) == 1
+    row = report["capacity_stalled"][0]
+    assert row["missing_on_nodes"] == ["pool41", "pool42"]
+    assert "pool41" in row["fix_cmd"] and "pool42" in row["fix_cmd"]
+
+
+def test_check_queue_capacity_stalled_not_reported_without_evidence(tmp_path, monkeypatch):
+    # HIGH-1 fix (2026-09-25 review): a capable+provisioned node with enough elapsed time is ALSO exactly what a
+    # perfectly healthy backlog looks like (replay: 47 clean lines flagged this way inside 30 minutes). With
+    # NEITHER evidence check confirming anything (no live budget shortfall, no later-dispatched claim), the line
+    # must not be reported as capacity_stalled at all.
+    now = int(time.time())
+    sha = "d" * 40
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (now - 7200, sha))
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda node, s, timeout=10, connect_timeout=6: True)
+    monkeypatch.setattr(psc, "probe_live_node_budget_gb", lambda *a, **k: None)   # no live confirmation
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q),
+                              claims_path_=str(tmp_path / "no-such-claims"), now=now)
+    assert report["capacity_stalled"] == []
+    assert "clean" in report["summary_line"]
+
+
+def test_check_queue_capacity_stalled_evidence_from_later_dispatched_claim(tmp_path, monkeypatch):
+    # HIGH-1 fix, second evidence path: no live --node-budget confirmation, but pool.queue.claims shows a job of
+    # this size or larger was actually DISPATCHED after this line was already queued -- direct proof the
+    # dispatcher had room for a job this size in that window and picked something else over this one.
+    now = int(time.time())
+    sha = "c" * 40
+    epoch = now - 7200
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (epoch, sha))
+    claims = tmp_path / "pool.queue.claims"
+    claims.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=10 python3 -m research.runners.other_job\n"
+                       % (epoch + 100,))   # dispatched AFTER this line was already queued, size >= 8
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda node, s, timeout=10, connect_timeout=6: True)
+    monkeypatch.setattr(psc, "probe_live_node_budget_gb", lambda *a, **k: None)   # no live confirmation
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), claims_path_=str(claims), now=now)
+    assert len(report["capacity_stalled"]) == 1
+    assert "later-queued" in report["capacity_stalled"][0]["evidence"]
 
 
 def test_check_queue_mem_stalled_becomes_unknown_when_a_node_is_unreachable(tmp_path, monkeypatch):
@@ -784,6 +907,14 @@ def test_check_queue_still_unrunnable_when_at_least_one_probe_confirms_false(tmp
     report = psc.check_queue(nodes=["pool1", "pool2"], queue_path_=str(q), now=now)
     assert report["unknown"] == []
     assert len(report["unrunnable"]) == 1
+    # LOW fix (2026-09-25 review): missing_nodes must carry only the CONFIRMED-False node; a probe-FAILED (None)
+    # node belongs in unprobed_nodes instead, and must not appear in the provisioning fix command -- provisioning
+    # an unreachable node was never confirmed useful.
+    row = report["unrunnable"][0]
+    assert row["missing_nodes"] == ["pool1"]
+    assert row["unprobed_nodes"] == ["pool2"]
+    assert "pool1" in row["fix_cmd"]
+    assert "pool2" not in row["fix_cmd"]
 
 
 def test_check_queue_expired_line_never_dispatchable_reports_separately(tmp_path, monkeypatch):
@@ -817,6 +948,39 @@ def test_check_queue_not_yet_expired_line_still_classified_normally(tmp_path, mo
     report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), now=now)
     assert report["expired"] == []
     assert len(report["unrunnable"]) == 1
+
+
+def test_check_queue_expired_boundary_equality_is_still_a_dispatcher_candidate(tmp_path, monkeypatch):
+    # LOW fix (2026-09-25 review): pop_job's own awk filter selects `$1+0 >= cutoff`, i.e. age_s == job_max_age
+    # EXACTLY is STILL a candidate the dispatcher will pick up next cycle -- the old `age_s >= job_max_age` here
+    # reported this boundary EXPIRED (permanently undispatchable), a false and misleading verdict one cycle early.
+    now = int(time.time())
+    sha = "f0" * 20
+    max_age = 43200
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/revisions/%s && mem_gb=8 python3 -m research.runners.settle_a2\n"
+                 % (now - max_age, sha))   # age_s == job_max_age exactly
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool1": 32}, []))
+    monkeypatch.setattr(psc, "check_provisioned", lambda *a, **k: False)
+    report = psc.check_queue(nodes=["pool1"], queue_path_=str(q), now=now, job_max_age_s=max_age)
+    assert report["expired"] == []
+    assert len(report["unrunnable"]) == 1
+
+
+def test_check_queue_membudget_age_gate_boundary_equality_counts_as_old_enough(tmp_path, monkeypatch):
+    # Review note (2026-09-25): "neither this mutation nor '>=' to '>' at :608 (the memory-budget age gate) is
+    # caught by the suite" -- pins the CURRENT, intentional behavior of that internal reporting gate (unlike the
+    # dispatcher-mirrored expired cutoff above, this age gate is this tool's own choice, not derived from an
+    # external source) so a future flip of its boundary operator is no longer silent.
+    now = int(time.time())
+    sha = "f1" * 20
+    membudget_min_age_h = 1
+    q = tmp_path / "pool.queue"
+    q.write_text("%d\tcd ~/derisk-pool/sim && mem_gb=40 python3 -m research.runners.huge_job\n"
+                 % (now - int(membudget_min_age_h * 3600),))   # age_s == membudget_min_age_s exactly
+    monkeypatch.setattr(psc, "all_mem_totals", lambda nodes, timeout=10, connect_timeout=6: ({"pool40": 15}, []))
+    report = psc.check_queue(nodes=["pool40"], queue_path_=str(q), now=now, membudget_min_age_h=membudget_min_age_h)
+    assert len(report["memory_budget_stalled"]) == 1
 
 
 def test_check_queue_no_entries_reports_clean(tmp_path, monkeypatch):
@@ -899,7 +1063,12 @@ def test_check_queue_end_to_end_with_fake_ssh(tmp_path, monkeypatch):
         unreachable=[],
     )
     monkeypatch.setenv("PATH", "%s:%s" % (bin_dir, os.environ.get("PATH", "")))
-    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q), now=now)
+    # HIGH-1 fix (2026-09-25 review): stub the live-budget evidence probe so the "clean" third line's
+    # capacity_stalled evaluation stays hermetic (no real `bash tools/pool_autodispatch.sh --node-budget ...`
+    # subprocess, which would itself shell out to `ssh`) -- with no evidence, it must stay clean (asserted below).
+    monkeypatch.setattr(psc, "probe_live_node_budget_gb", lambda *a, **k: None)
+    report = psc.check_queue(nodes=["pool1", "pool41"], queue_path_=str(q),
+                              claims_path_=str(tmp_path / "no-such-claims"), now=now)
 
     assert report["mem_totals"] == {"pool1": 32, "pool41": 15}
     assert report["n_queued"] == 3
@@ -907,6 +1076,7 @@ def test_check_queue_end_to_end_with_fake_ssh(tmp_path, monkeypatch):
     assert report["unrunnable"][0]["pinned_sha"] == sha
     assert set(report["unrunnable"][0]["capable_nodes"]) == {"pool1", "pool41"}
     assert len(report["memory_budget_stalled"]) == 1
+    assert report["capacity_stalled"] == []   # the clean, provisioned third line has no evidence -> not reported
     assert report["memory_budget_stalled"][0]["mem_gb"] == 40
 
 
@@ -956,11 +1126,34 @@ def test_format_capacity_stalled_row_names_provisioned_node():
     assert "--node-budget pool1" in line
 
 
+def test_format_capacity_stalled_row_names_evidence_and_missing_nodes():
+    # HIGH-1/MEDIUM fix (2026-09-25 review): the row now carries WHY it was flagged (evidence) and WHICH other
+    # capable nodes are confirmed missing the revision (missing_on_nodes/fix_cmd) -- both must render.
+    row = {"age_s": 7200, "module": "settle_a2", "pinned_sha": "b" * 40, "mem_gb": 8,
+           "provisioned_node": "pool1", "capable_nodes": ["pool1", "pool41"],
+           "evidence": "live --node-budget pool1 reads 0GB < mem_gb=8",
+           "missing_on_nodes": ["pool41"],
+           "fix_cmd": "bash tools/pool_provision.sh --revision %s --isolated pool41" % ("b" * 40)}
+    line = psc.format_capacity_stalled_row(row)
+    assert "reads 0GB < mem_gb=8" in line
+    assert "ALSO missing on pool41" in line
+    assert "bash tools/pool_provision.sh" in line
+
+
 def test_format_expired_row_names_reissue_command():
     row = {"age_s": 43260, "module": "settle_a2"}
     line = psc.format_expired_row(row)
     assert "settle_a2" in line
     assert "pool_queue.sh add" in line
+
+
+def test_format_expired_row_names_delete_under_lock_with_no_generic_readd_only(tmp_path):
+    # LOW fix (2026-09-25 review): pool_queue.sh has no remove command, so "re-add via ..." ALONE (the old text)
+    # leaves the stale line alerting forever -- the message must also say to delete the original line first.
+    row = {"age_s": 43260, "module": "settle_a2", "epoch": 1234567890}
+    line = psc.format_expired_row(row)
+    assert "delete it from pool.queue" in line
+    assert "1234567890" in line
 
 
 def test_format_unknown_row_carries_reason():

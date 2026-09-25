@@ -20,6 +20,15 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import parallel_audit as pa  # noqa: E402
 
 
+def _queue_counts(unrunnable=0, mem_stalled=0, expired=0, capacity_stalled=0, unknown=0, check_failed=False):
+    """A queue_unrunnable_summary()-shaped counts dict (fix round, 2026-09-25 review HIGH-1: the flat int total
+    became a per-bucket dict so the verdict-line suffix can label each bucket instead of calling everything
+    'UNRUNNABLE') -- 'stuck' is unrunnable+mem_stalled+expired ONLY, matching queue_unrunnable_summary's own rule."""
+    return {"unrunnable": unrunnable, "mem_stalled": mem_stalled, "expired": expired,
+            "capacity_stalled": capacity_stalled, "unknown": unknown,
+            "stuck": unrunnable + mem_stalled + expired, "check_failed": check_failed}
+
+
 # --------------------------------------------------------------------------------------- layer 1: pool_stall_summary
 
 def test_pool_stall_summary_forwards_flagged_rows_and_summary_line(monkeypatch):
@@ -78,7 +87,7 @@ def _stub_main_dependencies(monkeypatch, *, lanes_pool, flagged_pool, agents=5):
     # stub it too, same reason as pool_stall_summary above (no real ssh from a test). `nodes=None` default
     # (fix round, 2026-09-25 review HIGH-1): main() must call this with NO explicit node list -- see
     # test_main_queue_check_called_with_no_explicit_node_list below, which pins that wiring directly.
-    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (0, []))
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (_queue_counts(), []))
     monkeypatch.setattr(pa, "open_tasks", lambda: (1, [(1, "some task")]))
     monkeypatch.setattr(pa, "active_agents", lambda: agents)
     monkeypatch.setattr(pa, "gpu_queue_busy", lambda: False)
@@ -140,7 +149,7 @@ def test_main_calls_queue_unrunnable_summary_with_no_explicit_node_list(monkeypa
 
     def spy(nodes=None, timeout=12):
         captured["nodes"] = nodes
-        return (0, [])
+        return (_queue_counts(), [])
     monkeypatch.setattr(pa, "queue_unrunnable_summary", spy)
     rc = pa.main()
     assert rc == 0
@@ -152,7 +161,8 @@ def test_main_appends_queue_stuck_count_to_the_verdict_line(monkeypatch, capsys)
     # LOW-4 fix: the live heartbeat greps only lines matching SATURATED|UNDER-PARALLELIZED, so a queue-stuck
     # warning printed on ITS OWN line is silently dropped. The count must ride on the verdict line itself.
     _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=5)
-    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (3, ["⚠ fake queue line"]))
+    monkeypatch.setattr(pa, "queue_unrunnable_summary",
+                         lambda nodes=None, timeout=12: (_queue_counts(unrunnable=3), ["⚠ fake queue line"]))
     rc = pa.main()
     out = capsys.readouterr().out
     assert rc == 0
@@ -162,16 +172,18 @@ def test_main_appends_queue_stuck_count_to_the_verdict_line(monkeypatch, capsys)
 
 
 def test_main_under_parallelized_line_also_carries_queue_suffix(monkeypatch, capsys):
-    # Companion: the suffix must appear on the ⛔ UNDER-PARALLELIZED verdict line too, not just the SATURATED one
-    # -- whichever verdict fires is the one the heartbeat's grep will keep.
+    # Companion: the tag must appear on the ⛔ UNDER-PARALLELIZED verdict line too, not just the SATURATED one --
+    # whichever verdict fires is the one the heartbeat's grep will keep. HIGH-2 fix: it now rides in brackets
+    # right after the verdict word (not appended at the end), so it survives `cut -c1-160` on this branch too.
     _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=0)   # agents=0 -> under floor
-    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (2, ["⚠ fake queue line"]))
+    monkeypatch.setattr(pa, "queue_unrunnable_summary",
+                         lambda nodes=None, timeout=12: (_queue_counts(unrunnable=2), ["⚠ fake queue line"]))
     rc = pa.main()
     out = capsys.readouterr().out
     assert rc == 0
     stall_lines = [l for l in out.splitlines() if l.startswith("⛔ UNDER-PARALLELIZED")]
     assert len(stall_lines) == 1
-    assert "queue: 2 UNRUNNABLE" in stall_lines[0]
+    assert stall_lines[0].startswith("⛔ UNDER-PARALLELIZED [queue: 2 UNRUNNABLE]")
 
 
 def test_main_verdict_line_has_no_queue_suffix_when_nothing_stuck(monkeypatch, capsys):
@@ -181,3 +193,48 @@ def test_main_verdict_line_has_no_queue_suffix_when_nothing_stuck(monkeypatch, c
     out = capsys.readouterr().out
     assert rc == 0
     assert "queue:" not in out
+
+
+# --------------------------------------------------------------------- fix round 4 (2026-09-25 review, this pass)
+
+def test_main_queue_tag_labels_each_bucket_distinctly(monkeypatch, capsys):
+    # HIGH-1 fix: a healthy-backlog bucket (capacity_stalled) and a probe failure (unknown) must NEVER read as
+    # 'UNRUNNABLE' on the verdict line -- each bucket keeps its own label.
+    _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=5)
+    counts = _queue_counts(unrunnable=6, unknown=2, capacity_stalled=40)
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (counts, ["⚠ x"]))
+    rc = pa.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    saturated_lines = [l for l in out.splitlines() if l.startswith("✓ SATURATED")]
+    assert len(saturated_lines) == 1
+    line = saturated_lines[0]
+    assert "6 UNRUNNABLE" in line
+    assert "2 UNKNOWN" in line
+    assert "40 waiting>1h" in line
+    # capacity_stalled/unknown must not be blended into a single misleading "UNRUNNABLE" count.
+    assert "48 UNRUNNABLE" not in line
+
+
+def test_main_under_parallelized_tag_survives_cut_c1_160_on_the_longest_line(monkeypatch, capsys):
+    # HIGH-2 fix (2026-09-25 review): the real consumer (a heartbeat script) runs
+    # `grep ... | head -1 | cut -c1-160` on this exact line. Before the fix, the tag was appended at the END of
+    # the UNDER-PARALLELIZED line (166-286 bytes with both agents+compute reasons firing), so it was truncated or
+    # dropped entirely depending on which reason fired. Exercise the LONGEST realistic line (both reasons at
+    # once, a long capability list) and assert the tag survives a `cut -c1-160` equivalent.
+    _stub_main_dependencies(monkeypatch, lanes_pool=0, flagged_pool=0, agents=0)   # under both agents AND compute
+    monkeypatch.setattr(pa, "local_idle", lambda: (20, 2.0, 20, 0))       # idle_local > 6 -> in the capacity list
+    monkeypatch.setattr(pa, "pool_idle", lambda: (20, 0, 3))              # idle_pool > 10 -> in the capacity list
+    monkeypatch.setattr(pa, "gpu_state", lambda: 0)                       # gpu_free -> in the capacity list too
+    monkeypatch.setattr(pa, "open_tasks", lambda: (99, [(5, "a very long board task title for the anchors list")]))
+    counts = _queue_counts(unrunnable=6)
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (counts, []))
+    rc = pa.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    stall_lines = [l for l in out.splitlines() if l.startswith("⛔ UNDER-PARALLELIZED")]
+    assert len(stall_lines) == 1
+    line = stall_lines[0]
+    assert len(line) > 160, "test is only meaningful if the full line actually exceeds cut's window"
+    truncated = line[:160]
+    assert "queue: 6 UNRUNNABLE" in truncated

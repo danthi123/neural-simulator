@@ -30,14 +30,27 @@ the wrapper bash -> the job's own `bash -c "$job"`, which usually execs straight
 same signal and also pulls JOB_B64 to recover the actual command.
 
 ALSO CHECKS (2026-09-25 addition), read-only, every QUEUED (not-yet-dispatched) line in research/queue/pool.queue
--- `check_queue()`, see its own module-level comment for the incident (six revision-pinned lines sat queued 7.5h
-because the revision was never provisioned where it could fit, and nothing outside the dispatcher's own
-per-cycle log line ever said so):
-  (d) UNRUNNABLE -- a revision-pinned line whose revision is missing (no `.provisioned_ok`) on every node whose
-      raw MemTotal could ever fit its declared `mem_gb`. Reports the exact `pool_provision.sh --isolated`
-      command to fix it.
-  (e) memory_budget_stalled -- a line whose declared `mem_gb` exceeds every KNOWN node's raw ceiling outright --
-      no amount of provisioning helps; it needs a smaller size or a bigger node.
+-- `check_queue()`, see its own module-level comment (just above check_queue) for the incident this closes and
+what each bucket below means in full:
+  (d) UNRUNNABLE -- a revision-pinned line whose revision is CONFIRMED missing (no `.provisioned_ok`, at least
+      one capable node's probe actually returned False -- never just "every probe failed") on every node whose
+      raw MemTotal, minus a margin (max(POOL_OS_RESERVE_GB, POOL_MIN_AVAIL_GB+1) -- conservative enough that the
+      dispatcher's own LIVE MemAvailable floor could ever actually clear it too, not just the raw ceiling), could
+      ever fit its declared `mem_gb`. Reports the exact `pool_provision.sh --isolated` command to fix it.
+  (e) memory_budget_stalled -- a line whose declared `mem_gb` exceeds every KNOWN node's raw ceiling (same
+      margin) outright -- no amount of provisioning helps; it needs a smaller size or a bigger node.
+  (f) capacity_stalled -- a capable node HAS the revision provisioned, yet the line is still queued past its own
+      age gate -- not a provisioning problem. Fix round (2026-09-25 review HIGH-1): reported ONLY with EVIDENCE
+      the line is actually being skipped (a live `--node-budget` probe reading less headroom than the line
+      needs, or a later-queued line of its size or larger that was actually dispatched after it) -- a
+      capable+provisioned node with enough elapsed time is ALSO what a perfectly healthy backlog looks like, so
+      that alone is never reported as an incident.
+  (g) expired -- older than pool_autodispatch.sh's own POOL_JOB_MAX_AGE (12h default): pop_job's own staleness
+      cutoff (`$1+0 >= cutoff`, i.e. a line is still a candidate through AND INCLUDING age_s == the max age --
+      only STRICTLY older is dropped) skips such a line every cycle, silently, so any UNRUNNABLE/memory verdict
+      for it would be moot -- checked FIRST, before the buckets above.
+  (h) unknown -- a probe failure (unreachable node(s), every capable node's marker probe failing) left this tool
+      unable to confidently classify the line either way -- never folded into a confident-sounding verdict.
 
 Usage:
     python -m tools.pool_stall_check                 # human-readable report, all pool nodes (running + queue)
@@ -506,6 +519,63 @@ def fix_provision_command(sha, nodes):
     return "bash tools/pool_provision.sh --revision %s --isolated %s" % (sha, " ".join(nodes))
 
 
+_NODE_BUDGET_RE = re.compile(r"budget=(\d+)GB")
+
+
+def probe_live_node_budget_gb(node, root=None, timeout=20):
+    """Live diagnostic (review HIGH-1/MEDIUM fix, 2026-09-25): runs `tools/pool_autodispatch.sh --node-budget
+    <node>` -- the dispatcher's OWN `node_is_idle()` probe -- LOCALLY (it does its own ssh to `node` inside), and
+    returns the GB it would actually hand this node RIGHT NOW (a live MemAvailable-based budget, the same number
+    the dispatcher itself would use to decide whether to send work there), or None if the probe could not be
+    completed (script missing, timeout, non-zero exit with no parseable output). None must not be read as
+    evidence either way -- see _capacity_stall_evidence, the only caller. Never raises."""
+    root = root or _ROOT
+    script = os.path.join(root, "tools", "pool_autodispatch.sh")
+    if not os.path.isfile(script):
+        return None
+    try:
+        p = subprocess.run(["bash", script, "--node-budget", node], capture_output=True, text=True,
+                            timeout=timeout, cwd=root)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    m = _NODE_BUDGET_RE.search(p.stdout or "")
+    if not m:
+        return None
+    try:
+        return int(m.group(1))
+    except ValueError:
+        return None
+
+
+def _capacity_stall_evidence(node, mem_gb, epoch, claims_path, now, timeout=10, root=None):
+    """None, or a short human-readable string naming which evidence check fired (review HIGH-1, 2026-09-25: a
+    capacity_stalled verdict must never rest on 'a provisioned+capable node exists and the line is old', since a
+    perfectly healthy backlog reads exactly the same way -- the review's replay flagged 47 clean lines this way
+    inside 30 minutes). Two independent checks, either is sufficient:
+      (1) a LIVE `--node-budget` probe on `node` reads less headroom than this line's declared `mem_gb` RIGHT
+          NOW -- direct proof the node cannot currently take it.
+      (2) research/queue/pool.queue.claims shows some OTHER line of this size or larger was actually DISPATCHED
+          (claimed) after this line was already sitting in the queue -- direct proof the dispatcher had
+          capacity for a job this size in that window and picked something else over this one.
+    Never raises: a probe/read failure degrades to trying the other kind of evidence, and ultimately to None
+    (not reported), matching every sibling probe in this module."""
+    try:
+        budget = probe_live_node_budget_gb(node, root=root, timeout=timeout)
+    except Exception:
+        budget = None
+    if budget is not None and budget < mem_gb:
+        return "live --node-budget %s reads %dGB < mem_gb=%d" % (node, budget, mem_gb)
+    try:
+        claims = load_claims(claims_path, now=now)
+    except Exception:
+        claims = []
+    later = [c_epoch for c_epoch, c_text in claims if c_epoch > epoch and job_est_gb(c_text) >= mem_gb]
+    if later:
+        return ("%d later-queued line(s) of mem_gb>=%d claimed/dispatched after this one was already queued"
+                % (len(later), mem_gb))
+    return None
+
+
 DEFAULT_UNRUNNABLE_MIN_AGE_MIN = 30   # a normal provision (rsync + venv + sanity build) finishes in minutes, not this
 DEFAULT_MEMBUDGET_MIN_AGE_H = 1       # a structural ceiling doesn't change with time, but age-gate anyway (less noise)
 
@@ -525,8 +595,8 @@ DEFAULT_POOL_JOB_MAX_AGE_S = 43200   # pool_autodispatch.sh's POOL_JOB_MAX_AGE d
                                        # dispatched again regardless of anything this module could say about it.
 
 
-def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, connect_timeout=6,
-                 unrunnable_min_age_min=None, membudget_min_age_h=None, os_reserve_gb=None,
+def check_queue(nodes=None, root=None, queue_path_=None, claims_path_=None, now=None, timeout=10,
+                 connect_timeout=6, unrunnable_min_age_min=None, membudget_min_age_h=None, os_reserve_gb=None,
                  min_avail_gb=None, job_max_age_s=None):
     """Read-only scan of research/queue/pool.queue (STAGED, not-yet-dispatched lines) for five ways a line can
     never run that pool_autodispatch.sh's own per-cycle log never surfaces anywhere else (see the module-level
@@ -593,7 +663,10 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
         mod = sig[0] if sig else None
 
         # EXPIRED first (MEDIUM-3): moot to classify a line the dispatcher will never look at again.
-        if age_s >= job_max_age:
+        # LOW fix (2026-09-25 review): pop_job's own awk filter selects `$1+0 >= cutoff`, i.e. age_s <= job_max_age
+        # is STILL a candidate -- a line exactly AT the cutoff will be picked up next cycle, so the old `>=` here
+        # reported it EXPIRED (permanently undispatchable) one cycle too early. Only STRICTLY older is expired.
+        if age_s > job_max_age:
             expired.append({
                 "epoch": epoch, "age_s": age_s, "module": mod,
                 "command_snippet": text[:160],
@@ -651,11 +724,33 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
             # is occupied by other work right now (this check only ever reads raw MemTotal, see
             # probe_mem_total_gb's own docstring) -- report it rather than silently reading "clean".
             if age_s >= membudget_min_age_s:
-                capacity_stalled.append({
-                    "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb, "pinned_sha": sha,
-                    "provisioned_node": provisioned_node, "capable_nodes": sorted(capable),
-                    "command_snippet": text[:160],
-                })
+                # MEDIUM fix (2026-09-25 review): the LOW-3 early-break above only established THAT some node has
+                # it -- it never learned about the REST of the capable nodes, so a report here used to always name
+                # the one node that happens to be provisioned, even when the real fix (provision the OTHER capable
+                # nodes) was never suggested. Now that the line has aged into an actual incident worth a full
+                # report, keep probing the remaining capable nodes too (the (node, sha) cache from the loop above
+                # means this costs at most one extra probe per REMAINING node, not a full re-probe).
+                for n in capable:
+                    if n not in status:
+                        status[n] = _provisioned(n, sha)
+                missing_other_nodes = sorted(n for n, v in status.items() if v is False and n != provisioned_node)
+                # HIGH-1 fix (2026-09-25 review): a capable+provisioned node with enough elapsed time is ALSO what
+                # a perfectly healthy backlog looks like (replay: 47 clean lines flagged this way in 30 minutes)
+                # -- report capacity_stalled ONLY with EVIDENCE the line is actually being skipped over.
+                evidence = _capacity_stall_evidence(provisioned_node, mem_gb, epoch, claims_path_, now,
+                                                     timeout=timeout, root=root)
+                if evidence is not None:
+                    capacity_stalled.append({
+                        "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb, "pinned_sha": sha,
+                        "provisioned_node": provisioned_node, "capable_nodes": sorted(capable),
+                        "missing_on_nodes": missing_other_nodes,
+                        "fix_cmd": (fix_provision_command(sha, missing_other_nodes)
+                                    if missing_other_nodes else None),
+                        "evidence": evidence,
+                        "command_snippet": text[:160],
+                    })
+                # else: no confirming evidence either way -- NOT reported (an unverified guess must not read as
+                # a live-capacity incident on the one line a human/heartbeat sees).
             continue
 
         # MEDIUM-2 fix: every capable node's probe here is either False (confirmed absent) or None (probe
@@ -670,10 +765,15 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
             })
             continue
 
-        missing_nodes = sorted(n for n, v in status.items() if v is not True)
+        # LOW fix (2026-09-25 review): a node whose probe FAILED (None) is neither confirmed missing nor a
+        # candidate to provision -- only a CONFIRMED False belongs in missing_nodes/fix_cmd. A None node is
+        # listed separately as unprobed so a human can tell "definitely missing" from "could not check".
+        missing_nodes = sorted(n for n, v in status.items() if v is False)
+        unprobed_nodes = sorted(n for n, v in status.items() if v is None)
         unrunnable.append({
             "epoch": epoch, "age_s": age_s, "module": mod, "pinned_sha": sha, "mem_gb": mem_gb,
             "capable_nodes": sorted(capable), "node_status": status,
+            "missing_nodes": missing_nodes, "unprobed_nodes": unprobed_nodes,
             "fix_cmd": fix_provision_command(sha, missing_nodes),
             "command_snippet": text[:160],
         })
@@ -709,10 +809,19 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
 
 
 def format_unrunnable_row(row):
-    missing = ",".join(n for n, v in row["node_status"].items() if v is not True) or "-"
-    return ("queued %.1fh module=%s rev=%s mem_gb=%s capable=%s missing-on=%s -- fix: %s"
+    # LOW fix (2026-09-25 review): prefer the row's own missing_nodes/unprobed_nodes (CONFIRMED False vs probe-
+    # failed None, kept distinct by check_queue) when present; fall back to deriving them from node_status for a
+    # hand-built row (e.g. a caller's test stub) that predates those fields.
+    missing = row.get("missing_nodes")
+    if missing is None:
+        missing = sorted(n for n, v in row["node_status"].items() if v is False)
+    unprobed = row.get("unprobed_nodes")
+    if unprobed is None:
+        unprobed = sorted(n for n, v in row["node_status"].items() if v is None)
+    unprobed_txt = (" unprobed-on=%s" % ",".join(unprobed)) if unprobed else ""
+    return ("queued %.1fh module=%s rev=%s mem_gb=%s capable=%s missing-on=%s%s -- fix: %s"
             % (row["age_s"] / 3600.0, row["module"] or "?", row["pinned_sha"], row["mem_gb"],
-               ",".join(row["capable_nodes"]) or "-", missing, row["fix_cmd"]))
+               ",".join(row["capable_nodes"]) or "-", ",".join(missing) or "-", unprobed_txt, row["fix_cmd"]))
 
 
 def format_membudget_row(row):
@@ -724,17 +833,34 @@ def format_membudget_row(row):
 
 
 def format_capacity_stalled_row(row):
-    return ("queued %.1fh module=%s rev=%s mem_gb=%s -- provisioned+capable on %s but STILL queued -- likely "
-            "stuck on that node's LIVE memory (not this check's job to measure); live check: "
-            "bash tools/pool_autodispatch.sh --node-budget %s"
+    # HIGH-1 fix (2026-09-25 review): name the EVIDENCE (this row is never produced without it -- see
+    # _capacity_stall_evidence), and the MEDIUM fix's fuller node list, when present.
+    line = ("queued %.1fh module=%s rev=%s mem_gb=%s -- provisioned+capable on %s but STILL queued (%s); live "
+            "check: bash tools/pool_autodispatch.sh --node-budget %s"
             % (row["age_s"] / 3600.0, row["module"] or "?", row["pinned_sha"], row["mem_gb"],
-               row["provisioned_node"], row["provisioned_node"]))
+               row["provisioned_node"], row.get("evidence") or "no confirming evidence", row["provisioned_node"]))
+    missing = row.get("missing_on_nodes") or []
+    if missing:
+        line += " -- ALSO missing on %s: %s" % (",".join(missing), row.get("fix_cmd") or "-")
+    return line
 
 
 def format_expired_row(row):
+    # LOW fix (2026-09-25 review): pool_queue.sh has no remove command and the dispatcher never deletes a stale
+    # line, so re-adding a fresh copy alone leaves THIS line alerting forever -- say to delete it first, under
+    # the same lock pop_job itself uses (its own epoch, from this row, keeps the grep specific to this one line).
+    epoch = row.get("epoch")
+    delete_hint = (
+        (" -- delete it from pool.queue under its own lock first (matching epoch %d): "
+         "( flock -w 120 9; grep -v \"^%d\\t\" research/queue/pool.queue > research/queue/pool.queue.tmp "
+         "&& mv research/queue/pool.queue.tmp research/queue/pool.queue ) 9>research/queue/pool.queue.lock"
+         % (epoch, epoch))
+        if epoch is not None else " -- delete it from pool.queue under its own lock first (no remove command exists)")
     return ("queued %.1fh module=%s -- past the dispatcher's own POOL_JOB_MAX_AGE staleness cutoff, it will "
-            "NEVER be picked up as-is -- re-add via: bash tools/pool_queue.sh add '<cmd>' --checked '<reason>'"
-            % (row["age_s"] / 3600.0, row["module"] or "?"))
+            "NEVER be picked up as-is. pool_queue.sh has no remove command and the dispatcher never deletes a "
+            "stale line, so re-adding alone leaves this one alerting forever%s. THEN re-add if still needed: "
+            "bash tools/pool_queue.sh add '<cmd>' --checked '<reason>'"
+            % (row["age_s"] / 3600.0, row["module"] or "?", delete_hint))
 
 
 def format_unknown_row(row):

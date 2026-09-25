@@ -39,6 +39,7 @@ def test_queue_unrunnable_summary_forwards_unrunnable_and_membudget_rows(monkeyp
         "unrunnable": [{
             "age_s": 27000, "module": "settle_a2", "pinned_sha": "a" * 40, "mem_gb": 8,
             "capable_nodes": ["pool1", "pool2"], "node_status": {"pool1": False, "pool2": False},
+            "missing_nodes": ["pool1", "pool2"], "unprobed_nodes": [],
             "fix_cmd": "bash tools/pool_provision.sh --revision %s --isolated pool1 pool2" % ("a" * 40),
         }],
         "memory_budget_stalled": [{
@@ -48,26 +49,37 @@ def test_queue_unrunnable_summary_forwards_unrunnable_and_membudget_rows(monkeyp
     }
     assert pa.pool_stall_check is not None, "pool_stall_check must import cleanly for this gate to mean anything"
     monkeypatch.setattr(pa.pool_stall_check, "check_queue", lambda **kw: canned)
-    n, lines = pa.queue_unrunnable_summary(["pool1", "pool2"])
-    assert n == 2
+    counts, lines = pa.queue_unrunnable_summary(["pool1", "pool2"])
+    # HIGH-1 fix (2026-09-25 review): a flat int total became a per-bucket dict so the verdict-line suffix can
+    # label each bucket instead of calling everything 'UNRUNNABLE'. 'stuck' = unrunnable + mem_stalled + expired.
+    assert counts["unrunnable"] == 1
+    assert counts["mem_stalled"] == 1
+    assert counts["stuck"] == 2
+    assert counts["check_failed"] is False
     assert any("UNRUNNABLE" in l for l in lines)
     assert any("settle_a2" in l for l in lines)
     assert any("huge_job" in l for l in lines)
-    assert any("fix: bash tools/pool_provision.sh" in l for l in lines)
+    assert any("bash tools/pool_provision.sh" in l for l in lines)
 
 
 def test_queue_unrunnable_summary_never_raises_when_check_queue_blows_up(monkeypatch):
     def boom(**kw):
         raise RuntimeError("ssh exploded")
     monkeypatch.setattr(pa.pool_stall_check, "check_queue", boom)
-    n, lines = pa.queue_unrunnable_summary(["pool1"])   # must not raise -- the heartbeat is exit-0-always
-    assert n == 0
+    counts, lines = pa.queue_unrunnable_summary(["pool1"])   # must not raise -- the heartbeat is exit-0-always
+    assert counts["stuck"] == 0
+    # LOW fix (2026-09-25 review): a check that itself FAILED must not read the same as a clean queue -- the old
+    # code returned a bare 0 here, indistinguishable from "nothing wrong" once folded into the verdict suffix.
+    assert counts["check_failed"] is True
     assert any("failed to run" in l for l in lines)
 
 
 def test_queue_unrunnable_summary_disabled_cleanly_when_module_absent(monkeypatch):
     monkeypatch.setattr(pa, "pool_stall_check", None)
-    assert pa.queue_unrunnable_summary(["pool1"]) == (0, [])
+    counts, lines = pa.queue_unrunnable_summary(["pool1"])
+    assert counts["stuck"] == 0
+    assert counts["check_failed"] is True
+    assert lines == []
 
 
 def test_queue_unrunnable_summary_quiet_when_nothing_flagged(monkeypatch):
@@ -75,7 +87,10 @@ def test_queue_unrunnable_summary_quiet_when_nothing_flagged(monkeypatch):
         "unrunnable": [], "memory_budget_stalled": [],
         "summary_line": "POOL QUEUE CHECK: clean (of 3 queued line(s), 0 node(s) mem-unreachable)",
     })
-    assert pa.queue_unrunnable_summary(["pool1"]) == (0, [])
+    counts, lines = pa.queue_unrunnable_summary(["pool1"])
+    assert counts["stuck"] == 0
+    assert counts["check_failed"] is False
+    assert lines == []
 
 
 def test_queue_unrunnable_summary_default_nodes_is_none_so_get_pool_nodes_governs(monkeypatch):
@@ -92,6 +107,25 @@ def test_queue_unrunnable_summary_default_nodes_is_none_so_get_pool_nodes_govern
     assert captured["nodes"] is None
 
 
+# --------------------------------------------------------------------------- queue_tag() (2026-09-25 review HIGH-1)
+
+def test_queue_tag_labels_each_bucket_distinctly_and_omits_zero_buckets():
+    counts = pa._QUEUE_COUNTS_EMPTY.copy()
+    counts.update(unrunnable=6, unknown=2, capacity_stalled=40, stuck=6)
+    tag = pa.queue_tag(counts)
+    assert tag == "6 UNRUNNABLE, 2 UNKNOWN, 40 waiting>1h"
+
+
+def test_queue_tag_empty_when_nothing_flagged():
+    assert pa.queue_tag(pa._QUEUE_COUNTS_EMPTY) == ""
+
+
+def test_queue_tag_leads_with_check_failed():
+    counts = pa._QUEUE_COUNTS_EMPTY.copy()
+    counts["check_failed"] = True
+    assert pa.queue_tag(counts) == "CHECK FAILED"
+
+
 # ------------------------------------------------------------------------------------------- layer 2: main() wiring
 
 def _stub_main_dependencies(monkeypatch, *, queue_lines=(), n_queue_stuck=None):
@@ -99,11 +133,13 @@ def _stub_main_dependencies(monkeypatch, *, queue_lines=(), n_queue_stuck=None):
     write to the SHARED research/coordination state file. `nodes=None` default on the stub (fix round, 2026-09-25
     review HIGH-1) matches how main() actually calls this now -- with no explicit node list."""
     n = len(queue_lines) if n_queue_stuck is None else n_queue_stuck
+    counts = dict(pa._QUEUE_COUNTS_EMPTY)
+    counts.update(unrunnable=n, stuck=n)
     monkeypatch.setattr(pa, "local_idle", lambda: (20, 2.0, 0, 0))
     monkeypatch.setattr(pa, "gpu_state", lambda: -1)
     monkeypatch.setattr(pa, "pool_idle", lambda: (0, 5, 3))
     monkeypatch.setattr(pa, "pool_stall_summary", lambda nodes, timeout=12: (0, []))
-    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (n, list(queue_lines)))
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (counts, list(queue_lines)))
     monkeypatch.setattr(pa, "open_tasks", lambda: (1, [(1, "some task")]))
     monkeypatch.setattr(pa, "active_agents", lambda: 5)
     monkeypatch.setattr(pa, "gpu_queue_busy", lambda: False)

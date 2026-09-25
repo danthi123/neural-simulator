@@ -168,9 +168,35 @@ def pool_stall_summary(nodes=None, timeout=12):
     return len(flagged), lines
 
 
+_QUEUE_COUNTS_EMPTY = {"unrunnable": 0, "mem_stalled": 0, "expired": 0, "capacity_stalled": 0, "unknown": 0,
+                        "stuck": 0, "check_failed": False}
+
+
+def queue_tag(counts):
+    """'6 UNRUNNABLE, 2 UNKNOWN, 3 waiting>1h' style tag (fix round, 2026-09-25 review HIGH-1): each bucket keeps
+    its OWN label so the one line a human/heartbeat sees never claims a healthy backlog (capacity_stalled) or a
+    mere probe failure (unknown) is 'UNRUNNABLE' -- both used to be folded into that single confident-sounding
+    word. 'CHECK FAILED' leads if the underlying check itself could not run (LOW fix: that used to read silently
+    as 'clean' -- an empty suffix -- on the one line a human actually sees)."""
+    bits = []
+    if counts.get("check_failed"):
+        bits.append("CHECK FAILED")
+    if counts["unrunnable"]:
+        bits.append("%d UNRUNNABLE" % counts["unrunnable"])
+    if counts["mem_stalled"]:
+        bits.append("%d MEM-STALLED" % counts["mem_stalled"])
+    if counts["expired"]:
+        bits.append("%d EXPIRED" % counts["expired"])
+    if counts["unknown"]:
+        bits.append("%d UNKNOWN" % counts["unknown"])
+    if counts["capacity_stalled"]:
+        bits.append("%d waiting>1h" % counts["capacity_stalled"])
+    return ", ".join(bits)
+
+
 def queue_unrunnable_summary(nodes=None, timeout=12):
     """Read-only UNRUNNABLE / memory-budget-impossible check on QUEUED (not-yet-dispatched) pool.queue lines
-    (tools/pool_stall_check.py:check_queue) -- (count, lines) to print, never blocking, never raising
+    (tools/pool_stall_check.py:check_queue) -- (counts: dict, lines) to print, never blocking, never raising
     (exit-0-always heartbeat). 2026-09-25: six revision-pinned queue lines sat 7.5h with the dispatcher logging
     "revision ... not provisioned on pool2" every cycle, and NOTHING outside that one log line ever surfaced it
     -- this makes it a heartbeat line instead, the same fix shape as pool_stall_summary() above for running jobs.
@@ -180,19 +206,39 @@ def queue_unrunnable_summary(nodes=None, timeout=12):
     to pool_stall_check.get_pool_nodes() (which also reads research/queue/.pool_extra_nodes -- the AWS lane).
     The 2026-09-25 incident's six stuck lines were missing their revision on pool1/pool2 specifically; a caller
     that hardcodes POOL=[pool40,41,42] here would silence the alert the moment ONE mini-PC got the marker, while
-    the lines stayed stuck on the AWS nodes the check never even looked at."""
+    the lines stayed stuck on the AWS nodes the check never even looked at.
+
+    `counts` (fix round, 2026-09-25 review HIGH-1) breaks the old flat total down by bucket, because that total
+    used to feed a verdict-line suffix that called EVERY bucket 'UNRUNNABLE' -- including capacity_stalled (which
+    trips on any provisioned+capable line queued an hour or more, i.e. also what a HEALTHY backlog looks like) and
+    unknown (a probe failure, confirming nothing). `counts["stuck"]` is unrunnable + mem_stalled + expired ONLY --
+    the three CONFIRMED-broken states -- and is what a caller should treat as "the queue is actually broken";
+    capacity_stalled/unknown are still surfaced (see queue_tag) but must not inflate that number.
+    `counts["check_failed"]` (LOW fix) is True when the check itself could not run at all (pool_stall_check
+    failed to import, or check_queue() raised) -- the old code returned a bare 0 for this, which read completely
+    silent on the one line a human/heartbeat sees, indistinguishable from "nothing wrong"."""
     if pool_stall_check is None:
-        return 0, []
+        counts = dict(_QUEUE_COUNTS_EMPTY)
+        counts["check_failed"] = True
+        return counts, []
     try:
         report = pool_stall_check.check_queue(nodes=nodes, timeout=timeout)
     except Exception as e:
-        return 0, ["⚠ pool-queue-check failed to run (%s) -- treating as clean, not silently OK" % e]
+        counts = dict(_QUEUE_COUNTS_EMPTY)
+        counts["check_failed"] = True
+        return counts, ["⚠ pool-queue-check failed to run (%s) -- treating as clean, not silently OK" % e]
     unrunnable = report.get("unrunnable", [])
     mem_stalled = report.get("memory_budget_stalled", [])
     capacity_stalled = report.get("capacity_stalled", [])
     expired = report.get("expired", [])
     unknown = report.get("unknown", [])
-    n_total = len(unrunnable) + len(mem_stalled) + len(capacity_stalled) + len(expired) + len(unknown)
+    counts = {
+        "unrunnable": len(unrunnable), "mem_stalled": len(mem_stalled), "expired": len(expired),
+        "capacity_stalled": len(capacity_stalled), "unknown": len(unknown),
+        "stuck": len(unrunnable) + len(mem_stalled) + len(expired),
+        "check_failed": False,
+    }
+    n_total = counts["stuck"] + counts["capacity_stalled"] + counts["unknown"]
     lines = []
     if n_total:
         lines.append("⚠ %s" % report.get("summary_line", "pool queue check flagged stuck line(s)"))
@@ -206,7 +252,7 @@ def queue_unrunnable_summary(nodes=None, timeout=12):
             lines.append("   ⚠ %s" % pool_stall_check.format_expired_row(row))
         for row in unknown[:4]:
             lines.append("   ⚠ %s" % pool_stall_check.format_unknown_row(row))
-    return n_total, lines
+    return counts, lines
 
 
 def active_agents(base=None):
@@ -270,7 +316,8 @@ def main():
     # NODES=None (fix round, 2026-09-25 review HIGH-1): passing this module's own POOL constant here silently
     # excluded the AWS pool_extra_nodes (pool1/pool2) from the exact check meant to catch a revision missing on
     # them -- see queue_unrunnable_summary's own docstring. None lets pool_stall_check.get_pool_nodes() decide.
-    n_queue_stuck, queue_stuck_lines = queue_unrunnable_summary()
+    queue_counts, queue_stuck_lines = queue_unrunnable_summary()
+    n_queue_stuck = queue_counts["stuck"]
     n_open, top = open_tasks()
     agents = active_agents()
 
@@ -347,12 +394,14 @@ def main():
         _d = waiver_history.describe(_v)
         if _d:
             print("   🗒  %s waiver OPEN — %s" % (_print_label, _d))
-    # QUEUE-STUCK SUFFIX ON THE VERDICT LINE (fix round, 2026-09-25 review LOW). The queue_stuck_lines block
-    # above prints as its OWN separate line(s); the live heartbeat that actually reaches a human greps only
-    # lines matching SATURATED|UNDER-PARALLELIZED, so a queue warning printed on its own line is silently
-    # dropped no matter how loudly it prints here. Appending the count to the verdict line itself (the one
-    # line that regex is guaranteed to keep) makes it visible regardless of what wraps this script.
-    queue_suffix = " | queue: %d UNRUNNABLE" % n_queue_stuck if n_queue_stuck else ""
+    # QUEUE-STUCK TAG ON THE VERDICT LINE (fix round, 2026-09-25 review LOW/HIGH-1/HIGH-2). The queue_stuck_lines
+    # block above prints as its OWN separate line(s); the live heartbeat that actually reaches a human greps only
+    # lines matching SATURATED|UNDER-PARALLELIZED, so a queue warning printed on its own line is silently dropped
+    # no matter how loudly it prints here. Riding the tag on the verdict line itself (the one line that regex is
+    # guaranteed to keep) makes it visible regardless of what wraps this script. queue_tag() (HIGH-1) gives each
+    # bucket its own label instead of calling everything 'UNRUNNABLE'.
+    queue_tag_str = queue_tag(queue_counts)
+    queue_suffix = " | queue: %s" % queue_tag_str if queue_tag_str else ""
     if under:
         why = []
         if under_agents:
@@ -361,7 +410,13 @@ def main():
         if under_compute:
             why.append("idle %s ; %d ready tasks vs %d lanes (%d min straight)"
                        % (", ".join(cap), n_open, total_lanes, streak_c_min))
-        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s.%s" % (" ; ".join(why), queue_suffix))
+        # HIGH-2 fix (2026-09-25 review): the live heartbeat consumer runs `grep ... | head -1 | cut -c1-160` on
+        # this exact line, and the UNDER-PARALLELIZED "why" text alone runs 166-286 bytes -- a suffix APPENDED at
+        # the end (the old placement) was dropped entirely on the agents branch and truncated mid-word on the
+        # compute branch, surviving only when the line happened to be short (the SATURATED branches below). Put
+        # the tag in brackets right after the verdict word instead, well inside the first 160 characters.
+        queue_bracket = " [queue: %s]" % queue_tag_str if queue_tag_str else ""
+        print("⛔ UNDER-PARALLELIZED%s (a STALL, not a hold) — %s." % (queue_bracket, " ; ".join(why)))
         if under_compute and streak_c_min >= 30:
             print("   ⏱  dedicated compute has read idle-with-ready-work for %d min straight — past the "
                   "point `gates/compute_idle_persistent` blocks a commit on (mirrors gates/lane_starvation)."
