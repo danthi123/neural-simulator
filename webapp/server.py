@@ -6667,9 +6667,19 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # AFFECT DRIVES THE RESPONSE (board #84): prepend the graded affective EXPRESSION lead OUTERMOST (spoken
         # first, as tone) + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral
         # -> byte-identical. The content fields above are unchanged (affect colors the surface, never a fact).
-        if affect_drives_lead:
+        # 2026-09-25 owner decision (retire-affect-marker-word, `BRAIN_AFFECT_MARKER_SURFACE`, default OFF): the
+        # lead stays COMPUTED + RECORDED (affect_drives.lead / .surfaced below) on every turn — only whether it is
+        # ALSO glued onto the answer is now gated. Default OFF -> the marker never reaches the surface (an honest
+        # felt-state record, not a random "wonderful!"); =1 restores the pre-2026-09-25 prepend byte-identically.
+        try:
+            from webapp import affect_drives_chat as _ADC_surf
+            _affect_surface_on = _ADC_surf.affect_marker_surface_enabled()
+        except Exception:
+            _affect_surface_on = False
+        if affect_drives_lead and _affect_surface_on:
             resp["answer"] = affect_drives_lead + resp["answer"]
         if affect_drives_info is not None:
+            affect_drives_info = dict(affect_drives_info, surfaced=bool(affect_drives_lead and _affect_surface_on))
             resp["affect_drives"] = affect_drives_info
         # >>> W5 AFFECTIVE ToM BEGIN (rich path; additive, mergeable block) ─────────────────────────────────────
         # AFFECTIVE ToM DRIVES THE RESPONSE (W5): prepend the empathic EXPRESSION lead OUTERMOST (the emotional
@@ -7021,9 +7031,17 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # AFFECT DRIVES THE RESPONSE (board #84, single-fact path): prepend the graded affective EXPRESSION lead
     # OUTERMOST + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral ->
     # byte-identical. The content fields (abstained/recalled_svo/verified) are unchanged.
-    if affect_drives_lead:
+    # 2026-09-25 owner decision (retire-affect-marker-word, `BRAIN_AFFECT_MARKER_SURFACE`, default OFF): see the
+    # matching rich-path comment above -- the lead stays computed+recorded; only the surface prepend is gated.
+    try:
+        from webapp import affect_drives_chat as _ADC_surf
+        _affect_surface_on = _ADC_surf.affect_marker_surface_enabled()
+    except Exception:
+        _affect_surface_on = False
+    if affect_drives_lead and _affect_surface_on:
         _resp["answer"] = affect_drives_lead + _resp["answer"]
     if affect_drives_info is not None:
+        affect_drives_info = dict(affect_drives_info, surfaced=bool(affect_drives_lead and _affect_surface_on))
         _resp["affect_drives"] = affect_drives_info
     # >>> W5 AFFECTIVE ToM BEGIN (single-fact path; additive, mergeable block) ──────────────────────────────────
     # AFFECTIVE ToM DRIVES THE RESPONSE (W5, single-fact path): prepend the empathic EXPRESSION lead OUTERMOST +

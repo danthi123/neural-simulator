@@ -2047,7 +2047,13 @@ def test_brain_chat_affect_marker_congruence_default_off_is_byte_identical(clien
         assert d.get("abstained") is True, "expected the established wombat probe to genuinely abstain"
         lead = (d.get("affect_drives") or {}).get("lead") or ""
         assert lead, "expected the induced body-state to produce a genuine, non-empty affect-drives lead"
-        assert d["answer"].startswith(lead), "flag OFF -> the lead must reach the surface UNCHANGED"
+        # 2026-09-25 owner decision (retire-affect-marker-word): `BRAIN_AFFECT_MARKER_SURFACE` now separately
+        # gates whether an already-computed lead is ALSO glued onto `answer`; default OFF -> the CONGRUENCE flag
+        # under test here (orthogonal) still runs correctly, but the meaningful assertion is on the RECORDED
+        # field, not the answer string -- see test_brain_chat_affect_marker_surface_default_off_records_but_does_
+        # not_surface for the dedicated surface-flag coverage (incl. the ON == OFF+lead byte-identical restore).
+        assert (d.get("affect_drives") or {}).get("surfaced") is False, "surface flag default OFF"
+        assert not d["answer"].startswith(lead), "default OFF -> the recorded lead must not reach the answer"
         assert "affect_marker_congruence" not in d
 
     lead_unset = d_unset["affect_drives"]["lead"]
@@ -2088,9 +2094,13 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_abstention_and_is_s
     assert cg["abstention_conflict"] is True
     assert cg["valence_conflict"] is False, "a missing Gate-B read must never fabricate a valence conflict"
     assert cg["reason"] == "abstention"
-    assert not d["answer"].startswith(cg["checked_lead"]), "the marker must be WITHHELD, not surfaced"
-    for w in ("Wonderful", "Gladly", "Sure"):
-        assert not d["answer"].startswith(w)
+    assert cg["checked_lead"], "expected a genuine candidate marker to have been checked"
+    # 2026-09-25 owner decision (retire-affect-marker-word): `BRAIN_AFFECT_MARKER_SURFACE` defaults OFF, so the
+    # answer never carries ANY marker regardless of this gate's verdict -- the meaningful proof that congruence
+    # WITHHELD (not merely "never shown") is the RECORDED lead being cleared to '' by the gate.
+    assert (d.get("affect_drives") or {}).get("lead") == "", \
+        "the RECORDED marker must be cleared on an abstention conflict (withheld), not merely left unsurfaced"
+    assert not d["answer"].startswith(cg["checked_lead"]), "the marker must never reach the answer either"
     client.post("/api/brain-chat/reset", json={"session": sess_a, "brain": "tiny-demo", "renderer": "stub"})
 
     # ── session B: brand-new session, no induction -> must not inherit session A's state ──
@@ -2146,8 +2156,11 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_an
     assert cg2["valence_conflict"] is True
     assert cg2["abstention_conflict"] is False
     assert cg2["reason"] == "valence_mismatch"
-    for w in ("Wonderful", "Gladly", "Sure"):
-        assert not d2["answer"].startswith(w)
+    # 2026-09-25 owner decision (retire-affect-marker-word): the answer never carries a marker by default
+    # regardless of this gate (BRAIN_AFFECT_MARKER_SURFACE=0) -- the meaningful proof of WITHHOLD is the
+    # RECORDED lead being cleared to '' by the gate, not merely absent from the (never-surfaced-by-default) answer.
+    assert (d2.get("affect_drives") or {}).get("lead") == "", \
+        "the RECORDED marker must be cleared on a valence conflict (withheld)"
 
     # turn 3: strongly positive-sentiment content, REPEATED (bounded) until Gate-B's OWN mood genuinely reads
     # '+'. `_SESSION_MOOD` is an EMA (`_update_session_mood`, decay 0.4): turn 1 (appraisal -0.775) drove it to
@@ -2192,17 +2205,70 @@ def test_brain_chat_affect_marker_congruence_on_withholds_on_valence_conflict_an
     assert cg4["suppressed"] is False
     assert cg4["incongruent"] is False
     lead4 = (d4.get("affect_drives") or {}).get("lead") or ""
-    assert lead4, "a congruent turn must keep its (non-empty) lead"
-    # NOT `.startswith(lead4)`: by the time Gate-B's own mood is genuinely positive (the loop above), this session
-    # has crossed multiple topics (day/surprise/dog), so the topic-swap ("On dog, then -- ", webapp/server.py
-    # ~6689), common-ground ("As for it -- ", ~6698) and GNW-stop ("Setting the held thread aside -- ", ~6757)
-    # leads can ALSO legitimately fire on this same turn -- production composes leads in a fixed onion order
-    # (gnw_stop outermost ... affect innermost, each `resp["answer"] = X_lead + resp["answer"]` in sequence), so
-    # affect's lead is not necessarily the first substring. This is documented, intentional composition (verified
-    # by reading webapp/server.py's lead-prepend chain), not a production bug -- "kept" means present, not first.
-    assert lead4 in d4["answer"], f"congruent turn's marker missing from the answer: {lead4!r} not in {d4['answer']!r}"
+    assert lead4, "a congruent turn must keep its (non-empty) RECORDED lead (not withheld by the congruence gate)"
+    # 2026-09-25 owner decision (retire-affect-marker-word): "kept" now means the RECORDED field survives
+    # congruence-gating (checked above); it does NOT mean the word reaches `answer` -- BRAIN_AFFECT_MARKER_SURFACE
+    # defaults OFF, so even a congruent, non-withheld marker is never glued onto the reply by default (an
+    # honest internal record, not a random "wonderful!"). See test_brain_chat_affect_marker_surface_default_off_
+    # records_but_does_not_surface for the flag's own dedicated coverage (incl. the ON-restores-the-prepend check).
+    assert (d4.get("affect_drives") or {}).get("surfaced") is False, \
+        "surface flag default OFF -- a kept/congruent marker stays an internal record only"
 
     client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_affect_marker_surface_default_off_records_but_does_not_surface(client, monkeypatch):
+    """2026-09-25 owner decision (retire-affect-marker-word, branch research/retire-affect-marker-word). Owner,
+    verbatim: "It would be weird for the brain's replies to just be adding 'wonderful!' randomly. Its speech
+    should be influenced by its feelings, not just have a feeling-related word thrown in randomly." Approved option
+    A: the marker word stays COMPUTED + RECORDED (`affect_drives.lead`) every turn -- the #81 felt-state read and
+    the #86 spiking WTA selection are UNCHANGED -- but is no longer prepended to `answer` unless
+    `BRAIN_AFFECT_MARKER_SURFACE` is explicitly truthy. Default (unset) -> recorded-but-not-surfaced; `=1` ->
+    byte-identical to the pre-2026-09-25 surfaced production behavior: the SAME induced body-state must select the
+    SAME marker word either way, and the ON answer must equal the OFF answer with EXACTLY that word prepended (the
+    hash-style ON == OFF+lead check that flag ON is a true restore, not a new/different path)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_AFFECT_MARKER_SPIKING", "0")   # pin the exact host word for a byte-identical hash
+    monkeypatch.setenv("BRAIN_AFFECT_DRIVES_INDUCE", "1.0,0.3")
+    monkeypatch.setenv("BRAIN_AFFECT", "0")
+    monkeypatch.delenv("BRAIN_AFFECT_MARKER_CONGRUENCE", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    def _ask(sess, surface_value):
+        if surface_value is None:
+            monkeypatch.delenv("BRAIN_AFFECT_MARKER_SURFACE", raising=False)
+        else:
+            monkeypatch.setenv("BRAIN_AFFECT_MARKER_SURFACE", surface_value)
+        res = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+        assert res.status_code == 200, res.text
+        d = res.json()
+        client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+        return d
+
+    d_off = _ask("pytest-affect-marker-surface-off", None)
+    lead = (d_off.get("affect_drives") or {}).get("lead") or ""
+    assert lead, "expected the induced body-state to produce a genuine, non-empty affect-drives lead"
+    assert (d_off.get("affect_drives") or {}).get("surfaced") is False
+    assert not d_off["answer"].startswith(lead), "default OFF -> the recorded marker must not reach the answer"
+
+    d_zero = _ask("pytest-affect-marker-surface-zero", "0")
+    assert d_zero["affect_drives"]["lead"] == lead, "unset vs explicit '0' must pick the SAME marker word"
+    assert d_zero["answer"] == d_off["answer"], "unset vs explicit '0' must be byte-identical answers"
+
+    d_on = _ask("pytest-affect-marker-surface-on", "1")
+    lead_on = (d_on.get("affect_drives") or {}).get("lead") or ""
+    assert lead_on == lead, f"the SAME induced body-state must select the SAME marker word: {lead_on!r} vs {lead!r}"
+    assert (d_on.get("affect_drives") or {}).get("surfaced") is True
+    assert d_on["answer"].startswith(lead_on), "BRAIN_AFFECT_MARKER_SURFACE=1 must prepend the marker"
+    assert d_on["answer"] == lead_on + d_off["answer"], (
+        "ON must equal OFF's answer with EXACTLY the recorded lead prepended -- a true byte-identical restore of "
+        f"the pre-2026-09-25 production surface, not a new/different path: {d_on['answer']!r} vs "
+        f"{lead_on + d_off['answer']!r}")
 
 
 def test_brain_chat_curiosity_graded_novelty_explicit_off_is_byte_identical(client, monkeypatch):
