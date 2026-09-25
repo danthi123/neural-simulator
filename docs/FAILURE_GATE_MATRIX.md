@@ -31,7 +31,7 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | B | biology-not-bound-to-code | — | `biology_check.py` | pre-commit G3 | ✅ BLOCKS |
 | M | mechanism-status conflict | — | `biology_check.check_mechanism_status` | pre-commit G3 | ✅ BLOCKS |
 | S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |
-| X | invalid queued command | — | `pool_queue` argparse validation | execution path | ✅ BLOCKS |
+| X | invalid queued command | — | `pool_queue` argparse validation + `tools/queue_job_shape_check.sh` (first-word-would-run shape check, shared by `pool_queue add`/`gpu_queue add`/`queue_add.sh`; 2026-09-25, the SETTLE A2 prose-label lines) | execution path | ✅ BLOCKS |
 | Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
 | AP | pending work SERIALISED while dispatchable agents sit unused, including completed agents whose lanes remain falsely `running` | — | `gates/agent_parallelism` | registry; tracked JSON workboard | ✅ BLOCKS |
 | L | CPU lanes starved while work continues elsewhere | — | `gates/lane_starvation` | registry | ✅ BLOCKS |

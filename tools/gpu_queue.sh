@@ -35,6 +35,8 @@
 # GPU_QUEUE_NO_RESIDENCY_GUARD (bypass the residency check — proves the failing direction in --selftest).
 set -e
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
+# shellcheck source=tools/queue_job_shape_check.sh
+source "$ROOT/tools/queue_job_shape_check.sh"
 # SINGLETON across worktrees: resolve the SHARED repo root (the parent of the ONE git-common-dir every worktree
 # shares) so the queue + dpid + lock + daemon are ONE, not per-checkout. Before 2026-08-21 QDIR was relative to each
 # worktree's cwd, so N worktrees each ran their OWN daemon against the ONE physical 3090 -> concurrent brain loads ->
@@ -139,11 +141,25 @@ daemon() {
     # pop the job atomically (flock so a concurrent `add` append is not clobbered by this rewrite)
     ( flock 9; tail -n +2 "$QUEUE" > "$QUEUE.tmp" 2>/dev/null && mv "$QUEUE.tmp" "$QUEUE" ) 9>"$QLOCK" 8>&-
     echo "$(date '+%F %T') START: $job" >> "$LOG"
+    start_s=$(date +%s)
     setsid bash -c "$job" >> "$LOG" 2>&1 8>&- & jpid=$!   # own process GROUP so pause --now can kill the whole job tree (frees VRAM); 8>&- so the job never holds the daemon's singleton lock (see note above)
     printf '%s\t%s\n' "$jpid" "$job" > "$RUNNING"
     wait "$jpid" 2>/dev/null; rc=$?
     rm -f "$RUNNING"
+    dur=$(( $(date +%s) - start_s ))
     echo "$(date '+%F %T') DONE(rc=$rc): $job" >> "$LOG"
+    # FAST-FAIL, LOUDLY (2026-09-25). rc=127 ("command not found") or rc=2 (a shell syntax/usage error) inside
+    # FAST_FAIL_S of START means the job never actually ran -- it died on argv[0]/syntax, exactly like the
+    # historical `status` job (2026-08-31/09-01, three cycles, rc=127 in under a second each time) that sat in
+    # this very log as an ordinary, unremarkable DONE(rc=127) line for weeks. A plain DONE line is easy to miss
+    # in a log this size; a distinct marker is not. tools/queue_job_shape_check.sh now refuses that SHAPE at
+    # enqueue time, but this catches whatever it cannot see (e.g. a module importable locally but not on the
+    # box actually running the job, or a bug in the shape check itself) -- belt and suspenders.
+    if [ "$rc" -eq 127 ] || [ "$rc" -eq 2 ]; then
+      if [ "$dur" -le "${GPU_QUEUE_FAST_FAIL_S:-10}" ]; then
+        echo "$(date '+%F %T') ⛔ FAST-FAIL: rc=$rc after ${dur}s (died on argv[0]/syntax, not a real run): $job" >> "$LOG"
+      fi
+    fi
   done
 }
 
@@ -172,7 +188,7 @@ selftest() {
   # scratch dir is GLOBAL (not local) so the EXIT-trap cleanup still sees it after this function returns.
   _GPU_SELFTEST_T=$(mktemp -d "${TMPDIR:-/tmp}/gpu_queue_selftest.XXXXXX")
   trap _gpu_selftest_cleanup EXIT
-  local T="$_GPU_SELFTEST_T" SELF="$0" A="" B="" C="" D="" E="" F="" G="" H="" rc=0 out dead_pid
+  local T="$_GPU_SELFTEST_T" SELF="$0" A="" B="" C="" D="" E="" F="" G="" H="" I="" J="" rc=0 out dead_pid
   live()    { kill -0 "$1" 2>/dev/null; }
   dpid_is() { [ "$(cat "$T/gpu_queue.dpid" 2>/dev/null)" = "$1" ]; }
   lock_free() { ( exec 8>"$T/.gpu_daemon.lock"; flock -n 8 ) 2>/dev/null; }
@@ -288,6 +304,50 @@ FAKEEOF
   fi
   rm -f "$T/fake_resident_pid" "$T/gpu.running" "$T/GPU_PAUSE"
 
+  # ---- TEST E: a job that dies almost instantly with rc=127/2 is logged as a LOUD FAST-FAIL, not buried in --
+  # ---- an ordinary DONE line (2026-09-25: the historical `status` job did exactly this, unflagged, 3x) ------
+  echo
+  echo "-- TEST E: a fast rc=127 job is logged as a loud FAST-FAIL, an rc=0 job is NOT --"
+  # Dispatch messages (START/DONE/FAST-FAIL) are written to \$LOG (\$T/gpu_queue.log), NOT the ">>...  2>&1"
+  # redirection target below (that one only catches the daemon subprocess's own raw stdout/stderr).
+  DLOG="$T/gpu_queue.log"
+  if ! waitfor lock_free; then echo "  FAIL(E-setup): singleton lock not free before TEST E (prior daemon's kill hadn't released it yet)"; rc=1; fi
+  rm -f "$DLOG"
+  # A job whose FIRST WORD resolves (so the enqueue-time shape check accepts it -- see
+  # tools/queue_job_shape_check.sh) but whose TARGET does not -- the exact `status`-job shape: `env` is a real
+  # command, the thing it tries to exec is not, so the real dispatch still dies with rc=127 in well under a
+  # second.
+  GPU_QUEUE_DIR="$T" bash "$SELF" add "env this_command_does_not_exist_xyz_12345" >/dev/null
+  GPU_QUEUE_DIR="$T" GPU_QUEUE_NVIDIA_SMI="$T/fake_nvidia_smi.sh" GPU_QUEUE_POLL_SEC=1 \
+    bash "$SELF" __daemon >/dev/null 2>&1 & I=$!
+  if waitfor grep -q 'DONE(rc=127)' "$DLOG"; then
+    if grep -q 'FAST-FAIL: rc=127' "$DLOG"; then
+      echo "  PASS(E1): a fast rc=127 job is logged as a loud FAST-FAIL"
+    else
+      echo "  FAIL(E1): job died rc=127 fast but NO FAST-FAIL line was logged -- exactly the \`status\` bug"; rc=1
+    fi
+  else
+    echo "  FAIL(E-setup): the rc=127 job never completed (log tail: $(tail -3 "$DLOG" 2>/dev/null))"; rc=1
+  fi
+  kill -KILL "$I" 2>/dev/null
+  if ! waitfor lock_free; then echo "  FAIL(E-setup): daemon #E1's singleton lock never freed after kill"; rc=1; fi
+  # (E2) the FAILING DIRECTION: an ordinary rc=0 job must NEVER be flagged -- proves E1 is a real signal, not a
+  # marker stamped on every completion regardless of outcome.
+  rm -f "$DLOG"
+  GPU_QUEUE_DIR="$T" bash "$SELF" add "true" >/dev/null
+  GPU_QUEUE_DIR="$T" GPU_QUEUE_NVIDIA_SMI="$T/fake_nvidia_smi.sh" GPU_QUEUE_POLL_SEC=1 \
+    bash "$SELF" __daemon >/dev/null 2>&1 & J=$!
+  if waitfor grep -q 'DONE(rc=0)' "$DLOG"; then
+    if grep -q 'FAST-FAIL' "$DLOG"; then
+      echo "  FAIL(E2): a normal rc=0 job was wrongly flagged FAST-FAIL"; rc=1
+    else
+      echo "  PASS(E2): a normal rc=0 job is correctly never flagged"
+    fi
+  else
+    echo "  FAIL(E2-setup): the rc=0 job never completed (log tail: $(tail -3 "$DLOG" 2>/dev/null))"; rc=1
+  fi
+  kill -KILL "$J" 2>/dev/null
+
   echo
   if [ "$rc" -eq 0 ]; then echo "SELFTEST: PASS — singleton holds, the residency guard holds (+ both failing directions are detectable), and pause --now reaches a genuinely-resident job even with a stale record."
   else echo "SELFTEST: FAIL"; fi
@@ -325,6 +385,11 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
+    # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh): refuse a line whose first word could not
+    # possibly run (a prose label, a torn line, a syntax error) BEFORE it is queued -- see that file's header
+    # for the real historical failures (the SETTLE A2 pool lines; a bare `status` job in this very log,
+    # 2026-08-31/09-01, three separate cycles, rc=127 each time, never flagged).
+    if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then echo "$SHAPE_MSG" >&2; exit 1; fi
     ( flock 9; printf '%s\n' "$2" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;
   pause)
     touch "$PAUSE"

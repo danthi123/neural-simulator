@@ -269,6 +269,36 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
     "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64"
 }
 
+check_fast_fail() {
+  # check_fast_fail <node> <job-as-dispatched> -- READ-ONLY. Tails the node's OWN job_status.log for the v2
+  # record this exact dispatch produced and, when it died with rc=127 ("command not found") or rc=2 (a shell
+  # syntax/usage error) -- the signature of a job that never actually ran -- logs a LOUD line HERE (never
+  # remotely; this never writes anything to the node, and never touches remote_launch_command's wrapper).
+  #
+  # WHY (2026-09-25). Six SETTLE A2 pool lines and, independently, a bare `status` job in gpu_queue.log
+  # (2026-08-31/09-01, three separate cycles) all died this way in well under a second, and NOTHING said so
+  # louder than an ordinary v2 status row nobody was tailing -- the board and the claim record both said
+  # "dispatched" while nothing ran. tools/queue_job_shape_check.sh now refuses that SHAPE at enqueue time; this
+  # is the belt-and-suspenders net for whatever it cannot see from here (a module importable on this node's
+  # SHARED checkout but not on the pinned revision this job actually runs in, e.g.) -- it is deliberately not
+  # a substitute for the enqueue-time check, since a fast-fail already happened by the time this runs.
+  #
+  # Called from fill_node AFTER the existing POOL_DISPATCH_LAUNCH_SLEEP (default 5s, already there to "let the
+  # launch register") -- every real rc=127/2 in the historical record completed in well under 1s, so 5s is
+  # ample; a job that legitimately takes longer than that to even START is simply not yet in the log and this
+  # silently finds nothing (best-effort, never a false alarm).
+  local node="$1" job="$2" job_b64 remote_cmd rec rc
+  job_b64=$(printf '%s' "$job" | base64 -w0) || return 0
+  remote_cmd=$(printf 'grep -F -- %q ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -1' "$job_b64")
+  rec=$(timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" "$remote_cmd" 2>/dev/null)
+  [ -n "$rec" ] || return 0
+  rc=$(printf '%s' "$rec" | cut -f3)
+  case "$rc" in
+    127|2)
+      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc within ~${POOL_DISPATCH_LAUNCH_SLEEP:-5}s of dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
+  esac
+}
+
 pop_job() {
   # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
   # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
@@ -385,6 +415,7 @@ fill_node() {
     ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
     printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
     sleep "${POOL_DISPATCH_LAUNCH_SLEEP:-5}"     # let the launch register before this node's next capacity check
+    [ "${POOL_SKIP_FAST_FAIL_CHECK:-0}" = "1" ] || check_fast_fail "$NODE" "$JOB"
   done
 }
 
@@ -434,6 +465,13 @@ if [ "${1:-}" = "--revision-available" ]; then
   # completion MARKER, not bare directory existence).
   [ "$#" -eq 3 ] || { echo "usage: $0 --revision-available <node> <sha>" >&2; exit 2; }
   revision_available "$2" "$3"; exit $?
+fi
+if [ "${1:-}" = "--check-fast-fail" ]; then
+  # TEST SEAM (2026-09-25): exercises the REAL check_fast_fail ssh call (same argv construction, including
+  # SSH_F) against one node/job pair, without a real node -- so a stubbed `ssh` on PATH can assert both the
+  # exact read-only grep probe it makes AND that a matching rc=127/2 record is logged loudly to stderr.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --check-fast-fail <node> <job>" >&2; exit 2; }
+  check_fast_fail "$2" "$3"; exit 0
 fi
 if [ "${1:-}" = "--fill-node" ]; then
   # TEST SEAM (2026-09-23 fix round #3): calls cycle_setup then fill_node -- the SAME function the production
