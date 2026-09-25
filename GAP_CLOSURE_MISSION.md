@@ -233,9 +233,9 @@ live-check `llm claude`; then hand off.
 (BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
 shared log ecb6bae29 (review SOUND after a test-path fix 4b24c02a4); then the two merges it unblocked, gap4 C26 scoring 3d16962d0
 and pmem live cliff-detector v2 4c0b9fada. LOCAL_LLM_RUNBOOK.md filled (0b967376f): harvest recipes for fi / D6 N=2000 / SETTLE A2,
-idle-gate waiver guidance, Queue next EMPTY, parked-for-Claude list. Still open: GPU<->llm auto-swap fix (in review, workflow
-wf_aae2784e); condensed CLAUDE.md + memory (review faithful; branch must merge main first; awaits OWNER approval); live check of
-`llm claude` once the GPU is free.
+idle-gate waiver guidance, Queue next EMPTY, parked-for-Claude list. 16:30: GPU<->llm auto-swap MERGED d78f6a997
+(review SOUND, mutation-verified; gpu-queue-dispatch restarted onto it while idle). Condense branch brought up to date with main
+(ea25fbbaf, diff now only its own 8 files) and awaits OWNER approval. Still open: live check of `llm claude` once the GPU is free.
 
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
