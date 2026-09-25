@@ -287,15 +287,31 @@ check_fast_fail() {
   # launch register") -- every real rc=127/2 in the historical record completed in well under 1s, so 5s is
   # ample; a job that legitimately takes longer than that to even START is simply not yet in the log and this
   # silently finds nothing (best-effort, never a false alarm).
-  local node="$1" job="$2" job_b64 remote_cmd rec rc
+  #
+  # THIS DISPATCH'S record only (2026-09-25 fix round, review MEDIUM). <t0> is the local `date +%s` fill_node
+  # took just BEFORE its `ssh -f` launch. job_status.log is append-only and keeps every earlier attempt, so the
+  # first version (`grep -F <b64> | tail -1`, no time check) reported a re-dispatch of an identical job whose
+  # EARLIER attempt had died rc=127 as a new FAST-FAIL -- and its substring match could also hit a longer job
+  # whose base64 merely starts with this one's. A record now counts only when its job field is EXACTLY this
+  # job's base64 AND its timestamp is >= t0. The remote side stays a read-only grep; the exact-match and time
+  # filter run HERE, on its output. The record's timestamp is the node's clock: a node running more than a
+  # second or so behind this host makes a genuine fast-fail read as older than t0 and go unreported (a miss,
+  # never a false alarm). With no numeric <t0> there is no way to tell this dispatch from an earlier one, so it
+  # reports nothing.
+  local node="$1" job="$2" t0="${3:-}" job_b64 remote_cmd raw rec rc ts
+  [[ $t0 =~ ^[0-9]+$ ]] || return 0
   job_b64=$(printf '%s' "$job" | base64 -w0) || return 0
-  remote_cmd=$(printf 'grep -F -- %q ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -1' "$job_b64")
-  rec=$(timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" "$remote_cmd" 2>/dev/null)
+  remote_cmd=$(printf 'grep -F -- %q ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -n 50' "$job_b64")
+  raw=$(timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" "$remote_cmd" 2>/dev/null)
+  [ -n "$raw" ] || return 0
+  rec=$(printf '%s\n' "$raw" | awk -F'\t' -v b="$job_b64" -v t="$t0" \
+        '$1 == "v2" && $4 == b && $2 ~ /^[0-9]+$/ && $2 + 0 >= t + 0 {r = $0} END {if (r != "") print r}')
   [ -n "$rec" ] || return 0
+  ts=$(printf '%s' "$rec" | cut -f2)
   rc=$(printf '%s' "$rec" | cut -f3)
   case "$rc" in
     127|2)
-      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc within ~${POOL_DISPATCH_LAUNCH_SLEEP:-5}s of dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
+      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc $(( ts - t0 ))s after dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
   esac
 }
 
@@ -397,7 +413,7 @@ fill_node() {
   # below calls the EXACT production code path -- including the real `JOB=$(pop_job ...)` command substitution
   # -- rather than a re-typed copy that could silently drift from what the live `while true` loop (at the bottom
   # of this file) runs.
-  local NODE="$1"
+  local NODE="$1" t0
   while node_is_idle "$NODE"; do
     JOB=$(pop_job "$NODE_BUDGET" "$NODE")
     [ -z "$JOB" ] && break
@@ -412,10 +428,11 @@ fill_node() {
       echo "[pool-dispatch] failed to encode job for $NODE" >&2
       break
     }
+    t0=$(date +%s)   # taken BEFORE the launch: check_fast_fail accepts only a status record written at/after it
     ssh -f -n "${SSH_F[@]}" -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
     printf '%s %s %s\n' "$(date +%s)" "$NODE" "$(job_est_gb "$JOB")" >> "$RESV"
     sleep "${POOL_DISPATCH_LAUNCH_SLEEP:-5}"     # let the launch register before this node's next capacity check
-    [ "${POOL_SKIP_FAST_FAIL_CHECK:-0}" = "1" ] || check_fast_fail "$NODE" "$JOB"
+    [ "${POOL_SKIP_FAST_FAIL_CHECK:-0}" = "1" ] || check_fast_fail "$NODE" "$JOB" "$t0"
   done
 }
 
@@ -470,8 +487,9 @@ if [ "${1:-}" = "--check-fast-fail" ]; then
   # TEST SEAM (2026-09-25): exercises the REAL check_fast_fail ssh call (same argv construction, including
   # SSH_F) against one node/job pair, without a real node -- so a stubbed `ssh` on PATH can assert both the
   # exact read-only grep probe it makes AND that a matching rc=127/2 record is logged loudly to stderr.
-  [ "$#" -eq 3 ] || { echo "usage: $0 --check-fast-fail <node> <job>" >&2; exit 2; }
-  check_fast_fail "$2" "$3"; exit 0
+  # <t0> is the dispatch time fill_node would pass (records older than it are earlier attempts, not this one).
+  { [ "$#" -eq 3 ] || [ "$#" -eq 4 ]; } || { echo "usage: $0 --check-fast-fail <node> <job> [<t0>]" >&2; exit 2; }
+  check_fast_fail "$2" "$3" "${4:-}"; exit 0
 fi
 if [ "${1:-}" = "--fill-node" ]; then
   # TEST SEAM (2026-09-23 fix round #3): calls cycle_setup then fill_node -- the SAME function the production
