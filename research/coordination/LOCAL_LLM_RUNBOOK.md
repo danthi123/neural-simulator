@@ -124,6 +124,9 @@ lines here after the Tuesday reset.)_
   arms, the SlotBinder fast teach review (`research/slotbinder-fast-teach`, UNREVIEWED; touches sim/).
 - Designs with open review issues: prioritized memory (`research/prioritized-memory-design`), B2c combined battery
   (`research/b2c-paired-flip-prereg-fixround1`), claim-check round 8, the prereg-amendment gate, the pool-stall detector.
+- Scoring findings, harvested but not yet written: fi (aggregate reads NO-GO 3/6; seeds 43 and 101 look like an encoding
+  miss, not forgetting; needs the independent check + `preconditions` block) and D6 at N=2000 (recall holds to 2000; cost
+  ceiling 50-500; explain HEBB vs COPY PARITY-BY-CONSTRUCTION).
 - Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (FAILURE_LOG 2026-09-25; if a
   commit in a worktree is blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two
   LOW review notes (validate the profile name before writing the restore marker; `|| true` on the test-only stop path).
