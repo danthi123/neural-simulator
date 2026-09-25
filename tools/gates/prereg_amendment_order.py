@@ -11,11 +11,16 @@ THE RULE. A commit BLOCKS when BOTH hold:
       rule as `prereg_before_run`) and that file gains AMENDMENT ACTIVITY relative to the commit's parent(s):
         N1  a new amendment entry: its ID (the `6` of `## AMENDMENT 6`, `**Amendment 6 (...)**`, `**A6, ...**`,
             `ADDENDUM A6`) is in no parent version. Entries are recognised in every form the corpus uses:
-            `#` headings starting `Amendment`/`Addendum`; bold paragraphs or bullets starting `**AMENDMENT`,
-            `**Amendment`, `**ADDENDUM`; and, INSIDE an amendment-log section (`## AMENDMENT LOG`, `### Amendment
-            log: ...`), bold `**A<n>` entries followed by a date/delimiter and any top-level bold bullet (the
-            checklist's AMENDMENT LOG form: `- **2026-09-24, filed after ...**`). ID-less entries are keyed by
-            their text.
+            `#` headings starting `Amendment`/`Addendum`/`Erratum`; bold paragraphs or bullets starting
+            `**AMENDMENT`, `**Amendment`, `**ADDENDUM`, `**Erratum`; the same word after a one- or two-word
+            qualifier (`### Seed-integrity amendment - <date>`, `**Pre-formal amendment after ...**`, `**v3
+            amendment (...)**`; a qualifier such as `this`/`why`/`per`/`by` makes it a reference, not an entry);
+            and, INSIDE an amendment-log section (`## AMENDMENT LOG`, `### Amendment log: ...`), bold `**A<n>`
+            entries followed by a date/delimiter and any top-level bold bullet (the checklist's AMENDMENT LOG form:
+            `- **2026-09-24, filed after ...**`). A bold entry must open a paragraph or a list item; one glued to
+            the line above counts only when it names an ID and a date (`**AMENDMENT 3 (2026-09-25, ...)**`),
+            because a wrapped REFERENCE (`**AMENDMENT 3** governs ...`) has the same shape. ID-less entries are
+            keyed by their text; errata by `ERR` + their ID.
         N2  a new entry line reusing an existing ID (an ADDENDUM to amendment N, a rewritten amendment heading) —
             UNLESS it is a declared record subsection: its label says `record` and a non-record entry with the same
             ID exists (`### AMENDMENT 6, smoke record (appended after the declared smoke ran ...)`). A record
@@ -34,7 +39,7 @@ ESCAPE. A line added by this commit to that prereg reading `amendment-same-commi
 "the amendment only records the smoke that produced these files; no rule changes"). Scoped to the commit's own
 added lines, so an old amendment's escape cannot cover a new one.
 
-WHAT IS READ — the staged index the hook is COMMITTING, never a stand-in for it.
+WHAT IS READ — the commit git is about to write, never a stand-in for it.
   * The registry passes only `--diff-filter=A` paths, which cannot see an overwritten (status M) artifact; so this
     gate ignores `paths` and reads `git diff --cached` itself, on every commit, even when `paths` is empty.
   * `GIT_INDEX_FILE` is honoured: `git commit -a` and `git commit -- <paths>` commit a TEMPORARY index that git
@@ -42,17 +47,35 @@ WHAT IS READ — the staged index the hook is COMMITTING, never a stand-in for i
     `.git/worktrees/<name>/`), and the default index does not hold what is being committed. One rule serves the
     hook and the selftest alike (`_git_env`): drop the GIT_* location variables, then restore `GIT_INDEX_FILE`
     whenever it lies inside the repo's own git dir. So the selftest's temporary-index case runs the hook's code path.
-  * MERGES are checked, not skipped, and do not false-block: a path counts only if it differs from EVERY parent
-    (HEAD and each MERGE_HEAD), amendment activity only if it is new relative to every parent. Merging a branch
-    whose amendment and data landed in separate, correctly ordered commits therefore passes; an evil merge that
-    writes a new amendment and new data itself is still caught.
+  * THE PARENTS are the ones the new commit will have, which is not always HEAD. The gate asks which git command
+    is running the hook: the nearest ancestor `git` process whose working directory is this checkout (git chdirs
+    to the work-tree top before any hook, from a subdirectory or with `-C`; measured 2026-09-25), read from
+    /proc. Then:
+      - MERGE_HEAD present (a conflicted merge, or `merge --no-commit`, finished by `git commit`): judged against
+        HEAD and every MERGE_HEAD. A path counts only if it differs from EVERY parent, amendment activity only if
+        it is new relative to every parent. A merge that itself writes a new amendment and new data is caught.
+      - `git merge` / `git pull` with no MERGE_HEAD: a CLEAN AUTO-MERGE. git runs pre-merge-commit BEFORE it writes
+        MERGE_HEAD (builtin/merge.c prepare_to_commit), so HEAD is the only parent visible, and judging against it
+        alone false-blocked 19 of 534 real main merges (and this branch's own sync merge, 2026-09-25). Nothing is
+        checked: git refuses to start a merge over staged changes, so the tree is the strategy's output and no
+        person wrote any of it, and each side's commits were judged when they were made. A merge a person edits
+        is finished by `git commit` with MERGE_HEAD present, above.
+      - `git commit --amend` (or an unambiguous abbreviation, `--am` / `--ame` / `--amen`): the new commit REPLACES
+        HEAD, so it is judged against HEAD's parents. Diffing against HEAD let an amendment committed alone and
+        its data added by `--amend` land as ONE commit and pass (review 2026-09-25).
+      - anything else: HEAD.
   * FAILS CLOSED. If the index, MERGE_HEAD or a blob cannot be read, or git times out, the gate returns a problem
     rather than a silent pass: a gate that says nothing when it could not look is indistinguishable from a pass.
-  * COST. ~3 git calls per commit, plus 2 blob reads per modified prereg (memoised within a call). No history walk.
+  * COST. 4 git calls on a commit that modifies no prereg (one more under `--amend` and per extra merge parent),
+    plus a few /proc reads: 20 ms on this repo. Rename detection runs only over the two prereg pathspecs and the
+    raw/ diff runs without it: over the whole tree `-M` took 5.8 s per 1000-commit-divergent parent (review
+    2026-09-25; 1.72 s against 0.07 s here, tree to tree), and past the timeout the gate fails closed. When a
+    prereg IS modified: one raw/-limited diff and 2 blob reads per modified prereg. No history walk.
 
 WHAT THIS GATE CANNOT CATCH (stated, not hidden).
   * A blanket rule, like `prereg_before_run`: it does not know which artifact an amendment governs, so an
-    amendment that only records a finished run blocks until its author adds the escape or splits the commit.
+    amendment that only records a finished run blocks until its author adds the escape or splits the commit. Every
+    one of the replay's 19 blocks is exactly that (see REPLAY): the escape is the expected path for a record.
   * A prereg EDITED after its run with no amendment marker at all (the rewritten body of the ORIGINAL
     registration, outside any amendment/log section) — N3 covers amendment bodies only. That broader rule would fire
     on every results-appended-to-prereg commit this repo makes; it stays a reviewer's call.
@@ -61,26 +84,47 @@ WHAT THIS GATE CANNOT CATCH (stated, not hidden).
     amendment, but amendments cite what had been SEEN (docs/BUILD_LANE_CHECKLIST.md), so the premise was inverted:
     0 correct and 3 false blocks over 400 commits (review 2026-09-25). It was removed, not weakened. A correct
     version needs a declaration of what an amendment GOVERNS, which no prereg writes today.
-  * Amendment markers outside the forms above (an amendment written as plain prose), and preregs whose filename
-    lacks "prereg" or that live outside the two directories.
+  * Amendment markers outside the forms above: an amendment written as plain prose, and labels named only by a
+    generic word -- `**Instrument revision, before any mechanism run.**`, `**Wording correction (...)**`, `##
+    Declared deviations` -- because `correction`/`revision` also open 20+ ordinary sections of whole-file
+    registrations in the corpus (`## Locked correction`, `## Correction design`). Preregs whose filename lacks
+    "prereg" or that live outside the two directories.
+  * No /proc (not Linux), or no ancestor git process working in this checkout (the gate run by hand): the gate
+    cannot tell which command is committing and judges against HEAD. A clean auto-merge then false-blocks (the
+    fail-closed direction; finish it with `git merge --no-commit` + `git commit`), and `--amend` goes unseen.
+  * `git merge --squash` + `git commit`: one commit holding a whole lane is judged against HEAD, so a lane whose
+    amendment and data were ordered BLOCKS -- correctly by the rule's own terms (the squash erases that order from
+    history), but it is friction to know about. `git rebase` and a clean `cherry-pick` run no pre-commit hook.
+  * A prereg created by RENAMING a file whose old name is not a prereg: rename detection is limited to the prereg
+    pathspecs, so it reads as ADDED, which is `prereg_before_run`'s scope.
   * A `GIT_INDEX_FILE` pointing OUTSIDE the repo's git dir (a hand-set custom index) is not honoured; the default
     index is read instead. git itself never does this for `commit`, `commit -a` or `commit -- <paths>`.
 
-REPLAY (2026-09-25, the last 2500 commits of main, 534 of them merges; the gate's own `_problems` on each commit's
-real trees, merges judged against every parent). Truth = a new amendment/log entry or an edit to a committed
-amendment's text, landing with run data. 36 commits modified a prereg while writing under raw/; 19 BLOCK, all true
-(TP 19, FP 0), and none of the other 17 is a miss (FN 0): 10 wrote only `_provenance/runs.jsonl`, 1 is a record
-subsection (414e1ba4f), 6 append results to the ORIGINAL registration with no amendment (the declared blind spot
-above). Most of the 19 are records of runs the amendment was written after, i.e. the escape line's intended use.
-The review's 5 named misses: 835fc252e, 0ee39e293, 356c9f040, f2b9e69b7 now block; 72b744c4c wrote only the
-provenance log. The first version (hook semantics) blocked 13 of these commits: 11 true, 2 false (414e1ba4f,
-5b5ea1b74), and missed 8. Judging a merge against HEAD alone would have false-blocked 19 of the 534 merges.
+REPLAY (2026-09-25, re-run after the second fix round at origin/main d98913868: the last 2500 commits, 536 of them
+merges; the gate's own `_evaluate` on each commit's real trees, merges judged against every parent as a `git commit`
+with MERGE_HEAD would be -- a clean auto-merge is not checked at all, so this is the stricter reading). Truth = a new
+amendment/log entry or an edit to a committed amendment's text, landing with run data. 36 commits modified a prereg
+while writing under raw/; 19 BLOCK, all true by that definition (TP 19, FP 0), and none of the other 17 is a miss
+(FN 0): 10 wrote only `_provenance/runs.jsonl`, 1 is a record subsection (414e1ba4f), 6 append results to the
+ORIGINAL registration with no amendment (the declared blind spot above). No merge blocks; judged against HEAD alone,
+19 merges would have. The grammar added in this round (qualified, erratum and glued forms) changes no verdict in the
+window, and now recognises 4 of the review's 5 latent forms (`Instrument revision` is declared above instead).
+WHAT THE 19 ARE (each commit's amendment text and data list read by hand -- a judgement, not a measurement):
+0 are GOVERNED-data blocks (runs made under a rule that the same commit's amendment text sets: the ordering failure
+the gate exists for). All 19 are RECORDED-data blocks: the data were produced before or beside the amendment and it
+cites them as what was seen -- smokes, calibration grids, design sweeps, sizing runs, probe results, a queue-removal
+record, provenance and precision corrections (2def39c76 and 6994e80f2 say they were committed BEFORE any run they
+govern; 835fc252e completes a registration its own DRAFT said would be chosen from the sizing runs it lands with).
+So over this window the gate's whole cost is escape friction, 19 `amendment-same-commit:` lines or split commits in
+2500 commits, and its value is preventive. The one real post-launch change in the window, a9eda3d0a's edit to a
+governed scorer, was CODE, which no prereg-text gate can see; 4cf8c0237 later disclosed it by amendment.
 
-MUTATION-VERIFY. tests/test_gate_prereg_amendment_order.py::test_selftest_kills_mutants applies 12 mutants and
-requires selftest() -- the registry's only trust signal -- to FAIL on each: check() returns early on empty `paths`;
-the prereg status filter stops matching `M`; the raw filter counts only ADDED files; the detector is unwired; bold
-entries are not detected; GIT_INDEX_FILE is dropped; merges are judged against HEAD alone; the record exemption,
-the N3 body check, the provenance exclusion or the escape is removed; a git error returns no problem.
+MUTATION-VERIFY. tests/test_gate_prereg_amendment_order.py::test_selftest_kills_mutants applies each listed mutant
+and requires selftest() -- the registry's only trust signal -- to FAIL on it: among them check() returning early on
+empty `paths`, the M status filter, the raw filter, the detector unwired, bold entries, GIT_INDEX_FILE, merge
+parents, the clean-auto-merge rule, the amend rule and its flag parser, prereg rename detection, the record
+exemption (removed, or applied to any label saying `record`), N3, N4, the provenance exclusion, the escape
+(removed, or matched on any line), and fail-closed for git errors and an unreadable MERGE_HEAD.
 """
 from __future__ import annotations
 
@@ -96,7 +140,9 @@ BLOCKING = True
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 _PREREG_RE = re.compile(r"^(research/findings|docs/plans)/[^/]*prereg[^/]*\.md$", re.I)
+_PREREG_SPECS = (":(glob,icase)research/findings/*prereg*.md", ":(glob,icase)docs/plans/*prereg*.md")
 _RAW_RE = re.compile(r"^research/findings/raw/.+")
+_RAW_SPECS = ("research/findings/raw/",)
 _RAW_NOT_DATA_RE = re.compile(r"(?:\.prov\.json$|^research/findings/raw/_provenance/|\.progress_[^/]*$)")
 _ESCAPE_RE = re.compile(r"^\s*[-*]?\s*amendment-same-commit:\s*(.{15,})$", re.I)
 _GIT_TIMEOUT = 20
@@ -106,14 +152,20 @@ _HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 _BOLD_RE = re.compile(r"^(\s*)(?:[-*+]\s+|\d+[.)]\s+)?\*\*\s*(.*)$")
 _LIST_RE = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 _FENCE_RE = re.compile(r"^\s*(```|~~~)")
-_WORD_RE = re.compile(r"^(amendment(s?)|addend(um|a))\b[\s\-]*(.*)$", re.I)
+_WORD_RE = re.compile(r"^(amendments?|addend(?:um|a)|errat(?:um|a))\b[\s\-]*(.*)$", re.I)
+_QUAL_RE = re.compile(r"^((?:[A-Za-z0-9][\w-]*\s+){1,2})(amendment|addendum|erratum)\b[\s\-]*(.*)$", re.I)
+_QUAL_STOP = frozenset(
+    "a an the this that these those its our my their each every any no which what why how per for in of by to from "
+    "on see and or same prior previous next later earlier above below".split())
+_PLURAL = frozenset(("amendments", "addenda", "errata"))
+_TEMPORAL_RE = re.compile(r"^(?:after|before|filed|written|dated)\b", re.I)
 _LOGWORD_RE = re.compile(r"^(?:log|history)\b[\s\-]*(.*)$", re.I)
 _CORR_RE = re.compile(r"^correction\b\s*(\d+)?", re.I)
 _ID_RE = re.compile(r"^(?:no\.?\s*)?([A-Za-z]?\d+[a-z]?|[A-Z])(?=$|[\s,:;.()—–\-*\]])")
 _DELIM_RE = re.compile(r"^(?:$|[(:,;.—–\-*])")
 _AFORM_RE = re.compile(r"^A(\d+)(?=\s*(?:$|[,:;(—–]|-{1,2}\s|\.?\*\*))")
 _RECORD_RE = re.compile(r"\brecord\b", re.I)
-_SECNUM_RE = re.compile(r"^(?:\u00a7\s*)?\d+(?:\.\d+)*[.)]?\s+")          # `## 6. AMENDMENT LOG` -> `AMENDMENT LOG`
+_SECNUM_RE = re.compile(r"^(?:§\s*)?\d+(?:\.\d+)*[.)]?\s+")          # `## 6. AMENDMENT LOG` -> `AMENDMENT LOG`
 _DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 _PLACEHOLDER_RE = re.compile(r"^\s*(?:[-*+]\s+)?[(_*\s]*(?:none|no amendments?|n/?a)\b", re.I)
 _GIT_ENV_STRIP = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
@@ -134,20 +186,25 @@ def _label_kind(label, log_ctx):
     s = label.strip().lstrip("*_ ").strip()
     m = _WORD_RE.match(s)
     if m:
-        plural = bool(m.group(2)) or (m.group(3) or "").lower() == "a"
-        rest = m.group(4)
+        word, rest = m.group(1).lower(), m.group(2)
+    else:
+        q = _QUAL_RE.match(s)
+        if not q or _QUAL_STOP.intersection(q.group(1).lower().split()):
+            q = None
+        word, rest = (q.group(2).lower(), q.group(3)) if q else (None, "")
+    if word:
         lm = _LOGWORD_RE.match(rest)
         if lm:
             cm = _CORR_RE.match(lm.group(1))
             if cm:
                 return "entry", "LOGCORR" + (cm.group(1) or "")
             return "container", None
-        if plural:
+        if word in _PLURAL:
             return "container", None
-        im = _ID_RE.match(rest)
+        im = None if _DATE_RE.match(rest) else _ID_RE.match(rest)      # `amendment - 2026-08-03`: a date, no ID
         if im:
-            return "entry", _norm_id(im.group(1))
-        if _DELIM_RE.match(rest):
+            return "entry", ("ERR" if word.startswith("errat") else "") + _norm_id(im.group(1))
+        if _DELIM_RE.match(rest) or _TEMPORAL_RE.match(rest) or _DATE_RE.match(rest):
             return "entry", "TEXT:" + _collapse(s).lower()
         return None, None
     if log_ctx:
@@ -196,12 +253,18 @@ class _Doc:
                 self.head[i] = True
             elif not fence:
                 bm = _BOLD_RE.match(ln)
-                if bm and (prev_blank or _LIST_RE.match(ln)):
+                if bm:
+                    glued = not (prev_blank or _LIST_RE.match(ln))
                     direct = _direct_log(stack)
                     kind, key = _label_kind(bm.group(2), direct)
+                    # glued to the line above: an entry only if it names an ID AND a date -- a wrapped reference
+                    # (`**AMENDMENT 3** governs ...`) has the same shape and carries neither
+                    if glued and not (kind == "entry" and not key.startswith("TEXT:")
+                                      and _DATE_RE.search(bm.group(2)[:60])):
+                        kind = None
                     # the checklist's AMENDMENT LOG form: a top-level bold entry directly in a log section, e.g.
                     # `- **2026-09-24, filed after ...**` -- the first one, or any later one that carries a date
-                    if (kind is None and direct and len(bm.group(1)) < 2
+                    elif (kind is None and direct and len(bm.group(1)) < 2
                             and (cur_bold is None or _DATE_RE.search(bm.group(2)[:60]))):
                         kind, key = "entry", "TEXT:" + _collapse(ln).lower()
                     if kind == "entry":
@@ -312,6 +375,91 @@ def _problems(prereg_changes, raw_written):
     return out
 
 
+# --- which git command is committing? (the parents depend on it) ------------------------------------------------
+_GIT_GLOBAL_WITH_VALUE = frozenset(("-c", "-C", "--git-dir", "--work-tree", "--namespace", "--super-prefix",
+                                    "--config-env", "--attr-source"))
+_COMMIT_WITH_VALUE = frozenset(("-m", "-F", "-c", "-C", "-t", "--message", "--file", "--reedit-message",
+                                "--reuse-message", "--template", "--author", "--date", "--cleanup", "--fixup",
+                                "--squash", "--trailer", "--pathspec-from-file"))
+_SHORT_WITH_VALUE = "mFcCt"
+
+
+def _invocation_kind(argv):
+    """Pure. 'merge' | 'amend' | 'commit' for the argv of the git process running the hook; None if unreadable.
+    git parse-options accepts any unambiguous prefix of a long option: `--am`, `--ame`, `--amen` all mean --amend
+    for `git commit`, and a later `--no-amend` cancels it. An option's separate VALUE is skipped (`-m --amend` is a
+    message), and nothing after `--` is an option."""
+    if not argv:
+        return None
+    base = os.path.basename(argv[0])
+    i, sub = 1, None
+    if base.startswith("git-"):
+        sub = base[4:]
+    else:
+        while i < len(argv):
+            a = argv[i]
+            i += 1
+            if a in _GIT_GLOBAL_WITH_VALUE:
+                i += 1
+            elif not a.startswith("-"):
+                sub = a
+                break
+    if sub is None:
+        return None
+    if sub in ("merge", "pull"):
+        return "merge"
+    amend = False
+    while i < len(argv):
+        a = argv[i]
+        i += 1
+        if a == "--":
+            break
+        if a in _COMMIT_WITH_VALUE:
+            i += 1
+        elif a.startswith("--"):
+            name = a[2:].split("=", 1)[0]
+            if len(name) >= 2 and "amend".startswith(name):
+                amend = True
+            elif name.startswith("no-") and len(name) >= 5 and "amend".startswith(name[3:]):
+                amend = False
+        elif a.startswith("-") and len(a) > 1:
+            for j, ch in enumerate(a[1:]):
+                if ch in _SHORT_WITH_VALUE:
+                    if j == len(a) - 2:
+                        i += 1                    # `-qam msg`: the value is the next word
+                    break
+    return "amend" if amend else "commit"
+
+
+def _invoking_git_argv(root, start=None):
+    """argv of the nearest ancestor `git` process (from `start`, default this process's parent) -- but only if it is
+    working in `root`. git chdirs to the work-tree top before running any hook, so a hook's git process always
+    matches; a check() run on a scratch repo from INSIDE a real hook (the selftest) does not, and must not borrow the
+    outer command. None when there is none, or /proc cannot be read."""
+    want = os.path.realpath(root)
+    pid = start if start is not None else os.getppid()
+    try:
+        for _ in range(64):
+            if pid <= 1:
+                return None
+            with open("/proc/%d/comm" % pid, encoding="utf-8", errors="replace") as fh:
+                comm = fh.read().strip()
+            if comm == "git" or comm.startswith("git-"):
+                if os.path.realpath("/proc/%d/cwd" % pid) != want:
+                    return None
+                with open("/proc/%d/cmdline" % pid, "rb") as fh:
+                    return [a.decode("utf-8", "surrogateescape") for a in fh.read().split(b"\0")[:-1]]
+            with open("/proc/%d/stat" % pid, encoding="utf-8", errors="replace") as fh:
+                pid = int(fh.read().rsplit(")", 1)[1].split()[1])
+    except (OSError, ValueError, IndexError):
+        return None
+    return None
+
+
+def _detect_invocation(root):
+    return _invocation_kind(_invoking_git_argv(root))
+
+
 # --- wiring: the REAL staged index for the real commit; `root=` for a scratch repo ------------------------------
 class _GitReadError(Exception):
     pass
@@ -354,27 +502,34 @@ def _git(args, root, env, ok_codes=(0,)):
     return r
 
 
-def _parents(root, env):
-    """[HEAD] (or [] on an unborn branch) + every MERGE_HEAD when a merge is being committed."""
+def _parents(root, env, kind):
+    """The parents the commit being made will have. [] on an unborn branch; None for a clean auto-merge, which is
+    not checked (see the docstring: pre-merge-commit runs before git writes MERGE_HEAD)."""
     r = _git(["rev-parse", "-q", "--verify", "HEAD^{commit}"], root, env, ok_codes=(0, 1))
     head = r.stdout.decode().strip()
     if not head:
         return []
     mh = _git(["rev-parse", "--path-format=absolute", "--git-path", "MERGE_HEAD"], root, env).stdout.decode().strip()
-    merge_heads = []
-    if mh and os.path.exists(mh):
+    if mh and os.path.lexists(mh):
         try:
             with open(mh, encoding="utf-8") as fh:
                 merge_heads = [ln.split()[0] for ln in fh if ln.strip()]
         except OSError as e:
             raise _GitReadError("MERGE_HEAD exists but cannot be read: %s" % e)
-    return [head] + merge_heads
+        return [head] + merge_heads
+    if kind == "merge":
+        return None
+    if kind == "amend":
+        return _git(["rev-parse", "HEAD^@"], root, env).stdout.decode().split()
+    return [head]
 
 
-def _staged_changes(root, env, parent):
-    """{new_path: (status_letter, old_path)} of the staged index relative to `parent`."""
-    out = _git(["diff", "--cached", "-z", "--name-status", "-M", parent, "--"], root, env).stdout
-    toks = out.decode("utf-8", "surrogateescape").split("\0")
+def _changes(root, env, parent, target, specs, renames):
+    """{new_path: (status_letter, old_path)} from `parent` to the staged index (target None) or to commit `target`,
+    limited to `specs`. Rename detection only where it is asked for (the prereg specs)."""
+    args = ["diff", "-z", "--name-status", "-M" if renames else "--no-renames"]
+    args += (["--cached", parent] if target is None else [parent, target]) + ["--"] + list(specs)
+    toks = _git(args, root, env).stdout.decode("utf-8", "surrogateescape").split("\0")
     res, i = {}, 0
     while i < len(toks) and toks[i]:
         st = toks[i][:1]
@@ -387,9 +542,9 @@ def _staged_changes(root, env, parent):
     return res
 
 
-def check(paths, root=None):
-    """`paths` (the registry's --diff-filter=A list) is deliberately NOT used: see the docstring."""
-    root = os.path.abspath(root or _ROOT)
+def _evaluate(root, env, parents, target=None):
+    """The decision for a commit with these `parents` whose tree is the staged index (target None) or the commit
+    `target` (the replay). Raises _GitReadError. One code path for the hook, the selftest and the replay."""
     blobs = {}
 
     def blob(spec):
@@ -397,28 +552,33 @@ def check(paths, root=None):
             blobs[spec] = _git(["cat-file", "blob", spec], root, env).stdout.decode("utf-8", "replace")
         return blobs[spec]
 
+    pre = [_changes(root, env, p, target, _PREREG_SPECS, True) for p in parents]
+    modified = [p for p in sorted(set(pre[0]).intersection(*pre[1:]))       # a merge: new relative to EVERY parent
+                if _PREREG_RE.match(p) and pre[0][p][0] in ("M", "R") and all(c[p][0] != "D" for c in pre)]
+    if not modified:
+        return []
+    raw = [_changes(root, env, p, target, _RAW_SPECS, False) for p in parents]
+    raw_written = sorted(p for p in set(raw[0]).intersection(*raw[1:])
+                         if _RAW_RE.match(p) and all(c[p][0] != "D" for c in raw))
+    new_ref = ":%s" if target is None else target + ":%s"
+    prereg_changes = [(p, blob(new_ref % p), [blob("%s:%s" % (sha, c[p][1])) if c[p][0] != "A" else ""
+                                              for sha, c in zip(parents, pre)])
+                      for p in modified]
+    return _problems(prereg_changes, raw_written)
+
+
+def check(paths, root=None, invocation=None):
+    """`paths` (the registry's --diff-filter=A list) is deliberately NOT used: see the docstring. `invocation`
+    ('commit' | 'amend' | 'merge') overrides the /proc detection -- the selftest passes it so a check() on a scratch
+    repo does not depend on which real git command happens to be running the hook around it."""
+    root = os.path.abspath(root or _ROOT)
     try:
         env = _git_env(root)
-        parents = _parents(root, env)
+        kind = invocation if invocation is not None else _detect_invocation(root)
+        parents = _parents(root, env, kind)
         if not parents:
-            return []                                              # first commit: nothing can be MODIFIED
-        changes = [_staged_changes(root, env, p) for p in parents]
-        common = set(changes[0])
-        for c in changes[1:]:
-            common &= set(c)                                       # a merge: new relative to EVERY parent
-        raw_written = sorted(p for p in common if _RAW_RE.match(p) and all(c[p][0] != "D" for c in changes))
-        prereg_changes = []
-        for p in sorted(common):
-            if not _PREREG_RE.match(p) or changes[0][p][0] not in ("M", "R"):
-                continue
-            if any(c[p][0] == "D" for c in changes):
-                continue
-            parent_texts = [blob("%s:%s" % (sha, c[p][1])) if c[p][0] != "A" else ""
-                            for sha, c in zip(parents, changes)]
-            prereg_changes.append((p, blob(":" + p), parent_texts))
-        if not prereg_changes:
-            return []
-        return _problems(prereg_changes, raw_written)
+            return []                    # unborn branch / amended root commit: nothing is MODIFIED; None: auto-merge
+        return _evaluate(root, env, parents)
     except _GitReadError as e:
         return ["CLASS PRA could not read the commit being made (%s) -- failing CLOSED: this gate cannot say the "
                 "commit is clean without reading it. Retry; if git itself is broken, fix that first." % e]
@@ -426,7 +586,9 @@ def check(paths, root=None):
 
 # --- selftest -------------------------------------------------------------------------------------------------
 _ST_LOG = "# prereg\n\nthresholds: G1 >= 0.5\n\n## Amendment log\n\n(none at filing)\n"
+_ST_NOLOG = "# prereg\n\nthresholds: G1 >= 0.5\n"
 _ST_BOLD = "\n**AMENDMENT 1: 2026-01-02, after the seed-7 smoke, before round 2.** G1 is now >= 0.6.\n"
+_ST_ESCAPE = "- amendment-same-commit: these files are the seed-7 smoke this amendment records\n"
 
 
 def _selftest_pure(bad):
@@ -439,11 +601,12 @@ def _selftest_pure(bad):
     logbullet = base + "\n- **2026-01-02, filed after the seed-7 smoke completed.** G1 unchanged.\n"
     record = heading + "\n### AMENDMENT 1, smoke record (appended after the declared smoke ran)\n\nG1 read 0.7.\n"
     rewrite = heading.replace("G1 >= 0.6", "G1 >= 0.65")
-    escaped = bold + "- amendment-same-commit: these files are the seed-7 smoke this amendment records\n"
+    escaped = bold + _ST_ESCAPE
     criteria = base.replace("thresholds: G1 >= 0.5", "thresholds:\n\n- **A1 (route):** G1 >= 0.5")
     criteria2 = criteria.replace("G1 >= 0.5", "G1 >= 0.5\n- **A2 (two referents):** G2")
     fenced = base.replace("G1 >= 0.5\n", "G1 >= 0.5\n\n```\n## AMENDMENT 9 (inside a code block)\n```\n")
     prose = base.replace("G1 >= 0.5\n", "G1 >= 0.5\n\nsome clarifying prose outside any amendment.\n")
+    nolog = _ST_NOLOG
 
     def fires(new, old, r=raw):
         return bool(_problems([(p, new, [old])], r))
@@ -453,11 +616,30 @@ def _selftest_pure(bad):
                        ("dated log bullet", logbullet)):
         if not fires(new, base):
             bad.append("did NOT catch a new %s amendment beside a raw data artifact" % label)
-    nolog = "# prereg\n\nthresholds: G1 >= 0.5\n"
-    if not fires(nolog + "\n**Amendment 1 (2026-01-02; a stricter gate).** G1 >= 0.6\n", nolog):
-        bad.append("did NOT catch a bold `**Amendment N (...)**` paragraph in a prereg with no amendment-log section")
+    for label, new in (
+            ("bold `**Amendment N (...)**` paragraph with no log section",
+             "\n**Amendment 1 (2026-01-02; a stricter gate).** G1 >= 0.6\n"),
+            ("qualified heading `### Seed-integrity amendment - <date>`",
+             "\n### Seed-integrity amendment - 2026-01-02\n\nseed 7 replaced by seed 8.\n"),
+            ("qualified bold `**Pre-formal amendment after ...**`",
+             "\n**Pre-formal amendment after independent audit.** G1 >= 0.6\n"),
+            ("versioned bold `**v3 amendment (...)**`", "\n**v3 amendment (fix round 2): G1 is EXTENDED.** G1b\n"),
+            ("`## Erratum (<date>, ...)` heading", "\n## Erratum (2026-01-02, before any round-2 result)\n\nG1 0.6\n"),
+            ("bold amendment glued to the line above, with an ID and a date",
+             "prose line\n**AMENDMENT 1 (2026-01-02, before round 2).** G1 >= 0.6\n")):
+        if not fires(nolog + new, nolog):
+            bad.append("did NOT catch a new %s beside data" % label)
     if not fires(rewrite, heading):
         bad.append("did NOT catch the registered body of an existing amendment rewritten beside data (N3)")
+    if not fires(base + "\n- 2026-01-02: G1 raised to 0.6 after the smoke\n", base):
+        bad.append("did NOT catch a plain (unbolded) bullet added to the amendment log (N4)")
+    if not fires(base + "\n## AMENDMENT 7 (record of a new gate)\n\nG1 >= 0.7\n", base):
+        bad.append("the record exemption covered a NEW amendment whose label merely says `record` (no AMENDMENT 7 "
+                   "exists to be recorded)")
+    esc_parent = base + "- amendment-same-commit: an older escape, written for an earlier amendment\n"
+    if not fires(esc_parent + _ST_BOLD, esc_parent):
+        bad.append("an escape line already in the parent covered a NEW amendment (the escape must be one of the "
+                   "commit's own added lines)")
     if not fires(heading, base, ["research/findings/raw/_provenance/runs.jsonl", "research/findings/raw/x/s7.json"]):
         bad.append("a data artifact listed after the provenance log was not seen")
     # PASSING / no false positive
@@ -478,10 +660,79 @@ def _selftest_pure(bad):
         bad.append("FALSE POSITIVE: an amendment heading inside a fenced code block")
     if fires(heading.replace("G1 >= 0.6\n", "G1 >=\n0.6\n"), heading):
         bad.append("FALSE POSITIVE: re-wrapping an amendment's body is not a change")
+    for label, new in (("`### Why amendment 2's statistic is withdrawn`", "\n### Why amendment 2's statistic is withdrawn\n"),
+                       ("`**What this amendment does NOT change:**`", "\n**What this amendment does NOT change:** x\n"),
+                       ("`### Compute for this amendment`", "\n### Compute for this amendment\n\n2 GPU-h\n")):
+        if fires(nolog + new, nolog):
+            bad.append("FALSE POSITIVE: a reference to an amendment, %s, read as a new entry" % label)
+    glued_ref = heading.replace("thresholds: G1 >= 0.5\n", "thresholds: G1 >= 0.5, see\n**AMENDMENT 1** below.\n")
+    if fires(glued_ref, heading):
+        bad.append("FALSE POSITIVE: a wrapped `**AMENDMENT 1** ...` reference glued to prose read as an entry")
+    # which git command is committing: the flag parser the parents depend on
+    for argv, want in ((["git", "commit", "--amend", "--no-edit"], "amend"),
+                       (["/usr/lib/git-core/git", "commit", "-q", "-a", "--amen"], "amend"),
+                       (["git", "-c", "commit.gpgsign=false", "-C", "sub", "commit", "--am"], "amend"),
+                       (["git", "commit", "-qam", "--amend"], "commit"),
+                       (["git", "commit", "-m", "--amend"], "commit"),
+                       (["git", "commit", "--message", "--amend"], "commit"),
+                       (["git", "commit", "--amend", "--no-amend"], "commit"),
+                       (["git", "commit", "-a", "--", "--amend"], "commit"),
+                       (["git", "commit", "--author", "--amend <x@y>"], "commit"),
+                       (["git", "-c", "merge.ff=false", "merge", "--no-edit", "lane"], "merge"),
+                       (["git", "pull", "--no-rebase", ".", "lane"], "merge"),
+                       ([], None)):
+        if _invocation_kind(argv) != want:
+            bad.append("_invocation_kind(%r) = %r, expected %r" % (argv, _invocation_kind(argv), want))
+
+
+def _selftest_walker(bad, td):
+    """_invoking_git_argv against a REAL process tree: a process named `git` (a symlink to /bin/sh), working in td,
+    whose child writes its pid. Walking up from that child must find the `git` argv; asked about another root, it
+    must find nothing -- the rule that keeps a real hook's git command out of a check() on a scratch repo."""
+    if not (os.path.isdir("/proc/self") and os.path.exists("/bin/sh")):
+        return
+    import time
+    fake = os.path.join(td, ".git", "git")
+    pidfile = os.path.join(td, ".git", "selftest-child.pid")
+    os.symlink("/bin/sh", fake)
+    proc = subprocess.Popen([fake, "-c", 'sh -c "echo \\$\\$ > \'%s\'; exec sleep 30"; :' % pidfile,
+                             "commit", "--amend"], cwd=td, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    child = None
+    try:
+        child, deadline = None, time.time() + 5
+        while child is None and time.time() < deadline:
+            try:
+                with open(pidfile, encoding="utf-8") as fh:
+                    child = int(fh.read().strip() or 0) or None
+            except (OSError, ValueError):
+                time.sleep(0.01)
+        if child is None:
+            bad.append("walker selftest: the fake git process never started its child")
+            return
+        argv = _invoking_git_argv(td, start=child)
+        if _invocation_kind(argv) != "amend":
+            bad.append("_invoking_git_argv did not find the ancestor `git commit --amend` process working in the "
+                       "repo (got %r)" % (argv,))
+        if _invoking_git_argv(os.path.join(td, ".git"), start=child) is not None:
+            bad.append("_invoking_git_argv borrowed a git process working in ANOTHER directory")
+    finally:
+        if child:
+            try:
+                os.kill(child, 9)
+            except OSError:
+                pass
+        proc.kill()
+        proc.wait()
+        for pid_path in (fake, pidfile):
+            try:
+                os.unlink(pid_path)
+            except OSError:
+                pass
 
 
 def _selftest_repo(bad):
-    """check()-level, in a scratch repo: the wiring the registry actually runs."""
+    """check()-level, in a scratch repo: the wiring the registry actually runs. Every check() names its
+    `invocation`, so the answer does not depend on which real git command is running the hook around the selftest."""
     import tempfile
     with tempfile.TemporaryDirectory() as td:
         env0 = _stripped_env()
@@ -512,7 +763,7 @@ def _selftest_repo(bad):
         write(pre, _ST_BOLD, "a")
         write(raw, '{"v": 2}')
         g("add", "-u")
-        if not check([], root=td):
+        if not check([], root=td, invocation="commit"):
             bad.append("check() did NOT catch an amendment committed with an overwritten (status M) raw artifact "
                        "and nothing added -- part 1 must read the staged index itself, whatever `paths` holds")
         g("reset", "-q")
@@ -525,7 +776,7 @@ def _selftest_repo(bad):
         saved = os.environ.get("GIT_INDEX_FILE")
         try:
             os.environ["GIT_INDEX_FILE"] = alt
-            if not check([], root=td):
+            if not check([], root=td, invocation="commit"):
                 bad.append("check() ignored GIT_INDEX_FILE: an amendment + raw artifact staged in the temporary "
                            "index a `git commit -a` / `commit -- paths` hook sees was not caught")
         finally:
@@ -533,11 +784,21 @@ def _selftest_repo(bad):
                 os.environ.pop("GIT_INDEX_FILE", None)
             else:
                 os.environ["GIT_INDEX_FILE"] = saved
-        if check([], root=td):
+        if check([], root=td, invocation="commit"):
             bad.append("FALSE POSITIVE: the default index is clean (the change is only in the temporary index)")
         g("checkout", "--", ".")
 
-        # (3) a MERGE bringing in an amendment and its data from correctly ordered commits must NOT block
+        # (3) a prereg RENAMED (to another prereg name) in the same commit as its new amendment and data
+        pre2 = "research/findings/2026-01-01-st-renamed-PREREG.md"
+        g("mv", pre, pre2)
+        write(pre2, "\n## AMENDMENT 5 (r)\n", "a")                 # small: the file must stay >50% similar
+        write("research/findings/raw/st/s9.json", "{}")
+        g("add", "-A")
+        if not check([], root=td, invocation="commit"):
+            bad.append("did NOT catch an amendment in a RENAMED prereg beside data (prereg rename detection lost)")
+        g("reset", "-q", "--hard")
+
+        # (4) a MERGE bringing in an amendment and its data from correctly ordered commits must NOT block
         g("checkout", "-q", "-b", "lane")
         write(pre, _ST_BOLD, "a")
         g("commit", "-q", "-am", "amendment first")
@@ -549,21 +810,53 @@ def _selftest_repo(bad):
         g("add", "-A")
         g("commit", "-q", "-m", "main moves on")
         g("merge", "-q", "--no-ff", "--no-commit", "lane")
-        merge_problems = check(["research/findings/raw/st/s42.json"], root=td)
+        merge_problems = check(["research/findings/raw/st/s42.json"], root=td, invocation="commit")
         if merge_problems:
             bad.append("FALSE POSITIVE on a merge of correctly ordered history: %s" % merge_problems[0][:100])
+        # (4b) the same tree at pre-merge-commit time of a CLEAN auto-merge: git has not written MERGE_HEAD yet
+        mh = os.path.join(td, ".git", "MERGE_HEAD")
+        os.rename(mh, mh + ".st")
+        if not check([], root=td, invocation="commit"):
+            bad.append("selftest premise broken: the merged tree judged against HEAD alone should block")
+        if check([], root=td, invocation="merge"):
+            bad.append("FALSE POSITIVE: a clean auto-merge (git merge running pre-merge-commit, no MERGE_HEAD yet) "
+                       "was judged against HEAD alone")
+        os.rename(mh + ".st", mh)
         # ...but an evil merge that writes a NEW amendment and new data itself is still caught
         write(pre, "\n## AMENDMENT 2 (written in the merge)\n\nG1 >= 0.7\n", "a")
         write("research/findings/raw/st/s43.json", '{"v": 4}')
         g("add", "-A")
-        if not check([], root=td):
+        if not check([], root=td, invocation="commit"):
             bad.append("did NOT catch a merge that itself writes a new amendment and new data")
         g("merge", "--abort")
+        # (4c) an unreadable MERGE_HEAD fails CLOSED -- over a CLEAN index, where judging against HEAD alone would
+        # find nothing, so a fail-open cannot hide behind a HEAD-only block
+        os.mkdir(mh)
+        if not check([], root=td, invocation="commit"):
+            bad.append("check() FAILED OPEN: MERGE_HEAD exists but cannot be read, and no problem was returned")
+        os.rmdir(mh)
 
-        # (4) FAIL CLOSED: a root whose index cannot be read is a problem, never a silent pass
+        # (5) `git commit --amend` REPLACES HEAD: judged against HEAD's parents, not HEAD
+        write(pre, "\n## AMENDMENT 3 (committed alone)\n\nG1 >= 0.8\n", "a")
+        g("commit", "-q", "-am", "amendment alone")
+        write("research/findings/raw/st/s44.json", "{}")
+        g("add", "-A")
+        if check([], root=td, invocation="commit"):
+            bad.append("selftest premise broken: data after a committed amendment should pass as a NEW commit")
+        if not check([], root=td, invocation="amend"):
+            bad.append("did NOT catch `commit --amend` folding data into the commit that holds a new amendment")
+        g("commit", "-q", "-m", "the data, as its own commit")
+        write("research/findings/raw/st/s45.json", "{}")
+        g("add", "-A")
+        if check([], root=td, invocation="amend"):
+            bad.append("FALSE POSITIVE: `--amend` of a data-only commit whose amendment was committed before it")
+
+        _selftest_walker(bad, td)
+
+        # (6) FAIL CLOSED: a root whose index cannot be read is a problem, never a silent pass
         broken = os.path.join(td, "broken")
         write("broken/.git", "gitdir: %s\n" % os.path.join(td, "no-such-gitdir"))
-        if not check([], root=broken):
+        if not check([], root=broken, invocation="commit"):
             bad.append("check() FAILED OPEN: an unreadable repository/index returned no problem")
 
 

@@ -1,17 +1,23 @@
 """tests for tools/gates/prereg_amendment_order.py (CLASS PRA).
 
-Imports the REAL gate module the pre-commit registry calls. Three layers, each covering what the one before cannot:
+Imports the REAL gate module the pre-commit registry calls. Four layers, each covering what the one before cannot:
 
   1. selftest() -- the registry's only trust signal -- and a MUTATION check that it actually fails when the wiring
-     the 2026-09-25 review found broken is broken again (a selftest that survives these mutants is decoration).
-  2. REAL COMMITS through a REAL pre-commit hook in a scratch repo: plain `git add`, an overwritten artifact with
-     nothing added, `git commit -a`, `git commit -- <paths>`, a linked worktree, merges. The hook calls check()
-     exactly as the registry does, with the registry's --diff-filter=A list as `paths`.
-  3. The review's named commits, replayed from this repository's own history (skipped when absent, e.g. shallow CI).
+     the 2026-09-25 reviews found broken is broken again (a selftest that survives these mutants is decoration).
+  2. REAL COMMITS through REAL hooks in a scratch repo: the fixture installs a pre-commit that calls check() exactly
+     as the registry does, AND this repo's own tools/githooks/pre-merge-commit (which execs pre-commit), so a clean
+     `git merge` really runs the gate the way it does here -- before git has written MERGE_HEAD. (The first fix
+     round's fixture installed pre-commit only, so no hook ran during a merge and its merge test was vacuous.)
+     Every hook run is logged, with the git command the gate detected, to a file inside the test's tmp dir.
+  3. The same hook scenarios against MUTATED copies of the gate, so the /proc detection, the clean-auto-merge rule
+     and the amend rule are each shown to be what makes its real-hook test pass.
+  4. The review's named commits, replayed from this repository's own history through the gate's own _evaluate
+     (skipped when absent, e.g. shallow CI).
 """
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 import types
@@ -23,6 +29,8 @@ import tools.gates.prereg_amendment_order as pra_gate
 PREREG = "research/findings/2026-01-01-x-PREREGISTRATION.md"
 BASE = "# prereg\n\nthresholds: G1 >= 0.5\n\n## Amendment log\n\n(none at filing)\n"
 BOLD_AMEND = "\n**AMENDMENT 1: 2026-01-02, after the seed-7 smoke, before round 2.** G1 is now >= 0.6.\n"
+_REPO = pra_gate._ROOT
+_GATE_SRC = pra_gate.__file__
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -43,57 +51,93 @@ def test_registry_discovers_this_gate_with_the_expected_contract():
 
 MUTANTS = {
     "check() returns early on empty paths (the registry's --diff-filter=A list)": (
-        "    root = os.path.abspath(root or _ROOT)\n    blobs = {}",
-        "    if not paths:\n        return []\n    root = os.path.abspath(root or _ROOT)\n    blobs = {}"),
+        "    root = os.path.abspath(root or _ROOT)\n",
+        "    if not paths:\n        return []\n    root = os.path.abspath(root or _ROOT)\n"),
     "modified-prereg status filter no longer matches M": (
-        'changes[0][p][0] not in ("M", "R")', 'changes[0][p][0] not in ("A",)'),
+        'pre[0][p][0] in ("M", "R")', 'pre[0][p][0] in ("A",)'),
     "raw filter only counts ADDED artifacts": (
-        'all(c[p][0] != "D" for c in changes)', 'all(c[p][0] == "A" for c in changes)'),
+        'all(c[p][0] != "D" for c in raw)', 'all(c[p][0] == "A" for c in raw)'),
     "part 1 unwired from check()": (
-        "        return _problems(prereg_changes, raw_written)", "        return []"),
+        "    return _problems(prereg_changes, raw_written)", "    return []"),
     "bold / log-form amendment entries not detected": (
         "bm = _BOLD_RE.match(ln)", "bm = None"),
     "GIT_INDEX_FILE dropped": (
         '            env["GIT_INDEX_FILE"] = idx_abs', "            pass"),
     "merge handling removed (HEAD treated as the only parent)": (
-        "changes = [_staged_changes(root, env, p) for p in parents]",
-        "changes = [_staged_changes(root, env, p) for p in parents[:1]]"),
+        "        return _evaluate(root, env, parents)", "        return _evaluate(root, env, parents[:1])"),
     "record-subsection exemption removed": (
         'if is_record(idx) or ent["i"] not in added:', 'if ent["i"] not in added:'),
+    "record exemption applied to ANY label saying `record` (no existing entry required)": (
+        'and ent["key"] in plain_keys and not ent["key"].startswith("TEXT:")',
+        'and not ent["key"].startswith("TEXT:")'),
     "provenance log / sidecars counted as run data": (
         "return bool(_RAW_RE.match(path)) and not _RAW_NOT_DATA_RE.search(path)", "return bool(_RAW_RE.match(path))"),
     "edits to an existing amendment's body (N3) ignored": (
         "if bodies and all(new.body(idx) != b for b in bodies):", "if False:"),
+    "new amendment-log prose (N4) ignored": (
+        "    if prose:\n        out.append((\"N4\"", "    if False:\n        out.append((\"N4\""),
     "amendment-same-commit escape ignored": (
         "if not act or _escaped(new_text, parent_texts):", "if not act:"),
+    "escape matched on ANY line, not only the commit's own added lines": (
+        "for i in (added or ()))", "for i in range(len(new_lines)))"),
+    "qualified / erratum amendment labels not detected": (
+        "        word, rest = (q.group(2).lower(), q.group(3)) if q else (None, \"\")",
+        "        word, rest = (None, \"\")"),
+    "glued bold entries accepted without an ID and a date": (
+        "                    if glued and not (kind == \"entry\" and not key.startswith(\"TEXT:\")\n"
+        "                                      and _DATE_RE.search(bm.group(2)[:60])):",
+        "                    if glued and kind != \"entry\":"),
     "fails OPEN when git cannot read the index": (
         '        return ["CLASS PRA could not read', '        return []\n        return ["CLASS PRA could not read'),
+    "fails OPEN on an unreadable MERGE_HEAD": (
+        '            raise _GitReadError("MERGE_HEAD exists but cannot be read: %s" % e)',
+        "            merge_heads = []"),
+    "clean auto-merge judged against HEAD alone": (
+        "    if kind == \"merge\":\n        return None", "    if kind == \"merge\":\n        return [head]"),
+    "commit --amend judged against HEAD, not HEAD's parents": (
+        '        return _git(["rev-parse", "HEAD^@"], root, env).stdout.decode().split()', "        return [head]"),
+    "abbreviated --amend (`--am`, `--amen`) not recognised": (
+        'if len(name) >= 2 and "amend".startswith(name):', 'if name == "amend":'),
+    "an option's separate value read as a flag (`--message --amend`)": (
+        "        if a in _COMMIT_WITH_VALUE:\n            i += 1", "        if False:\n            i += 1"),
+    "prereg rename detection dropped": (
+        "_changes(root, env, p, target, _PREREG_SPECS, True)", "_changes(root, env, p, target, _PREREG_SPECS, False)"),
+    "/proc walker borrows a git process working in another directory": (
+        '                if os.path.realpath("/proc/%d/cwd" % pid) != want:\n                    return None',
+        "                if False:\n                    return None"),
+    "/proc walker does not climb past the first ancestor": (
+        '                pid = int(fh.read().rsplit(")", 1)[1].split()[1])', "                return None"),
 }
+
+
+def _mutated_source(old, new):
+    src = open(_GATE_SRC, encoding="utf-8").read()
+    assert src.count(old) == 1, "mutation anchor no longer matches the gate source exactly once: %r" % old[:80]
+    return src.replace(old, new)
 
 
 @pytest.mark.parametrize("label", sorted(MUTANTS))
 def test_selftest_kills_mutants(label):
-    old, new = MUTANTS[label]
-    src = open(pra_gate.__file__, encoding="utf-8").read()
-    assert src.count(old) == 1, "mutation anchor for %r no longer matches the gate source exactly once" % label
     mod = types.ModuleType("pra_mutant")
-    mod.__file__ = pra_gate.__file__
-    exec(compile(src.replace(old, new), pra_gate.__file__, "exec"), mod.__dict__)
+    mod.__file__ = _GATE_SRC
+    exec(compile(_mutated_source(*MUTANTS[label]), _GATE_SRC, "exec"), mod.__dict__)
     assert mod.selftest(), "selftest() still PASSES with the mutant %r -- the registry would trust a broken gate" % label
 
 
 # ---------------------------------------------------------------------------------------------------------
-# 2. real commits through a real pre-commit hook
+# 2. real commits through real hooks
 # ---------------------------------------------------------------------------------------------------------
-_REPO = pra_gate._ROOT
 _HOOK = """#!/bin/sh
 exec "%s" - <<'PY'
 import os, subprocess, sys
 sys.path.insert(0, %r)
 import tools.gates.prereg_amendment_order as m
+assert os.path.realpath(m.__file__) == os.path.realpath(%r), m.__file__
 added = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
                        capture_output=True, text=True).stdout.split()
 problems = m.check(added, root=os.getcwd())
+with open(%r, "a") as fh:
+    fh.write("%%s %%s\\n" %% (m._detect_invocation(os.getcwd()), "BLOCK" if problems else "pass"))
 print("\\n".join(problems))
 sys.exit(1 if problems else 0)
 PY
@@ -119,24 +163,40 @@ def _write(root, rel, text, mode="w"):
         fh.write(text)
 
 
-@pytest.fixture()
-def repo(tmp_path):
-    root = str(tmp_path / "main")
+def _make_repo(tmp_path, gate_root=_REPO, gate_file=_GATE_SRC):
+    """A scratch repo whose hooks dir is <root>/tools/githooks (untracked): the fixture's pre-commit, and this
+    repo's REAL pre-merge-commit, which checks core.hooksPath and execs $ROOT/tools/githooks/pre-commit."""
+    root = os.path.realpath(str(tmp_path / "main"))
     os.makedirs(root)
     _git(root, "init", "-q", "-b", "main")
     _git(root, "config", "user.email", "test@example.invalid")
     _git(root, "config", "user.name", "test")
-    hooks = str(tmp_path / "hooks")
+    hooks = os.path.join(root, "tools", "githooks")
     os.makedirs(hooks)
+    log = str(tmp_path / "hook-runs.log")
     with open(os.path.join(hooks, "pre-commit"), "w") as fh:
-        fh.write(_HOOK % (sys.executable, _REPO))
-    os.chmod(os.path.join(hooks, "pre-commit"), 0o755)
+        fh.write(_HOOK % (sys.executable, gate_root, gate_file, log))
+    shutil.copy(os.path.join(_REPO, "tools", "githooks", "pre-merge-commit"), os.path.join(hooks, "pre-merge-commit"))
+    for h in ("pre-commit", "pre-merge-commit"):
+        os.chmod(os.path.join(hooks, h), 0o755)
+    with open(os.path.join(root, ".git", "info", "exclude"), "a") as fh:
+        fh.write("/tools/\n")
     _git(root, "config", "core.hooksPath", hooks)
     _write(root, PREREG, BASE)
     _write(root, "research/findings/raw/x/s7.json", '{"v": 1}')
     _git(root, "add", "-A")
     _git(root, "commit", "-q", "-m", "base")
     return root
+
+
+def _hook_log(root):
+    p = os.path.join(os.path.dirname(root), "hook-runs.log")
+    return open(p).read().split("\n") if os.path.exists(p) else []
+
+
+@pytest.fixture()
+def repo(tmp_path):
+    return _make_repo(tmp_path)
 
 
 def _blocked(r):
@@ -148,6 +208,7 @@ def test_plain_add_amendment_with_a_new_artifact_is_blocked(repo):
     _write(repo, "research/findings/raw/x/s42.json", "{}")
     _git(repo, "add", "-A")
     assert _blocked(_git(repo, "commit", "-m", "amend+data", check=False))
+    assert _hook_log(repo)[-2] == "commit BLOCK"
 
 
 def test_overwritten_artifact_with_nothing_added_is_blocked(repo):
@@ -180,6 +241,17 @@ def test_commit_dash_a_in_a_linked_worktree_is_blocked(repo, tmp_path):
     _write(wt, PREREG, BOLD_AMEND, "a")
     _write(wt, "research/findings/raw/x/s7.json", '{"v": 2}')
     assert _blocked(_git(wt, "commit", "-a", "-m", "amend -a in a worktree", check=False))
+
+
+def test_commit_from_a_subdirectory_is_detected_as_a_commit(repo):
+    """the /proc detection matches the git process by its cwd; git chdirs to the work-tree top before a hook."""
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    r = subprocess.run(["git", "-c", "commit.gpgsign=false", "commit", "-m", "from a subdir"],
+                       cwd=os.path.join(repo, "research", "findings"), env=_env(), capture_output=True, text=True)
+    assert _blocked(r)
+    assert _hook_log(repo)[-2] == "commit BLOCK"
 
 
 @pytest.mark.parametrize("amend, raw_rel", [
@@ -226,6 +298,7 @@ def test_editing_a_committed_amendment_body_with_data_is_blocked(repo):
     assert _blocked(_git(repo, "commit", "-m", "complete the draft with the data", check=False))
 
 
+# --- merges: pre-merge-commit runs BEFORE git writes MERGE_HEAD (review 2, MEDIUM-HIGH) -----------------------
 def _lane_with_ordered_history(repo):
     _git(repo, "checkout", "-q", "-b", "lane")
     _write(repo, PREREG, BOLD_AMEND, "a")
@@ -239,11 +312,35 @@ def _lane_with_ordered_history(repo):
     _git(repo, "commit", "-q", "-m", "main moves")
 
 
-def test_merge_of_correctly_ordered_history_passes(repo):
-    """review issue 5: a merge brings the amendment AND the data in as changes relative to HEAD."""
+def _clean_merge_commits(repo):
     _lane_with_ordered_history(repo)
     r = _git(repo, "merge", "--no-ff", "-m", "merge lane", "lane", check=False)
+    return r.returncode == 0 and len(_git(repo, "rev-list", "--parents", "-n1", "HEAD").stdout.split()) == 3, r
+
+
+def test_clean_auto_merge_of_correctly_ordered_history_passes(repo):
+    """The hook REALLY runs during this merge (pre-merge-commit -> pre-commit), with no MERGE_HEAD yet; judged against
+    HEAD alone it would block, as it did for 19 of 534 real main merges."""
+    ok, r = _clean_merge_commits(repo)
+    assert ok, r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "merge pass", "the gate did not run during the merge, or misread it: %r" % _hook_log(repo)
+
+
+def test_pull_merge_of_correctly_ordered_history_passes(repo):
+    """`git pull` spawns `git merge FETCH_HEAD`; GIT_REFLOG_ACTION then reads `pull ...`, not `merge ...`."""
+    _lane_with_ordered_history(repo)
+    r = _git(repo, "pull", "--no-rebase", "--no-ff", "--no-edit", ".", "lane", check=False)
     assert r.returncode == 0, r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "merge pass"
+
+
+def test_no_commit_merge_finished_by_commit_passes(repo):
+    """MERGE_HEAD present: judged against every parent (the path a conflicted merge takes)."""
+    _lane_with_ordered_history(repo)
+    _git(repo, "merge", "--no-ff", "--no-commit", "lane")
+    r = _git(repo, "commit", "--no-edit", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "commit pass"
 
 
 def test_evil_merge_writing_a_new_amendment_and_data_is_blocked(repo):
@@ -253,6 +350,68 @@ def test_evil_merge_writing_a_new_amendment_and_data_is_blocked(repo):
     _write(repo, "research/findings/raw/x/s43.json", "{}")
     _git(repo, "add", "-A")
     assert _blocked(_git(repo, "commit", "-m", "evil merge", check=False))
+
+
+# --- commit --amend REPLACES HEAD (review 2, MEDIUM) ------------------------------------------------------------
+def _amend_folds_data_into_the_amendment_commit(repo, flag="--amend"):
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _git(repo, "commit", "-q", "-am", "amendment alone")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    return _git(repo, "commit", flag, "--no-edit", check=False)
+
+
+@pytest.mark.parametrize("flag", ["--amend", "--amen"])
+def test_amend_folding_data_into_an_amendment_commit_is_blocked(repo, flag):
+    """the review's reproduction: amendment committed alone, data added by `commit --amend` -> ONE commit, both."""
+    assert _blocked(_amend_folds_data_into_the_amendment_commit(repo, flag))
+    assert _hook_log(repo)[-2] == "amend BLOCK"
+
+
+def test_amend_of_a_data_commit_after_an_ordered_amendment_passes(repo):
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _git(repo, "commit", "-q", "-am", "amendment first")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "then data")
+    _write(repo, "research/findings/raw/x/s43.json", "{}")
+    _git(repo, "add", "-A")
+    r = _git(repo, "commit", "--amend", "--no-edit", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "amend pass"
+
+
+def test_amend_rewording_an_amendment_only_commit_passes(repo):
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _git(repo, "commit", "-q", "-am", "amendment alone")
+    r = _git(repo, "commit", "--amend", "-m", "amendment alone, reworded", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_every_diff_is_pathspec_limited_and_only_prereg_diffs_detect_renames(repo, monkeypatch):
+    """review 2 (LOW, cost): whole-tree `-M` cost 5.8 s per 1000-commit-divergent parent, and past the timeout the
+    gate fails CLOSED. Every diff the gate runs must name a pathspec; `-M` only over the prereg pathspecs."""
+    calls = []
+    real_git = pra_gate._git
+
+    def spy(args, root, env, ok_codes=(0,)):
+        calls.append(list(args))
+        return real_git(args, root, env, ok_codes)
+
+    monkeypatch.setattr(pra_gate, "_git", spy)
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    assert pra_gate.check([], root=repo, invocation="commit")          # it read far enough to block
+    diffs = [a for a in calls if a[0] == "diff"]
+    assert len(diffs) == 2, diffs                                        # the prereg diff, then the raw/ diff
+    for a in diffs:
+        specs = a[a.index("--") + 1:]
+        assert specs, "a diff over the whole tree: %r" % a
+        if "-M" in a:
+            assert set(specs) <= set(pra_gate._PREREG_SPECS), a
+        else:
+            assert "--no-renames" in a, a
 
 
 def test_unreadable_repository_fails_closed(tmp_path):
@@ -265,7 +424,42 @@ def test_unreadable_repository_fails_closed(tmp_path):
 
 
 # ---------------------------------------------------------------------------------------------------------
-# 3. the review's named commits, from this repository's own history
+# 3. the real-hook scenarios against MUTATED gates: each fix is what makes its test pass
+# ---------------------------------------------------------------------------------------------------------
+HOOK_MUTANTS = {
+    "clean auto-merge judged against HEAD alone": (
+        "    if kind == \"merge\":\n        return None", "    if kind == \"merge\":\n        return [head]", "merge"),
+    "commit --amend judged against HEAD": (
+        '        return _git(["rev-parse", "HEAD^@"], root, env).stdout.decode().split()', "        return [head]",
+        "amend"),
+    "the invoking git command never detected": (
+        "def _detect_invocation(root):\n    return _invocation_kind(_invoking_git_argv(root))",
+        "def _detect_invocation(root):\n    return None", "both"),
+}
+
+
+@pytest.mark.parametrize("label", sorted(HOOK_MUTANTS))
+def test_real_hook_scenarios_fail_under_mutant(tmp_path, label):
+    old, new, scenario = HOOK_MUTANTS[label]
+    gate_root = str(tmp_path / "mutant_gate")
+    os.makedirs(os.path.join(gate_root, "tools", "gates"))
+    for init in ("tools/__init__.py", "tools/gates/__init__.py"):
+        open(os.path.join(gate_root, init), "w").close()
+    gate_file = os.path.join(gate_root, "tools", "gates", "prereg_amendment_order.py")
+    with open(gate_file, "w", encoding="utf-8") as fh:
+        fh.write(_mutated_source(old, new))
+    if scenario in ("merge", "both"):
+        repo = _make_repo(tmp_path / "m", gate_root, gate_file)
+        ok, _r = _clean_merge_commits(repo)
+        assert not ok, "the clean merge still passes with the mutant %r -- its test proves nothing" % label
+    if scenario in ("amend", "both"):
+        repo = _make_repo(tmp_path / "a", gate_root, gate_file)
+        r = _amend_folds_data_into_the_amendment_commit(repo)
+        assert r.returncode == 0, "the amend still blocks with the mutant %r -- its test proves nothing" % label
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 4. the review's named commits, from this repository's own history, through the gate's own _evaluate
 # ---------------------------------------------------------------------------------------------------------
 REAL = [
     ("835fc252e", True),    # slotbinder: AMENDMENT 2's DRAFT item completed with the sizing data (the motivating case)
@@ -284,24 +478,8 @@ def _real(*args):
 
 
 def _replay(sha):
-    """The gate's pure decision on a real non-merge commit, against its first parent."""
-    out = _real("diff-tree", "-r", "-z", "--no-commit-id", "--name-status", "-M", sha + "^", sha).stdout
-    toks, i, ch = out.decode("utf-8", "surrogateescape").split("\0"), 0, {}
-    while i < len(toks) and toks[i]:
-        if toks[i][:1] in "RC":
-            ch[toks[i + 2]] = (toks[i][:1], toks[i + 1])
-            i += 3
-        else:
-            ch[toks[i + 1]] = (toks[i][:1], toks[i + 1])
-            i += 2
-    raw = [p for p, (st, _) in ch.items() if pra_gate._RAW_RE.match(p) and st != "D"]
-    preregs = []
-    for p, (st, old) in ch.items():
-        if pra_gate._PREREG_RE.match(p) and st in "MR":
-            new = _real("cat-file", "blob", "%s:%s" % (sha, p)).stdout.decode("utf-8", "replace")
-            par = _real("cat-file", "blob", "%s^:%s" % (sha, old)).stdout.decode("utf-8", "replace")
-            preregs.append((p, new, [par]))
-    return pra_gate._problems(preregs, raw)
+    parents = _real("rev-parse", sha + "^@").stdout.decode().split()
+    return pra_gate._evaluate(_REPO, _env(), parents, target=sha)
 
 
 @pytest.mark.parametrize("sha, should_block", REAL)
@@ -309,3 +487,13 @@ def test_review_named_commits(sha, should_block):
     if _real("cat-file", "-e", sha + "^{commit}").returncode != 0 or _real("cat-file", "-e", sha + "^").returncode != 0:
         pytest.skip("commit %s not in this clone" % sha)
     assert bool(_replay(sha)) is should_block
+
+
+@pytest.mark.parametrize("sha", ["df12ec1cc", "f793b6945"])
+def test_real_merges_pass_against_every_parent_but_block_against_head_alone(sha):
+    """two of the 19 real main merges the pre-fix hook would have false-blocked during a clean `git merge`."""
+    if _real("cat-file", "-e", sha + "^2").returncode != 0:
+        pytest.skip("merge %s not in this clone" % sha)
+    parents = _real("rev-parse", sha + "^@").stdout.decode().split()
+    assert pra_gate._evaluate(_REPO, _env(), parents, target=sha) == []
+    assert pra_gate._evaluate(_REPO, _env(), parents[:1], target=sha)
