@@ -329,16 +329,19 @@ _EXTRA_TURNS += ([("d10w_t%d" % (i + 1), txt, "d10w", i == 0, None, False) for i
 # model). On each later day, after that morning's question, the ENVIRONMENT tells k other facts that share no content
 # word with the target (no cat / chase / ball): 'fiv' k=0 (nothing else learned), 'fil' k=1, 'fih' k=3; 'fis' the
 # salient telling with k=3; 'fir' the weak telling re-mentioned after nights 1 and 2 (before that day's facts), k=3.
-# Every sentence below was checked to be STORED as one new block by the tiny-demo brain (agent+use/store+inanimate
-# patient); 'eat' / 'learn' sentences and animate patients are not stored by it (role binding does not resolve).
+# An environment check (tag-capture ledger on, no night, no recall of the fact) found every sentence below STORED as
+# one new block by the tiny-demo brain, in this order, at seed 42 (all 18) and seed 7 (13 of them; the rest untried).
+# The brain's spiking comprehension gate does NOT store 'eat' / 'learn' sentences, animate patients, or most 'words'
+# patients (its role binding does not resolve), so every fact here is animate agent + use/store + inanimate patient.
+# k=1 tells the first six, one a day; k=3 tells three a day in order.
 _FI_NIGHTS = 7
 _FI_FACTS = [
-    "the bird uses the river", "the dog stores the memory", "the fish uses the spikes",       # day 2 (k=1: first only)
+    "the bird uses the river", "the dog stores the memory", "the fish stores the spikes",     # (k=3) day 2
     "the worm uses the river", "the fish stores the memory", "the dog uses the spikes",       # day 3
-    "the bird stores the words", "the worm stores the memory", "the dog uses the river",      # day 4
-    "the fish uses the river", "the bird uses the spikes", "the worm stores the words",       # day 5
-    "the dog stores the words", "the fish stores the spikes", "the bird stores the memory",   # day 6
-    "the worm uses the spikes", "the dog uses the words", "the fish uses the words",          # day 7
+    "the bird stores the spikes", "the worm stores the memory", "the dog uses the river",     # day 4
+    "the fish uses the river", "the bird stores the memory", "the dog stores the spikes",     # day 5
+    "the bird uses the spikes", "the fish uses the spikes", "the worm stores the spikes",     # day 6
+    "the dog uses the memory", "the bird uses the memory", "the fish uses the memory",        # day 7
 ]
 
 
