@@ -1,0 +1,1087 @@
+{
+ "backend": "numpy",
+ "cells_previously_invalid_now_reverified_valid": 23,
+ "independent_rerun_matches_committed_aggregate_byte_for_byte": true,
+ "method": "tools/lb_shard.py aggregate --tag b2a0924 --seeds 42 43 44 100 101 102 --pin 9db7613296c3d02a161b36fb15da3983188b7902 --base <primary-checkout>/research/findings/raw/_load_bearing/_shards --out <scratch> (read-only against the primary checkout's shard tree; nothing in the primary checkout was moved, deleted, or written).",
+ "per_cell_provenance": {
+  "s100/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s100/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s101/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s102/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s102/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": true
+  },
+  "s42/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s42/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s43/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/affect-coloring": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/affect-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/affect-marker-spiking-wta": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/bg-action-selection": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/common-ground-drives": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/comprehension-learned-animacy-cue": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/comprehension-learned-verb-selects": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/comprehension-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/confidence-forthcomingness": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/curiosity-followup": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/da-gated-encoding": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/da-mode-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/discourse-register": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/episodic-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/gnw-multistep-deliberation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/metacog-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/noncontradiction-gate": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/open-ended-generation": {
+   "covered_by_parent": true,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/pragmatic-implicature": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/prospective-memory": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/reconsolidation": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/self-initiated-utterance": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/source-provenance-honesty": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/surprise-monitor": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/swap-drives-response": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/vision-identity-spiking-hmax": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/wm-binding-advanced": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  },
+  "s44/worldmodel-forward": {
+   "covered_by_parent": false,
+   "valid": true,
+   "was_invalid_in_FAIL_finding": false
+  }
+ },
+ "per_faculty_r1": {
+  "affect-coloring": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "affect-drives-response": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "affect-marker-spiking-wta": {
+   "n_load_bearing_b2a0924": 4,
+   "n_load_bearing_flipdefaults_adequate_ref": 4,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "bg-action-selection": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": false,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "common-ground-drives": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "comprehension-learned-animacy-cue": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "comprehension-learned-verb-selects": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "comprehension-monitor": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "confidence-forthcomingness": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": false,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "curiosity-followup": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "da-gated-encoding": {
+   "n_load_bearing_b2a0924": 0,
+   "n_load_bearing_flipdefaults_adequate_ref": 0,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "da-mode-drives-response": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "discourse-register": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "episodic-memory": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "gnw-multistep-deliberation": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "metacog-monitor": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "noncontradiction-gate": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "open-ended-generation": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": false,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "pragmatic-implicature": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "prospective-memory": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "reconsolidation": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "self-initiated-utterance": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": false,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "source-provenance-honesty": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "surprise-monitor": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "swap-drives-response": {
+   "n_load_bearing_b2a0924": 0,
+   "n_load_bearing_flipdefaults_adequate_ref": 0,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "vision-identity-spiking-hmax": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": false,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "wm-binding-advanced": {
+   "n_load_bearing_b2a0924": 0,
+   "n_load_bearing_flipdefaults_adequate_ref": 0,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  },
+  "worldmodel-forward": {
+   "n_load_bearing_b2a0924": 6,
+   "n_load_bearing_flipdefaults_adequate_ref": 6,
+   "previously_invalid_seed102_in_FAIL_finding": true,
+   "regression": false,
+   "seeds_present": 6
+  }
+ },
+ "pin": "9db7613296c3d02a161b36fb15da3983188b7902",
+ "provenance_gate_result": {
+  "n_cells_checked": 168,
+  "n_covered_by_parent": 6,
+  "n_invalid": 0,
+  "n_valid": 168,
+  "status": "verified"
+ },
+ "purpose": "Independent re-verification of the B2a production-default battery aggregate + R1/R2 scoring, following up research/findings/2026-09-25-production-default-battery-B2a-FAIL.md.",
+ "r1_no_regression": {
+  "n_faculties_compared": 28,
+  "n_regressions": 0,
+  "reference": "research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/aggregate.json",
+  "reference_caveat": "the reference predates git_archive pinning; every one of its 168 coverable cells records git_sha='unknown', source_kind=None, so it reads 0/168 valid if the same --pin rule is applied to it (verified separately, not corrected here -- out of this task's scope; R1 compares against it as pre-registered).",
+  "regressions": [],
+  "verdict": "PASS"
+ },
+ "r2_complete": {
+  "incomplete_faculties": [],
+  "n_coverable_faculties": 28,
+  "verdict": "PASS"
+ },
+ "reference_aggregate_path": "research/findings/raw/_load_bearing/_shards/b2a0924/aggregate.json",
+ "reported_pair_owner_ratified": {
+  "b2a0924_mean_fraction_3dp": 0.949,
+  "b2a0924_robust_core_n": 24,
+  "b2a0924_sd_fraction_3dp": 0.018,
+  "b2a0924_union_n": 25,
+  "flipdefaults_thin_mean_fraction_3dp": 0.603,
+  "flipdefaults_thin_robust_core_n": 15,
+  "flipdefaults_thin_union_n": 16
+ },
+ "runner": "tools/lb_shard.py aggregate",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ]
+}
