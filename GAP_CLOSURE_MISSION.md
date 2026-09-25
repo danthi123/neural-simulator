@@ -188,6 +188,14 @@ scoring of unscored result sets = `wjiqn7u7e`. SlotBinder fast teach toward 404 
 pair's rc family on CUPY (episodic store writes on cupy; the review's production-path gap) in worktree
 .claude/worktrees/pair-cupy-dev-4f77a5c7d -> research/findings/raw/_sleep_replay_capture_cupy_dev (dev record, not a gate row).
 
+**☀️ 13:55 merges + a gate gap:** merged dup-guard liveness (5c4be897e, 46 pool tests pass). gap#4 C25-C27 + C26 scoring (branch
+research/score-gap4-c26-0925 @ ed6758f61, verifier SOUND: UNDEFINED on interpretability; the sliding baseline removes the one-sided
+clamp saturation) is BLOCKED by gate CC: one C25 ckpt (1.08 h) carries no corpus_check_fresh although the lane ran a corpus check
+at 01:38 (logged in its worktree). Root cause: before_you_build.sh logs per-worktree (115 separate logs; main's last entry 09-24
+20:28) and pool/GPU jobs are never stamped -> fix = workflow `w6ceucy8n` (shared log, stamp propagation, gate accepts a real prior
+check from any log); merge after it lands. Merge aborted cleanly, 108 set-aside files restored. Fix round 4 (pool-stall 2 HIGH,
+prereg gate false positive, claim-check r8 non-ASCII regression, SETTLE A3 small items + M4 render=0) = `w8hj1o2ap`.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
