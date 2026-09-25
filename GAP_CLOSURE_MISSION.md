@@ -28,8 +28,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   pool40 stays OFFLINE (owner: OS reinstall deferred).
 
 **PRE-DECIDED NEXT ACTIONS:**
-1. Harvest workflow `wyzt42x79` (B2b base amendment + wave queue; lexicon closed-class lane + review); merge SOUND
-   branches; run the B2b next-wave script as waves drain.
+1. ✅ Harvested 21:15: B2b Amendment 1 merged (b589c7bf9; base arm only, wave 1 = 86 lines queued, waves 2-3 queued
+   by `research/coordination/b2b_queue_next_wave.sh`, which the heartbeat now runs every cycle; commit its ledger
+   `b2b0924_base_waves.tsv` when it moves). Frame-junction lexicon merged default-OFF (d68a607af), dev seed 7 NOT
+   READY. Next lexicon rung = one amendment covering the review's 7 issues: short-term depression at input->junction
+   synapses (the AND fails on a fast input), sentence-boundary cue for 'most', homeostatic scaling so an untrained
+   circuit abstains (R4), G3 scored per word with a drive-matched OR control, a battery no-regression gate with the flag
+   ON, POS ground-truth holes, and run() recording its constants + SHA. Seed 42 reads 64/112 turns changed and 33
+   mismatches (not 60).
 2. B2a aggregate at 186/186: `python tools/lb_shard.py aggregate --tag b2a0924 --seeds 42 43 44 100 101 102`, then R1/R2
    vs `research/findings/raw/_load_bearing/_shards/flipdefaults-adequate/aggregate.json`; use the re-run s100
    open-ended-generation cell (the off-revision one is set aside); write the finding.
@@ -42,7 +48,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    number). Offcheck at pin 36a175534 is running in the lane's worktree. Audit verdict: an ordinary fact told once is
    NOT kept overnight with the ledger on, and no replay/repetition route reaches that store, so a flip would make ordinary
    facts forgettable. Build lane `research/sleep-replay-capture` (brain-driven reactivation during the night tick,
-   default-OFF) launched 21:15.
+   default-OFF) launched 21:10.
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
