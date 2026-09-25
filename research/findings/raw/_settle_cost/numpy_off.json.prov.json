@@ -1,0 +1,30 @@
+{
+ "run_id": "1790228284-3480241",
+ "runner": "research/runners/_settle_turn_cost_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_settle_turn_cost_probe.py",
+  "--mode",
+  "off",
+  "--out",
+  "research/findings/raw/_settle_cost/numpy_off.json"
+ ],
+ "git_sha": "9d83a242a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T01:38:04",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 70922.6,
+ "corpus_check_query": "making a spiking brain's affect/emotion state load-bearing on a language model's free-generated reply TONE \u2014 beyond decode-time logit bias; how affect/valence conditions generation in neuroscience + N",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_settle_cost/numpy_off.json"
+}

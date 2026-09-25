@@ -1,0 +1,111 @@
+{
+ "backend": "none (host-only meta-check script; opens JSON files only, no simulation compute)",
+ "arms": {
+  "cupy_on": {
+   "has_criterion_L_field": false,
+   "top_level_keys": [
+    "backend",
+    "build_s",
+    "deliberation_ms",
+    "first_turn_s",
+    "interturn_rest_ms",
+    "mode",
+    "seed",
+    "settle_enabled",
+    "steady_max_turn_s",
+    "steady_median_turn_s",
+    "turn_s"
+   ],
+   "runner": "research/runners/_settle_turn_cost_probe.py",
+   "git_sha": "5e571d6c6",
+   "git_dirty": true,
+   "source_kind": null,
+   "seed": 42
+  },
+  "cupy_off": {
+   "has_criterion_L_field": false,
+   "top_level_keys": [
+    "backend",
+    "build_s",
+    "deliberation_ms",
+    "first_turn_s",
+    "interturn_rest_ms",
+    "mode",
+    "seed",
+    "settle_enabled",
+    "steady_max_turn_s",
+    "steady_median_turn_s",
+    "turn_s"
+   ],
+   "runner": "research/runners/_settle_turn_cost_probe.py",
+   "git_sha": "5e571d6c6",
+   "git_dirty": true,
+   "source_kind": null,
+   "seed": 42
+  },
+  "numpy_on": {
+   "has_criterion_L_field": false,
+   "top_level_keys": [
+    "backend",
+    "build_s",
+    "deliberation_ms",
+    "first_turn_s",
+    "interturn_rest_ms",
+    "mode",
+    "seed",
+    "settle_enabled",
+    "steady_max_turn_s",
+    "steady_median_turn_s",
+    "turn_s"
+   ],
+   "runner": "research/runners/_settle_turn_cost_probe.py",
+   "git_sha": "9d83a242a",
+   "git_dirty": true,
+   "source_kind": null,
+   "seed": 42
+  },
+  "numpy_off": {
+   "has_criterion_L_field": false,
+   "top_level_keys": [
+    "backend",
+    "build_s",
+    "deliberation_ms",
+    "first_turn_s",
+    "interturn_rest_ms",
+    "mode",
+    "seed",
+    "settle_enabled",
+    "steady_max_turn_s",
+    "steady_median_turn_s",
+    "turn_s"
+   ],
+   "runner": "research/runners/_settle_turn_cost_probe.py",
+   "git_sha": "9d83a242a",
+   "git_dirty": true,
+   "source_kind": null,
+   "seed": 42
+  }
+ },
+ "criterion_L": {
+  "computable": false,
+  "reason_if_not": "none of the 4 raw artifacts under research/findings/raw/_settle_cost/ contains the 'warm_turn_total_s' field the PREREGISTRATION's Criterion L formula reads (delta_s = on['warm_turn_total_s'] - off['warm_turn_total_s']); this is UNDEFINED, not a score of 0 or a PASS/FAIL."
+ },
+ "provenance": {
+  "all_source_kind_git_archive": false,
+  "distinct_git_shas": [
+   "5e571d6c6",
+   "9d83a242a"
+  ],
+  "single_pinned_revision": false,
+  "any_git_dirty": true,
+  "predates_git_archive_rule": false
+ },
+ "multi_seed_rule": {
+  "prereg_exempts_latency_from_6seed_rule": true,
+  "seeds_present": [
+   42
+  ],
+  "finding_claims_generalization": false
+ },
+ "independent_verdict": "VOID"
+}
