@@ -129,6 +129,13 @@ loses an ordinary fact overnight). Sleep-replay r2 = NO-GO (df415f6ca; downscali
 long delay NOT-RESCUED 6/6; offcheck IDENTICAL) -- superseded by the fi family (running). Next: the paired-flip pipeline
 (verify-go review -> combined no-regression battery with both ON -> production-default validation).
 
+**☀️ 11:55 GPU + fix rounds:** C26 full-size GPU run finished (~11:45); GPU now runs a short SETTLE A3 crossover smoke
+(worktree .claude/worktrees/settle-a3x-smoke-b21140758; the Amendment-3 worker path had never executed). Reviews of the resumed
+lanes: SETTLE A3 SOUND-WITH-ISSUES, claim-check r8 SOUND-WITH-ISSUES (first round without an UNSOUND), prereg gate SOUND-WITH-ISSUES,
+dup-guard UNSOUND, pool-stall UNSOUND -> all five fix rounds + opus re-reviews and the gap#4 C25-C27 + C26 scoring = workflow
+`wag8gn2mw` (review texts saved as .claude/worktrees/_review_<lane>_2026-09-25.txt). Paired-flip legs (b)+(c) = `wq8hepp4u`;
+stdin-class fixes + fragment-job audit = `wvh50k7ah`; awake-completion still building in `wjnk7jtnb`. B2b wave 3 queued.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
