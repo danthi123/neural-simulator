@@ -174,6 +174,12 @@ congruence: owner wants more context; stated view: feelings must shape HOW the b
 claim-check: APPROVED as recommended. Execution = workflow `wgw2xgcw9` (prioritized-memory research + design + registered
 'what-matters' test battery; B2b torn-cell redo with a node constraint + rerun log + amendment; claim-check corrections + scope note).
 
+**☀️ 13:15 SETTLE A3 smoke:** the Amendment-3 crossover worker runs end to end at b21140758 (cupy, Qwen renderer, planned arm every
+turn, one reader per arm, WTA read with the arm's config, no exception); verdict UNDEFINED as expected at 1 process/orientation
+(n=8). INSTRUMENT BUG: M4_render reads exactly 0.0 (se 0, resid 0) on every turn -- the render-time hook captures nothing; fix before
+any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
+The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
