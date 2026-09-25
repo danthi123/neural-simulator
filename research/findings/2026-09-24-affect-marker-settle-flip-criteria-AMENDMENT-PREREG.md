@@ -189,6 +189,131 @@ Command (verbatim; `<out>` is `research/findings/raw/_affect_marker_settle_congr
 `research/runners/_affect_marker_settle_congruence.py`, `tests/test_affect_marker_congruence_gate.py`), before any
 run against it.
 
+## Amendment 3 — A3: a within-process crossover that can resolve the 0.3 s bound (2026-09-25)
+
+**Disclosure.** This section is written AFTER the amended A3 run was seen and BEFORE any new data. That run (gpu_queue
+03:21-04:18 2026-09-25, clean pinned checkout d71c1a2c9, seed 42, order off,on,on,off) read UNDEFINED with every
+other precondition met: M2 (WTA-time delta) +0.133 s, M1 (total delta) -3.46 s, NOISE 4.72 s <!--derived-->
+(`research/findings/raw/_affect_marker_settle_gpu_timing/a3/verdict.json`). The author has read all four per-process
+records and decomposed their noise (finding `2026-09-25-affect-marker-settle-a3-gpu-timing-UNDEFINED-noise.md`,
+committed right after this section). The A3 rule above is not changed retroactively: the A3 run stays UNDEFINED.
+This amendment replaces the INSTRUMENT that decides precondition 3. The quantity and the bound do not change.
+
+**Quantity (unchanged).** Criterion L (228ba16f0) as amended in A3: the warm affective turn total wall time of
+`webapp.server.brain_chat` on the default production path (cupy, tiny-demo, the Qwen renderer with the LLM on, `rich`
+at the production default), SETTLE ON minus OFF, bound +0.3 s. In words: does SETTLE add more than 0.3 s to a
+production affective warm turn?
+
+**What made A3 unresolvable (from the decomposition).**
+
+- The noise is between processes. The two OFF processes had warm medians 35.31 s and 30.59 s. <!--derived-->
+  The SETTLE-free build turn was slow in the same processes: 706 s and 668 s (first two) vs 605 s and 600 s. <!--derived-->
+- A3's NOISE is a RANGE of process medians. The expected range of n draws grows with n (about 1.13, 2.06 and 3.08
+  standard deviations at n = 2, 4, 10). No number of A3-style processes resolves the bound. <!--derived-->
+- Read as a standard error instead, the arm difference needs about 1168 processes per arm to put its one-sided 95%
+  upper bound under 0.3 s at the observed M2, and about 2670 per arm for 80% power (pooled process SD 2.457 s). <!--derived-->
+
+**Candidates weighed.**
+
+1. *More A3 processes.* Rejected: above. At about 14 minutes per process, 1168 per arm is about 545 hours. <!--derived-->
+2. *Deterministic renderer settings or a fixed token budget.* Rejected. The Qwen mouth already decodes greedily
+   (`do_sample=False`), reseeds before every call and caps each call at 24 new tokens
+   (`research/runners/_grounded_lang_integration_derisk.py::SpikingQwenFaculty._generate`). Its output for a given
+   prompt and state is already fixed. Forcing a fixed budget (for example `min_new_tokens`) would change the production
+   reply, so the run would no longer measure the production path.
+3. *Bound = M2 + (render-length difference SETTLE causes) x (measured per-token time).* Not the gate. At the default
+   flags the lead SETTLE selects is prepended after the reply is rendered, and nothing downstream reads it, so the
+   render-length channel is expected to be zero. A bound built from counted work cannot see a cost SETTLE adds to
+   work it does not change (GPU clock state, allocator, cache). It would also measure a model of the wall time, not the
+   wall time. The same counts are recorded below as a diagnostic that explains any non-WTA delta. They are not gated.
+4. *Within-process paired ON/OFF turns on identical input.* Chosen, with three additions that A3's data showed are
+   needed: runs of same-arm turns with a washout, mirrored orientation across processes, and run-level fixed effects.
+   Reasons: (a) it removes the between-process noise that made A3 UNDEFINED, because both arms share each process;
+   (b) the A3 turn-index means ranged 28.75-33.81 s and all four processes shared this pattern. Mirrored orientations
+   put two ON and two OFF processes at every run slot, so a slot fixed effect removes it. (c) It measures the quantity
+   itself: the wall time of production turns. <!--derived-->
+
+**Protocol.** Runner `research/runners/_affect_marker_settle_gpu_timing.py`, `--xo-run` (the A3 code path is kept
+and unchanged).
+
+- Four fresh sequential processes at seed 42 (the production default). Orientations `off,on,on,off` give each
+  process's first run arm. This keeps A3's 4-process counterbalance as mirrored orientations.
+- `BRAIN_AFFECT_MARKER_SETTLE` is set explicitly to "1" or "0" before every turn. `get_reader` keys its cache by the
+  flag, so each arm keeps its own process-warm reader. Nothing is rebuilt between turns. A rebuild would add the reader
+  build cost to every turn, and a production warm turn never pays that cost.
+- Per process: the warm Qwen renderer is built first (the server's own startup warm). Then a build turn (NEU_TEXT,
+  reset). Then two unscored warm-up affective turns, one per arm, so both readers exist before scoring. Then 48 runs of
+  4 same-arm turns. Run arms are ABBA repeated (A = the orientation), so linear drift cancels within each process.
+- The first turn of every run is a washout and is not scored. Every scored turn therefore follows a turn of its own
+  arm. A lag-1 carry-over of SETTLE into the next turn is charged to the arm that causes it, as in an all-ON session.
+- Turn k gets `(EMO_TEXT, EMO2_TEXT)[k % 2]` in every process, so every index has identical input in both arms.
+
+**Differences from a production session, and why none of them touches a scored turn's work.** (i) Both readers are
+cached. The second one is a separate tiny private bridge that is never stepped on the other arm's turns. (ii) The
+OFF reader is read only on OFF turns. Its 40 ms washout makes its winner history-dependent, so its read count per turn
+(1 or 2) can differ from an all-OFF session. The difference is at most one read, about 0.011 s per turn. (iii) The <!--derived-->
+renderer is pre-warmed, which is the server's own startup path. <!--derived-->
+
+**Instrument (wrappers only time and count; no production code changes).** Per turn: wall time; process CPU time;
+1-minute load average at turn start; the spiking WTA `_select` time, config, read count and exceptions; every
+`generate` call on the warm Qwen model (time, batch, new tokens, prompt tokens); the reply with this turn's lead
+removed (sha1) and its length; CuPy pool bytes in use; max RSS.
+
+**Estimate.** A run's value is the mean over its kept scored turns. OLS on run values with process and run-slot fixed
+effects and an ON indicator. delta = the ON coefficient; one-sided 95% bounds delta +/- t(0.95, df) x SE.
+M1 = delta for the total wall time; M2 = delta for the WTA time. Reported, not gated: delta for the Qwen render time
+and for the rest; work identity per kept index (render calls, tokens, reply without the lead, ON vs OFF); a lag-1
+carry-over estimate over all affective run turns; a process-demeaned per-slot median; the load average by arm.
+
+**Preconditions (UNDEFINED if any is unmet).**
+
+- Every process completed and validated: cupy; the Qwen renderer on every turn; HTTP 200; a clean tree; the planned
+  arm on every turn; one cached reader per arm with its config; every affective run turn read the WTA with its arm's
+  config (ON 500/1000 ms, OFF 60/40 ms); no reader exception. This is the lever check.
+- At least 2 processes per orientation, with equal counts. One code revision. One plan. The same message at every
+  index in every process.
+- Kept scored indices are at least 80% of those planned. An index is dropped for ALL processes if any process's turn
+  there is neutral. The level is set before the WTA reads, so the drop cannot depend on the arm.
+- Resolvable (the rule below).
+
+**Rule.** bound = 0.3 s. PASS region: U(M2) <= 0.3 AND U(M1) <= 0.3 -> **GO**. FAIL region: L(M2) > 0.3 OR
+L(M1) > 0.3 -> **NO-GO**. Anything else is **UNDEFINED**. The rule can fail in both of its measured directions:
+the WTA's own cost (M2), or the whole turn including every non-WTA and lag-1 carry-over effect (M1). Selftest
+(no brain build) drives each direction: a 0.6 s WTA -> NO-GO; +1.0 s outside the WTA -> NO-GO; +0.8 s charged to the
+next turn -> NO-GO; a true 0.30 s cost with 0.3 s noise -> UNDEFINED; 5 s noise -> UNDEFINED; each lever, validity and
+balance failure -> UNDEFINED.
+
+**Size (derived from the A3 records; the arithmetic is in the finding).** The scored-turn count needed for 80% power
+to read GO when the true cost equals the observed M2 is N = 4 sigma^2 ((1.645 + 0.842) / (0.3 - 0.133))^2. <!--derived-->
+With sigma = 0.80 s (the two-way process x turn-index residual without the contended process) N = 571.
+With sigma = 1.72 s (all four processes) N = 2626. <!--derived-->
+Chosen: 4 processes x 48 runs x 3 scored turns = 576 scored turns (768 run turns plus builds and warm-ups). This
+gives an expected half-width of about 0.11 s at sigma = 0.80 s and about 0.24 s at sigma = 1.72 s. The second case
+would read UNDEFINED again. <!--derived-->
+Projected GPU-queue time is about 7.3 h (A3: build about 700 s, warm turn about 30 s). The per-process timeout is 4 h.
+A process that crashes keeps its partial record; `--xo-run` reruns only processes whose complete record at the same
+HEAD is missing. <!--derived-->
+
+**What each outcome would mean.** GO: at seed 42 on this machine, SETTLE adds at most 0.3 s to a production
+affective warm turn, counting the WTA and every other effect SETTLE has on that turn and on the next turn.
+NO-GO: it adds more. UNDEFINED: the run could not tell. If turn noise is the reason, the next rung is variance
+control (a quiet-machine window or CPU isolation), not a smaller bound or a looser rule. The verdict is a 1-seed
+latency de-risk, as criterion L scopes it. It is not a capability claim.
+
+Commands (verbatim; `<pin>` is a clean checkout pinned at the commit that carries this section, with
+`data/corpus/tinystories.txt` symlinked in; `<a3x>` is `<pin>/research/findings/raw/_affect_marker_settle_gpu_timing/a3x`):
+```
+# selftest (no brain build): both A3 and Amendment 3 verdicts through every failing direction
+.venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --selftest
+# the run (GPU queue, one job)
+SIM_BACKEND=cupy OMP_NUM_THREADS=1 bash tools/memcap.sh 20 -- .venv/bin/python -u -m \
+  research.runners._affect_marker_settle_gpu_timing --xo-run --seeds 42 --orient off,on,on,off --runs 48 --run-len 4 \
+  --out-dir <a3x> --out <a3x>/verdict.json
+# score an existing raw dir again (no brain build)
+.venv/bin/python -m research.runners._affect_marker_settle_gpu_timing --xo-score --raw-dir <a3x> \
+  --seeds 42 --orient off,on,on,off --runs 48 --run-len 4 --out <a3x>/verdict.json
+```
+
 ## Amendment log
 
 - A1, A2, A3 (this document, 2026-09-24): first amendment of the three preregistrations committed in 205604a80, b2e50bd37
@@ -196,3 +321,6 @@ run against it.
 - Amendment 2 (this document, 2026-09-25): A2 production wiring decided + wired (`BRAIN_AFFECT_MARKER_CONGRUENCE`,
   default OFF, `webapp/affect_drives_chat.congruence_gate`) + its production-path measurement registered, ahead of
   any run.
+- Amendment 3 (this document, 2026-09-25): A3's instrument replaced by a within-process crossover (`--xo-run`), written
+  after the A3 run read UNDEFINED (M2 +0.133 s inside the bound, M1 not resolvable at NOISE 4.72 s) and before any new <!--derived-->
+  data. Quantity and bound unchanged. <!--derived-->
