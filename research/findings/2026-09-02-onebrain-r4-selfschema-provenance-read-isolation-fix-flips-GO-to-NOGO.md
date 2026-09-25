@@ -98,7 +98,7 @@ not saved to a JSON artifact.)
 and lesion-recovers-migration all still pass 6/6 after the fix — only F2, the crux vary-then-lesion
 measurement, moves. `delta_lesion` is now exactly `0.0` on every seed after the fix (was `-0.0001` to `+0.0006`
 before) — `frac_attributable` is pinned at exactly `1.0` on every seed, cleaner than the banked
-`0.956`-`1.013` range. The mechanism (edge grows from near-zero, vanishes on lesion, moat holds) is intact and
+`0.956`-`1.028` range (see Corrections). The mechanism (edge grows from near-zero, vanishes on lesion, moat holds) is intact and
 real; what was wrong was the MAGNITUDE the leak let it reach.
 
 **Preconditions carried in the artifact** (`tools.verdict.Verdict`, non-empty list, `n_go` NOT among them):
@@ -166,3 +166,7 @@ DIR="research/findings/raw"
 NAME="_onebrain_integration_r4_selfschema_provenance_6seed_readfix_cupy.json"
 bash tools/gpu_queue.sh add "SIM_BACKEND=cupy python -m research.runners._onebrain_integration_r4_selfschema_provenance --seeds 42,43,44,100,101,102 --out $DIR/$NAME" --guard "git -C /home/dant123/Projects/sim log --oneline -- research/runners/_onebrain_integration_r4_selfschema_provenance.py | grep -q read-isolation"
 ```
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- The banked (before-fix) `frac_attributable` range was stated as `0.956`-`1.013`; the cited artifact (`_onebrain_integration_r4_selfschema_provenance_6seed.json`) gives per-seed `frac_attributable` of 1.0079 (42), 0.9562 (43), 1.0132 (44), 1.0283 (100), 1.0079 (101), 0.9692 (102) -- min 0.956 (seed 43) is correct, but the max is 1.028 (seed 100), not 1.013 (seed 44's value); corrected `1.013` -> `1.028`. Does not change the F2 gate outcome (that gate keys on `delta_intact` vs `F2_INTACT_FLOOR`, not on the before-arm `frac_attributable` spread), so the NO-GO 2/6 verdict is unaffected. <!--derived-->

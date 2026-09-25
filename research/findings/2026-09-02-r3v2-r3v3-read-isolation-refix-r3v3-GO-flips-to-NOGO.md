@@ -88,7 +88,7 @@ GO 6/6 SURVIVES isolation. **It does not.**
 | seed | BEFORE `delta_agent_intact` | AFTER | BEFORE sel_intact | AFTER | BEFORE sel_shuffled | AFTER | BEFORE ratio | AFTER ratio | BEFORE R3a | AFTER R3a | AFTER overall PASS |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 42  | 0.01222 | 0.01917 | 11.225 | 14.671 | 2.293 | 5.153 | 0.2043 | 0.3512 | True | **False** | **False** |
-| 43  | 0.01417 | 0.02083 | 10.680 | 15.089 | 1.845 | 4.299 | 0.1728 | 0.2849 | True | True | True |
+| 43  | 0.01417 | 0.02083 | 10.680 | 15.089 | 1.845 | 4.299 | 0.1727 | 0.2849 | True | True | True |
 | 44  | 0.01241 | 0.01944 | 10.769 | 14.974 | 2.525 | 5.142 | 0.2345 | 0.3434 | True | True | True |
 | 100 | 0.01361 | 0.02083 | 11.059 | 14.939 | 2.506 | 5.111 | 0.2266 | 0.3421 | True | True | True |
 | 101 | 0.01296 | 0.01861 | 10.972 | 14.931 | 2.987 | 6.240 | 0.2723 | 0.4180 | True | **False** | **False** |
@@ -159,3 +159,7 @@ that would show the R3a check itself, not the mechanism, needs the update. Until
 stand, cited above.
 
 Functional read-outs only; no phenomenal-experience claim.
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- Seed 43 BEFORE `ratio` (R3v3 table): 0.1728 -> 0.1727 (`selectivity_shuffled / selectivity_intact` = 1.8447000000000005 / 10.679524999999998 = 0.17273, from `research/findings/raw/_onebrain_integration_r3v3_functional_drive_6seed.json`); does not change any verdict -- this is a BEFORE-column reference value, well under `SEL_SHUFFLE_RATIO=0.35` either way, and seed 43's own row stays `True`/`True`/`True`. <!--derived-->
