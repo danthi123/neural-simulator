@@ -101,8 +101,27 @@ revision_available() {
   # fix round #3, re-review MEDIUM: they used to ask two different questions of the same directory).
   #
   # Fails closed: unreachable/timeout/missing marker all return non-zero (job stays queued for another node/cycle).
+  #
+  # `-n` IS LOAD-BEARING (2026-09-25 incident: pool1+pool2 starved 07:35-09:59 EDT with 74 already-runnable
+  # mem_gb=8 B2b jobs queued behind ONE job pinned to a not-yet-provisioned revision). This function is called
+  # from INSIDE pop_job's `while IFS= read -r cand; do ... done < <(awk ...)` loop (the per-candidate revision
+  # check). Without `-n`, ssh -- even run non-interactively, even with BatchMode=yes -- still opens and forwards
+  # its OWN stdin to the remote command, and that stdin is the SAME fd 0 the enclosing `while read` loop is
+  # consuming from the process substitution. The very first time a revision-pinned candidate needs a real probe,
+  # this ssh call drains the rest of that pipe before the remote `test -f .../.provisioned_ok` even returns --
+  # so pop_job's scan is silently truncated to that ONE candidate and returns empty, discarding every OTHER
+  # admissible job (different revision, no revision pin, smaller) behind it in the SAME call. Because the
+  # unavailable-revision job is left queued (never popped), it is the first candidate again on the NEXT cycle
+  # too, so the starvation repeats indefinitely until that one revision happens to become available -- exactly
+  # what happened to pool1 (idle-stopped mid-starvation, looking exactly like an AWS-lane defect) and pool2
+  # (never stopped, never touched by AWS tooling at all, starved identically) on 2026-09-25. Reproduced in
+  # isolation and pinned by tests/test_pool_autodispatch_workflow.py::test_pop_job_does_not_let_an_unavailable_revision_probe_swallow_later_queued_candidates
+  # (existing revision-check tests never caught this: their stub `ssh` binaries are plain `echo "$*" >> log;
+  # exit N` -- they never read stdin at all, so they cannot model the real ssh behaviour this bug depended on).
+  # `-f -n` is already the established idiom in THIS file for the same reason (see fill_node's dispatch ssh
+  # call) -- this brings the read-only probe in line with it.
   local node="$1" sha="$2"
-  timeout 10 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+  timeout 10 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
     "$(revision_marker_probe_cmd "derisk-pool/revisions/$sha")" 2>/dev/null
 }
 
