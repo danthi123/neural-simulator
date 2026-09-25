@@ -37,6 +37,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 4. Score as they land: SETTLE multi-turn seeds 44/100-102; AI-teacher SHAM arms; CA3 reruns; affect seed 102; D6 N2000;
    A10 v4 arms; wm-focus-bind 6-seed.
 5. Flip candidates that clear 6-seed GO + B2b no-regression: flip them myself (owner authorization 2026-09-23).
+6. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
+   persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
+   (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
+   The bound census (rung 0) sits at pool queue positions 7-9. When it lands, write ONE finding covering rung 0 +
+   rung 3, then take lever 1 (spiking output competition) or the bound, per the census rule.
 
 **🟢 UPDATE ~17:15 (2026-09-24) — main a5e37143b. (history: superseded by the 20:25 block above)**
 - **Incident 13:53:** a review subagent's `rm -rf <scratch> ~/.claude/projects` deleted every project's Claude session
