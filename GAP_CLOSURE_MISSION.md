@@ -83,6 +83,10 @@ B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the w
    60K, recall OK). All 6 agentic tasks FAILED before any model turn: chat-template rejection of Claude Code's system
    messages (Qwen: 'System message must be at the beginning'; Devstral: 'Only user, assistant and tool roles'). Harness
    fix + GPU re-run: workflow `wqf40cc45`. default_profile NOT set until an agentic result exists.
+   RE-RUN RESULT 05:48 (templates fixed, run from main): Qwen3.8-27B IQ4_NL+MTP PASSES all 3 agentic tasks (T1 locate
+   162 s, T2 fix a planted bug without touching the test 332 s, T3 extend a test 198 s), 63.6 tok/s short, 48 tok/s at
+   60K, 2.6 GB VRAM headroom; tools/local_llm/default_profile = qwen38-27b-iq4nl-mtp. Devstral hit a separate
+   grammar-parse error (400 'failed to parse grammar'), so it is untested, not failed.
    When the bake-off lands: read tools/local_llm/results/summary.md, set tools/local_llm/default_profile.
 6. Keep >= 3 build lanes busy with genuine builds from this list; stock the pool before any idle hold.
 
