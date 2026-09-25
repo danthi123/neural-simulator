@@ -54,15 +54,35 @@ KNOWN_HOSTS="${POOL_SSH_KNOWN_HOSTS:-$ROOT/research/queue/.pool_ssh_known_hosts}
 _state_get() { awk -F= -v k="^$1=" '$0 ~ k {print substr($0, index($0,"=")+1)}' "$STATE" 2>/dev/null | tail -1; }
 
 _write_host_block() {   # _write_host_block <file> <alias> <ip> <key>  -- appends (or replaces) one Host block
+  # ATOMIC, UNDER flock (2026-09-25 review, MEDIUM: "_write_host_block not atomic"). The OLD version did TWO
+  # separate filesystem operations with no lock at all: an awk-filter-then-`mv` (removing any existing block for
+  # this alias), followed by a SEPARATE `>>` append of the new one. A concurrent READER (any `ssh -F "$file"`
+  # call, which every pool script makes constantly) could observe the file in between those two steps, with the
+  # old block already gone and the new one not yet written -- reproduced: 10/1482 snapshots had the block
+  # MISSING entirely, 2/1482 PARTIAL. Two concurrent WRITERS (e.g. a routine pool_sync stale-ip refresh racing
+  # an operator's `start`) could each read the SAME pre-edit content and then race their two `mv`s -- reproduced:
+  # a DUPLICATE Host block with the STALE ip listed first in 27/30 trials (ssh uses the first match it finds).
+  # FIX: hold `flock` on "$file.lock" around the ENTIRE read-modify-write, and build the WHOLE new content
+  # (filtered old content, if any, plus the new block) in one `mktemp` file in the SAME directory as $file, then
+  # `mv` it ONCE -- one atomic filesystem operation instead of two, and no writer can interleave with another
+  # while the lock is held (a second writer waits, then re-reads the FIRST writer's already-updated content, so
+  # its own alias-replace logic still finds and replaces cleanly instead of duplicating).
   local file="$1" alias="$2" ip="$3" key="$4"
-  mkdir -p "$(dirname "$file")"
+  local dir; dir="$(dirname "$file")"
+  mkdir -p "$dir"
+  local lock="$file.lock" tmp
+  exec 8>"$lock"
+  flock 8
+  tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
   if [ -f "$file" ] && grep -q "^Host $alias\$" "$file" 2>/dev/null; then
     # Replace an existing block for this alias (a re-`up` after a torn-down node re-launched with a new IP).
     awk -v a="Host $alias" '
       $0==a {skip=1}
       skip && /^Host / && $0!=a {skip=0}
       !skip {print}
-    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    ' "$file" > "$tmp"
+  elif [ -f "$file" ]; then
+    cat "$file" > "$tmp"
   fi
   {
     echo "Host $alias"
@@ -71,7 +91,10 @@ _write_host_block() {   # _write_host_block <file> <alias> <ip> <key>  -- append
     echo "  IdentityFile $key"
     echo "  StrictHostKeyChecking accept-new"
     echo "  UserKnownHostsFile $KNOWN_HOSTS"
-  } >> "$file"
+  } >> "$tmp"
+  mv "$tmp" "$file"
+  flock -u 8
+  exec 8>&-
 }
 
 _backup_ssh_config() {   # _backup_ssh_config <file> -- best-effort ONE-PRIOR-VERSION .bak before any rewrite by
@@ -85,13 +108,24 @@ _backup_ssh_config() {   # _backup_ssh_config <file> -- best-effort ONE-PRIOR-VE
 }
 
 _remove_host_block() {   # _remove_host_block <file> <alias>
+  # Same atomic-under-flock treatment as _write_host_block (2026-09-25 review, MEDIUM) -- a reader must never
+  # observe a half-rewritten config, and a concurrent _write_host_block/_remove_host_block on the same file must
+  # never race each other (they share the SAME "$file.lock").
   local file="$1" alias="$2"
   [ -f "$file" ] || return 0
+  local dir; dir="$(dirname "$file")"
+  local lock="$file.lock" tmp
+  exec 8>"$lock"
+  flock 8
+  tmp=$(mktemp "$dir/.host_block.XXXXXX") || { flock -u 8; exec 8>&-; return 1; }
   awk -v a="Host $alias" '
     $0==a {skip=1; next}
     skip && /^Host / {skip=0}
     !skip {print}
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  ' "$file" > "$tmp"
+  mv "$tmp" "$file"
+  flock -u 8
+  exec 8>&-
 }
 
 _running_runners() {   # _running_runners <ssh-alias-or-command-prefix...> -- prints a count, "" if unreachable
@@ -508,13 +542,40 @@ cmd_start() {
     terminated|shutting-down)
       echo "⛔ $NODE_NAME's instance $IID is '$EC2_STATE' at AWS -- cannot start a terminated instance; 'up' launches a fresh one." >&2
       exit 1 ;;
+    stopping)
+      # WAIT FOR 'stopped' FIRST (2026-09-25 review, LOW): AWS refuses start-instances on an instance that is
+      # still mid-'stopping' (e.g. aws_idle_stop.sh's own stop-instances call landed moments ago). The OLD code
+      # fell straight through to the `*)` refusal below and gave up immediately instead of waiting out a
+      # transition that, unlike 'terminated', WILL resolve on its own.
+      echo "[aws-pool-node] $NODE_NAME's instance $IID is 'stopping' -- waiting for it to reach 'stopped' before starting it…"
+      STOP_WAIT_TIMEOUT="${AWS_POOL_STOP_WAIT_TIMEOUT_S:-180}"; STOP_WAIT_BEGIN=$(date +%s)
+      while :; do
+        EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+            --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+        [ "$EC2_STATE" = "stopped" ] && break
+        if [ $(( $(date +%s) - STOP_WAIT_BEGIN )) -ge "$STOP_WAIT_TIMEOUT" ]; then
+          echo "⛔ $NODE_NAME's instance did not finish stopping within ${STOP_WAIT_TIMEOUT}s (last state: ${EC2_STATE:-unknown}) -- cannot start it yet, try again shortly." >&2
+          exit 1
+        fi
+        sleep "${AWS_POOL_START_POLL_S:-10}"
+      done
+      # Genuinely 'stopped' now -- fall through to the SAME start-instances + wait-for-running path as below.
+      ;&
     stopped)
       TYPE_S=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
           --query 'Reservations[].Instances[].InstanceType' --output text 2>/dev/null)
       bash "$ROOT/tools/aws_budget.sh" check "${TYPE_S:-$TYPE}" || {
         echo "⛔ aws_pool_node.sh start: refused by tools/aws_budget.sh (daily cap) — see above" >&2; exit 1; }
       echo "[aws-pool-node] starting $NODE_NAME's instance $IID…"
-      aws ec2 start-instances --instance-ids "$IID" --region "$REGION_S" >/dev/null 2>&1
+      # CAPTURE RC + STDERR (2026-09-25 review, LOW): the old `>/dev/null 2>&1` discarded start-instances'
+      # own failure (throttled/credential/quota error) entirely and then waited the FULL timeout with no
+      # explanation of why the instance never reached 'running'. Fail fast, with the real reason.
+      START_OUT=$(aws ec2 start-instances --instance-ids "$IID" --region "$REGION_S" 2>&1); START_RC=$?
+      if [ "$START_RC" -ne 0 ]; then
+        echo "⛔ start-instances failed for $NODE_NAME's instance $IID (rc=$START_RC):" >&2
+        echo "$START_OUT" >&2
+        exit 1
+      fi
       START_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; START_BEGIN=$(date +%s)
       while :; do
         EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
@@ -527,8 +588,25 @@ cmd_start() {
         sleep "${AWS_POOL_START_POLL_S:-10}"
       done
       ;;
+    pending)
+      # WAIT FOR 'running' (2026-09-25 review, LOW): a start is already in flight (e.g. a concurrent `start`
+      # call, or the owner's own console action) -- this must wait it out, not refuse a state that will
+      # resolve to exactly what `start` wants on its own.
+      echo "[aws-pool-node] $NODE_NAME's instance $IID is already 'pending' (a start is already in flight) -- waiting for it to reach 'running'…"
+      START_TIMEOUT="${AWS_POOL_START_TIMEOUT_S:-180}"; START_BEGIN=$(date +%s)
+      while :; do
+        EC2_STATE=$(aws ec2 describe-instances --instance-ids "$IID" --region "$REGION_S" \
+            --query 'Reservations[].Instances[].State.Name' --output text 2>/dev/null)
+        [ "$EC2_STATE" = "running" ] && break
+        if [ $(( $(date +%s) - START_BEGIN )) -ge "$START_TIMEOUT" ]; then
+          echo "⛔ $NODE_NAME's instance did not reach 'running' within ${START_TIMEOUT}s (was already 'pending'; last state: ${EC2_STATE:-unknown})." >&2
+          exit 1
+        fi
+        sleep "${AWS_POOL_START_POLL_S:-10}"
+      done
+      ;;
     *)
-      echo "⛔ $NODE_NAME's instance $IID is in state '${EC2_STATE:-unknown}' -- refusing to start (only 'stopped' or 'running' are handled; describe-instances may be UNKNOWN/unreachable)." >&2
+      echo "⛔ $NODE_NAME's instance $IID is in state '${EC2_STATE:-unknown}' -- refusing to start (only 'running'/'stopped'/'stopping'/'pending' are handled; describe-instances may be UNKNOWN/unreachable)." >&2
       exit 1 ;;
   esac
 

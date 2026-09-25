@@ -94,7 +94,11 @@ for N in $NODES; do
     # unless the ip actually changed) round trip.
     _aws_state="$AWS_STATE_DIR/.aws_$N"
     _refreshed=0
-    if [ -f "$_aws_state" ]; then
+    # --dry-run MUST CHANGE NOTHING (2026-09-25 review, LOW): `refresh` rewrites .pool_ssh_config (+ its .bak)
+    # on disk -- a real, persistent change -- which the old code ran even under --dry-run, breaking that
+    # promise. Skip the refresh attempt entirely when $DRY is set; a dry-run node that would have been
+    # refreshed just reports UNREACHABLE like any other unreachable node, same as before this feature existed.
+    if [ -z "$DRY" ] && [ -f "$_aws_state" ]; then
       # Only retry if the Host block ACTUALLY changed -- `refresh` exits 0 both when it rewrote something and
       # when it correctly declined (node not running, ip already current, etc.), so a before/after content
       # compare is the one signal that distinguishes "worth a retry" from "nothing to gain by retrying."

@@ -12,6 +12,7 @@ import os
 import stat
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,6 +78,78 @@ def test_remove_host_block_drops_only_the_named_alias(tmp_path):
 def test_remove_host_block_on_missing_file_is_a_noop(tmp_path):
     res = _run(["--remove-host-block", str(tmp_path / "does-not-exist"), "pool1"])
     assert res.returncode == 0, res.stderr
+
+
+# ------------------------------------------------------------------------------- _write_host_block: atomicity
+
+def test_write_host_block_is_serialized_by_flock_against_a_concurrent_holder(tmp_path):
+    # MEDIUM (2026-09-25 review): "_write_host_block not atomic" -- it must hold `<file>.lock` for its ENTIRE
+    # read-modify-write, so anything else holding that same lock makes it WAIT rather than interleave. Hold the
+    # lock externally (via the real `flock` CLI) for a measured duration, then time how long
+    # `--write-host-block` takes to return: it must take AT LEAST that long (proving it genuinely waited for the
+    # lock), not return near-instantly (which the OLD code -- no flock call anywhere -- always did).
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\n")
+    lock = tmp_path / "ssh_config.lock"
+    hold_s = 2.0
+    holder = subprocess.Popen(["flock", str(lock), "sleep", str(hold_s)])
+    try:
+        time.sleep(0.4)   # give the holder a head start so it has genuinely acquired the lock first
+        t0 = time.monotonic()
+        res = _run(["--write-host-block", str(cfg), "pool1", "1.2.3.4", "/tmp/key.pem"])
+        elapsed = time.monotonic() - t0
+    finally:
+        holder.wait(timeout=10)
+    assert res.returncode == 0, res.stderr
+    assert elapsed >= 1.0, (
+        f"--write-host-block returned after only {elapsed:.2f}s while an external holder had the SAME lock "
+        f"for {hold_s}s -- it did not actually wait for the lock (not serialized)")
+    assert "Host pool1" in cfg.read_text()
+    assert "HostName 1.2.3.4" in cfg.read_text()
+
+
+def test_remove_host_block_is_serialized_by_flock_against_a_concurrent_holder(tmp_path):
+    # Same guarantee, for the removal path -- the two must share the SAME lock file so a write and a remove
+    # against the same config can never race each other either.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\nHost pool1\n  HostName 1.2.3.4\n")
+    lock = tmp_path / "ssh_config.lock"
+    hold_s = 2.0
+    holder = subprocess.Popen(["flock", str(lock), "sleep", str(hold_s)])
+    try:
+        time.sleep(0.4)
+        t0 = time.monotonic()
+        res = _run(["--remove-host-block", str(cfg), "pool1"])
+        elapsed = time.monotonic() - t0
+    finally:
+        holder.wait(timeout=10)
+    assert res.returncode == 0, res.stderr
+    assert elapsed >= 1.0, f"--remove-host-block did not wait for the lock (returned after {elapsed:.2f}s)"
+    assert "Host pool1" not in cfg.read_text()
+
+
+def test_write_host_block_concurrent_writers_never_lose_or_duplicate_a_block(tmp_path):
+    # MEDIUM: without the flock+single-mv fix, concurrent writers could each read the SAME pre-edit content and
+    # race their own `mv`s -- the review's own repro found a DUPLICATE block (stale ip listed FIRST, so ssh
+    # picks it) in 27/30 trials, and a concurrent READER saw the block MISSING entirely in 10/1482 snapshots.
+    # Fire many real concurrent writer PROCESSES, each adding its own distinct alias to the SAME file, and
+    # require every single one to land exactly once, fully formed, in the final content.
+    cfg = tmp_path / "ssh_config"
+    cfg.write_text("Include ~/.ssh/config\n")
+    n = 15
+    procs = [
+        subprocess.Popen(["bash", str(SCRIPT), "--write-host-block", str(cfg), f"node{i}",
+                           f"10.0.0.{i}", f"/tmp/k{i}.pem"], cwd=ROOT, env=dict(os.environ))
+        for i in range(n)
+    ]
+    for p in procs:
+        assert p.wait(timeout=30) == 0
+
+    lines = cfg.read_text().splitlines()
+    for i in range(n):
+        # Exact LINE match (not substring): "Host node1" is a substring of "Host node10".."Host node14" too.
+        assert lines.count(f"Host node{i}") == 1, f"node{i}'s block is missing or duplicated:\n{lines}"
+        assert f"  HostName 10.0.0.{i}" in lines, f"node{i}'s block is malformed/incomplete:\n{lines}"
 
 
 # --------------------------------------------------------------------------------------------- down ordering
@@ -984,6 +1057,129 @@ def test_start_refuses_a_torn_down_node(tmp_path):
     res = _run(["start", "testnode"], env={"AWS_POOL_NODE_STATE_FILE": str(state)})
     assert res.returncode == 1
     assert "TORN DOWN" in (res.stdout + res.stderr)
+
+
+def test_start_surfaces_start_instances_failure_instead_of_silently_timing_out(tmp_path):
+    # LOW (2026-09-25 review): the OLD code discarded start-instances' own rc/stderr (`>/dev/null 2>&1`) and
+    # then waited the FULL poll timeout with no explanation for why the instance never reached 'running'. A
+    # real failure (throttled/credential/quota error) must be surfaced IMMEDIATELY, with the real reason.
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    log = tmp_path / "combined.log"; log.write_text("")
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"--filters"*) echo '{{"Reservations": []}}'; exit 0 ;;
+  *"ec2 start-instances"*) echo "An error occurred (RequestLimitExceeded)" >&2; exit 255 ;;
+  *"State.Name"*) echo stopped; exit 0 ;;
+  *"InstanceType"*) echo r7i.4xlarge; exit 0 ;;
+esac
+echo ok; exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "3",
+        "AWS_POOL_START_POLL_S": "0",
+        "AWS_DAILY_CAP_USD": "10000",
+    }
+    t0 = time.monotonic()
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    elapsed = time.monotonic() - t0
+    assert res.returncode == 1
+    assert "start-instances failed" in (res.stdout + res.stderr)
+    assert "RequestLimitExceeded" in (res.stdout + res.stderr)
+    assert elapsed < 3, "must fail immediately on a real start-instances error, not wait out the whole poll timeout"
+    assert "1.2.3.4" in ssh_config.read_text(), "never touched -- failed before any Host-block rewrite"
+
+
+def test_start_waits_out_a_stopping_instance_then_starts_it(tmp_path):
+    # LOW: 'stopping' (e.g. aws_idle_stop.sh's own stop-instances call landed moments ago) must be WAITED OUT,
+    # not refused like 'terminated' -- it resolves to 'stopped' on its own, from which `start` CAN proceed.
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    log = tmp_path / "combined.log"; log.write_text("")
+    poll_counter = tmp_path / "polls"
+    started_marker = tmp_path / "started"
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"--filters"*) echo '{{"Reservations": []}}'; exit 0 ;;
+  *"ec2 start-instances"*) touch "{started_marker}"; echo ok; exit 0 ;;
+  *"State.Name"*)
+    if [ -f "{started_marker}" ]; then echo running; exit 0; fi
+    n=$(cat "{poll_counter}" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "{poll_counter}"
+    if [ "$n" -ge 2 ]; then echo stopped; else echo stopping; fi
+    exit 0 ;;
+  *"PublicIpAddress"*) echo "9.9.9.9"; exit 0 ;;
+  *"InstanceType"*) echo r7i.4xlarge; exit 0 ;;
+esac
+echo ok; exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f'#!/usr/bin/env bash\necho "SSH $*" >> "{log}"\nexit 0\n')
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "5",
+        "AWS_POOL_START_POLL_S": "0",
+        "AWS_POOL_STOP_WAIT_TIMEOUT_S": "5",
+        "AWS_DAILY_CAP_USD": "10000",
+    }
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert started_marker.exists(), "start-instances was never called once the instance genuinely stopped"
+    assert "9.9.9.9" in ssh_config.read_text()
+
+
+def test_start_waits_out_a_pending_instance_without_calling_start_instances_again(tmp_path):
+    # LOW: 'pending' means a start is ALREADY in flight (e.g. a concurrent `start` call, or the owner's own
+    # console action) -- must be waited out to 'running', never treated as an unhandled state, and NEVER call
+    # start-instances a second time on top of the one already in flight.
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    log = tmp_path / "combined.log"; log.write_text("")
+    poll_counter = tmp_path / "polls"
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{log}"
+case "$*" in
+  *"--filters"*) echo '{{"Reservations": []}}'; exit 0 ;;
+  *"ec2 start-instances"*) echo "SHOULD NEVER BE CALLED" >&2; exit 1 ;;
+  *"State.Name"*)
+    n=$(cat "{poll_counter}" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "{poll_counter}"
+    if [ "$n" -ge 2 ]; then echo running; else echo pending; fi
+    exit 0 ;;
+  *"PublicIpAddress"*) echo "9.9.9.9"; exit 0 ;;
+esac
+echo ok; exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f'#!/usr/bin/env bash\necho "SSH $*" >> "{log}"\nexit 0\n')
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    state = _write_state(tmp_path, instance="i-aaa")
+    ssh_config = tmp_path / "ssh_config"
+    ssh_config.write_text("Include ~/.ssh/config\nHost testnode\n  HostName 1.2.3.4\n")
+    env = {
+        "AWS_POOL_NODE_STATE_FILE": str(state),
+        "POOL_SSH_CONFIG": str(ssh_config),
+        "AWS_POOL_START_TIMEOUT_S": "5",
+        "AWS_POOL_START_POLL_S": "0",
+        "AWS_DAILY_CAP_USD": "10000",
+    }
+    res = _run(["start", "testnode"], bin_dir=bin_dir, tmp_path=tmp_path, env=env)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 start-instances" not in log.read_text()
+    assert "9.9.9.9" in ssh_config.read_text()
 
 
 # -------------------------------------------------------------------------------------------------- `refresh`

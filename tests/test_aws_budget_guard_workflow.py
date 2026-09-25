@@ -108,7 +108,10 @@ def _make_stub_bin(tmp_path, describe_instances, cw_datapoints=None, ssh_pgrep_f
 
     ssh_stub = bin_dir / "ssh"
     if ssh_reachable:
-        # `uptime` -> low load; `nproc` -> 8; pgrep -> exit 0 (found) or 1 (not found) per ssh_pgrep_finds_runner
+        # `uptime` -> low load; `nproc` -> 8; pgrep -> exit 0 (found) or 1 (not found) per ssh_pgrep_finds_runner;
+        # the `if [ -d ...` remote probe -> sync_node_before_stop's HIGH #1 fallback directory check (default:
+        # answer "has_raw" for EVERY candidate, i.e. every known project layout exists and has results -- tests
+        # that care about a SPECIFIC layout build their own stub instead, see test_idle_stop_fallback_* below).
         pgrep_rc = 0 if ssh_pgrep_finds_runner else 1
         ssh_stub.write_text(f"""#!/usr/bin/env bash
 echo "$*" >> "{ssh_log}"
@@ -116,6 +119,7 @@ case "$*" in
   *uptime*) echo " 12:00:00 up 1 day,  1 user,  load average: 0.05, 0.10, 0.10" ;;
   *nproc*) echo 8 ;;
   *pgrep*) exit {pgrep_rc} ;;
+  *"if [ -d "*) echo has_raw ;;
   *) exit 0 ;;
 esac
 """)
@@ -154,7 +158,11 @@ def _run(script, args, bin_dir, extra_env=None, tmp_path=None):
         env.setdefault("POOL_SSH_CONFIG", str(tmp_path / "no-such-pool-ssh-config"))
     if extra_env:
         env.update(extra_env)
-    return subprocess.run(["bash", str(script), *args], cwd=ROOT, env=env,
+    # stdin=DEVNULL (2026-09-25, HIGH #2 test coverage): matches how this script actually runs in production
+    # (systemd --user, stdin /dev/null) and keeps a stub that deliberately reads stdin (see
+    # _make_stdin_draining_stub_bin) from hanging on the test runner's own inherited stdin, which is not
+    # guaranteed to hit EOF.
+    return subprocess.run(["bash", str(script), *args], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
                            capture_output=True, text=True, timeout=30)
 
 
@@ -410,6 +418,281 @@ def test_idle_stop_no_running_instances_is_a_noop(tmp_path):
     res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
     assert res.returncode == 0, res.stderr
     assert "ec2 stop-instances" not in aws_log.read_text()
+
+
+# ---------------------------------------------------------- aws_idle_stop.sh: 2026-09-25 fix-round review items
+
+def test_idle_stop_fallback_pulls_from_the_sim_layout_when_derisk_pool_does_not_exist(tmp_path):
+    # HIGH #1 (2026-09-25 review): the .aws_gpu/.aws_cpuN lanes (tools/aws_cpu_launch.sh + tools/
+    # aws_cpu_provision.sh / tools/aws_provision.sh) rsync CODE to ~/sim, never ~/derisk-pool/sim -- that's the
+    # pool-node (tools/aws_pool_node.sh) layout only. The OLD single-path fallback always assumed
+    # ~/derisk-pool/sim; on these lanes that source dir never exists, rsync exits 23 every cycle, and the
+    # instance is NEVER idle-stopped (only the $50/day cap ever stops it) -- its results under ~/sim are never
+    # pulled either. Stub ssh: ~/derisk-pool/sim does not exist, ~/sim does (and has results) -- exactly this
+    # node's real layout.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *uptime*) echo " 12:00:00 up 1 day,  1 user,  load average: 0.05, 0.10, 0.10" ;;
+  *nproc*) echo 8 ;;
+  *pgrep*) exit 1 ;;
+  *"if [ -d ~/derisk-pool"*) echo no_root ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in aws_log.read_text()
+    assert "sim/research/findings/raw" in rsync_log.read_text()
+    assert "derisk-pool" not in rsync_log.read_text(), "must never have rsync'd the layout that doesn't exist"
+
+
+def test_idle_stop_fallback_refuses_when_neither_known_layout_exists(tmp_path):
+    # HIGH #1, the flip side: a node whose code layout matches NEITHER known convention must be treated as
+    # unverifiable (conservative: keep running), never silently skipped as if it had nothing to sync. Mutation
+    # check: the OLD code never asked `ssh test -d` at all -- it just rsync'd ~/derisk-pool/sim unconditionally,
+    # which the stub rsync below would happily report as a SUCCESS regardless of what's really there, and the
+    # instance would wrongly get stopped.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *uptime*) echo " 12:00:00 up 1 day,  1 user,  load average: 0.05, 0.10, 0.10" ;;
+  *nproc*) echo 8 ;;
+  *pgrep*) exit 1 ;;
+  *"if [ -d "*) echo no_root ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text()
+    assert rsync_log.read_text() == "", "must never have attempted an rsync with no confirmed source dir"
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "no known project layout found" in combined_log
+
+
+def _make_stdin_draining_stub_bin(tmp_path, describe_instances, cw_datapoints=None):
+    """Like _make_stub_bin, but its `ssh` stub ALWAYS drains whatever is sitting on its OWN stdin (`cat
+    >/dev/null`) before answering -- regardless of whether it was invoked with `-n` -- so a test built on this
+    stub isolates the fd-3 loop-read fix (HIGH #2) from the `-n` flag: even if some remote call inside the loop
+    somehow failed to behave as `-n` promises, the loop's OWN read of the instance-id list must still be immune,
+    because it now lives on a completely separate fd."""
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    describe_fixture = tmp_path / "describe.json"
+    describe_fixture.write_text(_describe_json(describe_instances))
+    cw_fixture = tmp_path / "cw.json"
+    cw_fixture.write_text(json.dumps({"Datapoints": [{"Average": a} for a in (cw_datapoints or [])]}))
+    aws_log = tmp_path / "aws.log"; aws_log.write_text("")
+    ssh_log = tmp_path / "ssh.log"; ssh_log.write_text("")
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(_AWS_STUB_TEMPLATE.format(
+        log=aws_log, cw_fixture=cw_fixture, describe_fixture=describe_fixture))
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+cat >/dev/null 2>&1   # DRAIN local stdin unconditionally -- simulates real ssh's stdin-forwarding, `-n` or not
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *uptime*) echo " 12:00:00 up 1 day,  1 user,  load average: 0.05, 0.10, 0.10" ;;
+  *nproc*) echo 8 ;;
+  *pgrep*) exit 1 ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text("#!/usr/bin/env bash\nexit 0\n")   # never inspected by this test -- just must not hang
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir, aws_log, ssh_log
+
+
+def test_idle_stop_checks_the_second_instance_even_when_ssh_drains_local_stdin(tmp_path):
+    # HIGH #2 (2026-09-25 review): `while read iid; do ... ssh ...; done <<<"$ids"` put the id list on fd 0 for
+    # the WHOLE loop body -- ssh, even when its remote command never reads stdin itself, still drains whatever
+    # local stdin it inherits (the same bug class 096dfdae0 fixed in the dispatcher's revision_available
+    # probe). With 2+ running instances, the FIRST one's ssh calls drained the REST of the id list off fd 0, so
+    # `read -r iid` hit EOF and the loop silently ended after ONE instance -- matching the production log
+    # (exactly one load1 line per cycle while pool1 AND pool2 both ran). Two running instances here; i-aaa has
+    # a verified ssh key (so its uptime/nproc/pgrep calls actually run and can drain), i-bbb has none. The
+    # assertion is that i-bbb's OWN CloudWatch check (an `aws` call carrying its instance id) still happens --
+    # i.e. the loop reached a SECOND iteration at all.
+    inst_a = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    inst_b = _instance("i-bbb", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log = _make_stdin_draining_stub_bin(tmp_path, [inst_a, inst_b], cw_datapoints=[])
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "uptime" in ssh_log.read_text(), "i-aaa's ssh fallback never even ran -- test setup is wrong"
+    assert "Value=i-bbb" in aws_log.read_text(), (
+        "the loop never reached the second instance -- fd-3 read did not protect it from ssh draining fd 0")
+
+
+def test_idle_stop_remote_ssh_calls_all_pass_dash_n(tmp_path):
+    # HIGH #2, the belt-and-suspenders half: every remote ssh call this script makes (uptime/nproc/pgrep) must
+    # ALSO carry `-n` on its own, independent of the fd-3 structural fix above.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    lines = [ln for ln in ssh_log.read_text().splitlines() if ln.strip()]
+    assert lines, "no ssh calls observed -- test setup is wrong"
+    for ln in lines:
+        assert ln.startswith("-n "), f"an ssh call did not pass -n first: {ln!r}"
+
+
+def test_idle_stop_rechecks_runner_right_before_stop_and_aborts_if_one_appeared(tmp_path):
+    # MEDIUM (2026-09-25 review): the strict sync between the ORIGINAL no-runner check and the stop call can
+    # take from ~1s to several minutes (main pull + ssh ls + one rsync per isolated revision, up to 180s each),
+    # widening the check-to-stop window enough for a job to land in it (5b5ea1b7 did, at 09:59:54). Stop must
+    # re-verify no-runner immediately before the stop-instances call, not rely on a reading that may now be
+    # stale. Stub pgrep: NOT found on the FIRST call (the original check, which is why the sync even started),
+    # FOUND on every call after (the re-check right before stop).
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    counter = tmp_path / "pgrep_calls"
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "$*" >> "{ssh_log}"
+case "$*" in
+  *uptime*) echo " 12:00:00 up 1 day,  1 user,  load average: 0.05, 0.10, 0.10" ;;
+  *nproc*) echo 8 ;;
+  *pgrep*)
+    n=$(cat "{counter}" 2>/dev/null || echo 0); n=$((n+1)); echo "$n" > "{counter}"
+    [ "$n" -eq 1 ] && exit 1   # first call (the original check): no runner found
+    exit 0                    # every call after (the re-check): a runner IS now running
+    ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text(), "stopped despite a runner appearing during the sync"
+    assert rsync_log.read_text().strip() != "", "the sync must still have run (it's what widened the window)"
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "a runner appeared during the sync" in combined_log
+
+
+def test_idle_stop_log_states_cloudwatch_signal_is_sustained(tmp_path):
+    # MEDIUM (2026-09-25 review): "state the idle-signal strength honestly" -- a CONCLUSIVE CloudWatch read
+    # spans the whole idle window (multiple 5-min datapoints); this must read differently in the log than a
+    # single SSH load sample (below).
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in aws_log.read_text()
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "CloudWatch (sustained" in combined_log
+
+
+def test_idle_stop_log_states_ssh_loadavg_signal_is_a_single_sample(tmp_path):
+    # MEDIUM, the flip side: the SSH-loadavg fallback (used when CloudWatch has no datapoints yet) is a SINGLE
+    # 1-minute sample, not the sustained signal the CloudWatch path gives -- the STOPPING line must say so, not
+    # imply the same strength of evidence as the CloudWatch path.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" in aws_log.read_text()
+    combined_log = (tmp_path / "aws_idle_stop.log").read_text()
+    assert "single 1-minute sample" in combined_log
+    assert "NOT a sustained" in combined_log
+
+
+def test_idle_stop_order_rsync_strictly_before_stop_instances_via_one_shared_call_log(tmp_path):
+    # LOW (2026-09-25 review): the prior version of this test only checked that "STOPPING" appeared in the log
+    # and that rsync was called SOMEWHERE -- never the actual ORDER, so mutation-deleting the
+    # `if sync_node_before_stop ...; then stop` gating still passed. `aws` and `rsync` now append to ONE SHARED
+    # log (same idiom as tests/test_aws_pool_node_workflow.py's `down`-ordering tests) so line order really is
+    # call order.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir = tmp_path / "bin"; bin_dir.mkdir()
+    shared_log = tmp_path / "shared.log"; shared_log.write_text("")
+    describe_fixture = tmp_path / "describe.json"; describe_fixture.write_text(_describe_json([inst]))
+    cw_fixture = tmp_path / "cw.json"
+    cw_fixture.write_text(json.dumps({"Datapoints": [{"Average": a} for a in (1.0, 2.0)]}))
+
+    aws_stub = bin_dir / "aws"
+    aws_stub.write_text(f"""#!/usr/bin/env bash
+echo "AWS $*" >> "{shared_log}"
+if [[ "$*" == *"cloudwatch get-metric-statistics"* ]]; then cat "{cw_fixture}"; exit 0; fi
+if [[ "$*" == *"ec2 describe-instances"* ]]; then cat "{describe_fixture}"; exit 0; fi
+if [[ "$*" == *"ec2 stop-instances"* ]]; then echo stopped; exit 0; fi
+echo "sg-stub-000"; exit 0
+""")
+    aws_stub.chmod(aws_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    ssh_stub = bin_dir / "ssh"
+    ssh_stub.write_text(f"""#!/usr/bin/env bash
+echo "SSH $*" >> "{shared_log}"
+case "$*" in
+  *pgrep*) exit 1 ;;
+  *"if [ -d "*) echo has_raw ;;
+  *) exit 0 ;;
+esac
+""")
+    ssh_stub.chmod(ssh_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    rsync_stub = bin_dir / "rsync"
+    rsync_stub.write_text(f'#!/usr/bin/env bash\necho "RSYNC $*" >> "{shared_log}"\nexit 0\n')
+    rsync_stub.chmod(rsync_stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+    _write_gpu_state(tmp_path, "i-aaa", tmp_path / "aws_key.pem")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    lines = shared_log.read_text().splitlines()
+    rsync_idx = next((i for i, ln in enumerate(lines) if ln.startswith("RSYNC ")), None)
+    stop_idx = next((i for i, ln in enumerate(lines) if "ec2 stop-instances" in ln), None)
+    assert rsync_idx is not None, f"rsync was never called: {lines}"
+    assert stop_idx is not None, f"stop-instances was never called: {lines}"
+    assert rsync_idx < stop_idx, f"stop-instances happened before/without a prior rsync: {lines}"
+
+
+def test_idle_stop_does_not_stop_when_recorded_key_file_is_missing_even_with_cpu_idle(tmp_path):
+    # LOW (2026-09-25 review): mutation-deleting sync_node_before_stop's own `[ ! -f "$key" ]` no-key guard
+    # passed 19/19 because no existing test's state file pointed at a key path that does not exist while CPU
+    # read idle -- every prior case either had a real key file or CPU that wasn't idle. A missing key file
+    # (recorded, but the file itself is gone -- e.g. cleaned up, or the state file copied without it) must
+    # never be treated as "have ssh access" anywhere in this script, end to end.
+    inst = _instance("i-aaa", "r7i.4xlarge", "running", hours_ago=1)
+    bin_dir, aws_log, ssh_log, rsync_log = _make_stub_bin(tmp_path, [inst], cw_datapoints=[1.0, 2.0],
+                                                           ssh_pgrep_finds_runner=False, rsync_ok=True)
+    state_dir = tmp_path / "state"; state_dir.mkdir(exist_ok=True)
+    missing_key = tmp_path / "does-not-exist.pem"   # recorded path, but the file was never written
+    (state_dir / ".aws_gpu").write_text(f"instance=i-aaa\nregion=us-east-1\nkey={missing_key}\nsg=sg-stub-000\n")
+    res = _run(AWS_IDLE_STOP, [], bin_dir, extra_env={"AWS_GPU_STATE_FILE": str(state_dir / ".aws_gpu")},
+               tmp_path=tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "ec2 stop-instances" not in aws_log.read_text()
+    assert rsync_log.read_text() == ""
+    assert ssh_log.read_text() == "", "no ssh key on hand -- must never even attempt an ssh call"
 
 
 # --------------------------------------------------------------------------------------- guard timer ordering

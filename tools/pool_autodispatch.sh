@@ -18,8 +18,11 @@
 # A job line is a command run on the node, from ~/derisk-pool/sim. Lines starting with # are ignored.
 set -uo pipefail
 ROOT=/home/dant123/Projects/sim
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN tools/ dir (unlike $ROOT above,
+# this follows whichever checkout/worktree is actually running -- used below so the stale-HostName refresh
+# invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
 # shellcheck source=tools/pool_revision_marker.sh
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/pool_revision_marker.sh"
+source "$SELF_DIR/pool_revision_marker.sh"
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
@@ -45,6 +48,38 @@ GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS 
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
+# STALE-HOSTNAME AUTO-REFRESH, DISPATCHER SIDE (2026-09-25 review, LOW: "spec gap"). tools/pool_sync.sh already
+# self-heals a stale ip (research/queue/.aws_<node> exists -> one `aws_pool_node.sh refresh <node>` + retry, see
+# its own header), but THIS dispatcher's own node_is_idle probe never did, even though the spec says every entry
+# point that finds a stale HostName should -- an AWS pool node whose ip changed (every stop/start, no Elastic IP
+# in this feature) between routine syncs stayed unreachable-to-dispatch until the NEXT pool_sync cadence noticed.
+# Overridable so tests never touch the shared production dir/marks.
+AWS_STATE_DIR_FOR_REFRESH="${POOL_AWS_STATE_DIR:-$ROOT/research/queue}"
+STALE_REFRESH_MARK_DIR="${POOL_STALE_REFRESH_MARK_DIR:-$ROOT/research/queue/.pool_stale_refresh}"
+STALE_REFRESH_RATE_S="${POOL_STALE_REFRESH_RATE_S:-300}"   # at most one refresh attempt per node per 5 min --
+# node_is_idle runs on every fill_node poll (POOL_DISPATCH_POLL, default 60s) for every configured node, so an
+# UN-rate-limited refresh would shell out to `aws describe-instances`/`aws ec2` on every single cycle for any
+# node that stays unreachable for a mundane reason (genuinely stopped, network blip) -- rate-limiting keeps this
+# self-heal cheap while still resolving a stale ip well within one routine pool_sync cadence (15 min).
+
+_maybe_refresh_stale_aws_node() {   # _maybe_refresh_stale_aws_node <node> -- called when node_is_idle's ssh
+  # probe fails for a node tools/aws_pool_node.sh manages (a research/queue/.aws_<node> state file exists). Best-
+  # effort, silent on failure (this is a self-heal, not a correctness gate -- node_is_idle already returns 1
+  # either way, so a failed refresh attempt changes nothing about THIS cycle's dispatch decision).
+  local node="$1" state="$AWS_STATE_DIR_FOR_REFRESH/.aws_$node" mark="$STALE_REFRESH_MARK_DIR/$node"
+  [ -f "$state" ] || return 0                                  # not an AWS-managed node -- nothing to refresh
+  grep -q '^# TORN DOWN' "$state" 2>/dev/null && return 0      # torn down -- refreshing a gone node is pointless
+  mkdir -p "$STALE_REFRESH_MARK_DIR" 2>/dev/null
+  if [ -f "$mark" ]; then
+    local last age
+    last=$(stat -c %Y "$mark" 2>/dev/null || stat -f %m "$mark" 2>/dev/null || echo 0)
+    age=$(( $(date +%s) - last ))
+    [ "$age" -lt "$STALE_REFRESH_RATE_S" ] && return 0         # rate-limited -- refreshed too recently
+  fi
+  touch "$mark" 2>/dev/null
+  AWS_POOL_NODE_STATE_FILE="$state" POOL_SSH_CONFIG="$POOL_SSH_CONFIG" \
+    bash "$SELF_DIR/aws_pool_node.sh" refresh "$node" >>"${POOL_STALE_REFRESH_LOG:-/dev/null}" 2>&1
+}
 
 refresh_ssh_f() {
   # Re-evaluate SSH_F EVERY cycle, not once at process start (2026-09-23 fix round). This dispatcher runs as a
@@ -217,7 +252,10 @@ node_is_idle() {
   # main's committed/lifetime-budget tracking + this branch's SSH_F routing), else it is empty and unchanged.
   local raw
   raw=$(timeout 12 ssh "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
-        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || return 1
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -c -f '^[^ ]*/?python[0-9.]* .*-m [r]esearch\.runners' 2>/dev/null | head -1) \$(awk '/MemAvailable/{print int(\$2/1048576)}' /proc/meminfo) \$(ps -eo rss,args | awk '\$2 ~ /python/ && /-m [r]esearch\\.runners/ {if (\$1>m) m=\$1} END{print int((m+1048575)/1048576)}') \$(awk '/MemTotal/{print int(\$2/1048576)}' /proc/meminfo); for e in /proc/[0-9]*/environ; do tr '\\0' '\\n' < \$e 2>/dev/null | grep -E '^POOL_JOB_(ID|MEM_GB)=' | sort | paste -sd' '; done | grep POOL_JOB_ID | sort -u || true" 2>/dev/null) || {
+    _maybe_refresh_stale_aws_node "$node"   # 2026-09-25 review, LOW -- see its own comment above
+    return 1
+  }
   out=$(printf '%s\n' "$raw" | head -1)
   local committed
   committed=$(printf '%s\n' "$raw" | tail -n +2 | committed_from_environ)

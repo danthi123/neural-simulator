@@ -388,6 +388,34 @@ def test_pool_sync_refreshes_a_stale_aws_node_and_retries_once(tmp_path):
     assert "9.9.9.9" in ssh_config.read_text()   # the refresh really rewrote the Host block
 
 
+def test_pool_sync_dry_run_never_triggers_the_stale_hostname_refresh(tmp_path):
+    # LOW (2026-09-25 review): --dry-run promises to "change nothing" (its own header comment), but the
+    # stale-hostname auto-refresh rewrote .pool_ssh_config (+ its .bak) even under --dry-run -- a REAL,
+    # persistent change on a call that exists specifically to make none. Same exact setup as
+    # test_pool_sync_refreshes_a_stale_aws_node_and_retries_once (a node whose refresh WOULD succeed and
+    # rewrite the ip) -- only --dry-run is added -- and the refresh must never even be attempted: no `aws`
+    # call, no ssh_config rewrite, and (since refresh never ran) no retried rsync either.
+    bin_dir, ssh_log = _make_quiet_ssh_stub(tmp_path)
+    rsync_log, counter = _make_rsync_fail_then_succeed_stub(bin_dir, tmp_path, fail_times=1)
+    aws_log = _make_refresh_aws_stub(bin_dir, tmp_path, ip="9.9.9.9")
+
+    aws_state_dir = tmp_path / "state"; aws_state_dir.mkdir()
+    key = tmp_path / "key.pem"; key.write_text("fake key\n")
+    (aws_state_dir / ".aws_pool1").write_text(f"instance=i-aaa\nregion=us-east-1\nkey={key}\nsg=sg-x\n")
+    ssh_config = tmp_path / "pool_ssh_config"   # deliberately does not exist yet
+
+    res = _run(POOL_SYNC, ["--dry-run"], bin_dir, {
+        "POOL_NODES": "pool1",
+        "POOL_SYNC_AWS_STATE_DIR": str(aws_state_dir),
+        "POOL_SSH_CONFIG": str(ssh_config),
+    })
+    assert res.returncode == 0, res.stderr
+    assert aws_log.read_text() == "", "the refresh must never have called `aws` at all under --dry-run"
+    assert not ssh_config.exists(), "--dry-run must not create/rewrite .pool_ssh_config"
+    assert counter.read_text().strip() == "1", "no retry -- the refresh that would have enabled one never ran"
+    assert "UNREACHABLE" in res.stdout
+
+
 def test_pool_sync_reports_unreachable_when_the_refresh_itself_cannot_help(tmp_path):
     # The node has an .aws_<name> state file, but the instance is NOT running (e.g. genuinely stopped) --
     # `refresh` correctly declines to rewrite anything, and pool_sync must still report UNREACHABLE (never
