@@ -229,6 +229,17 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 17:05 OWNER RULINGS + CLEAN-BREAK WORK (owner done gaming, "run stuff at your discretion"):** condensed CLAUDE.md MERGED
+07d75f6f4 (owner approved); memory condense APPLIED (35 notes archived to memory/_archive_2026-09-25/, index 19.4K -> 6.1K chars).
+Rulings, recorded in memory: learning over time is Claude's call -> now IN SCOPE in parallel with scaffold retirement, chosen by
+readiness/cost; single 3090 for now (+3090 plan shelved); merging to main at Claude's discretion (through the gates); feeling-word
+decisions at Claude's discretion. GPU: 128K local-model bake-off queued (profiles qwen38-27b-iq4nl-mtp-128k-q8 / -q4, ce570ab7b;
+results -> tools/local_llm/results/summary.md). Workflow wf_9944d7c2-aca (task wajxrz0pv) finishes the cutoff-interrupted lanes:
+full-suite test-collection regression (two of today's test files switch on the provenance recorder), B2b torn-cell redo (then
+queue the 3 re-runs), awake-replay completion, prioritized-memory design MEDIUMs, pair docs (parked on the owner ruling),
+SlotBinder fast teach, the 8 claim-check corrections, fi + D6 scoring findings (independent re-derivation), and FINAL reviews of
+claim-check r8 / prereg-amendment gate / pool-stall (merge if SOUND, else park). Claude merges each SOUND branch.
+
 **☀️ 16:40 HARVEST (raw results only; verdict findings PARKED for Claude after the reset):** fi (sleep-forgetting after later
 learning, prereg Amendment 6): aggregator reads NO-GO, 3/6 seeds GO (42, 44, 102); sign-flip p 0.0625 both contrasts. Seeds 43 and
 101 fail on the FIRST morning in most arms (plain facts never recalled), which looks like an encoding miss upstream of forgetting;
