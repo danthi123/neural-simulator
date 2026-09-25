@@ -323,6 +323,38 @@ _EXTRA_TURNS += ([("d10w_t%d" % (i + 1), txt, "d10w", i == 0, None, False) for i
                                                           ("d10w_recall%d" % n, _DATC_RECALL, "d10w", False, None,
                                                            False))])
 
+# ── AWAKE-REST GROUPS (label-only; research/runners/_da_tag_capture_chat_probe.py --family arc, branch
+# research/awake-replay-capture; gates in the sleep-replay-capture PREREGISTRATION, Amendment 4) ────────────────────
+# The long-delay telling of 'datl' (a fact ~4 h old at sleep onset), but the waking interval now contains QUIET REST:
+# the body stays awake (the awake mark moves with the clock) and the continuous engine runs a LIGHT idle tick (idle
+# == IDLE_SEC, never sleep-depth) at the end of each rest period, so any idle-tick process -- and the awake-replay
+# bout when BRAIN_AWAKE_REPLAY_CAPTURE is armed -- runs there. Every arm of a group gets the SAME ticks; only flags differ.
+# 'datr'  neutral telling, 4 h of rest (a tick every 5 min = AWAKE_BOUT_H: 48), night, recall.
+# 'datcr' the SALIENT telling, the same 4 h of rest, night, recall.
+# 'datq'  neutral telling, 4 h awake with one rest tick per hour (4), night, recall (the rest-dose point).
+# 'datz'  neutral telling, 3 h awake WITHOUT rest, then 1 h of rest (12 ticks), night, recall (late rest: regrowth).
+_WORLD_AWAKE_REST = "__world_step:awake_rest_4h__"
+_WORLD_AWAKE_REST_HOURLY = "__world_step:awake_rest_hourly_4h__"
+_WORLD_AWAKE_3H = "__world_step:awake_3h__"
+_WORLD_AWAKE_REST_1H = "__world_step:awake_rest_1h__"
+
+
+def _arc_group(prefix, texts, steps):
+    rows = [("%s_t%d" % (prefix, i + 1), txt, prefix, i == 0, None, False) for i, txt in enumerate(texts)]
+    rows += [("%s_%s" % (prefix, name), step, prefix, False, None, False) for name, step in steps]
+    rows += [("%s_night" % prefix, _WORLD_NIGHT, prefix, False, None, False),
+             ("%s_recall" % prefix, _DATC_RECALL, prefix, False, None, False)]
+    return rows
+
+
+_EXTRA_TURNS += (_arc_group("datr", _DATC_NEUTRAL, [("rest", _WORLD_AWAKE_REST)])
+                 + _arc_group("datcr", _DATC_SALIENT, [("rest", _WORLD_AWAKE_REST)])
+                 + _arc_group("datq", _DATC_NEUTRAL, [("rest", _WORLD_AWAKE_REST_HOURLY)])
+                 + _arc_group("datz", _DATC_NEUTRAL, [("awake", _WORLD_AWAKE_3H), ("rest", _WORLD_AWAKE_REST_1H)]))
+# world-step kind -> (hours, rest period in hours or None = awake without rest). 5 min = AWAKE_BOUT_H (reused).
+_AWAKE_STEP_KINDS = {"awake_4h": (4.0, None), "awake_3h": (3.0, None), "awake_rest_4h": (4.0, 5.0 / 60.0),
+                     "awake_rest_hourly_4h": (4.0, 1.0), "awake_rest_1h": (1.0, 5.0 / 60.0)}
+
 # ── D5-CONSOLIDATE / SLEEP-REPLAY DRIVING GROUPS (label-only; used only by load_bearing_fraction's new
 # lbf_rows/learning.py EXTRA_PROBES for "d5-consolidate" / "sleep-replay") ──────────────────────────────────────
 # Both faculties are gated on the SAME idle tick the DA tag-capture groups above already exercise (_WORLD_NIGHT ->
@@ -389,6 +421,10 @@ for _t in _lbf_rows_extra_turns():
         _known_labels.add(_t[0])
 _WORLD_STEPS = {t[0]: "overnight_24h" for t in _EXTRA_TURNS if t[1] == _WORLD_NIGHT}
 _WORLD_STEPS.update({t[0]: "awake_4h" for t in _EXTRA_TURNS if t[1] == _WORLD_AWAKE})   # r2 (label-only groups)
+_WORLD_STEPS.update({t[0]: {_WORLD_AWAKE_REST: "awake_rest_4h", _WORLD_AWAKE_REST_HOURLY: "awake_rest_hourly_4h",
+                            _WORLD_AWAKE_3H: "awake_3h", _WORLD_AWAKE_REST_1H: "awake_rest_1h"}[t[1]]
+                     for t in _EXTRA_TURNS
+                     if t[1] in (_WORLD_AWAKE_REST, _WORLD_AWAKE_REST_HOURLY, _WORLD_AWAKE_3H, _WORLD_AWAKE_REST_1H)})
 _TURN_BY_LABEL.update({t[0]: t for t in _EXTRA_TURNS})
 
 
@@ -399,10 +435,31 @@ def _run_world_step(kind):
     makes it a sleep-depth tick (sleep replay, the Turrigiano pass, the tag-and-capture ledger when armed). Returns a
     trace (no reply: nothing is said)."""
     import time as _time
-    hours = {"overnight_24h": 24.0, "awake_4h": 4.0}[kind]
+    hours = {"overnight_24h": 24.0, "awake_4h": 4.0}[kind] if kind in ("overnight_24h", "awake_4h") \
+        else _AWAKE_STEP_KINDS[kind][0]
     from webapp import server as _S
     from webapp import continuous_engine as _CE
-    if kind == "awake_4h":
+    if kind in _AWAKE_STEP_KINDS and _AWAKE_STEP_KINDS[kind][1] is not None:
+        # (awake-replay-capture) QUIET REST while awake: in each rest period the environment clock moves, every live
+        # ledger is told the body was awake through world-now, then the engine runs ONE light idle tick (idle ==
+        # IDLE_SEC after the last request: never sleep-depth), exactly the tick the server loop would run in a pause.
+        from webapp import da_tag_capture_chat as _DTC
+        period = _AWAKE_STEP_KINDS[kind][1]
+        n_steps = int(round(hours / period))
+        n_ticked = 0
+        for _k in range(n_steps):
+            _DTC.advance_world_clock_h(period)
+            for _c in list(_S._BRAIN_CHATS.values()):
+                _DTC.mark_awake(_c)
+            _last = [v for v in _CE._LAST_REQUEST.values() if v is not None]
+            now = (max(_last) if _last else _time.time()) + _CE.IDLE_SEC
+            n_ticked += int(_CE.tick_idle_sessions(_S._SESSION_MOOD, _S._get_affect_organ, now=now,
+                                                   selfinit_getter=_S._get_selfinit_organ,
+                                                   episodic_getter=_S._get_episodic_organ_existing,
+                                                   chat_getter=_S._get_chat_existing) or 0)
+        return {"world_step": kind, "hours": hours, "rest_period_h": period, "n_rest_ticks": n_steps,
+                "n_session_ticks": n_ticked}
+    if kind in ("awake_4h", "awake_3h"):
         # (r2) the body stays AWAKE: only the environment clock moves and every live session's ledger is told the
         # brain was awake through world-now. No idle tick runs (the engine would read >= SLEEP_IDLE_SEC of idle as
         # sleep). A session without a ledger is untouched.
