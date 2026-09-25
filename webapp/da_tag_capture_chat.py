@@ -25,6 +25,11 @@ SLEEP ROUTE (branch research/sleep-replay-capture, default-OFF `BRAIN_SLEEP_REPL
 due NREM cycle of webapp/sleep_replay_capture.py (SWR reactivation read off the store's own cleanup -> re-tag +
 SWR-coupled D1 drive into the same PRP pool). Flag unset -> never entered.
 
+AWAKE-REST ROUTE (branch research/awake-replay-capture, default-OFF `BRAIN_AWAKE_REPLAY_CAPTURE`): `tick` (the idle tick
+only, never a turn) runs one quiet-rest reactivation bout of webapp/awake_replay_capture.py while the ledger's clock
+says the brain is still awake (read-back -> reactivation-induced early LTP + a fresh tag; no PRP). Flag unset -> never
+entered.
+
 Blocks stored BEFORE the ledger existed (the tiny-demo build-time knowledge) are not managed (`block_offset`): they are
 treated as already-consolidated knowledge. DECLARED.
 
@@ -79,6 +84,11 @@ _WORLD_OFFSET_H = 0.0             # environment clock jump; only the battery's s
 def _replay_capture_enabled() -> bool:
     """`BRAIN_SLEEP_REPLAY_CAPTURE` (default OFF) -- read here so the flag-off path imports nothing new."""
     return os.environ.get("BRAIN_SLEEP_REPLAY_CAPTURE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _awake_replay_enabled() -> bool:
+    """`BRAIN_AWAKE_REPLAY_CAPTURE` (default OFF) -- read here so the flag-off path imports nothing new."""
+    return os.environ.get("BRAIN_AWAKE_REPLAY_CAPTURE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def store_composer(chat):
@@ -213,6 +223,18 @@ class ChatTagCapture:
         comp = store_composer(chat)
         t = max(self.now_h(), self.ledger.t)
         self._catch_up(comp, t)
+        # AWAKE-REST REPLAY (default-OFF `BRAIN_AWAKE_REPLAY_CAPTURE`, webapp/awake_replay_capture.py): on an idle tick
+        # while the ledger's own clock says the brain is still awake, one quiet-rest reactivation bout (at most one per
+        # AWAKE_BOUT_H). Only the idle tick reaches here (a turn is not rest). Flag unset -> never entered.
+        if _awake_replay_enabled() and self.n_turns > 0:
+            from webapp import awake_replay_capture as _ARC
+            if getattr(self, "_arc", None) is None:
+                self._arc = _ARC.AwakeReplayCapture(self.seed, rng_ctx=_private_rng)
+            t_ref = self.t_turn
+            aw = getattr(self, "awake_until_h", None)
+            if aw is not None and aw > t_ref:
+                t_ref = aw
+            self._arc.maybe_bout(self.ledger, comp, t_ref, t)
         return t
 
     def summary(self) -> dict:
@@ -226,6 +248,8 @@ class ChatTagCapture:
             out["sleep_replay_capture"] = self._src.summary()
         if getattr(self, "awake_until_h", None) is not None:  # only ever set by the battery's awake world step (r2)
             out["awake_until_h"] = self.awake_until_h
+        if getattr(self, "_arc", None) is not None:          # only ever set with BRAIN_AWAKE_REPLAY_CAPTURE armed
+            out["awake_replay_capture"] = self._arc.summary()
         return out
 
 

@@ -471,14 +471,27 @@ class SynapticTagCaptureLedger:
                 blk["z"] = np.zeros(D, dtype=np.float64)
                 blk.pop("h_rep", None)         # a fresh increment carries no replay tag (no-op when never replayed)
                 blk.pop("t_rep", None)
+                blk.pop("e_rep", None)         # ... nor an awake-replay early phase (no-op when never replayed awake)
+                blk.pop("t_erep", None)
                 n_rew += 1
             blk["last_w"] = cur
         self.n_external_rescales += n_scale
         self.n_external_rewrites += n_rew
         return {"rescaled": n_scale, "rewritten": n_rew}
 
-    def weight_factor(self, blk: dict) -> np.ndarray:
+    def early_expression(self, blk: dict) -> float:
+        """The block's early-phase (E-LTP) expression at the ledger's clock: the write's decaying E-LTP, or -- only for
+        a block an awake-replay bout re-potentiated (webapp/awake_replay_capture.py, default-OFF
+        BRAIN_AWAKE_REPLAY_CAPTURE) -- the larger of that and the bout's re-induced E-LTP, decaying with the SAME
+        tau_early. A block never replayed awake carries no "e_rep" key -> the write's value, bit for bit."""
         e = math.exp(-max(0.0, self.t - blk["t_w"]) / self.tau_early_h)
+        e_rep = blk.get("e_rep")
+        if e_rep is not None:
+            e = max(e, e_rep * math.exp(-max(0.0, self.t - blk["t_erep"]) / self.tau_early_h))
+        return e
+
+    def weight_factor(self, blk: dict) -> np.ndarray:
+        e = self.early_expression(blk)
         return e + blk["z"] * (1.0 - e)
 
     def _write(self, comp) -> None:
@@ -512,4 +525,8 @@ class SynapticTagCaptureLedger:
             if b.get("h_rep") is not None:
                 rec["tag_rep_mean"] = float(np.mean(b["h_rep"]))
                 rec["t_rep"] = float(b["t_rep"])
+            if b.get("e_rep") is not None:            # awake-replay early phase (BRAIN_AWAKE_REPLAY_CAPTURE ON only)
+                rec["e_rep"] = float(b["e_rep"])
+                rec["t_erep"] = float(b["t_erep"])
+                rec["early_expression_now"] = float(self.early_expression(b))
         return out

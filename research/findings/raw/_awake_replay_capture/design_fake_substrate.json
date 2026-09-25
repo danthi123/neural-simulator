@@ -1,0 +1,317 @@
+{
+  "what": "fake-substrate design sweep: a neutral fact told 4 h before sleep onset, with quiet-rest awake replay bouts at various schedules, then one night of the sleep route",
+  "substrate": "FAKE (Hill read-back fitted to measured seed-42 (ratio, R) pairs; linear D1); not brain evidence",
+  "hill_fit": {
+    "Rmax": 0.5093192874323118,
+    "c": 0.9222631904648466,
+    "n": 2.1069464979187074,
+    "max_abs_err_on_measured": 0.004002839833070036,
+    "measured_pairs": [
+      [
+        0.1414,
+        0.005609012
+      ],
+      [
+        1.1151,
+        0.306307325
+      ],
+      [
+        1.1389,
+        0.31162051
+      ],
+      [
+        1.292,
+        0.34171585
+      ],
+      [
+        1.3823,
+        0.356535268
+      ],
+      [
+        1.4612,
+        0.367943946
+      ],
+      [
+        2.0469,
+        0.426299712
+      ],
+      [
+        2.3961,
+        0.447724412
+      ],
+      [
+        2.654,
+        0.460067608
+      ],
+      [
+        2.7467,
+        0.466426613
+      ]
+    ]
+  },
+  "R_FULL": 2.19,
+  "rows": {
+    "no_rest": {
+      "rest_period_h": null,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 0,
+      "early_expression_at_4h": 0.069483,
+      "R_at_sleep_onset": 0.009972846,
+      "da_swr": 0.507379906,
+      "frac_z_gt_half_28h": 0.0,
+      "ratio_28h": 0.0,
+      "R_28h": 0.0,
+      "R_first_bouts": [],
+      "R_last_bout": null
+    },
+    "rest_every_5min": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 48,
+      "early_expression_at_4h": 0.930665,
+      "R_at_sleep_onset": 0.420415894,
+      "da_swr": 0.811107761,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.430985135,
+        0.426523104,
+        0.423917633
+      ],
+      "R_last_bout": 0.420415894
+    },
+    "rest_every_10min": {
+      "rest_period_h": 0.16666666666666666,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 24,
+      "early_expression_at_4h": 0.86291,
+      "R_at_sleep_onset": 0.408116849,
+      "da_swr": 0.802006468,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.42290807,
+        0.413027246,
+        0.407021076
+      ],
+      "R_last_bout": 0.398289332
+    },
+    "rest_every_15min": {
+      "rest_period_h": 0.25,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 16,
+      "early_expression_at_4h": 0.793288,
+      "R_at_sleep_onset": 0.392974539,
+      "da_swr": 0.790801159,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.414182018,
+        0.397859107,
+        0.387522613
+      ],
+      "R_last_bout": 0.370654423
+    },
+    "rest_every_20min": {
+      "rest_period_h": 0.3333333333333333,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 12,
+      "early_expression_at_4h": 0.71804,
+      "R_at_sleep_onset": 0.373062605,
+      "da_swr": 0.776066328,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.404792579,
+        0.380967307,
+        0.365251545
+      ],
+      "R_last_bout": 0.33559726
+    },
+    "rest_every_30min": {
+      "rest_period_h": 0.5,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 8,
+      "early_expression_at_4h": 0.548409,
+      "R_at_sleep_onset": 0.309722276,
+      "da_swr": 0.729194484,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.384004651,
+        0.342065705,
+        0.312237249
+      ],
+      "R_last_bout": 0.24310658
+    },
+    "rest_every_60min": {
+      "rest_period_h": 1.0,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 4,
+      "early_expression_at_4h": 0.226352,
+      "R_at_sleep_onset": 0.09873657,
+      "da_swr": 0.573065062,
+      "frac_z_gt_half_28h": 0.0,
+      "ratio_28h": 0.0,
+      "R_28h": 0.0,
+      "R_first_bouts": [
+        0.307062293,
+        0.198436421,
+        0.120833463
+      ],
+      "R_last_bout": 0.066499755
+    },
+    "rest_every_5min_awake_lesion": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": true,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 48,
+      "early_expression_at_4h": 0.069483,
+      "R_at_sleep_onset": 0.009972846,
+      "da_swr": 0.507379906,
+      "frac_z_gt_half_28h": 0.0,
+      "ratio_28h": 0.0,
+      "R_28h": 0.0,
+      "R_first_bouts": [
+        0.430985135,
+        0.42290807,
+        0.414182018
+      ],
+      "R_last_bout": 0.011184066
+    },
+    "rest_every_5min_sleep_lesion": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 0.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": true,
+      "da_at_telling": 0.5,
+      "n_bouts": 48,
+      "early_expression_at_4h": 0.930665,
+      "R_at_sleep_onset": 0.420415894,
+      "da_swr": 0.5,
+      "frac_z_gt_half_28h": 0.0,
+      "ratio_28h": 0.0,
+      "R_28h": 0.0,
+      "R_first_bouts": [
+        0.430985135,
+        0.426523104,
+        0.423917633
+      ],
+      "R_last_bout": 0.420415894
+    },
+    "rest_first_hour_only": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 0.0,
+      "rest_to_h": 1.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 12,
+      "early_expression_at_4h": 0.125962,
+      "R_at_sleep_onset": 0.033295993,
+      "da_swr": 0.524639035,
+      "frac_z_gt_half_28h": 0.0,
+      "ratio_28h": 0.0,
+      "R_28h": 0.0,
+      "R_first_bouts": [
+        0.430985135,
+        0.426523104,
+        0.423917633
+      ],
+      "R_last_bout": 0.42043774
+    },
+    "rest_last_hour_only": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 3.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 13,
+      "early_expression_at_4h": 0.921379,
+      "R_at_sleep_onset": 0.418854655,
+      "da_swr": 0.809952445,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.042682958,
+        0.060673515,
+        0.089462011
+      ],
+      "R_last_bout": 0.417657841
+    },
+    "rest_last_2h_only": {
+      "rest_period_h": 0.08333333333333333,
+      "rest_from_h": 2.0,
+      "rest_to_h": 4.0,
+      "awake_lesion": false,
+      "sleep_lesion": false,
+      "da_at_telling": 0.5,
+      "n_bouts": 25,
+      "early_expression_at_4h": 0.930663,
+      "R_at_sleep_onset": 0.420415584,
+      "da_swr": 0.811107532,
+      "frac_z_gt_half_28h": 1.0,
+      "ratio_28h": 2.19,
+      "R_28h": 0.438434,
+      "R_first_bouts": [
+        0.138270716,
+        0.202442643,
+        0.273781607
+      ],
+      "R_last_bout": 0.420415349
+    }
+  },
+  "captured_by_28h": {
+    "no_rest": false,
+    "rest_every_5min": true,
+    "rest_every_10min": true,
+    "rest_every_15min": true,
+    "rest_every_20min": true,
+    "rest_every_30min": true,
+    "rest_every_60min": false,
+    "rest_every_5min_awake_lesion": false,
+    "rest_every_5min_sleep_lesion": false,
+    "rest_first_hour_only": false,
+    "rest_last_hour_only": true,
+    "rest_last_2h_only": true
+  }
+}
