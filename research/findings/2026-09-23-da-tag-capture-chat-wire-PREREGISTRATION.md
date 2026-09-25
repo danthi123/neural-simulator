@@ -450,3 +450,40 @@ mismatch. No `sim/` edit, no default flipped, no gate/arm/threshold from Amendme
 **Governs:** any reader of this document's byte-identical-off status -- it is NOT verified at any pin as of this
 amendment, and a future `--offcheck` run must be read against this amendment's stale-pin caution, not treated as
 a fresh independent verdict without first checking whether `PINNED_SHA` has been re-derived properly.
+
+### Amendment 5 (2026-09-24) — `ordinary_fact_flip_forgetting` MEASURED True on seed 42 (local smoke, LTM off):
+### board #227 item (c) is CONFIRMED, not just inferred from code
+
+**seed-waiver: seed 42 only, a local smoke run under this document's own established convention ("Local 1-seed
+smoke (seed 42, `--ltm off`) under `tools/mem_ok.sh 12` + `tools/memcap.sh 12`" -- see "Compute" above), not a
+6-seed generalization claim.** `research/findings/raw/_da_tag_capture_chat_ordinary_check/seed42.json` (a
+fresh seed-42 run of the Amendment-3-registered arms, `--ltm off`, output to its OWN directory so the already-
+committed, already-scored `research/findings/raw/_da_tag_capture_chat/seed*.json` files are untouched):
+`seed_verdict: GO` (all of `G0`-`G6`, `G_isolation_gamma_consistent` hold, `n_arm_errors: 0` -- consistent with,
+not a re-derivation of, the 6-seed GO finding's own already-scored result) and **`ordinary_fact_flip_forgetting:
+True`**: `neu_night_off_intact` (today's production default, `BRAIN_DA_TAG_CAPTURE=0`) reads `correct` --
+the plainly-told fact IS recalled the next day under the code the owner's chat runs today -- while
+`neu_night_intact` (the SAME fact, SAME telling, `BRAIN_DA_TAG_CAPTURE=1`) reads `abstain`.
+
+**This directly measures, rather than infers from code, board #227 item (c)'s answer.** Amendment 3's own
+"declared reasoning" section argued from `tiered_fact_store.py`/`da_tag_capture_chat.py`/`one_brain_composer.py`
+that flipping the flag would cost an ordinary fact its overnight survival; this seed's `neu_night_off_intact`
+vs `neu_night_intact` contrast is the SAME conversation, SAME seed, run twice (flag off vs on) through the real
+`/api/brain-chat` handler, and shows the cost directly. Per Amendment 3, this is the mechanism's OWN by-design
+selectivity (behavioral tagging), not a defect in the wiring -- `G3_neutral_not_kept` already required exactly
+this abstention as a GO condition. What Amendment 3 added, and this run confirms, is that the SAME fact would
+NOT have been lost under today's shipped default -- the flip's real cost, made visible rather than assumed.
+
+**What this does NOT show.** One seed, LTM off (the buffer-only arm registered by the original prereg's own
+declared deviation, still separate from the flip-deciding LTM-ON arm registered by Amendment 3 point 1, not
+yet run). Per Amendment 3's own declared reasoning (LTM attachment cannot change what the ledger manages -- the
+buffer only), this reading is expected, not merely hoped, to transfer to LTM-on and to the other 5 seeds; both
+remain to be checked directly, not assumed, once the LTM-ON batch (Amendment 3 point 1, mem_gb TBD from a
+measured seed-42 peak) lands.
+
+**What this amendment does NOT change:** the gates, arms, or thresholds from Amendments 1-4 -- purely reports a
+measured result of code Amendment 3 already registered. No `sim/` edit, no default flipped, no runner code
+changed in this amendment.
+
+**Governs:** any reader of board #227 -- item (c) is CONFIRMED (not merely argued) MISSING on this one seed at
+LTM off; the LTM-on transfer and the other 5 seeds remain open, per Amendment 3's own compute plan.
