@@ -19,8 +19,13 @@ This file contains NO copy of any gate's logic. It IMPORTS and CALLS the real mo
     tools/githooks/pre-commit invokes. run_all's verdict is authoritative here; a per-gate pass is
     derived from the same `discover()` modules purely to attach fix scaffolding, and is cross-checked
     against run_all every run (a DRIFT line prints if they ever disagree).
-  * GATE 2 — claims: `tools.claim_check.check`, the SAME module the hook shells out to. Its stdout is
-    captured to name the specific unsupported numbers; the verdict is the module's own return code.
+  * GATE 2 — claims: `tools.claim_check._scan`, the SAME structured, printing-free computation the hook's
+    `claim_check.check()` and the registry gate `tools/gates/claim_check_coverage.py` both call. This reads its
+    `unsupported`/`missing`/`low_coverage` fields directly (2026-09-25 round 2: previously ran `check(verbose=
+    True)` under `redirect_stdout` and re-parsed the PRINTED lines with regexes -- functionally correct but one
+    accidental print-format change away from silently going blind; consuming the structured result cannot drift
+    from what the module actually computed). The verdict is still the module's own return code, recomputed here
+    from the same fields `check()` uses, so it cannot disagree with `check()`.
   * GATE 4 — new-finding status: the hook's 2-line inline test (first line `---`, a `status:` field).
     It is not a module, so it is reproduced faithfully and labelled as such.
 
@@ -32,9 +37,7 @@ finding itself — so they are intentionally out of scope here (noted, not run).
 from __future__ import annotations
 
 import argparse
-import contextlib
 import glob
-import io
 import json
 import os
 import re
@@ -52,11 +55,6 @@ import tools.claim_check as claim_check            # the SAME GATE 2 module the 
 _ART_FILE_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json)")
 # A bare path token (may be a directory) — used only for frontmatter `artifacts:` items and existence-tested.
 _PATH_TOKEN_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+/?")
-
-# parsed claim_check stdout
-_CC_LINE_RE = re.compile(r"⛔ line\s+(\d+)\s+([-\d.eE+]+)\s+not in any cited artifact\s*\|\s*(.*)")
-_CC_MISS_RE = re.compile(r"⛔ MISSING\s+(.*)")
-_CC_LOWCOV_RE = re.compile(r"⛔ LOW COVERAGE:\s*(.*)")
 
 # provenance sources to mine for a backend value (device_and_cost scaffolding)
 _BACKEND_IN_TEXT = re.compile(r"SIM_BACKEND\s*[=:]\s*['\"]?(cupy|numpy|cuda|gpu|cpu)['\"]?", re.I)
@@ -171,27 +169,25 @@ def cited_artifacts(finding_path):
 
 
 # ---------------------------------------------------------------------------------------------------
-# GATE 2 — claim_check (reuse the module; capture its stdout for the specific unsupported numbers)
+# GATE 2 — claim_check (reuse the module's structured `_scan()` result directly -- 2026-09-25 round 2: this
+# used to run `claim_check.check(verbose=True)` under `redirect_stdout` and re-parse the PRINTED lines with
+# regexes; `_scan()` is the exact same printing-free computation `check()` itself calls, so this now reads the
+# fields `check()` would print without depending on its print formatting ever staying stable.)
 # ---------------------------------------------------------------------------------------------------
 def run_claim_check(finding_path):
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        rc = claim_check.check(finding_path, verbose=True)
-    text = buf.getvalue()
-    unsupported, missing, low_coverage = [], [], []
-    for ln in text.split("\n"):
-        m = _CC_LINE_RE.search(ln)
-        if m:
-            unsupported.append((int(m.group(1)), m.group(2), m.group(3).strip()))
-            continue
-        m = _CC_MISS_RE.search(ln)
-        if m:
-            missing.append(m.group(1).strip())
-            continue
-        m = _CC_LOWCOV_RE.search(ln)
-        if m:
-            low_coverage.append(m.group(1).strip())
-    return rc, unsupported, missing, low_coverage, text
+    r = claim_check._scan(finding_path)
+    unsupported = list(r["unsupported"])           # [(lineno, val: float, ctx), ...]
+    missing = list(r["missing"])                    # [path, ...]
+    low_coverage = []
+    if r["low_coverage"]:
+        checked, total = r["checked"], r["total_numeric"]
+        low_coverage.append(
+            "only %d/%d (%.0f%%) numeric claim(s) were actually checked -- the rest were suppressed by "
+            "markers. Verify the <!--derived--> markers are not exempting a whole section; a derived block "
+            "should cover the specific numbers it derives, not surrounding prose."
+            % (checked, total, 100.0 * checked / total if total else 0.0))
+    rc = 1 if (missing or unsupported or r["low_coverage"]) else 0
+    return rc, unsupported, missing, low_coverage, r
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -273,7 +269,9 @@ def _seed_means(artifact_paths):
 
 def scaffold_claim_check(finding_path, unsupported, missing, artifact_paths, do_fix, emit):
     """A number in no cited artifact -> cite the file that holds it, mark <!--derived-->, or (the single
-    most common miss) it is a MEAN over per-seed files that lives in no per-seed file."""
+    most common miss) it is a MEAN over per-seed files that lives in no per-seed file.
+    `unsupported` items are `(lineno, val, ctx)` straight from `claim_check._scan()` -- `val` is already a
+    float (the module's own parsed measurement), not a re-parsed string."""
     if missing:
         emit("    FIX: these cited paths do not exist on disk — correct the path or add the artifact:")
         for m in missing[:8]:
@@ -282,26 +280,21 @@ def scaffold_claim_check(finding_path, unsupported, missing, artifact_paths, do_
         return
     means = _seed_means(artifact_paths)
     mean_hits = []
-    for lineno, valstr, ctx in unsupported:
-        try:
-            val = float(valstr)
-        except ValueError:
-            val = None
+    for lineno, val, ctx in unsupported:
         matched_key = None
-        if val is not None:
-            for k, (mean, vals) in means.items():
-                if abs(val - mean) <= max(5e-6, 1e-4 * abs(val)):
-                    matched_key = (k, mean, vals)
-                    break
+        for k, (mean, vals) in means.items():
+            if abs(val - mean) <= max(5e-6, 1e-4 * abs(val)):
+                matched_key = (k, mean, vals)
+                break
         if matched_key:
             k, mean, vals = matched_key
             mean_hits.append((lineno, val, k, mean, vals))
-            emit("    line %-4s %-12s looks like the MEAN of `%s` over the cited per-seed files "
-                 "(%s) — which lives in NO per-seed file." % (lineno, valstr, k,
+            emit("    line %-4s %-12g looks like the MEAN of `%s` over the cited per-seed files "
+                 "(%s) — which lives in NO per-seed file." % (lineno, val, k,
                  "/".join("%.4g" % x for x in vals)))
         else:
-            emit("    line %-4s %-12s is in no cited artifact. Either cite the artifact FILE that holds "
-                 "it (a path with a '/'), or mark it <!--derived--> inline on the same line." % (lineno, valstr))
+            emit("    line %-4s %-12g is in no cited artifact. Either cite the artifact FILE that holds "
+                 "it (a path with a '/'), or mark it <!--derived--> inline on the same line." % (lineno, val))
     if mean_hits:
         agg_rel = _suggest_aggregate_path(finding_path)
         emit("    FIX (the aggregate miss): means over seeds belong in an aggregate JSON you cite.")
@@ -476,7 +469,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
              % len(arts_skipped))
 
     # GATE 2 — claims
-    cc_rc, cc_unsupported, cc_missing, cc_low_coverage, _cc_text = run_claim_check(finding_path)
+    cc_rc, cc_unsupported, cc_missing, cc_low_coverage, _cc_scan = run_claim_check(finding_path)
     # GATE 4 — status
     g4_ok = status_present(finding_path)
     # GATE 5 — registry (authoritative verdict) + per-gate pass (grouping/scaffolding)

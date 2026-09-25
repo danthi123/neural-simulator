@@ -43,6 +43,36 @@ artifact it cited (0.17, 0.1625). THE FIX, two layers:
 `selftest()` demonstrates both directions: a doc with the ORIGINAL failure shape (marker after headings, wrong
 numbers in the sections that follow) still FAILS; a doc with a small, correctly paragraph-scoped derived table
 still PASSES.
+
+ROUND 2 (found 2026-09-25, review of the above fix -- SOUND-WITH-ISSUES): the paragraph-scope fix above still
+had three exploitable holes, all in the SAME direction (a marker's scope outliving the unit it was meant to
+cover). Fixed here, each with its own selftest case:
+  3. HEADING LEVEL: the close-on-heading check only matched a literal `## ` (level-2) line. A marker followed,
+     with no blank line, by a `### ` (or `#`, `#### ` ... any other level) subheading and then a wrong number
+     was never closed by that subheading, so the wrong number stayed suppressed. FIX: `HEADING_RE` now matches
+     ANY heading level (`#{1,6}` followed by whitespace or end-of-line); a heading whose text starts with
+     "derived" (any level, not only `## `) opens the section mechanism, and every OTHER heading, at any level,
+     closes both mechanisms.
+  4. UNIT BOUNDARY WITHOUT A BLANK LINE: scope only closed at a blank line, a heading, or an explicit close --
+     so a marker, a short derived table, and then a wrong number with NO blank line before it (the table simply
+     ends and prose resumes) stayed inside the block, because nothing but a blank line ever ended it. FIX: the
+     block now tracks what KIND of unit it opened on its first content line -- a TABLE (a run of `|`-prefixed
+     lines) or a PARAGRAPH (everything else) -- and closes at that unit's OWN boundary even with no blank line:
+     a table ends at its first line that does not start with `|`; a paragraph ends at a blank line, OR at a
+     line that opens a new markdown block on its own (a list item `-`/`*`/`+`/`N.`/`N)`, a blockquote `>`, a
+     horizontal rule, a fenced code block delimiter, or a table row `|` -- any of these is unambiguously a NEW
+     sentence-block, not a continuation of the paragraph the marker opened. The line that closes the unit is
+     itself OUTSIDE it and is checked normally, not suppressed.
+  5. CLOSE MARKER SHARING A LINE: `<!--/derived-->` only closed scope when it sat ALONE on its line -- a close
+     marker with trailing content on the SAME line (e.g. a derived paragraph's last sentence immediately
+     followed by `<!--/derived--> The real number was 0.999.`) never matched the alone-on-a-line check, so the
+     block stayed open and the trailing number stayed suppressed. FIX: the close marker now works ANYWHERE on a
+     line. Text on the line BEFORE the marker is still accounted under whatever scope was active up to that
+     point (it was inside the block); text AFTER the marker on the SAME line is normal content and IS checked
+     against the cited artifacts, exactly as if it started a new line right after the close.
+`selftest()` carries one adversarial case per hole (3/4/5): each reproduces the exploit shape with a WRONG
+number that must be caught (FAIL), verified to actually fail against the pre-round-2 logic before this fix
+landed.
 """
 from __future__ import annotations
 
@@ -64,19 +94,45 @@ VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 DERIVED_MARK = "<!--derived-->"
 DERIVED_CLOSE = "<!--/derived-->"          # explicit close, for a legitimate derived block wider than one paragraph
 
+# A markdown heading at ANY level (round 2, hole #3: only a literal `## ` used to close scope, so a `### `
+# subheading -- or any level other than exactly 2 -- right after a marker never closed it).
+HEADING_RE = re.compile(r"^#{1,6}(?:\s|$)")
+# A heading whose own text starts with "derived", at any level -- opens the SECTION mechanism (until the next
+# heading of any kind), same role the old literal `## derived` check played, generalized to any level.
+DERIVED_HEADING_RE = re.compile(r"^#{1,6}\s+derived\b", re.I)
+# Markdown constructs that start a new block-level unit on their own -- round 2, hole #4: a standalone marker's
+# PARAGRAPH ends at any of these even with no blank line before them, because each one is unambiguously a new
+# "sentence-block", not a continuation of the paragraph/table the marker opened.
+_LIST_ITEM_RE = re.compile(r"^(?:[-*+]|\d+[.)])(?:\s|$)")
+_BLOCKQUOTE_RE = re.compile(r"^>")
+_HRULE_RE = re.compile(r"^(?:-{3,}|\*{3,}|_{3,})\s*$")
+_FENCE_RE = re.compile(r"^(?:`{3,}|~{3,})")
+
+
+def _ends_open_paragraph(stripped):
+    """True if `stripped` starts a markdown block-level construct of its own -- ending an open PARAGRAPH
+    block even with no blank line separating them (a table row, a list item, a blockquote, a horizontal
+    rule, or a fenced code block). A TABLE block's own end rule is simpler and lives inline in `_scan`
+    (its first non-`|` line)."""
+    return bool(stripped.startswith("|") or _LIST_ITEM_RE.match(stripped) or _BLOCKQUOTE_RE.match(stripped)
+                or _HRULE_RE.match(stripped) or _FENCE_RE.match(stripped))
+
 # A non-synthesis doc that examined this fraction or less of its own numeric claims is treated the same as
 # examining ZERO of them -- the 2026-09-25 incident's ratio was 0/~50 (0%), but the failure mode is "suppressed
 # almost everything", not literally "suppressed everything".
 MIN_CHECK_FRACTION = 0.05
-# ... AND ONLY when the doc has at least this many numeric claims in total. CALIBRATED, not guessed: a
-# checked==0-of-everything retro-scan over the 353 `research/findings/*.md` added since 2026-09-01 (2026-09-25)
-# found 71 documents that are ENTIRELY, LEGITIMATELY derived (a short diagnosis note built purely from
-# already-published ratios/deltas/percentages, correctly all-marked) -- up to 39 numeric claims, 0 checked, by
-# design, not by error. A blanket "checked==0 fails" rule would have blocked every one of them. The real incident
-# examined 0 of ~50 numeric claims in a SUBSTANTIAL document (336 candidate artifact values, ~43-53 claims in the
-# doc itself). This floor sits just above the largest legitimate all-derived doc in the corpus (39) and well
-# below the incident's scale, so it passes every real 2026-09-01+ document while still catching the observed
-# shape (a large document reporting essentially nothing checked). Retro-scan: see the 2026-09-25 branch notes.
+# ... AND ONLY when the doc has at least this many numeric claims in total. CALIBRATED, not guessed -- and
+# calibrated on a SPECIFIC, DATED population: a checked==0-of-everything retro-scan over the 353
+# `research/findings/*.md` added since 2026-09-01 (2026-09-25) found 71 documents that are ENTIRELY,
+# LEGITIMATELY derived (a short diagnosis note built purely from already-published ratios/deltas/percentages,
+# correctly all-marked) -- up to 39 numeric claims, 0 checked, by design, not by error. A blanket "checked==0
+# fails" rule would have blocked every one of them. The real incident examined 0 of ~50 numeric claims in a
+# SUBSTANTIAL document (336 candidate artifact values, ~43-53 claims in the doc itself). This floor (40) sits
+# just above the largest legitimate all-derived doc in that corpus (39) and well below the incident's scale, so
+# it passes every real 2026-09-01+ document while still catching the observed shape (a large document reporting
+# essentially nothing checked). Retro-scan: see the 2026-09-25 branch notes. RECALIBRATE if a future corpus scan
+# (a different date cutoff, or the corpus grown much larger) finds a legitimate all-derived doc above 39 claims
+# -- this constant is an empirical ceiling over the 2026-09-01..2026-09-25 population, not a law.
 LOW_COVERAGE_MIN_TOTAL = 40
 
 
@@ -156,71 +212,103 @@ def _scan(doc_path, tol=None):
 
     unsupported, checked = [], 0
     suppressed = {"section": 0, "block": 0, "inline": 0, "synthesis": 0}
-    in_section = False     # a `## Derived` HEADING section -- deliberately scoped until the next heading
-    in_block = False       # a standalone marker's PARAGRAPH scope -- closes at a blank line/heading/close-marker
-    block_has_content = False  # blank lines BETWEEN the marker and its paragraph (common authoring style: the
-    # marker sits alone, then a blank line for visual separation, THEN the derived paragraph/table) do not
-    # themselves end the block -- only a blank line AFTER real content has started does. Corpus-measured
-    # (2026-09-25 retro-scan): treating the marker's OWN following blank line as an immediate close broke this
-    # exact, common, legitimate pattern in real findings (e.g. a `<!--derived-->` line, a blank line, THEN the
-    # paragraph it covers) with no security benefit -- the incident shape is a scope that outlives ONE paragraph,
-    # not a blank line existing at all near the marker.
-    for i, ln in enumerate(lines, 1):
-        stripped = ln.strip()
+    in_section = False     # a "derived" HEADING section (any level) -- deliberately scoped until the next heading
+    in_block = False       # a standalone marker's PARAGRAPH/TABLE scope -- closes at ITS OWN unit boundary
+    block_kind = None      # None (not yet started) | "table" | "para" -- set from the block's OWN first content
+    # line (round 2, hole #4): a table (a run of `|`-prefixed lines) closes at its first non-`|` line; a
+    # paragraph closes at a blank line OR the next line that opens a markdown block of its own (list item,
+    # blockquote, rule, fence, or a table row) -- not only at a blank line. Blank lines BETWEEN the marker and
+    # its paragraph (common authoring style: the marker sits alone, then a blank line for visual separation,
+    # THEN the derived paragraph/table) do not themselves end the block -- only a blank line AFTER real content
+    # has started does (2026-09-25 retro-scan: treating the marker's own following blank line as an immediate
+    # close broke this exact, common, legitimate pattern in real findings).
 
-        # Heading transitions. A `## Derived` heading opens the section mechanism; ANY OTHER `## ` heading ends
-        # both mechanisms -- ending `in_block` here too is a safety net beyond the blank-line scope below, for a
-        # marker block that is never followed by a blank line before the next heading.
-        if stripped.lower().startswith("## derived"):
-            in_section = True
-            in_block = False
-            continue
-        if ln.startswith("## "):
-            in_section = False
-            in_block = False
-
-        # An explicit close ends a marker block immediately, for a legitimately-derived block that spans more
-        # than one paragraph (e.g. a table followed directly by an explanatory line, no blank line between).
-        if stripped == DERIVED_CLOSE:
-            in_block = False
-            continue
-        # A marker ALONE on a line opens PARAGRAPH scope -- THE FIX (2026-09-25): this used to open scope until
-        # the next heading, which let one marker suppress whole sections. It now closes at the next blank line
-        # AFTER its paragraph/table has started (below), the next heading (above), or `<!--/derived-->` (above)
-        # -- whichever comes first.
-        if stripped == DERIVED_MARK:
-            in_block = True
-            block_has_content = False
-            continue
-        # A blank line BEFORE any content is just spacing between the marker and its paragraph (tolerated). A
-        # blank line AFTER content has started ends the paragraph/table -- and with it, the block's scope.
-        if in_block and stripped == "":
-            if block_has_content:
-                in_block = False
-            continue
-
+    def _reason_for(seg):
+        """The suppression reason for `seg` under the CURRENT (already-updated) state -- shared between the
+        main per-line path and the mid-line close-marker split below, so both cannot disagree."""
         if in_section:
-            reason = "section"
-        elif in_block:
-            reason = "block"
-            block_has_content = True
-        elif DERIVED_MARK in ln:
-            reason = "inline"
-        elif synthesis:
-            reason = "synthesis"
-        else:
-            reason = None
+            return "section"
+        if in_block:
+            return "block"
+        if DERIVED_MARK in seg:
+            return "inline"
+        if synthesis:
+            return "synthesis"
+        return None
 
+    def _account(seg, lineno, reason):
+        nonlocal checked
         if reason is not None:
-            suppressed[reason] += len(NUM_RE.findall(ln))
-            continue
-
-        for m in NUM_RE.finditer(ln):
+            suppressed[reason] += len(NUM_RE.findall(seg))
+            return
+        for m in NUM_RE.finditer(seg):
             val = float(m.group(1))
             checked += 1
             eps = tol if tol is not None else max(5e-6, 1e-4 * abs(val))
             if not any(abs(val - a) <= eps for a in nums):
-                unsupported.append((i, val, ln.strip()[:88]))
+                unsupported.append((lineno, val, seg.strip()[:88]))
+
+    for i, ln in enumerate(lines, 1):
+        stripped = ln.strip()
+
+        # Heading transitions, at ANY level (round 2, hole #3: a literal `## ` used to be the only heading that
+        # closed scope, so a `### ` subheading -- or any level but 2 -- right after a marker never closed it).
+        # A heading whose text starts with "derived" opens the section mechanism; every OTHER heading, at any
+        # level, ends both mechanisms -- ending `in_block` here too is a safety net beyond the unit-boundary
+        # check below, for a marker block never followed by a blank line before the next heading.
+        if DERIVED_HEADING_RE.match(stripped):
+            in_section = True
+            in_block = False
+            block_kind = None
+            continue
+        if HEADING_RE.match(stripped):
+            in_section = False
+            in_block = False
+            block_kind = None
+            # no `continue`: the heading line's own text still falls through below, same as before round 2.
+
+        # An explicit close ends a marker block -- round 2, hole #5: it used to require sitting ALONE on its
+        # line, so `<!--/derived--> trailing prose` left the block open and suppressed the trailing content. It
+        # now matches ANYWHERE on a line: text before the marker is accounted under the scope active up to this
+        # point (it was still inside the block); text after it is normal content, checked like any other line.
+        if DERIVED_CLOSE in ln:
+            before, _, after = ln.partition(DERIVED_CLOSE)
+            _account(before, i, _reason_for(before))
+            in_block = False
+            block_kind = None
+            if after.strip() == "":
+                continue
+            ln, stripped = after, after.strip()
+            # falls through: `after` is processed exactly like a normal line below.
+
+        # A marker ALONE on a line opens the block, with UNDETERMINED kind until its first content line.
+        if stripped == DERIVED_MARK:
+            in_block = True
+            block_kind = None
+            continue
+
+        # A blank line BEFORE any content is just spacing between the marker and its paragraph (tolerated). A
+        # blank line AFTER content has started ends the block (whichever kind it turned out to be).
+        if in_block and stripped == "":
+            if block_kind is not None:
+                in_block = False
+                block_kind = None
+            continue
+
+        if in_block:
+            if block_kind is None:
+                # This is the block's OWN first content line -- it defines the unit, and is unconditionally
+                # part of it regardless of its shape (a "derived list" is a legitimate paragraph-kind unit).
+                block_kind = "table" if stripped.startswith("|") else "para"
+            elif (block_kind == "table" and not stripped.startswith("|")) or \
+                    (block_kind == "para" and _ends_open_paragraph(stripped)):
+                # THE FIX (round 2, hole #4): the unit ends at ITS OWN boundary, not only at a blank line. This
+                # line is the first one OUTSIDE the block -- even with no blank line separating them -- so it
+                # falls through to `_reason_for` below with `in_block` already closed.
+                in_block = False
+                block_kind = None
+
+        _account(ln, i, _reason_for(ln))
 
     if synthesis and not cited:
         unsupported.append((0, 0.0, "synthesis doc cites NO artifact — the escape still requires citations"))
@@ -279,7 +367,7 @@ def check(doc_path, tol=None, verbose=True):
 
 def selftest():
     """Same contract as `tools/gates/*.selftest()`: return a list of problems, empty means the check itself is
-    trustworthy. Demonstrates BOTH directions of the 2026-09-25 block-scope hole:
+    trustworthy. Demonstrates BOTH directions of the 2026-09-25 block-scope hole, ROUND 1:
 
       (a) FAILING DIRECTION -- a standalone `<!--derived-->` marker placed right after `## ` headings (the
           exact incident shape), with WRONG numbers in the sections that follow, must still FAIL. Under the OLD
@@ -288,6 +376,13 @@ def selftest():
       (b) PASSING DIRECTION -- a legitimately-derived small table, correctly paragraph-scoped (marker, table,
           blank line), sitting next to a normally-checked headline number, must still PASS. A fix that closes
           (a) by over-restricting scope (e.g. treating every marker as inline-only) would break this.
+
+    ROUND 2 (same date, review of the round-1 fix): one FAILING-DIRECTION case per hole (#3/#4/#5 in the module
+    docstring), each verified against the round-1 code before this fix landed (it PASSED there, wrongly) and
+    against this fix (it must FAIL):
+      (c) a marker followed, with NO blank line, by a `### ` subheading (not `## `) and then a wrong number.
+      (d) a marker, a short derived table, and a wrong number immediately after it with NO blank line.
+      (e) a derived paragraph whose `<!--/derived-->` close shares a line with trailing wrong content.
     """
     import tempfile
     problems = []
@@ -330,6 +425,48 @@ def selftest():
             problems.append("SELFTEST BROKEN: a legitimately-derived, correctly paragraph-scoped small table "
                             "(next to normally-checked, matching headline numbers) FAILED -- the fix "
                             "over-restricts legitimate derived blocks")
+
+        # ROUND 2, hole #3 (heading level): a marker followed, with NO blank line, by a `### ` subheading (not
+        # `## `) -- the round-1 fix only closed scope on a literal `## `, so this subheading never closed it and
+        # the wrong number below stayed suppressed. Verified against the round-1 code: it PASSED (0 checked).
+        bad_heading_level = os.path.join(d, "bad_heading_level.md")
+        open(bad_heading_level, "w", encoding="utf-8").write(
+            "# Some finding\n\nArtifact: `%s`\n\n"
+            "<!--derived-->\n### A subheading, not a `## ` heading\n"
+            "The accuracy was 0.1525 here.\n" % art)
+        if check(bad_heading_level, verbose=False) == 0:
+            problems.append("SELFTEST BROKEN: a standalone <!--derived--> marker followed (no blank line) by a "
+                            "`### ` subheading, with a WRONG number (0.1525) right after it, PASSED -- hole #3 "
+                            "(only a literal `## ` closed scope) is back")
+
+        # ROUND 2, hole #4 (unit boundary without a blank line): a marker, a short derived table, and a wrong
+        # number immediately after the table's last row with NO blank line -- the round-1 fix only closed a
+        # block at a blank line/heading/close-marker, so a table's own end (its first non-`|` line) never closed
+        # it and the wrong number stayed suppressed as part of the "block". Verified against the round-1 code:
+        # it PASSED (0.1525 suppressed as part of the table's block).
+        bad_no_blank = os.path.join(d, "bad_no_blank_after_table.md")
+        open(bad_no_blank, "w", encoding="utf-8").write(
+            "# Some finding\n\nArtifact: `%s`\n\n"
+            "<!--derived-->\n| metric | value |\n|---|---|\n| ratio | 0.104615 |\n"
+            "The accuracy was 0.1525 here.\n" % art)
+        if check(bad_no_blank, verbose=False) == 0:
+            problems.append("SELFTEST BROKEN: a derived table immediately followed (no blank line) by a WRONG "
+                            "number (0.1525) PASSED -- hole #4 (a table's own end never closed the block) is "
+                            "back")
+
+        # ROUND 2, hole #5 (close marker sharing a line): a derived paragraph's `<!--/derived-->` close sits on
+        # the SAME line as trailing wrong content -- the round-1 fix only closed on a close marker ALONE on its
+        # line, so the trailing content stayed suppressed as part of the still-open "block". Verified against
+        # the round-1 code: it PASSED (0.1525 suppressed on the same line as the close marker).
+        bad_close_shares_line = os.path.join(d, "bad_close_shares_line.md")
+        open(bad_close_shares_line, "w", encoding="utf-8").write(
+            "# Some finding\n\nArtifact: `%s`\n\n"
+            "<!--derived-->\nThe ratio is 0.104615 here. <!--/derived--> "
+            "The real accuracy is 0.1525 here.\n" % art)
+        if check(bad_close_shares_line, verbose=False) == 0:
+            problems.append("SELFTEST BROKEN: a <!--/derived--> close marker sharing a line with trailing WRONG "
+                            "content (0.1525) PASSED -- hole #5 (a close marker only worked ALONE on its line) "
+                            "is back")
 
         # a SUBSTANTIAL doc (>= LOW_COVERAGE_MIN_TOTAL claims) that suppresses ALL of them via inline markers,
         # with NO wrong numbers anywhere, must still be flagged LOW COVERAGE -- defense-in-depth independent of

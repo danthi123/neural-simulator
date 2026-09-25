@@ -16,13 +16,16 @@ THE FIX has two independent layers, and this module is the second one:
      (almost) none of them is the same shape as the incident and gets flagged, corpus-wide, not just at the
      moment a doc is staged.
 
-WHY THE SIZE FLOOR (not "checked == 0" alone). A 2026-09-25 retro-scan of the 353 `research/findings/*.md` added
-since 2026-09-01 found 71 documents that are ENTIRELY, LEGITIMATELY derived -- a short diagnosis note built
-purely from already-published ratios/deltas/percentages, correctly all-marked, up to 39 numeric claims. A
-blanket "checked==0 fails" rule would have blocked every one of them for doing nothing wrong. The floor sits
-just above that observed legitimate maximum and well below the incident's scale (~43-53 claims in the document,
-336 candidate values in the artifacts it cited) -- see `tools/claim_check.py`'s `LOW_COVERAGE_MIN_TOTAL` comment
-and the 2026-09-25 `research/claimcheck-block-scope` branch notes for the full retro-scan.
+WHY THE SIZE FLOOR (not "checked == 0" alone). `LOW_COVERAGE_MIN_TOTAL = 40` was CALIBRATED, not guessed, on a
+SPECIFIC, DATED population: a 2026-09-25 retro-scan of the 353 `research/findings/*.md` added since 2026-09-01
+found 71 documents that are ENTIRELY, LEGITIMATELY derived -- a short diagnosis note built purely from
+already-published ratios/deltas/percentages, correctly all-marked, up to 39 numeric claims. A blanket
+"checked==0 fails" rule would have blocked every one of them for doing nothing wrong. The floor (40) sits just
+above that observed legitimate maximum and well below the incident's scale (~43-53 claims in the document, 336
+candidate values in the artifacts it cited) -- see `tools/claim_check.py`'s `LOW_COVERAGE_MIN_TOTAL` comment and
+the 2026-09-25 `research/claimcheck-block-scope` branch notes for the full retro-scan. RECALIBRATE if a later
+scan of a different-dated or much larger corpus finds a legitimate all-derived doc above 39 claims -- this is an
+empirical ceiling over the 2026-09-01..2026-09-25 population, not a law.
 
 REUSE, NOT REIMPLEMENTATION: this module calls `tools.claim_check._scan`, the SAME pure-computation core
 `tools/claim_check.py`'s own CLI and `tools/finding_lint.py` use, so the three can never disagree.
