@@ -389,3 +389,101 @@ LTM-ON arm and adds the new arm + reported field above. No `sim/` edit, no defau
 `ordinary_fact_flip_forgetting` field on every run after this commit (point 2); and any reader of the prior
 GO finding, who must read its "what this GO does NOT show" LTM-on caveat as still accurate until point 1's
 own run lands and is scored.
+
+### Amendment 4 (2026-09-24) — `--offcheck --pinned-sha 36a175534` RUN and FAILED; root-caused to the pin
+### going stale again (a recurrence of the class Amendment 2 fixed once, not a da-tag-capture regression)
+
+**What ran.** `bash tools/mem_ok.sh 12 && bash tools/memcap.sh 12 -- .venv/bin/python -u -m research.runners.
+_da_tag_capture_chat_probe --offcheck --pinned-sha 36a175534 --out research/findings/raw/_da_tag_capture_chat/
+offcheck.json`, on branch `research/da-tag-capture-ltm-on` at `cce3c1dbd`. Peak RSS 1.896 GB
+(`research/findings/raw/_da_tag_capture_chat/offcheck_peak_rss.json`, `RUSAGE_CHILDREN` over the whole
+subprocess tree, no GNU `time` on this box) -- cheap, consistent with the design-time ~1.1 GB no-LTM estimate
+plus normal process overhead.
+
+**Result: `byte_identical_off: false`.** `store_identical: true` and `v3_ledger_scenario_identical: true` (the
+composer's actual store synapses, and the deterministic synthetic ledger scenario, are byte-identical), but
+`replies_identical: false` -- the reply JSON differs between the pinned tree and this branch even with
+`BRAIN_DA_TAG_CAPTURE` unset on both.
+
+**Root cause (evidenced, not asserted from the verdict alone).** `git diff 36a175534 54cf42ccb -- webapp/
+server.py` has 19 hunks; only ~5 mention `da_tag_capture`. The other ~14 are UNRELATED features merged to
+`main` since Amendment 2 set this pin: open-ended-gated-turn, D6 Hebbian-chat observability, the A5
+false-belief register, multiref focus-bind, among others -- several touching the exact `brain_reply`
+reply-assembly code this offcheck hashes. One concrete candidate: the D6 Hebbian-chat hunk follows `try:
+... resp["d6_hebbian"] = _d6c_info; except Exception: resp["d6_hebbian"] = {"on": True, "error": ...}` --
+an exception in that block adds a key to the reply REGARDLESS of `BRAIN_D6_HEBBIAN_STORE`, so it (or a sibling
+pattern) could explain a reply difference on a tree that predates the whole module. This is NOT proven: the raw
+two-tree reply diff was not preserved (`offcheck_worker`'s own `res[tag].pop("replies", None)` strips it before
+saving, and the tempdir is deleted on exit), so the specific culprit is a well-evidenced candidate, not a closed
+finding. Logged: `research/FAILURE_LOG.md` (2026-09-24 entry).
+
+**Why this reads as a stale pin, not a da-tag-capture regression.** The two facts this branch's own change
+could plausibly affect -- the composer's actual stored synapses, and the ledger's own deterministic behavior
+-- are BOTH byte-identical. The one fact that differs (the reply JSON) is exactly the surface ~14 unrelated
+features have also been touching since the pin was set. `PINNED_SHA` was correct at Amendment 2's time (the
+merge-base of the ORIGINAL feature branch and `origin/main` then); it goes MORE stale, not less, the longer
+`main` moves afterward, because any fixed historical SHA conflates "this feature's own diff" with "everything
+else merged since" -- the identical class Amendment 2 fixed once (a +55/-1 diff) recurring now at 19 hunks.
+
+**What this does NOT show.** It does not show the OFF path is broken, and it does not show it is fine -- it is
+UNDEFINED under the current instrument. Re-pinning to a fresher SHA only defers the same recurrence to the next
+time this check is run against a still-moving `main`. The durable fix is diffing against `git revert` of just
+the feature's own commits applied to CURRENT HEAD -- a self-updating counterfactual immune to unrelated history
+-- and is NOT built here (scope discipline: a byte-identical-off check that self-derives its own counterfactual
+pin is a pattern shared by every `_*_offcheck*`-style runner in this repo, not something to rebuild ad hoc on
+one branch). **The DIAGNOSABILITY half IS built** (same commit as this amendment's data):
+`_offcheck_first_diff(pinned_replies, branch_replies)` in `_da_tag_capture_chat_probe.py` -- on a mismatch,
+`offcheck()` now keeps both trees' full turn-by-turn replies (previously popped unconditionally) plus a
+`first_diff` field naming the first differing turn's index and both sides' content, so a FUTURE mismatch (at a
+fresh pin, or once the counterfactual fix above lands) is diagnosable from the committed JSON alone, without a
+full two-tree re-run. On a match the replies are still popped (the sha256 already proves equality). Proven both
+directions in `--selftest` (identical lists -> `None`; a real difference -> the correct index + content;
+an extra turn on one side -> `None` on the other, not a crash) -- 34/34 checks pass. This branch's OWN
+`offcheck.json` (Amendment 4's data, above) predates this fix and does not carry `first_diff`; a future re-run
+at any pin will.
+
+**What this amendment does NOT change:** the gates, arms, LTM-ON registration, or `ordinary_fact_flip_forgetting`
+field from Amendments 1-3, or the offcheck's arms/gates/pin -- only the offcheck's status (PENDING to
+ATTEMPTED-FAILED-UNDEFINED), a new FAILURE_LOG entry, and `offcheck()`'s own diagnosability on a future
+mismatch. No `sim/` edit, no default flipped, no gate/arm/threshold from Amendments 1-3 touched.
+
+**Governs:** any reader of this document's byte-identical-off status -- it is NOT verified at any pin as of this
+amendment, and a future `--offcheck` run must be read against this amendment's stale-pin caution, not treated as
+a fresh independent verdict without first checking whether `PINNED_SHA` has been re-derived properly.
+
+### Amendment 5 (2026-09-24) — `ordinary_fact_flip_forgetting` MEASURED True on seed 42 (local smoke, LTM off):
+### board #227 item (c) is CONFIRMED, not just inferred from code
+
+**seed-waiver: seed 42 only, a local smoke run under this document's own established convention ("Local 1-seed
+smoke (seed 42, `--ltm off`) under `tools/mem_ok.sh 12` + `tools/memcap.sh 12`" -- see "Compute" above), not a
+6-seed generalization claim.** `research/findings/raw/_da_tag_capture_chat_ordinary_check/seed42.json` (a
+fresh seed-42 run of the Amendment-3-registered arms, `--ltm off`, output to its OWN directory so the already-
+committed, already-scored `research/findings/raw/_da_tag_capture_chat/seed*.json` files are untouched):
+`seed_verdict: GO` (all of `G0`-`G6`, `G_isolation_gamma_consistent` hold, `n_arm_errors: 0` -- consistent with,
+not a re-derivation of, the 6-seed GO finding's own already-scored result) and **`ordinary_fact_flip_forgetting:
+True`**: `neu_night_off_intact` (today's production default, `BRAIN_DA_TAG_CAPTURE=0`) reads `correct` --
+the plainly-told fact IS recalled the next day under the code the owner's chat runs today -- while
+`neu_night_intact` (the SAME fact, SAME telling, `BRAIN_DA_TAG_CAPTURE=1`) reads `abstain`.
+
+**This directly measures, rather than infers from code, board #227 item (c)'s answer.** Amendment 3's own
+"declared reasoning" section argued from `tiered_fact_store.py`/`da_tag_capture_chat.py`/`one_brain_composer.py`
+that flipping the flag would cost an ordinary fact its overnight survival; this seed's `neu_night_off_intact`
+vs `neu_night_intact` contrast is the SAME conversation, SAME seed, run twice (flag off vs on) through the real
+`/api/brain-chat` handler, and shows the cost directly. Per Amendment 3, this is the mechanism's OWN by-design
+selectivity (behavioral tagging), not a defect in the wiring -- `G3_neutral_not_kept` already required exactly
+this abstention as a GO condition. What Amendment 3 added, and this run confirms, is that the SAME fact would
+NOT have been lost under today's shipped default -- the flip's real cost, made visible rather than assumed.
+
+**What this does NOT show.** One seed, LTM off (the buffer-only arm registered by the original prereg's own
+declared deviation, still separate from the flip-deciding LTM-ON arm registered by Amendment 3 point 1, not
+yet run). Per Amendment 3's own declared reasoning (LTM attachment cannot change what the ledger manages -- the
+buffer only), this reading is expected, not merely hoped, to transfer to LTM-on and to the other 5 seeds; both
+remain to be checked directly, not assumed, once the LTM-ON batch (Amendment 3 point 1, mem_gb TBD from a
+measured seed-42 peak) lands.
+
+**What this amendment does NOT change:** the gates, arms, or thresholds from Amendments 1-4 -- purely reports a
+measured result of code Amendment 3 already registered. No `sim/` edit, no default flipped, no runner code
+changed in this amendment.
+
+**Governs:** any reader of board #227 -- item (c) is CONFIRMED (not merely argued) MISSING on this one seed at
+LTM off; the LTM-on transfer and the other 5 seeds remain open, per Amendment 3's own compute plan.
