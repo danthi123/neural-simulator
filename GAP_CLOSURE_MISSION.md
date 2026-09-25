@@ -155,6 +155,31 @@ SOUND-WITH-ISSUES; held, NOT queued until B3/B4 run. Workflow `wqjppzlyh`: revie
 production-path arm set (B3 wall-clock day with a clock seam, B4 salient-vs-neutral + waking-only DA lesion, episodic-store arm,
 D3 cupy spec) with a prereg amendment + dev smoke.
 
+**☀️ 12:40 OWNER ITEMS (briefed 12:35; briefs = workflow `w9vezagal` journal):** (1) memory pair B2: accept the overnight
+forgetting at flip time or wait for a fix -- recommendation: no ruling until B3/B4 land (the 'weak telling lost' number was never
+checked against immediate recall); lean wait. (2) SETTLE A2 congruence mechanism: the prereg reserved it for the owner; an overnight
+lane wired a HOST if/lookup gate (default-OFF, 5b5ea1b74) without asking -- recommendation: keep it as a measurement-only interim,
+NEVER flip BRAIN_AFFECT_MARKER_CONGRUENCE or BRAIN_AFFECT_MARKER_SETTLE without explicit owner sign-off; the brain-based target is
+the speak/abstain race gating the marker. (3) B2b torn cells (s43/d5-consolidate, s42/causal-whatif, s42/affect-appraisal-interoceptive):
+recommendation: redo on a different host, log in b2b0924_reruns.tsv, one-line prereg amendment. (4) Legacy claim-check failures:
+recommendation: merge the 8 confirmed corrections from claimcheck-audit-1..4, add a dated scope note, no bulk-marking, no retractions.
+(5) flipdefaults-adequate unpinned reference: FYI; B2a pinned R2 independently confirms the three flips; accept with the caveat.
+
+**☀️ 13:05 OWNER RULINGS:** (1) memory pair: WAIT ON FIX -- "a certain degree of forgetting is acceptable ... What's important is
+that the brain should remember things that matter ... prioritizing what should be remembered and focusing on key details, while
+forgetting minor details over time ... not just stores info like a RAG system" (memory project_remember_what_matters). The target
+is PRIORITIZED retention (important facts + key details kept, minor details fade, gist survives), not every fact kept. (2) affect
+congruence: owner wants more context; stated view: feelings must shape HOW the brain speaks, not insert 'Wonderful!'-style words
+(memory feedback_affect_shapes_speech) -- context workflow `w4reqinlw`. (3) B2b torn cells: APPROVED as recommended. (4) legacy
+claim-check: APPROVED as recommended. Execution = workflow `wgw2xgcw9` (prioritized-memory research + design + registered
+'what-matters' test battery; B2b torn-cell redo with a node constraint + rerun log + amendment; claim-check corrections + scope note).
+
+**☀️ 13:15 SETTLE A3 smoke:** the Amendment-3 crossover worker runs end to end at b21140758 (cupy, Qwen renderer, planned arm every
+turn, one reader per arm, WTA read with the arm's config, no exception); verdict UNDEFINED as expected at 1 process/orientation
+(n=8). INSTRUMENT BUG: M4_render reads exactly 0.0 (se 0, resid 0) on every turn -- the render-time hook captures nothing; fix before
+any long run (artifacts: .claude/worktrees/settle-a3x-smoke-b21140758/research/findings/raw/_affect_marker_settle_gpu_timing/a3x_smoke/).
+The 7.5 h A3 GPU run is HELD pending owner item 2 (the owner questions the prepended-marker design itself).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
