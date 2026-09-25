@@ -80,12 +80,31 @@ re-derived from git by tests/test_claim_check_line_only.py on every run):
      span to the next `-->` anywhere and hid whole sections; any comment starting with `derived`
      (`<!--derived-from ...-->`) exempted numbers; the chance rate was a DOC average.
 
+CALIBRATION (2026-09-25; re-derive with `tools/claim_check_retro_compare.py --since 2026-09-01 --calibrate`;
+outputs committed as research/coordination/claimcheck_r8_retro_since2026-09-01_2026-09-25.{tsv,txt}):
+  * CHANCE_MAX = 0.20. The per-claim rate over the 3,820 precision-tier matches in the 353 findings added since
+    2026-09-01: p50 0.02, p90 0.16, p95 0.25, p99 0.62. Docs that would fail on breadth ALONE at T = 0.05 / 0.10 /
+    0.15 / 0.20 / 0.25 / 0.30: 45 / 32 / 24 / 15 / 11 / 7. At 0.20 a wrong number of a claim's own shape is accepted
+    at most 1 time in 5; the 15 docs it fails on breadth alone (13 on numbers correct at their written precision,
+    2 on legacy-only matches) are each fixed by one more stated decimal or a narrower citation. The 19 legacy-only
+    matches have median rate 0.53: the relative window survives only against sparse pools.
+  * CHANCE_WINDOW = 500 units of the claim's last decimal either side, CHANCE_DECOYS = 100 drawn without
+    replacement, seeded by the claim's own text (sampling error ~0.04 at the 0.20 bar).
+  * The rate is taken in the TIER that matched: a claim matched at its stated precision is rated against the
+    precision rule, a legacy-only match against precision-or-legacy. (Rating every claim against the union made a
+    6-decimal value that EXACTLY matches the artifact read as "too broad" beside a dense sweep -- the relative
+    window, not the claim, was broad.)
+  * LOW_COVERAGE_MIN_TOTAL = 30: the largest non-synthesis doc since 2026-09-01 under 5% distinct-visible-checked
+    has 27 numeric claims.
+
 CANNOT CATCH (known): a number spelled in words; a decimal comma; homoglyph letters for digits; a wrong number
-within the matching window of an unrelated cited value whose own chance rate is under CHANCE_MAX; a value that IS
-in the artifact but belongs to another quantity (existence is not agreement -- gates/stated_value_mismatch).
+within the matching window of an unrelated cited value whose own chance rate is under CHANCE_MAX; a wrong number
+within the legacy relative window of the right one (1e-4 |x|, as in main and r5); a value that IS in the artifact
+but belongs to another quantity (existence is not agreement -- gates/stated_value_mismatch).
 BY DESIGN (fail closed): an identifier with >= 3 decimals (an arXiv id, a DOI prefix, a version inside a URL) is
 checked like any number -- mark it on its own line (`<!--derived: arXiv id-->`); numbers inside fenced code
-cannot be marked (a marker in a fence is code) -- cite an artifact that holds them or move them out of the fence.
+cannot be marked (a marker in a fence is code) -- cite an artifact that holds them or move them out of the fence;
+a `|` or a `<br>` anywhere on a line (a table row or not) cuts it into cells, which only ever narrows an exemption.
 """
 from __future__ import annotations
 
@@ -138,9 +157,12 @@ def _invisible(c):
 # number syntax
 # =================================================================================================================
 _SIGN_CLASS = "".join(re.escape(c) for c in sorted(_DASH_CHARS))
-# Not glued to an identifier: no ASCII letter/digit/dot directly before, and no `_` that is itself intraword
-# (`lr_0.001`, `foo_0.125` are identifiers; `_0.1525_` is emphasis and `Δ_0.1525` a symbol, so both are numbers).
-_NUM_RE = re.compile(r"(?<![A-Za-z0-9.])(?<![A-Za-z0-9]_)([0-9]*)\.([0-9]+)"
+# A number that starts with a digit is read unless a digit or a dot precedes it (then it is the tail of a longer
+# number, a version or a date: `1.2.345`, `2026.09.25`) -- a LETTER or `_` before it does not hide it (`acc0.1525`,
+# `_0.1525_`, `corr0.869` are all read; the whole corpus holds 11 such tokens, 0 since 2026-09-01, half of them run-
+# name parameters like `sigma0.001` that must now be cited or marked). A number that starts with its dot is read
+# unless a letter, digit, dot or `_` precedes it (`p.347` is a page, `x.125` a field).
+_NUM_RE = re.compile(r"(?:(?<![0-9.])([0-9]+)|(?<![A-Za-z0-9._]))\.([0-9]+)"
                      r"(?:[eE]([+" + _SIGN_CLASS + r"]?[0-9]+))?(?![0-9])")
 NUM_RE = _NUM_RE                                   # public alias (tests use it to list a text's numbers)
 _MAGNITUDE = {"k": 1e3, "K": 1e3, "M": 1e6, "B": 1e9, "G": 1e9, "T": 1e12}
@@ -179,13 +201,13 @@ LEGACY_ABS_FLOOR = 5e-6
 CHANCE_DECOYS = 100
 CHANCE_WINDOW = 500
 CHANCE_SEED = 20260925
-# CALIBRATION of CHANCE_MAX: see CALIBRATION below (tools/claim_check_retro_compare.py --calibrate).
-CHANCE_MAX = 0.10
+# CALIBRATED 2026-09-25 -- see the docstring CALIBRATION (tools/claim_check_retro_compare.py --calibrate).
+CHANCE_MAX = 0.20
 
 # LOW COVERAGE (defense in depth against marking (almost) everything derived). Distinct checked values seen
 # outside hidden regions / all numeric claims.
 MIN_CHECK_FRACTION = 0.05
-LOW_COVERAGE_MIN_TOTAL = 40
+LOW_COVERAGE_MIN_TOTAL = 30
 
 # =================================================================================================================
 # synthesis
@@ -595,16 +617,14 @@ def _where_label(tokens, lab):
 def _hidden(text, tokens, line_starts):
     """-> (hidden_lines set, hidden char spans sorted). Over-inclusive on purpose: a region wrongly judged hidden only
     loses its citations and its coverage credit (fails closed); its numbers are still checked."""
+    # A line markdown renders nowhere (a link-reference definition such as `[//]: # (...)`) is hidden whole. An HTML
+    # block is NOT hidden whole: a browser shows its text (`<!--derived--> see raw/x.json` at a line start is an HTML
+    # block whose citation a reader sees); only the comments and hidden elements inside it are hidden, below.
     covered = set()
     hidden_lines = set()
     for tok in tokens:
-        if not tok.map:
-            continue
-        rng = range(tok.map[0], tok.map[1])
-        if tok.type == "html_block":
-            hidden_lines.update(rng)
-        elif tok.type in ("inline", "fence", "code_block"):
-            covered.update(rng)
+        if tok.map and tok.type in ("inline", "fence", "code_block", "html_block"):
+            covered.update(range(tok.map[0], tok.map[1]))
     lines = text.split("\n")
     for i, ln in enumerate(lines):
         if ln.strip() and i not in covered:
@@ -775,7 +795,7 @@ def _hint(c, pool, tol):
     near = [pool[j] for j in (i - 1, i) if 0 <= j < len(pool)]
     if near:
         v = min(near, key=lambda a: abs(a - c.value))
-        if abs(v - c.value) <= 5 * c.unit:
+        if abs(v - c.value) <= 1.5 * c.unit:
             return "near miss: the artifact holds %r, which rounds to %.*f at the stated precision" % (
                 v, max(c.decimals, 0), v)
     return ""
@@ -860,8 +880,11 @@ def _scan(doc_path, tol=None):
     marks = list(_EXACT_MARKER_RE.finditer(text))
     labeled, labels, prefix = _labeled(text, marks)
     md_cm, md_gfm = _parsers()
-    toks_gfm = md_gfm.parse(labeled)
-    toks_cm = md_cm.parse(labeled)
+    try:
+        toks_gfm = md_gfm.parse(labeled)
+        toks_cm = md_cm.parse(labeled)
+    except Exception as e:                               # fail CLOSED: an unparseable doc is not checked as clean
+        return _empty("markdown-it could not parse %s (%s: %s)" % (doc_path, type(e).__name__, e))
     # A marker is live only if BOTH parsers read it as an HTML comment (GFM splits table cells before inline
     # parsing, CommonMark does not; where they disagree about a code span, the marker is dead -- fail closed).
     live = _live_labels(toks_gfm, prefix) & _live_labels(toks_cm, prefix)
@@ -956,6 +979,10 @@ def _scan(doc_path, tol=None):
                          "-- a reader cannot see it, so it is not loaded" % p))
     cited = sorted(cited)
     pool, _verdicts, loaded, missing = load_artifacts(cited)
+    for p in sorted(ignored):          # never loaded, but a hidden citation of a MISSING file still fails (as in r5)
+        full = p if os.path.isabs(p) else os.path.join(ROOT, p)
+        if not (glob.glob(full) if any(c in full for c in "*?[") else os.path.exists(full)):
+            missing.append("%s (cited only inside hidden text)" % p)
 
     # ---- check -----------------------------------------------------------------------------------------------------
     records, unsupported, too_broad, chances = [], [], [], []
@@ -1073,14 +1100,16 @@ def check(doc_path, tol=None, verbose=True):
         for lineno, kind, msg in r["warnings"]:
             print("      ⚠  WARNING line %-4d %-24s %s" % (lineno, kind, msg))
         hints = {(x["line"], x["value"]): x.get("hint", "") for x in r["records"] if x["status"] == "checked"}
+        written = {(x["line"], x["value"]): x["text"] for x in r["records"]}   # as WRITTEN, never re-rounded
         for lineno, val, ctx in r["unsupported"][:12]:
             h = hints.get((lineno, val), "")
-            print("      ⛔ line %-4d %-14g not in any cited artifact | %s%s"
-                  % (lineno, val, ctx, ("\n           -> " + h) if h else ""))
+            print("      ⛔ line %-4d %-14s not in any cited artifact | %s%s"
+                  % (lineno, written.get((lineno, val), repr(val)), ctx, ("\n           -> " + h) if h else ""))
         if len(r["unsupported"]) > 12:
             print("      ... and %d more" % (len(r["unsupported"]) - 12))
         for lineno, val, ch, ctx in r["too_broad"][:12]:
-            print("      ⛔ line %-4d %-14g chance %.0f%%: %s | %s" % (lineno, val, 100 * ch, TOO_BROAD_MSG, ctx))
+            print("      ⛔ line %-4d %-14s chance %.0f%%: %s | %s"
+                  % (lineno, written.get((lineno, val), repr(val)), 100 * ch, TOO_BROAD_MSG, ctx))
         if len(r["too_broad"]) > 12:
             print("      ... and %d more too broad" % (len(r["too_broad"]) - 12))
         if r["low_coverage"]:

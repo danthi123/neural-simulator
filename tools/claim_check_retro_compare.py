@@ -13,8 +13,7 @@ not accept, WHY -- one cause per number:
   html-comment       inside an HTML comment
   reader-split       only the reader's reading holds it (markup/invisible character inside the digits)
   sign               the artifact holds the opposite sign (a dash read as a minus)
-  near-miss          a cited value lies within 5 units of its last decimal (a wrong rounding, a truncation, or a
-                     wrong number)
+  near-miss          a cited value lies within 1.5 units of its last decimal (a truncation or a wrong rounding)
   no-pool            nothing was loaded to match against (no citation, or every citation missing)
   prose              anything else: an unmarked derived/aggregated/quoted number, or a real error
 The gate itself only ever checks NEWLY ADDED findings; this script re-gates nothing -- it is a measurement.
@@ -169,7 +168,66 @@ def scan_one(path):
                            for rec in r["records"] if rec["status"] in ("checked", "too_broad")
                            and rec["rule"] is not None]
     row["_coverage"] = (r["synthesis"], r["total_numeric"], r["checked_visible_distinct"])
+    # What round 8 does with every number an OLDER revision flagged: are the older revision's failures of this doc
+    # made ONLY of numbers round 8 matches at their written precision (a correct rounding -- the r5/r6 false
+    # positive), or at least one it also rejects?
+    for tag in REVS:
+        row["_old_%s" % tag] = _old_flag_fates(tag, path, r) if row[tag] == "FAIL" else None
     return row
+
+
+_OUT_LINE_RE = re.compile(r"line\s+(\d+)\s+(-?[0-9.eE+-]+)\s+not in any cited artifact")
+
+
+def _old_flags(tag, path):
+    """[(line, value)] an older revision flags as unsupported, and whether it failed for any OTHER reason."""
+    mod = _load(tag)
+    if hasattr(mod, "_scan"):
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                res = mod._scan(path)
+        except Exception:
+            return None, True
+        flags = [(ln, float(v)) for ln, v, _c in res.get("unsupported", ()) if ln]
+        other = bool(res.get("missing") or res.get("low_coverage") or res.get("unreadable") or res.get("too_broad"))
+        return flags, other
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            mod.check(path, verbose=True)
+    except Exception:
+        return None, True
+    out = buf.getvalue()
+    other = "MISSING" in out or "LOW COVERAGE" in out
+    return [(int(m.group(1)), float(m.group(2))) for m in _OUT_LINE_RE.finditer(out)], other
+
+
+def _old_flag_fates(tag, path, r8):
+    flags, other = _old_flags(tag, path)
+    if flags is None:
+        return {"error": 1}
+    fates = collections.Counter()
+    by_line = collections.defaultdict(list)
+    for rec in r8["records"]:
+        by_line[rec["line"]].append(rec)
+    for ln, v in flags:
+        cand = [x for x in by_line.get(ln, ()) if abs(x["value"] - v) <= 1e-6 * max(1.0, abs(v))]
+        if not cand:
+            fates["not-a-claim-in-r8"] += 1
+            continue
+        x = cand[0]
+        rule = (x["rule"] or "").split("+")[0]
+        if x["status"] == "exempt":
+            fates["exempt-in-r8"] += 1
+        elif rule in ("exact", "rounding"):
+            fates["correct-at-precision"] += 1
+        elif rule == "legacy":
+            fates["legacy"] += 1
+        else:
+            fates["unsupported-in-r8"] += 1
+    fates["_other_reason"] = int(other)
+    fates["_n"] = len(flags)
+    return fates
 
 
 def _paths(since):
@@ -228,6 +286,21 @@ def main(argv=None):
     for tag in REVS:
         flips = collections.Counter((r[tag], r["r8"]) for r in rows)
         print("  %s -> r8 verdict pairs: %s" % (tag, dict(flips)))
+    for tag in REVS:
+        fails = [r["_old_%s" % tag] for r in rows if r.get("_old_%s" % tag)]
+        tot = collections.Counter()
+        only_correct = 0
+        for f in fails:
+            for k, v in f.items():
+                if not k.startswith("_"):
+                    tot[k] += v
+            if f.get("_n") and not f.get("_other_reason") and f.get("correct-at-precision", 0) == f["_n"]:
+                only_correct += 1
+        n = sum(v for k, v in tot.items() if k != "error")
+        print("  %s: %d failing docs, %d flagged numbers; what round 8 makes of them: %s; %.0f%% correct at their "
+              "written precision; docs failing ONLY on numbers correct at their written precision: %d"
+              % (tag, len(fails), n, dict(tot.most_common()), 100.0 * tot["correct-at-precision"] / max(1, n),
+                 only_correct))
 
     if args.calibrate:
         recs = [x for r in rows for x in r["_chance_recs"]]

@@ -480,12 +480,15 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
     # assemble blocking gates, most-blocking first
     blocking_gates = []
     if cc_rc != 0:
-        probs = ["line %s: %s  (%s)" % (n, v, c[:60]) for n, v, c in cc_unsupported] \
+        # the number as WRITTEN (0.600, not the float 0.6), from the same records check() prints
+        written = {(x["line"], x["value"]): x["text"] for x in cc_result.get("records", ())}
+        probs = ["line %s: %s  (%s)" % (n, written.get((n, v), v), c[:60]) for n, v, c in cc_unsupported] \
             + ["MISSING artifact: %s" % m for m in cc_missing]
         if cc_result.get("unreadable"):
             probs.append("UNREADABLE: %s" % cc_result["unreadable"])
         for n, v, ch, c in cc_result.get("too_broad", ()):
-            probs.append("line %s: %s  chance %.0f%%: %s  (%s)" % (n, v, 100 * ch, claim_check.TOO_BROAD_MSG, c[:60]))
+            probs.append("line %s: %s  chance %.0f%%: %s  (%s)" % (n, written.get((n, v), v), 100 * ch,
+                                                                  claim_check.TOO_BROAD_MSG, c[:60]))
         if cc_result["low_coverage"]:
             checked = cc_result.get("checked_visible_distinct", cc_result["checked"])
             total = cc_result["total_numeric"]

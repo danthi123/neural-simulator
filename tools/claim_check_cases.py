@@ -431,6 +431,10 @@ SELFTEST_CASES = [
          why="a zero-width character is a SPACE in the normalized copy, never deleted, so `acc<ZWSP>0.1525` keeps "
              "its number",
          doc=_HDR + "The acc" + ZWSP + "0.1525 here.\n"),
+    dict(name="r8_number_glued_after_a_letter_is_read", expect="FAIL", wrong_on=_ALL_BEFORE_R8,
+         why="`corr0.1525` -- every earlier revision's lookbehind treated a letter before the digits as an identifier "
+             "and skipped the number (the corpus has one such measurement, `corr0.869`)",
+         doc=_HDR + "Best balance corr0.1525 here.\n"),
     dict(name="r8_entity_minus_sign_flip", expect="FAIL", wrong_on=_BEFORE_R6,
          why="`&minus;0.1625` shows -0.1625 while the artifact holds +0.1625",
          doc=_HDR + "The delta was &minus;0.1625 here.\n"),
@@ -466,6 +470,11 @@ SELFTEST_CASES = [
     dict(name="r8_marker_starting_an_html_block_line_exempts_its_line", expect="PASS", wrong_on=(),
          why="a marker that starts a line is an HTML block to markdown -- still a comment, still its own line",
          doc=_HDR + "<!--derived--> the ratio 0.104615 was derived\n\nThe baseline was 0.162500 here.\n"),
+    dict(name="r8_citation_in_a_line_start_html_block_is_visible", expect="PASS", wrong_on=(),
+         why="a line that STARTS with a marker is an HTML block, and a browser shows its text: a citation there is "
+             "one a reader sees, so it is loaded (an early round-8 draft hid whole HTML-block lines)",
+         doc="# Some finding\n\n<!--derived--> the ratio 0.104615 is from `%(art)s`\n\nThe baseline was 0.162500 "
+             "here.\n"),
     dict(name="r8_legacy_tolerance_is_accepted_and_reported", expect="PASS", wrong_on=('r7',),
          expect_output=("1 legacy relative tolerance",),
          why="SPEC: the legacy relative tolerance max(5e-6, 1e-4|x|) is also accepted, as in main and r5 -- "
