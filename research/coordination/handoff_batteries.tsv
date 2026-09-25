@@ -1,0 +1,16 @@
+# handoff_batteries.tsv -- registry of in-flight compute batteries for tools/status.sh + tools/battery_status.py.
+# Read by: tools/status.sh (READY-TO-HARVEST column), tools/battery_status.py (--list / --harvest).
+# Columns (tab-separated, `#` = comment, blank lines ignored):
+#   name            short slug, used to match this battery against GPU/pool "currently running" text
+#   raw_glob        repo-relative glob (recursive: use **) for this battery's raw result files
+#   expected_rows   how many result files a COMPLETE battery has (one per seed/cell, excludes *.prov.json sidecars)
+#   harvest_cmd     the registered command to inspect a READY battery's landed rows before writing the finding
+#   finding_template  a template finding doc to copy the write-up structure from
+#
+# Orchestrator: add/edit rows here as batteries launch or land; see "Harvest recipes" in LOCAL_LLM_RUNBOOK.md
+# for any battery whose harvest needs more than the generic listing command below.
+name	raw_glob	expected_rows	harvest_cmd	finding_template
+fi	research/findings/raw/_sleep_forgetting_interference/**/*.json	6	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest fi	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+settle_a2_wiring	research/findings/raw/_affect_marker_settle_congruence/wiring/**/*.json	6	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest settle_a2_wiring	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+d6_n2000	research/findings/raw/_d6_capacity_curve/**/*.json	18	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest d6_n2000	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
+b2b_base	research/findings/raw/_load_bearing/_shards/b2b0924-base/**/*.json	258	.venv/bin/python tools/battery_status.py --tsv research/coordination/handoff_batteries.tsv --harvest b2b_base	research/findings/_templates/SCALED_12WORD_TEMPLATE.md
