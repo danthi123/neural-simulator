@@ -15,7 +15,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
 
-**🟢 UPDATE (2026-09-24 night, provenance-fix scoring) — RESUME HERE (supersedes the 20:25 block's item-4 CA3 line).**
+**🟢 UPDATE 00:45 (2026-09-25) — main 265e1390. RESUME HERE. Scored tonight, each re-derived by an independent verifier, merged (8b4f91c6d):**
+- AI teacher (chat-only) + synaptic learning: GO 6/6 (default-OFF). Learned-content provenance: GO 6/6, prod and
+  Qwen-forced; learned-content fraction 0.00 default / 0.60 with the learned store. CA3 capacity: GO 6/6 on the full
+  54-cell grid with valid provenance (one cell rescored complete, aggregate identical). gap#4 A9: the +-12 clamp is
+  load-bearing (bound census 3/3), next lever = the bound; full-size GPU run UNDEFINED (0/3 interpretable).
+- INCOMPLETE: wm-focus-bind (OFF arms + lbf.json never landed), SETTLE (A3 GPU timing queued on the GPU; A2 needs
+  production wiring), D6 N2000 (14/18 cells in flight), A10 v4 (never dispatched). Workflow `w6d7cfgmz` requeues
+  wm-focus-bind and A10 v4 and fixes the claim-check block-scope hole (a standalone <!--derived--> exempted whole
+  sections: 0 of 336 checked, and two wrong numbers passed).
+- B2a: 186/186, aggregate robust core 24, union 25, mean 0.949, no incomplete faculty; R1/R2 scoring + two
+  verifiers in workflow `w6pj7nef3` (with the plasticity-audit round-2 re-review).
+
+**🟢 UPDATE (2026-09-24 night, provenance-fix scoring) — (history: folded into the 00:45 block above).**
 - **CA3 superposed-fact-attractor capacity grid: SCORED, GO 6/6.** All 9 pre-registered gates (G1-G9) pass 6/6, 0
   missing, 0 UNDEFINED, `k_fit` 0.13 (band 0.1-0.3), scored ONLY over provenance-clean cells: the 18 seeds-101/102
   reruns are now verified via `research/queue/dispatch.log` (54/54 CA3 lines, all pinned to
@@ -37,18 +49,6 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - **In flight:** B2a 152/186 (last 5 at the pool queue front); B2b base arm queued in waves; lexicon closed-class lane
   (workflow `wyzt42x79`); GPU: A9 gap#4 seed-7 run, then the local-LLM bake-off; AWS pool1/pool2 (~$1 so far today).
   pool40 stays OFFLINE (owner: OS reinstall deferred).
-
-**🟢 00:45 (2026-09-25) — scored tonight, each re-derived by an independent verifier, merged to main (8b4f91c6d):**
-- AI teacher (chat-only) + synaptic learning: GO 6/6 (default-OFF). Learned-content provenance: GO 6/6, prod and
-  Qwen-forced; learned-content fraction 0.00 default / 0.60 with the learned store. CA3 capacity: GO 6/6 on the full
-  54-cell grid with valid provenance (one cell rescored complete, aggregate identical). gap#4 A9: the +-12 clamp is
-  load-bearing (bound census 3/3), next lever = the bound; full-size GPU run UNDEFINED (0/3 interpretable).
-- INCOMPLETE: wm-focus-bind (OFF arms + lbf.json never landed), SETTLE (A3 GPU timing queued on the GPU; A2 needs
-  production wiring), D6 N2000 (14/18 cells in flight), A10 v4 (never dispatched). Workflow `w6d7cfgmz` requeues
-  wm-focus-bind and A10 v4 and fixes the claim-check block-scope hole (a standalone <!--derived--> exempted whole
-  sections: 0 of 336 checked, and two wrong numbers passed).
-- B2a: 186/186, aggregate robust core 24, union 25, mean 0.949, no incomplete faculty; R1/R2 scoring + two
-  verifiers in workflow `w6pj7nef3` (with the plasticity-audit round-2 re-review).
 
 **PRE-DECIDED NEXT ACTIONS:**
 1. ✅ Harvested 21:15: B2b Amendment 1 merged (b589c7bf9; base arm only, wave 1 = 86 lines queued, waves 2-3 queued
