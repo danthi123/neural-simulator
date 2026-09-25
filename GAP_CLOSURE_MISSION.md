@@ -114,6 +114,47 @@ stop/start build ran it); aws-guard would have stopped both pool nodes at the $5
 under PYTEST_CURRENT_TEST; _run always isolates; mutation-verified), relaunched the build from its WIP branch (`wxyj13qt8`).
 SETTLE A2 six seeds dispatched to pool2 at 10:00.
 
+**☀️ 11:10 dispatcher bug:** root cause of the pool1/pool2 starvation 07:35-09:59 = pool_autodispatch.sh revision_available()
+ran ssh WITHOUT -n inside pop_job's candidate read-loop, so the first probe on a missing revision drained the queue scan
+(pop_job empty every cycle); partial reads also dispatched LINE FRAGMENTS as jobs (~10 since 09-24 16:06, one ran the tail of a
+pinned load_bearing_fraction command in the unpinned tree). Fixed on main (096dfdae0, ssh -n + a stdin-draining regression test),
+dispatcher restarted 11:05 on the fixed code. Follow-ups = workflow `wvh50k7ah`: stop/start fix round (review HIGH: idle-stop
+checks only the first instance -- same stdin class; ~/sim fallback path), fragment-job audit (what ran/wrote, findings at risk ->
+owner), and a static gate for ssh-in-a-read-loop across all shell scripts. SETTLE A2 webapp test 3 failed on its own setup
+(mood never reached '+'); fix + real re-run = `wouk2m2fs`. Scoring sleep r2 + LTM-on (both 6/6 landed) = `wl76o8lhg`.
+
+**☀️ 11:30 scored + merged:** DA tag-capture LTM-ON = GO 6/6 runner-level (702b5bbf0, p 1/64, re-derived; seeds 43/101 recovered
+from pool1 verified) -- flip leg 1 of 4 met for BRAIN_DA_TAG_CAPTURE; it must ship WITH BRAIN_SLEEP_REPLAY_CAPTURE (alone it
+loses an ordinary fact overnight). Sleep-replay r2 = NO-GO (df415f6ca; downscaling 0/6 as registered, 4 NO-GO SHY1 + 2 UNDEFINED;
+long delay NOT-RESCUED 6/6; offcheck IDENTICAL) -- superseded by the fi family (running). Next: the paired-flip pipeline
+(verify-go review -> combined no-regression battery with both ON -> production-default validation).
+
+**☀️ 11:55 GPU + fix rounds:** C26 full-size GPU run finished (~11:45); GPU now runs a short SETTLE A3 crossover smoke
+(worktree .claude/worktrees/settle-a3x-smoke-b21140758; the Amendment-3 worker path had never executed). Reviews of the resumed
+lanes: SETTLE A3 SOUND-WITH-ISSUES, claim-check r8 SOUND-WITH-ISSUES (first round without an UNSOUND), prereg gate SOUND-WITH-ISSUES,
+dup-guard UNSOUND, pool-stall UNSOUND -> all five fix rounds + opus re-reviews and the gap#4 C25-C27 + C26 scoring = workflow
+`wag8gn2mw` (review texts saved as .claude/worktrees/_review_<lane>_2026-09-25.txt). Paired-flip legs (b)+(c) = `wq8hepp4u`;
+stdin-class fixes + fragment-job audit = `wvh50k7ah`; awake-completion still building in `wjnk7jtnb`. B2b wave 3 queued.
+
+**☀️ 12:10 SETTLE A2 never ran:** its six pool lines began with a prose label ('A2 wiring seed 42: mem_gb=8 && ...'), so bash ran
+`A2` and exited 127 at 09:59-10:00 -- nothing ran. Re-queued the six without the label at 12:05 (same pinned revision 5b5ea1b74).
+Fragment-job audit (research/dispatcher-fragment-audit @ 273cfc1b4, review SOUND-WITH-ISSUES): 14 fragments, 9 exit 127, 1 exit 2,
+4 ran load_bearing_fraction off-pin; every off-pin copy fails the pin rule and was replaced by the pinned full run; NO committed
+finding at risk. OWNER ITEMS before B2b is scored: B2b prereg A1.4(c) ruling for s43/d5-consolidate, s42/causal-whatif,
+s42/affect-appraisal-interoceptive (torn line ran off-pin, then the full line ran pinned on the same host, not logged as a rerun).
+Next rounds = workflow `w5lillvm5` (stop/start round 3, ssh-loop gate round 2 [was UNSOUND: scanned only added files], audit
+evidence made durable + PIN.txt, and a new enqueue-time 'first word must be runnable' check).
+
+**☀️ 12:15 memory pair NOT ready to flip:** verify-go review of BRAIN_DA_TAG_CAPTURE + BRAIN_SLEEP_REPLAY_CAPTURE (research/pair-verify-go
+@ 865dd6be6, opus re-review SOUND-WITH-ISSUES) = leg (b) NOT met: with both ON the next-day outcome is a step in the replay read R
+(lost <= 0.185, kept >= 0.209): the datn telling kept 6/6, the weak telling 4/6, a fact told 4 h before sleep 0/6; the production
+path (wall clock, 5-min pauses as sleep epochs, cupy, the episodic store which only writes on cupy, LTM on with the route armed) was
+never run. OWNER DECISION B2: is that forgetting acceptable at flip time, or does the flip wait for a further mechanism (fi family,
+awake-replay completion)? B2c combined-battery prereg (design (i): base + flipcand at F2 = fd29040db, ~15-17 h pool) reviewed
+SOUND-WITH-ISSUES; held, NOT queued until B3/B4 run. Workflow `wqjppzlyh`: review-doc fixes + B1 record corrections; B2c fixes;
+production-path arm set (B3 wall-clock day with a clock seam, B4 salient-vs-neutral + waking-only DA lesion, episodic-store arm,
+D3 cupy spec) with a prereg amendment + dev smoke.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
