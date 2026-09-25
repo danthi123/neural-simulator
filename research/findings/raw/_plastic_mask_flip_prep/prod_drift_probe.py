@@ -74,7 +74,8 @@ def _pathway_breakdown(bridge, coo, mask_host):
     if rm is None:
         return out
     try:
-        region_names = list(rm.regions.keys()) if hasattr(rm, "regions") else []
+        # RegionManager.regions() is a METHOD returning List[BrainRegion] (sim/regions.py), not a dict.
+        region_names = [r.name for r in rm.regions()]
     except Exception:
         region_names = []
     idx_by_region = {}
