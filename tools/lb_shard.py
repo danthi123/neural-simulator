@@ -67,6 +67,70 @@ def job_env(probe_set="adequate", fixes=True, extra_env=None):
     return envd
 OUT_BASE = "research/findings/raw/_load_bearing/_shards"
 MEASURABLE_KINDS = ("neural-lesion", "whether-disable", "thin", "mechanism-only")
+COVERABLE_KINDS = ("neural-lesion", "whether-disable")
+PIN_FILENAME = "PIN.txt"
+# B2b Amendment 1.2 (research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md), applied
+# generically: a (faculty, seed) cell is a measurement of `pin` only if EVERY sidecar in its shard directory
+# records `git_sha` == pin IN FULL, `source_kind` "git_archive", both manifest-verified flags true, and
+# env.SIM_BACKEND "numpy". lb_shard.py aggregate never checked this (research/findings/2026-09-25-production-
+# default-battery-B2a-FAIL.md: 23/28 coverable faculties' seed-102 cell ran off a dirty local worktree with a
+# SHORT git_sha and source_kind null, and the aggregate read clean because it never looked).
+PROV_ARM_ALLOWED_BRAIN_KEYS = {"BRAIN_CHAT_SEED"}  # arm runners set this after import; lb.json's own env allows NONE
+
+
+def _pin_file(base, tag):
+    return "%s/%s/%s" % (base, tag, PIN_FILENAME)
+
+
+def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
+    """Fields of ONE `.prov.json` sidecar that fail the pin rule. Empty list == this sidecar is a clean
+    measurement of `pin`. Never raises: an unreadable/missing sidecar is reported as a failure, not skipped."""
+    if not os.path.exists(prov_path):
+        return ["missing"]
+    try:
+        pj = json.load(open(prov_path))
+    except Exception as e:
+        return ["unreadable (%s: %s)" % (type(e).__name__, e)]
+    fails = []
+    sha = pj.get("git_sha")
+    if sha != pin:
+        fails.append("git_sha=%r (want %s IN FULL)" % (sha, pin))
+    if pj.get("source_kind") != "git_archive":
+        fails.append("source_kind=%r (want git_archive)" % pj.get("source_kind"))
+    if pj.get("source_manifest_verified_at_start") is not True:
+        fails.append("source_manifest_verified_at_start=%r (want true)" % pj.get("source_manifest_verified_at_start"))
+    if pj.get("source_manifest_verified_at_exit") is not True:
+        fails.append("source_manifest_verified_at_exit=%r (want true)" % pj.get("source_manifest_verified_at_exit"))
+    env = pj.get("env") or {}
+    if env.get("SIM_BACKEND") != "numpy":
+        fails.append("env.SIM_BACKEND=%r (want numpy)" % env.get("SIM_BACKEND"))
+    stray = sorted(k for k in env if k.startswith("BRAIN_") and k not in allow_brain_keys)
+    if stray:
+        fails.append("stray BRAIN_* env key(s): %s" % ",".join(stray))
+    return fails
+
+
+def cell_prov_fails(cell_dir, pin):
+    """B2b Amendment 1.2's validity rule for the shard directory `cell_dir` (one faculty x one seed), against
+    `pin`. Returns {sidecar_name: [fail strings]}; an empty dict means the whole cell is a clean measurement of
+    `pin`. Checks `lb.json.prov.json` (no BRAIN_* key allowed) and every OTHER non-`.prov.json` file's own
+    `<name>.prov.json` sidecar (BRAIN_CHAT_SEED allowed -- `main()` sets it after import)."""
+    out = {}
+    f = _prov_sidecar_fails(os.path.join(cell_dir, "lb.json.prov.json"), pin, allow_brain_keys=set())
+    if f:
+        out["lb.json.prov.json"] = f
+    try:
+        names = sorted(os.listdir(cell_dir))
+    except OSError:
+        names = []
+    for fn in names:
+        if fn in ("lb.json", "lb.json.prov.json") or fn.endswith(".prov.json"):
+            continue
+        f = _prov_sidecar_fails(os.path.join(cell_dir, fn + ".prov.json"), pin,
+                                 allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS)
+        if f:
+            out[fn + ".prov.json"] = f
+    return out
 
 
 def faculty_keys():
@@ -92,11 +156,35 @@ def cmd_jobs(a):
                   ".venv/bin/python -u -m research.runners.load_bearing_fraction --only %s --seed %d --repeats %d "
                   "--out %s" % (prefix, shlex.quote(os.path.dirname(out)), env, shlex.quote(fac), seed, a.repeats,
                                 shlex.quote(out)))
+    pin_arg = getattr(a, "pin", None)  # getattr: callers building a bare Namespace (e.g. tests) may predate this flag
+    if pin_arg:
+        # Written NEXT TO the job list so a tag cannot be aggregated unverified by accident: `aggregate` reads
+        # this file as its default `--pin` whenever the flag itself is omitted (2026-09-25, closing the B2a gap
+        # where a battery's pin lived only in a prose pre-registration `lb_shard.py aggregate` never read).
+        pf = _pin_file(OUT_BASE, a.tag)
+        os.makedirs(os.path.dirname(pf), exist_ok=True)
+        with open(pf, "w") as fh:
+            fh.write(pin_arg.strip() + "\n")
+        print("# pin recorded for tag %r: %s -> %s" % (a.tag, pin_arg, pf), file=sys.stderr)
 
 
 def cmd_aggregate(a):
+    base = getattr(a, "base", None) or OUT_BASE
+    pin_arg = getattr(a, "pin", None)
+    pin, pin_source = (pin_arg.strip() if pin_arg else None), ("--pin" if pin_arg else None)
+    pin_file = _pin_file(base, a.tag)
+    if not pin and os.path.exists(pin_file):
+        try:
+            recorded = open(pin_file).read().strip()
+        except OSError:
+            recorded = ""
+        if recorded:
+            pin, pin_source = recorded, "file:%s" % pin_file
+
     rows = {}  # fac -> {seed: row}
-    for path in glob.glob("%s/%s/s*/*/lb.json" % (OUT_BASE, a.tag)):
+    invalid_cells = {}  # "s<seed>/<fac>" -> {sidecar: [fail strings]}, EXCLUDED from `rows` -- never counted, never 0
+    n_checked = 0
+    for path in glob.glob("%s/%s/s*/*/lb.json" % (base, a.tag)):
         seed = int(path.split("/")[-3][1:])
         if a.seeds and seed not in a.seeds:
             continue
@@ -104,9 +192,17 @@ def cmd_aggregate(a):
             rep = json.load(open(path))
         except Exception:
             continue
+        cell_dir = os.path.dirname(path)
         for p in rep.get("per_faculty", []):
-            rows.setdefault(p["faculty"], {})[seed] = {
-                "kind": p.get("kind"), "verdict": p.get("verdict"), "load_bearing": p.get("load_bearing"),
+            fac, kind = p["faculty"], p.get("kind")
+            if pin and kind in COVERABLE_KINDS:
+                n_checked += 1
+                fails = cell_prov_fails(cell_dir, pin)
+                if fails:
+                    invalid_cells["s%d/%s" % (seed, fac)] = fails
+                    continue  # NOT a measurement of `pin` -- excluded, reported below, never scored 0
+            rows.setdefault(fac, {})[seed] = {
+                "kind": kind, "verdict": p.get("verdict"), "load_bearing": p.get("load_bearing"),
                 "null_clean": p.get("null_control_clean"), "unreliable": bool(rep.get("UNRELIABLE"))}
     seeds = sorted(a.seeds or {s for r in rows.values() for s in r})
     out = {"tag": a.tag, "seeds": seeds, "per_faculty": {}, "per_seed": {}}
@@ -147,7 +243,7 @@ def cmd_aggregate(a):
     # prefixes, so `env` below is now the shard's REAL per-row env, not just the SIM_/GAP-family subset it used to be.
     backends, hosts, ltm_modes = set(), set(), set()
     per_shard = {}
-    for prov in glob.glob("%s/%s/s*/*/lb.json.prov.json" % (OUT_BASE, a.tag)):
+    for prov in glob.glob("%s/%s/s*/*/lb.json.prov.json" % (base, a.tag)):
         seed_dir = prov.split("/")[-3]
         fac_dir = prov.split("/")[-2]
         try:
@@ -178,10 +274,37 @@ def cmd_aggregate(a):
     out["ltm_n_facts_note"] = ("not measured by this generic sidecar -- BRAIN_DATA_ROOT presence/absence (ltm_mode) "
                                 "is recorded; a per-shard fact COUNT needs the shard to query the data lake itself")
     out["per_shard_prov"] = per_shard
-    dest = "%s/%s/aggregate.json" % (OUT_BASE, a.tag)
+
+    # PROVENANCE GATE (2026-09-25, closes research/FAILURE_LOG.md's B2a row): with a pin, every coverable cell is
+    # checked against it and a failing cell is EXCLUDED above (never counted, never scored 0) and reported here
+    # with its failing fields. Without a pin (none passed, none recorded for this tag), nothing was checked --
+    # that is reported loudly rather than silently, exactly the silence that let B2a's 23 off-pin cells through.
+    n_invalid = len(invalid_cells)
+    if pin:
+        out["provenance"] = {
+            "status": "verified", "pin": pin, "pin_source": pin_source, "rule": "B2b Amendment 1.2",
+            "n_cells_checked": n_checked, "n_valid": n_checked - n_invalid, "n_invalid": n_invalid,
+            "invalid_cells": invalid_cells,
+        }
+    else:
+        out["provenance"] = {
+            "status": "unverified", "pin": None, "pin_source": None,
+            "warning": ("no --pin given and no recorded pin at %s -- per-cell provenance was NOT checked; a cell "
+                        "may have run off the registered revision without detection (2026-09-25 B2a)." % pin_file),
+        }
+
+    dest = getattr(a, "out", None) or ("%s/%s/aggregate.json" % (base, a.tag))
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     json.dump(out, open(dest, "w"), indent=1, sort_keys=True)
     print(json.dumps({k: out[k] for k in ("robust_core_n", "union_n", "mean_fraction", "incomplete_faculties")}))
+    if pin:
+        print("provenance: pin=%s (%s) n_checked=%d n_valid=%d n_invalid=%d"
+              % (pin, pin_source, n_checked, n_checked - n_invalid, n_invalid))
+        for k in sorted(invalid_cells):
+            print("  INVALID %s: %s" % (k, "; ".join("%s[%s]" % (sc, ", ".join(fs))
+                                                       for sc, fs in sorted(invalid_cells[k].items()))))
+    else:
+        print("⛔ provenance: unverified -- %s" % out["provenance"]["warning"], file=sys.stderr)
     print("wrote", dest)
 
 
@@ -199,9 +322,25 @@ def main():
                    help="adequate (default) = the verified LB_* drive probes; thin = none (the battery's default probes)")
     j.add_argument("--no-fixes", action="store_true",
                    help="pass NO fix flag: each mechanism runs at its production default")
+    j.add_argument("--pin", default=None,
+                   help="record this tag's registered git_archive revision (full SHA) as its default pin, written "
+                        "to <OUT_BASE>/<tag>/%s -- `aggregate` reads it automatically when --pin is omitted, so a "
+                        "tag cannot be aggregated unverified by accident" % PIN_FILENAME)
     g = sub.add_parser("aggregate")
     g.add_argument("--tag", required=True)
     g.add_argument("--seeds", type=int, nargs="*", default=None)
+    g.add_argument("--pin", default=None,
+                   help="full git SHA this tag is pinned to (B2b Amendment 1.2). A coverable cell whose sidecars "
+                        "don't match IN FULL (git_sha, source_kind=git_archive, both manifest-verified flags, "
+                        "env.SIM_BACKEND=numpy, no stray BRAIN_* key) is excluded and reported, never counted, "
+                        "never scored 0. Defaults to the pin recorded by `jobs --pin` for this tag, if any; with "
+                        "neither, prints a loud warning and marks the aggregate provenance 'unverified'.")
+    g.add_argument("--base", default=OUT_BASE,
+                   help="root directory holding <tag>/s<seed>/<faculty>/lb.json (default: %s). Override to "
+                        "aggregate a shard tree checked out elsewhere (e.g. the primary checkout) without cd-ing "
+                        "there." % OUT_BASE)
+    g.add_argument("--out", default=None,
+                   help="destination aggregate.json path (default: <base>/<tag>/aggregate.json)")
     a = ap.parse_args()
     {"jobs": cmd_jobs, "aggregate": cmd_aggregate}[a.cmd](a)
 
