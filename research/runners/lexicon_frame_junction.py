@@ -56,6 +56,15 @@ three mechanism changes, each a new companion process, none a threshold hack on 
     "host is legitimate for the syllabus" boundary EMERGE-62b already used for the identical defect --
     research/findings/2026-07-03-emerge62b-position-cue-GO.md -- the shared tokenizer's `[a-z']+` regex strips ALL
     punctuation, so a sentence-final word's right-frame afferent silently spliced in the NEXT sentence's first word).
+    DECLARED SIDE EFFECT (adversarial review, AMENDMENT 2): `FrameEnvironment.ctx` (the C=100 context words with a
+    frame afferent) is built from RAW token counts with no exclusion list, and PAUSE_TOKEN is the single MOST
+    FREQUENT token in the corpus (176,822 occurrences -- a sentence boundary is more common than any single word;
+    measured on the full 19,971,040-byte tinystories.txt, seed-independent since `ctx` never depends on seed). It
+    therefore wins a context-word slot on the same frequency-ranking basis every other context word does, displacing
+    exactly ONE word from the top-100: 'make' (a common verb, not a curriculum or battery-critical word). This is
+    the INTENDED mechanism, not incidental: PAUSE_TOKEN must occupy a real context-word slot to be usable as a frame
+    neighbour at all. Not measured: whether losing 'make' as a neighbour-context measurably changes any OTHER
+    word's frame evidence (plausible, not expected to be large -- one slot in 100).
   * A DRIVE-MATCHED OR CONTROL (`OR_MATCH_FACTOR`, lesion kind "coincidence_matched") alongside the existing
     "coincidence" (2x) lesion, and per-word CN-CX margins on every parse arm: the fixed 2x OR factor raises BOTH
     "this junction fires on either neighbour alone" AND the total population drive, so a G3 mismatch increase could
@@ -367,7 +376,20 @@ class FrameJunctionLexicon(L.SpikingFrameCategoryLexicon):
         `settle_k_occ` (< L.K_OCC=32) trades presentation fidelity for wall-clock cost on this dev-only settle pass
         (declared, not hidden): fewer sampled occurrences per word still gives each of the 40 CN0/CX0 neurons many
         rate readings across `epochs` x len(words) presentations, which is what the scale update needs -- it is not
-        the fine-grained per-frame detail the Oja rule's OWN presentations (unaffected by this) require."""
+        the fine-grained per-frame detail the Oja rule's OWN presentations (unaffected by this) require.
+
+        GUARD (adversarial review, AMENDMENT 2): this settle only touches `data[self.S]` (the FJ->CN/CX edge) and
+        installs it directly, bypassing `_install()` -- so it never re-writes `data[self.S_inh]` / `data[self.S_j]`.
+        If some OTHER lesion ("coincidence", "competition", ...) were installed when `learned_edge` first engages,
+        the settle would run its curriculum presentations against THOSE lesioned inhibition/junction weights instead
+        of the intact circuit, and `self.W_lesion_settled` would silently reflect that. No current call site does
+        this (`set_lesion` is always reached from an otherwise-intact lexicon before `learned_edge` is first
+        requested), so this is a LATENT bug, not a manifested one -- asserted here so a future caller cannot
+        introduce it silently."""
+        assert self.lesion is None, (
+            f"_r4_homeostatic_settle must run before any other manipulation is installed (self.lesion={self.lesion!r} "
+            "here): it settles against whatever inhibition/junction weights are currently on the bridge, so a prior "
+            "manipulation would get baked into the settled result instead of the default circuit's own weights.")
         from sim.backend import to_host, from_host
         words, _ = L.seed_curriculum(self.env)
         Wl = self.W_init.copy()

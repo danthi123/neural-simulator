@@ -429,3 +429,28 @@ for THIS specific gap than "restore the boundary the tokenizer already discards"
 decision rule the dev finding also floated is NOT built here -- see the result below for why the pause token alone
 was, honestly, not expected to fully clear 'most' once the recount above showed 2 of 6 complete frames ('the most
 fun') are genuine, not punctuation artifacts.
+
+### AMENDMENT 2 ADDENDUM (2026-09-24, independent adversarial code review, before the dev-check results below were
+read): two issues found in the mechanism code above, both fixed before any dev-check number was trusted.
+
+**Mechanism C, declared side effect (was undeclared).** `FrameEnvironment.ctx` (the C=100 context words) is built
+from RAW token counts with no exclusion list, and PAUSE_TOKEN is the single MOST FREQUENT token in the corpus
+(176,822 occurrences on the full 19,971,040-byte tinystories.txt -- a sentence boundary is more common than any one
+word; seed-independent, since `ctx` never depends on seed). It therefore wins a context-word slot on the SAME
+frequency basis every other context word does, displacing exactly one word from the prior top-100: 'make' (a
+common verb, not a curriculum or battery-critical word). This is the intended mechanism operating as designed
+(PAUSE_TOKEN must occupy a real slot to be usable as a frame neighbour at all), not a bug -- but AMENDMENT 2's
+original text did not say so, and a reviewer had to derive it by reading `FrameEnvironment.__init__`. Declared here
+and in the module docstring. Not measured: whether losing 'make' as a neighbour-context measurably changes any
+OTHER word's frame evidence (plausible, not expected to be large -- one slot in 100). The dev-check runs already in
+flight when this was found use the corpus/environment exactly as measured here, so no re-run was needed for this
+item.
+
+**Mechanism B, a latent (never-triggered) state-machine gap.** `_r4_homeostatic_settle` writes `data[self.S]`
+directly and calls `_install()` only afterward, so it never re-writes `data[self.S_inh]` / `data[self.S_j]`. Had
+`set_lesion("learned_edge")` ever been reached while some OTHER lesion ("coincidence", "competition") was already
+installed, the settle would have run its curriculum presentations against those lesioned inhibition/junction
+weights instead of the intact circuit. No call site in this lane does that (`set_lesion` always reaches
+`learned_edge` from an otherwise-intact lexicon), so this never fired -- confirmed by the reviewer reading every
+call site, not assumed. Fixed defensively: `_r4_homeostatic_settle` now asserts `self.lesion is None` on entry, so
+a future caller cannot introduce this silently.

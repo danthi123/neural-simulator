@@ -20,10 +20,16 @@ Steps (one process; numpy backend):
 
   bash tools/mem_ok.sh 4 && bash tools/memcap.sh 4 -- env SIM_BACKEND=numpy python -u -m \
       research.runners._lexicon_closed_class_junction_dev --seed 7 --corpus /path/to/tinystories.txt \
-      --out research/findings/raw/_lexicon_closed_class/dev_s7
+      --out research/findings/raw/_lexicon_closed_class/dev_s7_amendment2
   bash tools/mem_ok.sh 4 && bash tools/memcap.sh 4 -- env SIM_BACKEND=numpy python -u -m \
       research.runners._lexicon_closed_class_junction_dev --seed 42 --corpus /path/to/tinystories.txt \
-      --out research/findings/raw/_lexicon_closed_class/dev_s42
+      --out research/findings/raw/_lexicon_closed_class/dev_s42_amendment2
+
+NOTE ON --out: use a NEW directory per amendment, never the prior round's `dev_s<seed>/` -- round 1's
+`dev_s7/{off_frame_s7,junction_s7,route_s7,dev_s7_result}.json` are cited by
+research/findings/2026-09-24-lexicon-closed-class-frame-junction-dev-s7-not-ready.md's own frontmatter; reusing
+that directory overwrites the artifacts a committed finding points to (caught the hard way: AMENDMENT 2's first
+run did exactly this before it was reverted).
 """
 from __future__ import annotations
 
@@ -62,13 +68,15 @@ def main():
     out_dir = a.out if os.path.isabs(a.out) else os.path.join(_REPO, a.out)
     from research.runners import lexicon_spiking_frame_category as L
     from research.runners import _lexicon_closed_class_parse_diag as P
-    from research.runners import lexicon_frame_junction as J
     summary = {"seed": seed, "backend": os.environ.get("SIM_BACKEND"), "corpus_path": corpus,
               "git_sha": P._git_sha()}
     summary["corpus_sha256"], summary["corpus_bytes"] = P._sha256(corpus)
     t0 = time.time()
 
-    # D0 default OFF
+    # D0 default OFF. IMPORTANT: `lexicon_frame_junction` must NOT be imported (by this script or anything it calls)
+    # before this check runs, or "junction_module_imported" trivially reads True from OUR OWN later import instead
+    # of from get_lexicon()'s own variant choice (caught the hard way: importing it above for the constants block
+    # made D0 assert-fail on every seed the first time this ran).
     os.environ.pop("BRAIN_LEARNED_REFERENT_JUNCTION", None)
     off = P.run(seed, corpus)
     _dump(os.path.join(out_dir, f"off_frame_s{seed}.json"), off)
@@ -86,6 +94,7 @@ def main():
     assert off["variant"] == "frame" and not summary["D0_default_off"]["junction_module_imported"], \
         "default-off must be the v2 lexicon with the junction module unimported"
     print("D0", summary["D0_default_off"], flush=True)
+    from research.runners import lexicon_frame_junction as J   # AFTER the D0 check (see the comment above)
     summary["constants"] = {"W_J": J.W_J, "I_TONIC_J": J.I_TONIC_J, "T_ON_J": J.T_ON_J,
                             "DRIVE_MATCH_S": J.DRIVE_MATCH_S, "W_INIT_J": J.W_INIT_J, "ETA_J": J.ETA_J,
                             "OJA_BETA_J": J.OJA_BETA_J, "OR_LESION_FACTOR": J.OR_LESION_FACTOR,
