@@ -1,0 +1,43 @@
+{
+ "run_id": "1790336062-2889118",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/derisk-pool/revisions/2def39c76cb4d81ca1b907399d3e9482f62bfe42/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_DA_TAG_CAPTURE\": \"1\", \"BRAIN_DA_TAG_CAPTURE_CLOCK\": \"turn\", \"BRAIN_SLEEP_REPLAY_CAPTURE\": \"1\", \"BRAIN_SLEEP_LOAD_RENORM\": \"1\"}",
+  "--turns",
+  "fil_t1,fil_t2,fil_t3,fil_t4,fil_t5,fil_night1,fil_recall1,fil_d2f1,fil_night2,fil_recall2,fil_d3f1,fil_night3,fil_recall3,fil_d4f1,fil_night4,fil_recall4,fil_d5f1,fil_night5,fil_recall5,fil_d6f1,fil_night6,fil_recall6,fil_d7f1,fil_night7,fil_recall7",
+  "--out",
+  "research/findings/raw/_sleep_forgetting_interference/seed44/fil_lr.json"
+ ],
+ "git_sha": "2def39c76cb4d81ca1b907399d3e9482f62bfe42",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "700b414613cec43b7d2276dd9a266a6fa25c6f6f2d10b32abac4d46b1ffc6adf",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T11:34:22",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790336061162050208-6604",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "3",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1790336061-2889113",
+  "BRAIN_CHAT_SEED": "44",
+  "BRAIN_LTM_SHIP_DEFAULT": "0"
+ },
+ "host": "ip-172-31-47-57",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_sleep_forgetting_interference/seed44/fil_lr.json"
+}

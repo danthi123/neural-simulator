@@ -1,0 +1,285 @@
+---
+type: finding
+status: audit
+claim_check: measured
+date: 2026-09-25
+lane: pool-infrastructure
+mechanism: audit of every pool job that the pre-096dfdae0 dispatcher claimed from a PARTIAL queue line (the
+  revision probe's ssh, run without -n, drained part of pop_job's candidate stream and the next read resumed
+  mid-line) -- what each fragment executed, on which node, what it wrote, whether it reached the primary
+  checkout, and whether any committed finding or aggregate depends on it
+artifacts:
+  - research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json
+  - research/findings/raw/_dispatcher_fragment_audit/node_evidence/
+  - research/findings/raw/_load_bearing/_shards/b2a0924/aggregate.json
+  - research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json.prov.json
+  - research/findings/raw/_load_bearing/_shards/b2a0924/PIN.txt
+  - research/findings/raw/_load_bearing/_shards/b2b0924-base/PIN.txt
+---
+
+# Dispatcher fragment jobs: what ran, what it wrote, what depends on it (audit, 2026-09-25)
+
+## Plain statement
+
+Until commit 096dfdae0 (2026-09-25 11:04), `tools/pool_autodispatch.sh` could claim the TAIL of a queue line and run
+it as if it were a whole job. This audit finds every such claim and traces each one to its node, its exit status, and
+its outputs.
+
+- **14 fragments were claimed and dispatched**, from 2026-09-24 16:04:49 to 2026-09-25 07:35:36, all on the two AWS
+  nodes (pool1: 9, pool2: 5). A further **5 fragments were set aside unrun** by the dispatcher's `#checked:` gate.
+- **9 of the 14 ran nothing.** bash could not find their first word as a command (exit 127).
+- **1 ran only a missing script (exit 2).** It is line 1638, the one the review cited. Its first command,
+  `tools/assert_flipped_defaults.py`, does not exist in the unpinned node tree (git_archive d7b2a2bb5), so the
+  `&&` chain stopped. No mkdir ran and no load-bearing measurement ran.
+- **4 ran a real load-bearing measurement (exit 0)** in the UNPINNED `~/derisk-pool/sim` tree of their node, at the
+  wrong code revision. These are claims 1454, 1627, 1631 and 1635. The review's list missed all four, because
+  each begins with a plausible `NAME=value` word. Each wrote one cell, `pool_sync` pulled each cell into the primary
+  checkout, and a later run of the FULL line, pinned to the registered revision, replaced each cell.
+- **Every fragment's full line also ran, in full and pinned, afterwards.** No fragment removed its own full line from
+  the queue. Every one of those later runs that has finished exited 0. Only the `.json` tail (line 1916) still has
+  candidate full lines running or queued at the audit snapshot (2026-09-25 11:33).
+- **No committed finding is at risk.** Five items go to the owner (see "Findings at risk"). One of them is not a
+  fragment at all: six SETTLE A2 wiring lines ran nothing.
+
+## Scope
+
+- **Window.** The revision probe (`revision_available`) reached main in merge 561efa586 (2026-09-23 22:44:43). The
+  dispatcher restarted at 22:53:21 (`[pool-dispatch] started 22:53:21` in dispatch.log). It restarted with the fix
+  at 2026-09-25 11:05:52. The scan covers the WHOLE `pool.queue.claims`: 2037 lines at the 12:19:03 snapshot, as
+  recorded in the audit JSON's `provenance.inputs`. It finds zero fragments before the window and zero among the
+  claims made after the fixed restart.
+- **Nodes.** Fragments reached only pool1 and pool2. The mini-PCs (pool40/41/42) received none.
+- **Read-only.** No queue file, node, shard cell or finding was modified. Node files were read with
+  `ssh -n -o BatchMode=yes -o ConnectTimeout=8` (both AWS nodes were up). The first pass of this audit kept its
+  copies only in session scratch (`/tmp`, lost at session end -- flagged by review, r2); r2 re-fetched the same
+  files read-only, but committed them as `pool1.job_status.log`/`pool2.job_status.log` -- a name `.gitignore`'s
+  `*.log` rule silently drops, so they were never actually in git despite r2's own commit message and this
+  document (`:56` below, prior wording) saying they were (review r3 HIGH item; caught by reproducing this finding's
+  own command on a clean checkout, which read zero `*.job_status.log` files and got `rc=?` for every fragment and
+  every A2 line). **Fix round r3** renamed them to `pool1.job_status.tsv`/`pool2.job_status.tsv` (not gitignored;
+  `git ls-files` confirms both are tracked) and extended `tools/audit_pool_fragment_claims.py`'s `--node-status`
+  glob to read either extension. The durable evidence under
+  `research/findings/raw/_dispatcher_fragment_audit/node_evidence/` is: the 20 relevant job_status v2 records (the
+  14 fragments' own plus the six SETTLE-A2 lines'), the four fragment-written cells' `lb.json` + sidecar + the one
+  `oed_*.json`, and the two nodes' `runs.jsonl` (8 records total, 4 each).
+- **Parent-run exit statuses (review r3 MEDIUM item).** r2's regeneration fetched job_status only for the fragments
+  and A2 lines, never for the PARENT full-line reruns the table below cites as "rc 0" -- so every parent occurrence
+  in the committed JSON read `node_status: null`, and finding text such as "every later run exited 0" was not
+  supported by the cited artifact on a clean reproduction. r3 has no `research/queue/` access (a worktree-isolated
+  fix round; re-fetching from the live AWS nodes is also out of scope here) to redo that fetch directly, so it
+  restores the SAME values the very first audit pass already resolved and committed at 273cfc1b4 (a real read-only
+  `ssh -n` fetch of the complete, unfiltered per-node logs, before this repo's `.tsv` evidence existed): committed
+  as `research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json` (93 resolved
+  occurrences, 86 distinct (node, ts, rc) records spanning pool1/pool2/pool42, every one rc 0), and applied with
+  `tools/apply_parent_status_archive.py` (test: `tests/test_apply_parent_status_archive.py`) -- it fills ONLY an
+  occurrence a live fetch left empty, never overrides one, and records what it did in the JSON's own
+  `restorations` list. Of the 145 parent occurrences the current (larger, since-grown) queue snapshot carries, 93
+  are restored this way; the other 52 are claimed dispatches with no record in either this round's live fetch or
+  the archive (each is running, finished after both fetches, or genuinely unresolved -- none is known to have
+  failed). The JSON below was regenerated from the committed evidence by r2's own live-queue run, then patched by
+  this restoration step; its `provenance.argv` and the new `restorations` entry each name exactly what produced
+  their part of it.
+
+## Method
+
+1. **Detector.** A claim is a fragment if its job text is a PROPER SUFFIX of another known full line. Known lines are
+   every claim, the live `pool.queue`, `.unchecked` and `.malformed`, and a fragment is never counted as a parent.
+   A second scan lists claims whose first word is not a normal command start. Tool:
+   `tools/audit_pool_fragment_claims.py` (test: `tests/test_audit_pool_fragment_claims.py`).
+2. **Cross-checks on the detector.** All 14 fragments immediately follow a `revision <sha> not provisioned on <same
+   node>` line in dispatch.log. That is the one moment the bug can act. Across the window, 19 dispatches follow such a
+   line: the 14 fragments, 4 ordinary full lines, and the first A2 line (see below). `research/queue/pool.running`
+   holds 1003 entries total per the audit JSON's `provenance.inputs` at the 12:19:03 snapshot (not window-filtered);
+   every entry this audit's cross-check inspected within the window matched a claim.
+3. **Execution and exit status.** Each claim is mapped to its `pool.running` record (node and executed text). The
+   base64 of that text is looked up in the node's `~/derisk-pool/sim/job_status.log` v2 records (rc).
+4. **Writes.** On each node, every file under `~/derisk-pool/sim` (excluding `.venv`) newer than the tree's
+   provisioning marker `.pool_environment.json` was listed (pool1: 2026-09-24 13:41Z; pool2: 15:56Z). The node tree's own provenance log (`runs.jsonl` under
+   `research/findings/raw/_provenance`) was read. The list contains exactly the four measurement cells below, their
+   provenance records, `__pycache__`, `job_status.log` and `autodispatch.out`, and nothing else.
+5. **Pull-back.** `research/queue/pool_sync.log` lists the files each sync pulled from a node's main tree. Its runs
+   were aligned to the `pool-sync.service` journal's finish times.
+6. **Pin rule.** `tools/lb_shard.py`'s own `cell_prov_fails` was run on each fragment-produced cell (copied from the
+   node) and on every local cell of `b2a0924` (pin M1 9db7613296c3d02a161b36fb15da3983188b7902) and `b2b0924-base`
+   (pin F a308f1e09babcc9ed096c3c8046d00040391368c).
+7. **Citations.** Findings, the board and git history (all refs) were searched for the affected cells and for any
+   file whose sidecar `argv[0]` lies in an unpinned node tree.
+
+Reproduce, against the committed durable evidence (fix round r3; the first pass's `--node-status`/`--node-outputs`
+pointed at session scratch, since fixed by r2; r2's own evidence commit was silently gitignored, since fixed by r3
+-- see "Read-only" above):
+
+```
+.venv/bin/python tools/audit_pool_fragment_claims.py \
+  --json research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json \
+  --node-status research/findings/raw/_dispatcher_fragment_audit/node_evidence \
+  --scan-shards b2a0924=9db7613296c3d02a161b36fb15da3983188b7902 \
+  --scan-shards b2b0924-base=a308f1e09babcc9ed096c3c8046d00040391368c \
+  --node-outputs research/findings/raw/_dispatcher_fragment_audit/node_evidence
+
+# restore the parent-run exit statuses r2's fetch never covered (needs research/queue/ access; run from a checkout
+# that has it, not from a worktree-isolated fix round -- see "Parent-run exit statuses" above):
+.venv/bin/python tools/apply_parent_status_archive.py \
+  --report research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json \
+  --archive research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json
+```
+
+## Every fragment
+
+In the table below, a fragment word that ends in a JSON filename is split before `.json`. This stops the claim
+checker from reading it as a citation. The exact texts are in the audit JSON. All times are EDT. Every fragment
+ran with its node's `~/derisk-pool/sim` as the working directory, with no revision pin.
+
+| claims line | claimed | node | probe that swallowed the bytes | fragment starts | what bash ran | rc | wrote | the full line's real run(s) |
+|---|---|---|---|---|---|---|---|---|
+| 1454 | 09-24 16:04:49 | pool1 | 49a089d8 on pool1 | `OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_…` | `load_bearing_fraction --only open-ended-generation --seed 100` at git_archive 5d10431c6, SIM_BACKEND unset | 0 | cell `b2a0924/s100/open-ended-generation` (lb.json, sidecar, oed_distributional_s100.json) | 1579 (operator re-run, 19:23:01 pool2, rc 0) and 1582 (19:24:30 pool2, rc 0), both at M1 |
+| 1455 | 09-24 16:06:07 | pool1 | 49a089d8 on pool1 | `ed/lb` `.json` | nothing: command not found | 127 | nothing | tail of a b2a0924 wm-binding-advanced line; every candidate (s43/s44/s100/s101) ran later, rc 0 |
+| 1461 | 09-24 16:11:27 | pool1 | 49a089d8 on pool1 | `n-ended-generation/lb` `.json` | nothing | 127 | nothing | b2a0924 open-ended-generation; all 6 seed candidates ran later, rc 0 |
+| 1473 | 09-24 16:45:08 | pool1 | 49a089d8 on pool1 | `tive-memory/lb` `.json` | nothing | 127 | nothing | b2a0924 prospective-memory; 4 candidates ran later, rc 0 |
+| 1625 | 09-24 20:21:49 | pool2 | 4da72fd2 on pool2 | `/raw/_load_bearing/…/s43/vision-identity-spiking-hmax/lb` `.json` | nothing | 127 | nothing | 1846 (09-25 05:36:30 pool2, rc 0) |
+| 1627 | 09-24 20:28:58 | pool2 | 4da72fd2 on pool2 | `ENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_…` | `load_bearing_fraction --only d5-consolidate --seed 43` at git_archive d7b2a2bb5, SIM_BACKEND unset | 0 | cell `b2b0924-base/s43/d5-consolidate` (lb.json + sidecar; verdict `unmapped-in-battery`) | 1852 (09-25 05:43:01 pool2, rc 0), at F |
+| 1630 | 09-24 20:39:43 | pool1 | 4da72fd2 on pool1 | `dmodel-forward/lb` `.json` | nothing | 127 | nothing | b2b worldmodel-forward; all 4 candidates ran later, rc 0 |
+| 1631 | 09-24 20:39:51 | pool1 | d460b449 on pool1 | `RIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 …` | `load_bearing_fraction --only causal-whatif --seed 42` at git_archive 5d10431c6, SIM_BACKEND unset | 0 | cell `b2b0924-base/s42/causal-whatif` (lb.json + sidecar; `unmapped-in-battery`) | 1806 (09-25 03:38:28 pool1, rc 0), at F |
+| 1635 | 09-24 20:40:22 | pool2 | 4da72fd2 on pool2 | `RM_PROBE=1 .venv/bin/python -u -m …` | `load_bearing_fraction --only affect-appraisal-interoceptive --seed 42` at git_archive d7b2a2bb5, SIM_BACKEND unset | 0 | cell `b2b0924-base/s42/affect-appraisal-interoceptive` (lb.json + sidecar; `unmapped-in-battery`) | 1810 (09-25 03:48:21 pool2, rc 0), at F |
+| 1637 | 09-24 20:45:14 | pool1 | 4da72fd2 on pool1 | `coding/lb` `.json` | nothing | 127 | nothing | b2b da-gated-encoding; all 4 candidates ran later, rc 0 |
+| 1638 | 09-24 20:55:50 | pool2 | 4da72fd2 on pool2 | `& .venv/bin/python tools/assert_flipped_defaults.py && mkdir …` | `POOL_CHECKED_REASON=… &` (backgrounded assignment), then python on a script absent at d7b2a2bb5 | 2 | nothing (no mkdir, no provenance record) | 1752 (09-25 00:19:36 pool2, rc 0), at F |
+| 1647 | 09-24 20:58:04 | pool1 | 4da72fd2 on pool1 | `earing_fraction --only curiosity-followup …` | nothing | 127 | nothing | 1791 (09-25 02:52:42 pool2, rc 0) |
+| 1909 | 09-25 07:31:27 | pool2 | 5b5ea1b7 on pool2 | `nce/lb` `.json` | nothing | 127 | nothing | b2b self-initiated-utterance s44 (1948) or s100 (1991); both ran later, rc 0 |
+| 1916 | 09-25 07:35:36 | pool1 | 5b5ea1b7 on pool1 | `.json` | nothing | 127 | nothing | tail of any of 111 candidate b2b lines (the queue grew between the first pass and this fix round): 62 have a confirmed rc 0 (restored, see "Parent-run exit statuses"); the other 49 have no exit status in either fetch (running, finished after both fetches, or unresolved -- none known to have failed) |
+
+**Short tails have ambiguous parents.** A tail such as `.json` matches many lines. A candidate counts as the parent
+only if it was still queued at the fragment's claim time, meaning it was claimed later or is queued now. Each such
+fragment ran nothing, so the ambiguity affects only the bookkeeping, not any output.
+
+**Quarantined, never run (5).** Each of these follows a failed probe. Each begins inside the `#checked:` reason, so
+it carries no `#checked:` and the record-check gate set it aside. dispatch.log keeps the first 96 characters (lines
+36451, 36474, 36477, 36637, 36682). `pool.queue.unchecked` no longer holds them; it was rewritten on 2026-09-25 at
+04:05. The last two are tails of B2b lines and of `ca3_superposed_fact_attractor` lines. The first three are tails
+of lines that are in neither the claims nor the live queue. **Fix round r3 (review LOW item):** the prior wording
+here read the surviving 96-character heads as evidence of "deliberate supersession, not loss." It is not: a
+`#checked:` reason (dispatch.log:36474/36477's "b12 = Part A code identical to 7a39851c") explains why a line is
+PINNED to head b12, not that the line was ever superseded or removed on purpose, and dispatch.log:36451's surviving
+text ("...e any gate-seed run); Part A a3-successor CONT+CAT gate on BRAIN_OPEN_...") says nothing about
+supersession either -- both readings were an inference the head text does not support. The only verifiable facts:
+these three parents are absent from every current queue file (claims, live queue, `.unchecked`, `.malformed`), and
+nothing in this audit's evidence shows any of the three ever ran. A quarantine cannot remove a real line, so their
+absence is unexplained by this audit alone; it is not evidence of loss either. Anyone with a durable record of the
+A3-lane queue edit that removed them (if that is in fact what happened) should cite it here.
+
+## The four cells a fragment wrote
+
+| cell | fragment | node tree | fragment's result | pulled into the primary checkout (sync run finished) | replaced by | pin rule on the fragment copy | local copy now |
+|---|---|---|---|---|---|---|---|
+| `b2a0924/s100/open-ended-generation` | 1454 | pool1, 5d10431c6 | `regressed`, load_bearing true | 09-24 16:17:51, and again 19:34:56 | run 1582, lb.json mtime 09-24 19:25:06 | excluded: git_sha is not M1, env.SIM_BACKEND unset, oed file has no sidecar | pinned M1 run, started 23:24:31Z |
+| `b2b0924-base/s43/d5-consolidate` | 1627 | pool2, d7b2a2bb5 | `unmapped-in-battery` | 09-24 20:35:31 | run 1852, lb.json 09-25 06:00:18 | excluded: git_sha is not F, SIM_BACKEND unset | pinned F run |
+| `b2b0924-base/s42/causal-whatif` | 1631 | pool1, 5d10431c6 | `unmapped-in-battery` | 09-24 20:50:52 | run 1806, lb.json 09-25 04:34:49 | excluded: same two fields | pinned F run |
+| `b2b0924-base/s42/affect-appraisal-interoceptive` | 1635 | pool2, d7b2a2bb5 | `unmapped-in-battery` | 09-24 20:50:52 | run 1810, lb.json 09-25 04:10:08 | excluded: same two fields | pinned F run |
+
+- **No real artifact was overwritten by a fragment, on a node or locally.**
+  - On a node, a fragment wrote only under `~/derisk-pool/sim`. The real run wrote only under
+    `~/derisk-pool/revisions/<pin>`.
+  - Locally, `pool_sync` uses `rsync -au`, so the newer file wins. In each cell the fragment ran BEFORE any real run
+    of that cell. No earlier real copy existed for it to replace, and the later real copy replaced it.
+  - For `b2a0924/s100/open-ended-generation`, the fragment's lb.json and oed_distributional_s100.json are JSON-equal
+    to the pinned run's (parsed comparison). Only the sidecar differs.
+- **The local shard trees are clean.** The pin rule passes all 186 local `b2a0924` cells at M1 and all 177 local
+  `b2b0924-base` cells at F (per the committed audit JSON's `shard_scans`; fix round r3, review LOW item -- this
+  number had drifted to 147 here and 166 below as the tree grew between snapshots, so both now quote the one
+  committed artifact). No sidecar in either tag has an `argv[0]` outside `~/derisk-pool/revisions/`.
+- **Provenance.** The node-tree `runs.jsonl` records the 4 fragment runs (run_ids 1790280290-1098350,
+  1790296139-1555371, 1790296792-1720678, 1790296822-1575672). None of these run_ids appears in the primary
+  checkout's provenance log or in any shard sidecar. `pool_sync` excludes `_provenance/`. No commit on any ref
+  contains an LB sidecar from `~/derisk-pool/sim`.
+
+## What depends on these cells
+
+- **B2a** (`2026-09-25-production-default-battery-B2a-FAIL.md` and `...-B2a-rescored-PASS.md`).
+  - These findings rest on `research/findings/raw/_load_bearing/_shards/b2a0924/aggregate.json`. That aggregate
+    was produced with `--pin` M1, and its provenance block reads `status: verified`, with 168 cells checked and 0
+    invalid.
+  - The only B2a cell a fragment wrote is `s100/open-ended-generation`. The B2b pre-registration review caught it on
+    2026-09-24. At ~19:20 the cell was moved to `.claude/worktrees/_rescue_tmp_2026-09-24/b2a_offrev_cell`, and a
+    pinned re-run was queued (1579).
+  - The committed sidecar of that cell (commit 50916e654) records M1 and a start of 23:24:31Z.
+  - Even the fragment's content equals the pinned content.
+- **B2b.** No finding cites a `b2b0924-base` cell. No B2b aggregate exists yet, and no B2b file is in git.
+- **Nothing else.** No other runner's output was written by a fragment.
+
+## Findings at risk
+
+**No committed finding is at risk.** Nothing here was retracted or rewritten. The five items below go to the owner.
+
+1. **B2b: which attempt is "first" for three cells.** The cells are `s43/d5-consolidate`, `s42/causal-whatif` and
+   `s42/affect-appraisal-interoceptive`.
+   - The B2b prereg (A1.4(c)) says a torn line that DID run is class E. Class E goes through A1.4(a)/(b): move the
+     first attempt aside, then re-run once by direct ssh on a DIFFERENT host, logged in
+     `research/coordination/b2b0924_reruns.tsv`. That file does not exist.
+   - In each of these cells, the torn run was followed by the unaltered full line, which ran at F via the dispatcher
+     on the SAME host (pool2, pool1, pool2).
+   - Reading 1: the torn run is the first attempt. Then each F run is an unlogged same-host re-run.
+   - Reading 2: the torn run was not the registered job line. Then each F run is the first attempt and the cell
+     stands as it is now.
+   - The owner should settle this before the B2b aggregate is scored. Per A1.4(c), the other B2b fragments ran nothing
+     and are not attempts.
+2. **SETTLE A2 never ran (not a fragment).** Claims 1923-1928 are six complete lines that each begin with a label:
+   `A2 wiring seed <s>: mem_gb=8 && cd ~/derisk-pool/revisions/5b5ea1b7… && … --run-wiring …`.
+   - On pool2 at 09:59:54-10:00:26, bash ran `A2`, got exit 127 and skipped the whole `&&` chain.
+   - pool2 has no `_affect_marker_settle_congruence/wiring` output and no such process. No later claim re-ran them.
+   - The 11:06 board entry (5e1c78128) says "SETTLE A2 six seeds dispatched to pool2 at 10:00".
+   - This is logged in `research/FAILURE_LOG.md`.
+3. **The fragment outputs are still on the nodes.** The four cells above still exist in pool1's and pool2's
+   `~/derisk-pool/sim` trees (re-confirmed by the fix round's own read-only re-fetch). `pool_sync` re-pulls a node
+   file whenever the local copy is missing.
+   - This happened on 2026-09-24. The operator moved the bad B2a cell aside at ~19:20, and the 19:34:56 sync pulled
+     the fragment copy straight back from pool1. It was replaced only because a newer pinned copy already existed
+     on pool2. That copy was written at 19:25:06, and pool_sync pulls pool2 after pool1.
+   - The pin rule would exclude such a copy, so the result would be an excluded cell, not a silent wrong value.
+   - **Fix round r2 note:** the review flagged that removing these four cells (as originally recommended here)
+     would have destroyed the only copy of the evidence this finding's claims rest on. That is now moot -- durable
+     copies are committed at `research/findings/raw/_dispatcher_fragment_audit/node_evidence/` (see Method /
+     Read-only, above) -- but the recommendation itself still stands for node hygiene: the owner may remove those
+     four directories from the two unpinned node trees whenever convenient. This read-only audit did not remove
+     them, and this fix round did not either (task scope: read-only ssh only, no node writes/deletes).
+4. **Two prior documents have the wrong cause for this class, and both should be annotated, not just the one.**
+   - The 2026-09-24 failure-log row (commit dcc2c9a49) blamed an unlocked append for the "torn queue line", and
+     was closed by making `pool_queue.sh` append under a lock. The lock did not stop the fragments: ten more were
+     dispatched after that row, from 09-24 20:21 to 09-25 07:35. The real cause is the probe's stdin drain, fixed
+     in 096dfdae0, which has its own row.
+   - `research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md` A1.8 claims its after-wave
+     queue-line shape check "catches the torn-line class that hit B2a." It does not: the tearing happens at
+     `pop_job`'s READ, never in the queued line itself, so the shape check -- which only ever sees the intact,
+     correctly-shaped line -- could not have caught any of the ten b2b0924-base fragments.
+   - **Question for the owner / record only (fix round r3):** an earlier round of this branch corrected A1.8's
+     claim in place, as a dated amendment in the prereg itself. Per this task's instruction it has been removed
+     from this branch -- the owner has since approved the related B2b torn-cell handling (item 1 above, the
+     "which attempt is first" question), and a separate lane, `research/b2b-torn-cells-redo`, is the one now
+     writing amendments to that pre-registration (its commit bdfa1641f adds an Amendment 2 covering item 1). That
+     lane, or the owner directly, should also correct A1.8's "catches the torn-line class" claim there; this
+     finding keeps the fact on record but no longer edits the prereg itself.
+5. **Neither tag had a recorded pin (fix round r2: now fixed for both).** The review caught that this item
+   originally named only `b2b0924-base`, but `b2a0924` had no `PIN.txt` either, despite already having a committed
+   `aggregate.json`. The review also caught an overstatement: `gates/lb_battery_provenance` only checks a
+   newly-ADDED `aggregate.json` (`--diff-filter=A`); an in-place RE-aggregation of an already-committed
+   `aggregate.json` with `--pin` omitted is not checked by that gate and would silently read
+   `provenance.status: "unverified"` with no commit-time block.
+   - This fix round wrote `PIN.txt` for both tags, since `tools/lb_shard.py aggregate` already reads it
+     automatically whenever `--pin` is omitted (`cmd_aggregate`, closing the exact gap `gates/lb_battery_provenance`
+     cannot cover) and both pins are independently certain, not merely asserted: `b2a0924` = M1
+     `9db7613296c3d02a161b36fb15da3983188b7902`, matching the `git_sha` this fix round read directly from the
+     ALREADY-COMMITTED pinned sidecar `research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json.prov.json`;
+     `b2b0924-base` = F `a308f1e09babcc9ed096c3c8046d00040391368c` (`a308f1e09` resolved in full via `git rev-parse`),
+     matching the `git_sha` read directly from the local (uncommitted, live) pinned sidecar of run 1852
+     (`s43/d5-consolidate`) AND matching every one of the 177 local `b2b0924-base` cells this audit's own
+     `--scan-shards` pass checked against it (0 pin-rule failures at that pin, re-confirmed this fix round).
+   - `research/findings/raw/_load_bearing/_shards/b2a0924/PIN.txt` and `.../b2b0924-base/PIN.txt` are committed by
+     this fix round. With either pin, every fragment-written cell of that tag is excluded (see the table above).
+
+## Adjacent observation (not caused by the fragments)
+
+`tools/lb_shard.py`'s covered-by-parent window takes its upper bound from the `lb.json.prov.json` file mtime. A git
+checkout resets that mtime.
+
+- The tracked sidecar for `b2a0924/s100/open-ended-generation` reads 2026-09-25 00:43:26, which widens that cell's
+  window to about 5 h (the aggregate records `[1790292271, 1790311407]`).
+- The content-match requirement still binds the covered file to the parent's own result, so no admission depends on
+  the wide window here.

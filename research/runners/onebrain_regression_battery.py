@@ -561,6 +561,11 @@ FACULTY_PROBES = [
     ("noncontradiction-gate",   "well",     ["noncontradiction.on", "noncontradiction.reject",
                                              "noncontradiction.recalled_yn", "noncontradiction.asserted_polarity"], False),
     ("affect-coloring",         "well",     ["affect.on", "affect.valence_sign", "affect.tone_token"], False),
+    # 2026-09-25 EFFECT NOTE (retire-affect-marker-word, BRAIN_AFFECT_MARKER_SURFACE default OFF): the fields
+    # below are `resp['affect_drives']`'s RECORDED internal state (the felt-state read/selection), never
+    # `resp['answer']` -- both rows are UNCHANGED by the surface flip; the marker still gets computed+recorded
+    # exactly as before, only whether it is ALSO prepended to the answer is now gated. See
+    # docs/PRODUCTION_INTEGRATION_LEDGER.yaml affect-drives-response row.
     ("affect-drives-response",  "well",     ["affect_drives.on", "affect_drives.acted", "affect_drives.high_arousal",
                                              "affect_drives.reason"], False),
     # LIFTED 2026-09-02: `expression_lead()` returns '' UNCONDITIONALLY at mood level 0 (checked BEFORE either

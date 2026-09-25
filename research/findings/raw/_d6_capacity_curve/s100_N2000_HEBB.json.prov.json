@@ -1,0 +1,36 @@
+{
+ "run_id": "1790242630-550359",
+ "runner": "research/runners/d6_capacity_curve.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/24231d6d6872a83cba9a0cf29612ef6aaa147fda/research/runners/d6_capacity_curve.py",
+  "--worker",
+  "--seed",
+  "100",
+  "--n-facts",
+  "2000",
+  "--arm",
+  "HEBB",
+  "--out",
+  "research/findings/raw/_d6_capacity_curve/s100_N2000_HEBB.json"
+ ],
+ "git_sha": "24231d6d6872a83cba9a0cf29612ef6aaa147fda",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "2ae8b8e8e76427834be568559c0301dce326c47caa5aa65d67621790ebb804a9",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T05:37:10",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "POOL_JOB_ID": "1790242629860159675-31204",
+  "POOL_JOB_MEM_GB": "1"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d6_capacity_curve/s100_N2000_HEBB.json"
+}

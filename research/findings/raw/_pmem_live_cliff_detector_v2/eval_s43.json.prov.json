@@ -1,0 +1,28 @@
+{
+ "run_id": "1790193761-3744765",
+ "runner": "research/runners/_pmem_live_cliff_detector_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/2ba01783be41ff52f8d2af288899608b1a4c8058/research/runners/_pmem_live_cliff_detector_derisk.py",
+  "--eval",
+  "--seed",
+  "43"
+ ],
+ "git_sha": "2ba01783be41ff52f8d2af288899608b1a4c8058",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "7125b12616447e9fac85d29b074f3cce7fa70de96820a636b26dbe953f8f6dc9",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-23T16:02:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_pmem_live_cliff_detector_v2/eval_s43.json"
+}

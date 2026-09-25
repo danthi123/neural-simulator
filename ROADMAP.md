@@ -7,6 +7,22 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-25 (afternoon) — owner rulings, a backlog of results scored, and handoff to the local model
+
+**Owner rulings:** the memory pair waits for a fix that makes the brain remember what matters (important facts and key
+details kept, minor details fading, no perfect recall of everything); the feeling word glued onto replies ("Wonderful!")
+is being retired, so mood shapes how the brain speaks instead; AWS may run the weekend's queued experiments within the
+daily cap. **Scored today (each independently re-checked):** the ability to hold a memory with long-term memory on: GO
+on all six seeds; the old nightly scaling-down rule: NO-GO; learning feeling-words from reading: NO-GO; a learned
+word-to-thing lexicon: NO-GO; the gated free-talk turn: not a GO; tracking another person's false belief in chat: a
+practice-seed pass; two battery rows, a reminder-memory detector and an old timing measurement: undefined or void. The
+deep-credit (gap#4) sliding baseline stops the weights piling up at their limit (now merged).
+Several pool bugs were found and fixed (duplicate jobs, a dispatcher that starved the queue, jobs that never ran), and a
+test that wrote fake spend into the real AWS ledger was stopped. From this evening a local model supervises the queued
+experiments over the weekend while Claude usage is conserved. **Done by late afternoon:** the feeling word is off
+in replies by default (the mood is still computed and recorded), and the local model's runbook is written.
+(Board: GAP_CLOSURE_MISSION.md 13:05-16:20 entries.)
+
 ## 2026-09-25 (overnight) — overnight memory: a fact kept through sleep passes; resting hours before sleep works on 5 of 6 seeds; nothing switched on
 
 **Keeping an ordinary fact overnight:** the sleep-replay route (the brain's own memory read replays each recent fact at

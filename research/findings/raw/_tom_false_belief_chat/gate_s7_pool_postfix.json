@@ -1,0 +1,91 @@
+{
+  "seed": 7,
+  "n_items": 8,
+  "n_false_items": 4,
+  "n_true_items": 4,
+  "chance": 0.25,
+  "intact": {
+    "false_belief_acc": 1.0,
+    "true_belief_acc": 1.0,
+    "reality_baseline_false_acc": 0.0,
+    "true_belief_agree": 1.0
+  },
+  "other_lesion": {
+    "false_belief_acc": 0.0,
+    "collapsed": true,
+    "attributable_fraction": 1.0
+  },
+  "scramble_witnessing": {
+    "belief_acc_vs_true": 0.5,
+    "collapsed": true,
+    "attributable_fraction": 0.6666666666666666
+  },
+  "elapsed_seconds": 15.068428039550781,
+  "verdict_block": {
+    "label": "A5 false-belief chat wire (live organ, dev-seed smoke)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": ">=8 items",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "dev seed only (not one of the 6 validation seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "false-belief acc vs chance (live organ)",
+        "ok": true,
+        "detail": "1 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "reality-baseline FAILS false-belief",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f7cfa541870>",
+        "note": "a world-read that predicted reality would pass without any belief representation"
+      },
+      {
+        "kind": "require",
+        "name": "true-belief control: belief updates when witnessed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7cfa541870>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "other-lesion collapses the read",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "other-lesion collapsed to <= chance_loc bar",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "scrambled witnessing collapsed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.25
+  },
+  "honest_scope": "A dev-seed (7) smoke of the LIVE chat-facing organ/parser, reusing the already 6/6-seed-GO'd W3 register's own anti-cheats. Never a GO; the 6-seed capability gate over 42/43/44/100/101/102 runs at the frozen SHA F in B2b per the plan. Witnessing/presence is host-parsed; the action read is a host argmax (see the PRE-REGISTRATION)."
+}

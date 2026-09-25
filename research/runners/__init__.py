@@ -276,31 +276,69 @@ def _resolve_argv(rec):
     return rec
 
 
+def _shared_corpus_check_log():
+    """The ONE log `tools/before_you_build.sh` now writes (research/corpus-check-shared-log, 2026-09-25), at
+    the git COMMON dir root so every worktree of this repo reads and writes the SAME file -- the prior
+    location (`research/queue/.corpus_checks.jsonl`, inside whichever worktree ran the check) was invisible to
+    a run launched from any other checkout. `SIM_CORPUS_CHECK_LOG` overrides it, the same override
+    `before_you_build.sh` honors, so a test can point both ends at one tmp file without touching either the
+    real repo's `.git` or its `research/queue/`."""
+    override = os.environ.get("SIM_CORPUS_CHECK_LOG")
+    if override:
+        return override
+    try:
+        out = subprocess.run(
+            ["git", "-C", _ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+    except Exception:
+        out = ""
+    if not out:
+        return None
+    return os.path.join(out, "corpus_checks_shared.jsonl")
+
+
 def _corpus_check_state(max_age_h=24.0):
-    """How long since `before_you_build.sh` last ran. Stamped into every run record.
+    """How long before THIS RUN STARTED `before_you_build.sh` last ran. Stamped into every run record.
 
     EARNED 2026-07-31, expensively. The corpus check returns the priors for a question in 0.63 s and was
     purely ADVISORY: nothing bound running it to launching anything. A nine-hour, eight-cell crux was
     launched against a question already answered three weeks earlier at six seeds, with its root cause
     named in a second finding. The heartbeat flagged the missing check about fifteen times that day and was
     read past every time -- so this is recorded as a FACT of the run rather than as a reminder, and
-    `gates/corpus_check_required` refuses an expensive artifact whose run carries no recent check."""
+    `gates/corpus_check_required` refuses an expensive artifact whose run carries no recent check.
+
+    AGE IS MEASURED AT RUN START, NOT AT EXIT (research/corpus-check-shared-log, 2026-09-25). This function
+    runs from `_stamp_outputs`, which `atexit` calls when the run FINISHES -- so a check made seconds before a
+    long run began previously read as stale by the time a multi-hour run exited, understating freshness for
+    exactly the runs this gate cares most about. `_START` is fixed at import time; age is `_START - when`, and
+    any log entry timestamped AFTER `_START` is excluded outright (`when <= _START` is required) -- a check
+    logged once this run was already under way says nothing about whether it was consulted beforehand."""
     try:
-        log = os.path.join(_ROOT, "research", "queue", ".corpus_checks.jsonl")
-        if not os.path.exists(log):
+        log = _shared_corpus_check_log()
+        if not log or not os.path.exists(log):
             return {"corpus_check_age_s": None, "corpus_check_query": None}
         last = None
         with open(log, errors="ignore") as fh:
             for line in fh:
                 line = line.strip()
-                if line:
-                    try:
-                        last = json.loads(line)
-                    except ValueError:
-                        continue
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except ValueError:
+                    continue
+                try:
+                    when = float(entry.get("when", 0))
+                except (TypeError, ValueError):
+                    continue
+                if when > _START:
+                    continue                          # logged after this run started: not evidence for it
+                if last is None or when > float(last.get("when", 0)):
+                    last = entry
         if not last:
             return {"corpus_check_age_s": None, "corpus_check_query": None}
-        age = max(0.0, time.time() - float(last.get("when", 0)))
+        age = max(0.0, _START - float(last.get("when", 0)))
         return {"corpus_check_age_s": round(age, 1),
                 "corpus_check_query": str(last.get("query", ""))[:200],
                 "corpus_check_fresh": bool(age <= max_age_h * 3600.0)}
