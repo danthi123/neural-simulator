@@ -23,6 +23,16 @@ the checker's round-2 re-review found a NEW fence hole (a '# derived' comment in
 exemption) and list false positives, so round 3 runs (workflow `wou3e7upy`); the checker branch and the 4 audit branches
 (research/claimcheck-audit-1..4) are held until round 3 reviews SOUND, then merge together.
 
+**🌙 03:00 progress:** merged gap#4 clamp companion (2af73bfdd): the saturation is a DRIFT from C21's constant BDSP
+baseline p0=0.3; the fix is Payeur's sliding burst baseline (EMA ratio, default-OFF engine knob
+cfg.bdsp_pbar_ratio_tau_ms); smoke: weights stay near the start mean (+0.1/+0.3 vs +3.3/+4.3), train acc 0.21 vs chance
+0.18; relaxing the clamp to 48 does NOT stop the drift. 36 dev-seed-7 runs (C25-C27, AMENDMENT 6) queued at the pool tail.
+Review fixes applied: tau_avg XOR value is 5 s in bioRxiv v1, 2 s in v2; the drift story is a hypothesis C26 tests.
+Merged SETTLE A2 production wiring (4b4b35774, default-OFF): A2 is now measurable; 6 seeds queued; follow-up = a
+tests/test_webapp_server.py `test_brain_chat_*` integration test before any flip. Lexicon round 2 merged (db8db2a5b,
+NOT READY: AND fixed 102->0-1/10k, R4 fixed; G2 'might', G4 0.60/0.40 vs 0.30, G3 inconsistent); round 3 = workflow
+`wdj51wmk7` (partial-match pathway, opus).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. B2a: the heartbeat aggregates b2a0924 with `--pin 9db7613296c3...` at 186/186; if open-ended-generation shows excluded,
    wait for the oed provenance fix (workflow `wkqok0g80`), merge it, re-aggregate, then re-score R1/R2 and correct the
