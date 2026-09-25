@@ -1,0 +1,21 @@
+{
+ "n_junctions": 10000,
+ "lone_left_fired": 1,
+ "lone_right_fired": 1,
+ "pair_silent": 0,
+ "pair_spikes_mean": 1.0186,
+ "and_violations": 1,
+ "and_holds_all": false,
+ "lone_left_full_rows": [],
+ "lone_right_full_cols": [],
+ "left_afferent_rate": {
+  "median": 0.15333333333333332,
+  "max": 0.20666666666666667,
+  "argmax": 65
+ },
+ "right_afferent_rate": {
+  "median": 0.15,
+  "max": 0.24666666666666667,
+  "argmax": 9
+ }
+}
