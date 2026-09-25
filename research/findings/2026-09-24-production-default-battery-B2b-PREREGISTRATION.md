@@ -305,3 +305,19 @@ Reporting the #1 metric, the lesion-verified load-bearing fraction, at F over th
 over n_exercised, its mean and SD, the robust core, the union, and each faculty's count. Nothing more. It licenses no
 default flip and says nothing about BRAIN_LEARNED_REFERENT_LEXICON. A FAIL names each row that the shipped revision
 cannot measure as registered; each is a defect at F for that row's lane.
+
+### Amendment 2 (2026-09-25, written after `research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md`, before any redo)
+
+A dispatcher-popped command fragment (the pre-096dfdae0 stdin-drain bug that audit describes) that ran a real
+load-bearing measurement and wrote a cell -- claims 1627, 1631 and 1635 there, for `s43/d5-consolidate`,
+`s42/causal-whatif` and `s42/affect-appraisal-interoceptive` -- is a torn attempt under A1.3: class E (its sidecar
+fails A1.2 rule 1, wrong `git_sha` in an unpinned `~/derisk-pool/sim` tree), so it counts as the cell's FIRST
+attempt, not as a line that "never ran." Each cell's registered full line then ran, unaltered, on the SAME host as
+its fragment (pool2, pool1, pool2 respectively) -- that is an invalid same-host re-run under A1.4(b), which requires
+"never the host of the first attempt." This resolves Reading 1 of that audit's "Findings at risk" item 1: each of
+these three cells needs one more re-run, on a host different from its own fragment's, logged in
+`research/coordination/b2b0924_reruns.tsv`. For this dispatcher-accident class specifically, the re-run may be
+QUEUED with the `pool_node=<name>` constraint (`tools/pool_autodispatch.sh`'s `pop_job`, added 2026-09-25) rather
+than run by direct ssh, since the dispatcher can now pin a host; A1.4(b)'s memory guard
+(`bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 --`) is kept in front of the job's `env` prefix regardless of
+which path launches it.

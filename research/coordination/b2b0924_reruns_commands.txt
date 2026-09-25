@@ -1,0 +1,46 @@
+# B2b torn-cell redo: exact commands for the orchestrator (owner-approved 2026-09-25, "approved as recommended").
+# PREPARED, NOT RUN by the branch that added this file (research/b2b-torn-cells-redo): live research/queue/*,
+# the dispatcher/pool-sync services and the two AWS nodes (pool1, pool2) are out of scope for that worktree-isolated
+# session. Run these from the PRIMARY checkout (/home/dant123/Projects/sim), in order, AFTER merging this branch.
+#
+# Background: research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md found that a dispatcher-popped command
+# fragment (pre-096dfdae0 stdin-drain bug) ran a real load-bearing measurement for each of these 3 cells, on the
+# SAME host as the full line that later (correctly) measured them at F. Prereg Amendment 2 (2026-09-24 B2b
+# PREREGISTRATION doc) classifies the fragment as the cell's first attempt (class E) -- so the same-host full run
+# is an invalid re-run under A1.4(b), which requires a host different from the first attempt. Each cell needs one
+# more re-run, on a genuinely different host, before the aggregate is scored.
+
+# ---- STEP 1: move the current banked cell aside on BOTH sides (A1.4(a)) -- do this before Step 2, ideally
+# back-to-back, so pool-sync.service's ~15-min rsync -au cannot pull the node copy back into the now-empty local
+# path before the node side is also moved.
+
+# 1a. Local (primary checkout):
+mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43
+mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43/d5-consolidate
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/causal-whatif
+mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive \
+   research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/affect-appraisal-interoceptive
+
+# 1b. Node side (same move, under the pinned revision dir on the node that ran each fragment):
+ssh -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s43/d5-consolidate'
+ssh -F research/queue/.pool_ssh_config pool1 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/causal-whatif'
+ssh -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s42/affect-appraisal-interoceptive'
+
+# ---- STEP 2: restart/reload the dispatcher if it does not already carry this branch's pop_job (pool_node=)
+# change -- e.g. `systemctl --user restart pool-dispatch.service` (or however the live dispatcher is (re)started
+# on this box; it reads tools/pool_autodispatch.sh fresh on each restart, no code path caches the old pop_job).
+
+# ---- STEP 3: queue the three redo lines (unaltered job text from cd to --out, plus the A1.4(b) memory guard and
+# the pool_node= constraint so each can ONLY land on a host different from its own fragment's).
+
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only d5-consolidate --seed 43 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s43/d5-consolidate/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s43/d5-consolidate, different host than the pool2 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool41; mem_gb=8'
+
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only causal-whatif --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/causal-whatif/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s42/causal-whatif, different host than the pool1 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool42; mem_gb=8'
+
+bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && .venv/bin/python tools/assert_flipped_defaults.py && mkdir -p research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive && bash tools/mem_ok.sh 8 2 && bash tools/memcap.sh 12 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_AFFECT_DRIVE_PROBE=1 LB_BG_SELECT_DRIVE_PROBE=1 LB_CG_DRIVE_PROBE=1 LB_DISCOURSE_REGISTER_DRIVE_PROBE=1 LB_EPISODIC_DRIVE_PROBE=1 LB_NONCONTRADICTION_DRIVE_PROBE=1 LB_OPEN_ENDED_DISTRIB_PROBE=1 LB_PMEM_DRIVE_PROBE=1 LB_SURPRISE_CONFIRM_PROBE=1 .venv/bin/python -u -m research.runners.load_bearing_fraction --only affect-appraisal-interoceptive --seed 42 --repeats 2 --out research/findings/raw/_load_bearing/_shards/b2b0924-base/s42/affect-appraisal-interoceptive/lb.json' --checked 'prereg research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md (F a308f1e09) AMENDMENT 2; torn-cell redo of s42/affect-appraisal-interoceptive, different host than the pool2 fragment (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md); logged research/coordination/b2b0924_reruns.tsv; pool_node=pool41; mem_gb=8'
+
+# ---- STEP 4: once each redo's lb.json lands, fill in the PENDING columns of research/coordination/b2b0924_reruns.tsv
+# (rerun_start_time from dispatch.log / the sidecar's start time, rerun_result from the cell's verdict).
