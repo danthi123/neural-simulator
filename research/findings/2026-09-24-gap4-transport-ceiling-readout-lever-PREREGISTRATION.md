@@ -501,3 +501,68 @@ baseline (H2 0.35 to 0.12), which the full runs will show at 30 epochs. <!--deri
 ## Erratum (2026-09-25, before any C25-C27 result)
 
 AMENDMENT 6 cited tau_avg = 5 s as "the source's XOR task" value. That is the bioRxiv **v1** value; **v2** states 2 s. Both lie inside the source's ~1-10 s range, which is the actual justification for 5000 ms. No registered rule, config or threshold changes. The drift explanation for the clamp saturation is a hypothesis tested by the C26 runs themselves (see research/biology/bdsp-sliding-burst-baseline.md, Corrections).
+
+## AMENDMENT 7 (2026-09-25 ~06:45 EDT, before any run of the C26 full-size job; dev seed 7 only)
+
+**Why.** AMENDMENT 6's Decision (C26) names a full-size GPU dev run as the step AFTER the dev-scale C25-C27 battery
+(H32/pool 4, 30 epochs, 4 arms x 3 replicates x 3 configs = 36 runs) qualifies C26 under its own (i)-(iii) gate.
+That battery is registered and queued on the pool but has not run as of this commit (only the smoke, which the
+parent document already marks "no decision weight"). The GPU is idle now, and the full-size transfer question is
+logically separable from the dev-scale gate: AMENDMENT 5 F ran the equivalent C21 full-size check in parallel with
+other open work, and its answer (NOT DEFINED at full size --
+research/findings/2026-09-24-gap4-transport-ceiling-bound-census-clamp-load-bearing-fullsize-UNDEFINED.md) was
+useful precisely because it was a distinct question from the dev-scale reading. This amendment pre-registers that
+same follow-on step for C26, ahead of time and before the run, using the idle GPU rather than leaving it idle
+(the parallelization discipline this project already runs on) rather than waiting on the pool battery.
+
+**Scope, stated now.** This amendment answers exactly one question: does C26 (the ratio baseline at tau_avg 5 s,
+hidden layers, added to the C21 operating point) transfer to the 2026-09-15 full net size (H64/pool 16), under the
+same size and the same pass/fail rules AMENDMENT 5 F used for C21. It draws NO verdict on whether C26 clears the
+dev-scale AMENDMENT 6 gate -- that is decided only when the queued C25-C27 pool runs land. It is **not** an
+EVALUATION CONFIG section under AMENDMENT 5 D: it registers no `evaluation-config-fingerprint` and no
+`evaluation-seeds` line, so it does **not** unlock any evaluation seed (42/43/44/100/101/102); the runner's guard
+continues to refuse them against this document.
+
+**Config.** The same full-size shape AMENDMENT 5 F used (`research/queue/_a9_gap4_tc_gpu.sh`, read for its exact
+flags): `SIM_BACKEND=cupy`, hidden 64, pool_k 16, 2 hidden layers, train subsample 400, 40 epochs, dev seed 7,
+replicates 0 1 2 (R=3), the same 4 arms (frozen, fixed_fa, micro_inengine, transport_ceiling), and every C21 flag
+that script sets (`--read-quantity spikes --settle-steps 40 --read-window 30 --read-gain 20 --isi-steps 0
+--eval-frozen --spi-silence-outside-credit --no-structural-plasticity --no-ff-stp --ff-w-init 40
+--propagation-strength 0.5 --bdsp-w-max 12 --tonic-h-pA 225 --tonic-o-pA 250 --pbar-alpha 0 --lr 5
+--hidden-lr-gain 0.2`), **plus C26's added flags**: `--pbar-ratio-tau-ms 5000 --pbar-ratio-layers hidden`.
+Runner: `research/runners/_gap4_transport_ceiling_readout_derisk.py` (unchanged this round). New script:
+`research/queue/_a10_gap4_c26_fullsize_gpu.sh`, modelled on `_a9_gap4_tc_gpu.sh`'s structure (resumable
+per-(seed,replicate,arm) checkpoints, its own pinned detached worktree, the main checkout's `.venv` interpreter
+found through git's common dir so it resolves correctly from that worktree).
+
+**Rules applied (unchanged from the parent document; restated for this run, at full size).**
+- **Census rule** (AMENDMENT 5 H's quantity): per feedforward pathway (ff_0, ff_1), the fraction of synapses at
+  (or beyond) +-`bdsp_w_max` at build and after training, mean and max |w|. The clamp reads as load-bearing at this
+  size if, in the transport_ceiling arm, at least 10% of a hidden-post pathway's synapses end at +-w_max on at
+  least 2 of 3 replicates -- the identical threshold AMENDMENT 5 H used to find it load-bearing at dev size and
+  C26's dev criterion (i) uses to test the fix.
+- **Rule B** (AMENDMENT 5 B, the interpretability gate): a replicate is interpretable only if the transport_ceiling
+  arm clears chance (one-sided binomial p < 0.05) AND has headroom >= 0.05 over frozen; seed 7 is DEFINED iff at
+  least 2 of 3 replicates are interpretable.
+- **Training-fit check** (C26 dev criterion (ii), applied here at full size): the transport_ceiling arm's training
+  accuracy is above its replicate's training chance (`train_binom_p < 0.05`, per-shard as AMENDMENT 5 A
+  registered) on at least 2 of 3 replicates; the same test is reported for fixed_fa and micro_inengine.
+
+**Decision.** DEFINED (rule B) AND the census does NOT read load-bearing at this size (the AMENDMENT 5 H/census-rule
+threshold does not fire on transport_ceiling) AND the training-fit check holds: C26 TRANSFERS to full size, and it
+becomes the candidate operating point for a future, separate EVALUATION CONFIG amendment under AMENDMENT 5 D --
+this amendment does not write that section itself. Any other outcome (not DEFINED, or DEFINED but the census still
+fires, or DEFINED but the training-fit check fails): C26 does NOT transfer at full size, reported as UNDEFINED
+(never as a NO-GO on C26 itself, since C21's own full-size run already collapsed to chance under these same rules).
+The next lever is then decided from whichever dev-scale reading is available at that point: the queued C25-C27
+pool battery if it has landed, else AMENDMENT 6's own next-lever order (event-rate homeostasis, then output
+lateral inhibition).
+
+**Byte-identity / provenance.** No new engine or runner code this round (`cfg.bdsp_pbar_ratio_tau_ms` is already
+merged to `main` at `2af73bfdd`, default-off). `--identity-selftest` and `--print-fingerprint` are unchanged from
+AMENDMENT 6. Every shard records `git_dirty`, `train_chance`, `train_binom_p` and the run's config fingerprint, as
+in every prior round.
+
+**Unchanged.** Evaluation seeds stay locked (AMENDMENT 5 D); this amendment names no evaluation config and
+registers no fingerprint/seeds line. Declared host residuals are as in the parent document. Functional read-outs
+only; nothing here is a claim about experience.
