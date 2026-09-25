@@ -1,0 +1,27 @@
+{
+ "run_id": "1790303713-2744923",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "67650da5d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T22:35:13",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3410.3,
+ "corpus_check_query": "frame-junction AND circuit fires to a single fast afferent (rate-dependent, not coincidence-only)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_lexicon_closed_class/or_match_factor_s7.json"
+}
