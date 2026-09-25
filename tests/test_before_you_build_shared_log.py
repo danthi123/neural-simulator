@@ -19,7 +19,7 @@ import os
 import shutil
 import subprocess
 
-REPO_ROOT = "/home/dant123/Projects/sim/.claude/worktrees/wf_87826bf5-9db-1"
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SCRIPT_SRC = os.path.join(REPO_ROOT, "tools", "before_you_build.sh")
 
 
