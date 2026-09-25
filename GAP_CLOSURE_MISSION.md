@@ -196,6 +196,12 @@ at 01:38 (logged in its worktree). Root cause: before_you_build.sh logs per-work
 check from any log); merge after it lands. Merge aborted cleanly, 108 set-aside files restored. Fix round 4 (pool-stall 2 HIGH,
 prereg gate false positive, claim-check r8 non-ASCII regression, SETTLE A3 small items + M4 render=0) = `w8hj1o2ap`.
 
+**☀️ 14:05 awake-replay completion:** dev result (research/awake-replay-completion-r2 @ 111667aaa; dev seeds 1-15 only): completion
+rescued both weak dev seeds (2, 13), lesion-controlled, normal seeds unchanged, no confab -- but the NIGHT completion carried it.
+Review SOUND-WITH-ISSUES: the spiking item bank SATURATES at 300 pA and sometimes reinstates the WRONG word (seed 3: 'ball') = a
+false-memory risk; a host-argmax substitute passes every test; stale pin. NOT queued. Fix round (unsaturated bank, abstain when
+ambiguous, pin the spiking pick in tests, addendum before any gate run, re-pin) = workflow `wog6646nw`.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
