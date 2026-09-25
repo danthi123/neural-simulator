@@ -1,0 +1,31 @@
+{
+ "run_id": "1790358283-3019699",
+ "runner": "research/runners/_open_ended_gated_turn_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_af4b61fb-32f-5/research/runners/_open_ended_gated_turn_gate.py",
+  "--score",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out-dir",
+  "research/findings/raw/_open_ended_gated/partA",
+  "--aggregate-out",
+  "research/findings/raw/_open_ended_gated/partA/oe_gated_partA_aggregate.json"
+ ],
+ "git_sha": "0c86f45ba",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-25T13:44:43",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_open_ended_gated/partA/oe_gated_partA_aggregate.json"
+}
