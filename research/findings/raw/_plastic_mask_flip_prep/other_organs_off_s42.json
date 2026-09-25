@@ -1,0 +1,81 @@
+{
+  "seed": 42,
+  "enforced_flag_read": false,
+  "organs": {
+    "affect": {
+      "nnz": 91333,
+      "whole_bridge_max_dw": 0.0,
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "mask_present": true,
+      "n_frozen": 91333,
+      "n_plastic": 0,
+      "frozen_max_dw": 0.0,
+      "plastic_max_dw": 0.0,
+      "organ": "affect",
+      "shared_pool": false,
+      "sample_reply": {
+        "differential": 0.06,
+        "pos_rate": 0.06,
+        "neg_rate": 0.0
+      }
+    },
+    "curiosity": {
+      "nnz": 531804,
+      "whole_bridge_max_dw": 0.0,
+      "enable_hebbian_learning": true,
+      "enable_stdp": false,
+      "mask_present": true,
+      "n_frozen": 391728,
+      "n_plastic": 140076,
+      "frozen_max_dw": 0.0,
+      "plastic_max_dw": 0.0,
+      "organ": "curiosity",
+      "shared_pool": true,
+      "sample_reply": {
+        "novelty": 0.95,
+        "want_hz": 38.19444444444444,
+        "curious": true
+      }
+    },
+    "surprise": {
+      "nnz": 531804,
+      "whole_bridge_max_dw": 0.0,
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "mask_present": true,
+      "n_frozen": 391728,
+      "n_plastic": 140076,
+      "frozen_max_dw": 0.0,
+      "plastic_max_dw": 0.0,
+      "organ": "surprise",
+      "shared_pool": true,
+      "sample_reply": {
+        "surprise_hz": 4.976851851851852,
+        "surprised": true
+      }
+    },
+    "worldmodel": {
+      "organ": "worldmodel",
+      "error": "AttributeError: 'WorldModelProductionOrgan' object has no attribute 'bridge'"
+    },
+    "metacog": {
+      "nnz": 531804,
+      "whole_bridge_max_dw": 0.0,
+      "enable_hebbian_learning": false,
+      "enable_stdp": false,
+      "mask_present": true,
+      "n_frozen": 391728,
+      "n_plastic": 140076,
+      "frozen_max_dw": 0.0,
+      "plastic_max_dw": 0.0,
+      "organ": "metacog",
+      "shared_pool": true,
+      "sample_reply": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 0.8
+      }
+    }
+  }
+}

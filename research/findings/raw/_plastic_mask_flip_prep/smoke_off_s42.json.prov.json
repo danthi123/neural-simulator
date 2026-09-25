@@ -1,0 +1,30 @@
+{
+ "run_id": "1790297685-2535042",
+ "runner": "research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py",
+ "argv": [
+  "research/findings/raw/_plastic_mask_flip_prep/prod_drift_probe.py",
+  "--seed=42",
+  "--arm=off",
+  "--out=research/findings/raw/_plastic_mask_flip_prep/smoke_off_s42.json"
+ ],
+ "git_sha": "a90dd3bd9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T20:54:45",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_plastic_mask_flip_prep/smoke_off_s42.json"
+}
