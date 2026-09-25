@@ -210,7 +210,7 @@ fallback in `research/runners/__init__.py`), so it carries no information. Rows 
 
 Each UNDEFINED cell gets exactly one re-run.
 - **(a) Move the first attempt out of the aggregate glob.** `lb_shard.py aggregate` reads
-  `research/findings/raw/_load_bearing/_shards/<tag>/s*/*/lb.json`. Before the re-run, the whole shard directory moves to
+  `research/findings/raw/_load_bearing/_shards/<tag>/s<seed>/<faculty>/lb.json` (every seed and faculty). Before the re-run, the whole shard directory moves to
   `research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s<seed>/<faculty>/`, both on the node that ran it
   (under `~/derisk-pool/revisions/<F>/`) and in the primary checkout. Both moves are needed: `tools/pool_sync.sh` pulls
   with `rsync -au`, which copies back any remote file missing locally, so a local-only move is undone at the next
