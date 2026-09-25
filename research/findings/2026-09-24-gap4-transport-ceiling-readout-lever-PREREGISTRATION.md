@@ -19,8 +19,8 @@ external: Bellec et al. (2020) Nat Commun 11:3625 (e-prop; readouts are leaky IN
   membrane time constant); Mazurek et al. (2026) Front Neurosci "Operational manifolds in spiking neural networks"
   (accuracy depends on the inference integration horizon); Carandini & Heeger (2012) Nat Rev Neurosci 13:51
   (divisive normalization as a canonical cortical computation). Search recorded with tools/record_external_search.sh.
-  AMENDMENT 6 adds: Payeur et al. (2020) bioRxiv doi:10.1101/2020.03.30.015511 / (2021) Nat Neurosci 24:1010
-  doi:10.1038/s41593-021-00857-x (the slow moving-average baseline); Bienenstock, Cooper & Munro (1982) J Neurosci
+  AMENDMENT 6 adds: Payeur et al. (2020) bioRxiv 2020.03.30.015511 v1 / (2021) Nat Neurosci 24:1010 (the slow
+  moving-average baseline; DOIs in research/biology/bdsp-sliding-burst-baseline.md); Bienenstock, Cooper & Munro (1982) J Neurosci
   2:32 (the sliding threshold); van Rossum, Bi & Turrigiano (2000) J Neurosci 20:8812 and Royer & Pare (2003) Nature
   422:518 (the alternatives weighed).
 builds_on:
@@ -471,3 +471,29 @@ changes the census at a short budget. Its artifacts go to `research/findings/raw
 registering the fingerprint, and this amendment is not one. Declared host residuals are as in the parent document.
 The mask that chooses the hidden neurons is runner configuration. The ratio EMAs are per-neuron state in the engine
 step, as the old EMA was. Functional read-outs only.
+
+### AMENDMENT 6, smoke record (appended after the declared smoke ran; the registered rules above are unchanged)
+
+Local numpy smoke at revision feaca2fdf (the commit that registered AMENDMENT 6; every shard `git_dirty: false`),
+under `tools/memcap.sh 1`: the C21 flags at 3 epochs (78000 training steps), replicate 0, transport_ceiling arm only.
+No decision weight. Shards:
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C21/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C25/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C26/smoke_s7_ckpt/s7_r0_transport_ceiling.json`,
+`research/findings/raw/gap4/transport_ceiling_readout/companion_smoke_revfeaca2f/C27/smoke_s7_ckpt/s7_r0_transport_ceiling.json`.
+At build every config has mean signed weight -0.05 (ff_0) and +0.05 (ff_1). <!--derived-->
+
+<!--derived-->
+| config | ff_0 / ff_1 at +-w_max | ff_0 / ff_1 within 10% of w_max | ff_0 / ff_1 mean signed w | train acc (chance 0.1825, p) | H1 / H2 / out mean read |
+|---|---|---|---|---|---|
+| C21 (clamp 12, preset baseline) | 1.5% / 5.2% | 9.1% / 13.6% | +3.29 / +4.31 | 0.138 (p 0.99) | 0.209 / 0.347 / 0.066 |
+| C25 (clamp 48) | 0 / 0 (at 48); 6.9% / 9.7% at abs(w) >= 12 | 0 / 0 | +3.73 / +4.59 | 0.158 (p 0.91) | 0.226 / 0.346 / 0.084 |
+| C26 (ratio baseline, hidden) | 0 / 0 | 0 / 0.01% | +0.11 / +0.34 | 0.210 (p 0.089) | 0.063 / 0.123 / 0.091 |
+| C27 (ratio baseline, all) | 0 / 0 | 0 / 0 | +0.11 / +0.34 | 0.215 (p 0.055) | 0.063 / 0.126 / 0.069 |
+
+What the smoke shows: the flag changes the census. At this short budget the C21 ceiling has not yet crossed the 10%
+rule, but its hidden weights have already drifted to a mean of +3.3 / +4.3 and 9-14% sit within 10% of the clamp. <!--derived-->
+With the ratio baseline the same pathways stay near their build mean (+0.11 / +0.34) and no synapse is near a <!--derived-->
+bound. Relaxing the clamp to 48 (C25) does not stop the drift (mean +3.7 / +4.6). Training accuracy at 3 epochs is <!--derived-->
+one replicate and one arm, so it is not read against (ii). The hidden layers' mean reads fall under the ratio
+baseline (H2 0.35 to 0.12), which the full runs will show at 30 epochs. <!--derived-->
