@@ -75,8 +75,10 @@ def _stub_main_dependencies(monkeypatch, *, lanes_pool, flagged_pool, agents=5):
     monkeypatch.setattr(pa, "pool_stall_summary",
                          lambda nodes, timeout=12: (flagged_pool, (["⚠ fake stall line"] if flagged_pool else [])))
     # queue_unrunnable_summary (2026-09-25 addition) makes its own ssh calls via pool_stall_check.check_queue --
-    # stub it too, same reason as pool_stall_summary above (no real ssh from a test).
-    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes, timeout=12: [])
+    # stub it too, same reason as pool_stall_summary above (no real ssh from a test). `nodes=None` default
+    # (fix round, 2026-09-25 review HIGH-1): main() must call this with NO explicit node list -- see
+    # test_main_queue_check_called_with_no_explicit_node_list below, which pins that wiring directly.
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (0, []))
     monkeypatch.setattr(pa, "open_tasks", lambda: (1, [(1, "some task")]))
     monkeypatch.setattr(pa, "active_agents", lambda: agents)
     monkeypatch.setattr(pa, "gpu_queue_busy", lambda: False)
@@ -123,3 +125,59 @@ def test_main_saturated_message_excludes_flagged_lanes_from_its_own_evidence(mon
     out = capsys.readouterr().out
     assert rc == 0
     assert "SATURATED (5 agents + 3 compute lanes cover the frontier)" in out
+
+
+# --------------------------------------------------------------------- fix round (2026-09-25 opus review)
+
+def test_main_calls_queue_unrunnable_summary_with_no_explicit_node_list(monkeypatch, capsys):
+    # HIGH-1 fix: main() used to call queue_unrunnable_summary(POOL), hardcoding this module's own mini-PC-only
+    # node list -- pool_stall_check.check_queue() only falls back to get_pool_nodes() (which ALSO reads
+    # research/queue/.pool_extra_nodes, the AWS lane) when its own `nodes` argument is None. A revision missing
+    # only on an extra node (the exact 2026-09-25 incident) was invisible to the check under the old wiring.
+    # This is the direct wiring test the review asked for (mutation M8 on the nodes argument).
+    _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=5)
+    captured = {}
+
+    def spy(nodes=None, timeout=12):
+        captured["nodes"] = nodes
+        return (0, [])
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", spy)
+    rc = pa.main()
+    assert rc == 0
+    assert "nodes" in captured
+    assert captured["nodes"] is None
+
+
+def test_main_appends_queue_stuck_count_to_the_verdict_line(monkeypatch, capsys):
+    # LOW-4 fix: the live heartbeat greps only lines matching SATURATED|UNDER-PARALLELIZED, so a queue-stuck
+    # warning printed on ITS OWN line is silently dropped. The count must ride on the verdict line itself.
+    _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=5)
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (3, ["⚠ fake queue line"]))
+    rc = pa.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    saturated_lines = [l for l in out.splitlines() if l.startswith("✓ SATURATED")]
+    assert len(saturated_lines) == 1
+    assert "queue: 3 UNRUNNABLE" in saturated_lines[0]
+
+
+def test_main_under_parallelized_line_also_carries_queue_suffix(monkeypatch, capsys):
+    # Companion: the suffix must appear on the ⛔ UNDER-PARALLELIZED verdict line too, not just the SATURATED one
+    # -- whichever verdict fires is the one the heartbeat's grep will keep.
+    _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=0)   # agents=0 -> under floor
+    monkeypatch.setattr(pa, "queue_unrunnable_summary", lambda nodes=None, timeout=12: (2, ["⚠ fake queue line"]))
+    rc = pa.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    stall_lines = [l for l in out.splitlines() if l.startswith("⛔ UNDER-PARALLELIZED")]
+    assert len(stall_lines) == 1
+    assert "queue: 2 UNRUNNABLE" in stall_lines[0]
+
+
+def test_main_verdict_line_has_no_queue_suffix_when_nothing_stuck(monkeypatch, capsys):
+    # No false-positive suffix when the queue is clean.
+    _stub_main_dependencies(monkeypatch, lanes_pool=5, flagged_pool=0, agents=5)
+    rc = pa.main()
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "queue:" not in out

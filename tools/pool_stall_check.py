@@ -377,12 +377,26 @@ def kill_command(node, pids):
 # (pool41/pool42) never had room for the line's declared mem_gb. pool_autodispatch.sh's own per-cycle log
 # ("revision ... not provisioned on pool2") is the ONLY place this was ever said -- a line in a log nobody was
 # tailing, not a heartbeat line, not a report. These checks read research/queue/pool.queue directly (the STAGED,
-# not-yet-dispatched lines -- see load_queue) and flag two DIFFERENT ways a line can never run:
-#   UNRUNNABLE           -- its pinned revision is missing (no .provisioned_ok) on every node that could ever
-#                            physically fit its declared size. Fixable: provision that revision on those nodes.
+# not-yet-dispatched lines -- see load_queue) and flag FIVE different ways a line can never run:
+#   UNRUNNABLE            -- its pinned revision is missing (no .provisioned_ok) on every node that could ever
+#                             physically fit its declared size. Fixable: provision that revision on those nodes.
 #   memory_budget_stalled -- its declared size exceeds EVERY known node's raw capacity, regardless of revision.
-#                            Not fixable by provisioning -- the line needs a smaller size or a bigger node.
-# Both are read-only probes (MemTotal, the .provisioned_ok marker) -- this never provisions, dispatches, or
+#                             Not fixable by provisioning -- the line needs a smaller size or a bigger node.
+#   capacity_stalled       -- (fix round, 2026-09-25 review HIGH-2) a capable node HAS the revision provisioned,
+#                             yet the line is still queued past its own age gate -- not a provisioning problem at
+#                             all (the original code `continue`d the instant any capable node read True, so this
+#                             state read silently "clean"), most likely that node's LIVE memory is occupied by
+#                             other work right now (this check only ever reads raw MemTotal, never current free
+#                             RAM -- see probe_mem_total_gb's own docstring for why that is deliberate elsewhere).
+#   expired                -- (review MEDIUM-3) older than pool_autodispatch.sh's own POOL_JOB_MAX_AGE (12h
+#                             default): pop_job's own staleness cutoff (see that function's docstring) makes such
+#                             a line PERMANENTLY unselectable, silently, with only a stderr line nobody tails --
+#                             any UNRUNNABLE/memory verdict for it would be moot, so this is checked FIRST.
+#   unknown                -- (review MEDIUM-1/2) a probe failure (unreachable node(s)) left the tool unable to
+#                             confidently classify the line either way -- reported as UNKNOWN rather than
+#                             defaulting to the confident-sounding "exceeds every ceiling" / "revision missing"
+#                             verdicts a genuinely reached, capability-checked node would have earned.
+# All five are read-only probes (MemTotal, the .provisioned_ok marker) -- this never provisions, dispatches, or
 # removes anything, matching the running-job checks' own read-only contract.
 
 
@@ -495,17 +509,37 @@ def fix_provision_command(sha, nodes):
 DEFAULT_UNRUNNABLE_MIN_AGE_MIN = 30   # a normal provision (rsync + venv + sanity build) finishes in minutes, not this
 DEFAULT_MEMBUDGET_MIN_AGE_H = 1       # a structural ceiling doesn't change with time, but age-gate anyway (less noise)
 
+# The dispatcher's OWN safety margins/cutoffs, duplicated here for the same reason POOL_REVISION_MARKER_FILE is
+# (this Python module cannot `source` bash) -- kept from drifting apart by
+# test_min_avail_gb_default_matches_bash_source / test_pool_job_max_age_default_matches_bash_source
+# (tests/test_pool_stall_check.py), which read pool_autodispatch.sh's own lines and assert these still match.
+DEFAULT_MIN_AVAIL_GB = 3        # pool_autodispatch.sh's POOL_MIN_AVAIL_GB default (node_is_idle's MemAvailable
+                                 # floor) -- this module only ever sees raw MemTotal, never MemAvailable, so a
+                                 # line's "capable" ceiling must be conservative enough that the dispatcher's own
+                                 # live budget (which also subtracts this floor) could ever actually clear it
+                                 # (review LOW-1, replay G: mem_gb=12 on a 15 GB node read "clean" under the old
+                                 # gb-reserve-only ceiling, yet the dispatcher's NODE_BUDGET could never reach 12).
+DEFAULT_POOL_JOB_MAX_AGE_S = 43200   # pool_autodispatch.sh's POOL_JOB_MAX_AGE default (pop_job's staleness
+                                       # cutoff) -- a queued line older than this is skipped by the SAME awk
+                                       # filter that selects candidates at all (`$1+0 >= c`), so it is never
+                                       # dispatched again regardless of anything this module could say about it.
+
 
 def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, connect_timeout=6,
-                 unrunnable_min_age_min=None, membudget_min_age_h=None, os_reserve_gb=None):
-    """Read-only scan of research/queue/pool.queue (STAGED, not-yet-dispatched lines) for two ways a line can
+                 unrunnable_min_age_min=None, membudget_min_age_h=None, os_reserve_gb=None,
+                 min_avail_gb=None, job_max_age_s=None):
+    """Read-only scan of research/queue/pool.queue (STAGED, not-yet-dispatched lines) for five ways a line can
     never run that pool_autodispatch.sh's own per-cycle log never surfaces anywhere else (see the module-level
-    comment above this section for the 2026-09-25 incident this closes):
-      UNRUNNABLE            -- pinned to a revision missing (no .provisioned_ok) on every node whose raw
-                                MemTotal could ever fit the line's declared mem_gb + POOL_OS_RESERVE_GB.
-      memory_budget_stalled -- declared mem_gb exceeds every KNOWN node's raw ceiling, full stop (no revision
-                                would help; the line needs a smaller size or a bigger node).
-    Both are age-gated (a line staged moments ago is not flagged mid-provisioning). Never raises past this
+    comment above this section for the 2026-09-25 incident this closes, and for what each bucket below means):
+      UNRUNNABLE       -- pinned to a revision missing (confirmed False) on every node whose raw MemTotal could
+                          ever fit the line's declared mem_gb.
+      memory_budget_stalled -- declared mem_gb exceeds every KNOWN (reachable) node's raw ceiling, full stop.
+      capacity_stalled  -- a capable node HAS the revision, but the line is still queued past its own age gate.
+      expired           -- older than the dispatcher's own POOL_JOB_MAX_AGE -- checked FIRST, since nothing else
+                          said below matters once pop_job will never select the line again.
+      unknown           -- a probe failure left this tool unable to confidently say memory-stalled or
+                          provisioning-missing; never silently folded into either confident verdict.
+    All are age-gated (a line staged moments ago is not flagged mid-provisioning). Never raises past this
     function in normal operation -- every ssh probe and file read is guarded, degrading to unreachable/UNKNOWN
     rather than aborting the scan, matching check_all()'s own contract."""
     import time as _time
@@ -517,6 +551,15 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
     membudget_min_age_s = 3600 * (membudget_min_age_h if membudget_min_age_h is not None
                                    else float(os.environ.get("POOL_MEMBUDGET_MIN_AGE_H", DEFAULT_MEMBUDGET_MIN_AGE_H)))
     reserve = os_reserve_gb if os_reserve_gb is not None else int(os.environ.get("POOL_OS_RESERVE_GB", "2"))
+    # LOW-1 fix: the dispatcher's REAL budget is min(MemAvailable-resv-POOL_MIN_AVAIL_GB, MemTotal-2-committed) --
+    # this module only ever sees raw MemTotal, so treat a node as "capable" only with enough headroom that the
+    # dispatcher's OWN min_avail floor could still clear it too (replay G: mem_gb=12 on a bare 15 GB node can
+    # never actually be dispatched, since NODE_BUDGET tops out at MemAvailable-2-3 long before MemTotal-2 does).
+    min_avail = min_avail_gb if min_avail_gb is not None else int(os.environ.get("POOL_MIN_AVAIL_GB", str(DEFAULT_MIN_AVAIL_GB)))
+    margin = max(reserve, min_avail + 1)
+    # MEDIUM-3 fix: a line older than the dispatcher's own staleness cutoff is skipped by pop_job's own
+    # candidate-selection awk filter -- it will NEVER be dispatched again regardless of provisioning or memory.
+    job_max_age = job_max_age_s if job_max_age_s is not None else int(os.environ.get("POOL_JOB_MAX_AGE", str(DEFAULT_POOL_JOB_MAX_AGE_S)))
 
     try:
         mem_totals, mem_unreachable = all_mem_totals(node_list, timeout=timeout, connect_timeout=connect_timeout)
@@ -541,23 +584,47 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
 
     unrunnable = []
     mem_stalled = []
+    capacity_stalled = []
+    expired = []
+    unknown = []
     for epoch, text in entries:
         age_s = now - epoch
-        mem_gb = job_est_gb(text)
-        sha = pinned_revision(text)
         sig = job_signature(text)
         mod = sig[0] if sig else None
-        capable = [n for n, gb in mem_totals.items() if (gb - reserve) >= mem_gb]
+
+        # EXPIRED first (MEDIUM-3): moot to classify a line the dispatcher will never look at again.
+        if age_s >= job_max_age:
+            expired.append({
+                "epoch": epoch, "age_s": age_s, "module": mod,
+                "command_snippet": text[:160],
+            })
+            continue
+
+        mem_gb = job_est_gb(text)
+        sha = pinned_revision(text)
+        capable = [n for n, gb in mem_totals.items() if (gb - margin) >= mem_gb]
 
         if not capable:
             if age_s >= membudget_min_age_s:
-                ceilings = [gb - reserve for gb in mem_totals.values()]
-                mem_stalled.append({
-                    "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb,
-                    "max_known_ceiling_gb": max(ceilings) if ceilings else None,
-                    "nodes_checked": sorted(mem_totals.keys()),
-                    "command_snippet": text[:160],
-                })
+                # MEDIUM-1 fix: an unreachable node's true capacity is UNKNOWN, not "too small" -- do not let a
+                # probe failure masquerade as the confident "exceeds every ceiling" verdict (that verdict must
+                # mean every REACHABLE node was actually checked and still came up short).
+                if mem_unreachable:
+                    unknown.append({
+                        "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb,
+                        "reason": ("no reachable node fits mem_gb=%d, but %d node(s) could not be probed (%s) -- "
+                                   "cannot confirm a memory-ceiling stall" % (mem_gb, len(mem_unreachable),
+                                                                              ",".join(sorted(mem_unreachable)))),
+                        "command_snippet": text[:160],
+                    })
+                else:
+                    ceilings = [gb - margin for gb in mem_totals.values()]
+                    mem_stalled.append({
+                        "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb,
+                        "max_known_ceiling_gb": max(ceilings) if ceilings else None,
+                        "nodes_checked": sorted(mem_totals.keys()),
+                        "command_snippet": text[:160],
+                    })
             continue
 
         if sha is None:
@@ -565,9 +632,43 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
         if age_s < unrunnable_min_age_s:
             continue
 
-        status = {n: _provisioned(n, sha) for n in capable}
-        if any(v is True for v in status.values()):
-            continue   # at least one node that could run this already has the code -- not a provisioning stall
+        # LOW-3 fix: stop probing the instant a capable node reads True -- the remaining nodes' status is never
+        # consulted on this branch (the line is not a provisioning stall either way), so probing them was pure
+        # cost (probes are serial, 12s timeouts each, and a hung node could cost the whole heartbeat cycle).
+        status = {}
+        provisioned_node = None
+        for n in capable:
+            v = _provisioned(n, sha)
+            status[n] = v
+            if v is True:
+                provisioned_node = n
+                break
+
+        if provisioned_node is not None:
+            # HIGH-2 fix: a capable+provisioned node used to mean "not a provisioning stall, full stop, never
+            # reported again" -- but the line is STILL sitting in the queue, which the original code never
+            # questioned. If it has sat long enough, the far more likely explanation is that node's LIVE memory
+            # is occupied by other work right now (this check only ever reads raw MemTotal, see
+            # probe_mem_total_gb's own docstring) -- report it rather than silently reading "clean".
+            if age_s >= membudget_min_age_s:
+                capacity_stalled.append({
+                    "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb, "pinned_sha": sha,
+                    "provisioned_node": provisioned_node, "capable_nodes": sorted(capable),
+                    "command_snippet": text[:160],
+                })
+            continue
+
+        # MEDIUM-2 fix: every capable node's probe here is either False (confirmed absent) or None (probe
+        # failed/unreachable). Flag UNRUNNABLE only when at least one is a CONFIRMED False -- an all-None status
+        # means every probe failed, which contradicts check_provisioned's own None-means-"cannot say" contract.
+        if not any(v is False for v in status.values()):
+            unknown.append({
+                "epoch": epoch, "age_s": age_s, "module": mod, "mem_gb": mem_gb, "pinned_sha": sha,
+                "reason": ("every capable node's revision-marker probe failed (%s) -- cannot confirm the "
+                           "revision is actually missing" % ",".join(sorted(status.keys()))),
+                "command_snippet": text[:160],
+            })
+            continue
 
         missing_nodes = sorted(n for n, v in status.items() if v is not True)
         unrunnable.append({
@@ -579,12 +680,21 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
 
     unrunnable.sort(key=lambda r: -r["age_s"])
     mem_stalled.sort(key=lambda r: -r["age_s"])
+    capacity_stalled.sort(key=lambda r: -r["age_s"])
+    expired.sort(key=lambda r: -r["age_s"])
+    unknown.sort(key=lambda r: -r["age_s"])
 
     bits = []
     if unrunnable:
         bits.append("%d UNRUNNABLE (revision missing on every capable node)" % len(unrunnable))
     if mem_stalled:
         bits.append("%d over every known node's memory ceiling" % len(mem_stalled))
+    if capacity_stalled:
+        bits.append("%d stalled on live capacity (provisioned+capable but still queued)" % len(capacity_stalled))
+    if expired:
+        bits.append("%d EXPIRED (past the %dh dispatcher staleness cutoff)" % (len(expired), job_max_age // 3600))
+    if unknown:
+        bits.append("%d UNKNOWN (probe failure, cannot confirm)" % len(unknown))
     if not bits:
         bits.append("clean")
     summary_line = ("POOL QUEUE CHECK: %s (of %d queued line(s), %d node(s) mem-unreachable)"
@@ -593,6 +703,7 @@ def check_queue(nodes=None, root=None, queue_path_=None, now=None, timeout=10, c
     return {
         "nodes": node_list, "mem_totals": mem_totals, "mem_unreachable": mem_unreachable,
         "n_queued": len(entries), "unrunnable": unrunnable, "memory_budget_stalled": mem_stalled,
+        "capacity_stalled": capacity_stalled, "expired": expired, "unknown": unknown,
         "summary_line": summary_line,
     }
 
@@ -610,6 +721,24 @@ def format_membudget_row(row):
             "mem_gb or a bigger node, re-provisioning will not help"
             % (row["age_s"] / 3600.0, row["module"] or "?", row["mem_gb"],
                ceiling if ceiling is not None else "unknown"))
+
+
+def format_capacity_stalled_row(row):
+    return ("queued %.1fh module=%s rev=%s mem_gb=%s -- provisioned+capable on %s but STILL queued -- likely "
+            "stuck on that node's LIVE memory (not this check's job to measure); live check: "
+            "bash tools/pool_autodispatch.sh --node-budget %s"
+            % (row["age_s"] / 3600.0, row["module"] or "?", row["pinned_sha"], row["mem_gb"],
+               row["provisioned_node"], row["provisioned_node"]))
+
+
+def format_expired_row(row):
+    return ("queued %.1fh module=%s -- past the dispatcher's own POOL_JOB_MAX_AGE staleness cutoff, it will "
+            "NEVER be picked up as-is -- re-add via: bash tools/pool_queue.sh add '<cmd>' --checked '<reason>'"
+            % (row["age_s"] / 3600.0, row["module"] or "?"))
+
+
+def format_unknown_row(row):
+    return "queued %.1fh module=%s -- UNKNOWN: %s" % (row["age_s"] / 3600.0, row["module"] or "?", row["reason"])
 
 
 def check_all(nodes=None, root=None, timeout=12, connect_timeout=6, claims_path=None, now=None):
@@ -754,6 +883,12 @@ def main(argv=None):
             print("⚠ %s" % format_unrunnable_row(row))
         for row in queue_report["memory_budget_stalled"]:
             print("⚠ %s" % format_membudget_row(row))
+        for row in queue_report.get("capacity_stalled", []):
+            print("⚠ %s" % format_capacity_stalled_row(row))
+        for row in queue_report.get("expired", []):
+            print("⚠ %s" % format_expired_row(row))
+        for row in queue_report.get("unknown", []):
+            print("⚠ %s" % format_unknown_row(row))
     return 0
 
 

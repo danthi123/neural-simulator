@@ -35,6 +35,15 @@ provisioned where it could fit -- `pool_autodispatch.sh`'s own per-cycle log sai
 one log line ever surfaced it. `queue_unrunnable_summary()` runs `tools/pool_stall_check.py`'s read-only
 UNRUNNABLE / memory-budget check every cycle too, printed the same way (queued lines were never counted in
 `lanes_pool` to begin with, so there is nothing to subtract -- this is pure surfacing).
+2026-09-25 (fix round, opus review). Two defects in the wiring above, not the underlying check: (1) `main()`
+called `queue_unrunnable_summary(POOL)`, hardcoding this module's mini-PC-only node list -- the exact incident
+the check exists for (a revision missing on an AWS `.pool_extra_nodes` node) was invisible to it, since
+`pool_stall_check.check_queue()` only falls back to its own `get_pool_nodes()` (which DOES read
+`.pool_extra_nodes`) when `nodes` is None. Fixed: the call now passes no explicit node list. (2) the queue-stuck
+warning printed on its OWN line(s), but the live heartbeat that reaches a human greps only lines matching
+`SATURATED|UNDER-PARALLELIZED` -- a line that pattern does not match is invisible no matter how loudly it
+prints here. Fixed: the stuck-queue-line COUNT now also rides as a ` | queue: N UNRUNNABLE` suffix on the
+verdict line itself (both branches), which that grep is guaranteed to keep.
 """
 import json, os, re, subprocess, sys, time
 
@@ -161,26 +170,43 @@ def pool_stall_summary(nodes=None, timeout=12):
 
 def queue_unrunnable_summary(nodes=None, timeout=12):
     """Read-only UNRUNNABLE / memory-budget-impossible check on QUEUED (not-yet-dispatched) pool.queue lines
-    (tools/pool_stall_check.py:check_queue) -- lines to print, never blocking, never raising (exit-0-always
-    heartbeat). 2026-09-25: six revision-pinned queue lines sat 7.5h with the dispatcher logging "revision ...
-    not provisioned on pool2" every cycle, and NOTHING outside that one log line ever surfaced it -- this makes
-    it a heartbeat line instead, the same fix shape as pool_stall_summary() above for running jobs."""
+    (tools/pool_stall_check.py:check_queue) -- (count, lines) to print, never blocking, never raising
+    (exit-0-always heartbeat). 2026-09-25: six revision-pinned queue lines sat 7.5h with the dispatcher logging
+    "revision ... not provisioned on pool2" every cycle, and NOTHING outside that one log line ever surfaced it
+    -- this makes it a heartbeat line instead, the same fix shape as pool_stall_summary() above for running jobs.
+
+    `nodes` defaults to None deliberately (fix round, 2026-09-25 review HIGH-1): the caller (main(), below) must
+    NOT pass this module's own hardcoded mini-PC-only POOL constant here, or check_queue() never looks past it
+    to pool_stall_check.get_pool_nodes() (which also reads research/queue/.pool_extra_nodes -- the AWS lane).
+    The 2026-09-25 incident's six stuck lines were missing their revision on pool1/pool2 specifically; a caller
+    that hardcodes POOL=[pool40,41,42] here would silence the alert the moment ONE mini-PC got the marker, while
+    the lines stayed stuck on the AWS nodes the check never even looked at."""
     if pool_stall_check is None:
-        return []
+        return 0, []
     try:
         report = pool_stall_check.check_queue(nodes=nodes, timeout=timeout)
     except Exception as e:
-        return ["⚠ pool-queue-check failed to run (%s) -- treating as clean, not silently OK" % e]
+        return 0, ["⚠ pool-queue-check failed to run (%s) -- treating as clean, not silently OK" % e]
     unrunnable = report.get("unrunnable", [])
     mem_stalled = report.get("memory_budget_stalled", [])
+    capacity_stalled = report.get("capacity_stalled", [])
+    expired = report.get("expired", [])
+    unknown = report.get("unknown", [])
+    n_total = len(unrunnable) + len(mem_stalled) + len(capacity_stalled) + len(expired) + len(unknown)
     lines = []
-    if unrunnable or mem_stalled:
+    if n_total:
         lines.append("⚠ %s" % report.get("summary_line", "pool queue check flagged stuck line(s)"))
         for row in unrunnable[:4]:
             lines.append("   ⚠ %s" % pool_stall_check.format_unrunnable_row(row))
         for row in mem_stalled[:4]:
             lines.append("   ⚠ %s" % pool_stall_check.format_membudget_row(row))
-    return lines
+        for row in capacity_stalled[:4]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_capacity_stalled_row(row))
+        for row in expired[:4]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_expired_row(row))
+        for row in unknown[:4]:
+            lines.append("   ⚠ %s" % pool_stall_check.format_unknown_row(row))
+    return n_total, lines
 
 
 def active_agents(base=None):
@@ -241,7 +267,10 @@ def main():
     # QUEUED (not yet dispatched) lines are never counted in lanes_pool in the first place, so there is nothing
     # to subtract here -- this is purely a surfaced warning (2026-09-25: the failure was a stuck line nobody
     # SAW, not a lane miscounted as covered).
-    queue_stuck_lines = queue_unrunnable_summary(POOL)
+    # NODES=None (fix round, 2026-09-25 review HIGH-1): passing this module's own POOL constant here silently
+    # excluded the AWS pool_extra_nodes (pool1/pool2) from the exact check meant to catch a revision missing on
+    # them -- see queue_unrunnable_summary's own docstring. None lets pool_stall_check.get_pool_nodes() decide.
+    n_queue_stuck, queue_stuck_lines = queue_unrunnable_summary()
     n_open, top = open_tasks()
     agents = active_agents()
 
@@ -318,6 +347,12 @@ def main():
         _d = waiver_history.describe(_v)
         if _d:
             print("   🗒  %s waiver OPEN — %s" % (_print_label, _d))
+    # QUEUE-STUCK SUFFIX ON THE VERDICT LINE (fix round, 2026-09-25 review LOW). The queue_stuck_lines block
+    # above prints as its OWN separate line(s); the live heartbeat that actually reaches a human greps only
+    # lines matching SATURATED|UNDER-PARALLELIZED, so a queue warning printed on its own line is silently
+    # dropped no matter how loudly it prints here. Appending the count to the verdict line itself (the one
+    # line that regex is guaranteed to keep) makes it visible regardless of what wraps this script.
+    queue_suffix = " | queue: %d UNRUNNABLE" % n_queue_stuck if n_queue_stuck else ""
     if under:
         why = []
         if under_agents:
@@ -326,7 +361,7 @@ def main():
         if under_compute:
             why.append("idle %s ; %d ready tasks vs %d lanes (%d min straight)"
                        % (", ".join(cap), n_open, total_lanes, streak_c_min))
-        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s." % " ; ".join(why))
+        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s.%s" % (" ; ".join(why), queue_suffix))
         if under_compute and streak_c_min >= 30:
             print("   ⏱  dedicated compute has read idle-with-ready-work for %d min straight — past the "
                   "point `gates/compute_idle_persistent` blocks a commit on (mirrors gates/lane_starvation)."
@@ -338,9 +373,10 @@ def main():
             print("     • p%d  %s" % (pr, title))
         print("   Holding is NOT earned until this reads SATURATED (>= %d agents AND compute covered)." % AGENT_FLOOR)
     elif not have_ready:
-        print("✓ SATURATED (no ready board tasks — restock the board or hold).")
+        print("✓ SATURATED (no ready board tasks — restock the board or hold).%s" % queue_suffix)
     else:
-        print("✓ SATURATED (%d agents + %d compute lanes cover the frontier)." % (agents, lanes_local + lanes_pool))
+        print("✓ SATURATED (%d agents + %d compute lanes cover the frontier).%s"
+              % (agents, lanes_local + lanes_pool, queue_suffix))
 
     # COST-ROUTING — agent tokens count toward the Claude usage limit; mechanical work must go to non-Claude
     # machinery. Fires whenever cheap idle compute exists, so the routing is enforced every cycle, not remembered.
