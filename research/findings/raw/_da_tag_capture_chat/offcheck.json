@@ -1,23 +1,23 @@
 {
-  "pinned_sha": "f35196e66",
-  "branch_repo": "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3",
+  "pinned_sha": "36a175534",
+  "branch_repo": "/home/dant123/Projects/sim/.claude/worktrees/agent-aede61f797fc10edc",
   "ltm": "off",
   "pinned": {
-    "repo": "/tmp/tmp951gbo1o/pinned",
-    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
-    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "repo": "/tmp/tmp5s4h1xhb/pinned",
+    "replies_sha256": "324ff15436eec3c649bc8ddea6f43a5e44ac0fa60290deb0c7ae968a25457bbc",
+    "store_sha256": "158e537d82e2f932031e92302a8d8e028e09dbdd0c8605c74d1258fccdb87a7a",
     "n_store_conns": 768
   },
   "pinned_ledger_scenario_sha256": "82f8856dc8465ca5eb25a6bb8ca380fc46134a552b11326aa30ad18d841248c8",
   "branch": {
-    "repo": "/home/dant123/Projects/sim/.claude/worktrees/wf_faf08c17-18c-3",
-    "replies_sha256": "491f6b6beda82972ab480b0bcdbcffcf430c537d002e895709b9543fae74af0a",
-    "store_sha256": "dc0d91089e088a0ddee04d253996dc2eed9b519240853f44cf4f56be69c4621c",
+    "repo": "/home/dant123/Projects/sim/.claude/worktrees/agent-aede61f797fc10edc",
+    "replies_sha256": "af232c1460f12b0e0a0f4fc9cc91bdceb038658b7cc1bbb7e33497d7acb7b8a3",
+    "store_sha256": "158e537d82e2f932031e92302a8d8e028e09dbdd0c8605c74d1258fccdb87a7a",
     "n_store_conns": 768
   },
   "branch_ledger_scenario_sha256": "82f8856dc8465ca5eb25a6bb8ca380fc46134a552b11326aa30ad18d841248c8",
-  "replies_identical": true,
+  "replies_identical": false,
   "store_identical": true,
   "v3_ledger_scenario_identical": true,
-  "byte_identical_off": true
+  "byte_identical_off": false
 }
