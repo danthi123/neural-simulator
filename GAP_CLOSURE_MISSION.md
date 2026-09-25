@@ -87,6 +87,12 @@ SETTLE A3 GPU timing = UNDEFINED (M2 WTA +0.13 s inside the 0.3 s bound; whole-t
 finding + Amendment 3 (resolvable instrument, preregistered before new data) = workflow `wu657bt94`. Gate gaps from
 tonight's reviews (amendment-to-existing-prereg ordering; stalled/duplicate pool jobs counted as saturation) = `wx8n9rwrn`.
 
+**🌙 08:00 awake-rest replay (arc) = NO-GO 5/6** (merged with this entry; independently re-derived; sign-flip p 1/32):
+seed 101 fails ARC1 alone -- its read starts lowest (0.207) and collapses to 0.031 over 48 bouts because each bout's
+re-induction scales with the current read (subcritical for a weak trace); lz_arc 0/6 against the design sweep. Next
+method (companion process: CA3 pattern completion makes a replay event near all-or-none) on DEV seeds + Amendment 7 =
+workflow `w1zb4w1ta` lane B; lane A = dup-guard fix round (review found 2 HIGH fail-open paths). fi-family 6 seeds queued.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
