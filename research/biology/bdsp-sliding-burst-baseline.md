@@ -26,14 +26,15 @@ sources:
     anchor: "RATIO baseline (Payeur et al. 2020/2021"
     note: "LOCAL. The engine implementation (additive, default-off guarded block in the BDSP step), pinned by tests/test_bdsp_pbar_ratio.py (OFF byte-identical to the pre-edit engine; ON equals the ratio of EMAs and respects the mask; a zero-mean apical integrates to a net-LTP drive under the preset baseline and to a small fraction of it under the ratio baseline)."
 constants:
-  tau_avg_s_xor_task: 5.0
+  tau_avg_s_xor_task_v1: 5.0   # bioRxiv v1 Methods: "for Fig. 4, tau_avg = 5 s"
+  tau_avg_s_xor_task_v2: 2.0   # bioRxiv v2 Methods: "In Fig. 4, we have set tau_avg = 2 s, although a faster time scale can still yield adequate learning"
   tau_avg_s_pairing: 15.0
   tau_avg_s_range: "1-10"
 operating_point:
   # Not a machine-checked protocol rule: the flag defaults to 0.0 (OFF, byte-identical), and the checker compares the
   # runner DEFAULT, so a 'gte 1000' check would fire on the required default. It is a requirement WHEN ON.
   - key: pbar_ratio_tau_ms
-    requires: ">= 1000 (1 s) when > 0; the source range is ~1-10 s (5 s in the XOR task)"
+    requires: ">= 1000 (1 s) when > 0; the source range is ~1-10 s (XOR task: 5 s in bioRxiv v1, 2 s in v2)"
     why: "The baseline must be SLOW relative to one stimulus presentation, or it averages each teaching transient away inside its own credit phase. The legacy EMA of P at alpha 0.05/step (tau ~20 ms) did exactly that (AMENDMENT 3; frozen-readout training accuracy fell BELOW chance, 0.115-0.142, at C12/C18). One presentation here is 65 ms."
 companion_processes:
   - process: "event-rate homeostasis (Payeur's H_i / G_i terms: plasticity pushes a neuron's running event rate back into [e_min, e_max])"
@@ -78,3 +79,8 @@ input-specific part of the credit remains.
 runner chooses which neurons use it (the mask). The credit projection, the error, and the argmax read-out remain
 host computations, as declared by the parent pre-registration. The +-12 clip stays in the kernel as a backstop, and
 the census measures whether it still binds. Functional read-outs only.
+
+## Corrections (2026-09-25)
+
+- Version note on tau_avg for the XOR task (Fig. 4). bioRxiv 10.1101/2020.03.30.015511 **v1** Methods give 5 s ('for Fig. 4, tau_avg = 5 s'); **v2** gives 2 s ('In Fig. 4, we have set tau_avg = 2 s, although a faster time scale can still yield adequate learning'). Both sit inside the stated ~1-10 s range, which is what justifies C26/C27's 5000 ms; the earlier wording 'as in the source's XOR task' was true of v1 only. Checked in both versions 2026-09-25.
+- Scope of the drift explanation. The claim that a fixed baseline turns the convex burst-probability bias into net potentiation on every active synapse is shown only under the unit test's zero-mean symmetric apical drive and the dev-size smoke. An independent review rebuilt the tiny net with real random training targets and did not see a consistent positive drift there (the tiny-net drift came out negative, as the builder also noted). The dev-size C26 runs are the test of whether this explanation holds at the size that matters; it is a hypothesis until they land.

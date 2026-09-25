@@ -402,7 +402,7 @@ the saturation is ONE-SIDED and common to every arm that trains the hidden weigh
 (Payeur et al., bioRxiv 2020.03.30.015511 v1; Nat Neurosci 2021) sets the baseline to "a moving average of the
 proportion of events that are bursts in postsynaptic neuron i, with a slow (~ 1 – 10 s) time scale", and states
 why: "To ensure a finite growth of synaptic weights". Its Methods use the ratio of two exponential moving averages
-(burst train over event train), with tau_avg 5 s in the XOR task. C21 presets the baseline to the constant p0 = 0.3
+(burst train over event train), with tau_avg 5 s in the XOR task (bioRxiv v1; v2 states 2 s, both inside the ~1-10 s range; see the erratum at the end). C21 presets the baseline to the constant p0 = 0.3
 (`--pbar-alpha 0`), because the engine's only moving baseline was an EMA of the instantaneous P at 0.05 per step
 (about 20 ms), which averaged each teaching transient away (AMENDMENT 3). Mechanism, stated as the hypothesis this
 amendment tests: with p0 = 0.3 the burst-probability sigmoid is convex, so a credit that is zero on average still
@@ -430,7 +430,7 @@ per shard, numpy, at the revision carrying this amendment).**
 
 | id | change from C21 | role |
 |---|---|---|
-| C26 | `--pbar-ratio-tau-ms 5000` (hidden) | PRIMARY: the companion process, tau_avg 5 s as in the source's XOR task |
+| C26 | `--pbar-ratio-tau-ms 5000` (hidden) | PRIMARY: the companion process, tau_avg 5 s (bioRxiv v1 XOR value; v2 uses 2 s; both inside ~1-10 s) |
 | C27 | `--pbar-ratio-tau-ms 5000 --pbar-ratio-layers all` | secondary: the source's form on every neuron |
 | C25 | `--bdsp-w-max 48` (no ratio baseline) | control: the relaxation the census finding proposed; a bigger constant, no process |
 
@@ -497,3 +497,7 @@ With the ratio baseline the same pathways stay near their build mean (+0.11 / +0
 bound. Relaxing the clamp to 48 (C25) does not stop the drift (mean +3.7 / +4.6). Training accuracy at 3 epochs is <!--derived-->
 one replicate and one arm, so it is not read against (ii). The hidden layers' mean reads fall under the ratio
 baseline (H2 0.35 to 0.12), which the full runs will show at 30 epochs. <!--derived-->
+
+## Erratum (2026-09-25, before any C25-C27 result)
+
+AMENDMENT 6 cited tau_avg = 5 s as "the source's XOR task" value. That is the bioRxiv **v1** value; **v2** states 2 s. Both lie inside the source's ~1-10 s range, which is the actual justification for 5000 ms. No registered rule, config or threshold changes. The drift explanation for the clamp saturation is a hypothesis tested by the C26 runs themselves (see research/biology/bdsp-sliding-burst-baseline.md, Corrections).
