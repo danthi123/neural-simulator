@@ -73,8 +73,8 @@ B2b wave 2 auto-queued 05:28. Bake-off re-run from main queued on the GPU (the w
 3. Score as they land (scorer + independent verifier each): sleep route rc family (6 seeds, 269ae8f76) and r2 family
    (6 seeds, 50c791bf9); DA LTM-on (seed 42 GO, 43-102 queued, mem_gb=48); wm-focus-bind (alive on pool1/2); A10 v4 arms;
    D6 N2000; SETTLE A3 GPU timing; the gap#4 dev runs the clamp lane queues.
-4. B2b: wave-1 lines age out at ~07:36 (12 h from 19:36). The wave script warns but does not requeue: requeue aged-out
-   lines per prereg A1.4(c) (at most twice) before then.
+4. ✅ B2b age-out risk resolved 06:10: every wave-1 line dispatched (92 dispatched, 76/258 lb.json landed); wave 2 (86 lines)
+   auto-queued 05:28 by the heartbeat's wave step; no queued b2b line is older than 1 h.
 5. GPU: slot-binder gate (seed 7) STOPPED 03:08 after 6 h 08 min inside arm 1 with no output (prereg AMENDMENT 1: N=404
    impractical; next = per-fact progress/latency logging + small-N latency runs, a small build for its lane). Bake-off
    started 03:08; then SETTLE A3, plastic-mask cupy test.
