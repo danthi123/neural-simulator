@@ -24,8 +24,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
   production wiring), D6 N2000 (14/18 cells in flight), A10 v4 (never dispatched). Workflow `w6d7cfgmz` requeues
   wm-focus-bind and A10 v4 and fixes the claim-check block-scope hole (a standalone <!--derived--> exempted whole
   sections: 0 of 336 checked, and two wrong numbers passed).
-- B2a: 186/186, aggregate robust core 24, union 25, mean 0.949, no incomplete faculty; R1/R2 scoring + two
-  verifiers in workflow `w6pj7nef3` (with the plasticity-audit round-2 re-review).
+- B2a scored FAIL on R2 (merged 95fda6f94; two verifiers agree): no faculty regressed (all 28 coverable match the flip
+  battery), but 24 seed-102 cells had run from a plain local worktree (my shortcut, not git_archive at M1), so they are
+  invalid. Moved to `_load_bearing/_b2a0924_attempt1/`, the 24 registered lines re-queued pinned to M1 at the pool front
+  (00:50); the heartbeat re-aggregates at 186. Then re-score R1/R2 (expect PASS if the re-runs match). Gate being built:
+  `lb_shard.py aggregate --pin` (workflow `wpta864go`). Plasticity audit round 2 merged a878d274e (re-review SOUND).
 
 **🟢 UPDATE (2026-09-24 night, provenance-fix scoring) — (history: folded into the 00:45 block above).**
 - **CA3 superposed-fact-attractor capacity grid: SCORED, GO 6/6.** All 9 pre-registered gates (G1-G9) pass 6/6, 0
