@@ -39,8 +39,8 @@ six `s{42,43,44,100,101,102}/lbf.json.prov.json` sidecars record `started` betwe
 jobs are not merely absent from `ps`, they finished long enough ago that a still-running job would have shown.
 
 Completeness: every one of the 6 seed directories holds exactly 32 per-arm files (8 turns x 4 arm-kinds: intact_a,
-intact_b, lesion, lesion_rep) plus their `.prov.json` sidecars, plus `lbf.json`/`lbf.json.prov.json` -- 198 files
-total (verified against every seed directory listing). Every one of the 192 per-arm JSON files was scanned
+intact_b, lesion, lesion_rep) plus their `.prov.json` sidecars, plus `lbf.json`/`lbf.json.prov.json` -- 198 result files (192 per-arm + 6 lbf.json), each with its own
+.prov.json sidecar, 396 files in all (verified against every seed directory listing). Every one of the 192 per-arm JSON files was scanned
 recursively for an `_error` key at any depth: 0 found. No arm silently truncated mid-run.
 
 ## Provenance
