@@ -101,6 +101,19 @@ check, prereg-amendment gate fix round after an UNSOUND review, claim-check r8).
 5b5ea1b74) sat 7.5 h because that revision was never provisioned on pool1/pool2 -- provisioning now. Merged lexicon round 3
 (d51e9c88b, dev NOT READY) + its scope correction (05eba333f). Web tests re-running. fi family running (30 arm files).
 
+**☀️ 10:15 pool1 recovered:** aws_idle_stop had STOPPED pool1 at 09:06 after it drained (last dispatch 07:35, load 11 -> 0)
+while 74 runnable B2b lines were queued; DA LTM-on seeds 43 and 101 had finished there but their last arm + seed JSON were
+never synced. Restarted the instance (new IP 3.95.2.187; .pool_ssh_config edited, backup .claude/worktrees/_pool_ssh_config.bak_0925),
+pulled both seeds (11/11 arms each, per-arm sidecars at cce3c1dbd): LTM-on now 5/6 (s102 running on pool2). Sync-before-stop,
+start/refresh and the 07:35-09:06 starvation diagnosis = workflow `wv0ey666y`. SETTLE A2 revision provisioned on pool2/41/42 (and pool1 next).
+
+**☀️ 10:40 AWS spend ledger:** spend jumped $28.22 -> $43.30 in 10 min: a test helper (tests/test_aws_pool_node_workflow.py::_run)
+wrote a stub instance 'i-existing' into the PRODUCTION ledger whenever the suite ran (40 rows 09-24, 4 today while the
+stop/start build ran it); aws-guard would have stopped both pool nodes at the $50 cap ~13:45. Stopped that build, removed the
+44 phantom rows (backup kept; real spend $28.58), fixed it at the write (e30a77172: record() refuses the production ledger
+under PYTEST_CURRENT_TEST; _run always isolates; mutation-verified), relaunched the build from its WIP branch (`wxyj13qt8`).
+SETTLE A2 six seeds dispatched to pool2 at 10:00.
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
