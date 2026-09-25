@@ -55,6 +55,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
    MERGED 3bdf8b619 default-OFF (review SOUND-WITH-ISSUES: replay selection is the store's own resonate-and-fire read,
    host steps declared). Follow-up: a real-brain long-delay arm (fact told hours before sleep, beyond the capture
    window) and sleep downscaling, before any flip.
+   22:55: DA lane merged acca762fa (ordinary-fact forgetting MEASURED at seed 42 through /api/brain-chat: flag-off
+   recalls, flag-on abstains). Round 2 `research/sleep-replay-capture-r2`: long-delay arm, sleep downscaling across
+   nights, and an offcheck against a current-tree revert counterfactual (a fixed historical pin keeps going stale).
 7. gap#4 crux (A9): the full-size GPU run (H64/pool 16, 40 epochs, dev seed 7) finished 21:00, rc 0. The collapse
    persists at full size: every hidden-learning arm trains at chance on all 3 replicates, the frozen arm does not
    (`research/findings/raw/gap4/transport_ceiling_readout/gpu/gpu_s7_e40.json` in worktree `wf_4703a2bd-4dd-15`).
