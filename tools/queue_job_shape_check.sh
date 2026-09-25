@@ -339,6 +339,14 @@ queue_job_runnable_check() {
     printf '⛔ REFUSED: empty job line.\n'
     return 1
   fi
+  # 0. ONE LINE. Every queue stores one job per line (the GPU daemon runs each line as its own job), so a job
+  #    containing a newline or carriage return would be split into several jobs, each unchecked (review of
+  #    03c53f5f7: `gpu_queue.sh add $'echo ok\nstatus'` queued a second job `status` that died rc=127).
+  case "$job" in
+    *$'\n'*|*$'\r'*)
+      printf '⛔ REFUSED: the job contains a line break; a queue record is one line (join with && or ;).\n'
+      return 1 ;;
+  esac
 
   # 1. SYNTAX (parse only: -n never executes anything).
   local syn

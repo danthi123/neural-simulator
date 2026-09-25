@@ -259,7 +259,6 @@ true
     "if :; then A2; fi",
     "while :; do A2; done",
     "if ( : ) then A2; fi",
-    ": <<EOF\ncd x\nEOF\nA2 junk",
 ])
 def test_a_leading_noop_is_stepped_over(job):
     # Review LOW: 90 historical pool lines start `: mem_gb=N &&` or `mem_gb=N &&`; for those the first version
@@ -277,7 +276,6 @@ def test_a_leading_noop_is_stepped_over(job):
     "until :; do A2; done",          # the body runs only if the condition fails
     "if :; then :; else A2; fi",     # a branch that does not run
     ": ; : ; : ; : ; : ; : ; : ; : ; : ; A2",   # past the cap of 8 no-ops the check stops looking
-    ": <<EOF\nA2 junk\nEOF\ncd x",    # a here-document body is data, not a command
 ])
 def test_what_cannot_run_after_a_noop_is_not_judged(job):
     res = run_check(job)
@@ -479,3 +477,13 @@ def test_the_noop_step_over_is_what_catches_a_label_after_mem_gb(tmp_path):
     job = ": mem_gb=8 && A2 wiring seed 42: cd x"
     assert run_check(job, mut).returncode == 0, "mutation did not flip the result"
     assert run_check(job).returncode == 1
+
+
+@pytest.mark.parametrize("job", ["echo ok\nstatus", "cd x && \\\nstatus", "echo ok\r", ": <<EOF\nA2 junk\nEOF\ncd x"])
+def test_a_job_with_a_line_break_is_refused(job):
+    # Review MEDIUM (03c53f5f7): queues store one job per line, so a multi-line job is split into several
+    # unchecked jobs (`echo ok\nstatus` queued a second job `status` that died rc=127). One line only.
+    res = run_check(job)
+    assert res.returncode == 1, f"accepted {job!r}"
+    assert "line break" in (res.stdout + res.stderr)
+
