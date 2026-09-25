@@ -1,0 +1,844 @@
+{
+  "arm": "off",
+  "enforced_flag_read": false,
+  "seed": 42,
+  "n_facts": 5,
+  "mask_present": true,
+  "n_frozen_synapses": 391728,
+  "n_plastic_synapses": 140076,
+  "frozen_max_abs_dw": 0.0,
+  "plastic_max_abs_dw": 0.7016666531562805,
+  "per_pathway": {
+    "cue->patient_expected": {
+      "n_synapses": 55296,
+      "declared_plastic": true,
+      "named_gate": null,
+      "max_abs_dw": 0.7016666531562805
+    },
+    "patient_asserted->surprise": {
+      "n_synapses": 82944,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "patient_expected->surprise": {
+      "n_synapses": 82944,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "state->pred_pos": {
+      "n_synapses": 11520,
+      "declared_plastic": true,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "state->pred_neg": {
+      "n_synapses": 11520,
+      "declared_plastic": true,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "obs_pos->surprise_pos": {
+      "n_synapses": 2304,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "obs_neg->surprise_neg": {
+      "n_synapses": 2304,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "pred_pos->surprise_pos": {
+      "n_synapses": 2304,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "pred_neg->surprise_neg": {
+      "n_synapses": 2304,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "workspace->workspace_fs": {
+      "n_synapses": 3977,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "workspace_fs->workspace": {
+      "n_synapses": 3963,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "item->item_fs": {
+      "n_synapses": 2903,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "item_fs->item": {
+      "n_synapses": 2838,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "sel_agent->sel_FS_agent": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "sel_patient->sel_FS_patient": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "sel_FS_agent->sel_patient": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "sel_FS_patient->sel_agent": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "cue_position_pos->sel_agent": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_position",
+      "max_abs_dw": 0.0
+    },
+    "cue_position_neg->sel_patient": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_position",
+      "max_abs_dw": 0.0
+    },
+    "cue_animacy_pos->sel_agent": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_animacy",
+      "max_abs_dw": 0.0
+    },
+    "cue_animacy_neg->sel_patient": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_animacy",
+      "max_abs_dw": 0.0
+    },
+    "cue_verbfit_pos->sel_agent": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_verbfit",
+      "max_abs_dw": 0.0
+    },
+    "cue_verbfit_neg->sel_patient": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_verbfit",
+      "max_abs_dw": 0.0
+    },
+    "cue_lexbias_pos->sel_agent": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_lexbias",
+      "max_abs_dw": 0.0
+    },
+    "cue_lexbias_neg->sel_patient": {
+      "n_synapses": 2880,
+      "declared_plastic": true,
+      "named_gate": "cue_lexbias",
+      "max_abs_dw": 0.0
+    },
+    "episode->prov_perceived": {
+      "n_synapses": 6144,
+      "declared_plastic": true,
+      "named_gate": "prov_learn",
+      "max_abs_dw": 0.0
+    },
+    "episode->prov_generated": {
+      "n_synapses": 6144,
+      "declared_plastic": true,
+      "named_gate": "prov_learn",
+      "max_abs_dw": 0.0
+    },
+    "episode->content_readout": {
+      "n_synapses": 4608,
+      "declared_plastic": true,
+      "named_gate": "content_learn",
+      "max_abs_dw": 0.0
+    },
+    "ctx_perceived->prov_perceived": {
+      "n_synapses": 609,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "ctx_generated->prov_generated": {
+      "n_synapses": 622,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "prov_perceived->inh_perceived": {
+      "n_synapses": 234,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "inh_perceived->prov_generated": {
+      "n_synapses": 257,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "prov_generated->inh_generated": {
+      "n_synapses": 237,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "inh_generated->prov_perceived": {
+      "n_synapses": 266,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "ss_workspace->ss_workspace_fs": {
+      "n_synapses": 7952,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "ss_workspace_fs->ss_workspace": {
+      "n_synapses": 7997,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "cur_cue->striosome_value": {
+      "n_synapses": 5740,
+      "declared_plastic": true,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "reward_us->snc": {
+      "n_synapses": 731,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "striosome_value->snc": {
+      "n_synapses": 892,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "cortex_ctx->dlpfc_wm": {
+      "n_synapses": 41174,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "dlpfc_wm->cortex_ctx": {
+      "n_synapses": 40979,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "cortex_ctx->rel_A": {
+      "n_synapses": 6918,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "cortex_ctx->rel_B": {
+      "n_synapses": 6996,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w0->w0": {
+      "n_synapses": 351,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w0->fs": {
+      "n_synapses": 273,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w0": {
+      "n_synapses": 278,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w1->w1": {
+      "n_synapses": 368,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w1->fs": {
+      "n_synapses": 285,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w1": {
+      "n_synapses": 289,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w2->w2": {
+      "n_synapses": 363,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w2->fs": {
+      "n_synapses": 293,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w2": {
+      "n_synapses": 267,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w3->w3": {
+      "n_synapses": 362,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w3->fs": {
+      "n_synapses": 285,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w3": {
+      "n_synapses": 285,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w4->w4": {
+      "n_synapses": 351,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w4->fs": {
+      "n_synapses": 300,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w4": {
+      "n_synapses": 276,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w5->w5": {
+      "n_synapses": 359,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w5->fs": {
+      "n_synapses": 284,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w5": {
+      "n_synapses": 292,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w6->w6": {
+      "n_synapses": 365,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w6->fs": {
+      "n_synapses": 283,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w6": {
+      "n_synapses": 305,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w7->w7": {
+      "n_synapses": 363,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w7->fs": {
+      "n_synapses": 296,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w7": {
+      "n_synapses": 295,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w8->w8": {
+      "n_synapses": 357,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w8->fs": {
+      "n_synapses": 287,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w8": {
+      "n_synapses": 267,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w9->w9": {
+      "n_synapses": 362,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w9->fs": {
+      "n_synapses": 289,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w9": {
+      "n_synapses": 294,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w10->w10": {
+      "n_synapses": 364,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w10->fs": {
+      "n_synapses": 293,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w10": {
+      "n_synapses": 275,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w11->w11": {
+      "n_synapses": 355,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w11->fs": {
+      "n_synapses": 276,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w11": {
+      "n_synapses": 280,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w12->w12": {
+      "n_synapses": 376,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w12->fs": {
+      "n_synapses": 284,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w12": {
+      "n_synapses": 286,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w13->w13": {
+      "n_synapses": 354,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w13->fs": {
+      "n_synapses": 282,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w13": {
+      "n_synapses": 286,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w14->w14": {
+      "n_synapses": 361,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w14->fs": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w14": {
+      "n_synapses": 293,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w15->w15": {
+      "n_synapses": 363,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w15->fs": {
+      "n_synapses": 290,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w15": {
+      "n_synapses": 300,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w16->w16": {
+      "n_synapses": 361,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w16->fs": {
+      "n_synapses": 287,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w16": {
+      "n_synapses": 294,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w17->w17": {
+      "n_synapses": 356,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w17->fs": {
+      "n_synapses": 291,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w17": {
+      "n_synapses": 285,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w18->w18": {
+      "n_synapses": 369,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w18->fs": {
+      "n_synapses": 282,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w18": {
+      "n_synapses": 284,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w19->w19": {
+      "n_synapses": 365,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w19->fs": {
+      "n_synapses": 298,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w19": {
+      "n_synapses": 298,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w20->w20": {
+      "n_synapses": 353,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w20->fs": {
+      "n_synapses": 274,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w20": {
+      "n_synapses": 278,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w21->w21": {
+      "n_synapses": 353,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w21->fs": {
+      "n_synapses": 286,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w21": {
+      "n_synapses": 273,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w22->w22": {
+      "n_synapses": 365,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w22->fs": {
+      "n_synapses": 296,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w22": {
+      "n_synapses": 285,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w23->w23": {
+      "n_synapses": 368,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w23->fs": {
+      "n_synapses": 288,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w23": {
+      "n_synapses": 287,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w24->w24": {
+      "n_synapses": 360,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w24->fs": {
+      "n_synapses": 282,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w24": {
+      "n_synapses": 281,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w25->w25": {
+      "n_synapses": 361,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w25->fs": {
+      "n_synapses": 306,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w25": {
+      "n_synapses": 293,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w26->w26": {
+      "n_synapses": 361,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w26->fs": {
+      "n_synapses": 276,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w26": {
+      "n_synapses": 286,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w27->w27": {
+      "n_synapses": 366,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w27->fs": {
+      "n_synapses": 282,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w27": {
+      "n_synapses": 287,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w28->w28": {
+      "n_synapses": 352,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w28->fs": {
+      "n_synapses": 263,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w28": {
+      "n_synapses": 289,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w29->w29": {
+      "n_synapses": 355,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "w29->fs": {
+      "n_synapses": 263,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    },
+    "fs->w29": {
+      "n_synapses": 266,
+      "declared_plastic": false,
+      "named_gate": null,
+      "max_abs_dw": 0.0
+    }
+  },
+  "judged_any": true,
+  "replies": [
+    {
+      "msg": "dog chase cat",
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat",
+      "abstained": false
+    },
+    {
+      "msg": "cat eat fish",
+      "answer": "Setting the held thread aside \u2014 On cat, then \u2014 the cat eats the fish",
+      "abstained": false
+    },
+    {
+      "msg": "dog chase cat",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat",
+      "abstained": false
+    },
+    {
+      "msg": "cat eat fish",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat eats the fish",
+      "abstained": false
+    },
+    {
+      "msg": "dog chase cat",
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On dog, then \u2014 My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat",
+      "abstained": false
+    },
+    {
+      "msg": "what does the dog chase",
+      "answer": "As for it \u2014 My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat",
+      "abstained": false
+    }
+  ]
+}

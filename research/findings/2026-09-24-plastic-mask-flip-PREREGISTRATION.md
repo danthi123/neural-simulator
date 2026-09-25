@@ -106,14 +106,54 @@ measured RSS ~460MB, well under any plausible cap -- 3GB was used, not the sugge
 this is a `tiny-demo`/`rf`-composer smoke, not a full developed-bundle build, and 12GB was refused
 by `mem_ok.sh` against concurrent sessions' RAM use at run time).
 
-**Numbers: PENDING.** The arm=off run was still executing (CPU-bound calibration-battery + chat
-turns on the numpy backend) at the time this document was committed; the arm=on run had not yet
-been launched. The two output files land in this probe's own directory
-(`research/findings/raw/_plastic_mask_flip_prep/`) as `smoke_off_s42.json` and `smoke_on_s42.json`
-(paths not spelled out jointly here so `tools/claim_check.py` does not flag them as missing-artifact
-citations before they exist); this document is committed now, before those artifacts exist, per
-this branch's "commit before verify" rule -- the numbers will be added as a follow-up commit once
-the smoke completes, citing the real paths then, never asserted here ahead of the artifact.
+**Numbers (both arms completed; see
+`research/findings/raw/_plastic_mask_flip_prep/smoke_off_s42.json` /
+`..._smoke_on_s42.json`).** Both arms report `frozen_max_abs_dw: 0.0` across EVERY
+`declared_plastic: false` named pathway, including the four the board's finding names
+(`sel_agent->sel_FS_agent`, `sel_patient->sel_FS_patient`, `sel_FS_agent->sel_patient`,
+`sel_FS_patient->sel_agent`, each 288 synapses). The two arms' `frozen_max_abs_dw` (0.0 vs 0.0),
+`plastic_max_abs_dw` (0.7016666531562805 vs 0.7016666531562805, identical to 16 significant
+figures), and all 6 turn-by-turn replies (byte-identical text, `abstained: false` on every turn in
+both arms) match exactly. `judged_any: true` in both (the comprehension gate did fire).
+
+**This is NOT the clean confirmation it looks like, and should NOT be read as "the flag has zero
+effect, so the flip is trivially safe."** Two things need to be separated:
+
+1. **The `cue_*->sel_*` learned pathways' zero drift is EXPLAINED, not surprising.**
+   `research/runners/_spiking_comprehension_monitor_derisk.py::_build_comp` calls
+   `comp.freeze_all_cue_plasticity()` immediately after construction
+   (`research/runners/_phaseB_multicue_competition_spiking_derisk.py::freeze_all_cue_plasticity`,
+   which sets each `cue_{c}` NAMED plasticity gate to 0.0 via the pre-existing
+   `set_plasticity_gate` mechanism). These pathways are `declared_plastic: true` with a real
+   `named_gate` (e.g. `"cue_position"`) -- they were already frozen by the OLD, already-correct
+   named-gate path this Vikunja fix does not touch. Their zero drift in both arms is expected and
+   uninformative about the flag.
+2. **The `sel_*->sel_FS_*` / `sel_FS_*->sel_*` pathways' zero drift is UNEXPLAINED and is the
+   actual open question.** These are the exact pathways
+   `research/findings/raw/_read_isolation_audit_29/audit_29runners.json` measured drifting from
+   13.8 to 56.1 max-weight-delta starting from the FIRST read and continuing over 30 successive
+   reads on a process-shared organ -- i.e. that audit's own baseline read was, like this probe's,
+   taken after `ensure_built()` (build + the same calibration battery), so "calibration already
+   saturated the weights before this probe's snapshot" is not an obvious explanation: the original
+   audit saw substantial drift starting from THAT SAME post-calibration point. This smoke drove far
+   fewer comprehension-gated reads (5 transitive-assertion turns, three of them repeats of the same
+   two sentences, vs. the audit's 30 read_margin() calls) and got exactly 0.0 in the OFF arm, where
+   the historical code should reproduce SOME nonzero drift as a positive control. Two explanations
+   are open and neither is verified: (a) something about this organ's current build (weight
+   values, `sel_recurrent_density`, drive strength) or this probe's specific turns no longer
+   reproduces the original bug's firing pattern on these pathways, or (b) `corg.judge()`'s live-chat
+   call path takes a different route through the substrate than the original audit's direct
+   `read_margin()`/calibration-battery calls for a REPEATED identical sentence (memoization,
+   caching, or an early-return this document has not traced).
+
+**This blocks treating this smoke as evidence for the flip.** Before the 6-seed battery below is
+queued, the missing step is a POSITIVE CONTROL: reproduce SOME nonzero `frozen_max_abs_dw` on the
+`sel_*` pathways with the flag OFF (ideally by mirroring the original audit's own 30-read
+`read_margin()` protocol directly against `corg.comp`, bypassing the full chat pipeline), to prove
+the instrument can detect the bug it is meant to detect, before trusting either arm's zero as
+meaningful. Without that, this smoke shows the pipeline runs end-to-end and produces a well-formed
+artifact -- a real and non-trivial result on its own -- but says nothing yet about whether the flag
+changes anything for this organ.
 
 ## Broader exposure survey (grep-only, NOT built or measured -- scope note for the flip's blast radius)
 
@@ -194,6 +234,13 @@ guard checks for.
 
 ## What would block a flip
 
+- **The seed-42 smoke's unexplained instrument gap (see above): the OFF arm did not reproduce ANY
+  drift on the `sel_*->sel_FS_*` pathways the original audit named, so this probe has not yet been
+  shown capable of detecting the bug it targets.** Run the positive-control check (mirror the
+  original 30-read `read_margin()` protocol against `corg.comp` directly, flag OFF) BEFORE queuing
+  the 6-seed battery; if it also reads 0.0, the wall-check applies (bank this specific probe/wiring
+  reading as insufficient, do not conclude the capability is closed) rather than treating either
+  arm's zero as a GO signal.
 - Any nonzero `frozen_max_abs_dw` on any seed with the flag ON (the capability isn't actually
   closed by this wiring for some pathway shape not yet found -- e.g. a fourth Hebbian write site,
   or a non-Hebbian plasticity rule this flag doesn't touch: recall STDP/BDSP/BTSP already
