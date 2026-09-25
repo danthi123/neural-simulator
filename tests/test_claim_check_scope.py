@@ -6,8 +6,11 @@ Three layers:
   2. HISTORY: every case is re-run through each earlier checker (main before 2026-09-25 and rounds 1-3, read
      from git), and the case's recorded `wrong_on` must equal the rounds that actually get it wrong -- so the
      registry's "fails on an earlier round, passes now" claim is re-derived, not remembered;
-  3. spec guards that no earlier round got wrong (so they are not registry cases), plus the four real findings
-     with an odd number of fence lines.
+  3. spec guards: behaviour that is not one of the history's holes, so it is pinned here and not in the
+     registry. Most match every earlier round; five are deliberate departures from ALL of them (a fence is never
+     a sibling scope; a paragraph after a fence is a new sibling; a marker in an inline code span, including in
+     a table row, is text; a setext `Derived` heading opens a section). Plus the four real findings with an odd
+     number of fence lines.
 """
 from __future__ import annotations
 
