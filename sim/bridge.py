@@ -403,6 +403,60 @@ _SLOW_CONDUCTANCE_FEATURE_FLAGS = {
 }
 
 
+class _TrackedGainArray(cp.ndarray):
+    """A thin `cp.ndarray` subclass that bumps a per-instance `_mutation_version` counter on every
+    `__setitem__`, so a derived cache (see `SimulationBridge._sparse_gain_index_sets`) can detect staleness in
+    O(1) -- an attribute read plus an identity check -- instead of an O(nnz) content comparison.
+
+    WHY (2026-09-25, re-review of the earlier "self-healing" fix). That fix compared the gain array's CONTENTS
+    against a snapshot on every call (`cp.array_equal`, one O(nnz) read) to catch the ~40 research/runners sites
+    that write `cp_plasticity_rate_gain` in place (`g[:] = 0.0`, `g[idx] = 1.0`) without going through
+    `set_plasticity_gate` / `set_global_plasticity_gain`. That made every call to `_sparse_gain_index_sets` --
+    twice per step where anything fired -- redo exactly the O(nnz) work the event-driven step exists to avoid,
+    defeating the flag's own purpose at scale. This class fixes that at the SOURCE: instead of detecting a write
+    after the fact by re-reading everything, the ARRAY OBJECT itself reports when it was written, in O(1),
+    covering every write site automatically (present AND future) rather than requiring each of the ~40 sites to
+    remember to call a setter.
+
+    Coverage (audited 2026-09-25, `grep -rn` over sim/ and research/runners/): every existing write to
+    `cp_plasticity_rate_gain` is either (a) indexed assignment -- `g[:] = x`, `g[idx] = x`, `g[mask] = x` -- which
+    `ndarray.__setitem__` handles and this class intercepts, or (b) whole-array reassignment --
+    `bridge.cp_plasticity_rate_gain = new_array` -- which the `cp_plasticity_rate_gain` property setter re-wraps
+    (see `_as_tracked_gain`). No call site was found using `.fill()`, `+=`/`-=`/`*=`/`/=`, `out=` on a ufunc,
+    `np.copyto`, `np.putmask`, or any other mutator that writes the buffer WITHOUT going through `__setitem__`
+    (the one such call that DID exist, `self.cp_plasticity_rate_gain.fill(v)` in `set_global_plasticity_gain`,
+    was changed to `[:] = v` in the same commit as this class, so it is covered too). A future write through one of
+    those bypassing APIs would silently defeat this tracker exactly as `.fill()` used to -- there is no general
+    guard against that short of intercepting every numpy/cupy in-place primitive, which this class does not
+    attempt. See tests/test_sparse_gain_index_sets_self_heals.py and
+    tests/test_sparse_gain_index_sets_o1_staleness_check.py.
+    """
+
+    def __array_finalize__(self, obj):
+        # New views (slices, `.copy()`, ufunc outputs) start their own counter inherited from the source; only
+        # the ORIGINAL object stored as `self._cp_plasticity_rate_gain` is ever read by
+        # `_sparse_gain_index_sets`, so an independent counter on a transient view is harmless.
+        self._mutation_version = getattr(obj, "_mutation_version", 0)
+
+    def __setitem__(self, key, value):
+        cp.ndarray.__setitem__(self, key, value)
+        # Plain += 1 (not getattr-guarded): __array_finalize__ always runs before __setitem__ can be called on
+        # an instance of this class, so the attribute already exists.
+        self._mutation_version += 1
+
+
+def _as_tracked_gain(arr):
+    """Wrap `arr` as a `_TrackedGainArray` for the `cp_plasticity_rate_gain` property, or return it unchanged if
+    it already is one (idempotent, so re-assigning the SAME already-tracked object back onto the attribute --
+    e.g. `setattr(self, attr, arr)` after an in-place compaction write -- does not reset its version counter and
+    lose the write that just happened)."""
+    if arr is None or isinstance(arr, _TrackedGainArray):
+        return arr
+    tracked = arr.view(_TrackedGainArray)
+    tracked._mutation_version = 0
+    return tracked
+
+
 class SimulationBridge:
     @property
     def xp(self):
@@ -1141,25 +1195,35 @@ class SimulationBridge:
         """(nz, pos): cached ascending indices of synapses with plasticity gain != 0 (the only ones the gated decay
         changes) and gain > 0 (the only ones the gated clip touches).
 
-        SELF-HEALING against staleness, not just version-gated: `_plasticity_gain_version` (bumped by
-        set_plasticity_gate / set_global_plasticity_gain) is a fast pre-check, but it is NOT the correctness
-        mechanism, because ~40 research/runners sites write `cp_plasticity_rate_gain` in place directly
-        (`g[:] = 0.0`, `g[idx] = 1.0`, `g[:] = saved`) without going through either setter, so the version
-        counter never bumps for them and the dispatch guard cannot see it either (it only checks config flags).
-        A version-only cache would then serve a stale index set after such a write (reproduced: freeze all
-        gains in place, run steps, open one gate in place, run more steps -> the sparse and dense paths
-        diverge). So every call also compares the CONTENTS of the gain array against the snapshot taken at the
-        last cache build (one O(nnz) equality read, versus the ~20 dense passes this flag exists to avoid) and
-        rebuilds on any mismatch, in-place write or not. See tests/test_sparse_gain_index_sets_self_heals.py."""
+        SELF-HEALING against staleness, in O(1) per call, not `_plasticity_gain_version`-gated: that counter
+        (bumped by set_plasticity_gate / set_global_plasticity_gain) is NOT the correctness mechanism, because
+        ~40 research/runners sites write `cp_plasticity_rate_gain` in place directly (`g[:] = 0.0`, `g[idx] =
+        1.0`, `g[:] = saved`) without going through either setter, so the version counter never bumps for them
+        and the dispatch guard cannot see it either (it only checks config flags). A version-only cache would
+        then serve a stale index set after such a write (reproduced: freeze all gains in place, run steps, open
+        one gate in place, run more steps -> the sparse and dense paths diverge).
+
+        An earlier fix (2026-09-25) closed that by comparing the gain array's CONTENTS against a snapshot on
+        EVERY call (one O(nnz) `cp.array_equal`) -- correct, but it redid exactly the O(nnz) work this flag
+        exists to avoid, on every call, twice per step where anything fired, which a later review caught as
+        defeating the point of the sparse step at scale. The array itself now reports writes instead of being
+        re-read: `cp_plasticity_rate_gain` is always a `_TrackedGainArray` (see that class, above this one in the
+        module), whose `__setitem__` bumps a per-instance `_mutation_version` on every indexed write, covering
+        every one of the ~40 sites (and any future one) for free, in O(1), with no per-call content read. The
+        cache key is (object identity, nnz, mutation_version): identity catches whole-array reassignment
+        (`bridge.cp_plasticity_rate_gain = new_array` could otherwise land on the same nnz and a freshly-reset
+        version=0, aliasing a stale cache built from the OLD object at that same key); nnz catches growth
+        (`_ensure_gate_capacity` always returns a freshly-wrapped, version-0 array on growth, and growth always
+        changes nnz); the version counter catches an in-place write to the SAME object at the SAME nnz. See
+        tests/test_sparse_gain_index_sets_self_heals.py (correctness) and
+        tests/test_sparse_gain_index_sets_o1_staleness_check.py (the O(1) regression this docstring describes)."""
         nnz = self.cp_connections.nnz
         g = self._ensure_gate_capacity("cp_plasticity_rate_gain", nnz)
-        gs = g[:nnz]
-        key = (nnz, getattr(self, "_plasticity_gain_version", 0))
+        key = (nnz, getattr(g, "_mutation_version", 0))
         cache = getattr(self, "_sparse_gain_cache", None)
-        stale = (cache is None or cache[0] is not g or cache[1] != key
-                 or gs.shape != cache[4].shape or not bool(cp.array_equal(gs, cache[4])))
-        if stale:
-            cache = (g, key, cp.flatnonzero(gs != 0.0), cp.flatnonzero(gs > 0.0), gs.copy())
+        if cache is None or cache[0] is not g or cache[1] != key:
+            gs = g[:nnz]
+            cache = (g, key, cp.flatnonzero(gs != 0.0), cp.flatnonzero(gs > 0.0))
             self._sparse_gain_cache = cache
         return cache[2], cache[3]
 
@@ -4998,6 +5062,20 @@ class SimulationBridge:
         return canonical
 
     @property
+    def cp_plasticity_rate_gain(self):
+        """Per-synapse plasticity-rate multiplier (1.0=full plasticity, 0.0=frozen); see `__init__`'s docstring
+        comment for the biology. Backed by `self._cp_plasticity_rate_gain_arr`, always stored as a
+        `_TrackedGainArray` (or None) so `_sparse_gain_index_sets` can detect an in-place write in O(1) -- see
+        that class's docstring. The property exists SOLELY to make that wrapping automatic at every assignment
+        site (`self.cp_plasticity_rate_gain = new_array`, `_ensure_gate_capacity`'s `setattr`, etc.) without
+        having to edit each one; reads are a plain passthrough."""
+        return getattr(self, "_cp_plasticity_rate_gain_arr", None)
+
+    @cp_plasticity_rate_gain.setter
+    def cp_plasticity_rate_gain(self, value):
+        self._cp_plasticity_rate_gain_arr = _as_tracked_gain(value)
+
+    @property
     def cp_plasticity_gain(self):
         """DEPRECATED 2026-04-29 (Wave-1 rename #12). Use
         `cp_plasticity_rate_gain` instead — the new name distinguishes the
@@ -6048,7 +6126,10 @@ class SimulationBridge:
             nnz = int(self.cp_connections.nnz)
             self.cp_plasticity_rate_gain = cp.full(nnz, v, dtype=cp.float32)
         else:
-            self.cp_plasticity_rate_gain.fill(v)
+            # [:] = v, not .fill(v): .fill() writes the buffer directly and would bypass
+            # _TrackedGainArray.__setitem__ (see its docstring's coverage audit), silently defeating
+            # _sparse_gain_index_sets's O(1) staleness check. Identical result either way.
+            self.cp_plasticity_rate_gain[:] = v
             self._plasticity_gain_version = getattr(self, "_plasticity_gain_version", 0) + 1
 
     def get_global_plasticity_gain(self) -> float | None:

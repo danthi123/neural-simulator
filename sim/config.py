@@ -455,9 +455,10 @@ class CoreSimConfig:
     # regime it was verified in (see SimulationBridge._sparse_activity_step_can_dispatch); any unsupported feature
     # falls back to the dense step. The gain!=0/gain>0 index-set cache (SimulationBridge._sparse_gain_index_sets)
     # is SELF-HEALING against a caller that writes cp_plasticity_rate_gain in place (`g[:] = ...`) without going
-    # through set_plasticity_gate / set_global_plasticity_gain: it compares the gain array's CONTENTS against its
-    # last-cached snapshot every call (not just the version counter those setters bump) and rebuilds on any
-    # mismatch, so an in-place write is picked up on the next step rather than silently serving a stale index set.
+    # through set_plasticity_gate / set_global_plasticity_gain: cp_plasticity_rate_gain is always a
+    # _TrackedGainArray (sim/bridge.py), whose own __setitem__ bumps a per-instance version counter on every
+    # write, so the cache detects an in-place write in O(1) (an attribute read, not a re-scan of the array) and
+    # rebuilds on the next call rather than silently serving a stale index set.
     sparse_activity_step: bool = False
     # ADDITIVE, DEFAULT-OFF correctness enforcement (2026-09-02). The runtime Hebbian LTP/decay/clip path historically
     # consulted ONLY the named `plasticity_gate` (cp_plasticity_rate_gain); it never read cp_synapse_plastic_mask, so a

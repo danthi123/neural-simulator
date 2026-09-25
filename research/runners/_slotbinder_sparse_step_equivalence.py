@@ -18,9 +18,14 @@ TIMING. `--teach-facts K` / `--queries K` / `--no-ablation` shrink the protocol 
 (N=128/404 on numpy, where the OFF path costs hours); equality is still checked on whatever subset was run.
 
 Output: one JSON with, per N, `equal` (all comparisons), each comparison's boolean, and per path the per-fact teach
-seconds, per-read seconds and read counts. CPU/numpy by default (this is the equivalence instrument); cupy is
-allowed for timing but its transpose matvec is cuSPARSE's atomic scatter in BOTH paths, so bit-identity is not
-expected there (the verdict field says which backend ran).
+seconds, per-read seconds and read counts. Any mismatched weight comparison (`weights_after_teach/queries/
+ablation`) additionally gets a `..._first_diff` entry (`n_diff`, `idx`, `max_abs`) -- on cupy, where bit-identity
+is NOT expected (see below), this is what a caller checks against an explicit numeric criterion instead of the
+plain boolean. CPU/numpy by default (this is the equivalence instrument); cupy is allowed for timing but its
+transpose matvec is cuSPARSE's atomic scatter in BOTH paths, so bit-identity is not expected there (the verdict
+field says which backend ran) -- see
+research/findings/2026-09-24-slotbinder-production-composer-gate-PREREG.md AMENDMENT 3 item (5) for the pass
+criterion this instrument's cupy output is read against before a GPU production-gate run trusts the flag.
 """
 from __future__ import annotations
 
@@ -155,6 +160,17 @@ def run_path(sample, seed, fanout, sparse_step, n_teach, n_query, ablation, log)
     return out, (w_teach, w_query, w_abl)
 
 
+def _first_diff(a, b):
+    """n_diff/idx/max_abs over a mismatched weight-array pair -- the diagnostic a cupy run (where bit-identity is
+    NOT expected; see the AMENDMENT 3 item-5 pass criterion in
+    research/findings/2026-09-24-slotbinder-production-composer-gate-PREREG.md) is read against, without hand
+    re-deriving it from the raw arrays. Applied uniformly to every weight comparison (teach/queries/ablation),
+    not just teach, so the same criterion is machine-checkable regardless of which snapshot mismatches."""
+    d = np.flatnonzero(a != b)
+    return {"n_diff": int(d.size), "idx": int(d[0]) if d.size else None,
+            "max_abs": float(np.max(np.abs(a - b))) if d.size else 0.0}
+
+
 def compare(off, on, w_off, w_on):
     eq = {
         "thresholds": off["thresholds_sha256"] == on["thresholds_sha256"],
@@ -169,9 +185,11 @@ def compare(off, on, w_off, w_on):
         eq["ablation_answers"] = off["ablation"]["answers"] == on["ablation"]["answers"]
         eq["weights_after_ablation"] = bool(np.array_equal(w_off[2].view(np.uint8), w_on[2].view(np.uint8)))
     if not eq["weights_after_teach"]:
-        d = np.flatnonzero(w_off[0] != w_on[0])
-        eq["weights_after_teach_first_diff"] = {"n_diff": int(d.size), "idx": int(d[0]) if d.size else None,
-                                                "max_abs": float(np.max(np.abs(w_off[0] - w_on[0])))}
+        eq["weights_after_teach_first_diff"] = _first_diff(w_off[0], w_on[0])
+    if not eq["weights_after_queries"]:
+        eq["weights_after_queries_first_diff"] = _first_diff(w_off[1], w_on[1])
+    if "weights_after_ablation" in eq and not eq["weights_after_ablation"]:
+        eq["weights_after_ablation_first_diff"] = _first_diff(w_off[2], w_on[2])
     eq["all"] = all(v for k, v in eq.items() if isinstance(v, bool))
     return eq
 

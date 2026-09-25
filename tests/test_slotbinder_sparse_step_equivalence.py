@@ -103,6 +103,61 @@ def test_dispatch_guard_refuses_unverified_bridge_state():
             setattr(b, attr, old)
 
 
+def test_dispatch_guard_refuses_experiment_engine_running():
+    """The `self.experiment_engine is not None and self.experiment_engine.is_experiment_running` exclusion
+    (sim/bridge.py `_sparse_activity_step_can_dispatch`): the event-driven path has never been verified against
+    the experiment-engine machinery (batched replicas, inter-group connectivity), so an in-progress experiment
+    must refuse dispatch regardless of every other flag (LOW, 2026-09-25 re-review -- this clause was the only
+    one in the guard with no direct test; the other bridge-state exclusions are covered by
+    test_dispatch_guard_refuses_unverified_bridge_state, above)."""
+    b = build_binder_bridge(3, K=4, KF=6, sparse_step=True)
+    cfg = b.core_config
+    assert b._sparse_activity_step_can_dispatch(cfg) is True
+    assert b.experiment_engine is None, "test assumption violated: a freshly built bridge has no experiment engine"
+
+    class _FakeExperimentEngine:
+        is_experiment_running = True
+
+    b.experiment_engine = _FakeExperimentEngine()
+    try:
+        assert b._sparse_activity_step_can_dispatch(cfg) is False
+    finally:
+        b.experiment_engine = None
+
+    # an experiment_engine that exists but is NOT currently running must NOT refuse -- the exclusion is on
+    # is_experiment_running, not on the engine's mere presence (e.g. a completed/idle engine object left attached).
+    class _IdleExperimentEngine:
+        is_experiment_running = False
+
+    b.experiment_engine = _IdleExperimentEngine()
+    try:
+        assert b._sparse_activity_step_can_dispatch(cfg) is True
+    finally:
+        b.experiment_engine = None
+
+
+def test_dispatch_guard_refuses_missing_plasticity_gain():
+    """The `cfg.enable_hebbian_learning and ... self.cp_plasticity_rate_gain is None` exclusion (sim/bridge.py
+    `_sparse_activity_step_can_dispatch`): `_sparse_gain_index_sets` (which the event-driven Hebbian
+    decay/clip calls) requires a real `cp_plasticity_rate_gain` array to index into, so Hebbian learning WITHOUT
+    a gain array (no pathway ever called set_plasticity_gate / set_global_plasticity_gain, so it was never
+    allocated) must refuse dispatch rather than dispatch into a codepath with nothing to gate (LOW, 2026-09-25
+    re-review -- this was the guard's other untested clause)."""
+    b = build_binder_bridge(3, K=4, KF=6, sparse_step=True)
+    cfg = b.core_config
+    assert cfg.enable_hebbian_learning is True, "test assumption violated: this guard clause is only reachable when Hebbian learning is on"
+    assert b._sparse_activity_step_can_dispatch(cfg) is True
+    saved = b.cp_plasticity_rate_gain
+    assert saved is not None, "test assumption violated: the freshly built binder bridge has no plasticity gain array"
+
+    b.cp_plasticity_rate_gain = None
+    try:
+        assert b._sparse_activity_step_can_dispatch(cfg) is False
+    finally:
+        b.cp_plasticity_rate_gain = saved
+    assert b._sparse_activity_step_can_dispatch(cfg) is True, "restoring the gain array must restore dispatch"
+
+
 def test_lockstep_per_step_bit_identity_teach_and_read():
     """Two bridges, same seed, flag off/on, driven by the SAME external currents: every state array and every
     weight must match bit for bit after EVERY step, through a teach window (one gate open) and a read window."""

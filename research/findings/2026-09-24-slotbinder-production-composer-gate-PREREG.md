@@ -323,6 +323,43 @@ for SEED in 42 43 44 100 101 102; do
 done
 ```
 
+**Pass criterion for (a), fixed BEFORE it is run (2026-09-25, review fix round)** -- (b)/(c) may proceed only once
+ALL of the following read true from (a)'s output JSON (`research/findings/raw/_slotbinder_sparse_step/
+equivalence_seed7_n8_cupy.json`, `equal.*` and, on a mismatch, the matching `..._first_diff` field the compare()
+helper always attaches; see that runner's module docstring):
+
+1. **`equal.thresholds` must be `true` (exact, no tolerance).** Thresholds are drawn once at build time from
+   `cfg.seed`, before any matvec runs, so they do not depend on cuSPARSE's atomic-scatter summation order at
+   all -- a mismatch here means the OFF/ON builds used different RNG state, a build-determinism bug unrelated to
+   the event-driven step, and is an automatic FAIL that blocks (b)/(c) regardless of every other check.
+2. **Every answer comparison (`equal.intact_answers`, `equal.probe_answers`, and `equal.ablation_answers` if the
+   ablation phase ran) must be `true` (exact, no tolerance).** Answers are discrete argmax-over-slot-similarity
+   word choices, not raw floats: this equivalence gate exists to ask whether the event-driven path recalls the
+   SAME word, and a flipped answer is the actual capability regression this check is for, cuSPARSE nondeterminism
+   or not. Any `false` here is a FAIL that blocks (b)/(c).
+3. **Every weight comparison (`equal.weights_after_teach`, `equal.weights_after_queries`, and
+   `equal.weights_after_ablation` if ablation ran) is allowed to read `false` on cupy** (cuSPARSE's atomic
+   scatter over a DIFFERENT-shaped sub-matrix -- the fired-rows-only CSR versus the full one -- can sum the same
+   terms in a different order on the two paths; this is a real, already-acknowledged source of run-to-run
+   nondeterminism on cupy in BOTH paths, not something this flag introduces), PROVIDED the matching
+   `..._first_diff.max_abs` is `<= 1e-3` (float32 ULP accumulation at this weight scale; not a target, a bound
+   loose enough to pass reordered-but-converged sums and tight enough to catch a real divergence) -- any
+   `max_abs` above that bound, or a `weights_after_teach`/`_queries`/`_ablation` boolean reading `false` while
+   `final_state` also reads `false` (state divergence beyond float noise propagating from a genuinely different
+   computation, not reordered summation), is a FAIL that blocks (b)/(c).
+4. **`equal.all` itself is NOT the criterion** -- it is the numpy bit-identity bar, which criterion 3 above
+   explicitly does not require on cupy; a cupy run reading `equal.all: false` is expected and does not by itself
+   block (b)/(c) as long as criteria 1-3 hold.
+
+If any criterion fails, (b)/(c) do not proceed; the failure is investigated (starting with which of criteria 1/2
+gates it, since those two are supposed to hold with zero tolerance) before either is attempted.
+
+- amendment-same-commit: this edit only adds a pass criterion for command (a), a cupy check that has NOT been
+  run yet (still PREPARED, per item 5 above) -- it produces no data. The raw artifacts landing in this same
+  commit (the re-measured numpy speedup numbers) belong to a DIFFERENT, pre-existing finding
+  (`2026-09-25-slotbinder-event-driven-step-bit-identical-numpy.md`) that this amendment only cites; this
+  amendment does not govern them.
+
 Command (c) is deliberately NOT queued by this commit (same discipline as AMENDMENT 2's own battery: registered
 here, queued separately, not run ahead of the prereg) -- it additionally waits on (a)/(b), which AMENDMENT 2's
 original (non-sparse) battery did not need to.

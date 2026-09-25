@@ -45,22 +45,22 @@
       "paths": {
         "off": {
           "sparse_step": false,
-          "build_s": 2.6515746116638184,
+          "build_s": 2.429011821746826,
           "nnz": 2265600,
           "n_neurons": 5204,
           "sparse_activity_step_dispatches": false,
           "thresholds_sha256": "0457e65e0f5d116ac6872da3b463849ec5fed1cb552008094e75bad43b56b300",
           "teach_seconds": [
-            4.8310630321502686,
-            4.149205923080444,
-            3.8960022926330566,
-            5.126717805862427,
-            4.80369234085083,
-            4.817186117172241,
-            4.965284109115601,
-            4.873060941696167
+            4.318810701370239,
+            4.448647975921631,
+            4.4750144481658936,
+            4.679517030715942,
+            4.113398313522339,
+            4.238954782485962,
+            4.463422536849976,
+            4.674463272094727
           ],
-          "teach_s_per_fact_mean": 4.682776570320129,
+          "teach_s_per_fact_mean": 4.426528632640839,
           "weights_after_teach_sha256": "d322cda2f917948c2d6cdfc5ffdcc862a392d53121d4e2fb0572f37922921cf5",
           "intact": {
             "answers": [
@@ -74,8 +74,8 @@
               "music"
             ],
             "reads": 53,
-            "seconds": 40.59200096130371,
-            "s_per_read": 0.765886810590636
+            "seconds": 43.740647077560425,
+            "s_per_read": 0.8252952278784986
           },
           "probes": {
             "pairs": [
@@ -93,7 +93,7 @@
               null
             ],
             "reads": 18,
-            "seconds": 13.646156787872314
+            "seconds": 14.426172018051147
           },
           "weights_after_queries_sha256": "007c7e44ed25fea6bd2a6d697179c3cd4787fad97b1a102d689dd958c7fbd27c",
           "ablation": {
@@ -108,8 +108,8 @@
               null
             ],
             "reads": 64,
-            "seconds": 45.336859464645386,
-            "s_per_read": 0.7083884291350842
+            "seconds": 47.20980930328369,
+            "s_per_read": 0.7376532703638077
           },
           "weights_after_ablation_sha256": "d7486d9efec98bb6f51f884905206e0eb75988f3317a01efa3f7087532ef5cb1",
           "final_state_sha256": {
@@ -125,29 +125,29 @@
             "cp_conductance_g_nmda_recurrent_rise": "f33250d4204cf046979c5f85ad00bb61944096b8cb8cc8ac39627e125c3620c0"
           },
           "total_sim_steps": 7000,
-          "total_seconds": 137.03722977638245,
-          "ms_per_step": 19.57674711091178,
-          "ms_per_step_teach": 23.413882851600647,
-          "ms_per_step_read": 19.1471702647659
+          "total_seconds": 140.78885746002197,
+          "ms_per_step": 20.11269392286028,
+          "ms_per_step_teach": 22.132643163204193,
+          "ms_per_step_read": 20.632380696962464
         },
         "on": {
           "sparse_step": true,
-          "build_s": 2.471505880355835,
+          "build_s": 2.81563401222229,
           "nnz": 2265600,
           "n_neurons": 5204,
           "sparse_activity_step_dispatches": true,
           "thresholds_sha256": "0457e65e0f5d116ac6872da3b463849ec5fed1cb552008094e75bad43b56b300",
           "teach_seconds": [
-            0.2927680015563965,
-            0.25830674171447754,
-            0.24714994430541992,
-            0.288254976272583,
-            0.25708580017089844,
-            0.2600696086883545,
-            0.28371238708496094,
-            0.307375431060791
+            0.3746368885040283,
+            0.3593482971191406,
+            0.3365814685821533,
+            0.358792781829834,
+            0.31401968002319336,
+            0.32385706901550293,
+            0.3462955951690674,
+            0.32662272453308105
           ],
-          "teach_s_per_fact_mean": 0.27434036135673523,
+          "teach_s_per_fact_mean": 0.3425193130970001,
           "weights_after_teach_sha256": "d322cda2f917948c2d6cdfc5ffdcc862a392d53121d4e2fb0572f37922921cf5",
           "intact": {
             "answers": [
@@ -161,8 +161,8 @@
               "music"
             ],
             "reads": 53,
-            "seconds": 2.752615213394165,
-            "s_per_read": 0.0519361361017767
+            "seconds": 2.9813971519470215,
+            "s_per_read": 0.05625277645183059
           },
           "probes": {
             "pairs": [
@@ -180,7 +180,7 @@
               null
             ],
             "reads": 18,
-            "seconds": 0.8113837242126465
+            "seconds": 0.928950309753418
           },
           "weights_after_queries_sha256": "007c7e44ed25fea6bd2a6d697179c3cd4787fad97b1a102d689dd958c7fbd27c",
           "ablation": {
@@ -195,8 +195,8 @@
               null
             ],
             "reads": 64,
-            "seconds": 2.3507184982299805,
-            "s_per_read": 0.036729976534843445
+            "seconds": 2.7195541858673096,
+            "s_per_read": 0.04249303415417671
           },
           "weights_after_ablation_sha256": "d7486d9efec98bb6f51f884905206e0eb75988f3317a01efa3f7087532ef5cb1",
           "final_state_sha256": {
@@ -212,10 +212,10 @@
             "cp_conductance_g_nmda_recurrent_rise": "f33250d4204cf046979c5f85ad00bb61944096b8cb8cc8ac39627e125c3620c0"
           },
           "total_sim_steps": 7000,
-          "total_seconds": 8.109440326690674,
-          "ms_per_step": 1.1584914752415247,
-          "ms_per_step_teach": 1.3717018067836761,
-          "ms_per_step_read": 1.2984034025444176
+          "total_seconds": 9.37005615234375,
+          "ms_per_step": 1.3385794503348214,
+          "ms_per_step_teach": 1.7125965654850006,
+          "ms_per_step_read": 1.4063194112957649
         }
       },
       "equal": {
@@ -230,8 +230,8 @@
         "weights_after_ablation": true,
         "all": true
       },
-      "speedup_teach": 17.069222141290894,
-      "speedup_overall_per_step": 16.898481800938914
+      "speedup_teach": 12.92344245530839,
+      "speedup_overall_per_step": 15.025401680736586
     }
   },
   "verdict": "EQUIVALENT (bit-identical)"
