@@ -45,18 +45,40 @@ its outputs.
 
 - **Window.** The revision probe (`revision_available`) reached main in merge 561efa586 (2026-09-23 22:44:43). The
   dispatcher restarted at 22:53:21 (`[pool-dispatch] started 22:53:21` in dispatch.log). It restarted with the fix
-  at 2026-09-25 11:05:52. The scan covers the WHOLE `pool.queue.claims`: 2005 lines at the 11:33:10 snapshot, as
-  recorded in the audit JSON's `provenance.inputs`. It finds zero fragments before the window and zero among the 22
+  at 2026-09-25 11:05:52. The scan covers the WHOLE `pool.queue.claims`: 2037 lines at the 12:19:03 snapshot, as
+  recorded in the audit JSON's `provenance.inputs`. It finds zero fragments before the window and zero among the
   claims made after the fixed restart.
 - **Nodes.** Fragments reached only pool1 and pool2. The mini-PCs (pool40/41/42) received none.
 - **Read-only.** No queue file, node, shard cell or finding was modified. Node files were read with
   `ssh -n -o BatchMode=yes -o ConnectTimeout=8` (both AWS nodes were up). The first pass of this audit kept its
-  copies only in session scratch (`/tmp`, lost at session end -- flagged by review); the fix round re-fetched the
-  same files read-only and committed the durable subset under
-  `research/findings/raw/_dispatcher_fragment_audit/node_evidence/` (the 20 relevant `job_status.log` v2 records --
-  the 14 fragments' own plus the six SETTLE-A2 lines' -- the four fragment-written cells' `lb.json` + sidecar +
-  the one `oed_*.json`, and the two nodes' `runs.jsonl`, 4 records total). The JSON below was regenerated from
-  those committed files, not from `/tmp`; its own `provenance.argv` names only paths under this repo.
+  copies only in session scratch (`/tmp`, lost at session end -- flagged by review, r2); r2 re-fetched the same
+  files read-only, but committed them as `pool1.job_status.log`/`pool2.job_status.log` -- a name `.gitignore`'s
+  `*.log` rule silently drops, so they were never actually in git despite r2's own commit message and this
+  document (`:56` below, prior wording) saying they were (review r3 HIGH item; caught by reproducing this finding's
+  own command on a clean checkout, which read zero `*.job_status.log` files and got `rc=?` for every fragment and
+  every A2 line). **Fix round r3** renamed them to `pool1.job_status.tsv`/`pool2.job_status.tsv` (not gitignored;
+  `git ls-files` confirms both are tracked) and extended `tools/audit_pool_fragment_claims.py`'s `--node-status`
+  glob to read either extension. The durable evidence under
+  `research/findings/raw/_dispatcher_fragment_audit/node_evidence/` is: the 20 relevant job_status v2 records (the
+  14 fragments' own plus the six SETTLE-A2 lines'), the four fragment-written cells' `lb.json` + sidecar + the one
+  `oed_*.json`, and the two nodes' `runs.jsonl` (8 records total, 4 each).
+- **Parent-run exit statuses (review r3 MEDIUM item).** r2's regeneration fetched job_status only for the fragments
+  and A2 lines, never for the PARENT full-line reruns the table below cites as "rc 0" -- so every parent occurrence
+  in the committed JSON read `node_status: null`, and finding text such as "every later run exited 0" was not
+  supported by the cited artifact on a clean reproduction. r3 has no `research/queue/` access (a worktree-isolated
+  fix round; re-fetching from the live AWS nodes is also out of scope here) to redo that fetch directly, so it
+  restores the SAME values the very first audit pass already resolved and committed at 273cfc1b4 (a real read-only
+  `ssh -n` fetch of the complete, unfiltered per-node logs, before this repo's `.tsv` evidence existed): committed
+  as `research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json` (93 resolved
+  occurrences, 86 distinct (node, ts, rc) records spanning pool1/pool2/pool42, every one rc 0), and applied with
+  `tools/apply_parent_status_archive.py` (test: `tests/test_apply_parent_status_archive.py`) -- it fills ONLY an
+  occurrence a live fetch left empty, never overrides one, and records what it did in the JSON's own
+  `restorations` list. Of the 145 parent occurrences the current (larger, since-grown) queue snapshot carries, 93
+  are restored this way; the other 52 are claimed dispatches with no record in either this round's live fetch or
+  the archive (each is running, finished after both fetches, or genuinely unresolved -- none is known to have
+  failed). The JSON below was regenerated from the committed evidence by r2's own live-queue run, then patched by
+  this restoration step; its `provenance.argv` and the new `restorations` entry each name exactly what produced
+  their part of it.
 
 ## Method
 
@@ -66,8 +88,9 @@ its outputs.
    `tools/audit_pool_fragment_claims.py` (test: `tests/test_audit_pool_fragment_claims.py`).
 2. **Cross-checks on the detector.** All 14 fragments immediately follow a `revision <sha> not provisioned on <same
    node>` line in dispatch.log. That is the one moment the bug can act. Across the window, 19 dispatches follow such a
-   line: the 14 fragments, 4 ordinary full lines, and the first A2 line (see below). `pool.running` has 753
-   entries in the window at the snapshot, and every one matches a claim.
+   line: the 14 fragments, 4 ordinary full lines, and the first A2 line (see below). `research/queue/pool.running`
+   holds 1003 entries total per the audit JSON's `provenance.inputs` at the 12:19:03 snapshot (not window-filtered);
+   every entry this audit's cross-check inspected within the window matched a claim.
 3. **Execution and exit status.** Each claim is mapped to its `pool.running` record (node and executed text). The
    base64 of that text is looked up in the node's `~/derisk-pool/sim/job_status.log` v2 records (rc).
 4. **Writes.** On each node, every file under `~/derisk-pool/sim` (excluding `.venv`) newer than the tree's
@@ -82,8 +105,9 @@ its outputs.
 7. **Citations.** Findings, the board and git history (all refs) were searched for the affected cells and for any
    file whose sidecar `argv[0]` lies in an unpinned node tree.
 
-Reproduce, against the committed durable evidence (fix round r2; the first pass's `--node-status`/`--node-outputs`
-pointed at session scratch, since fixed):
+Reproduce, against the committed durable evidence (fix round r3; the first pass's `--node-status`/`--node-outputs`
+pointed at session scratch, since fixed by r2; r2's own evidence commit was silently gitignored, since fixed by r3
+-- see "Read-only" above):
 
 ```
 .venv/bin/python tools/audit_pool_fragment_claims.py \
@@ -92,6 +116,12 @@ pointed at session scratch, since fixed):
   --scan-shards b2a0924=9db7613296c3d02a161b36fb15da3983188b7902 \
   --scan-shards b2b0924-base=a308f1e09babcc9ed096c3c8046d00040391368c \
   --node-outputs research/findings/raw/_dispatcher_fragment_audit/node_evidence
+
+# restore the parent-run exit statuses r2's fetch never covered (needs research/queue/ access; run from a checkout
+# that has it, not from a worktree-isolated fix round -- see "Parent-run exit statuses" above):
+.venv/bin/python tools/apply_parent_status_archive.py \
+  --report research/findings/raw/_dispatcher_fragment_audit/2026-09-25-fragments.json \
+  --archive research/findings/raw/_dispatcher_fragment_audit/node_evidence/parent_run_status_archive.json
 ```
 
 ## Every fragment
@@ -115,7 +145,7 @@ ran with its node's `~/derisk-pool/sim` as the working directory, with no revisi
 | 1638 | 09-24 20:55:50 | pool2 | 4da72fd2 on pool2 | `& .venv/bin/python tools/assert_flipped_defaults.py && mkdir …` | `POOL_CHECKED_REASON=… &` (backgrounded assignment), then python on a script absent at d7b2a2bb5 | 2 | nothing (no mkdir, no provenance record) | 1752 (09-25 00:19:36 pool2, rc 0), at F |
 | 1647 | 09-24 20:58:04 | pool1 | 4da72fd2 on pool1 | `earing_fraction --only curiosity-followup …` | nothing | 127 | nothing | 1791 (09-25 02:52:42 pool2, rc 0) |
 | 1909 | 09-25 07:31:27 | pool2 | 5b5ea1b7 on pool2 | `nce/lb` `.json` | nothing | 127 | nothing | b2b self-initiated-utterance s44 (1948) or s100 (1991); both ran later, rc 0 |
-| 1916 | 09-25 07:35:36 | pool1 | 5b5ea1b7 on pool1 | `.json` | nothing | 127 | nothing | tail of any of 83 candidate b2b lines: 62 ran later with rc 0, 17 were still running at the snapshot, and 4 are still queued |
+| 1916 | 09-25 07:35:36 | pool1 | 5b5ea1b7 on pool1 | `.json` | nothing | 127 | nothing | tail of any of 111 candidate b2b lines (the queue grew between the first pass and this fix round): 62 have a confirmed rc 0 (restored, see "Parent-run exit statuses"); the other 49 have no exit status in either fetch (running, finished after both fetches, or unresolved -- none known to have failed) |
 
 **Short tails have ambiguous parents.** A tail such as `.json` matches many lines. A candidate counts as the parent
 only if it was still queued at the fragment's claim time, meaning it was claimed later or is queued now. Each such
@@ -125,16 +155,16 @@ fragment ran nothing, so the ambiguity affects only the bookkeeping, not any out
 it carries no `#checked:` and the record-check gate set it aside. dispatch.log keeps the first 96 characters (lines
 36451, 36474, 36477, 36637, 36682). `pool.queue.unchecked` no longer holds them; it was rewritten on 2026-09-25 at
 04:05. The last two are tails of B2b lines and of `ca3_superposed_fact_attractor` lines. The first three are tails
-of lines that are in neither the claims nor the live queue. **These first three should not be read as lost jobs.**
-Their surviving 96-character heads name content consistent with deliberate supersession, not loss: dispatch.log:36451
-reads "...e any gate-seed run); Part A a3-successor CONT+CAT gate on BRAIN_OPEN_..." (an open-ended-gated A3-successor
-line) and dispatch.log:36474/36477 both read "...b12 = Part A code identical to 7a39851c; mem_gb=7" (a line
-superseded by an identical-code shortcut). The review's own re-derivation additionally traced a same-day (2026-09-24,
-mid-afternoon) A3-lane queue edit that removed a batch of now-superseded lines; that edit's own accounting (exact
-line count, timestamp) lived only in the reviewing session's scratch and could not be re-verified from durable
-records for this fix round, so it is not restated as a number here -- only the weaker, independently-checkable fact
-that these three parents are absent from every current queue file AND that their surviving text names superseded,
-not missing, work. Regardless, a quarantine cannot remove a real line: nothing here shows these lines ever ran.
+of lines that are in neither the claims nor the live queue. **Fix round r3 (review LOW item):** the prior wording
+here read the surviving 96-character heads as evidence of "deliberate supersession, not loss." It is not: a
+`#checked:` reason (dispatch.log:36474/36477's "b12 = Part A code identical to 7a39851c") explains why a line is
+PINNED to head b12, not that the line was ever superseded or removed on purpose, and dispatch.log:36451's surviving
+text ("...e any gate-seed run); Part A a3-successor CONT+CAT gate on BRAIN_OPEN_...") says nothing about
+supersession either -- both readings were an inference the head text does not support. The only verifiable facts:
+these three parents are absent from every current queue file (claims, live queue, `.unchecked`, `.malformed`), and
+nothing in this audit's evidence shows any of the three ever ran. A quarantine cannot remove a real line, so their
+absence is unexplained by this audit alone; it is not evidence of loss either. Anyone with a durable record of the
+A3-lane queue edit that removed them (if that is in fact what happened) should cite it here.
 
 ## The four cells a fragment wrote
 
@@ -152,8 +182,10 @@ not missing, work. Regardless, a quarantine cannot remove a real line: nothing h
     of that cell. No earlier real copy existed for it to replace, and the later real copy replaced it.
   - For `b2a0924/s100/open-ended-generation`, the fragment's lb.json and oed_distributional_s100.json are JSON-equal
     to the pinned run's (parsed comparison). Only the sidecar differs.
-- **The local shard trees are clean.** The pin rule passes all 186 local `b2a0924` cells at M1 and all 147 local
-  `b2b0924-base` cells at F. No sidecar in either tag has an `argv[0]` outside `~/derisk-pool/revisions/`.
+- **The local shard trees are clean.** The pin rule passes all 186 local `b2a0924` cells at M1 and all 177 local
+  `b2b0924-base` cells at F (per the committed audit JSON's `shard_scans`; fix round r3, review LOW item -- this
+  number had drifted to 147 here and 166 below as the tree grew between snapshots, so both now quote the one
+  committed artifact). No sidecar in either tag has an `argv[0]` outside `~/derisk-pool/revisions/`.
 - **Provenance.** The node-tree `runs.jsonl` records the 4 fragment runs (run_ids 1790280290-1098350,
   1790296139-1555371, 1790296792-1720678, 1790296822-1575672). None of these run_ids appears in the primary
   checkout's provenance log or in any shard sidecar. `pool_sync` excludes `_provenance/`. No commit on any ref
@@ -214,13 +246,16 @@ not missing, work. Regardless, a quarantine cannot remove a real line: nothing h
      dispatched after that row, from 09-24 20:21 to 09-25 07:35. The real cause is the probe's stdin drain, fixed
      in 096dfdae0, which has its own row.
    - `research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md` A1.8 claims its after-wave
-     queue-line shape check "catches the torn-line class that hit B2a." It does not (see that document's own
-     Amendment A1.11, added this fix round): the tearing happens at `pop_job`'s READ, never in the queued line
-     itself, so the shape check -- which only ever sees the intact, correctly-shaped line -- could not have caught
-     any of the ten b2b0924-base fragments.
-   - The owner may want to annotate the older failure-log row; the prereg's own passage is now corrected in place
-     (Amendment A1.11) rather than left for later annotation, since a pre-registration document is meant to carry
-     its own corrections as dated amendments.
+     queue-line shape check "catches the torn-line class that hit B2a." It does not: the tearing happens at
+     `pop_job`'s READ, never in the queued line itself, so the shape check -- which only ever sees the intact,
+     correctly-shaped line -- could not have caught any of the ten b2b0924-base fragments.
+   - **Question for the owner / record only (fix round r3):** an earlier round of this branch corrected A1.8's
+     claim in place, as a dated amendment in the prereg itself. Per this task's instruction it has been removed
+     from this branch -- the owner has since approved the related B2b torn-cell handling (item 1 above, the
+     "which attempt is first" question), and a separate lane, `research/b2b-torn-cells-redo`, is the one now
+     writing amendments to that pre-registration (its commit bdfa1641f adds an Amendment 2 covering item 1). That
+     lane, or the owner directly, should also correct A1.8's "catches the torn-line class" claim there; this
+     finding keeps the fact on record but no longer edits the prereg itself.
 5. **Neither tag had a recorded pin (fix round r2: now fixed for both).** The review caught that this item
    originally named only `b2b0924-base`, but `b2a0924` had no `PIN.txt` either, despite already having a committed
    `aggregate.json`. The review also caught an overstatement: `gates/lb_battery_provenance` only checks a
@@ -234,7 +269,7 @@ not missing, work. Regardless, a quarantine cannot remove a real line: nothing h
      ALREADY-COMMITTED pinned sidecar `research/findings/raw/_load_bearing/_shards/b2a0924/s100/open-ended-generation/lb.json.prov.json`;
      `b2b0924-base` = F `a308f1e09babcc9ed096c3c8046d00040391368c` (`a308f1e09` resolved in full via `git rev-parse`),
      matching the `git_sha` read directly from the local (uncommitted, live) pinned sidecar of run 1852
-     (`s43/d5-consolidate`) AND matching every one of the 166 local `b2b0924-base` cells this audit's own
+     (`s43/d5-consolidate`) AND matching every one of the 177 local `b2b0924-base` cells this audit's own
      `--scan-shards` pass checked against it (0 pin-rule failures at that pin, re-confirmed this fix round).
    - `research/findings/raw/_load_bearing/_shards/b2a0924/PIN.txt` and `.../b2b0924-base/PIN.txt` are committed by
      this fix round. With either pin, every fragment-written cell of that tag is excluded (see the table above).

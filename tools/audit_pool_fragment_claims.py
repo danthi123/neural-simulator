@@ -18,11 +18,26 @@ WHAT THIS DOES (read-only; it never writes a queue file, never contacts a node):
      that preceded it, what bash would run (`bash -n` syntax check + first command word after assignments),
      whether it is revision-pinned, its declared output paths, its JOB_B64 (the key of the node's job_status.log
      v2 record), and every later claim of a parent full line (the duplicate/real run).
-  3. With --node-status DIR (files <node>.job_status.log fetched read-only by the operator), resolve each
-     fragment's exit status.
-  4. For output paths under research/findings/raw/_load_bearing/_shards/<tag>/, report the LOCAL cell's lb.json
+  3. With --node-status DIR (files <node>.job_status.log OR <node>.job_status.tsv, fetched read-only by the
+     operator -- the `.tsv` name exists because `.gitignore`'s `*.log` rule silently drops a committed copy of the
+     real name; fix round r3, review HIGH item, 2026-09-25: durable evidence must be committed under a name the
+     repo does not ignore), resolve each fragment's exit status.
+  4. With --parent-status-archive FILE (a JSON of previously-resolved PARENT-occurrence records, matched by
+     claim_line/parent_outputs/occurrence identity rather than by JOB_B64), fill in a parent occurrence's exit
+     status when the live --node-status fetch above did not cover it. A live record always wins; an archive-filled
+     entry is tagged node_status_source="archive:<path>" so it is never mistaken for a fresh fetch. Fix round r3,
+     review MEDIUM item: a prior regeneration fetched only the fragments' and A2 lines' own job_status records and
+     silently lost every parent full-line rc; this restores them from a durable, already-committed prior report
+     (git commit 273cfc1b4) rather than a new live fetch (out of scope for a read-only, worktree-isolated audit).
+  5. For output paths under research/findings/raw/_load_bearing/_shards/<tag>/, report the LOCAL cell's lb.json
      sidecar (git_sha / source_kind / started) and run tools/lb_shard.py's own pin rule on the cell, so the audit
      says whether the LBP pin gate would exclude a fragment-produced cell.
+
+WARNINGS (fix round r3, review LOW item): a fail-open path that reports "rc=?" or "cells=0" and looks clean is
+exactly how the missing job_status evidence went unnoticed the first time. main() now collects an explicit
+`warnings` list -- --node-status given but zero v2 records loaded from it, a fragment or nonstandard-start line
+still unresolved after --node-status was given, or a --scan-shards tag with n_cells==0 -- prints each to stderr,
+and returns a non-zero exit code when any fired.
 
     .venv/bin/python tools/audit_pool_fragment_claims.py --json <scratch>/fragments.json [--node-status <dir>]
 
@@ -199,6 +214,39 @@ def local_cell_report(out_path, pin_hint):
     return rep
 
 
+def load_node_status(node_status_dir):
+    """Load every `<node>.job_status.log` OR `<node>.job_status.tsv` file under `node_status_dir` into
+    {job_b64: [{"node", "ts", "rc"}, ...]}. Both extensions are read (fix round r3, review HIGH item): `.log` is
+    what a live node produces, but `.gitignore`'s `*.log` rule silently drops that name from any commit, so durable
+    evidence committed for a finding uses `.tsv` instead -- a prior fix round claimed these were committed while
+    they were actually gitignored, and this glob only ever looked for `.log`. Returns (status, n_files, n_records)
+    so a caller can warn when a given directory yielded nothing."""
+    status = {}
+    paths = sorted(glob.glob(os.path.join(node_status_dir, "*.job_status.log"))
+                    + glob.glob(os.path.join(node_status_dir, "*.job_status.tsv")))
+    n_records = 0
+    for p in paths:
+        node = os.path.basename(p).split(".job_status.")[0]
+        for line in open(p, encoding="utf-8", errors="replace"):
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) == 4 and parts[0] == "v2":
+                status.setdefault(parts[3], []).append({"node": node, "ts": int(parts[1]), "rc": int(parts[2])})
+                n_records += 1
+    return status, len(paths), n_records
+
+
+def load_parent_status_archive(path):
+    """Load a --parent-status-archive FILE (see load_node_status's docstring / fix round r3, review MEDIUM item)
+    into {(claim_line, tuple(parent_outputs), occurrence_src, occurrence_line, occurrence_time): node_status}."""
+    data = json.load(open(path))
+    out = {}
+    for e in data["entries"]:
+        key = (e["claim_line"], tuple(e["parent_outputs"]), e["occurrence_src"], e["occurrence_line"],
+               e.get("occurrence_time"))
+        out[key] = e["node_status"]
+    return out
+
+
 def scan_shard_tag(tag, pin):
     """Run lb_shard.py's own pin rule over EVERY cell of a local shard tag, and separately list every sidecar whose
     producing script lived in an UNPINNED node tree (`.../derisk-pool/sim/...`) -- the fingerprint of a fragment
@@ -232,7 +280,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--queue-dir", default=os.path.join(LIVE_ROOT, "research/queue"))
     ap.add_argument("--since", default=DEFAULT_SINCE, help="epoch or ISO local time (default %(default)s)")
-    ap.add_argument("--node-status", default=None, help="dir of <node>.job_status.log copies (read-only fetch)")
+    ap.add_argument("--node-status", default=None,
+                    help="dir of <node>.job_status.log or <node>.job_status.tsv copies (read-only fetch)")
+    ap.add_argument("--parent-status-archive", default=None,
+                    help="JSON of previously-resolved PARENT-occurrence node_status records (see "
+                         "load_parent_status_archive); fills only entries a live --node-status fetch left empty")
     ap.add_argument("--json", default=None, help="write the full report here")
     ap.add_argument("--scan-shards", action="append", default=[], metavar="TAG=PIN",
                     help="also run the pin rule over every local cell of this _load_bearing shard tag (repeatable)")
@@ -260,6 +312,8 @@ def main():
     with open(os.path.join(qd, "dispatch.log"), encoding="utf-8", errors="replace") as fh:
         dlog = fh.read().split("\n")
 
+    warnings = []
+
     # KNOWN LIMIT (fix round r2, review LOW item, not fixed this round -- see that round's commit message): the
     # node's job_status.log is keyed by the EXECUTED TEXT's own base64, not a per-dispatch id, so two DIFFERENT
     # dispatches that happen to run byte-identical text collapse onto the same key here and `rc_of`/`node_status`
@@ -268,12 +322,14 @@ def main():
     # _dispatcher_fragment_audit/node_evidence/`), so no fragment or SETTLE-A2 record in this finding is affected.
     status = {}
     if a.node_status:
-        for p in glob.glob(os.path.join(a.node_status, "*.job_status.log")):
-            node = os.path.basename(p).split(".job_status.log")[0]
-            for line in open(p, encoding="utf-8", errors="replace"):
-                parts = line.rstrip("\n").split("\t")
-                if len(parts) == 4 and parts[0] == "v2":
-                    status.setdefault(parts[3], []).append({"node": node, "ts": int(parts[1]), "rc": int(parts[2])})
+        status, n_status_files, n_status_records = load_node_status(a.node_status)
+        if n_status_files == 0 or n_status_records == 0:
+            warnings.append("--node-status %r yielded %d files / %d v2 records -- every fragment/nonstandard-start "
+                             "line below will read rc=? (fix round r3, review LOW item: this used to fail open and "
+                             "print a clean-looking 'rc=?' with no warning)" % (a.node_status, n_status_files,
+                                                                                n_status_records))
+
+    parent_archive = load_parent_status_archive(a.parent_status_archive) if a.parent_status_archive else {}
 
     def rc_of(executed):
         if not executed:
@@ -336,6 +392,7 @@ def main():
         for p in parents:
             occ = sorted((o for o in known[p]), key=lambda o: (o[2] or 0))
             sha = re.search(r"derisk-pool/revisions/([0-9a-f]{7,40})", p)
+            outputs = output_paths(strip_checked(p))
             later = []
             for src, ln, t in occ:
                 entry = {"src": src, "line": ln, "time": _fmt(t) if t else None}
@@ -343,6 +400,14 @@ def main():
                     pr = running_for(t, p)
                     entry["node"] = pr[0][2] if pr else None
                     entry["node_status"] = rc_of(pr[0][3]) if pr else None
+                    if not entry["node_status"] and parent_archive:
+                        # fix round r3, review MEDIUM item: a live --node-status fetch that does not cover this
+                        # occurrence (e.g. it ran before/outside the fetched node logs' window) falls back to a
+                        # prior, already-committed resolution -- see load_parent_status_archive's docstring.
+                        archived = parent_archive.get((n, tuple(outputs), "claims", ln, entry["time"]))
+                        if archived:
+                            entry["node_status"] = archived
+                            entry["node_status_source"] = "archive:%s" % a.parent_status_archive
                     later.append(entry)
                 elif src != "claims" and t and t <= ts:
                     # a still-queued line is a candidate only if it was ADDED before the fragment was claimed (the
@@ -352,7 +417,7 @@ def main():
             if not later:
                 continue  # claimed in full BEFORE the fragment (and not re-queued): it was not in the queue then
             par.append({"offset": len(p) - len(job), "revision": sha.group(1) if sha else None,
-                        "outputs": output_paths(strip_checked(p)), "occurrences_at_or_after_fragment": later,
+                        "outputs": outputs, "occurrences_at_or_after_fragment": later,
                         "head_tail": p[:len(p) - len(job)][-100:]})
         cls = classify(executed) if executed else {"expect": "no pool.running record"}
         rec = {
@@ -399,12 +464,32 @@ def main():
     report = {"since": _fmt(since), "dispatch_log_since_line": since_line, "blocked_unchecked_since": blocked, "fix_commit_time": FIX_TIME, "n_claims": len(claims),
               "n_fragments": len(frags), "n_fragments_before_since": pre_cutoff_frags,
               "fragments": frags, "nonstandard_start_complete_lines": odd}
+
+    # fix round r3, review LOW item: a fragment or nonstandard-start line that stays unresolved (no node_status)
+    # after --node-status WAS given used to print a clean-looking "rc=?" with nothing to flag it as a problem --
+    # exactly how the missing job_status evidence went unnoticed. Warn explicitly instead of failing open.
+    if a.node_status:
+        unresolved_frags = [r["claim_line"] for r in frags if not r.get("node_status")]
+        if unresolved_frags:
+            warnings.append("%d fragment(s) still unresolved (rc=?) after --node-status was given: claim_line(s) "
+                             "%s" % (len(unresolved_frags), unresolved_frags))
+        unresolved_odd = [o["claim_line"] for o in odd if not o.get("node_status")]
+        if unresolved_odd:
+            warnings.append("%d nonstandard-start line(s) still unresolved (rc=?) after --node-status was given: "
+                             "claim_line(s) %s" % (len(unresolved_odd), unresolved_odd))
+
     report["shard_scans"] = []
     pins = {}
     for spec in a.scan_shards:
         tag, _, pin = spec.partition("=")
         pins[tag] = pin
-        report["shard_scans"].append(scan_shard_tag(tag, pin))
+        scan = scan_shard_tag(tag, pin)
+        if scan["n_cells"] == 0:
+            # fix round r3, review LOW item: a mistyped or missing tag used to report "cells=0
+            # pin-rule-failing=0", which reads as a CLEAN scan rather than a scan that found nothing to check.
+            warnings.append("--scan-shards %s=%s matched 0 cells -- check the tag spelling / shard path" % (
+                tag, pin))
+        report["shard_scans"].append(scan)
     report["node_output_cells"] = []
     if a.node_outputs:
         sys.path.insert(0, REPO)
@@ -442,9 +527,12 @@ def main():
                    for fn in ("pool.queue.claims", "pool.running", "pool.queue", "pool.queue.unchecked",
                               "dispatch.log") if os.path.exists(os.path.join(qd, fn))},
         "read_only": "no queue file, node, or shard cell is written; node files are copies fetched with ssh -n"}
+    report["warnings"] = warnings
     if a.json:
         with open(a.json, "w") as fh:
             json.dump(report, fh, indent=1)
+    for w in warnings:
+        print("WARNING: %s" % w, file=sys.stderr)
     for sc in report["shard_scans"]:
         print("shard scan %s pin=%s: cells=%d pin-rule-failing=%d unpinned-tree sidecars=%d" % (
             sc["tag"], sc["pin"][:10], sc["n_cells"], len(sc["pin_rule_failing_cells"]),
@@ -472,7 +560,9 @@ def main():
         print("  quarantined dispatch.log:%d after %s probe-node=%s mid-line-fragment=%s | %s" % (
             b["dispatch_log_line"], b["after_clock"], (b["preceded_by_probe"] or {}).get("node"),
             b["is_mid_line_fragment"], b["head96"][:70]))
-    return 0
+    # fix round r3, review LOW item: fail LOUD, not open -- a caller (or a human skimming stdout) must not be able
+    # to mistake a silently-incomplete resolution for a clean one.
+    return 2 if warnings else 0
 
 
 if __name__ == "__main__":

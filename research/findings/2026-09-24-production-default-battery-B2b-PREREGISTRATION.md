@@ -305,17 +305,3 @@ Reporting the #1 metric, the lesion-verified load-bearing fraction, at F over th
 over n_exercised, its mean and SD, the robust core, the union, and each faculty's count. Nothing more. It licenses no
 default flip and says nothing about BRAIN_LEARNED_REFERENT_LEXICON. A FAIL names each row that the shipped revision
 cannot measure as registered; each is a defect at F for that row's lane.
-
-### A1.11 Correction: the after-wave shape check does not catch the torn-line class it names (2026-09-25, dispatcher-fragment audit)
-
-A1.8 says the after-wave check ("every queued b2b0924-base line ... starts with `cd ~/derisk-pool/revisions/<F> && `
-... and ... ends with `/lb.json  #checked:`") "catches the torn-line class that hit B2a." It does not, for any of
-the ten b2b0924-base fragments the audit found (research/findings/2026-09-25-dispatcher-fragment-jobs-audit.md).
-That audit traced the actual tearing to `pop_job`'s READ, not to the queued line: the bug (fixed in 096dfdae0) made
-a revision probe's `ssh` (run without `-n`) drain part of `pop_job`'s own candidate stream, so the NEXT `read`
-resumed mid-line and dispatched a TAIL of a queue line as if it were a whole job. The line that stayed queued the
-whole time (and that A1.8's own shape check would have scanned) was never torn -- it is the intact FULL line,
-dispatched correctly, later, in full. A1.8's check inspects exactly that intact copy and would read PASS on every
-one of the ten cases; it cannot see a fragment that a mid-read glitch invented from bytes the queue file never
-separately stored. See the audit's "Findings at risk" item 1 for the resulting open question (which of the
-fragment-touched cells' later, correctly-pinned runs counts as the "first" attempt under A1.4).
