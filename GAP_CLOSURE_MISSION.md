@@ -48,6 +48,12 @@ exempt only if <!--derived--> is on its own line (workflow `wrlt8b5ij`, opus rev
 marks; legacy findings are not rewritten (the gate checks newly added findings). Bake-off template fix merged
 (ed86e077f); the re-run is queued on the GPU after SETTLE A3.
 
+**🌙 04:10 progress:** merged sleep route round 2 (9d1329c35, review SOUND) and awake-rest replay (f793b6945,
+BRAIN_AWAKE_REPLAY_CAPTURE default-OFF, review SOUND-WITH-ISSUES): seed-42 smoke GO, a fact told 4 h before sleep is
+recalled next day when the brain rests in between, and abstains with no rest / flag off / awake-edge lesion; 6 seeds
+queued at the pool front (30ba29d4b). Wave-3 builds (workflow `wqh2nr4ua`): slot-binder progress+latency (AMENDMENT 1
+steps), SETTLE A2 end-to-end webapp test, sleep-forgetting companion process (downscaling 3-night NO-GO).
+
 **🌙 PRE-DECIDED NEXT ACTIONS — OVERNIGHT PLAN (owner asleep from 01:35, 2026-09-25); work in order, re-arm the heartbeat on every expiry:**
 1. ✅ B2a DONE 03:45: re-scored R1 PASS (28/28, 0 regressions) + R2 PASS (168/168 valid at pinned M1, 6 covered-by-parent,
    0 incomplete), two verifiers agree, merged 075c24cd3 (follow-up to the FAIL finding). Robust core 24, union 25, mean
