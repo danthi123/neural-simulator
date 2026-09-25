@@ -1,0 +1,14 @@
+{
+ "seed": 7,
+ "n_words": 75,
+ "v2_fr_spikes_per_step_mean": 0.5255833333333333,
+ "junction_fj_spikes_per_step_mean": 0.019091666666666667,
+ "ratio_of_means": 27.529463116542992,
+ "per_word_ratio_median": 26.451612903225804,
+ "w_j": 300.0,
+ "i_tonic": -650.0,
+ "t_on_j": 50,
+ "backend": "numpy",
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "elapsed_s": 124.6
+}

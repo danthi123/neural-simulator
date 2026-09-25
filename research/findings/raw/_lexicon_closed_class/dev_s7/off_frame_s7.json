@@ -1,0 +1,3442 @@
+{
+ "seed": 7,
+ "variant": "frame",
+ "junction_flag": null,
+ "arms": {
+  "intact": {
+   "arm": "intact",
+   "cap": 5,
+   "n_turns": 112,
+   "n_changed": 42,
+   "n_mismatch": 7,
+   "mismatch_labels": [
+    "emo",
+    "pmem_form",
+    "pmem_form2",
+    "datc_t2",
+    "datc_t5",
+    "datci_t2",
+    "datci_t5"
+   ],
+   "offending_words": [
+    "crazy",
+    "most",
+    "when",
+    "wonderful"
+   ],
+   "dropped_words": [
+    "anne",
+    "box",
+    "where"
+   ],
+   "unexplained_drops": [],
+   "unknown_admits": [
+    "east"
+   ],
+   "new_gt_nouns_recovered": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "step",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "sessions_changed": [
+    "anim",
+    "ch",
+    "d",
+    "d5c",
+    "datc",
+    "datci",
+    "datn",
+    "dr",
+    "dr2",
+    "emo",
+    "lbf_cau",
+    "oe2",
+    "pmem",
+    "pmem2",
+    "richw",
+    "s",
+    "slp",
+    "tomfb",
+    "well",
+    "wmc",
+    "wmcx"
+   ],
+   "sessions_mismatch": [
+    "datc",
+    "datci",
+    "emo",
+    "pmem",
+    "pmem2"
+   ],
+   "admitted_by_decision": [
+    "anne",
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crazy",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "east",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "most",
+    "moves",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "step",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "when",
+    "wonderful",
+    "world",
+    "worm"
+   ],
+   "tom_fb_on": [
+    "marble",
+    "basket",
+    "sally",
+    "leaves",
+    "room"
+   ],
+   "tom_fb_anne_kept": false,
+   "parse_sha256": "81737f9706d815e56244e7e1886aa622617fe72cc22a5cc780626b67a2bc0d29",
+   "decisions_sha256": "94a29a45b55112beab7383cb7ef6b1749593a2e3b2ee602aa5d1d7d89dd1871d",
+   "turns": [
+    {
+     "label": "well",
+     "session": "well",
+     "text": "the wolf bites the apple",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf",
+      "apple"
+     ],
+     "changed": true,
+     "admitted": [
+      "apple"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "question",
+     "session": "q",
+     "text": "what does the wolf bite",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "unknown",
+     "session": "u",
+     "text": "what is the capital of france",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "hold",
+     "session": "d",
+     "text": "the fox and the wolf walked in",
+     "off": [
+      "fox",
+      "wolf"
+     ],
+     "on": [
+      "fox",
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "held",
+     "session": "d",
+     "text": "the wolf watches the owl",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf",
+      "owl"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "scalar",
+     "session": "s",
+     "text": "some of the dogs ran",
+     "off": [],
+     "on": [
+      "dogs"
+     ],
+     "changed": true,
+     "admitted": [
+      "dogs"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "open",
+     "session": "o",
+     "text": "what might a dog chase",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "confirm",
+     "session": "surp",
+     "text": "the dog chase the cat",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "contra",
+     "session": "surp2",
+     "text": "the dog chase the fish",
+     "off": [
+      "dog",
+      "fish"
+     ],
+     "on": [
+      "dog",
+      "fish"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "expect_q",
+     "session": "wm",
+     "text": "what do you expect",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "episodic",
+     "session": "epi",
+     "text": "did we discuss the dog",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "vision",
+     "session": "vis",
+     "text": "what do you see",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "bgdots",
+     "session": "bg",
+     "text": "...",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr_a",
+     "session": "dr",
+     "text": "dog chase cat",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr_b",
+     "session": "dr",
+     "text": "then bird chase worm",
+     "off": [
+      "bird"
+     ],
+     "on": [
+      "bird",
+      "worm"
+     ],
+     "changed": true,
+     "admitted": [
+      "worm"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr_c",
+     "session": "dr",
+     "text": "who was doing it before",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "chase",
+     "session": "ch",
+     "text": "what does the dog chase all the way",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "way"
+     ],
+     "changed": true,
+     "admitted": [
+      "way"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "selfinit",
+     "session": "si",
+     "text": "",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "animacy",
+     "session": "anim",
+     "text": "the monkey carries the cup",
+     "off": [
+      "cup"
+     ],
+     "on": [
+      "monkey",
+      "cup"
+     ],
+     "changed": true,
+     "admitted": [
+      "monkey"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "verbsel",
+     "session": "vsel",
+     "text": "the dog cleans the cup",
+     "off": [
+      "dog",
+      "cup"
+     ],
+     "on": [
+      "dog",
+      "cup"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "emo",
+     "session": "emo",
+     "text": "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+     "off": [],
+     "on": [
+      "wonderful"
+     ],
+     "changed": true,
+     "admitted": [
+      "wonderful"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "wonderful"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "bc_a",
+     "session": "bc",
+     "text": "the cat and the ball walked in",
+     "off": [
+      "cat",
+      "ball"
+     ],
+     "on": [
+      "cat",
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "bc_b",
+     "session": "bc",
+     "text": "what does it eat",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "rich_well",
+     "session": "richw",
+     "text": "the wolf bites the apple",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf",
+      "apple"
+     ],
+     "changed": true,
+     "admitted": [
+      "apple"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "rich_open",
+     "session": "ropen",
+     "text": "what might a dog chase",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "pmem_form",
+     "session": "pmem",
+     "text": "remind me to feed the dog when the bird sings",
+     "off": [
+      "dog",
+      "bird"
+     ],
+     "on": [
+      "dog",
+      "when",
+      "bird"
+     ],
+     "changed": true,
+     "admitted": [
+      "when"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "when"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "epi_store",
+     "session": "epi2",
+     "text": "the dog chase the cat",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "epi_recall",
+     "session": "epi2",
+     "text": "did we discuss the dog",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr2_a",
+     "session": "dr2",
+     "text": "bird chase worm",
+     "off": [
+      "bird"
+     ],
+     "on": [
+      "bird",
+      "worm"
+     ],
+     "changed": true,
+     "admitted": [
+      "worm"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr2_b",
+     "session": "dr2",
+     "text": "then dog chase cat",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "dr2_c",
+     "session": "dr2",
+     "text": "who was doing it before",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "cg_mention1",
+     "session": "cg2",
+     "text": "the dog runs fast",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "cg_mention2",
+     "session": "cg2",
+     "text": "the dog runs again",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "noncontra_neg",
+     "session": "ncontra",
+     "text": "the dog does not chase the cat",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "sw_open",
+     "session": "sw2",
+     "text": "what does the dog chase",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "sw_hold",
+     "session": "sw2",
+     "text": "what does the dog chase",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "sw_switch",
+     "session": "sw2",
+     "text": "what does the cat eat",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "pmem_form2",
+     "session": "pmem2",
+     "text": "remind me to feed the dog when the bird sings",
+     "off": [
+      "dog",
+      "bird"
+     ],
+     "on": [
+      "dog",
+      "when",
+      "bird"
+     ],
+     "changed": true,
+     "admitted": [
+      "when"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "when"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "pmem_d0",
+     "session": "pmem2",
+     "text": "what does the cat eat",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "pmem_d1",
+     "session": "pmem2",
+     "text": "how is the weather today",
+     "off": [],
+     "on": [
+      "weather"
+     ],
+     "changed": true,
+     "admitted": [
+      "weather"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "pmem_d2",
+     "session": "pmem2",
+     "text": "tell me about the sky",
+     "off": [],
+     "on": [
+      "sky"
+     ],
+     "changed": true,
+     "admitted": [
+      "sky"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "pmem_cue",
+     "session": "pmem2",
+     "text": "the bird sings",
+     "off": [
+      "bird"
+     ],
+     "on": [
+      "bird"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t1",
+     "session": "oe2",
+     "text": "the wolf chase the rabbit",
+     "off": [
+      "wolf",
+      "rabbit"
+     ],
+     "on": [
+      "wolf",
+      "rabbit"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t2",
+     "session": "oe2",
+     "text": "the fox chase the rabbit",
+     "off": [
+      "fox",
+      "rabbit"
+     ],
+     "on": [
+      "fox",
+      "rabbit"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t3",
+     "session": "oe2",
+     "text": "the hawk chase the rabbit",
+     "off": [
+      "rabbit"
+     ],
+     "on": [
+      "hawk",
+      "rabbit"
+     ],
+     "changed": true,
+     "admitted": [
+      "hawk"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t4",
+     "session": "oe2",
+     "text": "the eagle chase the rabbit",
+     "off": [
+      "rabbit"
+     ],
+     "on": [
+      "eagle",
+      "rabbit"
+     ],
+     "changed": true,
+     "admitted": [
+      "eagle"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t5",
+     "session": "oe2",
+     "text": "the lion chase the deer",
+     "off": [
+      "lion"
+     ],
+     "on": [
+      "lion",
+      "deer"
+     ],
+     "changed": true,
+     "admitted": [
+      "deer"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t6",
+     "session": "oe2",
+     "text": "the bear chase the mouse",
+     "off": [
+      "bear",
+      "mouse"
+     ],
+     "on": [
+      "bear",
+      "mouse"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t7",
+     "session": "oe2",
+     "text": "the owl chase the beetle",
+     "off": [],
+     "on": [
+      "owl",
+      "beetle"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl",
+      "beetle"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t8",
+     "session": "oe2",
+     "text": "the pike chase the minnow",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_t9",
+     "session": "oe2",
+     "text": "the crow chase the boar",
+     "off": [],
+     "on": [
+      "crow"
+     ],
+     "changed": true,
+     "admitted": [
+      "crow"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "oe_ask",
+     "session": "oe2",
+     "text": "what might a dog chase",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmb_intro",
+     "session": "wmb",
+     "text": "the fox and the wolf walked in",
+     "off": [
+      "fox",
+      "wolf"
+     ],
+     "on": [
+      "fox",
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmb_ask",
+     "session": "wmb",
+     "text": "who are we talking about",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmb1_intro",
+     "session": "wmb1",
+     "text": "the fox walked in",
+     "off": [
+      "fox"
+     ],
+     "on": [
+      "fox"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmb1_ask",
+     "session": "wmb1",
+     "text": "who are we talking about",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmc_intro",
+     "session": "wmc",
+     "text": "the fox and the wolf walked in",
+     "off": [
+      "fox",
+      "wolf"
+     ],
+     "on": [
+      "fox",
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmc_drive",
+     "session": "wmc",
+     "text": "the wolf watches the owl",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf",
+      "owl"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmcx_intro",
+     "session": "wmcx",
+     "text": "the cat and the dog walked in",
+     "off": [
+      "cat",
+      "dog"
+     ],
+     "on": [
+      "cat",
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmcx_drive",
+     "session": "wmcx",
+     "text": "the dog watches the owl",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "owl"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_a1_intro",
+     "session": "wmfa1",
+     "text": "the dog and the cat walked in",
+     "off": [
+      "dog",
+      "cat"
+     ],
+     "on": [
+      "dog",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_a1_ask",
+     "session": "wmfa1",
+     "text": "what does it chase",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_a2_intro",
+     "session": "wmfa2",
+     "text": "the cat and the dog walked in",
+     "off": [
+      "cat",
+      "dog"
+     ],
+     "on": [
+      "cat",
+      "dog"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_a2_ask",
+     "session": "wmfa2",
+     "text": "what does it chase",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_b1_intro",
+     "session": "wmfb1",
+     "text": "the cat and the bird walked in",
+     "off": [
+      "cat",
+      "bird"
+     ],
+     "on": [
+      "cat",
+      "bird"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_b1_ask",
+     "session": "wmfb1",
+     "text": "what does it eat",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_b2_intro",
+     "session": "wmfb2",
+     "text": "the bird and the cat walked in",
+     "off": [
+      "bird",
+      "cat"
+     ],
+     "on": [
+      "bird",
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "wmf_b2_ask",
+     "session": "wmfb2",
+     "text": "what does it eat",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datc_t1",
+     "session": "datc",
+     "text": "Guess what, something unbelievable happened at the circus today!",
+     "off": [],
+     "on": [
+      "circus"
+     ],
+     "changed": true,
+     "admitted": [
+      "circus"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datc_t2",
+     "session": "datc",
+     "text": "You will never believe this crazy story, it is absolutely amazing!",
+     "off": [],
+     "on": [
+      "crazy",
+      "story"
+     ],
+     "changed": true,
+     "admitted": [
+      "crazy",
+      "story"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "crazy"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "datc_t3",
+     "session": "datc",
+     "text": "the cat chases the ball",
+     "off": [
+      "cat",
+      "ball"
+     ],
+     "on": [
+      "cat",
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datc_t4",
+     "session": "datc",
+     "text": "Everyone in the audience was screaming and laughing in total shock!",
+     "off": [],
+     "on": [
+      "audience"
+     ],
+     "changed": true,
+     "admitted": [
+      "audience"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datc_t5",
+     "session": "datc",
+     "text": "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+     "off": [],
+     "on": [
+      "most"
+     ],
+     "changed": true,
+     "admitted": [
+      "most"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "most"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "datc_night",
+     "session": "datc",
+     "text": "__world_step:overnight_24h__",
+     "off": [],
+     "on": [
+      "world",
+      "step"
+     ],
+     "changed": true,
+     "admitted": [
+      "world",
+      "step"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datc_recall",
+     "session": "datc",
+     "text": "what does the cat chase",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_t1",
+     "session": "datn",
+     "text": "the cat is here",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_t2",
+     "session": "datn",
+     "text": "the ball is here",
+     "off": [
+      "ball"
+     ],
+     "on": [
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_t3",
+     "session": "datn",
+     "text": "the cat chases the ball",
+     "off": [
+      "cat",
+      "ball"
+     ],
+     "on": [
+      "cat",
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_t4",
+     "session": "datn",
+     "text": "the cat is here",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_t5",
+     "session": "datn",
+     "text": "the ball is here",
+     "off": [
+      "ball"
+     ],
+     "on": [
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_night",
+     "session": "datn",
+     "text": "__world_step:overnight_24h__",
+     "off": [],
+     "on": [
+      "world",
+      "step"
+     ],
+     "changed": true,
+     "admitted": [
+      "world",
+      "step"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datn_recall",
+     "session": "datn",
+     "text": "what does the cat chase",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datci_t1",
+     "session": "datci",
+     "text": "Guess what, something unbelievable happened at the circus today!",
+     "off": [],
+     "on": [
+      "circus"
+     ],
+     "changed": true,
+     "admitted": [
+      "circus"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datci_t2",
+     "session": "datci",
+     "text": "You will never believe this crazy story, it is absolutely amazing!",
+     "off": [],
+     "on": [
+      "crazy",
+      "story"
+     ],
+     "changed": true,
+     "admitted": [
+      "crazy",
+      "story"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "crazy"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "datci_t3",
+     "session": "datci",
+     "text": "the cat chases the ball",
+     "off": [
+      "cat",
+      "ball"
+     ],
+     "on": [
+      "cat",
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datci_t4",
+     "session": "datci",
+     "text": "Everyone in the audience was screaming and laughing in total shock!",
+     "off": [],
+     "on": [
+      "audience"
+     ],
+     "changed": true,
+     "admitted": [
+      "audience"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datci_t5",
+     "session": "datci",
+     "text": "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+     "off": [],
+     "on": [
+      "most"
+     ],
+     "changed": true,
+     "admitted": [
+      "most"
+     ],
+     "dropped": [],
+     "bad_admits": [
+      "most"
+     ],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": false
+    },
+    {
+     "label": "datci_recall",
+     "session": "datci",
+     "text": "what does the cat chase",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_t1",
+     "session": "datni",
+     "text": "the cat is here",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_t2",
+     "session": "datni",
+     "text": "the ball is here",
+     "off": [
+      "ball"
+     ],
+     "on": [
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_t3",
+     "session": "datni",
+     "text": "the cat chases the ball",
+     "off": [
+      "cat",
+      "ball"
+     ],
+     "on": [
+      "cat",
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_t4",
+     "session": "datni",
+     "text": "the cat is here",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_t5",
+     "session": "datni",
+     "text": "the ball is here",
+     "off": [
+      "ball"
+     ],
+     "on": [
+      "ball"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "datni_recall",
+     "session": "datni",
+     "text": "what does the cat chase",
+     "off": [
+      "cat"
+     ],
+     "on": [
+      "cat"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "d5c_teach",
+     "session": "d5c",
+     "text": "the wolf chase the rabbit",
+     "off": [
+      "wolf",
+      "rabbit"
+     ],
+     "on": [
+      "wolf",
+      "rabbit"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "d5c_recall1",
+     "session": "d5c",
+     "text": "you mentioned the wolf",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "d5c_tick",
+     "session": "d5c",
+     "text": "__world_step:overnight_24h__",
+     "off": [],
+     "on": [
+      "world",
+      "step"
+     ],
+     "changed": true,
+     "admitted": [
+      "world",
+      "step"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "d5c_recall2",
+     "session": "d5c",
+     "text": "you mentioned the wolf",
+     "off": [
+      "wolf"
+     ],
+     "on": [
+      "wolf"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "slp_teach1",
+     "session": "slp",
+     "text": "the fox chase the hare",
+     "off": [
+      "fox"
+     ],
+     "on": [
+      "fox"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "slp_teach2",
+     "session": "slp",
+     "text": "the owl chase the mouse",
+     "off": [
+      "mouse"
+     ],
+     "on": [
+      "owl",
+      "mouse"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "slp_teach3",
+     "session": "slp",
+     "text": "the hawk chase the vole",
+     "off": [],
+     "on": [
+      "hawk"
+     ],
+     "changed": true,
+     "admitted": [
+      "hawk"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "slp_tick",
+     "session": "slp",
+     "text": "__world_step:overnight_24h__",
+     "off": [],
+     "on": [
+      "world",
+      "step"
+     ],
+     "changed": true,
+     "admitted": [
+      "world",
+      "step"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "slp_recall",
+     "session": "slp",
+     "text": "you mentioned the owl",
+     "off": [],
+     "on": [
+      "owl"
+     ],
+     "changed": true,
+     "admitted": [
+      "owl"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_tom1",
+     "session": "lbf_tom",
+     "text": "Maria is devastated",
+     "off": [],
+     "on": [],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach1",
+     "session": "lbf_cau",
+     "text": "the dog goes east",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "east"
+     ],
+     "changed": true,
+     "admitted": [
+      "east"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [
+      "east"
+     ],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach2",
+     "session": "lbf_cau",
+     "text": "the dog reaches river",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "river"
+     ],
+     "changed": true,
+     "admitted": [
+      "river"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach3",
+     "session": "lbf_cau",
+     "text": "the dog drinks water",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "water"
+     ],
+     "changed": true,
+     "admitted": [
+      "water"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach4",
+     "session": "lbf_cau",
+     "text": "the sun rises sky",
+     "off": [],
+     "on": [
+      "sun",
+      "sky"
+     ],
+     "changed": true,
+     "admitted": [
+      "sun",
+      "sky"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach5",
+     "session": "lbf_cau",
+     "text": "the bird sings dawn",
+     "off": [
+      "bird"
+     ],
+     "on": [
+      "bird"
+     ],
+     "changed": false,
+     "admitted": [],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_teach6",
+     "session": "lbf_cau",
+     "text": "the dog wakes morning",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "morning"
+     ],
+     "changed": true,
+     "admitted": [
+      "morning"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "lbf_cau_whatif",
+     "session": "lbf_cau",
+     "text": "what happens if the dog goes east",
+     "off": [
+      "dog"
+     ],
+     "on": [
+      "dog",
+      "east"
+     ],
+     "changed": true,
+     "admitted": [
+      "east"
+     ],
+     "dropped": [],
+     "bad_admits": [],
+     "unknown_admits": [
+      "east"
+     ],
+     "unexplained_drops": [],
+     "cap_full": false,
+     "order_ok": true,
+     "match": true
+    },
+    {
+     "label": "tom_fb",
+     "session": "tomfb",
+     "text": "Sally puts the marble in the basket. Sally leaves the room. Anne moves the marble to the box. Where will Sally look for the marble?",
+     "off": [
+      "sally",
+      "anne",
+      "box",
+      "where"
+     ],
+     "on": [
+      "marble",
+      "basket",
+      "sally",
+      "leaves",
+      "room"
+     ],
+     "changed": true,
+     "admitted": [
+      "marble",
+      "basket",
+      "leaves",
+      "room"
+     ],
+     "dropped": [
+      "anne",
+      "box",
+      "where"
+     ],
+     "bad_admits": [],
+     "unknown_admits": [],
+     "unexplained_drops": [],
+     "cap_full": true,
+     "order_ok": true,
+     "match": true
+    }
+   ],
+   "queried": {
+    "bites": {
+     "decision": false,
+     "rate_cn": 0.00015625,
+     "rate_cx": 0.0203125,
+     "heard": 19,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "apple": {
+     "decision": true,
+     "rate_cn": 0.05046874999999999,
+     "rate_cx": 0.0,
+     "heard": 409,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "what": {
+     "decision": null,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.0,
+     "heard": 3164,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "does": {
+     "decision": null,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.0003125,
+     "heard": 421,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "bite": {
+     "decision": false,
+     "rate_cn": 0.00546875,
+     "rate_cx": 0.01875,
+     "heard": 197,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "capital": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "france": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "walked": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02296875,
+     "heard": 1242,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "watches": {
+     "decision": false,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.012656249999999999,
+     "heard": 20,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "owl": {
+     "decision": true,
+     "rate_cn": 0.03984375,
+     "rate_cx": 0.0,
+     "heard": 376,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "some": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0028125,
+     "heard": 2014,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "dogs": {
+     "decision": true,
+     "rate_cn": 0.021249999999999998,
+     "rate_cx": 0.00140625,
+     "heard": 117,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "ran": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.023125,
+     "heard": 2354,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "might": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0026562499999999998,
+     "heard": 240,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "chase": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02578125,
+     "heard": 92,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "do": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0025,
+     "heard": 2901,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "expect": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.011875,
+     "heard": 26,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "did": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0096875,
+     "heard": 4150,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "discuss": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0290625,
+     "heard": 19,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "see": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02296875,
+     "heard": 2652,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "worm": {
+     "decision": true,
+     "rate_cn": 0.050937500000000004,
+     "rate_cx": 0.0,
+     "heard": 122,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "who": {
+     "decision": null,
+     "rate_cn": 0.0040625,
+     "rate_cx": 0.0028125,
+     "heard": 1882,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "doing": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0084375,
+     "heard": 330,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "before": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.00546875,
+     "heard": 644,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "all": {
+     "decision": false,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.00625,
+     "heard": 6533,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "way": {
+     "decision": true,
+     "rate_cn": 0.02703125,
+     "rate_cx": 0.00125,
+     "heard": 807,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "monkey": {
+     "decision": true,
+     "rate_cn": 0.0440625,
+     "rate_cx": 0.0010937499999999999,
+     "heard": 230,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "carries": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "cleans": {
+     "decision": null,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0003125,
+     "heard": 3,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "wonderful": {
+     "decision": true,
+     "rate_cn": 0.01125,
+     "rate_cx": 0.003125,
+     "heard": 141,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "am": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.00421875,
+     "heard": 951,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "happy": {
+     "decision": false,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.01484375,
+     "heard": 9289,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "delighted": {
+     "decision": false,
+     "rate_cn": 0.00234375,
+     "rate_cx": 0.01875,
+     "heard": 35,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "fantastic": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.006875000000000001,
+     "heard": 3,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "amazing": {
+     "decision": null,
+     "rate_cn": 0.0043749999999999995,
+     "rate_cx": 0.003125,
+     "heard": 193,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "eat": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.03078125,
+     "heard": 1291,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "remind": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.01875,
+     "heard": 19,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "feed": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0296875,
+     "heard": 84,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "when": {
+     "decision": true,
+     "rate_cn": 0.00625,
+     "rate_cx": 0.0026562499999999998,
+     "heard": 3528,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "sings": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.01203125,
+     "heard": 13,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "runs": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.01703125,
+     "heard": 173,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "fast": {
+     "decision": false,
+     "rate_cn": 0.0034375000000000005,
+     "rate_cx": 0.0096875,
+     "heard": 1104,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "again": {
+     "decision": null,
+     "rate_cn": 0.00625,
+     "rate_cx": 0.00578125,
+     "heard": 2322,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "not": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.003125,
+     "heard": 9729,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "how": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.003125,
+     "heard": 1432,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "weather": {
+     "decision": true,
+     "rate_cn": 0.044375,
+     "rate_cx": 0.0,
+     "heard": 22,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "today": {
+     "decision": null,
+     "rate_cn": 0.0026562499999999998,
+     "rate_cx": 0.0015625,
+     "heard": 325,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "tell": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.021406249999999998,
+     "heard": 339,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "about": {
+     "decision": false,
+     "rate_cn": 0.0003125,
+     "rate_cx": 0.0090625,
+     "heard": 1829,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "sky": {
+     "decision": true,
+     "rate_cn": 0.0678125,
+     "rate_cx": 0.0,
+     "heard": 1119,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "hawk": {
+     "decision": true,
+     "rate_cn": 0.05609375,
+     "rate_cx": 0.0,
+     "heard": 6,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "eagle": {
+     "decision": true,
+     "rate_cn": 0.05234375,
+     "rate_cx": 0.0,
+     "heard": 15,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "deer": {
+     "decision": true,
+     "rate_cn": 0.046718749999999996,
+     "rate_cx": 0.0,
+     "heard": 47,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "beetle": {
+     "decision": true,
+     "rate_cn": 0.0565625,
+     "rate_cx": 0.0,
+     "heard": 46,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "pike": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "minnow": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "crow": {
+     "decision": true,
+     "rate_cn": 0.038125,
+     "rate_cx": 0.0,
+     "heard": 14,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "boar": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "guess": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0190625,
+     "heard": 75,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "something": {
+     "decision": null,
+     "rate_cn": 0.0,
+     "rate_cx": 0.00015625,
+     "heard": 2453,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "unbelievable": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "happened": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.00453125,
+     "heard": 1105,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "circus": {
+     "decision": true,
+     "rate_cn": 0.031406250000000004,
+     "rate_cx": 0.0,
+     "heard": 3,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "will": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.00296875,
+     "heard": 2232,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "never": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0128125,
+     "heard": 977,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "believe": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0046875,
+     "heard": 174,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "crazy": {
+     "decision": true,
+     "rate_cn": 0.0159375,
+     "rate_cx": 0.0043749999999999995,
+     "heard": 71,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "story": {
+     "decision": true,
+     "rate_cn": 0.05625,
+     "rate_cx": 0.0,
+     "heard": 732,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "absolutely": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "chases": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02375,
+     "heard": 6,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "everyone": {
+     "decision": false,
+     "rate_cn": 0.00046875,
+     "rate_cx": 0.005,
+     "heard": 1022,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "audience": {
+     "decision": true,
+     "rate_cn": 0.059687500000000004,
+     "rate_cx": 0.0,
+     "heard": 10,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "screaming": {
+     "decision": false,
+     "rate_cn": 0.00125,
+     "rate_cx": 0.0134375,
+     "heard": 15,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "laughing": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02375,
+     "heard": 207,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "total": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "shock": {
+     "decision": null,
+     "rate_cn": 0.005625,
+     "rate_cx": 0.00453125,
+     "heard": 8,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "honestly": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "most": {
+     "decision": true,
+     "rate_cn": 0.0609375,
+     "rate_cx": 0.0,
+     "heard": 152,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "astonishing": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "ADJ",
+     "gt_class": "NON"
+    },
+    "spectacle": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "anybody": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "has": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.009218750000000001,
+     "heard": 552,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "ever": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.003125,
+     "heard": 880,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "witnessed": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "world": {
+     "decision": true,
+     "rate_cn": 0.054843750000000004,
+     "rate_cx": 0.0,
+     "heard": 281,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "step": {
+     "decision": true,
+     "rate_cn": 0.01203125,
+     "rate_cx": 0.009375,
+     "heard": 82,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "overnight": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "h": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "here": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0059375,
+     "heard": 600,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "mentioned": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.01328125,
+     "heard": 17,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "hare": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "vole": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "maria": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0084375,
+     "heard": 23,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "devastated": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "goes": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02,
+     "heard": 89,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "east": {
+     "decision": true,
+     "rate_cn": 0.05671875,
+     "rate_cx": 0.0,
+     "heard": 14,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "reaches": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.02046875,
+     "heard": 31,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "river": {
+     "decision": true,
+     "rate_cn": 0.06,
+     "rate_cx": 0.0,
+     "heard": 228,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "drinks": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0190625,
+     "heard": 17,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "water": {
+     "decision": true,
+     "rate_cn": 0.042812499999999996,
+     "rate_cx": 0.003125,
+     "heard": 1605,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "sun": {
+     "decision": true,
+     "rate_cn": 0.05500000000000001,
+     "rate_cx": 0.0,
+     "heard": 1308,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "rises": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0090625,
+     "heard": 4,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "dawn": {
+     "decision": null,
+     "rate_cn": null,
+     "rate_cx": null,
+     "heard": 0,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "wakes": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0053124999999999995,
+     "heard": 8,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "morning": {
+     "decision": true,
+     "rate_cn": 0.015625,
+     "rate_cx": 0.0,
+     "heard": 196,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "happens": {
+     "decision": null,
+     "rate_cn": 0.0,
+     "rate_cx": 0.0,
+     "heard": 23,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "if": {
+     "decision": null,
+     "rate_cn": 0.00046875,
+     "rate_cx": 0.0,
+     "heard": 1177,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "sally": {
+     "decision": false,
+     "rate_cn": 0.00578125,
+     "rate_cx": 0.0115625,
+     "heard": 826,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "puts": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.021562500000000002,
+     "heard": 121,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "marble": {
+     "decision": true,
+     "rate_cn": 0.038593749999999996,
+     "rate_cx": 0.0,
+     "heard": 9,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "basket": {
+     "decision": true,
+     "rate_cn": 0.032968750000000005,
+     "rate_cx": 0.0,
+     "heard": 131,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "leaves": {
+     "decision": true,
+     "rate_cn": 0.03484375,
+     "rate_cx": 0.003125,
+     "heard": 402,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "room": {
+     "decision": true,
+     "rate_cn": 0.031875,
+     "rate_cx": 0.000625,
+     "heard": 1555,
+     "gt_pos": "NOUN",
+     "gt_class": "NOUN"
+    },
+    "anne": {
+     "decision": true,
+     "rate_cn": 0.007656250000000001,
+     "rate_cx": 0.00375,
+     "heard": 14,
+     "gt_pos": null,
+     "gt_class": "UNKNOWN"
+    },
+    "moves": {
+     "decision": true,
+     "rate_cn": 0.01390625,
+     "rate_cx": 0.00609375,
+     "heard": 26,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    },
+    "where": {
+     "decision": null,
+     "rate_cn": 0.00234375,
+     "rate_cx": 0.0026562499999999998,
+     "heard": 703,
+     "gt_pos": null,
+     "gt_class": "NON"
+    },
+    "look": {
+     "decision": false,
+     "rate_cn": 0.0,
+     "rate_cx": 0.01890625,
+     "heard": 1915,
+     "gt_pos": "VERB",
+     "gt_class": "NON"
+    }
+   }
+  }
+ },
+ "build_train_s": 19.8,
+ "n_turns": 112,
+ "n_changed": 42,
+ "n_mismatch": 7,
+ "offending_words": [
+  "crazy",
+  "most",
+  "when",
+  "wonderful"
+ ],
+ "unknown_admits": [
+  "east"
+ ],
+ "parse_sha256": "81737f9706d815e56244e7e1886aa622617fe72cc22a5cc780626b67a2bc0d29",
+ "decisions_sha256": "94a29a45b55112beab7383cb7ef6b1749593a2e3b2ee602aa5d1d7d89dd1871d",
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "corpus_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_bytes": 19971040,
+ "fixture_sha256": "13d51608c09e9b8342fe1c9502c550590bc82db21e2df42d00326975767a3e16",
+ "corpus_pos_map_sha256": "c86ae9908fa756e24e39cf0b5081abd286304a8cc4d4e7ac1af0987cbaa45ee8",
+ "closed_class_sha256": "d2d9475e7705cd7ff4b106c76962c5a19683978703d586f9fb307b1ed618ed10",
+ "peak_rss_mb": 399.8,
+ "elapsed_s": 23.0
+}

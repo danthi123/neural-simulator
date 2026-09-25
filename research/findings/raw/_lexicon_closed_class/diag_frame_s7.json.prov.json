@@ -1,0 +1,33 @@
+{
+ "run_id": "1790293253-2133913",
+ "runner": "research/runners/_lexicon_closed_class_parse_diag.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/lexicon-closed-class/research/runners/_lexicon_closed_class_parse_diag.py",
+  "--seed",
+  "7",
+  "--corpus",
+  "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+  "--json",
+  "research/findings/raw/_lexicon_closed_class/diag_frame_s7.json"
+ ],
+ "git_sha": "dcc2c9a49",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T19:40:53",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_closed_class/diag_frame_s7.json"
+}

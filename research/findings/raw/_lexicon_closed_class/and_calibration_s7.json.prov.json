@@ -1,0 +1,32 @@
+{
+ "run_id": "1790294461-2436762",
+ "runner": "research/runners/lexicon_frame_junction.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/lexicon-closed-class/research/runners/lexicon_frame_junction.py",
+  "--calibrate",
+  "--seed",
+  "7",
+  "--json",
+  "research/findings/raw/_lexicon_closed_class/and_calibration_s7.json"
+ ],
+ "git_sha": "23a8b1e14",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T20:01:01",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_closed_class/and_calibration_s7.json"
+}

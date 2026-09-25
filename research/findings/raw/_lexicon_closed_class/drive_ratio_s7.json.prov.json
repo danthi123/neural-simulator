@@ -1,0 +1,34 @@
+{
+ "run_id": "1790295767-2478390",
+ "runner": "research/runners/lexicon_frame_junction.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/lexicon-closed-class/research/runners/lexicon_frame_junction.py",
+  "--drive-ratio",
+  "--seed",
+  "7",
+  "--corpus",
+  "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+  "--json",
+  "research/findings/raw/_lexicon_closed_class/drive_ratio_s7.json"
+ ],
+ "git_sha": "23a8b1e14",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-24T20:22:47",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_lexicon_closed_class/drive_ratio_s7.json"
+}

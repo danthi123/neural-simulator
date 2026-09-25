@@ -1,0 +1,222 @@
+{
+ "seed": 7,
+ "backend": "numpy",
+ "corpus_path": "/home/dant123/Projects/sim/data/corpus/tinystories.txt",
+ "corpus_sha256": "7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec",
+ "corpus_bytes": 19971040,
+ "D0_default_off": {
+  "parse_sha256": "81737f9706d815e56244e7e1886aa622617fe72cc22a5cc780626b67a2bc0d29",
+  "decisions_sha256": "94a29a45b55112beab7383cb7ef6b1749593a2e3b2ee602aa5d1d7d89dd1871d",
+  "variant": "frame",
+  "identical_to_pinned": true,
+  "junction_module_imported": false
+ },
+ "constants": {
+  "W_J": 300.0,
+  "I_TONIC_J": -650.0,
+  "T_ON_J": 50,
+  "DRIVE_MATCH_S": 27.53,
+  "W_INIT_J": 1101.2,
+  "ETA_J": 757900.9000000001,
+  "OJA_BETA_J": 5.277734859531107e-06,
+  "OR_LESION_FACTOR": 2.0
+ },
+ "D3_parse": {
+  "build_train_s": 1098.9,
+  "elapsed_s": 1370.9,
+  "peak_rss_mb": 586.9,
+  "intact": {
+   "n_changed": 38,
+   "n_mismatch": 2,
+   "mismatch_labels": [
+    "datc_t5",
+    "datci_t5"
+   ],
+   "offending_words": [
+    "most"
+   ],
+   "unknown_admits": [
+    "east"
+   ],
+   "unexplained_drops": [],
+   "new_gt_nouns_recovered": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "bite",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "tom_fb_on": [
+    "marble",
+    "basket",
+    "sally",
+    "leaves",
+    "room"
+   ],
+   "tom_fb_anne_kept": false,
+   "admitted_by_decision": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "bite",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "east",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "most",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ]
+  },
+  "coincidence": {
+   "n_changed": 43,
+   "n_mismatch": 6,
+   "mismatch_labels": [
+    "dr_c",
+    "dr2_c",
+    "wmb_ask",
+    "wmb1_ask",
+    "datc_t5",
+    "datci_t5"
+   ],
+   "offending_words": [
+    "most",
+    "who"
+   ],
+   "unknown_admits": [
+    "east"
+   ],
+   "new_gt_nouns_recovered": [
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "world",
+    "worm"
+   ],
+   "admitted_by_decision": [
+    "anne",
+    "apple",
+    "audience",
+    "basket",
+    "beetle",
+    "circus",
+    "crow",
+    "deer",
+    "dogs",
+    "eagle",
+    "east",
+    "hawk",
+    "leaves",
+    "marble",
+    "monkey",
+    "morning",
+    "most",
+    "owl",
+    "river",
+    "room",
+    "sky",
+    "story",
+    "sun",
+    "water",
+    "way",
+    "weather",
+    "who",
+    "world",
+    "worm"
+   ]
+  },
+  "g3_lever_moved": true,
+  "g3_lever_recorded": true,
+  "fraction_of_v2_mismatches_removed": 0.7142857142857143
+ },
+ "D1_curriculum": {
+  "n": 75,
+  "correct": 67,
+  "abstain": 8,
+  "wrong": []
+ },
+ "D2_and_smoke": {
+  "n": 256,
+  "lone_left_fired": 0,
+  "lone_right_fired": 3,
+  "pair_fired_in_window": 256,
+  "pair_spikes_mean": 1.56640625,
+  "pair_first_spike_max": 42,
+  "and_holds": false,
+  "coincidence_lesion_lone_left_fired": 62,
+  "coincidence_lesion_n": 64
+ },
+ "D4_route": {
+  "r1_pass": true,
+  "r1_input_order": [
+   "wolf",
+   "owl"
+  ],
+  "r2_pass": true,
+  "r3_recovered_both_rate": 0.6666666666666666,
+  "r3_pass": true,
+  "r4_lesion_recovered_both_rate": 0.3333333333333333,
+  "r4_lever_moved": true,
+  "r4_pass": false,
+  "hand_baseline_recovered_both_rate": 0.0,
+  "elapsed_s": 266.9
+ },
+ "elapsed_s": 1838.2,
+ "peak_rss_mb": 586.9
+}
