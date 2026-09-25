@@ -15,7 +15,16 @@ import os
 import subprocess
 import time
 
-import research.runners as provenance
+# Importing `research.runners` (the automatic provenance door) latches its `_ENABLED` flag from
+# `SIM_NO_PROVENANCE` ONCE, at first import into `sys.modules` -- a later import in the SAME process (e.g. by
+# tests/test_seam_contracts.py, which guards its own import the same way) just rebinds the already-cached
+# module and does not re-run this. This file only exercises the corpus-check-log helpers below, never the
+# door's enabled/disabled behavior itself, so disable it before importing -- otherwise this file collected
+# ahead of test_seam_contracts.py (alphabetically, "corpus_check" < "seam") leaves the door latched ENABLED for
+# the rest of the session and fails that file's `assert not prov_door._ENABLED`.
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
+
+import research.runners as provenance  # noqa: E402
 
 
 def _write_log(path, entries):
