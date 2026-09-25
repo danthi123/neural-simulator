@@ -253,7 +253,8 @@ states how it interacts (biology: `homeostatic-scaling-relative-strength`).
   `0.5 ** 0.25`, about 0.84), so the S-N magnitude difference that the DA write gain created shrinks at the first idle
   tick, before any delay. This works against WM0b and WM1 for S in the default baseline.
 - *With the ledger on.* `sync_from_store` reads the pass as an external rescale and applies it to the block's baseline
-  and increment alike (the fi records show one such rescale per arm, `external_rescales` = 1). The cleanup margin R is
+  and increment alike (the fi records count them: `external_rescales` is 1 in the one-fact arm `fiv_lr` and 70 in
+  `fih_lr_a`, consistent with a pass after each day's new facts that rescales every managed block). The cleanup margin R is
   scale-invariant, so R, the replay tag and capture are unchanged; what changes is magnitude-dependent: r3's load read
   (dW / W) and the cross-block cue-match competition of the recall.
 - *In the arms.* It stays ON in every arm, because it is production and the flip candidate must hold with it. Step 0
