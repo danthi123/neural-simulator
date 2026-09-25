@@ -6,7 +6,8 @@
 #                              --wait blocks until the queue drains instead of refusing.
 #   llm off              unload it (frees its VRAM); also cancels any pending gpu_queue auto-restore (below)
 #   llm status           what is loaded, and GPU memory in use
-#   llm claude [args]    open Claude Code in the current directory, talking to the local model (no Anthropic account)
+#   llm claude [args]    open Claude Code in the current directory, talking to the local model (no Anthropic account);
+#                        LLM_CLAUDE_FULL=1 skips the local-only context trims described at cmd_claude below
 #   llm run <command>    unload the model, run <command> to completion, reload the model, print how it ended
 #
 # Profiles (model file, context size, sampling, speculative decoding) live in tools/local_llm/profiles.json and were
@@ -146,13 +147,46 @@ cmd_status() {
   nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader | sed 's/^/GPU memory in use: /'
 }
 
+served_ctx() {   # context size (tokens) of the profile being served: the running unit's, else the default profile's
+  local prof
+  prof="$(systemctl --user show -p Description --value "$UNIT" 2>/dev/null | sed -n 's/^local LLM (\(.*\))$/\1/p')"
+  [ -n "$prof" ] || prof="$(cat "$HERE/default_profile" 2>/dev/null || echo qwen38-27b-iq4nl-mtp)"
+  python3 -c 'import json,sys; print(next(p["ctx"] for p in json.load(open(sys.argv[1])) if p["name"] == sys.argv[2]))' \
+    "$HERE/profiles.json" "$prof" 2>/dev/null || true
+}
+
+# Local-only context trims for `llm claude` (they change nothing for Claude's own sessions or settings files):
+#  - CLAUDE_CODE_MAX_CONTEXT_TOKENS = the served profile's ctx (65536 today). Claude Code does not know the window of a
+#    model named "local" and otherwise assumes a far larger one, so auto-compact would fire only after llama-server
+#    had already overflowed. An explicit CLAUDE_CODE_MAX_CONTEXT_TOKENS in the caller's environment wins. This one is
+#    a correctness setting, so it applies even with LLM_CLAUDE_FULL=1 (which only drops the flags below).
+#  - --disallowedTools WebSearch ReportFindings: WebSearch is an Anthropic server-side tool that cannot work against
+#    llama-server, and ReportFindings only serves /code-review; dropping both removes ~3,000 characters of tool
+#    schema from every request (measured 2026-09-25 with a local request recorder).
+#  - --strict-mcp-config and bio-research@inline=false: a terminal CLI session loads no MCP servers and no desktop-app
+#    plugins today (`claude mcp list` / `claude plugin list` are empty; measured request unchanged), so these only
+#    keep it that way if either is added later.
+# Hooks, CLAUDE.md, memory and project skills still load: the PreToolUse safety hooks and the LIVE-STATE anchor must
+# stay, which is why --bare / --setting-sources / disableAllHooks are NOT used. CLAUDE_CODE_DISABLE_BUNDLED_SKILLS was
+# measured and rejected (it grew the request by ~13,000 characters).
+# The trim flags go AFTER your arguments because --disallowedTools takes a list: placed first, it would swallow a
+# prompt given as a plain argument (`llm claude "fix X"`). If you pass your own --settings, --mcp-config or
+# --disallowedTools, run with LLM_CLAUDE_FULL=1 to avoid mixing them.
 cmd_claude() {
   is_up || cmd_on || return 1   # don't point Claude at a dead endpoint if cmd_on refused (e.g. a GPU job is busy)
+  local ctx trim=() ctxenv=()
+  ctx="${CLAUDE_CODE_MAX_CONTEXT_TOKENS:-$(served_ctx)}"
+  [ -n "$ctx" ] && ctxenv=("CLAUDE_CODE_MAX_CONTEXT_TOKENS=$ctx")
+  if [ "${LLM_CLAUDE_FULL:-0}" != 1 ]; then
+    trim=(--strict-mcp-config --settings '{"enabledPlugins":{"bio-research@inline":false}}'
+          --disallowedTools WebSearch ReportFindings)
+  fi
+  env "${ctxenv[@]}" \
   ANTHROPIC_BASE_URL="http://127.0.0.1:$PORT" ANTHROPIC_AUTH_TOKEN="local" ANTHROPIC_API_KEY="" \
   ANTHROPIC_MODEL="local" ANTHROPIC_SMALL_FAST_MODEL="local" ANTHROPIC_DEFAULT_HAIKU_MODEL="local" \
   ANTHROPIC_DEFAULT_SONNET_MODEL="local" ANTHROPIC_DEFAULT_OPUS_MODEL="local" \
   CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 API_TIMEOUT_MS=1200000 \
-    "$(command -v claude || ls -d "$HOME"/.config/Claude/claude-code/*/claude | sort -V | tail -1)" "$@"
+    "$(command -v claude || ls -d "$HOME"/.config/Claude/claude-code/*/claude | sort -V | tail -1)" "$@" "${trim[@]}"
 }
 
 cmd_run() {

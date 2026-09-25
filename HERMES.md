@@ -37,7 +37,7 @@ continuous, not a pre-compaction scramble:
   `hermes_say` feedback you have not yet acted on.
 Done right, a mid-task compaction costs you nothing — you resume from disk, not from the summary.
 
-## Non-negotiable constraints (full reasoning in CLAUDE.md)
+## Non-negotiable constraints (rules in CLAUDE.md; full reasoning in docs/CLAUDE_RATIONALE_ARCHIVE.md)
 
 - **Brain-based only.** Host code is legitimate ONLY for the world/environment and the body/motor
   output. Everything between sensation and action (perception, reward, value, action selection)
@@ -106,7 +106,7 @@ task board), `cost-routing`, `evolve-skills`.
 
 ## Depth, on demand — do not bulk-load
 
-`CLAUDE.md` (full constraints + workflow detail), `docs/HERMES_WORKFLOW_PARITY.md` (the complete
+`CLAUDE.md` (full constraints + workflow essentials; rationale and history in `docs/CLAUDE_RATIONALE_ARCHIVE.md`), `docs/HERMES_WORKFLOW_PARITY.md` (the complete
 Claude-Code-to-Hermes workflow mapping this file is a part of), `docs/FAILURE_GATE_MATRIX.md`
 (what each gate blocks and why), `docs/TERMS.md` (load-bearing word definitions — check before
 writing "consolidation"/"compositional"/"GO"/etc. in a finding).
