@@ -56,6 +56,7 @@ correctness-only dry run of this SCRIPT's own logic (never a valid gate result; 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import gc
 import json
 import os
@@ -184,12 +185,66 @@ def _free_gpu():
 
 
 # ============================================================================================================
+# PER-FACT TEACH PROGRESS (AMENDMENT 1, 2026-09-25) -- the dev seed-7 run sat silent for 6h08m inside the
+# slotbinder arm's build (_build_chat_brain -> load_developed_brain -> developed_brain_io._restore_facts ->
+# SlotBinderComposer.store(), called once per fact, with NO progress signal anywhere in that call chain) and
+# was stopped with no artifact written. This monkeypatches SlotBinderComposer.store for the duration of ONE
+# build call to print a flush=True per-fact line and (cheaply) refresh a JSON progress sidecar -- additive,
+# scoped to a `with` block, and restores the original method on exit (even on exception), so it changes
+# nothing about `store()`'s own behavior or return value, only adds an observable side effect around each
+# call. Inert for any composer_kind whose build never calls SlotBinderComposer.store (e.g. the 'rf' arm's
+# usual direct-set-from-persisted-composites fast path in _restore_facts) -- the patched method then simply
+# is never invoked.
+# ============================================================================================================
+
+@contextlib.contextmanager
+def _progress_instrumented_slotbinder_store(seed, n_expect, progress_path=None, label="teach"):
+    from research.runners.slotbinder_composer import SlotBinderComposer
+    orig_store = SlotBinderComposer.store
+    state = {"i": 0, "t_start": time.time()}
+
+    def wrapped(self, agent, action, patient, polarity=None, attribute=None):
+        t0 = time.time()
+        ok = orig_store(self, agent, action, patient, polarity=polarity, attribute=attribute)
+        dt = time.time() - t0
+        state["i"] += 1
+        i, n = state["i"], n_expect
+        elapsed = time.time() - state["t_start"]
+        avg = elapsed / i if i else 0.0
+        eta_s = round(avg * (n - i), 1) if n else None
+        print(f"[seed {seed}] {label} fact {i}/{n} agent={agent!r} action={action!r} "
+              f"fact_seconds={dt:.3f} elapsed_s={elapsed:.1f} avg_s_per_fact={avg:.3f} eta_s={eta_s}",
+              flush=True)
+        if progress_path:
+            try:
+                with open(progress_path, "w") as fh:
+                    json.dump({"seed": seed, "phase": label, "i": i, "n": n, "last_fact_seconds": dt,
+                              "elapsed_s": elapsed, "avg_s_per_fact": avg, "eta_s": eta_s,
+                              "updated_unix": time.time()}, fh)
+            except Exception:
+                pass  # the sidecar is a cheap convenience; never load-bearing on the gate's own JSON result
+        return ok
+
+    SlotBinderComposer.store = wrapped
+    try:
+        yield
+    finally:
+        SlotBinderComposer.store = orig_store
+
+
+# ============================================================================================================
 # one arm: build (real teach for slotbinder) + recall/moat/mismatch queries (+ ablation for slotbinder)
 # ============================================================================================================
 
-def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", run_ablation=True):
+def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", run_ablation=True,
+           progress_json_path=None):
     """composer_kind in {'slotbinder', 'rf'}, or None to mean "leave BRAIN_COMPOSER_KIND UNSET" (the flag-off
-    check). Routes through webapp.server._build_chat_brain -- the SAME function /api/brain-chat calls."""
+    check). Routes through webapp.server._build_chat_brain -- the SAME function /api/brain-chat calls.
+
+    `progress_json_path`: optional path for a cheap JSON progress sidecar (AMENDMENT 1, 2026-09-25), refreshed
+    once per taught fact during the build -- see `_progress_instrumented_slotbinder_store`. `None` (the default)
+    means no sidecar file; the per-fact PRINT lines still fire either way (they are the required observability
+    fix, the sidecar is an additional, optional convenience)."""
     if composer_kind is None:
         os.environ.pop("BRAIN_COMPOSER_KIND", None)
     else:
@@ -199,21 +254,31 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
 
     from webapp.server import _build_chat_brain
 
+    print(f"[seed {seed}] arm={composer_kind}: build starting (n_facts={len(sample)}) ...", flush=True)
     t0 = time.time()
-    chat, source = _build_chat_brain(bundle_dir, renderer)
+    if composer_kind == "slotbinder":
+        # This is the phase AMENDMENT 1 found silent for 6h08m: _build_chat_brain -> load_developed_brain ->
+        # developed_brain_io._restore_facts -> SlotBinderComposer.store() once per fact (no .kb fast path).
+        with _progress_instrumented_slotbinder_store(seed, len(sample), progress_json_path, label="teach"):
+            chat, source = _build_chat_brain(bundle_dir, renderer)
+    else:
+        chat, source = _build_chat_brain(bundle_dir, renderer)
     build_s = time.time() - t0
+    print(f"[seed {seed}] arm={composer_kind}: build done in {build_s:.2f}s", flush=True)
     inner = chat.inner
     comp = inner.composer
     resolved_class = type(comp).__name__
 
     per_fact = []
-    for f in sample:
+    for qi, f in enumerate(sample):
         a, v, p = f["agent"], f["action"], f["patient"]
         t0 = time.time()
         got = inner.what_does(a, v)
         dt = time.time() - t0
         per_fact.append({"agent": a, "action": v, "expected_patient": p, "got_patient": got,
                          "hit": got == p, "query_latency_s": dt})
+        print(f"[seed {seed}] arm={composer_kind}: query {qi + 1}/{len(sample)} agent={a!r} action={v!r} "
+              f"expected={p!r} got={got!r} hit={got == p} query_latency_s={dt:.3f}", flush=True)
 
     stored_pairs = {(f["agent"], f["action"]) for f in sample}
     words = sorted({w for f in sample for w in (f["agent"], f["action"], f["patient"])})
@@ -227,6 +292,8 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
         got = inner.what_does(a, v)
         dt = time.time() - t0
         moat = {"agent": a, "action": v, "abstained": got is None, "query_latency_s": dt}
+        print(f"[seed {seed}] arm={composer_kind}: moat probe agent={a!r} action={v!r} "
+              f"abstained={got is None} query_latency_s={dt:.3f}", flush=True)
         break
 
     mismatch = None
@@ -238,6 +305,8 @@ def run_arm(bundle_dir, composer_kind, fanout, sample, seed, renderer="stub", ru
             dt = time.time() - t0
             mismatch = {"agent": a, "action_from_other_fact": v,
                        "did_not_leak_fact0_patient": got != sample[0]["patient"], "query_latency_s": dt}
+            print(f"[seed {seed}] arm={composer_kind}: mismatch probe agent={a!r} action={v!r} "
+                  f"did_not_leak={mismatch['did_not_leak_fact0_patient']} query_latency_s={dt:.3f}", flush=True)
 
     result = {
         "composer_kind_requested": composer_kind, "composer_class_resolved": resolved_class, "source": source,
@@ -337,9 +406,10 @@ def main():
     arm_results = {}
     for kind in ("slotbinder", "rf"):
         print(f"[seed {args.seed}] running arm={kind} ...", flush=True)
+        progress_path = f"{args.out}.progress_{kind}.json"
         t0 = time.time()
         chat, res = run_arm(bundle_dir, kind, args.fanout, sample, args.seed, renderer=args.renderer,
-                            run_ablation=(not args.no_ablation))
+                            run_ablation=(not args.no_ablation), progress_json_path=progress_path)
         res["wall_clock_s"] = time.time() - t0
         arm_results[kind] = res
         print(f"[seed {args.seed}] arm={kind} resolved={res['composer_class_resolved']} "

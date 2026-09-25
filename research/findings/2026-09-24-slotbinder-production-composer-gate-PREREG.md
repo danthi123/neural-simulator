@@ -103,3 +103,74 @@ per query, consistent with 2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-c
 battery: (1) add per-fact progress and per-query latency lines to the runner; (2) re-run seed 7 at small N (e.g. 8, 32, 128)
 to measure the per-query cost on this path; (3) register the largest N whose three arms finish within a stated wall-clock
 budget as a further amendment. The gate criteria themselves are unchanged.
+
+## AMENDMENT 2 (2026-09-25, orchestrator) -- instrumentation landed + small-N runs QUEUED; item (3) is a DRAFT, values TBD
+
+**Item (1), instrumentation -- DONE, committed in this section's own commit.**
+`research/runners/_slotbinder_production_gate.py` now prints (all `flush=True`, matching the file's existing print
+style):
+- a per-fact TEACH progress line during the slotbinder arm's build (`[seed S] teach fact i/N ... fact_seconds=...
+  elapsed_s=... avg_s_per_fact=... eta_s=...`), emitted by a monkeypatch on `SlotBinderComposer.store`
+  (`_progress_instrumented_slotbinder_store`, scoped to a `with`-block around the `_build_chat_brain` call for that
+  one arm, restoring the original method on exit) -- this is the exact call AMENDMENT 1 found silent for 6h08m
+  (`_build_chat_brain` -> `load_developed_brain` -> `developed_brain_io._restore_facts` -> `comp.store()` once per
+  fact, since `SlotBinderComposer` has no `.kb` fast path). A cheap JSON progress sidecar
+  (`<out>.progress_<arm>.json`) is refreshed on the same cadence (one small `json.dump` per fact);
+- a per-query latency line for every per-fact query, the moat probe, and the mismatch probe, in both arms
+  (`[seed S] arm=<kind>: query i/N ... query_latency_s=...`, `... moat probe ... query_latency_s=...`, `...
+  mismatch probe ... query_latency_s=...`);
+- a build-start/build-done line per arm (`build starting (n_facts=N) ...` / `build done in Xs`).
+
+All additive: the monkeypatch is entered only inside `run_arm`'s own build call and restores the original
+`SlotBinderComposer.store` in a `finally`, so nothing about `store()`'s behavior, return value, or call signature
+changes, and the 'rf'/flag-off arms (whose builds normally take `_restore_facts`'s direct-set-from-persisted-
+composites fast path, never calling `.store()`) are unaffected -- the wrapper is simply never invoked for them.
+`--out`, `--seed`, `--n-facts`, `--fanout` and every existing CLI flag are unchanged.
+
+**Working hypothesis for WHY the dev run stalled (to be CONFIRMED or REFUTED by item (2)'s data, not yet a
+measured claim), WITH a topology caveat this amendment states up front:**
+`research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-latency.md` and
+`2026-09-24-slotbinder-l3-gpu-latency-GO-6seed.md` (both read before this amendment was written) measured
+per-fact TEACH cost (CPU, ~8.8-22.9 CPU-hours extrapolated for 404 facts) and per-query cost (GPU, ~1 s/query)
+respectively at a topology HELD FIXED at the full production size (K=2020/KF=1195, `n_neurons=64,324`) while only
+2 real facts were ever actually stored per seed -- those findings deliberately DECOUPLE network size from fact
+count. **This runner does not do that**: `build_sample_bundle` constructs a genuinely SMALLER real sub-bundle of N
+facts, so `load_developed_brain` sizes `slotbinder_max_facts=len(facts)=N` from THAT sub-bundle -- network size
+(`K=5N`, vocab, `n_neurons`) grows WITH N here, unlike the L1-L3 methodology. The N=404 dev-seed run therefore
+matches the L1-L3 findings' own full topology (N=404 IS the whole corpus, so K=2020 either way), but the new
+N=8/32/128 runs will each build a SMALLER network than that, not the same K=2020 network fed fewer facts. Reading
+across: `SlotBinderComposer.store()` runs 5 `_store_pair` calls per fact (agent/action/patient/polarity/attribute
+slots), each running `teach_steps=40` simulation steps, so per-fact teach cost is expected to depend on BOTH the
+number of `_store_pair` calls (linear in N regardless) AND the per-step cost at that N's own network size (which
+the L1-L3 findings only measured at the one, full-scale, K=2020 point) -- so whether the N=8/32/128 trend is
+linear in N, or grows faster because per-step cost itself rises with K, is an open empirical question this
+amendment does NOT prejudge. **This is stated so item (3)'s eventual numbers are read against the RIGHT
+methodology, not assumed to replicate the L1-L3 fixed-topology regime** -- the small-N runs below are what will
+show which effect (call count, per-step-at-N cost, or both) actually dominates.
+
+**Item (2), small-N runs -- QUEUED, not yet landed.** Seed 7 (dev seed only, per `feedback_6seed_validation` --
+this is sizing, not a multi-seed accuracy claim), N in {8, 32, 128}, fanout=32, `SIM_BACKEND=cupy`, default
+ablation and no `--check-flagoff` (that flag's own known `KeyError` residual at tiny synthetic N, see this
+document's "Known residuals" #3, is orthogonal to timing and would only add noise to a sizing run), one GPU job
+running the three N values in sequence via `tools/gpu_queue.sh`, each writing its own artifact under
+`research/findings/raw/_slotbinder_production_gate/sizing/seed7_n<N>.json`. See the commit history for the exact
+queued command line.
+
+**Item (3), the largest-N-within-budget registration -- DRAFT, TO BE COMPLETED WHEN THE SMALL-N RUNS LAND.** This
+paragraph is a placeholder marking what the completed amendment will contain, not yet a result:
+- per N in {8, 32, 128}: `build_seconds` (the real teach cost for that arm), mean/max per-fact teach seconds (from
+  the new progress lines/sidecar), mean per-query latency (slotbinder and FHRR arms), and whether the teach-cost
+  trend across N is linear or worse-than-linear in N (a superlinear trend would mean the per-fact cost itself
+  grows with corpus size already taught, a qualitatively different residual from the NOGO's own per-fact-constant
+  extrapolation);
+- a stated wall-clock budget (TBD once the N=8/32/128 numbers exist -- candidates to choose between at that time
+  include a single-session bound and a queued-overnight bound; this document will say which and why, not assume
+  one now) and the largest N whose three arms (slotbinder + FHRR + the ablation re-query) are projected to finish
+  within it, extrapolated from the measured per-fact trend;
+- an explicit statement of whether the measured GPU per-fact teach cost confirms, refutes, or refines the working
+  hypothesis above (i.e., whether the per-step simulation cost the 2026-09-05 finding identified on CPU is in fact
+  the dominant GPU cost too, or whether something else -- e.g. GPU kernel-launch overhead specific to this
+  network's small size -- turns out to dominate instead).
+
+**This section is committed BEFORE the N=8/32/128 runs it registers are dispatched**, per this project's
+prereg-amendments-before-runs discipline; the runs are queued by the same commit, not run ahead of it.
