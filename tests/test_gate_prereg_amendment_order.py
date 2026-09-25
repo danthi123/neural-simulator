@@ -97,9 +97,25 @@ MUTANTS = {
     "commit --amend judged against HEAD, not HEAD's parents": (
         '        return _git(["rev-parse", "HEAD^@"], root, env).stdout.decode().split()', "        return [head]"),
     "abbreviated --amend (`--am`, `--amen`) not recognised": (
-        'if len(name) >= 2 and "amend".startswith(name):', 'if name == "amend":'),
+        '            if opt == "amend":', '            if name == "amend":'),
     "an option's separate value read as a flag (`--message --amend`)": (
-        "        if a in _COMMIT_WITH_VALUE:\n            i += 1", "        if False:\n            i += 1"),
+        "            elif opt and _COMMIT_LONG[opt] and not eq:\n                i += 1",
+        "            elif False:\n                i += 1"),
+    "an ABBREVIATED option's separate value read as a flag (`--mess --amend`, review r4 NIT)": (
+        "            elif opt and _COMMIT_LONG[opt] and not eq:\n                i += 1",
+        "            elif opt == name and _COMMIT_LONG[opt] and not eq:\n                i += 1"),
+    "`-U <n>` (git 2.55) not known to take a value": (
+        '_SHORT_WITH_VALUE = "mFcCtU"', '_SHORT_WITH_VALUE = "mFcCt"'),
+    "commit --amend of a MERGE judged against its first parent only (HEAD^, not HEAD^@)": (
+        '        return _git(["rev-parse", "HEAD^@"], root, env).stdout.decode().split()',
+        '        return _git(["rev-parse", "HEAD^"], root, env).stdout.decode().split()'),
+    "`git merge --continue`: the command consulted BEFORE MERGE_HEAD is read (review r4: fails OPEN)": (
+        "    # MERGE_HEAD BEFORE `kind`:",
+        "    if kind == \"merge\":\n        return None\n    # MERGE_HEAD BEFORE `kind`:"),
+    "a qualified label naming an ID read as an entry (`## Rerun under AMENDMENT-1`, review r4)": (
+        "        if q and not _DATE_RE.match(rest) and _ID_RE.match(rest):\n            word, rest = None, \"\"\n", ""),
+    "the qualifier stop-list (`this`, `the`, `per`, ...) emptied": (
+        "_QUAL_STOP = frozenset(\n", "_QUAL_STOP = frozenset() and frozenset(\n"),
     "prereg rename detection dropped": (
         "_changes(root, env, p, target, _PREREG_SPECS, True)", "_changes(root, env, p, target, _PREREG_SPECS, False)"),
     "/proc walker borrows a git process working in another directory": (
@@ -352,6 +368,88 @@ def test_evil_merge_writing_a_new_amendment_and_data_is_blocked(repo):
     assert _blocked(_git(repo, "commit", "-m", "evil merge", check=False))
 
 
+# --- `git merge --continue` (review r4, LOW-MEDIUM): the hook's git command is `merge`, MERGE_HEAD present ------
+def _conflicted_merge(repo):
+    """lane: amendment, then data, then its own unrelated.txt; main: a different unrelated.txt -> add/add conflict."""
+    _lane_with_ordered_history(repo)
+    _git(repo, "checkout", "-q", "lane")
+    _write(repo, "unrelated.txt", "lane side\n")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "lane writes unrelated.txt too")
+    _git(repo, "checkout", "-q", "main")
+    r = _git(repo, "merge", "--no-ff", "lane", check=False)
+    assert r.returncode != 0 and "CONFLICT" in r.stdout, r.stdout + r.stderr
+    assert os.path.exists(os.path.join(repo, ".git", "MERGE_HEAD"))
+    _write(repo, "unrelated.txt", "resolved\n")
+
+
+def _merge_continue(repo):
+    """`git merge --continue` runs cmd_commit IN-PROCESS: the pre-commit hook's git process reads `git merge`."""
+    return subprocess.run(["git", "-c", "commit.gpgsign=false", "merge", "--continue"], cwd=repo,
+                          env=dict(_env(), GIT_EDITOR="true"), capture_output=True, text=True, timeout=60)
+
+
+def _evil_merge_continue(repo):
+    _conflicted_merge(repo)
+    _write(repo, PREREG, "\n## AMENDMENT 2 (written while resolving the conflict)\n\nG1 >= 0.7\n", "a")
+    _write(repo, "research/findings/raw/x/s43.json", "{}")
+    _git(repo, "add", "-A")
+    return _merge_continue(repo)
+
+
+def test_merge_continue_of_a_resolved_conflict_passes(repo):
+    _conflicted_merge(repo)
+    _git(repo, "add", "-A")
+    r = _merge_continue(repo)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert len(_git(repo, "rev-list", "--parents", "-n1", "HEAD").stdout.split()) == 3
+    assert _hook_log(repo)[-2] == "merge pass", _hook_log(repo)
+
+
+def test_merge_continue_writing_a_new_amendment_and_data_is_blocked(repo):
+    r = _evil_merge_continue(repo)
+    assert _blocked(r), r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "merge BLOCK", "the hook did not see `git merge` as the command: %r" % _hook_log(repo)
+    assert os.path.exists(os.path.join(repo, ".git", "MERGE_HEAD"))          # nothing was committed
+
+
+def test_amend_of_a_merge_commit_is_judged_against_every_parent(repo):
+    ok, r = _clean_merge_commits(repo)
+    assert ok, r.stdout + r.stderr
+    r = _git(repo, "commit", "--amend", "--no-edit", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert _hook_log(repo)[-2] == "amend pass"
+
+
+# --- review r4: results headings that only POINT at an amendment ------------------------------------------------
+@pytest.mark.parametrize("results", [
+    "\n## Rerun under AMENDMENT-1 (v2, seed 7): NO-GO\n\nG1 read 0.4.\n",
+    "\n## Results\n\n### Results under amendment 1\n\nG1 read 0.4.\n",
+    "\n## Results\n\n**Verdict after amendment 1:** NO-GO, G1 read 0.4.\n",
+])
+def test_results_naming_a_committed_amendment_appended_with_data_pass(repo, results):
+    _write(repo, PREREG, "\n## AMENDMENT 1 (2026-01-02, before round 2)\n\nG1 >= 0.6\n", "a")
+    _git(repo, "commit", "-q", "-am", "amendment first")
+    _write(repo, PREREG, results, "a")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    r = _git(repo, "commit", "-m", "results + data", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_abbreviated_message_option_takes_the_next_word_as_its_value(repo):
+    """review r4 NIT: `git commit --mess --amend` makes a NEW commit whose message is `--amend`, so data after an
+    amendment committed alone is ordered and must pass (read as --amend it was judged against HEAD^ and blocked)."""
+    _write(repo, PREREG, BOLD_AMEND, "a")
+    _git(repo, "commit", "-q", "-am", "amendment alone")
+    _write(repo, "research/findings/raw/x/s42.json", "{}")
+    _git(repo, "add", "-A")
+    r = _git(repo, "commit", "--mess", "--amend", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert _git(repo, "log", "-1", "--format=%s").stdout.strip() == "--amend"
+    assert _hook_log(repo)[-2] == "commit pass"
+
+
 # --- commit --amend REPLACES HEAD (review 2, MEDIUM) ------------------------------------------------------------
 def _amend_folds_data_into_the_amendment_commit(repo, flag="--amend"):
     _write(repo, PREREG, BOLD_AMEND, "a")
@@ -435,6 +533,12 @@ HOOK_MUTANTS = {
     "the invoking git command never detected": (
         "def _detect_invocation(root):\n    return _invocation_kind(_invoking_git_argv(root))",
         "def _detect_invocation(root):\n    return None", "both"),
+    "the command consulted BEFORE MERGE_HEAD (review r4: `git merge --continue` fails open)": (
+        "    # MERGE_HEAD BEFORE `kind`:",
+        "    if kind == \"merge\":\n        return None\n    # MERGE_HEAD BEFORE `kind`:", "merge-continue"),
+    "an abbreviated option's value read as a flag (`--mess --amend`)": (
+        "            elif opt and _COMMIT_LONG[opt] and not eq:\n                i += 1",
+        "            elif opt == name and _COMMIT_LONG[opt] and not eq:\n                i += 1", "mess-amend"),
 }
 
 
@@ -456,6 +560,19 @@ def test_real_hook_scenarios_fail_under_mutant(tmp_path, label):
         repo = _make_repo(tmp_path / "a", gate_root, gate_file)
         r = _amend_folds_data_into_the_amendment_commit(repo)
         assert r.returncode == 0, "the amend still blocks with the mutant %r -- its test proves nothing" % label
+    if scenario == "merge-continue":
+        repo = _make_repo(tmp_path / "c", gate_root, gate_file)
+        r = _evil_merge_continue(repo)
+        assert r.returncode == 0, "the evil `merge --continue` still blocks with the mutant %r" % label
+        assert _hook_log(repo)[-2] == "merge pass"                          # the gate ran, and failed OPEN
+    if scenario == "mess-amend":
+        repo = _make_repo(tmp_path / "s", gate_root, gate_file)
+        _write(repo, PREREG, BOLD_AMEND, "a")
+        _git(repo, "commit", "-q", "-am", "amendment alone")
+        _write(repo, "research/findings/raw/x/s42.json", "{}")
+        _git(repo, "add", "-A")
+        assert _blocked(_git(repo, "commit", "--mess", "--amend", check=False)), \
+            "`--mess --amend` still passes with the mutant %r -- its test proves nothing" % label
 
 
 # ---------------------------------------------------------------------------------------------------------

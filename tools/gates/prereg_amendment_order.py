@@ -14,7 +14,9 @@ THE RULE. A commit BLOCKS when BOTH hold:
             `#` headings starting `Amendment`/`Addendum`/`Erratum`; bold paragraphs or bullets starting
             `**AMENDMENT`, `**Amendment`, `**ADDENDUM`, `**Erratum`; the same word after a one- or two-word
             qualifier (`### Seed-integrity amendment - <date>`, `**Pre-formal amendment after ...**`, `**v3
-            amendment (...)**`; a qualifier such as `this`/`why`/`per`/`by` makes it a reference, not an entry);
+            amendment (...)**`; a qualifier such as `this`/`why`/`per`/`by` makes it a reference, not an entry, and
+            so does an ID after a qualified word: `## Rerun under AMENDMENT-1 (v2): NO-GO`, `### Results under
+            amendment 1` and `**Verdict after amendment 1:**` point AT amendment 1);
             and, INSIDE an amendment-log section (`## AMENDMENT LOG`, `### Amendment log: ...`), bold `**A<n>`
             entries followed by a date/delimiter and any top-level bold bullet (the checklist's AMENDMENT LOG form:
             `- **2026-09-24, filed after ...**`). A bold entry must open a paragraph or a list item; one glued to
@@ -51,15 +53,18 @@ WHAT IS READ — the commit git is about to write, never a stand-in for it.
     is running the hook: the nearest ancestor `git` process whose working directory is this checkout (git chdirs
     to the work-tree top before any hook, from a subdirectory or with `-C`; measured 2026-09-25), read from
     /proc. Then:
-      - MERGE_HEAD present (a conflicted merge, or `merge --no-commit`, finished by `git commit`): judged against
-        HEAD and every MERGE_HEAD. A path counts only if it differs from EVERY parent, amendment activity only if
-        it is new relative to every parent. A merge that itself writes a new amendment and new data is caught.
+      - MERGE_HEAD present (a conflicted merge, or `merge --no-commit`, finished by `git commit` OR by `git merge
+        --continue`): judged against HEAD and every MERGE_HEAD. A path counts only if it differs from EVERY parent,
+        amendment activity only if it is new relative to every parent. A merge that itself writes a new amendment
+        and new data is caught. `git merge --continue` runs the hook from a process whose command is `merge`, so
+        MERGE_HEAD is read BEFORE the command is consulted; the other order fails OPEN on exactly that commit
+        (review r4, 2026-09-25: an evil merge committed rc=0), and the selftest pins it.
       - `git merge` / `git pull` with no MERGE_HEAD: a CLEAN AUTO-MERGE. git runs pre-merge-commit BEFORE it writes
         MERGE_HEAD (builtin/merge.c prepare_to_commit), so HEAD is the only parent visible, and judging against it
         alone false-blocked 19 of 534 real main merges (and this branch's own sync merge, 2026-09-25). Nothing is
         checked: git refuses to start a merge over staged changes, so the tree is the strategy's output and no
         person wrote any of it, and each side's commits were judged when they were made. A merge a person edits
-        is finished by `git commit` with MERGE_HEAD present, above.
+        is finished by `git commit` or `git merge --continue` with MERGE_HEAD present, above.
       - `git commit --amend` (or an unambiguous abbreviation, `--am` / `--ame` / `--amen`): the new commit REPLACES
         HEAD, so it is judged against HEAD's parents. Diffing against HEAD let an amendment committed alone and
         its data added by `--amend` land as ONE commit and pass (review 2026-09-25).
@@ -192,6 +197,12 @@ def _label_kind(label, log_ctx):
         if not q or _QUAL_STOP.intersection(q.group(1).lower().split()):
             q = None
         word, rest = (q.group(2).lower(), q.group(3)) if q else (None, "")
+        # a QUALIFIED label that names an ID points AT that amendment (`## Rerun under AMENDMENT-1 (v2): NO-GO`,
+        # `### Results under amendment 1`, `**Verdict after amendment 1:**`): a results heading, not an entry. Read as
+        # an entry it false-blocked results appended with their data as N2 (review r4, 2026-09-25). A qualified
+        # ENTRY in the corpus never carries an ID (`Seed-integrity amendment - <date>`, `v3 amendment (...)`).
+        if q and not _DATE_RE.match(rest) and _ID_RE.match(rest):
+            word, rest = None, ""
     if word:
         lm = _LOGWORD_RE.match(rest)
         if lm:
@@ -378,17 +389,36 @@ def _problems(prereg_changes, raw_written):
 # --- which git command is committing? (the parents depend on it) ------------------------------------------------
 _GIT_GLOBAL_WITH_VALUE = frozenset(("-c", "-C", "--git-dir", "--work-tree", "--namespace", "--super-prefix",
                                     "--config-env", "--attr-source"))
-_COMMIT_WITH_VALUE = frozenset(("-m", "-F", "-c", "-C", "-t", "--message", "--file", "--reedit-message",
-                                "--reuse-message", "--template", "--author", "--date", "--cleanup", "--fixup",
-                                "--squash", "--trailer", "--pathspec-from-file"))
-_SHORT_WITH_VALUE = "mFcCt"
+# `git commit`'s long options (git 2.55, `git commit --git-completion-helper-all`), each with whether it takes a
+# REQUIRED value that may be the next word. parse-options accepts any unambiguous prefix of a name, so `--mess
+# --amend` is a message and `--am` is --amend; a name this table lacks is taken as valueless (the next word is then
+# read as an option, which can only make an amend visible, never hide one).
+_COMMIT_LONG = {
+    "ahead-behind": False, "all": False, "allow-empty": False, "allow-empty-message": False, "amend": False,
+    "author": True, "branch": False, "cleanup": True, "date": True, "dry-run": False, "edit": False, "file": True,
+    "fixup": True, "gpg-sign": False, "include": False, "interactive": False, "inter-hunk-context": True,
+    "long": False, "message": True, "null": False, "only": False, "patch": False, "pathspec-file-nul": False,
+    "pathspec-from-file": True, "porcelain": False, "post-rewrite": False, "quiet": False, "reedit-message": True,
+    "reset-author": False, "reuse-message": True, "short": False, "signoff": False, "squash": True, "status": False,
+    "template": True, "trailer": True, "unified": True, "untracked-files": False, "verbose": False, "verify": False,
+}
+_COMMIT_LONG.update({"no-" + k: False for k in list(_COMMIT_LONG)})
+_SHORT_WITH_VALUE = "mFcCtU"
+
+
+def _resolve_commit_long(name):
+    """The `git commit` long option `name` names: itself, or the one option it is an unambiguous prefix of."""
+    if name in _COMMIT_LONG:
+        return name
+    hits = [o for o in _COMMIT_LONG if o.startswith(name)]
+    return hits[0] if len(hits) == 1 else None
 
 
 def _invocation_kind(argv):
     """Pure. 'merge' | 'amend' | 'commit' for the argv of the git process running the hook; None if unreadable.
     git parse-options accepts any unambiguous prefix of a long option: `--am`, `--ame`, `--amen` all mean --amend
-    for `git commit`, and a later `--no-amend` cancels it. An option's separate VALUE is skipped (`-m --amend` is a
-    message), and nothing after `--` is an option."""
+    for `git commit`, and a later `--no-amend` cancels it. An option's separate VALUE is skipped (`-m --amend` and
+    `--mess --amend` are messages, `--auth --amend` an author), and nothing after `--` is an option."""
     if not argv:
         return None
     base = os.path.basename(argv[0])
@@ -414,14 +444,15 @@ def _invocation_kind(argv):
         i += 1
         if a == "--":
             break
-        if a in _COMMIT_WITH_VALUE:
-            i += 1
-        elif a.startswith("--"):
-            name = a[2:].split("=", 1)[0]
-            if len(name) >= 2 and "amend".startswith(name):
+        if a.startswith("--"):
+            name, eq, _ = a[2:].partition("=")
+            opt = _resolve_commit_long(name)
+            if opt == "amend":
                 amend = True
-            elif name.startswith("no-") and len(name) >= 5 and "amend".startswith(name[3:]):
+            elif opt == "no-amend":
                 amend = False
+            elif opt and _COMMIT_LONG[opt] and not eq:
+                i += 1                            # `--message --amend`, `--mess --amend`: the value is the next word
         elif a.startswith("-") and len(a) > 1:
             for j, ch in enumerate(a[1:]):
                 if ch in _SHORT_WITH_VALUE:
@@ -509,6 +540,8 @@ def _parents(root, env, kind):
     head = r.stdout.decode().strip()
     if not head:
         return []
+    # MERGE_HEAD BEFORE `kind`: `git merge --continue` runs this hook as kind 'merge' with MERGE_HEAD present, and
+    # a person may have written anything into that tree while resolving
     mh = _git(["rev-parse", "--path-format=absolute", "--git-path", "MERGE_HEAD"], root, env).stdout.decode().strip()
     if mh and os.path.lexists(mh):
         try:
@@ -668,6 +701,22 @@ def _selftest_pure(bad):
     glued_ref = heading.replace("thresholds: G1 >= 0.5\n", "thresholds: G1 >= 0.5, see\n**AMENDMENT 1** below.\n")
     if fires(glued_ref, heading):
         bad.append("FALSE POSITIVE: a wrapped `**AMENDMENT 1** ...` reference glued to prose read as an entry")
+    # a QUALIFIED label that names an ID points AT the amendment: results appended with their data (review r4)
+    for label, add in (("`## Rerun under AMENDMENT-1 (v2, seed 7): NO-GO`",
+                        "\n## Rerun under AMENDMENT-1 (v2, seed 7): NO-GO\n\nG1 read 0.4.\n"),
+                       ("`### Results under amendment 1`", "\n## Results\n\n### Results under amendment 1\n\nG1 0.4\n"),
+                       ("`**Verdict after amendment 1:**`", "\n## Results\n\n**Verdict after amendment 1:** NO-GO.\n")):
+        if fires(heading + add, heading):
+            bad.append("FALSE POSITIVE: a results label naming an existing amendment, %s, read as an entry for it"
+                       % label)
+    per = heading.replace("thresholds: G1 >= 0.5\n", "thresholds: G1 >= 0.5\n\n**Per amendment 1, G1 is read at seed 7.**\n")
+    if fires(per, heading):
+        bad.append("FALSE POSITIVE: `**Per amendment 1, ...**` outside the amendment read as an entry")
+    # ...and a stop-word qualifier (`this`, `the`) makes a reference even with NO ID -- pins _QUAL_STOP
+    for label, new in (("`**This amendment: ...**`", "\n**This amendment: G1 is read at seed 7.**\n"),
+                       ("`**The amendment (2026-01-02)**`", "\n**The amendment (2026-01-02)** is read at seed 7.\n")):
+        if fires(nolog + new, nolog):
+            bad.append("FALSE POSITIVE: a reference to an amendment, %s, read as a new entry" % label)
     # which git command is committing: the flag parser the parents depend on
     for argv, want in ((["git", "commit", "--amend", "--no-edit"], "amend"),
                        (["/usr/lib/git-core/git", "commit", "-q", "-a", "--amen"], "amend"),
@@ -678,6 +727,12 @@ def _selftest_pure(bad):
                        (["git", "commit", "--amend", "--no-amend"], "commit"),
                        (["git", "commit", "-a", "--", "--amend"], "commit"),
                        (["git", "commit", "--author", "--amend <x@y>"], "commit"),
+                       (["git", "commit", "--mess", "--amend"], "commit"),
+                       (["git", "commit", "--auth", "--amend"], "commit"),
+                       (["git", "commit", "-U", "--amend"], "commit"),
+                       (["git", "commit", "--message=x", "--amend"], "amend"),
+                       (["git", "commit", "--amend", "--no-am"], "commit"),
+                       (["git", "commit", "--a", "--amend"], "amend"),
                        (["git", "-c", "merge.ff=false", "merge", "--no-edit", "lane"], "merge"),
                        (["git", "pull", "--no-rebase", ".", "lane"], "merge"),
                        ([], None)):
@@ -828,6 +883,11 @@ def _selftest_repo(bad):
         g("add", "-A")
         if not check([], root=td, invocation="commit"):
             bad.append("did NOT catch a merge that itself writes a new amendment and new data")
+        # ...including when it is finished by `git merge --continue`: the hook's git command is then `merge`, with
+        # MERGE_HEAD present. Consulting the command before MERGE_HEAD reads this as a clean auto-merge (fail OPEN)
+        if not check([], root=td, invocation="merge"):
+            bad.append("check() FAILED OPEN on `git merge --continue`: a merge that writes a new amendment and new "
+                       "data, run as `merge` with MERGE_HEAD present, was read as an unchecked clean auto-merge")
         g("merge", "--abort")
         # (4c) an unreadable MERGE_HEAD fails CLOSED -- over a CLEAN index, where judging against HEAD alone would
         # find nothing, so a fail-open cannot hide behind a HEAD-only block
@@ -835,6 +895,13 @@ def _selftest_repo(bad):
         if not check([], root=td, invocation="commit"):
             bad.append("check() FAILED OPEN: MERGE_HEAD exists but cannot be read, and no problem was returned")
         os.rmdir(mh)
+        # (4d) `commit --amend` of a MERGE commit is judged against ALL of its parents (HEAD^@, not HEAD^)
+        g("merge", "-q", "--no-ff", "--no-edit", "lane")
+        if not _evaluate(td, _git_env(td), [g("rev-parse", "HEAD^1").strip()]):
+            bad.append("selftest premise broken: the merge's tree judged against its first parent alone should block")
+        if check([], root=td, invocation="amend"):
+            bad.append("FALSE POSITIVE: `--amend` of a merge of correctly ordered history was judged against its "
+                       "first parent alone")
 
         # (5) `git commit --amend` REPLACES HEAD: judged against HEAD's parents, not HEAD
         write(pre, "\n## AMENDMENT 3 (committed alone)\n\nG1 >= 0.8\n", "a")
@@ -866,7 +933,7 @@ def selftest():
     _selftest_pure(bad)
     try:
         _selftest_repo(bad)
-    except (RuntimeError, OSError, subprocess.SubprocessError) as e:
+    except (RuntimeError, OSError, subprocess.SubprocessError, _GitReadError) as e:
         bad.append("selftest scratch repo could not be built: %s" % e)
     return bad
 
