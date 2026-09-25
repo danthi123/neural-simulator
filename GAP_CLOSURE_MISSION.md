@@ -229,6 +229,13 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**☀️ 16:40 HARVEST (raw results only; verdict findings PARKED for Claude after the reset):** fi (sleep-forgetting after later
+learning, prereg Amendment 6): aggregator reads NO-GO, 3/6 seeds GO (42, 44, 102); sign-flip p 0.0625 both contrasts. Seeds 43 and
+101 fail on the FIRST morning in most arms (plain facts never recalled), which looks like an encoding miss upstream of forgetting;
+seed 100 loses the re-mentioned fact on night 4 (FI6). D6 capacity at N=2000 (18/18): recall holds to 2000 facts in HEBB and COPY;
+cost ceiling between 50 and 500 facts for both; HEBB vs COPY reads PARITY-BY-CONSTRUCTION (the finding must say what that means).
+Artifacts: `research/findings/raw/_sleep_forgetting_interference/aggregate.json`, `research/findings/raw/_d6_capacity_curve/score.json`.
+
 **☀️ 16:20 WRAP-UP MERGES (owner gaming; Claude weekly at 79%):** MERGED to main: marker-word retirement 606e1c7d8
 (BRAIN_AFFECT_MARKER_SURFACE default OFF; mood still computed + recorded; review SOUND, gate mutation-checked); corpus-check
 shared log ecb6bae29 (review SOUND after a test-path fix 4b24c02a4); then the two merges it unblocked, gap4 C26 scoring 3d16962d0
