@@ -86,7 +86,9 @@ PROV_ARM_ALLOWED_BRAIN_KEYS = {"BRAIN_CHAT_SEED"}  # arm runners set this after 
 # EXPECTED env (`aggregate --expect-env K=V ...`, or the EXPECT_ENV.txt that `jobs --pin` writes beside PIN.txt) turns
 # those keys from forbidden into REQUIRED: every checked sidecar must carry each expected key with exactly the expected
 # value (the manipulation check at the provenance level: the flag reached every arm process), and no other BRAIN_* key
-# beyond it (+ BRAIN_CHAT_SEED on arm sidecars). No expected env == the B2b Amendment 1.2 rule, unchanged.
+# beyond it (+ BRAIN_CHAT_SEED on arm sidecars). No expected env == the B2b Amendment 1.2 rule, unchanged -- and
+# `jobs --pin` only ever WRITES an EXPECT_ENV.txt from `--extra-env`'s own BRAIN_* keys (never from FIX_ENV, whatever
+# --no-fixes is), so a tag pinned with fixes on still keeps this rule unless it also passes --extra-env.
 EXPECT_ENV_FILENAME = "EXPECT_ENV.txt"
 
 
@@ -358,12 +360,25 @@ def cmd_jobs(a):
         with open(pf, "w") as fh:
             fh.write(pin_arg.strip() + "\n")
         print("# pin recorded for tag %r: %s -> %s" % (a.tag, pin_arg, pf), file=sys.stderr)
-        # B2c: every BRAIN_* key the job lines carry is part of the tag's registered contract, recorded beside the pin
-        # so a flip-candidate arm aggregates verified by default (a --no-fixes base arm carries none and keeps the
-        # plain rule). A stale EXPECT_ENV.txt from an earlier `jobs --pin` of the same tag is removed when this call
-        # declares none.
+        # B2c: every BRAIN_* key passed via --extra-env is part of the tag's registered CONTRACT (the flip-candidate
+        # flags a caller deliberately added), recorded beside the pin so that arm aggregates verified by default (a
+        # --no-fixes base arm carries none and keeps the plain rule). A stale EXPECT_ENV.txt from an earlier
+        # `jobs --pin` of the same tag is removed when this call declares none.
+        #   RESTRICTED TO --extra-env, NOT `envd` (fix round, review of this branch): `envd` also carries FIX_ENV's
+        #   own BRAIN_* keys (BRAIN_EPISODIC_STORE_VERIFY, BRAIN_PMEM_FACILITATION, BRAIN_PMEM_OP_STABILIZER,
+        #   BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE) whenever `fixes=True` (i.e. --no-fixes NOT passed). Every caller of
+        #   `jobs --pin` so far passes --no-fixes (envd then has no FIX_ENV keys at all, so this was a no-op in
+        #   practice -- tests/test_lb_shard_expect_env.py's jobs-pin cases all set no_fixes=True), but reading
+        #   `envd` here would silently promote incidental fix flags into the tag's REQUIRED env on the day a caller
+        #   pins a fixes-on tag, contradicting this file's own comment at EXPECT_ENV_FILENAME ("No expected env ==
+        #   the B2b Amendment 1.2 rule, unchanged" -- that holds only for a --no-fixes tag). Parsing --extra-env
+        #   directly keeps EXPECT_ENV.txt scoped to what the CALLER declared, whatever --no-fixes is.
         ef = _expect_env_file(OUT_BASE, a.tag)
-        expected = {k: v for k, v in envd.items() if k.startswith("BRAIN_")}
+        expected = {}
+        for kv in (a.extra_env or []):
+            k, _, v = kv.partition("=")
+            if k.startswith("BRAIN_"):
+                expected[k] = v
         if expected:
             with open(ef, "w") as fh:
                 fh.write("".join("%s=%s\n" % kv for kv in sorted(expected.items())))

@@ -70,9 +70,14 @@ if [ ! -f "$ef" ] || [ "$(sort "$ef" | tr '\n' ' ' | sed 's/ $//')" != "$PAIR_TO
   missing+=("$ef holding exactly: $PAIR_TOKENS")
 fi
 [ -f "$SHARDS/b2c0925-base/EXPECT_ENV.txt" ] && missing+=("NO EXPECT_ENV.txt for b2c0925-base (the base arm expects none)")
-# the pair scorer the prereg specifies ("Scoring code") must be merged before any cell exists, so no rule is coded
-# after data is seen
-[ -f "$POOL_ROOT/tools/b2c_score.py" ] || missing+=("the registered pair scorer $POOL_ROOT/tools/b2c_score.py (merged to main)")
+# the pair scorer the prereg specifies ("Scoring code") must be merged to main before any cell exists, so no rule
+# is coded after data is seen. A file existing in the working tree is not "merged" (fix round, review of this
+# branch): require it to be present, unchanged, in origin/main -- present at THAT ref (cat-file -e) and identical
+# to the working tree's copy (diff --quiet), so an uncommitted or unpushed local copy still refuses the queue.
+if ! git -C "$POOL_ROOT" cat-file -e origin/main:tools/b2c_score.py 2>/dev/null \
+   || ! git -C "$POOL_ROOT" diff --quiet origin/main -- tools/b2c_score.py 2>/dev/null; then
+  missing+=("the registered pair scorer tools/b2c_score.py is not merged, unchanged, to origin/main (git -C $POOL_ROOT cat-file -e origin/main:tools/b2c_score.py && git -C $POOL_ROOT diff --quiet origin/main -- tools/b2c_score.py)")
+fi
 if [ "${#missing[@]}" -gt 0 ]; then
   if [ "$MODE" = "queue" ]; then
     printf '⛔ REFUSED (B2c not started): missing %s\n' "${missing[@]}" >&2; exit 2

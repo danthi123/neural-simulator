@@ -54,10 +54,14 @@ It is rejected for five reasons.
    were identical. The reply JSON differed across a gap of 19 `webapp/server.py` hunks, about 14 of them from unrelated
    default-OFF merges. F to F2 adds 63 lines to that file alone. Hash tests showing that default-OFF code cannot change
    base cells do not exist for this range.
-3. **Two F-to-F2 changes alter every base shard directory whatever the flags.** `research/runners/__init__.py` and
-   `research/runners/load_bearing_fraction.py` (merge 56c0465c9) give each open-ended-generation file its own
-   provenance sidecar; B2b's cells at F rely on the covered-by-parent rule instead. A cell at F and its twin at F2 can
-   match in verdict, never as artifacts.
+3. **One F-to-F2 change adds a provenance sidecar for the open-ended-generation row's own output, not every base
+   shard directory** (narrowed, fix round: the F->F2 diff of `load_bearing_fraction.py` calls `declare_output` only
+   for `oed_distributional*.json`, load_bearing_fraction.py:1190-1198). `research/runners/__init__.py` and
+   `research/runners/load_bearing_fraction.py` (merge 56c0465c9) give that one row's file its own provenance sidecar;
+   B2b's cells at F for it rely on the covered-by-parent rule instead. A cell at F and its twin at F2 can match in
+   verdict there, never as artifacts -- but this reaches the 6 open-ended-generation cells (one row x six seeds), not
+   the other 42 rows' shard directories. Reasons 1, 2 and 5 are enough on their own to reject design (ii); this one
+   is scoped to its actual reach.
 4. **The identity check (ii) needs would be partial and costly.** One full seed of base re-run at F2 is 43 cells, about
    17 core-h (B2b's measured cost per seed). Its pass would certify one seed of 43 rows, not six, and its fail would
    require (i) anyway. B2b's own base arm is not complete; any B2b cell that ends not DEFINED leaves the matching (ii)
@@ -101,6 +105,12 @@ modules no production module imports, 18 of them `_`-prefixed plus `chat_time_pl
   module docstring these still run exactly one epoch for any one-night protocol. The r2 counterfactual read the whole
   feature IDENTICAL when OFF at 24380cbe4; the awake-replay and load-renorm merges edited the same files after that.
   F2 also carries the oed sidecar fix, so no B2c cell needs the covered-by-parent rule.
+- **F2's ON path is READ as matching the GO code, not MEASURED to (fix round; see "Residuals").** `git diff --stat`
+  over `da_tag_capture{,_chat}.py`, `sleep_replay_capture.py` and `onebrain_regression_battery.py` reads +353/-17
+  from 269ae8f76 (the rc family's own GO revision) to F2, and +613/-12 from cce3c1dbd (the LTM-on DA Amendment 3 GO
+  revision) to F2. The paragraph above accepts this on the module docstring's word ("still run exactly one epoch") --
+  the same kind of check design (ii) is rejected for at reason 1. This battery's PASS therefore does not by itself
+  show F2's ON path reproduces the GOs; see "Residuals" for the identity check this still needs before a flip.
 - **Registry at F2.** `load_bearing_fraction.FACULTY_LESIONS` after the row hook: 50 rows, the same keys and kinds as
   at F (computed at filing, F from a `git archive` tree, F2 from a checkout at F2; identical). Coverable (neural-lesion + whether-disable):
   36. Sharded (`lb_shard.py` MEASURABLE_KINDS): 43 per seed, so 258 cells per arm and 516 in all <!--derived-->. The
@@ -154,14 +164,21 @@ Consequences by row, from each coverable row's driving turn group at F2 under th
 
 | class | coverable rows | what the pair can do before the driving reply |
 |---|---|---|
-| UNEXPOSED (26) | affect-appraisal-interoceptive, affect-coloring, affect-drives-response, affect-marker-spiking-wta, affective-tom, bg-action-selection, comprehension-learned-animacy-cue, comprehension-learned-verb-selects, comprehension-monitor, confidence-forthcomingness, curiosity-followup, da-gated-encoding, da-mode-drives-response, gnw-bus, gnw-multistep-deliberation, metacog-monitor, multiref-competition, noncontradiction-gate, pragmatic-implicature, reconsolidation, self-initiated-utterance, source-provenance-honesty, surprise-monitor, vision-identity-spiking-hmax, worldmodel-forward; open-ended-generation (distributional ruler, no chat turn) | nothing but building the ledger: the driving turn opens its session, so no managed block exists before the reply |
-| IN-CONVERSATION (8) | causal-whatif (7-turn group), prospective-memory (5), discourse-register (3), common-ground-drives, episodic-memory, spiking-anaphor, swap-drives-response, wm-binding-advanced (2 each) | the rewrite `b + f*inc` of blocks written earlier in the same conversation; the oldest block is at most 6 turns = 3 min of world time old at the driving turn, so f >= exp(-3/90), about 0.967 <!--derived--> |
+| UNEXPOSED (26) | affect-appraisal-interoceptive, affect-coloring, affect-drives-response, affect-marker-spiking-wta, affective-tom, bg-action-selection, comprehension-learned-animacy-cue, comprehension-learned-verb-selects, comprehension-monitor, confidence-forthcomingness, curiosity-followup, da-gated-encoding, da-mode-drives-response, gnw-bus, gnw-multistep-deliberation, metacog-monitor, multiref-competition, noncontradiction-gate, pragmatic-implicature, reconsolidation, self-initiated-utterance, source-provenance-honesty, surprise-monitor, vision-identity-spiking-hmax, worldmodel-forward; open-ended-generation (distributional ruler, no chat turn) | no managed block exists before the reply (right: no `base + weight_factor*inc` rewrite happens), but the ledger still runs on the driving turn -- `on_store`+`advance` call `_write`, which unconditionally sets `comp._store_dirty`/`_store_csr = None`/`_persistent_dirty` and clears `_csr_cache` (and `_seq_dirty`/`_fused_dirty` where those apply) even with zero managed blocks (da_tag_capture.py:497-511, fix round: corrected from "nothing but building the ledger"); R2 catches any reply change this causes |
+| IN-CONVERSATION (8) | causal-whatif (7-turn group), prospective-memory (5), discourse-register (3), common-ground-drives, episodic-memory, spiking-anaphor, swap-drives-response, wm-binding-advanced (2 each) | the rewrite `w = base + weight_factor*inc` of blocks written earlier in the same conversation, where `base` is a SEEDED complex-Gaussian baseline the SAME magnitude as `inc` (`BETA_BASELINE=1.0`, da_tag_capture.py:69, fix round: this is not a small perturbation of the intact weight, the two terms are comparable in size); `weight_factor >= exp(-3/90)`, about 0.967 <!--derived--> at most, for the oldest block (6 turns = 3 min of world time old) at the driving turn; R2 catches any resulting change |
 | NIGHT (2) | d5-consolidate (d5c group), sleep-replay (slp group) | a 24 h world step: early-phase decay, the SWR epoch, capture; the only rows where the pair's designed effect can reach the reply |
 
 **Which rows may legitimately change: the two NIGHT rows only.** There a memory ability may improve or degrade, and
 R3 scores the direction. Everywhere else the pair is not designed to change a reply, and a change counts as a
 regression (R2). The da-gated-encoding row is measured on `well` (field `da_encoding.on`), which the ledger never
 writes. The battery therefore cannot show the pair load-bearing; the GO findings do that.
+
+**R3's real reach is narrower than "the two NIGHT rows" (fix round).** In B2b's own base cells at F, `d5c_teach`
+and `slp_teach2` do not resolve the patient on any of the six seeds, so the wolf and owl facts R3's CORRECT target
+checks for (`["wolf", "chase", "rabbit"]`, `["owl", "chase", "mouse"]`) are never stored in either arm; only
+ABSTAIN and OTHER are reachable there, so R3 can catch a downgrade into confabulation but cannot catch the loss of
+a fact that WAS stored -- the facts `slp_teach1`/`slp_teach3` DO store (fox/hare, hawk/vole) are never the target of
+any recall turn. See "What a PASS licenses" and the pre-registered fox/hawk read-back under "Reported" below.
 
 ## Validity of a cell (per arm; B2b Amendment 1.2 with F2 in place of F, plus the expected env)
 
@@ -175,11 +192,30 @@ A (row, seed) cell of either arm is DEFINED only if all of these hold:
    (added on this branch; tested both directions in `tests/test_lb_shard_expect_env.py`).
 4. The node that ran it holds the recorded corpus hash ("Corpus").
 5. The report is not UNRELIABLE, `null_control_clean` is not False, the verdict is `regressed`, `pass` or
-   `not-exercised`, and (flipcand only) no turn of any arm file in the cell carries `da_tag_capture.error`.
+   `not-exercised`, and (flipcand only, fix round: widened from a single top-level field, which missed two live
+   failure paths):
+   - **no turn of any arm file carries an `error` key ANYWHERE under `da_tag_capture`**, at any depth -- both
+     top-level (`da_tag_capture.error`, `after_store_chat` raising, webapp/server.py's second try/except around it)
+     AND nested under `observe` (`da_tag_capture.observe.error`, `observe_chat_turn` raising: webapp/server.py's
+     FIRST try/except around it catches the error into `da_tag_capture_info`, which then lands at
+     `resp["da_tag_capture"]["observe"]`, not at the top level a single-field check would read);
+   - **for a NIGHT row** (d5-consolidate, sleep-replay) **whose flipcand arm's `n_managed_blocks` > 0 at the recall
+     turn**, that same turn's `da_tag_capture.sleep_replay_capture.n_epochs` is also >= 1 -- its absence with blocks
+     already managed means the sleep route did not run that night;
+   - **the cell's dispatch log does not contain "DA tag-and-capture tick failed"** -- webapp/continuous_engine.py's
+     idle-tick handler around `tick_chat` only LOGS this (a `warning`, not a raise), which is where the night's SWR
+     epoch actually runs, so none of the JSON fields above can see a tick that failed there; a pool cell's own
+     `autodispatch.out` (or the smoke's direct-ssh capture) is what this check reads.
+
+   Without this widening a flipcand cell whose pair crashed mid-turn or whose sleep route silently never fired could
+   still read DEFINED and score PASS. `research/coordination/b2c_smoke_check.py` implements the same three checks
+   for the pre-wave smoke (see "Integrity smoke").
 
 Causes of an UNDEFINED cell are B2b's A1.3 classes. **E**: the cell did not run F2 as registered (rules 1-4, a killed
-process). **C**: the code at F2 failed on the row (the A1.3 list, UNRELIABLE, a dirty null control, and a
-`da_tag_capture.error` in a flipcand arm). **I**: the probe ran and could not decide.
+process). **C**: the code at F2 failed on the row (the A1.3 list, UNRELIABLE, a dirty null control, an `error` key
+anywhere under `da_tag_capture` in a flipcand arm, a NIGHT row managing a block without a matching
+`sleep_replay_capture.n_epochs` >= 1 at recall, or a dispatch log carrying "DA tag-and-capture tick failed"). **I**:
+the probe ran and could not decide.
 
 ## Re-run procedure (B2b A1.4, adapted)
 
@@ -226,7 +262,11 @@ Scoring:
   `d5c_recall2`, `["owl", "chase", "mouse"]` for `slp_recall`. It is ABSTAIN if `abstained` is true, and OTHER
   otherwise (an answer that is not the told fact, the confabulation class). Order: CORRECT > ABSTAIN > OTHER.
   Flipcand lower than base: REGRESSION. Higher: IMPROVEMENT, reported. The same class with a difference in (b):
-  NEUTRAL-CHANGE, reported.
+  NEUTRAL-CHANGE, reported. **d5-consolidate's own gate (fix round):** score it under R3 only when its flipcand
+  arm's `n_managed_blocks` > 0 at the recall turn (a fact was actually stored to consolidate). It is expected to be
+  0 -- `d5c_teach`'s patient never resolves in B2b's base cells on any of the six seeds -- and when it is, any
+  difference in (b) at `d5c_recall2` is scored under R2 instead: with nothing stored, a reply change there cannot be
+  a memory effect, only a leak.
 - **Load-bearing gain.** Base false, flipcand true: GAIN, reported. On a row outside the NIGHT rows it is also flagged
   as unexpected from the mechanism.
 - **No netting.** An IMPROVEMENT or a GAIN never offsets a REGRESSION on another row or seed.
@@ -241,17 +281,30 @@ Scoring:
 
 ## Scoring code (a start precondition)
 
-`tools/b2c_score.py` must be merged to main before wave 1. `b2c_queue_next_wave.sh` refuses to queue while it is
-absent, so no rule is coded after any cell is seen. It implements exactly the rules above, nothing else.
-- **Inputs:** both tags' shard trees, the pin F2, the expected env.
-- **Validity:** `lb_shard.cell_prov_fails` for rules 1-3, the corpus record for rule 4, `lb.json` for rule 5.
+`tools/b2c_score.py` must be merged, UNCHANGED, to `origin/main` before wave 1 (fix round: `b2c_queue_next_wave.sh`'s
+precondition check now runs `git cat-file -e origin/main:tools/b2c_score.py` plus `git diff --quiet origin/main --
+tools/b2c_score.py`, not a bare file-exists test, so a local-only or uncommitted copy still refuses the queue).
+`b2c_queue_next_wave.sh` refuses to queue while it is absent, so no rule is coded after any cell is seen. It
+implements exactly the rules above, nothing else.
+- **Inputs:** both tags' shard trees, the pin F2, the expected env, and each cell's dispatch log (`autodispatch.out`
+  for a pool cell, the direct-ssh capture for the smoke) for the rule-5 tick-failure grep.
+- **Validity:** `lb_shard.cell_prov_fails` for rules 1-3, the corpus record for rule 4; rule 5 reads `lb.json` for
+  the report/null-control/verdict checks AND, flipcand only, every turn of every arm file for an `error` key
+  anywhere under `da_tag_capture` (top-level or nested under `observe`), the NIGHT recall turn's
+  `sleep_replay_capture.n_epochs` when that arm's `n_managed_blocks` > 0, and the cell's dispatch log for
+  "DA tag-and-capture tick failed" (an idle-tick error webapp/continuous_engine.py only LOGS -- no JSON field sees
+  it). `research/coordination/b2c_smoke_check.py` implements this same rule-5 logic for the smoke and is the
+  reference the scorer's tests are checked against.
 - **Rows:** each row's decision fields from `load_bearing_fraction` at F2 with the adequate-probe remaps, cross-checked
   against `lb.json`'s `turn`.
 - **Output:** a `score.json` in `research/findings/raw/_load_bearing/_b2c0925_score/`, holding every pair's state,
   class, (a) and (b) values, hosts and label.
 - **Selftest:** must fail in the failing direction of each rule: an R1 loss, an R2 LEAK and an IN-CONVERSATION
   change, an R3 downgrade; an R3 upgrade scored as IMPROVEMENT and not as a regression; an UNDEFINED pair never
-  scored; FLIP-FAIL.
+  scored; FLIP-FAIL; a nested `da_tag_capture.observe.error` scored class C (not silently DEFINED); a NIGHT cell
+  with `n_managed_blocks` > 0 and `sleep_replay_capture.n_epochs` 0 or absent at recall scored class C; a cell whose
+  dispatch log carries "DA tag-and-capture tick failed" scored class C even with clean JSON fields; a d5-consolidate
+  pair with 0 managed blocks in flipcand scored under R2, not R3, on any reply difference.
 
 ## Reported (not gated)
 
@@ -264,6 +317,13 @@ absent, so no rule is coded after any cell is seen. It implements exactly the ru
   rc GO's scope was one fact per conversation, so this is the first multi-fact night read of the route. If no flipcand
   intact arm on any seed manages a block, the finding says in its verdict line that the pair rewrote nothing the probes
   reach and a PASS says only that the flags broke nothing there.
+- **Pre-registered fox/hawk read-back (fix round).** Since the recall target R3 gates on (wolf/owl) is never stored
+  (see "Which rows may legitimately change"), the read-back that IS informative on retention is on the facts that
+  ARE stored: sleep-replay's fox/hare block (`slp_teach1`) and hawk/vole block (`slp_teach3`). For each, on every
+  seed and both arms, report `sleep_replay_capture`'s per-block `R` at every epoch and `da_tag_capture`'s per-block
+  `z_mean`/`frac_synapses_z_gt_half` at the `slp_recall` turn, so a reader can see whether the route captured and
+  read back a fact that was actually written, independent of the untestable wolf/owl target. Not gated: this reports
+  retention where it CAN be measured, it does not substitute for an R3-style pass/fail on it.
 - Answer changes in lesion arms, for pairs whose load-bearing status is unchanged.
 - **Drift F to F2:** for each (row, seed) whose B2b-base cell (at F, per B2b's own rule) and B2c-base cell are both
   DEFINED, whether (a) and (b) are equal. A difference is attributed to the F-to-F2 merges, not bisected here, and
@@ -287,8 +347,10 @@ F2 pins the code, not the data. After provisioning, `research/coordination/b2c_r
 `data/corpus/tinystories.txt` in each node's `revisions/<F2>` copy. It writes `research/coordination/b2c0925_corpus_sha256.tsv`
 only when every node matches the primary checkout, holds F2 and carries `.provisioned_ok`, and that file is committed
 before wave 1. The primary checkout's copy read `7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec` at
-B2b's filing. A cell from a node whose hash differs is class E. A node re-provisioned during the battery is hashed
-again before it takes more cells.
+B2b's filing. A cell from a node whose hash differs is class E; **so is a cell from a node missing from
+`b2c0925_corpus_sha256.tsv` entirely** (fix round: rule 4, "Validity of a cell" #4, reads "holds the recorded
+hash" -- a host absent from the record has no hash to hold, which is the same failure as a mismatched one, not a
+lesser one). A node re-provisioned during the battery is hashed again before it takes more cells.
 
 ## Memory
 
@@ -300,11 +362,16 @@ If it is killed for memory, `mem_gb` is raised by an amendment before wave 1.
 
 Before wave 1, `research/coordination/b2c_smoke.sh` runs two flipcand lines at seed 7 (not a battery seed) by direct
 ssh on pool1, into `research/findings/raw/_load_bearing/_b2c0925_smoke/`, which no aggregate reads. Each is the
-battery's own s42 flipcand line with the seed and the output directory swapped. The rows are sleep-replay (NIGHT) and
-causal-whatif (the longest in-conversation group). The smoke checks only that the arms build with the pair ON, that
-`da_tag_capture` appears without an error, `n_managed_blocks`, `sleep_replay_capture` at `slp_recall`, and that each
-line completes under `memcap.sh 8`. No criterion reads it. Its results will be seen before the battery runs; this
-document is committed first.
+battery's own s42 flipcand line with the seed and the output directory swapped, PRECEDED by the same pinned
+`assert_flipped_defaults.py` guard every battery job line carries. The rows are sleep-replay (NIGHT) and
+causal-whatif (the longest in-conversation group). The remote out_dir is rsync'd back to this checkout (fix round),
+and `research/coordination/b2c_smoke_check.py` then scores it against the same checks rule 5 of "Validity of a
+cell" uses: `da_tag_capture` appears with no `error` key at any depth (top-level or nested under `observe`),
+`n_managed_blocks`, `sleep_replay_capture.n_epochs` >= 1 at `slp_recall` once a block is managed, no "DA
+tag-and-capture tick failed" line in the remote's captured stdout+stderr, and the LTM tier the arm actually built
+against (from the pulled sidecar's `env.BRAIN_DATA_ROOT`, reported). Each line must also complete under `memcap.sh
+8`. No criterion reads this smoke. Its results will be seen before the battery runs; this document is committed
+first.
 
 ## Queueing
 
@@ -316,7 +383,12 @@ It refuses (exit 2) until the start preconditions exist:
 - the committed corpus record;
 - `PIN.txt` (F2) for both tags, and `EXPECT_ENV.txt` (the three tokens) for flipcand only, under the primary
   checkout's shard tree;
-- `tools/b2c_score.py`.
+- `tools/b2c_score.py`, merged UNCHANGED to `origin/main` (fix round: checked with `git cat-file -e` + `git diff
+  --quiet` against `origin/main`, not a bare file-exists test -- see "Scoring code").
+
+**Human precondition the script cannot check (fix round; see "What a PASS licenses"): verify-go items B3 and B4 on
+the pair have run.** `b2c_queue_next_wave.sh` has no way to verify another finding's status, so this is not coded
+into it -- whoever runs "Prepared commands" below confirms it first.
 
 Before each add it checks the line statically: the pinned `cd`, the guard, and the env tokens (none for base, exactly
 three for flipcand). `--status` re-checks every queued B2c line for those rules and the `#checked:` tail. It never
@@ -331,10 +403,19 @@ re-queues or moves a stale line.
   (unmeasured).
 - **At B2b's observed throughput:** about 10.7 cells per hour (134 cells in 12.5 h of dispatch, excluding the
   2.4 h dispatcher starvation of 2026-09-25). 516 cells then take about 48 h.
-- **With pool1 and pool2 serving B2c alone:** at most 16 single-thread jobs per node by cores, and about 14 by memory
-  at 8 GB of 128 GiB. That is about 28 at once, so about 7.5 h, plus a tail of 2.5-4 h for the longest cells: 10-12 h.
-- **AWS cost:** about $1.0 per node-hour of compute (the spend ledger's own rate), so $20-25 at the lower bound and
-  about $100 if both nodes run 48 h for B2c alone. The owner's $50/day cap applies, and the tooling enforces it.
+- **With pool1 and pool2 serving B2c alone, corrected (fix round).** `tools/pool_autodispatch.sh`'s `node_is_idle`
+  caps a node at `cores - 1` single-threaded `-m research.runners` processes (no `POOL_JOBS_PER_NODE` override on
+  the live dispatch service), and the pgrep pattern it counts against that cap matches BOTH processes an LB job
+  runs -- the `load_bearing_fraction` parent and the arm worker it spawns via
+  `onebrain_regression_battery._spawn_arm`. A 16-core node therefore holds at most 8 concurrent LB jobs, not 16 (the
+  naive `cores - 1` reading), confirmed by B2b's own sidecars (at most 8 concurrent cells landed per AWS host
+  there). Two nodes: **16 concurrent cells, not 28.**
+- **Revised floor.** 204 core-h (6 seeds x 2 arms x 17 core-h) over 16 concurrent cells is about 13 h of dispatch
+  <!--derived-->, plus a tail of 2-4 h for the longest cells (146-248 min observed in B2b/B2a): **about 15-17 h**,
+  not 10-12 h.
+- **AWS cost, corrected.** About $1.0 per node-hour of compute (the spend ledger's own rate) x two nodes x about
+  15-17 h each is **about $32-35** <!--derived-->, not $20-25; about $100 if both nodes instead run the full 48 h
+  B2b-throughput estimate. The owner's $50/day cap applies to the daily rate, and the tooling enforces it.
 
 ## What was seen before filing (disclosure)
 
@@ -360,14 +441,38 @@ re-queues or moves a stale line.
 
 Criterion (c) of the owner's flip rule for the PAIR, both flags together, at F2, under the scripted turn clock, over
 the 36 coverable rows and the adequate probe set. That means no load-bearing loss, no reply change outside the NIGHT
-rows, and no recall downgrade in them. It licenses nothing more:
+rows, and no recall downgrade reachable by R3 in them. It licenses nothing more:
 - not (b), a SOUND review of the pair;
 - not (d), a production-default validation on the live server path with both flags as defaults and the wall clock;
 - not either flag alone. DA alone loses an ordinary fact overnight; the sleep route is inert without it;
 - not `BRAIN_AWAKE_REPLAY_CAPTURE`, `BRAIN_SLEEP_DOWNSCALING` or `BRAIN_SLEEP_LOAD_RENORM`;
 - not a claim that the pair is load-bearing or helps memory in chat. That evidence is the GO findings'.
+- **not a test of overnight RETENTION for the facts that ARE stored** (fix round). R3's CORRECT target (the wolf/owl
+  triples) is never reachable: `d5c_teach` and `slp_teach2` fail to resolve their patient at teach time on all six
+  of B2b's base-cell seeds, so neither fact is ever stored in either arm. R3 can therefore only catch a downgrade in
+  the ABSTAIN/OTHER split (confabulation), never the loss of a fact that WAS stored. The facts that ARE stored
+  (fox/hare from `slp_teach1`, hawk/vole from `slp_teach3`) are read back and reported (see "Reported" below,
+  pre-registered) but are not R3's gate, so a PASS says the reported read-back did not visibly worsen, not that
+  overnight retention was gated end-to-end;
+- **not an ON-path identity check** (fix round; see "Residuals"). A PASS here does not by itself show F2's flipcand
+  code reproduces the GO revisions' behavior, and does not by itself license a flip without that check;
+- **scoped to LTM-off** (fix round; see "Residuals" "LTM, pinned") -- not the LTM-on DA arm the flip-deciding GO ran.
 
 A FAIL keeps both flags default-OFF and names each regressed pair. INCOMPLETE is not a PASS.
+
+**Precondition on running this battery at all (fix round, owner-directed order): B2c is not queued before verify-go
+items B3 and B4 have run on the pair.** The adversarial verify-go review of this pair
+(`research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md` on `research/pair-verify-go`,
+verdict SOUND-WITH-ISSUES) reads leg (b) as NOT YET MET and its section 7, "What must happen, in order", lists B3
+and B4 (after B1's correction note and B2's owner decision) as still open before leg (b) counts as met: **B3** a
+registered production-path arm on the WALL clock (a realistic day: several turns, two or more facts told at
+different times, three or more pauses of 5 min or more, then a night and a multi-night idle, gated on no
+resurrection of a decayed fact, no confabulation and the ordinary/salient outcomes -- "until this runs, the
+multi-epoch regime is unmeasured"); **B4** a registered salient-vs-neutral contrast inside one family with both
+flags intact (long-delay salient vs neutral) plus a waking-only DA lesion leaving the SWR DA edge intact. B2c
+answers leg (c), a different leg, and does not technically depend on B3/B4 -- but the review's own order (section 7
+lists B1-B4 under leg (b), C1-C3 under leg (c), in that sequence) puts leg (b)'s open items before leg (c)'s compute
+spend, so this document's "Prepared commands" below do not run until B3 and B4 have landed on the pair's review.
 
 ## Residuals
 
@@ -378,9 +483,23 @@ A FAIL keeps both flags default-OFF and names each regressed pair. INCOMPLETE is
   two of the three slp facts parse. B2c checks for regressions; it does not measure the pair's benefit.
 - **A multi-fact night is outside the rc GO's scope.** The slp group puts two or three facts into one night's replay
   and PRP budget. B2c reports that read and does not gate it.
-- **LTM.** Both arms build whatever the F2 tree builds on the node. The aggregate's `ltm_mode` reads only
-  BRAIN_DATA_ROOT. The pair writes the buffer only (the LTM-on GO; `TieredFactStore` routes writes to the buffer), so
-  LTM attachment cannot change what it rewrites.
+- **F2's ON path needs an identity check before either default flips (fix round).** This battery's PASS does not
+  include one -- see "Frozen revision F2 and registry" above for the diff sizes it is currently accepted on a
+  docstring reading alone. Before a PASS here is used to flip `BRAIN_DA_TAG_CAPTURE` or `BRAIN_SLEEP_REPLAY_CAPTURE`
+  default-ON, re-run at F2, at one seed: the rc family's arm (`{**ON, **RC}`) and the LTM-on DA Amendment 3 arm,
+  compared turn-by-turn against their committed GO artifacts (`da_tag_capture`, `sleep_replay_capture` fields and
+  the reply). Absent that check, a PASS below is scoped to "no regression in the registry at F2's code", not to "the
+  code that earned the GOs is unchanged" -- and by itself does not license a flip.
+- **R3 cannot detect forgetting of the facts that ARE stored (fix round).** See "Which rows may legitimately
+  change" and "What a PASS licenses" -- R3 only reads the wolf/owl target, which is never reached, so a PASS here
+  says nothing about overnight retention of fox/hare or hawk/vole.
+- **LTM, pinned (fix round).** Both arms build whatever the F2 tree builds on the node; the pool's r7i.4xlarge nodes
+  cannot hold the 100k-entry LTM tier (it exceeded pool RAM per the LTM-off GO), so in practice both arms build
+  LTM-OFF. This is now recorded rather than left implicit: `research/coordination/b2c_smoke_check.py` and the
+  aggregate's own `ltm_mode` field (already derived from `BRAIN_DATA_ROOT` presence in the sidecar) both report it,
+  and **a PASS below is scoped to LTM-off** -- it says nothing about the LTM-on DA arm the flip-deciding GO ran (see
+  the bullet above). The pair writes the buffer only regardless of tier (the LTM-on GO; `TieredFactStore` routes
+  writes to the buffer), so LTM attachment cannot change what the ledger REWRITES, only what a recall turn can READ.
 - **No row uses the pair's own lesion flags.** `BRAIN_DA_ENCODING_LESION` (da-gated-encoding's flag) also pins the
   ledger's D1 input, so in flipcand that row's lesion arm differs from base's in one more respect. R1 and R2 read it
   like any other row.
@@ -391,7 +510,13 @@ A FAIL keeps both flags default-OFF and names each regressed pair. INCOMPLETE is
 
 ```
 F2=fd29040db19987819461693aaf385977e45840ef
-# 0. precondition: tools/b2c_score.py (section "Scoring code") built, self-tested and merged to main
+# -1. PRECONDITION (fix round, owner-directed order): verify-go items B3 and B4 on the DA-capture + sleep-replay
+#     pair (research/findings/2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md section 7, leg (b)) have
+#     RUN -- B3 the registered wall-clock production-path day, B4 the salient-vs-neutral + waking-only-DA-lesion
+#     contrast. NONE of the commands below run until both are landed and their own findings are committed; this is
+#     a precondition on running this file's commands at all, not merely on interpreting the result.
+# 0. precondition: tools/b2c_score.py (section "Scoring code") built, self-tested and merged, UNCHANGED, to
+#    origin/main (git cat-file -e origin/main:tools/b2c_score.py && git diff --quiet origin/main -- tools/b2c_score.py)
 # 1. provision F2 on the two AWS pool nodes only (ALLOW_STALE: main will have moved past F2; --isolated leaves
 #    ~/derisk-pool/sim untouched)
 POOL_PROVISION_ALLOW_STALE=1 bash tools/pool_provision.sh --revision $F2 --isolated pool1 pool2
@@ -406,7 +531,10 @@ cmp research/coordination/b2c0925_jobs.check.txt research/coordination/b2c0925_j
 #    python tools/lb_shard.py jobs --seeds 42 43 44 100 101 102 --tag b2c0925-flipcand --no-fixes --probe-set adequate \
 #        --repeats 2 --root '~/derisk-pool/revisions/'$F2 --faculties <rows> --pin $F2 \
 #        --extra-env BRAIN_DA_TAG_CAPTURE=1 BRAIN_SLEEP_REPLAY_CAPTURE=1 BRAIN_DA_TAG_CAPTURE_CLOCK=turn
-# 4. integrity smoke (seed 7, direct ssh on pool1, hard 8 GB cap); --print shows the two commands first
+# 4. integrity smoke (seed 7, direct ssh on pool1, hard 8 GB cap); --print shows the two commands first. Pulls the
+#    remote out_dir back via rsync and scores it with research/coordination/b2c_smoke_check.py (rule-5-equivalent
+#    checks: no error under da_tag_capture at any depth, sleep-replay n_epochs>=1 at slp_recall once a block is
+#    managed, no logged tick-failure, LTM tier recorded) -- non-zero exit stops here, before wave 1.
 bash research/coordination/b2c_smoke.sh --print pool1
 bash research/coordination/b2c_smoke.sh pool1
 # 5. waves: check, then add the second line to the heartbeat cycle beside b2b_queue_next_wave.sh; commit
