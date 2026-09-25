@@ -1,0 +1,780 @@
+{
+ "runner": "_lexicon_learned_referent_derisk",
+ "corpus": "tinystories.txt",
+ "tokens": 1570049,
+ "vocab": 2000,
+ "k_seed": 12,
+ "gate": {
+  "g1_mean": 0.8,
+  "g1_min": 0.75,
+  "g2_max": 0.6,
+  "g3_gap": 0.15,
+  "g4_agree": 0.95,
+  "g4_bacc": 0.8,
+  "g5_abstain": 1.0,
+  "g7_recover": 0.8,
+  "g7_base_max": 0.1,
+  "g7_lesion_max": 0.1,
+  "g7_fp_max": 0.2
+ },
+ "per_seed": [
+  {
+   "seed": 101,
+   "n_held": 1701,
+   "n_held_noun": 903,
+   "seed_words": [
+    "pig",
+    "wolf",
+    "door",
+    "doctor",
+    "bird",
+    "chair",
+    "boy",
+    "book",
+    "fox",
+    "cup",
+    "queen",
+    "fish",
+    "sang",
+    "blue",
+    "open",
+    "jumped",
+    "walked",
+    "ran",
+    "ate",
+    "jump",
+    "played",
+    "sad",
+    "again",
+    "scared"
+   ],
+   "bacc_learned": 0.933234248411727,
+   "bacc_shuffled": 0.49268520137553184,
+   "bacc_label_permuted": 0.565906044180218,
+   "bacc_topical": 0.4583551903013347,
+   "bacc_freq_only": 0.52312467214548,
+   "spiking_n": 400,
+   "spiking_agree": 1.0,
+   "bacc_spiking": 0.9337523570081709,
+   "lesion_abstain_rate": 1.0,
+   "deterministic": true,
+   "organ": {
+    "trials": [
+     {
+      "a": "wine",
+      "b": "armchair",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: wine and armchair.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "mother",
+      "b": "horn",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: mother and horn.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "yard",
+      "b": "wheat",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: yard and wheat.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "powder",
+      "b": "neck",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: powder and neck.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "whale",
+      "b": "words",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: whale and words.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "dogs",
+      "b": "surprises",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: dogs and surprises.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "years",
+      "b": "stone",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": false,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "temple",
+      "b": "store",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: temple and store.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "pilot",
+      "b": "automobile",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: pilot and automobile.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "feather",
+      "b": "flashlight",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: feather and flashlight.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "pebble",
+      "b": "folder",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: pebble and folder.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "necklace",
+      "b": "cookies",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: necklace and cookies.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     }
+    ],
+    "fp_trials": [
+     {
+      "v1": "bent",
+      "v2": "appeared",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "competitive",
+      "v2": "return",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "cheered",
+      "v2": "understand",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "pet",
+      "v2": "sitting",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "hear",
+      "v2": "stand",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "grab",
+      "v2": "hate",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "scream",
+      "v2": "sighed",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "seek",
+      "v2": "dropped",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "nervous",
+      "v2": "special",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "thinking",
+      "v2": "miserable",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "delicate",
+      "v2": "hugged",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "lift",
+      "v2": "such",
+      "in_scope": false,
+      "refs": null
+     }
+    ],
+    "learned_recover_rate": 0.9166666666666666,
+    "learned_in_scope_rate": 0.9166666666666666,
+    "hand_in_scope_rate": 0.0,
+    "lesion_in_scope_rate": 0.0,
+    "reply_differs_learned_vs_hand_rate": 0.9166666666666666,
+    "reply_differs_lesion_vs_hand_rate": 0.0,
+    "fp_in_scope_rate": 0.0
+   },
+   "elapsed_s": 17.7
+  },
+  {
+   "seed": 102,
+   "n_held": 1701,
+   "n_held_noun": 903,
+   "seed_words": [
+    "tree",
+    "chair",
+    "pig",
+    "doctor",
+    "cow",
+    "horse",
+    "farmer",
+    "ball",
+    "wolf",
+    "house",
+    "man",
+    "rabbit",
+    "never",
+    "again",
+    "slowly",
+    "small",
+    "red",
+    "sleep",
+    "open",
+    "always",
+    "quickly",
+    "slept",
+    "angry",
+    "sang"
+   ],
+   "bacc_learned": 0.9293582794194789,
+   "bacc_shuffled": 0.5110887684327097,
+   "bacc_label_permuted": 0.3521303258145363,
+   "bacc_topical": 0.4599871772454392,
+   "bacc_freq_only": 0.5550358454275224,
+   "spiking_n": 400,
+   "spiking_agree": 1.0,
+   "bacc_spiking": 0.9317385647082375,
+   "lesion_abstain_rate": 1.0,
+   "deterministic": true,
+   "organ": {
+    "trials": [
+     {
+      "a": "shoes",
+      "b": "temple",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: shoes and temple.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "name",
+      "b": "sunshine",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: name and sunshine.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "pasta",
+      "b": "slides",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": false,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "guard",
+      "b": "cats",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: guard and cats.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "mask",
+      "b": "barber",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: mask and barber.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "mouth",
+      "b": "medal",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: mouth and medal.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "basketball",
+      "b": "snack",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: basketball and snack.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "backyard",
+      "b": "whiskers",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": false,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "mop",
+      "b": "mud",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: mop and mud.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "night",
+      "b": "kiss",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": false,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "lamp",
+      "b": "snow",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": true,
+       "readout": "I'm holding 2 referents in working memory at once: lamp and snow.",
+       "recovered_both": true
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": true,
+      "reply_differs_lesion_vs_hand": false
+     },
+     {
+      "a": "nod",
+      "b": "space",
+      "hand": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "learned": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "lesion": {
+       "in_scope": false,
+       "readout": null,
+       "recovered_both": false
+      },
+      "reply_differs_learned_vs_hand": false,
+      "reply_differs_lesion_vs_hand": false
+     }
+    ],
+    "fp_trials": [
+     {
+      "v1": "impatient",
+      "v2": "healthy",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "explained",
+      "v2": "appeared",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "scare",
+      "v2": "lose",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "young",
+      "v2": "hold",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "stayed",
+      "v2": "cheered",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "heal",
+      "v2": "destroy",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "difficult",
+      "v2": "finds",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "pointed",
+      "v2": "bitter",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "cleaning",
+      "v2": "excited",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "shining",
+      "v2": "try",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "continued",
+      "v2": "sees",
+      "in_scope": false,
+      "refs": null
+     },
+     {
+      "v1": "behave",
+      "v2": "hopped",
+      "in_scope": false,
+      "refs": null
+     }
+    ],
+    "learned_recover_rate": 0.6666666666666666,
+    "learned_in_scope_rate": 0.6666666666666666,
+    "hand_in_scope_rate": 0.0,
+    "lesion_in_scope_rate": 0.0,
+    "reply_differs_learned_vs_hand_rate": 0.6666666666666666,
+    "reply_differs_lesion_vs_hand_rate": 0.0,
+    "fp_in_scope_rate": 0.0
+   },
+   "elapsed_s": 13.1
+  }
+ ]
+}
