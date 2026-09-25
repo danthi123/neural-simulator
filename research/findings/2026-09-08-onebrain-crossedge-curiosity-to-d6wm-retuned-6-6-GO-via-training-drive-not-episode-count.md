@@ -56,8 +56,8 @@ was plain under-training. Re-run at `N_EPISODES=300` (3x, `research/findings/raw
 (rounded to 4dp for legibility; the "@100ep" column is the ALREADY-BANKED
 `research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_readfix_6seed.json` values for these 3 seeds,
 reproduced here for the side-by-side comparison; the "@300ep" column is this row's own cited artifact,
-`_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json`, at full precision `1.6149...`,
-`1.6478...`, `1.7605...` for grown and `-0.0035`/`-0.0055`/`-0.0030` for delta_intact.)
+`_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json`, at full precision `1.6155...`,
+`1.6476...`, `1.7612...` for grown and `-0.0035`/`-0.0055`/`-0.0030` for delta_intact; see Corrections below.)
 
 | seed | grown @100ep | grown @300ep | Δintact @100ep | Δintact @300ep |
 |---|---|---|---|---|
@@ -159,3 +159,7 @@ production flip, per this lane's explicit scope (rank-1/rank-6 flip files untouc
   finding), so this is not assumed to reproduce identically on cupy without that confirmation.
 
 Functional read-outs only; no phenomenal-experience claim.
+
+## Corrections (2026-09-25 claim-check spot audit)
+
+- Section 3's "full precision" parenthetical: `1.6149...` -> `1.6155...`, `1.6478...` -> `1.6476...`, `1.7605...` -> `1.7612...` (transcription errors; true full-precision `grown.ask_to_w0` for seeds 43/101/102 in `research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_nepisodes300_scout_negative.json` are 1.6154699325561523 / 1.6476027965545654 / 1.7612478733062744); the table's own rounded values (1.615/1.648/1.761) were already correct and unaffected -- this only fixes the illustrative full-precision citation. <!--derived-->

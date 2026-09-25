@@ -51,6 +51,14 @@ LONG_RUN_S = 8 * 3600.0
 
 def _is_structural_record(obj):
     """True for create-only commands/configs that record no completed run."""
+    # A Claude Code settings file (e.g. tools/local_llm/claude_local_settings.json, 2026-09-25) is agent
+    # configuration -- permission rules / plugin toggles -- and records no run; it has no backend to report.
+    # Matched on its own top-level keys ONLY when no run-like key is present, so a result that happens to carry a
+    # `permissions` field is still checked.
+    if (("permissions" in obj or "enabledPlugins" in obj)
+            and not any(k in obj for k in BACKEND_KEYS + ELAPSED_KEYS)
+            and not any(k in obj for k in ("means", "results", "arms", "seeds", "verdict"))):
+        return True
     schema = obj.get("schema")
     # Operational state is not a scientific result.  The persistent coordinator
     # deliberately records lanes, agents, and resource observations separately;
@@ -204,4 +212,13 @@ def selftest():
         if _check_one(w("parallel_audit_state.json", {"schema": "parallel-audit-state-v1", "under_agents": True}),
                       "research/coordination/parallel_audit_state.json"):
             bad.append("FALSE POSITIVE: treated the parallel-audit persistence record as a completed result")
+        # 11d. NEGATIVE CONTROL -- a Claude Code settings file is agent configuration, not a run (2026-09-25).
+        if _check_one(w("claude_local_settings.json", {"enabledPlugins": {"x@y": False},
+                                                       "permissions": {"allow": ["Bash(ls)"], "deny": []}}),
+                      "tools/local_llm/claude_local_settings.json"):
+            bad.append("FALSE POSITIVE: treated a Claude Code settings file as a completed result")
+        # 11e. ...but a RESULT that carries a `permissions` field is still checked (no blanket key exemption).
+        if not any("NO backend" in x for x in _check_one(
+                w("h.json", {"permissions": {"allow": []}, "means": {"acc": 0.5}}), "raw/h.json")):
+            bad.append("did NOT catch a result without a backend just because it also carries `permissions`")
     return bad

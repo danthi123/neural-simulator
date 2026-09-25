@@ -177,6 +177,31 @@ case "${1:-list}" in
            echo "$SHAPE_MSG" >&2
            exit 2
          fi
+         # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
+         # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node
+         # constraint (tools/pool_autodispatch.sh, same 2026-09-25 change) `continue`s past any candidate whose
+         # pool_node= does not match the current node -- silently, by design, so a mistyped node name (e.g.
+         # `pool14` for `pool41`) never surfaces as an error: the line just sits in the queue, matching no real
+         # node, until POOL_JOB_MAX_AGE retires it as stale. Cheap and local (no ssh): reject at enqueue time
+         # against the exact candidate list pop_job/probe_nodes already iterate (POOL_NODES default plus any
+         # research/queue/.pool_extra_nodes entries), reusing node_in_list (below) so this can never drift from
+         # the dup-guard's own node-membership logic.
+         #
+         # SCAN THE FULL STORED LINE, NOT JUST $2 (fix, follow-up review round): every real redo line in this
+         # branch (research/coordination/b2b0924_reruns_commands.txt) puts `pool_node=` in the --checked REASON
+         # ($4), not in the command ($2) -- e.g. `--checked '... pool_node=pool41; mem_gb=8'`. pop_job matches
+         # against the WHOLE stored queue line (command + "  #checked:$CHECKED", written below by this same
+         # `add`), so it sees pool_node= in either place; the old `grep` here only ever looked at "$2" and was
+         # therefore blind to the actual usage pattern it was built to guard -- a typo'd `pool_node=pool14` in a
+         # --checked reason enqueued clean (exit 0) instead of being refused. Build the identical string pop_job
+         # will later see (mirroring the `printf '%s\t%s  #checked:%s\n'` write further down) and grep THAT.
+         WANT_NODE=$(printf '%s  #checked:%s' "$2" "$CHECKED" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
+         if [ -n "$WANT_NODE" ] && ! node_in_list "$WANT_NODE" "$(probe_nodes)"; then
+           echo "⛔ REFUSED: pool_node=$WANT_NODE names no node this pool currently knows about." >&2
+           echo "   Known nodes: $(probe_nodes)" >&2
+           echo "   If this is meant to be an AWS/extra node, check research/queue/.pool_extra_nodes first." >&2
+           exit 2
+         fi
          # TIMESTAMP every entry (2026-07-31). The first run of this queue reused a path that already held 69
          # STALE jobs from an opsweep stopped days earlier as live-but-stalled, and the dispatcher cheerfully
          # launched three of them on real nodes. An un-timestamped queue cannot tell staged-work from debris.

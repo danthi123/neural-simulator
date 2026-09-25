@@ -570,3 +570,35 @@ def test_llm_off_clears_the_marker_even_when_the_unit_is_still_active():
         assert res.returncode == 0, res.stdout + res.stderr
         assert "unloaded" in res.stdout
         assert not os.path.exists(marker)
+
+
+def test_user_bus_env_is_supplied_when_the_dispatcher_runs_without_a_session():
+    """2026-09-25 LIVE failure: gpu-queue-dispatch is a SYSTEM unit with no XDG_RUNTIME_DIR /
+    DBUS_SESSION_BUS_ADDRESS, so `systemctl --user` could not reach the user bus, llm_is_active() read the
+    running model as inactive, and a queued job waited forever for VRAM. The stub below behaves like the real
+    systemctl: it cannot see the unit unless the user-bus variables are set. gpu_queue.sh must supply them."""
+    if not os.path.isdir("/run/user/%d" % os.getuid()) or not os.path.exists("/run/user/%d/bus" % os.getuid()):
+        import pytest
+        pytest.skip("no user runtime dir / bus on this machine")
+    with tempfile.TemporaryDirectory() as tmp:
+        state = os.path.join(tmp, "fake_unit_state")
+        open(state, "w").write("active")
+        systemctl = _write_exec(os.path.join(tmp, "bus_aware_systemctl.sh"), """
+if [ -z "$XDG_RUNTIME_DIR" ] || [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+  echo "Failed to connect to user scope bus via local transport" >&2; exit 1
+fi
+case "$*" in
+  *"is-active --quiet local-llm"*) [ "$(cat %s)" = "active" ] ;;
+  *"stop local-llm"*) echo inactive > %s ;;
+  *) exit 0 ;;
+esac
+""" % (state, state))
+        llm_sh, _ = _fake_llm_sh(tmp, profile="qwen38-27b-iq4nl-mtp-128k-q4")
+        env = {k: v for k, v in os.environ.items() if k not in ("XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS")}
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "GPU_QUEUE_LLM_SH": llm_sh})
+        res = subprocess.run(["bash", _GPU_QUEUE, "__llm_stop_for_job"], env=env, capture_output=True, text=True,
+                             timeout=15)
+        assert res.returncode == 0, res.stderr
+        assert open(state).read().strip() == "inactive", (
+            "the running model was not stopped: gpu_queue.sh did not supply the user-bus environment")
+        assert os.path.exists(os.path.join(tmp, ".local_llm_was_on"))

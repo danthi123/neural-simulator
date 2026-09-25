@@ -467,6 +467,78 @@ def test_pop_job_without_a_node_arg_skips_the_revision_check_entirely(tmp_path: 
     assert ssh_log.read_text() == ""             # and no ssh call was made to check
 
 
+# --------------------------------------------------------------- pool_node= constraint (2026-09-25 B2b torn-cell fix)
+# research/coordination/b2b0924_reruns.tsv: a torn dispatcher-fragment's cell must be re-run on a DIFFERENT host
+# than the one that ran the fragment (B2b prereg Amendment 2, A1.4(b)). A line may declare `pool_node=<name>`
+# anywhere in its text (typically the --checked reason, same convention as `mem_gb=N`) to require that ONLY that
+# node may pop it. No ssh stub needed here: unlike the revision check, this is a pure text match on the candidate.
+
+def test_pop_job_skips_a_line_pinned_to_a_different_node_leaving_it_queued(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool42"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert res.stdout == ""                       # pool42 is not pool41 -- nothing handed out
+    assert "run.sh" in queue.read_text()           # never popped -- still queued for pool41
+
+
+def test_pop_job_hands_a_node_pinned_line_to_its_named_node(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool41"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+    assert "run.sh" not in queue.read_text()       # popped -- removed from the queue
+
+
+def test_pop_job_node_constraint_does_not_swallow_a_later_unconstrained_candidate(tmp_path: Path) -> None:
+    # Mirrors the revision-check scan-truncation regression (test_pop_job_does_not_let_an_unavailable_revision_
+    # probe_swallow_later_queued_candidates, above): a mismatched pool_node= candidate must be `continue`d past,
+    # not stop the scan, so a later, unconstrained line behind it is still reachable this cycle.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash blocked.sh  #checked:r pool_node=pool41 mem_gb=1\n"
+                      f"{now + 1}\tbash good.sh  #checked:r mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool42"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "good.sh" in res.stdout
+    assert "pool_node=pool41" in queue.read_text()  # the constrained line is still queued, untouched
+    assert "good.sh" not in queue.read_text()
+
+
+def test_pop_job_without_a_node_arg_skips_the_node_constraint_too(tmp_path: Path) -> None:
+    # Backward compatibility: node-less callers (test seams that never pass [node]) see unchanged behaviour even
+    # for a pool_node=-tagged line -- the constraint only applies once a real node identity is in play.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r pool_node=pool41 mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+
+
+def test_pop_job_ignores_pool_node_absent_lines_exactly_as_before(tmp_path: Path) -> None:
+    # No behaviour change for lines without the token: a plain line pops for ANY node.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tbash run.sh  #checked:r mem_gb=1\n")
+    env = {**os.environ, "POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = subprocess.run(["bash", str(DISPATCHER), "--pop-once", "999", "pool40"],
+                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "run.sh" in res.stdout
+
+
 def _write_ssh_stub_dir_exists_but_no_marker(tmp_path: Path, sha: str):
     """REGRESSION (2026-09-23 fix round #2): a stub answering `[ -d ... ]` TRUE (dir exists -- the defect: a
     half-provisioned revision from a FAILED pool_provision.sh run always leaves this true) but `[ -f

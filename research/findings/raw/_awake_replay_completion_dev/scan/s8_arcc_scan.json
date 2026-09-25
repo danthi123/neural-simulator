@@ -1,0 +1,290 @@
+{
+ "seed": 8,
+ "arm": "arcc",
+ "group": "datr",
+ "env": {
+  "BRAIN_DA_TAG_CAPTURE": "1",
+  "BRAIN_DA_TAG_CAPTURE_CLOCK": "turn",
+  "BRAIN_SLEEP_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_CAPTURE": "1",
+  "BRAIN_AWAKE_REPLAY_COMPLETION": "1"
+ },
+ "labels": [
+  "datr_t1",
+  "datr_t2",
+  "datr_t3",
+  "datr_t4",
+  "datr_t5",
+  "datr_rest",
+  "datr_night",
+  "datr_recall"
+ ],
+ "tell_seconds": 350.3,
+ "curve": [
+  {
+   "e": 1.0,
+   "R": 0.3745303372959403,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.374530337
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.564461891
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.512101427
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.026637742
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.839967618
+    }
+   },
+   "completion": {
+    "R": 0.3745303372959403,
+    "R_c": 0.7771707650912938,
+    "coherence_abs": 0.7790770622980596,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      3.0
+     ],
+     "action": [
+      5.0,
+      2.0
+     ],
+     "patient": [
+      8.0,
+      4.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.9,
+   "R": 0.34995686330911463,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.349956863
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.561654616
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.49584494
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.012713152
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.831557436
+    }
+   },
+   "completion": {
+    "R": 0.34995686330911463,
+    "R_c": 0.7771707650912938,
+    "coherence_abs": 0.7790770622980596,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      3.0
+     ],
+     "action": [
+      5.0,
+      2.0
+     ],
+     "patient": [
+      8.0,
+      4.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.7,
+   "R": 0.28194494369506035,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.281944944
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.50417403
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.450761195
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.023067182
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.80916922
+    }
+   },
+   "completion": {
+    "R": 0.28194494369506035,
+    "R_c": 0.7771707650912938,
+    "coherence_abs": 0.7790770622980596,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      4.0
+     ],
+     "action": [
+      5.0,
+      3.0
+     ],
+     "patient": [
+      8.0,
+      4.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.5,
+   "R": 0.16715550830548145,
+   "roles": {
+    "agent": {
+     "word": "cat",
+     "margin": 0.167155508
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.379837638
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.374365048
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.072730286
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.774102049
+    }
+   },
+   "completion": {
+    "R": 0.16715550830548145,
+    "R_c": 0.7771707650912938,
+    "coherence_abs": 0.7790770622980596,
+    "items": {
+     "agent": "cat",
+     "action": "chase",
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      4.0
+     ],
+     "action": [
+      5.0,
+      4.0
+     ],
+     "patient": [
+      8.0,
+      5.0
+     ]
+    },
+    "n_items": 3
+   }
+  },
+  {
+   "e": 0.3,
+   "R": 0.06364186172788573,
+   "roles": {
+    "agent": {
+     "word": null,
+     "margin": 0.063641862
+    },
+    "action": {
+     "word": "chase",
+     "margin": 0.127439577
+    },
+    "patient": {
+     "word": "ball",
+     "margin": 0.166507141
+    },
+    "attribute": {
+     "word": null,
+     "margin": 0.063311548
+    },
+    "polarity": {
+     "word": "AFFIRM",
+     "margin": 0.711329227
+    }
+   },
+   "completion": {
+    "R": 0.06364186172788573,
+    "R_c": 0.43218172483315087,
+    "coherence_abs": 0.44058581347936027,
+    "items": {
+     "agent": null,
+     "action": null,
+     "patient": "ball"
+    },
+    "spikes": {
+     "agent": [
+      6.0,
+      6.0
+     ],
+     "action": [
+      6.0,
+      5.0
+     ],
+     "patient": [
+      8.0,
+      7.0
+     ]
+    },
+    "n_items": 1
+   }
+  }
+ ],
+ "curve_seconds": 7.6,
+ "scan": true,
+ "elapsed_seconds": 357.9,
+ "tell_da": [
+  0.04616293556102311,
+  0.3944787502697754,
+  0.2515586481942769,
+  0.04616293556102311,
+  0.04616293556102311
+ ]
+}
