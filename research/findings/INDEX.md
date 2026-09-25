@@ -27,12 +27,14 @@ non-gate-reading field), and **19 numbers the audit could not trace to any cited
 mis-parsed as decimals by the checker's regex, uncommitted/UNARCHIVED scratch-script output the doc itself
 disclaims, a rotated log file, or an external-literature figure). Per the owner's ruling: **no bulk-marking of
 unchecked numbers and no retractions** — the 19 are listed below as a known-untraceable set, not a fabrication
-claim, and stand unmarked in their source documents.
+claim, and remain covered by their docs' pre-existing block `<!--derived-->` markers (unchanged; the current
+checker does not flag them).
 
 **This was a spot audit, not a full re-verification** of the corpus: older findings were sampled, not
 exhaustively re-checked, so an unflagged old number is not thereby confirmed. `tools/claim_check.py` (the
-pre-commit gate) guards **new and edited findings only**; it does not retroactively re-scan history. Further
-auditing of the remaining corpus is low-priority background work, not blocking.
+pre-commit gate, `tools/githooks/pre-commit:45`) runs with `--diff-filter=A`, so it guards **newly added
+findings only**; edits must be run manually (as was done for these 8), and it does not retroactively re-scan
+history. Further auditing of the remaining corpus is low-priority background work, not blocking.
 
 **The 19 untraceable numbers** (doc:line — value(s) — why):
 
