@@ -156,6 +156,9 @@ cmd_on() {
     fi
   fi
   local cmd; cmd="$(profile_cmd "$prof")"
+  # A unit left FAILED (e.g. a stop that timed out and was SIGKILLed, 2026-09-26) stays loaded, and systemd-run then
+  # refuses the same name ("already loaded or has a fragment file"); clear it first. Harmless when there is none.
+  "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
   # shellcheck disable=SC2086
   systemd-run --user --quiet --unit="$UNIT" --description="local LLM ($prof)" -p MemoryMax=12G bash -c "exec $cmd"
   echo "loading $prof ..."; wait_up && echo "ready on http://127.0.0.1:$PORT ($prof)"
@@ -262,8 +265,12 @@ case "${1:-status}" in
   on) shift; cmd_on "$@" ;;
   off) cmd_off ;;
   status) cmd_status ;;
-  claude) shift; cmd_claude "$@" ;;
-  resume) shift; cmd_claude --continue "$@" ;;
+  claude) shift
+    # `llm claude continue` / `llm claude resume` (a bare word, not the flag) means "continue", not a new session
+    # whose first prompt is the word "continue" (seen 2026-09-26)
+    if [ "$#" -eq 1 ] && { [ "$1" = continue ] || [ "$1" = resume ]; }; then set -- --continue; fi
+    cmd_claude "$@" ;;
+  resume|continue) shift; cmd_claude --continue "$@" ;;
   __session_args) shift; llm_session_args "$@" | tr '\0' ' '; echo ;;   # TEST-ONLY: show the rewritten args
   run) shift; cmd_run "$@" ;;
   __current_profile) current_profile ;;   # hidden: gpu_queue.sh's llm_stop_for_job reads this to remember the profile

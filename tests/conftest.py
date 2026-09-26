@@ -35,3 +35,13 @@ from __future__ import annotations
 import os
 
 os.environ.setdefault("SIM_NO_PROVENANCE", "1")
+
+
+# 2026-09-26: no test may ever reach the REAL local-llm user unit. Since the GPU<->local-model autoswap merged
+# (2026-09-25), tools/gpu_queue.sh stops the local model whenever a job is queued, and tools/local_llm/llm.sh stops it
+# on `off`; a test that drives either without its own stub would stop the owner's running model (a full-suite run
+# did, 2026-09-26 00:01, leaving the unit failed). Default every subprocess to a stub that reports the unit
+# inactive and ignores stop/start; tests that need a specific fake still set LOCAL_LLM_SYSTEMCTL themselves.
+import os as _os_llm
+_STUB = _os_llm.path.join(_os_llm.path.dirname(__file__), "_stub_systemctl_inactive.sh")
+_os_llm.environ.setdefault("LOCAL_LLM_SYSTEMCTL", _STUB)
