@@ -242,6 +242,13 @@ co-occur, test A alone in a novel context Z; arms: full replay, wake-only, order
 representational read. Adopted: "which mechanisms were necessary for which capability, by ablation" is now the reporting standard
 (CLAUDE.md non-negotiable 4). Full exchange: this session 2026-09-25 evening.
 
+**🌙 23:40 HARVEST (local-model runbook, 2026-09-25):** arcc awake-replay completion battery (6 gate seeds; prereg
+2026-09-24-sleep-replay-capture, Amendment 8 / Addendum 8a) landed 6/6; aggregate verdict GO (6/6 GO): sign-flip p 0.015625 on
+rest-rescue on-vs-off and intact-vs-awake-lesion; diffs_on_minus_off 6/6; diffs_intact_minus_lesion 6/6; completion
+load-bearing 1/6 (awake completion needed 1/6, night 0/6). Raw: research/findings/raw/_awake_replay_completion/ (6 seed
+JSONs + per-seed arm dirs + aggregate.json, .prov.json sidecars). Raw files on disk, not yet committed: waiver budget
+exhausted until ~16:00 Sat; they commit once a pool lane is served or the budget frees.
+
 **☀️ 19:05 HANDOFF READY (owner: 88% weekly usage; local model takes over at the owner's discretion):** since 18:20 MERGED:
 fi finding 690700816 (NO-GO 3/6, aggregate with checked preconditions), prioritized-memory DESIGN rev 4 7964590ef (+ open
 review issues listed at its top e7c7a281f), local-LLM prompt-cache fix 4c72a7f56 (template renders later system messages in
