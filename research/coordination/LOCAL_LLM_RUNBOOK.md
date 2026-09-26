@@ -15,6 +15,22 @@ Start here every session: `bash tools/status.sh` (read-only, <=40 lines, ~10s). 
 pool queue + per-node state, AWS spend vs cap, whether the local-llm unit is up, every registered battery's
 rows-landed vs expected, and recent failures.
 
+## Context budget (read this first; you compact every ~10 minutes otherwise)
+
+Your window is 128K tokens and about 20K is used before you start. On 2026-09-26 one session compacted 14 times because
+~240K tokens of file reads went through it: whole modules (35-41K characters each, one read twice), 300-line chunks of
+`webapp/server.py` (~30K characters each), and repeated full re-reads of its own growing draft (~37K characters).
+
+- **Find first, then read narrowly:** `grep -n "def name\|keyword" file` to locate, then Read with `offset` and
+  `limit` of at most **120 lines**. Never Read a whole source file.
+- **Never re-read a file you are writing.** Append new rows or entries (Edit at the end, or `cat >> file <<'EOF'`);
+  check what is there with `tail -n 20 <file>` or `grep -c '^| ' <file>`.
+- **Never re-read a file you already read this session** unless you are about to edit that exact range.
+- **Keep Bash output short:** pipe through `head -40` / `tail -40`, and `cut -c1-200` for long lines.
+- **After a compaction, read ONLY:** this section, the "Hard rules" of the task you are on (in "Weekend work" below),
+  and `tail -n 25` of that task's `WORKLOG.md`. Re-read the full runbook only at the start of a new session.
+- Write each finding into the draft as soon as you have it, so a compaction loses nothing.
+
 ## What you MAY do
 
 1. **Run `bash tools/status.sh`** as often as you like — it changes nothing.
