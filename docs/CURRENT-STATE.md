@@ -1,6 +1,10 @@
 # Current State
 
-Status reviewed: 2026-08-11.
+Status reviewed: 2026-08-11; refreshed 2026-09-25 for the headline counts, the
+permanent-mouth decision, the shared spiking pool, and the load-bearing
+metric below. The detailed "Demonstrated" / "Partially Achieved" tables
+further down describe the original fourteen-turn toy-world demo as it stood
+on 2026-08-11 and have not been re-audited row by row since.
 
 Neural Simulator is a capable CPU/GPU spiking-network simulator and a large
 collection of neuroscience-inspired experiments. It is **not yet an autonomous
@@ -8,18 +12,56 @@ conversational mind**. It cannot currently live in a world, develop through
 ordinary human interaction, hold fluent open-ended conversations, or produce
 all of its cognition through one self-organizing spiking brain.
 
-The current frontier is **continuous integration**: validated faculties are now
-wired into one live fourteen-turn conversational loop, and each change is judged
-by whether the conversation actually improves, because running the real chat is
-what exposes results that only looked good in isolation. That chat still runs in
-a small toy world (two agents, three actions, a small fact set), so most turns
-correctly abstain, and the language "mouth" is a conventionally trained spiking
-language model kept as an explicit articulation scaffold. Episodic memory (the
-"gap#5" seam) is now mechanistically closed at the completion-readout level and
-wired into that loop.
+The current frontier is **continuous integration**: validated faculties are
+wired into a live conversational loop, and each change is judged by whether
+the conversation actually improves, because running the real chat is what
+exposes results that only looked good in isolation. As of the 2026-09-16
+ledger head, the production-integration ledger tracks 69 faculties in total,
+30 of them default-on and genuinely spiking, and 5 with their host scaffold
+fully retired (one-brain-substrate — the recall composer's own retirement —
+selective-attention-biased-competition, spiking-novelty-habituation,
+spiking-anaphor-detection, and spiking-qroute-selection). Since 2026-09-19 the
+tracked #1 metric is a lesion-verified **load-bearing fraction** of the whole
+production conversation, always reported as a pair: a 2026-09-25 re-scored
+6-seed battery reads mean 0.603 (robust core 15/26, union 16) with the thin
+measurement probes the shipped default actually uses, and mean 0.949 (robust
+core 24/26, union 25) with adequate measurement-only probe fixes not yet
+shipped (`research/findings/2026-09-25-production-default-battery-B2a-rescored-PASS.md`).
+Eleven cortical organs (surprise, world-model, self-monitoring, comprehension,
+pragmatic inference, self-schema, curiosity, the causal what-if model,
+source-provenance, prospective memory, and multi-referent working memory) are
+validated together on one shared spiking pool, with 8 of them routed through
+it on the default chat path today (`onebrain-merge-organs` in the ledger).
+
+As of 2026-09-19, the external Qwen2.5-0.5B-Instruct language model is treated
+as a **permanent** articulation "mouth" rather than a scaffold being phased
+out: an earlier arc to retire it in favor of the brain's own from-scratch
+spiking fluency was closed as falsified (that spiking mouth beat a simple
+word-pair baseline on simple text at a deployable size, but was not fluent
+enough on broad, arbitrary-topic text). A narrower, bounded-scope spiking
+mouth that renders single-role transitive-SVO recall sentences directly
+remains default-on for that narrow case and is a separate, older mechanism,
+unaffected by that closure. The tracked question is now whether the spiking
+brain, not Qwen, is provably load-bearing on what gets said (the load-bearing
+fraction above), not how much of the mouth has been replaced.
+
+The original fourteen-turn demo conversation described in the tables below
+still runs in a small toy world (two agents, three actions, a small fact
+set), so most of *its* turns correctly abstain. That no longer describes the
+production default on its own: since 2026-09-02, the default `/api/brain-chat`
+path loads the brain's full roughly 79,000-fact knowledge base (the
+`wikidata_100k` bundle) as its long-term-memory tier whenever the
+deployment's data lake directory is present, so a deployed production chat
+draws on far more than the toy world's handful of facts; a checkout without
+that data lake degrades, byte-identically, to the small in-process demo
+described here, where most turns still correctly abstain. Episodic memory
+(the "gap#5" seam) is now mechanistically closed at the completion-readout
+level and wired into that loop.
 
 This page separates evidence for working components from partial integration
-and from abilities that have not been achieved.
+and from abilities that have not been achieved; the "Demonstrated" and
+"Partially Achieved" tables below describe the 2026-08-11 toy-world demo
+specifically.
 
 ## Demonstrated
 
