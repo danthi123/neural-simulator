@@ -128,6 +128,28 @@ check still refuses (its waiver budget is exhausted), that is a NEEDS CLAUDE ite
 _(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
 lines here after the Tuesday reset.)_
 
+## Weekend draft work (owner-approved 2026-09-25) -- DRAFTS ONLY, never merged
+
+Serves the adopted plan `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. Rules: work on a branch
+`research/draft-<topic>` (`git switch -c research/draft-<topic>`), write under `docs/drafts/`, commit through the gates,
+push with `bash tools/push_both.sh research/draft-<topic>`, never merge, never touch `main` for this. Append to the draft
+file after EVERY chunk of work, so nothing is lost if the session ends or compacts. Claude reviews the drafts after Tuesday.
+
+1. **Host-decision seam map (plan section 1)** -> `docs/drafts/host-decision-seam-map.md`. Trace ONE default chat turn
+   (`/api/brain-chat` in `webapp/server.py`) in order. For every place Python decides something from neural output, one
+   table row: file:line, the operation, the neural input just before it, the decision made, the category (candidate
+   generation / scoring / admission-filtering / winner selection / commitment / composition / routing), whether a
+   neural signal already represents the choice (cite what shows it), and "unsure" wherever you are not certain. Work in
+   chunks of ~300 lines of server.py; record facts only, no recommendations.
+2. **Prior-work memos (plan sections 4-5)** -> `docs/drafts/credit-and-sleep-prior-work.md`. For the long-delay credit
+   task and sleep transitive inference: run `bash tools/before_you_build.sh "<topic>"` and
+   `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus all`, OPEN each hit, and list what the project already
+   has (eligibility traces, DA gating, sleep replay, transitive/relational memory runners and findings) with paths and
+   one-line quotes. Do not design the experiment.
+3. **Test-suite triage (parked item)** -> `docs/drafts/test-suite-triage.md`: run the resumable full-suite command from
+   "Parked for Claude" (it takes 2+ hours; the owner approves the command), then group failures by error message.
+   Mark `cudaErrorNoDevice` / GPU-hidden failures as ENVIRONMENT; list the rest with the first error line. No fixes.
+
 ## Parked for Claude (after the Tuesday reset) — do NOT work on these
 
 - Prioritized memory (owner's top memory directive): the DESIGN is on main (e7c7a281f) with its open re-review issues listed at

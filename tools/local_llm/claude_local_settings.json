@@ -34,7 +34,10 @@
       "Edit(research/coordination/LOCAL_LLM_RUNBOOK.md)",
       "Edit(GAP_CLOSURE_MISSION.md)",
       "Edit(research/queue/.lane_waiver)",
-      "Edit(research/queue/.parallel_compute_waiver)"
+      "Edit(research/queue/.parallel_compute_waiver)",
+      "Edit(docs/drafts/**)",
+      "Bash(bash tools/before_you_build.sh:*)",
+      "Bash(.venv-rag/bin/python tools/rag/rag_search.py:*)"
     ],
     "deny": [
       "Bash(git commit --no-verify:*)",
