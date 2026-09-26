@@ -47,3 +47,18 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   already pointed at by Part 1's "Part 2" refs; fill with the specific mapping + line, mark unsure where the
   read is not yet traced.
 - 2026-09-26 14:15 (Claude): the GPU fell off the bus at ~11:07 during the commit above; Claude committed Part 1 on the local model's behalf (Markdown only). Resume at Part 2 (A = ChatBrain core ... E) per the entry above.
+- 2026-09-26 20:38  RESUMED after compaction. Re-read the runbook in full (FIRST-EVERY-TIME): task 0 ("Pending
+  commit from Claude") is now DONE (runbook line 138: "DONE 2026-09-26 16:10 by Claude (ae60029b0; b629d1a35)");
+  the arcc per-seed raw files are committed (b629d1a35), only aggregate.json stays for Claude's scoring. `git -C
+  /home/dant123/Projects/sim rev-parse --abbrev-ref HEAD` = main. `bash tools/status.sh`: GPU idle, pool queue 0,
+  no READY battery (b2b_base is Claude's, arcc 0/6 WAITING), AWS $0.40, local-llm active. Nothing to harvest or
+  queue. Wrote Part 2 section A (the `ChatBrain` core) into host-decision-seam-map.md: 12 rows A1-A12 in
+  execution order as `gate()` runs (open-ended routing 811, in-loop acquisition 816, anaphora 819, comprehension
+  1514, spiking recall 1521, miss-only fallbacks 1528-1573, honest-abstain 1613, gate abstain handling 828, host
+  router candidate 852, **the `if recalled == p` commitment seam 857-868 = the host-share instrument target**,
+  render+verify 1642, spiking-mouth 1648). Verified location facts: `what_does`/`is_it_true` are on the INNER
+  `BrainConversationalAgent` (brain_conversational_agent.py:772/783), not ChatBrain; `_spiking_select` is on the
+  composer (one_brain_composer.py:956) → section B. `what_does` → `composer.query_patient(a,v)` (the spiking
+  recall, returns patient or None = the no-confab moat). UNSURE markers kept on A2/A3/A6/A11 (host-vs-neural
+  split of comprehension, anaphora, fallbacks, render). Next: section B (`RichAnswerComposer.answer`,
+  rich_answer_composer.py:303).
