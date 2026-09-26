@@ -1,5 +1,16 @@
 # Current State
 
+> **Update 2026-09-25 (the rest of this page was last reviewed 2026-08-11 and is being refreshed).** The ledger now
+> counts 69 faculties, 30 spiking and on by default, 5 with their host scaffold fully retired. Qwen2.5-0.5B-Instruct
+> is the permanent articulation mouth (owner decision 2026-09-19); the #1 metric is the lesion-verified
+> load-bearing fraction, measured on the shipped brain two ways: mean 0.949 (robust core 24 of 26, adequate
+> measurement-only probes, 2026-09-25) and mean 0.603 (robust core 15, older thin probes, 2026-09-24, a known
+> under-measurement). A shared spiking pool is on by default (11 organs validated in it, 8 routed through it on the
+> default chat path), but most organ-to-organ boundaries are still host relays. The "small toy world" below
+> describes the original fourteen-turn demo: the default chat endpoint loads the ~79,000-fact bundle when the
+> deployment's data store is present. Current phase:
+> [prove who owns the computation](plans/2026-09-25-prove-who-owns-the-computation-PLAN.md).
+
 Status reviewed: 2026-08-11.
 
 Neural Simulator is a capable CPU/GPU spiking-network simulator and a large

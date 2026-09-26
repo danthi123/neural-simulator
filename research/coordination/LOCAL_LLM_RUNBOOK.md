@@ -117,8 +117,13 @@ DESIGN ("Queue next" is empty). The honest exception, then retry the commit:
 - Otherwise: write the same two files with `CLASS: NO-READY-WORK` and a `checked=` line naming what you looked at, e.g.
   `checked=<date time>: status.sh shows no READY battery beyond the one being committed; LOCAL_LLM_RUNBOOK Queue next is empty`.
 
-Never write anything in a waiver that is not true. Waivers expire after 6 h; write a fresh one when needed. If the
-check still refuses (its waiver budget is exhausted), that is a NEEDS CLAUDE item.
+Never write anything in a waiver that is not true. Waivers expire after 6 h and there is a 6-hour budget of waiver
+time per rolling 24 h (2026-09-25: the budget was used up at ~22:30 and frees gradually from ~16:00 Saturday).
+- **Commits whose staged files are ALL Markdown (.md) are exempt from this check** -- drafts, worklogs, preregs, the
+  seam map and board lines can always be committed.
+- For a commit that includes code or raw results: write the honest waiver just before the commit and delete it right
+  after, so it does not sit charging the budget. If the check still refuses because the budget is exhausted, keep
+  working and commit Markdown only; commit the code/results later. Never bypass it.
 
 ## Queue next
 
@@ -171,6 +176,10 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
 4. **Sleep transitive inference (plan section 5)** -> DRAFT prereg + a runner skeleton that REUSES the sleep-replay
    capture machinery (`webapp/sleep_replay_capture.py`, `research/runners/_da_tag_capture_chat_probe.py`, read-only).
    Arms: normal replay, wake-only, order-scrambled replay, replay off; the novel-context test. Dev smoke only if it runs.
+6. **Finish the public-docs refresh** (branch `docs-refresh-readme`, worktree `/home/dant123/Projects/sim-worktrees/docs-refresh`):
+   fix every item in `docs/drafts/docs-refresh/ISSUES.md` (25 honesty-check issues: stale numbers, contradictions,
+   overclaims, conflated mechanisms), re-checking each number against the ledger/findings; keep the honesty boundary;
+   log in that folder's WORKLOG.md; commit there; never merge (Claude reviews and publishes after Tuesday).
 5. **Test-suite triage** -> `docs/drafts/test-triage/`: the resumable full-suite command from "Parked for Claude"
    (2+ hours; start it on the pool or locally under memcap and do other tasks meanwhile), then group failures by error.
    `cudaErrorNoDevice`/GPU-hidden = ENVIRONMENT; list the rest with the first error line. No fixes.

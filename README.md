@@ -80,15 +80,22 @@ the real conversation, rather than an isolated probe, is what exposes a
 mechanism that was mis-scoped in isolation. A 2026-08-19 audit lesioned the
 thirty-one faculties then on by default and found twenty-three genuinely change
 the reply and none inert, with roughly fifteen genuinely spiking and
-lesion-load-bearing. As of the 2026-09-05 ledger head the tracked
-production-integration ledger counts 66 faculties in total, 30 of them
-genuinely spiking and on by default, and 1 with its host scaffold fully
-retired (`scaffold_retired: 1`), so this remains, by the ledger's own note,
-co-residency of many faculties in one loop rather than one true substrate for
-most of the live chat's load-bearing cognition, which still runs in host
-Python or NumPy. The open problems are a fluent open-ended mouth, a single
-true substrate for the remaining faculties, and mechanisms that emerge rather
-than being hand-wired.
+lesion-load-bearing. As of 2026-09-25 the production-integration ledger
+counts 69 faculties in total, 30 of them genuinely spiking and on by default,
+and 5 with their host scaffold fully retired (`scaffold_retired: 5`). This is
+still, by the ledger's own note, co-residency of many faculties in one loop
+rather than one true substrate: most organ-to-organ boundaries remain host
+relays, and much of the live chat's load-bearing cognition still runs in host
+Python or NumPy. Since 2026-09-19 the language model (Qwen2.5-0.5B-Instruct) is
+kept as the permanent articulation mouth, and the #1 metric is the lesion-verified
+load-bearing fraction: how much of the brain provably changes the reply. It is
+measured on the shipped default brain two ways: with the adequate
+measurement-only probe set, mean 0.949 (robust core 24 of 26 exercised, union
+25, SD 0.018; 2026-09-25 re-scored battery); with the older thin probe set, mean
+0.603 (robust core 15, union 16; 2026-09-24 flip battery), a known
+under-measurement. The current phase asks which part of the system caused each
+answer, shown causally
+([plan](docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md)).
 
 For a dated status report, see [Current State](docs/CURRENT-STATE.md). For the
 planned build order, see the [Roadmap](ROADMAP.md).
