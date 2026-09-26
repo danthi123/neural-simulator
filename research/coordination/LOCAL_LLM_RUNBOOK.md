@@ -137,7 +137,7 @@ lines here after the Tuesday reset.)_
 
 The local-llm fix below is already live in the working tree but could not be committed (code commit + exhausted waiver
 budget). After 16:00 Saturday: write the honest NO-READY-WORK waiver (see the idle-compute section), then
-`git add tools/local_llm/llm.sh tests/conftest.py tests/_stub_systemctl_inactive.sh tests/test_no_real_llm_unit.py`,
+`git add tools/local_llm/llm.sh tests/conftest.py tests/_stub_systemctl_inactive.sh tests/test_no_real_llm_unit.py tools/local_llm/claude_local_settings.json`,
 run `.venv/bin/python -m pytest -q tests/test_no_real_llm_unit.py tests/test_llm_gpu_autoswap.py tests/test_llm_session_resume.py`,
 commit with the message `fix(local-llm): tests can no longer stop the real local model; llm on clears a failed unit;
 llm claude continue means resume (Claude-authored 2026-09-26, committed by the local model)`, delete the waiver, and
@@ -148,8 +148,12 @@ push main. If anything differs from this description, stop and write NEEDS CLAUD
 Serves `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. The owner wants the local model to carry real
 work, done so Claude can review, fix or discard it later. **Hard rules for everything in this section:**
 
-- Each task on its own branch: `git switch -c research/draft-<topic>`; commit through the gates; push with
-  `bash tools/push_both.sh research/draft-<topic>`; **never merge, never commit this work to `main`**.
+- **NEVER switch the branch of the main checkout** (`/home/dant123/Projects/sim` must stay on `main`: live services run
+  from it). Each task gets its own worktree: `git worktree add .claude/worktrees/draft-<topic> -b research/draft-<topic>`
+  (or without `-b` if the branch exists), and ALL edits, commits and pushes happen inside that folder. The seam map
+  already has one: `.claude/worktrees/draft-seam-map` (branch `research/draft-seam-map`, your uncommitted draft moved
+  there 2026-09-26). Push with `git -C .claude/worktrees/draft-<topic> push origin research/draft-<topic>` and the same
+  for `gitea`. **Never merge, never commit this work to `main`.**
 - Keep `WORKLOG.md` at the top of the branch's draft folder (`docs/drafts/<topic>/`): each entry = date/time, what you
   did, commands you ran, results (paths), and anything you are UNSURE of. Append after every step, so a restart or
   compaction loses nothing. Mark guesses as guesses.
@@ -158,7 +162,7 @@ work, done so Claude can review, fix or discard it later. **Hard rules for every
 - Compute: CPU on the mini-PC pool (`tools/pool_queue.sh add`, jobs pinned to your pushed branch commit after
   `bash tools/pool_provision.sh --revision <sha> --isolated pool41 pool42`); small local runs only under
   `bash tools/memcap.sh 8 -- ...`. **No GPU jobs** (the GPU auto-swap would stop your own model mid-session).
-- Code goes in NEW files under `research/runners/` and `tests/` (never edit `sim/`, `webapp/`, `tools/gates/`). To
+- Code goes in NEW files under `research/runners/` and `tests/` (inside your worktree) (never edit `sim/`, `webapp/`, `tools/gates/`). To
   observe production code, import it and wrap/monkeypatch functions inside your runner; never change it.
 - Stop and write NEEDS CLAUDE when: a gate blocks and the fix isn't obvious, a result looks like a GO/NO-GO, or a design
   choice would change what the experiment means.
