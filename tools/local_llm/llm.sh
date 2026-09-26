@@ -7,7 +7,11 @@
 #   llm off              unload it (frees its VRAM); also cancels any pending gpu_queue auto-restore (below)
 #   llm status           what is loaded, and GPU memory in use
 #   llm claude [args]    open Claude Code in the current directory, talking to the local model (no Anthropic account);
-#                        LLM_CLAUDE_FULL=1 skips the local-only context trims described at cmd_claude below
+#                        LLM_CLAUDE_FULL=1 skips the local-only context trims described at cmd_claude below.
+#                        Each new session's id is recorded; `llm claude --continue` (or -c) resumes the LAST LOCAL
+#                        session, never Claude Code's own "most recent in this folder" (that can be a huge Anthropic
+#                        desktop session that overflows the local window); `llm claude --resume <id>` resumes any.
+#   llm resume           same as `llm claude --continue`
 #   llm run <command>    unload the model, run <command> to completion, reload the model, print how it ended
 #
 # Profiles (model file, context size, sampling, speculative decoding) live in tools/local_llm/profiles.json and were
@@ -196,8 +200,35 @@ served_ctx() {   # context size (tokens) of the profile being served: the runnin
 # The trim flags go AFTER your arguments because --disallowedTools takes a list: placed first, it would swallow a
 # prompt given as a plain argument (`llm claude "fix X"`). If you pass your own --settings, --mcp-config or
 # --disallowedTools, run with LLM_CLAUDE_FULL=1 to avoid mixing them.
+LLM_SESSION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sim-local-llm/last_session"
+# Session bookkeeping (2026-09-25): Claude Code's own --continue picks the most recent session in this project folder,
+# which is usually the owner's Anthropic desktop session -- a transcript far larger than the local window. So --continue
+# / -c is rewritten to --resume <the last session llm itself started>, and every new session gets a recorded id.
+llm_session_args() {   # llm_session_args <args...> -> prints NUL-separated args with session handling applied
+  local out=() a have_session=0 want_continue=0 next_is_id=0 last=""
+  for a in "$@"; do
+    if [ "$next_is_id" = 1 ]; then next_is_id=0; last="$a"; out+=("$a"); continue; fi
+    case "$a" in
+      -c|--continue) want_continue=1 ;;
+      -r|--resume) have_session=1; next_is_id=1; out+=("$a") ;;
+      --resume=*) have_session=1; last="${a#--resume=}"; out+=("$a") ;;
+      --session-id) have_session=1; next_is_id=1; out+=("$a") ;;
+      *) out+=("$a") ;;
+    esac
+  done
+  if [ "$want_continue" = 1 ] && [ "$have_session" = 0 ]; then
+    last="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
+    if [ -n "$last" ]; then out=(--resume "$last" "${out[@]}"); have_session=1
+    else echo "llm: no previous local session recorded; starting a new one" >&2; fi
+  fi
+  if [ "$have_session" = 0 ]; then last="$(uuidgen 2>/dev/null || python3 -c 'import uuid; print(uuid.uuid4())')"; out=(--session-id "$last" "${out[@]}"); fi
+  if [ -n "$last" ]; then mkdir -p "$(dirname "$LLM_SESSION_FILE")" && printf '%s\n' "$last" > "$LLM_SESSION_FILE"; fi
+  printf '%s\0' "${out[@]}"
+}
+
 cmd_claude() {
   is_up || cmd_on || return 1   # don't point Claude at a dead endpoint if cmd_on refused (e.g. a GPU job is busy)
+  local sargs=(); mapfile -d '' -t sargs < <(llm_session_args "$@"); set -- "${sargs[@]}"
   local ctx trim=() ctxenv=()
   ctx="${CLAUDE_CODE_MAX_CONTEXT_TOKENS:-$(served_ctx)}"
   [ -n "$ctx" ] && ctxenv=("CLAUDE_CODE_MAX_CONTEXT_TOKENS=$ctx")
@@ -232,6 +263,8 @@ case "${1:-status}" in
   off) cmd_off ;;
   status) cmd_status ;;
   claude) shift; cmd_claude "$@" ;;
+  resume) shift; cmd_claude --continue "$@" ;;
+  __session_args) shift; llm_session_args "$@" | tr '\0' ' '; echo ;;   # TEST-ONLY: show the rewritten args
   run) shift; cmd_run "$@" ;;
   __current_profile) current_profile ;;   # hidden: gpu_queue.sh's llm_stop_for_job reads this to remember the profile
   *) sed -n '2,27p' "$0"; exit 2 ;;

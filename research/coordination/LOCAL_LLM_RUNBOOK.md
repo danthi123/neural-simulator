@@ -9,6 +9,8 @@ The commands this runbook uses are pre-approved in `tools/local_llm/claude_local
 anything else asks for permission, and the explicit denies (--no-verify, force-push, merge, AWS, sim/ webapp/ tools/gates/
 edits) are refused outright.
 
+Resume the previous local session with `llm resume` (or `llm claude --continue`); plain `llm claude` starts a new one.
+
 Start here every session: `bash tools/status.sh` (read-only, <=40 lines, ~10s). It shows the GPU queue, the
 pool queue + per-node state, AWS spend vs cap, whether the local-llm unit is up, every registered battery's
 rows-landed vs expected, and recent failures.
