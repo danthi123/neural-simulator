@@ -229,7 +229,7 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
-**☀️ 21:30 PROPOSED NEXT PHASE (external reviews, owner to confirm; nothing built):** after two outside AI reviews, the proposed
+**☀️ 21:30 NEXT PHASE -- ADOPTED by the owner 2026-09-25 ~22:00 (plan: docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md; nothing built yet):** after two outside AI reviews, the proposed
 frame is "prove who owns the computation" with the permanent mouth held fixed. Candidates, in order: (1) host-decision seam map of the
 live chat turn, content/commitment seams first; (2) a HOST-DECISION SHARE metric per seam, measured BEFORE any retirement: decision
 substitution, decodability of the host decision from pre-decision neural state (necessary, not sufficient), and the decisive one,
@@ -239,8 +239,8 @@ with no host argmax, tested by state-dependent reversal (need state flips the wi
 long-delay credit task: cue A/B, variable delay (0.5x-8x base), uninformative terminal state, final DECOY cue, eligibility-trace
 lesion, immediate-reward and shuffled-reward controls; (5) sleep transitive inference A->B (ctx X), B->D (ctx Y), A and D never
 co-occur, test A alone in a novel context Z; arms: full replay, wake-only, order-shuffled replay, replay lesion; plus a before/after
-representational read. Owner question pending: adopt "which mechanisms were necessary for which capability, by ablation" as the
-reporting standard beside the faithfulness default. Full exchange: this session 2026-09-25 evening.
+representational read. Adopted: "which mechanisms were necessary for which capability, by ablation" is now the reporting standard
+(CLAUDE.md non-negotiable 4). Full exchange: this session 2026-09-25 evening.
 
 **☀️ 19:05 HANDOFF READY (owner: 88% weekly usage; local model takes over at the owner's discretion):** since 18:20 MERGED:
 fi finding 690700816 (NO-GO 3/6, aggregate with checked preconditions), prioritized-memory DESIGN rev 4 7964590ef (+ open

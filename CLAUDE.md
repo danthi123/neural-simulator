@@ -14,6 +14,9 @@ grows through a TEMPORARY AI-teacher scaffold that graduates to real humans; eve
 spiking brain, the transformer minimized. (Owner 2026-09-19: Qwen stays as the permanent conditioned-articulation
 mouth; the #1 metric is the lesion-verified load-bearing fraction:
 `docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md`.)
+**Current phase (owner 2026-09-25): prove who owns the computation.** Which part of the system caused the answer,
+shown causally? A host-decision share, measured by intervention, sits beside the load-bearing fraction:
+`docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`.
 
 - **PLAN:** [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
   (faculty map, one-brain architecture, 6 stages, walls ledger; the old 5-gap cluster is a sub-view). Foundation:
@@ -37,6 +40,9 @@ mouth; the #1 metric is the lesion-verified load-bearing fraction:
 4. **Speed is secondary.** Slow-but-faithful biology (dendritic credit, seconds-long BTSP plateaus, sleep replay) is
    in scope; never trade faithfulness for speed. (Owner refinement 2026-09-18: a per-mechanism realism trade only for
    a significant performance gain that loses nothing important to the end goal, documented honestly.)
+   **Faithfulness-first, but falsifiable (owner 2026-09-25):** biological fidelity never counts as evidence for a
+   capability by itself. For every major capability, report which mechanisms were NECESSARY for it, shown by
+   controlled six-seed ablation; mechanisms are not dropped because one benchmark does not need them.
 5. **The honesty boundary is a deliverable.** Build and measure every functional consciousness / self-model / affect
    correlate; every self-report is an honest functional read-out ("my familiarity monitor reads this as novel, so I'm
    uncertain"); NEVER assert phenomenal experience.
