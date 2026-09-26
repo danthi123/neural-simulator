@@ -62,3 +62,18 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   recall, returns patient or None = the no-confab moat). UNSURE markers kept on A2/A3/A6/A11 (host-vs-neural
   split of comprehension, anaphora, fallbacks, render). Next: section B (`RichAnswerComposer.answer`,
   rich_answer_composer.py:303).
+- 2026-09-26 20:5x  Wrote Part 2 section B (`RichAnswerComposer.answer`, rich_answer_composer.py:303) into
+  host-decision-seam-map.md: 13 rows B1-B13 in execution order as `answer()` runs. Verified line facts against the
+  source: B1 `_is_followup` (1001, helper 219-230); B2 `if not facts: abstain` (1003-1008); B3 single-HypothesisSVO
+  flagged-guess (1014-1018); B4 `if not kept: abstain` (1020-1024); B5 `direct = self._direct_fact(question); if
+  direct is None: return None,[]` (647-649, the moat); B6 topic `p if (p in agents_set) else a` (664-668); B7
+  chain+elab+`_dedup(...)[:max_sentences]` cap (671-674); B8 `resolve_compositional_chain` FIRST then `chat.gate`
+  (463-468); B9 `_chain_facts` spiking hop + host corner-turn `own[0]` (503-520); B10 `_planner.ordered_associates`
+  dlPFC rank (540 / 578-579, neural); B11 `composer.elaborate` + edge-weight fallback (613-623); B12 per-fact
+  `_render_one_verified` keep/drop (826-832); B13 `_verify_claim_set`/`_verify` (987-991). Added a "Note on the
+  moat": B2/B4/B5/B12/B13 are the same no-confab moat at different altitudes (neural verdict → host maps to
+  abstain/drop, never injects a fact); the only genuinely host-authored candidate-generation in B is B9's
+  corner-turn (`own[0]`) and B11's edge-weight fallback, both fire only after the spiking selection missed and both
+  draw from the brain's own stored facts (never the LLM). Fixed a duplicate B skeleton bullet left over from the
+  section A edit (the bullet now appears once, at 205 as C). UNSURE/partial markers kept: B3/B6/B7/B8/B9/B11 are
+  PARTLY (host-vs-neural split). Next: section C (the GNW gate-wrapper stack, server.py:4650-4769).
