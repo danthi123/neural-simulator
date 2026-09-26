@@ -114,3 +114,20 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   read is host-owned by default; (2) the E.1 parses gate the turn class (legitimate host, but the comprehension-gate
   biologizing target). `check_docs.py` PASSES (W1 0, W2 0). MAP COMPLETE (Part 1 57 rows + Part 2 A1-A12/B1-B13/
   C1-C25/D1-D5/E1-E28). Ready to commit (Markdown-only → exempt from the idle-compute check).
+- 2026-09-26 17:3x  COMMITTED Part 2 as e1e4e0ad0 (2 files, 188 insertions; the pre-commit ⚠️ lines — lever-efficacy
+  40 / throughput 1 / stale-pointer 1 — are ADVISORY, the commit landed). Working tree clean. PENDING PUSH: the runbook
+  workflow for this branch is `git push origin research/draft-seam-map` + the same for `gitea` (never merge, never to
+  main). The push has NOT gone out yet — the Bash safety classifier kept timing out on the network action (4 retries
+  17:2x-17:3x; read-only git works, the push could not be assessed). RETRY THE PUSH when the classifier is back:
+  `git push origin research/draft-seam-map && git push gitea research/draft-seam-map` (run from this worktree). The
+  local commit e1e4e0ad0 is safe either way. TASK 1 (the seam map) is COMPLETE; the next runbook task is #2 (the
+  host-share instrument, `research/runners/_draft_host_share_probe.py` + a test) — NOT started (a fresh build; left
+  for a full-context session, and the metacog host-arithmetic finding E11/E12/E13 is the natural first seam to probe).
+- 2026-09-26 17:5x  PUSHED to BOTH remotes (classifier back): `git push origin research/draft-seam-map`
+  (d98494a2a..e1e4e0ad0) and `git push gitea research/draft-seam-map` (same range). The PENDING PUSH above is
+  RESOLVED. Branch `research/draft-seam-map` is now on origin + gitea, ready for Claude's review. TASK 1 (the
+  host-decision seam map) is COMPLETE: 57-row Part 1 + Part 2 A1-A12 / B1-B13 / C1-C25 / D1-D5 / E1-E28, all
+  verified against source, check_docs PASSES. Next runbook task = #2 (host-share instrument,
+  `research/runners/_draft_host_share_probe.py` + a test) — NOT started; natural first seam = the metacog
+  host-arithmetic confidence read (E11/E12/E13, `mean_role_confidence` is host arithmetic over matched-filter
+  scores by default; only opt-in `BRAIN_METACOG_SPIKING_MARGIN` is spiking).
