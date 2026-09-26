@@ -43,6 +43,17 @@ heat that the *edge*-temperature fan curve doesn't see — is a classic cause of
   `tools/gpu_recover.sh` attempts a no-reboot recovery (stop lactd → free /dev/nvidia* → reload nvidia modules → restart
   lactd). It REFUSES to run if the core is hung (sanity-check failing), where only a reboot helps.
 
+## 2026-09-26: it did crash with the 300 W cap in force
+
+Same signature (`_scrubWaitAndSave ... [NV_ERR_TIMEOUT]`, then `GPU lost from the bus`) at ~11:07, during sustained
+local-LLM inference (Qwen3.8-27B, 128K context, ~23 GB resident; generation is memory-bandwidth bound, which heats the
+GDDR6X far more than the core). The journal kept only the last ~40 s before shutdown: the NVRM error flood rotated the
+earlier entries out, so the first failure was not recorded. LACT fan control was OFF (`fan_control_enabled: false`).
+Mitigations: owner applied `sudo nvidia-smi -lgc 210,1800` (verified: core pinned at 1800 MHz under load; lost on
+reboot); still to do by the owner: a persistent clock limit or undervolt in LACT, LACT fan control with a steeper
+curve, optionally a small memory underclock, and a larger journald size (`SystemMaxUse`). If it crashes again: the LTS
+kernel, then the PSU.
+
 ## If it STILL crashes after the 300 W cap (points to deeper cause — needs your hands-on attention)
 
 1. **Undervolt** (best 3090 stability fix): set a VF curve in LACT (e.g. ~1800–1900 MHz @ ~875–900 mV) — less heat + less
