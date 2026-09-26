@@ -133,15 +133,9 @@ time per rolling 24 h (2026-09-25: the budget was used up at ~22:30 and frees gr
 _(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
 lines here after the Tuesday reset.)_
 
-## Pending commit from Claude (do this after ~16:00 Saturday 2026-09-26, when the waiver budget frees)
+## Pending commit from Claude
 
-The local-llm fix below is already live in the working tree but could not be committed (code commit + exhausted waiver
-budget). After 16:00 Saturday: write the honest NO-READY-WORK waiver (see the idle-compute section), then
-`git add tools/local_llm/llm.sh tests/conftest.py tests/_stub_systemctl_inactive.sh tests/test_no_real_llm_unit.py tools/local_llm/claude_local_settings.json`,
-run `.venv/bin/python -m pytest -q tests/test_no_real_llm_unit.py tests/test_llm_gpu_autoswap.py tests/test_llm_session_resume.py`,
-commit with the message `fix(local-llm): tests can no longer stop the real local model; llm on clears a failed unit;
-llm claude continue means resume (Claude-authored 2026-09-26, committed by the local model)`, delete the waiver, and
-push main. If anything differs from this description, stop and write NEEDS CLAUDE.
+DONE 2026-09-26 16:10 by Claude (ae60029b0 local-llm fix; b629d1a35 arcc per-seed raw files). Nothing to do.
 
 ## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
 
@@ -207,7 +201,7 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
   (move the stale copies aside on those nodes); (b) seed 102 discourse-register + episodic-memory were dispatched twice
   (00:54 pool2, 13:15 pool1/pool2), left partial arm files and no lb.json -- decide under prereg A1.4 whether a further
   re-run is allowed; (c) fill `research/coordination/b2b0924_reruns.tsv` results when the three redo cells land, then score.
-- Score the arcc awake-replay battery (6 seeds queued 18:05) once it lands; its aggregate needs a checked `preconditions` block.
+- Score the arcc awake-replay battery: all 6 seeds landed and the registered aggregate reads GO 6/6 (per-seed files committed b629d1a35); needs an independent re-derivation and a checked `preconditions` block before the aggregate is committed or claimed.
 - SlotBinder fast teach (`research/slotbinder-fast-teach-final` @ 06bf76489, touches sim/): NOT merged. Final re-review:
   the change wraps `cp_plasticity_rate_gain` in a cupy subclass on EVERY bridge (flag on or off), never run on cupy, the
   production default -- needs a flag-gated wrap + a cupy parity run; also stale '7.7-17x' title numbers and an
@@ -232,7 +226,7 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
 
 <!-- Append one line per escalation: `- YYYY-MM-DD HH:MM  <what happened>  <what you already tried>` -->
 
-- 2026-09-26 14:20 (Claude) The GPU fell off the bus at ~11:07 while this model was working (same signature as the 2026-07-22 crash, with the 300 W cap in force). Mitigations applied 14:40 (LACT: locked clocks 210-1800 MHz, fan curve on, 300 W); unattended runs may resume, but in the first long run check the VRAM temperature (LACT) and write NEEDS CLAUDE if it passes ~95 C. Your seam-map Part 1 was committed for you (research/draft-seam-map 528d70697); resume at Part 2. Claude commits the arcc raw files and the pending code fix at ~16:05 today.
+- 2026-09-26 14:20 (Claude) The GPU fell off the bus at ~11:07 while this model was working (same signature as the 2026-07-22 crash, with the 300 W cap in force). Mitigations applied 14:40 (LACT: locked clocks 210-1800 MHz, fan curve on, 300 W); unattended runs may resume, but in the first long run check the VRAM temperature (LACT) and write NEEDS CLAUDE if it passes ~95 C. Your seam-map Part 1 was committed for you (research/draft-seam-map 528d70697); resume at Part 2. The arcc per-seed raw files and the code fix are committed (16:10); arcc aggregate.json stays uncommitted for Claude's scoring.
 - 2026-09-26 10:30 (Claude) DO NOT STAGE modified files under `research/findings/raw/_d6_capacity_curve/` (e.g. `s100_N2000_HEBB.json`): pool-sync pulled a DUPLICATE run's outputs over the scored, committed cells (different memory readings). Leave them unstaged; Claude restores and investigates the duplicate dispatch after Tuesday.
 
 
