@@ -128,27 +128,52 @@ check still refuses (its waiver budget is exhausted), that is a NEEDS CLAUDE ite
 _(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
 lines here after the Tuesday reset.)_
 
-## Weekend draft work (owner-approved 2026-09-25) -- DRAFTS ONLY, never merged
+## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
 
-Serves the adopted plan `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. Rules: work on a branch
-`research/draft-<topic>` (`git switch -c research/draft-<topic>`), write under `docs/drafts/`, commit through the gates,
-push with `bash tools/push_both.sh research/draft-<topic>`, never merge, never touch `main` for this. Append to the draft
-file after EVERY chunk of work, so nothing is lost if the session ends or compacts. Claude reviews the drafts after Tuesday.
+Serves `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. The owner wants the local model to carry real
+work, done so Claude can review, fix or discard it later. **Hard rules for everything in this section:**
 
-1. **Host-decision seam map (plan section 1)** -> `docs/drafts/host-decision-seam-map.md`. Trace ONE default chat turn
-   (`/api/brain-chat` in `webapp/server.py`) in order. For every place Python decides something from neural output, one
-   table row: file:line, the operation, the neural input just before it, the decision made, the category (candidate
-   generation / scoring / admission-filtering / winner selection / commitment / composition / routing), whether a
-   neural signal already represents the choice (cite what shows it), and "unsure" wherever you are not certain. Work in
-   chunks of ~300 lines of server.py; record facts only, no recommendations.
-2. **Prior-work memos (plan sections 4-5)** -> `docs/drafts/credit-and-sleep-prior-work.md`. For the long-delay credit
-   task and sleep transitive inference: run `bash tools/before_you_build.sh "<topic>"` and
-   `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus all`, OPEN each hit, and list what the project already
-   has (eligibility traces, DA gating, sleep replay, transitive/relational memory runners and findings) with paths and
-   one-line quotes. Do not design the experiment.
-3. **Test-suite triage (parked item)** -> `docs/drafts/test-suite-triage.md`: run the resumable full-suite command from
-   "Parked for Claude" (it takes 2+ hours; the owner approves the command), then group failures by error message.
-   Mark `cudaErrorNoDevice` / GPU-hidden failures as ENVIRONMENT; list the rest with the first error line. No fixes.
+- Each task on its own branch: `git switch -c research/draft-<topic>`; commit through the gates; push with
+  `bash tools/push_both.sh research/draft-<topic>`; **never merge, never commit this work to `main`**.
+- Keep `WORKLOG.md` at the top of the branch's draft folder (`docs/drafts/<topic>/`): each entry = date/time, what you
+  did, commands you ran, results (paths), and anything you are UNSURE of. Append after every step, so a restart or
+  compaction loses nothing. Mark guesses as guesses.
+- **Seeds:** use ONLY dev seeds (7, and 1-15 for small dev sweeps). **Never** 42/43/44/100/101/102; those are gate
+  seeds, run only under a preregistration Claude has reviewed. Label every dev result "DEV, not a verdict".
+- Compute: CPU on the mini-PC pool (`tools/pool_queue.sh add`, jobs pinned to your pushed branch commit after
+  `bash tools/pool_provision.sh --revision <sha> --isolated pool41 pool42`); small local runs only under
+  `bash tools/memcap.sh 8 -- ...`. **No GPU jobs** (the GPU auto-swap would stop your own model mid-session).
+- Code goes in NEW files under `research/runners/` and `tests/` (never edit `sim/`, `webapp/`, `tools/gates/`). To
+  observe production code, import it and wrap/monkeypatch functions inside your runner; never change it.
+- Stop and write NEEDS CLAUDE when: a gate blocks and the fix isn't obvious, a result looks like a GO/NO-GO, or a design
+  choice would change what the experiment means.
+
+Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the next task.
+
+1. **Host-decision seam map (plan section 1)** -> `docs/drafts/seam-map/host-decision-seam-map.md`. Trace ONE default
+   chat turn (`/api/brain-chat` in `webapp/server.py`) in order, ~300 lines per chunk. One table row per place Python
+   decides something from neural output: file:line, operation, neural input just before it, the decision, category
+   (candidate generation / scoring / admission-filtering / winner selection / commitment / composition / routing),
+   whether a neural signal already represents the choice (cite the evidence), and "unsure" where you are not certain.
+   Facts only.
+2. **Host-share instrument, first seams (plan section 2)** -> `research/runners/_draft_host_share_probe.py` + a test.
+   After the map has 5+ rows, pick 1-2 winner-selection or commitment seams. Build a runner that drives a dev-seed chat
+   turn (numpy, CPU) and, by wrapping the seam function, records (a) the host decision and the neural inputs
+   (decoding), (b) the downstream result when the host decision is replaced by a neural-derived one (substitution),
+   and (c) when it is flipped with the neural state held fixed (intervention). Dev seeds only; queue a small dev sweep.
+3. **Long-delay credit task (plan section 4)** -> `research/runners/_draft_long_delay_credit.py` + test + a DRAFT
+   prereg in `docs/drafts/long-delay-credit/`. First run the prior-work search
+   (`bash tools/before_you_build.sh "long delay temporal credit eligibility trace"` and
+   `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus all`, opening each hit) and REUSE existing
+   eligibility-trace / dopamine machinery. Implement the arms from the plan (variable delay, uninformative terminal
+   state, final decoy cue, trace lesion, immediate-reward and shuffled-reward controls) on a small spiking network.
+   Dev-seed smoke, then a small dev sweep on the pool.
+4. **Sleep transitive inference (plan section 5)** -> DRAFT prereg + a runner skeleton that REUSES the sleep-replay
+   capture machinery (`webapp/sleep_replay_capture.py`, `research/runners/_da_tag_capture_chat_probe.py`, read-only).
+   Arms: normal replay, wake-only, order-scrambled replay, replay off; the novel-context test. Dev smoke only if it runs.
+5. **Test-suite triage** -> `docs/drafts/test-triage/`: the resumable full-suite command from "Parked for Claude"
+   (2+ hours; start it on the pool or locally under memcap and do other tasks meanwhile), then group failures by error.
+   `cudaErrorNoDevice`/GPU-hidden = ENVIRONMENT; list the rest with the first error line. No fixes.
 
 ## Parked for Claude (after the Tuesday reset) — do NOT work on these
 

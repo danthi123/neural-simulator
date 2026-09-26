@@ -37,7 +37,13 @@
       "Edit(research/queue/.parallel_compute_waiver)",
       "Edit(docs/drafts/**)",
       "Bash(bash tools/before_you_build.sh:*)",
-      "Bash(.venv-rag/bin/python tools/rag/rag_search.py:*)"
+      "Bash(.venv-rag/bin/python tools/rag/rag_search.py:*)",
+      "Edit(research/runners/_draft_*)",
+      "Edit(tests/test_draft_*)",
+      "Bash(.venv/bin/python -m pytest:*)",
+      "Bash(bash tools/memcap.sh 8 --:*)",
+      "Bash(bash tools/pool_queue.sh add:*)",
+      "Bash(bash tools/queue_job_shape_check.sh:*)"
     ],
     "deny": [
       "Bash(git commit --no-verify:*)",
@@ -55,7 +61,8 @@
       "Edit(sim/**)",
       "Edit(webapp/**)",
       "Edit(tools/gates/**)",
-      "Bash(POOL_PROVISION_ALLOW_STALE=1:*)"
+      "Bash(POOL_PROVISION_ALLOW_STALE=1:*)",
+      "Bash(bash tools/gpu_queue.sh add:*)"
     ]
   }
 }
