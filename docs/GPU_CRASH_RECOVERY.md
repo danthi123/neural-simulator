@@ -50,9 +50,11 @@ local-LLM inference (Qwen3.8-27B, 128K context, ~23 GB resident; generation is m
 GDDR6X far more than the core). The journal kept only the last ~40 s before shutdown: the NVRM error flood rotated the
 earlier entries out, so the first failure was not recorded. LACT fan control was OFF (`fan_control_enabled: false`).
 Mitigations: owner applied `sudo nvidia-smi -lgc 210,1800` (verified: core pinned at 1800 MHz under load; lost on
-reboot); still to do by the owner: a persistent clock limit or undervolt in LACT, LACT fan control with a steeper
-curve, optionally a small memory underclock, and a larger journald size (`SystemMaxUse`). If it crashes again: the LTS
-kernel, then the PSU.
+reboot). Then, persistently in LACT (verified in /etc/lact/config.yaml, re-applied by lactd at boot): locked core
+clocks 210-1800 MHz, fan control ON with LACT's default curve (30% at 40 C, 50% at 60 C, 75% at 70 C, 100% at 80 C,
+keyed on the GPU edge temperature), power cap 300 W. LACT also reads the VRAM temperature: if it passes ~95 C under
+local-LLM load, add a -500 MHz VRAM offset. Still optional: a +100 MHz core offset under the 1800 lock (mild
+undervolt) once stable, and a larger journald size (`SystemMaxUse`). If it crashes again: the LTS kernel, then the PSU.
 
 ## If it STILL crashes after the 300 W cap (points to deeper cause — needs your hands-on attention)
 
