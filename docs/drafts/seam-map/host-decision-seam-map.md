@@ -202,25 +202,154 @@ host maps each to abstain/drop. The host never injects a fact; it only decides t
 signal says there is nothing grounded. The one genuinely host-authored candidate-generation in B is B9's
 corner-turn (`own[0]`) and B11's edge-weight fallback — both fire only after the spiking selection has already
 missed, and both draw from the brain's own stored facts (never the LLM).
-- **C. the GNW gate-wrapper stack** (installed at server.py:4650-4769, around `chat.gate`):
-  `webapp/gnw_bus_shadow.py` (ignition bus), `webapp/gnw_two_organ_bus.py`, `webapp/gnw_three_organ_bus.py`
-  (consensus), `webapp/gnw_deliberation.py`, value-driven choice (`value_choice_production_organ`),
-  `webapp/gnw_multistep_deliberation.py` — consensus/veto/commit logic.
-- **D. the observe_turn family** (the lead mappers): `webapp/swap_drives_chat.py`,
-  `webapp/affect_drives_chat.py`, `webapp/da_mode_drives_chat.py`, `webapp/gnw_global_stop.py`,
-  `webapp/continuous_engine.py` (`recent_wander`).
-- **E. the organ mapping/text functions** (host mappings from spiking reads to text/numbers):
-  `affect_production_organ` (`appraise_text` 104, `tone_level` 343, `content_plan` 348,
-  `manner_template_for` 369, `is_feel_query` 408), `d5_episodic` (`recall_disclosure`),
-  `worldmodel_production_organ` (`expectation_readout`, `worldmodel_surprise_notice`),
-  `surprise_production_organ` (`surprise_notice`, `extract_assertion`), `pragmatic_production_organ`
-  (`judge_text`, `pragmatic_notice`), `metacog_production_organ` (`mean_role_confidence`,
-  `evidence_from_role_conf`, `hedge_prefix`), `curiosity_production_organ` (`extract_topic`,
-  `followup_question`, `NOVEL_SIGNAL`), `prospective_memory` (`parse_intention`, `reminder_text`,
-  `acknowledgement_text`), `b3_noncontradiction_production_organ` (`check`, `rejection_message`),
-  `d3_discourse_event_register_production_organ` (`note_turn`, `maybe_answer`),
-  `comprehension_production_organ` (`judge`, `repair_target`), `repair` (`clarification_question`),
-  `activity_silent_wm_production_organ` (`_extract_refs`, `judge`), `d6_multiref_wm_production_organ`
-  (`judge`), `causal` organ (`is_causal_query`, `extract_cue`, `what_if`, `why`, `_honest_causal_answer`),
-  `self_schema` organ (`read_author`, `authorship_marker`), `confidence_forthcoming_chat` (`reach_plan`,
-  `apply_cap`, `floor_override`).
+### C. The GNW gate-wrapper stack — the consensus / veto / commit layer around `chat.gate`
+
+`brain_reply` installs SIX gate wrappers around `chat.gate`, in this order (server.py): bus_shadow (4652, always)
+→ two_organ (4679, `BRAIN_GNW_2ORGAN` default "on") → three_organ (4700, `BRAIN_GNW_3ORGAN` default "1") →
+deliberation (4721, `_GNW_DELIBERATE_DEFAULT_ON`) → value_choice (4745, `value_choice_enabled()`) → multistep
+(4765, `_GNW_MULTISTEP_DEFAULT_ON`). (OEG at 4769 is default-OFF and not traced here.) Each `install_X(chat)`
+re-wraps `chat.gate`, so the LAST installed is the OUTERMOST. **Execution order on a default turn (outermost →
+innermost): multistep → value_choice → deliberation → three_organ → [two_organ → bus_shadow → the original host
+`gate()` (section A)].** All six are DEFAULT-ON.
+
+**The active default author is three_organ** (the 3-way consensus). When `three_organ_enabled()` AND
+`_organ_discriminates()` hold (the default), `_three_organ_gate` runs `three_organ_gate_via`, which authors the
+covered-class verdict itself and does NOT call the inner two_organ / bus gate — so on a clean default turn the
+two_organ and bus_shadow combines are the **fallbacks**, reached only if three_organ's per-call re-check fails
+(flag off / the organs stop discriminating on this backend) or the combine throws (each wrapper's `except` falls
+back to its wrapped gate). value_choice sits OUTSIDE deliberation and can OVERRIDE the inner commit — or un-
+abstain an inner abstain — on a >=2-competing-patient recall.
+
+**Finding (mechanism is fact; whether it fires is UNSURE): the deliberation conflict gate reads a stale attribute.**
+`install_deliberation_gate` (gnw_deliberation.py:237) passes `getattr(chat, "_last_gnw_bus", None)` into
+`deliberate_svo`, which gates on `bus_info.get("authored_by") == "bus"` (gnw_deliberation.py:179). But
+`chat._last_gnw_bus` is set **only** by `gnw_bus_shadow` (gnw_bus_shadow.py:533) — three_organ sets
+`chat._last_three_organ` instead (gnw_three_organ_bus.py:425), and on the default path three_organ is the author
+and never invokes the inner bus. So on a default turn `_last_gnw_bus` is NOT refreshed this turn; the
+`authored_by == "bus"` gate therefore depends on stale state (None on the first turn → the deliberation block is a
+pass-through, reason "out_of_scope_or_no_bus_info"). **UNSURE** whether the deliberation conflict gate (C10–C13)
+ever fires on the default three_organ path or is inert there — a live probe is needed. This is a candidate
+host-share-instrument target (task 2): a host decision that may not be live on the default author.
+
+Rows are grouped by wrapper, outermost → innermost; within a wrapper, in execution order.
+
+| # | file:line | operation | neural input just before | the decision | category | the neural signal already represents the choice? |
+|---|---|---|---|---|---|---|
+| C1 | gnw_multistep_deliberation.py:113-130 | `cleaned = detect_chase(question)`; `if cleaned is None: return inner_gate(question)` (234-237) | none — host parse of the teacher utterance for a chase marker (`_CHASE_MARKERS`, 74-93) | whether this is a chase-form question ("…all the way / to the end") → run the multi-step chase, else pure pass-through (byte-identical) | routing (turn-type) | NO — host parse of the user's utterance (the declared environment/comprehension boundary, not a neural read) |
+| C2 | gnw_multistep_deliberation.py:183-185 | `if base_svo is None: info["reason"]="already_abstained"; return None` | the inner gate's committed SVO (or None) | an already-abstained inner turn stays abstained (the moat: never un-abstain) | commitment (abstain) | YES — the abstain is the inner (neural) verdict; the host maps None→abstain |
+| C3 | gnw_multistep_deliberation.py:206-209 | `if terminal is None: info["abstained"]=True; return None` | the `confidence_gated_chase` terminal (the spiking EMERGENT-count read, 168-170) | an unstored / over-run chase (the leaf never ignited) → abstain, never confabulate a chain end | commitment (abstain) | YES — the terminal is the spiking read; the host maps None→abstain |
+| C4 | gnw_multistep_deliberation.py:214-216 | `out = list(base_svo); out[2] = terminal; return out` | the terminal concept (spiking) + the inner committed SVO | swap the committed SVO's patient slot to the chase terminal and emit it as the answer | composition (emit) | YES — the terminal is the spiking read; the host only relabels the patient slot |
+| C5 | value_choice_production_organ.py:327-351 | `av = extract_agent_action(question, chat)`; `if av is None: return result` (423-425) | the stored `agents_set` / `actions_set` (+ the on-brain BridgeParser read only if `BRAIN_NEURAL_EXTRACT` on, default OFF) | whether the turn is a well-formed (agent, action) query (else the inner result verbatim) | admission-filtering (comprehension) | PARTLY — the default is the host membership/positional heuristic; the neural read is flag-gated default-off |
+| C6 | value_choice_production_organ.py:427-429 | `cands = candidate_patients(chat, a, v)`; `if len(cands) < 2: return result` | the brain's stored facts (distinct patients under (a,v)) | whether this is the >=2-competing-patient ambiguity the value-choice touches (else inner result verbatim) | admission-filtering (ambiguity gate) | PARTLY — the enumeration + count is host over the brain's own store (a faithful read); the "ambiguous" verdict is a host count |
+| C7 | value_choice_production_organ.py:374-393 (called at 436) | `engagements = _ctx(a, v, cands)` — fact recency (later-stored → more engaged) + a boost if the candidate is the current discourse-WM referent; the shared-salience spiking transduction is flag-gated default-OFF (`BRAIN_SHARED_SALIENCE`) | fact recency + the discourse-WM held referent | the per-candidate "prior reward / engagement" scalar the value critic converts to a learned V | candidate scoring (context) | PARTLY — the recency/referent bookkeeping is host (a declared episodic-provenance boundary); the spiking transduction is default-off |
+| C8 | value_choice_production_organ.py:242 + 443-444 | `decisive = spread >= self.v_margin_hz`; `if chosen is None: return result` | the learned spiking V spread (`read_values`, a `cp_firing_states` read, 209-222) | is the learned value decisive enough to commit (else decline → inner result verbatim) | commitment (decisiveness gate) | YES — the V is the learned spiking read; the host reads the spread and applies a documented scalar threshold ("like an argmax over spike counts") |
+| C9 | value_choice_production_organ.py:241 + 445 | `choice, counts, margin = self._wta_for(n).decide(drives)`; `return [a, v, chosen]` | the spiking value-WTA winner (Wang-2002 biased competition over the learned-V drives, 239-241) | WHICH competing patient to commit — the higher-learned-V one | winner selection + commitment (value-WTA) | YES — the WTA is spiking; the host maps the winner index to a STORED candidate (never invents a fact → the moat holds) |
+| C10 | gnw_deliberation.py:124-141 | `cands = all_candidate_patients(composer, agent, action)` (PROPOSE) | the composer's stored facts | the set of DISTINCT competing candidate patients bound under (agent, action) to drive into the workspace | candidate generation (PROPOSE) | PARTLY — the enumeration is host over the brain's own store (the declared modular-processor boundary, a faithful read-only `_iter_facts` + unbind) |
+| C11 | gnw_deliberation.py:206-209 | `if n_cand <= 1: info["decision"]=COMMIT; return bus_svo` | the candidate count | a single clean stored answer → commit unchanged (the workspace is not even run); only a >=2 conflict runs it | commitment (single-candidate short-circuit) | PARTLY — the count is host; the "single stored answer" is the brain's own store structure |
+| C12 | gnw_deliberation.py:153-154 + 159-161 | `drives[i] = IGNITE_PA` (drive the candidate slots EQUALLY); `while decision == RETRY and cyc < R_MAX_DEFAULT: ...` | the candidate count | which workspace slots to drive (equally-valid stored answers) and how many deterministic re-drive cycles to allow | routing (equal drive) + winner selection (retry walk) | PARTLY — the equal-drive + retry budget are host; the commit/abstain verdict is the spiking `acc_conflict_gate` (reads conf + n_ignited) |
+| C13 | gnw_deliberation.py:214-216 | `if decision == ABSTAIN: info["abstained"]=True; return None` | the `acc_conflict_gate` decision (spiking conf + n_ignited) | a sustained workspace conflict → abstain ("I don't know") instead of committing the shaky first-match | commitment (abstain) | YES — the decision is the spiking ACC gate; the host maps ABSTAIN→None. (UNSURE whether C10–C13 fire on the default path — see the stale-attribute finding above.) |
+| C14 | gnw_three_organ_bus.py:139-154 | `known, unknown = _real_vocab_competence(agent, action, cand, brain_vocab)` (HOST RESIDUAL) | the brain's OWN learned concept inventory (`_chat_concepts`) | are all the recalled proposition's entities/roles (agent, action, patient-head) KNOWN in the learned vocab — organ C's veto authority | admission-filtering (comprehension veto) | PARTLY — the membership test is host code; the vocabulary it reads is the brain's own learned inventory (the spiking sub-read for UNKNOWN propositions is the D4 margin, C16) |
+| C15 | gnw_three_organ_bus.py:262-264 | `ltm_exempt_applied = bool(organb_ltm_exempt and recall_source == "ltm")` | the recall provenance tier (`recall_source`, from `TieredFactStore.query_patient_source`) | whether this recall is LTM-sourced → organ B (and organ C) corroborate unconditionally (default-ON since 2026-08-27) | admission-filtering (provenance gate) | PARTLY — the tier provenance is a store read; the exemption rule is host |
+| C16 | gnw_three_organ_bus.py:204-214 | `competent = corg.competent(...)`; `margin = corg.read_margin(...)`; `comprehended = margin >= corg.threshold` | the `cp_firing_states` sel-pool WTA margin (organ C's spiking D4 read) | does a genuinely-UNKNOWN proposition's roles resolve (corroborate) or not (the comprehension VETO) | admission-filtering (comprehension veto, spiking) | YES — the margin is the spiking read; the host applies the threshold compare (the documented scalar read-out) |
+| C17 | gnw_three_organ_bus.py:293 | `candidates = [cand, (cand if confirmed_b else None), (cand if votes_c else None)]` | organ B's confirmation + organ C's comprehension vote (both spiking reads) | which of the three organs' votes go into the shared workspace slot(cand) | composition (vote assembly) | YES — each vote is a spiking read; the host only assembles the vector (the consensus itself is the spiking `norgan_hop`) |
+| C18 | gnw_three_organ_bus.py:294-299 | `committed, _rates, _winner, n_ign = norgan_hop(...)` | the assembled 3-organ vote vector | commit the ignited patient (all three organs agree — the 3-way consensus) vs abstain (any one withheld) | winner selection + commitment (consensus ignition) | YES — the consensus is the spiking `norgan_hop` (WTA + NMDA sustain); the host reads `committed` |
+| C19 | gnw_three_organ_bus.py:320-385 | `mode = chat.gate_extract(question)[0]`; dispatch 'done'/'route'/'decline'/'router' | the on-brain BridgeParser parse + the acquisition/anaphora/open-ended side effects | which class this turn is (covered vs out-of-scope) and WHO authors it — only 'route' is substrate-authored; open-ended / acquisition / comprehension-decline / self-identity-short stay host | routing (class dispatch) | PARTLY — the parse is neural; the class→author mapping is host (the out-of-scope classes are the honest host residual). **Duplicated identically** in the two inner fallbacks (two_organ 334-408, bus_shadow 385-499) |
+| C20 | gnw_three_organ_bus.py:340-344 | `if isinstance(committed, str) and committed in agents_set: chat._note_referent(committed)` | the committed patient (spiking) + the agent set | whether the committed patient is itself an agent → write it as the next-turn pronoun referent (the anaphora WM) | routing (anaphora WM write) | PARTLY — the committed patient is spiking; the "is it an agent" membership + the WM write is host |
+| C21 | gnw_three_organ_bus.py:352-365 | `if not anaphora_used: return None` (veto → abstain); else `svo = chat._gate_router_combine(q)` (fall-through) | the substrate veto (no 3-way consensus) + anaphora_used | a vetoed NON-anaphora turn → abstain; a vetoed ANAPHORA turn → fall through to the host router (the out-of-scope residual) | commitment (abstain) + routing (fall-through) | YES (the abstain is the neural veto) / NO (the anaphora router fall-through is the host residual) |
+| C22 | gnw_two_organ_bus.py:303-309 | `ltm_exempt_applied = bool(organb_ltm_exempt and recall_source == "ltm")`; `if ltm_exempt_applied: confirmed, hz = True, None` | the recall provenance tier | LTM-sourced recall → organ B corroborates unconditionally (the mirror of C15; **fallback-only** — reached if three_organ delegates) | admission-filtering (provenance gate) | PARTLY — same split as C15 |
+| C23 | gnw_two_organ_bus.py:320-323 | `decoy = _pick_decoy(...)`; `committed, ... = coincidence_hop(...)` | organ A's recall + organ B's confirmation (both spiking) | commit the ignited patient (the 2-way coincidence) vs abstain (**fallback-only**) | winner selection + commitment (coincidence ignition) | YES — the coincidence is the spiking `coincidence_hop`; the decoy pick is host (a WTA distractor, never the answer) |
+| C24 | gnw_bus_shadow.py:441-447 | `if committed is None and agent == "brain" and action == "isa" and _neural_selfid_enabled(): for v_cand in ("has","have","is","uses","use"): ...` | the bus combine's committed (None = a miss) | on a bare-identity ('brain','isa') miss, retry the candidate relations in a fixed host order (MISS-ONLY: can only rescue, never override a found patient) — flag `BRAIN_NEURAL_SELFID` default OFF (**innermost fallback**) | candidate generation (host fallback, miss-only) | PARTLY — the retry order is host; each retry re-queries the spiking `bus_combine` |
+| C25 | gnw_bus_shadow.py:410-477 | `info = bus_combine(...)`; `committed = info.get("committed")` (the base ignition bus) | the composer's 3 organ reads (forward + verify + reverse-binding, all from the composer) | commit the ignited patient vs abstain (the base N-organ bus; the mode dispatch is the same as C19) — **innermost fallback** | winner selection + commitment (ignition) | YES — the ignition is spiking; the mode dispatch is host (same as C19) |
+
+**Note on the moat across C:** the abstain rows (C2, C3, C13, C21, and the `committed is None` branches inside
+C18/C23/C25) are the same no-confabulation moat at different altitudes — the spiking combine (consensus /
+coincidence / ignition) produces the empty verdict, and the host maps it to abstain. The host never injects a
+patient; it only decides to stay silent when the neural signal says there is no ignition. The genuinely
+host-authored candidate-generation in C is C1's chase-marker parse (the input boundary), C5's (agent,action)
+extraction (default host heuristic), C7's engagement context, C12's equal-drive/retry walk, C14's real-vocab
+membership test, C17's vote-vector assembly, and C24's miss-only identity retry — each fires only around a spiking
+read, and each draws from the brain's own store / vocabulary (never the LLM).
+### D. The observe_turn family — the lead mappers (spiking verdict → lead/suffix text)
+
+Each of these runs ONE spiking read per turn (or reads an already-computed upstream spiking read) and maps the
+verdict to a lead/suffix that is PREPENDED/APPENDED to the reply. The shared pattern: the spiking read is the
+signal; the host maps it to a lead TEXT and a reason label, and the lead frames WHETHER something is announced,
+never WHICH fact is true (the moat stays intact — the fact after the lead is unchanged). All five are default-ON.
+
+| # | file:line | operation | neural input just before | the decision | category | the neural signal already represents the choice? |
+|---|---|---|---|---|---|---|
+| D1 | swap_drives_chat.py:128-155 (+ transition_lead 115-125) | `info = _GTS.observe_turn(chat, message, ...)` (the #77 `gnw_swap` spiking swap/hold); `swapped = bool(info.get("swapped"))`; `lead = transition_lead(swapped, new_topic)` | the spiking swap/hold verdict (`swapped`) + the neural winner coalition's topic (`held_topic`) | whether to announce a topic shift, and which topic to name — `transition_lead` → `"On %s, then — "` if a swap with a named coalition, else `""` (byte-identical) | composition (topic-transition lead) | YES — the swap/hold verdict is spiking; the lead TEXT is host composition (frames WHETHER a shift is announced, never WHICH fact) |
+| D2 | affect_drives_chat.py:571-605 | `appraisal = _AO.appraise_text(message)` (host); `info = ws.observe(valence, arousal, n_hits, ...)` (the #81 graded-affect ladder read) | the host appraisal (valence/arousal) → the spiking ladder's OWN population read off `cp_firing_states` (mood = rate(V+) − rate(V−)) | which affective expression to attach (the graded warmth/curtness lead + the tone level) | composition (affective lead) + candidate scoring (appraisal) | PARTLY — the ladder read is graded spiking (the level is a host threshold bucket, `tone_level`); the message appraisal is host (a declared sensory-appraisal boundary); the lead text is host |
+| D3 | da_mode_drives_chat.py:541-590 (+ mode_suffix 251-256, _SUFFIX 175-178) | `info = ws.observe(message, ...)` — the host `engagement_of` mix drives the spiking SNc nucleus; the self-produced DA LEVEL is read off the bus, binned to a MODE (rest/focus/arousal), mapped to a suffix | the spiking DA level (off the SNc→DA bus) | the engagement suffix — `_SUFFIX`: focus → `" — worth going further here."`, arousal → `" — there's plenty more to dig into here!"`, rest → none (byte-identical) | composition (engagement suffix) + candidate scoring (engagement) | PARTLY — the DA level is spiking (load-bearing: the lesion collapses the suffix); the engagement mix, the mode binning, and the mode→suffix map are host |
+| D4 | gnw_global_stop.py:368-401 (+ stop_lead 360-365, detect_trigger 340-349) | `triggered, ... = detect_trigger(chat)` (reads upstream spiking: `chat._last_gnw_delib` sustained conflict + `chat._last_swap_drives` swapped); `if not triggered: return None`; `cleared = ws.run(...)`; `lead = stop_lead(cleared)` | the spiking distributed-overwrite clear-all decision (`cleared` = the held coalition driven to n_ignited=0) | whether to announce a clean-slate clear — `stop_lead` → the clearing lead if a CLEAN stop, else `""` (byte-identical) | composition (clearing lead) + admission (trigger gate) | YES — the clear-all is spiking; the trigger gate (a host read of upstream spiking reads) + the lead text are host |
+| D5 | continuous_engine.py:665-683 | `for rec in reversed(lst): if rec.get("wandered"): rec["wandered"]=None; return w` — consume the most recent selfinit-organ wandered concept | the selfinit organ's spiking selection (already made at tick time; NO new spiking read here) | which just-wandered concept to surface on the next live turn (consumed on read → surfaces exactly once) | routing (surface-once) | YES — the concept is the selfinit organ's spiking selection (made at tick time); recent_wander is host bookkeeping (consume-once) |
+
+**Note on D:** the five lead mappers are all the same conditioned-articulation pattern — a spiking verdict (swap /
+ladder / DA level / clear-all / selfinit selection) drives a host-composed lead/suffix that frames the MANNER of
+the reply, never its fact. The host never injects content; it only decides whether to prepend/append a framing
+lead. The genuinely host-authored computation in D is the message appraisal (D2, a declared sensory boundary), the
+engagement mix (D3), and the trigger gate (D4, a host read of upstream spiking) — each feeds a spiking read, none
+substitutes for it.
+### E. The organ mapping/text functions — host mappings from spiking reads to text/numbers
+
+These are the leaf mappings: a spiking read (or a host parse of the input) is converted into a discrete text or
+number. Three sub-types, all conditioned-articulation (the host frames the MANNER / the read-out, never the fact):
+(1) **host parses** (language scaffolds over the INPUT — a declared sensory-encoding boundary; the DECISION is the
+downstream spiking/moat read, never the parse); (2) **host threshold/compare read-outs** (a spiking read is
+bucketed / compared / normalized by the host into a discrete level, a ceiling, or a keep-vs-truncate verdict);
+(3) **host text-composition read-outs** (a spiking verdict is composed into a notice / message / question).
+
+**E.1 Host parses (input boundary):**
+
+| # | file:line | operation | neural input just before | the decision | category | the neural signal already represents the choice? |
+|---|---|---|---|---|---|---|
+| E1 | causal_whatif_production_organ.py:130-136 | `is_causal_query`: `_WHATIF_RE` / `_WHY_RE` → `'what_if'` \| `'why'` \| None | none — host regex over the input | whether the turn is a causal query (the surface gate for the disjoint causal class) | routing (turn-class) | NO — host regex; the DECISION (the grounded causal answer) is the downstream moat read |
+| E2 | causal_whatif_production_organ.py:139-159 | `extract_cue`: host parse of (agent, action-lemma) → the canonical causal event index (or None) | the brain's real agent vocab (`agents_set`) | which grounded canonical event the causal query is about (None → honest abstain) | candidate generation (surface parse) | NO — "pure surface parse (a declared host sensory-encoding boundary; the DECISION is the moat read)" |
+| E3 | curiosity_production_organ.py:150-160 | `extract_topic`: the first content word (function/wh/meta-verb stripped) | none — host token filter | WHICH word to frame the follow-up around (never WHETHER to ask — that is the spiking ASK-pool read) | candidate generation (surface parse) | NO (which word) / YES (whether to ask is the spiking ASK-pool) |
+| E4 | surprise_production_organ.py:193-205 | `extract_assertion`: a 3-content-token declarative SVO → (agent, action, patient), else None | none — host token filter | whether the turn is an expectation-bearing assertion (WH-questions / non-assertions → None) | admission-filtering (assertion gate) | NO — host parse; the surprise verdict is the downstream spiking mismatch read |
+| E5 | prospective_memory_production_organ.py:212-230 | `parse_intention`: host regex → `{action, cue_clause, cue_keywords}` or None (never on a trailing `?`) | none — host regex | whether the turn forms an intention (the cue keywords that the spiking coincidence later fires on) | candidate generation (surface parse) | NO — host parse; "given the cue is present the SPIKING coincidence decides the fire" |
+| E6 | affect_production_organ.py:408-409 | `is_feel_query`: `bool(_FEEL_RE.search(text))` | none — host regex | whether the turn is a feel-query (the surface gate for the affect self-report class) | routing (turn-class) | NO — host regex |
+| E7 | affect_production_organ.py:104 | `appraise_text`: host appraisal of the message → `{valence, arousal, n_hits}` | none — host lexicon over the input | the signed valence / arousal that drives the #81 spiking ladder (D2) | candidate scoring (sensory appraisal) | NO — a declared sensory-appraisal boundary (the host encodes the sensation; the ladder reads it) |
+
+**E.2 Host threshold/compare read-outs (spiking → host bucket/compare → text/number):**
+
+| # | file:line | operation | neural input just before | the decision | category | the neural signal already represents the choice? |
+|---|---|---|---|---|---|---|
+| E8 | affect_production_organ.py:343-345 | `tone_level`: `int(SA._graded_tone_level(differential))` (the Stage-A Koulakov staircase) | the spiking ladder differential (mood = rate(V+) − rate(V−)) | the discrete tone level (a host threshold bucket of the graded spiking read) | scoring → commitment | YES (the differential is graded spiking) / the discrete level is a host bucket — unsure whether the organ's spiking ladder already encodes the discrete level |
+| E9 | affect_production_organ.py:348-359 | `content_plan`: level → `{max_sentences, max_elaborations}` (≥1 → 4/3; −2 → 1/0; −1 → 2/1; else neutral default) | via the tone level (spiking differential) | the FORTHCOMINGNESS ceiling — how many gate-matched facts to volunteer + elaboration depth (never WHICH fact, never whether an unmatched cue abstains) | commitment (forthcomingness) | YES (spiking-sourced level) / the level→budget map is host |
+| E10 | affect_production_organ.py:369-377 | `manner_template_for`: level → `_MANNER_WARM` / `_MANNER_CURT` / `""` | via the tone level (spiking differential) | the surface manner (warm / curt / neutral phrasing template) | composition (manner) | YES (spiking-sourced level) / the level→template map is host |
+| E11 | metacog_production_organ.py:293+ | `mean_role_confidence`: preference `margin_spiking` > `margin_snr` > `margin_norm` > `margin` > `confidence` | the composer's per-turn activity trace | the brain's mean role-decode confidence. **HOST ARITHMETIC over matched-filter scores by default** — only the opt-in `margin_spiking` (`BRAIN_METACOG_SPIKING_MARGIN`, default OFF) is a genuine spiking read | scoring (confidence) | PARTLY — default is host arithmetic over the scores; the spiking margin is flag-gated default-off (a key host-share-instrument target) |
+| E12 | metacog_production_organ.py:284-290 | `evidence_from_role_conf`: `clip((mean − LO)/span, 0, 1)` (stretch the observed recall band) | the mean role-decode confidence (E11) | the normalized evidence scalar in [0,1] (None → out of scope) | scoring (evidence) | PARTLY — a host normalization of the (default host-arithmetic) confidence |
+| E13 | confidence_forthcoming_chat.py:187+ | `apply_cap`: keep the reach-sized output vs truncate back to the floor, on the spiking `confident` read | the spiking confidence read (`metacog judge()['confident']`, the SAME read E11/E12 feed) | keep vs truncate the reach's bonus fact (only an affirmative HIGH read grants the bonus; None treated as False — the safe direction) | winner selection (keep vs truncate) | YES (the confidence is spiking when margin_spiking is on; host arithmetic by default) / the keep-vs-truncate is a host compare |
+| E14 | confidence_forthcoming_chat.py:157-162 | `reach_plan`: `(floor_sentences + EXTRA_SENTENCES, floor_elaborations + EXTRA_ELABORATIONS)` | the floor (read live off `rich.max_sentences`/`max_elaborations`, i.e. what the mood coupling decided, E9) | the temporary REACH budget requested from the composer before `rich.answer()` (restored in a `finally`) | candidate generation (reach budget) | PARTLY — the floor is spiking-sourced (via E9); the +EXTRA budget is host |
+
+**E.3 Host text-composition read-outs (spiking verdict → composed text):**
+
+Each of these composes a notice / message / question from a spiking verdict (or a host parse); the composed text
+frames the MANNER, never the fact (the moat is intact — the fact is gate-sourced + verified downstream).
+
+| # | file:line | function | composes from (the spiking verdict / host parse) |
+|---|---|---|---|
+| E15 | d5_episodic_production_organ.py:263 | `recall_disclosure` | the spiking D5 recall verdict + the surfaced fact (Part 1 D6) |
+| E16 | worldmodel_production_organ.py:338 / 349 | `expectation_readout` / `worldmodel_surprise_notice` | the spiking worldmodel expectation read + the surprise sign |
+| E17 | surprise_production_organ.py:448 | `surprise_notice` | the spiking expectation-violation mismatch verdict (agent, action, stored patient) |
+| E18 | pragmatic_production_organ.py:258 (judge_text 223) | `pragmatic_notice` | the spiking RSA belief over {none, SBNA, all} (Part 1 row 21) |
+| E19 | b3_noncontradiction_production_organ.py:232 | `rejection_message` | the spiking non-contradiction check verdict (stored polarity) |
+| E20 | repair_production_organ.py:53 | `clarification_question` | the spiking repair-target read (the unresolved role) |
+| E21 | self_schema_production_organ.py:153 / 192 | `read_author` / `authorship_marker` | the spiking authorship read (whether this turn is self-authored) |
+| E22 | prospective_memory_production_organ.py:411 / 419 | `reminder_text` / `acknowledgement_text` | the spiking intention-coincidence fire + the host-parsed action/cue (E5) |
+| E23 | metacog_production_organ.py:511 | `hedge_prefix` | the spiking confidence read (E11) — a hedge when not confident |
+| E24 | curiosity_production_organ.py:600 | `followup_question` | the spiking ASK-pool read + the host-parsed topic (E3) |
+| E25 | comprehension_production_organ.py (`judge` / `repair_target`) | `judge` / `repair_target` | the spiking role-competition sel-pool margin (Part 1 row 23); the scope gate is host |
+| E26 | d3_discourse_event_register_production_organ.py (`note_turn` / `maybe_answer`) | `note_turn` / `maybe_answer` | the spiking register slot read (Part 1 D10); the structural abstain is partly host |
+| E27 | activity_silent_wm_production_organ.py (`_extract_refs` / `judge`) | `_extract_refs` / `judge` | the host referent extraction + the spiking load/hold verdict |
+| E28 | d6_multiref_wm_production_organ.py (`judge`) | `judge` | the spiking load+hold of ≥2 named referents (Part 1 row 18); the referent extraction is host |
+
+**Note on E (the host-share instrument targets):** the E mappings are all conditioned-articulation — the host
+frames the MANNER / the read-out, never the fact. The two host-share-instrument targets (task 2) that are NOT
+pure read-outs: (1) **E11/E12/E13** — the metacog confidence read is HOST ARITHMETIC over matched-filter scores by
+default (only the opt-in `margin_spiking` is spiking), so the hedge / forthcomingness-cap decision is host-owned
+by default; and (2) the **E.1 parses** (E1-E7) — host language scaffolds over the input that gate the turn class,
+which are the declared sensory-encoding boundary (legitimate host, but a target for biologizing the comprehension
+gate). Everything else in E is a documented scalar read-out (threshold bucket / template / composed text) of a
+spiking verdict — the host never injects a fact.

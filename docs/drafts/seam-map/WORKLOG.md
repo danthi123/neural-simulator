@@ -77,3 +77,40 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   draw from the brain's own stored facts (never the LLM). Fixed a duplicate B skeleton bullet left over from the
   section A edit (the bullet now appears once, at 205 as C). UNSURE/partial markers kept: B3/B6/B7/B8/B9/B11 are
   PARTLY (host-vs-neural split). Next: section C (the GNW gate-wrapper stack, server.py:4650-4769).
+- 2026-09-26 17:1x  Wrote Part 2 section C (the GNW gate-wrapper stack) into host-decision-seam-map.md: 25 rows
+  C1-C25 grouped by wrapper outermost→innermost (multistep C1-C4, value_choice C5-C9, deliberation C10-C13,
+  three_organ C14-C21, two_organ fallback C22-C23, bus_shadow innermost-fallback C24-C25), each in execution order
+  with verified file:line. Verified the architectural facts against server.py + the six wrapper sources: install
+  order bus_shadow(4652)→two_organ(4679)→three_organ(4700)→deliberation(4721)→value_choice(4745)→multistep(4765),
+  last installed = outermost; execution order multistep→value_choice→deliberation→three_organ→[two_organ→bus_shadow→
+  host gate]; three_organ is the ACTIVE default author (two_organ/bus_shadow are fallbacks reached only on re-check
+  fail or throw). KEY FINDING (mechanism=fact, fires?=UNSURE): `install_deliberation_gate` (gnw_deliberation.py:237)
+  passes `getattr(chat, "_last_gnw_bus", None)` into `deliberate_svo`, which gates on `authored_by == "bus"`
+  (gnw_deliberation.py:179), but `chat._last_gnw_bus` is set ONLY by gnw_bus_shadow (gnw_bus_shadow.py:533) —
+  three_organ sets `chat._last_three_organ` instead (gnw_three_organ_bus.py:425) and on the default path never
+  invokes the inner bus, so `_last_gnw_bus` is stale/None on a default turn → the deliberation conflict gate
+  (C10-C13) is likely inert on the default three_organ path (a candidate host-share-instrument target). Added a
+  "Note on the moat across C": the abstain rows (C2/C3/C13/C21 + the committed-is-None branches in C18/C23/C25)
+  are the same no-confab moat at different altitudes; the genuinely host-authored candidate-generation in C is
+  C1 chase-parse, C5 (agent,action) extraction, C7 engagement context, C12 equal-drive/retry, C14 real-vocab
+  membership, C17 vote-vector assembly, C24 miss-only identity retry — each fires only around a spiking read and
+  draws from the brain's own store/vocab (never the LLM). `check_docs.py` PASSES (W1 0, W2 0). Next: section D
+  (observe_turn lead mappers) + section E (organ mapping / text fns).
+- 2026-09-26 17:2x  Wrote Part 2 sections D + E (the final two), completing the map. Section D (the observe_turn
+  lead mappers): 5 rows D1-D5 — swap_drives (D1, transition_lead "On %s, then — "), affect_drives (D2, appraise_text
+  host + #81 ladder read), da_mode (D3, engagement mix → spiking SNc → DA level → mode → _SUFFIX), gnw_global_stop
+  (D4, detect_trigger host gate + spiking clear-all + stop_lead), continuous_engine recent_wander (D5, consume-once
+  bookkeeping over the selfinit organ's tick-time spiking selection). All five = the conditioned-articulation
+  pattern (spiking verdict → host-composed lead/suffix that frames the MANNER, never the fact). Section E (the organ
+  mapping/text fns): 3 sub-types, 28 rows E1-E28. E.1 host parses (E1-E7, input boundary: is_causal_query/extract_cue,
+  extract_topic, extract_assertion, parse_intention, is_feel_query, appraise_text — declared sensory-encoding
+  boundary, the DECISION is the downstream spiking/moat read). E.2 host threshold/compare read-outs (E8-E14:
+  tone_level/content_plan/manner_template_for, **mean_role_confidence = HOST ARITHMETIC over matched-filter scores by
+  default — only opt-in margin_spiking is spiking (BRAIN_METACOG_SPIKING_MARGIN default OFF)**, evidence_from_role_conf,
+  apply_cap, reach_plan). E.3 host text-composition read-outs (E15-E28: recall_disclosure, expectation_readout,
+  surprise_notice, pragmatic_notice, rejection_message, clarification_question, read_author/authorship_marker,
+  reminder/acknowledgement_text, hedge_prefix, followup_question, comprehension judge, d3 maybe_answer, silent_wm,
+  d6 judge). KEY host-share-instrument targets flagged in the "Note on E": (1) E11/E12/E13 the metacog confidence
+  read is host-owned by default; (2) the E.1 parses gate the turn class (legitimate host, but the comprehension-gate
+  biologizing target). `check_docs.py` PASSES (W1 0, W2 0). MAP COMPLETE (Part 1 57 rows + Part 2 A1-A12/B1-B13/
+  C1-C25/D1-D5/E1-E28). Ready to commit (Markdown-only → exempt from the idle-compute check).
