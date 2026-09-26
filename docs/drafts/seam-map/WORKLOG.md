@@ -131,3 +131,41 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   `research/runners/_draft_host_share_probe.py` + a test) — NOT started; natural first seam = the metacog
   host-arithmetic confidence read (E11/E12/E13, `mean_role_confidence` is host arithmetic over matched-filter
   scores by default; only opt-in `BRAIN_METACOG_SPIKING_MARGIN` is spiking).
+
+## Runbook task 2 — host-share instrument, first seam
+
+- 2026-09-26 18:0x  STARTED task 2. Seam chosen: `metacog_production_organ.mean_role_confidence` (a
+  COMMITMENT-STRENGTH seam: host arithmetic over the composer's per-role matched-filter scores ->
+  `evidence_from_role_conf` -> `MetacogProductionOrgan.judge` -> the `confident` bool = the reply's assert-vs-hedge
+  commitment). Chose it over the `if recalled == p` commitment seam because it is the cleanest host-arithmetic seam
+  AND there is a reusable composer-direct build pattern (`_metacog_spiking_recall_margin_derisk.py`, ~40x faster
+  than the full chat stack; the mechanism is entirely internal to composer + metacog organ).
+- 2026-09-26 18:0x  BUILT `research/runners/_draft_host_share_probe.py` (NEW file, no sim//webapp/ edit; imports +
+  wraps production code). Reuses the composer-direct pattern: `OneBrainComposer(seed, trace=True, vocab=VOCAB)` +
+  `hear` 5 dev facts + `query_patient` -> `last_trace`. Sets `BRAIN_METACOG_SPIKING_MARGIN=1` so each role chip
+  carries BOTH `margin` (host) AND `margin_spiking` (spiking) -> one query serves both arms. Records the three
+  plan-section-2 measurements per query: (a) DECODING = host_mrc (the host chain, never prefers margin_spiking) +
+  the per-role fields; (b) SUBSTITUTION = downstream `confident` at host_mrc vs at neural_mrc (mean_role_confidence
+  with the flag on, prefers margin_spiking); (c) INTERVENTION = hold the trace fixed, sweep host_mrc over MRC_GRID,
+  read `confident` at each (monotonicity + host-controllability). host_share_indicator = fraction of answered rows
+  where the host's mrc choice controls `confident` AND the WTA transmits it monotonically.
+- 2026-09-26 18:0x  SMOKE (dev seed 7, `bash tools/memcap.sh 8 -- env SIM_BACKEND=numpy ... --seeds 7`): 5/5
+  answered, decoding_corr=0.769, host_share=1.0. Wrote `research/findings/raw/_draft_host_share_probe/
+  dev_seed7_smoke.json`.
+- 2026-09-26 18:0x  DEV SWEEP (seeds 1-7, memcap 8, ~89s): 35/35 answered. Per-seed decoding corr
+  [0.969,0.93,0.859,0.062,0.946,0.767,0.769] (pooled 0.838; SEED 4 IS AN OUTLIER at 0.062 -- the host read does not
+  track the neural read there). host_mrc 0.78+-0.045, neural_mrc 0.869+-0.054 (both HIGH). SUBSTITUTION
+  confident_changed = 0/35 (a NO-OP on this CLEAN-fact panel: both confidences sit above the confident threshold, so
+  the commitment is confident either way -- a PANEL LIMITATION, not a bug). host_share = 1.0 on all 35 rows (the
+  intervention is a single 0->1 transition at evidence 0.5 on every row -> the spiking WTA faithfully transmits the
+  host's evidence -> the host owns the commitment at this seam). Wrote `dev_sweep.json`.
+- 2026-09-26 18:0x  TEST `tests/test_draft_host_share_probe.py` (dev seed 7, numpy/CPU): 2 tests --
+  (1) the three measurements are recorded (host + neural reads present, per-role fields finite, both substitution
+  arms map to a confident bool); (2) the intervention is monotonic (n_transitions <= 1 -- the core claim).
+  `2 passed in 15.8s`.
+- FINDINGS (DEV, not a verdict): (1) host OWNED the commitment at this seam on the dev panel (host_share 1.0, 35/35
+  monotonic); (2) the host's arithmetic mostly DECODES the neural read (pooled corr 0.838) but DIVERGES on seed 4
+  (0.062) -- worth a follow-up (is seed 4's host read a degenerate case?); (3) the substitution is a NO-OP on a
+  clean panel. NEXT STEP (clear, not a NEEDS-CLAUDE): add a DEGRADED panel (reuse `_noise` from
+  `_emergent_graceful_degradation_derisk` on the store conns, a small sigma sweep) so the host vs neural confidences
+  STRADDLE the threshold and the substitution can show a real commitment change. NOT yet built (context budget).

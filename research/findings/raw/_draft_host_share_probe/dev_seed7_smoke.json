@@ -1,0 +1,662 @@
+{
+  "seams": [
+    "metacog mean_role_confidence (commitment-strength)"
+  ],
+  "seeds": [
+    7
+  ],
+  "per_seed": [
+    {
+      "seed": 7,
+      "rows": [
+        {
+          "agent": "river",
+          "verb": "flow",
+          "abstained": false,
+          "answer": "sea",
+          "host_mrc": 0.65547964294424,
+          "neural_mrc": 0.7737564115146438,
+          "role_fields": [
+            {
+              "margin": 0.7796731497882318,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.7499999998125,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.744052150969349,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8571428570204082,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.4936503942835815,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.7142857141836735,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.6045428767357974,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.74999999990625,
+              "confidence": 1.0
+            }
+          ],
+          "substitution": {
+            "host": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "neural": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "confident_changed": false
+          },
+          "intervention": [
+            {
+              "mrc": 0.0,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.15,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.3,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.4,
+              "evidence": 0.5000000000000001,
+              "confident": true,
+              "balance": 0.08296399649601936,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.5,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.6,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.7,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 1.0,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            }
+          ],
+          "intervention_summary": {
+            "host_controls_confident": true,
+            "monotonic": true,
+            "n_transitions": 1,
+            "confident_seq": [
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        },
+        {
+          "agent": "bird",
+          "verb": "fly",
+          "abstained": false,
+          "answer": "sky",
+          "host_mrc": 0.7931290012413088,
+          "neural_mrc": 0.8328480546386876,
+          "role_fields": [
+            {
+              "margin": 0.8215855825039377,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.9999999998571428,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.6923147560004121,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.499999999875,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.711583628872243,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8333333331944445,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.9470320375886425,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.999999999875,
+              "confidence": 1.0
+            }
+          ],
+          "substitution": {
+            "host": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "neural": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "confident_changed": false
+          },
+          "intervention": [
+            {
+              "mrc": 0.0,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.15,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.3,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.4,
+              "evidence": 0.5000000000000001,
+              "confident": true,
+              "balance": 0.08296399649601936,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.5,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.6,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.7,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 1.0,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            }
+          ],
+          "intervention_summary": {
+            "host_controls_confident": true,
+            "monotonic": true,
+            "n_transitions": 1,
+            "confident_seq": [
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        },
+        {
+          "agent": "worm",
+          "verb": "dig",
+          "abstained": false,
+          "answer": "soil",
+          "host_mrc": 0.7483468862745615,
+          "neural_mrc": 0.7930954947241713,
+          "role_fields": [
+            {
+              "margin": 0.7500646646949451,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.79999999984,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.6981361304331136,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8571428570204082,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.5451867499701875,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.49999999991666666,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.9999999999999997,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.999999999875,
+              "confidence": 1.0
+            }
+          ],
+          "substitution": {
+            "host": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "neural": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "confident_changed": false
+          },
+          "intervention": [
+            {
+              "mrc": 0.0,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.15,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.3,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.4,
+              "evidence": 0.5000000000000001,
+              "confident": true,
+              "balance": 0.08296399649601936,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.5,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.6,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.7,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 1.0,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            }
+          ],
+          "intervention_summary": {
+            "host_controls_confident": true,
+            "monotonic": true,
+            "n_transitions": 1,
+            "confident_seq": [
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        },
+        {
+          "agent": "ball",
+          "verb": "roll",
+          "abstained": false,
+          "answer": "hill",
+          "host_mrc": 0.766797469655169,
+          "neural_mrc": 0.8811957626592497,
+          "role_fields": [
+            {
+              "margin": 0.7626860122053812,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8571428570204082,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.7719184011166669,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8333333331944445,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.6514116754215947,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.8571428570204082,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.8811737898770337,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.999999999875,
+              "confidence": 1.0
+            }
+          ],
+          "substitution": {
+            "host": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "neural": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "confident_changed": false
+          },
+          "intervention": [
+            {
+              "mrc": 0.0,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.15,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.3,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.4,
+              "evidence": 0.5000000000000001,
+              "confident": true,
+              "balance": 0.08296399649601936,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.5,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.6,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.7,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 1.0,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            }
+          ],
+          "intervention_summary": {
+            "host_controls_confident": true,
+            "monotonic": true,
+            "n_transitions": 1,
+            "confident_seq": [
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        },
+        {
+          "agent": "stone",
+          "verb": "sink",
+          "abstained": false,
+          "answer": "pond",
+          "host_mrc": 0.8208459108760945,
+          "neural_mrc": 0.8648112615993069,
+          "role_fields": [
+            {
+              "margin": 0.7490400150885932,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.79999999984,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.7578293088008614,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.79999999984,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.7765143196149239,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.874999999890625,
+              "confidence": 1.0
+            },
+            {
+              "margin": 0.9999999999999996,
+              "margin_norm": null,
+              "margin_snr": null,
+              "margin_spiking": 0.999999999875,
+              "confidence": 1.0
+            }
+          ],
+          "substitution": {
+            "host": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "neural": {
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            "confident_changed": false
+          },
+          "intervention": [
+            {
+              "mrc": 0.0,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.15,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.3,
+              "evidence": 0.0,
+              "confident": false,
+              "balance": 0.028241363218177183,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.4,
+              "evidence": 0.5000000000000001,
+              "confident": true,
+              "balance": 0.08296399649601936,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.5,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.6,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 0.7,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            },
+            {
+              "mrc": 1.0,
+              "evidence": 1.0,
+              "confident": true,
+              "balance": 0.12461141138612636,
+              "threshold": 0.07833201627496375
+            }
+          ],
+          "intervention_summary": {
+            "host_controls_confident": true,
+            "monotonic": true,
+            "n_transitions": 1,
+            "confident_seq": [
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        }
+      ],
+      "decoding_host_vs_neural_corr": 0.7690037863907923,
+      "host_share_indicator": 1.0,
+      "organ_threshold": 0.07833201627496375,
+      "organ_calib": {
+        "mean_hi": 0.10638601177102805,
+        "min_hi": 0.08540433036921058,
+        "mean_lo": 0.05245755734968284,
+        "max_lo": 0.07125970218071691,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "label": "DEV, not a verdict"
+    }
+  ],
+  "label": "DEV, not a verdict",
+  "note": "host-share instrument first seam; plan section 2 (decoding/substitution/intervention)."
+}
