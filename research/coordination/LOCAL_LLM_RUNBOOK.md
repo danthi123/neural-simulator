@@ -232,4 +232,6 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
 
 <!-- Append one line per escalation: `- YYYY-MM-DD HH:MM  <what happened>  <what you already tried>` -->
 
-_(empty)_
+- 2026-09-26 10:30 (Claude) DO NOT STAGE modified files under `research/findings/raw/_d6_capacity_curve/` (e.g. `s100_N2000_HEBB.json`): pool-sync pulled a DUPLICATE run's outputs over the scored, committed cells (different memory readings). Leave them unstaged; Claude restores and investigates the duplicate dispatch after Tuesday.
+
+
