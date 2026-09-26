@@ -133,6 +133,16 @@ time per rolling 24 h (2026-09-25: the budget was used up at ~22:30 and frees gr
 _(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
 lines here after the Tuesday reset.)_
 
+## Pending commit from Claude (do this after ~16:00 Saturday 2026-09-26, when the waiver budget frees)
+
+The local-llm fix below is already live in the working tree but could not be committed (code commit + exhausted waiver
+budget). After 16:00 Saturday: write the honest NO-READY-WORK waiver (see the idle-compute section), then
+`git add tools/local_llm/llm.sh tests/conftest.py tests/_stub_systemctl_inactive.sh tests/test_no_real_llm_unit.py`,
+run `.venv/bin/python -m pytest -q tests/test_no_real_llm_unit.py tests/test_llm_gpu_autoswap.py tests/test_llm_session_resume.py`,
+commit with the message `fix(local-llm): tests can no longer stop the real local model; llm on clears a failed unit;
+llm claude continue means resume (Claude-authored 2026-09-26, committed by the local model)`, delete the waiver, and
+push main. If anything differs from this description, stop and write NEEDS CLAUDE.
+
 ## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
 
 Serves `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. The owner wants the local model to carry real
@@ -207,6 +217,9 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
   timeout on the live-node memory probe), issue lists in workflow wf_9944d7c2-aca; make `tools/gpu_queue.sh` and
   `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script; make `pool_provision.sh --revision` imply
   `--isolated` (FAILURE_LOG 2026-09-25).
+- Local-llm host RAM: the unit runs under `MemoryMax=12G`; on 2026-09-25/26 it hit a 12G memory peak AND 12G swap peak
+  (mmap'd weights + the default 8 GiB host prompt cache, `-cram`), which slows long sessions. Measure, then raise the cap or
+  set `-cram` in the 128K profile.
 - Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (if a commit in a worktree is
   blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two LOW review notes (validate
   the profile name before writing the restore marker; `|| true` on the test-only stop path).
