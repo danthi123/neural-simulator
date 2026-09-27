@@ -1,0 +1,4239 @@
+{
+  "seams": [
+    "metacog mean_role_confidence (commitment-strength)"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "panel": "degraded",
+  "per_seed": [
+    {
+      "seed": 1,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7844413147326722,
+          "mean_neural_mrc": 0.8741584851405854,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8385387997623847,
+              "neural_mrc": 0.9456593733318448,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7947956221241734,
+              "neural_mrc": 0.8570219086274808,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8222709553536208,
+              "neural_mrc": 0.9456593733095511,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6945523240445443,
+              "neural_mrc": 0.7595206974910833,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7720488723786375,
+              "neural_mrc": 0.8629310729429673,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.768479328564976,
+          "mean_neural_mrc": 0.8444515045539287,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8430261865234262,
+              "neural_mrc": 0.9456593733318448,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7766801994899746,
+              "neural_mrc": 0.8194181357328953,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.774200692006667,
+              "neural_mrc": 0.8629310729429673,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6712021709534137,
+              "neural_mrc": 0.6937140949243839,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7772873938513983,
+              "neural_mrc": 0.9005348458375528,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7274569213516076,
+          "mean_neural_mrc": 0.8091039580342596,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8401539122773044,
+              "neural_mrc": 0.9456593733318448,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7140198698291055,
+              "neural_mrc": 0.7254087035011325,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.826532938310669,
+              "neural_mrc": 0.9080556004149656,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5469804636832309,
+              "neural_mrc": 0.6034650399803871,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.709597422657728,
+              "neural_mrc": 0.8629310729429673,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6348913504016174,
+          "mean_neural_mrc": 0.6996232592352236,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7284003711104181,
+              "neural_mrc": 0.8516499410930309,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7078099704760579,
+              "neural_mrc": 0.7119787846047412,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.700318986359359,
+              "neural_mrc": 0.7802027725763836,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.4979516911246551,
+              "neural_mrc": 0.547059380636159,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.9897584556232755,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5399757329375972,
+              "neural_mrc": 0.6072254172658034,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6101538839294176,
+          "mean_neural_mrc": 0.6281760907353771,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5582136418098764,
+              "neural_mrc": 0.5602207011534472,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7020346214403412,
+              "neural_mrc": 0.693176898162149,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.6122205564824337,
+              "neural_mrc": 0.5771423989486308,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5298167969310545,
+              "neural_mrc": 0.6128659832028585,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6484838029833823,
+              "neural_mrc": 0.6974744722098,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 4,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.5390229314227722,
+          "mean_neural_mrc": 0.6194018770648448,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.4606345065060685,
+              "neural_mrc": 0.6045394335024395,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8031725325303426,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7090869449344787,
+              "neural_mrc": 0.7802027725763836,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.3703962905154856,
+              "neural_mrc": 0.4405153574427548,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.35198145257742813,
+              "neural_evidence": 0.7025767872137739,
+              "confident_changed": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6159739837350562,
+              "neural_mrc": 0.6523499447378016,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 3,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5392190655591883,
+          "mean_neural_mrc": 0.5428513393834449,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.532019464405879,
+              "neural_mrc": 0.5494767660422435,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.466366209696532,
+              "neural_mrc": 0.46433108026487474,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8318310484826599,
+              "neural_evidence": 0.8216554013243738,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.619271522575154,
+              "neural_mrc": 0.6147461718432163,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 0,
+          "n_straddle": 0,
+          "mean_host_mrc": null,
+          "mean_neural_mrc": null,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.39070042057184373,
+          "mean_neural_mrc": 0.38160277989829106,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.39070042057184373,
+              "neural_mrc": 0.38160277989829106,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.4535021028592187,
+              "neural_evidence": 0.40801389949145533,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 4,
+          "n_straddle": 3,
+          "mean_host_mrc": 0.402001301696127,
+          "mean_neural_mrc": 0.5017334043834092,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.38782547784579524,
+              "neural_mrc": 0.43129347980288535,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.43912738922897626,
+              "neural_evidence": 0.6564673990144267,
+              "confident_changed": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.37923510335692656,
+              "neural_mrc": 0.5924525064971311,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.39617551678463286,
+              "neural_evidence": 1.0,
+              "confident_changed": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.3331863512070221,
+              "neural_mrc": 0.466211268919334,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.16593175603511062,
+              "neural_evidence": 0.8310563445966701,
+              "confident_changed": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5077582743747641,
+              "neural_mrc": 0.516976362314286,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.5,
+        2.5
+      ],
+      "organ_threshold": 0.061287047189711466,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 2,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.8027016606717414,
+          "mean_neural_mrc": 0.8930140912719366,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8203394652559003,
+              "neural_mrc": 0.9187995355498061,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7380407834925666,
+              "neural_mrc": 0.8059882168606781,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7969598053609898,
+              "neural_mrc": 0.9155763549954944,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.8374086208201663,
+              "neural_mrc": 0.9187995355498061,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.8207596284290837,
+              "neural_mrc": 0.9059068134038987,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7955037147525978,
+          "mean_neural_mrc": 0.8865677302041399,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8140147678094956,
+              "neural_mrc": 0.8865677302108227,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7431482677434322,
+              "neural_mrc": 0.8435919897552634,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7760072054475069,
+              "neural_mrc": 0.870451827523496,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.8241798555634668,
+              "neural_mrc": 0.8811957626552208,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.820168477199088,
+              "neural_mrc": 0.9510313408758969,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7299391853515933,
+          "mean_neural_mrc": 0.8056658988057034,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6357339713445136,
+              "neural_mrc": 0.7092928008490996,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7295343891420515,
+              "neural_mrc": 0.7683844439660926,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.739459223767076,
+              "neural_mrc": 0.814046168181806,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7628814643375184,
+              "neural_mrc": 0.8811957626552208,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7820868781668073,
+              "neural_mrc": 0.8554103183762984,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6589317001255972,
+          "mean_neural_mrc": 0.7188549030960351,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.694311789403639,
+              "neural_mrc": 0.7737564115270666,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5628374869661686,
+              "neural_mrc": 0.5964814821599715,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.6274425246917376,
+              "neural_mrc": 0.6786725857737078,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6996723850575317,
+              "neural_mrc": 0.746896573743685,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7103943145089093,
+              "neural_mrc": 0.7984674622757444,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5780899168381955,
+          "mean_neural_mrc": 0.6383828291043674,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7887945940522072,
+              "neural_mrc": 0.8435919897606354,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5826617498555575,
+              "neural_mrc": 0.693176898176922,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5120561793132737,
+              "neural_mrc": 0.5835887600374857,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.530079505587346,
+              "neural_mrc": 0.6072254172765472,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.47685755538259306,
+              "neural_mrc": 0.46433108027024667,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8842877769129653,
+              "neural_evidence": 0.8216554013512334,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 2,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.5220390428324031,
+          "mean_neural_mrc": 0.5749936119348779,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6371967339961045,
+              "neural_mrc": 0.693176898176922,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.40688135166870176,
+              "neural_mrc": 0.45681032569283375,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.5344067583435088,
+              "neural_evidence": 0.7840516284641688,
+              "confident_changed": true
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6295018778843933,
+          "mean_neural_mrc": 0.6630938798597494,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5669576602410846,
+              "neural_mrc": 0.6233413199433531,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.692046095527702,
+              "neural_mrc": 0.7028464397761458,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 3,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.47196722701263777,
+          "mean_neural_mrc": 0.5320178714852993,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.4648451615163796,
+              "neural_mrc": 0.44069442302602807,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8242258075818981,
+              "neural_evidence": 0.7034721151301404,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.42883929658916153,
+              "neural_mrc": 0.5932583016382138,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.6441964829458077,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.522217222932372,
+              "neural_mrc": 0.5621008897916563,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 1,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.32576248643969463,
+          "mean_neural_mrc": 0.42995048790945223,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.32576248643969463,
+              "neural_mrc": 0.42995048790945223,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.12881243219847321,
+              "neural_evidence": 0.6497524395472611,
+              "confident_changed": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.4129438313277078,
+          "mean_neural_mrc": 0.5282574941980404,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.4129438313277078,
+              "neural_mrc": 0.5282574941980404,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.564719156638539,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.5,
+        2.25
+      ],
+      "organ_threshold": 0.07203883935470176,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 3,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7996935968985514,
+          "mean_neural_mrc": 0.875394037686554,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7904119715095694,
+              "neural_mrc": 0.8736750080649152,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.8095969372575681,
+              "neural_mrc": 0.8554103183634058,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8032654893014785,
+              "neural_mrc": 0.9134275679942042,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.8262641577747051,
+              "neural_mrc": 0.938138618756312,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7689294286494359,
+              "neural_mrc": 0.7963186752539334,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7834806226631106,
+          "mean_neural_mrc": 0.8666914502443113,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7941253207499941,
+              "neural_mrc": 0.9059068134038987,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.820895179403966,
+              "neural_mrc": 0.900534845835404,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7619842761893496,
+              "neural_mrc": 0.8811957626552208,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7867174710587465,
+              "neural_mrc": 0.8817329594120837,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7536808659134971,
+              "neural_mrc": 0.7640868699149499,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6931001627563808,
+          "mean_neural_mrc": 0.7276649298865104,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7670993910342039,
+              "neural_mrc": 0.8360712351703298,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6512136536529161,
+              "neural_mrc": 0.6953256851858401,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.619977139367605,
+              "neural_mrc": 0.6340852550599289,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7398567126240652,
+              "neural_mrc": 0.7914839044680871,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6873539171031136,
+              "neural_mrc": 0.6813585695483663,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6940248775476172,
+          "mean_neural_mrc": 0.7461982179555865,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6298886909244192,
+              "neural_mrc": 0.5986302691817825,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7150553825482272,
+              "neural_mrc": 0.772682017996822,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.673007059278673,
+              "neural_mrc": 0.746896573743685,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7158926666579384,
+              "neural_mrc": 0.751999942923743,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7362805883288287,
+              "neural_mrc": 0.8607822859319003,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5824993569543659,
+          "mean_neural_mrc": 0.6799081383110543,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5663184003856887,
+              "neural_mrc": 0.6459035836755918,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6546502947846113,
+              "neural_mrc": 0.6899537176302383,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.6512628530208382,
+              "neural_mrc": 0.7415246061880831,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5425229578629994,
+              "neural_mrc": 0.7106357927465616,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.49774227871769205,
+              "neural_mrc": 0.6115229913147974,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.9887113935884603,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 4,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.47595303787031096,
+          "mean_neural_mrc": 0.5282574941939361,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5048875798890013,
+              "neural_mrc": 0.6179693523877512,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5114979411940053,
+              "neural_mrc": 0.5470593806368305,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.436866221814711,
+              "neural_mrc": 0.38912353448107595,
+              "host_confident": true,
+              "neural_confident": false,
+              "host_evidence": 0.6843311090735551,
+              "neural_evidence": 0.4456176724053798,
+              "confident_changed": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.4505604085835262,
+              "neural_mrc": 0.5588777092700866,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.752802042917631,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5137777232555301,
+          "mean_neural_mrc": 0.4471407840898495,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6445443694075977,
+              "neural_mrc": 0.5395386260594175,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.38301107710346244,
+              "neural_mrc": 0.35474294212028146,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.41505538551731225,
+              "neural_evidence": 0.27371471060140734,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5115340027646083,
+          "mean_neural_mrc": 0.5752622103136451,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5115340027646083,
+              "neural_mrc": 0.5752622103136451,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 0,
+          "n_straddle": 0,
+          "mean_host_mrc": null,
+          "mean_neural_mrc": null,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 0,
+          "n_straddle": 0,
+          "mean_host_mrc": null,
+          "mean_neural_mrc": null,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.5
+      ],
+      "organ_threshold": 0.047171710604403866,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 4,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7856467241565878,
+          "mean_neural_mrc": 0.8756089163871238,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8044233714346313,
+              "neural_mrc": 0.9005348458429248,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7728863222865825,
+              "neural_mrc": 0.8328480546386877,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8018596413599114,
+              "neural_mrc": 0.870451827533273,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7643942542937162,
+              "neural_mrc": 0.9134275679888323,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7846700314080978,
+              "neural_mrc": 0.8607822859319003,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7720611105871132,
+          "mean_neural_mrc": 0.8526168952460103,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7750640681655626,
+              "neural_mrc": 0.8178065454763411,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7597727627295008,
+              "neural_mrc": 0.8328480546386877,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8171552600324448,
+              "neural_mrc": 0.9080556004278585,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7175666589203124,
+              "neural_mrc": 0.8435919897552634,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7907468030877457,
+              "neural_mrc": 0.8607822859319003,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7235153709043758,
+          "mean_neural_mrc": 0.79374013082819,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7234813648749033,
+              "neural_mrc": 0.8178065454763411,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7217805445854031,
+              "neural_mrc": 0.8328480546386877,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8132448594940358,
+              "neural_mrc": 0.870451827533273,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6978351921922195,
+              "neural_mrc": 0.8113601844162799,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6612348933753167,
+              "neural_mrc": 0.6362340420763679,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6419205236970408,
+          "mean_neural_mrc": 0.7297062775556595,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6163551590230624,
+              "neural_mrc": 0.7028464397707739,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6684186847966808,
+              "neural_mrc": 0.757640508849517,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5895335004505604,
+              "neural_mrc": 0.6824329630603461,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6336858842774571,
+              "neural_mrc": 0.746896573738313,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7016093899374429,
+              "neural_mrc": 0.758714902359348,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.603319459210285,
+          "mean_neural_mrc": 0.6587963058120447,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6480567201464545,
+              "neural_mrc": 0.6749122084754124,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6568086388704293,
+              "neural_mrc": 0.6824329630603461,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.621293078119073,
+              "neural_mrc": 0.6824329630603461,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5338818600847722,
+              "neural_mrc": 0.6663170603935404,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5565569988306955,
+              "neural_mrc": 0.5878863340705787,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 4,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.43315435330047647,
+          "mean_neural_mrc": 0.46889725269428106,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.387318706943076,
+              "neural_mrc": 0.43532245546505416,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.43659353471538015,
+              "neural_evidence": 0.6766122773252708,
+              "confident_changed": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5205744163241681,
+              "neural_mrc": 0.56962164437659,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.32350566486479515,
+              "neural_mrc": 0.38697474745926497,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.11752832432397581,
+              "neural_evidence": 0.4348737372963249,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5012186250698668,
+              "neural_mrc": 0.4836701634762154,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 0.9183508173810769,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.44842668341073016,
+          "mean_neural_mrc": 0.4756122121363661,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.48137248878132577,
+              "neural_mrc": 0.4976372791136893,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.9068624439066288,
+              "neural_evidence": 0.9881863955684467,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.41548087804013456,
+              "neural_mrc": 0.4535871451590429,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.5774043902006728,
+              "neural_evidence": 0.7679357257952146,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 2,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.4632711865701824,
+          "mean_neural_mrc": 0.4890421310291313,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.37276110202998397,
+              "neural_mrc": 0.4084626176816726,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.3638055101499199,
+              "neural_evidence": 0.5423130884083629,
+              "confident_changed": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5537812711103809,
+              "neural_mrc": 0.56962164437659,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.2290877928938589,
+          "mean_neural_mrc": 0.2956512989979164,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.2290877928938589,
+              "neural_mrc": 0.2956512989979164,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.0,
+              "neural_evidence": 0.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 2,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.46834010850626295,
+          "mean_neural_mrc": 0.5142903785456174,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5821546185616043,
+              "neural_mrc": 0.5771423989540029,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.3545255984509216,
+              "neural_mrc": 0.4514383581372319,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.27262799225460793,
+              "neural_evidence": 0.7571917906861594,
+              "confident_changed": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "organ_threshold": 0.052831519307089236,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 5,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7948132663163505,
+          "mean_neural_mrc": 0.8996753310326484,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8035545261149587,
+              "neural_mrc": 0.9381386187246175,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.8319067860426158,
+              "neural_mrc": 0.9456593733170717,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8458723992315161,
+              "neural_mrc": 0.9456593733095511,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7546245499042283,
+              "neural_mrc": 0.8306992676177123,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7381080702884342,
+              "neural_mrc": 0.8382200221942895,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7671544665018561,
+          "mean_neural_mrc": 0.8655812436088037,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7533991256091577,
+              "neural_mrc": 0.8554103183580337,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7967722760331771,
+              "neural_mrc": 0.870451827527901,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7882594824812879,
+              "neural_mrc": 0.8629310729429673,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7528268595922128,
+              "neural_mrc": 0.9008929770208269,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7445145887934459,
+              "neural_mrc": 0.8382200221942895,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7262603122207705,
+          "mean_neural_mrc": 0.8039826822965622,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.698789821724911,
+              "neural_mrc": 0.7200367359420388,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7968383686525161,
+              "neural_mrc": 0.9080556004224865,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.8449456674482615,
+              "neural_mrc": 0.9005348458375528,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6337024149758943,
+              "neural_mrc": 0.7282737528756142,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6570252883022695,
+              "neural_mrc": 0.7630124764051187,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.716270174276018,
+          "mean_neural_mrc": 0.7624394665262054,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.8333406599992393,
+              "neural_mrc": 0.893014091252619,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7035829469899537,
+              "neural_mrc": 0.6824329630549741,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7125643470417379,
+              "neural_mrc": 0.7200367359420388,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.759728314809587,
+              "neural_mrc": 0.8557684495488285,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5721346025395717,
+              "neural_mrc": 0.6609450928325664,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5908041773577424,
+          "mean_neural_mrc": 0.6410688128679218,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5884912443755234,
+              "neural_mrc": 0.6448291901603888,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5931171103399615,
+              "neural_mrc": 0.637308435575455,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 3,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5809911455202933,
+          "mean_neural_mrc": 0.6244754019757192,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5997565540203273,
+              "neural_mrc": 0.5470593806314585,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7086731597002187,
+              "neural_mrc": 0.8185228078196107,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.434543722840334,
+              "neural_mrc": 0.5078440174760882,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.67271861420167,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 3,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.4421385863969241,
+          "mean_neural_mrc": 0.5081126158522142,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.34454619548222687,
+              "neural_mrc": 0.4890421310264453,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.2227309774111344,
+              "neural_evidence": 0.9452106551322265,
+              "confident_changed": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.48526692373484515,
+              "neural_mrc": 0.4944140985820472,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.9263346186742257,
+              "neural_evidence": 0.9720704929102361,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.49660263997370035,
+              "neural_mrc": 0.5408816179481502,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.9830131998685018,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.38435662294429984,
+          "mean_neural_mrc": 0.4363968489732737,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.4542364035941143,
+              "neural_mrc": 0.4944140985820472,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.7711820179705716,
+              "neural_evidence": 0.9720704929102361,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.3144768422944854,
+              "neural_mrc": 0.37837959936450016,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.07238421147242713,
+              "neural_evidence": 0.39189799682250087,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 2,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.5332743646043725,
+          "mean_neural_mrc": 0.4895793277813608,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5043809873939533,
+              "neural_mrc": 0.3966442890531169,
+              "host_confident": true,
+              "neural_confident": false,
+              "host_evidence": 1.0,
+              "neural_evidence": 0.48322144526558447,
+              "confident_changed": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5621677418147918,
+              "neural_mrc": 0.5825143665096048,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 0,
+          "n_straddle": 0,
+          "mean_host_mrc": null,
+          "mean_neural_mrc": null,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.75,
+        2.25
+      ],
+      "organ_threshold": 0.07051771578223842,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 6,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7380927548601841,
+          "mean_neural_mrc": 0.8326868956138286,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.702750140485745,
+              "neural_mrc": 0.7984674622757444,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.71592696701522,
+              "neural_mrc": 0.8006162493050761,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.801285900834609,
+              "neural_mrc": 0.893014091257991,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7481665686657887,
+              "neural_mrc": 0.8102857909094572,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7223341972995583,
+              "neural_mrc": 0.8610508843208743,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7010832132242057,
+          "mean_neural_mrc": 0.7773556297829017,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6788429953184366,
+              "neural_mrc": 0.753342934803746,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.670602278364328,
+              "neural_mrc": 0.7307806710715072,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7632475887051395,
+              "neural_mrc": 0.8102857908914074,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7376202953909564,
+              "neural_mrc": 0.7877235271712019,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6551029083421681,
+              "neural_mrc": 0.8046452249766459,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6783224265170267,
+          "mean_neural_mrc": 0.7163300783428406,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.7210022078439909,
+              "neural_mrc": 0.7909467076983314,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6288127568418551,
+              "neural_mrc": 0.6985488657325238,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7506403873743933,
+              "neural_mrc": 0.7275574905248237,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6985725676474371,
+              "neural_mrc": 0.6673914539100327,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5925842128774571,
+              "neural_mrc": 0.6972058738484916,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.560575473943189,
+          "mean_neural_mrc": 0.6127048241796271,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5247911039821606,
+              "neural_mrc": 0.6158205653584193,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.41230648486458865,
+              "neural_mrc": 0.49441409858741914,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.5615324243229433,
+              "neural_evidence": 0.9720704929370957,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.650887159569715,
+              "neural_mrc": 0.6373084355808271,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.6553598226077081,
+              "neural_mrc": 0.6523499447506944,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5595327986917723,
+              "neural_mrc": 0.6636310766207756,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 4,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.5024233151771844,
+          "mean_neural_mrc": 0.578664456433287,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.5455202911607522,
+              "neural_mrc": 0.5878863340705787,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.43939415122398273,
+              "neural_mrc": 0.4675542608094096,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.6969707561199137,
+              "neural_evidence": 0.837771304047048,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5708074840711387,
+              "neural_mrc": 0.5642496768134673,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.4539713342528643,
+              "neural_mrc": 0.6949675540396923,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.7698566712643214,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 3,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.4523671124259078,
+          "mean_neural_mrc": 0.4510802269703591,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.43446279730735937,
+              "neural_mrc": 0.3668298691255899,
+              "host_confident": true,
+              "neural_confident": false,
+              "host_evidence": 0.6723139865367969,
+              "neural_evidence": 0.33414934562794957,
+              "confident_changed": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.5762045184528318,
+              "neural_mrc": 0.6276388939936363,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.3464340215175324,
+              "neural_mrc": 0.35877191779185125,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.232170107587662,
+              "neural_evidence": 0.2938595889592563,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 3,
+          "n_straddle": 1,
+          "mean_host_mrc": 0.4593369122679718,
+          "mean_neural_mrc": 0.5518046186513855,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.528990800710348,
+              "neural_mrc": 0.6502011577267346,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.3766907105656787,
+              "neural_mrc": 0.44740938247036255,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.3834535528283936,
+              "neural_evidence": 0.7370469123518127,
+              "confident_changed": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.4723292255278888,
+              "neural_mrc": 0.5578033157570592,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.861646127639444,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.4709323462246889,
+          "mean_neural_mrc": 0.5862747437972369,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.40260124846199197,
+              "neural_mrc": 0.5438362001030395,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.5130062423099598,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.5392634439873858,
+              "neural_mrc": 0.6287132874914343,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.22251516399230703,
+          "mean_neural_mrc": 0.20969981809754185,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.22251516399230703,
+              "neural_mrc": 0.20969981809754185,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.0,
+              "neural_evidence": 0.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.4401623488268325,
+          "mean_neural_mrc": 0.4320992749312632,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.4401623488268325,
+              "neural_mrc": 0.4320992749312632,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.7008117441341624,
+              "neural_evidence": 0.660496374656316,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.5,
+        1.75
+      ],
+      "organ_threshold": 0.044179352790613954,
+      "label": "DEV, not a verdict"
+    },
+    {
+      "seed": 7,
+      "sigma_grid": [
+        0.0,
+        0.3,
+        0.6,
+        0.9,
+        1.2,
+        1.5,
+        1.75,
+        2.0,
+        2.25,
+        2.5
+      ],
+      "per_sigma": [
+        {
+          "sigma": 0.0,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7569197821982747,
+          "mean_neural_mrc": 0.8291413970272119,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.65547964294424,
+              "neural_mrc": 0.7737564115146438,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7931290012413088,
+              "neural_mrc": 0.8328480546386876,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7483468862745615,
+              "neural_mrc": 0.7930954947241713,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.766797469655169,
+              "neural_mrc": 0.8811957626592497,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.8208459108760945,
+              "neural_mrc": 0.8648112615993069,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.3,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.7405900374248499,
+          "mean_neural_mrc": 0.8419266798101299,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.6739109268103037,
+              "neural_mrc": 0.8059882168536273,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7754745310903151,
+              "neural_mrc": 0.8516499410812799,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.7525297469504232,
+              "neural_mrc": 0.7930954947241713,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7058174281258613,
+              "neural_mrc": 0.8489639573202663,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7952175541473464,
+              "neural_mrc": 0.9099357890713051,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.6,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6579059659797604,
+          "mean_neural_mrc": 0.725408703515986,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.517053968543821,
+              "neural_mrc": 0.5642496768233383,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.7217236696676412,
+              "neural_mrc": 0.7066068170679412,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.6241012628517115,
+              "neural_mrc": 0.7608636893851879,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.7326765638649507,
+              "neural_mrc": 0.8489639573202663,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.6939743649706775,
+              "neural_mrc": 0.746359376983196,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 0.9,
+          "n_answered": 5,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.6151277664190719,
+          "mean_neural_mrc": 0.619527222981109,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.4614834015148823,
+              "neural_mrc": 0.49656288561393064,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8074170075744116,
+              "neural_evidence": 0.9828144280696532,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.5326652348484094,
+              "neural_mrc": 0.5159019688192277,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.6843480904754335,
+              "neural_mrc": 0.6577219123081764,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.682039857474886,
+              "neural_mrc": 0.7092928008531285,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.7151022477817481,
+              "neural_mrc": 0.7181565473110818,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.2,
+          "n_answered": 4,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.47254818321033515,
+          "mean_neural_mrc": 0.5256386600125895,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.3007019418997391,
+              "neural_mrc": 0.3466849907912433,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.0035097094986955013,
+              "neural_evidence": 0.23342495395621665,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.6146817612784267,
+              "neural_mrc": 0.6797469792845596,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.38993701316964574,
+              "neural_mrc": 0.44821517760746993,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.44968506584822876,
+              "neural_evidence": 0.7410758880373497,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.584872016493529,
+              "neural_mrc": 0.6279074923670853,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.5,
+          "n_answered": 3,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.4322829191883404,
+          "mean_neural_mrc": 0.48393876185386336,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.2979153777088409,
+              "neural_mrc": 0.3386270394534757,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.0,
+              "neural_evidence": 0.19313519726737866,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.44619627734136813,
+              "neural_mrc": 0.4965628856132592,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.7309813867068407,
+              "neural_evidence": 0.9828144280662959,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.552737102514812,
+              "neural_mrc": 0.6166263604948552,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 1.75,
+          "n_answered": 4,
+          "n_straddle": 2,
+          "mean_host_mrc": 0.41604216485327133,
+          "mean_neural_mrc": 0.4895793277884115,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.33172561102980497,
+              "neural_mrc": 0.4903851229252503,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.1586280551490249,
+              "neural_evidence": 0.9519256146262517,
+              "confident_changed": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": false,
+              "host_mrc": 0.47662229211476614,
+              "neural_mrc": 0.4514383581412608,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8831114605738307,
+              "neural_evidence": 0.7571917907063042,
+              "confident_changed": false
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": false,
+              "host_mrc": 0.3007551742262317,
+              "neural_mrc": 0.4071196257976405,
+              "host_confident": false,
+              "neural_confident": true,
+              "host_evidence": 0.0037758711311586257,
+              "neural_evidence": 0.5355981289882025,
+              "confident_changed": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5550655820422825,
+              "neural_mrc": 0.6093742042894945,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.0,
+          "n_answered": 2,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.48268499938900095,
+          "mean_neural_mrc": 0.4707774413434691,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.4043818401300201,
+              "neural_mrc": 0.499786066152422,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.5219092006501005,
+              "neural_evidence": 0.99893033076211,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": false,
+              "host_mrc": 0.5609881586479818,
+              "neural_mrc": 0.44176881653451616,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 1.0,
+              "neural_evidence": 0.7088440826725808,
+              "confident_changed": false
+            }
+          ]
+        },
+        {
+          "sigma": 2.25,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.3795197690976686,
+          "mean_neural_mrc": 0.33862703945750466,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": true
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": false,
+              "host_mrc": 0.3795197690976686,
+              "neural_mrc": 0.33862703945750466,
+              "host_confident": false,
+              "neural_confident": false,
+              "host_evidence": 0.39759884548834307,
+              "neural_evidence": 0.19313519728752337,
+              "confident_changed": false
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        },
+        {
+          "sigma": 2.5,
+          "n_answered": 1,
+          "n_straddle": 0,
+          "mean_host_mrc": 0.479760015522001,
+          "mean_neural_mrc": 0.569621644381962,
+          "rows": [
+            {
+              "agent": "river",
+              "verb": "flow",
+              "abstained": false,
+              "host_mrc": 0.479760015522001,
+              "neural_mrc": 0.569621644381962,
+              "host_confident": true,
+              "neural_confident": true,
+              "host_evidence": 0.8988000776100049,
+              "neural_evidence": 1.0,
+              "confident_changed": false
+            },
+            {
+              "agent": "bird",
+              "verb": "fly",
+              "abstained": true
+            },
+            {
+              "agent": "worm",
+              "verb": "dig",
+              "abstained": true
+            },
+            {
+              "agent": "ball",
+              "verb": "roll",
+              "abstained": true
+            },
+            {
+              "agent": "stone",
+              "verb": "sink",
+              "abstained": true
+            }
+          ]
+        }
+      ],
+      "straddle_sigmas": [
+        1.75
+      ],
+      "organ_threshold": 0.07833201627496375,
+      "label": "DEV, not a verdict"
+    }
+  ],
+  "label": "DEV, not a verdict",
+  "note": "host-share instrument first seam; plan section 2 (decoding/substitution/intervention)."
+}

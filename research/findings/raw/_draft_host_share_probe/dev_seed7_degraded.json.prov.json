@@ -1,0 +1,30 @@
+{
+ "run_id": "1790463886-368278",
+ "runner": "research/runners/_draft_host_share_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/draft-seam-map/research/runners/_draft_host_share_probe.py",
+  "--seeds",
+  "7",
+  "--degraded",
+  "--out",
+  "research/findings/raw/_draft_host_share_probe/dev_seed7_degraded.json"
+ ],
+ "git_sha": "c7d68099a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-26T19:04:46",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 95396.2,
+ "corpus_check_query": "a told fact is recallable at once but encoded too weakly to be replayed: encoding strength set by the seed not importance",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_draft_host_share_probe/dev_seed7_degraded.json"
+}

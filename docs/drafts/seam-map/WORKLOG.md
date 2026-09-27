@@ -169,3 +169,31 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   clean panel. NEXT STEP (clear, not a NEEDS-CLAUDE): add a DEGRADED panel (reuse `_noise` from
   `_emergent_graceful_degradation_derisk` on the store conns, a small sigma sweep) so the host vs neural confidences
   STRADDLE the threshold and the substitution can show a real commitment change. NOT yet built (context budget).
+- 2026-09-26 19:0x  BUILT the DEGRADED panel (the NEXT STEP above). `research/runners/_draft_host_share_probe.py`
+  gains: `_noise(store_conns, sigma, rng)` (mirrors `_emergent_graceful_degradation_derisk._noise` verbatim -- complex
+  Gaussian jitter on the store phasors; sigma 0 = the intact store), `SIGMA_GRID = [0,0.3,0.6,0.9,1.2,1.5,1.75,2.0,
+  2.25,2.5]`, and `run_seed_degraded(seed)` (per sigma: apply `_noise` to a copy of the store, re-query the 5 dev
+  facts, record host_mrc / neural_mrc / host_confident / neural_confident / confident_changed, then RESTORE the intact
+  store before the next level -- the perturbation never accumulates). A `--degraded` CLI flag runs this panel instead
+  of the clean one. No sim//webapp/ edit (the probe sets `comp.store_conns` on a COPY and restores it, exactly the
+  derisk's `_sweep` pattern; verified empirically that a single-query read re-reads `store_conns` each call, so the
+  perturbation reaches the read without touching `_store_dirty`).
+- 2026-09-26 19:0x  SMOKE (dev seed 7, `--degraded`): the clean panel (sigma 0-1.5) is a NO-OP (straddle=0); the
+  straddle appears at sigma 1.75 (2 facts: the host's lower mrc maps to hedge, the neural's higher mrc maps to assert).
+  Wrote `dev_seed7_degraded.json`.
+- 2026-09-26 19:0x  DEV SWEEP (seeds 1-7, memcap 8, `--degraded`, ~3 min): EVERY seed produces a NON-EMPTY straddle
+  band, all in the DEGRADED regime, none at the clean panel: seed1 [1.5,2.5], seed2 [1.5,2.25], seed3 [1.5], seed4
+  [1.5,2.0,2.5], seed5 [1.75,2.25], seed6 [1.5,1.75], seed7 [1.75]. The clean panel (sigma 0-1.2) is a NO-OP on all 7
+  (both arms confident). Wrote `dev_degraded_sweep.json`.
+- 2026-09-26 19:0x  TEST: added `test_degraded_panel_straddles` (dev seed 7): the clean panel (sigma 0) answers all 5
+  facts with n_straddle=0 (the NO-OP), AND the degraded panel produces a non-empty straddle band that excludes sigma 0
+  (a real commitment change in the degraded regime), AND every straddling row is a genuine host-vs-neural divergence
+  (both confident bools present and unequal). `3 passed in 34.9s`.
+- FINDINGS (DEV, not a verdict): the DEGRADED panel closes the clean-panel NO-OP. As the store degrades, the host and
+  the neural mrcs fall and cross the metacog confident-threshold at DIFFERENT points, so the two arms STRADDLE and the
+  substitution (host decision -> neural decision) flips the downstream commitment (hedge<->assert) on a band of sigma
+  levels. The band is NARROW (1-3 sigma levels per seed) and sits in the degraded regime (sigma ~1.5-2.5): the host
+  and neural mrcs both fall with sigma, so they straddle the threshold only in a window before the facts abstain. The
+  straddle direction is per-fact (the host is usually the less-confident read, but not always) -- the invariant is the
+  DIVERGENCE, not which arm is higher. This is a DEV screen (dev seeds 1-7, NOT the 6 gate seeds); it shows the
+  substitution CAN be load-bearing, it is not a 6-seed generalization claim.

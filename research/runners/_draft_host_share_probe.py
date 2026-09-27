@@ -78,6 +78,27 @@ VOCAB = sorted({w for f in FACTS for w in f} | {"brain", "use", "spikes", "dog",
 # or all 1) is visible.
 MRC_GRID = [0.0, 0.15, 0.30, 0.40, 0.50, 0.60, 0.70, 1.0]
 
+# The DEGRADED panel's sigma sweep: complex Gaussian jitter on the store phasors (mirrors
+# `_emergent_graceful_degradation_derisk._noise`). On the CLEAN panel (sigma 0) the host and the neural
+# confidences BOTH sit above the metacog threshold, so the substitution is a NO-OP. As the store degrades the
+# confidences fall and cross the threshold at DIFFERENT points, so the two arms STRADDLE (one confident, one not)
+# and the substitution can show a real commitment change. The grid is fine near 0 (the transition region for this
+# small closed-vocab store is low-sigma) and reaches the reference derisk's top level (1.5) plus a bit past it.
+SIGMA_GRID = [0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.75, 2.0, 2.25, 2.5]
+
+
+def _noise(store_conns, sigma, rng):
+    """Synaptic noise: complex Gaussian jitter on each store weight (magnitude + phase). Mirrors
+    `_emergent_graceful_degradation_derisk._noise` verbatim so the degraded panel is the SAME perturbation the
+    graceful-degradation derisk uses. sigma 0.0 returns the store unchanged (the clean panel)."""
+    if sigma == 0.0:
+        return list(store_conns)
+    out = []
+    for (post, pre, w) in store_conns:
+        jit = complex(rng.normal(0.0, sigma), rng.normal(0.0, sigma))
+        out.append((post, pre, complex(w) + jit))
+    return out
+
 
 def _host_mrc(activity):
     """The HOST decision: mirror `mean_role_confidence`'s host chain EXACTLY but never prefer `margin_spiking`
@@ -201,31 +222,108 @@ def run_seed(seed):
             "organ_calib": organ.calib, "label": "DEV, not a verdict"}
 
 
+def run_seed_degraded(seed):
+    """The DEGRADED panel: the SAME three measurements, but with the store synapses noised at each sigma level
+    (mirrors `_emergent_graceful_degradation_derisk._sweep`: apply to a copy, eval, restore the intact store).
+
+    WHY: on the clean panel the host and the neural confidences both sit above the metacog threshold, so the
+    SUBSTITUTION (host decision -> neural decision) is a NO-OP. As the store degrades the confidences fall and
+    cross the threshold at DIFFERENT points, so the two arms STRADDLE (one confident, one not) and the
+    substitution can finally show a real commitment change. The panel records, per sigma, which facts straddle
+    (`confident_changed`) and the mean host vs neural mrc, so the straddle band is visible.
+
+    The store is restored to the intact base after every sigma level (the perturbation never accumulates)."""
+    comp = build_composer(seed)
+    organ = MetacogProductionOrgan(seed=seed)
+    organ.ensure_built()
+    base = list(comp.store_conns)
+    rng = np.random.default_rng(seed)
+    queries = [(f[0], f[1]) for f in FACTS]
+    per_sigma = []
+    for sigma in SIGMA_GRID:
+        comp.store_conns = _noise(base, sigma, rng)          # perturb a copy (sigma 0 = the intact store)
+        rows = []
+        for a, v in queries:
+            ans, trace = ask_and_trace(comp, a, v)
+            if ans is None or not trace:
+                rows.append({"agent": a, "verb": v, "abstained": True})
+                continue
+            host = _host_mrc(trace)                          # (a) the host decision
+            neural = _neural_mrc(trace)                      # the neural-derived decision
+            sub_host = _confident(organ, host)               # (b) downstream confident at the host decision
+            sub_neural = _confident(organ, neural)           # (b) ...and at the neural decision
+            rows.append({
+                "agent": a, "verb": v, "abstained": False,
+                "host_mrc": host, "neural_mrc": neural,
+                "host_confident": sub_host["confident"], "neural_confident": sub_neural["confident"],
+                "host_evidence": sub_host["evidence"], "neural_evidence": sub_neural["evidence"],
+                "confident_changed": (sub_host["confident"] != sub_neural["confident"]),
+            })
+        comp.store_conns = list(base)                        # restore the intact store before the next level
+        answered = [r for r in rows if not r["abstained"]]
+        per_sigma.append({
+            "sigma": sigma,
+            "n_answered": len(answered),
+            "n_straddle": sum(1 for r in answered if r["confident_changed"]),
+            "mean_host_mrc": (float(np.mean([r["host_mrc"] for r in answered])) if answered else None),
+            "mean_neural_mrc": (float(np.mean([r["neural_mrc"] for r in answered])) if answered else None),
+            "rows": rows,
+        })
+    # the STRADDLE band: the sigma levels at which at least one answered fact's host vs neural confident differ
+    straddle_sigmas = [s["sigma"] for s in per_sigma if s["n_straddle"] > 0]
+    return {
+        "seed": seed,
+        "sigma_grid": SIGMA_GRID,
+        "per_sigma": per_sigma,
+        "straddle_sigmas": straddle_sigmas,
+        "organ_threshold": float(organ.threshold),
+        "label": "DEV, not a verdict",
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[7])
     ap.add_argument("--out", type=str, default=None)
+    ap.add_argument("--degraded", action="store_true",
+                    help="run the DEGRADED panel (noise the store synapses over SIGMA_GRID so the host vs neural "
+                         "confidences straddle the metacog threshold and the substitution can show a real "
+                         "commitment change) instead of the clean panel.")
     args = ap.parse_args()
 
     per_seed = []
     for seed in args.seeds:
-        print(f"=== host-share probe, dev seed {seed} ===", flush=True)
-        r = run_seed(seed)
-        per_seed.append(r)
-        print(f"  answered {sum(1 for row in r['rows'] if not row['abstained'])}/{len(r['rows'])}, "
-              f"decoding_corr={r['decoding_host_vs_neural_corr']}, "
-              f"host_share_indicator={r['host_share_indicator']}", flush=True)
+        print(f"=== host-share probe, dev seed {seed} ({'DEGRADED' if args.degraded else 'clean'}) ===",
+              flush=True)
+        if args.degraded:
+            r = run_seed_degraded(seed)
+            per_seed.append(r)
+            print(f"  straddle band (sigmas with >=1 straddling fact): {r['straddle_sigmas']}", flush=True)
+            for s in r["per_sigma"]:
+                print(f"    sigma={s['sigma']:<5} answered={s['n_answered']}/{len(FACTS)} "
+                      f"straddle={s['n_straddle']} host_mrc={s['mean_host_mrc']} neural_mrc={s['mean_neural_mrc']}",
+                      flush=True)
+        else:
+            r = run_seed(seed)
+            per_seed.append(r)
+            print(f"  answered {sum(1 for row in r['rows'] if not row['abstained'])}/{len(r['rows'])}, "
+                  f"decoding_corr={r['decoding_host_vs_neural_corr']}, "
+                  f"host_share_indicator={r['host_share_indicator']}", flush=True)
 
     result = {"seams": ["metacog mean_role_confidence (commitment-strength)"], "seeds": args.seeds,
-              "per_seed": per_seed, "label": "DEV, not a verdict",
+              "panel": ("degraded" if args.degraded else "clean"), "per_seed": per_seed,
+              "label": "DEV, not a verdict",
               "note": "host-share instrument first seam; plan section 2 (decoding/substitution/intervention)."}
     if args.out:
         p = Path(args.out)
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(result, indent=2))
         print(f"wrote {p}", flush=True)
-    print(json.dumps({s["seed"]: {"answered": sum(1 for r in s["rows"] if not r["abstained"]),
-                                  "host_share": s["host_share_indicator"]} for s in per_seed}, indent=2))
+    if args.degraded:
+        print(json.dumps({s["seed"]: {"straddle_sigmas": s["straddle_sigmas"]} for s in per_seed}, indent=2))
+    else:
+        print(json.dumps({s["seed"]: {"answered": sum(1 for r in s["rows"] if not r["abstained"]),
+                                      "host_share": s["host_share_indicator"]} for s in per_seed}, indent=2))
 
 
 if __name__ == "__main__":

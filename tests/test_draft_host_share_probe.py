@@ -14,7 +14,8 @@ import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 from research.runners._draft_host_share_probe import (  # noqa: E402
-    build_composer, ask_and_trace, _host_mrc, _neural_mrc, _confident, FACTS, MRC_GRID,
+    build_composer, ask_and_trace, _host_mrc, _neural_mrc, _confident,
+    run_seed_degraded, FACTS, MRC_GRID,
 )
 from research.runners.metacog_production_organ import (  # noqa: E402
     MetacogProductionOrgan,
@@ -71,3 +72,27 @@ def test_intervention_is_monotonic():
     assert all(c is not None for c in seq)
     n_trans = sum(1 for i in range(1, len(seq)) if seq[i] != seq[i - 1])
     assert n_trans <= 1, f"intervention must be monotonic (a single 0->1 transition), got {n_trans} transitions"
+
+
+def test_degraded_panel_straddles():
+    """The DEGRADED panel's core claim: on the CLEAN panel (sigma 0) the host and the neural confidences both sit
+    above the metacog threshold, so the SUBSTITUTION (host decision -> neural decision) is a NO-OP. As the store
+    degrades the host (the less-confident read) and the neural (the more-confident read) mrcs fall and cross the
+    threshold at DIFFERENT points, so the two arms STRADDLE and the substitution finally produces a REAL
+    commitment change. On the dev seed the straddle band is non-empty and does NOT include the clean panel."""
+    r = run_seed_degraded(DEV_SEED)
+    # the clean panel (sigma 0) must be a NO-OP: no straddling fact.
+    clean = r["per_sigma"][0]
+    assert clean["sigma"] == 0.0
+    assert clean["n_answered"] == len(FACTS), "the clean panel must answer every dev fact"
+    assert clean["n_straddle"] == 0, "the clean panel must be a NO-OP (both arms confident -> no straddle)"
+    # the degraded panel must produce at least one straddling sigma level (a real commitment change via substitution).
+    assert r["straddle_sigmas"], "the degraded panel must produce at least one straddling sigma level"
+    assert 0.0 not in r["straddle_sigmas"], "the straddle must occur in the degraded regime, not the clean panel"
+    # every straddling fact must be a genuine host-vs-neural divergence (one confident, one not), not a None.
+    for s in r["per_sigma"]:
+        if s["sigma"] in r["straddle_sigmas"]:
+            for row in s["rows"]:
+                if row.get("confident_changed"):
+                    assert row["host_confident"] is not None and row["neural_confident"] is not None
+                    assert row["host_confident"] != row["neural_confident"]
