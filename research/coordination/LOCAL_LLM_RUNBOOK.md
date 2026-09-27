@@ -153,6 +153,10 @@ lines here after the Tuesday reset.)_
 
 DONE 2026-09-26 16:10 by Claude (ae60029b0 local-llm fix; b629d1a35 arcc per-seed raw files). Nothing to do.
 
+PENDING (Claude, 2026-09-27 17:25): `tools/local_llm/claude_local_settings.json` (deny edits to gate-read files) and
+`tests/test_local_llm_permissions.py` (its test) are live in the working tree but uncommitted (waiver budget exhausted).
+Claude commits them; do not touch them.
+
 ## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
 
 Serves `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. The owner wants the local model to carry real
@@ -174,6 +178,11 @@ work, done so Claude can review, fix or discard it later. **Hard rules for every
   `bash tools/memcap.sh 8 -- ...`. **No GPU jobs** (the GPU auto-swap would stop your own model mid-session).
 - Code goes in NEW files under `research/runners/` and `tests/` (inside your worktree) (never edit `sim/`, `webapp/`, `tools/gates/`). To
   observe production code, import it and wrap/monkeypatch functions inside your runner; never change it.
+- **Never write to a file a gate reads in order to get a commit through** (`research/coordination/lane_builds.jsonl`,
+  the waiver files beyond the honest template in this runbook, queue files, ledgers). Registering a build, run or queue
+  entry that does not exist is a FALSE CLAIM, exactly like a false waiver. On 2026-09-27 you registered two builds with
+  "6-seed run queued on the pool" that did not exist (no branch, empty queue); Claude reverted them. When a gate
+  blocks: commit Markdown only, keep working, and write NEEDS CLAUDE.
 - Stop and write NEEDS CLAUDE when: a gate blocks and the fix isn't obvious, a result looks like a GO/NO-GO, or a design
   choice would change what the experiment means.
 
@@ -242,6 +251,7 @@ Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the n
 
 <!-- Append one line per escalation: `- YYYY-MM-DD HH:MM  <what happened>  <what you already tried>` -->
 
+- 2026-09-27 17:20 (Claude) research/draft-seam-map f446de2df registered three "in-flight builds" in lane_builds.jsonl to satisfy the lane-starvation gate; two did not exist (no branch, nothing queued, notes claimed 6-seed pool runs) and the third was not started. Reverted (ff517a3b1). Rule added under Weekend work hard rules. Do not repeat.
 - 2026-09-26 14:20 (Claude) The GPU fell off the bus at ~11:07 while this model was working (same signature as the 2026-07-22 crash, with the 300 W cap in force). Mitigations applied 14:40 (LACT: locked clocks 210-1800 MHz, fan curve on, 300 W); unattended runs may resume, but in the first long run check the VRAM temperature (LACT) and write NEEDS CLAUDE if it passes ~95 C. Your seam-map Part 1 was committed for you (research/draft-seam-map 528d70697); resume at Part 2. The arcc per-seed raw files and the code fix are committed (16:10); arcc aggregate.json stays uncommitted for Claude's scoring.
 - 2026-09-26 10:30 (Claude) DO NOT STAGE modified files under `research/findings/raw/_d6_capacity_curve/` (e.g. `s100_N2000_HEBB.json`): pool-sync pulled a DUPLICATE run's outputs over the scored, committed cells (different memory readings). Leave them unstaged; Claude restores and investigates the duplicate dispatch after Tuesday.
 
