@@ -1,0 +1,25 @@
+{
+ "run_id": "1790573542-2517104",
+ "runner": "research/runners/_tone_bg_nchannel_pathway_trace.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/draft-seam-map/research/runners/_tone_bg_nchannel_pathway_trace.py"
+ ],
+ "git_sha": "cd8f33d67",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-28T01:32:22",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 205052.2,
+ "corpus_check_query": "a told fact is recallable at once but encoded too weakly to be replayed: encoding strength set by the seed not importance",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_pathway_trace_seed7.log"
+}

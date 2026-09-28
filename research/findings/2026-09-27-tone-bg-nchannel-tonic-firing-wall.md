@@ -78,16 +78,85 @@ localises the absolute *saturation* to the tonic operating point, and shows the 
 problem persists even in the sub-threshold window. (The earlier "thalamic tonic — the floor persists" held within the
 range it tested; the sweep extends the tonic toggle to 5% and finds the sub-threshold window.)
 
+## The combination probe + motor-pool correction: the salience gain is NOT the lever (2026-09-28)
+
+The combination probe (`research/runners/_tone_bg_nchannel_combination.py`, dev seed 7) ran the race in the
+sub-threshold window (gpi=50, thal=45) across the salience gain (600→19200). It reported the motor pools as
+"near-silent (7-16)" — but that was an **artifact of the early break**: `_run_nchannel_trial` stops the run the
+instant a channel crosses `commit_threshold_spikes=12`, so it only ever reports the count *at the break point*. The
+motor-pool tonic sweep (`research/runners/_tone_bg_nchannel_motor_tonic_sweep.py`, raw
+`research/findings/raw/_motor_tonic_sweep_seed7.log`) measures the MOTOR pool (the decision pool) over the FULL run
+(no early break) and shows the decision pools actually fire **~1100-2100** spikes at the sub-threshold tonic — not
+7-16. The combination probe measured the wrong quantity.
+
+The motor-pool gain sweep (`research/runners/_tone_bg_nchannel_motor_gain_sweep.py`, raw
+`research/findings/raw/_motor_gain_sweep_seed7.log`) then tested the salience gain directly on the full-run motor
+pool at the sub-threshold tonic (v_held=+0.9, saliences [0.55, 0.9, 0.7, 0.4, 0.2], expected winner cand 1):
+
+| gain (pA) | motor (cand 0..4) | commit (cand 0..4) | argmax | max/2nd |
+|-----------|-------------------|--------------------|--------|---------|
+| 600       | [2138, 1632, 717, 2035, 1136] | [8075, 8075, 8055, 8101, 8072] | 0 (no) | 1.05 |
+| 1200      | [2138, 1632, 717, 2035, 1136] | [8075, 8075, 8055, 8101, 8072] | 0 (no) | 1.05 |
+| 2400      | [2149, 1632, 717, 2040, 1136] | [8069, 8075, 8055, 8104, 8072] | 0 (no) | 1.05 |
+| 4800      | [2149, 1632, 717, 2040, 1136] | [8069, 8075, 8055, 8104, 8073] | 0 (no) | 1.05 |
+| 9600      | [2138, 1632, 717, 2035, 1136] | [8075, 8075, 8055, 8101, 8073] | 0 (no) | 1.05 |
+| 19200     | [2138, 1632, 717, 2035, 1136] | [8075, 8075, 8055, 8101, 8073] | 0 (no) | 1.05 |
+| 38400     | [2138, 1632, 717, 2035, 1136] | [8075, 8075, 8055, 8101, 8072] | 0 (no) | 1.05 |
+
+Across a **64x salience-gain range** the motor pools vary by at most 11 spikes (0.5%, noise) and the commit pools by
+≤9. The motor pools do NOT track the saliences (cand 0, salience 0.55, fires the most; cand 1, salience 0.9, the
+expected winner, fires second; cand 2, salience 0.7, fires the least). **The salience gain is decisively not the
+lever** — the D1→GPi→thal→commit→motor pathway fully decouples the salience bias from the decision pools.
+
+## Pathway trace: the D1 differentiates perfectly, but the GPi is near its floor (2026-09-28)
+
+The pathway trace (`research/runners/_tone_bg_nchannel_pathway_trace.py`, dev seed 7, raw
+`research/findings/raw/_pathway_trace_seed7.log`) measures the full-run firing at EVERY pathway step (D1, GPi,
+thalamus, commit, motor) at the sub-threshold tonic (gpi=50, thal=45), v_held=+0.9, default gain, saliences
+[0.55, 0.9, 0.7, 0.4, 0.2] (expected winner cand 1):
+
+| step | cand 0 | cand 1 | cand 2 | cand 3 | cand 4 | max/min | argmax |
+|------|--------|--------|--------|--------|--------|---------|--------|
+| D1 (salience bias applied here) | 452 | **913** | 702 | 417 | 210 | **4.35** | **1 (expected)** |
+| GPi (D1 inhibits GPi) | 8 | 17 | 19 | 17 | 28 | 3.50 | 4 |
+| thalamus (GPi inhibits thal) | 94 | 83 | 82 | 80 | 87 | 1.18 | 0 |
+| commit pool (thal drives commit) | 8075 | 8075 | 8055 | 8101 | 8072 | 1.01 | 3 |
+| motor pool (commit drives motor; DECISION) | 2138 | 1632 | 717 | 2035 | 1136 | 2.98 | 0 |
+
+Three findings:
+
+1. **The D1 pool differentiates PERFECTLY by salience.** D1=[452, 913, 702, 417, 210] tracks the saliences
+   monotonically (cand 1, sal 0.9 → 913; cand 4, sal 0.2 → 210) and the argmax is cand 1 (the expected winner). The
+   salience bias is working correctly at the D1 pool.
+
+2. **The GPi is near its floor (nearly silent), so its differentiation is too small to modulate the thalamus.**
+   GPi=[8, 17, 19, 17, 28] — only 8-28 spikes over 600 steps (~0.013-0.047 spikes/step/neuron across 20 neurons).
+   The D1 inhibition is strong enough to nearly silence the GPi. The GPi's residual differentiation (8 vs 28) is a
+   small modulation of a near-silent pool. The thalamus (thal=[94, 83, 82, 80, 87], max/min=1.18) fires flat at its
+   tonic rate (driven by the thalamic tonic, 45 pA), regardless of the GPi. **The GPi→thalamus step is where the
+   differentiation vanishes.**
+
+3. **The commit/motor pools are flat (pinned by the thalamic tonic).** commit=[8075, 8075, 8055, 8101, 8072]
+   (max/min=1.01) and motor=[2138, 1632, 717, 2035, 1136] (max/min=2.98, but the argmax is cand 0, NOT the expected
+   cand 1). The motor pool's "differentiation" is pure noise — it does not track the saliences.
+
+This localises the wall precisely: the salience bias works correctly at the D1 pool, but the **GPi's unfaithful
+near-silence** (the real GPi fires at a high tonic rate, ~20-50 Hz, and the D1/D2 pathways modulate it) prevents the
+D1 differentiation from propagating to the thalamus/commit/motor. The fix is the **GPi's operating point**, not the
+salience gain or the tonic floor.
+
 ## Next step (no-defer)
 
-The untested lever is the **combination**: run the race in the sub-threshold tonic window (scale ~= 0.05, gpi=50,
-thal=45) WITH a higher salience gain (the H1 lever, which failed only because at the default tonic the pools were
-saturated and the bias had no contrast to act on). A cheap CPU probe sweeping SALIENCE_GAIN_PA x {1200, 2400, 4800,
-9600} at scale 0.05 will show whether the salience bias can break the tie once the pools are sub-threshold. If it
-does, the no-defer wiring fix is (a) lower the tonic floor into the sub-threshold window + (b) raise the salience
-gain. If it does not, the suspect moves to the D1->commit contrast attenuation (the D1 pools differentiate but the
-commit pools flatten it — see the D1 diagnosis) and the fix is the D1->commit synapse, not the tonic. Either way the
-capability (a spiking N-way winner-selection race) is kept. The host-share probe
+The GPi is near its floor because the D1 inhibition is too strong relative to the GPi's tonic/STN drive. In the real
+basal ganglia the GPi fires at a HIGH tonic rate and the D1/D2 pathways modulate it (reduce/increase); the model's
+GPi is unfaithfully silent. The lever is to **raise the GPi's tonic rate** (raise `gpi_tonic_pA`, or strengthen the
+STN→GPi drive) so the GPi fires at a higher rate and its D1-driven differentiation becomes a larger modulation of the
+thalamus. A cheap CPU probe sweeping `gpi_tonic_pA` (50→1000 pA) with the thalamic tonic fixed at 45 pA, measuring
+the GPi/thal/commit/motor pools at v_held=+0.9, will show whether a higher GPi tonic propagates the D1
+differentiation to the decision pools. If it does, the no-defer wiring fix is to raise the GPi tonic into the
+range where the D1 differentiation propagates. If it does not, the suspect moves to the GPi→thalamus synapse weight
+(the GPi's inhibition is too weak to modulate the thalamus even when the GPi fires). Either way the capability (a
+spiking N-way winner-selection race) is kept. The host-share probe
 (`research/runners/_draft_host_share_tone_probe.py`) keeps the wall in view: its substitution arm is recorded but not
 gated on, so the moment the N-way race commits cleanly the probe's `n_committed` will rise and the seam's host-share
 verdict can be re-read against a neural winner.
