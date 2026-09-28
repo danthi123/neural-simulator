@@ -197,3 +197,30 @@ something from neural output. Facts only; "unsure" where not certain. Output:
   straddle direction is per-fact (the host is usually the less-confident read, but not always) -- the invariant is the
   DIVERGENCE, not which arm is higher. This is a DEV screen (dev seeds 1-7, NOT the 6 gate seeds); it shows the
   substitution CAN be load-bearing, it is not a 6-seed generalization claim.
+
+## The tone-selection seam (next rung): the N=5 tonic-firing wall (2026-09-27 → 2026-09-28)
+
+- 2026-09-27  The next rung of the seam (the tone-selection seam, `webapp.affect_tone_selection.select_by_mood`)
+  is the N-channel basal-ganglia action selector (`research/runners/_tone_bg_nchannel_selector.py`). It commits
+  cleanly at N=2 but NOT at N=5: at the default tonic (gpi=1000/thal=900) every commit pool fires tonically
+  (~9000 spikes each) so no clean winner emerges. Finding:
+  `research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md`.
+- 2026-09-28  The wall localised to the GPi's unfaithful near-silence (pathway trace: the D1 pool differentiates
+  perfectly, but the GPi fires only 8-28 spikes so its differentiation cannot modulate the thalamus). The no-defer
+  lever: raise ONLY the GPi tonic (the real GPi fires at a ~20-50 Hz tonic). A clean N=5 winner emerges at
+  gpi=400-600 (thal=45) on the dev seed (v_held=+0.9). Fixed operating point: gpi=500, thal=45.
+- 2026-09-28  SIX-SEED VERDICT (non-negotiable #6, raw `research/findings/raw/_gpi_fix_6seed.json`): the dev seed
+  was optimistic. Mean intact commit 0.40 (range 0.15-0.69), 0/6 go (the 0.9 commit bar is not met). BUT the
+  anti-cheat is rock-solid on every seed: lesioning EITHER the arousal drive OR the direct path drops commit to
+  0.0 in all six seeds -> 100% of the selection is owned by the spiking race, 0% by the host (the 2026-09-25
+  "who owns the computation" answer for this seam). The winner is affect-dependent and mood-congruent, reliably at
+  the high-contrast moods (v_held=-0.9/0.0/+0.9); the residual is the low-contrast moods (v_held=±0.45, salience
+  contrast 0.05) plus seed-to-seed sensitivity of the operating point.
+- 2026-09-28  VERDICT (honesty boundary): the GPi-tonic method REPLACES the wall's method (the capability is
+  present and 100% neural-attributable) but does NOT close the wall to the de-risk bar (0/6 go, mean commit 0.40
+  < 0.9). No-defer: the capability is kept; the GPi-tonic lever is banked as a real (partial) fix; the next lever
+  is the STN->GPi competition loop + post-commit reset (the model has the regions `selector_stn`/`selector_reset`;
+  the real selector runs them alongside the GPi tonic — the "missing companion process" question).
+- NOTE: the main-arc summary docs (GAP_CLOSURE_MISSION.md / ROADMAP.md / AUTONOMOUS_STATE.md) are 11 commits behind
+  main on this branch; the N=5 verdict is recorded here + in the finding doc and folds into the main arc's walls
+  ledger at merge time (not edited on the stale base, to avoid a conflict).

@@ -355,11 +355,13 @@ class NToneBGSelector:
     finding's own anti-cheat (same semantics as the two-channel organ). `select_once(saliences)` runs ONE salience-
     biased N-way race -> the selected channel index (or None if no clean winner)."""
 
-    def __init__(self, seed=42, n_channels=N_CHANNELS, version="v2", lesion=None):
+    def __init__(self, seed=42, n_channels=N_CHANNELS, version="v2", lesion=None, config=None):
         self.seed = int(seed)
         self.n_channels = int(n_channels)
         self.channels = tuple(range(self.n_channels))
-        self.config = selector_config(version)
+        # config=None -> the version default; a caller may pass a dataclasses.replace(...) override (e.g. the
+        # N=5 GPi-tonic operating point) to run the SAME race at a different tonic operating point.
+        self.config = config if config is not None else selector_config(version)
         self.lesion = lesion
         self._bridge = None
         self._built = False
@@ -386,13 +388,14 @@ class NToneBGSelector:
 _ORGANS: dict = {}
 
 
-def get_organ(seed=42, n_channels=N_CHANNELS, lesion=None) -> NToneBGSelector:
-    """Process-shared selector cache, keyed by (seed, n_channels, lesion) so the intact + lesion variants (and
-    different candidate counts) coexist."""
-    key = (int(seed), int(n_channels), lesion)
+def get_organ(seed=42, n_channels=N_CHANNELS, lesion=None, config=None) -> NToneBGSelector:
+    """Process-shared selector cache, keyed by (seed, n_channels, lesion, tonic) so the intact + lesion variants
+    (and different candidate counts / tonic operating points) coexist. config=None -> the version default tonic."""
+    tonic = (int(config.gpi_tonic_pA), int(config.thalamus_tonic_pA)) if config is not None else None
+    key = (int(seed), int(n_channels), lesion, tonic)
     org = _ORGANS.get(key)
     if org is None:
-        org = NToneBGSelector(seed=seed, n_channels=n_channels, lesion=lesion)
+        org = NToneBGSelector(seed=seed, n_channels=n_channels, lesion=lesion, config=config)
         _ORGANS[key] = org
     return org
 
@@ -402,12 +405,13 @@ def _lesion_for(condition: str):
 
 
 def run_condition(seed, v_held, *, condition="intact", trials=20,
-                  cand_valences=CAND_VALENCES) -> dict:
+                  cand_valences=CAND_VALENCES, config=None) -> dict:
     """Run the N-way race `trials` times at one held mood + condition; return the winner distribution + the host
-    argmin (for comparison) + the congruence saliences that drove the race."""
+    argmin (for comparison) + the congruence saliences that drove the race. config=None -> the version default
+    tonic; pass a dataclasses.replace(...) override to run the SAME race at a different tonic operating point."""
     sal = congruence_saliences(cand_valences, v_held)
     n = len(cand_valences)
-    org = get_organ(seed=seed, n_channels=n, lesion=_lesion_for(condition))
+    org = get_organ(seed=seed, n_channels=n, lesion=_lesion_for(condition), config=config)
     winner_counts = {i: 0 for i in range(n)}
     n_committed = 0
     for _ in range(int(trials)):
@@ -433,16 +437,20 @@ def run_condition(seed, v_held, *, condition="intact", trials=20,
 
 def run_seed(seed, *, v_held_grid=None, trials=20,
              conditions=("intact", "no_arousal", "no_direct_path"),
-             cand_valences=CAND_VALENCES) -> dict:
+             cand_valences=CAND_VALENCES, config=None) -> dict:
     """The full de-risk: sweep the held mood, run the race under each condition, and check (a) the race commits
     when intact, (b) the arousal lesion floors the commit (the selection is the spiking race, not the host), (c)
-    the winner is affect-dependent (it tracks the most-congruent candidate and CHANGES across the mood sweep)."""
+    the winner is affect-dependent (it tracks the most-congruent candidate and CHANGES across the mood sweep).
+    config=None -> the version default tonic; pass a dataclasses.replace(...) override to run the de-risk at a
+    different tonic operating point (e.g. the N=5 GPi-tonic fix)."""
     if v_held_grid is None:
         v_held_grid = [-0.9, -0.45, 0.0, 0.45, 0.9]
+    eff_config = config if config is not None else selector_config("v2")
     rows = []
     for cond in conditions:
         for vh in v_held_grid:
-            rows.append(run_condition(seed, vh, condition=cond, trials=trials, cand_valences=cand_valences))
+            rows.append(run_condition(seed, vh, condition=cond, trials=trials,
+                                      cand_valences=cand_valences, config=config))
 
     intact = [r for r in rows if r["condition"] == "intact"]
     no_arousal = [r for r in rows if r["condition"] == "no_arousal"]
@@ -471,6 +479,8 @@ def run_seed(seed, *, v_held_grid=None, trials=20,
     return {
         "seed": int(seed),
         "n_channels": len(cand_valences),
+        "gpi_tonic_pA": float(eff_config.gpi_tonic_pA),
+        "thalamus_tonic_pA": float(eff_config.thalamus_tonic_pA),
         "cand_styles": list(CAND_STYLES[:len(cand_valences)]),
         "cand_valences": [float(v) for v in cand_valences],
         "v_held_grid": [float(v) for v in v_held_grid],

@@ -145,18 +145,138 @@ near-silence** (the real GPi fires at a high tonic rate, ~20-50 Hz, and the D1/D
 D1 differentiation from propagating to the thalamus/commit/motor. The fix is the **GPi's operating point**, not the
 salience gain or the tonic floor.
 
+## GPi-tonic sweep: raising the GPi tonic propagates the D1 differentiation to a clean N=5 winner (2026-09-28)
+
+The pathway trace localised the wall to the GPi's unfaithful near-silence (GPi=[8, 17, 19, 17, 28] at the sub-threshold
+tonic gpi=50, thal=45). The no-defer lever: raise ONLY the GPi tonic (`gpi_tonic_pA`) with the thalamic tonic fixed at
+the sub-threshold value (45 pA), so the D1 inhibition has "room" to modulate a firing GPi. In the real basal ganglia the
+GPi fires at a high tonic rate (~20-50 Hz) and the direct (D1) pathway reduces it for the selected action; the model's
+GPi at gpi=50 is unfaithfully silent.
+
+The sweep (`research/runners/_tone_bg_nchannel_gpi_tonic_sweep.py`, dev seed 7, numpy/CPU, raw
+`research/findings/raw/_gpi_tonic_sweep_seed7.log`) measures the full-run (no early break) firing at every pathway step
+across `gpi_tonic` ∈ {50, 100, 200, 400, 600, 800, 1000} pA (thal fixed at 45), v_held=+0.9, saliences
+[0.55, 0.9, 0.7, 0.4, 0.2] (expected winner cand 1):
+
+| gpi (pA) | GPi (cand 0..4) | motor (cand 0..4) | winner | max-loser/winner | clean | == expected |
+|----------|-----------------|-------------------|--------|------------------|-------|-------------|
+| 50       | [8, 17, 19, 17, 28] | [2138, 1632, 717, 2035, 1136] | 0 | 95.2% | no | no |
+| 100      | [125, 49, 85, 190, 163] | [150, 275, 0, 0, 0] | 1 | 54.5% | no | yes |
+| 200      | [338, 106, 264, 405, 434] | [94, 172, 220, 0, 0] | 2 | 78.2% | no | no |
+| **400**  | [668, 323, 520, 737, 806] | [0, 164, 0, 0, 0] | **1** | **0.0%** | **yes** | **yes** |
+| **600**  | [941, 505, 769, 1022, 1102] | [0, 167, 0, 0, 0] | **1** | **0.0%** | **yes** | **yes** |
+| 800      | [1200, 729, 1002, 1276, 1381] | [0, 0, 0, 0, 0] | — | — | all silent | no |
+| 1000     | [1442, 956, 1226, 1509, 1621] | [0, 0, 0, 0, 0] | — | — | all silent | no |
+
+Three findings:
+
+1. **A clean N=5 winner emerges at gpi=400-600 (thal=45), dev seed 7, v_held=+0.9.** The motor pool is [0, 164, 0, 0, 0]
+   (gpi=400) and [0, 167, 0, 0, 0] (gpi=600): the expected winner (cand 1) fires cleanly and every loser is silent
+   (max-loser/winner = 0.0%, far below the 0.25 clean-loser ratio). The D1 differentiation (perfect at the D1 pool) now
+   propagates through GPi → thalamus → commit → motor. This is the first spiking N=5 clean winner: the wall's method
+   (the N-way cross-inhibition at the sub-threshold tonic) is replaced by the faithful high-tonic GPi operating point.
+
+2. **The window is bounded on both sides.** Below gpi=400 the GPi is too silent to differentiate cleanly (gpi=50:
+   near-silent, motor flat; gpi=100-200: the motor differentiates but the max-loser is 54-78% of the winner, not clean,
+   and at gpi=200 the wrong channel wins). Above gpi=600 the GPi tonic over-inhibits the thalamus (gpi=800-1000: the
+   thalamus/commit/motor are all silent — no winner at all). The faithful operating point is a window (gpi≈400-600,
+   thal=45), not a single value; the fixed point for the six-seed validation is gpi=500 (the mid-window).
+
+3. **The mechanism is the GPi operating point, confirming the pathway-trace diagnosis.** The D1 pool is unchanged across
+   the sweep (the salience bias is applied at the D1, independent of the GPi tonic); only the GPi's firing level changes.
+   Raising the GPi tonic gives the D1 inhibition room to work, and the differentiation propagates.
+
+## Seed-7 de-risk at the fixed operating point: the race owns the selection; the commit bar is not met (2026-09-28)
+
+The fine sweep validated the clean window only at v_held=+0.9 (the highest-contrast mood). Before the six-seed
+generalization, the full de-risk (`research/runners/_tone_bg_nchannel_selector.py::run_seed`, dev seed 7, numpy/CPU,
+raw `research/findings/raw/_gpi_fix_seed7_diag.json`) runs all 3 arms (intact + arousal-lesion + direct-path-lesion)
+× all 5 v_held × 20 trials (300 races) at the fixed operating point (gpi=500, thal=45):
+
+| arm | commit rate |
+|-----|-------------|
+| intact | 0.66 (of the committed trials, 0.8 select the host-argmin channel) |
+| no-arousal (salience→D1 drive lesioned) | 0.0 |
+| no-direct-path (D1→GPi lesioned) | 0.0 |
+
+The modal (most frequent) winner matches the host argmin at four of the five mood levels (v_held −0.9→cand 4,
+−0.45→3, 0.0→0, +0.9→1 — the salience-closest candidate); at v_held=+0.45 the modal is cand 1 while the argmin is
+cand 2 (the two closest candidates, salience 0.875 vs 0.925).
+
+Two findings:
+
+1. **The commit is fully attributable to the spiking race, not the host (the 2026-09-25 "who owns the computation"
+   answer for this seam).** Lesioning EITHER the arousal drive (salience→D1) OR the direct path (D1→GPi) removes the
+   entire commit (0.66 → 0.0). No host computation is doing the selection: the spiking N-way race owns it.
+
+2. **The de-risk `go` is false on the commit-rate bar, not the mechanism.** `race_commits_intact` requires ≥0.9 intact
+   commit; the de-risk gets 0.66. The load-bearing checks (`arousal_is_load_bearing`, `direct_path_is_load_bearing`)
+   are gated on an intact-commit floor (~0.75) and therefore report false even though the underlying lesion effect is
+   maximal (0.66 → 0.0). The residual — why 0.66 rather than ~1.0 — is the low-contrast moods: at v_held=±0.45 the
+   expected winner's salience advantage over the runner-up is only 0.05 (at +0.45, cand 2 salience 0.925 vs cand 1
+   0.875; at −0.45, cand 3 0.925 vs cand 4 0.875), so the race commits less reliably there. The v_held=0.0 mood
+   (contrast 0.15) is the most reliable. The modal winner is the salience-correct channel at four of the five moods (all
+   but v_held=+0.45).
+
+So the CAPABILITY — a spiking N-way winner-selection race that commits to the salience-correct channel and is fully
+attributable to the neural mechanism — is demonstrated on the dev seed. What remains is a refinement (push the intact
+commit rate from 0.66 to ≥0.9 by handling the low-contrast moods) and the six-seed generalization (non-negotiable #6),
+which is the authoritative check on whether 0.66 holds across seeds.
+
+## Six-seed generalization at gpi=500/thal=45: the capability is present and 100% neural-attributable, but the commit bar is not met (2026-09-28)
+
+The authoritative check (non-negotiable #6): the full de-risk across the six seeds (42/43/44/100/101/102) at the fixed
+operating point (gpi=500, thal=45), via `research/runners/_tone_bg_nchannel_gpi_fix_validation.py` (numpy/CPU, raw
+`research/findings/raw/_gpi_fix_6seed.json`):
+
+| seed | intact commit | match vs host argmin | no-arousal | no-direct-path |
+|------|---------------|----------------------|------------|----------------|
+| 42   | 0.45 | 0.6 | 0.0 | 0.0 |
+| 43   | 0.51 | 0.8 | 0.0 | 0.0 |
+| 44   | 0.15 | 0.6 | 0.0 | 0.0 |
+| 100  | 0.30 | 0.8 | 0.0 | 0.0 |
+| 101  | 0.69 | 1.0 | 0.0 | 0.0 |
+| 102  | 0.28 | 0.8 | 0.0 | 0.0 |
+| **mean** | **0.40** | **0.77** | **0.0** | **0.0** |
+
+`n_go = 0/6` (the de-risk `go` fails on every seed).
+
+Three findings, stated honestly:
+
+1. **The dev seed was optimistic; the commit rate does not reach the bar and is seed-variable.** The mean intact commit
+   rate is 0.40 (range 0.15–0.69), far below the 0.9 `race_commits_intact` bar. The dev seed 7 (0.66) sat near the top
+   of the range; the six seeds show the operating point (gpi=500) is near the edge of the clean window for several of
+   them (seed 44 commits only 0.15). This is NOT a closed wall.
+
+2. **The anti-cheat is the robust, consistent result: 100% of the selection is owned by the spiking race, on every seed.**
+   On all six seeds, lesioning EITHER the arousal drive OR the direct path drops the commit rate to exactly 0.0. No host
+   computation owns any of the selection — the 2026-09-25 "who owns the computation" question is answered decisively for
+   this seam: the neural mechanism owns it, fully.
+
+3. **The winner is affect-dependent and mood-congruent, most reliably at the high-contrast moods.** The modal winner is
+   the salience-correct channel at v_held=−0.9 (all six seeds → cand 4), v_held=0.0 (all six → cand 0), and v_held=+0.9
+   (five of six → cand 1). The errors concentrate at the mid moods (v_held=±0.45), where adjacent candidates' saliences
+   are close — e.g. seed 44 picks cand 4 at v_held=−0.45 (expected cand 3) and cand 2 at v_held=+0.45/+0.9 (expected
+   cand 1). `winner_tracks_host_argmin` and `winner_is_affect_dependent` are true on all six seeds.
+
+**Verdict (honesty boundary):** the GPi-tonic method REPLACES the wall's method — a spiking N-way race now commits to a
+mood-congruent, affect-dependent winner that is fully attributable to the neural mechanism (0% → 0.40 mean commit, clean
+and attributable). But it does NOT close the wall to the de-risk bar (0/6 go, mean commit 0.40 < 0.9, seed-variable).
+The residual is two-fold: (a) the mid/low-contrast moods, where the salience gap between adjacent candidates is small,
+and (b) seed-to-seed sensitivity of the operating point (gpi=500 is mid-window for seed 7 but near the window edge for
+others). No-defer: the capability is kept and demonstrated; the GPi-tonic lever is banked as a real (partial) fix; a
+further spiking lever is needed to raise the commit rate to the bar.
+
 ## Next step (no-defer)
 
-The GPi is near its floor because the D1 inhibition is too strong relative to the GPi's tonic/STN drive. In the real
-basal ganglia the GPi fires at a HIGH tonic rate and the D1/D2 pathways modulate it (reduce/increase); the model's
-GPi is unfaithfully silent. The lever is to **raise the GPi's tonic rate** (raise `gpi_tonic_pA`, or strengthen the
-STN→GPi drive) so the GPi fires at a higher rate and its D1-driven differentiation becomes a larger modulation of the
-thalamus. A cheap CPU probe sweeping `gpi_tonic_pA` (50→1000 pA) with the thalamic tonic fixed at 45 pA, measuring
-the GPi/thal/commit/motor pools at v_held=+0.9, will show whether a higher GPi tonic propagates the D1
-differentiation to the decision pools. If it does, the no-defer wiring fix is to raise the GPi tonic into the
-range where the D1 differentiation propagates. If it does not, the suspect moves to the GPi→thalamus synapse weight
-(the GPi's inhibition is too weak to modulate the thalamus even when the GPi fires). Either way the capability (a
-spiking N-way winner-selection race) is kept. The host-share probe
-(`research/runners/_draft_host_share_tone_probe.py`) keeps the wall in view: its substitution arm is recorded but not
-gated on, so the moment the N-way race commits cleanly the probe's `n_committed` will rise and the seam's host-share
-verdict can be re-read against a neural winner.
+The six-seed generalization is done: 0/6 go, mean commit 0.40 (the capability is present and 100% neural-attributable,
+but the commit bar is not met). The next step is a further spiking lever to raise the intact commit rate to ≥0.9,
+targeting the two residuals above. Guided by the wall-reframe question ("what else does the real system run alongside
+this, that we replaced with a constant?"): the real basal-ganglia selector runs the **STN→GPi competition loop** and a
+**post-commit reset** alongside the GPi tonic — the model already has the regions (`selector_stn`, `selector_reset`), so
+the first probe is whether the N-channel bridge engages them or leaves them at a constant. That loop is the faithful
+mechanism for stabilizing the N-way race (raising the commit rate) and for sharpening the mid-contrast moods, and it is
+seed-robust by construction (it does not depend on a hand-tuned tonic operating point). The host-share probe
+(`research/runners/_draft_host_share_tone_probe.py`) stays in view: its substitution arm is recorded but not gated on, so
+the moment the N-way race commits cleanly the probe's `n_committed` rises and the seam's host-share verdict can be
+re-read against a neural winner.

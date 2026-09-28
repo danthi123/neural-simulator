@@ -1,0 +1,36 @@
+{
+  "gpi_tonic_pA": 500.0,
+  "thalamus_tonic_pA": 45.0,
+  "seeds": [
+    7
+  ],
+  "n_seeds": 1,
+  "n_go": 0,
+  "all_seeds_go": false,
+  "mean_intact_commit_rate": 0.66,
+  "mean_match_rate": 0.8,
+  "per_seed": [
+    {
+      "seed": 7,
+      "go": false,
+      "intact_commit_rate": 0.66,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.8,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 3,
+        "0.0": 0,
+        "0.45": 1,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    }
+  ]
+}

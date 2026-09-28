@@ -1,0 +1,37 @@
+{
+ "run_id": "1790628878-360550",
+ "runner": "research/runners/_tone_bg_nchannel_gpi_fix_validation.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/draft-seam-map/research/runners/_tone_bg_nchannel_gpi_fix_validation.py",
+  "--gpi",
+  "500",
+  "--thal",
+  "45",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--trials",
+  "20",
+  "--out",
+  "research/findings/raw/_gpi_fix_6seed.json"
+ ],
+ "git_sha": "62d47eaa9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-28T16:54:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 260388.7,
+ "corpus_check_query": "a told fact is recallable at once but encoded too weakly to be replayed: encoding strength set by the seed not importance",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_gpi_fix_6seed.json"
+}

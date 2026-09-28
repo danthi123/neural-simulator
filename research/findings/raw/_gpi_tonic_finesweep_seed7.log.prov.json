@@ -1,0 +1,27 @@
+{
+ "run_id": "1790582169-2739804",
+ "runner": "research/runners/_tone_bg_nchannel_gpi_tonic_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/draft-seam-map/research/runners/_tone_bg_nchannel_gpi_tonic_sweep.py"
+ ],
+ "git_sha": "62d47eaa9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-28T03:56:09",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 213679.3,
+ "corpus_check_query": "a told fact is recallable at once but encoded too weakly to be replayed: encoding strength set by the seed not importance",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_gpi_tonic_finesweep_seed7.log"
+}

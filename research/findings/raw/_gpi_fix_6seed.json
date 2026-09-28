@@ -1,0 +1,151 @@
+{
+  "gpi_tonic_pA": 500.0,
+  "thalamus_tonic_pA": 45.0,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_go": 0,
+  "all_seeds_go": false,
+  "mean_intact_commit_rate": 0.3967,
+  "mean_match_rate": 0.7667,
+  "per_seed": [
+    {
+      "seed": 42,
+      "go": false,
+      "intact_commit_rate": 0.45,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.6,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 4,
+        "0.0": 0,
+        "0.45": 1,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    },
+    {
+      "seed": 43,
+      "go": false,
+      "intact_commit_rate": 0.51,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.8,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 3,
+        "0.0": 0,
+        "0.45": 1,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    },
+    {
+      "seed": 44,
+      "go": false,
+      "intact_commit_rate": 0.15,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.6,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 4,
+        "0.0": 0,
+        "0.45": 2,
+        "0.9": 2
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    },
+    {
+      "seed": 100,
+      "go": false,
+      "intact_commit_rate": 0.3,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.8,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 3,
+        "0.0": 0,
+        "0.45": 1,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    },
+    {
+      "seed": 101,
+      "go": false,
+      "intact_commit_rate": 0.69,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 1.0,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 3,
+        "0.0": 0,
+        "0.45": 2,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    },
+    {
+      "seed": 102,
+      "go": false,
+      "intact_commit_rate": 0.28,
+      "no_arousal_commit_rate": 0.0,
+      "no_direct_path_commit_rate": 0.0,
+      "intact_match_rate_vs_host_argmin": 0.8,
+      "modal_winner_by_v_held": {
+        "-0.9": 4,
+        "-0.45": 3,
+        "0.0": 0,
+        "0.45": 0,
+        "0.9": 1
+      },
+      "checks": {
+        "race_commits_intact": false,
+        "arousal_is_load_bearing": false,
+        "direct_path_is_load_bearing": false,
+        "winner_tracks_host_argmin": true,
+        "winner_is_affect_dependent": true
+      }
+    }
+  ]
+}
