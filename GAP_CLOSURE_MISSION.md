@@ -239,7 +239,9 @@ git_sha f7693a36f via git_archive; registered aggregate reproduces GO 6/6 (signf
 finding (faithfulness-first-but-falsifiable rule): n_completion_load_bearing = 1 -- pattern completion was necessary on only 1 of
 6 seeds (n_awake_completion_needed 1, n_night_completion_needed 0), so the GO is carried mostly by replay, not by completion.
 Still needed: an independent re-derivation and the preconditions block written into aggregate.json. B2b (256/258;
-rule on the two seed-102 cells under A1.4; the 3 torn-cell re-runs reproduce attempt 1 exactly, logged 0d4e5c81). (4) D6: the overwritten raw files are RESTORED (2026-09-28 22:30; duplicate outputs kept in
+rule on the two seed-102 cells under A1.4 (A1.4 allows EXACTLY ONE re-run per UNDEFINED cell, by direct ssh on a
+different named host; they were dispatched 00:54 pool2 and 13:15 pool1/pool2 on 09-25 -- decide whether the 13:15 dispatch was
+their one re-run; if not, run it per A1.4(b)); the 3 torn-cell re-runs reproduce attempt 1 exactly, logged 0d4e5c81). (4) D6: the overwritten raw files are RESTORED (2026-09-28 22:30; duplicate outputs kept in
 `.claude/worktrees/_d6_duplicate_run_outputs_2026-09-28/`). Cause found: the 09-25 00:03 OOM-recovery re-queue of 14 N=2000
 combos (pool.queue.claims 1740ff) ran cells whose first attempt had also completed; the harvest (fe1066f64) committed the
 first-landed runs and pool-sync later pulled the re-runs over them. Needs a RULING: which run per doubled cell is canonical
