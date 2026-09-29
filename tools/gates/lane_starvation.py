@@ -44,9 +44,9 @@ LANE_WAIVER_MAX_H = 6
 RECENT_DISPATCH_MIN = 45   # a dispatched pool job runs remotely; it serves its lane for this long
 
 CPU_LANES = {
-    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion"],
-    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress"],
-    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom"],
+    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion", "need_reversal", "bg_live_seam"],
+    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress", "long_delay_credit"],
+    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom", "host_share"],
     "D · Perception":    ["v1_selforg", "_b1_", "visual", "retina", "gabor", "v2_", "_it_", "nav_"],
     "E · Language":      ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                           "comprehension", "producer", "confidence_gate"],
