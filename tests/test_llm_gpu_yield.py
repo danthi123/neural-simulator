@@ -200,15 +200,22 @@ def test_no_new_job_starts_after_yield_deadline_even_with_unit_inactive():
     """A job already dispatched would be left to finish, but a NEW one must not start once the driver's own
     promised window has expired -- even though the unit is genuinely down (nothing to hold it back but the clock)."""
     with tempfile.TemporaryDirectory() as tmp:
-        systemctl, _, _ = _fake_systemctl(tmp, "inactive")
+        systemctl, state_file, _ = _fake_systemctl(tmp, "inactive")
         nvidia_smi = _fake_nvidia_smi(tmp)
+        llm_sh, llm_log = _fake_llm_sh_yield(tmp, state_file=state_file)
         _write_yield_marker(tmp, deadline_abs=int(time.time()) - 10)
         sentinel = os.path.join(tmp, "job_ran")
         _add_job(tmp, "touch %s" % sentinel)
-        daemon = _spawn_daemon(_daemon_env(tmp, systemctl, nvidia_smi))
+        daemon = _spawn_daemon(_daemon_env(tmp, systemctl, nvidia_smi, llm_sh=llm_sh))
         try:
             time.sleep(3)
             assert not os.path.exists(sentinel), "a new job started after the yield deadline had already passed"
+            # 2026-09-29 fix: an expired window with jobs still queued must RESTORE the driver (it used to hold forever)
+            assert _wait_for(lambda: os.path.exists(llm_log) and " on" in (" " + open(llm_log).read()), timeout=10), \
+                "the driver was never restored after the yield deadline passed with jobs still queued"
+            assert not os.path.exists(os.path.join(tmp, ".llm_yield")), "the yield marker was not consumed"
+            time.sleep(2)
+            assert not os.path.exists(sentinel), "a held job started while/after the driver was being restored"
         finally:
             _kill(daemon)
 

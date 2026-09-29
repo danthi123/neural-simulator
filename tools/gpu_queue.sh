@@ -173,8 +173,10 @@ llm_yield_restore_if_drained() {
   echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}${sess:+, resuming session $sess}" >> "$LOG"
   # backgrounded (loading + a full headless turn can take a while, must not block dispatch) + 8>&- for the same
   # fd-inheritance reason as every other forked child here.
+  : > "$QDIR/.llm_restoring"                        # HOLD new jobs until `llm on` returns (else a job can race the model load)
   (
     bash "$LLM_SH" on ${prof:+"$prof"} >> "$LOG" 2>&1
+    rm -f "$QDIR/.llm_restoring"
     if [ -n "$sess" ]; then
       bash "$LLM_SH" claude --resume "$sess" -p \
         "GPU window finished: $n jobs ran (see research/queue/gpu_queue.log). Harvest their outputs, then continue per the runbook." \
@@ -248,7 +250,8 @@ daemon() {
     while :; do
       [ -f "$PAUSE" ] && break
       if llm_is_active; then sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: the driver owns the card, no auto-stop
-      if [ -f "$LLM_YIELD_MARKER" ] && yield_deadline_passed; then sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: yield window expired
+      if [ -f "$QDIR/.llm_restoring" ]; then sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: the driver is being restored
+      if [ -f "$LLM_YIELD_MARKER" ] && yield_deadline_passed; then llm_yield_restore_if_drained; sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: yield window expired
       if [ -z "${GPU_QUEUE_NO_RESIDENCY_GUARD:-}" ]; then
         resident=$(gpu_resident_brain_pids)
         if [ -n "$resident" ]; then _adopt_resident "$resident"; sleep "$POLL_SEC" 8>&-; continue; fi
