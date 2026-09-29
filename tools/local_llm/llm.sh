@@ -298,9 +298,20 @@ cmd_run() {
 # runbook's own hard rule is "commit before you queue", so this just enforces it at the handoff itself). Only
 # TRACKED changes count (--untracked-files=no): a scratch/log file mid-draft is not a reason to refuse.
 cmd_yield() {
-  local max_hours=10
+  local max_hours=10 notify_cmd=""
   while [ $# -gt 0 ]; do
-    case "$1" in --max-hours) max_hours="${2:-10}"; shift 2 ;; *) shift ;; esac
+    case "$1" in
+      --max-hours) max_hours="${2:-10}"; shift 2 ;;
+      # --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`, docs/plans/2026-09-29-local-model-
+      # transition-PLAN.md section 9): the CONTAINERIZED agent has no workstation `llm claude` session to
+      # resume, so its restore step is different -- run this shell command instead (its "$1" is filled in by
+      # the restorer with the same "GPU window finished..." message the workstation flow would otherwise
+      # resume a session with; see tools/gpu_queue.sh's llm_yield_restore_if_drained). Skips capturing
+      # LLM_SESSION_FILE below: a container-triggered yield has nothing to do with the workstation's own last
+      # local session, and restoring should not accidentally resume it.
+      --notify-cmd) notify_cmd="${2:-}"; shift 2 ;;
+      *) shift ;;
+    esac
   done
   if [ -f "$GAME_MODE_FILE" ]; then
     echo "refusing to yield: GAME_MODE is set (owner gaming/away) -- see: bash tools/game.sh status"; return 1
@@ -320,13 +331,18 @@ cmd_yield() {
   fi
   is_up || { echo "refusing to yield: $UNIT is not loaded -- nothing to yield."; return 1; }
   local sess prof deadline
-  sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
+  if [ -n "$notify_cmd" ]; then
+    sess=""   # see --notify-cmd's case comment above: no workstation session bookkeeping for this path
+  else
+    sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
+  fi
   prof="$(current_profile)"
   deadline=$(( $(date +%s) + max_hours * 3600 ))
   {
     echo "LLM_YIELD_SESSION=$sess"
     echo "LLM_YIELD_PROFILE=$prof"
     echo "LLM_YIELD_DEADLINE=$deadline"
+    [ -n "$notify_cmd" ] && echo "LLM_YIELD_NOTIFY_CMD=$notify_cmd"
   } > "$LLM_YIELD_MARKER"
   echo "yielding for up to ${max_hours}h (session=${sess:-<none>} profile=${prof:-<default>} deadline=$deadline); stopping $UNIT gracefully"
   cmd_stop_graceful 45

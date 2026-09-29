@@ -416,6 +416,72 @@ def render_gate_failure_section(since, since_is_sha, floor_date):
     return "\n".join(out)
 
 
+# -------------------------------------------------------------------------- agent-container Claude Code version
+
+AGENT_CTL_HOST = "homelab-agent-ctl"
+NPM_VERSION_TIMEOUT_S = 10
+SSH_STATE_TIMEOUT_S = 10
+
+
+def query_container_claude_version():
+    # a thin, monkeypatchable wrapper (tests/test_inspection_digest.py stubs this directly -- never a real ssh
+    # call in a test) around `ssh homelab-agent-ctl state`'s `claude_version:` line.
+    try:
+        res = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", AGENT_CTL_HOST, "state"],
+                              capture_output=True, text=True, timeout=SSH_STATE_TIMEOUT_S)
+        for line in res.stdout.splitlines():
+            if line.startswith("claude_version:"):
+                return line.split(":", 1)[1].strip()
+    except Exception:
+        pass
+    return None
+
+
+def query_latest_claude_code_version():
+    # likewise monkeypatchable; never a real npm call in a test.
+    try:
+        res = subprocess.run(["npm", "view", "@anthropic-ai/claude-code", "version"],
+                              capture_output=True, text=True, timeout=NPM_VERSION_TIMEOUT_S)
+        if res.returncode == 0 and res.stdout.strip():
+            return res.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def render_agent_container_version_section():
+    # owner 2026-09-29 (docs/plans/2026-09-29-local-model-transition-PLAN.md section 9's harness-currency
+    # addendum): surface a lag between the sim-agent container's installed Claude Code build and the latest
+    # release, so it is visible without a separate check-in. Best-effort both ways -- an unreachable server, or
+    # no network for the npm registry lookup, SKIPS that half rather than failing the whole digest.
+    out = ["## 7. Agent-container Claude Code version\n"]
+    installed = query_container_claude_version()
+    latest = query_latest_claude_code_version()
+
+    if installed is None:
+        out.append("_(could not reach the sim-agent harness -- `ssh homelab-agent-ctl state` did not answer; "
+                    "skipped)_\n")
+    else:
+        out.append(f"- installed (via the harness's `claude --version`): `{installed}`")
+    if latest is None:
+        out.append("_(could not resolve the latest published version -- `npm view "
+                    "@anthropic-ai/claude-code version` failed or timed out, likely offline; skipped)_\n")
+    else:
+        out.append(f"- latest published (npm `@anthropic-ai/claude-code`): `{latest}`")
+    if installed is not None and latest is not None:
+        installed_ver = installed.split()[0] if installed.split() else installed
+        if installed_ver == latest:
+            out.append("- **up to date.**")
+        else:
+            out.append(f"- **LAG: installed `{installed_ver}` != latest `{latest}`.** "
+                        "`agent start` runs `claude update` + a smoke test on every start "
+                        "(tools/agent_container/bin/claude-safe-update.sh); if this persists across several "
+                        "inspections, either the smoke test keeps failing (check ~/claude_update.log on the "
+                        "container) or the harness has not been started recently.")
+    out.append("")
+    return "\n".join(out)
+
+
 # ------------------------------------------------------------------------------------------------------- main
 
 def build_digest(explicit_since):
@@ -431,6 +497,7 @@ def build_digest(explicit_since):
         render_failure_log_section(floor_date),
         render_utilization_section(floor_date),
         render_gate_failure_section(since, since_is_sha, floor_date),
+        render_agent_container_version_section(),
     ]
     text = "\n".join(parts)
     approx_tokens = len(text) // 4

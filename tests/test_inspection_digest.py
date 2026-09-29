@@ -316,12 +316,49 @@ def test_build_digest_end_to_end_on_scratch_repo_produces_all_sections(tmp_path,
     monkeypatch.setattr(digest, "FAILURE_LOG", repo / "no-failure-log.md")
     monkeypatch.setattr(digest, "DISPATCH_LOG", repo / "no-dispatch.log")
     monkeypatch.setattr(digest, "GPU_LOG", repo / "no-gpu.log")
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
 
     text = digest.build_digest("1970-01-01")
     for heading in ("## 1. Commits per branch", "## 2. New findings", "## 3. NEEDS-CLAUDE",
                     "## 4. New research/FAILURE_LOG.md rows", "## 5. Pool / GPU utilization",
-                    "## 6. Commits noting a gate failure"):
+                    "## 6. Commits noting a gate failure", "## 7. Agent-container Claude Code version"):
         assert heading in text
     assert "2026-09-29-new-finding-GO.md" in text
     approx_tokens = len(text) // 4
     assert approx_tokens < 15000
+
+
+# --------------------------------------------------------- agent-container Claude Code version (2026-09-29)
+
+def test_agent_container_version_section_reports_a_lag(monkeypatch):
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.266 (Claude Code)")
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    text = digest.render_agent_container_version_section()
+    assert "installed" in text and "2.1.266" in text
+    assert "latest published" in text and "2.1.280" in text
+    assert "LAG" in text
+
+
+def test_agent_container_version_section_reports_up_to_date(monkeypatch):
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    text = digest.render_agent_container_version_section()
+    assert "up to date" in text
+    assert "LAG" not in text
+
+
+def test_agent_container_version_section_skips_gracefully_when_harness_unreachable(monkeypatch):
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: None)
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    text = digest.render_agent_container_version_section()
+    assert "could not reach the sim-agent harness" in text
+    assert "latest published" in text and "2.1.280" in text
+
+
+def test_agent_container_version_section_skips_gracefully_when_offline(monkeypatch):
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: None)
+    text = digest.render_agent_container_version_section()
+    assert "installed" in text and "2.1.280" in text
+    assert "could not resolve the latest published version" in text

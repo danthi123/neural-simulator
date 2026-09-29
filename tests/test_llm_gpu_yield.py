@@ -408,3 +408,54 @@ def test_yield_writes_marker_and_schedules_graceful_stop():
         sysrun_log = os.path.join(tmp, "systemd_run.log")
         assert _wait_for(lambda: os.path.exists(sysrun_log))
         assert "--on-active=45s" in open(sysrun_log).read(), "the stop must be scheduled gracefully (~45s), not immediate"
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`): the containerized agent has no workstation
+# session to resume, so the restore step runs a caller-supplied command instead -- see tools/agent_gateway.sh's
+# own header for the exact "unpause the harness + say" command it constructs.
+# ---------------------------------------------------------------------------------------------------------------
+
+def test_yield_with_notify_cmd_omits_the_workstation_session_and_records_the_command():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
+        systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
+        bindir = _fake_curl_and_systemd_run(tmp, state_file)
+        state_home = os.path.join(tmp, "state")
+        os.makedirs(os.path.join(state_home, "sim-local-llm"))
+        # A real workstation session IS recorded -- notify-cmd must still take priority and leave SESSION empty,
+        # so restore never resumes it for a container-triggered yield.
+        open(os.path.join(state_home, "sim-local-llm", "last_session"), "w").write("some-unrelated-session\n")
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root,
+                    "XDG_STATE_HOME": state_home})
+        res = _run_llm(["yield", "--notify-cmd", "echo notified \"$1\""], env)
+        assert res.returncode == 0, res.stdout + res.stderr
+        content = open(os.path.join(tmp, ".llm_yield")).read()
+        assert "LLM_YIELD_SESSION=\n" in content, "a notify-cmd yield must not carry the workstation's own session: %r" % content
+        assert 'LLM_YIELD_NOTIFY_CMD=echo notified "$1"' in content
+
+
+def test_yield_restore_runs_notify_cmd_instead_of_resuming_a_session():
+    with tempfile.TemporaryDirectory() as tmp:
+        systemctl, state_file, _ = _fake_systemctl(tmp, "inactive")
+        llm_sh, log = _fake_llm_sh_yield(tmp, state_file=state_file)
+        nvidia_smi = _fake_nvidia_smi(tmp)
+        marker = os.path.join(tmp, ".llm_yield")
+        notify_marker = os.path.join(tmp, "notify_ran")
+        open(marker, "w").write(
+            "LLM_YIELD_SESSION=\nLLM_YIELD_PROFILE=prof-x\nLLM_YIELD_DEADLINE=%d\n"
+            "LLM_YIELD_NOTIFY_CMD=echo \"got: $1\" > %s\n" % (int(time.time()) + 3600, notify_marker))
+        sentinel = os.path.join(tmp, "job_ran")
+        _add_job(tmp, "touch %s" % sentinel)
+        daemon = _spawn_daemon(_daemon_env(tmp, systemctl, nvidia_smi, llm_sh=llm_sh))
+        try:
+            assert _wait_for(lambda: os.path.exists(sentinel), timeout=10), "the queued job never ran"
+            assert _wait_for(lambda: "CALLED: on prof-x" in _log_text(log), timeout=10), "the SAME profile was not reloaded"
+            assert _wait_for(lambda: os.path.exists(notify_marker), timeout=10), "the notify-cmd never ran"
+            assert "got: GPU window finished" in open(notify_marker).read()
+            # and the (empty-session) restore must NOT have tried to resume any claude session
+            assert not any(l.startswith("CALLED: claude --resume") for l in _log_text(log).splitlines())
+        finally:
+            _kill(daemon)

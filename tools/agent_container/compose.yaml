@@ -1,0 +1,66 @@
+# tools/agent_container/compose.yaml -- the isolated local-model harness, homelab-server (192.168.0.10).
+# Isolation IS the point (docs/plans/2026-09-29-local-model-transition-PLAN.md section 9): this box also runs
+# gitea, nextcloud, home assistant and other unrelated services, so sim-agent gets its own network, no docker
+# socket, a dropped capability set, no host access, and a read-only root filesystem.
+#
+#   cd ~/sim-agent && docker compose -f compose.yaml build
+#   docker compose -f compose.yaml up -d
+#   docker compose -f compose.yaml run --rm sim-agent <smoke-test-command>      # see smoke_test.sh
+name: sim-agent
+
+services:
+  sim-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sim-agent:latest
+    container_name: sim-agent
+    hostname: sim-agent
+    # No `init: true` here -- the Dockerfile's own ENTRYPOINT already runs tini as PID 1 (wrapping
+    # entrypoint.sh); compose's `init: true` would ALSO inject docker's built-in init ahead of it, which then
+    # stops tini from acting as PID 1/child-subreaper (observed live 2026-09-29: tini's own warning under
+    # `docker compose run`). One init, at the image level, is enough.
+    restart: unless-stopped
+
+    # --- isolation -------------------------------------------------------------------------------------------
+    networks:
+      - agent-net                      # its OWN bridge network only -- never `network_mode: host`, never
+                                        # attached to any other stack's network (gitea/nextcloud/etc.)
+    # No `ports:` -- nothing is published. The container reaches the workstation by making an OUTBOUND ssh
+    # connection (its restricted gateway key); nothing on the server or the LAN connects INTO sim-agent.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true                    # root filesystem is read-only; every writable path below is explicit
+    tmpfs:
+      - /tmp:size=2g,mode=1777          # Claude Code + tmux + pip/venv scratch space; wiped on every recreate
+    ulimits:
+      nproc: 4096
+    # Plain (non-swarm) resource limits -- `deploy.resources.limits` is a Swarm-stack construct that modern
+    # `docker compose` (v5 here) refuses to mix with the non-swarm `pids_limit` below ("can't set distinct
+    # values on 'pids_limit' and 'deploy.resources.limits.pids'"), so cpus/memory use the equivalent plain
+    # Compose fields instead -- same effect for `docker compose up`, no Swarm involved either way.
+    cpus: "12"
+    mem_limit: "24g"
+    pids_limit: 4096
+
+    # --- persistence: exactly two named volumes, nothing else writable --------------------------------------
+    volumes:
+      - sim-agent-repo:/work/sim
+      - sim-agent-home:/home/agent
+
+    environment:
+      - AGENT_HOME=/home/agent
+      - REPO_DIR=/work/sim
+      # Cloud-profile secrets (tools/agent_container/profiles/*.env's TOKEN_VAR) are supplied here or via
+      # env_file, NEVER written into a profile file or baked into the image. Example (commented):
+      # - CLOUD_LLM_API_KEY=${CLOUD_LLM_API_KEY:?set in .env, not in this file}
+
+networks:
+  agent-net:
+    driver: bridge
+
+volumes:
+  sim-agent-repo:
+  sim-agent-home:
