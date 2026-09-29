@@ -58,7 +58,7 @@ RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
 # exclude rule is ever reached) -- this mirrors the pre-existing `--exclude='_provenance/'` this replaces.
 RSYNC_SAFETY_ARGS=(--safe-links --chmod=F-x
   --exclude='_provenance/'
-  --include='*/' --include='*.json' --include='*.prov.json' --include='*.log' --include='*.csv' --include='*.npz'
+  --include='*/' --include='*.json' --include='*.prov.json' --include='*.log' --include='*.csv' --include='*.npz' --include='*.rep[0-9]*' --include='*.done' --include='*.txt' --include='*.jsonl' --include='*.md' --include='*.npy'
   --exclude='*')
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 _EXTRA=""

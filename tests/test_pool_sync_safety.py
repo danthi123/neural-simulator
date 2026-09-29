@@ -104,6 +104,17 @@ def test_extension_allowlist_blocks_py_files_but_allows_result_types():
             "worker.log": False,
             "table.csv": False,
             "array.npz": False,
+            # 2026-09-29: result types the batteries actually write (found missing from the first allow-list;
+            # the load-bearing batteries need *.rep0, dispatch uses *.done markers)
+            "lesion_x.json.rep0": False,
+            "lesion_x.json.rep1": False,
+            "cell.done": False,
+            "notes.txt": False,
+            "events.jsonl": False,
+            "summary.md": False,
+            "weights.npy": False,
+            "evil.pyc": True,
+            "evil.sh": True,
         }
         for name in names:
             open(os.path.join(src, name), "w").write("x\n")
@@ -118,3 +129,5 @@ def test_extension_allowlist_blocks_py_files_but_allows_result_types():
         for name, should_block in names.items():
             if not should_block:
                 assert os.path.exists(os.path.join(dst, name)), "%s should have been pulled" % name
+            else:
+                assert not os.path.exists(os.path.join(dst, name)), "%s must be blocked" % name
