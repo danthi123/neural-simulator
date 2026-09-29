@@ -67,3 +67,12 @@ def test_raw_gpu_queue_add_stays_denied():
     # exist to enforce, and they are bypassed entirely if the raw command is also allowed.
     _, deny = _rules()
     assert any("gpu_queue.sh add" in r for r in deny)
+
+
+def test_protected_edit_hook_is_wired():
+    # 2026-09-29: the `git -C .claude/worktrees/draft-:*` allow rule permits any git subcommand (incl. --no-verify,
+    # replace, stash) and the deny rules are prefix rules that miss that form; the PreToolUse hook is the guard.
+    j = json.load(open(SETTINGS))
+    cmds = [h["command"] for e in j.get("hooks", {}).get("PreToolUse", []) for h in e.get("hooks", [])
+            if "Bash" in e.get("matcher", "") and "Edit" in e.get("matcher", "")]
+    assert any("tools/local_llm/hooks/deny_protected_edits.sh" in c for c in cmds)

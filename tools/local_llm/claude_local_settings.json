@@ -75,5 +75,18 @@
       "Edit(research/queue/pool.queue)",
       "Edit(research/queue/gpu.queue)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/tools/local_llm/hooks/deny_protected_edits.sh"
+          }
+        ]
+      }
+    ]
   }
 }
