@@ -1,8 +1,15 @@
 """tools/agent_gateway.sh -- the forced command that is the ENTIRE trust boundary between the sim-agent
 container and the workstation's compute (docs/plans/2026-09-29-local-model-transition-PLAN.md section 9).
-Hermetic throughout: AGENT_GATEWAY_ROOT points every test at a scratch directory holding stub tools/*.sh
-(never the real pool_queue.sh/gpu_add.sh/gpu_queue.sh/game.sh/llm.sh), and AGENT_GATEWAY_SSH stubs `ssh`
+Hermetic throughout: AGENT_GATEWAY_ROOT points every test at a scratch directory holding stub tools/*.sh (never
+the real pool_queue.sh/gpu_queue.sh/game.sh/llm.sh/agent_gateway_submit.py), and AGENT_GATEWAY_SSH stubs `ssh`
 entirely -- no real ssh connection, no real pool/GPU job, ever touches this repo's live queues.
+
+2026-09-29 security review rewrite: H1 removed `eval` from argument splitting entirely (tools/
+agent_gateway_parse.py, a real python3 script -- NOT stubbed here, since it is itself hermetic/side-effect-free);
+H2 replaced free-form `pool-submit '<cmd>' --checked '<reason>'` / `gpu-submit '<cmd>'` with STRUCTURED requests
+the gateway forwards, verbatim as argv (never re-joined into a shell string), to tools/agent_gateway_submit.py
+(stubbed here -- its own real validation/sandboxing logic is tested in tests/test_agent_gateway_submit.py); H3
+removed `results-sync` from this script entirely (moved to a separate rrsync-only ssh key).
 """
 import os
 import stat
@@ -23,13 +30,23 @@ def _write_exec(path, body):
 
 def _scaffold(tmp):
     """A minimal $ROOT/tools/... tree the gateway's hard-coded relative paths expect, each stub just logging
-    its own invocation."""
+    its own invocation (one argument per log line, `argv:`-prefixed, so a test can tell "one literal token" from
+    "several words a shell would have split")."""
     log = os.path.join(tmp, "calls.log")
     _write_exec(os.path.join(tmp, "tools", "pool_queue.sh"), 'echo "pool_queue.sh $*" >> "%s"\n' % log)
-    _write_exec(os.path.join(tmp, "tools", "local_llm", "gpu_add.sh"), 'echo "gpu_add.sh $*" >> "%s"\n' % log)
     _write_exec(os.path.join(tmp, "tools", "gpu_queue.sh"), 'echo "gpu_queue.sh $*" >> "%s"\n' % log)
     _write_exec(os.path.join(tmp, "tools", "game.sh"), 'echo "game.sh $*" >> "%s"\n' % log)
     _write_exec(os.path.join(tmp, "tools", "local_llm", "llm.sh"), 'echo "llm.sh $*" >> "%s"\n' % log)
+    # a STUB agent_gateway_submit.py: NOT the real validator (that lives in tests/test_agent_gateway_submit.py)
+    # -- this only proves the gateway forwards the request as a clean argv list to whatever python3 runs it
+    # with. It is invoked as `python3 <this file> <argv...>`, so it must be valid PYTHON, not a shell script.
+    with open(os.path.join(tmp, "tools", "agent_gateway_submit.py"), "w") as f:
+        f.write(
+            "import sys\n"
+            "with open(%r, 'a') as f:\n"
+            "    f.write('submit.py:' + ''.join(' argv[%%s]' %% a for a in sys.argv[1:]) + chr(10))\n"
+            % log
+        )
     os.makedirs(os.path.join(tmp, "research", "findings", "raw"), exist_ok=True)
     os.makedirs(os.path.join(tmp, "research", "queue"), exist_ok=True)
     return log
@@ -90,30 +107,75 @@ def test_unknown_subcommand_is_refused_and_logged():
         assert "rm -rf /" in log
 
 
-def test_pool_submit_forwards_to_pool_queue_add():
+def test_pool_submit_forwards_the_structured_request_as_argv():
     with tempfile.TemporaryDirectory() as tmp:
         log = _scaffold(tmp)
-        res = _run("pool-submit 'cd ~ && echo hi' --checked 'corpus: nothing'", tmp)
+        res = _run("pool-submit --sha " + "a" * 40 + " --runner research.runners.foo "
+                   "--checked 'corpus: nothing' -- --seed 7", tmp)
         assert res.returncode == 0, res.stdout + res.stderr
         calls = open(log).read()
-        assert "pool_queue.sh add cd ~ && echo hi --checked corpus: nothing" in calls
+        assert "submit.py: argv[pool] argv[--sha] argv[" + "a" * 40 + "]" in calls
+        assert "argv[--runner] argv[research.runners.foo]" in calls
+        assert "argv[--checked] argv[corpus: nothing]" in calls
+        assert "argv[--] argv[--seed] argv[7]" in calls
 
 
-def test_gpu_submit_forwards_one_quoted_command():
+def test_gpu_submit_forwards_the_structured_request_as_argv():
     with tempfile.TemporaryDirectory() as tmp:
         log = _scaffold(tmp)
-        res = _run("gpu-submit 'cd ~/derisk-pool/sim && run --seed 7'", tmp)
+        res = _run("gpu-submit --sha " + "b" * 40 + " --runner research.runners.bar -- --seed 7", tmp)
         assert res.returncode == 0, res.stdout + res.stderr
         calls = open(log).read()
-        assert "gpu_add.sh cd ~/derisk-pool/sim && run --seed 7" in calls
+        assert "submit.py: argv[gpu] argv[--sha] argv[" + "b" * 40 + "]" in calls
+        assert "argv[--runner] argv[research.runners.bar]" in calls
 
 
-def test_gpu_submit_refuses_more_than_one_argument():
+def test_gpu_submit_with_no_request_is_refused():
     with tempfile.TemporaryDirectory() as tmp:
         _scaffold(tmp)
-        res = _run("gpu-submit foo bar", tmp)
+        res = _run("gpu-submit", tmp)
         assert res.returncode != 0
-        assert "one quoted command" in res.stderr
+        assert "structured request" in res.stderr
+
+
+def test_pool_submit_command_substitution_is_never_executed_and_arrives_as_one_literal_token():
+    """H1 regression: the exact shape the security review used (`pool-submit x $(cmd) --checked y`) must never
+    run `cmd` -- it must arrive at the (stubbed) submit script as ONE inert, literal argv token, exactly as
+    `eval` never touching this text would produce."""
+    with tempfile.TemporaryDirectory() as tmp:
+        log = _scaffold(tmp)
+        marker = os.path.join(tmp, "pwned")
+        # $(id>marker) has NO internal whitespace, so it is exactly ONE shlex token either way -- isolating the
+        # question this test asks (did the substitution get EXECUTED) from ordinary word-splitting.
+        res = _run("pool-submit --sha " + "c" * 40 +
+                   " --runner research.runners.foo --checked reason -- --out $(id>%s)" % marker, tmp)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert not os.path.exists(marker), "a command substitution in the request must NEVER execute"
+        calls = open(log).read()
+        assert ("argv[$(id>%s)]" % marker) in calls, (
+            "the literal, unexpanded text must still reach the (stub) submit script as one token: %s" % calls)
+
+
+def test_a_control_character_in_an_argument_is_refused_before_reaching_the_submit_script():
+    # \x01 survives BOTH bash's own `read -r SUB REST <<< "$CMD"` line-extraction (only \n ends that read; \x01
+    # is not an IFS character either) AND shlex's own whitespace splitting (shlex treats " \t\r\n" as
+    # inter-token whitespace, so a bare \r would just become a token boundary, never an embedded byte -- \x01
+    # is not, and genuinely reaches agent_gateway_parse.py's per-token check embedded WITHIN one token).
+    with tempfile.TemporaryDirectory() as tmp:
+        log = _scaffold(tmp)
+        res = _run("pool-submit --sha " + "d" * 40 +
+                   " --runner research.runners.foo --checked reason -- --seed=7\x018", tmp)
+        assert res.returncode != 0
+        assert "control character" in res.stderr or "could not parse" in res.stderr
+        assert not os.path.exists(os.path.join(tmp, "calls.log")) or "submit.py" not in open(log).read()
+
+
+def test_results_sync_has_moved_off_this_gateway():
+    with tempfile.TemporaryDirectory() as tmp:
+        _scaffold(tmp)
+        res = _run("results-sync --server --sender -logDtprze.iLsfxCIvu . research/findings/raw", tmp)
+        assert res.returncode != 0
+        assert "rrsync" in res.stderr.lower()
 
 
 def test_status_runs_all_three_status_checks():
@@ -125,45 +187,6 @@ def test_status_runs_all_three_status_checks():
         assert "gpu_queue.sh status" in calls
         assert "pool_queue.sh list" in calls
         assert "game.sh status" in calls
-
-
-def test_results_sync_allows_a_read_of_an_allowed_root():
-    with tempfile.TemporaryDirectory() as tmp:
-        _scaffold(tmp)
-        rsync_log = os.path.join(tmp, "rsync_calls.log")
-        _write_exec(os.path.join(tmp, "fakebin", "rsync"), 'echo "rsync $*" >> "%s"\n' % rsync_log)
-        env = dict(os.environ)
-        env["PATH"] = os.path.join(tmp, "fakebin") + os.pathsep + env["PATH"]
-        res = _run(
-            "results-sync --server --sender -logDtprze.iLsfxCIvu . research/findings/raw",
-            tmp, extra_env={"PATH": env["PATH"]},
-        )
-        assert res.returncode == 0, res.stdout + res.stderr
-        assert "research/findings/raw" in open(rsync_log).read()
-
-
-def test_results_sync_refuses_a_write_direction():
-    with tempfile.TemporaryDirectory() as tmp:
-        _scaffold(tmp)
-        res = _run("results-sync --server -logDtprze.iLsfxCIvu . research/findings/raw", tmp)
-        assert res.returncode != 0
-        assert "read" in res.stderr.lower()
-
-
-def test_results_sync_refuses_a_path_outside_the_allowed_roots():
-    with tempfile.TemporaryDirectory() as tmp:
-        _scaffold(tmp)
-        res = _run("results-sync --server --sender -logDtprze.iLsfxCIvu . research/coordination", tmp)
-        assert res.returncode != 0
-        assert "outside the allowed roots" in res.stderr
-
-
-def test_results_sync_refuses_a_path_escaping_via_dotdot():
-    with tempfile.TemporaryDirectory() as tmp:
-        _scaffold(tmp)
-        res = _run("results-sync --server --sender -logDtprze.iLsfxCIvu . research/../tools", tmp)
-        assert res.returncode != 0
-        assert "outside the allowed roots" in res.stderr
 
 
 def test_yield_skips_pause_for_a_cloud_profile():
@@ -200,3 +223,14 @@ def test_yield_continues_gracefully_when_the_ctl_host_is_unreachable():
         # unreachable ctl -> harness_kind can't be determined -> NOT cloud -> still attempts llm.sh yield
         assert res.returncode == 0, res.stdout + res.stderr
         assert "llm.sh yield" in open(log).read()
+
+
+def test_yield_max_hours_command_substitution_is_never_executed():
+    """H1 regression on the `yield` path too -- its own --max-hours parsing used the same `eval "set -- $REST"`
+    before this fix."""
+    with tempfile.TemporaryDirectory() as tmp:
+        log = _scaffold(tmp)
+        marker = os.path.join(tmp, "pwned_yield")
+        ssh_path, _ = _fake_ssh(tmp, state_output="container: running\nprofile_kind: local\n")
+        res = _run("yield --max-hours $(touch %s)" % marker, tmp, ssh_path=ssh_path)
+        assert not os.path.exists(marker), "a command substitution in --max-hours must NEVER execute"

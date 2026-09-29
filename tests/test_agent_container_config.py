@@ -141,11 +141,87 @@ def test_settings_wires_the_shared_protected_edit_hook():
     assert any("deny_protected_edits.sh" in c for c in cmds)
 
 
+def test_settings_hook_points_at_the_baked_readonly_path_not_the_writable_repo():
+    # 2026-09-29 security review, LOW: the OLD config pointed at "$CLAUDE_PROJECT_DIR"/tools/local_llm/hooks/
+    # deny_protected_edits.sh -- a path inside the model's OWN writable repo checkout, which it could simply
+    # edit or delete to neuter its own guardrail.
+    s = _settings()
+    cmds = [h["command"] for e in s.get("hooks", {}).get("PreToolUse", []) for h in e.get("hooks", [])]
+    hook_cmds = [c for c in cmds if "deny_protected_edits.sh" in c]
+    assert hook_cmds
+    for c in hook_cmds:
+        assert "CLAUDE_PROJECT_DIR" not in c
+        assert c.startswith("/usr/local/lib/agent-container/")
+
+
+def test_dockerfile_bakes_the_settings_as_managed_settings_on_linux():
+    # 2026-09-29 security review, LOW: baked as Claude Code's MANAGED settings (highest-precedence, not a
+    # project/user setting a writable repo checkout could ever shadow), read-only, outside both volumes.
+    text = _dockerfile_text()
+    assert "/etc/claude-code/managed-settings.json" in text
+    assert re.search(r"chmod\s+444\s+/etc/claude-code/managed-settings\.json", text) or \
+        re.search(r"chmod\s+444\s+[^\n]*managed-settings\.json", text)
+
+
+def test_dockerfile_bakes_the_hook_scripts_read_only():
+    text = _dockerfile_text()
+    assert "COPY hooks/" in text
+    assert "/usr/local/lib/agent-container/hooks/" in text
+
+
+def test_vendored_hook_files_are_byte_identical_to_the_local_llm_source():
+    # The Docker build context is tools/agent_container/ alone, so it cannot COPY tools/local_llm/hooks/*
+    # directly -- these are vendored copies, kept in sync manually. This pins that they have NOT drifted.
+    src_dir = os.path.join(ROOT, "tools", "local_llm", "hooks")
+    vendored_dir = os.path.join(AC, "hooks")
+    for name in ("deny_protected_edits.sh", "deny_protected_edits.py"):
+        src = open(os.path.join(src_dir, name), "rb").read()
+        vendored = open(os.path.join(vendored_dir, name), "rb").read()
+        assert src == vendored, f"{name} has drifted from tools/local_llm/hooks/ -- re-vendor the copy"
+
+
+def test_compose_service_builds_with_an_unused_uid_not_1000():
+    # 2026-09-29 security review, LOW: UID 1000 maps to the WORKSTATION account's own uid (dant123) -- any
+    # filesystem escape would land with the same uid as the real user. An unused id has no such collision.
+    svc = _compose()["services"]["sim-agent"]
+    build_args = svc.get("build", {}).get("args", {})
+    assert str(build_args.get("AGENT_UID")) == "61000"
+    assert str(build_args.get("AGENT_GID")) == "61000"
+    assert str(build_args.get("AGENT_UID")) != "1000"
+
+
+def test_compose_network_has_a_fixed_subnet():
+    # 2026-09-29 security review, M1: tools/agent_container/egress.sh's iptables rules target a subnet
+    # directly -- it must never be a Docker-assigned one that can change on a network recreate.
+    compose = _compose()
+    ipam = compose["networks"]["agent-net"].get("ipam", {})
+    subnets = [c.get("subnet") for c in ipam.get("config", [])]
+    assert subnets, "agent-net must declare a fixed ipam subnet"
+    assert subnets[0] == "172.30.30.0/24"
+
+
+def test_compose_service_bounds_its_log_size():
+    # 2026-09-29 security review, M3: the default json-file driver has no size cap -- an agent-authored job
+    # that logs heavily could fill this shared server's disk.
+    svc = _compose()["services"]["sim-agent"]
+    logging = svc.get("logging", {})
+    assert logging.get("driver") == "local"
+    assert "max-size" in logging.get("options", {})
+
+
 def test_settings_only_allows_the_gateway_subcommands_over_ssh():
+    # 2026-09-29 security review, H3: results-sync moved OFF the ssh gateway entirely (a separate, read-only
+    # rrsync key) -- it must never appear as a "workstation-gateway results-sync" allow rule any more.
     allow = _settings()["permissions"]["allow"]
     ssh_rules = [r for r in allow if r.startswith("Bash(ssh ")]
     for r in ssh_rules:
         assert "workstation-gateway" in r
-    subs = {"pool-submit", "gpu-submit", "results-sync", "status", "yield"}
+    subs = {"pool-submit", "gpu-submit", "status", "yield"}
     covered = {s for s in subs if any(f"workstation-gateway {s}" in r for r in ssh_rules)}
     assert covered == subs
+    assert not any("results-sync" in r for r in ssh_rules)
+
+
+def test_settings_allows_the_dedicated_rrsync_results_pull():
+    allow = _settings()["permissions"]["allow"]
+    assert any("results-sync-gateway" in r and r.startswith("Bash(rsync") for r in allow)

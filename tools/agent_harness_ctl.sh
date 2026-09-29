@@ -36,6 +36,28 @@ read -r SUB REST <<< "$CMD"
 
 container_status() { "$DOCKER" inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "absent"; }
 
+# volume_size_gb <name-substring> -- the named volume's on-disk SIZE in GB (one decimal), via the daemon's own
+# accounting (`docker system df -v` -- no raw filesystem access needed, so this works under the same privilege
+# level `docker inspect`/`docker exec` already require). Grepped by SUBSTRING since compose prefixes the
+# declared volume name with the project name (e.g. "sim-agent_sim-agent-repo"), which can vary by how the stack
+# was deployed. Prints nothing (never a bare "0") if the volume cannot be found or its size cannot be parsed --
+# 2026-09-29 security review, M3 ("the digest that warns when the volumes exceed a threshold").
+volume_size_gb() {
+  local name_substr="$1" raw
+  raw=$("$DOCKER" system df -v 2>/dev/null | awk -v n="$name_substr" '$1 ~ n {print $NF; exit}')
+  [ -n "$raw" ] || return 0
+  python3 -c '
+import re, sys
+m = re.match(r"^([0-9.]+)\s*([a-zA-Z]*)$", sys.argv[1])
+if not m:
+    sys.exit(0)
+val = float(m.group(1)); unit = m.group(2).lower()
+mult = {"b": 1, "kb": 1e3, "mb": 1e6, "gb": 1e9, "tb": 1e12,
+        "kib": 2**10, "mib": 2**20, "gib": 2**30, "tib": 2**40, "": 1}.get(unit, 1e9)
+print(f"{val * mult / 1e9:.2f}")
+' "$raw" 2>/dev/null
+}
+
 case "$SUB" in
   pause)
     log "scheduling '$DOCKER pause $CONTAINER' in ${PAUSE_DELAY_S}s"
@@ -67,10 +89,32 @@ case "$SUB" in
     if [ "${#msg}" -gt "$MAX_SAY_LEN" ]; then
       log "refused say: ${#msg} chars (max $MAX_SAY_LEN)"; echo "refused: message exceeds $MAX_SAY_LEN chars" >&2; exit 1
     fi
+    # REJECT CR/LF EXPLICITLY (2026-09-29 security review, LOW). A \r or \n delivered as a literal keystroke
+    # into the container's tmux pane submits whatever was typed there so far to the shell, followed by
+    # anything sent after it -- command injection into the model's own terminal. The printable-character check
+    # below runs `grep -q` on the message's bytes; grep operates LINE BY LINE, and `-q` only needs ONE line to
+    # match -- so a message with an embedded \n silently became several all-printable LINES and passed outright
+    # (never actually tested as a single string), and \r itself is classified as [:space:] (POSIX: space, tab,
+    # newline, vertical tab, form feed, CR are all "space"), so it passes the class check even alone. This is a
+    # dedicated, whole-string check via bash's own pattern matching (never line-split) that closes both gaps at
+    # once, run BEFORE the printable check so no embedded newline can reach it.
+    case "$msg" in
+      *$'\n'*|*$'\r'*)
+        log "refused say: message contains a newline/carriage-return"
+        echo "refused: message must not contain a newline or carriage return" >&2; exit 1 ;;
+    esac
     if ! printf '%s' "$msg" | LC_ALL=C grep -qE '^[[:print:][:space:]]*$'; then
       log "refused say: non-printable characters"; echo "refused: message contains non-printable characters" >&2; exit 1
     fi
-    if "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" "$msg" Enter >> "$LOG" 2>&1; then
+    # LITERAL TEXT, then a SEPARATE non-literal Enter (2026-09-29 security review, LOW). Without `-l`, `tmux
+    # send-keys` treats each word of its argument as a KEY NAME when one matches (e.g. "C-c", "Enter"), not
+    # literal text -- so a `say 'C-c'` sent an actual Ctrl-C keystroke into the model's terminal instead of the
+    # three characters it looks like. `-l` (and `--`, so a message starting with `-` is never read as a flag)
+    # forces the TEXT argument to be sent exactly as literal bytes; Enter must therefore be its OWN, separate,
+    # NON-literal send-keys call -- folding it into the same `-l` invocation would type the four literal
+    # characters "Enter" instead of pressing the key.
+    if "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" -l -- "$msg" >> "$LOG" 2>&1 \
+       && "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" Enter >> "$LOG" 2>&1; then
       log "said: $msg"; echo "sent"
     else
       log "say FAILED (container not running, or no '$TMUX_SESSION' tmux session?)"
@@ -92,6 +136,12 @@ case "$SUB" in
       echo "claude_active: $([ -n "$busy" ] && echo yes || echo no)"
       echo "claude_version: $cver"
     fi
+    # VOLUME DISK USAGE -- always reported, regardless of container state (the named volumes persist across
+    # pause/stop); consumed by tools/inspection_digest.py to warn when either exceeds a threshold.
+    repo_gb="$(volume_size_gb "sim-agent-repo")"
+    home_gb="$(volume_size_gb "sim-agent-home")"
+    echo "repo_volume_gb: ${repo_gb:-unknown}"
+    echo "home_volume_gb: ${home_gb:-unknown}"
     log "state queried (status=$st)"
     ;;
 

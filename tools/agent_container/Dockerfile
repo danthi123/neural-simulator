@@ -67,7 +67,30 @@ RUN chmod +x /usr/local/lib/agent-container/bin/*.sh \
     && ln -s /usr/local/lib/agent-container/bin/smoke_test.sh /usr/local/bin/smoke_test.sh
 
 COPY profiles/ /usr/local/lib/agent-container/profiles/
+
+# --- MANAGED settings + guardrail hook, baked read-only into the image (2026-09-29 security review, LOW:
+# "the in-container guardrails can be edited by the model: the hook lives in the writable repo, and the
+# .claude settings are writable"). Two fixes, together:
+#   1. claude_container_settings.json (this repo's own copy, kept as a build artifact for reference/CI too) is
+#      installed as Claude Code's MANAGED settings file -- /etc/claude-code/managed-settings.json on Linux,
+#      the highest-precedence, non-overridable settings tier (enterprise policy, not a project/user setting the
+#      model's own repo checkout could ever shadow or edit). It lives OUTSIDE both writable volumes
+#      (/work/sim, /home/agent) and under this image's read-only root filesystem (compose.yaml's
+#      `read_only: true`), so the model cannot edit, delete, or bypass it by editing files in its own checkout.
+#   2. The PreToolUse hook it points at (hooks/deny_protected_edits.{sh,py} -- vendored copies of tools/
+#      local_llm/hooks/deny_protected_edits.{sh,py}, kept byte-identical: tests/test_agent_container_config.py
+#      pins this, since the Docker build context is tools/agent_container/ alone and cannot COPY a file from
+#      elsewhere in the repo) is ALSO baked into this read-only image, not read from the writable /work/sim
+#      checkout -- the OLD config pointed at "$CLAUDE_PROJECT_DIR"/tools/local_llm/hooks/deny_protected_edits.sh,
+#      a path inside the model's own writable repo, which the model could simply edit or delete to neuter its
+#      own guardrail.
+COPY hooks/ /usr/local/lib/agent-container/hooks/
+RUN chmod +x /usr/local/lib/agent-container/hooks/*.sh
 COPY claude_container_settings.json /usr/local/lib/agent-container/claude_container_settings.json
+RUN mkdir -p /etc/claude-code \
+    && cp /usr/local/lib/agent-container/claude_container_settings.json /etc/claude-code/managed-settings.json \
+    && chmod 444 /etc/claude-code/managed-settings.json /usr/local/lib/agent-container/hooks/*.py
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

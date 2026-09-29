@@ -13,6 +13,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # UID/GID 61000, not 1000 (2026-09-29 security review, LOW): 1000 maps to the WORKSTATION account's own
+        # UID (dant123) -- any escape that reached raw filesystem access (e.g. a mis-scoped bind mount, or a
+        # future volume-driver bug) would land with the SAME uid as the real user. An unused, deliberately
+        # high/unusual id has no such collision on this box. Volume ownership needs no `chown` under
+        # `cap_drop: ALL` (which drops CAP_CHOWN too): Docker copies a NAMED VOLUME's mount-point content --
+        # including ownership -- from the IMAGE's own directory the FIRST time it is mounted over one, and the
+        # Dockerfile already `chown`s /work/sim (build time, unrestricted) and creates /home/agent as this uid
+        # via `useradd -m` -- so both volumes come up correctly owned on first start with no runtime chown at
+        # all. See docs/AGENT_HARNESS_SETUP.md for the doc fix this replaces (its old `docker exec -u root ...
+        # chown` step could never have worked under this same cap_drop).
+        AGENT_UID: "61000"
+        AGENT_GID: "61000"
     image: sim-agent:latest
     container_name: sim-agent
     hostname: sim-agent
@@ -45,6 +58,17 @@ services:
     mem_limit: "24g"
     pids_limit: 4096
 
+    # --- bounded logs (2026-09-29 security review, M3) -------------------------------------------------------
+    # The default json-file driver has NO size cap -- an agent-authored job that logs heavily (or loops) could
+    # fill this SHARED server's disk with nothing but this one container's stdout/stderr. `local` (Docker's own
+    # size-bounded driver, no extra daemon config needed) caps it explicitly; see update.sh's own disk-usage
+    # check for the volumes (which this logging driver does not cover -- named volumes have no such built-in cap).
+    logging:
+      driver: local
+      options:
+        max-size: "20m"
+        max-file: "5"
+
     # --- persistence: exactly two named volumes, nothing else writable --------------------------------------
     volumes:
       - sim-agent-repo:/work/sim
@@ -60,6 +84,13 @@ services:
 networks:
   agent-net:
     driver: bridge
+    ipam:
+      config:
+        # FIXED SUBNET (2026-09-29 security review, M1): tools/agent_container/egress.sh's iptables DOCKER-USER
+        # rules target this subnet directly -- a Docker-assigned one (the previous default) can change on a
+        # network recreate, silently leaving the firewall rules matching nothing. Keep this in sync with
+        # egress.sh's SIM_AGENT_EGRESS_SUBNET default if it is ever changed here.
+        - subnet: 172.30.30.0/24
 
 volumes:
   sim-agent-repo:

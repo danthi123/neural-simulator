@@ -57,6 +57,18 @@ def _fake_curl(tmp, up):
     return bindir
 
 
+def _fake_systemctl(tmp, active):
+    """A stand-in for `systemctl --user is-active --quiet local-llm` (2026-09-29 fix, same shape as
+    tests/test_llm_gpu_yield.py's own _fake_systemctl): answers ONLY the unit's real active/inactive state,
+    completely independent of whatever `curl` is stubbed to say -- the whole point of the fix under test."""
+    return _write_exec(os.path.join(tmp, "fake_systemctl.sh"), """
+case "$*" in
+  *"is-active --quiet local-llm"*) exit %d ;;
+  *) exit 0 ;;
+esac
+""" % (0 if active else 1))
+
+
 def _log_text(path):
     return open(path).read() if os.path.exists(path) else ""
 
@@ -86,9 +98,10 @@ def test_on_pauses_the_queue_and_sets_game_mode():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run(["on"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         assert os.path.exists(os.path.join(tmp, "GAME_MODE"))
@@ -100,9 +113,10 @@ def test_on_off_round_trip_freezes_and_resumes_a_standalone_local_process():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
         proc = subprocess.Popen(["bash", "-c", 'exec -a "python -u -m research.runners.faketest_standalone" sleep 30'])
         try:
             time.sleep(0.2)
@@ -129,12 +143,13 @@ def test_on_records_the_llm_state_when_it_was_loaded_and_off_reloads_it():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, log = _fake_llm_sh(tmp, up=True, profile="qwen38-27b-iq4nl-mtp")
         bindir = _fake_curl(tmp, up=True)
+        systemctl = _fake_systemctl(tmp, active=True)
         state_home = os.path.join(tmp, "state")
         os.makedirs(os.path.join(state_home, "sim-local-llm"))
         open(os.path.join(state_home, "sim-local-llm", "last_session"), "w").write("sess-abc\n")
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "XDG_STATE_HOME": state_home})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "XDG_STATE_HOME": state_home, "LOCAL_LLM_SYSTEMCTL": systemctl})
 
         res_on = _run(["on"], env)
         assert res_on.returncode == 0, res_on.stdout + res_on.stderr
@@ -154,13 +169,58 @@ def test_on_records_the_llm_state_when_it_was_loaded_and_off_reloads_it():
             "the SAME session must be resumed headless: %s" % log_text)
 
 
+def test_on_off_decide_llm_state_from_the_unit_not_the_health_port():
+    """2026-09-29 incident: `game on` recorded GAME_LLM_WAS_ON=1 while the local-llm systemd unit was INACTIVE,
+    because something else (Unsloth Studio, during setup) happened to answer on port 8080 -- so `game off` would
+    have loaded the 23 GB model and started a SECOND driver session on top of whatever was actually running
+    (CLAUDE.md non-negotiable 12: one driver at a time). The unit is inactive but the health port answers `up`
+    (the exact conflicting-signal shape that caused it): `on` must record WAS_ON=0 (never stop a unit that was
+    never running), `status` must say "down", and `off` must not reload the model or resume any session."""
+    with tempfile.TemporaryDirectory() as tmp:
+        llm_sh, log = _fake_llm_sh(tmp, up=False)
+        bindir = _fake_curl(tmp, up=True)                  # something else answers on :8080 -- must NOT be trusted
+        systemctl = _fake_systemctl(tmp, active=False)      # ground truth: the unit itself is NOT running
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
+
+        res_on = _run(["on"], env)
+        assert res_on.returncode == 0, res_on.stdout + res_on.stderr
+        assert "CALLED: __stop_graceful" not in _log_text(log), "must not stop a unit that was never active"
+        state = open(os.path.join(tmp, ".game_llm_state")).read()
+        assert "GAME_LLM_WAS_ON=0" in state, state
+
+        res_status = _run(["status"], env)
+        assert "local model: down" in res_status.stdout, res_status.stdout
+
+        res_off = _run(["off"], env)
+        assert res_off.returncode == 0, res_off.stdout + res_off.stderr
+        assert "not loaded before the pause" in res_off.stdout
+        log_text = _log_text(log)
+        assert "CALLED: on" not in log_text and "CALLED: claude" not in log_text, (
+            "off must never reload/resume a session for a unit that was never actually active: %s" % log_text)
+
+
+def test_status_reports_local_model_up_only_when_the_unit_is_active():
+    with tempfile.TemporaryDirectory() as tmp:
+        llm_sh, _ = _fake_llm_sh(tmp, up=True, profile="prof-x")
+        bindir = _fake_curl(tmp, up=False)          # health port down -- must NOT suppress a true "up"
+        systemctl = _fake_systemctl(tmp, active=True)
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
+        res = _run(["status"], env)
+        assert "local model: UP (prof-x)" in res.stdout, res.stdout
+
+
 def test_on_graceful_delays_the_stop():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, log = _fake_llm_sh(tmp, up=True)
         bindir = _fake_curl(tmp, up=True)
+        systemctl = _fake_systemctl(tmp, active=True)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run(["on", "--graceful"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         assert "CALLED: __stop_graceful 45" in open(log).read()
@@ -170,9 +230,10 @@ def test_off_does_not_reload_when_the_model_was_not_loaded():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, log = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
         _run(["on"], env)
         res = _run(["off"], env)
         assert res.returncode == 0, res.stdout + res.stderr
@@ -185,9 +246,10 @@ def test_status_reports_game_mode_and_frozen_pids():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res0 = _run(["status"], env)
         assert "GAME_MODE: off" in res0.stdout
 
@@ -243,10 +305,11 @@ def test_on_pauses_the_harness_via_ctl_ssh():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="local")
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run(["on"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         calls = _log_text(ssh_log)
@@ -258,10 +321,11 @@ def test_on_skips_the_harness_pause_for_a_cloud_profile():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="cloud")
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run(["on"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         assert "no pause needed" in res.stdout.lower()
@@ -273,10 +337,11 @@ def test_on_continues_gracefully_when_the_ctl_host_is_unreachable():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         ssh_path, _ = _fake_ctl_ssh(tmp, reachable=False)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run(["on"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         assert os.path.exists(os.path.join(tmp, "GAME_MODE")), "local pause must still proceed despite the unreachable ctl host"
@@ -286,10 +351,11 @@ def test_off_unpauses_the_harness_and_sends_a_resume_message():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, _ = _fake_llm_sh(tmp, up=False)
         bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)
         ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="local")
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path})
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
         _run(["on"], env)
         res = _run(["off"], env)
         assert res.returncode == 0, res.stdout + res.stderr

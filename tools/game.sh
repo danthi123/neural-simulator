@@ -35,6 +35,9 @@ GAME="$QDIR/GAME_MODE"                  # sentinel any LOCAL-CPU runner (and too
 GPUQ="$ROOT/tools/gpu_queue.sh"
 LLM_SH="${GAME_LLM_SH:-$ROOT/tools/local_llm/llm.sh}"   # override is TEST-ONLY (a fake script); NEVER set in production
 LLM_PORT="${LLM_PORT:-8080}"
+LLM_UNIT="local-llm"
+LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}   # TEST-ONLY override (same name/shape as llm.sh's own
+                                                         # SYSTEMCTL override); NEVER set in production
 FROZEN_PIDS="$QDIR/.game_frozen_pids"   # one SIGSTOP'd pid per line, written by `on`, consumed (SIGCONT'd) by `off`
 LLM_STATE="$QDIR/.game_llm_state"       # GAME_LLM_WAS_ON=/GAME_LLM_PROFILE=/GAME_LLM_SESSION=, written by `on`, consumed by `off`
 # Mirrors tools/local_llm/llm.sh's own LLM_SESSION_FILE formula (the id of the last `llm claude` session it
@@ -58,8 +61,17 @@ gpu_python_procs() {
   pgrep -af "python .*(research\.runners|webapp)" 2>/dev/null | grep -v "gpu_queue.sh" || true
 }
 vram() { command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader 2>/dev/null || echo "n/a"; }
-# Mirrors llm.sh's own is_up(): a plain health check, so game.sh never needs to parse `llm status`'s text output.
-llm_is_up() { curl -sf "http://127.0.0.1:$LLM_PORT/health" >/dev/null 2>&1; }
+# llm_unit_active: is the local-llm systemd UNIT actually active? (2026-09-29 fix -- the previous version,
+# llm_is_up(), asked "does anything answer curl http://127.0.0.1:$LLM_PORT/health", which is true for ANY
+# process bound to that port, not just this unit. Measured: `game on` recorded GAME_LLM_WAS_ON=1 while the
+# local-llm unit was inactive, because Unsloth Studio happened to be answering on 8080 during setup -- so
+# `game off` would have loaded the 23 GB model and started a SECOND driver session on top of whatever was
+# actually running (CLAUDE.md non-negotiable 12: one driver at a time). Ground truth is the unit's own state,
+# exactly like llm.sh's cmd_on/cmd_yield already decide "is it loaded" via `$SYSTEMCTL --user is-active`; the
+# health endpoint is only ever the right check for "is it done starting up YET" (llm.sh's own wait_up loop,
+# used by `on ... --wait` -- an ALREADY-active-unit's own responsiveness, never a stand-in for whether the unit
+# itself is the thing running).
+llm_unit_active() { "$LOCAL_LLM_SYSTEMCTL" --user is-active --quiet "$LLM_UNIT" 2>/dev/null; }
 llm_field() { sed -n "s/^GAME_LLM_$1=//p" "$LLM_STATE" 2>/dev/null | tail -1; }
 
 case "${1:-status}" in
@@ -90,7 +102,7 @@ case "${1:-status}" in
     # Stop the local-llm server, recording enough to bring it back exactly as it was: whether it was up, which
     # profile, and its last session id (llm.sh's own state file) -- `off` uses all three.
     was_on=0; prof=""; sess=""
-    if llm_is_up; then
+    if llm_unit_active; then
       was_on=1
       prof="$(bash "$LLM_SH" __current_profile 2>/dev/null || true)"
       sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
@@ -160,7 +172,7 @@ case "${1:-status}" in
   status)
     echo "[game] GAME_MODE: $([ -f "$GAME" ] && echo ON || echo off)"
     echo "[game] GPU_PAUSE: $([ -f "$QDIR/GPU_PAUSE" ] && echo ON || echo off)"
-    if llm_is_up; then echo "[game] local model: UP ($(bash "$LLM_SH" __current_profile 2>/dev/null))"; else echo "[game] local model: down"; fi
+    if llm_unit_active; then echo "[game] local model: UP ($(bash "$LLM_SH" __current_profile 2>/dev/null))"; else echo "[game] local model: down"; fi
     echo "[game] VRAM: $(vram)"
     echo "[game] pool dispatcher (minipc): $(pgrep -f pool_autodispatch >/dev/null && echo RUNNING || echo down)"
     if [ -s "$FROZEN_PIDS" ]; then echo "[game] frozen (SIGSTOP'd) pids: $(tr '\n' ' ' < "$FROZEN_PIDS")"; else echo "[game] frozen pids: none"; fi

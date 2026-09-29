@@ -410,6 +410,29 @@ def test_yield_writes_marker_and_schedules_graceful_stop():
         assert "--on-active=45s" in open(sysrun_log).read(), "the stop must be scheduled gracefully (~45s), not immediate"
 
 
+def test_yield_refuses_a_max_hours_value_that_is_not_plain_digits():
+    """2026-09-29 security review, H2: `deadline=$(( $(date +%s) + max_hours * 3600 ))` is bash ARITHMETIC
+    expansion, which recursively re-expands a variable's STRING VALUE as if it were itself an arithmetic
+    expression -- so `--max-hours 'a[$(cmd)]'` made bash evaluate the embedded command substitution and run
+    `cmd`, not merely fail to parse as a number (confirmed standalone: `max_hours="a[$(touch marker)]";
+    $(( ... + max_hours * 3600 ))` creates `marker` even though the surrounding expression then errors on a bad
+    array subscript). --max-hours must be validated as 1-2 plain digits BEFORE it ever reaches `$(( ))`."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root, \
+         tempfile.TemporaryDirectory() as scratch:
+        marker = os.path.join(scratch, "pwned")
+        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
+        systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
+        bindir = _fake_curl_and_systemd_run(tmp, state_file)
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        res = _run_llm(["yield", "--max-hours", "a[$(touch %s)]" % marker], env)
+        assert res.returncode != 0
+        assert "1-2 digits" in res.stdout
+        assert not os.path.exists(marker), "--max-hours must never be evaluated as a shell/arithmetic injection"
+        assert not os.path.exists(os.path.join(tmp, ".llm_yield")), "no yield marker must be written on refusal"
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`): the containerized agent has no workstation
 # session to resume, so the restore step runs a caller-supplied command instead -- see tools/agent_gateway.sh's

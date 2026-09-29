@@ -19,12 +19,35 @@ HERE="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 COMPOSE="$HERE/compose.yaml"
 LOG="$HERE/update.log"
 CONTAINER="${AGENT_CONTAINER_NAME:-sim-agent}"
+DF="${AGENT_UPDATE_DF:-df}"               # TEST-ONLY override; NEVER set in production
+DISK_ROOT="${AGENT_UPDATE_DISK_ROOT:-/var/lib/docker}"   # the filesystem docker's data (incl. named volumes)
+                                                          # actually lives on -- override if this daemon uses a
+                                                          # different data-root (`docker info -f '{{.DockerRootDir}}'`)
+DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
 
 log() { printf '%s update.sh: %s\n' "$(date -u '+%F %T')" "$*" | tee -a "$LOG" >&2; }
 
 if [ ! -f "$COMPOSE" ]; then
   echo "update.sh: no compose.yaml found at $HERE -- pass the deployed tools/agent_container directory as \$1" >&2
   exit 2
+fi
+
+# DISK-USAGE CHECK (2026-09-29 security review, M3). homelab-server is a SHARED box (gitea/nextcloud/home-
+# assistant/etc. all live on it too) with no per-container disk quota on the two named volumes (compose.yaml's
+# own log-size cap only bounds container STDOUT/STDERR, never volume content) -- warn LOUDLY, every cycle,
+# rather than let a runaway agent-authored job's disk growth go unnoticed between owner check-ins. This never
+# blocks the build/recreate below; it is a visibility fix, not a gate (tools/inspection_digest.py's own
+# per-volume GB breakdown, sourced from tools/agent_harness_ctl.sh's `state`, is the finer-grained companion
+# check -- this one is a coarse, always-available floor: it works even when the harness/ctl ssh path is down).
+disk_pct=$("$DF" --output=pcent "$DISK_ROOT" 2>/dev/null | tail -1 | tr -dc '0-9')
+if [ -n "$disk_pct" ]; then
+  log "disk usage at $DISK_ROOT: ${disk_pct}%"
+  if [ "$disk_pct" -ge "$DISK_WARN_PCT" ]; then
+    log "⚠️  WARNING: $DISK_ROOT is ${disk_pct}% full (threshold ${DISK_WARN_PCT}%) -- this is a SHARED server; " \
+        "investigate the sim-agent volumes (docker system df -v) before they threaten disk space for other services."
+  fi
+else
+  log "disk usage check: could not read $DF --output=pcent $DISK_ROOT -- skipped (non-fatal)"
 fi
 
 log "checking $CONTAINER's state before deciding whether to recreate"

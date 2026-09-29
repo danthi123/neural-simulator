@@ -19,16 +19,22 @@ def _write_exec(path, body):
     return path
 
 
-def _fake_docker(tmp, status="running", exec_ok=True):
+def _fake_docker(tmp, status="running", exec_ok=True,
+                  df_v_output="sim-agent_sim-agent-repo   1   245.3MB\nsim-agent_sim-agent-home   1   1.2GB\n"):
     """A stand-in for `docker`: logs every invocation; answers `inspect -f {{.State.Status}}` with `status`;
     `exec ... tmux send-keys` and `exec ... cat ...` / `exec ... pgrep ...` succeed iff exec_ok; `pause`/
-    `unpause` always succeed and are logged."""
+    `unpause` always succeed and are logged; `system df -v` answers with `df_v_output` (the same column shape
+    real `docker system df -v` prints for its "Local Volumes" section: NAME ... SIZE, SIZE last)."""
     log = os.path.join(tmp, "docker_calls.log")
+    df_v_file = os.path.join(tmp, "df_v_output.txt")
+    with open(df_v_file, "w") as f:
+        f.write(df_v_output)
     body = """
 echo "docker $*" >> "%s"
 case "$1" in
   inspect) echo "%s" ;;
   pause|unpause) exit 0 ;;
+  system) cat "%s" ;;
   exec)
     %s
     case "$*" in
@@ -41,7 +47,7 @@ case "$1" in
     ;;
   *) exit 0 ;;
 esac
-""" % (log, status, "" if exec_ok else "exit 1")
+""" % (log, status, df_v_file, "" if exec_ok else "exit 1")
     return _write_exec(os.path.join(tmp, "fake_docker.sh"), body), log
 
 
@@ -122,6 +128,37 @@ def test_say_refuses_non_printable_content():
         assert res.returncode != 0
 
 
+def test_say_refuses_a_carriage_return():
+    # 2026-09-29 security review, LOW: \r is classified as [[:space:]] by POSIX (space/tab/newline/vtab/
+    # formfeed/CR all count), so the old printable-OR-space check let it straight through -- and sent literally
+    # (no -l, at the time) it acts as an Enter keystroke inside the container's tmux pane, letting a crafted
+    # `say` message submit a SECOND, attacker-chosen line to whatever shell is running there.
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, log = _fake_docker(tmp)
+        res = _run("say " + "innocent\rrm -rf /", tmp, docker)
+        assert res.returncode != 0
+        assert "carriage return" in res.stderr.lower() or "newline" in res.stderr.lower()
+        assert "rm -rf" not in (open(log).read() if os.path.exists(log) else "")
+
+
+def test_say_sends_the_text_literally_and_enter_as_a_separate_call():
+    # 2026-09-29 security review, LOW: without `-l`, `tmux send-keys` treats a word that matches a key name
+    # (e.g. "C-c") as that KEY, not literal text -- a `say 'C-c'` sent an actual Ctrl-C into the model's
+    # terminal instead of three harmless characters. Fixed by sending the text with `-l --` (forced literal)
+    # and Enter as its OWN, separate, non-literal call (bundling it into the -l call would type the word
+    # "Enter" instead of pressing the key).
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, log = _fake_docker(tmp)
+        res = _run("say C-c", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        calls = open(log).read()
+        assert "tmux send-keys -t agent -l -- C-c" in calls
+        assert "tmux send-keys -t agent Enter" in calls
+        # the literal call must never be the one that also carries the bare "Enter" argument
+        literal_lines = [l for l in calls.splitlines() if "-l --" in l]
+        assert literal_lines and all("Enter" not in l for l in literal_lines)
+
+
 def test_say_fails_loudly_when_docker_exec_fails():
     with tempfile.TemporaryDirectory() as tmp:
         docker, _ = _fake_docker(tmp, exec_ok=False)
@@ -149,3 +186,33 @@ def test_state_when_absent_does_not_attempt_docker_exec():
         assert res.returncode == 0, res.stdout + res.stderr
         assert "container: absent" in res.stdout
         assert "docker exec" not in open(log).read()
+
+
+def test_state_reports_volume_disk_usage_in_gb():
+    # 2026-09-29 security review, M3: "the digest that warns when the volumes exceed a threshold" reads these
+    # two lines. 245.3MB -> ~0.25GB, 1.2GB -> ~1.20GB.
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "repo_volume_gb: 0.25" in res.stdout, res.stdout
+        assert "home_volume_gb: 1.20" in res.stdout, res.stdout
+
+
+def test_state_reports_volume_disk_usage_even_when_the_container_is_absent():
+    # the named volumes persist independently of whether the container itself is running.
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="absent")
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "repo_volume_gb: 0.25" in res.stdout, res.stdout
+        assert "home_volume_gb: 1.20" in res.stdout, res.stdout
+
+
+def test_state_volume_usage_is_unknown_when_not_found():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="running", df_v_output="unrelated-volume   1   5MB\n")
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "repo_volume_gb: unknown" in res.stdout
+        assert "home_volume_gb: unknown" in res.stdout

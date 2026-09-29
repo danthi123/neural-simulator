@@ -301,7 +301,18 @@ cmd_yield() {
   local max_hours=10 notify_cmd=""
   while [ $# -gt 0 ]; do
     case "$1" in
-      --max-hours) max_hours="${2:-10}"; shift 2 ;;
+      --max-hours)
+        max_hours="${2:-10}"
+        # VALIDATE BEFORE ANY ARITHMETIC (2026-09-29 security review, H2). `$(( ... max_hours * 3600 ))` below
+        # is bash ARITHMETIC expansion, which recursively re-expands a variable's VALUE as if it were itself an
+        # arithmetic expression -- so `--max-hours 'a[$(cmd)]'` made bash evaluate the embedded command
+        # substitution and run `cmd`, not merely fail to parse as a number. A plain digit-only check on the
+        # value, BEFORE it ever reaches `$(( ))`, closes this off entirely: no arithmetic context ever sees
+        # anything but a string already proven to be 1-2 digits.
+        [[ "$max_hours" =~ ^[0-9]{1,2}$ ]] || {
+          echo "refusing to yield: --max-hours must be 1-2 digits (got: $max_hours)"; return 1
+        }
+        shift 2 ;;
       # --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`, docs/plans/2026-09-29-local-model-
       # transition-PLAN.md section 9): the CONTAINERIZED agent has no workstation `llm claude` session to
       # resume, so its restore step is different -- run this shell command instead (its "$1" is filled in by

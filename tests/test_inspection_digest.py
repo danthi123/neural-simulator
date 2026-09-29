@@ -318,6 +318,7 @@ def test_build_digest_end_to_end_on_scratch_repo_produces_all_sections(tmp_path,
     monkeypatch.setattr(digest, "GPU_LOG", repo / "no-gpu.log")
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
 
     text = digest.build_digest("1970-01-01")
     for heading in ("## 1. Commits per branch", "## 2. New findings", "## 3. NEEDS-CLAUDE",
@@ -334,6 +335,7 @@ def test_build_digest_end_to_end_on_scratch_repo_produces_all_sections(tmp_path,
 def test_agent_container_version_section_reports_a_lag(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.266 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
     text = digest.render_agent_container_version_section()
     assert "installed" in text and "2.1.266" in text
     assert "latest published" in text and "2.1.280" in text
@@ -343,6 +345,7 @@ def test_agent_container_version_section_reports_a_lag(monkeypatch):
 def test_agent_container_version_section_reports_up_to_date(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
     text = digest.render_agent_container_version_section()
     assert "up to date" in text
     assert "LAG" not in text
@@ -351,6 +354,7 @@ def test_agent_container_version_section_reports_up_to_date(monkeypatch):
 def test_agent_container_version_section_skips_gracefully_when_harness_unreachable(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: None)
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
     text = digest.render_agent_container_version_section()
     assert "could not reach the sim-agent harness" in text
     assert "latest published" in text and "2.1.280" in text
@@ -359,6 +363,41 @@ def test_agent_container_version_section_skips_gracefully_when_harness_unreachab
 def test_agent_container_version_section_skips_gracefully_when_offline(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: None)
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
     text = digest.render_agent_container_version_section()
     assert "installed" in text and "2.1.280" in text
     assert "could not resolve the latest published version" in text
+
+
+# --------------------------------------------------------------- volume disk usage warning (2026-09-29, M3)
+
+def _stub_version_queries(monkeypatch):
+    monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
+    monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
+
+
+def test_volume_usage_reports_gb_with_no_warning_below_threshold(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": 2.5, "home": 3.1})
+    text = digest.render_agent_container_version_section()
+    assert "repo volume: 2.50 GB" in text
+    assert "home volume: 3.10 GB" in text
+    assert "OVER" not in text
+    assert "warn threshold" not in text
+
+
+def test_volume_usage_warns_when_over_the_threshold(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": 25.0, "home": 3.0})
+    text = digest.render_agent_container_version_section()
+    assert "repo volume: 25.00 GB" in text
+    assert "OVER" in text
+    assert "SHARED box" in text
+
+
+def test_volume_usage_skips_gracefully_when_both_unknown(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    text = digest.render_agent_container_version_section()
+    assert "could not reach the sim-agent harness, or the volumes were not found" in text
+    assert "OVER" not in text

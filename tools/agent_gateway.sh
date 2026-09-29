@@ -4,13 +4,18 @@
 # agent_gateway.sh",restrict ssh-ed25519 AAAA...`, see docs/AGENT_HARNESS_SETUP.md). sshd hands us whatever the
 # container's ssh client actually asked for in $SSH_ORIGINAL_COMMAND, regardless of the forced command itself
 # -- this script is the ENTIRE trust boundary between the container and the workstation's compute (the pool,
-# the GPU, the local-model server). It allows exactly five things and refuses (and logs) everything else:
+# the GPU, the local-model server). THE CONTAINER'S OWN DRIVER MAY BE ADVERSARIAL (2026-09-29 security review):
+# it must not be able to run ANY text it supplies as a shell command, on this workstation or a pool node. It
+# allows exactly four things and refuses (and logs) everything else:
 #
-#   pool-submit <job args>     -> tools/pool_queue.sh add <job args>       (keeps its own gate-seed guard)
-#   gpu-submit '<cmd>'         -> tools/local_llm/gpu_add.sh '<cmd>'      (keeps its own committed-checkout +
-#                                                                          gate-seed-prereg checks)
-#   results-sync                a READ-ONLY rsync source for research/findings/raw and research/queue (the
-#                                container must invoke rsync with --rsync-path=results-sync, see below)
+#   pool-submit --sha <40hex> --runner research.runners.<name> [--prereg <path>] --checked <reason> -- <args...>
+#   gpu-submit  --sha <40hex> --runner research.runners.<name> [--prereg <path>] -- <args...>
+#       STRUCTURED requests only (2026-09-29 security review, H2) -- tools/agent_gateway_submit.py validates the
+#       sha (reachable from a refs/remotes/{origin,gitea}/* ref), the runner module (exists AT that sha), every
+#       argument (matches a narrow allow-list charset -- no shell metacharacters at all), any --out path
+#       (resolves under research/findings/raw/, no ..), and a GATE seed's --prereg (committed at that sha) --
+#       THEN builds the actual command line itself. No text the container supplies ever reaches a shell as a
+#       command; gpu-submit additionally runs the job bubblewrap-SANDBOXED (see that script's own header).
 #   status                      gpu_queue + pool_queue + game.sh status, concatenated
 #   yield [--max-hours N]       pause the harness (best-effort, via tools/agent_harness_ctl.sh on the server),
 #                                stop the local model server, release the GPU queue for the window -- reuses
@@ -19,23 +24,32 @@
 #                                workstation session" behaviour swapped for "unpause the harness + say" (see
 #                                that command's --notify-cmd, and tools/gpu_queue.sh's LLM_YIELD_NOTIFY_CMD).
 #
-# RESULTS-SYNC MECHANICS: rsync's remote command is normally literally "rsync --server ..."; passing
-# --rsync-path=results-sync on the CONTAINER side makes rsync run "results-sync --server ..." instead (nothing
-# else about rsync's protocol changes), which is what lets this single forced command tell a results-sync pull
-# apart from everything else. Example, run FROM the container:
-#   rsync -av --rsync-path=results-sync -e "ssh -F ~/.ssh/config workstation-gateway" \
-#       workstation-gateway:research/findings/raw/ /work/sim/research/findings/raw/
-# Only the SENDER direction (server reads and sends -- i.e. the container reads/pulls) is ever allowed; a
-# request missing `--sender` (the container trying to push/write) is refused outright.
+# RESULTS-SYNC HAS MOVED OFF THIS SCRIPT ENTIRELY (2026-09-29 security review, H3): the old `results-sync`
+# subcommand here validated only the LAST rsync protocol argument, so `. /home/dant123/.ssh/ research/findings/
+# raw/` could read private keys, and rsync's own `--remove-source-files`/`-L` could delete files or follow
+# attacker-planted symlinks. Results now sync via a SEPARATE ssh key whose `authorized_keys` forced command is
+# `rrsync -ro -no-del <abs path>/research/findings/raw` directly (rsync's own restricted-rsync wrapper, shipped
+# with rsync -- read-only, no delete, confined to that one path by rrsync itself, never by text this script
+# would have to parse) -- see docs/AGENT_HARNESS_SETUP.md. This script no longer accepts `results-sync` at all.
+#
+# H1 (2026-09-29 security review): argument splitting NEVER uses `eval`. tools/agent_gateway_parse.py splits
+# $SSH_ORIGINAL_COMMAND's remainder with Python's shlex (word-splitting/quoting only -- no command substitution,
+# variable expansion, or any other shell feature) and rejects any token containing a control character.
 set -uo pipefail
-ROOT="${AGENT_GATEWAY_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# SELF_DIR: this script's OWN tools/ directory -- used ONLY to locate agent_gateway_parse.py, a pure, hermetic,
+# side-effect-free helper that ships as part of THIS codebase's tooling and is never a thing a test needs to
+# stub. ROOT (below) is the repository being operated ON/queued against -- test-overridable, since
+# tools/agent_gateway_submit.py (which DOES need stubbing in tests) is resolved relative to it.
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="${AGENT_GATEWAY_ROOT:-$(cd "$SELF_DIR/.." && pwd)}"
 LOG="${AGENT_GATEWAY_LOG:-$ROOT/research/queue/agent_gateway.log}"
 mkdir -p "$(dirname "$LOG")" 2>/dev/null || true
 CTL_HOST="${AGENT_HARNESS_CTL_HOST:-homelab-agent-ctl}"   # ssh host alias (owner's ~/.ssh/config) for
                                                             # tools/agent_harness_ctl.sh on the server
 SSH_BIN="${AGENT_GATEWAY_SSH:-ssh}"                        # TEST-ONLY override; NEVER set in production
 SSH_OPTS=(-o ConnectTimeout=8 -o BatchMode=yes)
-RSYNC_ALLOWED_ROOTS=("$ROOT/research/findings/raw" "$ROOT/research/queue")
+PYTHON_BIN="${AGENT_GATEWAY_PYTHON:-python3}"              # TEST-ONLY override; NEVER set in production
+SUBMIT_PY="$ROOT/tools/agent_gateway_submit.py"
 
 log() { printf '%s agent_gateway: %s\n' "$(date -u '+%F %T')" "$*" >> "$LOG"; }
 refuse() { log "REFUSED: ${CMD:-<empty>}  ($1)"; echo "refused: $1" >&2; exit 1; }
@@ -48,37 +62,36 @@ log "request: ${CMD:-<empty>}"
 # variables puts everything past the first word into the LAST one)
 read -r SUB REST <<< "$CMD"
 
+# parse_rest_into_args: fills the global ARGS array by shlex-splitting $REST (H1 -- NEVER `eval`). Refuses (and
+# never returns) on any parse error or any token containing a control character.
+parse_rest_into_args() {
+  local py_out py_rc
+  py_out=$(printf '%s' "$REST" | "$PYTHON_BIN" "$SELF_DIR/agent_gateway_parse.py" 2>&1)
+  py_rc=$?
+  if [ "$py_rc" -ne 0 ]; then
+    refuse "could not parse arguments ($py_out)"
+  fi
+  ARGS=()
+  if [ -n "$py_out" ]; then
+    while IFS= read -r tok; do ARGS+=("$tok"); done <<< "$py_out"
+  fi
+}
+
 case "$SUB" in
   pool-submit)
-    [ -n "$REST" ] || refuse "pool-submit needs arguments (a command and --checked '<reason>')"
-    if ! eval "set -- $REST" 2>/dev/null; then refuse "could not parse pool-submit's arguments"; fi
-    exec bash "$ROOT/tools/pool_queue.sh" add "$@"
+    [ -n "$REST" ] || refuse "pool-submit needs a structured request (--sha ... --runner ... --checked ... -- <args...>)"
+    parse_rest_into_args
+    exec "$PYTHON_BIN" "$SUBMIT_PY" pool "${ARGS[@]}"
     ;;
 
   gpu-submit)
-    [ -n "$REST" ] || refuse "gpu-submit needs one quoted command argument"
-    if ! eval "set -- $REST" 2>/dev/null; then refuse "could not parse gpu-submit's argument"; fi
-    [ "$#" -eq 1 ] || refuse "gpu-submit takes exactly one quoted command argument, got $#"
-    exec bash "$ROOT/tools/local_llm/gpu_add.sh" "$1"
+    [ -n "$REST" ] || refuse "gpu-submit needs a structured request (--sha ... --runner ... -- <args...>)"
+    parse_rest_into_args
+    exec "$PYTHON_BIN" "$SUBMIT_PY" gpu "${ARGS[@]}"
     ;;
 
   results-sync)
-    [ -n "$REST" ] || refuse "results-sync: no rsync protocol arguments"
-    case "$REST" in
-      "--server --sender "*) : ;;   # read direction only (server sends = the container reads/pulls)
-      *) refuse "results-sync only allows a read (rsync --server --sender ...); refusing: $REST" ;;
-    esac
-    if ! eval "set -- $REST" 2>/dev/null; then refuse "could not parse results-sync's rsync arguments"; fi
-    # rsync's server invocation ends with the source path last -- validate it resolves inside an allowed root.
-    last="${*: -1}"
-    resolved="$(cd "$ROOT" 2>/dev/null && realpath -m -- "$last" 2>/dev/null)"
-    allowed=0
-    for a in "${RSYNC_ALLOWED_ROOTS[@]}"; do
-      case "$resolved" in "$a"|"$a"/*) allowed=1 ;; esac
-    done
-    [ "$allowed" = 1 ] || refuse "results-sync path '$last' is outside the allowed roots (research/findings/raw, research/queue)"
-    cd "$ROOT" || refuse "could not cd to $ROOT"
-    exec rsync "$@"
+    refuse "results-sync has moved to a separate, read-only rrsync key (rrsync -ro -no-del research/findings/raw) -- see docs/AGENT_HARNESS_SETUP.md; this gateway no longer handles it"
     ;;
 
   status)
@@ -107,7 +120,10 @@ case "$SUB" in
       log "yield: could not reach $CTL_HOST to pause the harness -- continuing anyway"
     fi
     max_hours_args=()
-    if [ -n "$REST" ] && eval "set -- $REST" 2>/dev/null; then max_hours_args=("$@"); fi
+    if [ -n "$REST" ]; then
+      parse_rest_into_args   # H1 -- was `eval "set -- $REST"`; same shlex-based parser as every other subcommand
+      max_hours_args=("${ARGS[@]}")
+    fi
     # The restore step (tools/gpu_queue.sh's llm_yield_restore_if_drained, once the GPU queue drains) runs this
     # verbatim via `bash -c "$notify" bash "<message>"` -- so "$1" here is deliberately LITERAL (single-quoted
     # semantics via escaping), filled in with the actual "GPU window finished..." message at that later point,
@@ -117,6 +133,6 @@ case "$SUB" in
     ;;
 
   *)
-    refuse "unknown command '$SUB' (allowed: pool-submit, gpu-submit, results-sync, status, yield)"
+    refuse "unknown command '$SUB' (allowed: pool-submit, gpu-submit, status, yield)"
     ;;
 esac

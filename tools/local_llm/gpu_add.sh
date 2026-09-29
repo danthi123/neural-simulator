@@ -32,8 +32,17 @@ if [ -z "$cd_path" ]; then
   echo "⛔ REFUSED: the job must start with 'cd <checkout> && ...' -- gpu_add.sh only runs jobs against a specific, checked git checkout (never the dispatcher's own ambient cwd)." >&2
   exit 1
 fi
-# shellcheck disable=SC2086 # deliberate: allow ~ / $HOME / $ROOT-style expansion in the path the model wrote
-cd_path_expanded=$(eval echo $cd_path 2>/dev/null || true)
+# EXPAND ~ / $HOME / $ROOT-STYLE REFERENCES WITHOUT A SHELL (2026-09-29 security review, H2: `eval echo
+# $cd_path` ran the CALLER-SUPPLIED path through a SECOND round of full shell parsing -- a cd_path like
+# `$(id>/tmp/pwned)` (one whitespace-free token, so it survives the awk field-split above intact) made `eval`
+# execute `id` and redirect its output, not merely "expand a variable". python's os.path.expandvars only
+# textually substitutes `$NAME`/`${NAME}` references from the environment (regex requires a bare word or a
+# `{...}` immediately after `$` -- `$(...)` matches neither and is left completely untouched, byte for byte,
+# never interpreted as shell syntax); os.path.expanduser handles a leading `~`. No shell is ever invoked.
+cd_path_expanded=$(python3 -c '
+import os, sys
+print(os.path.expanduser(os.path.expandvars(sys.argv[1])))
+' "$cd_path" 2>/dev/null || true)
 if [ -z "$cd_path_expanded" ] || [ ! -d "$cd_path_expanded" ] || ! git -C "$cd_path_expanded" rev-parse HEAD >/dev/null 2>&1; then
   echo "⛔ REFUSED: '$cd_path' is not a git checkout." >&2
   exit 1
@@ -47,29 +56,10 @@ rev=$(git -C "$cd_path_expanded" rev-parse HEAD)
 # 2. GATE seeds require a committed prereg. Parsing is deliberately narrow (python, not a bash regex maze): find
 #    --seed/--seeds' value(s) and --prereg's value / a PREREG= assignment; a value this can't confidently read is
 #    never silently accepted as "no gate seed" (see GATE_HIT default below).
-PY_OUT=$(python3 - "$CMD" <<'PY'
-import re, sys
-cmd = sys.argv[1]
-GATE = {42, 43, 44, 100, 101, 102}
-
-def values_after(flag):
-    return re.findall(flag + r'''(?:=|\s+)("[^"]*"|'[^']*'|\S+)''', cmd)
-
-hit = False
-for val in values_after(r'--seeds?'):
-    nums = re.findall(r'\d+', val)
-    if any(int(n) in GATE for n in nums):
-        hit = True
-        break
-
-prereg = ""
-m = re.findall(r'--prereg(?:=|\s+)("[^"]*"|\'[^\']*\'|\S+)', cmd) + re.findall(r'\bPREREG=("[^"]*"|\'[^\']*\'|\S+)', cmd)
-if m:
-    prereg = m[0].strip('"\'')
-
-print(("1" if hit else "0"), prereg or "-")
-PY
-)
+# SHARED WITH tools/agent_gateway_submit.py (2026-09-29 security review, H2): this used to be an embedded
+# heredoc here; it now lives once in tools/gate_seed_guard.py so the structured gpu-submit/pool-submit path
+# enforces the identical rule instead of a second, potentially-diverging copy of it.
+PY_OUT=$(python3 "$ROOT/tools/gate_seed_guard.py" "$CMD")
 read -r GATE_HIT PREREG_PATH <<< "$PY_OUT"
 
 if [ "$GATE_HIT" = "1" ]; then
