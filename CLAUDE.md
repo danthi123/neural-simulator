@@ -26,6 +26,9 @@ shown causally? A host-decision share, measured by intervention, sits beside the
 - **To SKIM:** [`ROADMAP.md`](ROADMAP.md), plain-language status; its "Project shorthand" table decodes
   FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer.
 - Cross-session continuation is MANUAL by owner choice ("continue" + the roadmap + the board): no watchdog/daemon.
+  One exception (owner 2026-09-29): after the local-model driver yields the GPU (`llm yield`), its session
+  auto-resumes when the GPU window ends. **Transition to local-model-first operation (Claude inspects rarely):**
+  `docs/plans/2026-09-29-local-model-transition-PLAN.md`.
 
 ## Non-negotiables
 
