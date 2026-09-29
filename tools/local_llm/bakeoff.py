@@ -97,18 +97,35 @@ def auth_headers(profile):
 
 
 def generic_ready(profile, timeout_s=5):
-    """Cheap readiness probe for an externally-managed backend (Ollama / Unsloth Studio): a tiny real completion,
-    since neither exposes llama.cpp's /health. Returns True once the target model actually answers OR the server
-    rejects the request as unauthenticated (401/403) -- for a backend that mints its bearer key only once the
-    model has finished loading (Unsloth Studio's `unsloth run`, read back via --api-key-file below), a 401 at
-    this point is itself proof the process is up; refresh_api_key_file() re-checks auth for the real calls."""
+    """STRICT readiness for an externally-managed backend (Ollama / Unsloth Studio): only a genuine completion
+    (a `choices` payload) counts. 2026-09-29 bake-off incident: an earlier version also accepted a 401/403 as
+    "ready" (reasoning: a bearer-auth backend that has not minted its key yet answers that way) -- but Unsloth
+    Studio mints its key at SERVER startup, well before the model itself has loaded, so that early version
+    returned "ready" the instant the port opened, before the model could answer at all. The very next (now
+    authenticated) request landed mid-load and got a 400 "Bad Request", crashed speed_and_context_generic (it
+    does not expect an HTTPError), and stop_server() then killed the process before it ever finished loading.
+    Use port_answers() below for "is the process even up" and let THIS keep polling (400/401/403 all just mean
+    "not ready yet") until the model itself is actually serving."""
     try:
         r = http("/v1/chat/completions", {"model": profile["model"], "messages": [{"role": "user", "content": "hi"}],
                                           "max_tokens": 1, "temperature": 0},
                  timeout=timeout_s, base_url=profile["base_url"], headers=auth_headers(profile))
         return bool(r.get("choices"))
-    except urllib.error.HTTPError as e:
-        return e.code in (401, 403)
+    except Exception:
+        return False
+
+
+def port_answers(profile, timeout_s=5):
+    """Loose PHASE-1 probe: does anything answer at all (any HTTP status, even 400/401/500)? True here only
+    proves the process is up enough to be worth reading its auto-minted key from -- see generic_ready() for
+    the strict PHASE-2 check that the model itself is actually serving."""
+    try:
+        http("/v1/chat/completions", {"model": profile.get("model"), "messages": [{"role": "user", "content": "hi"}],
+                                      "max_tokens": 1, "temperature": 0},
+             timeout=timeout_s, base_url=profile["base_url"], headers=auth_headers(profile))
+        return True
+    except urllib.error.HTTPError:
+        return True
     except Exception:
         return False
 
@@ -141,14 +158,28 @@ def start_server(profile):
             proc = subprocess.Popen(profile["start_cmd"], stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
                                     shell=isinstance(profile["start_cmd"], str))
         deadline = t0 + profile.get("load_timeout_s", 600)
+        # PHASE 1: wait for the process/port itself, loosely (any HTTP status). Only once something is
+        # listening is it worth reading an auto-minted key (Unsloth Studio mints its bearer key at server
+        # startup, well BEFORE the model itself has loaded -- see generic_ready()'s docstring).
+        while True:
+            if proc is not None and proc.poll() is not None:
+                raise RuntimeError("%s exited during load (see %s.server.log)" % (profile.get("start_cmd"), profile["name"]))
+            if port_answers(profile):
+                break
+            if time.time() >= deadline:
+                raise RuntimeError("%s: nothing answered at %s within %ss" % (profile["name"], profile["base_url"],
+                                                                              profile.get("load_timeout_s", 600)))
+            time.sleep(2)
+        refresh_api_key_file(profile)
+        # PHASE 2: wait for the MODEL itself to actually answer (strict -- see generic_ready()).
         while time.time() < deadline:
             if proc is not None and proc.poll() is not None:
                 raise RuntimeError("%s exited during load (see %s.server.log)" % (profile.get("start_cmd"), profile["name"]))
             if generic_ready(profile):
                 return proc, time.time() - t0, profile.get("start_cmd") or ("<external: %s>" % profile["base_url"])
             time.sleep(2)
-        raise RuntimeError("%s did not answer at %s within %ss" % (profile["name"], profile["base_url"],
-                                                                    profile.get("load_timeout_s", 600)))
+        raise RuntimeError("%s: the model never answered a real completion at %s within %ss" %
+                           (profile["name"], profile["base_url"], profile.get("load_timeout_s", 600)))
     return start_server_llama_cpp(profile)
 
 
@@ -347,7 +378,11 @@ def git_diff_names(cwd):
 def tasks(profile):
     res = {}
     base_url = profile["base_url"] if profile.get("kind") == "generic" else "http://127.0.0.1:%d" % PORT
-    token = profile.get("api_key", "local") if profile.get("kind") == "generic" else "local"
+    # `.get("api_key", "local")` alone is wrong: profile["api_key"] is explicitly None for Ollama (no key
+    # configured), a PRESENT key whose VALUE is None, so the "local" default never fires and None reaches
+    # subprocess.run()'s env dict -- os.fsencode(None) there raises "expected str, bytes or os.PathLike
+    # object, not NoneType" (the 2026-09-29 Ollama bake-off crash, inside run_claude's T1 call).
+    token = (profile.get("api_key") or "local") if profile.get("kind") == "generic" else "local"
     model_name = profile["model"] if profile.get("kind") == "generic" else "local"
     rc = dict(base_url=base_url, token=token, model_name=model_name)
     # T1 locate
@@ -487,9 +522,14 @@ def main():
     recs = []
     for f in sorted(glob.glob(os.path.join(RESULTS, "*.json"))):
         try:
-            recs.append(json.load(open(f)))
+            d = json.load(open(f))
         except Exception:
-            pass
+            continue
+        # RESULTS also holds non-bake-off JSON (e.g. cache_probe.json is a LIST, not a record -- this crashed
+        # main() outright on 2026-09-29, `'list' object has no attribute 'get'`, AFTER both queued runs had
+        # already finished and wrote their own real records): only accept an actual bake-off record shape.
+        if isinstance(d, dict) and "profile" in d:
+            recs.append(d)
     recs.sort(key=lambda r: r.get("started", ""))
     summarize(recs)
 
