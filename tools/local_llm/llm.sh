@@ -165,10 +165,26 @@ wait_up() {
 }
 
 llama_swap_cmd() {   # the launch line for the "local-llm" unit itself: llama-swap, fronting every profile.json
-  # entry (tools/local_llm/llama-swap.yaml). -listen 0.0.0.0 (not 127.0.0.1): the server harness needs the LAN
-  # address too (owner 2026-09-29); there is no apiKeys: entry, so treat the LAN as trusted, same as any other
-  # unauthenticated service on this box. -watch-config: docs/LOCAL_MODEL_GUIDE.md's edits (add/switch a model)
-  # take effect without a restart.
+  # entry (tools/local_llm/llama-swap.yaml).
+  #
+  # -listen 0.0.0.0 (not 127.0.0.1): llm.sh itself needs loopback (is_up/activate_profile/cmd_claude all use
+  # 127.0.0.1), and the server harness needs the LAN address (docs/AGENT_HARNESS_SETUP.md, workstation.env) --
+  # both on the SAME port 8080. llama-swap's -listen takes exactly one address (it is a plain Go
+  # http.Server.ListenAndServe, not a multi-bind server), so "127.0.0.1 AND the LAN IP, nothing else" is not
+  # expressible as a single -listen value: binding to the specific LAN IP alone would make 127.0.0.1 itself
+  # unreachable (a different destination address at the TCP/IP layer, not merely a stricter version of "any
+  # interface"), breaking every local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working.
+  # There is no apiKeys: entry either, matching the old unauthenticated direct-llama-server setup.
+  #
+  # THE ACTUAL RESTRICTION lives one layer down, where it is possible: the egress firewall on homelab-server
+  # (tools/agent_container/egress.sh) already limits the sim-agent CONTAINER to reaching ONLY
+  # 192.168.0.68:8080 (this box) among a narrow allowlist -- so the one real external consumer this port was
+  # opened up for is already fenced in. Tightening the WORKSTATION's own inbound side further (accept only
+  # 127.0.0.1 + 192.168.0.10, drop everything else on :8080) is an optional, OWNER-applied hardening step --
+  # see docs/AGENT_HARNESS_SETUP.md's "restrict who can reach the local-llm port" section for the exact
+  # commands; this script never touches the firewall itself.
+  #
+  # -watch-config: docs/LOCAL_MODEL_GUIDE.md's edits (add/switch a model) take effect without a restart.
   printf '%s -config %s -listen 0.0.0.0:%s -watch-config' "$LLAMA_SWAP_BIN" "$LLAMA_SWAP_YAML" "$PORT"
 }
 

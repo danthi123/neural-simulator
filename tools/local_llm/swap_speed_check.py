@@ -34,9 +34,13 @@ PROMPT = ("Write a 200-word explanation of how flash attention reduces memory ba
           "inference, aimed at someone who already knows what attention is.")
 
 
-def http(url, payload, timeout=1800):
+def http(url, payload, timeout=1800, method=None):
+    # method=None lets urllib pick its default (POST, since `data` is given). llama-swap's own API is not
+    # uniformly POST -- PUT /api/profiles/active specifically (its server.go registers exactly that method) --
+    # a 2026-09-29 bug found live: a plain POST there 405's instantly, which is why the first queued run of
+    # this script failed in 14s (an HTTPError) instead of actually measuring anything.
     req = urllib.request.Request(url, data=json.dumps(payload).encode(),
-                                 headers={"Content-Type": "application/json"})
+                                 headers={"Content-Type": "application/json"}, method=method)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode())
 
@@ -109,7 +113,7 @@ def measure_through_swap():
         t0 = time.time()
         wait_health("http://127.0.0.1:%d/health" % SWAP_PORT, proc)   # llama-swap's own health (fast: no model yet)
         # activate_profile() equivalent: pin "local" then force-load, same as llm.sh's cmd_on would.
-        http("http://127.0.0.1:%d/api/profiles/active" % SWAP_PORT, {"name": PROFILE})
+        http("http://127.0.0.1:%d/api/profiles/active" % SWAP_PORT, {"name": PROFILE}, method="PUT")
         urllib.request.urlopen("http://127.0.0.1:%d/upstream/%s/health" % (SWAP_PORT, PROFILE), timeout=600).read()
         load_s = round(time.time() - t0, 1)
         result = measure_completion("http://127.0.0.1:%d" % SWAP_PORT, model=PROFILE)

@@ -386,6 +386,30 @@ case start
     and echo "agent: sent 'agent-start.sh $profile' into the tmux session -- attach with: agent"
 ```
 
+## Optional: restrict who can reach the workstation's local-llm port
+
+`tools/local_llm/llm.sh` runs llama-swap on `0.0.0.0:8080` on the WORKSTATION (192.168.0.68) -- required so
+both loopback (`llm.sh` itself, `llm claude`) and the LAN (this harness) can reach it on the same port; see the
+comment above `llama_swap_cmd()` in that script for why a single, narrower bind cannot serve both. The egress
+firewall above (step (d')) already confines the sim-agent CONTAINER to reaching only `192.168.0.68:8080` in the
+first place, but nothing yet stops an unrelated device elsewhere on the home LAN from also reaching that port
+directly -- low severity (no credentials, just inference + this workstation's own model selection), but cheap
+to close. Optional, on the WORKSTATION itself:
+
+```bash
+# accept from loopback and from homelab-server (192.168.0.10, the only real external caller); drop everything else
+sudo iptables -I INPUT 1 -i lo -p tcp --dport 8080 -j ACCEPT
+sudo iptables -I INPUT 1 -s 192.168.0.10 -p tcp --dport 8080 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+```
+
+Verify from another LAN device (should now time out): `curl -m 3 http://192.168.0.68:8080/health`. Verify
+homelab-server itself still works: `curl -m 3 http://192.168.0.68:8080/health` FROM 192.168.0.10. These rules
+are not persisted across reboot by `iptables` alone -- save them with this distro's usual mechanism (e.g.
+`iptables-save`, or a systemd unit / `nftables` equivalent) if you want them to survive one. Revert by deleting
+the two ACCEPT lines' effect: `sudo iptables -D INPUT -p tcp --dport 8080 -j DROP` (repeat if it was added more
+than once) and the matching `-D` for each `-I` rule above.
+
 ## Optional: a cheap cloud model for the mechanical tier
 
 Two ready-made cloud profiles (owner-approved 2026-09-29) let `agent start` route mechanical work to a cheap,
