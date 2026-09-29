@@ -42,6 +42,24 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
 [ -f "$POOL_SSH_CONFIG" ] && RSYNC_SSH="ssh -F $POOL_SSH_CONFIG -o BatchMode=yes -o ConnectTimeout=6"
+# RSYNC SAFETY (2026-09-29 security re-review, M1): a pool job can be agent-authored (pool-submit), so what
+# comes back from a node is not fully trusted. `--safe-links` refuses to transfer any symlink whose target
+# would resolve OUTSIDE the copied tree (an absolute path, or a `../` escape) -- without it, a job that plants
+# e.g. `research/findings/raw/evil -> /home/dant123/.ssh/id_ed25519` would land as a real symlink in the LOCAL
+# repo tree, readable/writable through it by anything that later opens it by that path. `--chmod=F-x` strips
+# the executable bit from every transferred FILE regardless of its own permissions on the node, so nothing
+# pulled back can ever be run as a program. The include/exclude list below is an ALLOW-list of RESULT file
+# types only (json/prov.json/log/csv/npz) -- everything else, notably `.py`, is refused; a node that returns
+# an executable or a source file the runner never legitimately produces is simply never copied, rather than
+# trusted because no exclude happened to name it.
+#
+# FILTER ORDER MATTERS (rsync: first matching rule wins). `_provenance/` must be excluded BEFORE the general
+# `--include='*/'` (which would otherwise match and admit it, as just another directory, before its own
+# exclude rule is ever reached) -- this mirrors the pre-existing `--exclude='_provenance/'` this replaces.
+RSYNC_SAFETY_ARGS=(--safe-links --chmod=F-x
+  --exclude='_provenance/'
+  --include='*/' --include='*.json' --include='*.prov.json' --include='*.log' --include='*.csv' --include='*.npz'
+  --exclude='*')
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 _EXTRA=""
 # BUGFIX (fix round): under `set -e`, this whole line's exit status is the exit status of the LAST command in
@@ -78,7 +96,7 @@ AWS_STATE_DIR="${POOL_SYNC_AWS_STATE_DIR:-$ROOT/research/queue}"
 _rsync_pull() {   # _rsync_pull <node> -- one itemized pull; the ONE place this shape is spelled out, so the
                    # main call and the post-refresh retry below can never drift apart.
   timeout 180 rsync -au $DRY --itemize-changes \
-      --exclude='*.log' --exclude='_provenance/' \
+      "${RSYNC_SAFETY_ARGS[@]}" \
       -e "$RSYNC_SSH" \
       "$1:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null
 }
@@ -142,7 +160,7 @@ for N in $NODES; do
     || { echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; }
   for R in $revs; do
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
-          --exclude='*.log' --exclude='_provenance/' \
+          "${RSYNC_SAFETY_ARGS[@]}" \
           -e "$RSYNC_SSH" \
           "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
     rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)

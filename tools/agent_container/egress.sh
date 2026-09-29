@@ -107,7 +107,16 @@ run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$WORKSTATION_IP" -p tcp --dpor
     -m comment --comment "$COMMENT" -j ACCEPT
 run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$WORKSTATION_IP" -p tcp --dport 22 \
     -m comment --comment "$COMMENT" -j ACCEPT
-run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$GITEA_HOST" -p tcp --dport "$GITEA_PORT" \
+# CTORIGDST, NOT -d (2026-09-29 re-review, M4): if gitea is reached through any port-forward/DNAT on this
+# server (e.g. it is itself a container whose published port maps to a different internal address), the
+# packet's destination has ALREADY been rewritten by the time DOCKER-USER evaluates it -- DOCKER-USER sees the
+# POST-DNAT destination, never what the container actually dialed. A plain `-d "$GITEA_HOST"` rule would then
+# match nothing (the real destination it sees is gitea's rewritten internal address, which can also change
+# across a recreate), silently leaving this ACCEPT dead and gitea access dependent on some other rule. `-m
+# conntrack --ctorigdst/--ctorigdstport` matches the connection's ORIGINAL destination -- what the client
+# dialed -- regardless of any NAT applied afterward, so this keeps matching "gitea, as the owner configured it"
+# even if its actual on-server address moves.
+run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -p tcp -m conntrack --ctorigdst "$GITEA_HOST" --ctorigdstport "$GITEA_PORT" \
     -m comment --comment "$COMMENT" -j ACCEPT
 run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$DNS_RESOLVER" -p udp --dport 53 \
     -m comment --comment "$COMMENT" -j ACCEPT

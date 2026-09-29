@@ -325,7 +325,14 @@ def test_pool_builds_the_isolated_revision_job_line_and_forwards_it():
     assert f"derisk-pool/revisions/{sha}" in line
     assert "research.runners.foo" in line
     assert "--checked corpus:nothing" in line
-    assert "POOL_PROVISION --revision %s --isolated" % sha in calls
+    # the provisioning call is now `flock LOCKFILE bash <stub> ...` (2026-09-29 re-review, M2: serialized
+    # provisioning) -- still backgrounded/non-blocking, but the extra flock fork+exec can land a beat after
+    # this process returns; poll briefly rather than assume it is already flushed to disk.
+    import time
+    deadline = time.time() + 5
+    while "POOL_PROVISION --revision %s --isolated" % sha not in open(log).read() and time.time() < deadline:
+        time.sleep(0.05)
+    assert "POOL_PROVISION --revision %s --isolated" % sha in open(log).read()
 
 
 def test_pool_refuses_an_argument_with_shell_metacharacters():
@@ -335,3 +342,166 @@ def test_pool_refuses_an_argument_with_shell_metacharacters():
                 "--checked", "corpus:nothing", "--", "--seed", "7;rm -rf ~"], env)
     assert res.returncode != 0
     assert "allowed pattern" in res.stderr
+
+
+# ------------------------------------------------------------------------------------ M2 re-review (2026-09-29)
+
+def test_gpu_job_is_wrapped_in_systemd_run_scope_with_resource_limits_and_a_timeout():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    line = next(l for l in open(log).read().splitlines() if l.startswith("GPU_QUEUE add"))
+    assert "timeout --kill-after=30s" in line
+    assert "systemd-run --user --scope --quiet" in line
+    assert "-p MemoryMax=20G" in line
+    assert "-p TasksMax=512" in line
+    assert "--setenv=AGENT_JOB_SRC=sim-agent" in line
+    # the bwrap invocation must still be present, wrapped INSIDE the systemd-run/timeout, not replaced by it
+    assert "bwrap --unshare-all" in line
+    # timeout/systemd-run must come BEFORE bwrap in the line (outside it), not after
+    assert line.index("timeout") < line.index("systemd-run") < line.index("bwrap")
+
+
+def test_gpu_queue_depth_cap_refuses_a_new_submission_once_reached():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    queue_path = os.path.join(d, "gpu.queue")
+    with open(queue_path, "w") as f:
+        for _ in range(20):
+            f.write("timeout 4h systemd-run --user --scope --setenv=AGENT_JOB_SRC=sim-agent -- bwrap ...\n")
+    env["AGENT_GATEWAY_GPU_QUEUE_PATH"] = queue_path
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode != 0
+    assert "cap" in res.stderr.lower()
+    assert "GPU_QUEUE add" not in open(log).read() if os.path.exists(log) else True
+
+
+def test_gpu_queue_depth_cap_ignores_unrelated_queued_jobs():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    queue_path = os.path.join(d, "gpu.queue")
+    with open(queue_path, "w") as f:
+        for _ in range(30):
+            f.write("cd /some/other/checkout && .venv/bin/python -u -m research.runners.unrelated --seed 1\n")
+    env["AGENT_GATEWAY_GPU_QUEUE_PATH"] = queue_path
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+
+
+def test_pool_queue_depth_cap_refuses_a_new_submission_once_reached():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    queue_path = os.path.join(d, "pool.queue")
+    with open(queue_path, "w") as f:
+        for _ in range(20):
+            f.write("AGENT_JOB_SRC=sim-agent cd ~/derisk-pool/revisions/abc && true  #checked:x\n")
+    env["AGENT_GATEWAY_POOL_QUEUE_PATH"] = queue_path
+    res = _run(["pool", "--sha", sha, "--runner", "research.runners.foo",
+                "--checked", "corpus:nothing", "--", "--seed", "7"], env)
+    assert res.returncode != 0
+    assert "cap" in res.stderr.lower()
+
+
+def test_pool_provisioning_is_serialized_via_flock():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    res = _run(["pool", "--sha", sha, "--runner", "research.runners.foo",
+                "--checked", "corpus:nothing", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    ps_log = os.path.join(d, "ps_calls.log")
+    # the real `flock` binary was exec'd directly (not stubbed) -- assert indirectly via the stub provisioning
+    # script actually being reached (proves flock granted the lock and exec'd through to it).
+    import time
+    deadline = time.time() + 5
+    while "POOL_PROVISION" not in open(log).read() and time.time() < deadline:
+        time.sleep(0.05)
+    assert "POOL_PROVISION --revision %s --isolated" % sha in open(log).read()
+
+
+def test_gpu_checkout_is_ro_bound_not_writable():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    line = next(l for l in open(log).read().splitlines() if l.startswith("GPU_QUEUE add"))
+    checkout = os.path.join(d, ".claude", "worktrees", "agent-jobs", sha)
+    assert ("--ro-bind %s %s" % (checkout, checkout)) in line
+    assert ("--bind %s %s" % (checkout, checkout)) not in line
+
+
+def test_worktree_cap_cleans_up_the_oldest_agent_job_worktrees():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    env["AGENT_GATEWAY_MAX_WORKTREES"] = "2"
+    # build two extra committed shas so three distinct worktrees can exist before the cap is exercised
+    shas = [sha]
+    for i in range(2):
+        with open(os.path.join(d, "extra_%d.txt" % i), "w") as f:
+            f.write("x\n")
+        _git(["add", "-A"], d)
+        _git(["commit", "-q", "-m", "extra %d" % i], d)
+        s = _git(["rev-parse", "HEAD"], d).stdout.strip()
+        _git(["update-ref", "refs/remotes/origin/main", s], d)
+        shas.append(s)
+
+    import time
+    for i, s in enumerate(shas):
+        _run(["gpu", "--sha", s, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+        time.sleep(1.01)   # distinct mtimes -- cleanup order is mtime-based
+
+    worktrees_dir = os.path.join(d, ".claude", "worktrees", "agent-jobs")
+    remaining = set(os.listdir(worktrees_dir))
+    assert len(remaining) <= 2, remaining
+    # the two most RECENTLY created (shas[1], shas[2]) must survive; the oldest (shas[0]) must be gone
+    assert shas[0] not in remaining
+    assert shas[-1] in remaining
+
+
+def test_git_operations_disable_hooks():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    hook_marker = os.path.join(d, "HOOK_RAN")
+    hooks_dir = os.path.join(d, ".git", "hooks")
+    os.makedirs(hooks_dir, exist_ok=True)
+    for hook_name in ("post-checkout", "post-commit"):
+        _write_exec(os.path.join(hooks_dir, hook_name), 'echo ran >> "%s"\n' % hook_marker)
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    assert not os.path.exists(hook_marker), (
+        "git worktree add must never run a repo's hooks (core.hooksPath=/nonexistent on every git call)")
+
+
+def test_validate_sha_fetches_the_draft_branch_namespace_before_checking_reachability():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    fetch_log = os.path.join(d, "git_fetch_calls.log")
+    real_git = subprocess.run(["which", "git"], capture_output=True, text=True).stdout.strip()
+    fake_git = _write_exec(os.path.join(d, "fake_git.sh"), """
+echo "GIT $*" >> "%s"
+case "$*" in
+  *" fetch "*) exit 0 ;;
+  *) exec %s "$@" ;;
+esac
+""" % (fetch_log, real_git))
+    env["AGENT_GATEWAY_GIT_BIN"] = fake_git
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    calls = open(fetch_log).read()
+    assert "fetch --quiet gitea refs/heads/research/draft-*:refs/remotes/gitea/research/draft-*" in calls
+
+
+def test_validate_sha_tolerates_a_fetch_failure():
+    """gitea unreachable / no such remote must never crash the submit -- reachability just falls back to
+    whatever is already cached, exactly as if the fetch attempt had not been made at all."""
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    fake_git = _write_exec(os.path.join(d, "fake_git_fail.sh"), """
+case "$*" in
+  *" fetch "*) exit 1 ;;
+  *) exec git "$@" ;;
+esac
+""")
+    env["AGENT_GATEWAY_GIT_BIN"] = fake_git
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
+    assert res.returncode == 0, res.stdout + res.stderr

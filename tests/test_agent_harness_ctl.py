@@ -56,6 +56,10 @@ def _run(cmd, tmp, docker_path, extra_env=None, timeout=10):
     env["AGENT_CTL_DOCKER"] = docker_path
     env["AGENT_CTL_LOG"] = os.path.join(tmp, "ctl.log")
     env["AGENT_CTL_PAUSE_DELAY_S"] = "0"   # no need to wait out a real delay in tests
+    # NEVER the real $HOME (2026-09-29 re-review, L3 fix): both default to per-test tmp paths so no test can
+    # ever read or write the actual workstation's own active-profile record or profile files.
+    env.setdefault("AGENT_CTL_ACTIVE_PROFILE_STATE", os.path.join(tmp, ".sim_agent_active_profile"))
+    env.setdefault("AGENT_CTL_PROFILE_DIR", os.path.join(tmp, "no-such-profile-dir"))
     env["SSH_ORIGINAL_COMMAND"] = cmd
     if extra_env:
         env.update(extra_env)
@@ -167,16 +171,90 @@ def test_say_fails_loudly_when_docker_exec_fails():
         assert "failed" in res.stderr.lower()
 
 
+def _write_profile_env(profile_dir, name, kind):
+    os.makedirs(profile_dir, exist_ok=True)
+    with open(os.path.join(profile_dir, "%s.env" % name), "w") as f:
+        f.write("BASE_URL=http://example\nTOKEN_VAR=\nMODEL=x\nCONTEXT=1\nKIND=%s\n" % kind)
+
+
 def test_state_reports_status_profile_and_kind_when_running():
     with tempfile.TemporaryDirectory() as tmp:
         docker, _ = _fake_docker(tmp, status="running")
-        res = _run("state", tmp, docker)
+        profile_dir = os.path.join(tmp, "profiles")
+        _write_profile_env(profile_dir, "workstation", "local")
+        env = {"AGENT_CTL_PROFILE_DIR": profile_dir}
+        res_set = _run("set-active-profile workstation", tmp, docker, extra_env=env)
+        assert res_set.returncode == 0, res_set.stdout + res_set.stderr
+        res = _run("state", tmp, docker, extra_env=env)
         assert res.returncode == 0, res.stdout + res.stderr
         assert "container: running" in res.stdout
         assert "active_profile: workstation" in res.stdout
         assert "profile_kind: local" in res.stdout
         assert "claude_active: no" in res.stdout
         assert "claude_version: 2.1.280" in res.stdout
+
+
+def test_state_does_not_trust_a_container_writable_profile_file():
+    """2026-09-29 re-review, L3: `state` must never ask the CONTAINER what profile/kind is active -- a
+    possibly-adversarial model could simply write its own .active_profile_kind to fake a cloud backend and
+    dodge the owner's gaming-pause. With no set-active-profile ever called, `docker exec` claiming
+    "local"/"workstation" (the fake docker's own default answer for those cat calls) must be ignored."""
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, log = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "active_profile: none" in res.stdout
+        assert "profile_kind: unknown" in res.stdout
+        assert "cat /home/agent/.active_profile" not in open(log).read(), (
+            "state must never docker-exec into the container to ask for the active profile at all")
+
+
+def test_set_active_profile_determines_kind_from_the_servers_own_profile_file():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp)
+        profile_dir = os.path.join(tmp, "profiles")
+        _write_profile_env(profile_dir, "cloud-example", "cloud")
+        env = {"AGENT_CTL_PROFILE_DIR": profile_dir}
+        res = _run("set-active-profile cloud-example", tmp, docker, extra_env=env)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "cloud" in res.stdout
+        state_path = os.path.join(tmp, ".sim_agent_active_profile")
+        content = open(state_path).read()
+        assert "PROFILE=cloud-example" in content
+        assert "KIND=cloud" in content
+
+
+def test_set_active_profile_refuses_an_unsafe_name():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp)
+        res = _run("set-active-profile ../../etc/passwd", tmp, docker)
+        assert res.returncode != 0
+
+
+def test_set_active_profile_refuses_a_profile_that_does_not_exist():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp)
+        res = _run("set-active-profile no-such-profile", tmp, docker)
+        assert res.returncode != 0
+        assert "no such profile" in res.stderr.lower()
+
+
+def test_state_strips_control_characters_from_claude_version():
+    """2026-09-29 re-review, L3: even the one remaining container-sourced field (claude_version) must never let
+    an ANSI escape / control byte reach whoever reads `state`'s output on a terminal."""
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp)
+        # override the version answer with an embedded ESC sequence + a literal control byte
+        body = open(docker).read().replace(
+            '*"claude --version"*) echo "2.1.280 (Claude Code)" ;;',
+            '*"claude --version"*) printf "2.1.280\\x1b[31m EVIL\\x07 (Claude Code)\\n" ;;')
+        with open(docker, "w") as f:
+            f.write(body)
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "\x1b" not in res.stdout
+        assert "\x07" not in res.stdout
+        assert "EVIL" in res.stdout   # the ordinary printable text around it must survive
 
 
 def test_state_when_absent_does_not_attempt_docker_exec():

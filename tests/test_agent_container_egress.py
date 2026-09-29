@@ -84,3 +84,17 @@ def test_input_chain_catchall_drop_is_last():
     input_chain = chains.get("INPUT", [])
     assert input_chain, "INPUT chain must have at least the catch-all DROP"
     assert "-j DROP" in input_chain[-1]
+
+
+def test_gitea_rule_matches_on_conntrack_original_destination_not_plain_dest():
+    # 2026-09-29 re-review, M4: DOCKER-USER sees the POST-DNAT destination -- if gitea is reached through any
+    # port-forward/DNAT on the server, a plain `-d <gitea>` rule matches nothing. `--ctorigdst`/`--ctorigdstport`
+    # matches what the client actually DIALED, regardless of any NAT rewrite applied afterward.
+    out = _run_dry_run()
+    chains = _simulated_chains(out)
+    docker_user = chains["DOCKER-USER"]
+    gitea_rules = [r for r in docker_user if "192.168.0.10" in r and "2222" in r]
+    assert gitea_rules, "no gitea rule found: %s" % docker_user
+    for r in gitea_rules:
+        assert "-m conntrack --ctorigdst 192.168.0.10 --ctorigdstport 2222" in r, r
+        assert "-d 192.168.0.10" not in r, "must not ALSO plain-match -d (the post-DNAT address is not this)"

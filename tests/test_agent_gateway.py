@@ -234,3 +234,17 @@ def test_yield_max_hours_command_substitution_is_never_executed():
         ssh_path, _ = _fake_ssh(tmp, state_output="container: running\nprofile_kind: local\n")
         res = _run("yield --max-hours $(touch %s)" % marker, tmp, ssh_path=ssh_path)
         assert not os.path.exists(marker), "a command substitution in --max-hours must NEVER execute"
+
+
+def test_log_strips_control_characters_from_the_attacker_controlled_command():
+    """2026-09-29 re-review, L3: $CMD is the container's own SSH_ORIGINAL_COMMAND, logged verbatim on every
+    request -- an embedded ANSI escape sequence must never reach the log file (a terminal later tailing/catting
+    it could have its title rewritten, text hidden, or worse on a vulnerable emulator)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        _scaffold(tmp)
+        res = _run("bogus-command\x1b[31m EVIL\x07", tmp)
+        assert res.returncode != 0
+        log_text = open(os.path.join(tmp, "gateway.log")).read()
+        assert "\x1b" not in log_text
+        assert "\x07" not in log_text
+        assert "EVIL" in log_text   # the ordinary printable text around it must survive

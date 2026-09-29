@@ -63,6 +63,26 @@ POOL_PROVISION_SH = os.environ.get("AGENT_GATEWAY_POOL_PROVISION_SH", os.path.jo
 BWRAP = os.environ.get("AGENT_GATEWAY_BWRAP", "bwrap")   # TEST-ONLY override; NEVER set in production
 HOME = os.environ.get("AGENT_GATEWAY_HOME", os.path.expanduser("~"))
 JOBS_DIR = os.path.join(ROOT, ".claude", "worktrees", "agent-jobs")
+GIT_FETCH_REMOTE = os.environ.get("AGENT_GATEWAY_GITEA_REMOTE", "gitea")
+
+# RESOURCE + AVAILABILITY BOUNDS (2026-09-29 re-review, M2) -- none of bwrap's namespace isolation caps CPU/
+# memory/process-count or wall-clock runtime; these bound what a sandboxed job can do to the shared workstation
+# even while it runs, and how much of the shared queue/disk ANY number of submissions can claim.
+SYSTEMD_RUN = os.environ.get("AGENT_GATEWAY_SYSTEMD_RUN", "systemd-run")   # TEST-ONLY override
+TIMEOUT_BIN = os.environ.get("AGENT_GATEWAY_TIMEOUT_BIN", "timeout")       # TEST-ONLY override
+GPU_JOB_TIMEOUT_H = os.environ.get("AGENT_GATEWAY_GPU_JOB_TIMEOUT_H", "4")
+GPU_JOB_MEMORY_MAX = os.environ.get("AGENT_GATEWAY_GPU_JOB_MEMORY_MAX", "20G")
+GPU_JOB_TASKS_MAX = os.environ.get("AGENT_GATEWAY_GPU_JOB_TASKS_MAX", "512")
+AGENT_JOB_MARKER = "AGENT_JOB_SRC=sim-agent"   # embedded in every job line THIS script builds, so the queue-
+                                                # depth cap counts only agent-submitted jobs, never unrelated
+                                                # work the owner/other tooling queued directly.
+MAX_QUEUED_AGENT_JOBS = int(os.environ.get("AGENT_GATEWAY_MAX_QUEUED_JOBS", "20"))
+MAX_AGENT_WORKTREES = int(os.environ.get("AGENT_GATEWAY_MAX_WORKTREES", "20"))
+GPU_QUEUE_PATH = os.environ.get("AGENT_GATEWAY_GPU_QUEUE_PATH", os.path.join(ROOT, "research", "queue", "gpu.queue"))
+POOL_QUEUE_PATH = os.environ.get("AGENT_GATEWAY_POOL_QUEUE_PATH", os.path.join(ROOT, "research", "queue", "pool.queue"))
+POOL_PROVISION_LOCK = os.environ.get("AGENT_GATEWAY_POOL_PROVISION_LOCK",
+                                      os.path.join(ROOT, "research", "queue", ".agent_pool_provision.lock"))
+FLOCK_BIN = os.environ.get("AGENT_GATEWAY_FLOCK_BIN", "flock")   # TEST-ONLY override
 # PER-JOB output root (2026-09-29 re-review, LOW): a job must never write into the SHARED research/findings/raw/
 # directly -- every submission gets its own subdirectory here, and only THAT subdirectory is ever bound
 # writable into the sandbox. A (not-yet-written) harvest step is expected to copy real results out of these
@@ -84,7 +104,14 @@ def die(msg, code=1):
 
 
 def git(*args, cwd=ROOT):
-    return subprocess.run(["git", "-C", cwd, *args], capture_output=True, text=True)
+    # -c core.hooksPath=/nonexistent on EVERY git invocation this script makes (2026-09-29 re-review, L2): a
+    # `git worktree add` (or any other git operation) otherwise runs whatever hooks ambient config points at --
+    # this repo is a shared checkout with many worktrees, so a hooksPath set for some OTHER purpose (or a
+    # future config change) must never be able to run code as a side effect of validating/staging an
+    # agent-submitted job. Read-only calls (cat-file/rev-parse/merge-base/for-each-ref) don't trigger hooks
+    # anyway; setting this unconditionally on the one shared helper means no future call here can forget it.
+    return subprocess.run(["git", "-c", "core.hooksPath=/nonexistent", "-C", cwd, *args],
+                           capture_output=True, text=True)
 
 
 # ------------------------------------------------------------------------------------------------- validation
@@ -124,9 +151,32 @@ def parse_common(kind, argv):
     return sha, runner, prereg, checked, args
 
 
+def _fetch_draft_branches():
+    # Best-effort, SCOPED fetch (2026-09-29 re-review, L5): without this, gpu-submit/pool-submit only ever saw
+    # whatever refs/remotes/gitea/* happened to already be cached locally -- a sha the container just pushed to
+    # its own research/draft-* branch was refused as "not reachable" until the OWNER happened to run a `git
+    # fetch` themselves, or (if not even the commit OBJECT was present yet) failed the earlier cat-file check
+    # outright. Scoped to research/draft-* ONLY -- the one namespace the container's own deploy key can push to
+    # (docs/AGENT_HARNESS_SETUP.md's gitea branch-protection step, M2) -- never a bare `git fetch` of everything.
+    # Hooks disabled (core.hooksPath=/nonexistent, same as every other git call here). Failure (gitea
+    # unreachable, no such remote, timeout) is silent: the checks below simply fall back to whatever is
+    # already cached, exactly like before this fetch existed -- this only ever makes reachability MORE
+    # permissive of genuinely-pushed work, never less strict.
+    git_bin = os.environ.get("AGENT_GATEWAY_GIT_BIN", "git")   # TEST-ONLY override; NEVER set in production
+    try:
+        subprocess.run(
+            [git_bin, "-c", "core.hooksPath=/nonexistent", "-C", ROOT, "fetch", "--quiet", GIT_FETCH_REMOTE,
+             "refs/heads/research/draft-*:refs/remotes/%s/research/draft-*" % GIT_FETCH_REMOTE],
+            capture_output=True, text=True, timeout=30,
+        )
+    except Exception:
+        pass
+
+
 def validate_sha(sha):
     if not SHA_RE.match(sha):
         die(f"--sha must be exactly 40 hex characters, got: {sha!r}")
+    _fetch_draft_branches()
     if git("cat-file", "-e", f"{sha}^{{commit}}").returncode != 0:
         die(f"--sha {sha} is not a commit this repo has")
     refs_res = git("for-each-ref", "--format=%(refname)", "refs/remotes/origin", "refs/remotes/gitea")
@@ -211,6 +261,36 @@ def ensure_bwrap():
             "Arch/CachyOS workstation, or `sudo apt-get install bubblewrap` on Debian/Ubuntu) and retry.")
 
 
+def _remove_worktree(path):
+    git("worktree", "remove", "--force", path)
+    subprocess.run(["rm", "-rf", path])
+
+
+def _cleanup_old_worktrees(keep, exempt=None):
+    """Caps how many .claude/worktrees/agent-jobs/<sha> checkouts can accumulate (2026-09-29 re-review, M2):
+    each is a full checkout, and every gpu-submit that names a new --sha creates one -- with no bound, an agent
+    that keeps varying --sha (or a long-lived harness) could fill the workstation's disk one checkout at a
+    time. Removes the OLDEST (by mtime) worktrees under JOBS_DIR beyond `keep`, via `git worktree remove` (never
+    a bare rm -- keeps the repo's own worktree registration consistent). `exempt` (the sha about to be
+    created/reused this call) is never removed even if it is technically the oldest."""
+    if not os.path.isdir(JOBS_DIR):
+        return
+    entries = []
+    for name in os.listdir(JOBS_DIR):
+        if exempt and name == exempt:
+            continue
+        p = os.path.join(JOBS_DIR, name)
+        if os.path.isdir(p):
+            try:
+                entries.append((os.path.getmtime(p), p))
+            except OSError:
+                continue
+    entries.sort()   # oldest first
+    n_over = len(entries) - (keep - 1 if exempt else keep)   # room for `exempt` itself if it's being created
+    for _mtime, p in entries[:max(0, n_over)]:
+        _remove_worktree(p)
+
+
 def ensure_worktree(sha):
     path = os.path.join(JOBS_DIR, sha)
     if os.path.isdir(path):
@@ -219,8 +299,8 @@ def ensure_worktree(sha):
             _ensure_venv_symlink(path)
             return path
         # stale/wrong -- remove the registration and the directory, then recreate cleanly below.
-        git("worktree", "remove", "--force", path)
-        subprocess.run(["rm", "-rf", path])
+        _remove_worktree(path)
+    _cleanup_old_worktrees(MAX_AGENT_WORKTREES, exempt=sha)
     os.makedirs(JOBS_DIR, exist_ok=True)
     res = git("worktree", "add", "--detach", path, sha)
     if res.returncode != 0:
@@ -271,8 +351,10 @@ def build_bwrap_argv(checkout, job_out_dir, inner_argv, home=None, repo_venv=Non
         with `cudaErrorOperatingSystem` without it; nothing narrower was found to work), and the repo's shared
         `.venv` (cupy + its bundled CUDA runtime libraries; only `libcuda.so.1` itself, the kernel-matched
         driver library, comes from `/usr`). Never `/`, `/home`, `/etc`, `/proc`, `/run`.
-      - Writable: ONLY the job's own pinned checkout and its OWN per-job output subdirectory (2026-09-29
-        re-review, LOW -- never the shared research/findings/raw/ directly; see rewrite_out_args).
+      - Writable: ONLY the job's own per-job output subdirectory (2026-09-29 re-review, LOW -- never the shared
+        research/findings/raw/ directly; see rewrite_out_args). The checkout itself is RO-BOUND (2026-09-29
+        re-review, L1) -- a job has no reason to modify the pinned revision it runs against; scratch space, if
+        a runner needs any outside its declared --out, is the already-writable --tmpfs /tmp.
     """
     home = home or HOME
     repo_venv = repo_venv or os.path.join(ROOT, ".venv")
@@ -307,11 +389,52 @@ def build_bwrap_argv(checkout, job_out_dir, inner_argv, home=None, repo_venv=Non
     if os.path.isdir(repo_venv):
         argv += ["--ro-bind", repo_venv, repo_venv]
     argv += ["--tmpfs", "/tmp"]
-    argv += ["--bind", checkout, checkout]
+    argv += ["--ro-bind", checkout, checkout]
     argv += ["--bind", job_out_dir, job_out_dir]
     argv += ["--chdir", checkout]
     argv += ["--"] + inner_argv
     return argv
+
+
+def _count_agent_jobs(queue_path):
+    if not os.path.exists(queue_path):
+        return 0
+    try:
+        return open(queue_path, errors="ignore").read().count(AGENT_JOB_MARKER)
+    except OSError:
+        return 0
+
+
+def _enforce_queue_cap(queue_path, kind):
+    # 2026-09-29 re-review, M2: an unbounded number of agent-submitted jobs could otherwise fill the shared
+    # queue (and, for GPU, the workstation's own resources once dispatched) indefinitely -- counted by
+    # AGENT_JOB_MARKER so this never counts the owner's own, unrelated queue entries.
+    n = _count_agent_jobs(queue_path)
+    if n >= MAX_QUEUED_AGENT_JOBS:
+        die(f"refusing to queue another {kind} job: {n} agent-submitted jobs are already queued "
+            f"(cap {MAX_QUEUED_AGENT_JOBS}) -- wait for some to drain before submitting more")
+
+
+def wrap_gpu_job_with_resource_limits(job_id, bwrap_argv):
+    """2026-09-29 re-review, M2: bwrap's namespace isolation caps WHAT a job can reach, never HOW MUCH memory/
+    processes it can consume or for how long it can run -- a job that simply allocates until OOM, fork-bombs
+    within its own pid namespace, or hangs forever would still degrade (or indefinitely occupy) the shared
+    workstation/GPU queue. `systemd-run --user --scope` runs the sandboxed job as a transient cgroup-scoped
+    unit (synchronously -- `--scope`, not `--unit`, so gpu_queue.sh's own `wait` on the dispatched pid still
+    works exactly as before) with a hard MemoryMax/TasksMax; `timeout` wraps the WHOLE scope from outside it, so
+    a hung job is killed by wall-clock time regardless of what is happening inside the sandbox.
+    `--setenv=AGENT_JOB_SRC=sim-agent` embeds AGENT_JOB_MARKER in the literal job line so the queue-depth cap
+    can count agent-submitted jobs specifically."""
+    unit = "sim-agent-gpu-%s" % job_id
+    return [
+        TIMEOUT_BIN, "--kill-after=30s", "%sh" % GPU_JOB_TIMEOUT_H,
+        SYSTEMD_RUN, "--user", "--scope", "--quiet",
+        "--unit=%s" % unit,
+        "--setenv=AGENT_JOB_SRC=sim-agent",
+        "-p", "MemoryMax=%s" % GPU_JOB_MEMORY_MAX,
+        "-p", "TasksMax=%s" % GPU_JOB_TASKS_MAX,
+        "--",
+    ] + bwrap_argv
 
 
 def cmd_gpu(argv):
@@ -320,6 +443,7 @@ def cmd_gpu(argv):
     validate_runner(sha, runner)
     validate_args(args)
     validate_gate_seed(sha, args, prereg)
+    _enforce_queue_cap(GPU_QUEUE_PATH, "GPU")
     ensure_bwrap()
     checkout = ensure_worktree(sha)
     job_id = "%s-%s" % (sha[:12], uuid.uuid4().hex[:8])
@@ -329,7 +453,8 @@ def cmd_gpu(argv):
     venv_python = os.path.join(checkout, ".venv", "bin", "python")
     inner_argv = [venv_python, "-u", "-m", runner] + args
     bwrap_argv = build_bwrap_argv(checkout, job_out_dir, inner_argv)
-    job_line = " ".join(shlex.quote(a) for a in bwrap_argv)
+    wrapped_argv = wrap_gpu_job_with_resource_limits(job_id, bwrap_argv)
+    job_line = " ".join(shlex.quote(a) for a in wrapped_argv)
     res = subprocess.run(["bash", GPU_QUEUE_SH, "add", job_line])
     return res.returncode
 
@@ -342,6 +467,7 @@ def cmd_pool(argv):
     validate_runner(sha, runner)
     validate_args(args)
     validate_gate_seed(sha, args, prereg)
+    _enforce_queue_cap(POOL_QUEUE_PATH, "pool")
     # PER-JOB output subdir, same rationale as gpu-submit (2026-09-29 re-review, LOW): a job must not write the
     # shared research/findings/raw/ directly. Pool jobs run on a REMOTE node against its own
     # ~/derisk-pool/revisions/<sha> checkout, so this is a RELATIVE path (resolved against that remote
@@ -356,10 +482,17 @@ def cmd_pool(argv):
     # (tools/pool_autodispatch.sh's revision_available_cached) already tolerates "not yet provisioned" by
     # skipping the job for later cycles, so this never needs to block the submit call on a real network/rsync
     # round trip -- and in tests AGENT_GATEWAY_POOL_PROVISION_SH points at a stub that never touches a real node.
-    subprocess.Popen(["bash", POOL_PROVISION_SH, "--revision", sha, "--isolated"],
+    # FLOCK, ONE PROVISIONING AT A TIME (2026-09-29 re-review, M2): several pool-submit calls arriving close
+    # together used to each spawn their OWN concurrent `pool_provision.sh` background process -- a thundering
+    # herd of simultaneous rsync/ssh sessions against the SAME pool nodes. `flock LOCKFILE cmd...` (not `-n`)
+    # serializes them: this Popen call still returns immediately (the wait happens INSIDE the backgrounded
+    # process, never blocking cmd_pool itself), but only one provisioning run against the lock actually
+    # executes at a time; the rest queue up on the same lock in whatever order they arrived.
+    os.makedirs(os.path.dirname(POOL_PROVISION_LOCK), exist_ok=True)
+    subprocess.Popen([FLOCK_BIN, POOL_PROVISION_LOCK, "bash", POOL_PROVISION_SH, "--revision", sha, "--isolated"],
                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    job_line = "cd ~/derisk-pool/revisions/%s && mkdir -p %s && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -u -m %s %s" % (
-        sha, job_out_dir_rel, runner, " ".join(args))
+    job_line = "%s cd ~/derisk-pool/revisions/%s && mkdir -p %s && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -u -m %s %s" % (
+        AGENT_JOB_MARKER, sha, job_out_dir_rel, runner, " ".join(args))
     res = subprocess.run(["bash", POOL_QUEUE_SH, "add", job_line, "--checked", checked])
     return res.returncode
 

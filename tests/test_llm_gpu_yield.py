@@ -428,9 +428,37 @@ def test_yield_refuses_a_max_hours_value_that_is_not_plain_digits():
         env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
         res = _run_llm(["yield", "--max-hours", "a[$(touch %s)]" % marker], env)
         assert res.returncode != 0
-        assert "1-2 digits" in res.stdout
+        assert "1-12" in res.stdout
         assert not os.path.exists(marker), "--max-hours must never be evaluated as a shell/arithmetic injection"
         assert not os.path.exists(os.path.join(tmp, ".llm_yield")), "no yield marker must be written on refusal"
+
+
+def test_yield_refuses_a_max_hours_value_over_12():
+    """2026-09-29 re-review, M2: the digit-only check alone still let a container-triggered `yield --max-hours
+    N` claim an arbitrarily long window (up to 99h) over the shared GPU -- capped at 12."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
+        systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
+        bindir = _fake_curl_and_systemd_run(tmp, state_file)
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        res = _run_llm(["yield", "--max-hours", "13"], env)
+        assert res.returncode != 0
+        assert "1-12" in res.stdout
+        assert not os.path.exists(os.path.join(tmp, ".llm_yield"))
+
+
+def test_yield_accepts_a_max_hours_value_of_exactly_12():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
+        systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
+        bindir = _fake_curl_and_systemd_run(tmp, state_file)
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        res = _run_llm(["yield", "--max-hours", "12"], env)
+        assert res.returncode == 0, res.stdout + res.stderr
 
 
 # ---------------------------------------------------------------------------------------------------------------

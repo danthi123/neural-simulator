@@ -76,6 +76,16 @@ def test_compose_service_root_fs_is_read_only_with_tmp_tmpfs():
     assert any(str(t).startswith("/tmp") for t in tmpfs)
 
 
+def test_compose_tmp_tmpfs_is_noexec_nosuid_nodev():
+    # 2026-09-29 re-review, L4: /tmp is writable by every process in the container -- without these mount
+    # options, a downloaded/generated file there could simply be chmod +x'd and executed directly.
+    svc = _compose()["services"]["sim-agent"]
+    tmp_entry = next(str(t) for t in svc.get("tmpfs", []) if str(t).startswith("/tmp"))
+    opts = tmp_entry.split(":", 1)[1].split(",")
+    for flag in ("noexec", "nosuid", "nodev"):
+        assert flag in opts, "%s missing from /tmp tmpfs options: %s" % (flag, tmp_entry)
+
+
 def test_compose_service_has_exactly_two_named_volumes_for_persistence():
     svc = _compose()["services"]["sim-agent"]
     vols = svc.get("volumes", [])

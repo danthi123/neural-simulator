@@ -47,7 +47,12 @@ services:
       - no-new-privileges:true
     read_only: true                    # root filesystem is read-only; every writable path below is explicit
     tmpfs:
-      - /tmp:size=2g,mode=1777          # Claude Code + tmux + pip/venv scratch space; wiped on every recreate
+      # noexec,nosuid,nodev (2026-09-29 re-review, L4): /tmp is the one writable-by-default scratch space every
+      # process in the container shares -- without these, a downloaded/generated file there could simply be
+      # chmod +x'd and executed directly. Nothing legitimate here needs to: Claude Code's own updater installs
+      # into the writable home volume (~/.local/share/claude/versions/...), never /tmp; pip installs happened at
+      # BUILD time into the read-only /opt venvs; tmux only uses /tmp for its socket, never to exec anything.
+      - /tmp:size=2g,mode=1777,noexec,nosuid,nodev
     ulimits:
       nproc: 4096
     # Plain (non-swarm) resource limits -- `deploy.resources.limits` is a Swarm-stack construct that modern

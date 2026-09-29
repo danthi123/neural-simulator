@@ -10,9 +10,61 @@ not affect anything beyond its container, its volumes, and the narrow, validated
 `tools/agent_gateway.sh` (on the workstation) and `tools/agent_harness_ctl.sh` (on the server) are the two
 forced-command scripts these keys point at -- read their headers for exactly what each allows.
 
-**MANDATORY ORDER -- the harness must NOT be started before step (d\') (the egress firewall) is applied.**
-Without it, a compromised container's outbound traffic is unrestricted on the LAN (see step (d\') for why the
-old "optional" framing was wrong).
+**MANDATORY ORDER -- the harness must NOT be started before step (0) (workstation sshd), step (d\') (the egress
+firewall), and the gitea Actions step in (c) are ALL applied.** Without the egress firewall, a compromised
+container's outbound traffic is unrestricted on the LAN (see step (d\') for why the old "optional" framing was
+wrong); without the sshd hardening, the restricted keys below are not the only way into this account; without
+Actions disabled on the gitea repo, a pushed workflow file is a direct route off the container entirely.
+
+**Plain-language residual risk (read this before deciding the setup is "done"):** even with every step below
+applied, a FULLY ROGUE model driving the container could still (1) exfiltrate the private repo and any results
+it can read, over the one egress path that must stay open for legitimate use (443 to non-LAN destinations --
+there is no way to allow "the Claude Code updater" without also allowing "any other HTTPS destination" at the
+IP-filtering level this setup works at); (2) if the RECOMMENDED pool-node sudo fix below is not applied, get
+root on the mini-PC pool nodes and use that as a foothold onto the rest of the LAN from there (never from the
+container's own subnet, which the egress firewall does confine); (3) burn CPU/GPU compute and fill its own two
+volumes up to their configured caps (M3) -- a resource-exhaustion nuisance, not a compromise of anything else;
+(4) attempt to social-engineer the OWNER through whatever it says in chat/tmux -- no technical control stops a
+human from being persuaded, only the owner's own judgment does; (5) attempt a kernel or NVIDIA driver exploit
+from inside the sandbox/container to escape it entirely -- namespaces and cap_drop/seccomp reduce this surface
+but cannot make it zero; this setup gives an attacker no assistance toward one, but a fully rogue model with
+unbounded compute time is still probing the SAME host kernel + driver every other unprivileged process on this
+box already can.
+
+## (0) MANDATORY: harden the workstation's sshd first
+
+Before generating or installing any of the restricted keys below, close the one thing that would make them
+optional: password authentication. A carefully `restrict`ed, forced-command key is meaningless if an attacker
+(or a compromised container that somehow learned or brute-forced a password) can just log in normally instead.
+This is a property of the WORKSTATION's sshd as a whole, not of any one key, so it is step 0.
+
+In `/etc/ssh/sshd_config` (or a drop-in under `/etc/ssh/sshd_config.d/`), set:
+
+```
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+AuthenticationMethods publickey
+```
+
+Then reload (never a full restart while you might still be connected over the old config -- `reload` applies
+the new config to the running daemon without dropping existing sessions):
+
+```bash
+sudo systemctl reload sshd
+```
+
+Verify the running daemon actually has these in effect (reads sshd's OWN resolved, effective configuration --
+not just what the file says, which could differ if another drop-in overrides it later in the read order):
+
+```bash
+sudo sshd -T | grep -i passwordauthentication      # expect: passwordauthentication no
+sudo sshd -T | grep -i kbdinteractiveauthentication # expect: kbdinteractiveauthentication no
+sudo sshd -T | grep -i authenticationmethods        # expect: authenticationmethods publickey
+```
+
+Keep at least one already-working ssh-key session open while you do this, and confirm a FRESH connection with
+your normal key still works, before closing that session -- a misconfigured `AuthenticationMethods` line can
+lock out key-based access too if written wrong.
 
 ## (a) Generate the two keypairs
 
@@ -106,11 +158,24 @@ In the gitea web UI (`https://git.dant123.com`), on the `neural-simulator` repo:
    release process) might trust. This is the REAL enforcement that a compromised container can never touch
    `main` (or any other real branch) or a tag; `claude_container_settings.json`'s own deny rules are
    belt-and-braces on top of it, not instead of it.
-2. **Settings -> Actions**: **2026-09-29 security review, M2** -- disable Actions for this repo (repo Settings,
-   or org/instance-wide if Actions is not needed anywhere). If Actions and a runner are ever enabled here, a
-   pushed workflow file (even to an otherwise-unprotected `research/draft-*` branch) can execute on whatever
-   runs the Actions runner -- for a repo a possibly-adversarial container can push to, this is a direct route off
-   the container entirely. Disabling Actions closes it regardless of any other setting here.
+2. **MANDATORY, escalated to HIGH in the 2026-09-29 re-review: Settings -> Actions** -- disable Actions for this
+   repo, or (simpler, and covers every repo on this instance at once) instance-wide via `[actions]
+   ENABLED=false` in gitea's `app.ini` followed by a gitea restart. **Why this is HIGH, not merely "a pushed
+   workflow could run somewhere"**: if this server's gitea has an act-runner registered with a Docker socket (or
+   an equivalent POST/EXEC-enabled proxy in front of it, the common way people expose runners without handing
+   out the raw socket) reachable from the runner's job containers, a pushed workflow file gets to issue
+   arbitrary Docker API calls FROM the runner -- which is root-equivalent on whatever host that socket belongs
+   to. For a repo a possibly-adversarial container can push to (`research/draft-*`, even fully branch-protected
+   everywhere else), this is a direct path to ROOT ON THE SERVER, not merely "a workflow runs". Disabling
+   Actions closes it regardless of any runner configuration detail you have not audited.
+
+   Verify it is actually off:
+   ```bash
+   # (a) the repo's own Actions tab must be gone/inaccessible in the gitea web UI, and
+   # (b) a real test push proves it, not just the UI's own claim:
+   git push gitea research/draft-actions-verify-test HEAD:refs/heads/research/draft-actions-verify-test
+   # then in the gitea UI: the repo's Actions tab shows NO new run for this push. Delete the test branch after.
+   ```
 3. **Settings -> Deploy Keys**, or a dedicated bot account under **Site Administration -> User Accounts** (a
    deploy key is simpler and the container never needs to open PRs itself): add a new deploy key, paste a
    FRESH keypair's public half (`ssh-keygen -t ed25519 -f ~/.ssh/sim_agent_gitea_deploy -N ""`, generated on the
@@ -302,48 +367,98 @@ addresses). The fixed function builds the ENTIRE remote command as ONE pre-escap
 TWO arguments total (the host, then that one string) -- with nothing left for `ssh` to rejoin, this problem
 cannot recur:
 
+**Also (2026-09-29 re-review, L3):** `agent start` now records the profile on the SERVER via
+`tools/agent_harness_ctl.sh`'s `set-active-profile` (over the trusted workstation->server ctl key) BEFORE
+sending the tmux keystroke -- this is what makes `state`'s gaming-pause-skip decision trustworthy: it reads
+this server-local record, never anything the container itself could write.
+
 ```fish
 case start
     set -l profile $argv[2]
     if test -z "$profile"
         set profile workstation
     end
+    ssh homelab-agent-ctl "set-active-profile $profile"
+    or echo "agent: warning -- could not record the active profile on the server (state's gaming-pause check may be stale)"
     set -l inner (string escape -- "bash /usr/local/bin/agent-start.sh $profile")
     set -l remote_cmd "docker exec sim-agent tmux send-keys -t agent $inner Enter"
     ssh homelab-server $remote_cmd
     and echo "agent: sent 'agent-start.sh $profile' into the tmux session -- attach with: agent"
 ```
 
-## Optional: a size-capped repo/home volume (M3, 2026-09-29 security review)
+## MANDATORY (escalated from optional in the 2026-09-29 re-review, M3): a size-capped repo/home volume
 
 homelab-server is SHARED (gitea/nextcloud/home-assistant/etc.) and the two named volumes have no built-in size
 cap (compose.yaml's `logging.driver: local` only bounds the container's stdout/stderr, never volume content;
 `tools/inspection_digest.py` and `update.sh`'s own disk-usage check both warn when usage looks wrong, but
-neither can PREVENT it). If you want a hard ceiling instead of a warning, back one or both named volumes with a
-loop-mounted, fixed-size image file instead of the plain directory-backed local driver Docker uses by default --
-growth then hits `ENOSPC` INSIDE the loop device, never the shared filesystem:
+neither can PREVENT it) -- a warning is not a ceiling, so this is now required, not optional. Back both named
+volumes with a loop-mounted, fixed-size image file instead of the plain directory-backed local driver Docker
+uses by default -- growth then hits `ENOSPC` INSIDE the loop device, never the shared filesystem:
 
 ```bash
-fallocate -l 20G /var/lib/sim-agent-repo.img
-mkfs.ext4 /var/lib/sim-agent-repo.img
-# then either mount it and bind-mount the mountpoint as the volume's host path, or use a `local` volume driver
-# with `o: loop` options pointed at the image file -- pick whichever this server's docker version supports; not
-# scripted here since it is optional and the exact incantation varies by docker/kernel version.
+fallocate -l 20G /var/lib/sim-agent-repo.img && mkfs.ext4 /var/lib/sim-agent-repo.img
+fallocate -l 10G /var/lib/sim-agent-home.img && mkfs.ext4 /var/lib/sim-agent-home.img
+# then either mount each and bind-mount the mountpoint as the volume's host path, or use a `local` volume driver
+# with `o: loop` options pointed at the image file -- pick whichever this server's docker version supports.
 ```
 
-## Scheduling `tools/agent_container/update.sh` (weekly rebuild)
+Verify the cap actually holds (from inside the container, or via a throwaway container mounting the same
+volume -- writing past the image's own size must fail with ENOSPC, not silently succeed onto the host disk):
 
-Not installed by this build on purpose (owner directive: don't install a schedule). A weekly cron line, run as
-whichever user owns `~/sim-agent/`:
-
+```bash
+docker exec sim-agent sh -c 'dd if=/dev/zero of=/work/sim/.cap_test bs=1M count=25000 2>&1 | tail -3; rm -f /work/sim/.cap_test'
+# expect a "No space left on device" partway through a 20G checkout's cap, not a completed 25000+0 records out
 ```
-0 4 * * 0  /usr/bin/bash ~/sim-agent/tools/agent_container/update.sh >> ~/sim-agent/tools/agent_container/cron.log 2>&1
+
+Also cap gitea's own accepted push size (a rogue container could otherwise attempt to push an enormous blob to
+fill the SERVER's gitea data volume, a separate resource from sim-agent's own two volumes) -- in gitea's
+`app.ini`:
+
+```ini
+[repository]
+; bytes; 500 MiB shown here, adjust to this repo's real needs
+MAX_CREATION_LIMIT = -1
+[git]
+MAX_GIT_DIFF_LINES = 1000
 ```
 
-Or a systemd user timer (`~/.config/systemd/user/sim-agent-update.timer` + a matching `.service` running the
-same command), enabled with `systemctl --user enable --now sim-agent-update.timer`. Either way the script
-itself decides whether it is safe to recreate the container this cycle (see its own header) -- the schedule just
-needs to run it periodically.
+Gitea's actual push-size limit setting is `[repository.upload] FILE_MAX_SIZE` (web UI uploads) and the git
+transport itself is bounded by the OS/filesystem, not a gitea config key as of this writing -- the loop-image
+cap above is what actually bounds it in practice; set `receive.maxInputSize` in the git config gitea's own git
+hooks run under (per-repo `.git/config` on the server, or gitea's global git config) as an additional,
+git-native ceiling on any single push:
+
+```bash
+# on the server, in gitea's git repo storage for this repo:
+git config receive.maxInputSize 536870912   # 512 MiB per push
+```
+
+## RECOMMENDED: remove NOPASSWD sudo on the pool nodes
+
+The pool40/41/42 mini-PCs run pool-submitted jobs with a NOPASSWD sudoers entry for their own user -- so a
+malicious pool job (the agent can author runner code that gets dispatched there, same as GPU jobs) gets ROOT on
+those minis for free, and from there a foothold onto the rest of the LAN those nodes sit on. Pool jobs are NOT
+sandboxed the way GPU jobs are (see tools/agent_gateway_submit.py's own header on why: they are dedicated,
+disposable compute, not shared infrastructure) -- but "disposable" does not mean "a free root shell on a LAN
+device", which NOPASSWD sudo hands over unconditionally regardless of what the job actually needed root for.
+
+Either remove the NOPASSWD entry (on each pool node, as whatever admin account manages them):
+
+```bash
+sudo visudo -f /etc/sudoers.d/<the-file-granting-it>   # find it first: sudo grep -rl NOPASSWD /etc/sudoers.d/
+# delete the NOPASSWD line, or change it to require a password -- either way, a pool job's own user account
+# (which never has that password) can no longer sudo at all
+```
+
+Or, more thoroughly, run pool jobs as a SEPARATE, unprivileged user with no sudo entry at all (matches the
+`simjob`-style separation already used for the workstation's own GPU jobs):
+
+```bash
+sudo useradd -r -M -s /usr/sbin/nologin simjob        # on each pool node
+# then point tools/pool_provision.sh / the dispatcher's remote launch command at this user (e.g. `sudo -u simjob
+# <job>`, run by an account that itself is NOT the one with the NOPASSWD entry) -- a larger change than removing
+# NOPASSWD outright, tracked here as the more thorough alternative rather than scripted in this pass.
+```
 
 ## Scheduling `tools/agent_container/update.sh` (weekly rebuild)
 

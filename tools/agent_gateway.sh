@@ -51,7 +51,13 @@ SSH_OPTS=(-o ConnectTimeout=8 -o BatchMode=yes)
 PYTHON_BIN="${AGENT_GATEWAY_PYTHON:-python3}"              # TEST-ONLY override; NEVER set in production
 SUBMIT_PY="$ROOT/tools/agent_gateway_submit.py"
 
-log() { printf '%s agent_gateway: %s\n' "$(date -u '+%F %T')" "$*" >> "$LOG"; }
+# sanitize <text> (2026-09-29 re-review, L3): strips every non-printable/control/escape character before it
+# ever reaches the log file -- $CMD is attacker-controlled (the container's own SSH_ORIGINAL_COMMAND) and is
+# logged verbatim on every request, so without this an ANSI escape sequence embedded in a request could alter
+# whatever terminal later `tail`s/`cat`s this log (hide text, rewrite the title, or worse on a vulnerable
+# emulator). Never strips ordinary printable text.
+sanitize() { printf '%s' "$1" | LC_ALL=C tr -dc '[:print:]'; }
+log() { printf '%s agent_gateway: %s\n' "$(date -u '+%F %T')" "$(sanitize "$*")" >> "$LOG"; }
 refuse() { log "REFUSED: ${CMD:-<empty>}  ($1)"; echo "refused: $1" >&2; exit 1; }
 
 CMD="${SSH_ORIGINAL_COMMAND:-}"

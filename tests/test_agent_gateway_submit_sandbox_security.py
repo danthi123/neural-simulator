@@ -139,17 +139,19 @@ def test_write_outside_the_two_binds_fails():
         assert "TMP_OK" in res.stdout   # the fresh --tmpfs /tmp is writable -- not a leak, its own scratch space
 
 
-def test_the_two_writable_binds_are_exactly_the_checkout_and_job_out_dir():
+def test_only_the_job_out_dir_is_writable_the_checkout_is_ro_bound():
+    # 2026-09-29 re-review, L1: the checkout is RO-BOUND (a job has no reason to modify the pinned revision it
+    # runs against) -- only its own per-job output subdirectory is writable.
     with tempfile.TemporaryDirectory() as tmp:
         checkout = os.path.join(tmp, "checkout")
         job_out = os.path.join(tmp, "checkout_out")
         argv, checkout, job_out, home = _build(tmp, [
             "/usr/bin/sh", "-c",
-            "(: > %s/w1) 2>&1 && echo CHECKOUT_WRITABLE; "
+            "(: > %s/w1) 2>&1 || echo CHECKOUT_REFUSED; "
             "(: > %s/w2) 2>&1 && echo JOBOUT_WRITABLE" % (checkout, job_out)
         ])
         res = _run(argv)
-        assert "CHECKOUT_WRITABLE" in res.stdout
+        assert "CHECKOUT_REFUSED" in res.stdout
         assert "JOBOUT_WRITABLE" in res.stdout
-        assert os.path.exists(os.path.join(checkout, "w1")), "the write must be REAL (land on the host path)"
-        assert os.path.exists(os.path.join(job_out, "w2"))
+        assert not os.path.exists(os.path.join(checkout, "w1"))
+        assert os.path.exists(os.path.join(job_out, "w2")), "the write must be REAL (land on the host path)"

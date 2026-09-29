@@ -16,9 +16,13 @@
 #              only, at most 300 characters. This script only delivers the keystrokes; it never interprets
 #              them itself.
 #   state      one-line-per-field status: container status (running/paused/absent/...), and -- if running --
-#              the active profile + its KIND (tools/agent_container/profiles/*.env's KIND=local|cloud, written
-#              by tools/agent_container/bin/llm) and whether a claude process is currently active. Read by
+#              the active profile + its KIND (from the SERVER-LOCAL record `set-active-profile` writes, never
+#              from the container) and whether a claude process is currently active. Read by
 #              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile) and by tools/game.sh.
+#   set-active-profile <name>   records which profile is active + its KIND (read from this script's OWN
+#              sibling profiles/<name>.env on the server), so `state`'s gaming-pause-skip decision never has to
+#              trust anything the container itself could write (2026-09-29 re-review, L3). Called by `agent
+#              start` from the HOST, over this same trusted ctl channel -- the container has no access to it.
 set -uo pipefail
 CONTAINER="${AGENT_CONTAINER_NAME:-sim-agent}"
 DOCKER="${AGENT_CTL_DOCKER:-docker}"          # TEST-ONLY override; NEVER set in production
@@ -26,8 +30,23 @@ TMUX_SESSION="${AGENT_CTL_TMUX_SESSION:-agent}"
 LOG="${AGENT_CTL_LOG:-$HOME/agent_harness_ctl.log}"
 PAUSE_DELAY_S="${AGENT_CTL_PAUSE_DELAY_S:-5}"
 MAX_SAY_LEN=300
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROFILE_DIR="${AGENT_CTL_PROFILE_DIR:-$SELF_DIR/agent_container/profiles}"
+# SERVER-LOCAL active-profile record (2026-09-29 re-review, L3). NEVER inside the container's own writable
+# home volume: `state` used to `docker exec ... cat /home/agent/.active_profile_kind`, a file the CONTAINER
+# itself writes -- a possibly-adversarial model could simply `echo cloud > ~/.active_profile_kind` to claim a
+# cloud backend and make tools/game.sh / tools/agent_gateway.sh's `yield` skip pausing it for gaming entirely,
+# defeating the owner's own control over their GPU. This file lives on the SERVER's own filesystem, written
+# only by THIS script's own `set-active-profile` (below), which determines KIND itself by reading its
+# sibling profiles/<name>.env -- never anything the container can reach or influence.
+ACTIVE_PROFILE_STATE="${AGENT_CTL_ACTIVE_PROFILE_STATE:-$HOME/.sim_agent_active_profile}"
 
 log() { printf '%s agent_harness_ctl: %s\n' "$(date -u '+%F %T')" "$*" >> "$LOG"; }
+
+# sanitize <text> (2026-09-29 re-review, L3): strips every non-printable/control/escape character, so nothing
+# `state` (claude_version is still container-sourced) or a logged request can smuggle an ANSI escape sequence
+# or other control byte into a terminal that later displays it. Never strips ordinary printable text.
+sanitize() { printf '%s' "$1" | LC_ALL=C tr -dc '[:print:]'; }
 
 CMD="${SSH_ORIGINAL_COMMAND:-}"
 log "request: ${CMD:-<empty>}"
@@ -123,18 +142,44 @@ case "$SUB" in
     fi
     ;;
 
+  set-active-profile)
+    # 2026-09-29 re-review, L3: the SERVER-side record of "which profile/kind is active" -- called by `agent
+    # start` FROM THE HOST (never by the container, which has no access to this ctl channel at all: it holds
+    # only its own separate workstation-gateway key). KIND is determined HERE, from this script's own sibling
+    # profiles/<name>.env -- never asked of, or trusted from, the container.
+    name="$REST"
+    if ! [[ "$name" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+      log "REFUSED set-active-profile: unsafe name '$name'"
+      echo "refused: profile name must match ^[A-Za-z0-9_.-]+\$" >&2; exit 1
+    fi
+    pf="$PROFILE_DIR/$name.env"
+    if [ ! -f "$pf" ]; then
+      log "REFUSED set-active-profile: no such profile file $pf"
+      echo "refused: no such profile '$name' ($pf not found on the server)" >&2; exit 1
+    fi
+    kind="$(sed -n 's/^KIND=//p' "$pf" | tail -1)"
+    { echo "PROFILE=$(sanitize "$name")"; echo "KIND=$(sanitize "${kind:-unknown}")"; } > "$ACTIVE_PROFILE_STATE"
+    log "set-active-profile: $name (kind=${kind:-unknown})"
+    echo "recorded: $name (kind=${kind:-unknown})"
+    ;;
+
   state)
     st="$(container_status)"
     echo "container: $st"
     if [ "$st" = "running" ]; then
-      prof="$("$DOCKER" exec "$CONTAINER" cat /home/agent/.active_profile 2>/dev/null || echo none)"
-      kind="$("$DOCKER" exec "$CONTAINER" cat /home/agent/.active_profile_kind 2>/dev/null || echo unknown)"
+      prof="none"; kind="unknown"
+      if [ -f "$ACTIVE_PROFILE_STATE" ]; then
+        prof="$(sed -n 's/^PROFILE=//p' "$ACTIVE_PROFILE_STATE" | tail -1)"
+        kind="$(sed -n 's/^KIND=//p' "$ACTIVE_PROFILE_STATE" | tail -1)"
+        [ -n "$prof" ] || prof="none"
+        [ -n "$kind" ] || kind="unknown"
+      fi
       busy="$("$DOCKER" exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
       cver="$("$DOCKER" exec "$CONTAINER" claude --version 2>/dev/null || echo unknown)"
-      echo "active_profile: $prof"
-      echo "profile_kind: $kind"
+      echo "active_profile: $(sanitize "$prof")"
+      echo "profile_kind: $(sanitize "$kind")"
       echo "claude_active: $([ -n "$busy" ] && echo yes || echo no)"
-      echo "claude_version: $cver"
+      echo "claude_version: $(sanitize "$cver")"
     fi
     # VOLUME DISK USAGE -- always reported, regardless of container state (the named volumes persist across
     # pause/stop); consumed by tools/inspection_digest.py to warn when either exceeds a threshold.
@@ -147,7 +192,7 @@ case "$SUB" in
 
   *)
     log "REFUSED: ${CMD:-<empty>}"
-    echo "refused: only pause | unpause | say '<line>' | state are allowed" >&2
+    echo "refused: only pause | unpause | say '<line>' | state | set-active-profile <name> are allowed" >&2
     exit 1
     ;;
 esac
