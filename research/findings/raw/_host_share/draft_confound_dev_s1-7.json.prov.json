@@ -1,0 +1,29 @@
+{
+ "run_id": "1790699175-1581538",
+ "runner": "research/runners/_host_share_draft_confound_check.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/host-share-baselines/research/runners/_host_share_draft_confound_check.py",
+  "--seeds",
+  "1,2,3,4,5,6,7",
+  "--out",
+  "research/findings/raw/_host_share/draft_confound_dev_s1-7.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T12:26:15",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1060.5,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_host_share/draft_confound_dev_s1-7.json"
+}
