@@ -32,6 +32,11 @@
 #     `--comment sim-agent-egress` tag so a re-run flushes exactly its own prior rules (never touching anything
 #     else on this shared, multi-service box) before reapplying; persistence is the accompanying systemd unit
 #     (tools/agent_container/sim-agent-egress.service, installed by the owner -- see its own header).
+#
+# A SECOND ordering bug (2026-09-29 RE-review, MEDIUM-1) was in THIS script's own FIRST version: the generic
+# 443-ACCEPT rule was executed AFTER the RFC1918-exclusion DROP loop, which (same `-I ... 1` semantics as above)
+# put the generic ACCEPT ABOVE every private-range DROP in the final chain -- silently defeating the RFC1918
+# exclusion entirely. See the 443 block below for the fix and the exact reasoning.
 set -uo pipefail
 
 # ============================================================================ CONFIGURATION (edit for this box)
@@ -108,20 +113,24 @@ run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$DNS_RESOLVER" -p udp --dport 
     -m comment --comment "$COMMENT" -j ACCEPT
 run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$DNS_RESOLVER" -p tcp --dport 53 \
     -m comment --comment "$COMMENT" -j ACCEPT
-# 443 ONLY to non-RFC1918 destinations (cloud APIs, the Claude Code installer/updater) -- one ACCEPT per
-# excluded range (`! -d RANGE`), each still requiring dport 443, so ALL of them must match for the packet to be
-# accepted by any single rule; iptables has no single-rule "not in this list of ranges" -- the equivalent is one
-# rule per exclusion, each of which the packet must independently satisfy, so chain them with a single rule
-# using multiple `! -d` is NOT how iptables works (a rule can only test one `-d`), so instead: build an ipset-
-# free approximation with one rule per exclusion, each dropping the destination BEFORE it ever reaches the
-# generic 443 ACCEPT below. Simpler and equally correct: reject 443 to each private range FIRST (still above
-# the later generic ACCEPT, thanks to -I 1 ordering), then accept 443 generically.
+# 443 ONLY to non-RFC1918 destinations (cloud APIs, the Claude Code installer/updater). iptables has no
+# single-rule "not in this list of ranges" -- the equivalent is one DROP rule per excluded range, each of which
+# must land ABOVE the generic 443 ACCEPT in the FINAL chain so it is evaluated first.
+#
+# ORDERING BUG FIXED (2026-09-29 re-review, MEDIUM-1): this used to EXECUTE the generic ACCEPT LAST (after the
+# private-range DROP loop) -- but `-I ... 1` means the LAST rule EXECUTED ends up FIRST in the chain, so the
+# generic ACCEPT landed ABOVE every private-range DROP, matching (and thus silently accepting) 443 traffic to
+# this very server's own reverse-proxied LAN services before any DROP rule ever got a chance to fire (confirmed
+# with --dry-run: the printed EXECUTION order does not by itself show this -- it is the -I semantics applied to
+# that order that put ACCEPT on top). THE FIX: execute the generic ACCEPT FIRST, then the private-range DROPs
+# -- each DROP's `-I 1` now pushes the already-inserted ACCEPT further down, so the final chain (top to bottom)
+# reads private-range DROPs, then the generic ACCEPT, exactly as intended.
+run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -p tcp --dport 443 \
+    -m comment --comment "$COMMENT" -j ACCEPT
 for r in "${PRIVATE_RANGES[@]}"; do
   run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -d "$r" -p tcp --dport 443 \
       -m comment --comment "$COMMENT" -j DROP
 done
-run "$IPTABLES" -I DOCKER-USER 1 -s "$SUBNET" -p tcp --dport 443 \
-    -m comment --comment "$COMMENT" -j ACCEPT
 
 # ---- INPUT: block the container from reaching homelab-server's OWN listening services over the bridge,
 #      except any host port explicitly declared needed above (almost certainly none). ------------------------

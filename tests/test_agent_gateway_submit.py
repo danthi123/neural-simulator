@@ -149,30 +149,54 @@ def test_gpu_refuses_an_argument_with_shell_metacharacters():
     assert "allowed pattern" in res.stderr
 
 
-def test_gpu_refuses_an_out_path_outside_the_allowed_root():
+def test_gpu_redirects_an_out_path_outside_the_allowed_root_into_the_per_job_dir():
+    # 2026-09-29 re-review, LOW: a job must never write the SHARED research/findings/raw/ directly -- the
+    # caller's directory is now always discarded outright (never trusted enough to validate), and only the
+    # BASENAME is kept, relocated under a fresh per-job subdirectory that is the ONLY thing bound writable.
     d, sha, _ = _make_repo()
     log, env = _stub_set(d)
     res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--",
                 "--seed", "7", "--out", "research/coordination/x.json"], env)
-    assert res.returncode != 0
-    assert "does not resolve under research/findings/raw" in res.stderr
+    assert res.returncode == 0, res.stdout + res.stderr
+    line = next(l for l in open(log).read().splitlines() if l.startswith("GPU_QUEUE add"))
+    assert "research/coordination" not in line
+    assert "_agent_jobs" in line and "/x.json" in line
 
 
-def test_gpu_refuses_an_out_path_with_dotdot():
+def test_gpu_redirects_an_out_path_with_dotdot_into_the_per_job_dir():
     d, sha, _ = _make_repo()
     log, env = _stub_set(d)
     res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--",
                 "--seed", "7", "--out=research/findings/raw/../../etc/passwd"], env)
-    assert res.returncode != 0
-    assert "does not resolve under research/findings/raw" in res.stderr or "contains '..'" in res.stderr
+    assert res.returncode == 0, res.stdout + res.stderr
+    line = next(l for l in open(log).read().splitlines() if l.startswith("GPU_QUEUE add"))
+    assert "etc/passwd" not in line and ".." not in line
+    assert "_agent_jobs" in line and "/passwd" in line
 
 
-def test_gpu_accepts_an_out_path_inside_the_allowed_root():
+def test_gpu_refuses_an_out_value_whose_basename_is_dotdot():
+    # ';' and other shell metacharacters are already refused by the earlier arg-charset check (ARG_RE) --
+    # this exercises the ONE thing that charset does NOT rule out: a basename of exactly '..', which is made
+    # entirely of otherwise-safe characters but would let os.path.join(job_out_dir, '..') escape the job dir.
     d, sha, _ = _make_repo()
     log, env = _stub_set(d)
     res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--",
-                "--seed", "7", "--out", "research/findings/raw/o.json"], env)
+                "--seed", "7", "--out=research/findings/raw/.."], env)
+    assert res.returncode != 0
+    assert "not safe" in res.stderr
+
+
+def test_gpu_only_binds_the_per_job_dir_writable_not_the_shared_raw_dir():
+    d, sha, _ = _make_repo()
+    log, env = _stub_set(d)
+    res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--",
+                "--seed", "7", "--out", "o.json"], env)
     assert res.returncode == 0, res.stdout + res.stderr
+    line = next(l for l in open(log).read().splitlines() if l.startswith("GPU_QUEUE add"))
+    shared_raw = os.path.join(d, "research", "findings", "raw")
+    # the shared raw dir itself must never appear as a --bind target (only its _agent_jobs/<id> subdir may)
+    assert ("--bind %s %s" % (shared_raw, shared_raw)) not in line
+    assert "_agent_jobs" in line
 
 
 # ---------------------------------------------------------------------------------------------- gate-seed guard
@@ -228,19 +252,31 @@ def test_gpu_builds_a_sandboxed_command_with_the_required_bwrap_flags():
     calls = open(log).read()
     assert "GPU_QUEUE add" in calls
     line = next(l for l in calls.splitlines() if l.startswith("GPU_QUEUE add"))
-    assert "--ro-bind / /" in line
-    assert "--unshare-net" in line
+    # 2026-09-29 re-review, HIGH-1: rebuilt from empty -- NEVER a blanket --ro-bind / /  any more.
+    assert "--ro-bind / /" not in line
+    assert "--unshare-all" in line
     assert "--die-with-parent" in line
-    assert "--tmpfs" in line and ".ssh" in line
+    assert "--new-session" in line
+    assert "--clearenv" in line
+    assert "--proc /proc" in line
+    assert "--dev /dev" in line
+    assert "--ro-bind /usr /usr" in line
+    assert "--ro-bind /sys /sys" in line
+    assert "--symlink usr/lib /lib" in line
+    # never a blanket bind of /home, /etc, /proc (beyond the fresh one above), or /run
+    for bad in ("--bind /home", "--ro-bind /home", "--bind /etc", "--ro-bind /etc",
+                "--bind /run", "--ro-bind /run"):
+        assert bad not in line, "must never bind %r: %s" % (bad, line)
     checkout = os.path.join(d, ".claude", "worktrees", "agent-jobs", sha)
     assert checkout in line
-    out_dir = os.path.join(d, "research", "findings", "raw")
-    assert out_dir in line
-    assert "bash -c" in line
+    assert "_agent_jobs" in line   # the per-job output dir, not the shared raw dir
     assert "research.runners.foo" in line
+    # no shell wrapper any more -- the venv's python is exec'd directly
+    assert "bash -c" not in line
+    assert os.path.join(checkout, ".venv", "bin", "python") in line
 
 
-def test_gpu_creates_a_detached_worktree_pinned_at_the_sha():
+def test_gpu_creates_a_detached_worktree_pinned_at_the_sha_with_a_venv_symlink():
     d, sha, _ = _make_repo()
     log, env = _stub_set(d)
     res = _run(["gpu", "--sha", sha, "--runner", "research.runners.foo", "--", "--seed", "7"], env)
@@ -249,8 +285,12 @@ def test_gpu_creates_a_detached_worktree_pinned_at_the_sha():
     assert os.path.isdir(checkout)
     head = _git(["rev-parse", "HEAD"], checkout).stdout.strip()
     assert head == sha
+    # the ONLY expected "dirt" is the untracked .venv symlink this script itself creates (matching the
+    # convention every other worktree in the real repo already uses) -- no TRACKED file may be modified.
     status = _git(["status", "--porcelain"], checkout).stdout
-    assert status == ""
+    assert status.strip() in ("", "?? .venv"), status
+    assert os.path.islink(os.path.join(checkout, ".venv"))
+    assert os.path.realpath(os.path.join(checkout, ".venv")) == os.path.realpath(os.path.join(d, ".venv"))
 
 
 def test_gpu_reuses_an_existing_correct_worktree_on_a_second_submit():

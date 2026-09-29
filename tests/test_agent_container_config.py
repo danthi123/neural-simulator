@@ -200,6 +200,14 @@ def test_compose_network_has_a_fixed_subnet():
     assert subnets[0] == "172.30.30.0/24"
 
 
+def test_compose_network_has_ipv6_disabled():
+    # 2026-09-29 re-review, LOW: egress.sh only governs IPv4 -- rather than build and keep a parallel
+    # ip6tables ruleset in sync, IPv6 is disabled outright on this bridge so there is no v6 traffic for a
+    # missing rule to ever leave ungoverned.
+    compose = _compose()
+    assert compose["networks"]["agent-net"].get("enable_ipv6") is False
+
+
 def test_compose_service_bounds_its_log_size():
     # 2026-09-29 security review, M3: the default json-file driver has no size cap -- an agent-authored job
     # that logs heavily could fill this shared server's disk.

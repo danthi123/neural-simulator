@@ -20,7 +20,9 @@ VALIDATION (all of this refuses before anything is queued or executed):
   - every argument token matches `^[A-Za-z0-9_./=:,+@%-]+$` (no shell metacharacters at all: no spaces, quotes,
     `$`, backticks, `;`, `|`, `&`, redirection, globs -- so even if something downstream ever concatenated
     these into a string, there would be nothing for an attacker's token to DO).
-  - any `--out`/`--out=` argument resolves (realpath, no `..` component) under `research/findings/raw/`.
+  - any `--out`/`--out=` argument is reduced to its BASENAME and relocated under a fresh, per-job subdirectory
+    of `research/findings/raw/_agent_jobs/` (2026-09-29 re-review, LOW: a job must not write the shared raw/
+    directory directly) -- the caller's directory component is discarded outright, never merely validated.
   - a GATE seed (42/43/44/100/101/102) requires a `--prereg <path>` that exists as a COMMITTED file at the
     pinned --sha (tools/gate_seed_guard.py, shared with tools/local_llm/gpu_add.sh -- CLAUDE.md non-negotiable).
 
@@ -42,13 +44,13 @@ M2/H2) -- they are dedicated, disposable compute with no credentials of their ow
 tools/pool_provision.sh deploys, not shared infrastructure a malicious job could pivot from the way the
 workstation's own GPU process could.
 """
-import glob
 import os
 import re
 import shlex
 import shutil
 import subprocess
 import sys
+import uuid
 
 ROOT = os.environ.get("AGENT_GATEWAY_SUBMIT_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # gate_seed_guard.py ships alongside THIS script in the real codebase and is resolved from ITS OWN directory,
@@ -61,11 +63,19 @@ POOL_PROVISION_SH = os.environ.get("AGENT_GATEWAY_POOL_PROVISION_SH", os.path.jo
 BWRAP = os.environ.get("AGENT_GATEWAY_BWRAP", "bwrap")   # TEST-ONLY override; NEVER set in production
 HOME = os.environ.get("AGENT_GATEWAY_HOME", os.path.expanduser("~"))
 JOBS_DIR = os.path.join(ROOT, ".claude", "worktrees", "agent-jobs")
+# PER-JOB output root (2026-09-29 re-review, LOW): a job must never write into the SHARED research/findings/raw/
+# directly -- every submission gets its own subdirectory here, and only THAT subdirectory is ever bound
+# writable into the sandbox. A (not-yet-written) harvest step is expected to copy real results out of these
+# subdirectories into their permanent home; this script's job is only to make sure a job can never reach
+# anything BUT its own subdirectory.
+AGENT_JOBS_OUT_ROOT = os.path.join(ROOT, "research", "findings", "raw", "_agent_jobs")
+NVIDIA_DEVICES = ["/dev/nvidia0", "/dev/nvidiactl", "/dev/nvidia-uvm", "/dev/nvidia-uvm-tools"]
 
 SHA_RE = re.compile(r'^[0-9a-f]{40}$')
 RUNNER_RE = re.compile(r'^research\.runners\.[A-Za-z0-9_]+$')
 ARG_RE = re.compile(r'^[A-Za-z0-9_./=:,+@%-]+$')
 OUT_RE = re.compile(r'^--out(?:=(.*))?$')
+SAFE_BASENAME_RE = re.compile(r'^[A-Za-z0-9_.-]+$')
 
 
 def die(msg, code=1):
@@ -144,32 +154,34 @@ def validate_args(args):
             die(f"argument does not match the allowed pattern ^[A-Za-z0-9_./=:,+@%-]+$: {a!r}")
 
 
-def find_out_paths(args):
-    outs = []
+def rewrite_out_args(args, job_out_dir):
+    """A job must never write into the SHARED research/findings/raw/ directly (2026-09-29 re-review, LOW) --
+    every `--out`/`--out=` value the caller supplies is reduced to its BASENAME (any directory component,
+    including a `..` traversal attempt, is simply discarded, never trusted or even inspected for validity) and
+    relocated under this job's OWN, freshly-created output subdirectory. There is deliberately no "reject a bad
+    --out path" step any more: a path cannot escape what it is never allowed to keep in the first place."""
+    out = []
     i = 0
     while i < len(args):
         a = args[i]
         m = OUT_RE.match(a)
         if m:
             if m.group(1) is not None:
-                outs.append(m.group(1))
+                value = m.group(1)
             else:
                 i += 1
                 if i >= len(args):
                     die("--out needs a value")
-                outs.append(args[i])
+                value = args[i]
+            base = os.path.basename(value.rstrip("/")) or "out"
+            if not SAFE_BASENAME_RE.match(base) or base in (".", ".."):
+                die(f"--out's filename is not safe: {value!r}")
+            out.append("--out=%s" % os.path.join(job_out_dir, base))
+            i += 1
+            continue
+        out.append(a)
         i += 1
-    return outs
-
-
-def validate_out_paths(outs):
-    allowed = os.path.realpath(os.path.join(ROOT, "research", "findings", "raw"))
-    for o in outs:
-        if ".." in o.split("/"):
-            die(f"--out path contains '..': {o!r}")
-        resolved = os.path.realpath(o if os.path.isabs(o) else os.path.join(ROOT, o))
-        if resolved != allowed and not resolved.startswith(allowed + os.sep):
-            die(f"--out path does not resolve under research/findings/raw/: {o!r}")
+    return out
 
 
 def validate_gate_seed(sha, args, prereg):
@@ -204,6 +216,7 @@ def ensure_worktree(sha):
     if os.path.isdir(path):
         head = git("rev-parse", "HEAD", cwd=path)
         if head.returncode == 0 and head.stdout.strip() == sha:
+            _ensure_venv_symlink(path)
             return path
         # stale/wrong -- remove the registration and the directory, then recreate cleanly below.
         git("worktree", "remove", "--force", path)
@@ -212,60 +225,92 @@ def ensure_worktree(sha):
     res = git("worktree", "add", "--detach", path, sha)
     if res.returncode != 0:
         die(f"could not create the job checkout at {path}: {res.stderr.strip()}")
+    _ensure_venv_symlink(path)
     return path
 
 
-def build_bwrap_argv(checkout, out_dir, inner_cmd):
-    """SANDBOX for an agent-authored GPU job (2026-09-29 security review, H2): the agent can author runner code,
-    so the job runs with `--ro-bind / /` (the whole host filesystem, READ-ONLY) plus tmpfs masks over every
-    credential store this workstation account has (SSH keys, AWS/gitea/npm/docker/rust credentials, the GNOME
-    keyring, Claude Code's own session/auth files, GPG), writable binds ONLY for the job's own pinned checkout
-    and the shared output directory, no network (`--unshare-net`), only the /dev/nvidia* device nodes
-    `--dev-bind`ed in (so cupy can see the GPU and nothing else under /dev), and `--die-with-parent` so a job
-    can never outlive gpu_queue.sh's own process tree. This does not make an agent-authored job TRUSTED -- it
-    bounds what a malicious one can reach: no credentials, no network egress, no write access outside its own
-    checkout/output dir, and no discovery of MORE of the host to escalate from before this container of jobs is
-    itself only ever launched by the ALREADY-restricted tools/agent_gateway.sh trust boundary.
+def _ensure_venv_symlink(path):
+    # matches the convention every OTHER worktree in this repo already uses (`.venv -> <repo>/.venv`, verified
+    # 2026-09-29 across .claude/worktrees/*): `git worktree add` does not create this itself (`.venv` is
+    # gitignored), so `.venv/bin/python` inside a freshly created worktree would otherwise not exist at all.
+    # The symlink is only ever a POINTER; build_bwrap_argv ro-binds the REAL target (ROOT/.venv) at its own
+    # absolute path, so resolving through this symlink inside the sandbox finds real content.
+    link = os.path.join(path, ".venv")
+    target = os.path.join(ROOT, ".venv")
+    if not os.path.islink(link) and not os.path.exists(link):
+        try:
+            os.symlink(target, link)
+        except OSError:
+            pass
+
+
+def build_bwrap_argv(checkout, job_out_dir, inner_argv, home=None, repo_venv=None):
+    """SANDBOX for an agent-authored GPU job, rebuilt FROM EMPTY (2026-09-29 re-review -- HIGH-1: the previous
+    `--ro-bind / /` design left the HOST's real /proc visible with no PID namespace, so a same-uid process's
+    /proc/<pid>/environ (live ANTHROPIC/AWS/GH tokens from the dispatcher, local-llm, Claude Code) was readable,
+    and left /run/user/<uid>/bus + DBUS_SESSION_BUS_ADDRESS reachable, so `systemctl --user` could start a
+    transient unit that runs OUTSIDE the sandbox entirely -- both are real escapes, not merely theoretical).
+    Nothing is trusted by default any more; every path below was individually verified NEEDED (a real `cupy`
+    array op run through this exact argv; the six sandbox-escape properties below are pinned by real-bwrap
+    tests in tests/test_agent_gateway_submit_sandbox_security.py, and a real GPU compute smoke through the
+    actual gpu_queue.sh was run manually -- see this commit's message for the result):
+
+      - `--unshare-all` (net, pid, ipc, uts, cgroup, AND user -- verified this still sees the GPU: the device
+        nodes are world-rw, so namespace-mapped uids don't affect opening them) + `--die-with-parent` (a job can
+        never outlive gpu_queue.sh's own process tree) + `--new-session` (detaches from any controlling
+        terminal/session, e.g. TIOCSTI-style tricks).
+      - `--clearenv` + an explicit allow-list (PATH, a fresh empty HOME, LANG, SIM_BACKEND, CUDA_VISIBLE_DEVICES,
+        thread-count env vars) -- no ANTHROPIC_*/AWS_*/GH_* token, no DBUS_SESSION_BUS_ADDRESS, no SSH_AUTH_SOCK
+        is ever even in this process's environment to read, from itself or (now impossible anyway) another pid.
+      - a FRESH `--proc /proc` (this process's own, now-isolated pid namespace only -- confirmed: only its own
+        pid 1/2 are visible) and a FRESH `--dev /dev`, then `--dev-bind` ONLY the four nvidia device nodes that
+        exist on this box -- never `/dev` itself, never `/run` or `/run/user/*` (both simply do not exist inside
+        the sandbox at all: dbus/systemd --user are unreachable, not merely denied).
+      - RO-BIND ONLY: `/usr` (+ `/lib`, `/lib64` as the SAME symlinks this Arch-based host already uses, so the
+        dynamic linker and `python3.11` resolve), `/sys` (verified REQUIRED -- cupy's device enumeration fails
+        with `cudaErrorOperatingSystem` without it; nothing narrower was found to work), and the repo's shared
+        `.venv` (cupy + its bundled CUDA runtime libraries; only `libcuda.so.1` itself, the kernel-matched
+        driver library, comes from `/usr`). Never `/`, `/home`, `/etc`, `/proc`, `/run`.
+      - Writable: ONLY the job's own pinned checkout and its OWN per-job output subdirectory (2026-09-29
+        re-review, LOW -- never the shared research/findings/raw/ directly; see rewrite_out_args).
     """
-    home = HOME
-    tmpfs_targets = [
-        os.path.join(home, ".ssh"),
-        os.path.join(home, ".aws"),
-        os.path.join(home, ".claude-config"),
-        os.path.join(home, ".config"),   # no CUDA-specific subpath found under ~/.config on this workstation
-                                          # (verified 2026-09-29, ~/.cupy and ~/.nv are separate TOP-LEVEL dirs,
-                                          # already left readable via the blanket --ro-bind / /); if one ever
-                                          # appears, carve out a --ro-bind for that specific subpath here first.
-        os.path.join(home, ".gnupg"),
-        os.path.join(home, ".local", "share", "keyrings"),
-        # additional credential-bearing dirs found on this workstation (2026-09-29 audit, not exhaustive):
-        os.path.join(home, ".docker"),
-        os.path.join(home, ".cargo"),
-        os.path.join(home, ".pki"),
-        os.path.join(home, ".npm"),
+    home = home or HOME
+    repo_venv = repo_venv or os.path.join(ROOT, ".venv")
+    argv = [
+        BWRAP,
+        "--unshare-all",
+        "--die-with-parent",
+        "--new-session",
+        "--clearenv",
+        "--setenv", "PATH", "/usr/bin:/bin",
+        "--setenv", "HOME", "/tmp/home",
+        "--setenv", "LANG", "C.UTF-8",
+        "--setenv", "SIM_BACKEND", "cupy",
+        "--setenv", "CUDA_VISIBLE_DEVICES", "0",
+        "--setenv", "OMP_NUM_THREADS", "1",
+        "--setenv", "OPENBLAS_NUM_THREADS", "1",
+        "--setenv", "MKL_NUM_THREADS", "1",
+        "--setenv", "NUMEXPR_NUM_THREADS", "1",
+        "--dir", "/tmp/home",
+        "--proc", "/proc",
+        "--dev", "/dev",
     ]
-    file_masks = [
-        # Claude Code's own session/auth files and the Bitwarden ssh-agent socket are FILES, not directories --
-        # tmpfs only masks directories, so these are individually bind-masked with /dev/null instead.
-        os.path.join(home, ".claude.json"),
-        os.path.join(home, ".claude.json.backup"),
-        os.path.join(home, ".bitwarden-ssh-agent.sock"),
-        os.path.join(home, ".git-credentials"),
+    for dev in NVIDIA_DEVICES:
+        if os.path.exists(dev):
+            argv += ["--dev-bind", dev, dev]
+    argv += [
+        "--ro-bind", "/usr", "/usr",
+        "--symlink", "usr/lib", "/lib",
+        "--symlink", "usr/lib64", "/lib64",
+        "--ro-bind", "/sys", "/sys",
     ]
-    argv = [BWRAP, "--ro-bind", "/", "/", "--die-with-parent", "--unshare-net"]
-    for t in tmpfs_targets:
-        if os.path.isdir(t):
-            argv += ["--tmpfs", t]
-    for f in file_masks:
-        if os.path.exists(f):
-            argv += ["--bind", "/dev/null", f]
+    if os.path.isdir(repo_venv):
+        argv += ["--ro-bind", repo_venv, repo_venv]
+    argv += ["--tmpfs", "/tmp"]
     argv += ["--bind", checkout, checkout]
-    argv += ["--bind", out_dir, out_dir]
-    for dev in sorted(glob.glob("/dev/nvidia*")):
-        argv += ["--dev-bind", dev, dev]
-    argv += ["--unsetenv", "AWS_ACCESS_KEY_ID", "--unsetenv", "AWS_SECRET_ACCESS_KEY",
-             "--unsetenv", "ANTHROPIC_API_KEY", "--unsetenv", "GH_TOKEN", "--unsetenv", "SSH_AUTH_SOCK"]
-    argv += ["--", "bash", "-c", inner_cmd]
+    argv += ["--bind", job_out_dir, job_out_dir]
+    argv += ["--chdir", checkout]
+    argv += ["--"] + inner_argv
     return argv
 
 
@@ -274,15 +319,16 @@ def cmd_gpu(argv):
     validate_sha(sha)
     validate_runner(sha, runner)
     validate_args(args)
-    validate_out_paths(find_out_paths(args))
     validate_gate_seed(sha, args, prereg)
     ensure_bwrap()
     checkout = ensure_worktree(sha)
-    out_dir = os.path.join(ROOT, "research", "findings", "raw")
-    os.makedirs(out_dir, exist_ok=True)
-    inner = "cd %s && SIM_BACKEND=cupy .venv/bin/python -u -m %s %s" % (
-        shlex.quote(checkout), shlex.quote(runner), " ".join(shlex.quote(a) for a in args))
-    bwrap_argv = build_bwrap_argv(checkout, out_dir, inner)
+    job_id = "%s-%s" % (sha[:12], uuid.uuid4().hex[:8])
+    job_out_dir = os.path.join(AGENT_JOBS_OUT_ROOT, job_id)
+    os.makedirs(job_out_dir, exist_ok=True)
+    args = rewrite_out_args(args, job_out_dir)
+    venv_python = os.path.join(checkout, ".venv", "bin", "python")
+    inner_argv = [venv_python, "-u", "-m", runner] + args
+    bwrap_argv = build_bwrap_argv(checkout, job_out_dir, inner_argv)
     job_line = " ".join(shlex.quote(a) for a in bwrap_argv)
     res = subprocess.run(["bash", GPU_QUEUE_SH, "add", job_line])
     return res.returncode
@@ -295,8 +341,15 @@ def cmd_pool(argv):
     validate_sha(sha)
     validate_runner(sha, runner)
     validate_args(args)
-    validate_out_paths(find_out_paths(args))
     validate_gate_seed(sha, args, prereg)
+    # PER-JOB output subdir, same rationale as gpu-submit (2026-09-29 re-review, LOW): a job must not write the
+    # shared research/findings/raw/ directly. Pool jobs run on a REMOTE node against its own
+    # ~/derisk-pool/revisions/<sha> checkout, so this is a RELATIVE path (resolved against that remote
+    # checkout), not the local absolute AGENT_JOBS_OUT_ROOT gpu-submit uses -- the existing pool result-sync
+    # mechanism (tools/pool_sync.sh) is what eventually copies it back into this repo.
+    job_id = "%s-%s" % (sha[:12], uuid.uuid4().hex[:8])
+    job_out_dir_rel = "research/findings/raw/_agent_jobs/%s" % job_id
+    args = rewrite_out_args(args, job_out_dir_rel)
     # BEST-EFFORT, NON-BLOCKING provisioning of this revision ahead of dispatch (2026-09-29, H2: "build the
     # standard provisioned job line ... from the structured request"). The job line below pins to
     # ~/derisk-pool/revisions/<sha>, the exact layout tools/pool_provision.sh --isolated creates; the dispatcher
@@ -305,8 +358,8 @@ def cmd_pool(argv):
     # round trip -- and in tests AGENT_GATEWAY_POOL_PROVISION_SH points at a stub that never touches a real node.
     subprocess.Popen(["bash", POOL_PROVISION_SH, "--revision", sha, "--isolated"],
                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    job_line = "cd ~/derisk-pool/revisions/%s && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -u -m %s %s" % (
-        sha, runner, " ".join(args))
+    job_line = "cd ~/derisk-pool/revisions/%s && mkdir -p %s && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -u -m %s %s" % (
+        sha, job_out_dir_rel, runner, " ".join(args))
     res = subprocess.run(["bash", POOL_QUEUE_SH, "add", job_line, "--checked", checked])
     return res.returncode
 

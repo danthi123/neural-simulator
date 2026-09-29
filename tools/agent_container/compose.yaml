@@ -84,6 +84,11 @@ services:
 networks:
   agent-net:
     driver: bridge
+    # NO IPv6 (2026-09-29 re-review, LOW): tools/agent_container/egress.sh only writes IPv4 iptables rules --
+    # an ip6tables ruleset would have to be built and kept in exact sync with it to close the same gaps for v6
+    # traffic. Simpler and strictly stronger: give the bridge no IPv6 capability at all, so there is no v6
+    # traffic for a missing ip6tables rule to ever leave ungoverned in the first place.
+    enable_ipv6: false
     ipam:
       config:
         # FIXED SUBNET (2026-09-29 security review, M1): tools/agent_container/egress.sh's iptables DOCKER-USER
