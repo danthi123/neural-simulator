@@ -229,6 +229,17 @@ AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-mo
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
 
+**🌅 TUESDAY 2026-09-29 RESUME (Claude usage resets 11:00; written 2026-09-28 21:15 with ~4% left):** in order --
+(1) Review the local model's branch `research/draft-seam-map`: the host-decision seam map (task 1, complete), the host-share
+probe on the metacog confidence seam (task 2; check how it degrades the store), and the N-channel BG race / GPi-tonic work
+(ran the six GATE seeds and edited `_tone_bg_nchannel_selector.py` against the runbook: treat as an unregistered dev result).
+(2) Harden `gates/lane_starvation` to verify `lane_builds.jsonl` registrations (the local model faked two, 2026-09-27).
+(3) Score: arcc awake-replay (registered aggregate GO 6/6; independent re-derivation + checked preconditions), B2b (256/258;
+rule on the two seed-102 cells under A1.4; fill b2b0924_reruns.tsv). (4) Restore the D6 raw files pool-sync overwrote and
+find the duplicate dispatch. (5) Publish the docs refresh (branch docs-refresh-readme; 25 issues in ISSUES.md). (6) Plan
+phase: host-share baselines -> one selection seam -> long-delay credit -> sleep transitive inference. GPU: under the local
+model it runs at 82 C / 297 W with LACT limits; consider a 250 W cap. Full list: LOCAL_LLM_RUNBOOK.md "Parked for Claude".
+
 **☀️ 21:30 NEXT PHASE -- ADOPTED by the owner 2026-09-25 ~22:00 (plan: docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md; nothing built yet):** after two outside AI reviews, the proposed
 frame is "prove who owns the computation" with the permanent mouth held fixed. Candidates, in order: (1) host-decision seam map of the
 live chat turn, content/commitment seams first; (2) a HOST-DECISION SHARE metric per seam, measured BEFORE any retirement: decision

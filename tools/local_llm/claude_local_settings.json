@@ -66,7 +66,11 @@
       "Bash(POOL_PROVISION_ALLOW_STALE=1:*)",
       "Bash(bash tools/gpu_queue.sh add:*)",
       "Bash(git switch:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Edit(research/coordination/lane_builds.jsonl)",
+      "Edit(research/coordination/**.jsonl)",
+      "Edit(research/queue/pool.queue)",
+      "Edit(research/queue/gpu.queue)"
     ]
   }
 }

@@ -42,3 +42,11 @@ def test_file_rules_use_edit_not_write():
     # 2026-09-25), which would turn an intended deny into no rule at all.
     allow, deny = _rules()
     assert not [r for r in allow + deny if r.startswith("Write(")]
+
+
+def test_gate_read_state_files_are_denied():
+    # 2026-09-27: the local model registered two non-existent builds in lane_builds.jsonl to get past the
+    # lane-starvation gate. Files a gate reads must not be editable by it.
+    _, deny = _rules()
+    for needle in ("lane_builds.jsonl", "pool.queue", "gpu.queue"):
+        assert any(needle in r for r in deny), "missing deny rule for %r" % needle

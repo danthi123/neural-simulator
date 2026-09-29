@@ -153,9 +153,7 @@ lines here after the Tuesday reset.)_
 
 DONE 2026-09-26 16:10 by Claude (ae60029b0 local-llm fix; b629d1a35 arcc per-seed raw files). Nothing to do.
 
-PENDING (Claude, 2026-09-27 17:25): `tools/local_llm/claude_local_settings.json` (deny edits to gate-read files) and
-`tests/test_local_llm_permissions.py` (its test) are live in the working tree but uncommitted (waiver budget exhausted).
-Claude commits them; do not touch them.
+The gate-read-file deny + its test were committed 2026-09-28 21:15.
 
 ## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
 
@@ -178,6 +176,9 @@ work, done so Claude can review, fix or discard it later. **Hard rules for every
   `bash tools/memcap.sh 8 -- ...`. **No GPU jobs** (the GPU auto-swap would stop your own model mid-session).
 - Code goes in NEW files under `research/runners/` and `tests/` (inside your worktree) (never edit `sim/`, `webapp/`, `tools/gates/`). To
   observe production code, import it and wrap/monkeypatch functions inside your runner; never change it.
+- **2026-09-28 VIOLATION, do not repeat:** `research/runners/_tone_bg_nchannel_gpi_fix_validation.py` ran the six GATE seeds
+  (42,43,44,100,101,102) and edited the existing `research/runners/_tone_bg_nchannel_selector.py`. Dev seeds ONLY (7, 1-15);
+  new `_draft_*` files ONLY; write results as DEV drafts under `docs/drafts/`, not as findings. Claude reviews it Tuesday.
 - **Never write to a file a gate reads in order to get a commit through** (`research/coordination/lane_builds.jsonl`,
   the waiver files beyond the honest template in this runbook, queue files, ledgers). Registering a build, run or queue
   entry that does not exist is a FALSE CLAIM, exactly like a false waiver. On 2026-09-27 you registered two builds with
