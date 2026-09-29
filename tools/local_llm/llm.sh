@@ -2,7 +2,7 @@
 # llm -- run a local model for Claude Code, and get the GPU back for experiments with one command.
 #
 #   llm on [profile] [--wait]  load the model (default profile: tools/local_llm/default_profile). Refuses while
-#                              a tools/gpu_queue.sh job is running/queued (same 3090 -- see AUTOSWAP below);
+#                              a tools/gpu_queue.sh job is running/queued (same 3090 -- see COORDINATION below);
 #                              --wait blocks until the queue drains instead of refusing.
 #   llm off              unload it (frees its VRAM); also cancels any pending gpu_queue auto-restore (below)
 #   llm status           what is loaded, and GPU memory in use
@@ -13,23 +13,34 @@
 #                        desktop session that overflows the local window); `llm claude --resume <id>` resumes any.
 #   llm resume           same as `llm claude --continue`
 #   llm run <command>    unload the model, run <command> to completion, reload the model, print how it ended
+#   llm yield [--max-hours N]   DRIVER-initiated GPU handoff (default 10h): stop this unit (gracefully) so
+#                                tools/gpu_queue.sh can drain its queue, then auto-reload the SAME profile and
+#                                resume THIS session headless once the queue empties or the window expires.
+#                                Refuses under GAME_MODE, with an empty GPU queue, or with uncommitted tracked
+#                                changes in any .claude/worktrees/draft-* worktree.
 #
 # Profiles (model file, context size, sampling, speculative decoding) live in tools/local_llm/profiles.json and were
 # chosen by tools/local_llm/bakeoff.py on this machine: 4 GB of the 24 GB card is left for the displays.
 # Add `alias llm='bash ~/Projects/sim/tools/local_llm/llm.sh'` to your shell config to type just `llm`.
 #
-# AUTOSWAP (2026-09-25, see docs/LOCAL-MODEL-OFFLOAD.md; fix-round same day): this unit and tools/gpu_queue.sh
-# jobs are NOT coordinated on their own and both want the one 3090, so gpu_queue.sh's dispatcher stops this unit
-# itself -- DIRECTLY via systemctl, never by shelling out to this script's own `off` (that would delete the very
-# marker the stop is about to write, see cmd_off's comment below) -- right before a queued job would contend
-# with it for VRAM, and restarts it, with the SAME profile that was running, once the queue drains -- ONLY if it
-# found this unit actually running (never fabricates an "it was on" memory) and only after a VERIFIED stop. The
-# two scripts share research/queue/.local_llm_was_on as a one-shot marker whose CONTENTS are the profile name to
-# restore: `llm off` always removes it (a manual/explicit off cancels the pending auto-restore, even mid-job),
-# and gpu_queue consumes it right before its one restart attempt (so a crash or a failed restart is never
-# retried forever). A refused `llm on` (GPU busy, no --wait) also WRITES this marker itself, recording the
-# owner's intent to have it loaded, so the "it will load automatically once the queue drains" message it prints
-# is actually true. Gaming's PAUSE sentinel (tools/game.sh) defers that restore rather than skipping it.
+# COORDINATION WITH tools/gpu_queue.sh (2026-09-25 auto-swap; retired 2026-09-29 for an explicit GPU YIELD --
+# docs/plans/2026-09-29-local-model-transition-PLAN.md section 3). This unit and tools/gpu_queue.sh jobs both want
+# the one 3090 and are not coordinated on their own. The ORIGINAL fix had gpu_queue.sh stop this unit itself the
+# instant a job was queued -- with the local model now the day-to-day DRIVER, that stop lands mid-session and
+# loses whatever it was doing. So a queued GPU job no longer stops this unit automatically: gpu_queue.sh's
+# dispatcher just HOLDS the job (never starts it) for as long as this unit is active. The driver frees the card
+# only by choosing to, via `llm yield` above: it stops itself (gracefully -- see cmd_stop_graceful) and writes
+# research/queue/.llm_yield, naming the session/profile to restore and a deadline; gpu_queue.sh's dispatcher
+# drains its queue while that marker exists, then reloads the SAME profile and resumes the SAME session headless.
+# GAME_MODE (tools/game.sh) still takes precedence over all of this -- checked by both scripts, and gaming's own
+# pause already holds the queue regardless.
+#
+# A separate, still-live marker: research/queue/.local_llm_was_on, CONTENTS = the profile name. `llm on` (the
+# OWNER, not the driver) refusing to load because a GPU job is busy writes this itself, recording the intent to
+# load once the queue clears -- `llm off` always removes it (a manual/explicit off cancels that pending
+# auto-restore, even mid-job), and gpu_queue.sh's own llm_restore_if_idle consumes it right before its one
+# restart attempt (so a crash or a failed restart is never retried forever). Gaming's PAUSE sentinel defers that
+# restore rather than skipping it.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PORT="${LLM_PORT:-8080}"
@@ -41,7 +52,9 @@ SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}   # TEST-ONLY override (shared name 
 _GIT_COMMON=$(git -C "$HERE" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)
 if [ -n "$_GIT_COMMON" ] && [ -d "$(dirname "$_GIT_COMMON")" ]; then _LLM_SHARED_ROOT="$(dirname "$_GIT_COMMON")"; else _LLM_SHARED_ROOT="$HERE/../.."; fi
 QDIR="${GPU_QUEUE_DIR:-$_LLM_SHARED_ROOT/research/queue}"
-LLM_WAS_ON_MARKER="$QDIR/.local_llm_was_on"   # gpu_queue.sh's autoswap marker (its llm_stop_for_job/llm_restore_if_idle); CONTENTS = the profile to restore
+LLM_WAS_ON_MARKER="$QDIR/.local_llm_was_on"   # gpu_queue.sh's own `llm on`-refusal marker (its llm_restore_if_idle); CONTENTS = the profile to restore
+LLM_YIELD_MARKER="$QDIR/.llm_yield"           # `llm yield`'s own marker; LLM_YIELD_SESSION=/LLM_YIELD_PROFILE=/LLM_YIELD_DEADLINE=<epoch seconds>
+GAME_MODE_FILE="$QDIR/GAME_MODE"              # tools/game.sh's sentinel -- absolute priority over a yield
 LLM_WAIT_POLL_SEC="${LLM_WAIT_POLL_SEC:-5}"   # `llm on --wait` poll cadence; TEST-ONLY override for a fast test
 DPID="$QDIR/gpu_queue.dpid"                   # gpu_queue.sh's own dispatcher-pid + singleton-lock files (read-only from here)
 DLOCK="$QDIR/.gpu_daemon.lock"
@@ -72,7 +85,7 @@ gpu_job_busy() {
 
 current_profile() {
   # The profile name embedded in this unit's own Description ("local LLM (<profile>)"), set by cmd_on's
-  # systemd-run --description. Used by gpu_queue.sh's llm_stop_for_job to remember WHICH profile to restore
+  # systemd-run --description. Used by `cmd_yield` to record WHICH profile to restore in the .llm_yield marker
   # (LOW finding, 2026-09-25 fix-round: a bare marker always restored the DEFAULT profile, even when a
   # different one was actually running). Empty when not up / unparseable.
   local desc
@@ -167,10 +180,27 @@ cmd_on() {
 cmd_off() {
   if "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then "$SYSTEMCTL" --user stop "$UNIT"; echo "unloaded"; else echo "not loaded"; fi
   "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
-  # An explicit/manual off ALWAYS cancels gpu_queue's autoswap "restore it when the queue drains" intent -- even
-  # when this unit was already down because gpu_queue itself stopped it for a job (the owner's `llm off` mid-job
-  # must stick; the queue draining afterward must not silently reload it against that choice).
+  # An explicit/manual off ALWAYS cancels gpu_queue's pending "restore it when the queue drains" intent -- even
+  # when this unit was already down for some other reason (the owner's `llm off` must stick; the queue draining
+  # afterward must not silently reload it against that choice).
   rm -f "$LLM_WAS_ON_MARKER"
+}
+
+# __stop_graceful <delay-seconds>: used by `llm yield` and by `game.sh on --graceful`. delay<=0 stops immediately
+# (same body as cmd_off, minus its marker cleanup -- callers that need that do it themselves); delay>0 schedules
+# the stop via a one-shot transient systemd timer and returns immediately, so a caller invoking this from INSIDE
+# its own chat turn (the model calling `llm yield` on itself) can finish replying before the server actually
+# dies. Never blocks, never waits for the stop to land.
+cmd_stop_graceful() {
+  local delay="${1:-0}"
+  if [ "$delay" -gt 0 ] 2>/dev/null && "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then
+    systemd-run --user --quiet --on-active="${delay}s" --unit="${UNIT}-graceful-stop-$$" \
+      bash -c "\"$SYSTEMCTL\" --user stop \"$UNIT\"; \"$SYSTEMCTL\" --user reset-failed \"$UNIT\" >/dev/null 2>&1 || true"
+    echo "graceful stop of $UNIT scheduled in ${delay}s"
+  else
+    if "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then "$SYSTEMCTL" --user stop "$UNIT"; echo "unloaded"; else echo "not loaded"; fi
+    "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
+  fi
 }
 
 cmd_status() {
@@ -261,6 +291,47 @@ cmd_run() {
   return "$rc"
 }
 
+# cmd_yield [--max-hours N]: the driver's own GPU handoff (default 10h). Refuses (returns 1, changes nothing)
+# under GAME_MODE (gaming is the owner's absolute priority, and the marker/session bookkeeping below would only
+# race it), with an empty GPU queue (nothing to yield FOR), or with uncommitted tracked changes in any
+# `draft-*` worktree (a yield can auto-resume hours later into a checkout the driver never finished; the
+# runbook's own hard rule is "commit before you queue", so this just enforces it at the handoff itself). Only
+# TRACKED changes count (--untracked-files=no): a scratch/log file mid-draft is not a reason to refuse.
+cmd_yield() {
+  local max_hours=10
+  while [ $# -gt 0 ]; do
+    case "$1" in --max-hours) max_hours="${2:-10}"; shift 2 ;; *) shift ;; esac
+  done
+  if [ -f "$GAME_MODE_FILE" ]; then
+    echo "refusing to yield: GAME_MODE is set (owner gaming/away) -- see: bash tools/game.sh status"; return 1
+  fi
+  if [ ! -s "$QDIR/gpu.queue" ]; then
+    echo "refusing to yield: the GPU queue is empty -- nothing queued to run in the window."; return 1
+  fi
+  local wt dirty=""
+  local draft_root="${LLM_YIELD_DRAFT_ROOT:-$_LLM_SHARED_ROOT}"   # TEST-ONLY override; NEVER set in production
+  for wt in "$draft_root"/.claude/worktrees/draft-*; do
+    [ -d "$wt" ] || continue
+    if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then dirty="$dirty $wt"; fi
+  done
+  if [ -n "$dirty" ]; then
+    echo "refusing to yield: uncommitted tracked changes in:$dirty -- commit (through the normal gates) before yielding."
+    return 1
+  fi
+  is_up || { echo "refusing to yield: $UNIT is not loaded -- nothing to yield."; return 1; }
+  local sess prof deadline
+  sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
+  prof="$(current_profile)"
+  deadline=$(( $(date +%s) + max_hours * 3600 ))
+  {
+    echo "LLM_YIELD_SESSION=$sess"
+    echo "LLM_YIELD_PROFILE=$prof"
+    echo "LLM_YIELD_DEADLINE=$deadline"
+  } > "$LLM_YIELD_MARKER"
+  echo "yielding for up to ${max_hours}h (session=${sess:-<none>} profile=${prof:-<default>} deadline=$deadline); stopping $UNIT gracefully"
+  cmd_stop_graceful 45
+}
+
 case "${1:-status}" in
   on) shift; cmd_on "$@" ;;
   off) cmd_off ;;
@@ -273,6 +344,8 @@ case "${1:-status}" in
   resume|continue) shift; cmd_claude --continue "$@" ;;
   __session_args) shift; llm_session_args "$@" | tr '\0' ' '; echo ;;   # TEST-ONLY: show the rewritten args
   run) shift; cmd_run "$@" ;;
-  __current_profile) current_profile ;;   # hidden: gpu_queue.sh's llm_stop_for_job reads this to remember the profile
-  *) sed -n '2,27p' "$0"; exit 2 ;;
+  yield) shift; cmd_yield "$@" ;;
+  __stop_graceful) shift; cmd_stop_graceful "$@" ;;   # hidden: also used by tools/game.sh on --graceful
+  __current_profile) current_profile ;;   # hidden diagnostic: which profile (if any) this unit is currently serving
+  *) sed -n '2,24p' "$0"; exit 2 ;;
 esac
