@@ -1,0 +1,79 @@
+{
+  "task": "draft_long_delay_credit",
+  "status": "DEV, not a verdict (dev seeds; Claude reviews after Tuesday)",
+  "plan": "docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md section 4",
+  "reuse": "sim.kernels.fused_eligibility_trace_decay (unmodified); TD-error + analytic-vstar from sim.td_value_critic",
+  "arms": [
+    "full",
+    "trace_ablated",
+    "immediate",
+    "misleading_final_cue",
+    "shuffled_reward"
+  ],
+  "seeds": [
+    7
+  ],
+  "n_trials": 2000,
+  "rows": [
+    {
+      "arm": "full",
+      "seed": 7,
+      "buffer_accuracy": 1.0,
+      "value_at_cue_A": 0.547,
+      "value_at_cue_B": 0.0416,
+      "value_discrimination": 0.5054,
+      "vrmse": 0.1801,
+      "us_decay": 1.0102,
+      "rpe_at_terminal": 0.00196,
+      "rpe_at_decoy": 0.00197
+    },
+    {
+      "arm": "trace_ablated",
+      "seed": 7,
+      "buffer_accuracy": 1.0,
+      "value_at_cue_A": 0.2469,
+      "value_at_cue_B": 0.2523,
+      "value_discrimination": -0.0054,
+      "vrmse": 0.1804,
+      "us_decay": 1.0105,
+      "rpe_at_terminal": 0.00518,
+      "rpe_at_decoy": 0.00518
+    },
+    {
+      "arm": "immediate",
+      "seed": 7,
+      "buffer_accuracy": 1.0,
+      "value_at_cue_A": 0.6229,
+      "value_at_cue_B": 0.0342,
+      "value_discrimination": 0.5887,
+      "vrmse": 0.1702,
+      "us_decay": 1.0102,
+      "rpe_at_terminal": 0.00161,
+      "rpe_at_decoy": 0.00162
+    },
+    {
+      "arm": "misleading_final_cue",
+      "seed": 7,
+      "buffer_accuracy": 1.0,
+      "value_at_cue_A": 0.547,
+      "value_at_cue_B": 0.0416,
+      "value_discrimination": 0.5054,
+      "vrmse": 0.1801,
+      "us_decay": 1.0102,
+      "rpe_at_terminal": 0.00196,
+      "rpe_at_decoy": 0.00197
+    },
+    {
+      "arm": "shuffled_reward",
+      "seed": 7,
+      "buffer_accuracy": 1.0,
+      "value_at_cue_A": 0.2837,
+      "value_at_cue_B": 0.3258,
+      "value_discrimination": -0.0421,
+      "vrmse": 0.2032,
+      "us_decay": 1.1441,
+      "rpe_at_terminal": 0.0022,
+      "rpe_at_decoy": 0.00221
+    }
+  ]
+}
