@@ -17,6 +17,11 @@ mouth; the #1 metric is the lesion-verified load-bearing fraction:
 **Current phase (owner 2026-09-25): prove who owns the computation.** Which part of the system caused the answer,
 shown causally? A host-decision share, measured by intervention, sits beside the load-bearing fraction:
 `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`.
+**Integration-first + pivot dwell (owner 2026-09-29):** the unit of progress is a faculty ON BY DEFAULT whose lesion
+changes the REPLY; stop adding new faculties while de-risked ones sit off by default; stage-exit attempts are on the
+calendar (Stage 1 by 10-24, Stage 2 by 11-21, Stage 3 by 12-19) and run even if expected to fail. No phase-level
+redirect for four weeks unless a six-seed falsification forces it; every pivot lists what it retires. Evidence:
+`docs/plans/2026-09-29-acceleration-report.md`; long-range path: `docs/plans/2026-09-29-roadmap-to-the-primary-goal.md`.
 
 - **PLAN:** [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
   (faculty map, one-brain architecture, 6 stages, walls ledger; the old 5-gap cluster is a sub-view). Foundation:
