@@ -168,6 +168,20 @@ case "${1:-list}" in
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
            exit 2
          fi
+         # REJECT A NEWLINE/CONTROL CHARACTER IN --checked (2026-09-29 security review, H2). Every queue record
+         # is written as ONE line ("<ts>\t<cmd>  #checked:<CHECKED>\n", below) and every reader (valid_depth/
+         # malformed_depth/list/pop_job) parses the queue file LINE BY LINE. An embedded newline in CHECKED would
+         # split one record into two lines on disk -- letting a crafted --checked value inject what LOOKS like a
+         # second, independently-parseable queue line (potentially a fully-formed, attacker-chosen "#checked:"
+         # record that never went through any of the gates above, since only the FIRST, intended command was
+         # ever checked). `case` matches the pattern against the WHOLE string in bash's own memory (never an
+         # external pipeline that could itself be fooled by a line-split), so this cannot be defeated the way a
+         # `grep -q` per-line scan of the same text could be.
+         case "$CHECKED" in
+           *[![:print:]]*)
+             echo "⛔ REFUSED: --checked must not contain a newline or other control character." >&2
+             exit 2 ;;
+         esac
          # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). Six SETTLE A2 lines were queued as
          # 'A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/... && ...' -- a prose label as the first
          # word -- so the node ran `A2`, got "command not found" (rc=127), and nothing ran, while the board said
@@ -176,6 +190,45 @@ case "${1:-list}" in
          if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then
            echo "$SHAPE_MSG" >&2
            exit 2
+         fi
+         # GATE-SEED GUARD (2026-09-29, docs/plans/2026-09-29-local-model-transition-PLAN.md section 4). The
+         # local model ran the six GATE seeds (42/43/44/100/101/102) on 2026-09-28 with no committed
+         # preregistration -- a GATE-seed result is meant to be a VERDICT, and a verdict without a prereg is
+         # exactly the tuning-toward-the-answer failure mode the runbook's dev/gate-seed split exists to prevent
+         # (dev seeds 7, 1-15 are unaffected; see LOCAL_LLM_RUNBOOK.md's 2026-09-28 VIOLATION entry). Refuse at
+         # enqueue time, cheaply and locally (no ssh), before the node-reachability probes below spend anything.
+         GATE_SEEDS_LIST="42 43 44 100 101 102"
+         JOB_SEED_NUMS=$(printf '%s' "$2" | grep -oE -- '--seeds?(=|[[:space:]]+)[0-9]+([,[:space:]]+[0-9]+)*' \
+           | grep -oE '[0-9]+')
+         HIT_GATE_SEEDS=""
+         for _s in $JOB_SEED_NUMS; do
+           for _g in $GATE_SEEDS_LIST; do
+             if [ "$_s" = "$_g" ]; then
+               case " $HIT_GATE_SEEDS " in *" $_s "*) ;; *) HIT_GATE_SEEDS="$HIT_GATE_SEEDS $_s" ;; esac
+             fi
+           done
+         done
+         HIT_GATE_SEEDS="${HIT_GATE_SEEDS# }"
+         if [ -n "$HIT_GATE_SEEDS" ]; then
+           # A prereg is named in the --checked REASON as "prereg <path>" (matches the convention already used
+           # live in research/queue/dispatch.log, e.g. "prereg research/findings/...-PREREGISTRATION.md ...").
+           PREREG_PATH=$(printf '%s' "$CHECKED" | grep -oE 'prereg[[:space:]]+[^[:space:]]+' | head -1 | awk '{print $2}')
+           GS_PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
+           if [ -z "$PREREG_PATH" ]; then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS] require a committed preregistration." >&2
+             echo "   Add to --checked: '... prereg <path/to/PREREGISTRATION.md> ...'. Dev seeds (7, 1-15) are unaffected." >&2
+             exit 2
+           fi
+           if [ -z "$GS_PINNED_REV" ]; then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS] need the job pinned to a revision (cd ~/derisk-pool/revisions/<sha>)" >&2
+             echo "   so prereg '$PREREG_PATH' can be verified to exist there." >&2
+             exit 2
+           fi
+           if ! git -C "$ROOT" cat-file -e "$GS_PINNED_REV:$PREREG_PATH" 2>/dev/null; then
+             echo "⛔ REFUSED: prereg '$PREREG_PATH' does not exist at pinned revision $GS_PINNED_REV (git cat-file -e failed)." >&2
+             echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
+             exit 2
+           fi
          fi
          # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
          # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node

@@ -1,0 +1,26 @@
+# tools/agent_container/sim-agent-egress.service -- persists the sim-agent egress firewall (egress.sh, M1,
+# 2026-09-29 security review) across a reboot. NOT installed by this build (owner directive: no schedule/unit
+# installed without being asked) -- the OWNER installs it, ON THE SERVER:
+#
+#   sudo cp tools/agent_container/sim-agent-egress.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now sim-agent-egress.service
+#
+# Runs AFTER docker (so the agent-net bridge already exists) and is a oneshot -- it applies the rules once at
+# boot and exits; iptables rules persist in the kernel until the next reboot or an explicit flush, so nothing
+# needs to keep running. Re-running `egress.sh` (this unit, or by hand) is idempotent (see its own header).
+[Unit]
+Description=sim-agent container egress firewall (DOCKER-USER + INPUT rules)
+After=docker.service
+Requires=docker.service
+# If the compose stack itself is also managed by a systemd unit/quadlet, add "After=<that unit>" here so the
+# agent-net bridge is guaranteed to exist before this runs.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# EDIT THIS PATH to wherever ~/sim-agent/ is deployed on this server (docs/AGENT_HARNESS_SETUP.md step (e)).
+ExecStart=/usr/bin/bash /home/USERNAME/sim-agent/tools/agent_container/egress.sh
+
+[Install]
+WantedBy=multi-user.target
