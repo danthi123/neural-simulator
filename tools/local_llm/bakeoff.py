@@ -179,10 +179,15 @@ def worktree(tag):
     return path
 
 
-def run_claude(cwd, prompt, max_turns=30, timeout=1500):
-    env = dict(os.environ, ANTHROPIC_BASE_URL="http://127.0.0.1:%d" % PORT, ANTHROPIC_AUTH_TOKEN="local",
-               ANTHROPIC_MODEL="local", ANTHROPIC_SMALL_FAST_MODEL="local", ANTHROPIC_DEFAULT_HAIKU_MODEL="local",
-               ANTHROPIC_DEFAULT_SONNET_MODEL="local", ANTHROPIC_DEFAULT_OPUS_MODEL="local",
+def run_claude(cwd, prompt, max_turns=30, timeout=1500, base_url=None, token="local", model_name="local"):
+    # base_url/token/model_name (2026-09-29, cloud mechanical-tier validation -- docs/AGENT_HARNESS_SETUP.md):
+    # default to the local llama-server this script itself starts, so every EXISTING caller (the profiles.json
+    # loop in main()) is unaffected; --base-url below is the only caller that overrides them, to point the SAME
+    # T1/T2/T3 agentic tasks at an already-running Anthropic-compatible endpoint instead (e.g. a
+    # tools/agent_container/profiles/*.env cloud profile).
+    env = dict(os.environ, ANTHROPIC_BASE_URL=base_url or ("http://127.0.0.1:%d" % PORT), ANTHROPIC_AUTH_TOKEN=token,
+               ANTHROPIC_MODEL=model_name, ANTHROPIC_SMALL_FAST_MODEL=model_name, ANTHROPIC_DEFAULT_HAIKU_MODEL=model_name,
+               ANTHROPIC_DEFAULT_SONNET_MODEL=model_name, ANTHROPIC_DEFAULT_OPUS_MODEL=model_name,
                CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1", DISABLE_AUTOUPDATER="1", API_TIMEOUT_MS="1200000",
                SIM_NO_PROVENANCE="1")
     for k in ("ANTHROPIC_API_KEY", "CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT", "CLAUDE_CODE_OAUTH_TOKEN"):
@@ -217,13 +222,17 @@ def git_diff_names(cwd):
     return subprocess.run(["git", "diff", "--name-only"], cwd=cwd, capture_output=True, text=True).stdout.split()
 
 
-def tasks(profile):
+def tasks(profile, base_url=None, token="local", model_name="local"):
+    # base_url/token/model_name default to the local llama-server this script started for `profile` -- unchanged
+    # for every existing (profiles.json-driven) caller. main()'s --base-url mode is the only caller that passes
+    # real values, to run these SAME three objective checks against an already-running cloud endpoint instead.
     res = {}
+    rc = dict(base_url=base_url, token=token, model_name=model_name)
     # T1 locate
     wt = worktree(profile["name"] + "-t1")
     r = run_claude(wt, "Which file in this repository implements the PreToolUse guard that blocks deletes aimed at "
                        "~/.claude, and which test file pins it? Reply with just the two repository-relative paths, "
-                       "one per line, and nothing else.", max_turns=15)
+                       "one per line, and nothing else.", max_turns=15, **rc)
     r["pass"] = (".claude/hooks/guard_protected_delete.py" in r["result"]
                  and "tests/test_guard_protected_delete.py" in r["result"])
     res["T1_locate"] = r
@@ -241,7 +250,7 @@ def tasks(profile):
     r = run_claude(wt, "The test suite tests/test_require_memcap_hook.py is failing. Find the cause in the code under "
                        "test and fix it. Do NOT edit the test file. Run the suite with `SIM_NO_PROVENANCE=1 %s -m "
                        "pytest -q tests/test_require_memcap_hook.py` to confirm it passes, then reply with the one-line "
-                       "pytest summary." % VENV_PY)
+                       "pytest summary." % VENV_PY, **rc)
     ok, tail = pytest_ok(wt, "tests/test_require_memcap_hook.py")
     test_untouched = open(test_path).read() == test_before
     r.update({"pass": ok and test_untouched, "pytest": tail, "test_untouched": test_untouched,
@@ -253,7 +262,8 @@ def tasks(profile):
     case = ".venv/bin/python -m research.runners.load_bearing_fraction --score results.json"
     r = run_claude(wt, "In tests/test_require_memcap_hook.py add one new entry to the ALLOW list for the command "
                        "`%s` (a scoring run that builds no brain), then run `SIM_NO_PROVENANCE=1 %s -m pytest -q "
-                       "tests/test_require_memcap_hook.py` and reply with the one-line pytest summary." % (case, VENV_PY))
+                       "tests/test_require_memcap_hook.py` and reply with the one-line pytest summary." % (case, VENV_PY),
+                   **rc)
     ok, tail = pytest_ok(wt, "tests/test_require_memcap_hook.py")
     added = case in open(os.path.join(wt, "tests", "test_require_memcap_hook.py")).read()
     r.update({"pass": ok and added, "pytest": tail, "case_added": added, "changed": git_diff_names(wt)})
@@ -304,8 +314,33 @@ def summarize(recs):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--profiles", nargs="*", help="profile names from profiles.json (default: all)")
+    # --base-url (2026-09-29, cloud mechanical-tier validation -- docs/AGENT_HARNESS_SETUP.md): validates an
+    # ALREADY-RUNNING Anthropic-compatible endpoint (a tools/agent_container/profiles/*.env cloud profile, or
+    # llama-swap itself) by running the SAME objective T1/T2/T3 agentic tasks against it, instead of this script
+    # launching its own local llama-server. No VRAM/load-time/speed measurements (those are meaningless for a
+    # remote endpoint); the pass/fail verdicts are the point.
+    ap.add_argument("--base-url", help="an already-running Anthropic-compatible base URL to validate, e.g. "
+                    "https://api.deepseek.com/anthropic (skips starting a local llama-server profile)")
+    ap.add_argument("--model", help="model name to request at --base-url (required with --base-url)")
+    ap.add_argument("--api-key-env", help="env var holding the bearer token for --base-url, if the endpoint needs one")
     a = ap.parse_args()
     os.makedirs(RESULTS, exist_ok=True)
+    if a.base_url:
+        if not a.model:
+            sys.exit("--base-url requires --model")
+        token = os.environ.get(a.api_key_env, "") if a.api_key_env else ""
+        if a.api_key_env and not token:
+            sys.exit("--api-key-env %s is set but empty/unset in the environment" % a.api_key_env)
+        name = re.sub(r"[^a-zA-Z0-9_.-]+", "_", a.model)
+        rec = {"profile": name, "model": a.model, "base_url": a.base_url, "started": time.strftime("%Y-%m-%d %H:%M:%S")}
+        rec["tasks"] = tasks({"name": name}, base_url=a.base_url, token=token or "local", model_name=a.model)
+        rec["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        out_path = os.path.join(RESULTS, name + ".remote.json")
+        json.dump(rec, open(out_path, "w"), indent=1)
+        verdict = {k: v.get("pass") for k, v in rec["tasks"].items()}
+        print(json.dumps(verdict, indent=1))
+        print("full result: %s" % out_path)
+        return 0 if all(verdict.values()) else 1
     profiles = json.load(open(os.path.join(HERE, "profiles.json")))
     if a.profiles:
         profiles = [p for p in profiles if p["name"] in a.profiles]

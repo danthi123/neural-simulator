@@ -386,6 +386,26 @@ case start
     and echo "agent: sent 'agent-start.sh $profile' into the tmux session -- attach with: agent"
 ```
 
+## Optional: a cheap cloud model for the mechanical tier
+
+Two ready-made cloud profiles (owner-approved 2026-09-29) let `agent start` route mechanical work to a cheap,
+Anthropic-compatible cloud model instead of the workstation's local server: `tools/agent_container/profiles/
+deepseek-flash.env` (DeepSeek's `deepseek-flash` model, `https://api.deepseek.com/anthropic`) and `glm-lite.env`
+(Z.ai's `glm-4.7-flashx`, `https://api.z.ai/api/anthropic`) -- both files cite the provider's own docs for the
+base URL, model id and context window; read either file's header before using it. To use one: create an API
+account with that provider (DeepSeek platform / Z.ai platform) and generate a key; put the key in THIS compose
+project's own `.env` file on the server (next to `tools/agent_container/compose.yaml`, untracked -- never in
+this repo) as `DEEPSEEK_API_KEY=...` or `GLM_API_KEY=...` (compose.yaml has a matching commented example line
+to uncomment); then run `agent start deepseek-flash` (or `agent start glm-lite`) from the workstation. Both
+profiles are `KIND=cloud`, so `tools/agent_gateway.sh yield` and `tools/game.sh` skip pausing the harness for
+them -- mechanical work keeps flowing even while the workstation's GPU is busy or the owner is gaming. Before
+routing real work to either one, validate the endpoint + model name actually work with a quick bake-off run
+(from the workstation, outside the container -- this needs `claude` and this repo checked out locally, and
+costs a little real API spend): `python3 tools/local_llm/bakeoff.py --base-url https://api.deepseek.com/anthropic
+--model deepseek-flash --api-key-env DEEPSEEK_API_KEY` (swap in the GLM base URL/model/env var for that profile).
+It runs the same three objective agentic tasks (T1 locate / T2 debug / T3 extend) the local-model bake-off used
+and prints a PASS/fail verdict per task plus the full result at `tools/local_llm/results/<model>.remote.json`.
+
 ## MANDATORY (escalated from optional in the 2026-09-29 re-review, M3): a size-capped repo/home volume
 
 homelab-server is SHARED (gitea/nextcloud/home-assistant/etc.) and the two named volumes have no built-in size
