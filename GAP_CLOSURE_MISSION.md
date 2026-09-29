@@ -233,10 +233,13 @@ live-check `llm claude`; then hand off.
 (1) Review the local model's branch `research/draft-seam-map`: the host-decision seam map (task 1, complete), the host-share
 probe on the metacog confidence seam (task 2; check how it degrades the store), and the N-channel BG race / GPi-tonic work
 (ran the six GATE seeds and edited `_tone_bg_nchannel_selector.py` against the runbook: treat as an unregistered dev result).
-(2) Harden `gates/lane_starvation` to verify `lane_builds.jsonl` registrations (the local model faked two, 2026-09-27).
+(2) DONE 2026-09-28 81f08f972: `gates/lane_starvation` now requires a registered branch to exist.
 (3) Score: arcc awake-replay (registered aggregate GO 6/6; independent re-derivation + checked preconditions), B2b (256/258;
-rule on the two seed-102 cells under A1.4; fill b2b0924_reruns.tsv). (4) Restore the D6 raw files pool-sync overwrote and
-find the duplicate dispatch. (5) Publish the docs refresh (branch docs-refresh-readme; 25 issues in ISSUES.md). (6) Plan
+rule on the two seed-102 cells under A1.4; the 3 torn-cell re-runs reproduce attempt 1 exactly, logged 0d4e5c81). (4) D6: the overwritten raw files are RESTORED (2026-09-28 22:30; duplicate outputs kept in
+`.claude/worktrees/_d6_duplicate_run_outputs_2026-09-28/`). Cause found: the 09-25 00:03 OOM-recovery re-queue of 14 N=2000
+combos (pool.queue.claims 1740ff) ran cells whose first attempt had also completed; the harvest (fe1066f64) committed the
+first-landed runs and pool-sync later pulled the re-runs over them. Needs a RULING: which run per doubled cell is canonical
+for the D6 score (then re-score if it changes). (5) Publish the docs refresh (branch docs-refresh-readme; 25 issues in ISSUES.md). (6) Plan
 phase: host-share baselines -> one selection seam -> long-delay credit -> sleep transitive inference. GPU: under the local
 model it runs at 82 C / 297 W with LACT limits; consider a 250 W cap. Full list: LOCAL_LLM_RUNBOOK.md "Parked for Claude".
 
