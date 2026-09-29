@@ -1,0 +1,81 @@
+{
+  "enabledPlugins": {
+    "bio-research@inline": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git restore --staged:*)",
+      "Bash(git commit -m:*)",
+      "Bash(git commit -q -m:*)",
+      "Bash(git push gitea:*)",
+      "Bash(git worktree add .claude/worktrees/draft-:*)",
+      "Bash(git -C .claude/worktrees/draft-:*)",
+      "Edit(.claude/worktrees/draft-*/**)",
+      "Edit(research/coordination/LOCAL_LLM_RUNBOOK.md)",
+      "Edit(GAP_CLOSURE_MISSION.md)",
+      "Edit(research/queue/.lane_waiver)",
+      "Edit(research/queue/.parallel_compute_waiver)",
+      "Edit(docs/drafts/**)",
+      "Edit(research/runners/_draft_*)",
+      "Edit(tests/test_draft_*)",
+      "Bash(/opt/venv-sim/bin/python -m pytest:*)",
+      "Bash(/opt/venv-rag/bin/python tools/rag/rag_search.py:*)",
+      "Bash(bash tools/before_you_build.sh:*)",
+      "Bash(bash tools/check_docs.py)",
+      "Bash(ssh workstation-gateway pool-submit:*)",
+      "Bash(ssh workstation-gateway gpu-submit:*)",
+      "Bash(ssh workstation-gateway status)",
+      "Bash(ssh workstation-gateway yield:*)",
+      "Bash(rsync -av -e ssh results-sync-gateway:*)",
+      "Bash(llm list)",
+      "Bash(llm active)",
+      "Bash(claude --version)",
+      "Bash(claude update)"
+    ],
+    "deny": [
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git replace:*)",
+      "Bash(git stash:*)",
+      "Bash(rm -rf:*)",
+      "Bash(aws:*)",
+      "Bash(sudo:*)",
+      "Edit(sim/**)",
+      "Edit(webapp/**)",
+      "Edit(tools/gates/**)",
+      "Edit(tools/agent_container/**)",
+      "Edit(tools/agent_gateway.sh)",
+      "Edit(tools/agent_harness_ctl.sh)",
+      "Bash(git switch:*)",
+      "Bash(git checkout:*)",
+      "Edit(research/coordination/lane_builds.jsonl)",
+      "Edit(research/coordination/**.jsonl)",
+      "Edit(research/queue/pool.queue)",
+      "Edit(research/queue/gpu.queue)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/local/lib/agent-container/hooks/deny_protected_edits.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -168,6 +168,20 @@ case "${1:-list}" in
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
            exit 2
          fi
+         # REJECT A NEWLINE/CONTROL CHARACTER IN --checked (2026-09-29 security review, H2). Every queue record
+         # is written as ONE line ("<ts>\t<cmd>  #checked:<CHECKED>\n", below) and every reader (valid_depth/
+         # malformed_depth/list/pop_job) parses the queue file LINE BY LINE. An embedded newline in CHECKED would
+         # split one record into two lines on disk -- letting a crafted --checked value inject what LOOKS like a
+         # second, independently-parseable queue line (potentially a fully-formed, attacker-chosen "#checked:"
+         # record that never went through any of the gates above, since only the FIRST, intended command was
+         # ever checked). `case` matches the pattern against the WHOLE string in bash's own memory (never an
+         # external pipeline that could itself be fooled by a line-split), so this cannot be defeated the way a
+         # `grep -q` per-line scan of the same text could be.
+         case "$CHECKED" in
+           *[![:print:]]*)
+             echo "⛔ REFUSED: --checked must not contain a newline or other control character." >&2
+             exit 2 ;;
+         esac
          # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). Six SETTLE A2 lines were queued as
          # 'A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/... && ...' -- a prose label as the first
          # word -- so the node ran `A2`, got "command not found" (rc=127), and nothing ran, while the board said

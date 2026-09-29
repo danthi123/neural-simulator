@@ -132,6 +132,19 @@ def test_allows_a_gate_seed_with_a_committed_prereg_env_assignment():
             subprocess.run(["rm", "-rf", co])
 
 
+def test_cd_path_is_never_evaluated_as_a_shell_command():
+    """2026-09-29 security review, H2: `eval echo $cd_path` ran the caller-supplied path through a SECOND round
+    of shell parsing. `$(id>marker)` is ONE whitespace-free token (survives the awk field-split that extracts
+    cd_path intact), so under the old `eval` it executed `id`, redirecting its output to `marker` -- creating
+    it -- rather than merely "expanding a variable". The path is not a real git checkout either way, so the job
+    is refused regardless; the only question this test asks is whether the marker file got created."""
+    with tempfile.TemporaryDirectory() as qdir, tempfile.TemporaryDirectory() as scratch:
+        marker = os.path.join(scratch, "pwned")
+        res = _run("cd $(id>%s) && echo hi" % marker, qdir)
+        assert res.returncode != 0
+        assert not os.path.exists(marker), "cd_path must never be evaluated as a shell command"
+
+
 def test_a_number_that_merely_contains_a_gate_seed_is_not_a_false_positive():
     """--seed 142 must not be mistaken for gate seed 42 -- exact numeric match only."""
     with tempfile.TemporaryDirectory() as qdir:
