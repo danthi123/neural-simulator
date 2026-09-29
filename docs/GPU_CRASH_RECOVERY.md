@@ -56,6 +56,15 @@ keyed on the GPU edge temperature), power cap 300 W. LACT also reads the VRAM te
 local-LLM load, add a -500 MHz VRAM offset. Still optional: a +100 MHz core offset under the 1800 lock (mild
 undervolt) once stable, and a larger journald size (`SystemMaxUse`). If it crashes again: the LTS kernel, then the PSU.
 
+## 2026-09-28: the July training auto-resume is retired
+
+`lmtrain-resume.service` (resumes the WKV LM run3 training) and `gpu-train-watchdog.service` (restarts that training
+whenever it stops, and REBOOTS the machine after repeated GPU-off-the-bus checks) were still enabled from July. The
+run3 own-voice training belongs to the spiking-mouth fluency arc the owner closed on 2026-09-19, and it was
+crash-looping and competing with the local model for the GPU. At the owner's request both were stopped and disabled
+(`sudo systemctl disable --now ...`). Side effect: nothing auto-reboots after a GPU crash any more. If unattended
+local-model runs need that, write a watchdog that only reboots and never restarts training.
+
 ## If it STILL crashes after the 300 W cap (points to deeper cause — needs your hands-on attention)
 
 1. **Undervolt** (best 3090 stability fix): set a VF curve in LACT (e.g. ~1800–1900 MHz @ ~875–900 mV) — less heat + less
