@@ -13,19 +13,20 @@ inserting a feeling word, runs inner-state monitors (a surprise notice, a confid
 hedge), asks a curiosity follow-up when it hits a novel topic, and can
 volunteer a novel, clearly-flagged guess on an open-ended prompt. It is NOT yet
 a fluid, fully open-ended conversational system: as of 2026-09-19 the external
-language model it graduated from (Qwen2.5-0.5B) is treated as a **permanent**
+Qwen2.5-0.5B-Instruct language model is treated as a **permanent**
 articulation "mouth" that phrases replies, not a scaffold being phased out — an
 earlier arc to retire it in favor of the brain's own spiking fluency was closed
 as falsified. The tracked measure of progress is now the lesion-verified
 fraction of a reply that the spiking brain, not the mouth, actually drives.
 Much of the load-bearing cognition still runs in host Python rather than on
-neurons: as of 2026-09-16, 5 of 69 tracked faculties (of 30 default-on spiking
-faculties) have had their host scaffold fully retired and verified against the
-spiking substrate — one-brain-substrate (this is the recall composer's own
-retirement: its host full-scan / NumPy recall path is now an opt-out oracle,
-the spiking store being the default), selective-attention-biased-competition,
-spiking novelty-habituation, spiking anaphor-detection, and spiking
-q-route-selection. Every self-report it gives (for
+neurons: the ledger tracks 69 faculties, 30 of them default-on and spiking;
+5 have had their host scaffold fully retired — one-brain-substrate (2026-09-02,
+the recall composer's own retirement: its host full-scan / NumPy recall path
+is now an opt-out oracle, the spiking store being the default, a mechanism
+claim proven by an activity trace, not an answer diff) and, verified 2026-09-16
+by a byte-identical branch-vs-main `/api/brain-chat` answer comparison,
+selective-attention-biased-competition, spiking novelty-habituation, spiking
+anaphor-detection, and spiking q-route-selection. Every self-report it gives (for
 example "my familiarity monitor reads this as novel") is an honest functional
 read-out of an internal spiking signal, never a claim of felt or subjective
 experience. See [Current State](docs/CURRENT-STATE.md) for the present
@@ -152,7 +153,7 @@ was never taught the answer, it declines instead of guessing.
 # GPU-free smoke chat on a tiny built-in brain
 SIM_BACKEND=numpy python -m research.runners.brain_chat_tui --stub-renderer --tiny-demo
 
-# talk to a developed-brain bundle (Qwen2.5-0.5B renders the reply by default; the brain supplies and verifies the content; needs a GPU)
+# talk to a developed-brain bundle (Qwen2.5-0.5B phrases most replies by default; the brain supplies the content, which a partly-host no-confab check verifies; needs a GPU)
 SIM_BACKEND=cupy python -m research.runners.brain_chat_tui --load <bundle-or-codes.json>
 ```
 
@@ -169,9 +170,15 @@ described below.
 The fluent prose you read is phrased by the external Qwen2.5-0.5B language
 model, now treated as a **permanent** articulation "mouth" rather than a
 scaffold being phased out (an earlier arc to retire it in favor of the brain's
-own spiking fluency was closed as falsified in 2026-09). For a direct factual
-question, which fact to surface is decided by the spiking substrate (an
-on-brain question parse and recall read, not a host keyword router). The
+own spiking fluency was closed as falsified in 2026-09). A narrow spiking
+renderer speaks simple single-role subject-verb-object recalls directly
+(default-on); without a GPU, a multi-sentence template stub replaces Qwen
+instead. For a direct factual question, which fact to surface is decided by
+the spiking substrate for the question parse and the recent-conversation
+store (an on-brain question parse and recall read, not a host keyword
+router); for the large background knowledge base, the final cleanup
+selection that picks the surfaced fact is still a host argmax over the
+matched-filter membrane (ledger row `semantic-recall`). The
 no-confab check that keeps the brain from inventing an answer (the "moat")
 combines that spiking recall with host-side machinery that is not yet
 neural — the recall composer's exact-inverse vector-symbolic algebra, the
