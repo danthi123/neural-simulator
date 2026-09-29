@@ -50,3 +50,20 @@ def test_gate_read_state_files_are_denied():
     _, deny = _rules()
     for needle in ("lane_builds.jsonl", "pool.queue", "gpu.queue"):
         assert any(needle in r for r in deny), "missing deny rule for %r" % needle
+
+
+def test_gpu_yield_and_pause_commands_are_pre_approved():
+    # docs/plans/2026-09-29-local-model-transition-PLAN.md section 3/8: the driver may pause for gaming, yield the
+    # GPU through `llm.sh yield`, and queue GPU jobs only through the checked tools/local_llm/gpu_add.sh wrapper.
+    allow, _ = _rules()
+    for needle in ("bash tools/game.sh on --graceful", "bash tools/game.sh status",
+                   "bash tools/local_llm/llm.sh yield", "bash tools/local_llm/gpu_add.sh"):
+        assert any(needle in r for r in allow), "missing allow rule for %r" % needle
+
+
+def test_raw_gpu_queue_add_stays_denied():
+    # The local model must go through the checked wrapper (tools/local_llm/gpu_add.sh), never the raw
+    # tools/gpu_queue.sh add -- that is exactly what the wrapper's own commit-revision + gate-seed-prereg checks
+    # exist to enforce, and they are bypassed entirely if the raw command is also allowed.
+    _, deny = _rules()
+    assert any("gpu_queue.sh add" in r for r in deny)
