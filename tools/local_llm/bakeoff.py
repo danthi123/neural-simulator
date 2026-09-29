@@ -28,6 +28,7 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.error
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -97,14 +98,35 @@ def auth_headers(profile):
 
 def generic_ready(profile, timeout_s=5):
     """Cheap readiness probe for an externally-managed backend (Ollama / Unsloth Studio): a tiny real completion,
-    since neither exposes llama.cpp's /health. Returns True only once the target model actually answers."""
+    since neither exposes llama.cpp's /health. Returns True once the target model actually answers OR the server
+    rejects the request as unauthenticated (401/403) -- for a backend that mints its bearer key only once the
+    model has finished loading (Unsloth Studio's `unsloth run`, read back via --api-key-file below), a 401 at
+    this point is itself proof the process is up; refresh_api_key_file() re-checks auth for the real calls."""
     try:
         r = http("/v1/chat/completions", {"model": profile["model"], "messages": [{"role": "user", "content": "hi"}],
                                           "max_tokens": 1, "temperature": 0},
                  timeout=timeout_s, base_url=profile["base_url"], headers=auth_headers(profile))
         return bool(r.get("choices"))
+    except urllib.error.HTTPError as e:
+        return e.code in (401, 403)
     except Exception:
         return False
+
+
+def refresh_api_key_file(profile):
+    """For a backend that mints its own bearer key only after the model is loaded (Unsloth Studio): re-read
+    profile["api_key_file"] right before it is actually needed (speed/context + agentic tasks), never at CLI-arg
+    time when the file may not exist yet. A literal --api-key always wins if one was given."""
+    if profile.get("kind") == "generic" and not profile.get("api_key") and profile.get("api_key_file"):
+        for _ in range(60):
+            try:
+                key = open(profile["api_key_file"]).read().strip()
+                if key:
+                    profile["api_key"] = key
+                    return
+            except OSError:
+                pass
+            time.sleep(2)
 
 
 def start_server(profile):
@@ -388,6 +410,7 @@ def run_profile(profile):
             cmd_str = " ".join(cmd) if isinstance(cmd, list) else str(cmd)
             rec.update(load_s=round(load_s, 1) if load_s is not None else None, server_cmd=cmd_str,
                        vram_after_load_mib=gpu_used_mib()[0])
+            refresh_api_key_file(profile)
             rec.update(speed_and_context(profile))
             rec["tasks"] = tasks(profile)
         rec["vram_peak_mib"] = pv.peak
@@ -431,6 +454,9 @@ def main():
     ap.add_argument("--engine", default=None, help="label only, e.g. ollama / unsloth-studio")
     ap.add_argument("--api-key", help="bearer token, sent as Authorization: Bearer <key> (Ollama has none)")
     ap.add_argument("--api-key-env", help="env var to read the bearer token from instead of --api-key literally")
+    ap.add_argument("--api-key-file", help="path to re-read the bearer token from AFTER the server answers ready "
+                                           "(for a backend, e.g. Unsloth Studio, that mints its own key only once "
+                                           "the model has loaded); ignored if --api-key/--api-key-env is set")
     ap.add_argument("--start-cmd", help="shell command that starts the server (omit if it is already running, "
                                         "e.g. Ollama's systemd unit)")
     ap.add_argument("--stop-cmd", help="shell command run after the bake-off to unload the model "
@@ -446,8 +472,9 @@ def main():
         name = a.name or re.sub(r"\W+", "-", "%s-%s" % (a.engine or "generic", a.model)).strip("-")
         key = a.api_key or (os.environ.get(a.api_key_env) if a.api_key_env else None)
         profile = {"name": name, "kind": "generic", "base_url": a.base_url, "model": a.model,
-                   "engine": a.engine or "generic", "api_key": key, "start_cmd": a.start_cmd,
-                   "stop_cmd": a.stop_cmd, "ctx": a.ctx, "long_tokens": a.long_tokens, "load_timeout_s": a.load_timeout}
+                   "engine": a.engine or "generic", "api_key": key, "api_key_file": a.api_key_file,
+                   "start_cmd": a.start_cmd, "stop_cmd": a.stop_cmd, "ctx": a.ctx, "long_tokens": a.long_tokens,
+                   "load_timeout_s": a.load_timeout}
         run_profile(profile)
     else:
         profiles = json.load(open(os.path.join(HERE, "profiles.json")))
