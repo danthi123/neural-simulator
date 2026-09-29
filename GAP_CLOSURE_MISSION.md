@@ -234,7 +234,11 @@ live-check `llm claude`; then hand off.
 probe on the metacog confidence seam (task 2; check how it degrades the store), and the N-channel BG race / GPi-tonic work
 (ran the six GATE seeds and edited `_tone_bg_nchannel_selector.py` against the runbook: treat as an unregistered dev result).
 (2) DONE 2026-09-28 81f08f972: `gates/lane_starvation` now requires a registered branch to exist.
-(3) Score: arcc awake-replay (registered aggregate GO 6/6; independent re-derivation + checked preconditions), B2b (256/258;
+(3) Score: arcc awake-replay -- preconditions CHECKED 2026-09-28 22:50: 6/6 seed files, 90 arm files, 0 arm errors, all
+git_sha f7693a36f via git_archive; registered aggregate reproduces GO 6/6 (signflip p 0.015625 both contrasts). CAVEAT for the
+finding (faithfulness-first-but-falsifiable rule): n_completion_load_bearing = 1 -- pattern completion was necessary on only 1 of
+6 seeds (n_awake_completion_needed 1, n_night_completion_needed 0), so the GO is carried mostly by replay, not by completion.
+Still needed: an independent re-derivation and the preconditions block written into aggregate.json. B2b (256/258;
 rule on the two seed-102 cells under A1.4; the 3 torn-cell re-runs reproduce attempt 1 exactly, logged 0d4e5c81). (4) D6: the overwritten raw files are RESTORED (2026-09-28 22:30; duplicate outputs kept in
 `.claude/worktrees/_d6_duplicate_run_outputs_2026-09-28/`). Cause found: the 09-25 00:03 OOM-recovery re-queue of 14 N=2000
 combos (pool.queue.claims 1740ff) ran cells whose first attempt had also completed; the harvest (fe1066f64) committed the
