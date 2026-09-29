@@ -123,7 +123,21 @@ LANE_BUILD_MAX_H = 6
 _LANE_BUILDS = os.path.join(_ROOT, "research", "coordination", "lane_builds.jsonl")
 
 
-def _build_served(now_ts, path=None):
+def _branch_exists(branch):
+    """A registered build must name a REAL branch (2026-09-27: a local model registered two builds whose branches did not
+    exist, with notes claiming "6-seed run queued on the pool" while the queue was empty). Local or origin ref."""
+    for ref in ("refs/heads/%s" % branch, "refs/remotes/origin/%s" % branch):
+        try:
+            r = subprocess.run(["git", "-C", _ROOT, "rev-parse", "--verify", "--quiet", ref],
+                               capture_output=True, text=True, timeout=10)
+        except Exception:
+            continue
+        if r.returncode == 0:
+            return True
+    return False
+
+
+def _build_served(now_ts, path=None, branch_exists=None):
     """Lanes whose next work is a BUILD in flight (2026-09-24). Every unserved lane's genuine next job sat inside an
     agent build that could not commit while the lane read unserved -- a deadlock (waiver budget exhausted, no honest
     job to queue). A registration names the lane, the workflow/task id and the branch, is committed (auditable), and
@@ -140,7 +154,8 @@ def _build_served(now_ts, path=None):
         except ValueError:
             continue
         if (e.get("lane") in CPU_LANES and e.get("workflow") and e.get("branch")
-                and 0 <= now_ts - float(e.get("started", -1)) <= LANE_BUILD_MAX_H * 3600):
+                and 0 <= now_ts - float(e.get("started", -1)) <= LANE_BUILD_MAX_H * 3600
+                and (branch_exists or _branch_exists)(e["branch"])):
             served.add(e["lane"])
     return served
 
@@ -230,10 +245,16 @@ def selftest():
         fh.write(json.dumps({"lane": lane_a, "workflow": "wX", "branch": "research/x", "started": 1000.0}) + "\n")
         fh.write(json.dumps({"lane": lane_a, "workflow": "", "branch": "research/x", "started": 1000.0}) + "\n")
         reg = fh.name
-    if _build_served(1000.0 + 60, reg) != {lane_a}:
+    real = lambda b: True  # noqa: E731  (the selftest's registrations name a branch assumed to exist)
+    if _build_served(1000.0 + 60, reg, branch_exists=real) != {lane_a}:
         bad.append("did NOT count a fresh, well-formed lane-build registration as serving its lane")
-    if _build_served(1000.0 + LANE_BUILD_MAX_H * 3600 + 1, reg):
+    if _build_served(1000.0 + LANE_BUILD_MAX_H * 3600 + 1, reg, branch_exists=real):
         bad.append("FALSE NEGATIVE-PROOF: an EXPIRED lane-build registration still served its lane")
+    # 2026-09-27: a registration naming a branch that does NOT exist must not serve its lane
+    if _build_served(1000.0 + 60, reg, branch_exists=lambda b: False):
+        bad.append("counted a registration whose branch does not exist (the 2026-09-27 fabricated-build hole)")
+    if _build_served(1000.0 + 60, reg):  # real git: 'research/x' does not exist in this repo
+        bad.append("real-git branch check accepted the non-existent branch 'research/x'")
     os.unlink(reg)
     idle5 = sorted(CPU_LANES)
     rejected = {"active": True, "ok": False, "class": None,
