@@ -1,0 +1,42 @@
+{
+ "run_id": "1790704133-1755160",
+ "runner": "research/runners/_need_reversal_selection_seam.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/selection-seam-need-reversal/research/runners/_need_reversal_selection_seam.py",
+  "--aggregate",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed10.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed11.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed12.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed1.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed2.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed3.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed4.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed5.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed6.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed7.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed8.json",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/seed9.json",
+  "--out",
+  "research/findings/raw/_need_reversal_seam/dev_rehearsal2/aggregate_seeds1-12.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T13:48:53",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6018.1,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_need_reversal_seam/dev_rehearsal2/aggregate_seeds1-12.json"
+}
