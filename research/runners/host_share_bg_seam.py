@@ -219,6 +219,7 @@ def score(shard_dir, seeds):
     pooled = {"F": [], "S": [], "D": [], "cap": [], "ns": [], "readout": [], "bus_disagree": [],
               "latch_thr_change": [], "first12_change": [], "membrane_ok": [], "content_held": [], "empty_held": [],
               "sham_ok": [], "bus_unique_agree": [], "seam_intact_held_for_ns": [], "seam_lesion_held": []}
+    prod_events = []          # per-turn {F,S,D,f_outcome,seed,live} records, for SCHEMA.seam_stats/classify_seam
     for s in seeds:
         sh = {}
         for arm in ARMS:
@@ -295,11 +296,31 @@ def score(shard_dir, seeds):
                            ("readout", "readout_share")):
                 if ev.get(key) is not None:
                     pooled[k].append(ev[key])
+            # SCHEMA.classify_seam takes a `stats` dict built by SCHEMA.seam_stats over per-event {F,S,D,
+            # f_outcome,seed,live} records (research/runners/host_share_schema.py's own docstring: "the step-3
+            # selection-seam builder imports it for its before/after instead of keeping its own statistic") --
+            # NOT three pooled scalars. f_outcome maps this file's local "returned_to_intact" vocabulary onto
+            # SCHEMA's "returned_to_neural" (both mean: unperturbed by the host flip, i.e. the reply took the
+            # neural/baseline outcome rather than the host's alternative or some third, unexplained path).
+            f_outcome = None
+            if ev.get("F") == 0:
+                f_outcome = ("returned_to_neural" if ev.get("intervene_outcome") == "returned_to_intact"
+                             else "masked")
+            prod_events.append({"F": ev.get("F"), "S": ev.get("S"), "D": ev.get("D"), "f_outcome": f_outcome,
+                                "seed": int(s), "live": ev.get("F") is not None})
         out["per_seed"][int(s)] = rows
     m = {k: (round(sum(v) / len(v), 4) if v else None) for k, v in pooled.items()}
     out["pooled"] = m
     out["n"] = {k: len(v) for k, v in pooled.items()}
-    out["production_seam_class"] = C.classify_seam(m["F"], m["S"], m["D"])
+    # `C.classify_seam` does not exist on the host_share module itself (only on host_share_schema, imported
+    # there as SCHEMA, and it takes a stats dict from seam_stats(events) -- not three pooled scalars). Bug
+    # found 2026-09-29 landing the selection-seam merge (the HANDOFF's own sanity check caught it: printed an
+    # AttributeError, not TRANSDUCED). Fixed per the schema module's own docstring ("the step-3 selection-seam
+    # builder imports it for its before/after instead of keeping its own statistic"): build per-event records
+    # and go through SCHEMA.seam_stats -> SCHEMA.classify_seam, exactly like host_share.py's own aggregate().
+    prod_stats = C.SCHEMA.seam_stats(prod_events)
+    out["production_seam_class"] = C.SCHEMA.classify_seam(prod_stats)
+    out["production_seam_stats"] = prod_stats
     # ATTRIBUTION (gates/attribution_required): G3 (ns) already reports the FRACTION of events whose outcome
     # changes when the value pathway is lesioned -- but a fraction alone still leaves "whose is the seam's held
     # rate" unasked. Ask it directly: treatment = the intact seam's held rate on the same paired events; control
