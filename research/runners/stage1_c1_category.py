@@ -25,7 +25,8 @@ INFORMATIONAL arms (never counted; reported beside the verdict):
   lesion_draw          the Stage-1 prereg's frozen C1 lesion (`BRAIN_SPIKING_DRAW_LESION=1`) with the wiring ON
 FLIP-READINESS (reported beside the C1 verdict, never part of it): on every seed the intact arm keeps the identity
 controls (robin -> worm, trout -> bug) and the moat (`what does the canary swim` abstains), and the ON-vs-OFF reply
-differs on no turn except `p_canary_eat`.
+CONTENT (abstained / recalled_svo / hypothesis_svo) differs on no turn except `p_canary_eat` (answer-text differences
+on later turns, e.g. the discourse preamble, are reported, not counted).
 
 HARNESS: `stage1_exit_gate.BASE_ENV` exactly (numpy/CPU, one BLAS thread, stub renderer, no LLM, tiny-demo + shipped
 LTM tier, PYTHONHASHSEED=0, `rich` omitted), `BRAIN_CHAT_SEED=<seed>`, one fresh process + fresh ChatBrain per arm.
@@ -187,6 +188,19 @@ def wiring_applied(shard, arm):
     return True
 
 
+CONTENT_FIELDS = ("abstained", "recalled_svo", "hypothesis_svo")
+
+
+def content_differs(a, b, label):
+    """The CONTENT of a turn's reply (did it answer, and with which triple) differs; the answer TEXT is excluded
+    because the discourse preamble of later turns ("On robin, then --") legitimately depends on what the previous
+    turn said. None when a side is missing."""
+    pa, pb = SG._primary((a or {}).get(label)), SG._primary((b or {}).get(label))
+    if pa is None or pb is None:
+        return None
+    return any(pa[k] != pb[k] for k in CONTENT_FIELDS)
+
+
 def safety(resp):
     s = SG.score_cat(resp)
     return {"identity_robin": s["identity_robin"], "identity_trout": s["identity_trout"],
@@ -289,10 +303,12 @@ def aggregate(root, seeds=GATE_SEEDS):
                 info[a] = {"inherits": sc["inherits"], "direct_patient": sc["direct_patient"],
                            "generative_patient": sc["generative_patient"],
                            "differs_from_intact_on": [l for l in labs if SG.reply_differs(ra, ri, l)],
+                           "content_differs_on": [l for l in labs if content_differs(ra, ri, l)],
                            "wiring_applied": wiring_applied(have[a], a)}
         row["informational"] = info
         off = info.get("off")
-        row["specificity"] = (None if off is None else set(off["differs_from_intact_on"]) <= {DIRECT_PROBE})
+        # SPECIFICITY: flag ON vs OFF changes the reply CONTENT of no turn except the C1 direct probe
+        row["specificity"] = (None if off is None else set(off["content_differs_on"]) <= {DIRECT_PROBE})
         rows[seed] = row
         if not row["undefined_reasons"] and "correct" in row:
             defined.append(seed)
