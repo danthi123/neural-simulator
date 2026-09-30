@@ -13,7 +13,9 @@ mouth -- the b2d0929-mouth arm (local GPU queue, cupy, LB_ARM_RENDERER=productio
          three rows the pre-registration names (affect-coloring, affect-appraisal-interoceptive,
          affect-drives-response), with the same nine adequate LB_* probe flags, --repeats 2, one line per (seed, row),
          each under tools/mem_ok.sh + tools/memcap.sh. The only differences from the stub line are SIM_BACKEND=cupy,
-         LB_ARM_RENDERER=production and the memory guard. Writes <shards>/<tag>/PIN.txt.
+         LB_ARM_RENDERER=production, the memory guard, and PREREG=<the B2d prereg> (inert: no code reads it and the
+         provenance sidecar does not record it; it lets tools/gate_seed_guard.py resolve the gate seeds to their
+         committed prereg). Writes <shards>/<tag>/PIN.txt.
 
 Both refuse a pin that is not a full 40-hex sha, and never queue anything.
 """
@@ -36,9 +38,13 @@ ASSERT = ".venv/bin/python tools/assert_flipped_defaults.py && "
 # mouth-arm memory: a cupy brain build plus the Qwen2.5-0.5B faculty in the worker (about 8 GB RSS per arm at dev seed
 # 7). The workstation is shared, and a refused mem_ok makes the GPU queue record DONE(rc=1) and drop the line (dev seed
 # 7, 2026-09-30: three lines dropped in one second), so the guard WAITS up to 90 min for room, then checks once more
-# and refuses loudly if there is still none.
-MOUTH_MEM_OK = ("for _w in $(seq 90); do bash tools/mem_ok.sh 10 4 >/dev/null 2>&1 && break; sleep 60; done; "
+# and refuses loudly if there is still none. The wait loop is joined to the final check with `&&`, never `;`, so the
+# whole line stays ONE && chain: a `;` there (review 2026-09-30) started the GPU run after a failed
+# assert_flipped_defaults.py, and after a failed `cd` it ran in the GPU dispatcher's own cwd (the primary checkout).
+# The loop's own status is 0 whether it broke on room or ran out (its last command is `break` or `sleep`).
+MOUTH_MEM_OK = ("for _w in $(seq 90); do bash tools/mem_ok.sh 10 4 >/dev/null 2>&1 && break; sleep 60; done && "
                 "bash tools/mem_ok.sh 10 4")
+PREREG = "research/findings/2026-09-29-production-default-battery-B2d-PREREGISTRATION.md"
 MOUTH_MEMCAP = "bash tools/memcap.sh 16 --"
 
 
@@ -76,9 +82,9 @@ def mouth_lines(pin, seeds=SEEDS, tag=MOUTH_TAG, rows=MOUTH_ROWS):
             out = "%s/%s/s%d/%s/lb.json" % (lb_shard.OUT_BASE, tag, seed, row)
             lines.append(
                 "cd ~/derisk-pool/revisions/%s && %smkdir -p %s && %s && %s env SIM_BACKEND=cupy OMP_NUM_THREADS=1 "
-                "OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_ARM_RENDERER=production %s .venv/bin/python -u -m "
+                "OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 LB_ARM_RENDERER=production PREREG=%s %s .venv/bin/python -u -m "
                 "research.runners.load_bearing_fraction --only %s --seed %d --repeats 2 --out %s"
-                % (pin, ASSERT, shlex.quote(os.path.dirname(out)), MOUTH_MEM_OK, MOUTH_MEMCAP, env,
+                % (pin, ASSERT, shlex.quote(os.path.dirname(out)), MOUTH_MEM_OK, MOUTH_MEMCAP, PREREG, env,
                    shlex.quote(row), seed, shlex.quote(out)))
     return lines
 
