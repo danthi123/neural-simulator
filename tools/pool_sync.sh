@@ -197,7 +197,10 @@ for N in $NODES; do
   # revision ever provisioned on this node, the common case) makes the remote `ls` exit non-zero on ITS OWN,
   # which must read as "zero revisions", not a strict-mode failure. The ssh call's own exit status -- reachability
   # -- is what the `||` on the assignment below reacts to.
-  revs=$(timeout 20 $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null || true' 2>/dev/null) \
+  # `sh -c` (2026-09-30): the remote LOGIN shell runs this string, and on the workstation that is fish with `ls`
+  # wrapped in a long, coloured listing, so the old bare `ls -d` returned "drwxr-xr-x - dant123 30 Sep ..." tokens
+  # and no revision was ever pulled from it. A non-interactive sh has no aliases and POSIX glob semantics everywhere.
+  revs=$(timeout 20 $RSYNC_SSH "$N" "sh -c 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null || true'" 2>/dev/null) \
     || { echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; }
   for R in $revs; do
     # The listing is the node's answer: only a plain revision path (its name also names a staging subdir) is used.

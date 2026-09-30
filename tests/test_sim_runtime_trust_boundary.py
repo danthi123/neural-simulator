@@ -278,6 +278,22 @@ def test_a_reachable_host_without_a_main_results_dir_still_has_its_revisions_pul
     assert (raw / "gpu.json").read_text() == "gpu\n"
 
 
+def test_revisions_are_listed_even_when_the_login_shell_wraps_ls(tmp_path: Path) -> None:
+    # The workstation's login shell is fish with `ls` wrapped in a long, coloured listing; the old bare `ls -d` there
+    # returned permission/owner/date tokens instead of paths, so none of its GPU-job revisions could be pulled.
+    bin_dir, home = _fake_node(tmp_path)
+    bashenv = tmp_path / "bashenv"
+    bashenv.write_text("ls() { command ls -l --color=always \"$@\"; }\n")
+    _node_file(home, "derisk-pool/sim/research/findings/raw/.keep.json", "{}\n")
+    _node_file(home, "derisk-pool/revisions/abc1234-1759270000/research/findings/raw/gpu.json", "gpu\n")
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws, node="workstation"), "BASH_ENV": str(bashenv)})
+    assert "ignoring unexpected revision path" not in res.stdout, res.stdout
+    assert (raw / "gpu.json").read_text() == "gpu\n"
+
+
 def test_runtime_dry_run_writes_nothing(tmp_path: Path) -> None:
     bin_dir, home = _fake_node(tmp_path)
     _node_file(home, "derisk-pool/sim/research/findings/raw/main.json", "main\n")
