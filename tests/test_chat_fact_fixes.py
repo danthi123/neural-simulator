@@ -52,6 +52,8 @@ REQUESTS_B3 = [
     "could you tell the story",         # -> was [could, tell, story]
     "can dogs fly",                     # a modal-inverted question without '?' -> was [can, dogs, fly]
     "let's talk about dogs",
+    "don't tell me about the sky",      # a negative imperative -> was stored as NEGATE [tell, about, sky]
+    "never show me the red ball",       # -> was NEGATE [show, red, ball]
 ]
 # Requests the legacy path (BRAIN_NONCONTRADICTION_GATE=0: exactly three whitespace tokens) used to ACQUIRE.
 REQUESTS_LEGACY = ["tell me more", "show us cats", "give me fish", "can dogs fly", "please remember dogs",
@@ -111,7 +113,8 @@ def test_request_shape_predicate_is_narrow():
         assert R(q), q
     for q in list(ASSERTIONS_B3) + list(ASSERTIONS_LEGACY) + [
             "the dog and the cat walked in", "that was wonderful, I am so happy", "i like the sky",
-            "the book is about dogs", "mom told me about dogs", "he tells us stories", "the wolf hunts the deer", ""]:
+            "the book is about dogs", "mom told me about dogs", "he tells us stories", "the wolf hunts the deer",
+            "the dog does not eat grass", "dogs never eat grass", "the cat doesn't chase dogs", ""]:
         assert not R(q), q
 
 

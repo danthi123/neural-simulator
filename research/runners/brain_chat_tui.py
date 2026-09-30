@@ -96,7 +96,8 @@ from research.runners.d6_hebbian_store import conversation_write as _d6_conversa
 # which a declarative SVO assertion can start with: a `please` anywhere; a sentence-initial modal (subject-auxiliary
 # inversion: "can you describe the moon", "can dogs fly" -- a question or a request, never an assertion); a
 # listener-directed imperative (a closed class of request verbs first, or any word followed by the addressee
-# pronoun: "tell me ...", "show us ..."). Leading discourse particles ("now tell me ...") are skipped first.
+# pronoun: "tell me ...", "show us ..."). Leading discourse particles ("now tell me ...") and a negative-imperative
+# marker ("don't tell me ...", which B3 would otherwise store as a NEGATE fact) are skipped first.
 # HOST SCAFFOLD (declared, the same standing as the interrogative first-word list it extends): a closed-class lexical
 # read of the sentence mood; the neural replacement is a learned speech-act/mood read on the substrate (not built).
 _REQUEST_LEAD_PARTICLES = frozenset(("now", "so", "ok", "okay", "well", "then", "just", "and", "oh", "hey", "hi",
@@ -106,6 +107,7 @@ _REQUEST_VERBS = frozenset(("tell", "show", "give", "teach", "explain", "describ
                             "recall", "consider", "pretend", "guess"))
 _REQUEST_MODALS = frozenset(("can", "could", "would", "will", "should", "shall", "may", "might", "must", "cannot",
                              "can't", "couldn't", "wouldn't", "won't", "shouldn't"))
+_REQUEST_NEG_LEAD = frozenset(("don't", "dont", "never"))
 _REQUEST_ADDRESSEE = frozenset(("me", "us"))
 _REQUEST_WORD_RE = re.compile(r"[a-z']+")
 
@@ -115,7 +117,7 @@ def _is_request_speech_act(text) -> bool:
     toks = _REQUEST_WORD_RE.findall((text or "").lower())
     if "please" in toks:
         return True
-    while toks and toks[0] in _REQUEST_LEAD_PARTICLES:
+    while toks and (toks[0] in _REQUEST_LEAD_PARTICLES or toks[0] in _REQUEST_NEG_LEAD):
         toks = toks[1:]
     if not toks:
         return False
