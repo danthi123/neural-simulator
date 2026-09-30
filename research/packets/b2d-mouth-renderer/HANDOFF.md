@@ -137,7 +137,7 @@ You cannot queue these lines, and must not try: `tools/gpu_queue.sh add` and `st
 (`tools/local_llm/claude_local_settings.json`) and your runbook forbids touching `gpu_queue.sh` beyond `status`; your
 GPU path, `tools/local_llm/gpu_add.sh`, refuses them because the export `~/derisk-pool/revisions/<P>` is not a git
 checkout (checked 2026-09-30). Never wrap `gpu_queue.sh add` in `bash -c`, a loop or a script to get past that.
-Queueing the 18 lines, and whether the registered arm runs at all, is Claude's (NEEDS-CLAUDE #3). Every session:
+Queueing the 18 lines, and whether the registered arm runs at all, is Claude's (NEEDS-CLAUDE #3, #6). Every session:
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -147,7 +147,7 @@ grep -c -- "_shards/b2d0929-mouth/" $P/research/queue/gpu.queue 2>/dev/null || t
 
 | result | do |
 |---|---|
-| 0 mouth lines queued and 0 landed (step 6 count) | nothing: the arm waits for Claude (NEEDS-CLAUDE #3). Continue the stub arm |
+| 0 mouth lines queued and 0 landed (step 6 count) | nothing: the arm waits for Claude (NEEDS-CLAUDE #6). Continue the stub arm |
 | 1 or more mouth lines queued | free the card when you choose (below) |
 | 0 queued, 1 to 17 landed, no GPU job running | the queue drained: steps 7-8 score the arm; its re-runs are Claude's (step 9) |
 
@@ -287,8 +287,9 @@ Report the printed `probe` reading and the drives cell state to Claude in `resea
    recorder is still blind (the finding labels LTM from the arm files' `source` field instead).
 5. Any STOP row above.
 6. **Queue the mouth arm, its re-runs and the section 11 dev lines (Claude only; review 2026-09-30).** The local
-   model cannot (step 5). If #3 keeps the registered arm: first confirm the Qwen call counter reads above 0 on a
-   real Qwen-rendered turn (review record in the commit that added this item), then from `$W`:
+   model cannot (step 5). The Qwen call counter that decides MOUTH-SILENT has a real-path positive control
+   (review 2026-09-30, `dev7/README.md` section 5: 1 counted call on a Qwen-rendered recall). If #3 keeps the
+   registered arm, from `$W`:
    `bash -c 'while IFS= read -r line; do bash tools/gpu_queue.sh add "$line" </dev/null || exit 1; done' < $K/jobs/mouth_$P7.txt`
    and tell the local model (runbook) to yield. A mouth re-run: `bash $K/rerun_mouth_cell.sh <seed> <row>
    "<fails>"` (it queues on the GPU). Until then the stub arm proceeds alone; step 10 needs both scorer outputs.

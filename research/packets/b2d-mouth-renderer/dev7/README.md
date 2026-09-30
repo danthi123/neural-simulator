@@ -73,3 +73,15 @@ the marker is the host-share plan's question, not this probe's.
   selections. A fix task was filed. Until it lands, a mouth cell killed this way is re-run through step 9's table.
 - The GPU queue holds every job while the local-llm unit is active, and `llm.sh yield` refuses while any draft
   worktree has staged changes; this session used `llm.sh off` plus the `.local_llm_was_on` restore marker.
+
+## 5. Review positive control of the Qwen call counter (2026-09-30, adversarial review)
+
+Every dev-seed-7 mouth cell read 0 Qwen generation calls, and MOUTH-SILENT is final and never re-run, so the counter
+needed a real-path positive control: a turn the Qwen mouth certainly renders, counted by the same installation the
+worker uses. `counter_posctl.py` (beside this file; dev seed 7, CPU, `CUDA_VISIBLE_DEVICES=''`) installs the battery's
+`_QwenGenerateCounter` on `SpikingQwenFaculty` before importing `webapp.server`, as `_collect_worker` does, then sends
+the real `brain_chat` handler "what does the dog chase" with `renderer="qwen"` and `BRAIN_SPIKING_MOUTH_RECALL=0` (so
+the spiking recall mouth does not pre-empt the renderer). Result: `qwen_generate_calls` = 1, renderer `off-bridge
+Qwen-0.5B (spiking forward)`, answer "The dog chased the cat." (612 s on CPU; the process was stopped after this turn
+to free shared RAM). The counter sees a real generation made by the warm renderer inside the handler. This is not a
+mouth-arm cell: the renderer is forced and the recall mouth is off, both of which the production arm never does.
