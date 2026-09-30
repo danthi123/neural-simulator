@@ -23,6 +23,8 @@ SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN t
 # invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
 # shellcheck source=tools/pool_revision_marker.sh
 source "$SELF_DIR/pool_revision_marker.sh"
+# shellcheck source=tools/pool_nodes.sh
+source "$SELF_DIR/pool_nodes.sh"
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
@@ -256,7 +258,7 @@ peek_est_gb() {
 # --checked reason, beside mem_gb=N and pool_node=<name>) to set its own limit; it is capped at
 # POOL_JOB_MAX_AGE_CAP_H (240 h), so an abandoned batch still expires. A line with no token keeps the default.
 POOL_FRESH_AWK='function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m = substr(l, RSTART + 10, RLENGTH - 10) + 0; if (m > cap) m = cap; return m * 3600 } return d }'
-NODES="${POOL_NODES:-pool40 pool41 pool42}"
+NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
 NODE_BUDGET=0
 
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
