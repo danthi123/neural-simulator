@@ -11,6 +11,15 @@ issue; anything not covered here goes on the NEEDS-CLAUDE list at the end and yo
   `W=/home/dant123/Projects/sim/.claude/worktrees/host-share-baselines; P=/home/dant123/Projects/sim; PY=/home/dant123/Projects/sim/.venv/bin/python`
 - The shell may be zsh: run every multi-line block exactly as given, inside `bash -c '...'` where shown.
 
+## 0a. Pre-data fix, 2026-09-30 (read first)
+
+The gate revision 59edf3255 could not run a single gate shard: `run_shard` did not pass `--allow-gate-seed` to its
+worker, so every gate-seed worker died in argparse (rc=1, no data). Fixed before any gate data existed; the prereg,
+seams, arms and bars are unchanged (see WORKLOG 2026-09-30 and `research/FAILURE_LOG.md`). The gate now runs at the
+commit in `GATE_SHA` (the merge of origin/main over the fix). Its job lines are regenerated with step 6's
+`--emit-pool-jobs $(cat GATE_SHA)`, each `--checked` reason with `max_age_h=168` appended; the coordinator queues
+them from `research/queue/requeue_host_share_<sha9>.tsv`. Never queue a line pinned to 59edf3255.
+
 ## 0. State at handoff
 
 - Everything is STAGED in the worktree, nothing committed (`gates/compute_idle_persistent` blocked commits).

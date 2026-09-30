@@ -51,3 +51,17 @@ copied from the primary checkout's uncommitted `research/coordination/lane_build
   and v-choice manipulations applied, source `tiny-demo +LTM`, seeds threaded. Removed stray `.part0.prov.json` /
   `.log.prov.json` sidecars (the runner now deletes part sidecars itself). Everything staged; the prereg stays
   untracked for its own commit. STOP here per the owner's mode change: the local model executes `HANDOFF.md`.
+- 2026-09-30 ~14:40  PRE-DATA FIX (pool canary; no gate data existed, the prereg is unchanged). The four s42 recall
+  lines dispatched to pool41/pool42 on 2026-09-29 (intact_a, intact_b, k-select:intervene, k-select:substitute) and
+  a sandboxed canary of `recall bg-select:intervene` on pool42 (2026-09-30 13:57) all exited rc=1 in the worker's
+  argparse: `run_shard` spawned `--worker --seed 42` without the parent's `--allow-gate-seed`, and the worker re-runs
+  the gate-seed check (`seed 42 is a GATE seed: pass --allow-gate-seed`). The remaining 104 lines were moved to
+  `research/queue/pool.queue.held` before they ran. Fix: `run_shard(..., allow_gate_seed=)` passes the parent's flag to
+  every worker (`--shard` and `--seed-all`); `--backend` and `--labels` were already passed, and no other flag is
+  gate-only. Failing-first tests in `tests/test_host_share.py` run the real CLI in a real child process with only
+  `run_worker` stubbed: at 59edf3255 they fail with the pool's exact error; after the fix 13 passed, SELFTEST OK,
+  SCHEMA SELFTEST OK. The gate revision moves from 59edf3255 to the commit that merges origin/main over this fix (main
+  changed no sim/, webapp/ or research/runners/ file since 59edf3255, so relative to 59edf3255 the only brain-path change
+  is this fix); it is written to `GATE_SHA`, provisioned `--isolated` on pool41 + pool42, canaried sandboxed, and its
+  104 lines are regenerated with `--emit-pool-jobs` (+ `max_age_h=168`) into
+  `/home/dant123/Projects/sim/research/queue/requeue_host_share_<sha9>.tsv` for the coordinator to queue.

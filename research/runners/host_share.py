@@ -626,9 +626,11 @@ def run_worker(seed, group, arm, out_path, backend="numpy", session_index=None, 
     return 0
 
 
-def run_shard(seed, group, arm, out_path, backend="numpy", only_labels=None):
+def run_shard(seed, group, arm, out_path, backend="numpy", only_labels=None, allow_gate_seed=False):
     """One (seed, group, arm) shard; each session in its OWN fresh subprocess (PYTHONHASHSEED=0 set before interpreter
-    start): one ChatBrain per process, no carry-over through process-shared organ singletons. Parts are merged."""
+    start): one ChatBrain per process, no carry-over through process-shared organ singletons. Parts are merged.
+    `allow_gate_seed` is the parent's --allow-gate-seed, passed on to every worker: the worker re-runs the CLI's
+    gate-seed check (pool defect 2026-09-30, pre-data: without it every gate-seed worker died in argparse)."""
     env = dict(os.environ)
     env["PYTHONHASHSEED"] = "0"
     parts = []
@@ -637,6 +639,8 @@ def run_shard(seed, group, arm, out_path, backend="numpy", only_labels=None):
         if not os.path.exists(part):
             cmd = [sys.executable, "-u", "-m", "research.runners.host_share", "--worker", "--seed", str(seed),
                    "--group", group, "--arm", arm, "--out", part, "--backend", backend, "--session-index", str(si)]
+            if allow_gate_seed:
+                cmd.append("--allow-gate-seed")
             if only_labels:
                 cmd += ["--labels", ",".join(only_labels)]
             p = subprocess.run(cmd, env=env)
@@ -1284,7 +1288,8 @@ def main():
         return run_worker(a.seed, a.group, a.arm, a.out, backend=a.backend, session_index=a.session_index,
                           only_labels=only)
     if a.shard:
-        return 0 if run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, only_labels=only) else 1
+        return 0 if run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, only_labels=only,
+                              allow_gate_seed=a.allow_gate_seed) else 1
     if a.seed_all:
         fails = []
         for group in (GROUPS if a.group is None else [a.group]):
@@ -1292,7 +1297,8 @@ def main():
                 p = shard_path(a.out_dir, a.seed, group, arm)
                 if a.skip_existing and os.path.exists(p):
                     continue
-                if not run_shard(a.seed, group, arm, p, backend=a.backend, only_labels=only):
+                if not run_shard(a.seed, group, arm, p, backend=a.backend, only_labels=only,
+                                 allow_gate_seed=a.allow_gate_seed):
                     fails.append(p)
         print("[host_share] seed %d done; failed shards: %s" % (a.seed, fails), flush=True)
         return 0 if not fails else 1
