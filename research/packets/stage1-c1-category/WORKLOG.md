@@ -36,3 +36,11 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   not run: `mem_ok.sh 9` refused for over an hour (sibling dev runs held the workstation), and they are informational
   once the gate is queued. Launcher stopped; no dev process left running. Declared risk: the real-handler null was not
   checked at a dev seed (organ determinism was, 8/8).
+- 2026-09-30 13:10 Claude (adversarial review of the packet): two defects fixed, nothing re-queued. (1) Scorer: a
+  swallowed organ exception (an `error` in the `category_inherit` trace) read as FAIL "capability absent"; it now
+  reads UNDEFINED ("not applied"), failing-first test, commit 8ff2547ed (25 tests pass, SELFTEST OK). (2) HANDOFF:
+  section 0 sent a missing-shard re-queue through steps 1-3, whose step 3 re-adds all 54 lines (and, after a
+  NEEDS-MERGE re-pin, at a second revision); steps 1-3 are now record-only and step 4 carries its own re-queue block
+  (re-adds only the absent shards' lines, pinned to bb6705de6). Verified: the 54 queued lines pass the shape check and
+  the gate-seed guard (prereg resolved), carry mem_ok 7 / memcap 9 / mem_gb=7 / max_age_h=120; both nodes hold the
+  LTM bundle, the corpus, the runner and a venv at bb6705de6; queue position 469 of 522.

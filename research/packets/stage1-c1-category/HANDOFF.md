@@ -36,16 +36,25 @@ then stop that line of work and continue with any other thread that is not block
 - **The gate WAS queued by Claude on 2026-09-30 at 12:20 EDT**: main merged (366d131f7), GATE re-pinned to
   `bb6705de6259ef775ca265caa33e5799a587b97c` (the last GATE row), steps 1-2 run as written (CONTAINS-MAIN; six OK
   lines on pool41/pool42), 54 lines added with 0 ADD-FAILED, pool queue depth 526 after the add. **Start at step 4.**
-  Steps 1-3 are only for a re-queue (a missing-shard re-queue in step 4, or after a NEEDS-MERGE re-pin, which also
-  means removing nothing: the queued lines stay pinned to their revision and remain valid).
+  **Never run steps 1-3 again** (they are the record of how the gate was queued). Every shard of this gate comes
+  from ONE revision, `bb6705de6`: never merge main, never re-pin, never regenerate `$JOBS`, never run step 3's loop.
+  A missing-shard re-queue is step 4's own block, which re-adds only the absent lines from `$JOBS` as pinned. If a
+  node lost the `bb6705de6` revision (the dispatcher logs "revision ... not provisioned"): STOP, NEEDS-CLAUDE #3.
+- **Scorer hardening, 2026-09-30 (adversarial review, before any gate job was dispatched; no bar, arm, turn or prereg
+  line changed):** a swallowed organ exception (an `error` in a turn's `category_inherit` trace) now makes that arm
+  "not applied", so the seed reads UNDEFINED instead of FAIL "capability absent" (prereg section 4: no errored turn,
+  the wiring applied). Commit 8ff2547ed; the scorer runs from the worktree HEAD in step 5, the shards from
+  `bb6705de6`. Test count is now 25.
 
 ## 1. Checks before provisioning (every line must print what its comment says)
+
+**Record only (done 2026-09-30 12:20 EDT). Do not run this step again: section 0.**
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
 cd $W && ls data/corpus/tinystories.txt                                                   # the path, no error
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --selftest 2>/dev/null | tail -1        # SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py 2>/dev/null | tail -1   # 22 passed
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py 2>/dev/null | tail -1   # 25 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null; git status --short --untracked-files=no | wc -l   # 0
 git merge-base --is-ancestor $GATE_SHA HEAD && echo GATE-SHA-OK                            # GATE-SHA-OK
 git diff $PREREG_SHA $GATE_SHA -- $PREREG | wc -l                                          # 0
@@ -70,7 +79,7 @@ SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inh
 git diff $PREREG_SHA HEAD -- $PREREG | wc -l
 ```
 
-If it prints `MERGE-CONFLICT`, anything but `SELFTEST OK` / `22 passed` / `0`: STOP, NEEDS-CLAUDE #2. Otherwise re-pin
+If it prints `MERGE-CONFLICT`, anything but `SELFTEST OK` / `25 passed` / `0`: STOP, NEEDS-CLAUDE #2. Otherwise re-pin
 and push:
 
 ```bash
@@ -86,6 +95,8 @@ Then return to the top of step 1 (the pins now name the merge commit). A second 
 STOP, NEEDS-CLAUDE #2.
 
 ## 2. Provision the pool at GATE_SHA
+
+**Record only (done 2026-09-30 12:20 EDT). Do not run this step again: section 0.**
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
@@ -103,6 +114,8 @@ done
 | `CORPUS MISSING` or `RUNNER MISSING` | re-run `pool_provision.sh` for that node once; still missing: STOP, NEEDS-CLAUDE #3 |
 
 ## 3. Queue the 54 gate jobs (one per seed x arm)
+
+**Record only (done 2026-09-30 12:20 EDT). Do not run this step again: section 0.**
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
@@ -130,11 +143,23 @@ source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/
 find $P/$OUT -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'aggregate.json' | wc -l   # 54 when complete
 ```
 
-When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued
-(`grep -c stage1_c1_category $P/research/queue/pool.queue` prints 0): run step 5's aggregate (its `missing_shards`
-list names them), re-queue exactly those lines from `$JOBS` ONCE (grep each by the exact text `--seed N --arm A --allow-gate-seed`, so `lesion_inherit` does not also pick up `lesion_inherit.rep0`; add it with the same `pool_queue.sh add "$cmd" --checked "$why"` loop as step 3), wait again.
-Still missing: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and NEEDS-CLAUDE #5. If no shard has landed by
-2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before 2026-10-24).
+When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued or running: re-queue
+ONCE with this block. It re-adds exactly the `$JOBS` lines whose shard is absent (counted and informational arms),
+pinned to `bb6705de6` as they are; it never touches a line whose shard landed.
+
+```bash
+source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
+cd $P && grep -c "$GATE_SHA" $JOBS                                                    # 54 (every line at GATE_SHA)
+grep -c stage1_c1_category research/queue/pool.queue research/queue/pool.running       # both ...:0
+bash -c 'n=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [ -f "$out" ] && continue; n=$((n+1)); bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $cmd"; done < '"$JOBS"'; echo "re-queued $n"'
+```
+
+If the first line prints anything but 54, or either count is not 0: do not run the loop; STOP, NEEDS-CLAUDE #5.
+Then wait again. Still missing after that one re-queue: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and
+NEEDS-CLAUDE #5. If no shard has landed by 2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before
+2026-10-24). The lines carry `max_age_h=120`: after about 2026-10-05 12:20 EDT the dispatcher SKIPS them but leaves
+them in `pool.queue`, so the block's guard (count not 0) stops you. If `stage1_c1_category` lines are still queued
+after 2026-10-05 12:20 EDT with fewer than 54 shards landed: STOP, NEEDS-CLAUDE #10 (a fresh re-queue or another lane).
 
 ## 5. Score with the registered scorer, write the finding, commit
 
@@ -217,7 +242,8 @@ board line appended to the WORKLOG (Claude moves it to the board):
 9. FAIL: the prereg section 9 row names where to look; the next method is Claude's.
 10. Nothing landed by 2026-10-12: decide the lane (AWS CPU under the $50/day cap, or the local workstation under
     `mem_ok.sh`) so C1 lands inside the October Stage-1 window.
-11. A null failure (intact_a != intact_b), the wiring or lesion "not applied", or a hash-seed precondition failure.
+11. A null failure (intact_a != intact_b), the wiring or lesion "not applied" (including a swallowed organ error: the
+    reason names the turn and the error), or a hash-seed precondition failure.
 12. The bridging-member over-generalization (prereg section 12: a member that shares one frame from each category
     merges them; dev: the canary's `swim` then reached `lake`). Decide before any flip whether the moat needs a
     stricter admission (e.g. a frame reached only through the lateral association must clear a higher floor).
