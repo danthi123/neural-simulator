@@ -13,7 +13,35 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**North star:** a sim-brain that converses genuinely; Qwen2.5-0.5B stays the permanent mouth; #1 metric = the load-bearing
+fraction, with a host-decision share (by intervention) beside it. **Plan:** docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md.
+**Frontier (2026-09-29 12:15, Claude back after the usage reset; local model OFF, one driver):** seven agents launched on the
+Tuesday list: host-share baselines (research/host-share-baselines, reviews the local model's seam map + metacog probe), one
+selection seam with need-state reversal (research/selection-seam-need-reversal, reviews the N=5 BG work), spiking long-delay
+credit (research/long-delay-credit-spiking; the local model's rate-level draft is the reference: ruling, the claim needs the spiking
+substrate), sleep transitive inference inside the prioritized-memory prereg (research/sleep-transitive-inference), B2b s102 A1.4
+ruling + B2c readiness + fill the pool (research/b2-rulings-2026-09-29), arcc score + D6 canonical-run facts + waiver-absence
+latency fix (research/arcc-b2b-d6-scoring), docs refresh publish-ready (docs-refresh-readme). Lanes A/B/C registered in
+lane_builds.jsonl (primary checkout, uncommitted: `gates/compute_idle_persistent` blocks non-Markdown commits until the
+pool/GPU are busy; waiver budget 6.73/6 h frees ~18:30). **Next:** harvest each agent, review, merge SOUND branches.
+
+**LANDING (2026-09-29, evening):** merged to main (7801d0813, b8c50b492, 4c6b62722, 99986c950, ea4977d29): arcc
+awake-completion GO 6/6 + D6 doubled-cell ruling + waiver_history clear_waiver fix; B2b COMPLETE (216/216 DEFINED,
+robust core 28/29, mean 0.843) + tools/b2b_score.py; B2d reply-level rescore (headline reply core 17/33) +
+comprehension-monitor lesion-twin crash fix + tools/b2d_score.py; docs-refresh's 25 ISSUES.md fixes; the local-model
+bake-off (Ollama vs Unsloth Studio). Pushed both remotes. Kept on their branches, not yet merged (packets awaiting
+their own gate verdicts): host-share-baselines, selection-seam-need-reversal (+ a host_share_bg_seam.py integration
+bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Next, this cycle:
+provision + queue host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit
+instrument sweep (243 pool jobs, dev seeds) per each branch's own HANDOFF. NOT queued: sleep transitive inference
+(its dev cupy seeds 8-11 were killed mid-build by a GPU pause/game cycle, not a code failure -- re-queued, gate
+seeds wait on its step-2 operating-point check passing first); B2d (needs a harness change first, NEEDS-CLAUDE per
+its own prereg).
+
+*Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
+
 
 **🌙 02:35 progress (overnight):** sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74);
 open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as

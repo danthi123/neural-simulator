@@ -31,6 +31,7 @@ checked is a HYPOTHESIS, exactly like a claim in a comment.
 | **lesion** | the manipulation is verified to STILL HOLD at the moment of measurement (a zeroed weight can regrow within steps if plasticity is live) | "attempted lesion (persistence unverified)" |
 | **selective** | reported with its permuted/scrambled control AND raw per-item magnitudes; a ratio alone is not selectivity | "ratio X (control not run)" |
 | **works / solved** | the capability gate passes, not a proxy of it (a weight read is a proxy; behaviour is the capability) | "the proxy passes", "the write works" |
+| **load-bearing** (reply-level, the default meaning) | a **primary reply field** (`answer`, `abstained`, `recalled_svo`, or the rendered reply text) differs between the lesion and intact arms on the probe turn, stays the same between the two independent intact arms (the null), and reproduces against the lesion's own repeat | "trace-level load-bearing (decision field)" (a registered decision/trace field differs, but no reply field does) |
 
 ---
 
@@ -43,6 +44,15 @@ checked is a HYPOTHESIS, exactly like a claim in a comment.
   code comments or scratch notes.
 - **Adding a term.** Only when a real overclaim has occurred — this file records earned lessons, not anticipated
   ones. Cite the incident.
+- **"load-bearing," added 2026-09-29.** The 2026-09-24 flip finding's honesty line ("lesioning ... changes the chat
+  reply") described the reply level, but the number it reported was the registered TRACE fraction: of its 24
+  adequate-battery core rows, 9-11 never changed `answer`/`abstained`/`recalled_svo` on the registered probe (some
+  because the only registered diff was a label the lesion branch writes about itself, e.g. `*.reason =
+  lesion_collapsed`, regardless of any neural effect). Re-scored at reply level, the B2b battery's robust core is
+  17 of 33 reply-defined rows, not the trace headline's 28 of 34
+  (`research/findings/2026-09-29-load-bearing-fraction-reply-level-rescore.md`). The unqualified word
+  "load-bearing" in a finding or board entry now means reply-level by default; a decision-field-only result must
+  say "trace-level load-bearing" explicitly.
 - **On full ASD-STE100** (Issue 9, Jan 2025; ~53 rules + ~900-word dictionary, free-on-request from STEMG, not
   redistributable): the full specification was assessed and NOT adopted for findings. Its rules target procedural
   maintenance prose, whereas findings are argumentative and causal; its controlled dictionary does not cover

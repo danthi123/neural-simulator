@@ -413,8 +413,22 @@ class ComprehensionProductionOrgan:
 
         SHARED path: the pool already settled the WHOLE bridge to a quiescent rest and snapshotted it (`pool.snap`),
         so the rest is that snapshot's (v,u) -- restoring it in _hard_reset returns EVERY slice to rest (co-residents
-        included, so no clobber), and no extra settle steps footprint the shared bridge."""
-        if self._shared is not None and self._shared.snap is not None:
+        included, so no clobber), and no extra settle steps footprint the shared bridge.
+
+        THE LESION-TWIN CRASH FIX (2026-09-29, found by the B2d reply-level rescore audit — comprehension-monitor's
+        lesion arm raised `ValueError: could not broadcast input array from shape (7002,) into shape (1032,)` on
+        88/88 retained lesion arms since the 2026-09-21 pilot, so its "load-bearing on 6/6 seeds" verdict in every
+        battery was a harness crash, not a lesion effect). The ORIGINAL condition branched only on `self._shared`
+        (the ORGAN's own shared-pool context, set once at construction) and ignored WHICH comp bridge was being
+        snapshotted. `_lesion_comp()` builds the twin standalone (`_build_comp(self.seed)`, no `shared=`) precisely
+        so it "needs no pool guard" (see the comment at the `judge()`/`repair_target()` call sites) — but the old
+        condition still took the shared-pool branch for it whenever the ORGAN itself was pool-attached, storing the
+        pool's N=7002 rest snapshot into the twin's OWN N=1032-neuron arrays in `_hard_reset`. The fix: the shared
+        snapshot is used only for the bridge the pool actually owns (`comp is self.comp`); every other bridge
+        (the standalone lesion twin) always takes the manual 40-step settle below, matching its own size. This
+        changes NOTHING for `self.comp` (the shared/intact path): `comp is self.comp` is trivially true there, so
+        the branch it takes is unchanged from before this fix."""
+        if self._shared is not None and self._shared.snap is not None and comp is self.comp:
             snap = self._shared.snap
             # BACKEND-MATCH (cupy build fix, 2026-08-28): store the rest snapshot in the comp bridge's OWN backend
             # so `_hard_reset`'s `b.cp_*[:] = rest` is a device->device (cupy) / host->host (numpy) assignment. The
