@@ -57,14 +57,15 @@ def check_at_build(root: str | None = None) -> dict:
         return st
     where = os.path.join(REPO_ROOT if root is None else root, "data", "corpus")
     msg = ("CORPUS MISSING: %s lacks %s. The corpus-learned organs (the one-brain cross-edge pool, the learned-animacy "
-           "lexicon) will DEGRADE to their standalone paths: this is a DIFFERENT brain from the primary checkout's. "
-           "Link or sync data/ (a worktree: `ln -s <primary>/data data`; a pool node: tools/pool_provision.sh). "
-           "Every /api/brain-chat reply carries corpus_present=false." % (where, st["corpus_missing"]))
+           "lexicon) DEGRADE to their standalone paths without it: a DIFFERENT brain from the primary checkout's. "
+           "Link or sync data/ (a worktree: `ln -s <primary>/data data`; a pool node: tools/pool_provision.sh)."
+           % (where, st["corpus_missing"]))
     if require_corpus():
         raise CorpusMissingError(msg + " BRAIN_REQUIRE_CORPUS=1: refusing to build.")
     if where not in _WARNED:
         _WARNED.add(where)
-        print("[webapp] ⛔ %s Set BRAIN_REQUIRE_CORPUS=1 to refuse instead." % msg, file=sys.stderr, flush=True)
+        print("[webapp] ⛔ %s Building anyway: every /api/brain-chat reply carries corpus_present=false. Set "
+              "BRAIN_REQUIRE_CORPUS=1 to refuse instead." % msg, file=sys.stderr, flush=True)
     return st
 
 
