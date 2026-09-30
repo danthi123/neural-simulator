@@ -1,0 +1,41 @@
+{
+ "run_id": "1790705088-1799949",
+ "runner": "research/runners/long_delay_credit_bg.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/long-delay-credit-spiking/research/runners/long_delay_credit_bg.py",
+  "--schedule",
+  "late_immediate",
+  "--arms",
+  "full",
+  "--seeds",
+  "7",
+  "--n-train",
+  "200",
+  "--n-test",
+  "100",
+  "--verbose",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/long-delay-credit-spiking/research/findings/raw/_long_delay_credit_bg/dev/inst1_late_immediate_full_s7.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T14:04:48",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6973.4,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_long_delay_credit_bg/dev/inst1_late_immediate_full_s7.json"
+}
