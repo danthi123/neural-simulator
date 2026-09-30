@@ -39,11 +39,13 @@ shape tools/pool_provision.sh --isolated / tools/pool_queue.sh / tools/pool_auto
 throughout) and forwards it to tools/pool_queue.sh add, which re-applies its OWN full guard suite (shape/
 gate-seed/node-validation/--checked control-character rejection) independently -- this script's own validation
 above is not a substitute for that, it is what makes the CONSTRUCTED command line trustworthy in the first
-place. 2026-09-30 security review (HIGH #2): tools/agent_gateway.sh REFUSES pool-submit, so nothing reaches this
-builder from the container today; it is kept for when every pool node runs agent jobs under a no-sudo user inside
-the gpu path's bubblewrap recipe (docs/AGENT_HARNESS_SETUP.md, "Pool nodes"). The earlier reasoning -- pool nodes
-are dedicated, disposable compute, so an unsandboxed job there is acceptable -- did not hold: their job account has
-passwordless sudo and full LAN access, so a malicious job is a LAN foothold, not a contained nuisance.
+place. 2026-09-30 security review (HIGH #2): the earlier reasoning -- pool nodes are dedicated, disposable compute,
+so an unsandboxed job there is acceptable -- did not hold: their job account has passwordless sudo and full LAN
+access, so a malicious job was a LAN foothold, not a contained nuisance. tools/agent_gateway.sh now forwards
+pool-submit here only while the live pool dispatcher runs with POOL_SANDBOX=on, and the node runs the line inside
+tools/pool_job_sandbox.sh's bubblewrap recipe; the AGENT_JOB_MARKER below is what selects that recipe's agent mode
+(only this job's research/findings/raw/_agent_jobs/<id> writable, an outer MemoryMax/TasksMax scope, a wall-clock
+timeout), and tools/pool_autodispatch.sh never pops a marked line for an unsandboxed launch.
 """
 import os
 import re

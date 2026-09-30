@@ -6,7 +6,8 @@
 # -- this script is the ENTIRE trust boundary between the container and the workstation's compute (the pool,
 # the GPU, the local-model server). THE CONTAINER'S OWN DRIVER MAY BE ADVERSARIAL (2026-09-29 security review):
 # it must not be able to run ANY text it supplies as a shell command, on this workstation or a pool node. It
-# allows exactly three things and refuses (and logs) everything else:
+# allows exactly four things (pool-submit only while the pool sandbox is mandatory) and refuses (and logs) everything
+# else:
 #
 #   gpu-submit  --sha <40hex> --runner research.runners.<name> [--prereg <path>] -- <args...>
 #       STRUCTURED requests only (2026-09-29 security review, H2) -- tools/agent_gateway_submit.py validates the
@@ -23,14 +24,20 @@
 #                                workstation session" behaviour swapped for "unpause the harness + say" (see
 #                                that command's --notify-cmd, and tools/gpu_queue.sh's LLM_YIELD_NOTIFY_CMD).
 #
-# POOL-SUBMIT IS REFUSED (2026-09-30 security review, HIGH #2). It dispatched agent-authored runner code (any
-# research/draft-* commit the gitea deploy key can push) to the pool40/41/42 mini-PCs UNSANDBOXED, with full
-# network, under a job account with passwordless sudo: a LAN foothold that bypasses everything sim-agent.nft
-# confines, because the code no longer runs in the container. The only compute channels left are the sandboxed GPU
-# path (bubblewrap --unshare-all, no network, resource limits) and the model port. Re-enabling it is a CODE CHANGE
-# here, reviewed by the owner, and only after every pool node runs agent jobs under a dedicated no-sudo user inside
-# the same bubblewrap recipe as gpu-submit (read-only checkout, writable per-job output directory, no network) --
-# docs/AGENT_HARNESS_SETUP.md, "Pool nodes". tools/agent_gateway_submit.py's `pool` builder is kept for that day.
+#   pool-submit --sha <40hex> --runner research.runners.<name> [--prereg <path>] --checked <reason> -- <args...>
+#       ONLY WHILE THE POOL SANDBOX IS MANDATORY (2026-09-30). The 2026-09-30 security review (HIGH #2) found it
+#       dispatching agent-authored runner code to the pool mini-PCs UNSANDBOXED, with full network, under a job
+#       account with passwordless sudo: a LAN foothold outside everything sim-agent.nft confines. Pool jobs now run
+#       inside tools/pool_job_sandbox.sh's bubblewrap recipe (gpu-submit's: --unshare-all, no network,
+#       no-new-privs, the revision read-only, only this job's research/findings/raw/_agent_jobs/<id> writable, an
+#       outer MemoryMax/TasksMax scope and a wall-clock timeout). This subcommand is accepted only while the LIVE
+#       dispatcher publishes mode=on in research/queue/.pool_sandbox_state (written every cycle by
+#       tools/pool_autodispatch.sh's main loop; stale after POOL_SANDBOX_STATE_MAX_AGE_S) -- i.e. while a node that
+#       cannot sandbox gets no work at all. In `auto`/`off`, or with no fresh state, it is refused. Independently,
+#       the dispatcher never pops an AGENT_JOB_SRC=sim-agent line for an unsandboxed launch in any mode, so a line
+#       accepted here stays queued rather than running unsandboxed if the mode is later changed. Same structured
+#       request and validation as gpu-submit (tools/agent_gateway_submit.py `pool`), docs/AGENT_HARNESS_SETUP.md,
+#       "Pool nodes".
 #
 # RESULTS-SYNC HAS MOVED OFF THIS SCRIPT ENTIRELY (2026-09-29 security review, H3): the old `results-sync`
 # subcommand here validated only the LAST rsync protocol argument, so `. /home/dant123/.ssh/ research/findings/
@@ -76,6 +83,30 @@ log "request: ${CMD:-<empty>}"
 # variables puts everything past the first word into the LAST one)
 read -r SUB REST <<< "$CMD"
 
+# pool_sandbox_mandatory: 0 only when the LIVE pool dispatcher last published mode=on within the freshness window.
+# The state file is written by tools/pool_autodispatch.sh (write_sandbox_state) under THIS repo's research/queue/;
+# the container cannot write it. A symlink, a missing/garbled/stale file, or any other mode refuses (fail closed).
+POOL_SANDBOX_STATE="$ROOT/research/queue/.pool_sandbox_state"
+POOL_SANDBOX_STATE_MAX_AGE_S=900   # the live loop rewrites it every cycle (60 s poll + a full fill of every node)
+pool_sandbox_mandatory() {
+  local line mode ts now
+  POOL_SANDBOX_WHY=""
+  if [ ! -f "$POOL_SANDBOX_STATE" ] || [ -L "$POOL_SANDBOX_STATE" ]; then
+    POOL_SANDBOX_WHY="no dispatcher state (research/queue/.pool_sandbox_state)"; return 1
+  fi
+  line=$(head -1 "$POOL_SANDBOX_STATE" 2>/dev/null)
+  if [[ ! $line =~ ^mode=([a-z]+)\ ts=([0-9]+)(\ |$) ]]; then
+    POOL_SANDBOX_WHY="unreadable dispatcher state"; return 1
+  fi
+  mode="${BASH_REMATCH[1]}"; ts="${BASH_REMATCH[2]}"
+  [ "$mode" = on ] || { POOL_SANDBOX_WHY="the pool dispatcher runs with POOL_SANDBOX=$mode, not on"; return 1; }
+  now=$(date +%s)
+  if [ $(( now - ts )) -gt "$POOL_SANDBOX_STATE_MAX_AGE_S" ] || [ "$ts" -gt $(( now + 60 )) ]; then
+    POOL_SANDBOX_WHY="the dispatcher state is stale (is pool-dispatch.service running?)"; return 1
+  fi
+  return 0
+}
+
 # parse_rest_into_args: fills the global ARGS array by shlex-splitting $REST (H1 -- NEVER `eval`). Refuses (and
 # never returns) on any parse error or any token containing a control character.
 parse_rest_into_args() {
@@ -93,7 +124,11 @@ parse_rest_into_args() {
 
 case "$SUB" in
   pool-submit)
-    refuse "pool-submit is disabled: pool jobs would run unsandboxed, with network, on nodes with passwordless sudo (a LAN foothold outside sim-agent.nft) -- use gpu-submit (sandboxed, no network); see docs/AGENT_HARNESS_SETUP.md, Pool nodes"
+    pool_sandbox_mandatory \
+      || refuse "pool-submit needs the pool sandbox to be mandatory (POOL_SANDBOX=on on the live dispatcher): $POOL_SANDBOX_WHY -- until then pool jobs could run unsandboxed, with network, on nodes with passwordless sudo; use gpu-submit (sandboxed, no network); see docs/AGENT_HARNESS_SETUP.md, Pool nodes"
+    [ -n "$REST" ] || refuse "pool-submit needs a structured request (--sha ... --runner ... --checked ... -- <args...>)"
+    parse_rest_into_args
+    exec "$PYTHON_BIN" "$SUBMIT_PY" pool "${ARGS[@]}"
     ;;
 
   gpu-submit)
@@ -145,6 +180,6 @@ case "$SUB" in
     ;;
 
   *)
-    refuse "unknown command '$SUB' (allowed: gpu-submit, status, yield)"
+    refuse "unknown command '$SUB' (allowed: gpu-submit, pool-submit, status, yield)"
     ;;
 esac

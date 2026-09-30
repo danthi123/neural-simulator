@@ -370,13 +370,14 @@ def test_settings_only_allows_the_gateway_subcommands_over_ssh():
     ssh_rules = [r for r in allow if r.startswith("Bash(ssh ")]
     for r in ssh_rules:
         assert "workstation-gateway" in r
-    subs = {"gpu-submit", "status", "yield"}
+    subs = {"gpu-submit", "pool-submit", "status", "yield"}
     covered = {s for s in subs if any(f"workstation-gateway {s}" in r for r in ssh_rules)}
     assert covered == subs
     assert not any("results-sync" in r for r in ssh_rules)
-    # 2026-09-30 security review (HIGH #2): the gateway refuses pool-submit; the settings deny it outright too
-    assert not any("pool-submit" in r for r in ssh_rules)
-    assert any("workstation-gateway pool-submit" in r for r in _settings()["permissions"]["deny"])
+    # 2026-09-30 (security review HIGH #2, closed by the pool-job sandbox): pool-submit is allowed here and gated at
+    # the WORKSTATION -- tools/agent_gateway.sh accepts it only while the live pool dispatcher runs with
+    # POOL_SANDBOX=on (tests/test_agent_gateway.py). The settings must not deny it any more (a deny would win).
+    assert not any("pool-submit" in r for r in _settings()["permissions"]["deny"])
 
 
 def test_settings_allows_the_dedicated_rrsync_results_pull():

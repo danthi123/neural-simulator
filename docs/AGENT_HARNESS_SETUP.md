@@ -27,6 +27,11 @@ failed WAN refresh alerts; `verify_isolation.sh` fails when Gitea Actions are on
 the workstation's sshd offers a password; a gate flags agent changes to server and hook code. What is left to the
 owner is in the checklist below and in "What the owner must verify" at the end.
 
+**Then the pool-job sandbox** (branch `research/pool-job-sandbox`, 2026-09-30): pool jobs run inside bubblewrap on
+the nodes (no network, no-new-privs, the pinned revision read-only, only its output area writable), behind a
+`POOL_SANDBOX=auto|on|off` switch on the dispatcher, and the gateway accepts `pool-submit` again only while the live
+dispatcher runs with `POOL_SANDBOX=on`. The node steps are in "Pool nodes".
+
 ## Where everything lives
 
 | What | On the server | Source of truth (this repo) |
@@ -52,15 +57,16 @@ Building from `repo/` (the agent's own checkout) would let it rewrite its own gu
 (the model server); Gitea over ssh at 192.168.0.10:2222; HTTPS (443) to the public internet except this site's own
 WAN address. Nothing else: no host listener (sshd, rpcbind, Samba, NFS, upsd, Cockpit), no other container, no
 published port, no LAN device, no IPv6, and nothing can connect in. Of the workstation gateway's commands, only
-`gpu-submit` (bubblewrap-sandboxed, no network), `status` and `yield` are accepted; `pool-submit` is refused (see
+`gpu-submit` (bubblewrap-sandboxed, no network), `status` and `yield` are accepted; `pool-submit` is accepted only
+while the pool dispatcher runs with `POOL_SANDBOX=on`, i.e. every pool job runs bubblewrap-sandboxed on the node (see
 "Pool nodes").
 
 **Plain-language residual risk (read this before deciding the setup is "done"):** even with every step applied, a
 FULLY ROGUE model driving the container could still (1) exfiltrate the repo and any results it can read over the
 one egress path that must stay open (HTTPS to the internet: "the Claude Code updater" cannot be told apart from
-"any other HTTPS destination" at the IP level this works at); (2) reach the pool nodes only if `pool-submit` is
-ever re-enabled without the "Pool nodes" hardening (it is refused today), and then get root on the mini-PCs through
-a pool job and use that as a foothold on the LAN; (3) burn CPU/GPU compute and fill its own dataset up to its
+"any other HTTPS destination" at the IP level this works at); (2) run code on the pool nodes through `pool-submit`,
+inside the bubblewrap sandbox (no network, no-new-privs, read-only revision); reaching the LAN or root from there
+takes a kernel exploit through unprivileged user namespaces, the same residual as (5); (3) burn CPU/GPU compute and fill its own dataset up to its
 refquota (a nuisance, not a compromise); (4) try to
 social-engineer the OWNER through what it says in chat/tmux; (5) attempt a kernel or driver exploit to escape the
 container: namespaces, cap_drop and seccomp shrink that surface but cannot make it zero; (6) persist code in its
@@ -93,6 +99,8 @@ hold**):
 12. Build, smoke-test, seed the repo, start.
 13. `verify_isolation.sh`: ALL CHECKS PASSED; branch protection probed from the workstation.
 14. OWNERSHIP-MAP, weekly rebuild timer.
+15. Pool nodes: bubblewrap on every node, the live self-test, then `POOL_SANDBOX=on` on the dispatcher ("Pool
+    nodes"); until then the gateway refuses `pool-submit`.
 
 After that, for every agent branch you merge and every `src/` update: "Merging agent branches". Optional site-wide
 hardening found on the way: "Optional: site-wide hardening".
@@ -347,13 +355,14 @@ skips pausing the harness for them.
 
 **Preconditions, all of them, before the first key goes in:** step 1 applied and `sshd -T` confirmed; step 3's
 Actions check reads `false`, the probe push produced no run, the gitea quota is set; and the gateway refuses
-`pool-submit` (it does by default; confirm on the WORKSTATION):
+`pool-submit` unless the pool sandbox is mandatory (confirm on the WORKSTATION):
 
 ```bash
 cd /home/dant123/Projects/sim
+cat research/queue/.pool_sandbox_state      # mode=... as published by the live dispatcher each cycle
 env SSH_ORIGINAL_COMMAND='pool-submit --sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --runner research.runners.x --checked y -- --seed 1' AGENT_GATEWAY_LOG=/dev/null bash tools/agent_gateway.sh
-# expect: refused: pool-submit is disabled ... (exit status 1)
-.venv/bin/python -m pytest -q tests/test_agent_gateway.py tests/test_agent_gateway_submit.py
+# expect, unless mode=on: refused: pool-submit needs the pool sandbox to be mandatory ... (exit status 1)
+.venv/bin/python -m pytest -q tests/test_agent_gateway.py tests/test_agent_gateway_submit.py tests/test_pool_job_sandbox.py
 ```
 
 From the WORKSTATION, streaming each private key straight into place (it never lands anywhere else):
@@ -575,24 +584,80 @@ sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
 Verify from another LAN device (`curl -m 3 http://192.168.0.68:8080/health` times out) and from the server (it
 answers). These do not survive a reboot unless saved with the workstation's own firewall mechanism.
 
-## Pool nodes (required before `pool-submit` is ever re-enabled)
+## Pool nodes (the sandbox `pool-submit` requires)
 
-`tools/agent_gateway.sh` REFUSES `pool-submit` (2026-09-30 security review, HIGH). It used to dispatch agent-authored
-runner code (any `research/draft-*` commit the deploy key can push) to the pool40/41/42 mini-PCs unsandboxed, with
-full network, under a job account with passwordless sudo (`tools/pool_provision.sh` relies on `sudo -n`): a LAN
-foothold that bypasses everything `sim-agent.nft` confines, because the code no longer runs in the container. With it
-refused, the container's compute channels are the sandboxed GPU path (bubblewrap `--unshare-all`, no network,
-resource limits) and the model port. Nothing to do on the nodes while it stays refused.
+**Why.** The 2026-09-30 security review found `tools/pool_autodispatch.sh` running every pool job over ssh as the
+node's login user, with passwordless sudo and full network: an agent-authored line (`pool-submit`, or the local-model
+driver's `tools/pool_queue.sh add`) was a LAN foothold that bypassed everything `sim-agent.nft` confines, next to a
+server that trusts the LAN (SMB guest shares, rpcbind/NFS, upsd, published ports).
 
-Re-enabling it is a reviewed CODE CHANGE to `tools/agent_gateway.sh`, and only after ALL of this holds on every node:
+**What runs now.** For a sandboxed launch the dispatcher sends `tools/pool_job_sandbox.sh` as the remote wrapper. On
+the node it builds a bubblewrap sandbox from an empty root, the recipe `gpu-submit` uses: `--unshare-all` (no
+network at all, no view of other processes, no host sockets), no-new-privs (sudo cannot work), `--clearenv` with an
+allow-list, a fresh `/tmp` and a fresh tmpfs over the node's HOME (so `~/.ssh` and everything else there is absent),
+read-only `/usr`, six `/etc` entries, the pinned `~/derisk-pool/revisions/<sha>` (source, `.venv`, `data/corpus`)
+and `~/Projects/sim-data`. Writable: only `<revision>/research/findings/raw` (a gateway-built agent line: only its
+own `_agent_jobs/<id>`). `memcap.sh` N becomes a `MemoryMax=N G` scope around the whole sandbox, `mem_ok.sh` reads
+a snapshot of the node's scopes, and an agent line always gets `MemoryMax=8G`, `TasksMax=512` and a 12 h timeout.
+Refusals are rc 126 in `job_status.log`, never an unsandboxed fallback. The file's header has the full recipe.
 
-1. a dedicated job user with no sudo at all (`sudo useradd -r -m -s /usr/sbin/nologin simjob`), and the dispatcher's
-   remote launch pointed at it; the existing NOPASSWD entry removed or restricted to the provisioning account
-   (`sudo grep -rl NOPASSWD /etc/sudoers.d/`, then `sudo visudo -f /etc/sudoers.d/<that-file>`);
-2. agent jobs run under the same bubblewrap recipe as `gpu-submit` (`--unshare-all`, the checkout read-only, one
-   writable per-job output directory), or at the very least a per-node firewall that lets the job user reach only
-   the workstation;
-3. `tests/test_agent_gateway.py` and `tests/test_agent_gateway_submit.py` re-run green with the change.
+**The switch** (`POOL_SANDBOX`, read by the dispatcher at start): `auto` (default) sandboxes on every node whose
+probe answers `POOL_SANDBOX_READY` and launches unsandboxed, with a loud `⚠ UNSANDBOXED` line per dispatch, on a node
+that does not; `on` gives an unready node no work at all (jobs stay queued); `off` is the old launch everywhere.
+Whatever the mode, a line carrying `AGENT_JOB_SRC=sim-agent` is never popped for an unsandboxed launch. The live loop
+publishes its mode every cycle to `research/queue/.pool_sandbox_state`; `tools/agent_gateway.sh` accepts
+`pool-submit` only while that file says `mode=on` and is under 15 minutes old.
+
+**Node readiness found on 2026-09-30** (pool41 and pool42, Ubuntu 22.04.5, kernel 5.15): unprivileged user
+namespaces are enabled (`kernel.unprivileged_userns_clone=1`, no AppArmor userns restriction on 22.04, `unshare
+--user --map-root-user --net true` succeeds), but bubblewrap is NOT installed. So today every node probes as not
+ready and `auto` launches exactly as before.
+
+**Owner steps, in order:**
+
+1. On each node (pool41, pool42, and any node added to `tools/pool_nodes.conf` later), install bubblewrap and
+   confirm it starts a sandbox as the job user (expect `ok`):
+
+   ```bash
+   ssh pool41 'sudo apt-get update && sudo apt-get install -y bubblewrap'
+   ssh pool41 'bwrap --unshare-all --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --symlink usr/lib64 /lib64 --proc /proc --dev /dev -- /bin/sh -c "grep -q \"^NoNewPrivs:.*1\" /proc/self/status && echo ok"'
+   ```
+
+   Leave `kernel.unprivileged_userns_clone` at 1. On a node later upgraded to Ubuntu 24.04+, check
+   `sysctl kernel.apparmor_restrict_unprivileged_userns`: at 1 it blocks bubblewrap unless an AppArmor profile
+   grants `/usr/bin/bwrap` the `userns` permission; the `ok` check above fails loudly if so.
+2. From the workstation, the live self-test on each node, against any revision already provisioned there (it runs
+   through the exact sandboxed launch, not the queue; exit 0 = every check passed):
+
+   ```bash
+   cd /home/dant123/Projects/sim
+   bash tools/pool_autodispatch.sh --sandbox-probe pool41        # POOL_SANDBOX_READY bwrap=...
+   bash tools/pool_sandbox_selftest.sh pool41 <provisioned-sha>
+   bash tools/pool_sandbox_selftest.sh pool41 <provisioned-sha> --job '<one queued dev-seed-7 line, without #checked>'
+   ```
+
+   It checks from inside the sandbox that 192.168.0.10:445, 1.1.1.1:443 and DNS fail, sudo fails with no-new-privs
+   set, the revision and `/usr` are read-only, `~/.ssh` and the node's other processes are invisible, then pulls the
+   report back with `tools/pool_sync.sh`.
+3. Once `research/pool-job-sandbox` is merged, make the sandbox mandatory on the dispatcher and restart it (safe at
+   any time: jobs run on the nodes, not under the dispatcher):
+
+   ```bash
+   mkdir -p ~/.config/systemd/user/pool-dispatch.service.d
+   printf '[Service]\nEnvironment=POOL_SANDBOX=on\n' > ~/.config/systemd/user/pool-dispatch.service.d/sandbox.conf
+   systemctl --user daemon-reload && systemctl --user restart pool-dispatch.service
+   grep 'POOL_SANDBOX=' research/queue/dispatch.log | tail -1; cat research/queue/.pool_sandbox_state   # mode=on
+   ```
+
+   Then queue one dev-seed-7 line with `FRONT=1` and `max_age_h=` in its `--checked` text, and confirm its result
+   arrives with the next `tools/pool_sync.sh`, before trusting the backlog to it.
+4. Optional defence in depth: a dedicated job user with no sudo on each node (`sudo useradd -m -s /bin/bash
+   simjob`), the dispatcher's ssh target switched to it, and the NOPASSWD entry kept for the provisioning account
+   only (`sudo grep -rl NOPASSWD /etc/sudoers.d/`). The sandbox already makes sudo unusable from a job; this also
+   covers a sandbox escape short of a kernel exploit.
+
+Re-run `tests/test_pool_job_sandbox.py`, `tests/test_agent_gateway.py` and `tests/test_agent_gateway_submit.py`
+after any change to the dispatcher, the wrapper or the gateway.
 
 ## Merging agent branches (and updating `src/`)
 
@@ -638,9 +703,10 @@ Nothing on the server was modified by that review, and `~/apps/.env` was never r
 evidence came from read-only `sudo -n` reads of nft, exports, samba, `sshd -T`, zfs, sanoid, systemd units, compose
 fragments (secret values redacted) and the act-runner `config.yaml`. These are the items only you can close:
 
-1. Before installing the container's gateway key: `pool-submit` stays refused in `tools/agent_gateway.sh` (step 10
-   shows the check) until the "Pool nodes" hardening holds on every node; re-run the gateway tests after any change.
-   It is the one designed channel that reached the LAN.
+1. Before installing the container's gateway key: `pool-submit` is refused by `tools/agent_gateway.sh` (step 10
+   shows the check) until the live dispatcher runs with `POOL_SANDBOX=on`, which needs "Pool nodes" steps 1-3 on
+   every node; re-run the gateway and sandbox tests after any change. It was the one designed channel that reached
+   the LAN.
 2. Build the image and run the ctl script from a `src/` that contains the PATH and absolute-interpreter fix
    (`tools/agent_container/Dockerfile`, `entrypoint.sh`, `bin/firewall_guard.sh`) and the `docker exec -e PATH=...`
    change (`update.sh`, `agent_harness_ctl.sh`, `verify_isolation.sh`): merge this branch BEFORE step 6's clone. The

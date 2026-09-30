@@ -107,19 +107,68 @@ def test_unknown_subcommand_is_refused_and_logged():
         assert "rm -rf /" in log
 
 
-def test_pool_submit_is_refused_until_the_pool_nodes_are_sandboxed():
-    # 2026-09-30 security review (HIGH #2): pool jobs are agent-authored runner code dispatched UNSANDBOXED, with full
-    # network, to pool nodes whose job account has passwordless sudo -- a LAN foothold outside everything
-    # sim-agent.nft confines. Refused (one line, like results-sync) until the nodes run jobs under a no-sudo user
-    # inside the same bubblewrap recipe as gpu-submit.
+_POOL_REQ = ("pool-submit --sha " + "a" * 40 + " --runner research.runners.foo "
+             "--checked 'corpus: nothing' -- --seed 7")
+
+
+def _write_sandbox_state(tmp, line):
+    path = os.path.join(tmp, "research", "queue", ".pool_sandbox_state")
+    with open(path, "w") as f:
+        f.write(line)
+    return path
+
+
+def _assert_pool_submit_refused(tmp, log, why):
+    res = _run(_POOL_REQ, tmp)
+    assert res.returncode != 0
+    assert "refused" in res.stderr.lower() and "gpu-submit" in res.stderr, res.stderr
+    assert why in res.stderr, res.stderr
+    assert "REFUSED" in open(os.path.join(tmp, "gateway.log")).read()
+    assert "submit.py" not in (open(log).read() if os.path.exists(log) else "")
+
+
+def test_pool_submit_is_refused_unless_the_pool_sandbox_is_mandatory():
+    # 2026-09-30 security review (HIGH #2): pool jobs used to be agent-authored runner code dispatched UNSANDBOXED,
+    # with full network, to pool nodes whose job account has passwordless sudo -- a LAN foothold outside everything
+    # sim-agent.nft confines. pool-submit is accepted only while the LIVE dispatcher publishes POOL_SANDBOX=on
+    # (research/queue/.pool_sandbox_state, rewritten every cycle): no state, auto, off, stale, garbled or a symlink
+    # all refuse, and nothing reaches agent_gateway_submit.py.
+    import time
+    now = int(time.time())
     with tempfile.TemporaryDirectory() as tmp:
         log = _scaffold(tmp)
-        res = _run("pool-submit --sha " + "a" * 40 + " --runner research.runners.foo "
-                   "--checked 'corpus: nothing' -- --seed 7", tmp)
-        assert res.returncode != 0
-        assert "refused" in res.stderr.lower() and "gpu-submit" in res.stderr
-        assert "REFUSED" in open(os.path.join(tmp, "gateway.log")).read()
-        assert "submit.py" not in (open(log).read() if os.path.exists(log) else "")
+        _assert_pool_submit_refused(tmp, log, "no dispatcher state")
+        _write_sandbox_state(tmp, "mode=auto ts=%d pid=1\n" % now)
+        _assert_pool_submit_refused(tmp, log, "POOL_SANDBOX=auto, not on")
+        _write_sandbox_state(tmp, "mode=off ts=%d pid=1\n" % now)
+        _assert_pool_submit_refused(tmp, log, "POOL_SANDBOX=off, not on")
+        _write_sandbox_state(tmp, "mode=on ts=%d pid=1\n" % (now - 3600))
+        _assert_pool_submit_refused(tmp, log, "stale")
+        _write_sandbox_state(tmp, "mode=on ts=%d pid=1\n" % (now + 7200))   # a future stamp is not fresh either
+        _assert_pool_submit_refused(tmp, log, "stale")
+        _write_sandbox_state(tmp, "mode=on\n")
+        _assert_pool_submit_refused(tmp, log, "unreadable")
+        real = _write_sandbox_state(tmp, "mode=on ts=%d pid=1\n" % now)
+        os.rename(real, real + ".real")
+        os.symlink(real + ".real", real)
+        _assert_pool_submit_refused(tmp, log, "no dispatcher state")
+
+
+def test_pool_submit_forwards_the_structured_request_when_the_sandbox_is_mandatory():
+    import time
+    with tempfile.TemporaryDirectory() as tmp:
+        log = _scaffold(tmp)
+        _write_sandbox_state(tmp, "mode=on ts=%d pid=4242\n" % int(time.time()))
+        res = _run(_POOL_REQ, tmp)
+        assert res.returncode == 0, res.stdout + res.stderr
+        calls = open(log).read()
+        assert "submit.py: argv[pool] argv[--sha] argv[" + "a" * 40 + "]" in calls
+        assert "argv[--runner] argv[research.runners.foo] argv[--checked] argv[corpus: nothing] argv[--]" in calls
+        # the H1 parser still applies: a shell-shaped request is split by shlex and never run
+        res = _run("pool-submit --sha " + "a" * 40 + " --runner x --checked y -- $(touch %s/pwned)" % tmp, tmp)
+        assert not os.path.exists(os.path.join(tmp, "pwned"))
+        res = _run("pool-submit", tmp)
+        assert res.returncode != 0 and "structured request" in res.stderr
 
 
 def test_gpu_submit_forwards_the_structured_request_as_argv():
@@ -142,7 +191,7 @@ def test_gpu_submit_with_no_request_is_refused():
 
 def test_submit_command_substitution_is_never_executed_and_arrives_as_one_literal_token():
     """H1 regression: the exact shape the security review used (`pool-submit x $(cmd) --checked y`, now sent to
-    gpu-submit since pool-submit is refused outright) must never
+    gpu-submit, which is always accepted) must never
     run `cmd` -- it must arrive at the (stubbed) submit script as ONE inert, literal argv token, exactly as
     `eval` never touching this text would produce."""
     with tempfile.TemporaryDirectory() as tmp:
