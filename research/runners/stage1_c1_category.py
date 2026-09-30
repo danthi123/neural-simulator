@@ -185,7 +185,7 @@ def wiring_applied(shard, arm):
     rd = (_trace(resp.get(DIRECT_PROBE)) or {}).get("read") or {}
     if want in ("all", "lateral"):                  # the read-time cut was in force AND still held (docs/TERMS.md)
         return rd.get("lesion") == want and rd.get("lesion_held") is True
-    return True
+    return rd.get("lesion") == want                 # intact: no lesion on the read; lateral_learn: the blockade
 
 
 CONTENT_FIELDS = ("abstained", "recalled_svo", "hypothesis_svo")
