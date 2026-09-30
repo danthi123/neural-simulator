@@ -124,8 +124,10 @@ line under one specific model's own entry to override it just for that one.
 ## What NOT to do
 
 - Don't edit the `-listen` address or remove `-watch-config` from `tools/local_llm/llm.sh`'s `llama_swap_cmd()`
-  unless you mean to change how llama-swap is reached — the LAN address is there on purpose, for the server
-  harness (`docs/AGENT_HARNESS_SETUP.md`).
+  unless you mean to change how llama-swap is reached — the LAN address is there on purpose, for whatever else
+  on the LAN needs it (2026-09-30: the sim-agent harness was retired; the owner runs Hermes Agent on
+  homelab-server (`~/apps/hermes`) as a general harness; the sim driver is `tools/local_llm/llm.sh claude` on
+  the workstation).
 - Don't add an `apiKeys:` block to `llama-swap.yaml` without checking what else on the LAN currently talks to it
   unauthenticated — today nothing needs a key, so adding one would break existing callers until they're updated
   too.

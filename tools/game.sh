@@ -22,12 +22,9 @@
 # dispatch, no local-llm reload, no session auto-resume (see tools/gpu_queue.sh's LOCAL-LLM COORDINATION block
 # and tools/local_llm/llm.sh's `yield`). Nothing here needs Claude or the local model to be running.
 #
-# CONTAINERIZED HARNESS (2026-09-29, docs/plans/2026-09-29-local-model-transition-PLAN.md section 9): `on` ALSO
-# pauses the sim-agent container on homelab-server (best-effort, via tools/agent_harness_ctl.sh over ssh --
-# skipped gracefully if the server/ctl is unreachable, and skipped outright when the container's active
-# profile is KIND=cloud, since a cloud backend does not depend on this machine's GPU/model server at all); `off`
-# unpauses it and sends a "gaming's over" line into its tmux session, AFTER the local model server is back up
-# and answering its health endpoint.
+# 2026-09-30: the sim-agent harness was retired; the owner runs Hermes Agent on homelab-server (~/apps/hermes)
+# as a general harness; the sim driver is tools/local_llm/llm.sh claude on the workstation. This script no
+# longer pauses/unpauses anything on the server.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 QDIR="${GPU_QUEUE_DIR:-$ROOT/research/queue}"
@@ -43,18 +40,6 @@ LLM_STATE="$QDIR/.game_llm_state"       # GAME_LLM_WAS_ON=/GAME_LLM_PROFILE=/GAM
 # Mirrors tools/local_llm/llm.sh's own LLM_SESSION_FILE formula (the id of the last `llm claude` session it
 # started) -- read directly rather than adding a round-trip through llm.sh for one path.
 LLM_SESSION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sim-local-llm/last_session"
-CTL_HOST="${AGENT_HARNESS_CTL_HOST:-homelab-agent-ctl}"   # ssh alias for tools/agent_harness_ctl.sh on the server
-GAME_SSH="${GAME_SSH:-ssh}"                                # TEST-ONLY override; NEVER set in production
-SSH_OPTS=(-o ConnectTimeout=8 -o BatchMode=yes)
-
-# harness_kind: the sim-agent container's active profile KIND (local|cloud), read via agent_harness_ctl.sh
-# `state`. Best-effort -- empty (not "cloud") whenever the server/ctl is unreachable or nothing is running, so
-# an unreachable harness is treated as "needs a pause" (the safe default: skip pausing only when we POSITIVELY
-# know it is a cloud backend, never by default).
-harness_kind() {
-  "$GAME_SSH" "${SSH_OPTS[@]}" "$CTL_HOST" state 2>/dev/null | sed -n 's/^profile_kind: //p'
-}
-harness_pause_needed() { [ "$(harness_kind)" != "cloud" ]; }
 
 gpu_python_procs() {
   # brain-loading GPU python (cupy), excluding the queue dispatcher itself
@@ -79,15 +64,6 @@ case "${1:-status}" in
     graceful=0
     for a in "${@:2}"; do [ "$a" = "--graceful" ] && graceful=1; done
     echo "[game] pausing local compute for gaming/break (minipc pool KEEPS running)…"
-    if harness_pause_needed; then
-      if "$GAME_SSH" "${SSH_OPTS[@]}" "$CTL_HOST" pause >/dev/null 2>&1; then
-        echo "[game] sim-agent harness: pause requested"
-      else
-        echo "[game] sim-agent harness: could not reach $CTL_HOST to pause (unreachable, or not set up yet) -- continuing"
-      fi
-    else
-      echo "[game] sim-agent harness: active profile is KIND=cloud -- no pause needed"
-    fi
     bash "$GPUQ" pause --now || echo "[game] warn: gpu_queue pause returned nonzero (dispatcher may be down); continuing"
     : > "$GAME"
 
@@ -153,20 +129,6 @@ case "${1:-status}" in
       fi
     else
       echo "[game] the local model was not loaded before the pause -- nothing to reload."
-    fi
-
-    # sim-agent harness: unpause + a "gaming's over" line, AFTER the model server (if any) is confirmed
-    # healthy above. Always attempted (best-effort) -- agent_harness_ctl.sh's own `unpause` is a no-op if the
-    # container was never paused (e.g. it was on a cloud profile, or the server/ctl was unreachable at `on`
-    # time), so there is nothing to gate this on here.
-    if "$GAME_SSH" "${SSH_OPTS[@]}" "$CTL_HOST" unpause >/dev/null 2>&1; then
-      echo "[game] sim-agent harness: unpaused"
-      "$GAME_SSH" "${SSH_OPTS[@]}" "$CTL_HOST" say \
-        "Gaming pause is over. Re-check your last step, then continue per the runbook." >/dev/null 2>&1 \
-        && echo "[game] sim-agent harness: sent a resume prompt into its session" \
-        || echo "[game] sim-agent harness: unpaused but could not deliver the resume prompt (container down, or no 'agent' tmux session)"
-    else
-      echo "[game] sim-agent harness: could not reach $CTL_HOST to unpause (unreachable, or not set up yet)"
     fi
     ;;
   status)

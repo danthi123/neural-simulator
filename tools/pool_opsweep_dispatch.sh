@@ -7,10 +7,12 @@
 #         bash tools/pool_opsweep_dispatch.sh --status   # collect progress
 set -uo pipefail
 cd "$(dirname "$0")/.."
+# shellcheck source=tools/pool_nodes.sh
+source tools/pool_nodes.sh
 REMOTE=derisk-pool/sim
 OUT=research/findings/raw/consol_opsweep
 SEEDS="42 43 44 100 101 102"
-NODES=(pool40 pool41 pool42)
+NODES=($POOL_NODES_DEFAULT)
 # AWS-AS-EXTRA-POOL-NODE (fix round #2): honour the repo-local ssh config every other pool script does, so this
 # still resolves an AWS-node alias if ever pointed at one manually. The 3-way round-robin sharding below is
 # deliberately NOT widened to extra nodes (this is a fixed, one-off sweep script, not the live dispatcher).

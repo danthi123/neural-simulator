@@ -168,21 +168,19 @@ llama_swap_cmd() {   # the launch line for the "local-llm" unit itself: llama-sw
   # entry (tools/local_llm/llama-swap.yaml).
   #
   # -listen 0.0.0.0 (not 127.0.0.1): llm.sh itself needs loopback (is_up/activate_profile/cmd_claude all use
-  # 127.0.0.1), and the server harness needs the LAN address (docs/AGENT_HARNESS_SETUP.md, workstation.env) --
-  # both on the SAME port 8080. llama-swap's -listen takes exactly one address (it is a plain Go
-  # http.Server.ListenAndServe, not a multi-bind server), so "127.0.0.1 AND the LAN IP, nothing else" is not
-  # expressible as a single -listen value: binding to the specific LAN IP alone would make 127.0.0.1 itself
-  # unreachable (a different destination address at the TCP/IP layer, not merely a stricter version of "any
-  # interface"), breaking every local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working.
-  # There is no apiKeys: entry either, matching the old unauthenticated direct-llama-server setup.
+  # 127.0.0.1); 0.0.0.0 also keeps the port reachable from the LAN (workstation.env) for whatever else on the
+  # LAN needs it. llama-swap's -listen takes exactly one address (it is a plain Go http.Server.ListenAndServe,
+  # not a multi-bind server), so "127.0.0.1 AND the LAN IP, nothing else" is not expressible as a single
+  # -listen value: binding to the specific LAN IP alone would make 127.0.0.1 itself unreachable (a different
+  # destination address at the TCP/IP layer, not merely a stricter version of "any interface"), breaking every
+  # local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working. There is no apiKeys: entry
+  # either, matching the old unauthenticated direct-llama-server setup.
   #
-  # THE ACTUAL RESTRICTION lives one layer down, where it is possible: the egress firewall on homelab-server
-  # (tools/agent_container/egress.sh) already limits the sim-agent CONTAINER to reaching ONLY
-  # 192.168.0.68:8080 (this box) among a narrow allowlist -- so the one real external consumer this port was
-  # opened up for is already fenced in. Tightening the WORKSTATION's own inbound side further (accept only
-  # 127.0.0.1 + 192.168.0.10, drop everything else on :8080) is an optional, OWNER-applied hardening step --
-  # see docs/AGENT_HARNESS_SETUP.md's "restrict who can reach the local-llm port" section for the exact
-  # commands; this script never touches the firewall itself.
+  # 2026-09-30: the sim-agent harness was retired; the owner runs Hermes Agent on homelab-server (~/apps/hermes)
+  # as a general harness, and the per-container firewall that used to fence its LAN reach to this port
+  # (tools/agent_container/server-stack/host/etc/nftables.d/sim-agent.nft) went with it. Nothing currently
+  # restricts who on the LAN can reach :8080; tightening that is an optional, OWNER-applied workstation
+  # firewall step, not something this script does.
   #
   # -watch-config: docs/LOCAL_MODEL_GUIDE.md's edits (add/switch a model) take effect without a restart.
   printf '%s -config %s -listen 0.0.0.0:%s -watch-config' "$LLAMA_SWAP_BIN" "$LLAMA_SWAP_YAML" "$PORT"
@@ -373,7 +371,7 @@ cmd_run() {
 # runbook's own hard rule is "commit before you queue", so this just enforces it at the handoff itself). Only
 # TRACKED changes count (--untracked-files=no): a scratch/log file mid-draft is not a reason to refuse.
 cmd_yield() {
-  local max_hours=10 notify_cmd=""
+  local max_hours=10
   while [ $# -gt 0 ]; do
     case "$1" in
       --max-hours)
@@ -384,21 +382,13 @@ cmd_yield() {
         # substitution and run `cmd`, not merely fail to parse as a number. A plain digit-only check on the
         # value, BEFORE it ever reaches `$(( ))`, closes this off entirely: no arithmetic context ever sees
         # anything but a string already proven to be 1-2 digits.
-        # MAX 12 (2026-09-29 re-review, M2): the digit-only check alone still let a container-triggered yield
-        # (tools/agent_gateway.sh's `yield --max-hours N`) claim an arbitrarily long window (up to 99h) over
-        # the shared GPU -- a resource-exhaustion concern distinct from the injection this check also closes.
+        # MAX 12 (2026-09-29 re-review, M2): the digit-only check alone still let a caller claim an arbitrarily
+        # long window (up to 99h) over the shared GPU -- a resource-exhaustion concern distinct from the
+        # injection this check also closes.
         [[ "$max_hours" =~ ^[0-9]{1,2}$ ]] && [ "$max_hours" -ge 1 ] && [ "$max_hours" -le 12 ] || {
           echo "refusing to yield: --max-hours must be 1-12 (got: $max_hours)"; return 1
         }
         shift 2 ;;
-      # --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`, docs/plans/2026-09-29-local-model-
-      # transition-PLAN.md section 9): the CONTAINERIZED agent has no workstation `llm claude` session to
-      # resume, so its restore step is different -- run this shell command instead (its "$1" is filled in by
-      # the restorer with the same "GPU window finished..." message the workstation flow would otherwise
-      # resume a session with; see tools/gpu_queue.sh's llm_yield_restore_if_drained). Skips capturing
-      # LLM_SESSION_FILE below: a container-triggered yield has nothing to do with the workstation's own last
-      # local session, and restoring should not accidentally resume it.
-      --notify-cmd) notify_cmd="${2:-}"; shift 2 ;;
       *) shift ;;
     esac
   done
@@ -420,18 +410,13 @@ cmd_yield() {
   fi
   is_up || { echo "refusing to yield: $UNIT is not loaded -- nothing to yield."; return 1; }
   local sess prof deadline
-  if [ -n "$notify_cmd" ]; then
-    sess=""   # see --notify-cmd's case comment above: no workstation session bookkeeping for this path
-  else
-    sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
-  fi
+  sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
   prof="$(current_profile)"
   deadline=$(( $(date +%s) + max_hours * 3600 ))
   {
     echo "LLM_YIELD_SESSION=$sess"
     echo "LLM_YIELD_PROFILE=$prof"
     echo "LLM_YIELD_DEADLINE=$deadline"
-    [ -n "$notify_cmd" ] && echo "LLM_YIELD_NOTIFY_CMD=$notify_cmd"
   } > "$LLM_YIELD_MARKER"
   echo "yielding for up to ${max_hours}h (session=${sess:-<none>} profile=${prof:-<default>} deadline=$deadline); stopping $UNIT gracefully"
   cmd_stop_graceful 45

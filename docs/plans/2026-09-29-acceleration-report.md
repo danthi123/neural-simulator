@@ -352,7 +352,7 @@ Each block lists what to START and what to STOP; every STOP is tied to a number 
 ### 6.2 Infrastructure
 
 **Start.**
-- **The harness on the server** (`sim-agent` container on 192.168.0.10, this week per the transition plan section 9), LLM-agnostic via `llm use`, with the restricted gateway to the workstation. Nothing here is new; it is the plan.
+- **The harness on the server** -- 2026-09-30: RETIRED before completion; the owner decided against a custom harness (`sim-agent` container on 192.168.0.10, per the transition plan section 9) and instead runs the off-the-shelf Hermes Agent on homelab-server (`~/apps/hermes`) as a general harness, with the sim driver staying `tools/local_llm/llm.sh claude` on the workstation.
 - **Explicit yield** for GPU windows (transition plan section 3) so the driver's session is never lost, plus auto-requeue for jobs killed by pause/OOM/memcap and a reboot-only hardware watchdog for the "off the bus" crash.
 - **CPU-first, three nodes, then burst.** `pool40` fixed or retired; AWS by rule for long batteries; Kaggle for GPU-tolerant sweeps; a TRC application.
 - **Simulator speed work under the non-negotiable #4 carve-out**: CUDA Graphs on the resonate loop (the project's own profile says 97.7% dispatch overhead), and per-battery build caching, each byte-identical when off and measured with `before_after` before any speedup is claimed.

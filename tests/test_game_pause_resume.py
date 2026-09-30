@@ -8,11 +8,11 @@ Hermetic throughout: GPU_QUEUE_DIR isolates every state file (GAME_MODE, the fro
 record) from the live research/queue/; GAME_LLM_SH stubs tools/local_llm/llm.sh entirely (never spawns a real
 llama-server/systemd unit); tools/gpu_queue.sh's own `pause --now`/`resume`/`status` are exercised for real but
 only ever touch the isolated GPU_QUEUE_DIR. Frozen "processes" are real, short-lived `sleep` children this file
-spawns and kills itself -- never anything from the live system. GAME_SSH stubs `ssh` too (the sim-agent harness
-pause/unpause, 2026-09-29): `_run`'s own default is a stub that fails INSTANTLY (simulating an unreachable ctl
-host, never a real network call) unless a test supplies its own via `env_extra`.
+spawns and kills itself -- never anything from the live system.
+
+2026-09-30: the sim-agent harness was retired (it used to be paused/unpaused here via ssh); game.sh no longer
+touches anything on the server, so the harness ssh stubbing that used to live in this file is gone too.
 """
-import atexit
 import os
 import stat
 import subprocess
@@ -28,11 +28,6 @@ def _write_exec(path, body):
         f.write("#!/bin/bash\n" + body)
     os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
     return path
-
-
-_DEFAULT_SSH_DIR = tempfile.mkdtemp(prefix="game_test_default_ssh_")
-atexit.register(lambda: __import__("shutil").rmtree(_DEFAULT_SSH_DIR, ignore_errors=True))
-_DEFAULT_SSH = _write_exec(os.path.join(_DEFAULT_SSH_DIR, "fake_ssh_unreachable.sh"), "exit 1\n")
 
 
 def _fake_llm_sh(tmp, up=False, profile="prof-1"):
@@ -75,7 +70,6 @@ def _log_text(path):
 
 def _run(args, env_extra, timeout=10):
     env = dict(os.environ)
-    env["GAME_SSH"] = _DEFAULT_SSH   # overridden below if env_extra sets its own
     env.update(env_extra)
     return subprocess.run(["bash", _GAME] + args, env=env, capture_output=True, text=True, timeout=timeout)
 
@@ -276,89 +270,3 @@ def _wait_for(predicate, timeout=8.0, interval=0.05):
         time.sleep(interval)
         ok = predicate()
     return ok
-
-
-# ---------------------------------------------------------------------------------------------------------------
-# sim-agent harness pause/unpause (2026-09-29, docs/plans/2026-09-29-local-model-transition-PLAN.md section 9):
-# `on` best-effort pauses the containerized harness via tools/agent_harness_ctl.sh (over ssh); `off` unpauses it
-# and delivers a "gaming's over" line. GAME_SSH stubs `ssh` entirely -- no real ssh connection is ever made.
-# ---------------------------------------------------------------------------------------------------------------
-
-def _fake_ctl_ssh(tmp, kind="local", reachable=True):
-    log = os.path.join(tmp, "ssh_calls.log")
-    if not reachable:
-        return _write_exec(os.path.join(tmp, "fake_ssh.sh"), 'echo "ssh $*" >> "%s"\nexit 1\n' % log), log
-    body = """
-echo "ssh $*" >> "%s"
-args=("$@")
-last="${args[-1]:-}"
-case "$last" in
-  state) echo "profile_kind: %s" ;;
-  *) : ;;
-esac
-exit 0
-""" % (log, kind)
-    return _write_exec(os.path.join(tmp, "fake_ssh.sh"), body), log
-
-
-def test_on_pauses_the_harness_via_ctl_ssh():
-    with tempfile.TemporaryDirectory() as tmp:
-        llm_sh, _ = _fake_llm_sh(tmp, up=False)
-        bindir = _fake_curl(tmp, up=False)
-        systemctl = _fake_systemctl(tmp, active=False)
-        ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="local")
-        env = dict(os.environ)
-        env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
-        res = _run(["on"], env)
-        assert res.returncode == 0, res.stdout + res.stderr
-        calls = _log_text(ssh_log)
-        assert "state" in calls
-        assert "pause" in calls
-
-
-def test_on_skips_the_harness_pause_for_a_cloud_profile():
-    with tempfile.TemporaryDirectory() as tmp:
-        llm_sh, _ = _fake_llm_sh(tmp, up=False)
-        bindir = _fake_curl(tmp, up=False)
-        systemctl = _fake_systemctl(tmp, active=False)
-        ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="cloud")
-        env = dict(os.environ)
-        env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
-        res = _run(["on"], env)
-        assert res.returncode == 0, res.stdout + res.stderr
-        assert "no pause needed" in res.stdout.lower()
-        # only the `state` query happened, never a `pause`
-        assert "pause" not in _log_text(ssh_log)
-
-
-def test_on_continues_gracefully_when_the_ctl_host_is_unreachable():
-    with tempfile.TemporaryDirectory() as tmp:
-        llm_sh, _ = _fake_llm_sh(tmp, up=False)
-        bindir = _fake_curl(tmp, up=False)
-        systemctl = _fake_systemctl(tmp, active=False)
-        ssh_path, _ = _fake_ctl_ssh(tmp, reachable=False)
-        env = dict(os.environ)
-        env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
-        res = _run(["on"], env)
-        assert res.returncode == 0, res.stdout + res.stderr
-        assert os.path.exists(os.path.join(tmp, "GAME_MODE")), "local pause must still proceed despite the unreachable ctl host"
-
-
-def test_off_unpauses_the_harness_and_sends_a_resume_message():
-    with tempfile.TemporaryDirectory() as tmp:
-        llm_sh, _ = _fake_llm_sh(tmp, up=False)
-        bindir = _fake_curl(tmp, up=False)
-        systemctl = _fake_systemctl(tmp, active=False)
-        ssh_path, ssh_log = _fake_ctl_ssh(tmp, kind="local")
-        env = dict(os.environ)
-        env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "GAME_SSH": ssh_path, "LOCAL_LLM_SYSTEMCTL": systemctl})
-        _run(["on"], env)
-        res = _run(["off"], env)
-        assert res.returncode == 0, res.stdout + res.stderr
-        calls = _log_text(ssh_log)
-        assert "unpause" in calls
-        assert "say" in calls and "runbook" in calls

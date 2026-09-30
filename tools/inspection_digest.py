@@ -416,122 +416,6 @@ def render_gate_failure_section(since, since_is_sha, floor_date):
     return "\n".join(out)
 
 
-# -------------------------------------------------------------------------- agent-container Claude Code version
-
-AGENT_CTL_HOST = "homelab-agent-ctl"
-NPM_VERSION_TIMEOUT_S = 10
-SSH_STATE_TIMEOUT_S = 10
-# VOLUME_WARN_GB (2026-09-29 security review, M3): "the digest that warns when the volumes exceed a threshold".
-# homelab-server is a SHARED box (gitea/nextcloud/home-assistant/etc. all on it too); an agent-authored job that
-# writes heavily to /work/sim (the repo volume) or piles up Claude Code versions/state under /home/agent (the
-# home volume) has no other backstop (named volumes are not covered by compose.yaml's own log-size cap, M3's
-# other half). 20 GB is a generous multiple of a normal repo+venvs checkout on this box -- comfortably above
-# routine growth, low enough to catch a genuine runaway well before it threatens the shared disk.
-VOLUME_WARN_GB = 20.0
-
-
-def query_container_claude_version():
-    # a thin, monkeypatchable wrapper (tests/test_inspection_digest.py stubs this directly -- never a real ssh
-    # call in a test) around `ssh homelab-agent-ctl state`'s `claude_version:` line.
-    try:
-        res = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", AGENT_CTL_HOST, "state"],
-                              capture_output=True, text=True, timeout=SSH_STATE_TIMEOUT_S)
-        for line in res.stdout.splitlines():
-            if line.startswith("claude_version:"):
-                return line.split(":", 1)[1].strip()
-    except Exception:
-        pass
-    return None
-
-
-def query_container_volume_usage_gb():
-    # Same `ssh homelab-agent-ctl state` call as query_container_claude_version (tools/agent_harness_ctl.sh's
-    # own `repo_volume_gb:`/`home_volume_gb:` lines, 2026-09-29) -- a SEPARATE ssh round trip here (rather than
-    # sharing one call between the two query_* functions) so each stays independently monkeypatchable, matching
-    # the existing test seam. Returns {"repo": float|None, "home": float|None}; a line reading "unknown" (the
-    # volume could not be found/parsed) or a missing line both map to None.
-    result = {"repo": None, "home": None}
-    try:
-        res = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", AGENT_CTL_HOST, "state"],
-                              capture_output=True, text=True, timeout=SSH_STATE_TIMEOUT_S)
-        for line in res.stdout.splitlines():
-            if line.startswith("repo_volume_gb:"):
-                v = line.split(":", 1)[1].strip()
-                result["repo"] = float(v) if v != "unknown" else None
-            elif line.startswith("home_volume_gb:"):
-                v = line.split(":", 1)[1].strip()
-                result["home"] = float(v) if v != "unknown" else None
-    except Exception:
-        pass
-    return result
-
-
-def query_latest_claude_code_version():
-    # likewise monkeypatchable; never a real npm call in a test.
-    try:
-        res = subprocess.run(["npm", "view", "@anthropic-ai/claude-code", "version"],
-                              capture_output=True, text=True, timeout=NPM_VERSION_TIMEOUT_S)
-        if res.returncode == 0 and res.stdout.strip():
-            return res.stdout.strip()
-    except Exception:
-        pass
-    return None
-
-
-def render_agent_container_version_section():
-    # owner 2026-09-29 (docs/plans/2026-09-29-local-model-transition-PLAN.md section 9's harness-currency
-    # addendum): surface a lag between the sim-agent container's installed Claude Code build and the latest
-    # release, so it is visible without a separate check-in. Best-effort both ways -- an unreachable server, or
-    # no network for the npm registry lookup, SKIPS that half rather than failing the whole digest.
-    out = ["## 7. Agent-container Claude Code version\n"]
-    installed = query_container_claude_version()
-    latest = query_latest_claude_code_version()
-
-    if installed is None:
-        out.append("_(could not reach the sim-agent harness -- `ssh homelab-agent-ctl state` did not answer; "
-                    "skipped)_\n")
-    else:
-        out.append(f"- installed (via the harness's `claude --version`): `{installed}`")
-    if latest is None:
-        out.append("_(could not resolve the latest published version -- `npm view "
-                    "@anthropic-ai/claude-code version` failed or timed out, likely offline; skipped)_\n")
-    else:
-        out.append(f"- latest published (npm `@anthropic-ai/claude-code`): `{latest}`")
-    if installed is not None and latest is not None:
-        installed_ver = installed.split()[0] if installed.split() else installed
-        if installed_ver == latest:
-            out.append("- **up to date.**")
-        else:
-            out.append(f"- **LAG: installed `{installed_ver}` != latest `{latest}`.** "
-                        "`agent start` runs `claude update` + a smoke test on every start "
-                        "(tools/agent_container/bin/claude-safe-update.sh); if this persists across several "
-                        "inspections, either the smoke test keeps failing (check ~/claude_update.log on the "
-                        "container) or the harness has not been started recently.")
-
-    # --- volume disk usage (2026-09-29 security review, M3) --------------------------------------------------
-    usage = query_container_volume_usage_gb()
-    repo_gb, home_gb = usage.get("repo"), usage.get("home")
-    if repo_gb is None and home_gb is None:
-        out.append("- volume disk usage: _(could not reach the sim-agent harness, or the volumes were not "
-                    "found by `docker system df -v` -- skipped)_")
-    else:
-        def _fmt(name, gb):
-            if gb is None:
-                return f"- {name} volume: unknown"
-            flag = " **-- OVER the %.0f GB warn threshold**" % VOLUME_WARN_GB if gb > VOLUME_WARN_GB else ""
-            return f"- {name} volume: {gb:.2f} GB{flag}"
-        out.append(_fmt("repo", repo_gb))
-        out.append(_fmt("home", home_gb))
-        if (repo_gb or 0) > VOLUME_WARN_GB or (home_gb or 0) > VOLUME_WARN_GB:
-            out.append("  **A volume is over the warn threshold** -- homelab-server is a SHARED box; investigate "
-                        "before it threatens disk space for gitea/nextcloud/home-assistant/etc. An optional "
-                        "size-capped volume (a loop-mounted image file, so growth hits ENOSPC inside the loop "
-                        "device instead of the shared filesystem) is documented in docs/AGENT_HARNESS_SETUP.md "
-                        "for the owner to opt into.")
-    out.append("")
-    return "\n".join(out)
-
-
 # ------------------------------------------------------------------------------------------------------- main
 
 def build_digest(explicit_since):
@@ -547,7 +431,6 @@ def build_digest(explicit_since):
         render_failure_log_section(floor_date),
         render_utilization_section(floor_date),
         render_gate_failure_section(since, since_is_sha, floor_date),
-        render_agent_container_version_section(),
     ]
     text = "\n".join(parts)
     approx_tokens = len(text) // 4

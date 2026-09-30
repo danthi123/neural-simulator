@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import os
 import stat
+import sys
 from pathlib import Path
 import subprocess
 import time
@@ -11,6 +12,12 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 DISPATCHER = ROOT / "tools" / "pool_autodispatch.sh"
 WORKFLOW = ROOT / "tools" / "workflow_check.sh"
+
+sys.path.insert(0, str(ROOT / "tools"))
+import pool_nodes  # noqa: E402 -- single source of truth: tools/pool_nodes.conf
+
+# Read, not pinned, so this tracks tools/pool_nodes.conf rather than independently re-hardcoding it.
+DEFAULT_NODES = " ".join(pool_nodes.default_nodes())
 
 
 def run_bash(script: Path, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
@@ -286,7 +293,7 @@ def test_workflow_check_pool_nodes_default_unaffected_when_no_extra_nodes_file(t
                         "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
     assert res.returncode == 0, res.stderr
     lines = res.stdout.splitlines()
-    assert lines[0].strip() == "pool40 pool41 pool42"
+    assert lines[0].strip() == DEFAULT_NODES
     assert lines[1] == "NOF"
 
 
@@ -301,7 +308,7 @@ def test_workflow_check_pool_nodes_grows_with_extra_nodes_file_and_honours_dash_
                    env={"POOL_EXTRA_NODES_FILE": str(extra), "POOL_SSH_CONFIG": str(config)})
     assert res.returncode == 0, res.stderr
     lines = res.stdout.splitlines()
-    assert lines[0].strip() == "pool40 pool41 pool42 pool1"
+    assert lines[0].strip() == f"{DEFAULT_NODES} pool1"
     assert lines[1] == "F"
 
 

@@ -76,8 +76,15 @@ BACKLOG_PY = os.path.join(ROOT, "tools", "backlog.py")
 GPU_QUEUE_SH = os.path.join(ROOT, "tools", "gpu_queue.sh")
 POOL_QUEUE_SH = os.path.join(ROOT, "tools", "pool_queue.sh")
 
+# tools/ dir on sys.path so this resolves whether ratchet.py is run directly (`tools/ratchet.py`, where
+# sys.path[0] is already tools/), imported as `tools.ratchet`, or loaded by path (tests/test_ratchet.py).
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+import pool_nodes  # noqa: E402 -- single source of truth: tools/pool_nodes.conf
+
 FREE_LANES = ("gpu-queue", "pool-cpu")
-POOL_NODES = ("pool40", "pool41", "pool42")
+POOL_NODES = tuple(pool_nodes.default_nodes())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
