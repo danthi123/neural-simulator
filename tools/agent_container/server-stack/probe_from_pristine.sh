@@ -28,7 +28,7 @@ exec docker run --rm --pull never --name "sim-agent-probe-$$" \
   --network "$NETWORK" --dns 192.168.0.1 --dns 1.1.1.1 \
   --read-only --tmpfs /tmp:size=16m,mode=1777,noexec,nosuid,nodev \
   --cap-drop ALL --security-opt no-new-privileges:true --user 61000:61000 \
-  --memory 256m --pids-limit 256 --cpus 1 \
+  --memory 256m --pids-limit 512 --cpus 1 \
   --label sim-agent.role=isolation-probe \
   -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
   --entrypoint /bin/bash "$IMAGE" /usr/local/lib/agent-container/bin/net_probe.sh "$@"

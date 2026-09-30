@@ -46,6 +46,7 @@ case "$1" in
     esac ;;
   exec) [ -n "$FAKE_BUSY" ] && echo "$FAKE_BUSY"; exit 0 ;;
   run) exit "${FAKE_PROBE_RC:-0}" ;;
+  network) [ "${FAKE_NO_NETWORK:-0}" = 1 ] && exit 1; exit 0 ;;
 esac
 exit 0
 '''
@@ -360,3 +361,14 @@ def test_warns_when_the_gitea_dataset_has_no_quota():
         assert "gitea dataset data/appdata/gitea: 2.87 GB used, NO quota" in log
         assert "WARNING" in log and "zfs set quota=" in log
         assert "docker compose build --pull sim-agent" in calls
+
+
+def test_the_isolation_probe_is_skipped_not_failed_when_the_stack_is_down():
+    # `docker compose down` removes apps_sim-agent-net: nothing runs on it, so there is nothing to probe, and a weekly
+    # false alarm would teach the owner to ignore the real one
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, calls = _run(tmp, status="exited", old_id="sha256:same", new_id="sha256:same",
+                               cur_image="sha256:same", extra_env={"FAKE_NO_NETWORK": "1"})
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "docker run " not in calls
+        assert "isolation probe SKIPPED" in log and "apps_sim-agent-net does not exist" in log

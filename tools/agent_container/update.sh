@@ -50,6 +50,7 @@ DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
 FRAGMENT_SRC="$SRC_DIR/tools/agent_container/server-stack/sim-agent/compose.yaml"
 FRAGMENT_LIVE="$APPS_DIR/sim-agent/compose.yaml"
 PRISTINE_PROBE="$HERE/server-stack/probe_from_pristine.sh"
+PROBE_NETWORK=apps_sim-agent-net
 # The weekly probe's targets. MUST FAIL (dropped): this host via the bridge gateway and via its LAN address (sshd,
 # rpcbind, smb, nfs), a published port (caddy 18443), another stack's subnet gateway, the router, the workstation's
 # SMB, a resolver the fragment does not pin, plain HTTP. MUST PASS: the pinned resolvers and gitea ssh via this
@@ -159,20 +160,28 @@ else
 fi
 
 # --- 3b. the isolation probe, from a pristine container, every cycle -----------------------------------------------
-log "isolation probe from a pristine container (probe_from_pristine.sh --image $IMAGE)"
-if bash "$PRISTINE_PROBE" --image "$IMAGE" -- --must-fail "$PROBE_MUST_FAIL" --must-pass "$PROBE_MUST_PASS" \
-     --dns-name github.com --https "https://github.com" --no-ipv6 >> "$LOG" 2>&1; then
-  log "isolation probe passed"
+# Skipped (never failed) only when the stack's network does not exist at all (`docker compose down`): then nothing
+# runs on it, and a weekly false alarm would teach the owner to ignore the real one.
+if ! docker network inspect "$PROBE_NETWORK" >/dev/null 2>&1; then
+  log "isolation probe SKIPPED: $PROBE_NETWORK does not exist (the stack is down; nothing runs on it)"
 else
-  if [ -n "$old_id" ] && [ "$new_id" != "$old_id" ]; then
-    docker image tag "$ROLLBACK_IMAGE" "$IMAGE" >> "$LOG" 2>&1
-    log "ISOLATION PROBE FAILED -- rolled $IMAGE back to $ROLLBACK_IMAGE; nothing was swapped. See $LOG, then run" \
-        "verify_isolation.sh: the host firewall (sim-agent.nft) may be missing or wrong."
+  log "isolation probe from a pristine container (probe_from_pristine.sh --image $IMAGE)"
+  probe_rc=0
+  bash "$PRISTINE_PROBE" --image "$IMAGE" -- --must-fail "$PROBE_MUST_FAIL" --must-pass "$PROBE_MUST_PASS" \
+    --dns-name github.com --https "https://github.com" --no-ipv6 >> "$LOG" 2>&1 || probe_rc=$?
+  if [ "$probe_rc" -eq 0 ]; then
+    log "isolation probe passed"
   else
-    log "ISOLATION PROBE FAILED -- nothing was swapped. See $LOG, then run verify_isolation.sh: the host firewall" \
-        "(sim-agent.nft) may be missing or wrong, and the RUNNING container may be unfiltered."
+    if [ -n "$old_id" ] && [ "$new_id" != "$old_id" ]; then
+      docker image tag "$ROLLBACK_IMAGE" "$IMAGE" >> "$LOG" 2>&1
+      log "ISOLATION PROBE FAILED -- rolled $IMAGE back to $ROLLBACK_IMAGE; nothing was swapped. See $LOG, then" \
+          "run verify_isolation.sh: the host firewall (sim-agent.nft) may be missing or wrong."
+    else
+      log "ISOLATION PROBE FAILED -- nothing was swapped. See $LOG, then run verify_isolation.sh: the host" \
+          "firewall (sim-agent.nft) may be missing or wrong, and the RUNNING container may be unfiltered."
+    fi
+    exit 1
   fi
-  exit 1
 fi
 
 # --- 4. swap the running container only when it is safe ----------------------------------------------------------
