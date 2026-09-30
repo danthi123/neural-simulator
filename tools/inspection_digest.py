@@ -421,13 +421,14 @@ def render_gate_failure_section(since, since_is_sha, floor_date):
 AGENT_CTL_HOST = "homelab-agent-ctl"
 NPM_VERSION_TIMEOUT_S = 10
 SSH_STATE_TIMEOUT_S = 10
-# VOLUME_WARN_GB (2026-09-29 security review, M3): "the digest that warns when the volumes exceed a threshold".
-# homelab-server is a SHARED box (gitea/nextcloud/home-assistant/etc. all on it too); an agent-authored job that
-# writes heavily to /work/sim (the repo volume) or piles up Claude Code versions/state under /home/agent (the
-# home volume) has no other backstop (named volumes are not covered by compose.yaml's own log-size cap, M3's
-# other half). 20 GB is a generous multiple of a normal repo+venvs checkout on this box -- comfortably above
-# routine growth, low enough to catch a genuine runaway well before it threatens the shared disk.
-VOLUME_WARN_GB = 20.0
+# APPDATA_WARN_FRACTION (2026-09-29 security review M3, rebased 2026-09-30): "the digest that warns when the
+# volumes exceed a threshold". The agent's repo + home now live on the ZFS dataset data/appdata/sim-agent, whose
+# refquota is the real ceiling (a runaway job hits ENOSPC inside the container, never the shared pool), so the
+# warning is relative to that quota: at 85% the agent is about to start failing writes and the owner should
+# prune worktrees/results or raise the refquota. APPDATA_WARN_GB is the fallback when no refquota is set (the
+# dataset was created without one -- itself worth a warning, since then nothing caps it).
+APPDATA_WARN_FRACTION = 0.85
+APPDATA_WARN_GB = 48.0
 
 
 def query_container_claude_version():
@@ -444,23 +445,31 @@ def query_container_claude_version():
     return None
 
 
-def query_container_volume_usage_gb():
-    # Same `ssh homelab-agent-ctl state` call as query_container_claude_version (tools/agent_harness_ctl.sh's
-    # own `repo_volume_gb:`/`home_volume_gb:` lines, 2026-09-29) -- a SEPARATE ssh round trip here (rather than
-    # sharing one call between the two query_* functions) so each stays independently monkeypatchable, matching
-    # the existing test seam. Returns {"repo": float|None, "home": float|None}; a line reading "unknown" (the
-    # volume could not be found/parsed) or a missing line both map to None.
-    result = {"repo": None, "home": None}
+def query_container_appdata_usage():
+    # Same `ssh homelab-agent-ctl state` call as query_container_claude_version (tools/agent_harness_ctl.sh's own
+    # `appdata_gb:` / `appdata_quota_gb:` / `firewall:` lines) -- a SEPARATE ssh round trip so each query stays
+    # independently monkeypatchable, matching the existing test seam. Returns {"used": float|None,
+    # "quota": float|None, "firewall": str|None}; "unknown" or a missing line maps to None, and a quota of "none"
+    # (no refquota set) maps to 0.0.
+    # gitea_used / gitea_quota (2026-09-30 security review, MEDIUM): the gitea dataset, which the container's write
+    # deploy key can push into and which shares the `data` pool with every other stack; quota "none" -> 0.0.
+    result = {"used": None, "quota": None, "firewall": None, "gitea_used": None, "gitea_quota": None}
     try:
         res = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", AGENT_CTL_HOST, "state"],
                               capture_output=True, text=True, timeout=SSH_STATE_TIMEOUT_S)
         for line in res.stdout.splitlines():
-            if line.startswith("repo_volume_gb:"):
-                v = line.split(":", 1)[1].strip()
-                result["repo"] = float(v) if v != "unknown" else None
-            elif line.startswith("home_volume_gb:"):
-                v = line.split(":", 1)[1].strip()
-                result["home"] = float(v) if v != "unknown" else None
+            key, _, val = line.partition(":")
+            val = val.strip()
+            if key == "appdata_gb" and val not in ("", "unknown"):
+                result["used"] = float(val)
+            elif key == "appdata_quota_gb" and val not in ("", "unknown"):
+                result["quota"] = 0.0 if val == "none" else float(val)
+            elif key == "firewall" and val:
+                result["firewall"] = val
+            elif key == "gitea_gb" and val not in ("", "unknown"):
+                result["gitea_used"] = float(val)
+            elif key == "gitea_quota_gb" and val not in ("", "unknown"):
+                result["gitea_quota"] = 0.0 if val == "none" else float(val)
     except Exception:
         pass
     return result
@@ -491,7 +500,7 @@ def render_agent_container_version_section():
         out.append("_(could not reach the sim-agent harness -- `ssh homelab-agent-ctl state` did not answer; "
                     "skipped)_\n")
     else:
-        out.append(f"- installed (via the harness's `claude --version`): `{installed}`")
+        out.append(f"- installed (the harness's active build, read from its install symlink): `{installed}`")
     if latest is None:
         out.append("_(could not resolve the latest published version -- `npm view "
                     "@anthropic-ai/claude-code version` failed or timed out, likely offline; skipped)_\n")
@@ -508,26 +517,44 @@ def render_agent_container_version_section():
                         "inspections, either the smoke test keeps failing (check ~/claude_update.log on the "
                         "container) or the harness has not been started recently.")
 
-    # --- volume disk usage (2026-09-29 security review, M3) --------------------------------------------------
-    usage = query_container_volume_usage_gb()
-    repo_gb, home_gb = usage.get("repo"), usage.get("home")
-    if repo_gb is None and home_gb is None:
-        out.append("- volume disk usage: _(could not reach the sim-agent harness, or the volumes were not "
-                    "found by `docker system df -v` -- skipped)_")
+    # --- appdata disk usage + firewall state (2026-09-29 security review M3; ZFS dataset since 2026-09-30) -----
+    usage = query_container_appdata_usage()
+    used, quota, firewall = usage.get("used"), usage.get("quota"), usage.get("firewall")
+    if used is None:
+        out.append("- appdata disk usage: _(could not reach the sim-agent harness, or the ZFS dataset "
+                    "data/appdata/sim-agent could not be read -- skipped)_")
+    elif quota:
+        frac = used / quota
+        line = f"- appdata (ZFS data/appdata/sim-agent): {used:.2f} GB of its {quota:.2f} GB refquota ({frac:.0%})"
+        if frac >= APPDATA_WARN_FRACTION:
+            line += (f" **-- OVER {APPDATA_WARN_FRACTION:.0%} of the refquota:** the agent will soon hit ENOSPC "
+                     "inside its container (the cap holds -- the SHARED box is unaffected). Prune its worktrees/"
+                     "results, or raise it: `sudo zfs set refquota=<N>G data/appdata/sim-agent`.")
+        out.append(line)
     else:
-        def _fmt(name, gb):
-            if gb is None:
-                return f"- {name} volume: unknown"
-            flag = " **-- OVER the %.0f GB warn threshold**" % VOLUME_WARN_GB if gb > VOLUME_WARN_GB else ""
-            return f"- {name} volume: {gb:.2f} GB{flag}"
-        out.append(_fmt("repo", repo_gb))
-        out.append(_fmt("home", home_gb))
-        if (repo_gb or 0) > VOLUME_WARN_GB or (home_gb or 0) > VOLUME_WARN_GB:
-            out.append("  **A volume is over the warn threshold** -- homelab-server is a SHARED box; investigate "
-                        "before it threatens disk space for gitea/nextcloud/home-assistant/etc. An optional "
-                        "size-capped volume (a loop-mounted image file, so growth hits ENOSPC inside the loop "
-                        "device instead of the shared filesystem) is documented in docs/AGENT_HARNESS_SETUP.md "
-                        "for the owner to opt into.")
+        line = f"- appdata (ZFS data/appdata/sim-agent): {used:.2f} GB, **NO refquota set** -- nothing caps it"
+        if used > APPDATA_WARN_GB:
+            line += (f" and it is OVER the {APPDATA_WARN_GB:.0f} GB warn threshold -- this is a SHARED box; set "
+                     "one: `sudo zfs set refquota=<N>G data/appdata/sim-agent` (docs/AGENT_HARNESS_SETUP.md)")
+        out.append(line)
+    g_used, g_quota = usage.get("gitea_used"), usage.get("gitea_quota")
+    if g_used is not None:
+        if g_quota:
+            g_frac = g_used / g_quota
+            line = f"- gitea (ZFS data/appdata/gitea): {g_used:.2f} GB of its {g_quota:.2f} GB quota ({g_frac:.0%})"
+            if g_frac >= APPDATA_WARN_FRACTION:
+                line += (f" **-- OVER {APPDATA_WARN_FRACTION:.0%} of the quota:** Gitea pushes will start failing. "
+                         "Delete stale research/draft-* branches (only you can) or raise it: "
+                         "`sudo zfs set quota=<N>G data/appdata/gitea`.")
+            out.append(line)
+        else:
+            out.append(f"- gitea (ZFS data/appdata/gitea): {g_used:.2f} GB, **NO quota set** -- the sim-agent deploy "
+                       "key can push unlimited research/draft-* data into the SHARED `data` pool through it: "
+                       "`sudo zfs set quota=<N>G data/appdata/gitea` (docs/AGENT_HARNESS_SETUP.md)")
+    if firewall is not None and firewall != "active":
+        out.append(f"- **sim-agent-fw.service is `{firewall}`** -- the container refuses to (re)start without it "
+                    "(firewall_guard.sh) and a running one may be unfiltered: `sudo systemctl status "
+                    "sim-agent-fw.service` on the server.")
     out.append("")
     return "\n".join(out)
 

@@ -63,10 +63,14 @@ def test_deepseek_and_glm_use_different_token_vars():
     assert a["TOKEN_VAR"] != b["TOKEN_VAR"]
 
 
-def test_compose_yaml_has_a_matching_commented_secret_line_for_each():
-    compose = open(os.path.join(ROOT, "tools", "agent_container", "compose.yaml")).read()
+def test_stack_fragment_maps_each_token_var_from_a_sim_agent_prefixed_apps_env_entry():
+    # 2026-09-30: the key comes from ~/apps/.env (the ONE env file, 0600) under this stack's own SIM_AGENT_ prefix,
+    # interpolated with `:-` (never `:?`, which would break every stack in the included project when unset, and
+    # never env_file:, which would hand this container every other stack's secrets).
+    compose = open(os.path.join(ROOT, "tools", "agent_container", "server-stack", "sim-agent", "compose.yaml")).read()
     for name in CLOUD_PROFILES:
         cfg = _parse_env(os.path.join(PROFILE_DIR, name + ".env"))
-        assert cfg["TOKEN_VAR"] in compose, (
-            "compose.yaml has no (commented) example line for %s's TOKEN_VAR=%s -- the owner would have no "
-            "template to uncomment when wiring the real key in" % (name, cfg["TOKEN_VAR"]))
+        var = cfg["TOKEN_VAR"]
+        line = "%s: ${SIM_AGENT_%s:-}" % (var, var)
+        assert line in compose, (
+            "the stack fragment does not map %s's TOKEN_VAR from ~/apps/.env -- expected the line %r" % (name, line))

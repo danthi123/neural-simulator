@@ -13,12 +13,21 @@ from __future__ import annotations
 import os
 import stat
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 AUTODISPATCH = ROOT / "tools" / "pool_autodispatch.sh"
 POOL_QUEUE = ROOT / "tools" / "pool_queue.sh"
 POOL_SYNC = ROOT / "tools" / "pool_sync.sh"
+
+sys.path.insert(0, str(ROOT / "tools"))
+import pool_nodes  # noqa: E402 -- single source of truth: tools/pool_nodes.conf
+
+# The default node list is READ from tools/pool_nodes.conf (not pinned here) so this test tracks whatever
+# that file currently says (pool40/41/42 originally; pool41/42 after pool40's 2026-09-30 retirement) instead
+# of independently re-hardcoding it.
+DEFAULT_NODES = " ".join(pool_nodes.default_nodes())
 
 
 def _make_ssh_stub(tmp_path: Path) -> tuple[Path, Path]:
@@ -96,7 +105,7 @@ def test_extra_nodes_file_is_reread_fresh_each_call_not_cached_at_startup(tmp_pa
              "POOL_EXTRA_NODES_FILE": str(extra)},
         capture_output=True, text=True, timeout=30,
     )
-    assert res_before.stdout.strip() == "pool40 pool41 pool42"
+    assert res_before.stdout.strip() == DEFAULT_NODES
 
     extra.write_text("# a comment, ignored\npool1\n\npool2\n")
     res_after = subprocess.run(
@@ -105,7 +114,7 @@ def test_extra_nodes_file_is_reread_fresh_each_call_not_cached_at_startup(tmp_pa
              "POOL_EXTRA_NODES_FILE": str(extra)},
         capture_output=True, text=True, timeout=30,
     )
-    assert res_after.stdout.strip() == "pool40 pool41 pool42 pool1 pool2"
+    assert res_after.stdout.strip() == f"{DEFAULT_NODES} pool1 pool2"
 
 
 def test_pool_nodes_env_default_unaffected_by_extra_nodes_when_not_present(tmp_path):
@@ -116,7 +125,7 @@ def test_pool_nodes_env_default_unaffected_by_extra_nodes_when_not_present(tmp_p
              "POOL_EXTRA_NODES_FILE": str(tmp_path / "does-not-exist")},
         capture_output=True, text=True, timeout=30,
     )
-    assert res.stdout.strip() == "pool40 pool41 pool42"
+    assert res.stdout.strip() == DEFAULT_NODES
 
 
 # ------------------------------------------------------------------------------------------ pool_queue.sh
@@ -300,7 +309,7 @@ def test_pool_sync_survives_an_empty_or_comment_only_extra_nodes_file(tmp_path):
                    {"POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
                     "POOL_EXTRA_NODES_FILE": str(extra)})
         assert res.returncode == 0, f"content={content!r} stderr={res.stderr}"
-        assert "pool40" in res.stdout
+        assert DEFAULT_NODES.split()[0] in res.stdout
 
 
 # ------------------------------------------------------------------ pool_sync.sh: stale-hostname auto-refresh
