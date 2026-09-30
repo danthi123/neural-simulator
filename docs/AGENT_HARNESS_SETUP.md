@@ -18,6 +18,15 @@ INPUT DROP matched no interface (compose set no bridge name), its 443 rule let t
 box's own `*.dant123.com` services, and the DNS fallback resolver was blocked. This doc replaces the old one
 entirely; `egress.sh`, `sim-agent-egress.service`, the standalone `compose.yaml` and the loop-image step are gone.
 
+**Then the 2026-09-30 security review of that refit** (same branch) found that the checks the owner was told to rely
+on were computed inside the agent's own container, and fixed or gated each finding: the image PATH no longer starts
+with the model-writable home, and nothing that checks the container runs a command from it; the network probes run
+from a throwaway pristine container and the host's drop counters are a hard check; `pool-submit` is refused (pool
+jobs ran unsandboxed on nodes with passwordless sudo); the container will not start while the hairpin is open, and a
+failed WAN refresh alerts; `verify_isolation.sh` fails when Gitea Actions are on, the gitea dataset has no quota, or
+the workstation's sshd offers a password; a gate flags agent changes to server and hook code. What is left to the
+owner is in the checklist below and in "What the owner must verify" at the end.
+
 ## Where everything lives
 
 | What | On the server | Source of truth (this repo) |
@@ -42,18 +51,51 @@ Building from `repo/` (the agent's own checkout) would let it rewrite its own gu
 1.1.1.1 (the two resolvers pinned in the fragment); the workstation 192.168.0.68 on 22 (restricted keys) and 8080
 (the model server); Gitea over ssh at 192.168.0.10:2222; HTTPS (443) to the public internet except this site's own
 WAN address. Nothing else: no host listener (sshd, rpcbind, Samba, NFS, upsd, Cockpit), no other container, no
-published port, no LAN device, no IPv6, and nothing can connect in.
+published port, no LAN device, no IPv6, and nothing can connect in. Of the workstation gateway's commands, only
+`gpu-submit` (bubblewrap-sandboxed, no network), `status` and `yield` are accepted; `pool-submit` is refused (see
+"Pool nodes").
 
 **Plain-language residual risk (read this before deciding the setup is "done"):** even with every step applied, a
 FULLY ROGUE model driving the container could still (1) exfiltrate the repo and any results it can read over the
 one egress path that must stay open (HTTPS to the internet: "the Claude Code updater" cannot be told apart from
-"any other HTTPS destination" at the IP level this works at); (2) if the RECOMMENDED pool-node sudo fix below is not
-applied, get root on the mini-PC pool nodes through a pool job and use that as a foothold on the LAN; (3) burn
-CPU/GPU compute and fill its own dataset up to its refquota (a nuisance, not a compromise); (4) try to
+"any other HTTPS destination" at the IP level this works at); (2) reach the pool nodes only if `pool-submit` is
+ever re-enabled without the "Pool nodes" hardening (it is refused today), and then get root on the mini-PCs through
+a pool job and use that as a foothold on the LAN; (3) burn CPU/GPU compute and fill its own dataset up to its
+refquota (a nuisance, not a compromise); (4) try to
 social-engineer the OWNER through what it says in chat/tmux; (5) attempt a kernel or driver exploit to escape the
-container: namespaces, cap_drop and seccomp shrink that surface but cannot make it zero.
+container: namespaces, cap_drop and seccomp shrink that surface but cannot make it zero; (6) persist code in its
+own home (`~/.bashrc`, `~/.local/bin`, `~/.ssh/config`, Claude Code settings) that runs in its NEXT session.
+Nothing that CHECKS the container executes from that home (the start guard, the network probes, `update.sh`'s idle
+check, the ctl script and `verify_isolation.sh` pin PATH and run only image binaries, and the tmux shell starts
+without startup files). The functional smoke test and step 13's gateway `status` call do run home content (the
+`claude` binary, the ssh config), inside a container, and are never evidence about isolation. Treat the home as
+untrusted; step 11 says how to recreate it from nothing if in doubt.
 
 ## The owner checklist (in order)
+
+At a glance (each line is a step below; **no key goes into the container before steps 1, 3 and 10's preconditions
+hold**):
+
+1. Workstation sshd: no password logins (today `PasswordAuthentication` is still `yes` there).
+2. Generate the four keypairs on the workstation.
+3. Gitea: Actions OFF and verified `false` plus a probe push; a ZFS quota on `data/appdata/gitea`; branch and tag
+   protection; only then the write deploy key.
+4. Retire the 2026-09-29 attempt, including `docker network rm sim-agent_agent-net` (else step 12 fails on the
+   172.30.30.0/24 overlap).
+5. ZFS dataset `data/appdata/sim-agent`, its two directories, the snapshot policy.
+6. Review and merge `research/harness-server-fit`, then clone `src/` from GitHub, so the image that is built and the
+   ctl script that runs are the fixed ones.
+7. Firewall: install and enable; `self_wan` must hold 1 address (and after every reboot).
+8. The stack fragment into `~/apps`.
+9. Secrets (optional).
+10. Keys into the container's home, host keys pinned, `authorized_keys` lines (preconditions listed there).
+11. `backup.sh` SKIP.
+12. Build, smoke-test, seed the repo, start.
+13. `verify_isolation.sh`: ALL CHECKS PASSED; branch protection probed from the workstation.
+14. OWNERSHIP-MAP, weekly rebuild timer.
+
+After that, for every agent branch you merge and every `src/` update: "Merging agent branches". Optional site-wide
+hardening found on the way: "Optional: site-wide hardening".
 
 ### 1. Workstation sshd: no password logins
 
@@ -73,7 +115,11 @@ sudo sshd -T | grep -iE '^(passwordauthentication|kbdinteractiveauthentication|a
 ```
 
 Keep a working session open and confirm a FRESH key login still works before closing it. (The server already
-allows pubkey only, `AllowUsers dant123`.)
+allows pubkey only, `AllowUsers dant123`.) On 2026-09-30 this workstation still read `passwordauthentication yes`,
+and sim-agent.nft lets the container reach 192.168.0.68:22, so until this is applied the account password is an
+authentication surface for it. Do this BEFORE step 10. `verify_isolation.sh` (step 13) re-checks it from the
+container's network position: it reads the method list the workstation's sshd offers and fails on `password` or
+`keyboard-interactive`.
 
 ### 2. Generate the four keypairs (on the workstation)
 
@@ -86,12 +132,15 @@ ssh-keygen -t ed25519 -N "" -f ~/.ssh/sim_agent_harness_ctl_key  -C "workstation
 
 The first three private halves go INTO the container's home (step 10); the ctl key's private half stays here.
 
-### 3. Gitea: Actions off, branch protection, deploy key (web UI, as the admin)
+### 3. Gitea: Actions off, a quota, branch protection, THEN the deploy key (web UI, as the admin)
+
+In this order; the deploy key comes last, so no key that can write exists while any of the rest is missing.
 
 1. **MANDATORY (HIGH): turn Actions OFF for `neural-simulator`** (repo Settings, Repository units: untick Actions).
-   This box's `[actions] ENABLED = true` instance-wide, and `gitea-act-runner` drives a docker-socket-proxy that
-   allows POST and EXEC: a workflow file pushed to ANY branch the container can write would run arbitrary Docker
-   API calls, root-equivalent on this server. Verify:
+   This box's `[actions] ENABLED = true` instance-wide, and `gitea-act-runner`'s job containers join the shared
+   `proxy` network through a docker-socket-proxy that allows POST, EXEC, CONTAINERS, IMAGES, VOLUMES and NETWORKS: a
+   workflow file pushed to ANY branch the container can write would run as a container next to every web app, with
+   Docker API calls that are root-equivalent on this server. Verify, and re-verify whenever Gitea is upgraded:
 
    ```bash
    curl -s https://git.dant123.com/api/v1/repos/dant123/neural-simulator | jq .has_actions   # expect: false
@@ -100,24 +149,34 @@ The first three private halves go INTO the container's home (step 10); the ctl k
    (On 2026-09-30 this read `true`.) Then prove it with a push: on the workstation, commit a trivial
    `.gitea/workflows/probe.yml` (one `run: echo probe` step) on a throwaway branch `research/draft-actions-probe`,
    push it to `gitea` only, check the repo's Actions page shows no run, then delete that branch on Gitea.
-2. **Branch protection** (today NO branch on this Gitea instance is protected). Settings, Branches, add rules in
+   `verify_isolation.sh` fails while `has_actions` is not `false` (or cannot be read).
+2. **MANDATORY: a quota on the gitea dataset.** The deploy key can push unlimited data to unlimited `research/draft-*`
+   branches, and branch protection (item 3) stops it deleting them, so only you can clean up; `data/appdata/gitea`
+   (2.67G on 2026-09-30, no quota) shares the `data` pool with postgres, immich, clickhouse and every other stack.
+   Also cap a single push at 512 MiB:
+
+   ```bash
+   sudo zfs set quota=30G data/appdata/gitea
+   zfs get -o property,value used,quota data/appdata/gitea
+   docker exec -u git gitea git -C /data/git/repositories/dant123/neural-simulator.git config receive.maxInputSize 536870912
+   ```
+
+   `verify_isolation.sh` fails without the quota; `update.sh` logs the dataset's use every week and warns past 85%,
+   and `ssh homelab-agent-ctl state` reports `gitea_gb` / `gitea_quota_gb` (so does the inspection digest).
+3. **Branch protection** (today NO branch on this Gitea instance is protected). Settings, Branches, add rules in
    this priority order: `research/draft-*` first (push allowed to anyone with write access, which includes the
    deploy key; force-push and deletion off), then `*` (push allow-list = your own user only, "allow deploy keys"
    UNticked, force-push off, deletion off). Also protect tags (Settings, Tags: pattern `*`, allowed = your user).
    This is the real enforcement that the container can never touch `main`, any other real branch, or a tag;
-   `claude_container_settings.json`'s deny rules are belt-and-braces on top.
-3. **Deploy key:** Settings, Deploy Keys, add `~/.ssh/sim_agent_gitea_deploy.pub` with **write access** (it pushes
-   only `research/draft-*`, per item 2's rules). The container reaches Gitea at `192.168.0.10:2222`: the WAN only
-   forwards 80/443, and `git.dant123.com` hairpins through the WAN address, which the firewall drops.
-4. Optional, cheap: cap a single push at 512 MiB (the gitea dataset has no quota):
-
-   ```bash
-   docker exec -u git gitea git -C /data/git/repositories/dant123/neural-simulator.git config receive.maxInputSize 536870912
-   ```
+   `claude_container_settings.json`'s deny rules are belt-and-braces on top. Step 13 probes it.
+4. **Deploy key, last:** Settings, Deploy Keys, add `~/.ssh/sim_agent_gitea_deploy.pub` with **write access** (it
+   pushes only `research/draft-*`, per item 3's rules). The container reaches Gitea at `192.168.0.10:2222`: the WAN
+   only forwards 80/443, and `git.dant123.com` hairpins through the WAN address, which the firewall drops.
 
 ### 4. Retire the 2026-09-29 deployment attempt (on the server)
 
-It sits outside ZFS, git and backup, and its network holds `172.30.30.0/24`. Nothing references it (no container,
+It sits outside ZFS, git and backup, and its network holds `172.30.30.0/24`: **remove that network before step 12**,
+or `docker compose up` fails on the subnet overlap. Nothing references it (no container,
 no unit, no `authorized_keys` entry, no cron line). Check, then remove (the volumes hold only a Claude Code install
 and an empty repo; look first if you ever copied a key into them):
 
@@ -169,8 +228,12 @@ zfs get -o property,value mountpoint,refquota,quota data/appdata/sim-agent
 
 ### 6. The build source
 
-After `research/harness-server-fit` is merged to `main` (or add `-b research/harness-server-fit` to trial it
-first). A sparse, blobless clone of `tools/` only is all the build and the ctl script need (about 15 MB):
+Merge `research/harness-server-fit` to `main` first (or add `-b research/harness-server-fit` to trial it): the
+2026-09-30 security fixes live there (the image PATH, the absolute interpreters, the PATH-pinned `docker exec`s in
+`update.sh`, `agent_harness_ctl.sh` and `verify_isolation.sh`, the pristine-container probes), so the image that gets
+built and the ctl script that runs must come from it. Review it like an agent branch ("Merging agent branches"):
+it changes every trusted path. A sparse, blobless clone of `tools/` only is all the build and the ctl script need
+(about 15 MB):
 
 ```bash
 git clone --filter=blob:none --sparse https://github.com/danthi123/neural-simulator.git /home/dant123/data/sim-agent/src
@@ -178,10 +241,19 @@ git -C /home/dant123/data/sim-agent/src sparse-checkout set tools
 git -C /home/dant123/data/sim-agent/src log -1 --oneline
 ```
 
-Update it only deliberately (review what changed first; the image and the ctl forced command run from it):
-`git -C /home/dant123/data/sim-agent/src fetch origin && git -C ... log --oneline HEAD..origin/main`, then
-`git -C ... merge --ff-only origin/main`. `update.sh` refuses to build if this checkout's `tools/agent_container`
-or `tools/agent_harness_ctl.sh` has any modified, untracked or ignored file.
+Update it only deliberately; the image and the ctl forced command run from it, as you (docker group, sudo) or as
+root at boot. Read the trusted paths' diff first, then fast-forward:
+
+```bash
+S=/home/dant123/data/sim-agent/src
+git -C $S fetch origin && git -C $S log --oneline HEAD..origin/main
+git -C $S diff HEAD..origin/main -- tools/agent_container tools/agent_harness_ctl.sh tools/agent_gateway.sh \
+    tools/agent_gateway_submit.py tools/agent_gateway_parse.py        # read every line
+git -C $S merge --ff-only origin/main
+```
+
+`update.sh` refuses to build if this checkout's `tools/agent_container` or `tools/agent_harness_ctl.sh` has any
+modified, untracked or ignored file.
 
 ### 7. The firewall (before the stack ever starts)
 
@@ -200,8 +272,15 @@ sudo nft -c -f /etc/nftables.d/sim-agent.nft && echo syntax-ok
 sudo systemctl daemon-reload
 sudo systemctl enable --now sim-agent-fw.service sim-agent-fw-selfwan.timer
 sudo /usr/local/sbin/sim-agent-fw-selfwan.sh           # expect: self_wan set holds 1 address(es)
+sudo nft list set inet sim_agent self_wan               # expect: exactly 1 element
+systemctl show -p OnFailure --value sim-agent-fw-selfwan.service   # expect: ntfy-notify@...
 sudo nft list table inet sim_agent | head -40
 ```
+
+**After this step and after every reboot**, `sudo nft list set inet sim_agent self_wan` must hold 1 address; after a
+DDNS change, check `journalctl -u sim-agent-fw-selfwan` once. A failed refresh now alerts through `ntfy-notify@`,
+and the container refuses to start while the WAN address is not dropped (below), so an empty set costs a delayed
+start, never an open hairpin.
 
 How it fits the box's firewall:
 
@@ -222,7 +301,11 @@ How it fits the box's firewall:
 - **Hairpin:** every `*.dant123.com` name resolves to the WAN address and the router hairpins it back to Caddy
   with a LAN-looking source, which Caddy's private-range rules treat as a LAN client. The `self_wan` set holds that
   address (resolved at runtime by `sim-agent-fw-selfwan.sh` every 5 minutes; DDNS can change it, and this public
-  repo never contains it), and the container's HTTPS rule excludes it.
+  repo never contains it), and the container's HTTPS rule excludes it. The set is filled best-effort at boot and by
+  the timer a minute later, so `bin/firewall_guard.sh` also probes that address on 443 (resolved from
+  `SIM_AGENT_FW_WAN_NAME` in the fragment, never printed) and refuses to start the container until it is DROPPED;
+  the restart policy retries. `sim-agent-fw-selfwan.service` alerts on failure (`OnFailure=ntfy-notify@%n.service`).
+  If a compose-level systemd unit for this stack is ever added, give it `Requires=`/`After=sim-agent-fw-selfwan.service`.
 - `/etc/nftables.d/` and `fw.nft` are owned by `dant123`, not root, although root loads them at boot. Because the
   DIRECTORY is dant123's, that account could also replace the root-owned `sim-agent.nft` (unlink + recreate needs
   only write access to the directory). Recommended: `sudo chown root:root /etc/nftables.d /etc/nftables.d/fw.nft`
@@ -261,6 +344,17 @@ routing real work to a cloud profile, validate it from the workstation with `too
 skips pausing the harness for them.
 
 ### 10. Keys into the container's home, host keys pinned
+
+**Preconditions, all of them, before the first key goes in:** step 1 applied and `sshd -T` confirmed; step 3's
+Actions check reads `false`, the probe push produced no run, the gitea quota is set; and the gateway refuses
+`pool-submit` (it does by default; confirm on the WORKSTATION):
+
+```bash
+cd /home/dant123/Projects/sim
+env SSH_ORIGINAL_COMMAND='pool-submit --sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --runner research.runners.x --checked y -- --seed 1' AGENT_GATEWAY_LOG=/dev/null bash tools/agent_gateway.sh
+# expect: refused: pool-submit is disabled ... (exit status 1)
+.venv/bin/python -m pytest -q tests/test_agent_gateway.py tests/test_agent_gateway_submit.py
+```
 
 From the WORKSTATION, streaming each private key straight into place (it never lands anywhere else):
 
@@ -351,41 +445,54 @@ docker compose build sim-agent
 docker compose run --rm --no-deps sim-agent smoke_test.sh     # expect: ALL PASS/SKIP (import sim SKIPs until seeded)
 docker compose run --rm --no-deps sim-agent git clone -o gitea git@gitea-deploy:dant123/neural-simulator.git /work/sim
 docker compose up -d sim-agent
-docker logs sim-agent 2>&1 | tail -5                          # expect: "firewall_guard: OK ..." then "ready."
+docker logs sim-agent 2>&1 | tail -6                          # expect: two "firewall_guard: OK ..." lines, then "ready."
 ```
 
 The clone's remote is named `gitea`, which the container's settings allow pushing to (`git push origin` is
-denied). The smoke test's network section (section 7) already runs the must-fail/must-pass probes from inside;
-a missing firewall makes the run refuse to start at all.
+denied). The smoke test is FUNCTIONAL only (that container mounts the model-writable home, so nothing it reports is
+evidence about isolation); the network is probed from a pristine container by step 13 and by every weekly
+`update.sh` run. A missing firewall, or an open hairpin, makes the run refuse to start at all.
 
-### 13. Verify the isolation (and again after any firewall, Docker or fragment change)
+### 13. Verify the isolation (and again after any firewall, Docker, Gitea or fragment change)
 
 ```bash
 bash /home/dant123/data/sim-agent/src/tools/agent_container/server-stack/verify_isolation.sh   # expect: ALL CHECKS PASSED
 ```
 
-Read-only. Host side: both firewall units active and enabled, `nftables.service` not enabled, the table loaded,
-`self_wan` non-empty, `br-simagent` present, `apps_sim-agent-net` = `172.30.30.0/24`, the container on that network
-only, no published ports. From inside (in parallel, about 5 s), each must be DROPPED (a timeout; a connection or a
-refusal fails): this host via the gateway and via 192.168.0.10 on 22/111/139/445/2049/3493, the published ports
-1880/18443/11000/8554, the router's UI, AdGuard at 192.168.0.5, the workstation's 80/445, docker0 and the proxy
-bridge gateway, both docker-socket-proxies and the gitea and caddy containers by IP, 8.8.8.8:53 (not an allowed
-resolver), 1.1.1.1:80, and `https://git.dant123.com` (the hairpin). Must work: DNS at both resolvers,
-192.168.0.68:22 and :8080 (a refusal is fine if llama-swap is stopped), 192.168.0.10:2222, HTTPS to GitHub and
-claude.ai. Also no IPv6, no docker socket, uid 61000, no effective capabilities, `no_new_privs`, read-only root.
-Then the two channels:
+Read-only, and nothing in it is computed inside the agent's container. Host side: both firewall units active and
+enabled, `sim-agent-fw-selfwan.service` has `OnFailure=`, `nftables.service` not enabled, the table loaded,
+`self_wan` non-empty, `br-simagent` present, `apps_sim-agent-net` = `172.30.30.0/24` with IPv6 off, Gitea
+`has_actions` = `false` (unreadable fails), `data/appdata/gitea` has a quota, the container on that network only,
+no published ports. From `docker inspect` (Docker's record, not the container's): every capability dropped and none
+added, not privileged, read-only root, `no-new-privileges`, no host namespace, DNS pinned, exactly the two bind
+mounts, no docker socket. Two fresh PATH-pinned execs: uid 61000, `CapEff` 0 and `NoNewPrivs` 1.
+
+Then the network, from a THROWAWAY PRISTINE container (`probe_from_pristine.sh`: the image alone on
+`apps_sim-agent-net`, no mounts, read-only, no capabilities), which a rogue process in the agent's container cannot
+reach. Each must be DROPPED (a timeout; a connection or a refusal fails): this host via the gateway and via
+192.168.0.10 on 22/111/139/445/2049/3493, the published ports 1880/18443/11000/8554, the router's UI, AdGuard at
+192.168.0.5, the workstation's 80/445, docker0 and the proxy bridge gateway, both docker-socket-proxies and the gitea
+and caddy containers by IP, 8.8.8.8:53, 1.1.1.1:80, and `https://git.dant123.com` (the hairpin, which must time out).
+Must work: DNS at both resolvers, 192.168.0.68:22 and :8080 (a refusal is fine if llama-swap is stopped),
+192.168.0.10:2222, HTTPS to GitHub and claude.ai. The workstation's sshd must offer no password method, and there
+is no routable IPv6. Finally the host's own drop counters for `sim-agent -> host`, `LAN, other containers`,
+`everything else` and the hairpin must have GROWN during the probes: the authoritative signal that this table, not
+luck, dropped them.
+
+Then the two channels, and branch protection, probed from the WORKSTATION with the deploy key itself (not from
+inside the container, whose git config and hooks are model-writable), hooks off:
 
 ```bash
-ssh homelab-agent-ctl state                              # from the workstation: appdata_gb / firewall: active lines
-docker exec sim-agent ssh workstation-gateway status     # on the server: the gateway answers
-docker exec sim-agent git -C /work/sim fetch gitea       # on the server: gitea over 2222 works
-# branch protection holds for the deploy key (step 3): a draft push works, anything else is rejected
-docker exec sim-agent git -C /work/sim push gitea HEAD:refs/heads/research/draft-protection-probe   # expect: accepted
-docker exec sim-agent git -C /work/sim push gitea HEAD:refs/heads/protection-probe                 # expect: REJECTED
+ssh homelab-agent-ctl state                              # from the workstation: appdata_gb / gitea_gb / firewall: active
+ssh homelab-server "docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent /usr/bin/ssh workstation-gateway status"   # the gateway answers
+cd /home/dant123/Projects/sim
+env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/research/draft-protection-probe   # expect: accepted
+env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/protection-probe            # expect: REJECTED
+env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/tags/protection-probe-tag         # expect: REJECTED
 ```
 
-Delete `research/draft-protection-probe` in the Gitea UI afterwards (and `protection-probe` too, if it was
-accepted: then step 3's rules are wrong, fix them before going further).
+Delete `research/draft-protection-probe` in the Gitea UI afterwards (and anything else that was accepted: then
+step 3's rules are wrong, fix them before going further).
 
 ### 14. OWNERSHIP-MAP, weekly rebuild
 
@@ -402,10 +509,13 @@ accepted: then step 3's rules are wrong, fix them before going further).
 `tools/agent_container/update.sh` (run weekly by `sim-agent-update.timer`, or by hand as `dant123`) does one cycle:
 refuse unless `~/apps` includes the stack and the build source is a clean checkout; warn if the `~/apps` fragment
 drifted from the reviewed copy; log disk usage of the dataset and Docker's data-root; tag the current image
-`sim-agent:rollback`; `docker compose build --pull sim-agent`; if the image changed, run the smoke test against
-the NEW image and, on failure, point `sim-agent:local` back at the rollback image and stop. It swaps the running
-container (`docker compose up -d --no-deps --no-build sim-agent`) only when it is running, no `claude` process is
-active and `sim-agent-fw.service` is active. A paused harness (a gaming yield froze a session, maybe mid-task) is
+`sim-agent:rollback`; `docker compose build --pull sim-agent`; if the image changed, run the (functional) smoke
+test against the NEW image and, on failure, point `sim-agent:local` back at the rollback image and stop. Every cycle
+it then probes the isolation from a pristine container (`probe_from_pristine.sh`, the targets that do not depend on
+the workstation being awake); a failure rolls a changed image back, never swaps, and fails the unit even when the
+image did not change, so it is also a weekly regression check of the firewall. It logs the gitea dataset's use
+against its quota. It swaps the running container (`docker compose up -d --no-deps --no-build sim-agent`) only when
+it is running, no `claude` process is active and `sim-agent-fw.service` is active. A paused harness (a gaming yield froze a session, maybe mid-task) is
 deferred, not recreated; a stopped one is never started. It logs to `/home/dant123/data/sim-agent/update.log`;
 failures alert through `ntfy-notify@`.
 
@@ -417,7 +527,10 @@ Claude Code itself lives in the home bind mount and is kept current as before: e
 failure). Its own auto-updater is never disabled.
 
 Never `docker compose up -d` the whole `~/apps` project while an agent session is live if the sim-agent fragment
-changed: it recreates the container. Check first: `docker exec sim-agent pgrep -f '/claude$'` (empty = idle).
+changed: it recreates the container. Check first, PATH pinned and the binary absolute (empty = idle):
+`docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent /usr/bin/pgrep -f '/claude$'`.
+Everything you run INTO the container should look like that: the image PATH no longer includes the home, but an
+explicit PATH and an absolute binary keep a check from ever depending on it.
 
 ## Everyday use (the `agent` fish function, workstation-side)
 
@@ -436,12 +549,15 @@ case start
     ssh homelab-agent-ctl "set-active-profile $profile"
     or echo "agent: warning -- could not record the active profile on the server (state's gaming-pause check may be stale)"
     set -l inner (string escape -- "bash /usr/local/bin/agent-start.sh $profile")
-    set -l remote_cmd "docker exec sim-agent tmux send-keys -t agent $inner Enter"
+    set -l remote_cmd "docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent /usr/bin/tmux send-keys -t agent $inner Enter"
     ssh homelab-server $remote_cmd
     and echo "agent: sent 'agent-start.sh $profile' into the tmux session -- attach with: agent"
 ```
 
-Every `docker exec sim-agent ...` in this doc runs ON THE SERVER; the container does not exist on the workstation.
+Update the installed function to match (its `docker exec` pins PATH and names tmux absolutely). Every `docker
+exec sim-agent ...` in this doc runs ON THE SERVER; the container does not exist on the workstation. The tmux
+session's shell starts with no startup files (`bash --noprofile --norc`, `tmux -f /dev/null`) and has the home's
+`~/.local/bin` LAST on its PATH, where `claude` lives.
 
 ## Optional: restrict who can reach the workstation's model port
 
@@ -459,18 +575,90 @@ sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
 Verify from another LAN device (`curl -m 3 http://192.168.0.68:8080/health` times out) and from the server (it
 answers). These do not survive a reboot unless saved with the workstation's own firewall mechanism.
 
-## RECOMMENDED: remove NOPASSWD sudo on the pool nodes
+## Pool nodes (required before `pool-submit` is ever re-enabled)
 
-The pool40/41/42 mini-PCs run pool jobs under a NOPASSWD sudoers entry, so a malicious pool job (the agent can
-author runner code that is dispatched there) gets root on them for free, and a foothold on the LAN from there.
-Pool jobs are not sandboxed the way GPU jobs are (`tools/agent_gateway_submit.py`'s header: they are dedicated,
-disposable compute), but disposable does not mean a free root shell on a LAN device. On each node:
+`tools/agent_gateway.sh` REFUSES `pool-submit` (2026-09-30 security review, HIGH). It used to dispatch agent-authored
+runner code (any `research/draft-*` commit the deploy key can push) to the pool40/41/42 mini-PCs unsandboxed, with
+full network, under a job account with passwordless sudo (`tools/pool_provision.sh` relies on `sudo -n`): a LAN
+foothold that bypasses everything `sim-agent.nft` confines, because the code no longer runs in the container. With it
+refused, the container's compute channels are the sandboxed GPU path (bubblewrap `--unshare-all`, no network,
+resource limits) and the model port. Nothing to do on the nodes while it stays refused.
 
-```bash
-sudo grep -rl NOPASSWD /etc/sudoers.d/            # find the file
-sudo visudo -f /etc/sudoers.d/<that-file>         # delete the NOPASSWD line (or require a password)
-```
+Re-enabling it is a reviewed CODE CHANGE to `tools/agent_gateway.sh`, and only after ALL of this holds on every node:
 
-More thorough: run pool jobs as a separate unprivileged user with no sudo at all (`sudo useradd -r -M -s
-/usr/sbin/nologin simjob` on each node, then point the dispatcher's remote launch at it), matching the separation
-the workstation's GPU jobs already use.
+1. a dedicated job user with no sudo at all (`sudo useradd -r -m -s /usr/sbin/nologin simjob`), and the dispatcher's
+   remote launch pointed at it; the existing NOPASSWD entry removed or restricted to the provisioning account
+   (`sudo grep -rl NOPASSWD /etc/sudoers.d/`, then `sudo visudo -f /etc/sudoers.d/<that-file>`);
+2. agent jobs run under the same bubblewrap recipe as `gpu-submit` (`--unshare-all`, the checkout read-only, one
+   writable per-job output directory), or at the very least a per-node firewall that lets the job user reach only
+   the workstation;
+3. `tests/test_agent_gateway.py` and `tests/test_agent_gateway_submit.py` re-run green with the change.
+
+## Merging agent branches (and updating `src/`)
+
+The agent's only route into `main` is a `research/draft-*` branch you merge. What the server runs as you (docker
+group, sudo) or as root at boot is built from `src/`, which tracks GitHub `main`; on the workstation,
+`core.hooksPath=tools/githooks` and `.claude/settings.json` hooks run `tools/githooks/**`, what those execute, and
+`.claude/**` at your next commit or Claude session. So, for every agent branch:
+
+1. Never check it out, or `git worktree add` it, with hooks enabled; review it without a checkout:
+
+   ```bash
+   cd /home/dant123/Projects/sim && git fetch gitea
+   .venv/bin/python -m tools.gates.agent_trust_paths gitea/research/draft-<topic>    # exit 1 = trusted paths changed
+   git diff main...gitea/research/draft-<topic> -- tools/agent_container tools/agent_harness_ctl.sh \
+       'tools/agent_gateway*' tools/githooks tools/gates .claude tools/push_both.sh   # read every line
+   ```
+
+   The CLI runs `main`'s own copy of the gate, so a branch that edits the gate cannot change this answer.
+2. Merge with `--no-ff` (never a fast-forward, a rebase or a cherry-pick: those run no commit hook), acknowledging
+   the exact tip you reviewed: `SIM_AGENT_TRUST_ACK=<that sha> git merge --no-ff gitea/research/draft-<topic>`.
+   Without the acknowledgement the `agent_trust_paths` gate blocks a merge whose agent commits touch a trusted path.
+   It is a tripwire, not the control: a merge already runs the INCOMING hook code, which is why step 1 comes first.
+3. On the server, `src/` moves only after the same review (step 6's `git diff HEAD..origin/main -- ...` before
+   `merge --ff-only`).
+
+## Optional: site-wide hardening (found on the way, independent of sim-agent)
+
+- **Gitea act-runner:** its job containers join the shared `proxy` network (`container.network: "proxy"` in
+  `/home/dant123/data/gitea-act-runner/config.yaml`). Give them a dedicated network, so a workflow in ANY repo is not
+  a container next to every web app.
+- **homepage-dockerproxy** sits on `proxy` with `CONTAINERS=1`, which exposes every container's environment (every
+  stack's secrets) to any compromised container on that network. Move it off `proxy`, or set `CONTAINERS=0` if the
+  widgets do not need it.
+- **Caddy's LAN privilege:** hairpinned traffic reaches Caddy with a LAN-looking source (usually the router's LAN
+  address; confirm in Caddy's access log with a request to a `*.dant123.com` name from a LAN host). Exclude that
+  source from the private-range matcher that grants LAN-only access (`not remote_ip <that address>`), so a hairpin
+  is never treated as a LAN client, whoever makes it.
+- **`/etc/nftables.d` ownership:** `sudo chown root:root /etc/nftables.d /etc/nftables.d/fw.nft` (step 7).
+
+## What the owner must verify (2026-09-30 security review)
+
+Nothing on the server was modified by that review, and `~/apps/.env` was never read (only its mode); the rest of the
+evidence came from read-only `sudo -n` reads of nft, exports, samba, `sshd -T`, zfs, sanoid, systemd units, compose
+fragments (secret values redacted) and the act-runner `config.yaml`. These are the items only you can close:
+
+1. Before installing the container's gateway key: `pool-submit` stays refused in `tools/agent_gateway.sh` (step 10
+   shows the check) until the "Pool nodes" hardening holds on every node; re-run the gateway tests after any change.
+   It is the one designed channel that reached the LAN.
+2. Build the image and run the ctl script from a `src/` that contains the PATH and absolute-interpreter fix
+   (`tools/agent_container/Dockerfile`, `entrypoint.sh`, `bin/firewall_guard.sh`) and the `docker exec -e PATH=...`
+   change (`update.sh`, `agent_harness_ctl.sh`, `verify_isolation.sh`): merge this branch BEFORE step 6's clone. The
+   in-container network probes are gone; they run from a pristine container on `apps_sim-agent-net`.
+3. Gitea: Actions unticked and `curl -s https://git.dant123.com/api/v1/repos/dant123/neural-simulator | jq
+   .has_actions` printing `false` (it printed `true`), the probe push, and only THEN the write deploy key; the two
+   branch rules in the stated priority order and tags `*` protected (step 3).
+4. Workstation: sshd step 1 applied (`PasswordAuthentication` was still `yes`), confirmed with
+   `sudo sshd -T | grep -iE '^(passwordauthentication|kbdinteractiveauthentication|authenticationmethods) '`.
+5. After step 7 and every reboot: `sudo nft list set inet sim_agent self_wan` holds 1 address; the installed
+   `sim-agent-fw-selfwan.service` carries `OnFailure=ntfy-notify@%n.service`; `journalctl -u sim-agent-fw-selfwan`
+   checked once after a DDNS change.
+6. A ZFS quota on `data/appdata/gitea` (20-30G) before the deploy key is added; `receive.maxInputSize` kept.
+7. The old network `sim-agent_agent-net` removed (step 4) before step 12, or `docker compose up` fails on the
+   172.30.30.0/24 overlap.
+8. When merging `research/harness-server-fit` and any later agent branch: the explicit diff of
+   `tools/agent_container/**`, `tools/agent_harness_ctl.sh`, `tools/agent_gateway*`, `server-stack/host/**`,
+   `tools/githooks/**` and `.claude/**` before the merge and before `git -C src merge --ff-only origin/main`
+   ("Merging agent branches"; the `agent_trust_paths` gate backs it up).
+9. Optional but recommended site-wide: the act-runner's job containers off `proxy`, and homepage-dockerproxy reduced
+   or moved ("Optional: site-wide hardening").
