@@ -332,6 +332,36 @@ Write ONE finding per flipped packet from the template in its HANDOFF, `status: 
 `GAP_CLOSURE_MISSION.md` CURRENT STATE with one dated line per packet (numbers only, from the verdict JSONs). Commit,
 push. Then NEEDS-CLAUDE "iw2: flips <FLIP> validated at F=<F7> (provisional); adversarial review + merge".
 
+## 12. Adversarial review before any gate job (Claude, 2026-09-30)
+
+Verdict: SOUND-WITH-ISSUES. Two defects fixed on the branch (commit bb149f522, each pinned failing-first in
+`tests/test_integration_wave2_anchors.py`; FAILURE_LOG 2026-09-30); the judgment calls are NEEDS-CLAUDE 7-10 below.
+
+- **Fixed: the scorer could pass a SILENT belief store.** Locations take slots in order of mention, so the probe's
+  stale location is always slot 0, and the organ's read `max(rates, key=rates.get)` returns slot 0 when every rate is
+  0: a store that never ignited would answer "basket" and the lesion would still move it to "box". The trace block
+  now carries `belief_rates` (trace only; the reply is unchanged) and the scorer requires a positive rate at the
+  answered slot, strictly above every other, else `UNDEFINED:degenerate-intact`. Organ-level check on dev seeds 7-12:
+  the answered slot reads 0.333 and every other slot 0.0, in all three arms (false belief, lesion, true belief).
+- **Fixed: the step-B flip lines could never be queued.** `pool_queue.sh add` checks every `--flag` of a
+  revision-pinned line against the `-m` module's --help; `assert_iw2_defaults.py --expect-on=<list>` carried a flag
+  load_bearing_fraction does not accept. The guard now takes the list positionally in job lines (section 7).
+- **OFF path equals main, through the real handler.** The `default` arm of this 16-turn script run on main
+  (aba935ccd, the runner copied into a scratch checkout, PYTHONHASHSEED=0, one thread) is IDENTICAL on all 16 turns
+  to this branch's dev `default` and `off` arms (section 9; session_sha_canon 2ae28fc4..., peak RSS 11.32 GB,
+  1283 s). No code the default path runs differs between the merge-base and main.
+- **The fix, through the real handler.** Dev seed 7, `tom-false-belief` at bb149f522 (`dev_s7/review_fb/`): intact
+  a/b "Sally will look in the basket ..." with belief_rates slot 0 = 0.333333, others 0.0; lesion "... box ..." with
+  slot 1 = 0.333333; the registered cell logic (provenance rules bypassed for local sidecars) reads DEFINED
+  `regressed`, the store guard satisfied.
+- **Checked, holds:** the three anchors read False and the readers equal the pre-anchor expressions; the transitive
+  scope guard runs only after the flag check; the prereg commit (4f3418f71) precedes every code commit and is
+  unchanged since; the 41 step-D/R lines at the branch head pass `tools/queue_job_shape_check.sh` and the
+  gate-seed guard (each prereg resolves at the pinned revision with `git cat-file`), and every flag they carry is
+  accepted by their module; the step-R arms run the real `webapp.server.brain_chat` handler
+  (onebrain_regression_battery `_collect_worker`), and the lesion flags are read inside the live path; the wave-2
+  runners' static import closure has no gap against `requirements-pool.txt` (httpx included).
+
 ## Stop conditions (any one stops the thread)
 
 - A gate blocks for any reason other than the compute gates: STOP, NEEDS-CLAUDE. Never `--no-verify`, never a waiver.
@@ -362,3 +392,23 @@ push. Then NEEDS-CLAUDE "iw2: flips <FLIP> validated at F=<F7> (provisional); ad
 6. This build registered itself for CPU lanes C and E in `research/coordination/lane_builds.jsonl` (entries expire
    after 6 h) so its commits could land while those lanes read unserved; the registrations name this branch and say
    the packet's step-R jobs are the lanes' next work. Nothing was queued by Claude.
+7. (review) What the false-belief lesion removes. `BRAIN_FALSE_BELIEF_LESION` forces `witnessed=True`: the same host
+   boolean that decides whether the move drives the belief slot (`_write_event`: `write_belief = w_o > 0`, a 5000 pA
+   helper current into `belief_dev[loc]`) and opens the world->belief gate. The spiking store holds the value; the
+   host parse decides whether it is overwritten. A host dict (`belief = loc if witnessed else belief`) gives the same
+   reply pair, so a 6/6 R here shows the store carries the belief, not that the substrate computes who saw what. Rule
+   how the finding and the host-decision share report it (the prereg declares the witnessing parse and the argmax as
+   residuals; the row's kind is `neural-lesion`).
+8. (review) What the neural-selfid lesion removes. `BridgeParser.role_of(position)` drives one (position, voice)
+   conjunction and reads the winning role; the words never enter it, so `_neural_question_parse` returns
+   (content[0], content[1]) for every active-voice question, and `BRAIN_SUBSTRATE_PARSE_LESION` cuts that fixed
+   positional map (the same cut the `content-selection` row already counts). Rule whether `neural-selfid` counts as a
+   separate load-bearing row or as the content-selection mechanism reaching a new question class (the host router
+   retiring for self questions is the real change).
+9. (review) The scorer counts a capability cell when S2 reads `regressed` and the INTACT reply is right; it does not
+   check that the LESION reply lost the capability's content (e.g. a lesion reply that still says "river ...
+   reasoned" but differs in `recalled_svo`). The dev lesion replies do lose it (box / abstain / abstain). Tightening
+   this now would add a criterion the preregs do not state; rule whether to add it by prereg amendment before P.
+10. (review) Wave 1's step-B lines have the same defect this review fixed here: `research/packets/integration-wave1/
+    make_jobs.sh` inserts `assert_iw1_defaults.py --expect-on=<list>`, which `pool_queue.sh add` will refuse. Fix
+    on that branch before its step B.
