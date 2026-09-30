@@ -165,12 +165,12 @@ llm_yield_restore_if_drained() {
     echo "$(date '+%F %T') LLM-YIELD: window drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
     return 0
   fi
-  local sess prof n notify
-  sess=$(yield_field SESSION); prof=$(yield_field PROFILE); notify=$(yield_field NOTIFY_CMD)
+  local sess prof n
+  sess=$(yield_field SESSION); prof=$(yield_field PROFILE)
   n=$(cat "$LLM_YIELD_COUNT" 2>/dev/null || echo 0)
   rm -f "$LLM_YIELD_MARKER" "$LLM_YIELD_COUNT"   # consumed HERE, before the one attempt below
   llm_is_active && return 0                       # owner (or a race) already reloaded it manually
-  echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}${sess:+, resuming session $sess}${notify:+, running its notify-cmd}" >> "$LOG"
+  echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}${sess:+, resuming session $sess}" >> "$LOG"
   # backgrounded (loading + a full headless turn can take a while, must not block dispatch) + 8>&- for the same
   # fd-inheritance reason as every other forked child here.
   : > "$QDIR/.llm_restoring"                        # HOLD new jobs until `llm on` returns (else a job can race the model load)
@@ -180,14 +180,6 @@ llm_yield_restore_if_drained() {
     msg="GPU window finished: $n jobs ran (see research/queue/gpu_queue.log). Harvest their outputs, then continue per the runbook."
     if [ -n "$sess" ]; then
       bash "$LLM_SH" claude --resume "$sess" -p "$msg" >> "$QDIR/llm_session.log" 2>&1
-    fi
-    # NOTIFY_CMD (2026-09-29, tools/agent_gateway.sh's `yield` -- docs/plans/2026-09-29-local-model-transition-
-    # PLAN.md section 9): the containerized agent has no workstation session to resume; this runs the caller's
-    # own restore action instead (unpause the harness + tmux `say` the same message, for the container case),
-    # with the message above passed as its "$1". A plain string, never `eval`'d -- `bash -c` is exactly what a
-    # shell does with any command line; this one was written by tools/agent_gateway.sh, not by the model.
-    if [ -n "$notify" ]; then
-      bash -c "$notify" bash "$msg" >> "$LOG" 2>&1
     fi
   ) >> "$LOG" 2>&1 8>&- &
 }

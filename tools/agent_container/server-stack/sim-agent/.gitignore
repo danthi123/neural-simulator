@@ -1,7 +1,0 @@
-# ~/apps/sim-agent/.gitignore -- apps-gitsync runs `git add -A` nightly and pushes ~/apps to Gitea, and the root
-# .gitignore only covers .env files. Only the compose fragment belongs in this directory; keys, profiles and
-# agent state live on the ZFS dataset (${DATA_ROOT}/sim-agent), never here. Anything else dropped here by
-# mistake (a private key, a profile, a log) stays out of git.
-*
-!.gitignore
-!compose.yaml
