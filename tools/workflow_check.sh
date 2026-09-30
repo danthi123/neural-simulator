@@ -30,10 +30,12 @@ POOL_CHECK_NODES="pool40 pool41 pool42 $(_pool_check_extra_nodes)"
 
 queue_health() {
   local queue="$1" now="$2" max_age="$3"
-  awk -F'\t' -v now="$now" -v max_age="$max_age" '
+  # Same per-line `max_age_h=N` rule as tools/pool_autodispatch.sh's POOL_FRESH_AWK (tests pin the two copies).
+  awk -F'\t' -v now="$now" -v d="$max_age" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+    'function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m = substr(l, RSTART + 10, RLENGTH - 10) + 0; if (m > cap) m = cap; return m * 3600 } return d }
     $0 ~ /^[[:space:]]*(#|$)/ {next}
     !($1 ~ /^[0-9]+$/ && NF > 1) {malformed++; next}
-    {total++; if ($1 >= now-max_age) live++; else stale++}
+    {total++; if ($1 >= now - maxage($0)) live++; else stale++}
     END {printf "%d\t%d\t%d\t%d\n", live+0, stale+0, malformed+0, total+0}
   ' "$queue" 2>/dev/null
 }

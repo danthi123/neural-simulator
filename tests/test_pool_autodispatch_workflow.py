@@ -896,3 +896,40 @@ def test_queue_add_front_puts_the_line_at_the_head(tmp_path: Path) -> None:
                    env={**env, "FRONT": "1"}, check=True, capture_output=True, text=True)
     lines = queue.read_text().splitlines()
     assert "echo front" in lines[0] and "old-job" in lines[1] and "echo back" in lines[2]
+
+
+def test_a_line_may_declare_its_own_max_age_capped_at_240h(tmp_path: Path) -> None:
+    # 2026-09-30: ~550 legitimate lines queued on 09-29 needed three to five days of pool time, but every line
+    # older than 12 h was skipped as debris. `max_age_h=N` lets a batch declare its expected wait; the 240 h cap
+    # keeps an abandoned batch expiring; a line with no token keeps the 12 h default.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(
+        f"{now - 50_000}\told-default  #checked:r mem_gb=1\n"            # 13.9 h, no token -> stale
+        f"{now - 1_000_000}\tover-cap  #checked:r max_age_h=9999\n"      # 11.6 days > 240 h cap -> stale
+        f"{now - 50_000}\tdeclared  #checked:r mem_gb=1 max_age_h=120\n"  # 13.9 h < 120 h -> fresh
+    )
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = run_bash(DISPATCHER, "--pop-once", env=env)
+    assert res.stdout.endswith("declared"), res.stdout + res.stderr
+    assert "SKIPPING 2 stale" in res.stderr
+    assert run_bash(DISPATCHER, "--pop-once", env=env).stdout == ""
+    assert "old-default" in queue.read_text() and "over-cap" in queue.read_text()   # skipped, never deleted
+
+
+def test_queue_health_honours_the_per_line_max_age(tmp_path: Path) -> None:
+    now = 2_000_000_000
+    queue = tmp_path / "pool.queue"
+    queue.write_text(
+        f"{now - 50_000}\tstale #checked:test\n"
+        f"{now - 50_000}\tdeclared #checked:test max_age_h=48\n"
+    )
+    assert run_bash(WORKFLOW, "--queue-health", str(queue), str(now), "43200").stdout == "1\t1\t0\t2\n"
+
+
+def test_dispatcher_and_monitor_share_one_max_age_rule() -> None:
+    import re
+    fn = re.compile(r"function maxage\(l,  m\) \{.*?return d \}")
+    a = fn.findall(DISPATCHER.read_text())
+    b = fn.findall(WORKFLOW.read_text())
+    assert a and b and set(a) == set(b), "the dispatcher and workflow_check.sh must apply the same max_age_h rule"
