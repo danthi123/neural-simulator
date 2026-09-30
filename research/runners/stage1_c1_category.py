@@ -171,15 +171,36 @@ def _trace(resp):
     return (resp or {}).get("category_inherit") if isinstance(resp, dict) else None
 
 
+def organ_errors(shard):
+    """Organ exceptions the wiring swallowed (a turn never crashes, so they survive only in the trace): an observe
+    `error`, a read whose reason is `error: ...`, or a trace that could not be read. [(label, text), ...]."""
+    out = []
+    for label, r in (shard.get("responses") or {}).items():
+        tr = _trace(r)
+        if not isinstance(tr, dict):
+            continue
+        if tr.get("error"):
+            out.append((label, "trace: %s" % tr["error"]))
+        ob, rd = tr.get("observe"), tr.get("read")
+        if isinstance(ob, dict) and ob.get("error"):
+            out.append((label, "observe: %s" % ob["error"]))
+        if isinstance(rd, dict) and str(rd.get("reason") or "").startswith("error"):
+            out.append((label, "read: %s" % rd["reason"]))
+    return out
+
+
 def wiring_applied(shard, arm):
-    """The flag reached the handler: every flag-ON arm carries the `category_inherit` trace on every turn, and the
-    direct probe's organ read reports the arm's lesion mode; the OFF arm carries it on no turn."""
+    """The flag reached the handler: every flag-ON arm carries the `category_inherit` trace on every turn, with no
+    swallowed organ exception on any turn (prereg section 4: no errored turn), and the direct probe's organ read
+    reports the arm's lesion mode; the OFF arm carries it on no turn."""
     resp = shard.get("responses") or {}
     on = ARMS[arm][0].get(FLAG) == "1"
     has = [_trace(r) is not None for r in resp.values()]
     if not on:
         return not any(has)
     if not (has and all(has)):
+        return False
+    if organ_errors(shard):
         return False
     want = {None: None, "1": "all", "lateral": "lateral", "lateral_learn": "lateral_learn"}[ARMS[arm][0].get(LESION)]
     rd = (_trace(resp.get(DIRECT_PROBE)) or {}).get("read") or {}
@@ -256,7 +277,9 @@ def aggregate(root, seeds=GATE_SEEDS):
             if any("_error" in (v or {}) for v in (sh.get("responses") or {}).values()):
                 row["undefined_reasons"].append("%s: an errored turn" % a)
             if not wiring_applied(sh, a):
-                row["undefined_reasons"].append("%s: wiring/lesion not applied (category_inherit trace)" % a)
+                errs = organ_errors(sh)
+                row["undefined_reasons"].append("%s: wiring/lesion not applied (category_inherit trace%s)" % (
+                    a, ("; organ error on %s: %s" % errs[0]) if errs else ""))
         if readable["intact_a"]:
             ra = have["intact_a"]["responses"]
             row["intact"] = SG.score_cat(ra)

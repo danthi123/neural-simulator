@@ -190,3 +190,44 @@ def test_runner_selftest():
     from research.runners import stage1_c1_category as R
     ok, checks = R.selftest(verbose=False)
     assert ok, {k: v for k, v in checks.items() if not v}
+
+
+def _write_pass_shards(td, mutate=None):
+    import json
+    from research.runners import stage1_c1_category as R
+    for s in R.GATE_SEEDS:
+        for arm in R.ARMS:
+            d = R._synthetic("pass", arm)
+            if mutate is not None:
+                mutate(s, arm, d)
+            p = R.shard_path(td, s, arm)
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w") as f:
+                json.dump(d, f)
+
+
+@pytest.mark.parametrize("where", ["observe", "read", "trace"])
+def test_a_swallowed_organ_error_is_undefined_never_a_capability_fail(tmp_path, where):
+    """The wiring swallows every organ exception (a turn never crashes), so the exception survives only in the
+    `category_inherit` trace. A deterministic error is identical in intact_a and intact_b, so the null stays clean.
+    Prereg section 4 counts a seed only with no errored turn and the wiring applied: an organ error in a counted arm
+    must read UNDEFINED ("not applied"), never FAIL "capability absent"."""
+    from research.runners import stage1_c1_category as R
+
+    def mutate(s, arm, d):
+        if not (s == 42 and arm in ("intact_a", "intact_b")):   # a deterministic error: both same-seed builds
+            return
+        r = d["responses"]
+        r["p_canary_eat"] = R._fake("I don't know", abstained=True, trace=True)   # the error's reply-level shape
+        if where == "observe":
+            r["t_canary_fly"]["category_inherit"]["observe"] = {"error": "MemoryError: "}
+        elif where == "read":
+            r["p_canary_eat"]["category_inherit"]["read"] = {"agent": "canary", "action": "eat", "patient": None,
+                                                            "reason": "error: RuntimeError: boom"}
+        else:
+            r["p_canary_eat"]["category_inherit"] = {"error": "KeyError: 'x'"}
+
+    _write_pass_shards(str(tmp_path), mutate)
+    agg = R.aggregate(str(tmp_path))
+    assert agg["verdict"].startswith("UNDEFINED"), (agg["verdict"], agg["why"])
+    assert any("not applied" in u for u in agg["rows"][42]["undefined_reasons"]), agg["rows"][42]["undefined_reasons"]
