@@ -121,6 +121,21 @@ authentication surface for it. Do this BEFORE step 10. `verify_isolation.sh` (st
 container's network position: it reads the method list the workstation's sshd offers and fails on `password` or
 `keyboard-interactive`.
 
+### 1b. Workstation firewall: let the server reach the gateway and the model port
+
+The workstation runs ufw with a default-drop input policy (found 2026-09-30: the server's ssh-keyscan of
+192.168.0.68 returned nothing and 22/8080 were closed from the server). The container's traffic reaches the
+workstation masqueraded as 192.168.0.10, so allow exactly that source, like the existing Ollama rule:
+
+```bash
+sudo ufw allow from 192.168.0.10 to any port 22 proto tcp comment 'sim-agent gateway (forced-command keys only)'
+sudo ufw allow from 192.168.0.10 to any port 8080 proto tcp comment 'sim-agent -> llama-swap model server'
+```
+
+Every container on the server shares that source address, so this opens sshd (keys only after step 1; the only
+keys authorized for this route are the two forced-command ones) and the model port to all of them, the same exposure
+Ollama's 11434 rule already has. Do this before step 10: its ssh-keyscan of the workstation needs port 22.
+
 ### 2. Generate the four keypairs (on the workstation)
 
 ```bash
