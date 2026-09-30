@@ -1,0 +1,32 @@
+{
+ "run_id": "1790783034-1531723",
+ "runner": "research/runners/stage1_c1_category.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/runners/stage1_c1_category.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--arm",
+  "permuted",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/findings/raw/_stage1_c1_category/dev/s7/cat_disc__permuted.json"
+ ],
+ "git_sha": "ce496d36e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-30T11:43:54",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7151.0,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_category/dev/s7/cat_disc__permuted.json"
+}
