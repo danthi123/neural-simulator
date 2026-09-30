@@ -315,6 +315,60 @@ def _facts_of(chat):
     return out
 
 
+def _find_chat(srv, session):
+    """The session's live ChatBrain in the handler's session cache (keyed (session, brain, renderer)), or None."""
+    chat = None
+    try:
+        for _name, _obj in list(vars(srv).items()):
+            if isinstance(_obj, dict):
+                for key, val in list(_obj.items()):
+                    if isinstance(key, tuple) and key and key[0] == session and hasattr(val, "stored_facts"):
+                        chat = val
+    except Exception:
+        return None
+    return chat
+
+
+INTERNAL_TRACE_ATTRS = {"gnw_multistep": "_last_gnw_multistep"}
+
+
+def capture_internal(chat, prev_ids=None):
+    """Read-only copies of the per-turn traces the handler stashes on the chat and does not attach to the response
+    (`_last_gnw_multistep`: the C5 chase's acted/reason/terminal/resolved_hops/cycles). `prev_ids` (name -> id of the
+    object seen last turn) drops a trace no wrapper rewrote this turn (each wrapper assigns a NEW dict per call)."""
+    out = {}
+    if chat is None:
+        return out
+    for name, attr in INTERNAL_TRACE_ATTRS.items():
+        obj = getattr(chat, attr, None)
+        if not isinstance(obj, dict):
+            continue
+        if prev_ids is not None:
+            if prev_ids.get(name) == id(obj):
+                continue
+            prev_ids[name] = id(obj)
+        out[name] = {k: v for k, v in obj.items() if not callable(v)}
+    return out
+
+
+def process_record(srv):
+    """The worker process's peak RSS (the lane's mem_gb/memcap claim is checked against it) and the LTM bundle the
+    handler resolved (the shipped default is wikidata_100k with wikidata_core_15k as the fallback; both yield the
+    same `source` string, so the bundle is recorded per arm)."""
+    rec = {}
+    try:
+        import resource
+        rec["peak_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1)
+    except Exception:
+        rec["peak_rss_mb"] = None
+    try:
+        b = srv._resolve_ltm_bundle()
+        rec["ltm_bundle"] = os.path.basename(str(b).rstrip("/")) if b else None
+    except Exception as e:
+        rec["ltm_bundle"] = "unresolved: %s" % type(e).__name__
+    return rec
+
+
 def run_worker(seed, group, arm, out_path, labels=None):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
@@ -336,8 +390,10 @@ def run_worker(seed, group, arm, out_path, labels=None):
         keep = set(labels.split(","))
         turns = [t for t in turns if t[0] in keep]
     session = "s2_%s_%s_%d" % (group, arm.replace(".", "_"), int(seed))
-    responses, timings = {}, {}
+    responses, timings, internal = {}, {}, {}
     builtin_facts = None
+    from webapp import server as _srv
+    prev_ids = {}
     for i, (label, msg, role) in enumerate(turns):
         t1 = time.time()
         try:
@@ -347,30 +403,23 @@ def run_worker(seed, group, arm, out_path, labels=None):
         except Exception as e:
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
         timings[label] = round(time.time() - t1, 1)
+        chat = _find_chat(_srv, session)
+        # the internal traces the handler stashes on the chat but never attaches to the response (the C5 chase trace:
+        # prereg 4.5's internal secondary); only a trace this turn wrote is kept (object identity), never a stale one
+        rec = capture_internal(chat, prev_ids)
+        if rec:
+            internal[label] = rec
         if builtin_facts is None:
             # the build-time fact list (read once, after the first turn built the brain; the grounding set for C1/C5)
-            try:
-                from webapp import server as _srv
-                chat = None
-                for _name, _obj in list(vars(_srv).items()):     # the session -> ChatBrain cache, whatever its name
-                    if isinstance(_obj, dict):
-                        for key, val in list(_obj.items()):
-                            if isinstance(key, tuple) and key and key[0] == session and hasattr(val, "stored_facts"):
-                                chat = val
-                if chat is not None:
-                    builtin_facts = _facts_of(chat)
-            except Exception:
-                builtin_facts = None
-            if builtin_facts is None:
-                builtin_facts = []
+            builtin_facts = _facts_of(chat) if chat is not None else []
     out = {"runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG,
            "seed": int(seed), "group": group, "arm": arm, "kind": kind, "criterion": GROUPS[group]["criterion"],
            "env": dict(GROUPS[group]["env"], **env), "patch": patch_rec, "pythonhashseed_ok": hash_ok,
            "corpus_present": corpus_present, "builtin_facts": builtin_facts,
            "session": session, "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns],
-           "responses": responses, "timings_s": timings, "import_s": round(import_s, 1),
+           "responses": responses, "internal": internal, "timings_s": timings, "import_s": round(import_s, 1),
            "wall_s": round(time.time() - t0, 1), "elapsed_seconds": round(time.time() - t0, 1),
-           "expected_source": EXPECTED_SOURCE,
+           "expected_source": EXPECTED_SOURCE, "process": process_record(_srv),
            "sources": sorted({str(r.get("source")) for r in responses.values() if isinstance(r, dict)})}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
@@ -380,7 +429,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     return 0
 
 
-def run_shard(seed, group, arm, out_path, backend="numpy", labels=None):
+def run_shard(seed, group, arm, out_path, backend="numpy", labels=None, allow_gate_seed=False, prereg=None):
     """One (seed, group, arm) arm in a FRESH subprocess with the frozen env (PYTHONHASHSEED must be set before the
     interpreter starts, so it cannot be applied in-process)."""
     env = dict(os.environ)
@@ -393,6 +442,11 @@ def run_shard(seed, group, arm, out_path, backend="numpy", labels=None):
            "--group", group, "--arm", arm, "--out", part]
     if labels:
         cmd += ["--labels", labels]
+    if allow_gate_seed:
+        # the worker's own main() applies the gate-seed guard too: without the flag every gate shard dies rc=2
+        cmd += ["--allow-gate-seed"]
+    if prereg:
+        cmd += ["--prereg", prereg]
     p = subprocess.run(cmd, env=env, cwd=_REPO)
     if p.returncode != 0 or not os.path.exists(part):
         print("[stage2 shard] worker FAILED rc=%s for seed=%s %s/%s" % (p.returncode, seed, group, arm), flush=True)
@@ -521,6 +575,59 @@ def _multistep_info(resp):
                 if isinstance(v2, dict) and "cycles" in v2 and "resolved_hops" in v2:
                     return v2
     return None
+
+
+# groups whose scorer grounds replies against the arm's `builtin_facts` (an empty list would read as a FAIL)
+GROUNDING_GROUPS = ("conv", "inner")
+
+
+def organ_errors(resp):
+    """Faculty sub-dicts of one response that carry an `error` (the handler catches an organ exception into
+    `<organ>.error` and keeps going; FAILURE_LOG 2026-09-29, B2b: such a turn was scored as a lesion effect).
+    Scans two levels deep; returns the dotted keys."""
+    out = []
+    if not isinstance(resp, dict):
+        return out
+    for k, v in resp.items():
+        if isinstance(v, dict):
+            if v.get("error"):
+                out.append(k)
+            for k2, v2 in v.items():
+                if isinstance(v2, dict) and v2.get("error"):
+                    out.append("%s.%s" % (k, k2))
+    return out
+
+
+def arm_validity(group, arm, shard):
+    """Why one COUNTED arm cannot be scored (empty list = valid). Prereg section 7: every response's source is the
+    expected brain, PYTHONHASHSEED=0 and the corpus present; an errored reply is UNDEFINED, never a pass or a fail
+    (a lesion arm whose scored turn crashed must not read as 'no effect', nor an organ error as an effect); the
+    grounding set is recorded wherever a scorer reads it. The reason strings are matched by the preconditions."""
+    why = []
+    if not isinstance(shard, dict) or "responses" not in shard:
+        return ["%s: arm missing or unreadable" % arm]
+    resp = shard.get("responses") or {}
+    errored = sorted(l for l, r in resp.items() if not isinstance(r, dict) or "_error" in r)
+    if errored:
+        why.append("%s: errored turn(s) %s" % (arm, ",".join(errored)[:120]))
+    org = {l: organ_errors(r) for l, r in resp.items()}
+    org = {l: v for l, v in org.items() if v}
+    for l, rec in (shard.get("internal") or {}).items():
+        ms = (rec or {}).get("gnw_multistep") or {}
+        if str(ms.get("reason") or "").startswith("error"):
+            org.setdefault(l, []).append("gnw_multistep")
+    if org:
+        why.append("%s: organ error %s" % (arm, "; ".join("%s:%s" % (l, "+".join(v)) for l, v in sorted(org.items()))[:160]))
+    srcs = set(shard.get("sources") or [])
+    if srcs != {EXPECTED_SOURCE}:
+        why.append("%s: unexpected brain source %s" % (arm, sorted(srcs)))
+    if not shard.get("pythonhashseed_ok"):
+        why.append("%s: PYTHONHASHSEED not 0" % arm)
+    if not shard.get("corpus_present", True):
+        why.append("%s: corpus absent: corpus-learned production organs degraded" % arm)
+    if group in GROUNDING_GROUPS and not (shard.get("builtin_facts") or []):
+        why.append("%s: builtin_facts not recorded (the grounding set the scorer reads)" % arm)
+    return why
 
 
 def null_clean(a, b, labels):
@@ -721,7 +828,13 @@ def score_inner(shard, permuted=False):
           "builtin_dog_cat": _patient(resp.get("c_dog_chase")) == "cat"}
     ok["all"] = bool(ok["private_voices_stored_fact"] and ok["inner_terminal_lynx"] and ok["inner_terminal_vole"]
                      and ok["single_hop"] and ok["moat_tail"] and ok["builtin_dog_cat"])
-    info = _multistep_info(resp.get("p_chase_all"))
+    def _trace(label):
+        rec = ((shard.get("internal") or {}).get(label) or {}).get("gnw_multistep")
+        return rec if isinstance(rec, dict) and "resolved_hops" in rec else _multistep_info(resp.get(label))
+    info = _trace("p_chase_all")
+    iv = _trace("p_chase_all_vole")
+    ok["chain_internal_vole"] = ({"cycles": iv.get("cycles"), "resolved_hops": iv.get("resolved_hops"),
+                                  "terminal": iv.get("terminal"), "reason": iv.get("reason")} if iv else None)
     ok["chain_internal"] = ({"cycles": info.get("cycles"), "resolved_hops": info.get("resolved_hops"),
                              "terminal": info.get("terminal"), "reason": info.get("reason")} if info else None)
     ok["chain_hops_internal_ge2"] = bool(info and (info.get("resolved_hops") or 0) >= 2)
@@ -789,12 +902,6 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                     row["undefined_reasons"].append("null failed (intact_a != intact_b) on %d turn(s)" % len(diffs))
                 srcs = set(ia.get("sources") or []) | set(ib.get("sources") or [])
                 row["sources"] = sorted(srcs)
-                if srcs and srcs != {EXPECTED_SOURCE}:
-                    row["undefined_reasons"].append("unexpected brain source %s" % sorted(srcs))
-                if not (ia.get("pythonhashseed_ok") and ib.get("pythonhashseed_ok")):
-                    row["undefined_reasons"].append("PYTHONHASHSEED not 0")
-                if not (ia.get("corpus_present", True) and ib.get("corpus_present", True)):
-                    row["undefined_reasons"].append("corpus absent: corpus-learned production organs degraded")
                 for les in g["lesions"]:
                     for arm_name in (les, les + ".rep0"):
                         sh = have.get(arm_name)
@@ -802,6 +909,13 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                             row["undefined_reasons"].append("%s arm missing or unreadable" % arm_name)
                 if have.get("permuted") is None or "responses" not in (have.get("permuted") or {}):
                     row["undefined_reasons"].append("permuted arm missing or unreadable")
+                # every COUNTED arm must be a valid measurement (prereg section 7), not only the intact pair
+                for arm_name in need:
+                    sh = have.get(arm_name)
+                    if sh is not None and "responses" in sh:
+                        row["undefined_reasons"] += arm_validity(group, arm_name, sh)
+                row["ltm_bundles"] = sorted({str(((have.get(a) or {}).get("process") or {}).get("ltm_bundle"))
+                                             for a in need if have.get(a) is not None})
                 ra, rb = ia["responses"], ib["responses"]
                 # ── correctness (intact_a) ──
                 row["intact"] = SCORERS[group](ia)
@@ -915,9 +1029,14 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
     v.require("null clean (intact_a == intact_b) on every primary (group, seed)",
               sum(1 for r in prim_rows if r.get("null_clean") is not True), expect=0,
               note="a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds")
-    v.require("every response from the expected brain", sum(1 for r in prim_rows if r.get("sources") not in (None, [EXPECTED_SOURCE])), expect=0,
-              note="expected `source` = %s" % EXPECTED_SOURCE)
-    v.require("PYTHONHASHSEED=0 in every primary arm", sum(1 for r in prim_rows if "PYTHONHASHSEED not 0" in r.get("undefined_reasons", [])), expect=0)
+    def _n_rows_with(tag):
+        return sum(1 for r in prim_rows if any(tag in x for x in r.get("undefined_reasons", [])))
+    v.require("every response from the expected brain", _n_rows_with("unexpected brain source"), expect=0,
+              note="expected `source` = %s in every counted arm" % EXPECTED_SOURCE)
+    v.require("PYTHONHASHSEED=0 in every primary arm", _n_rows_with("PYTHONHASHSEED not 0"), expect=0)
+    v.require("no errored turn and no organ error in any counted arm", _n_rows_with("errored turn") + _n_rows_with("organ error"),
+              expect=0, note="an errored reply or a caught organ exception is an instrument failure, never an effect or a FAIL")
+    v.require("the grounding set (builtin_facts) recorded in every conv/inner counted arm", _n_rows_with("builtin_facts not recorded"), expect=0)
     v.require("the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
               sum(1 for r in prim_rows if any("corpus absent" in x for x in r.get("undefined_reasons", []))), expect=0,
               note="a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it")
@@ -1205,7 +1324,8 @@ def main():
             sys.exit(2)
         if a.worker:
             sys.exit(run_worker(a.seed, a.group, a.arm, a.out, labels=a.labels))
-        sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels))
+        sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels,
+                           allow_gate_seed=a.allow_gate_seed, prereg=a.prereg))
     ap.error("choose one of --worker/--shard/--aggregate/--report/--selftest/--emit-pool-jobs")
 
 

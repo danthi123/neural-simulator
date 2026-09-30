@@ -11,6 +11,9 @@ os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
 from research.runners import stage2_exit_gate as SG
 
+# production resolves the shipped LTM as wikidata_100k first, wikidata_core_15k as the fallback
+# (webapp/server.py::_default_ltm_bundle_dir, the #108 flip of 2026-09-02): the novel words must be absent from both
+_LTM_BUNDLES = ("wikidata_100k", "wikidata_core_15k")
 _LTM_FACTS = os.path.expanduser("~/Projects/sim-data/knowledge_bundles/wikidata_core_15k/facts.json")
 
 
@@ -86,13 +89,24 @@ def test_novel_words_are_absent_from_the_tiny_demo_vocabulary_and_the_shipped_lt
     tiny = {"brain", "use", "spikes", "learn", "words", "store", "memory", "dog", "chase", "cat", "eat", "fish"}
     for w in SG.NOVEL_WORDS:
         assert w not in tiny, w
-    if not os.path.exists(_LTM_FACTS):
-        pytest.skip("shipped LTM bundle not present on this machine")
-    with open(_LTM_FACTS, errors="ignore") as f:
-        blob = f.read().lower()
     import re
-    hits = [w for w in SG.NOVEL_WORDS if re.search(r"\b%s\b" % re.escape(w), blob)]
-    assert not hits, hits
+    paths = [os.path.expanduser("~/Projects/sim-data/knowledge_bundles/%s/facts.json" % b) for b in _LTM_BUNDLES]
+    present = [p for p in paths if os.path.exists(p)]
+    if not present:
+        pytest.skip("shipped LTM bundle not present on this machine")
+    for p in present:
+        with open(p, errors="ignore") as f:
+            blob = f.read().lower()
+        hits = [w for w in SG.NOVEL_WORDS if re.search(r"\b%s\b" % re.escape(w), blob)]
+        assert not hits, (p, hits)
+
+
+def test_the_handoff_checks_the_ltm_bundle_production_resolves_first():
+    """The pool check must look for the bundle the handler loads (wikidata_100k), not only the fallback core."""
+    root = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+    with open(os.path.join(root, "docs", "drafts", "stage2-exit", "HANDOFF.md")) as f:
+        h = f.read()
+    assert "grep -q wikidata_100k" in h
 
 
 def test_grammar_checker_is_strict_about_form_and_prepositions():
@@ -142,3 +156,155 @@ def test_multistep_info_reader_finds_the_trace_wherever_it_is_attached():
     assert SG._multistep_info({"gnw": {"multistep": info}}) == info
     assert SG._multistep_info({"gnw_multistep": info}) == info
     assert SG._multistep_info({"answer": "x"}) is None
+
+
+# ── review fixes 2026-09-30 (adversarial review of the packet; failing-first) ────────────────────────────────────────
+def test_gate_seed_shard_hands_the_gate_flag_to_its_worker(monkeypatch, tmp_path):
+    """A pool line runs `--shard --seed 42 --allow-gate-seed --prereg <p>`; run_shard spawns `--worker` in a fresh
+    process, and main()'s gate-seed guard applies to --worker too. The worker argv must therefore carry the flag, or
+    every one of the 186 gate jobs dies with rc=2 before building a brain (measured at 8c934312a)."""
+    seen = {}
+
+    class _P:
+        returncode = 0
+
+    def _fake_worker(seed, group, arm, out_path, labels=None):
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)     # the real worker makes its directory too
+        with open(out_path, "w") as f:
+            json.dump({"responses": {}, "seed": seed}, f)
+        return 0
+
+    def _fake_run(cmd, env=None, cwd=None):
+        seen["cmd"] = list(cmd)
+        assert cmd[1:4] == ["-u", "-m", "research.runners.stage2_exit_gate"], cmd
+        monkeypatch.setattr(sys, "argv", ["stage2_exit_gate"] + list(cmd[4:]))
+        with pytest.raises(SystemExit) as e:
+            SG.main()
+        p = _P()
+        p.returncode = e.value.code
+        seen["worker_rc"] = e.value.code
+        return p
+
+    monkeypatch.setattr(SG, "run_worker", _fake_worker)
+    monkeypatch.setattr(SG.subprocess, "run", _fake_run)
+    out = str(tmp_path / "s42" / "ask__intact_a.json")
+    monkeypatch.setattr(sys, "argv", ["stage2_exit_gate", "--shard", "--seed", "42", "--group", "ask", "--arm", "intact_a",
+                                      "--allow-gate-seed", "--prereg", SG.PREREG, "--out", out])
+    with pytest.raises(SystemExit) as outer:
+        SG.main()
+    assert seen.get("worker_rc") == 0, seen
+    assert outer.value.code == 0 and os.path.exists(out)
+    # a dev seed never needs (or gets) the flag
+    monkeypatch.setattr(sys, "argv", ["stage2_exit_gate", "--shard", "--seed", "7", "--group", "ask", "--arm", "intact_a",
+                                      "--out", str(tmp_path / "s7.json")])
+    with pytest.raises(SystemExit) as dev:
+        SG.main()
+    assert dev.value.code == 0 and "--allow-gate-seed" not in seen["cmd"]
+
+
+def _ask_tree(td, seeds=(1, 2)):
+    kinds = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_curiosity.rep0": "lesion",
+             "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted"}
+    for seed in seeds:
+        for arm, kind in kinds.items():
+            p = SG.shard_path(td, seed, "ask", arm)
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            d = dict(SG._fake_shard("ask", SG._synthetic_ask(kind), permuted=(kind == "permuted")), seed=seed, arm=arm,
+                     corpus_present=True)
+            with open(p, "w") as f:
+                json.dump(d, f)
+
+
+def _rewrite(td, seed, arm, fn):
+    p = SG.shard_path(td, seed, "ask", arm)
+    with open(p) as f:
+        d = json.load(f)
+    fn(d)
+    with open(p, "w") as f:
+        json.dump(d, f)
+
+
+def test_an_errored_turn_in_a_lesion_arm_is_undefined_never_a_not_load_bearing_fail(tmp_path):
+    """Prereg section 7: an errored reply makes the seed UNDEFINED; UNDEFINED is never counted as a pass or a fail.
+    At 8c934312a an errored scored turn in a LESION arm read as 'no effect' and the group FAILed 'not load-bearing'."""
+    td = str(tmp_path)
+    _ask_tree(td)
+    assert SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]["verdict"] == "PASS"
+
+    def _err(d):
+        for l in SG.SCORED_LABELS["ask"]["lesion_curiosity"]:
+            d["responses"][l] = {"_error": "RuntimeError: organ crashed"}
+    for arm in ("lesion_curiosity", "lesion_curiosity.rep0"):
+        _rewrite(td, 2, arm, _err)
+    g = SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]
+    assert g["verdict"] == "INCOMPLETE", (g["verdict"], g["why"])
+    assert any("errored" in r for r in g["seeds"][2]["undefined_reasons"]), g["seeds"][2]["undefined_reasons"]
+
+
+def test_an_organ_error_in_a_counted_arm_is_undefined(tmp_path):
+    """FAILURE_LOG 2026-09-29 (B2b): an organ that raised inside a lesion arm was caught into `<organ>.error` and the
+    missing field was scored as the lesion's effect. An organ error in any counted arm is an instrument failure."""
+    td = str(tmp_path)
+    _ask_tree(td)
+
+    def _organ_err(d):
+        d["responses"]["g_eel"]["curiosity"] = {"on": True, "error": "ValueError: could not broadcast"}
+    _rewrite(td, 1, "lesion_curiosity", _organ_err)
+    g = SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]
+    assert g["verdict"] == "INCOMPLETE" and any("organ error" in r for r in g["seeds"][1]["undefined_reasons"])
+
+
+def test_source_hash_and_corpus_are_required_in_every_counted_arm_not_only_the_intact_pair(tmp_path):
+    """Prereg section 7: every response's source is `tiny-demo +LTM`, PYTHONHASHSEED=0 and corpus_present recorded.
+    At 8c934312a only intact_a/intact_b were checked, so a lesion or permuted arm built on a degraded node counted."""
+    td = str(tmp_path)
+    _ask_tree(td)
+    _rewrite(td, 1, "lesion_graded", lambda d: d.update(corpus_present=False))
+    _rewrite(td, 2, "permuted", lambda d: d.update(sources=["tiny-demo"]))
+    agg = SG.aggregate(td, seeds=(1, 2))
+    g = agg["groups"]["ask"]
+    assert g["n_defined"] == 0, [g["seeds"][s]["undefined_reasons"] for s in (1, 2)]
+    assert any("corpus absent" in r for r in g["seeds"][1]["undefined_reasons"])
+    assert any("unexpected brain source" in r for r in g["seeds"][2]["undefined_reasons"])
+    pre = {c["name"]: c for c in agg["preconditions"]}
+    assert pre["every response from the expected brain"]["ok"] is False
+    _ask_tree(td)
+    _rewrite(td, 2, "lesion_curiosity.rep0", lambda d: d.update(pythonhashseed_ok=False))
+    g = SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]
+    assert any("PYTHONHASHSEED" in r for r in g["seeds"][2]["undefined_reasons"])
+
+
+def test_grounding_set_is_required_where_a_scorer_reads_it(tmp_path):
+    """C1 (`conv`) and C5 (`inner`) score grounding against `builtin_facts`; an arm that failed to record it would
+    read as 'capability absent' (an instrument failure scored as a FAIL)."""
+    assert SG.GROUNDING_GROUPS == ("conv", "inner")
+    shard = {"responses": {"x": {"answer": "a", "source": SG.EXPECTED_SOURCE}}, "sources": [SG.EXPECTED_SOURCE],
+             "pythonhashseed_ok": True, "corpus_present": True, "builtin_facts": []}
+    assert any("builtin_facts" in r for r in SG.arm_validity("inner", "intact_a", shard))
+    assert not SG.arm_validity("ask", "intact_a", shard)
+    shard["builtin_facts"] = [["dog", "chase", "cat"]]
+    assert not SG.arm_validity("inner", "intact_a", shard)
+
+
+def test_worker_captures_the_multistep_trace_the_handler_does_not_attach():
+    """Prereg 4.5 names the chase trace (cycles, resolved_hops, terminal) as C5's internal secondary; at HEAD the
+    handler stashes it on `chat._last_gnw_multistep` and never puts it in the response, so the worker must read it."""
+    class _Chat:
+        _last_gnw_multistep = {"acted": True, "reason": "chain_terminal", "terminal": "mite", "resolved_hops": 3,
+                               "cycles": 4}
+    rec = SG.capture_internal(_Chat())
+    assert rec["gnw_multistep"]["terminal"] == "mite"
+    shard = {"responses": {"p_chase_all": {"answer": "x", "recalled_svo": ["lynx", "chase", "mite"]}},
+             "internal": {"p_chase_all": rec}, "builtin_facts": [], "turns": []}
+    s = SG.score_inner(shard)
+    assert s["chain_internal"]["resolved_hops"] == 3 and s["chain_hops_internal_ge2"] is True
+    assert SG.capture_internal(object()) == {}
+
+
+def test_process_record_reports_peak_rss_and_the_resolved_ltm_bundle():
+    class _Srv:
+        @staticmethod
+        def _resolve_ltm_bundle():
+            return "/x/knowledge_bundles/wikidata_100k"
+    rec = SG.process_record(_Srv)
+    assert rec["peak_rss_mb"] > 0 and rec["ltm_bundle"] == "wikidata_100k"
