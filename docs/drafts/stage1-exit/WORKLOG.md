@@ -41,3 +41,5 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   novel word ALONE holds the prior mood exactly (delta 0.0 on both probes) -> inherits False, the predicted C4b
   FAIL at production defaults (a non-lexicon word contributes zero by code); the E2 world-model surprise notice
   fired on each company flip. Instrument intact. All six dev arms now landed; HANDOFF section 2 PASS list holds.
+
+- 2026-09-29 23:1x (Claude): GATE_SHA 4f6d9d7fb69124a4d16797a236ac388b67eb73c6 provisioned isolated on pool41+pool42 (LTM OK, CORPUS OK on both); 204 jobs queued, 0 ADD-FAILED; pool depth 551 after queueing. AWS lane NOT used (NEEDS-CLAUDE #13 ruled: the pool ETA of about Oct 2-5 lands inside the Oct 24 window and before the Pro downgrade).
