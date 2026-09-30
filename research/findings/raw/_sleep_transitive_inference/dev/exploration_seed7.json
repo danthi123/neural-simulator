@@ -1,0 +1,160 @@
+{
+ "what": "Exploratory dev-seed-7 runs made with ad-hoc scripts (scratch dbg2/dbg3/dbg4/tstep, importing research/runners/sleep_transitive_inference.py at its dev predecessors) while choosing the operating point. Log lines transcribed verbatim below; seed 7 only; no gate seed.",
+ "date": "2026-09-29",
+ "seed": 7,
+ "runs": {
+  "dbg2_d25l30": {
+   "config": "between_density=0.25, init 15, 30 laps, SWR every 325 steps (32.5 ms), night 20000 steps, no PV; old read (peak smoothed fraction; counts at active_frac 0.10)",
+   "log": [
+    "encoded 587s",
+    "X1 A1:329 B1:331 P1:186",
+    "A1 B1:338 P1:249",
+    "B1 D1:321 P1:180",
+    "Y1 B1:350 D1:321 P1:37",
+    "D1 P1:30",
+    "P1 B1:121 D1:58",
+    "probe A1 sil=None: A1:240sp/48c@14 B1:85sp/48c@50 D1:115sp/48c@124 P1:100sp/48c@72",
+    "probe B1 sil=None: B1:240sp/48c@14 D1:70sp/47c@47 P1:20sp/15c@57",
+    "probe X1 sil=None: A1:47sp/39c@48 B1:165sp/48c@48 D1:132sp/48c@117 P1:153sp/48c@82 X1:240sp/48c@14",
+    "probe A1 sil=B1: A1:240sp/48c@14 P1:19sp/19c@73",
+    "night 673s pop=0.0007 inits=62 counts=A1:0 B1:0 D1:0 P1:0 C1:0 X1:0 Y1:0 A2:0 B2:0 D2:0 P2:0 C2:0 X2:0 Y2:0 Z:0",
+    "coact A1D1 0 A1D2 0 A1B1 0",
+    "post AD1 89.95682294112348 DA1 21.924334075531025 AD2foil 25.008261358242827 AB 338.3817645130641 BD 240.23696166784282",
+    "probe A1 sil=B1: A1:240sp/48c@14 P1:28sp/27c@65",
+    "probe A1 sil=None: A1:243sp/51c@14 B1:173sp/68c@49 D1:144sp/59c@118 P1:128sp/48c@65 X1:15sp/15c@236 A2:21sp/21c@257 B2:83sp/54c@244 D2:64sp/45c@294 P2:120sp/67c@184 C2:31sp/31c@261",
+    "done 677s"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg2_d50l30": {
+   "config": "between_density=0.5, init 15, 30 laps, SWR every 325 steps, night 20000 steps, no PV",
+   "log": [
+    "encoded 1109s",
+    "X1 A1:340 B1:333 P1:279",
+    "A1 B1:211 D1:51 P1:109",
+    "B1 A1:111 D1:228 P1:62",
+    "Y1 A1:36 B1:333 D1:340",
+    "D1 A1:26 B1:87 P1:16",
+    "P1 A1:201 B1:264 D1:19",
+    "probe A1 sil=None: A1:399sp/69c@14 B1:343sp/48c@53 D1:188sp/48c@88 P1:109sp/48c@72",
+    "probe B1 sil=None: A1:195sp/48c@59 B1:533sp/65c@14 D1:181sp/48c@43 P1:115sp/48c@81",
+    "probe X1 sil=None: A1:315sp/48c@36 B1:445sp/48c@36 D1:181sp/48c@64 P1:206sp/48c@39 X1:240sp/48c@14",
+    "probe A1 sil=B1: A1:240sp/48c@14 P1:13sp/13c@74",
+    "night 1459s pop=0.0044 inits=62 counts=A1:4 B1:4 D1:4 P1:3 C1:2 X1:3 Y1:3 A2:4 B2:4 D2:3 P2:4 C2:3 X2:3 Y2:2 Z:3",
+    "coact A1D1 4 A1D2 3 A1B1 4",
+    "post AD1 398.28538570308444 DA1 418.2445253954893 AD2foil 398.89919857699033 AB 425.7257721490836 BD 381.6997448716208",
+    "probe A1 sil=B1: A1:2793sp/80c@14 D1:2639sp/80c@43 P1:2487sp/80c@45 C1:1796sp/80c@52 X1:2344sp/80c@46 Y1:2356sp/80c@49 A2:2648sp/80c@39 B2:2649sp/80c@41 D2:2638sp/80c@41 P2:2593sp/80c@43 C2:2496sp/80c@47 X2:2427sp/80c@48 Y2:1802sp/80c@52 Z:2489sp/80c@45",
+    "probe A1 sil=None: A1:2846sp/80c@14 B1:2754sp/80c@41 D1:2699sp/80c@43 P1:2537sp/80c@45 C1:1866sp/80c@51 X1:2405sp/80c@46 Y1:2416sp/80c@48 A2:2703sp/80c@39 B2:2706sp/80c@41 D2:2697sp/80c@41 P2:2647sp/80c@43 C2:2547sp/80c@47 X2:2490sp/80c@48 Y2:1885sp/80c@52 Z:2548sp/80c@45",
+    "done 1472s"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg3_v1": {
+   "config": "between_density=0.25, init 15, SWR every 325 steps, night 60000 steps, no PV; recruited-fraction read",
+   "log": [
+    "[v1] ENC 748s A1>B1:338 B1>D1:321 D1>B1:10 A1>D1:15 D1>A1:15 A1>D2:15 X1>A1:329 B1>P1:180 B1>P2:15 offdiag_mean=39.7",
+    "[v1] WAKE: DI=0.000 FI=0.378 PAB=0.509 PBD=0.528 PBP=0.150 foil=0.000 spurC=0.000 sil=True  | ch1 direct_D=0.00 free_D=0.45 AB=0.55 BD=0.54",
+    "[v1] NIGHT 1116s pop=0.0020 inits=185 counts=A1:31 B1:38 D1:39 P1:32 C1:24 X1:27 Y1:25 A2:27 B2:37 D2:37 P2:35 C2:31 X2:22 Y2:22 Z:24",
+    "[v1] coact A1D1=21 A1D2=15 A1B1=22 B1D1=27",
+    "[v1] POST A1>B1:346 B1>D1:351 D1>B1:344 A1>D1:342 D1>A1:379 A1>D2:324 X1>A1:384 B1>P1:403 B1>P2:352 offdiag_mean=266.5",
+    "[v1] SLEEP: DI=0.000 FI=0.000 PAB=0.000 PBD=0.000 PBP=0.000 foil=0.481 spurC=0.425 sil=True  | ch1 direct_D=0.48 free_D=0.49 AB=0.49 BD=0.49",
+    "[v1] done 1207s"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg3_v3": {
+   "config": "as v1 with init 5 (killed after the waking read)",
+   "log": [
+    "[v3] ENC 746s A1>B1:332 B1>D1:315 D1>B1:3 A1>D1:5 D1>A1:5 A1>D2:5 X1>A1:322 B1>P1:193 B1>P2:5 offdiag_mean=30.2",
+    "[v3] WAKE: DI=0.000 FI=0.372 PAB=0.481 PBD=0.512 PBP=0.150 foil=0.000 spurC=0.000 sil=True  | ch1 direct_D=0.00 free_D=0.44 AB=0.51 BD=0.53",
+    "[v3] NIGHT 1123s pop=0.0016 inits=185 counts=A1:33 B1:41 D1:40 P1:33 C1:24 X1:27 Y1:24 A2:28 B2:36 D2:37 P2:37 C2:30 X2:22 Y2:21 Z:24",
+    "[v3] coact A1D1=21 A1D2=15 A1B1=24 B1D1=28",
+    "[v3] POST A1>B1:333 B1>D1:258 D1>B1:325 A1>D1:291 D1>A1:329 A1>D2:321 X1>A1:368 B1>P1:259 B1>P2:264 offdiag_mean=224.3",
+    "[v3] SLEEP: DI=0.000 FI=0.000 PAB=0.000 PBD=0.000 PBP=0.000 foil=0.425 spurC=0.300 sil=True  | ch1 direct_D=0.42 free_D=0.42 AB=0.42 BD=0.42",
+    "[v3] done 1216s"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg3_g5": {
+   "config": "GPU cupy: init 5, PV 40 x (150, 4 pA), SWR every 325 steps, night 150000 steps",
+   "log": [
+    "[g5] ENC 57s A1>B1:331 B1>D1:315 D1>B1:3 A1>D1:5 D1>A1:5 A1>D2:5 X1>A1:322 B1>P1:187 B1>P2:5 offdiag_mean=30.2",
+    "[g5] WAKE: DI=0.000 FI=0.381 PAB=0.506 PBD=0.522 PBP=0.153 foil=0.000 spurC=0.000 sil=True  | ch1 direct_D=0.00 free_D=0.45 AB=0.54 BD=0.52",
+    "[g5] NIGHT 183s pop=0.0026 inits=462 counts=A1:86 B1:89 D1:96 P1:84 C1:78 X1:74 Y1:76 A2:86 B2:85 D2:94 P2:97 C2:85 X2:78 Y2:73 Z:79",
+    "[g5] coact A1D1=59 A1D2=52 A1B1=60 B1D1=67",
+    "[g5] POST A1>B1:304 B1>D1:290 D1>B1:293 A1>D1:288 D1>A1:332 A1>D2:304 X1>A1:368 B1>P1:277 B1>P2:363 offdiag_mean=225.2",
+    "[g5] SLEEP: DI=0.000 FI=0.000 PAB=0.000 PBD=0.000 PBP=0.000 foil=0.425 spurC=0.300 sil=True  | ch1 direct_D=0.42 free_D=0.42 AB=0.42 BD=0.42",
+    "[g5] done 196s"
+   ],
+   "backend": "cupy",
+   "device": "gpu (RTX 3090)"
+  },
+  "dbg4_p1": {
+   "config": "numpy: v1's waking weights (init 15, no PV), SWR every 1500 steps (150 ms), night 90000 steps (60 events), 2 probe trials",
+   "log": [
+    "[p1] NIGHT 616s pop=0.00021 inits=60 counts=A1:9 B1:15 D1:14 P1:16 C1:3 X1:5 Y1:3 A2:8 B2:16 D2:19 P2:17 C2:5 X2:4 Y2:2 Z:5",
+    "[p1] coact A1D1=9 A1D2=0 A2D2=8 A2D1=0",
+    "[p1] PRE  A1>B1:338 B1>D1:321 D1>B1:10 A1>D1:15 D1>A1:15 A1>D2:15 A2>D2:15 A2>D1:15 B1>P1:180 B1>P2:15 offdiag_mean=39.7",
+    "[p1] POST A1>B1:340 B1>D1:193 D1>B1:123 A1>D1:159 D1>A1:28 A1>D2:15 A2>D2:140 A2>D1:15 B1>P1:177 B1>P2:15 offdiag_mean=47.0",
+    "[p1] yok max|dw|=0",
+    "[p1] SCR  A1>B1:365 B1>D1:267 D1>B1:56 A1>D1:41 D1>A1:15 A1>D2:57 A2>D2:78 A2>D1:47 B1>P1:170 B1>P2:54 offdiag_mean=61.4",
+    "[p1] SLEEP: DI=0.225 FI=0.384 PAB=0.438 PBD=0.225 PBP=0.172 foil=0.000 spurC=0.000 sil=True | ch1 dD=0.28 dDf=0.00 ch2 dD=0.17 dDf=0.00",
+    "[p1] SCR: DI=0.013 FI=0.016 PAB=0.131 PBD=0.216 PBP=0.119 foil=0.000 spurC=0.000 sil=True | ch1 dD=0.00 dDf=0.00 ch2 dD=0.03 dDf=0.00",
+    "[p1] done 874s",
+    "[provenance] stamped 2 artifact(s) | run_id 1790701509-1656869"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg4_p3": {
+   "config": "numpy: v3's waking weights (init 5, no PV), SWR every 1500 steps, night 90000 steps",
+   "log": [
+    "[p3] NIGHT 661s pop=0.00021 inits=60 counts=A1:9 B1:15 D1:14 P1:16 C1:3 X1:5 Y1:3 A2:8 B2:16 D2:19 P2:17 C2:5 X2:4 Y2:2 Z:5",
+    "[p3] coact A1D1=9 A1D2=0 A2D2=8 A2D1=0",
+    "[p3] PRE  A1>B1:332 B1>D1:315 D1>B1:3 A1>D1:5 D1>A1:5 A1>D2:5 A2>D2:5 A2>D1:5 B1>P1:193 B1>P2:5 offdiag_mean=30.2",
+    "[p3] POST A1>B1:333 B1>D1:192 D1>B1:112 A1>D1:145 D1>A1:18 A1>D2:5 A2>D2:127 A2>D1:5 B1>P1:175 B1>P2:5 offdiag_mean=37.6",
+    "[p3] yok max|dw|=0",
+    "[p3] SCR  A1>B1:361 B1>D1:265 D1>B1:47 A1>D1:33 D1>A1:5 A1>D2:47 A2>D2:69 A2>D1:38 B1>P1:177 B1>P2:43 offdiag_mean=52.1",
+    "[p3] SLEEP: DI=0.150 FI=0.366 PAB=0.428 PBD=0.234 PBP=0.163 foil=0.000 spurC=0.000 sil=True | ch1 dD=0.19 dDf=0.00 ch2 dD=0.11 dDf=0.00",
+    "[p3] SCR: DI=0.003 FI=0.006 PAB=0.194 PBD=0.259 PBP=0.128 foil=0.000 spurC=0.000 sil=True | ch1 dD=0.00 dDf=0.00 ch2 dD=0.01 dDf=0.00",
+    "[p3] done 934s",
+    "[provenance] stamped 1 artifact(s) | run_id 1790701509-1656868"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "tstep": {
+   "config": "numpy: v1's waking weights, SWR every 10000 steps (1 s), 30000 steps: per-event extent",
+   "log": [
+    "30000 steps 151.2s  active_steps=568 pop=0.00006",
+    "event 0 init X1 active span steps (14, 289) assemblies: ['A1', 'B1', 'D1', 'P1', 'X1']",
+    "event 1 init X1 active span steps (9, 370) assemblies: ['A1', 'B1', 'D1', 'P1', 'X1']",
+    "event 2 init Y1 active span steps (10, 313) assemblies: ['B1', 'D1', 'P1', 'Y1']"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  },
+  "dbg4_p1l": {
+   "config": "numpy: v1's waking weights (init 15, no PV), SWR every 1500 steps, night 180000 steps (120 events), 2 probe trials",
+   "log": [
+    "[p1l] NIGHT 1575s pop=0.00023 inits=120 counts=A1:21 B1:32 D1:33 P1:30 C1:9 X1:9 Y1:8 A2:18 B2:29 D2:34 P2:32 C2:11 X2:7 Y2:6 Z:7",
+    "[p1l] coact A1D1=19 A1D2=0 A2D2=18 A2D1=0",
+    "[p1l] PRE  A1>B1:338 B1>D1:321 D1>B1:10 A1>D1:15 D1>A1:15 A1>D2:15 A2>D2:15 A2>D1:15 B1>P1:180 B1>P2:15 offdiag_mean=39.7",
+    "[p1l] POST A1>B1:291 B1>D1:157 D1>B1:162 A1>D1:224 D1>A1:90 A1>D2:15 A2>D2:240 A2>D1:15 B1>P1:175 B1>P2:15 offdiag_mean=53.3",
+    "[p1l] yok max|dw|=0",
+    "[p1l] SCR  A1>B1:329 B1>D1:189 D1>B1:210 A1>D1:168 D1>A1:118 A1>D2:107 A2>D2:102 A2>D1:151 B1>P1:235 B1>P2:200 offdiag_mean=81.5",
+    "[p1l] SLEEP: DI=0.347 FI=0.319 PAB=0.344 PBD=0.116 PBP=0.125 foil=0.000 spurC=0.000 sil=True | ch1 dD=0.38 dDf=0.00 ch2 dD=0.32 dDf=0.00",
+    "[p1l] SCR: DI=0.016 FI=0.003 PAB=0.003 PBD=-0.003 PBP=0.000 foil=0.362 spurC=0.294 sil=True | ch1 dD=0.41 dDf=0.32 ch2 dD=0.31 dDf=0.36",
+    "[p1l] done 1969s"
+   ],
+   "backend": "numpy",
+   "device": "cpu"
+  }
+ },
+ "backend": "numpy (all runs except dbg3_g5, cupy)",
+ "device": "local CPU; dbg3_g5 on the local RTX 3090 via tools/gpu_queue.sh"
+}
