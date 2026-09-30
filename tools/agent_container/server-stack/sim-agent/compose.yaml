@@ -95,9 +95,12 @@ services:
       AGENT_HOME: /home/agent
       REPO_DIR: /work/sim
       # Fail closed (tools/agent_container/bin/firewall_guard.sh, run by entrypoint.sh): refuse to start unless a
-      # probe of this host's sshd through the bridge gateway is DROPPED, i.e. sim-agent.nft is loaded.
+      # probe of this host's sshd through the bridge gateway is DROPPED, i.e. sim-agent.nft is loaded, AND a probe
+      # of this site's own WAN address (resolved from the name below, never written anywhere) on 443 is DROPPED,
+      # i.e. the self_wan set is filled and the hairpin into this box's own services is closed.
       SIM_AGENT_REQUIRE_FIREWALL: "1"
       SIM_AGENT_FW_PROBE: "172.30.30.1:22"
+      SIM_AGENT_FW_WAN_NAME: "dant123.com"   # = sim-agent-fw-selfwan.sh's default NAMES (a test pins it)
       # Cloud-profile keys (tools/agent_container/profiles/{deepseek-flash,glm-lite}.env TOKEN_VAR) come from
       # SIM_AGENT_* entries in ~/apps/.env (0600, gitignored). `:-` on purpose: this fragment is part of the ONE
       # ~/apps project, so a `:?` here would break `docker compose` for every stack whenever the key is unset.

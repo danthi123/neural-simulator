@@ -185,6 +185,19 @@ def test_selfwan_timer_refreshes_periodically():
     assert "Requisite=sim-agent-fw.service" in s
 
 
+def test_selfwan_refresh_failure_alerts():
+    # 2026-09-30 security review (MEDIUM): a failed resolution leaves the set unchanged and exits 1, which used to fail
+    # silently; after a DDNS change that left the hairpin open with nobody told
+    assert re.search(r"^OnFailure=ntfy-notify@%n\.service$", _unit("sim-agent-fw-selfwan.service"), re.MULTILINE)
+
+
+def test_firewall_unit_no_longer_claims_nothing_talks_to_the_site_before_a_session():
+    # a model can leave code in its persistent home; the guard's WAN probe is what holds the container back now
+    u = _unit("sim-agent-fw.service")
+    assert "before the owner starts a session" not in u
+    assert "firewall_guard.sh" in u
+
+
 # ------------------------------------------------------------------------------ self_wan refresher script
 
 def _exec(path, body):
@@ -230,23 +243,66 @@ def test_selfwan_dry_run_changes_nothing():
 
 # ------------------------------------------------------------------------------------ fail-closed guard
 
-def _guard_copy(tmp, timeout_rc):
+def _guard_copy(tmp, timeout_rc, getent_out=None):
     """The guard names /usr/bin/timeout by absolute path and resets PATH (so nothing on PATH can stand in for the
     probe, which is the point). The stub therefore goes into a COPY of the script, at that absolute path."""
     stub = _exec(os.path.join(tmp, "timeout_stub"), "exit %d\n" % timeout_rc)   # stands in for the probe's outcome
     text = open(GUARD).read()
     assert text.count("/usr/bin/timeout ") >= 1
+    text = text.replace("/usr/bin/timeout ", stub + " ")
+    if getent_out is not None:
+        assert "/usr/bin/getent ahostsv4 " in text
+        getent = _exec(os.path.join(tmp, "getent_stub"), "cat <<'EOF'\n%sEOF\n" % getent_out)
+        text = text.replace("/usr/bin/getent ahostsv4 ", getent + " ahostsv4 ")
     copy = os.path.join(tmp, "firewall_guard.sh")
     with open(copy, "w") as f:
-        f.write(text.replace("/usr/bin/timeout ", stub + " "))
+        f.write(text)
     return copy
 
 
-def _run_guard(tmp, timeout_rc, extra_env=None):
-    env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="172.30.30.1:22")
+def _run_guard(tmp, timeout_rc, extra_env=None, getent_out="203.0.113.7 STREAM example.org\n"):
+    env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="172.30.30.1:22",
+               SIM_AGENT_FW_WAN_NAME="example.org")
     env.update(extra_env or {})
-    return subprocess.run(["bash", _guard_copy(tmp, timeout_rc)], env=env, capture_output=True, text=True,
-                          timeout=10)
+    return subprocess.run(["bash", _guard_copy(tmp, timeout_rc, getent_out)], env=env, capture_output=True,
+                          text=True, timeout=10)
+
+
+def test_guard_also_requires_the_sites_own_wan_address_to_be_dropped():
+    # 2026-09-30 security review (MEDIUM): self_wan is filled best-effort at boot, by a timer a minute later and every
+    # 5 minutes, so the hairpin into this site's own services is open at every boot and after a DDNS change. The
+    # container auto-starts with a persistent, model-writable home, so the guard now also refuses to start until a
+    # probe of the WAN address on 443 is DROPPED (a timeout), exactly like the gateway's sshd.
+    with tempfile.TemporaryDirectory() as tmp:
+        r = _run_guard(tmp, 124)
+        assert r.returncode == 0, r.stdout + r.stderr
+        assert "203.0.113.7" not in r.stdout + r.stderr, "the WAN address is never written to a log"
+        # the gateway probe is dropped but the WAN address connects: refuse
+        stub = _exec(os.path.join(tmp, "timeout_seq"), 'case "$*" in *" 22"|*"22") exit 124 ;; *) exit 0 ;; esac\n')
+        text = open(GUARD).read().replace("/usr/bin/timeout ", stub + " ").replace(
+            "/usr/bin/getent ahostsv4 ", _exec(os.path.join(tmp, "g"), "echo '203.0.113.7 STREAM x'\n") + " ahostsv4 ")
+        copy = os.path.join(tmp, "guard_seq.sh")
+        open(copy, "w").write(text)
+        env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="172.30.30.1:22",
+                   SIM_AGENT_FW_WAN_NAME="example.org")
+        r = subprocess.run(["bash", copy], env=env, capture_output=True, text=True, timeout=10)
+        assert r.returncode == 1 and "WAN" in r.stderr and "REFUSING TO START" in r.stderr, r.stdout + r.stderr
+
+
+def test_guard_fails_closed_when_the_wan_address_cannot_be_resolved_or_is_not_configured():
+    with tempfile.TemporaryDirectory() as tmp:
+        r = _run_guard(tmp, 124, getent_out="")
+        assert r.returncode == 1 and "REFUSING TO START" in r.stderr
+        r = _run_guard(tmp, 124, getent_out="192.168.0.10 STREAM example.org\n")   # private only: not the WAN
+        assert r.returncode == 1 and "REFUSING TO START" in r.stderr
+        r = _run_guard(tmp, 124, extra_env={"SIM_AGENT_FW_WAN_NAME": ""})
+        assert r.returncode == 1 and "SIM_AGENT_FW_WAN_NAME" in r.stderr
+
+
+def test_the_fragment_names_the_same_wan_name_the_selfwan_refresher_resolves():
+    env = _fragment()["services"]["sim-agent"]["environment"]
+    default = re.search(r'NAMES="\$\{SIM_AGENT_SELFWAN_NAMES:-([^}]*)\}"', open(SELFWAN).read()).group(1).split()
+    assert env.get("SIM_AGENT_FW_WAN_NAME") in default
 
 
 def test_guard_ignores_a_timeout_planted_on_path():
@@ -263,7 +319,7 @@ def test_guard_ignores_a_timeout_planted_on_path():
             os.makedirs(fakebin)
             _exec(os.path.join(fakebin, "timeout"), "exit 124\n")
             env = dict(os.environ, PATH=fakebin + os.pathsep + os.environ["PATH"], SIM_AGENT_REQUIRE_FIREWALL="1",
-                       SIM_AGENT_FW_PROBE="127.0.0.1:%d" % s.getsockname()[1])
+                       SIM_AGENT_FW_PROBE="127.0.0.1:%d" % s.getsockname()[1], SIM_AGENT_FW_WAN_NAME="localhost")
             r = subprocess.run(["bash", GUARD], env=env, capture_output=True, text=True, timeout=10)
             assert r.returncode == 1 and "ACCEPTED a connection" in r.stderr, r.stdout + r.stderr
     finally:
@@ -294,7 +350,8 @@ def test_guard_really_connects_and_refuses_when_a_listener_answers():
     s.bind(("127.0.0.1", 0))
     s.listen(1)
     try:
-        env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="127.0.0.1:%d" % s.getsockname()[1])
+        env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="127.0.0.1:%d" % s.getsockname()[1],
+                   SIM_AGENT_FW_WAN_NAME="localhost")
         r = subprocess.run(["bash", GUARD], env=env, capture_output=True, text=True, timeout=10)
         assert r.returncode == 1 and "ACCEPTED a connection" in r.stderr
     finally:
