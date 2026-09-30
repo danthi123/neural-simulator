@@ -27,6 +27,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -38,9 +39,10 @@ BASE = "research/findings/raw/_load_bearing/_shards"
 PACKETS = {
     "d6-hebbian-write": {"row": "d6-hebbian-write", "shard_dir": "d6-hebbian-write",
                          "flags": ["BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME"],
-                         "lesion_flags": ["BRAIN_D6_HEBBIAN_FREEZE"]},
+                         "lesion_flags": ["BRAIN_D6_HEBBIAN_FREEZE"], "probe_message": "what does the wolf hunt"},
     "xedge-surprise-worldmodel": {"row": "xedge-surprise-worldmodel", "shard_dir": "xedge-surprise-worldmodel",
-                                  "flags": ["BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL"], "lesion_flags": []},
+                                  "flags": ["BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL"], "lesion_flags": [],
+                                  "probe_message": "what do you expect?"},
     "wm-focus-bind": {"row": "wm-binding-referent-focus", "shard_dir": "wm-binding-advanced",
                       "flags": ["BRAIN_MULTIREF_FOCUS_BIND", "BRAIN_MULTIREF_LESION_SCOPE"],
                       "lesion_flags": ["BRAIN_MULTIREF_LESION"]},
@@ -59,8 +61,33 @@ def _allowing(allowed):
     return f
 
 
-def _cell_std(d, fac, pin, allowed):
-    """b2d_score.judge_dir with the capability-shard relaxation; returns (state, s2_verdict, detail)."""
+def _norm(text):
+    return re.sub(r"[^a-z0-9 ]+", "", str(text).lower()).strip()
+
+
+def degenerate_intact(canon, probe_message=None):
+    """Why the intact reply on the probe turn cannot carry a capability (adversarial review 2026-09-29): an empty or
+    absent answer, an abstention, or an echo of the probe message. A lesion that 'changes' such a reply is not the
+    faculty's contribution, so a would-be `regressed` cell with one of these is UNDEFINED (never counted toward a
+    PASS). An intact abstention the lesion leaves unchanged stays `pass` (a real negative); this only blocks passes."""
+    turn = canon.get("turn")
+    out = []
+    for k in ("intact_a", "intact_b"):
+        t = ((canon.get("arms") or {}).get(k) or {}).get(turn) or {}
+        ans = t.get("answer")
+        if not isinstance(ans, str) or not ans.strip():
+            out.append("%s: empty or absent answer" % k)
+        elif t.get("abstained") is True:
+            out.append("%s: abstained" % k)
+        elif probe_message and _norm(ans) == _norm(probe_message):
+            out.append("%s: echoes the probe message" % k)
+    return out
+
+
+def _cell_std(d, fac, pin, allowed, probe_message=None, guard_degenerate=False):
+    """b2d_score.judge_dir with the capability-shard relaxation; returns (state, s2_verdict, detail). With
+    `guard_degenerate` (step R and F1: pass criteria), a `regressed` cell whose intact reply is degenerate is
+    UNDEFINED:degenerate-intact."""
     saved = B.sidecar_fails
     B.sidecar_fails = _allowing(set(allowed))
     try:
@@ -73,7 +100,12 @@ def _cell_std(d, fac, pin, allowed):
     if canon["kind"] not in B.COVERABLE:
         return "UNDEFINED:kind-%s" % canon["kind"], None, {}
     s2, det = B.score_s2(canon, None)
-    return state, s2, dict(det, s0=[canon["verdict"], canon["load_bearing"]])
+    det = dict(det, s0=[canon["verdict"], canon["load_bearing"]])
+    if guard_degenerate and s2 == "regressed":
+        why = degenerate_intact(canon, probe_message)
+        if why:
+            return "UNDEFINED:degenerate-intact", None, dict(det, fails=why)
+    return state, s2, det
 
 
 def _cell_wmf(d, pin, allowed):
@@ -113,7 +145,8 @@ def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
         if packet == "wm-focus-bind":
             st, v, det = _cell_wmf(d, pin, allowed)
         else:
-            st, v, det = _cell_std(d, spec["row"], pin, allowed)
+            st, v, det = _cell_std(d, spec["row"], pin, allowed, probe_message=spec.get("probe_message"),
+                                   guard_degenerate=True)
         per[str(s)] = {"state": st, "reply_verdict": v, "detail": det}
     n_def = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass"))
     n_lb = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] == "regressed")
@@ -196,6 +229,15 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
     for p in flipped:
         if p in new_rows:
             n = _counts(f, "s2").get(new_rows[p])
+            if isinstance(n, int):
+                # the same guarded per-seed read as step R (a degenerate intact reply never counts toward F1)
+                fr, _fcode = score_R(p, flip_tag, flip_pin, base=base, seeds=seeds)
+                out.setdefault("f1_cells", {})[p] = fr["per_seed"]
+                if fr["n_defined"] < len(seeds):
+                    n = "UNDEFINED (%d/%d seeds DEFINED after the degenerate-intact guard)" % (fr["n_defined"],
+                                                                                            len(seeds))
+                else:
+                    n = fr["n_reply_load_bearing"]
             rows_F[p] = n
             if n is None:
                 undefined.append("F %s: its row is absent from the flip battery (REQUIRED_ENV not lifted?)" % p)
@@ -242,13 +284,17 @@ def score_A(b_result, tag, pin, base=BASE, seeds=SEEDS):
         rows[fac] = {"verdict": v, "off_run": {"s0": x["s0_n_load_bearing"], "s2": x["s2_n_load_bearing"]},
                      "flip": {"s0": f0, "s2": f2}}
         verdicts.append(v)
-    if not verdicts or all(v == "excused" for v in verdicts):
-        verdict, code = "PASS", PASS
-    elif any(v in ("flip-caused", "FAIL") for v in verdicts):
+    b_undefined = list(b_result.get("undefined") or [])
+    if any(v in ("flip-caused", "FAIL") for v in verdicts):
         verdict, code = "FAIL", FAIL
-    else:
+    elif b_undefined or any(v == "UNDEFINED" for v in verdicts):
+        # adversarial review 2026-09-29: excusing every drop says nothing about B's own not-DEFINED criteria (B2
+        # completeness, an undefined flip cell): A can never turn a B that was also UNDEFINED into a pass
         verdict, code = "UNDEFINED", UNDEF
-    return {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "verdict": verdict}, code
+    else:
+        verdict, code = "PASS", PASS
+    return {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined,
+            "verdict": verdict}, code
 
 
 def main(argv=None):

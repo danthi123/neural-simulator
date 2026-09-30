@@ -21,6 +21,15 @@ Checks the packets use (HANDOFF step D and step F):
   python -m research.runners.iw1_default_identity --compare A.json B.json --expect same|differs [--out V.json]
 
 Numpy backend, stub renderer, LLM disabled (the battery workers' discipline). No sim/ edit; reads only.
+
+DEGRADED-BRAIN GUARD (adversarial review 2026-09-29). A pool revision dir without data/corpus/ builds a DEGRADED brain
+with no error anywhere in the replies (the ONEBRAIN XEDGE build falls back to standalone organs: research/
+FAILURE_LOG.md 2026-09-23 and 2026-09-25), and a node without the knowledge-bundle data lake builds a brain with no
+LTM. Either would make a byte comparison across arms (which land on different nodes) meaningless. So an arm REFUSES
+(exit 3, before touching the environment or building anything) when a load_bearing_fraction CORPUS GUARD file is
+missing or the shipped LTM default resolves no bundle, and records `corpus_present` and `ltm_bundle`; `--compare` is
+UNDEFINED unless both arms read corpus_present True and the same non-empty ltm_bundle. IW1_ALLOW_DEGRADED=1 measures
+the degraded brain on purpose (recorded).
 """
 from __future__ import annotations
 
@@ -58,6 +67,8 @@ TURNS = [
     (POS, "xedge-surprise-worldmodel", SESSION),
     ("what do you expect?", "xedge-surprise-worldmodel", SESSION),
 ]
+# the same four files load_bearing_fraction's CORPUS GUARD requires (research/runners/load_bearing_fraction.py)
+CORPUS_FILES = ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")
 VOLATILE_KEY_RE = re.compile(r"(latency|elapsed|_ms$|_sec$|_secs$|seconds|time|timestamp|wall|duration|perf)", re.I)
 
 
@@ -93,7 +104,22 @@ def _canon(obj, path, dropped):
     return obj
 
 
+def corpus_status(root: str) -> dict:
+    missing = [f for f in CORPUS_FILES if not os.path.exists(os.path.join(root, "data", "corpus", f))]
+    return {"corpus_present": not missing, "corpus_missing": missing}
+
+
+def _refuse(msg: str):
+    print("⛔ iw1_default_identity: %s. Refusing to build a degraded brain (set IW1_ALLOW_DEGRADED=1 to measure it "
+          "on purpose)." % msg, file=sys.stderr, flush=True)
+    raise SystemExit(3)
+
+
 def run_arm(arm: str, seed: int, out: str) -> dict:
+    allow_degraded = os.environ.get("IW1_ALLOW_DEGRADED") == "1"
+    cs = corpus_status(os.getcwd())
+    if not cs["corpus_present"] and not allow_degraded:
+        _refuse("data/corpus/ in %s is missing %s" % (os.getcwd(), cs["corpus_missing"]))
     env = arm_env(arm)
     for f, v in env.items():
         if v is None:
@@ -105,8 +131,12 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
     os.environ["BRAIN_CHAT_SEED"] = str(int(seed))
     sys.path.insert(0, os.getcwd())
     from fastapi.testclient import TestClient  # noqa: E402
-    from webapp.server import app  # noqa: E402
-    client = TestClient(app)
+    from webapp import server as _server  # noqa: E402
+    ltm_dir = _server._default_ltm_bundle_dir() if _server._ltm_ship_default_on() else None
+    if ltm_dir is None and not allow_degraded:
+        _refuse("the shipped LTM default resolves no knowledge bundle (ship-default %s, BRAIN_DATA_ROOT=%r)"
+                % (_server._ltm_ship_default_on(), os.environ.get("BRAIN_DATA_ROOT")))
+    client = TestClient(_server.app)
     rows, t0 = [], time.time()
     for i, (msg, packet, session) in enumerate(TURNS):
         t1 = time.time()
@@ -121,10 +151,14 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
         rows.append({"turn": i, "message": msg, "for": packet, "session": session, "status": res.status_code,
                      "sha_raw": hashlib.sha256(body).hexdigest(), "sha_canon": hashlib.sha256(canon).hexdigest(),
                      "dropped_volatile_keys": dropped, "answer": d.get("answer"), "abstained": d.get("abstained"),
-                     "recalled_svo": d.get("recalled_svo"), "turn_wall_s": round(time.time() - t1, 2)})
+                     "recalled_svo": d.get("recalled_svo"), "source": d.get("source"),
+                     "turn_wall_s": round(time.time() - t1, 2)})
         print("[iw1-identity] %s turn %d status=%d canon=%s ans=%r" % (arm, i, res.status_code,
               rows[-1]["sha_canon"][:12], (d.get("answer") or "")[:90]), flush=True)
     rec = {"arm": arm, "seed": int(seed), "cwd": os.getcwd(), "flags_env": {f: os.environ.get(f) for f in env},
+           "corpus_present": cs["corpus_present"], "corpus_missing": cs["corpus_missing"],
+           "ltm_bundle": os.path.basename(ltm_dir) if ltm_dir else None, "ltm_bundle_dir": ltm_dir,
+           "allow_degraded": allow_degraded, "sources": sorted({str(r["source"]) for r in rows}),
            "sim_backend": os.environ.get("SIM_BACKEND"), "n_turns": len(TURNS),
            "wall_s": round(time.time() - t0, 1), "turns": rows,
            "session_sha_canon": hashlib.sha256("".join(r["sha_canon"] for r in rows).encode()).hexdigest()}
@@ -145,7 +179,11 @@ def compare(a: dict, b: dict, expect: str) -> dict:
     at least one turn differs. Returns a verdict dict; `ok` is the check's outcome; UNDEFINED when a precondition
     (same seed, same script length, every status 200) fails."""
     pre = {"same_seed": a.get("seed") == b.get("seed"), "same_n_turns": a.get("n_turns") == b.get("n_turns"),
-           "all_status_200": all(r.get("status") == 200 for r in a.get("turns", []) + b.get("turns", []))}
+           "all_status_200": all(r.get("status") == 200 for r in a.get("turns", []) + b.get("turns", [])),
+           "all_turns_present": all(len(x.get("turns", [])) == x.get("n_turns") for x in (a, b)),
+           # degraded-brain guard (module docstring): both arms built with the corpus and the same shipped LTM
+           "corpus_present_both": a.get("corpus_present") is True and b.get("corpus_present") is True,
+           "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle")}
     diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
             if x.get("sha_canon") != y.get("sha_canon")]
     reply_diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
@@ -155,6 +193,7 @@ def compare(a: dict, b: dict, expect: str) -> dict:
     v = {"runner": "research.runners.iw1_default_identity --compare", "argv": list(sys.argv),
          "sim_backend": backends[0] if len(backends) == 1 else backends,   # the compared arms' backend (no build here)
          "arms": [a.get("arm"), b.get("arm")], "git_shas": [a.get("git_sha"), b.get("git_sha")], "expect": expect,
+         "ltm_bundles": [a.get("ltm_bundle"), b.get("ltm_bundle")], "sources": [a.get("sources"), b.get("sources")],
          "preconditions": pre, "differing_turns": diff, "reply_differing_turns": reply_diff}
     if not all(pre.values()):
         v["verdict"], v["ok"] = "UNDEFINED", None

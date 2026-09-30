@@ -307,9 +307,10 @@ def test_identity_compare_verdicts():
     from research.runners import iw1_default_identity as t
     row = lambda sha, ans="x": {"status": 200, "sha_canon": sha, "answer": ans, "abstained": False,  # noqa: E731
                                 "recalled_svo": None}
-    a = {"arm": "default", "seed": 7, "n_turns": 2, "turns": [row("a"), row("b")]}
-    b = {"arm": "off", "seed": 7, "n_turns": 2, "turns": [row("a"), row("b")]}
-    c = {"arm": "on:wm-focus-bind", "seed": 7, "n_turns": 2, "turns": [row("a"), row("c", "y")]}
+    built = {"corpus_present": True, "ltm_bundle": "wikidata_100k"}   # the degraded-brain guard's preconditions
+    a = dict(built, arm="default", seed=7, n_turns=2, turns=[row("a"), row("b")])
+    b = dict(built, arm="off", seed=7, n_turns=2, turns=[row("a"), row("b")])
+    c = dict(built, arm="on:wm-focus-bind", seed=7, n_turns=2, turns=[row("a"), row("c", "y")])
     assert t.compare(a, b, "same")["ok"] is True
     assert t.compare(a, c, "same")["ok"] is False
     v = t.compare(a, c, "differs")
@@ -414,3 +415,160 @@ def test_learned_referent_route_admits_no_wh_word(monkeypatch):
     for text in ("what does the dog chase", "who are we talking about?", "what should we have for dinner"):
         refs = m.extract_referents(text)
         assert not ({"what", "who"} & set(refs)), (text, refs)
+
+
+# ── adversarial review 2026-09-29 (Claude): defects found before any gate-seed job, each pinned failing-first ─────
+def _write_cell_raw(root, tag, seed, fac, turn, arms, env=None, arm_env=None, verdict="regressed"):
+    """Like _write_cell, but each arm is a full {answer, abstained, recalled_svo} dict (degenerate replies)."""
+    import json as _json
+    d = os.path.join(root, tag, "s%d" % seed, fac)
+    os.makedirs(d, exist_ok=True)
+    env = dict({"SIM_BACKEND": "numpy"}, **(env or {}))
+    lb = {"per_faculty": [{"faculty": fac, "kind": "neural-lesion", "verdict": verdict,
+                           "load_bearing": verdict == "regressed", "turn": turn, "diffs": [],
+                           "null_control_clean": True, "lesion_reproduced": True}]}
+    _json.dump(lb, open(os.path.join(d, "lb.json"), "w"))
+    _json.dump(_sidecar(env), open(os.path.join(d, "lb.json.prov.json"), "w"))
+    for name, key in (("intact_a_x.json", "ia"), ("intact_b_x.json", "ia"), ("lesion_x.json", "le"),
+                      ("lesion_x.json.rep0", "le")):
+        _json.dump({turn: arms[key]}, open(os.path.join(d, name), "w"))
+        _json.dump(_sidecar(dict(arm_env or {})), open(os.path.join(d, name + ".prov.json"), "w"))
+
+
+_D6F = {"BRAIN_D6_HEBBIAN_STORE": "1", "BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}
+_ABSTAIN = {"answer": "I don't know about that.", "abstained": True, "recalled_svo": None}
+
+
+@pytest.mark.parametrize("intact", [
+    {"answer": "", "abstained": False, "recalled_svo": None},                       # empty reply
+    {"answer": None, "abstained": False, "recalled_svo": None},                     # no reply at all
+    {"answer": "I have not heard of wolf.", "abstained": True, "recalled_svo": None},  # abstain vs abstain
+    {"answer": "What does the wolf hunt?", "abstained": False, "recalled_svo": None},  # echo of the probe
+])
+def test_iw1_score_R_degenerate_intact_reply_never_passes(tmp_path, intact):
+    """A lesion that 'changes' a degenerate intact reply (empty, absent, an abstention, an echo of the probe) is not
+    the faculty's contribution: the cell is UNDEFINED, never counted toward R PASS."""
+    sc = importlib.import_module("tools.iw1_score")
+    for s in sc.SEEDS:
+        _write_cell_raw(str(tmp_path), "R", s, "d6-hebbian-write", "iw1d6_probe",
+                        {"ia": {"answer": "the wolf hunts the deer", "abstained": False,
+                                "recalled_svo": ["wolf", "hunt", "deer"]}, "le": _ABSTAIN},
+                        env=_D6F, arm_env=_D6F)
+    assert sc.score_R("d6-hebbian-write", "R", PIN, base=str(tmp_path))[1] == sc.PASS
+    _write_cell_raw(str(tmp_path), "R", 101, "d6-hebbian-write", "iw1d6_probe", {"ia": intact, "le": _ABSTAIN},
+                    env=_D6F, arm_env=_D6F)
+    res, code = sc.score_R("d6-hebbian-write", "R", PIN, base=str(tmp_path))
+    assert code == sc.UNDEF and res["per_seed"]["101"]["state"].startswith("UNDEFINED"), res["per_seed"]["101"]
+
+
+def test_iw1_score_R_intact_abstain_equal_to_lesion_stays_a_fail(tmp_path):
+    """The degenerate guard only blocks PASSES: an intact abstention the lesion leaves unchanged is still `pass`
+    (not load-bearing), so R reads FAIL, not UNDEFINED."""
+    sc = importlib.import_module("tools.iw1_score")
+    for s in sc.SEEDS:
+        _write_cell_raw(str(tmp_path), "R", s, "d6-hebbian-write", "iw1d6_probe", {"ia": _ABSTAIN, "le": _ABSTAIN},
+                        env=_D6F, arm_env=_D6F, verdict="pass")
+    assert sc.score_R("d6-hebbian-write", "R", PIN, base=str(tmp_path))[1] == sc.FAIL
+
+
+def test_iw1_score_A_never_passes_a_B_with_undefined_cells(tmp_path):
+    """score_A excused every B1 drop but ignored B's own `undefined` list (e.g. B2: the flip battery INCOMPLETE), so a
+    B that was FAIL + UNDEFINED became 'A PASS = the flips stand'. UNDEFINED must never count as a pass."""
+    sc = importlib.import_module("tools.iw1_score")
+    for s in sc.SEEDS:
+        _write_cell(str(tmp_path), "base", s, "affect-coloring", "emo", "warm", "warm", "flat", "flat")
+        _write_cell(str(tmp_path), "flip", s, "affect-coloring", "emo", "warm", "warm", "flat", "flat")
+        _write_cell(str(tmp_path), "base", s, "curiosity-followup", "cur", "q", "q", "x", "x")
+        _write_cell(str(tmp_path), "flip", s, "curiosity-followup", "cur", "q", "q", "x", "x")
+        _write_cell(str(tmp_path), "alloff", s, "affect-coloring", "emo", "warm", "warm", "flat", "flat")
+    _write_cell(str(tmp_path), "flip", 101, "affect-coloring", "emo", "warm", "warm", "warm", "warm", verdict="pass")
+    _write_cell(str(tmp_path), "alloff", 101, "affect-coloring", "emo", "warm", "warm", "warm", "warm", verdict="pass")
+    _write_cell(str(tmp_path), "flip", 44, "curiosity-followup", "cur", "q", "r", "x", "x")   # noisy null -> undefined
+    res, code = sc.score_B("base", PIN, "flip", PIN, [], base=str(tmp_path))
+    assert code == sc.FAIL and res["undefined"], res
+    a, acode = sc.score_A(res, "alloff", PIN, base=str(tmp_path))
+    assert a["faculties"]["affect-coloring"]["verdict"] == "excused", a
+    assert acode == sc.UNDEF and a["verdict"] == "UNDEFINED", a
+
+
+def _arm(seed=7, **kw):
+    row = {"status": 200, "sha_canon": "a", "answer": "x", "abstained": False, "recalled_svo": None}
+    base = {"arm": "default", "seed": seed, "n_turns": 1, "turns": [row], "corpus_present": True,
+            "ltm_bundle": "wikidata_100k"}
+    base.update(kw)
+    return base
+
+
+def test_identity_compare_requires_the_corpus_and_the_same_ltm():
+    """A pool node without data/corpus/ builds a DEGRADED brain silently (FAILURE_LOG 2026-09-23/25), and the two
+    nodes may resolve different LTM bundles; either makes a byte comparison meaningless -> UNDEFINED."""
+    from research.runners import iw1_default_identity as t
+    assert t.compare(_arm(), _arm(arm="off"), "same")["verdict"] == "IDENTICAL"
+    assert t.compare(_arm(), _arm(arm="off", corpus_present=False), "same")["verdict"] == "UNDEFINED"
+    no_key = _arm(arm="off")
+    del no_key["corpus_present"]
+    assert t.compare(_arm(), no_key, "same")["verdict"] == "UNDEFINED"
+    assert t.compare(_arm(), _arm(arm="off", ltm_bundle="wikidata_core_15k"), "same")["verdict"] == "UNDEFINED"
+    assert t.compare(_arm(), _arm(arm="off", ltm_bundle=None), "differs")["verdict"] == "UNDEFINED"
+
+
+def test_identity_arm_refuses_to_build_without_the_corpus(tmp_path, monkeypatch):
+    """Fail loudly (exit 3) before any env change or brain build when data/corpus/ is incomplete."""
+    from research.runners import iw1_default_identity as t
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("IW1_ALLOW_DEGRADED", raising=False)
+    before = dict(os.environ)
+    with pytest.raises(SystemExit) as e:
+        t.run_arm("default", 7, str(tmp_path / "out.json"))
+    assert e.value.code == 3
+    assert not (tmp_path / "out.json").exists()
+    assert dict(os.environ) == before
+
+
+def test_make_jobs_lines_are_memory_gated_and_capped(tmp_path):
+    """Every job line runs under tools/mem_ok.sh + tools/memcap.sh (CLAUDE.md non-negotiable 10; B2b's lines did)
+    and passes the queue's shape check."""
+    mk = os.path.join(REPO, "research", "packets", "integration-wave1", "make_jobs.sh")
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
+    env = dict(os.environ, IW1_JOBS_OUTD=str(tmp_path))
+    r = subprocess.run(["bash", mk, "identity", head, "default", "off"], cwd=REPO, env=env, capture_output=True,
+                       text=True)
+    assert r.returncode == 0, r.stderr
+    lines = (tmp_path / ("identity_%s.txt" % head[:7])).read_text().splitlines()
+    assert len(lines) == 2
+    sample_lb = ("cd ~/derisk-pool/revisions/%s && mkdir -p x && env SIM_BACKEND=numpy .venv/bin/python -u -m "
+                 "research.runners.load_bearing_fraction --only d6-hebbian-write --seed 42 --out x/lb.json" % head)
+    w = subprocess.run(["bash", mk, "capwrap", "8", "12"], cwd=REPO, input=sample_lb + "\n", capture_output=True,
+                       text=True)
+    assert w.returncode == 0, w.stderr
+    for ln in lines + w.stdout.splitlines():
+        assert re.search(r" && bash tools/mem_ok\.sh \d+ \d+ && bash tools/memcap\.sh \d+ -- env SIM_BACKEND=numpy ",
+                         ln), ln
+        sh = subprocess.run(["bash", os.path.join(REPO, "tools", "queue_job_shape_check.sh"), ln], cwd=REPO,
+                            capture_output=True, text=True)
+        assert sh.returncode == 0, (ln, sh.stderr)
+
+
+# The pool dispatcher hands a node only a job whose declared mem_gb fits its budget, min(MemAvailable - 3, MemTotal - 2)
+# (tools/pool_autodispatch.sh node_is_idle/pop_job); on the 15 GB mini-PC nodes an idle node's budget is 11 GB, so a
+# larger declaration is never dispatched (0 lines with mem_gb >= 12 in research/queue/dispatch.log as of 2026-09-29).
+POOL_MAX_DISPATCHABLE_GB = 11
+
+
+def test_handoff_queue_reasons_name_a_real_prereg_and_a_dispatchable_size():
+    """tools/pool_queue.sh's GATE-SEED GUARD extracts the prereg as `prereg[[:space:]]+[^[:space:]]+` and checks it
+    with `git cat-file -e <rev>:<path>`: a path glued to a ';' ("...PREREGISTRATION.md; mem_gb=8") is refused, so
+    every step R/B add would fail. Each reason must also declare a size the dispatcher can ever hand a node."""
+    k = os.path.join(REPO, "research", "packets", "integration-wave1")
+    reasons = []
+    for root, _dirs, files in os.walk(k):
+        for fn in files:
+            if fn == "HANDOFF.md":
+                reasons += re.findall(r'R="([^"]*)"', open(os.path.join(root, fn), encoding="utf-8").read())
+    assert len(reasons) >= 6, reasons
+    for r in reasons:
+        m = re.search(r"prereg[ \t]+(\S+)", r)
+        assert m, r
+        assert os.path.isfile(os.path.join(REPO, m.group(1))), (r, m.group(1))
+        gb = re.search(r"mem_gb=(\d+)", r)
+        assert gb and int(gb.group(1)) <= POOL_MAX_DISPATCHABLE_GB, r

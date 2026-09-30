@@ -28,6 +28,20 @@ directory), `SH` (the shard root), and the pins recorded so far in `$K/PINS.tsv`
 `$W/.venv` and `$W/data` are symlinks to the primary's (gitignored). If missing: `ln -s $P/.venv $W/.venv; ln -s
 $P/data $W/data`.
 
+## Adversarial review (Claude, 2026-09-29, before any gate-seed job)
+
+Defects fixed on this branch, each pinned by a failing-first test in `tests/test_integration_wave1_anchors.py`:
+- Queue reasons: the pool's GATE-SEED GUARD reads the prereg path up to whitespace, so `...PREREGISTRATION.md;` was
+  refused and every step R/B add would have failed. Reasons now read `...PREREGISTRATION.md ; mem_gb=N`.
+- Identity arms declared `mem_gb=12`; the dispatcher only hands a 15 GB pool node a job of at most 11 GB, so step D/F
+  lines would never have been dispatched. They now declare 11 and run under `mem_ok.sh 11 1` + `memcap.sh 15`.
+- Every job line now runs under `tools/mem_ok.sh` + `tools/memcap.sh` (LB shards 8/12, as B2b's lines did).
+- `iw1_default_identity.py` refuses (exit 3) to build without data/corpus/ or without a shipped LTM bundle, records
+  `corpus_present`/`ltm_bundle`/`sources`, and `--compare` is UNDEFINED unless both arms have the corpus and the same
+  LTM bundle (a degraded node would otherwise make D0/F2/F3 silently meaningless).
+- `iw1_score.py`: a `regressed` R (and F1) cell whose intact reply is empty, absent, an abstention or an echo of the
+  probe is UNDEFINED (never a pass); `A` is UNDEFINED, not PASS, when B itself carried undefined criteria.
+
 ## 0. Already done (do not redo)
 
 - Anchors (all read False here): `_D6_LEARN_DEFAULT_ON` (research/runners/d6_hebbian_store.py; every reader of the
@@ -94,10 +108,10 @@ Any other count: STOP, NEEDS-CLAUDE. (This commit is a child of P and changes no
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/packets/integration-wave1/env.sh
 cd $P
-bash -c 'R="iw1 step D dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=12"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
-bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-d6-hebbian-write-flip-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_d6_$P7.txt"
-bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-xedge-surprise-worldmodel-flip-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_swm_$P7.txt"
-bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-wm-focus-bind-flip-PREREGISTRATION.md; mem_gb=10"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_wmf_$P7.txt"
+bash -c 'R="iw1 step D dev seed 7: prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md ; mem_gb=11"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
+bash -c 'R="iw1 step R: prereg research/findings/2026-09-29-iw1-d6-hebbian-write-flip-PREREGISTRATION.md ; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_d6_$P7.txt"
+bash -c 'R="iw1 step R: prereg research/findings/2026-09-29-iw1-xedge-surprise-worldmodel-flip-PREREGISTRATION.md ; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_swm_$P7.txt"
+bash -c 'R="iw1 step R: prereg research/findings/2026-09-29-iw1-wm-focus-bind-flip-PREREGISTRATION.md ; mem_gb=10"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_wmf_$P7.txt"
 ```
 
 | result | do |
@@ -185,9 +199,9 @@ only when fewer than 10 `iw1-flip` lines remain in `research/queue/pool.queue`
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/packets/integration-wave1/env.sh
 cd $P
-bash -c 'R="iw1 step B, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=8"; sed -n 1,43p '"$W/$K/jobs/flip_$F7.txt"' | while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done'
+bash -c 'R="iw1 step B: prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md ; mem_gb=8"; sed -n 1,43p '"$W/$K/jobs/flip_$F7.txt"' | while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done'
 # later waves: sed -n 44,86p, 87,129p, 130,172p, 173,215p, 216,258p, 259,301p (until the file ends)
-bash -c 'R="iw1 step F dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=12"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
+bash -c 'R="iw1 step F dev seed 7: prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md ; mem_gb=11"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
 ```
 
 Log each wave (epoch, first-last line) in `$K/waves.tsv`. Every B line starts with
@@ -211,6 +225,7 @@ cd $P && V=$W/research/findings/raw/_iw1/verdicts/$F7; IF=research/findings/raw/
 |---|---|---|---|
 | PASS | PASS | PASS | the flips stand on the branch. Section 8 re-run log, then section 11 (finding + NEEDS-CLAUDE review/merge) |
 | FAIL, and every regression is B1 (level s0/s2) | PASS | PASS | attribution: for each regressed faculty X, `bash $K/make_jobs.sh alloff $PIN_F <X> $FLIP` (run in $W at F), queue it (reason as step B), then `iw1_score.py A --b-result $V/B.json --tag iw1-alloff-$F7 --pin $PIN_F --out $V/A.json`. A PASS (every drop excused) = the flips stand. A FAIL: next row |
+| A.json UNDEFINED (an attribution cell not DEFINED, or B.json also listed `undefined`) | - | - | section 8 re-run rule for the not-DEFINED cells (B's and A's), then score B and A again; still UNDEFINED: nothing merges, NEEDS-CLAUDE with both verdict files |
 | A.json FAIL (a flip-caused drop at X) | - | - | bisect: for each packet q in FLIP, `make_jobs.sh bisect $PIN_F <X> <q>`, queue, `iw1_score.py X --tag iw1-bisect-<q>-$F7 --pin $PIN_F --faculty <X>`. The ONE q whose run is higher than the F count at either level: `integration_wave1_flip.py revert <q>`, commit ("revert(iw1): <q> caused <X> drop"), push, provision, and redo section 7 at the new F. No q, or more than one: revert every packet in FLIP, commit, push; NEEDS-CLAUDE "iw1: interaction at <X>" |
 | FAIL with an F1 regression for packet p | - | - | revert p (flip script), commit, push, provision, redo section 7 at the new F |
 
