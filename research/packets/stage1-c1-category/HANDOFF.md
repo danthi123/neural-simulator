@@ -30,7 +30,11 @@ then stop that line of work and continue with any other thread that is not block
   guess, `hypothesis_svo` [canary, eat, worm]); `lesion_inherit` -> abstain, only that turn changes; `permuted` ->
   "perhaps the canary eats the bug". The other dev-seed-7 arms (`off`, `intact_b`, the informational ablations) were
   still running at the gate commit; their reads are appended to the WORKLOG when they land (informational only).
-- The gate has NOT been queued. Nothing exists under `$OUT` yet.
+- **The gate WAS queued by Claude on 2026-09-30 at 12:20 EDT**: main merged (366d131f7), GATE re-pinned to
+  `bb6705de6259ef775ca265caa33e5799a587b97c` (the last GATE row), steps 1-2 run as written (CONTAINS-MAIN; six OK
+  lines on pool41/pool42), 54 lines added with 0 ADD-FAILED, pool queue depth 526 after the add. **Start at step 4.**
+  Steps 1-3 are only for a re-queue (a missing-shard re-queue in step 4, or after a NEEDS-MERGE re-pin, which also
+  means removing nothing: the queued lines stay pinned to their revision and remain valid).
 
 ## 1. Checks before provisioning (every line must print what its comment says)
 
@@ -102,7 +106,7 @@ source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/
 cd $W && SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --emit-pool-jobs $GATE_SHA > $JOBS && wc -l < $JOBS   # 54
 grep -c "max_age_h=120" $JOBS                                                                                                # 54
 cd $P && bash -c 'while IFS=$'"'"'\t'"'"' read -r cmd why; do bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $cmd"; done < '"$JOBS"
-bash tools/pool_queue.sh list | grep -c "stage1_c1_category"                                                                  # 54
+grep -c "stage1_c1_category" $P/research/queue/pool.queue                                                                    # 54 (`pool_queue.sh list` truncates commands)
 ```
 
 Any `ADD-FAILED`: re-run the loop once (the duplicate guard refuses lines already queued). Still failing: STOP,
@@ -124,7 +128,7 @@ find $P/$OUT -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'agg
 ```
 
 When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued
-(`bash tools/pool_queue.sh list | grep -c stage1_c1_category` prints 0): run step 5's aggregate (its `missing_shards`
+(`grep -c stage1_c1_category $P/research/queue/pool.queue` prints 0): run step 5's aggregate (its `missing_shards`
 list names them), re-queue exactly those lines from `$JOBS` ONCE (grep each by its `--seed N --arm A`), wait again.
 Still missing: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and NEEDS-CLAUDE #5. If no shard has landed by
 2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before 2026-10-24).

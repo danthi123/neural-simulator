@@ -26,3 +26,9 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - 2026-09-30 12:09 Claude: dev seed 7 `permuted` landed, 1327.4 s: `what does the canary eat` -> "perhaps the canary
   eats the bug" (organ bug 0.1042 / worm 0.0); `what does the canary swim` recalls lake (taught in this arm).
   The remaining dev arms (`off`, `intact_b`, the three informational ablations) run behind `mem_ok.sh 9`.
+- 2026-09-30 12:13 Claude: HANDOFF step 1 dry-run printed NEEDS-MERGE (main moved to 366d131f7); merged cleanly
+  (9f138a93e), selftest OK, 22 passed, prereg byte-identical; GATE re-pinned to bb6705de6 and pushed.
+- 2026-09-30 12:20 Claude: step 2: pool41 + pool42 provisioned at bb6705de6 (LTM OK, CORPUS OK, RUNNER OK on both).
+  Step 3: 54 lines emitted (54 carry max_age_h=120) and added, 0 ADD-FAILED, queue depth 526. The HANDOFF's own
+  step-3 count used `pool_queue.sh list`, which truncates commands (read 0); corrected to grep the queue file.
+  Next for the local model: step 4.
