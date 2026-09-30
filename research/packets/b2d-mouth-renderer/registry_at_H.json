@@ -1,0 +1,6126 @@
+{
+ "argv": [
+  "research/packets/b2d-mouth-renderer/registry_fingerprint.py"
+ ],
+ "execution": "not_executed",
+ "fingerprint": {
+  "adequate_probe_flags": {
+   "LB_AFFECT_DRIVE_PROBE": "1",
+   "LB_BG_SELECT_DRIVE_PROBE": "1",
+   "LB_CG_DRIVE_PROBE": "1",
+   "LB_DISCOURSE_REGISTER_DRIVE_PROBE": "1",
+   "LB_EPISODIC_DRIVE_PROBE": "1",
+   "LB_NONCONTRADICTION_DRIVE_PROBE": "1",
+   "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
+   "LB_PMEM_DRIVE_PROBE": "1",
+   "LB_SURPRISE_CONFIRM_PROBE": "1"
+  },
+  "coverable_kinds": [
+   "neural-lesion",
+   "whether-disable"
+  ],
+  "faculty_probes": [
+   [
+    "content-selection",
+    "well",
+    [
+     "answer",
+     "abstained",
+     "recalled_svo",
+     "activity.matched_fact_index"
+    ],
+    false
+   ],
+   [
+    "semantic-recall",
+    "well",
+    [
+     "recalled_svo",
+     "activity.composer",
+     "verified"
+    ],
+    false
+   ],
+   [
+    "one-brain-substrate",
+    "well",
+    [
+     "activity.composer"
+    ],
+    false
+   ],
+   [
+    "moat-verify",
+    "unknown",
+    [
+     "abstained",
+     "answer"
+    ],
+    false
+   ],
+   [
+    "in-loop-learning",
+    "well",
+    [
+     "answer",
+     "recalled_svo"
+    ],
+    false
+   ],
+   [
+    "comprehension-monitor",
+    "well",
+    [
+     "comprehension.on",
+     "comprehension.comprehended"
+    ],
+    false
+   ],
+   [
+    "comprehension-learned-animacy-cue",
+    "animacy",
+    [
+     "comprehension.on"
+    ],
+    false
+   ],
+   [
+    "comprehension-learned-verb-selects",
+    "verbsel",
+    [
+     "comprehension.on"
+    ],
+    false
+   ],
+   [
+    "noncontradiction-gate",
+    "well",
+    [
+     "noncontradiction.on",
+     "noncontradiction.reject",
+     "noncontradiction.recalled_yn",
+     "noncontradiction.asserted_polarity"
+    ],
+    false
+   ],
+   [
+    "affect-coloring",
+    "well",
+    [
+     "affect.on",
+     "affect.valence_sign",
+     "affect.tone_token"
+    ],
+    false
+   ],
+   [
+    "affect-drives-response",
+    "well",
+    [
+     "affect_drives.on",
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.reason"
+    ],
+    false
+   ],
+   [
+    "affect-marker-spiking-wta",
+    "emo",
+    [
+     "affect_drives.lead"
+    ],
+    false
+   ],
+   [
+    "da-mode-drives-response",
+    "well",
+    [
+     "da_drives.on",
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.reason"
+    ],
+    false
+   ],
+   [
+    "da-gated-encoding",
+    "well",
+    [
+     "da_encoding.on"
+    ],
+    false
+   ],
+   [
+    "source-provenance-honesty",
+    "well",
+    [
+     "provenance.known",
+     "provenance.label",
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as"
+    ],
+    false
+   ],
+   [
+    "common-ground-drives",
+    "well",
+    [
+     "common_ground_drives.on",
+     "common_ground_drives.decision",
+     "common_ground_drives.reason"
+    ],
+    false
+   ],
+   [
+    "confidence-forthcomingness",
+    "rich_well",
+    [
+     "confidence_forthcoming.granted",
+     "confidence_forthcoming.reason"
+    ],
+    false
+   ],
+   [
+    "swap-drives-response",
+    "held",
+    [
+     "swap_drives.on",
+     "swap_drives.acted",
+     "swap_drives.swapped",
+     "swap_drives.reason"
+    ],
+    false
+   ],
+   [
+    "anaphora-wm",
+    "held",
+    [
+     "activity.roles"
+    ],
+    false
+   ],
+   [
+    "wm-binding-advanced",
+    "held",
+    [
+     "multiref.n_referents"
+    ],
+    false
+   ],
+   [
+    "prospective-memory",
+    "pmem_form",
+    [
+     "prospective.held"
+    ],
+    false
+   ],
+   [
+    "pragmatic-implicature",
+    "scalar",
+    [
+     "pragmatic.on",
+     "pragmatic.enriched_interpretation"
+    ],
+    false
+   ],
+   [
+    "surprise-monitor",
+    "contra",
+    [
+     "surprise.surprised",
+     "surprise.on"
+    ],
+    false
+   ],
+   [
+    "metacog-monitor",
+    "confirm",
+    [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    false
+   ],
+   [
+    "worldmodel-forward",
+    "expect_q",
+    [
+     "worldmodel.pred_sign",
+     "worldmodel.on"
+    ],
+    false
+   ],
+   [
+    "curiosity-followup",
+    "unknown",
+    [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    false
+   ],
+   [
+    "reconsolidation",
+    "contra",
+    [
+     "reconsolidation.action"
+    ],
+    false
+   ],
+   [
+    "episodic-memory",
+    "episodic",
+    [
+     "episodic.in_memory"
+    ],
+    false
+   ],
+   [
+    "discourse-register",
+    "dr_c",
+    [
+     "discourse_register.abstained",
+     "discourse_register.agent"
+    ],
+    false
+   ],
+   [
+    "open-ended-generation",
+    "rich_open",
+    [
+     "hypothesis",
+     "answer"
+    ],
+    false
+   ],
+   [
+    "discourse-planner",
+    "rich_well",
+    [
+     "rich",
+     "n_sentences"
+    ],
+    false
+   ],
+   [
+    "gnw-deliberation",
+    "well",
+    [
+     "activity.composer"
+    ],
+    true
+   ],
+   [
+    "gnw-multistep-deliberation",
+    "chase",
+    [
+     "recalled_svo"
+    ],
+    false
+   ],
+   [
+    "self-initiated-utterance",
+    "selfinit",
+    [
+     "abstained"
+    ],
+    false
+   ],
+   [
+    "vision-identity-spiking-hmax",
+    "vision",
+    [
+     "vision_identity.recognized_category"
+    ],
+    false
+   ],
+   [
+    "value-driven-choice",
+    "well",
+    [
+     "value_choice"
+    ],
+    true
+   ],
+   [
+    "bg-action-selection",
+    "bgdots",
+    [
+     "abstained"
+    ],
+    false
+   ],
+   [
+    "selective-attention-biased-competition",
+    "bc_b",
+    [
+     "recalled_svo"
+    ],
+    false
+   ],
+   [
+    "d5-consolidate",
+    "d5c_recall2",
+    [
+     "episodic.graded_cue.depth_hold",
+     "answer"
+    ],
+    false
+   ],
+   [
+    "sleep-replay",
+    "slp_recall",
+    [
+     "episodic.graded_cue.depth_hold",
+     "answer"
+    ],
+    false
+   ],
+   [
+    "affective-tom",
+    "lbf_tom1",
+    [
+     "affective_tom.reason",
+     "affective_tom.tone_level"
+    ],
+    false
+   ],
+   [
+    "causal-whatif",
+    "lbf_cau_whatif",
+    [
+     "abstained",
+     "causal.confirmed"
+    ],
+    false
+   ],
+   [
+    "spiking-anaphor",
+    "bc_b",
+    [
+     "abstained",
+     "recalled_svo"
+    ],
+    false
+   ],
+   [
+    "gnw-bus",
+    "question",
+    [
+     "abstained"
+    ],
+    false
+   ],
+   [
+    "multiref-competition",
+    "hold",
+    [
+     "multiref.all_recovered"
+    ],
+    false
+   ],
+   [
+    "affect-appraisal-interoceptive",
+    "emo",
+    [
+     "affect.valence_sign"
+    ],
+    false
+   ],
+   [
+    "spiking-qroute",
+    "well",
+    [
+     "activity.composer"
+    ],
+    true
+   ],
+   [
+    "learned-referent",
+    "held",
+    [
+     "multiref.n_referents"
+    ],
+    true
+   ],
+   [
+    "onebrain-xedge",
+    "held",
+    [
+     "comprehension.xedge_live_learn"
+    ],
+    true
+   ],
+   [
+    "surprise-salience-snc-afferent",
+    "confirm",
+    [
+     "da_drives.reward_value.source",
+     "da_drives.reward_value.surprised",
+     "da_drives.mode",
+     "da_drives.lead"
+    ],
+    true
+   ]
+  ],
+  "measurable_kinds": [
+   "neural-lesion",
+   "whether-disable",
+   "thin",
+   "mechanism-only"
+  ],
+  "n_rows": 50,
+  "noise_fields": [
+   "afferent_pA",
+   "appraisal_arousal",
+   "appraisal_hits",
+   "appraisal_valence",
+   "body_a",
+   "body_h",
+   "confidence",
+   "d",
+   "da_level",
+   "differential",
+   "ema_arousal",
+   "ema_engagement",
+   "ema_valence",
+   "felt_arousal",
+   "g",
+   "gen_seconds",
+   "level",
+   "mood",
+   "n_facts_scanned",
+   "neg_rate",
+   "pos_rate",
+   "rate_generated",
+   "rate_perceived",
+   "snc_firing",
+   "tone_level",
+   "turn_engagement",
+   "vminus_rate",
+   "vplus_rate",
+   "wm_margin"
+  ],
+  "row_merge_report": {
+   "collisions": [
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['content-selection'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['semantic-recall'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['moat-verify'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['in-loop-learning'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['discourse-planner'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['selective-attention-biased-competition'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['gnw-deliberation'] collides with an existing FACULTY_LESIONS row -- dropped",
+    "proposed_lesions_conflict_kb: EXTRA_LESIONS['value-driven-choice'] collides with an existing FACULTY_LESIONS row -- dropped"
+   ],
+   "import_errors": [],
+   "keys_added": [
+    "d5-consolidate",
+    "sleep-replay",
+    "affective-tom",
+    "causal-whatif",
+    "spiking-anaphor",
+    "gnw-bus",
+    "multiref-competition",
+    "affect-appraisal-interoceptive",
+    "spiking-qroute",
+    "learned-referent",
+    "onebrain-xedge",
+    "surprise-salience-snc-afferent"
+   ],
+   "modules": [
+    "learning",
+    "live_organs",
+    "reward_value_afferent"
+   ],
+   "parked": [
+    "live_organs: 'self-schema' parked by its module -- retracted by Amendment 3: probe turn rich_open never attaches 'authorship' (KeyError at seed 7)",
+    "open_ended_gated: 'open-ended-turn-faculty-drive' parked by its module -- non-discriminating as a single-shot LBF row (PREREG Amendment 1/3): the pooled dev bg-curve at the intact salience (0, 1) reads SPEAK 0 / STAY_SILENT 23 / none 1 of 24 races, and at the cut salience (0.5, 0.5) SPEAK 12 of 24 (bg_curve_dev_s7_11_13.json, pooled) -- one LBF build per arm is one race, so the verdict is a per-seed coin flip whatever the afferent coupling. Kept out of FACULTY_LESIONS/FACULTY_PROBES entirely (not merely DESCRIPTIVE_ONLY, which the real scorer never reads); read via --bg-curve instead.",
+    "open_ended_gated: 'open-ended-turn-affect-drive' is an opt-in row (needs BRAIN_OPEN_ENDED_GATED=1; measure with lb_shard --extra-env)",
+    "open_ended_gated: 'open-ended-turn-faculty-drive' is an opt-in row (needs BRAIN_OPEN_ENDED_GATED=1; measure with lb_shard --extra-env)",
+    "open_ended_gated: 'open-ended-turn-gnw-drive' is an opt-in row (needs BRAIN_OPEN_ENDED_GATED=1; measure with lb_shard --extra-env)",
+    "reasoning_transitive_chat: 'reasoning-transitive-chat' is an opt-in row (needs BRAIN_TRANSITIVE_CHAT=1; measure with lb_shard --extra-env)",
+    "tom_false_belief_chat: 'tom-false-belief' is an opt-in row (needs BRAIN_FALSE_BELIEF_CHAT=1; measure with lb_shard --extra-env)"
+   ]
+  },
+  "rows": {
+   "affect-appraisal-interoceptive": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "affect-coloring": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_AFFECT_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "affect-drives-response": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_AFFECT_DRIVES_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "affect-marker-spiking-wta": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_AFFECT_MARKER_SPIKING_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "affective-tom": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_AFFECTIVE_TOM_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "anaphora-wm": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "proposed",
+    "required_env": null,
+    "value": null
+   },
+   "bg-action-selection": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_BG_SELECT_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "causal-whatif": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_CAUSAL_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "common-ground-drives": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_CG_DRIVES_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "comprehension-learned-animacy-cue": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_LEARNED_ANIMACY_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "comprehension-learned-verb-selects": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_LEARNED_VERB_SELECTS_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "comprehension-monitor": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_COMPREHENSION_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "confidence-forthcomingness": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_CONFIDENCE_FORTHCOMING",
+    "kind": "whether-disable",
+    "required_env": null,
+    "value": "0"
+   },
+   "content-selection": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "in-process",
+    "required_env": null,
+    "value": null
+   },
+   "curiosity-followup": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_CURIOSITY_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "d5-consolidate": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_D5_CONSOLIDATE",
+    "kind": "whether-disable",
+    "required_env": null,
+    "value": "0"
+   },
+   "da-gated-encoding": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_DA_ENCODING_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "da-mode-drives-response": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_DA_DRIVES_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "discourse-planner": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "proposed",
+    "required_env": null,
+    "value": null
+   },
+   "discourse-register": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_DISCOURSE_REGISTER_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "episodic-memory": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_EPISODIC_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "gnw-bus": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_GNW_BUS_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "gnw-deliberation": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_GNW_DELIBERATE_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "gnw-multistep-deliberation": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_GNW_MULTISTEP_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "in-loop-learning": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "in-process",
+    "required_env": null,
+    "value": null
+   },
+   "learned-referent": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_LEARNED_REFERENT_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "metacog-monitor": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_METACOG_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "moat-verify": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "in-process",
+    "required_env": null,
+    "value": null
+   },
+   "multiref-competition": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_MULTIREF_COMPETITION_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "noncontradiction-gate": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_NONCONTRADICTION_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "one-brain-substrate": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_COMPOSER_KIND",
+    "kind": "mechanism-only",
+    "required_env": null,
+    "value": "rf"
+   },
+   "onebrain-xedge": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_ONEBRAIN_XEDGE_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "open-ended-generation": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SPIKING_DRAW_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "pragmatic-implicature": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_PRAGMATIC_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "prospective-memory": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_PMEM_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "reconsolidation": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_RECONSOLIDATION_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "selective-attention-biased-competition": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "proposed",
+    "required_env": null,
+    "value": null
+   },
+   "self-initiated-utterance": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SELF_INITIATE_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "semantic-recall": {
+    "REQUIRED_ENV": null,
+    "flag": null,
+    "kind": "in-process",
+    "required_env": null,
+    "value": null
+   },
+   "sleep-replay": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SLEEP_REPLAY",
+    "kind": "whether-disable",
+    "required_env": null,
+    "value": "0"
+   },
+   "source-provenance-honesty": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SOURCE_PROVENANCE_HONESTY_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "spiking-anaphor": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SPIKING_ANAPHOR_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "spiking-qroute": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SPIKING_QROUTE_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "surprise-monitor": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SURPRISE_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "surprise-salience-snc-afferent": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_REWARD_VALUE_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "swap-drives-response": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_SWAP_DRIVES_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "value-driven-choice": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_VALUE_CHOICE_LESION",
+    "kind": "thin",
+    "required_env": null,
+    "value": "1"
+   },
+   "vision-identity-spiking-hmax": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_VISION_IDENTITY_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "wm-binding-advanced": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_MULTIREF_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   },
+   "worldmodel-forward": {
+    "REQUIRED_ENV": null,
+    "flag": "BRAIN_WORLDMODEL_LESION",
+    "kind": "neural-lesion",
+    "required_env": null,
+    "value": "1"
+   }
+  },
+  "sharded_keys": [
+   "one-brain-substrate",
+   "comprehension-monitor",
+   "comprehension-learned-animacy-cue",
+   "comprehension-learned-verb-selects",
+   "noncontradiction-gate",
+   "affect-coloring",
+   "affect-drives-response",
+   "affect-marker-spiking-wta",
+   "da-mode-drives-response",
+   "da-gated-encoding",
+   "source-provenance-honesty",
+   "common-ground-drives",
+   "swap-drives-response",
+   "wm-binding-advanced",
+   "prospective-memory",
+   "pragmatic-implicature",
+   "surprise-monitor",
+   "metacog-monitor",
+   "worldmodel-forward",
+   "curiosity-followup",
+   "reconsolidation",
+   "episodic-memory",
+   "discourse-register",
+   "gnw-multistep-deliberation",
+   "self-initiated-utterance",
+   "vision-identity-spiking-hmax",
+   "bg-action-selection",
+   "open-ended-generation",
+   "gnw-deliberation",
+   "value-driven-choice",
+   "confidence-forthcomingness",
+   "d5-consolidate",
+   "sleep-replay",
+   "affective-tom",
+   "causal-whatif",
+   "spiking-anaphor",
+   "gnw-bus",
+   "multiref-competition",
+   "affect-appraisal-interoceptive",
+   "spiking-qroute",
+   "learned-referent",
+   "onebrain-xedge",
+   "surprise-salience-snc-afferent"
+  ],
+  "turns": {
+   "animacy": [
+    "animacy",
+    "the monkey carries the cup",
+    "anim",
+    true,
+    null,
+    false
+   ],
+   "bc_a": [
+    "bc_a",
+    "the cat and the ball walked in",
+    "bc",
+    true,
+    null,
+    false
+   ],
+   "bc_b": [
+    "bc_b",
+    "what does it eat",
+    "bc",
+    false,
+    null,
+    false
+   ],
+   "bgdots": [
+    "bgdots",
+    "...",
+    "bg",
+    true,
+    null,
+    false
+   ],
+   "cg_mention1": [
+    "cg_mention1",
+    "the dog runs fast",
+    "cg2",
+    true,
+    null,
+    false
+   ],
+   "cg_mention2": [
+    "cg_mention2",
+    "the dog runs again",
+    "cg2",
+    false,
+    null,
+    false
+   ],
+   "chase": [
+    "chase",
+    "what does the dog chase all the way",
+    "ch",
+    true,
+    null,
+    false
+   ],
+   "confirm": [
+    "confirm",
+    "the dog chase the cat",
+    "surp",
+    true,
+    null,
+    false
+   ],
+   "contra": [
+    "contra",
+    "the dog chase the fish",
+    "surp2",
+    true,
+    null,
+    false
+   ],
+   "d10w_night1": [
+    "d10w_night1",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night10": [
+    "d10w_night10",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night2": [
+    "d10w_night2",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night3": [
+    "d10w_night3",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night4": [
+    "d10w_night4",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night5": [
+    "d10w_night5",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night6": [
+    "d10w_night6",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night7": [
+    "d10w_night7",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night8": [
+    "d10w_night8",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_night9": [
+    "d10w_night9",
+    "__world_step:overnight_24h__",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall1": [
+    "d10w_recall1",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall10": [
+    "d10w_recall10",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall2": [
+    "d10w_recall2",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall3": [
+    "d10w_recall3",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall4": [
+    "d10w_recall4",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall5": [
+    "d10w_recall5",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall6": [
+    "d10w_recall6",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall7": [
+    "d10w_recall7",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall8": [
+    "d10w_recall8",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_recall9": [
+    "d10w_recall9",
+    "what does the cat chase",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_t1": [
+    "d10w_t1",
+    "the cat is here",
+    "d10w",
+    true,
+    null,
+    false
+   ],
+   "d10w_t2": [
+    "d10w_t2",
+    "the ball is here",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_t3": [
+    "d10w_t3",
+    "the cat is here",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_t4": [
+    "d10w_t4",
+    "the ball is here",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d10w_t5": [
+    "d10w_t5",
+    "the cat chases the ball",
+    "d10w",
+    false,
+    null,
+    false
+   ],
+   "d3c_night1": [
+    "d3c_night1",
+    "__world_step:overnight_24h__",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_night2": [
+    "d3c_night2",
+    "__world_step:overnight_24h__",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_night3": [
+    "d3c_night3",
+    "__world_step:overnight_24h__",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_recall": [
+    "d3c_recall",
+    "what does the cat chase",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_t1": [
+    "d3c_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "d3c",
+    true,
+    null,
+    false
+   ],
+   "d3c_t2": [
+    "d3c_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_t3": [
+    "d3c_t3",
+    "the cat chases the ball",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_t4": [
+    "d3c_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3c_t5": [
+    "d3c_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "d3c",
+    false,
+    null,
+    false
+   ],
+   "d3r_night1": [
+    "d3r_night1",
+    "__world_step:overnight_24h__",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_night2": [
+    "d3r_night2",
+    "__world_step:overnight_24h__",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_night3": [
+    "d3r_night3",
+    "__world_step:overnight_24h__",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_recall": [
+    "d3r_recall",
+    "what does the cat chase",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_remention1": [
+    "d3r_remention1",
+    "the cat chases the ball",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_remention2": [
+    "d3r_remention2",
+    "the cat chases the ball",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_t1": [
+    "d3r_t1",
+    "the cat is here",
+    "d3r",
+    true,
+    null,
+    false
+   ],
+   "d3r_t2": [
+    "d3r_t2",
+    "the ball is here",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_t3": [
+    "d3r_t3",
+    "the cat is here",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_t4": [
+    "d3r_t4",
+    "the ball is here",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3r_t5": [
+    "d3r_t5",
+    "the cat chases the ball",
+    "d3r",
+    false,
+    null,
+    false
+   ],
+   "d3w_night1": [
+    "d3w_night1",
+    "__world_step:overnight_24h__",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_night2": [
+    "d3w_night2",
+    "__world_step:overnight_24h__",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_night3": [
+    "d3w_night3",
+    "__world_step:overnight_24h__",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_recall": [
+    "d3w_recall",
+    "what does the cat chase",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_t1": [
+    "d3w_t1",
+    "the cat is here",
+    "d3w",
+    true,
+    null,
+    false
+   ],
+   "d3w_t2": [
+    "d3w_t2",
+    "the ball is here",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_t3": [
+    "d3w_t3",
+    "the cat is here",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_t4": [
+    "d3w_t4",
+    "the ball is here",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d3w_t5": [
+    "d3w_t5",
+    "the cat chases the ball",
+    "d3w",
+    false,
+    null,
+    false
+   ],
+   "d5c_recall1": [
+    "d5c_recall1",
+    "you mentioned the wolf",
+    "d5c",
+    false,
+    null,
+    false
+   ],
+   "d5c_recall2": [
+    "d5c_recall2",
+    "you mentioned the wolf",
+    "d5c",
+    false,
+    null,
+    false
+   ],
+   "d5c_teach": [
+    "d5c_teach",
+    "the wolf chase the rabbit",
+    "d5c",
+    true,
+    null,
+    false
+   ],
+   "d5c_tick": [
+    "d5c_tick",
+    "__world_step:overnight_24h__",
+    "d5c",
+    false,
+    null,
+    false
+   ],
+   "datc_night": [
+    "datc_night",
+    "__world_step:overnight_24h__",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datc_recall": [
+    "datc_recall",
+    "what does the cat chase",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datc_t1": [
+    "datc_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "datc",
+    true,
+    null,
+    false
+   ],
+   "datc_t2": [
+    "datc_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datc_t3": [
+    "datc_t3",
+    "the cat chases the ball",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datc_t4": [
+    "datc_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datc_t5": [
+    "datc_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "datc",
+    false,
+    null,
+    false
+   ],
+   "datci_recall": [
+    "datci_recall",
+    "what does the cat chase",
+    "datci",
+    false,
+    null,
+    false
+   ],
+   "datci_t1": [
+    "datci_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "datci",
+    true,
+    null,
+    false
+   ],
+   "datci_t2": [
+    "datci_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "datci",
+    false,
+    null,
+    false
+   ],
+   "datci_t3": [
+    "datci_t3",
+    "the cat chases the ball",
+    "datci",
+    false,
+    null,
+    false
+   ],
+   "datci_t4": [
+    "datci_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "datci",
+    false,
+    null,
+    false
+   ],
+   "datci_t5": [
+    "datci_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "datci",
+    false,
+    null,
+    false
+   ],
+   "datcl_awake": [
+    "datcl_awake",
+    "__world_step:awake_4h__",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_night": [
+    "datcl_night",
+    "__world_step:overnight_24h__",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_recall": [
+    "datcl_recall",
+    "what does the cat chase",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_t1": [
+    "datcl_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "datcl",
+    true,
+    null,
+    false
+   ],
+   "datcl_t2": [
+    "datcl_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_t3": [
+    "datcl_t3",
+    "the cat chases the ball",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_t4": [
+    "datcl_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcl_t5": [
+    "datcl_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "datcl",
+    false,
+    null,
+    false
+   ],
+   "datcr_night": [
+    "datcr_night",
+    "__world_step:overnight_24h__",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_recall": [
+    "datcr_recall",
+    "what does the cat chase",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_rest": [
+    "datcr_rest",
+    "__world_step:awake_rest_4h__",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_t1": [
+    "datcr_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "datcr",
+    true,
+    null,
+    false
+   ],
+   "datcr_t2": [
+    "datcr_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_t3": [
+    "datcr_t3",
+    "the cat chases the ball",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_t4": [
+    "datcr_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datcr_t5": [
+    "datcr_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "datcr",
+    false,
+    null,
+    false
+   ],
+   "datl_awake": [
+    "datl_awake",
+    "__world_step:awake_4h__",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_night": [
+    "datl_night",
+    "__world_step:overnight_24h__",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_recall": [
+    "datl_recall",
+    "what does the cat chase",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_t1": [
+    "datl_t1",
+    "the cat is here",
+    "datl",
+    true,
+    null,
+    false
+   ],
+   "datl_t2": [
+    "datl_t2",
+    "the ball is here",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_t3": [
+    "datl_t3",
+    "the cat chases the ball",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_t4": [
+    "datl_t4",
+    "the cat is here",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datl_t5": [
+    "datl_t5",
+    "the ball is here",
+    "datl",
+    false,
+    null,
+    false
+   ],
+   "datn_night": [
+    "datn_night",
+    "__world_step:overnight_24h__",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datn_recall": [
+    "datn_recall",
+    "what does the cat chase",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datn_t1": [
+    "datn_t1",
+    "the cat is here",
+    "datn",
+    true,
+    null,
+    false
+   ],
+   "datn_t2": [
+    "datn_t2",
+    "the ball is here",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datn_t3": [
+    "datn_t3",
+    "the cat chases the ball",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datn_t4": [
+    "datn_t4",
+    "the cat is here",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datn_t5": [
+    "datn_t5",
+    "the ball is here",
+    "datn",
+    false,
+    null,
+    false
+   ],
+   "datni_recall": [
+    "datni_recall",
+    "what does the cat chase",
+    "datni",
+    false,
+    null,
+    false
+   ],
+   "datni_t1": [
+    "datni_t1",
+    "the cat is here",
+    "datni",
+    true,
+    null,
+    false
+   ],
+   "datni_t2": [
+    "datni_t2",
+    "the ball is here",
+    "datni",
+    false,
+    null,
+    false
+   ],
+   "datni_t3": [
+    "datni_t3",
+    "the cat chases the ball",
+    "datni",
+    false,
+    null,
+    false
+   ],
+   "datni_t4": [
+    "datni_t4",
+    "the cat is here",
+    "datni",
+    false,
+    null,
+    false
+   ],
+   "datni_t5": [
+    "datni_t5",
+    "the ball is here",
+    "datni",
+    false,
+    null,
+    false
+   ],
+   "datq_night": [
+    "datq_night",
+    "__world_step:overnight_24h__",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_recall": [
+    "datq_recall",
+    "what does the cat chase",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_rest": [
+    "datq_rest",
+    "__world_step:awake_rest_hourly_4h__",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_t1": [
+    "datq_t1",
+    "the cat is here",
+    "datq",
+    true,
+    null,
+    false
+   ],
+   "datq_t2": [
+    "datq_t2",
+    "the ball is here",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_t3": [
+    "datq_t3",
+    "the cat chases the ball",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_t4": [
+    "datq_t4",
+    "the cat is here",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datq_t5": [
+    "datq_t5",
+    "the ball is here",
+    "datq",
+    false,
+    null,
+    false
+   ],
+   "datr_night": [
+    "datr_night",
+    "__world_step:overnight_24h__",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_recall": [
+    "datr_recall",
+    "what does the cat chase",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_rest": [
+    "datr_rest",
+    "__world_step:awake_rest_4h__",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_t1": [
+    "datr_t1",
+    "the cat is here",
+    "datr",
+    true,
+    null,
+    false
+   ],
+   "datr_t2": [
+    "datr_t2",
+    "the ball is here",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_t3": [
+    "datr_t3",
+    "the cat chases the ball",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_t4": [
+    "datr_t4",
+    "the cat is here",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datr_t5": [
+    "datr_t5",
+    "the ball is here",
+    "datr",
+    false,
+    null,
+    false
+   ],
+   "datz_awake": [
+    "datz_awake",
+    "__world_step:awake_3h__",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_night": [
+    "datz_night",
+    "__world_step:overnight_24h__",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_recall": [
+    "datz_recall",
+    "what does the cat chase",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_rest": [
+    "datz_rest",
+    "__world_step:awake_rest_1h__",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_t1": [
+    "datz_t1",
+    "the cat is here",
+    "datz",
+    true,
+    null,
+    false
+   ],
+   "datz_t2": [
+    "datz_t2",
+    "the ball is here",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_t3": [
+    "datz_t3",
+    "the cat chases the ball",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_t4": [
+    "datz_t4",
+    "the cat is here",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "datz_t5": [
+    "datz_t5",
+    "the ball is here",
+    "datz",
+    false,
+    null,
+    false
+   ],
+   "dr2_a": [
+    "dr2_a",
+    "bird chase worm",
+    "dr2",
+    true,
+    null,
+    false
+   ],
+   "dr2_b": [
+    "dr2_b",
+    "then dog chase cat",
+    "dr2",
+    false,
+    null,
+    false
+   ],
+   "dr2_c": [
+    "dr2_c",
+    "who was doing it before",
+    "dr2",
+    false,
+    null,
+    false
+   ],
+   "dr_a": [
+    "dr_a",
+    "dog chase cat",
+    "dr",
+    true,
+    null,
+    false
+   ],
+   "dr_b": [
+    "dr_b",
+    "then bird chase worm",
+    "dr",
+    false,
+    null,
+    false
+   ],
+   "dr_c": [
+    "dr_c",
+    "who was doing it before",
+    "dr",
+    false,
+    null,
+    false
+   ],
+   "dwi_recall": [
+    "dwi_recall",
+    "what does the cat chase",
+    "dwi",
+    false,
+    null,
+    false
+   ],
+   "dwi_t1": [
+    "dwi_t1",
+    "the cat is here",
+    "dwi",
+    true,
+    null,
+    false
+   ],
+   "dwi_t2": [
+    "dwi_t2",
+    "the ball is here",
+    "dwi",
+    false,
+    null,
+    false
+   ],
+   "dwi_t3": [
+    "dwi_t3",
+    "the cat is here",
+    "dwi",
+    false,
+    null,
+    false
+   ],
+   "dwi_t4": [
+    "dwi_t4",
+    "the ball is here",
+    "dwi",
+    false,
+    null,
+    false
+   ],
+   "dwi_t5": [
+    "dwi_t5",
+    "the cat chases the ball",
+    "dwi",
+    false,
+    null,
+    false
+   ],
+   "dwn_night": [
+    "dwn_night",
+    "__world_step:overnight_24h__",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "dwn_recall": [
+    "dwn_recall",
+    "what does the cat chase",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "dwn_t1": [
+    "dwn_t1",
+    "the cat is here",
+    "dwn",
+    true,
+    null,
+    false
+   ],
+   "dwn_t2": [
+    "dwn_t2",
+    "the ball is here",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "dwn_t3": [
+    "dwn_t3",
+    "the cat is here",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "dwn_t4": [
+    "dwn_t4",
+    "the ball is here",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "dwn_t5": [
+    "dwn_t5",
+    "the cat chases the ball",
+    "dwn",
+    false,
+    null,
+    false
+   ],
+   "emo": [
+    "emo",
+    "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+    "emo",
+    true,
+    null,
+    false
+   ],
+   "epi_recall": [
+    "epi_recall",
+    "did we discuss the dog",
+    "epi2",
+    false,
+    null,
+    false
+   ],
+   "epi_store": [
+    "epi_store",
+    "the dog chase the cat",
+    "epi2",
+    true,
+    null,
+    false
+   ],
+   "episodic": [
+    "episodic",
+    "did we discuss the dog",
+    "epi",
+    true,
+    null,
+    false
+   ],
+   "expect_q": [
+    "expect_q",
+    "what do you expect",
+    "wm",
+    true,
+    null,
+    false
+   ],
+   "fih_d2f1": [
+    "fih_d2f1",
+    "the bird uses the river",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d2f2": [
+    "fih_d2f2",
+    "the dog stores the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d2f3": [
+    "fih_d2f3",
+    "the fish stores the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d3f1": [
+    "fih_d3f1",
+    "the worm uses the river",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d3f2": [
+    "fih_d3f2",
+    "the fish stores the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d3f3": [
+    "fih_d3f3",
+    "the dog uses the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d4f1": [
+    "fih_d4f1",
+    "the bird stores the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d4f2": [
+    "fih_d4f2",
+    "the worm stores the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d4f3": [
+    "fih_d4f3",
+    "the dog uses the river",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d5f1": [
+    "fih_d5f1",
+    "the fish uses the river",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d5f2": [
+    "fih_d5f2",
+    "the bird stores the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d5f3": [
+    "fih_d5f3",
+    "the dog stores the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d6f1": [
+    "fih_d6f1",
+    "the bird uses the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d6f2": [
+    "fih_d6f2",
+    "the fish uses the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d6f3": [
+    "fih_d6f3",
+    "the worm stores the spikes",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d7f1": [
+    "fih_d7f1",
+    "the dog uses the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d7f2": [
+    "fih_d7f2",
+    "the bird uses the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_d7f3": [
+    "fih_d7f3",
+    "the fish uses the memory",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night1": [
+    "fih_night1",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night2": [
+    "fih_night2",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night3": [
+    "fih_night3",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night4": [
+    "fih_night4",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night5": [
+    "fih_night5",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night6": [
+    "fih_night6",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_night7": [
+    "fih_night7",
+    "__world_step:overnight_24h__",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall1": [
+    "fih_recall1",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall2": [
+    "fih_recall2",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall3": [
+    "fih_recall3",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall4": [
+    "fih_recall4",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall5": [
+    "fih_recall5",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall6": [
+    "fih_recall6",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_recall7": [
+    "fih_recall7",
+    "what does the cat chase",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_t1": [
+    "fih_t1",
+    "the cat is here",
+    "fih",
+    true,
+    null,
+    false
+   ],
+   "fih_t2": [
+    "fih_t2",
+    "the ball is here",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_t3": [
+    "fih_t3",
+    "the cat is here",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_t4": [
+    "fih_t4",
+    "the ball is here",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fih_t5": [
+    "fih_t5",
+    "the cat chases the ball",
+    "fih",
+    false,
+    null,
+    false
+   ],
+   "fil_d2f1": [
+    "fil_d2f1",
+    "the bird uses the river",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_d3f1": [
+    "fil_d3f1",
+    "the dog stores the memory",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_d4f1": [
+    "fil_d4f1",
+    "the fish stores the spikes",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_d5f1": [
+    "fil_d5f1",
+    "the worm uses the river",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_d6f1": [
+    "fil_d6f1",
+    "the fish stores the memory",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_d7f1": [
+    "fil_d7f1",
+    "the dog uses the spikes",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night1": [
+    "fil_night1",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night2": [
+    "fil_night2",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night3": [
+    "fil_night3",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night4": [
+    "fil_night4",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night5": [
+    "fil_night5",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night6": [
+    "fil_night6",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_night7": [
+    "fil_night7",
+    "__world_step:overnight_24h__",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall1": [
+    "fil_recall1",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall2": [
+    "fil_recall2",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall3": [
+    "fil_recall3",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall4": [
+    "fil_recall4",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall5": [
+    "fil_recall5",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall6": [
+    "fil_recall6",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_recall7": [
+    "fil_recall7",
+    "what does the cat chase",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_t1": [
+    "fil_t1",
+    "the cat is here",
+    "fil",
+    true,
+    null,
+    false
+   ],
+   "fil_t2": [
+    "fil_t2",
+    "the ball is here",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_t3": [
+    "fil_t3",
+    "the cat is here",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_t4": [
+    "fil_t4",
+    "the ball is here",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fil_t5": [
+    "fil_t5",
+    "the cat chases the ball",
+    "fil",
+    false,
+    null,
+    false
+   ],
+   "fir_d2f1": [
+    "fir_d2f1",
+    "the bird uses the river",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d2f2": [
+    "fir_d2f2",
+    "the dog stores the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d2f3": [
+    "fir_d2f3",
+    "the fish stores the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d3f1": [
+    "fir_d3f1",
+    "the worm uses the river",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d3f2": [
+    "fir_d3f2",
+    "the fish stores the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d3f3": [
+    "fir_d3f3",
+    "the dog uses the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d4f1": [
+    "fir_d4f1",
+    "the bird stores the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d4f2": [
+    "fir_d4f2",
+    "the worm stores the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d4f3": [
+    "fir_d4f3",
+    "the dog uses the river",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d5f1": [
+    "fir_d5f1",
+    "the fish uses the river",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d5f2": [
+    "fir_d5f2",
+    "the bird stores the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d5f3": [
+    "fir_d5f3",
+    "the dog stores the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d6f1": [
+    "fir_d6f1",
+    "the bird uses the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d6f2": [
+    "fir_d6f2",
+    "the fish uses the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d6f3": [
+    "fir_d6f3",
+    "the worm stores the spikes",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d7f1": [
+    "fir_d7f1",
+    "the dog uses the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d7f2": [
+    "fir_d7f2",
+    "the bird uses the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_d7f3": [
+    "fir_d7f3",
+    "the fish uses the memory",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night1": [
+    "fir_night1",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night2": [
+    "fir_night2",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night3": [
+    "fir_night3",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night4": [
+    "fir_night4",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night5": [
+    "fir_night5",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night6": [
+    "fir_night6",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_night7": [
+    "fir_night7",
+    "__world_step:overnight_24h__",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall1": [
+    "fir_recall1",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall2": [
+    "fir_recall2",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall3": [
+    "fir_recall3",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall4": [
+    "fir_recall4",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall5": [
+    "fir_recall5",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall6": [
+    "fir_recall6",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_recall7": [
+    "fir_recall7",
+    "what does the cat chase",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_remention1": [
+    "fir_remention1",
+    "the cat chases the ball",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_remention2": [
+    "fir_remention2",
+    "the cat chases the ball",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_t1": [
+    "fir_t1",
+    "the cat is here",
+    "fir",
+    true,
+    null,
+    false
+   ],
+   "fir_t2": [
+    "fir_t2",
+    "the ball is here",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_t3": [
+    "fir_t3",
+    "the cat is here",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_t4": [
+    "fir_t4",
+    "the ball is here",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fir_t5": [
+    "fir_t5",
+    "the cat chases the ball",
+    "fir",
+    false,
+    null,
+    false
+   ],
+   "fis_d2f1": [
+    "fis_d2f1",
+    "the bird uses the river",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d2f2": [
+    "fis_d2f2",
+    "the dog stores the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d2f3": [
+    "fis_d2f3",
+    "the fish stores the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d3f1": [
+    "fis_d3f1",
+    "the worm uses the river",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d3f2": [
+    "fis_d3f2",
+    "the fish stores the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d3f3": [
+    "fis_d3f3",
+    "the dog uses the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d4f1": [
+    "fis_d4f1",
+    "the bird stores the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d4f2": [
+    "fis_d4f2",
+    "the worm stores the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d4f3": [
+    "fis_d4f3",
+    "the dog uses the river",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d5f1": [
+    "fis_d5f1",
+    "the fish uses the river",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d5f2": [
+    "fis_d5f2",
+    "the bird stores the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d5f3": [
+    "fis_d5f3",
+    "the dog stores the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d6f1": [
+    "fis_d6f1",
+    "the bird uses the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d6f2": [
+    "fis_d6f2",
+    "the fish uses the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d6f3": [
+    "fis_d6f3",
+    "the worm stores the spikes",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d7f1": [
+    "fis_d7f1",
+    "the dog uses the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d7f2": [
+    "fis_d7f2",
+    "the bird uses the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_d7f3": [
+    "fis_d7f3",
+    "the fish uses the memory",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night1": [
+    "fis_night1",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night2": [
+    "fis_night2",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night3": [
+    "fis_night3",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night4": [
+    "fis_night4",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night5": [
+    "fis_night5",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night6": [
+    "fis_night6",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_night7": [
+    "fis_night7",
+    "__world_step:overnight_24h__",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall1": [
+    "fis_recall1",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall2": [
+    "fis_recall2",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall3": [
+    "fis_recall3",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall4": [
+    "fis_recall4",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall5": [
+    "fis_recall5",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall6": [
+    "fis_recall6",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_recall7": [
+    "fis_recall7",
+    "what does the cat chase",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_t1": [
+    "fis_t1",
+    "Guess what, something unbelievable happened at the circus today!",
+    "fis",
+    true,
+    null,
+    false
+   ],
+   "fis_t2": [
+    "fis_t2",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_t3": [
+    "fis_t3",
+    "the cat chases the ball",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_t4": [
+    "fis_t4",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fis_t5": [
+    "fis_t5",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "fis",
+    false,
+    null,
+    false
+   ],
+   "fiv_night1": [
+    "fiv_night1",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night2": [
+    "fiv_night2",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night3": [
+    "fiv_night3",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night4": [
+    "fiv_night4",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night5": [
+    "fiv_night5",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night6": [
+    "fiv_night6",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_night7": [
+    "fiv_night7",
+    "__world_step:overnight_24h__",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall1": [
+    "fiv_recall1",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall2": [
+    "fiv_recall2",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall3": [
+    "fiv_recall3",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall4": [
+    "fiv_recall4",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall5": [
+    "fiv_recall5",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall6": [
+    "fiv_recall6",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_recall7": [
+    "fiv_recall7",
+    "what does the cat chase",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_t1": [
+    "fiv_t1",
+    "the cat is here",
+    "fiv",
+    true,
+    null,
+    false
+   ],
+   "fiv_t2": [
+    "fiv_t2",
+    "the ball is here",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_t3": [
+    "fiv_t3",
+    "the cat is here",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_t4": [
+    "fiv_t4",
+    "the ball is here",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "fiv_t5": [
+    "fiv_t5",
+    "the cat chases the ball",
+    "fiv",
+    false,
+    null,
+    false
+   ],
+   "held": [
+    "held",
+    "the wolf watches the owl",
+    "d",
+    false,
+    null,
+    false
+   ],
+   "hold": [
+    "hold",
+    "the fox and the wolf walked in",
+    "d",
+    true,
+    null,
+    false
+   ],
+   "lbf_cau_teach1": [
+    "lbf_cau_teach1",
+    "the dog goes east",
+    "lbf_cau",
+    true,
+    null,
+    false
+   ],
+   "lbf_cau_teach2": [
+    "lbf_cau_teach2",
+    "the dog reaches river",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_cau_teach3": [
+    "lbf_cau_teach3",
+    "the dog drinks water",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_cau_teach4": [
+    "lbf_cau_teach4",
+    "the sun rises sky",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_cau_teach5": [
+    "lbf_cau_teach5",
+    "the bird sings dawn",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_cau_teach6": [
+    "lbf_cau_teach6",
+    "the dog wakes morning",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_cau_whatif": [
+    "lbf_cau_whatif",
+    "what happens if the dog goes east",
+    "lbf_cau",
+    false,
+    null,
+    false
+   ],
+   "lbf_tom1": [
+    "lbf_tom1",
+    "Maria is devastated",
+    "lbf_tom",
+    true,
+    null,
+    false
+   ],
+   "noncontra_neg": [
+    "noncontra_neg",
+    "the dog does not chase the cat",
+    "ncontra",
+    true,
+    null,
+    false
+   ],
+   "oe_ask": [
+    "oe_ask",
+    "what might a dog chase",
+    "oe2",
+    false,
+    null,
+    true
+   ],
+   "oe_t1": [
+    "oe_t1",
+    "the wolf chase the rabbit",
+    "oe2",
+    true,
+    null,
+    false
+   ],
+   "oe_t2": [
+    "oe_t2",
+    "the fox chase the rabbit",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t3": [
+    "oe_t3",
+    "the hawk chase the rabbit",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t4": [
+    "oe_t4",
+    "the eagle chase the rabbit",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t5": [
+    "oe_t5",
+    "the lion chase the deer",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t6": [
+    "oe_t6",
+    "the bear chase the mouse",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t7": [
+    "oe_t7",
+    "the owl chase the beetle",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t8": [
+    "oe_t8",
+    "the pike chase the minnow",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "oe_t9": [
+    "oe_t9",
+    "the crow chase the boar",
+    "oe2",
+    false,
+    null,
+    false
+   ],
+   "open": [
+    "open",
+    "what might a dog chase",
+    "o",
+    true,
+    null,
+    false
+   ],
+   "pmem_cue": [
+    "pmem_cue",
+    "the bird sings",
+    "pmem2",
+    false,
+    null,
+    false
+   ],
+   "pmem_d0": [
+    "pmem_d0",
+    "what does the cat eat",
+    "pmem2",
+    false,
+    null,
+    false
+   ],
+   "pmem_d1": [
+    "pmem_d1",
+    "how is the weather today",
+    "pmem2",
+    false,
+    null,
+    false
+   ],
+   "pmem_d2": [
+    "pmem_d2",
+    "tell me about the sky",
+    "pmem2",
+    false,
+    null,
+    false
+   ],
+   "pmem_form": [
+    "pmem_form",
+    "remind me to feed the dog when the bird sings",
+    "pmem",
+    true,
+    null,
+    false
+   ],
+   "pmem_form2": [
+    "pmem_form2",
+    "remind me to feed the dog when the bird sings",
+    "pmem2",
+    true,
+    null,
+    false
+   ],
+   "question": [
+    "question",
+    "what does the wolf bite",
+    "q",
+    true,
+    null,
+    false
+   ],
+   "rich_open": [
+    "rich_open",
+    "what might a dog chase",
+    "ropen",
+    true,
+    null,
+    true
+   ],
+   "rich_well": [
+    "rich_well",
+    "the wolf bites the apple",
+    "richw",
+    true,
+    null,
+    true
+   ],
+   "scalar": [
+    "scalar",
+    "some of the dogs ran",
+    "s",
+    true,
+    null,
+    false
+   ],
+   "selfinit": [
+    "selfinit",
+    "",
+    "si",
+    true,
+    null,
+    false
+   ],
+   "slp_recall": [
+    "slp_recall",
+    "you mentioned the owl",
+    "slp",
+    false,
+    null,
+    false
+   ],
+   "slp_teach1": [
+    "slp_teach1",
+    "the fox chase the hare",
+    "slp",
+    true,
+    null,
+    false
+   ],
+   "slp_teach2": [
+    "slp_teach2",
+    "the owl chase the mouse",
+    "slp",
+    false,
+    null,
+    false
+   ],
+   "slp_teach3": [
+    "slp_teach3",
+    "the hawk chase the vole",
+    "slp",
+    false,
+    null,
+    false
+   ],
+   "slp_tick": [
+    "slp_tick",
+    "__world_step:overnight_24h__",
+    "slp",
+    false,
+    null,
+    false
+   ],
+   "sw_hold": [
+    "sw_hold",
+    "what does the dog chase",
+    "sw2",
+    false,
+    null,
+    false
+   ],
+   "sw_open": [
+    "sw_open",
+    "what does the dog chase",
+    "sw2",
+    true,
+    null,
+    false
+   ],
+   "sw_switch": [
+    "sw_switch",
+    "what does the cat eat",
+    "sw2",
+    false,
+    null,
+    false
+   ],
+   "tom_fb": [
+    "tom_fb",
+    "Sally puts the marble in the basket. Sally leaves the room. Anne moves the marble to the box. Where will Sally look for the marble?",
+    "tomfb",
+    true,
+    null,
+    false
+   ],
+   "unknown": [
+    "unknown",
+    "what is the capital of france",
+    "u",
+    true,
+    null,
+    false
+   ],
+   "verbsel": [
+    "verbsel",
+    "the dog cleans the cup",
+    "vsel",
+    true,
+    null,
+    false
+   ],
+   "vision": [
+    "vision",
+    "what do you see",
+    "vis",
+    true,
+    "bird",
+    false
+   ],
+   "wd_idle3d": [
+    "wd_idle3d",
+    "__world_step:vclock:idle:259200__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_night": [
+    "wd_night",
+    "__world_step:vclock:idle:39600__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_p1": [
+    "wd_p1",
+    "__world_step:vclock:idle:1500__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_p2": [
+    "wd_p2",
+    "__world_step:vclock:idle:420__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_p3": [
+    "wd_p3",
+    "__world_step:vclock:idle:600__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qA_d5": [
+    "wd_qA_d5",
+    "what does the cat chase",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qA_eve": [
+    "wd_qA_eve",
+    "what does the cat chase",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qA_imm": [
+    "wd_qA_imm",
+    "what does the cat chase",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qA_morn": [
+    "wd_qA_morn",
+    "what does the cat chase",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qA_preB": [
+    "wd_qA_preB",
+    "what does the cat chase",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qB_d5": [
+    "wd_qB_d5",
+    "what does the dog store",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qB_eve": [
+    "wd_qB_eve",
+    "what does the dog store",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qB_imm": [
+    "wd_qB_imm",
+    "what does the dog store",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qB_morn": [
+    "wd_qB_morn",
+    "what does the dog store",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qC_d5": [
+    "wd_qC_d5",
+    "what does the bird use",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qC_decay": [
+    "wd_qC_decay",
+    "what does the bird use",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qC_eve": [
+    "wd_qC_eve",
+    "what does the bird use",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qC_imm": [
+    "wd_qC_imm",
+    "what does the bird use",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_qC_morn": [
+    "wd_qC_morn",
+    "what does the bird use",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rA_d5": [
+    "wd_rA_d5",
+    "you mentioned the cat",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rA_eve": [
+    "wd_rA_eve",
+    "you mentioned the cat",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rA_morn": [
+    "wd_rA_morn",
+    "you mentioned the cat",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rB_d5": [
+    "wd_rB_d5",
+    "you mentioned the dog",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rB_eve": [
+    "wd_rB_eve",
+    "you mentioned the dog",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rB_morn": [
+    "wd_rB_morn",
+    "you mentioned the dog",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rC_d5": [
+    "wd_rC_d5",
+    "you mentioned the bird",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rC_eve": [
+    "wd_rC_eve",
+    "you mentioned the bird",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_rC_morn": [
+    "wd_rC_morn",
+    "you mentioned the bird",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s10": [
+    "wd_s10",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s100": [
+    "wd_s100",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s104": [
+    "wd_s104",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s106": [
+    "wd_s106",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s108": [
+    "wd_s108",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s110": [
+    "wd_s110",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s112": [
+    "wd_s112",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s115": [
+    "wd_s115",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s117": [
+    "wd_s117",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s119": [
+    "wd_s119",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s12": [
+    "wd_s12",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s121": [
+    "wd_s121",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s123": [
+    "wd_s123",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s125": [
+    "wd_s125",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s127": [
+    "wd_s127",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s129": [
+    "wd_s129",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s131": [
+    "wd_s131",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s133": [
+    "wd_s133",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s135": [
+    "wd_s135",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s137": [
+    "wd_s137",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s139": [
+    "wd_s139",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s14": [
+    "wd_s14",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s141": [
+    "wd_s141",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s143": [
+    "wd_s143",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s145": [
+    "wd_s145",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s147": [
+    "wd_s147",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s149": [
+    "wd_s149",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s151": [
+    "wd_s151",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s153": [
+    "wd_s153",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s155": [
+    "wd_s155",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s157": [
+    "wd_s157",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s159": [
+    "wd_s159",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s16": [
+    "wd_s16",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s161": [
+    "wd_s161",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s163": [
+    "wd_s163",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s165": [
+    "wd_s165",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s167": [
+    "wd_s167",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s169": [
+    "wd_s169",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s171": [
+    "wd_s171",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s173": [
+    "wd_s173",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s175": [
+    "wd_s175",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s177": [
+    "wd_s177",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s179": [
+    "wd_s179",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s18": [
+    "wd_s18",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s181": [
+    "wd_s181",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s183": [
+    "wd_s183",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s185": [
+    "wd_s185",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s187": [
+    "wd_s187",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s189": [
+    "wd_s189",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s192": [
+    "wd_s192",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s194": [
+    "wd_s194",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s196": [
+    "wd_s196",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s198": [
+    "wd_s198",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s2": [
+    "wd_s2",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s20": [
+    "wd_s20",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s200": [
+    "wd_s200",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s204": [
+    "wd_s204",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s206": [
+    "wd_s206",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s208": [
+    "wd_s208",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s210": [
+    "wd_s210",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s212": [
+    "wd_s212",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s216": [
+    "wd_s216",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s218": [
+    "wd_s218",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s22": [
+    "wd_s22",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s220": [
+    "wd_s220",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s222": [
+    "wd_s222",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s224": [
+    "wd_s224",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s228": [
+    "wd_s228",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s230": [
+    "wd_s230",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s232": [
+    "wd_s232",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s234": [
+    "wd_s234",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s236": [
+    "wd_s236",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s24": [
+    "wd_s24",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s26": [
+    "wd_s26",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s28": [
+    "wd_s28",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s30": [
+    "wd_s30",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s32": [
+    "wd_s32",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s34": [
+    "wd_s34",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s36": [
+    "wd_s36",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s38": [
+    "wd_s38",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s4": [
+    "wd_s4",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s40": [
+    "wd_s40",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s42": [
+    "wd_s42",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s44": [
+    "wd_s44",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s46": [
+    "wd_s46",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s48": [
+    "wd_s48",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s50": [
+    "wd_s50",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s52": [
+    "wd_s52",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s54": [
+    "wd_s54",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s56": [
+    "wd_s56",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s58": [
+    "wd_s58",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s6": [
+    "wd_s6",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s60": [
+    "wd_s60",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s62": [
+    "wd_s62",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s64": [
+    "wd_s64",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s66": [
+    "wd_s66",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s68": [
+    "wd_s68",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s70": [
+    "wd_s70",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s72": [
+    "wd_s72",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s74": [
+    "wd_s74",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s76": [
+    "wd_s76",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s78": [
+    "wd_s78",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s8": [
+    "wd_s8",
+    "__world_step:vclock:idle:40__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s80": [
+    "wd_s80",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s82": [
+    "wd_s82",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s84": [
+    "wd_s84",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s86": [
+    "wd_s86",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s88": [
+    "wd_s88",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s90": [
+    "wd_s90",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s92": [
+    "wd_s92",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s94": [
+    "wd_s94",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s96": [
+    "wd_s96",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_s98": [
+    "wd_s98",
+    "__world_step:vclock:idle:240__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t1": [
+    "wd_t1",
+    "the bird is here",
+    "wd",
+    true,
+    null,
+    false
+   ],
+   "wd_t103": [
+    "wd_t103",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t105": [
+    "wd_t105",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t107": [
+    "wd_t107",
+    "the cat chases the ball",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t109": [
+    "wd_t109",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t111": [
+    "wd_t111",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t116": [
+    "wd_t116",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t118": [
+    "wd_t118",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t120": [
+    "wd_t120",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t122": [
+    "wd_t122",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t124": [
+    "wd_t124",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t126": [
+    "wd_t126",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t128": [
+    "wd_t128",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t13": [
+    "wd_t13",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t130": [
+    "wd_t130",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t132": [
+    "wd_t132",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t134": [
+    "wd_t134",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t136": [
+    "wd_t136",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t138": [
+    "wd_t138",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t140": [
+    "wd_t140",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t142": [
+    "wd_t142",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t144": [
+    "wd_t144",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t146": [
+    "wd_t146",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t148": [
+    "wd_t148",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t15": [
+    "wd_t15",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t150": [
+    "wd_t150",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t152": [
+    "wd_t152",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t154": [
+    "wd_t154",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t156": [
+    "wd_t156",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t158": [
+    "wd_t158",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t160": [
+    "wd_t160",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t162": [
+    "wd_t162",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t164": [
+    "wd_t164",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t166": [
+    "wd_t166",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t168": [
+    "wd_t168",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t17": [
+    "wd_t17",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t170": [
+    "wd_t170",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t172": [
+    "wd_t172",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t174": [
+    "wd_t174",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t176": [
+    "wd_t176",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t178": [
+    "wd_t178",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t180": [
+    "wd_t180",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t182": [
+    "wd_t182",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t184": [
+    "wd_t184",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t186": [
+    "wd_t186",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t188": [
+    "wd_t188",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t19": [
+    "wd_t19",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t191": [
+    "wd_t191",
+    "Guess what, something unbelievable happened at the circus today!",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t193": [
+    "wd_t193",
+    "You will never believe this crazy story, it is absolutely amazing!",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t195": [
+    "wd_t195",
+    "the dog stores the memory",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t197": [
+    "wd_t197",
+    "Everyone in the audience was screaming and laughing in total shock!",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t199": [
+    "wd_t199",
+    "Honestly it was the most astonishing spectacle anybody has ever witnessed!",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t21": [
+    "wd_t21",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t23": [
+    "wd_t23",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t25": [
+    "wd_t25",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t27": [
+    "wd_t27",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t29": [
+    "wd_t29",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t3": [
+    "wd_t3",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t31": [
+    "wd_t31",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t33": [
+    "wd_t33",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t35": [
+    "wd_t35",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t37": [
+    "wd_t37",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t39": [
+    "wd_t39",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t41": [
+    "wd_t41",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t43": [
+    "wd_t43",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t45": [
+    "wd_t45",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t47": [
+    "wd_t47",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t49": [
+    "wd_t49",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t5": [
+    "wd_t5",
+    "the bird uses the river",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t51": [
+    "wd_t51",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t53": [
+    "wd_t53",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t55": [
+    "wd_t55",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t57": [
+    "wd_t57",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t59": [
+    "wd_t59",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t61": [
+    "wd_t61",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t63": [
+    "wd_t63",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t65": [
+    "wd_t65",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t67": [
+    "wd_t67",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t69": [
+    "wd_t69",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t7": [
+    "wd_t7",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t71": [
+    "wd_t71",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t73": [
+    "wd_t73",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t75": [
+    "wd_t75",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t77": [
+    "wd_t77",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t79": [
+    "wd_t79",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t81": [
+    "wd_t81",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t83": [
+    "wd_t83",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t85": [
+    "wd_t85",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t87": [
+    "wd_t87",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t89": [
+    "wd_t89",
+    "the bird is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t9": [
+    "wd_t9",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t91": [
+    "wd_t91",
+    "the river is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t93": [
+    "wd_t93",
+    "the dog is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t95": [
+    "wd_t95",
+    "the memory is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t97": [
+    "wd_t97",
+    "the cat is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_t99": [
+    "wd_t99",
+    "the ball is here",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "wd_vclock": [
+    "wd_vclock",
+    "__world_step:vclock:start__",
+    "wd",
+    false,
+    null,
+    false
+   ],
+   "well": [
+    "well",
+    "the wolf bites the apple",
+    "well",
+    true,
+    null,
+    false
+   ],
+   "wmb1_ask": [
+    "wmb1_ask",
+    "who are we talking about",
+    "wmb1",
+    false,
+    null,
+    false
+   ],
+   "wmb1_intro": [
+    "wmb1_intro",
+    "the fox walked in",
+    "wmb1",
+    true,
+    null,
+    false
+   ],
+   "wmb_ask": [
+    "wmb_ask",
+    "who are we talking about",
+    "wmb",
+    false,
+    null,
+    false
+   ],
+   "wmb_intro": [
+    "wmb_intro",
+    "the fox and the wolf walked in",
+    "wmb",
+    true,
+    null,
+    false
+   ],
+   "wmc_drive": [
+    "wmc_drive",
+    "the wolf watches the owl",
+    "wmc",
+    false,
+    null,
+    false
+   ],
+   "wmc_intro": [
+    "wmc_intro",
+    "the fox and the wolf walked in",
+    "wmc",
+    true,
+    null,
+    false
+   ],
+   "wmcx_drive": [
+    "wmcx_drive",
+    "the dog watches the owl",
+    "wmcx",
+    false,
+    null,
+    false
+   ],
+   "wmcx_intro": [
+    "wmcx_intro",
+    "the cat and the dog walked in",
+    "wmcx",
+    true,
+    null,
+    false
+   ],
+   "wmf_a1_ask": [
+    "wmf_a1_ask",
+    "what does it chase",
+    "wmfa1",
+    false,
+    null,
+    false
+   ],
+   "wmf_a1_intro": [
+    "wmf_a1_intro",
+    "the dog and the cat walked in",
+    "wmfa1",
+    true,
+    null,
+    false
+   ],
+   "wmf_a2_ask": [
+    "wmf_a2_ask",
+    "what does it chase",
+    "wmfa2",
+    false,
+    null,
+    false
+   ],
+   "wmf_a2_intro": [
+    "wmf_a2_intro",
+    "the cat and the dog walked in",
+    "wmfa2",
+    true,
+    null,
+    false
+   ],
+   "wmf_b1_ask": [
+    "wmf_b1_ask",
+    "what does it eat",
+    "wmfb1",
+    false,
+    null,
+    false
+   ],
+   "wmf_b1_intro": [
+    "wmf_b1_intro",
+    "the cat and the bird walked in",
+    "wmfb1",
+    true,
+    null,
+    false
+   ],
+   "wmf_b2_ask": [
+    "wmf_b2_ask",
+    "what does it eat",
+    "wmfb2",
+    false,
+    null,
+    false
+   ],
+   "wmf_b2_intro": [
+    "wmf_b2_intro",
+    "the bird and the cat walked in",
+    "wmfb2",
+    true,
+    null,
+    false
+   ]
+  },
+  "world_steps": [
+   "d10w_night1",
+   "d10w_night10",
+   "d10w_night2",
+   "d10w_night3",
+   "d10w_night4",
+   "d10w_night5",
+   "d10w_night6",
+   "d10w_night7",
+   "d10w_night8",
+   "d10w_night9",
+   "d3c_night1",
+   "d3c_night2",
+   "d3c_night3",
+   "d3r_night1",
+   "d3r_night2",
+   "d3r_night3",
+   "d3w_night1",
+   "d3w_night2",
+   "d3w_night3",
+   "d5c_tick",
+   "datc_night",
+   "datcl_awake",
+   "datcl_night",
+   "datcr_night",
+   "datcr_rest",
+   "datl_awake",
+   "datl_night",
+   "datn_night",
+   "datq_night",
+   "datq_rest",
+   "datr_night",
+   "datr_rest",
+   "datz_awake",
+   "datz_night",
+   "datz_rest",
+   "dwn_night",
+   "fih_night1",
+   "fih_night2",
+   "fih_night3",
+   "fih_night4",
+   "fih_night5",
+   "fih_night6",
+   "fih_night7",
+   "fil_night1",
+   "fil_night2",
+   "fil_night3",
+   "fil_night4",
+   "fil_night5",
+   "fil_night6",
+   "fil_night7",
+   "fir_night1",
+   "fir_night2",
+   "fir_night3",
+   "fir_night4",
+   "fir_night5",
+   "fir_night6",
+   "fir_night7",
+   "fis_night1",
+   "fis_night2",
+   "fis_night3",
+   "fis_night4",
+   "fis_night5",
+   "fis_night6",
+   "fis_night7",
+   "fiv_night1",
+   "fiv_night2",
+   "fiv_night3",
+   "fiv_night4",
+   "fiv_night5",
+   "fiv_night6",
+   "fiv_night7",
+   "slp_tick",
+   "wd_idle3d",
+   "wd_night",
+   "wd_p1",
+   "wd_p2",
+   "wd_p3",
+   "wd_s10",
+   "wd_s100",
+   "wd_s104",
+   "wd_s106",
+   "wd_s108",
+   "wd_s110",
+   "wd_s112",
+   "wd_s115",
+   "wd_s117",
+   "wd_s119",
+   "wd_s12",
+   "wd_s121",
+   "wd_s123",
+   "wd_s125",
+   "wd_s127",
+   "wd_s129",
+   "wd_s131",
+   "wd_s133",
+   "wd_s135",
+   "wd_s137",
+   "wd_s139",
+   "wd_s14",
+   "wd_s141",
+   "wd_s143",
+   "wd_s145",
+   "wd_s147",
+   "wd_s149",
+   "wd_s151",
+   "wd_s153",
+   "wd_s155",
+   "wd_s157",
+   "wd_s159",
+   "wd_s16",
+   "wd_s161",
+   "wd_s163",
+   "wd_s165",
+   "wd_s167",
+   "wd_s169",
+   "wd_s171",
+   "wd_s173",
+   "wd_s175",
+   "wd_s177",
+   "wd_s179",
+   "wd_s18",
+   "wd_s181",
+   "wd_s183",
+   "wd_s185",
+   "wd_s187",
+   "wd_s189",
+   "wd_s192",
+   "wd_s194",
+   "wd_s196",
+   "wd_s198",
+   "wd_s2",
+   "wd_s20",
+   "wd_s200",
+   "wd_s204",
+   "wd_s206",
+   "wd_s208",
+   "wd_s210",
+   "wd_s212",
+   "wd_s216",
+   "wd_s218",
+   "wd_s22",
+   "wd_s220",
+   "wd_s222",
+   "wd_s224",
+   "wd_s228",
+   "wd_s230",
+   "wd_s232",
+   "wd_s234",
+   "wd_s236",
+   "wd_s24",
+   "wd_s26",
+   "wd_s28",
+   "wd_s30",
+   "wd_s32",
+   "wd_s34",
+   "wd_s36",
+   "wd_s38",
+   "wd_s4",
+   "wd_s40",
+   "wd_s42",
+   "wd_s44",
+   "wd_s46",
+   "wd_s48",
+   "wd_s50",
+   "wd_s52",
+   "wd_s54",
+   "wd_s56",
+   "wd_s58",
+   "wd_s6",
+   "wd_s60",
+   "wd_s62",
+   "wd_s64",
+   "wd_s66",
+   "wd_s68",
+   "wd_s70",
+   "wd_s72",
+   "wd_s74",
+   "wd_s76",
+   "wd_s78",
+   "wd_s8",
+   "wd_s80",
+   "wd_s82",
+   "wd_s84",
+   "wd_s86",
+   "wd_s88",
+   "wd_s90",
+   "wd_s92",
+   "wd_s94",
+   "wd_s96",
+   "wd_s98",
+   "wd_vclock"
+  ]
+ },
+ "note": "a static manifest (import only, no brain build, no run): the B2d registry fingerprint at H, read by repin.py check. Identical at e8a0d0cb1.",
+ "pin": "3c2907b85c10fe918ddc81b4c69de8888c9f321b"
+}

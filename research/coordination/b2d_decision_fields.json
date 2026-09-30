@@ -9,13 +9,13 @@
   "research/runners/bg_action_selection_production_organ.py": "77ccc6ab7bdfac18df5c9c9a6e6d7449f3b80194",
   "research/runners/causal_whatif_production_organ.py": "19620254cdaf555c76bf83a7bc0753c049170d78",
   "research/runners/common_ground_ledger_production_organ.py": "6a1ca1133526f97470d77c26dabdeec1a905c265",
-  "research/runners/comprehension_production_organ.py": "25f5cfbb4e1fbf56d9606c9c991154c63d969fef",
+  "research/runners/comprehension_production_organ.py": "b0330c426f806186208eec5a4f8e6f90103177de",
   "research/runners/curiosity_production_organ.py": "caba4578dfd933bc57190bc864e2836f9d3e4739",
   "research/runners/d3_discourse_event_register_production_organ.py": "7e778a1b367e2cba55cfe216591d60a1ca11dded",
   "research/runners/d6_multiref_wm_production_organ.py": "6c2878ade1010121f967033ff31950394c290940",
   "research/runners/load_bearing_fraction.py": "b4be22c0e04413d8fbbf0e1f0aa180a8dfdfe267",
   "research/runners/metacog_production_organ.py": "803c5a28b926ec55094942a3dd7999986f48977e",
-  "research/runners/onebrain_regression_battery.py": "a504a69aac4c17eef024da2d26f4caa731ad1b54",
+  "research/runners/onebrain_regression_battery.py": "3d51c57f77ab44dabe88db2a9ff63f000de0360c",
   "research/runners/pragmatic_production_organ.py": "df5f6fd0585c7e8c3bf059393a8ffb9cb7cd06ae",
   "research/runners/prospective_memory_production_organ.py": "c0cc10ced926f27cb1fd056698a67ed7653b5101",
   "research/runners/reconsolidation_production_organ.py": "02afe8e2a4103c9516daa4d83a38a7821f6e34d9",
@@ -198,8 +198,8 @@
    "fields": {
     "comprehension.on": {
      "class": "N",
-     "evidence": "research/runners/comprehension_production_organ.py:165-173,233-246,705-734",
-     "note": "lesion zeroes the learned drive; the same WTA reads margin 0; judge returns None"
+     "evidence": "research/runners/comprehension_production_organ.py:165-173,233-246,719-748",
+     "note": "lesion zeroes the learned drive; the same WTA reads margin 0; judge returns None; RE-AUDITED at the re-pin (Amendment 1): class unchanged, the cited range 705-734 at H is 719-748 after d218481dc (identical text)"
     }
    },
    "kept": [
@@ -212,8 +212,8 @@
    "fields": {
     "comprehension.on": {
      "class": "N",
-     "evidence": "research/runners/comprehension_production_organ.py:197-230,705-734",
-     "note": "same mechanism as the animacy row"
+     "evidence": "research/runners/comprehension_production_organ.py:197-230,719-748",
+     "note": "same mechanism as the animacy row; RE-AUDITED at the re-pin (Amendment 1): class unchanged, the cited range 705-734 at H is 719-748 after d218481dc (identical text)"
     }
    },
    "kept": [
@@ -225,18 +225,18 @@
   "comprehension-monitor": {
    "fields": {
     "comprehension.comprehended": {
-     "class": "SD",
-     "evidence": "webapp/server.py:6108-6109; research/runners/comprehension_production_organ.py:409-450,660-666",
-     "note": "ORGAN ERROR: the lesion twin raises 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)' (B2b lesion arm, all seeds checked s42/s101); the fallback dict drops the field. Cell is UNDEFINED:organ-error, class C",
-     "sd_kind": "branch-structural"
+     "class": "N",
+     "evidence": "research/runners/comprehension_production_organ.py:674-680,703-721,738-756; webapp/server.py:6023-6024",
+     "note": "RE-AUDITED at the re-pin (B2d Amendment 1, A1.4): after the lesion-twin crash fix d218481dc, judge() reads the twin's own spiking margin (_lesion_comp zeroes the learned cue->role weights) and computes comprehended = margin >= threshold by the same statement in both arms. At H it was SD (branch-structural): the twin raised and the exception fallback dropped the field (UNDEFINED:organ-error in B2b)."
     },
     "comprehension.on": {
      "class": "UNSURE",
-     "evidence": "webapp/server.py:6108-6109",
-     "note": "True in both arms; in the lesion arm it comes from the exception fallback dict"
+     "evidence": "research/runners/comprehension_production_organ.py:752-756",
+     "note": "literal True in both arms (at H the lesion arm's True came from the exception fallback dict)"
     }
    },
    "kept": [
+    "comprehension.comprehended",
     "comprehension.on"
    ],
    "probe_turn": "well",
@@ -702,9 +702,48 @@
   }
  },
  "schema": "b2d-decision-fields-v1",
- "status": "COMPLETE for the 35 brain_chat coverable rows at filing (three read-only audits; SD calls re-read); not independently re-audited",
+ "status": "COMPLETE for the 35 brain_chat coverable rows at filing (three read-only audits; SD calls re-read); independently re-checked by a fourth session and comprehension-monitor re-audited at the re-pin (Amendment 1, A1.4-A1.5)",
  "tag": "b2d0929",
  "unsure_rule": "UNSURE fields are KEPT in S1; an S1 load-bearing verdict that rests only on an UNSURE field is reported as such",
  "execution": "not_executed",
- "argv": []
+ "argv": [],
+ "harness_blobs_at_pin": {
+  "research/runners/lbf_rows/__init__.py": "3c8b457d8171ae8dd5a5e89242d9010f55a2053d",
+  "research/runners/lbf_rows/learning.py": "bd64ffca68ebf8b1d4d49d5d1fc67a1626ec6a20",
+  "research/runners/lbf_rows/live_organs.py": "b868166738edbeed9c4d2c8b07fc1209c6b43026",
+  "research/runners/lbf_rows/open_ended_gated.py": "48de3ff6f17f45017836daf300ea042705252699",
+  "research/runners/lbf_rows/proposed_lesions_conflict_kb.py": "31334dc70ce86c8bd6021b2eecd5cccf9b81c013",
+  "research/runners/lbf_rows/reasoning_transitive_chat.py": "16dbcde9f9b04549e35457deeea92db5ffbaef16",
+  "research/runners/lbf_rows/reward_value_afferent.py": "52a67265c75f28ecf0df4069645e864b818f6cf9",
+  "research/runners/lbf_rows/tom_false_belief_chat.py": "e33aaec927d9696ae349d854397ea049e9adc689",
+  "research/runners/load_bearing_fraction.py": "b4be22c0e04413d8fbbf0e1f0aa180a8dfdfe267",
+  "research/runners/onebrain_regression_battery.py": "3d51c57f77ab44dabe88db2a9ff63f000de0360c",
+  "tools/lab.py": "202567ce34aa954a989f63442ced85f89315dcb4",
+  "tools/lb_shard.py": "3364beee6a1e28144f4119b972f362948e860ab8"
+ },
+ "repin_audit": {
+  "amendment": "research/findings/2026-09-29-production-default-battery-B2d-PREREGISTRATION.md, Amendment 1 (A1.4, A1.5)",
+  "audited_at": "e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1",
+  "cited_files_changed_since_H": {
+   "research/runners/comprehension_production_organ.py": {
+    "at_H": "25f5cfbb4e1fbf56d9606c9c991154c63d969fef",
+    "audited": "b0330c426f806186208eec5a4f8e6f90103177de"
+   },
+   "research/runners/onebrain_regression_battery.py": {
+    "at_H": "a504a69aac4c17eef024da2d26f4caa731ad1b54",
+    "audited": "3d51c57f77ab44dabe88db2a9ff63f000de0360c"
+   }
+  },
+  "from_pin": "3c2907b85c10fe918ddc81b4c69de8888c9f321b",
+  "registry_fingerprint_at_H": "research/packets/b2d-mouth-renderer/registry_at_H.json (identical at the audited commit)",
+  "rows_reaudited": {
+   "affective-tom": "NX evidence onebrain_regression_battery.py:697-702 unchanged (lines 1-880 identical)",
+   "comprehension-learned-animacy-cue": "N unchanged; evidence lines shifted",
+   "comprehension-learned-verb-selects": "N unchanged; evidence lines shifted",
+   "comprehension-monitor": "comprehension.comprehended SD -> N; kept += comprehension.comprehended",
+   "swap-drives-response": "UNSURE evidence onebrain_regression_battery.py:143-150 unchanged"
+  },
+  "rule": "research/packets/b2d-mouth-renderer/repin.py check: every cited and harness blob at the new pin must equal these; otherwise NEEDS-CLAUDE",
+  "step1_sd_recheck": "closed by Amendment 1 A1.5: every SD call and the pragmatic N call concur"
+ }
 }

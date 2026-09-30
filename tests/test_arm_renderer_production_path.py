@@ -321,3 +321,10 @@ def test_counter_wrapper_is_transparent_and_uninstalls():
     c.uninstall(K)
     assert K._generate is orig_g and K._generate_batch is orig_b
 
+
+
+def test_qwen_renderer_name_is_the_one_the_mouth_scorer_requires():
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import b2d_mouth_score as M
+    src = open(os.path.join(ROOT, "research", "runners", "brain_chat_tui.py")).read()
+    assert 'name = "%s"' % M.QWEN_RENDERER_NAME in src
