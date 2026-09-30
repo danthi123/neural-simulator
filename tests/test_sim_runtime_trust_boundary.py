@@ -311,8 +311,10 @@ def test_runtime_dry_run_writes_nothing(tmp_path: Path) -> None:
 # ------------------------------------------------------------------ lane_starvation reads pool.running
 
 def test_lane_starvation_counts_recent_pool_running_records(tmp_path: Path, monkeypatch) -> None:
-    sys.path.insert(0, str(ROOT / "tools" / "gates"))
-    import lane_starvation as ls  # noqa: E402
+    import importlib.util   # loaded by path: tools/gates on sys.path would shadow real packages (gates/coverage.py)
+    spec = importlib.util.spec_from_file_location("lane_starvation_under_test", ROOT / "tools" / "gates" / "lane_starvation.py")
+    ls = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ls)
     qd = tmp_path / "research" / "queue"
     qd.mkdir(parents=True)
     now = time.strftime("%Y-%m-%d %H:%M:%S")
