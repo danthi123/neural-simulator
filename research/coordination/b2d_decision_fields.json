@@ -36,7 +36,7 @@
   "open-ended-generation": "distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2"
  },
  "organ_error_rule": "a cell whose probe-turn response carries an 'error' key in the parent dict of any compared field, in any arm, is UNDEFINED:organ-error (class C) for S0-as-reported, S1 and S2",
- "pin": "3c2907b85c10fe918ddc81b4c69de8888c9f321b",
+ "pin": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
  "prereg": "research/findings/2026-09-29-production-default-battery-B2d-PREREGISTRATION.md",
  "reply_fields": [
   "answer",
@@ -745,5 +745,13 @@
   },
   "rule": "research/packets/b2d-mouth-renderer/repin.py check: every cited and harness blob at the new pin must equal these; otherwise NEEDS-CLAUDE",
   "step1_sd_recheck": "closed by Amendment 1 A1.5: every SD call and the pragmatic N call concur"
- }
+ },
+ "repin_history": [
+  {
+   "from": "3c2907b85c10fe918ddc81b4c69de8888c9f321b",
+   "to": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
+   "utc": "2026-09-30T15:21:10Z",
+   "by": "research/packets/b2d-mouth-renderer/repin.py apply (all checks passed)"
+  }
+ ]
 }

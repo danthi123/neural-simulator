@@ -1,3 +1,6 @@
 node	host	file	sha256	source_git_sha	provisioned_ok	recorded_utc
 pool41	node-dl4g243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	3c2907b85c10fe918ddc81b4c69de8888c9f321b	yes	2026-09-29T18:21:59Z
 pool42	node-dl5d243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	3c2907b85c10fe918ddc81b4c69de8888c9f321b	yes	2026-09-29T18:22:00Z
+pool41	node-dl4g243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	5818dc629c5c0cd3cbb370c0c6cc16b314805b03	yes	2026-09-30T15:25:07Z
+pool42	node-dl5d243	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	5818dc629c5c0cd3cbb370c0c6cc16b314805b03	yes	2026-09-30T15:25:08Z
+workstation	dant123-wk	data/corpus/tinystories.txt	7a00272e6ca4a29c91d7bc3508de2c76dc1369b351637adf2769e1d3a3679aec	5818dc629c5c0cd3cbb370c0c6cc16b314805b03	yes	2026-09-30T15:25:08Z
