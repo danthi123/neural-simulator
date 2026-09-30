@@ -27,18 +27,24 @@ latency fix (research/arcc-b2b-d6-scoring), docs refresh publish-ready (docs-ref
 lane_builds.jsonl (primary checkout, uncommitted: `gates/compute_idle_persistent` blocks non-Markdown commits until the
 pool/GPU are busy; waiver budget 6.73/6 h frees ~18:30). **Next:** harvest each agent, review, merge SOUND branches.
 
+**SERVING SWITCH (2026-09-29, 22:40):** research/serving-simplify merged (3ee54e338): the `local-llm` unit now runs
+llama-swap in front of the same llama-server command (speed check: generation -2.45%, within the 5% bar; live
+smoke via `llm on` + one Anthropic Messages request passed; idle model auto-unloads after 1 h). GPU-crash watchdog and
+cloud profiles are merged but not installed (owner steps: docs/GPU_CRASH_RECOVERY.md, a cloud API key).
+
 **LANDING (2026-09-29, evening):** merged to main (7801d0813, b8c50b492, 4c6b62722, 99986c950, ea4977d29): arcc
 awake-completion GO 6/6 + D6 doubled-cell ruling + waiver_history clear_waiver fix; B2b COMPLETE (216/216 DEFINED,
 robust core 28/29, mean 0.843) + tools/b2b_score.py; B2d reply-level rescore (headline reply core 17/33) +
 comprehension-monitor lesion-twin crash fix + tools/b2d_score.py; docs-refresh's 25 ISSUES.md fixes; the local-model
 bake-off (Ollama vs Unsloth Studio). Pushed both remotes. Kept on their branches, not yet merged (packets awaiting
 their own gate verdicts): host-share-baselines, selection-seam-need-reversal (+ a host_share_bg_seam.py integration
-bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Next, this cycle:
-provision + queue host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit
-instrument sweep (243 pool jobs, dev seeds) per each branch's own HANDOFF. NOT queued: sleep transitive inference
-(its dev cupy seeds 8-11 were killed mid-build by a GPU pause/game cycle, not a code failure -- re-queued, gate
-seeds wait on its step-2 operating-point check passing first); B2d (needs a harness change first, NEEDS-CLAUDE per
-its own prereg).
+bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Queued this cycle:
+host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit instrument sweep
+(243 pool jobs, dev seeds). Sleep transitive inference: its dev cupy seeds 8-11 were killed mid-build once by a
+GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Step 2 operating-point check printed
+`all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
+went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
+NEEDS-CLAUDE per its own prereg).
 
 *Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
 

@@ -324,7 +324,16 @@ def test_llm_on_records_intent_when_it_refuses():
 
 def test_llm_on_does_not_refuse_forever_on_a_stale_running_pid_with_a_dead_dispatcher():
     """MEDIUM finding: a stale gpu.running (dead pid) left behind by a dispatcher that crashed, with no live
-    dispatcher at all, must NOT refuse forever -- nothing is left to ever dequeue and contend for the GPU."""
+    dispatcher at all, must NOT refuse forever -- nothing is left to ever dequeue and contend for the GPU.
+
+    LLM_PORT=18096 (2026-09-29 incident, post-llama-swap): this path reaches the REAL wait_up()/activate_profile()
+    curl calls (systemd-run is faked, so the unit never actually comes up and cmd_on ends up returning non-zero --
+    but the curl calls themselves are real). Without an isolated port, a REAL local-llm unit happening to be up
+    on the real 8080 (e.g. the owner's own concurrent session) makes `is_up()` see IT instead, and llm.sh's
+    activate_profile() then PUTs an unrelated profile onto that real, unrelated service and force-loads it --
+    caught live when this exact test collided with a real session, swapped its active model and pulled ~21 GB
+    onto the shared GPU for a profile nobody asked for. A LOCAL_LLM_SYSTEMCTL stub keeps this hermetic against
+    the unit's own state; it was never enough on its own once cmd_on started talking to the port on success."""
     with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.running"), "w").write("%d\tsome-job" % _dead_pid())
         # no gpu_queue.dpid and no .gpu_daemon.lock at all -> dispatcher_alive() must be false
@@ -335,14 +344,16 @@ def test_llm_on_does_not_refuse_forever_on_a_stale_running_pid_with_a_dead_dispa
         env["PATH"] = tmp + os.pathsep + env["PATH"]
         env["GPU_QUEUE_DIR"] = tmp
         env["LOCAL_LLM_SYSTEMCTL"] = systemctl
-        res = subprocess.run(["bash", _LLM_SH, "on", "qwen38-27b-iq4nl-mtp"], env=env, capture_output=True, text=True, timeout=10)
+        env["LLM_PORT"] = "18096"
+        res = subprocess.run(["bash", _LLM_SH, "on", "qwen38-27b-iq4nl-mtp"], env=env, capture_output=True, text=True, timeout=15)
         assert "refusing" not in res.stdout.lower(), res.stdout
         assert os.path.exists(sentinel), "a stale record with no live dispatcher must not block loading forever"
 
 
 def test_llm_on_does_not_refuse_forever_on_a_stale_queue_with_a_dead_dispatcher():
     """Same MEDIUM finding, for a stale non-empty gpu.queue rather than gpu.running: with no live dispatcher,
-    nothing will ever dequeue it, so it is not real contention."""
+    nothing will ever dequeue it, so it is not real contention. LLM_PORT=18096: see the sibling test above for
+    why an isolated port is required here (real network calls, not just a stubbed systemctl)."""
     with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.queue"), "w").write("SIM_BACKEND=cupy some-command --json raw/o.json\n")
         systemctl, _, _ = _fake_systemctl(tmp, "inactive")
@@ -352,7 +363,8 @@ def test_llm_on_does_not_refuse_forever_on_a_stale_queue_with_a_dead_dispatcher(
         env["PATH"] = tmp + os.pathsep + env["PATH"]
         env["GPU_QUEUE_DIR"] = tmp
         env["LOCAL_LLM_SYSTEMCTL"] = systemctl
-        res = subprocess.run(["bash", _LLM_SH, "on", "qwen38-27b-iq4nl-mtp"], env=env, capture_output=True, text=True, timeout=10)
+        env["LLM_PORT"] = "18096"
+        res = subprocess.run(["bash", _LLM_SH, "on", "qwen38-27b-iq4nl-mtp"], env=env, capture_output=True, text=True, timeout=15)
         assert "refusing" not in res.stdout.lower(), res.stdout
         assert os.path.exists(sentinel), "a stale queue with no live dispatcher must not block loading forever"
 
