@@ -363,7 +363,9 @@ write_sandbox_state() {
   printf 'mode=%s ts=%s pid=%s\n' "$POOL_SANDBOX_MODE" "$(date +%s)" "$$" > "$tmp" 2>/dev/null && mv -f "$tmp" "$SANDBOX_STATE"
 }
 
-mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
+# Runtime mode creates nothing up front: a missing queue just means nothing to pop, and every write into the
+# workspace happens inside the unit's confinement (see the guard before the main loop).
+[ -n "${SIM_WORKSPACE:-}" ] || { mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"; }
 
 node_is_idle() {
   # Has capacity = fewer than (cores - headroom) research runners AND load below its core count. The pool jobs are
@@ -787,6 +789,16 @@ if [ "${1:-}" = "--nodes-this-cycle" ]; then
   # .pool_extra_nodes (or $POOL_EXTRA_NODES_FILE) currently names, re-read fresh on every call.
   printf '%s %s\n' "$NODES" "$(extra_nodes)" | valid_node_names
   exit 0
+fi
+
+# RUNTIME MODE NEEDS ITS CONFINEMENT. The loop appends to workspace files (pool.running, .claims, the reservations),
+# and a symlink the agent planted there is followed. sim-pool-dispatch.service makes this user's own code, keys and
+# config read-only (ProtectHome=read-only), so such a write cannot land in them. Run by hand as sim, it could: a
+# planted pool.running -> <runtime>/tools/pool_sync.sh would append queue text to code sim runs. So when the code
+# root is writable, the loop does not start. The one-shot seams above do not append to the workspace.
+if [ -n "${SIM_WORKSPACE:-}" ] && [ -w "$ROOT" ]; then
+  echo "[pool-dispatch] ⛔ REFUSING to start: runtime mode (SIM_WORKSPACE) with a writable code root ($ROOT) means no confinement -- run it as sim-pool-dispatch.service" >&2
+  exit 1
 fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock

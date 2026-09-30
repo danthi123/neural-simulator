@@ -99,6 +99,14 @@ def test_runtime_mode_accepts_a_same_filesystem_symlink_and_legacy_mode_is_uncha
     assert q.read_text() == ""
 
 
+def test_runtime_mode_loop_refuses_to_start_unconfined(tmp_path: Path) -> None:
+    # The worktree running this test is writable, exactly like /home/sim/runtime outside its unit's ProtectHome.
+    ws = _workspace(tmp_path)
+    res = _run(DISPATCHER, [], {"SIM_WORKSPACE": str(ws)})
+    assert res.returncode == 1 and "REFUSING to start" in res.stderr and "writable code root" in res.stderr
+    assert not (ws / "research" / "queue" / "pool.queue").exists(), "runtime mode must create nothing up front"
+
+
 @pytest.mark.parametrize("answer,busy", [
     ("4 0.10 0 10 0 ROOT[$(touch${IFS}PWNED)]", True),   # total_gb reached $(( )) unchecked (ran on the old code)
     ("ROOT[$(touch${IFS}PWNED)] 0.10 0 10 0 15", True),  # cores reached $(( )) unchecked
