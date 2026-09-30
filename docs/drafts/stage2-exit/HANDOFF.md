@@ -93,7 +93,7 @@ cd $W && bash -c 'bash tools/mem_ok.sh 7 && bash tools/memcap.sh 9 -- env SIM_NO
 ```bash
 cd $W
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --selftest | tail -1                    # must print: SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py | tail -1   # must print: 20 passed
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py | tail -1   # must print: 21 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null       # every runner appends to this shared log; never commit it
 git status --short | grep -v "^??" | wc -l                                      # must print 0 (nothing uncommitted)
 SHA=$(cat docs/drafts/stage2-exit/GATE_SHA); git merge-base --is-ancestor $SHA HEAD && echo GATE-SHA-OK

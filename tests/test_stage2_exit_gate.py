@@ -14,7 +14,6 @@ from research.runners import stage2_exit_gate as SG
 # production resolves the shipped LTM as wikidata_100k first, wikidata_core_15k as the fallback
 # (webapp/server.py::_default_ltm_bundle_dir, the #108 flip of 2026-09-02): the novel words must be absent from both
 _LTM_BUNDLES = ("wikidata_100k", "wikidata_core_15k")
-_LTM_FACTS = os.path.expanduser("~/Projects/sim-data/knowledge_bundles/wikidata_core_15k/facts.json")
 
 
 def test_selftest_passes():
@@ -308,3 +307,155 @@ def test_process_record_reports_peak_rss_and_the_resolved_ltm_bundle():
             return "/x/knowledge_bundles/wikidata_100k"
     rec = SG.process_record(_Srv)
     assert rec["peak_rss_mb"] > 0 and rec["ltm_bundle"] == "wikidata_100k"
+
+
+# ── end to end over ALL five groups (review 2026-09-30): the bars are reachable by an ideal brain, and each clause bites ──
+_S = SG.EXPECTED_SOURCE
+_AB2 = "I don't know about that."
+
+
+def _e2e_R(answer, svo=None, abst=False, **extra):
+    d = {"answer": answer, "abstained": abst, "recalled_svo": svo, "source": _S, "derived": False}
+    d.update(extra)
+    return d
+
+
+def _e2e_fr(a, v, p):
+    return _e2e_R("the %s %s the %s" % (a, SG.VERB_3SG[v], p), [a, v, p])
+
+
+def _e2e_teach_resps(turns):
+    out = {}
+    for l, m, r in turns:
+        if r in ("teach", "expose"):
+            out[l] = _e2e_R("ok " + m)
+    return out
+
+
+def _e2e_conv(kind):
+    turns = SG.turns_for("conv", 1, "permuted" if kind == "permuted" else "intact_a")
+    r = _e2e_teach_resps(turns)
+    if kind == "permuted":
+        r.update(p_fox_chase=_e2e_R(_AB2, abst=True), p_more=_e2e_R(_AB2, abst=True),
+                 p_owl_hunt=_e2e_R(_AB2, abst=True), c_mole_hunt=_e2e_fr("mole", "hunt", "owl"))
+    else:
+        r.update(p_fox_chase=_e2e_fr("fox", "chase", "hare"), p_more=_e2e_fr("fox", "eat", "berry"),
+                 p_owl_hunt=_e2e_fr("owl", "hunt", "mole"), c_mole_hunt=_e2e_R(_AB2, abst=True))
+        if kind == "lesion":
+            r["p_fox_chase"] = _e2e_R("The fox chases hare.", ["fox", "chase", "hare"])
+    r["p_deer_sleep"] = _e2e_R("the deer sleeps in the meadow", ["deer", "sleep", "meadow"])
+    r["c_dog_chase"] = _e2e_fr("dog", "chase", "cat")
+    r["c_oov"] = _e2e_R(_AB2, abst=True)
+    return r
+
+
+def _e2e_infer(kind):
+    turns = SG.turns_for("infer", 1, "permuted" if kind == "permuted" else "intact_a")
+    r = _e2e_teach_resps(turns)
+    if kind == "permuted":
+        df = [["heron", "hunt", "gnat"], ["gnat", "eat", "frog"]]
+        r.update(c_heron_hunt=_e2e_fr("heron", "hunt", "gnat"), c_frog_eat=_e2e_R(_AB2, abst=True))
+    else:
+        df = [["heron", "hunt", "frog"], ["frog", "eat", "gnat"]]
+        r.update(c_heron_hunt=_e2e_fr("heron", "hunt", "frog"), c_frog_eat=_e2e_fr("frog", "eat", "gnat"))
+    r["p_prey_eat"] = _e2e_R("I derived this from: ... the %s eats the %s" % (df[1][0], df[1][2]), None, derived=True,
+                        derived_from=df)
+    if kind == "lesion":
+        r["p_prey_eat"] = _e2e_R(_AB2, abst=True)
+    r.update(c_prey_chase=_e2e_R(_AB2, abst=True), p_yesno=_e2e_fr("crow", "chase", "wren"), c_dog_chase=_e2e_fr("dog", "chase", "cat"))
+    return r
+
+
+def _e2e_emo(kind):
+    turns = SG.turns_for("emo", 1, "permuted" if kind == "permuted" else "intact_a")
+    r = _e2e_teach_resps(turns)
+    words = {"joy": "happy", "fear": "afraid", "anger": "angry", "sadness": "sad"}
+    r["feel_base"] = SG._synthetic_feel(0.0)
+    for c in ("joy", "fear", "anger", "sadness"):
+        w = SG.SITUATION_SWAP[c] if kind == "permuted" else c
+        d = 0.3 if w == "joy" else -0.3
+        r["feel_%s" % c] = SG._synthetic_feel(0.0) if kind == "lesion" else SG._synthetic_feel(d, category=words[w])
+    return r
+
+
+def _e2e_inner(kind):
+    turns = SG.turns_for("inner", 1, "permuted" if kind == "permuted" else "intact_a")
+    r = _e2e_teach_resps(turns)
+    r["p_private"] = _e2e_R("Something's been on my mind — cat eat fish. What does cat eat?")
+    if kind == "permuted":
+        r.update(p_chase_all=_e2e_fr("lynx", "chase", "beetle"), p_chase_all_vole=_e2e_fr("vole", "chase", "beetle"),
+                 c_lynx_chase=_e2e_fr("lynx", "chase", "mite"), c_beetle_all=_e2e_R(_AB2, abst=True),
+                 c_mite_all=_e2e_fr("mite", "chase", "beetle"))
+    else:
+        r.update(p_chase_all=_e2e_fr("lynx", "chase", "mite"), p_chase_all_vole=_e2e_fr("vole", "chase", "mite"),
+                 c_lynx_chase=_e2e_fr("lynx", "chase", "vole"), c_mite_all=_e2e_R(_AB2, abst=True),
+                 c_beetle_all=_e2e_fr("beetle", "chase", "mite"))
+    r["c_dog_chase"] = _e2e_fr("dog", "chase", "cat")
+    if kind == "lesion_workspace":
+        r.update(p_chase_all=_e2e_fr("lynx", "chase", "vole"), p_chase_all_vole=_e2e_fr("vole", "chase", "beetle"))
+    if kind == "lesion_selfinit":
+        r["p_private"] = _e2e_R("Nothing in particular is surfacing for me to bring up right now.", abst=True)
+    return r
+
+
+def _e2e_shard(group, arm, resp, seed):
+    base = arm.split(".rep")[0]
+    turns = SG.turns_for(group, seed, "permuted" if base == "permuted" else "intact_a")
+    return {"seed": seed, "group": group, "arm": arm, "responses": resp, "sources": [_S], "pythonhashseed_ok": True,
+            "corpus_present": True, "builtin_facts": [["dog", "chase", "cat"], ["cat", "eat", "fish"]],
+            "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns]}
+
+
+def _e2e_build(td, seeds, mk):
+    for seed in seeds:
+        for group in SG.GROUPS:
+            for arm in SG.arms_for(group):
+                base = arm.split(".rep")[0]
+                p = SG.shard_path(td, seed, group, arm)
+                os.makedirs(os.path.dirname(p), exist_ok=True)
+                json.dump(_e2e_shard(group, arm, mk(group, base), seed), open(p, "w"))
+
+
+def _e2e_ideal(group, base):
+    if group == "ask":
+        k = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_graded": "graded_lesion",
+             "permuted": "permuted"}[base]
+        return SG._synthetic_ask(k)
+    kind = "permuted" if base == "permuted" else ("lesion" if base.startswith("lesion") else "intact")
+    if group == "inner" and base.startswith("lesion"):
+        kind = base
+    if base in ("transitive_chat", "qp_lesion"):
+        kind = "intact"
+    return {"conv": _e2e_conv, "infer": _e2e_infer, "emo": _e2e_emo, "inner": _e2e_inner}[group](kind)
+
+
+
+
+def test_every_group_passes_on_an_ideal_brain_and_each_clause_bites(tmp_path):
+    """The selftest drives only `ask` through the aggregate. Here every group: an IDEAL reply set PASSES (a bar no
+    brain could reach would be a guaranteed FAIL); lesion arms equal to intact FAIL 'not load-bearing'; a permuted
+    arm that ignores the exposure FAILs 'not exposure-driven'; all-abstain and echoed replies are never correct."""
+    td = str(tmp_path)
+    _e2e_build(td, (1, 2), _e2e_ideal)
+    agg = SG.aggregate(td, seeds=(1, 2))
+    assert agg["verdict"] == "PASS" and set(agg["criteria"].values()) == {"PASS"}, agg["criteria"]
+
+    _e2e_build(td, (1, 2), lambda g, b: _e2e_ideal(g, "intact_a") if b.startswith("lesion") else _e2e_ideal(g, b))
+    agg = SG.aggregate(td, seeds=(1, 2))
+    for g, d in agg["groups"].items():
+        assert d["verdict"] == "FAIL" and any("not load-bearing" in w for w in d["why"]), (g, d["why"])
+
+    _e2e_build(td, (1, 2), lambda g, b: _e2e_ideal(g, "intact_a") if b == "permuted" else _e2e_ideal(g, b))
+    agg = SG.aggregate(td, seeds=(1, 2))
+    for g, d in agg["groups"].items():
+        assert d["verdict"] == "FAIL" and any("not exposure-driven" in w for w in d["why"]), (g, d["why"])
+
+    _e2e_build(td, (1, 2), lambda g, b: {l: _e2e_R(_AB2, abst=True) for l in _e2e_ideal(g, b)})
+    agg = SG.aggregate(td, seeds=(1, 2))
+    assert all(d["n_correct"] == 0 for d in agg["groups"].values()) and agg["GO"] is False
+
+    def _echo(g, b):
+        return {l: _e2e_R(m) for l, m, _r in SG.turns_for(g, 1, "permuted" if b == "permuted" else "intact_a")}
+    _e2e_build(td, (1, 2), _echo)
+    agg = SG.aggregate(td, seeds=(1, 2))
+    assert all(d["n_correct"] == 0 for d in agg["groups"].values()) and agg["GO"] is False
