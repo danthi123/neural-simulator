@@ -181,9 +181,13 @@ def test_provisioning_executes_the_generator_extracted_from_head():
     assert '"$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"' in script
     assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
     assert '"$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md"' in script
-    assert "numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0" in script
-    assert '\\"pillow\\":PIL.__version__' in script
-    assert "pyyaml==6.0.3 pytest==8.4.1" in script
+    # The venv package set moved to requirements-pool.txt (2026-09-30), installed + recorded by pool_venv_deps.sh.
+    pins = (root / "requirements-pool.txt").read_text(encoding="utf-8")
+    for pin in ("numpy==2.2.6", "scipy==1.15.3", "h5py==3.16.0", "pillow==12.0.0", "pyyaml==6.0.3", "pytest==8.4.1"):
+        assert pin in pins
+    assert 'bash "$ROOT/tools/pool_venv_deps.sh" --remote-root "$REMOTE_ROOT" --requirements "$POOL_REQ"' in script
+    venv_deps = (root / "tools/pool_venv_deps.sh").read_text(encoding="utf-8")
+    assert "--write-env .pool_environment.json" in venv_deps
     assert "COMPLETE SOURCE FILE SET VERIFY FAIL" in script
     assert 'source_ancestry_sha256=%s' in script
 
