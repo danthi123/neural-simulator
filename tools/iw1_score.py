@@ -285,6 +285,10 @@ def main(argv=None):
     else:
         flipped = [x for x in a.flipped.split(",") if x]
         res, code = score_B(a.base_tag, a.base_pin, a.flip_tag, a.flip_pin, flipped, base=a.base)
+    # provenance + device for the committed verdict file (gates artifact_provenance / device_and_cost): this scorer
+    # builds no brain; every cell it counts had to carry SIM_BACKEND=numpy in its sidecars (b2d_score rule 3)
+    res.update(runner="tools/iw1_score.py", argv=list(sys.argv if argv is None else argv),
+               sim_backend="numpy (the scored shards'; this scorer builds no brain)")
     print(json.dumps({k: res[k] for k in res if k not in ("s0_base", "s0_flip", "s2_base", "s2_flip")},
                      indent=1, default=str))
     if a.out:

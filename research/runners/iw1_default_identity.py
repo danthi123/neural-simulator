@@ -151,7 +151,10 @@ def compare(a: dict, b: dict, expect: str) -> dict:
     reply_diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
                   if [x.get(k) for k in ("answer", "abstained", "recalled_svo")]
                   != [y.get(k) for k in ("answer", "abstained", "recalled_svo")]]
-    v = {"arms": [a.get("arm"), b.get("arm")], "git_shas": [a.get("git_sha"), b.get("git_sha")], "expect": expect,
+    backends = sorted({str(a.get("sim_backend")), str(b.get("sim_backend"))})
+    v = {"runner": "research.runners.iw1_default_identity --compare", "argv": list(sys.argv),
+         "sim_backend": backends[0] if len(backends) == 1 else backends,   # the compared arms' backend (no build here)
+         "arms": [a.get("arm"), b.get("arm")], "git_shas": [a.get("git_sha"), b.get("git_sha")], "expect": expect,
          "preconditions": pre, "differing_turns": diff, "reply_differing_turns": reply_diff}
     if not all(pre.values()):
         v["verdict"], v["ok"] = "UNDEFINED", None
@@ -174,6 +177,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.compare:
         v = compare(json.load(open(a.compare[0])), json.load(open(a.compare[1])), a.expect)
+        v["inputs"] = [os.path.abspath(p) for p in a.compare]
         print(json.dumps(v, indent=1))
         if a.out:
             os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)

@@ -41,9 +41,19 @@ prereg are copied verbatim (winner set by intrinsic excitability, not discourse 
 
 ## Dev seed 7 (Claude, 2026-09-29)
 
-WMF_DEV_PLACEHOLDER
+The full 32-build probe was not re-run locally (2-3 h per seed; it is step R on the pool, and its 6-seed GO at
+4da72fd23 used the same organ code, which differs at this packet only by the anchor, pinned by the truth-table
+tests). Dev evidence here is the real-handler identity script, seed 7, commit 6f4c02368
+(`research/findings/raw/_iw1/dev_s7/identity/`, verdicts in `../verdicts/`): `default` equals `off` on all 13
+turns (byte-identical-off), and `on:wm-focus-bind` differs from `default`. The reply that changes is the swapped-order
+session: after "the cat and the dog walked in", "what does it chase" answers "The dog chases cat." by the positional
+route and "I don't know about that." with the flag on (the WTA retrieved "cat", and no stored fact has the cat
+chasing). The first ordering answers "the dog chases the cat" either way.
 
 ## NEEDS CLAUDE (packet-specific)
 
 1. Once default-on, should `LB_WMB_FOCUS_PROBE` count in the headline fraction (kind `neural-lesion-opt-in` today)?
    A harness decision; until then the faculty's reply-level evidence lives in this packet's R record.
+2. Product behavior after a flip: an anaphor now lands on whichever held referent wins the WTA (set by intrinsic
+   excitability, not salience), so some "it" questions that the positional route answered will abstain (dev seed 7:
+   "what does it chase" after "the cat and the dog walked in"). Rule whether that is acceptable before the merge.

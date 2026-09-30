@@ -94,7 +94,7 @@ Any other count: STOP, NEEDS-CLAUDE. (This commit is a child of P and changes no
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/packets/integration-wave1/env.sh
 cd $P
-bash -c 'R="iw1 step D dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
+bash -c 'R="iw1 step D dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=12"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
 bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-d6-hebbian-write-flip-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_d6_$P7.txt"
 bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-xedge-surprise-worldmodel-flip-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_swm_$P7.txt"
 bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-wm-focus-bind-flip-PREREGISTRATION.md; mem_gb=10"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_wmf_$P7.txt"
@@ -105,7 +105,8 @@ bash -c 'R="iw1 step R, prereg research/findings/2026-09-29-iw1-wm-focus-bind-fl
 | every add succeeds | continue; note the time in WORKLOG |
 | an add fails (`ADD FAILED`, a shape-check or prereg refusal) | STOP that file. NEEDS-CLAUDE with the refusal text. Do not edit the line |
 
-Expected wall time: D about 1 h, R d6/swm about 30 min per seed, R wmf 2-3 h per seed (32 builds).
+Expected wall time: D about 30-60 min per arm (each identity arm builds two chat sessions, ~12 GB peak: one per
+node), R d6/swm about 30 min per seed, R wmf 2-3 h per seed (32 builds).
 
 ## 5. Score steps D and R (after `bash tools/status.sh` shows the lines done; results land under `$P`)
 
@@ -186,7 +187,7 @@ source /home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/p
 cd $P
 bash -c 'R="iw1 step B, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=8"; sed -n 1,43p '"$W/$K/jobs/flip_$F7.txt"' | while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done'
 # later waves: sed -n 44,86p, 87,129p, 130,172p, 173,215p, 216,258p, 259,301p (until the file ends)
-bash -c 'R="iw1 step F dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=8"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
+bash -c 'R="iw1 step F dev seed 7, prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md; mem_gb=12"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
 ```
 
 Log each wave (epoch, first-last line) in `$K/waves.tsv`. Every B line starts with
@@ -236,10 +237,24 @@ line with the same `--checked` reason. A second failure stays UNDEFINED.
 
 ## 9. Dev seed 7 results (Claude, 2026-09-29, worktree at the packet commit, local numpy)
 
-See each packet's HANDOFF for its row's dev result. Identity (step D shape, dev seed 7):
-`research/findings/raw/_iw1/dev_s7/identity/` and the summary lines filled in below.
+Step D's shape, run locally at commit 6f4c02368 (dev seed 7, 13-turn script, real `/api/brain-chat` handler, one fresh
+process per arm): `research/findings/raw/_iw1/dev_s7/identity/*.json`, verdicts in `.../dev_s7/verdicts/`.
 
-DEV_RESULTS_PLACEHOLDER
+- **D0 byte-identical-off: IDENTICAL** -- `default` equals `off` on all 13 turns.
+- **D_wm-focus-bind: DIFFERS**, and the reply changes: in the swapped-order session "what does it chase" answers "The
+  dog chases cat." (positional) vs "I don't know about that." (flag on; the WTA retrieved "cat").
+- **D_xedge-surprise-worldmodel: DIFFERS** on turns 7-12; the reply changes on "what do you expect?": margin +430 Hz
+  (default) vs +370 Hz (edge on). Four violation turns were not enough here for the notice to stop.
+- **D_d6-hebbian-write: DIFFERS** on 12 of 13 turns by response body (the `d6_hebbian` block and engram-derived
+  sets), with NO reply-text difference on this script: an intact recall reads the same whether the fact was copied
+  or written. The write's reply-level effect shows only under the freeze lesion (step R; the dev LB run above).
+- Latency (report only): arm wall time default 965.5, off 881.5, on_d6-hebbian-write 826.5, on_wm-focus-bind 951.3, on_xedge-surprise-worldmodel 892.2 s; the first turn of each session includes a brain build (up to ~290 s
+  locally with other jobs running); later turns 5-25 s. Each identity arm peaks near 12 GB (two chat sessions): the
+  first local attempt under a 10 GB cap stalled in memory reclaim and was killed; rerun under 16 GB.
+
+Dev LB rows (local, `--repeats 2`, commit 106a20da5): `d6-hebbian-write` regressed at trace and reply level (the
+freeze lesion abstains); `xedge-surprise-worldmodel` regressed at trace and reply level (the margin text). Details
+in each packet's HANDOFF. These are dev runs: their sidecars are not pool git_archive, so they carry no gate weight.
 
 ## 10. Dropped from the wave: the learned-referent lexicon
 
@@ -250,6 +265,14 @@ the multi-referent organ's two-referent scope. Logged in research/FAILURE_LOG.md
 xfail test. Its reply-level probe worked on dev seed 7 (intact: "I'm holding 2 referents in working memory at once:
 air and alarm."; lesion: the ordinary abstain), so it is the natural wave-2 packet once the closed-class admission is
 fixed. Nothing to do here.
+
+Other default-off candidates screened and not chosen for this wave (for Claude's wave-2 list): the transitive
+yes/no chat route (`BRAIN_TRANSITIVE_CHAT`; its keystone chase is 6/6 GO, but the chat route has only a
+preregistration, no 6-seed chat-level gate); the false-belief chat wire (`BRAIN_FALSE_BELIEF_CHAT`; seed-7 smoke
+only at chat level); DA tag-and-capture (`BRAIN_DA_TAG_CAPTURE`; runner-level 6/6, but the pair review found an
+ordinary fact told 4 h before sleep is not kept on 6/6 seeds, so a flip would regress today's default); the
+SlotBinder composer (GO scoped to N=32 of the 404-fact corpus); the affect-marker SETTLE route (its own flip arc is
+in flight).
 
 ## 11. Finding and hand-back (after section 7 reads PASS)
 
