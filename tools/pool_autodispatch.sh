@@ -21,7 +21,20 @@ set -uo pipefail
 # worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
 # 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-_GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
+# RUNTIME MODE (2026-09-30, trust boundary of the server move; docs/plans/2026-09-30-home-to-server-MIGRATION.md
+# section 10). On srv-host-0 this script runs as the unprivileged user `sim` from a reviewed checkout
+# (/home/sim/runtime) that the agent cannot write, and the agent-writable workspace is DATA only: SIM_WORKSPACE names
+# it, and only the queue files below are read or written there. In this mode no git command runs at all (a git
+# command inside the workspace would execute its agent-controlled .git/config), and everything that can make this
+# process run a program or pick an ssh target stays in the code root ($ROOT): the repo-local ssh config (its
+# ProxyCommand runs a shell), the extra-node list, the AWS state files and the pause markers. On the server those
+# files do not exist in the runtime, so the AWS lane is off there. Without SIM_WORKSPACE nothing changes.
+if [ -n "${SIM_WORKSPACE:-}" ]; then
+  DATA_ROOT="$SIM_WORKSPACE"
+else
+  _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
+  DATA_ROOT="$ROOT"
+fi
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN tools/ dir (unlike $ROOT above,
 # this follows whichever checkout/worktree is actually running -- used below so the stale-HostName refresh
 # invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
@@ -29,7 +42,7 @@ SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN t
 source "$SELF_DIR/pool_revision_marker.sh"
 # shellcheck source=tools/pool_nodes.sh
 source "$SELF_DIR/pool_nodes.sh"
-QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
+QUEUE="${POOL_QUEUE_PATH:-$DATA_ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
 # MEMORY RESERVATIONS (2026-09-23). The RSS snapshot node_is_idle reads is taken seconds after the previous launch,
@@ -39,7 +52,7 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # --checked reason), else POOL_JOB_EST_GB. The reservation double-counts a job whose RSS has already caught up
 # (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
-RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
+RESV="${POOL_RESERVATIONS_PATH:-$DATA_ROOT/research/queue/.pool_reservations}"
 GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23, tools/aws_pool_node.sh). Two gitignored, machine-local files, never
 # ~/.ssh/config (which this tooling must never edit):
@@ -114,6 +127,20 @@ extra_nodes() {
   [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
 }
 
+valid_node_names() {
+  # stdin: whitespace-separated node names -> stdout: the ones that are plain host aliases, one line. A host argument
+  # that starts with '-' is parsed by ssh/rsync as an OPTION (-oProxyCommand=... runs a shell), and a name arrives
+  # here from files (.pool_extra_nodes, pause markers), so every name is checked before any ssh sees it (2026-09-30
+  # trust boundary). `read -a` splits without glob expansion.
+  local n out="" names=()
+  read -r -a names || true
+  for n in "${names[@]}"; do
+    if [[ $n =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then out="$out $n"
+    else echo "[pool-dispatch] ⛔ ignoring node name $(printf '%q' "$n") (not a plain host alias)" >&2; fi
+  done
+  printf '%s\n' "${out# }"
+}
+
 cycle_setup() {
   # ONE-FUNCTION FIX (2026-09-23 fix round #2, re-review MEDIUM): the OLD `--print-ssh-f-loop` test seam called
   # `refresh_ssh_f` directly, inline -- a COPY of the production loop's shape, not the production loop itself.
@@ -129,7 +156,7 @@ cycle_setup() {
   # Runs BEFORE CYCLE_NODES is computed below so a node this call just re-registered is picked up THIS cycle,
   # not the next one.
   reregister_stale_paused_nodes
-  CYCLE_NODES="$NODES $(extra_nodes)"
+  CYCLE_NODES=$(printf '%s %s\n' "$NODES" "$(extra_nodes)" | valid_node_names)
   SANDBOX_READY=()   # re-probe every node's sandbox readiness each cycle (bwrap can be installed between cycles)
   # Reset the per-cycle revision-availability cache (see its own comment, right before revision_available_cached())
   # so each cycle re-probes fresh (a node CAN gain a revision between cycles, e.g. aws_pool_node.sh's
@@ -287,7 +314,7 @@ case "$POOL_SANDBOX_MODE" in
      POOL_SANDBOX_MODE=on ;;
 esac
 SANDBOX_WRAPPER="${POOL_SANDBOX_WRAPPER:-$SELF_DIR/pool_job_sandbox.sh}"   # TEST-ONLY override
-SANDBOX_STATE="${POOL_SANDBOX_STATE_PATH:-$ROOT/research/queue/.pool_sandbox_state}"
+SANDBOX_STATE="${POOL_SANDBOX_STATE_PATH:-$DATA_ROOT/research/queue/.pool_sandbox_state}"
 AGENT_JOB_MARKER="AGENT_JOB_SRC=sim-agent"   # the marker tools/agent_gateway_submit.py embeds in every line it builds
 declare -A SANDBOX_READY=()   # node -> 1/0, reset every cycle in cycle_setup (fill_node runs in the main shell)
 NODE_SANDBOX=0                # the decision for the node fill_node is filling right now (read by pop_job too)
@@ -359,8 +386,19 @@ node_is_idle() {
   out=$(printf '%s\n' "$raw" | head -1)
   local committed
   committed=$(printf '%s\n' "$raw" | tail -n +2 | committed_from_environ)
-  set -- $out
-  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}" total_gb="${6:-0}"
+  local cores load procs avail_gb max_job_gb total_gb rest
+  read -r cores load procs avail_gb max_job_gb total_gb rest <<<"$out"
+  cores="${cores:-0}" load="${load:-99}" procs="${procs:-99}" avail_gb="${avail_gb:-0}" max_job_gb="${max_job_gb:-0}"
+  total_gb="${total_gb:-0}"
+  # A NODE'S ANSWER IS UNTRUSTED (2026-09-30 trust boundary). Pool jobs are agent-authored and run on the node, so
+  # its probe output must never reach bash arithmetic unchecked: $(( x )) evaluates a subscript such as
+  # `a[$(cmd)]` inside x, i.e. runs cmd here, as the dispatcher's user. `cores` and `total_gb` reached $(( )) with
+  # no check before this. Every field must be a plain number, else the node is treated as busy.
+  if ! [[ $cores =~ ^[0-9]+$ && $procs =~ ^[0-9]+$ && $avail_gb =~ ^[0-9]+$ && $max_job_gb =~ ^[0-9]+$ \
+          && $total_gb =~ ^[0-9]+$ && $committed =~ ^[0-9]+$ && $load =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    echo "[pool-dispatch] ⛔ $node: malformed capacity-probe answer, treated as busy: $(printf '%q' "$out" | cut -c1-160)" >&2
+    return 1
+  fi
   # COUNT ONLY PYTHON RUNNERS (2026-09-23). The old `pgrep -fc research.runners` also counted every `flock`
   # waiter, `bash -c` wrapper and ssh line carrying the job text, so a node with 2 working jobs + 4 jobs queued
   # behind a lab-chosen flock read 11/11 "full" at load ~5.6 on 12 cores while 13 jobs sat queued. Load stays
@@ -467,15 +505,56 @@ check_fast_fail() {
   esac
 }
 
+queue_snapshot() {
+  # queue_snapshot -- RUNTIME MODE ONLY (SIM_WORKSPACE set): copy the live queue into a PRIVATE file and print its
+  # path. pop_job copies queue text into files the agent can read (.claims, .malformed, .unchecked, pool.running) and
+  # to the nodes, and the agent owns every directory on the way to $QUEUE, so pool.queue could be a symlink to one of
+  # this user's secrets (~/.ssh/sim_ed25519: its lines would be quarantined as "malformed", readable). The check runs
+  # on the OPENED file, so no swap between a check and the read can beat it: it must be a regular file on the
+  # workspace's own filesystem (the device of the workspace's parent, the dataset mount, which the agent cannot
+  # replace), i.e. a file the agent could read anyway. Anything else: no pop this cycle.
+  local snap fd want got kind
+  want=$(stat -c %d -- "$(dirname "$SIM_WORKSPACE")" 2>/dev/null) || return 1
+  exec {fd}<"$QUEUE" || return 1
+  got=$(stat -L -c %d /dev/stdin <&"$fd" 2>/dev/null); kind=$(stat -L -c %F /dev/stdin <&"$fd" 2>/dev/null)
+  case "$kind" in "regular file"|"regular empty file") ;; *) got="" ;; esac
+  if [ -z "$got" ] || [ "$got" != "$want" ]; then
+    exec {fd}<&-
+    echo "[pool-dispatch] ⛔ REFUSING the queue: $QUEUE is not a regular file on the workspace filesystem (device ${got:-?} != ${want}, type ${kind:-?}) -- nothing popped" >&2
+    return 1
+  fi
+  snap=$(mktemp "${TMPDIR:-/tmp}/pool_queue_snap.XXXXXX") || { exec {fd}<&-; return 1; }
+  cat <&"$fd" > "$snap"; exec {fd}<&-
+  printf '%s\n' "$snap"
+}
+
+queue_install() {
+  # queue_install <new> <read-copy> -- make <new> the live queue. Legacy mode: <new> is $QUEUE.tmp, renamed over the
+  # queue (unchanged). Runtime mode: <new> and <read-copy> are private; the content is WRITTEN into the workspace
+  # (never read back from it) and renamed into place, and the private read copy follows it.
+  if [ -n "${SIM_WORKSPACE:-}" ]; then
+    cp -f "$1" "$2" && cat "$1" > "$QUEUE.tmp" && mv -f "$QUEUE.tmp" "$QUEUE"
+    rm -f "$1"
+  else
+    mv "$1" "$QUEUE"
+  fi
+}
+
 pop_job() {
   # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
   # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
   # dispatcher instances from claiming the same job. [node] is OPTIONAL and omitted by test seams that only
   # care about size-based selection (--pop-once) -- when absent, the revision check is skipped entirely
   # (unchanged pre-fix behaviour), matching every caller that never dispatches to a real node.
-  local job="" node="${2:-}"
+  local job="" node="${2:-}" qin="$QUEUE" qnew="$QUEUE.tmp"
   exec 9>"$QUEUE.lock"
   flock 9 || return 1
+  # RUNTIME MODE: every read below is of a private snapshot (see queue_snapshot); legacy mode reads $QUEUE as before.
+  if [ -n "${SIM_WORKSPACE:-}" ]; then
+    qin=$(queue_snapshot) || { flock -u 9; return 1; }
+    qnew="$qin.new"
+    trap 'rm -f "$qin" "$qnew"; trap - RETURN' RETURN
+  fi
   # A generic queue producer once wrote GPU-style command-only lines into this
   # timestamped pool queue. Monitoring counted them, while this consumer could
   # never select them. Preserve such records for diagnosis and remove them from
@@ -484,17 +563,17 @@ pop_job() {
   malformed_count=$(awk -F'\t' '
     $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1) {n++}
     END {print n+0}
-  ' "$QUEUE")
+  ' "$qin")
   if [ "${malformed_count:-0}" -gt 0 ]; then
     awk -F'\t' '
       $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1)
-    ' "$QUEUE" | while IFS= read -r line; do
+    ' "$qin" | while IFS= read -r line; do
       printf '%s\t%s\n' "$(date +%s)" "$line"
     done >> "$QUEUE.malformed"
     awk -F'\t' '
       $0 ~ /^[[:space:]]*(#|$)/ || ($1 ~ /^[0-9]+$/ && NF > 1)
-    ' "$QUEUE" > "$QUEUE.tmp"
-    mv "$QUEUE.tmp" "$QUEUE"
+    ' "$qin" > "$qnew"
+    queue_install "$qnew" "$qin"
     echo "[pool-dispatch] BLOCKED + quarantined $malformed_count malformed queue record(s); use tools/pool_queue.sh" >&2
   fi
   # STALENESS GUARD: an entry older than MAX_AGE is debris, not staged work. Learned immediately -- the first
@@ -528,7 +607,7 @@ pop_job() {
     if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
     job="$cand"; break
   done < <(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$QUEUE")
+             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$qin")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -539,14 +618,14 @@ pop_job() {
     ""|*"#checked:"*) ;;
     *) echo "[pool-dispatch] BLOCKED unchecked job -- requeue via: bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'" >&2
        echo "                $(echo "$job" | cut -c1-96)" >&2
-       grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
-       mv "$QUEUE.tmp" "$QUEUE"
+       grep -vF "	$job" "$qin" > "$qnew" 2>/dev/null || true
+       queue_install "$qnew" "$qin"
        printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.unchecked"
        flock -u 9; printf ''; return 0 ;;
   esac
   local stale
   stale=$(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-          "$POOL_FRESH_AWK"' NF>1 && $1+0 < now - maxage($0)' "$QUEUE" | wc -l)
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 < now - maxage($0)' "$qin" | wc -l)
   [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h" >&2
   if [ -z "$job" ]; then flock -u 9; printf ''; return 0; fi
   # Keep the full timestamped record, including the checked reason, before the
@@ -554,8 +633,8 @@ pop_job() {
   # to reconstruct the exact command and rationale.
   printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.claims"
   if true; then
-    grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
-    mv "$QUEUE.tmp" "$QUEUE"          # unconditional: grep -v exits 1 when it filters everything, and a
+    grep -vF "	$job" "$qin" > "$qnew" 2>/dev/null || true
+    queue_install "$qnew" "$qin"      # unconditional: grep -v exits 1 when it filters everything, and a
                                        # `&& mv` there once made a single-line queue never clear, relaunching
                                        # the same job nine times.
   fi
@@ -706,7 +785,7 @@ fi
 if [ "${1:-}" = "--nodes-this-cycle" ]; then
   # TEST SEAM: prints the node list ONE dispatch cycle would use -- POOL_NODES plus whatever
   # .pool_extra_nodes (or $POOL_EXTRA_NODES_FILE) currently names, re-read fresh on every call.
-  printf '%s %s\n' "$NODES" "$(extra_nodes)" | tr -s ' ' | sed 's/^ *//; s/ *$//'
+  printf '%s %s\n' "$NODES" "$(extra_nodes)" | valid_node_names
   exit 0
 fi
 
