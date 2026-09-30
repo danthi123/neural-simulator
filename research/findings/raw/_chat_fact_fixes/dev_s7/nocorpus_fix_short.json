@@ -1,0 +1,732 @@
+{
+ "script": "short",
+ "seed": 7,
+ "root": "/home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix",
+ "corpus_present": false,
+ "corpus_missing": [
+  "tinystories.txt",
+  "wikitext.txt",
+  "simplewiki.txt",
+  "websters1913.json"
+ ],
+ "allow_degraded": true,
+ "ltm_bundle": "wikidata_100k",
+ "pythonhashseed": "0",
+ "sim_backend": "numpy",
+ "corpus_files_opened": null,
+ "n_turns": 3,
+ "wall_s": 508.8,
+ "turns": [
+  {
+   "turn": 0,
+   "message": "the wolf hunts the deer",
+   "session": "cff-short",
+   "status": 200,
+   "sha_raw": "3854df6a2ac14eacd2d6eb7815cc0eb7a2a9b26b5460dc90c46ab654f532cf8b",
+   "sha_canon": "74a7661c47ed9049af3bb6fb28a8a73932650e80835bed526af2a1f0f034d71c",
+   "dropped_volatile_keys": [],
+   "answer": "the wolf hunts the deer",
+   "abstained": false,
+   "recalled_svo": [
+    "wolf",
+    "hunt",
+    "deer"
+   ],
+   "source": "tiny-demo +LTM",
+   "corpus_present_field": false,
+   "body_canon": {
+    "answer": "the wolf hunts the deer",
+    "abstained": false,
+    "recalled_svo": [
+     "wolf",
+     "hunt",
+     "deer"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+     "roles": [
+      {
+       "word": "wolf",
+       "confidence": null,
+       "role": "agent",
+       "cue": true,
+       "asserted": "wolf"
+      },
+      {
+       "word": "hunt",
+       "confidence": null,
+       "role": "action",
+       "cue": true,
+       "asserted": "hunt"
+      },
+      {
+       "word": "deer",
+       "confidence": null,
+       "role": "patient",
+       "cue": true,
+       "asserted": "deer"
+      }
+     ],
+     "matched_fact_index": null,
+     "n_facts_scanned": 214,
+     "abstained": true,
+     "rf": {
+      "n_readout_neurons": 54784,
+      "frac_fired": 1.0,
+      "mean_magnitude": 104.49940685423097
+     },
+     "composer": "rf"
+    },
+    "provenance": {
+     "known": true,
+     "label": "perceived",
+     "d": 0.9999999900928793,
+     "rate_perceived": 0.1009375,
+     "rate_generated": 0.0,
+     "encoded_as": "perceived",
+     "agrees_with_encoded": true
+    },
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "comprehension": {
+     "on": true,
+     "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+     "on": true,
+     "lesioned": false,
+     "in_scope": true,
+     "svo": [
+      "wolf",
+      "hunts",
+      "deer"
+     ],
+     "recall_action": "hunts",
+     "asserted_polarity": "AFFIRM",
+     "recalled_yn": "unknown",
+     "stored_polarity": null,
+     "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+     "acted": true,
+     "turn": 1,
+     "lesioned": false,
+     "ema_valence": 0.0,
+     "ema_arousal": 0.0,
+     "body_h": 0.5,
+     "body_a": 0.0,
+     "mood": -0.0012916666666666632,
+     "felt_arousal": 0.0,
+     "level": 0,
+     "high_arousal": false,
+     "lead": "",
+     "reason": "neutral_hold",
+     "seed": 7,
+     "vplus_rate": 0.03779166666666667,
+     "vminus_rate": 0.03908333333333333,
+     "surfaced": false
+    },
+    "swap_drives": {
+     "acted": false,
+     "turn": 1,
+     "topic": null,
+     "swapped": false,
+     "held_topic_before": null,
+     "held_topic": null,
+     "evicted_topic": null,
+     "reason": "no_topic_hold",
+     "seed": 7,
+     "lesioned": false,
+     "on": true,
+     "lead": "",
+     "new_topic": null,
+     "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+     "on": true,
+     "topic": null,
+     "decision": null,
+     "reason": "no_grounded_topic",
+     "lead": "",
+     "lesioned": false,
+     "reason_lead": "no_referent"
+    },
+    "da_drives": {
+     "acted": true,
+     "turn": 1,
+     "lesioned": false,
+     "turn_engagement": 0.5090909090909089,
+     "ema_engagement": 0.30545454545454537,
+     "afferent_pA": 427.6363636363635,
+     "da_level": 0.5494163884270326,
+     "snc_firing": 0.08333333333333326,
+     "mode": "neutral",
+     "lead": "",
+     "reason": "low_engagement",
+     "seed": 7,
+     "shared_salience": {
+      "raw": 0.75,
+      "want_hz": 19.44444444444444,
+      "normalized": 0.5090909090909089,
+      "lesioned": false,
+      "calib": {
+       "want_novel_hz": 38.19444444444444,
+       "want_familiar_hz": 0.0,
+       "threshold_hz": 19.09722222222222,
+       "novel_signal": 0.95,
+       "familiar_signal": 0.0,
+       "read_reps": 4
+      },
+      "on": true
+     },
+     "spiking_novelty": {
+      "novelty": 1.0,
+      "n_tokens": 3,
+      "per_word_freshness": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "fresh_ref": 26.0,
+      "n_channels": 64,
+      "lesioned": false,
+      "on": true
+     },
+     "on": true
+    },
+    "da_encoding": {
+     "on": true,
+     "g": 1.7794770596941287,
+     "da_level": 0.5494163884270326,
+     "lesioned": false
+    },
+    "corpus_present": false,
+    "corpus_missing": [
+     "tinystories.txt"
+    ]
+   },
+   "turn_wall_s": 137.25
+  },
+  {
+   "turn": 1,
+   "message": "what does the wolf hunt",
+   "session": "cff-short",
+   "status": 200,
+   "sha_raw": "799030947d86166fc2431cd33cc3f85eb78dffcc1f0826764a2e58b44dd35807",
+   "sha_canon": "32418493ef429005855d988de94c9dac5d945c6943c8ae700b179fa4e0ea3c53",
+   "dropped_volatile_keys": [],
+   "answer": "the wolf hunts the deer",
+   "abstained": false,
+   "recalled_svo": [
+    "wolf",
+    "hunt",
+    "deer"
+   ],
+   "source": "tiny-demo +LTM",
+   "corpus_present_field": false,
+   "body_canon": {
+    "answer": "the wolf hunts the deer",
+    "abstained": false,
+    "recalled_svo": [
+     "wolf",
+     "hunt",
+     "deer"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+     "roles": [
+      {
+       "role": "agent",
+       "word": "wolf",
+       "confidence": 1.0,
+       "margin": 0.6372026782924178,
+       "margin_spiking": null,
+       "cue": true,
+       "asserted": "wolf"
+      },
+      {
+       "role": "action",
+       "word": "hunt",
+       "confidence": 1.0,
+       "margin": 0.5455819776487589,
+       "margin_spiking": null,
+       "cue": true,
+       "asserted": "hunt"
+      },
+      {
+       "role": "patient",
+       "word": "deer",
+       "confidence": 1.0,
+       "margin": 0.6568553796674886,
+       "margin_spiking": null,
+       "cue": false
+      },
+      {
+       "role": "attribute",
+       "word": null,
+       "confidence": 1.0,
+       "margin": 0.1873110466388458,
+       "margin_spiking": null,
+       "cue": false
+      },
+      {
+       "role": "polarity",
+       "word": "AFFIRM",
+       "confidence": 1.0,
+       "margin": 0.9006754063749595,
+       "margin_spiking": null,
+       "cue": false
+      }
+     ],
+     "matched_fact_index": 5,
+     "n_facts_scanned": 6,
+     "abstained": false,
+     "rf": {
+      "n_readout_neurons": 6880,
+      "frac_fired": 0.11177325581395349,
+      "mean_magnitude": 79372.47600275087
+     },
+     "composer": "onebrain"
+    },
+    "provenance": {
+     "known": true,
+     "label": "perceived",
+     "d": 0.9999999900928793,
+     "rate_perceived": 0.1009375,
+     "rate_generated": 0.0,
+     "encoded_as": "perceived",
+     "agrees_with_encoded": true
+    },
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": {
+     "on": true,
+     "lesioned": false,
+     "evidence": 1.0,
+     "balance": 0.09269111534688368,
+     "threshold": 0.060034058880282674,
+     "confident": true,
+     "calib": {
+      "mean_hi": 0.08104205205341658,
+      "min_hi": 0.06695760458601124,
+      "mean_lo": 0.03831601280798336,
+      "max_lo": 0.053110513174554105,
+      "clean_gap": true,
+      "read_reps": 8,
+      "role_conf_lo": 0.3,
+      "role_conf_hi": 0.5,
+      "confidence_read": "nmda_norm"
+     },
+     "mean_role_conf": 0.5855252977244942
+    },
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+     "acted": true,
+     "turn": 2,
+     "lesioned": false,
+     "ema_valence": 0.0,
+     "ema_arousal": 0.0,
+     "body_h": 0.5,
+     "body_a": 0.0,
+     "mood": -0.0012916666666666632,
+     "felt_arousal": 0.0,
+     "level": 0,
+     "high_arousal": false,
+     "lead": "",
+     "reason": "neutral_hold",
+     "seed": 7,
+     "vplus_rate": 0.03779166666666667,
+     "vminus_rate": 0.03908333333333333,
+     "surfaced": false
+    },
+    "swap_drives": {
+     "acted": true,
+     "turn": 2,
+     "topic": "wolf",
+     "swapped": false,
+     "held_topic_before": null,
+     "held_topic": "wolf",
+     "evicted_topic": null,
+     "reason": "first_thought",
+     "seed": 7,
+     "lesioned": false,
+     "proposed_slot": 0,
+     "held_slot": 0,
+     "winner_slot": 0,
+     "n_ignited_post": 1,
+     "held_rate_post": 0.3333333333333333,
+     "mm_peak": 0.011111111111111112,
+     "boost_max": 0.008333333333333333,
+     "on": true,
+     "lead": "",
+     "new_topic": null,
+     "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+     "on": true,
+     "topic": "wolf",
+     "slot": 0,
+     "decision": "introduce",
+     "in_common_ground": false,
+     "first_mention": true,
+     "reduce_rate": 0.0,
+     "introduce_rate": 0.051666666666666666,
+     "evidence_rate": 0.0,
+     "margin": -0.051666666666666666,
+     "lesioned": false,
+     "lead": "",
+     "reason_lead": "introduce"
+    },
+    "da_drives": {
+     "acted": true,
+     "turn": 2,
+     "lesioned": false,
+     "turn_engagement": 0.1818181818181818,
+     "ema_engagement": 0.23127272727272724,
+     "afferent_pA": 323.78181818181815,
+     "da_level": 0.4410534339022884,
+     "snc_firing": 0.06666666666666662,
+     "mode": "neutral",
+     "lead": "",
+     "reason": "low_engagement",
+     "seed": 7,
+     "shared_salience": {
+      "raw": 0.5615384615384615,
+      "want_hz": 6.944444444444444,
+      "normalized": 0.1818181818181818,
+      "lesioned": false,
+      "calib": {
+       "want_novel_hz": 38.19444444444444,
+       "want_familiar_hz": 0.0,
+       "threshold_hz": 19.09722222222222,
+       "novel_signal": 0.95,
+       "familiar_signal": 0.0,
+       "read_reps": 4
+      },
+      "on": true
+     },
+     "spiking_novelty": {
+      "novelty": 0.7692307692307693,
+      "n_tokens": 2,
+      "per_word_freshness": [
+       0.6153846153846154,
+       0.9230769230769231
+      ],
+      "fresh_ref": 26.0,
+      "n_channels": 64,
+      "lesioned": false,
+      "on": true
+     },
+     "on": true
+    },
+    "da_encoding": {
+     "on": true,
+     "g": 1.6462752836704486,
+     "da_level": 0.4410534339022884,
+     "lesioned": false
+    },
+    "corpus_present": false,
+    "corpus_missing": [
+     "tinystories.txt"
+    ]
+   },
+   "turn_wall_s": 360.41
+  },
+  {
+   "turn": 2,
+   "message": "tell me about the sky",
+   "session": "cff-short",
+   "status": 200,
+   "sha_raw": "a60ac2972d310076a95a252f09d5d21b359754d4481e3f181902323e319702db",
+   "sha_canon": "c78d7a8e81a8ff1c384f90fd262b570ef2b25c4941177aff648244bf61e8648c",
+   "dropped_volatile_keys": [],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sky yet: what can you tell me about sky?",
+   "abstained": true,
+   "recalled_svo": null,
+   "source": "tiny-demo +LTM",
+   "corpus_present_field": false,
+   "body_canon": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sky yet: what can you tell me about sky?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+     "roles": [
+      {
+       "word": "me_sky",
+       "confidence": null,
+       "role": "agent",
+       "cue": true,
+       "asserted": "me_sky"
+      },
+      {
+       "word": "alias_of",
+       "confidence": null,
+       "role": "action",
+       "cue": true,
+       "asserted": "alias_of"
+      }
+     ],
+     "matched_fact_index": null,
+     "n_facts_scanned": 220,
+     "abstained": true,
+     "rf": {
+      "n_readout_neurons": 56320,
+      "frac_fired": 1.0,
+      "mean_magnitude": 104.49941198612974
+     },
+     "composer": "rf"
+    },
+    "provenance": null,
+    "affect": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.0,
+     "appraisal_arousal": 0.0,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "comprehension": {
+     "on": true,
+     "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+     "on": true,
+     "lesioned": false,
+     "novelty": 0.980878815550533,
+     "want_hz": 38.88888888888888,
+     "threshold": 19.09722222222222,
+     "curious": true,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "topic": "sky",
+     "graded_novelty": {
+      "on": true,
+      "value": 0.980878815550533,
+      "lesioned": false
+     },
+     "curiosity_da": {
+      "on": true,
+      "lesioned": false,
+      "da_level": 0.5997482764555643,
+      "da_tonic": 0.5,
+      "k_da": 1.5,
+      "da_crave_gain": 1.1496224146833465,
+      "base_threshold": 19.09722222222222,
+      "eff_threshold": 16.61173440801638,
+      "want_hz": 38.88888888888888,
+      "want_eff_hz": 44.707538348796795,
+      "curious": true
+     }
+    },
+    "multiref": null,
+    "noncontradiction": {
+     "on": true,
+     "lesioned": false,
+     "in_scope": true,
+     "svo": [
+      "tell",
+      "about",
+      "sky"
+     ],
+     "recall_action": "about",
+     "asserted_polarity": "AFFIRM",
+     "recalled_yn": "unknown",
+     "stored_polarity": null,
+     "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+     "acted": true,
+     "turn": 3,
+     "lesioned": false,
+     "ema_valence": 0.0,
+     "ema_arousal": 0.0,
+     "body_h": 0.5,
+     "body_a": 0.0,
+     "mood": -0.0012916666666666632,
+     "felt_arousal": 0.0,
+     "level": 0,
+     "high_arousal": false,
+     "lead": "",
+     "reason": "neutral_hold",
+     "seed": 7,
+     "vplus_rate": 0.03779166666666667,
+     "vminus_rate": 0.03908333333333333,
+     "surfaced": false
+    },
+    "swap_drives": {
+     "acted": false,
+     "turn": 3,
+     "topic": null,
+     "swapped": false,
+     "held_topic_before": "wolf",
+     "held_topic": "wolf",
+     "evicted_topic": null,
+     "reason": "no_topic_hold",
+     "seed": 7,
+     "lesioned": false,
+     "on": true,
+     "lead": "",
+     "new_topic": null,
+     "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+     "on": true,
+     "topic": null,
+     "decision": null,
+     "reason": "no_grounded_topic",
+     "lead": "",
+     "lesioned": false,
+     "reason_lead": "no_referent"
+    },
+    "da_drives": {
+     "acted": true,
+     "turn": 3,
+     "lesioned": false,
+     "turn_engagement": 0.41818181818181815,
+     "ema_engagement": 0.34341818181818173,
+     "afferent_pA": 480.7854545454544,
+     "da_level": 0.5997482764555643,
+     "snc_firing": 0.09166666666666656,
+     "mode": "neutral",
+     "lead": "",
+     "reason": "low_engagement",
+     "seed": 7,
+     "shared_salience": {
+      "raw": 0.6884615384615385,
+      "want_hz": 15.97222222222222,
+      "normalized": 0.41818181818181815,
+      "lesioned": false,
+      "calib": {
+       "want_novel_hz": 38.19444444444444,
+       "want_familiar_hz": 0.0,
+       "threshold_hz": 19.09722222222222,
+       "novel_signal": 0.95,
+       "familiar_signal": 0.0,
+       "read_reps": 4
+      },
+      "on": true
+     },
+     "spiking_novelty": {
+      "novelty": 0.9807692307692308,
+      "n_tokens": 2,
+      "per_word_freshness": [
+       0.9615384615384616,
+       1.0
+      ],
+      "fresh_ref": 26.0,
+      "n_channels": 64,
+      "lesioned": false,
+      "on": true
+     },
+     "on": true
+    },
+    "da_encoding": {
+     "on": true,
+     "g": 1.8889985199802664,
+     "da_level": 0.5997482764555643,
+     "lesioned": false
+    },
+    "corpus_present": false,
+    "corpus_missing": [
+     "tinystories.txt"
+    ]
+   },
+   "turn_wall_s": 11.13
+  }
+ ],
+ "session_sha_canon": "d3637a58a8c814bc70bad292851ce3d928c3c54507a5e25391a6d47a7f8d572b",
+ "git_sha": "30980b16e5d297d86c9767bf2bbf591c985387aa",
+ "git_dirty_tracked": true
+}
