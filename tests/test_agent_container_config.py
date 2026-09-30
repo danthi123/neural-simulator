@@ -381,24 +381,19 @@ def test_settings_allows_the_dedicated_rrsync_results_pull():
     assert any("results-sync-gateway" in r and r.startswith("Bash(rsync") for r in allow)
 
 
-def test_smoke_test_probes_the_isolation_from_inside_on_the_server():
-    # update.sh smoke-tests every new image before the swap, so a firewall regression blocks the swap too
+def test_smoke_test_no_longer_probes_the_network_from_inside():
+    # 2026-09-30 security review (HIGH #1): the smoke container mounts the model-writable home, so a verdict computed
+    # there is the model's. update.sh + verify_isolation.sh probe from a pristine container instead
+    # (tests/test_agent_container_net_probe.py, tests/test_agent_container_update.py).
     text = open(os.path.join(AC, "bin", "smoke_test.sh")).read()
-    assert 'SIM_AGENT_REQUIRE_FIREWALL:-0}" != "1"' in text
-    must_fail = re.search(r'MUST_FAIL="\$\{SMOKE_MUST_FAIL:-([^}]*)\}"', text).group(1).split()
-    must_pass = re.search(r'MUST_PASS="\$\{SMOKE_MUST_PASS:-([^}]*)\}"', text).group(1).split()
-    for t in ("172.30.30.1:22", "192.168.0.10:22", "192.168.0.10:445", "192.168.0.10:2049", "192.168.0.10:18443"):
-        assert t in must_fail, t
-    assert "192.168.0.10:2222" in must_pass
-    # the workstation may be asleep or gaming during the weekly rebuild: a miss there must never roll an image back
-    assert not any(t.startswith("192.168.0.68:") for t in must_pass)
+    assert "/dev/tcp/" not in text and "MUST_FAIL" not in text
 
 
 def test_every_shipped_shell_script_parses():
     import subprocess
     scripts = [os.path.join(AC, n) for n in ("entrypoint.sh", "update.sh")]
     scripts += [os.path.join(AC, "bin", n) for n in os.listdir(os.path.join(AC, "bin"))]
-    scripts += [os.path.join(STACK, "verify_isolation.sh"),
+    scripts += [os.path.join(STACK, "verify_isolation.sh"), os.path.join(STACK, "probe_from_pristine.sh"),
                 os.path.join(STACK, "host", "usr", "local", "sbin", "sim-agent-fw-selfwan.sh"),
                 os.path.join(ROOT, "tools", "agent_harness_ctl.sh")]
     for path in scripts:
@@ -442,7 +437,7 @@ def test_container_scripts_use_absolute_interpreters():
 
 def test_pre_session_scripts_reset_path_before_any_lookup():
     # entrypoint.sh and firewall_guard.sh run at every start, before (and without) any model session
-    for rel in ("entrypoint.sh", "bin/firewall_guard.sh"):
+    for rel in ("entrypoint.sh", "bin/firewall_guard.sh", "bin/net_probe.sh"):
         code = [l.strip() for l in _code(os.path.join(AC, rel))]
         first = next(l for l in code if not l.startswith("set -"))
         assert first == "export PATH=%s" % SAFE_PATH, (rel, first)

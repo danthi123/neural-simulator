@@ -15,8 +15,13 @@
 #      ZFS dataset (df reports it against its refquota) and of Docker's data-root is logged, loudly above 85%.
 #   2. Tag the current image sim-agent:rollback, then `docker compose build --pull sim-agent` from ~/apps.
 #   3. If the image changed: smoke-test the NEW image (`docker compose run --rm --no-deps sim-agent
-#      smoke_test.sh`, which includes the in-container network-isolation probes). On failure, point
+#      smoke_test.sh`, FUNCTIONAL checks only: that container mounts the model-writable home). On failure, point
 #      sim-agent:local back at the rollback image and stop -- the running container is never touched.
+#   3b. EVERY cycle: probe the network isolation from a throwaway PRISTINE container on apps_sim-agent-net
+#      (server-stack/probe_from_pristine.sh: the image alone, no mounts, no capabilities) -- the one vantage point
+#      a rogue process in the agent container cannot influence (2026-09-30 security review, HIGH #1). On failure:
+#      roll a changed image back, never swap, exit 1 (the unit's OnFailure alerts) -- also for an unchanged image,
+#      so this is a weekly regression check of the host firewall itself.
 #   4. Swap the running container onto the new image (`docker compose up -d --no-deps --no-build sim-agent`) only
 #      when that can neither lose work nor start it unfiltered:
 #        running, no active claude process, sim-agent-fw.service active  -> recreate
@@ -42,6 +47,14 @@ SYSTEMCTL="${AGENT_UPDATE_SYSTEMCTL:-systemctl}" # TEST-ONLY override; NEVER set
 DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
 FRAGMENT_SRC="$SRC_DIR/tools/agent_container/server-stack/sim-agent/compose.yaml"
 FRAGMENT_LIVE="$APPS_DIR/sim-agent/compose.yaml"
+PRISTINE_PROBE="$HERE/server-stack/probe_from_pristine.sh"
+# The weekly probe's targets. MUST FAIL (dropped): this host via the bridge gateway and via its LAN address (sshd,
+# rpcbind, smb, nfs), a published port (caddy 18443), another stack's subnet gateway, the router, the workstation's
+# SMB, a resolver the fragment does not pin, plain HTTP. MUST PASS: the pinned resolvers and gitea ssh via this
+# host's 2222. The workstation's 22/8080 are allowed too, but it may be asleep or gaming when the weekly rebuild
+# runs, and a miss here rolls the image back -- verify_isolation.sh (owner-run) checks those instead.
+PROBE_MUST_FAIL="172.30.30.1:22 172.30.30.1:445 192.168.0.10:22 192.168.0.10:111 192.168.0.10:445 192.168.0.10:2049 192.168.0.10:18443 172.20.0.1:22 192.168.0.1:443 192.168.0.68:445 8.8.8.8:53 1.1.1.1:80"
+PROBE_MUST_PASS="192.168.0.1:53 1.1.1.1:53 192.168.0.10:2222"
 # Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review,
 # HIGH): an exec inherits the container's environment, and the home bind mount is model-writable.
 EXEC_ENV_PATH="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -117,6 +130,23 @@ else
     exit 1
   fi
   log "smoke test passed"
+fi
+
+# --- 3b. the isolation probe, from a pristine container, every cycle -----------------------------------------------
+log "isolation probe from a pristine container (probe_from_pristine.sh --image $IMAGE)"
+if bash "$PRISTINE_PROBE" --image "$IMAGE" -- --must-fail "$PROBE_MUST_FAIL" --must-pass "$PROBE_MUST_PASS" \
+     --dns-name github.com --https "https://github.com" --no-ipv6 >> "$LOG" 2>&1; then
+  log "isolation probe passed"
+else
+  if [ -n "$old_id" ] && [ "$new_id" != "$old_id" ]; then
+    docker image tag "$ROLLBACK_IMAGE" "$IMAGE" >> "$LOG" 2>&1
+    log "ISOLATION PROBE FAILED -- rolled $IMAGE back to $ROLLBACK_IMAGE; nothing was swapped. See $LOG, then run" \
+        "verify_isolation.sh: the host firewall (sim-agent.nft) may be missing or wrong."
+  else
+    log "ISOLATION PROBE FAILED -- nothing was swapped. See $LOG, then run verify_isolation.sh: the host firewall" \
+        "(sim-agent.nft) may be missing or wrong, and the RUNNING container may be unfiltered."
+  fi
+  exit 1
 fi
 
 # --- 4. swap the running container only when it is safe ----------------------------------------------------------

@@ -8,6 +8,7 @@ Hermetic: a fake `docker` (first on PATH) records every call and answers from en
 `systemctl` are stubbed through the script's own TEST-ONLY overrides; ~/apps and the source checkout are temp dirs.
 """
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -44,6 +45,7 @@ case "$1" in
       *Image*) echo "$FAKE_CUR_IMAGE" ;;
     esac ;;
   exec) [ -n "$FAKE_BUSY" ] && echo "$FAKE_BUSY"; exit 0 ;;
+  run) exit "${FAKE_PROBE_RC:-0}" ;;
 esac
 exit 0
 '''
@@ -88,7 +90,8 @@ def _scaffold(tmp, include=True, drift=False):
 
 
 def _run(tmp, *, status="running", old_id="sha256:old", new_id="sha256:new", cur_image="sha256:old", busy="",
-         smoke_rc=0, build_rc=0, fw="active", df_pct=42, include=True, drift=False, dirty=None, extra_env=None):
+         smoke_rc=0, build_rc=0, fw="active", df_pct=42, include=True, drift=False, dirty=None, extra_env=None,
+         probe_rc=0):
     apps, data, src = _scaffold(tmp, include=include, drift=drift)
     if dirty:
         with open(os.path.join(src, dirty), "w") as f:
@@ -103,7 +106,8 @@ def _run(tmp, *, status="running", old_id="sha256:old", new_id="sha256:new", cur
     env.update({
         "PATH": fakebin + os.pathsep + env["PATH"], "FAKE_T": tmp, "FAKE_STATUS": status, "FAKE_OLD_ID": old_id,
         "FAKE_NEW_ID": new_id, "FAKE_CUR_IMAGE": cur_image, "FAKE_BUSY": busy, "FAKE_SMOKE_RC": str(smoke_rc),
-        "FAKE_BUILD_RC": str(build_rc), "SIM_AGENT_APPS_DIR": apps, "SIM_AGENT_SRC_DIR": src,
+        "FAKE_BUILD_RC": str(build_rc), "FAKE_PROBE_RC": str(probe_rc), "SIM_AGENT_APPS_DIR": apps,
+        "SIM_AGENT_SRC_DIR": src,
         "SIM_AGENT_DATA_DIR": data, "AGENT_UPDATE_DF": df, "AGENT_UPDATE_SYSTEMCTL": systemctl,
         "AGENT_UPDATE_DISK_ROOTS": data,
     })
@@ -278,3 +282,57 @@ def test_the_idle_probe_pins_path_and_runs_an_absolute_pgrep():
         assert res.returncode == 0, res.stdout + res.stderr
         assert ("docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent "
                 "/usr/bin/pgrep -f /claude$") in calls
+
+
+# ------------------------------------- isolation probes from a pristine container (2026-09-30 review, HIGH #1)
+# The probes used to run inside the smoke container, which mounts the model-writable home. They now run every
+# cycle from a throwaway container with no mounts (server-stack/probe_from_pristine.sh), before any swap.
+
+def _probe_line(calls):
+    lines = [l for l in calls.splitlines() if l.startswith("docker run ")]
+    assert len(lines) == 1, lines
+    return lines[0]
+
+
+def test_a_changed_image_is_probed_from_a_pristine_container_after_the_smoke_and_before_the_swap():
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, calls = _run(tmp)
+        assert res.returncode == 0, res.stdout + res.stderr
+        line = _probe_line(calls)
+        assert "--network apps_sim-agent-net" in line and "--read-only" in line and "--cap-drop ALL" in line
+        assert " -v " not in line and "--mount" not in line and "--volume" not in line
+        assert "sim-agent:local /usr/local/lib/agent-container/bin/net_probe.sh --must-fail" in line
+        order = [calls.index(c) for c in ("docker compose run --rm --no-deps -T sim-agent smoke_test.sh",
+                                          "docker run ", "docker compose up -d --no-deps --no-build sim-agent")]
+        assert order == sorted(order)
+        assert "isolation probe passed" in log
+
+
+def test_a_failed_isolation_probe_rolls_a_changed_image_back_and_never_swaps():
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, calls = _run(tmp, probe_rc=1)
+        assert res.returncode == 1
+        assert "ISOLATION PROBE FAILED" in log
+        assert "docker image tag sim-agent:rollback sim-agent:local" in calls
+        assert "compose up" not in calls
+
+
+def test_the_isolation_probe_runs_and_alerts_even_when_the_image_did_not_change():
+    # a weekly regression check of the host firewall itself: nothing to roll back, but the unit must fail (ntfy)
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, calls = _run(tmp, old_id="sha256:same", new_id="sha256:same", cur_image="sha256:same", probe_rc=1)
+        assert res.returncode == 1
+        assert "ISOLATION PROBE FAILED" in log
+        assert "docker image tag sim-agent:rollback sim-agent:local" not in calls
+        assert "compose up" not in calls
+
+
+def test_probe_targets_cover_this_host_and_never_require_the_workstation():
+    text = open(_UPDATE).read()
+    must_fail = re.search(r'^PROBE_MUST_FAIL="([^"]*)"', text, re.MULTILINE).group(1).split()
+    must_pass = re.search(r'^PROBE_MUST_PASS="([^"]*)"', text, re.MULTILINE).group(1).split()
+    for t in ("172.30.30.1:22", "192.168.0.10:22", "192.168.0.10:445", "192.168.0.10:2049", "192.168.0.10:18443"):
+        assert t in must_fail, t
+    assert "192.168.0.10:2222" in must_pass
+    # the workstation may be asleep or gaming during the weekly rebuild: a miss there must never roll an image back
+    assert not any(t.startswith("192.168.0.68:") for t in must_pass)

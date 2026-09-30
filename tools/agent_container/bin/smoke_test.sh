@@ -6,10 +6,9 @@
 # does not touch any other container/network/config. Reports every check, exits non-zero if any FAILed; a check
 # that depends on an owner step not yet done (repo seeding) SKIPs with a clear reason instead.
 #
-# Section 7 probes the network FROM INSIDE (the run container sits on the same br-simagent bridge, so
-# sim-agent.nft applies to it): destinations that must be dropped, and the few that must work. It runs only
-# when SIM_AGENT_REQUIRE_FIREWALL=1 (set by the server stack fragment); SMOKE_SKIP_NET=1 skips it explicitly.
-# Every target is overridable (SMOKE_MUST_FAIL / SMOKE_MUST_PASS, space-separated host:port lists).
+# FUNCTIONAL checks only. This container mounts the model-writable home, so nothing here is evidence about
+# isolation: the network probes run from a pristine container instead (bin/net_probe.sh via
+# server-stack/probe_from_pristine.sh, from update.sh and verify_isolation.sh).
 set -uo pipefail
 FAIL=0
 pass() { echo "PASS: $*"; }
@@ -74,35 +73,11 @@ for t in git ssh jq node npm python3; do
   if command -v "$t" >/dev/null 2>&1; then pass "$t present"; else fail "$t not found"; fi
 done
 
-# 7. network isolation, from inside (see the header). A must-fail target PASSES only on a timeout (sim-agent.nft
-#    drops silently); a connection OR a refusal means the packet reached something unfiltered.
-tcp_probe() {   # tcp_probe <host> <port> <seconds> -> 0 connected, 124 timed out, other = refused/unreachable
-  timeout "$3" bash -c 'exec 3<>"/dev/tcp/$0/$1"' "$1" "$2" 2>/dev/null
-}
-if [ "${SMOKE_SKIP_NET:-0}" = "1" ] || [ "${SIM_AGENT_REQUIRE_FIREWALL:-0}" != "1" ]; then
-  skip "network isolation probes (not on the server stack, or SMOKE_SKIP_NET=1)"
-else
-  # this host via the bridge gateway and via its LAN address (sshd, rpcbind, smb, nfs), a published port
-  # (caddy 18443), another stack's subnet, the router, the workstation's SMB, a non-allowed resolver, plain HTTP
-  MUST_FAIL="${SMOKE_MUST_FAIL:-172.30.30.1:22 172.30.30.1:445 192.168.0.10:22 192.168.0.10:111 192.168.0.10:445 192.168.0.10:2049 192.168.0.10:18443 172.20.0.1:22 192.168.0.1:443 192.168.0.68:445 8.8.8.8:53 1.1.1.1:80}"
-  # allowed paths that do not depend on the workstation: the DNS resolvers and gitea ssh via this host's 2222.
-  # The workstation's 22/8080 are allowed too, but it may be asleep or gaming when the weekly rebuild runs, and a
-  # miss here rolls the image back -- server-stack/verify_isolation.sh (owner-run) checks those instead.
-  MUST_PASS="${SMOKE_MUST_PASS:-192.168.0.1:53 1.1.1.1:53 192.168.0.10:2222}"
-  for t in $MUST_FAIL; do
-    tcp_probe "${t%:*}" "${t##*:}" 3; rc=$?
-    case "$rc" in
-      124) pass "blocked: $t (dropped)" ;;
-      0)   fail "NOT blocked: $t ACCEPTED a connection -- sim-agent.nft is missing or wrong" ;;
-      *)   fail "NOT dropped: $t was refused/unreachable (rc=$rc) -- the packet was answered unfiltered" ;;
-    esac
-  done
-  for t in $MUST_PASS; do
-    if tcp_probe "${t%:*}" "${t##*:}" 5; then pass "reachable: $t"; else fail "unreachable: $t (an allowed path is broken, or that service is down)"; fi
-  done
-  if getent hosts github.com >/dev/null 2>&1; then pass "DNS resolves github.com"; else fail "DNS lookup of github.com failed"; fi
-  if tcp_probe github.com 443 5; then pass "HTTPS egress to github.com:443"; else fail "no HTTPS egress to github.com:443"; fi
-fi
+# 7. network isolation is NOT probed here (2026-09-30 security review, HIGH #1): this container mounts the
+#    model-writable home, so a verdict computed in it is the model's to choose. update.sh probes from a pristine
+#    container every cycle (server-stack/probe_from_pristine.sh -> bin/net_probe.sh), and so does the owner's
+#    verify_isolation.sh.
+skip "network isolation (probed from a pristine container by update.sh and verify_isolation.sh, not from here)"
 
 echo "== smoke test done: $([ "$FAIL" -eq 0 ] && echo ALL PASS/SKIP || echo SOME FAILURES) =="
 exit "$FAIL"
