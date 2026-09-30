@@ -36,3 +36,8 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - 2026-09-29 22:58 Claude: origin/main moved (serving-simplify merge, 5 commits) after commit 2; merged it in
   cleanly (4f6d9d7fb; FAILURE_LOG appends auto-merged), selftest/tests green, prereg byte-identical to
   PREREG_SHA; GATE_SHA re-pinned to the merge commit so pool_provision.sh accepts it.
+- 2026-09-29 23:12 Claude: val_novel/intact_a (dev seed 7) landed: 442 s wall; the company moves the reply-visible
+  mood (+0.068 after the glorp company, -0.061 after the blick company, read from the feel reply text), and each
+  novel word ALONE holds the prior mood exactly (delta 0.0 on both probes) -> inherits False, the predicted C4b
+  FAIL at production defaults (a non-lexicon word contributes zero by code); the E2 world-model surprise notice
+  fired on each company flip. Instrument intact. All six dev arms now landed; HANDOFF section 2 PASS list holds.
