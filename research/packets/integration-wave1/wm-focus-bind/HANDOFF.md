@@ -28,8 +28,8 @@ OFF `=0`). Score: `tools/iw1_score.py R --packet wm-focus-bind ...`.
 ## Production default (shared steps B and F)
 
 No new battery row (the paired-session probe is excluded from the headline by design). Its production-default check is
-F2: `default@F` equals `on:<flipped>@F` through the real handler on the identity script, whose first two turns are
-"the dog and the cat walked in" -> "what does it chase". B1 still applies to every other faculty, including
+F2: `default@F` equals `on:<flipped>@F` through the real handler on the identity script, which runs "the dog and the cat walked in" -> "what does it chase" and the swapped order in its own session
+(the probe's pair A). B1 still applies to every other faculty, including
 `wm-binding-advanced`'s own battery row.
 
 ## Finding template (after the shared section 7 reads PASS)

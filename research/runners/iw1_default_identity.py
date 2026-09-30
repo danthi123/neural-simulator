@@ -1,6 +1,6 @@
 """Integration wave 1: production-default identity check through the REAL /api/brain-chat handler (2026-09-29).
 
-One scripted session that reaches all three wave-1 mechanisms (focus-bind: a two-referent intro then an anaphor;
+A fixed script that reaches all three wave-1 mechanisms (focus-bind: a two-referent intro then an anaphor, both orders;
 D6 write: teach then recall; C1: alternating valence then an expectation query) is run in ONE FRESH PROCESS per arm,
 and the sha256 of every response body is recorded (canonical: keys whose NAME looks like a wall-clock timing are
 dropped first, the same VOLATILE_KEY_RE as research/runners/_flip_validated_fixes_chat_sha.py, and every dropped
@@ -38,19 +38,25 @@ PACKET_FLAGS = {
     "xedge-surprise-worldmodel": ("BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",),
 }
 SESSION = "iw1-identity"
+SESSION_B = "iw1-identity-b"   # the focus probe's swapped intro order, in its own session (per-session organs)
 POS, NEG = "that was wonderful, I am so happy", "that was terrible, I am so sad"
-TURNS = [  # (message, which packet the turn is there for)
-    ("the dog and the cat walked in", "wm-focus-bind"),
-    ("what does it chase", "wm-focus-bind"),
-    ("the wolf hunts the deer", "d6-hebbian-write"),
-    ("what does the cat eat", "d6-hebbian-write"),
-    ("what does the wolf hunt", "d6-hebbian-write"),
-    (POS, "xedge-surprise-worldmodel"),
-    (NEG, "xedge-surprise-worldmodel"),
-    (POS, "xedge-surprise-worldmodel"),
-    (NEG, "xedge-surprise-worldmodel"),
-    (POS, "xedge-surprise-worldmodel"),
-    ("what do you expect?", "xedge-surprise-worldmodel"),
+# (message, which packet the turn is there for, session). The two orderings of the focus intro mirror
+# LB_WMB_FOCUS_PROBE's pair A: with the flag on, the two anaphor replies follow the held referent (they differ); the
+# positional route answers both the same, so at least one ordering differs from the flag-off reply.
+TURNS = [
+    ("the dog and the cat walked in", "wm-focus-bind", SESSION),
+    ("what does it chase", "wm-focus-bind", SESSION),
+    ("the cat and the dog walked in", "wm-focus-bind", SESSION_B),
+    ("what does it chase", "wm-focus-bind", SESSION_B),
+    ("the wolf hunts the deer", "d6-hebbian-write", SESSION),
+    ("what does the cat eat", "d6-hebbian-write", SESSION),
+    ("what does the wolf hunt", "d6-hebbian-write", SESSION),
+    (POS, "xedge-surprise-worldmodel", SESSION),
+    (NEG, "xedge-surprise-worldmodel", SESSION),
+    (POS, "xedge-surprise-worldmodel", SESSION),
+    (NEG, "xedge-surprise-worldmodel", SESSION),
+    (POS, "xedge-surprise-worldmodel", SESSION),
+    ("what do you expect?", "xedge-surprise-worldmodel", SESSION),
 ]
 VOLATILE_KEY_RE = re.compile(r"(latency|elapsed|_ms$|_sec$|_secs$|seconds|time|timestamp|wall|duration|perf)", re.I)
 
@@ -102,9 +108,9 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
     from webapp.server import app  # noqa: E402
     client = TestClient(app)
     rows, t0 = [], time.time()
-    for i, (msg, packet) in enumerate(TURNS):
+    for i, (msg, packet, session) in enumerate(TURNS):
         t1 = time.time()
-        res = client.post("/api/brain-chat", json={"session": SESSION, "brain": "tiny-demo", "renderer": "stub",
+        res = client.post("/api/brain-chat", json={"session": session, "brain": "tiny-demo", "renderer": "stub",
                                                    "message": msg, "rich": False})
         body, dropped = res.content, []
         try:
@@ -112,7 +118,7 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
             canon = json.dumps(_canon(d, "$", dropped), sort_keys=True).encode()
         except Exception:
             d, canon = {}, body
-        rows.append({"turn": i, "message": msg, "for": packet, "status": res.status_code,
+        rows.append({"turn": i, "message": msg, "for": packet, "session": session, "status": res.status_code,
                      "sha_raw": hashlib.sha256(body).hexdigest(), "sha_canon": hashlib.sha256(canon).hexdigest(),
                      "dropped_volatile_keys": dropped, "answer": d.get("answer"), "abstained": d.get("abstained"),
                      "recalled_svo": d.get("recalled_svo"), "turn_wall_s": round(time.time() - t1, 2)})

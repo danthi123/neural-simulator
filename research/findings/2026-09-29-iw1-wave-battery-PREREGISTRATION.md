@@ -36,10 +36,10 @@ Each packet's candidate, evidence and reply-level probe are in its own prereg:
 
 ## Step D: byte-identity at P, one dev seed (seed 7, real handler, `research/runners/iw1_default_identity.py`)
 
-Five fresh-process arms of one scripted 11-turn session: `default`, `off`, `on:d6-hebbian-write`,
+Five fresh-process arms of one 13-turn script (two sessions: the focus intro in both orders): `default`, `off`, `on:d6-hebbian-write`,
 `on:wm-focus-bind`, `on:xedge-surprise-worldmodel`. Per-turn sha256 of the response body (timing keys dropped).
 
-- **D0 (byte-identical-off).** `default` equals `off` on all 11 turns. Required for every packet.
+- **D0 (byte-identical-off).** `default` equals `off` on all 13 turns. Required for every packet.
 - **D_p (the script reaches p's flag).** `on:p` differs from `default` on at least one turn. Required for packet p;
   a vacuous `on:p` (no difference) is UNDEFINED for p, not a pass.
 
@@ -75,8 +75,8 @@ docs/TERMS.md). Criteria:
 
 `iw1_default_identity.py` arms at F: `default`, `off`, `on:<all flipped packets joined by +>`.
 
-- **F2 (the default IS the capability).** `default@F` equals `on:<flipped>@F` on all 11 turns.
-- **F3 (the escape still works).** `off@F` equals `default@P` (from step D) on all 11 turns.
+- **F2 (the default IS the capability).** `default@F` equals `on:<flipped>@F` on all 13 turns.
+- **F3 (the escape still works).** `off@F` equals `default@P` (from step D) on all 13 turns.
 
 ## Decision table (applied by the HANDOFF, no judgment)
 

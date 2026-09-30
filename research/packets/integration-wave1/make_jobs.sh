@@ -23,7 +23,7 @@ if [ "$HEAD" != "$PIN" ]; then
   git diff --quiet "$PIN" HEAD -- . ':!research/packets/integration-wave1' ':!research/findings/raw' || {
     echo "make_jobs: HEAD differs from pin $PIN outside the packet dir and raw results (code moved; re-pin)" >&2; exit 2; }
 fi
-P7="${PIN:0:7}"; ROOT="~/derisk-pool/revisions/$PIN"; OUTD="research/packets/integration-wave1/jobs"
+P7="${PIN:0:7}"; ROOT="~/derisk-pool/revisions/$PIN"; OUTD="research/packets/integration-wave1/jobs"; mkdir -p "$OUTD"
 SEEDS="42 43 44 100 101 102"
 PY=".venv/bin/python"
 guard() {  # insert the defaults guard right after `cd <root> && `
