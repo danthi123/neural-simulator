@@ -9,7 +9,7 @@ FRESH PROCESS per arm (numpy, stub renderer, LLM disabled: the integration-wave1
 sha256 of the raw body and of the canonical body (keys whose NAME looks like a wall-clock timing dropped, the same
 VOLATILE_KEY_RE) plus the canonical body itself, so a byte difference can be explained key by key.
 
-Scripts (a third, `short`, is the 3-turn degraded-brain probe for fix 2):
+Scripts (`pmem` = the load_bearing_fraction PMEM driving group verbatim; `short` = the 3-turn degraded-brain probe):
   iw1       the 13 turns of iw1_default_identity.TURNS, verbatim (two sessions). No turn is a request, so fix (1)
             must leave all 13 byte-identical; with the corpus present fix (2) must too.
   requests  13 turns in one session: legitimate teach/recall turns interleaved with request-shaped turns (the defect
@@ -70,6 +70,16 @@ SCRIPTS = {
         ("i like the sky", "cff-requests"),                   # control (2 content words: never acquired)
         ("the dog chases the ball", "cff-requests"),          # legitimate teach
         ("what does the dog chase", "cff-requests"),          # legitimate recall
+    ],
+    # the load_bearing_fraction PMEM driving group, verbatim (research/runners/onebrain_regression_battery.py labels
+    # pmem_form2..pmem_cue): its third intervening turn is the request "tell me about the sky", which the pre-fix brain
+    # ACQUIRED as a junk fact. Does removing that write disturb the cue turn's `prospective` read (the row's measure)?
+    "pmem": [
+        ("remind me to feed the dog when the bird sings", "pmem2"),
+        ("what does the cat eat", "pmem2"),
+        ("how is the weather today", "pmem2"),
+        ("tell me about the sky", "pmem2"),
+        ("the bird sings", "pmem2"),
     ],
     # the degraded-brain arms (no data/corpus/): does the reply SAY it is degraded? (fix 2)
     "short": [
