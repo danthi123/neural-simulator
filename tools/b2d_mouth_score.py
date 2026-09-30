@@ -81,7 +81,7 @@ def judge_mouth_cell(d, fac, pin, fields_row, host_sha=None, primary_sha=None):
     """One mouth cell. Returns a dict with `state` (DEFINED / MOUTH-SILENT / E / C / M), `fails`, the probe-turn
     renderer read-out per arm, and (when DEFINED) `s2` = (verdict, detail) from tools/b2d_score.py's score_s2."""
     r = {"dir": d, "faculty": fac, "fails": [], "state": None, "host": None, "turn": None, "arms_present": [],
-         "renderer": {}, "qwen_calls": {}, "lb": None}
+         "renderer": {}, "qwen_calls": {}, "source": {}, "lb": None}
     turn = (fields_row or {}).get("probe_turn")
     r["turn"] = turn
     if not os.path.isdir(d):
@@ -156,6 +156,7 @@ def judge_mouth_cell(d, fac, pin, fields_row, host_sha=None, primary_sha=None):
         ar = t.get("_arm_renderer") or {}
         r["renderer"][k] = t.get("renderer")
         r["qwen_calls"][k] = ar.get("qwen_generate_calls")
+        r["source"][k] = t.get("source")          # reported only (e.g. 'tiny-demo +LTM'), for the findings label
         if t.get("renderer") != QWEN_RENDERER_NAME:
             r["fails"].append("M: %s renderer %r != %r" % (k, t.get("renderer"), QWEN_RENDERER_NAME))
         if ar.get("mode") != MODE or not isinstance(ar.get("qwen_generate_calls"), int):

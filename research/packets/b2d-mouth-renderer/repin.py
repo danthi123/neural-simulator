@@ -56,6 +56,24 @@ def harness_blobs(pin):
     return {f: blob_at(pin, f) for f in keep}
 
 
+def blob_problems(pin, fields):
+    """Rule 4 of `check`: every cited and harness blob at `pin` equals the audited one recorded in the fields file."""
+    problems = []
+    if fields.get("tag") != "b2d0929":
+        problems.append("fields file tag %r != b2d0929" % fields.get("tag"))
+    for f, want in sorted((fields.get("cited_blobs_at_pin") or {}).items()):
+        have = blob_at(pin, f)
+        if have != want:
+            problems.append("cited file changed after the audit: %s (audited %s, at pin %s)" % (f, want, have))
+    want_h = fields.get("harness_blobs_at_pin") or {}
+    have_h = harness_blobs(pin)
+    for f in sorted(set(want_h) | set(have_h)):
+        if want_h.get(f) != have_h.get(f):
+            problems.append("harness file differs from the audited one: %s (audited %s, at pin %s)"
+                            % (f, want_h.get(f), have_h.get(f)))
+    return problems
+
+
 def check(pin, tree, fields=None, python=None):
     fields = fields if fields is not None else json.load(open(FIELDS))
     problems = []
@@ -94,18 +112,7 @@ def check(pin, tree, fields=None, python=None):
             for k in sorted(set(want) | set(have)):
                 if want.get(k) != have.get(k):
                     problems.append("registry changed since H: %s" % k)
-    if fields.get("tag") != "b2d0929":
-        problems.append("fields file tag %r != b2d0929" % fields.get("tag"))
-    for f, want in sorted((fields.get("cited_blobs_at_pin") or {}).items()):
-        have = blob_at(pin, f)
-        if have != want:
-            problems.append("cited file changed after the audit: %s (audited %s, at pin %s)" % (f, want, have))
-    want_h = fields.get("harness_blobs_at_pin") or {}
-    have_h = harness_blobs(pin)
-    for f in sorted(set(want_h) | set(have_h)):
-        if want_h.get(f) != have_h.get(f):
-            problems.append("harness file differs from the audited one: %s (audited %s, at pin %s)"
-                            % (f, want_h.get(f), have_h.get(f)))
+    problems += blob_problems(pin, fields)
     return problems
 
 
