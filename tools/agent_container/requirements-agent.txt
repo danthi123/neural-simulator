@@ -1,0 +1,23 @@
+# tools/agent_container/requirements-agent.txt -- the agent container's copy of the project's numpy venv,
+# built from the repo's own requirements.txt (2026-09-29 snapshot) MINUS GPU packages and MINUS the
+# desktop-GUI packages that need system OpenGL (the container is headless and never runs neural-simulator.py's
+# GUI or renders anything -- it submits pool/GPU jobs to the workstation and inspects results).
+#
+# Excluded vs. requirements.txt, and why:
+#   cupy-cuda12x               -- GPU-only; the server has no GPU (docs/plans/2026-09-29-local-model-transition-
+#                                  PLAN.md section 9). sim/bridge.py falls back to numpy/scipy at SIM_BACKEND=numpy.
+#   dearpygui, PyOpenGL(_accelerate) -- the interactive GUI only; needs libGL/libGLU the image does not carry.
+#   torch, transformers, cuda-python -- already commented out in the source requirements.txt (GPU research arc);
+#                                  left out here for the same reason.
+#
+# Installed exactly as in requirements.txt otherwise. Rebuild this file (by hand) if requirements.txt's non-GPU,
+# non-GUI set changes -- tools/agent_container/update.sh's weekly rebuild does not diff the two automatically.
+numpy
+scipy   # SIM_BACKEND=numpy CPU path (sim/bridge.py's get_sparse_module -> scipy.sparse)
+h5py
+pyyaml>=6.0
+psutil
+hdf5plugin
+
+# Webapp dashboard deps (fastapi/uvicorn/pydantic) are NOT included: the agent container never serves the
+# webapp dashboard (webapp/** is denied-edit for the local model and out of scope for this harness).

@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# tools/agent_container/bin/llm -- `llm use <profile>` inside the sim-agent container (section 9 of
+# docs/plans/2026-09-29-local-model-transition-PLAN.md, item 2 of the build). LLM-agnostic: a profile is a
+# small env file (tools/agent_container/profiles/<name>.env, baked into the image at
+# /usr/local/lib/agent-container/profiles/) naming a backend -- the workstation's llama-server over the LAN
+# today, a cloud Anthropic-compatible API later. Nothing else about this script changes between backends.
+#
+#   llm list                launch nothing -- print available profiles
+#   llm use <profile> [-- <extra claude args>]
+#                            export that profile's ANTHROPIC_* env and exec Claude Code (interactive, in the
+#                            foreground -- meant to run INSIDE the tmux "agent" session, see agent-start.sh)
+#   llm active               print the currently-recorded active profile (see below), or "none"
+#
+# A profile file sets (shell-sourceable):
+#   BASE_URL=http://...            ANTHROPIC_BASE_URL
+#   TOKEN_VAR=SOME_ENV_VAR_NAME    the NAME of an env var (already present in the container's own environment
+#                                  -- from compose's `environment:`/`env_file:`, never written into the profile
+#                                  file itself) holding the actual token/API key. Never commit a real secret to
+#                                  a profile file.
+#   MODEL=local                    ANTHROPIC_MODEL (and the small/haiku/sonnet/opus aliases, all pointed at
+#                                  the same one model for a single-model local backend)
+#   CONTEXT=65536                  CLAUDE_CODE_MAX_CONTEXT_TOKENS (this backend's real context window, so
+#                                  auto-compact fires before the backend itself overflows -- see
+#                                  tools/local_llm/llm.sh's own served_ctx()/ctxenv, mirrored here)
+#   KIND=local|cloud               local: this container's traffic depends on the workstation's 3090 server
+#                                  being up (gaming/GPU-yield pausing applies). cloud: no pause is needed --
+#                                  tools/agent_gateway.sh's `yield` and `game.sh` skip the harness pause when
+#                                  `llm active`'s KIND is cloud (queried via tools/agent_harness_ctl.sh `state`).
+set -uo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROFILE_DIR="${AGENT_PROFILE_DIR:-/usr/local/lib/agent-container/profiles}"
+SETTINGS="${AGENT_CLAUDE_SETTINGS:-/usr/local/lib/agent-container/claude_container_settings.json}"
+AGENT_HOME="${AGENT_HOME:-$HOME}"
+ACTIVE_PROFILE_FILE="$AGENT_HOME/.active_profile"
+ACTIVE_KIND_FILE="$AGENT_HOME/.active_profile_kind"
+
+usage() { sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'; }
+
+cmd_list() {
+  echo "profiles in $PROFILE_DIR:"
+  for f in "$PROFILE_DIR"/*.env; do
+    [ -f "$f" ] || continue
+    name="$(basename "$f" .env)"
+    kind="$(sed -n 's/^KIND=//p' "$f" | tail -1)"
+    echo "  $name  (${kind:-unknown})"
+  done
+}
+
+cmd_active() {
+  if [ -s "$ACTIVE_PROFILE_FILE" ]; then cat "$ACTIVE_PROFILE_FILE"; else echo "none"; fi
+}
+
+cmd_use() {
+  local prof="${1:-}"; shift || true
+  [ -n "$prof" ] || { echo "usage: llm use <profile>" >&2; cmd_list >&2; exit 2; }
+  local pf="$PROFILE_DIR/$prof.env"
+  [ -f "$pf" ] || { echo "llm: no such profile '$prof' ($pf not found)" >&2; cmd_list >&2; exit 2; }
+
+  # shellcheck disable=SC1090
+  BASE_URL=""; TOKEN_VAR=""; MODEL=""; CONTEXT=""; KIND=""
+  source "$pf"
+  [ -n "$BASE_URL" ] || { echo "llm: profile '$prof' has no BASE_URL" >&2; exit 2; }
+  [ -n "$MODEL" ] || { echo "llm: profile '$prof' has no MODEL" >&2; exit 2; }
+
+  # No TOKEN_VAR configured -> "local" (a dummy, non-empty placeholder; matches tools/local_llm/llm.sh's own
+  # convention for an unauthenticated local llama-server). TOKEN_VAR configured but the named var is empty ->
+  # a hard error (a cloud profile with a missing secret should never silently send an empty auth header).
+  local token="local"
+  if [ -n "$TOKEN_VAR" ]; then
+    token="${!TOKEN_VAR:-}"
+    if [ -z "$token" ]; then
+      echo "llm: profile '$prof' names TOKEN_VAR=$TOKEN_VAR but that env var is empty/unset in this container" >&2
+      echo "     (set it via compose's environment:/env_file:, never by editing the profile file)" >&2
+      exit 2
+    fi
+  fi
+
+  echo "$prof" > "$ACTIVE_PROFILE_FILE"
+  echo "${KIND:-local}" > "$ACTIVE_KIND_FILE"
+
+  local trim=()
+  if [ "${AGENT_CLAUDE_FULL:-0}" != 1 ]; then
+    trim=(--strict-mcp-config --settings "$SETTINGS" --disallowedTools WebSearch ReportFindings)
+  fi
+
+  echo "llm: using profile '$prof' -> $BASE_URL (model=$MODEL, ctx=${CONTEXT:-default}, kind=${KIND:-local})"
+  env ANTHROPIC_BASE_URL="$BASE_URL" ANTHROPIC_AUTH_TOKEN="$token" ANTHROPIC_API_KEY="" \
+      ANTHROPIC_MODEL="$MODEL" ANTHROPIC_SMALL_FAST_MODEL="$MODEL" ANTHROPIC_DEFAULT_HAIKU_MODEL="$MODEL" \
+      ANTHROPIC_DEFAULT_SONNET_MODEL="$MODEL" ANTHROPIC_DEFAULT_OPUS_MODEL="$MODEL" \
+      ${CONTEXT:+CLAUDE_CODE_MAX_CONTEXT_TOKENS="$CONTEXT"} \
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 API_TIMEOUT_MS=1200000 \
+    claude "$@" "${trim[@]}"
+}
+
+case "${1:-}" in
+  list) cmd_list ;;
+  active) cmd_active ;;
+  use) shift; cmd_use "$@" ;;
+  *) usage; exit 2 ;;
+esac
