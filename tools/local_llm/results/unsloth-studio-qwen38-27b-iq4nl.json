@@ -1,0 +1,65 @@
+{
+ "profile": "unsloth-studio-qwen38-27b-iq4nl",
+ "model": "Qwen3.8-27B-IQ4_NL",
+ "started": "2026-09-29 17:57:19",
+ "device": "cuda:0 (unsloth-studio at http://127.0.0.1:8888, externally managed)",
+ "kind": "generic",
+ "ctx": 131072,
+ "long_tokens": 60000,
+ "base_url": "http://127.0.0.1:8888",
+ "vram_before_mib": 2662,
+ "vram_total_mib": 24576,
+ "load_s": 16.1,
+ "server_cmd": "bash tools/local_llm/unsloth_run_and_key.sh /var/tmp/ollama-import/Qwen3.8-27B-IQ4_NL.gguf 8888 /var/tmp/ollama-import/unsloth_bakeoff_key.txt",
+ "vram_after_load_mib": 22776,
+ "short_gen_tok_s": 13.2,
+ "long_prompt_tokens": 75760,
+ "long_pp_tok_s": 437.5,
+ "long_gen_tok_s": 0.7,
+ "long_answer": "ORCHID-7431-TANGERINE The user is asking about the \"bake-off passphrase\" mentioned in the notes. Looking at the text, near the end of the GAP_CLOSURE_MISSION.md content there's a line that says:\n\n\"IMP",
+ "long_recall_ok": true,
+ "vram_peak_mib_long": 22877,
+ "long_timing_note": "wall-clock only (no llama.cpp /completion timings on this backend): long_pp_tok_s is a lower bound (prompt+gen time combined)",
+ "tasks": {
+  "T1_locate": {
+   "wall_s": 213,
+   "exit": 0,
+   "num_turns": 4,
+   "is_error": false,
+   "result": ".claude/hooks/guard_protected_delete.py\ntests/test_guard_protected_delete.py",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"Qwen3.8-27B-IQ4_NL\",\"query_source\":\"sdk\"}\n",
+   "pass": true
+  },
+  "T2_debug": {
+   "wall_s": 1500,
+   "exit": "timeout",
+   "result": "",
+   "is_error": true,
+   "pass": true,
+   "pytest": [
+    "22 passed in 0.13s"
+   ],
+   "test_untouched": true,
+   "changed": []
+  },
+  "T3_extend": {
+   "wall_s": 368,
+   "exit": 0,
+   "num_turns": 5,
+   "is_error": false,
+   "result": "Added the entry to `ALLOW` in tests/test_require_memcap_hook.py:33 (grouped with the other `load_bearing_fraction` lines) \u2014 the hook's `HARMLESS` regex already covers `--score`, so no hook change was needed.\n\n**23 passed in 0.19s**",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"Qwen3.8-27B-IQ4_NL\",\"query_source\":\"sdk\"}\n",
+   "pass": true,
+   "pytest": [
+    "23 passed in 0.13s"
+   ],
+   "case_added": true,
+   "changed": [
+    "tests/test_require_memcap_hook.py"
+   ]
+  }
+ },
+ "vram_peak_mib": 23071,
+ "vram_headroom_mib": 1505,
+ "finished": "2026-09-29 18:35:57"
+}
