@@ -309,3 +309,25 @@ def decide_action(msg: str, seed: int = 42, lesion: str | None = None) -> dict |
         "loser_ratio": r["loser_ratio"],
         "lesion": les,
     }
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# Corticostriatal credit extension (lane B, 2026-09-29): `BRAIN_BG_CREDIT`, DEFAULT OFF.
+# Separate functions only; nothing above reads them, and the default path imports nothing new (the byte-identical-off
+# test, tests/test_bg_credit_off_identical.py, compares this module against the pinned pre-change SHA f52c6d246).
+# The machinery lives in research/runners/bg_corticostriatal_credit.py; preregistration:
+# research/findings/2026-09-29-long-delay-credit-bg-organ-PREREG.md.
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+def bg_credit_enabled() -> bool:
+    """DEFAULT OFF: only an explicit truthy BRAIN_BG_CREDIT enables the learned corticostriatal credit extension."""
+    v = os.environ.get("BRAIN_BG_CREDIT")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def build_credit_organ(seed: int = 42, params=None, **kw):
+    """The production selector plus plastic context -> striatum synapses, spiking-SNc dopamine and a striosomal critic.
+    Refuses unless BRAIN_BG_CREDIT is on. Returns (bridge, selector_config)."""
+    if not bg_credit_enabled():
+        raise RuntimeError("BRAIN_BG_CREDIT is off: the corticostriatal credit extension is default-off")
+    from research.runners.bg_corticostriatal_credit import CreditParams, build_credit_selector
+    return build_credit_selector(seed, params if params is not None else CreditParams(), **kw)
