@@ -30,9 +30,10 @@ then stop that line of work and continue with any other thread that is not block
   guess, `hypothesis_svo` [canary, eat, worm]); `lesion_inherit` -> abstain, only that turn changes; `permuted` ->
   "perhaps the canary eats the bug". The other dev-seed-7 arms (`off`, `intact_b`, the informational ablations) were
   NOT run: the workstation stayed memory-contended by sibling dev runs (`mem_ok.sh 9` refused for over an hour), so
-  the launcher was stopped after the gate was queued. Declared risk: the real-handler null (`intact_a == intact_b`)
-  was not checked at a dev seed (the organ's same-seed determinism was, 8/8); a null failure at the gate seeds reads
-  UNDEFINED (NEEDS-CLAUDE #11), never a verdict. Do not re-run dev arms; the gate measures all of them.
+  the launcher was stopped after the gate was queued. The review (2026-09-30 13:20-14:27, WORKLOG) then ran the
+  real-handler null at dev seed 7: `intact_b` at HEAD equals the committed `intact_a` on every key of every turn
+  (peak RSS 6.8 GB), and the OFF path (flag unset) at HEAD is byte-identical to main 366d131f7 on the same 16 turns.
+  A null failure at the gate seeds still reads UNDEFINED (NEEDS-CLAUDE #11), never a verdict. Do not re-run dev arms.
 - **The gate WAS queued by Claude on 2026-09-30 at 12:20 EDT**: main merged (366d131f7), GATE re-pinned to
   `bb6705de6259ef775ca265caa33e5799a587b97c` (the last GATE row), steps 1-2 run as written (CONTAINS-MAIN; six OK
   lines on pool41/pool42), 54 lines added with 0 ADD-FAILED, pool queue depth 526 after the add. **Start at step 4.**

@@ -44,3 +44,12 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   (re-adds only the absent shards' lines, pinned to bb6705de6). Verified: the 54 queued lines pass the shape check and
   the gate-seed guard (prereg resolved), carry mem_ok 7 / memcap 9 / mem_gb=7 / max_age_h=120; both nodes hold the
   LTM bundle, the corpus, the runner and a venv at bb6705de6; queue position 469 of 522.
+- 2026-09-30 14:27 Claude (review, dev seed 7 only, outputs kept out of the repo): (a) real-handler NULL: the runner's
+  own `intact_b` arm at HEAD (989 s, peak RSS 6.8 GB under memcap 9) equals the committed `intact_a` (ce496d36e) on
+  EVERY key of EVERY turn (sha256 of the sorted responses cec1434e9e879819 both); the declared risk is retired at
+  the dev seed. (b) OFF byte-identity: the 16 cat_disc turns through `webapp.server.brain_chat` with the flag UNSET,
+  main 366d131f7 vs this branch's HEAD: sha256 2290f578c98667f6 both, no `category_inherit` key. (c) Specificity at
+  the dev seed: main vs flag-on `intact_a` differ only on `p_canary_eat` (full response minus the trace key); main
+  equals the Stage-1 production-default dev shard (fac3f699c) on every key. (d) HEAD's organ in a fresh process
+  reproduces the committed real-handler organ reads exactly (intact, permuted, lesion rates and the attribution);
+  organ-only RSS about 0.5 GB.
