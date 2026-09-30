@@ -19,6 +19,7 @@ import importlib
 import json
 import re
 import sys
+import warnings
 from importlib import metadata
 
 # Keep equal to import_closure.SUBMODULE_EXTRA_IMPORTS's keys (tests/test_pool_venv_deps.py pins that).
@@ -47,10 +48,27 @@ def parse_pins(path: str) -> dict[str, str]:
     return pins
 
 
-def top_level_modules(dist_name: str) -> list[str]:
-    owners = metadata.packages_distributions()
-    return sorted(module for module, dists in owners.items()
-                  if not module.startswith("_") and any(normalize(d) == dist_name for d in dists))
+def top_level_modules(dist: "str | metadata.Distribution") -> list[str]:
+    """Public top-level import names a distribution ships, from its top_level.txt AND its RECORD file list.
+
+    Not metadata.packages_distributions(): on Python 3.10 (the pool nodes) it reads top_level.txt only, which
+    numpy/scipy/fastapi/pydantic/starlette/httpx wheels do not ship, so it reports them as shipping nothing."""
+    if isinstance(dist, str):
+        dist = metadata.distribution(dist)
+    names: set[str] = set()
+    top_level = dist.read_text("top_level.txt") or ""
+    names.update(line.strip() for line in top_level.splitlines())
+    for path in dist.files or []:
+        parts = path.parts
+        if not parts or parts[0] in {"..", "__pycache__"} or parts[0].endswith((".dist-info", ".egg-info", ".data")):
+            continue
+        if len(parts) > 1:
+            names.add(parts[0])                         # a package directory
+        elif parts[0].endswith(".py"):
+            names.add(parts[0][:-3])                    # a single-file module
+        elif parts[0].endswith((".so", ".pyd")):
+            names.add(parts[0].split(".", 1)[0])        # a top-level extension module
+    return sorted(n for n in names if n.isidentifier() and not n.startswith("_"))
 
 
 def main(argv: list[str]) -> int:
@@ -83,13 +101,17 @@ def main(argv: list[str]) -> int:
                 importlib.import_module(module)
             except Exception as exc:  # noqa: BLE001 -- report every failure, not just ImportError
                 failures.append(f"{name}: import {module} failed: {type(exc).__name__}: {exc}")
+    harness_warnings: list[str] = []
     for module in HARNESS_SUBMODULES:
         try:
-            importlib.import_module(module)
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                importlib.import_module(module)
+            harness_warnings.extend(f"{module}: {w.category.__name__}: {w.message}" for w in caught)
         except Exception as exc:  # noqa: BLE001
             failures.append(f"harness: import {module} failed: {type(exc).__name__}: {exc}")
     report = {"ok": not failures, "python": "%s.%s" % sys.version_info[:2], "versions": versions,
-              "failures": failures}
+              "failures": failures, "warnings": sorted(set(harness_warnings))}
     print(json.dumps(report, sort_keys=True))
     if write_env and not failures:
         env = dict(versions, python_major_minor=report["python"])

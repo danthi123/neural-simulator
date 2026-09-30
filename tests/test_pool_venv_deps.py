@@ -55,6 +55,21 @@ def test_checker_harness_matches_closure_extras() -> None:
     assert set(pool_venv_check.HARNESS_SUBMODULES) == set(ic.SUBMODULE_EXTRA_IMPORTS)
 
 
+def test_top_level_modules_do_not_need_top_level_txt(tmp_path: Path) -> None:
+    # Python 3.10 (the pool nodes) resolves packages_distributions() from top_level.txt alone, which numpy /
+    # scipy / fastapi / httpx wheels do not ship; the first live run of the checker failed every pin that way.
+    from importlib import metadata
+
+    info = tmp_path / "fakepkg-1.0.dist-info"
+    info.mkdir()
+    (info / "METADATA").write_text("Metadata-Version: 2.1\nName: fakepkg\nVersion: 1.0\n", encoding="utf-8")
+    (info / "RECORD").write_text(
+        "fakemod/__init__.py,,\nfakemod/sub/x.py,,\nfakepkg.libs/libz.so,,\nfake_ext.cpython-310-x86_64-linux-gnu.so,,\n"
+        "single.py,,\n_private.py,,\n../../bin/tool,,\nfakepkg-1.0.dist-info/RECORD,,\n", encoding="utf-8")
+    dist = metadata.PathDistribution(info)
+    assert pool_venv_check.top_level_modules(dist) == ["fake_ext", "fakemod", "single"]
+
+
 # --- the closure analysis catches the incident (negative control) ------------------------------------------
 
 def _harness_tree(root: Path) -> None:
