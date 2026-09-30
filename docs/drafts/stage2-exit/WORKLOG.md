@@ -103,3 +103,9 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   NEEDS-CLAUDE #15 (C5 private store), #16 (C3 DA-order confound + failed acquisition), #17 (C1 probes) need a ruling
   first. Remaining dev arms: `ask/intact_b`, `inner/intact_b`, `emo/lesion_affect` running locally (memcap 10); the
   rest queued on the pool (FRONT=1, `max_age_h=24`; they may starve behind `mem_gb=2` lines and expire).
+- 2026-09-30 13:01 Claude: the nulls are clean at dev 7: `ask__intact_b` and `inner__intact_b` are byte-identical to
+  their `intact_a` in EVERY response field (not only the primary ones) and in the captured chase trace, across two
+  independent processes (the gate's null precondition should hold). `emo__lesion_affect`: valid, peak RSS 8104 MB
+  (under memcap 10), every feel read clamped to "+0.000 neutral", so all four scored turns differ from intact
+  (lesion effect present, no organ error). Committed the three shards. Still on the pool (FRONT=1, may starve):
+  the other lesion arms, `infer/transitive_chat`, and duplicate intact_a arms (a workstation-vs-pool check).
