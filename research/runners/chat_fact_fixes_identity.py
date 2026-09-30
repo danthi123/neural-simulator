@@ -216,7 +216,9 @@ def compare(a: dict, b: dict) -> dict:
                       "before": {k: x.get(k) for k in ("answer", "abstained", "recalled_svo", "source")},
                       "after": {k: y.get(k) for k in ("answer", "abstained", "recalled_svo", "source")},
                       "differing_paths": _key_diff(x.get("body_canon"), y.get("body_canon"))})
+    backends = sorted({str(a.get("sim_backend")), str(b.get("sim_backend"))})
     v = {"runner": "research/runners/chat_fact_fixes_identity.py --compare", "script": a.get("script"),
+         "sim_backend": backends[0] if len(backends) == 1 else backends,   # the compared arms' backend (no build here)
          "git_shas": [a.get("git_sha"), b.get("git_sha")], "preconditions": pre,
          "differing_turns": [t["turn"] for t in turns], "details": turns}
     v["verdict"] = ("UNDEFINED" if not all(pre.values()) else ("IDENTICAL" if not turns else "DIFFERS"))

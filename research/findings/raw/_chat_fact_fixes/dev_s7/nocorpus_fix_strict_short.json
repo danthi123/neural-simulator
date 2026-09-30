@@ -1,0 +1,78 @@
+{
+ "script": "short",
+ "seed": 7,
+ "root": "/home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix",
+ "corpus_present": false,
+ "corpus_missing": [
+  "tinystories.txt",
+  "wikitext.txt",
+  "simplewiki.txt",
+  "websters1913.json"
+ ],
+ "allow_degraded": true,
+ "ltm_bundle": "wikidata_100k",
+ "pythonhashseed": "0",
+ "sim_backend": "numpy",
+ "corpus_files_opened": null,
+ "n_turns": 3,
+ "wall_s": 0.4,
+ "turns": [
+  {
+   "turn": 0,
+   "message": "the wolf hunts the deer",
+   "session": "cff-short",
+   "status": 400,
+   "sha_raw": "591ce248d7f24b27e43a1909734ad19910d3c51d07277d02bb8273467f0ddded",
+   "sha_canon": "6940ca24e6c7f5976cb9519009b7aec44ca30d4cf6df0e8a1cf720e99bac1b84",
+   "dropped_volatile_keys": [],
+   "answer": null,
+   "abstained": null,
+   "recalled_svo": null,
+   "source": null,
+   "corpus_present_field": "<absent>",
+   "body_canon": {
+    "detail": "failed to load brain 'tiny-demo' with renderer 'stub': CorpusMissingError: CORPUS MISSING: /home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix/data/corpus lacks ['tinystories.txt']. The corpus-learned organs (the one-brain cross-edge pool, the learned-animacy lexicon) DEGRADE to their standalone paths without it: a DIFFERENT brain from the primary checkout's. Link or sync data/ (a worktree: `ln -s <primary>/data data`; a pool node: tools/pool_provision.sh). BRAIN_REQUIRE_CORPUS=1: refusing to build."
+   },
+   "turn_wall_s": 0.44
+  },
+  {
+   "turn": 1,
+   "message": "what does the wolf hunt",
+   "session": "cff-short",
+   "status": 400,
+   "sha_raw": "591ce248d7f24b27e43a1909734ad19910d3c51d07277d02bb8273467f0ddded",
+   "sha_canon": "6940ca24e6c7f5976cb9519009b7aec44ca30d4cf6df0e8a1cf720e99bac1b84",
+   "dropped_volatile_keys": [],
+   "answer": null,
+   "abstained": null,
+   "recalled_svo": null,
+   "source": null,
+   "corpus_present_field": "<absent>",
+   "body_canon": {
+    "detail": "failed to load brain 'tiny-demo' with renderer 'stub': CorpusMissingError: CORPUS MISSING: /home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix/data/corpus lacks ['tinystories.txt']. The corpus-learned organs (the one-brain cross-edge pool, the learned-animacy lexicon) DEGRADE to their standalone paths without it: a DIFFERENT brain from the primary checkout's. Link or sync data/ (a worktree: `ln -s <primary>/data data`; a pool node: tools/pool_provision.sh). BRAIN_REQUIRE_CORPUS=1: refusing to build."
+   },
+   "turn_wall_s": 0.0
+  },
+  {
+   "turn": 2,
+   "message": "tell me about the sky",
+   "session": "cff-short",
+   "status": 400,
+   "sha_raw": "591ce248d7f24b27e43a1909734ad19910d3c51d07277d02bb8273467f0ddded",
+   "sha_canon": "6940ca24e6c7f5976cb9519009b7aec44ca30d4cf6df0e8a1cf720e99bac1b84",
+   "dropped_volatile_keys": [],
+   "answer": null,
+   "abstained": null,
+   "recalled_svo": null,
+   "source": null,
+   "corpus_present_field": "<absent>",
+   "body_canon": {
+    "detail": "failed to load brain 'tiny-demo' with renderer 'stub': CorpusMissingError: CORPUS MISSING: /home/dant123/Projects/sim/.claude/worktrees/cff-nocorpus-fix/data/corpus lacks ['tinystories.txt']. The corpus-learned organs (the one-brain cross-edge pool, the learned-animacy lexicon) DEGRADE to their standalone paths without it: a DIFFERENT brain from the primary checkout's. Link or sync data/ (a worktree: `ln -s <primary>/data data`; a pool node: tools/pool_provision.sh). BRAIN_REQUIRE_CORPUS=1: refusing to build."
+   },
+   "turn_wall_s": 0.0
+  }
+ ],
+ "session_sha_canon": "bffe40527bf9cc5e9db27eee7a783284fe41077aae5f6709b4b48989176d1b48",
+ "git_sha": "30980b16e5d297d86c9767bf2bbf591c985387aa",
+ "git_dirty_tracked": false
+}
