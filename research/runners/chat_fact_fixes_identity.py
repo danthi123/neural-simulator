@@ -9,7 +9,7 @@ FRESH PROCESS per arm (numpy, stub renderer, LLM disabled: the integration-wave1
 sha256 of the raw body and of the canonical body (keys whose NAME looks like a wall-clock timing dropped, the same
 VOLATILE_KEY_RE) plus the canonical body itself, so a byte difference can be explained key by key.
 
-Scripts:
+Scripts (a third, `short`, is the 3-turn degraded-brain probe for fix 2):
   iw1       the 13 turns of iw1_default_identity.TURNS, verbatim (two sessions). No turn is a request, so fix (1)
             must leave all 13 byte-identical; with the corpus present fix (2) must too.
   requests  13 turns in one session: legitimate teach/recall turns interleaved with request-shaped turns (the defect
@@ -70,6 +70,12 @@ SCRIPTS = {
         ("i like the sky", "cff-requests"),                   # control (2 content words: never acquired)
         ("the dog chases the ball", "cff-requests"),          # legitimate teach
         ("what does the dog chase", "cff-requests"),          # legitimate recall
+    ],
+    # the degraded-brain arms (no data/corpus/): does the reply SAY it is degraded? (fix 2)
+    "short": [
+        ("the wolf hunts the deer", "cff-short"),
+        ("what does the wolf hunt", "cff-short"),
+        ("tell me about the sky", "cff-short"),
     ],
 }
 CORPUS_FILES = ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")

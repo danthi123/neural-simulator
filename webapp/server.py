@@ -4014,6 +4014,10 @@ def _build_chat_brain(brain: str, renderer: str):
     renderer: 'qwen' (off-bridge Qwen, GPU) / 'stub' (template-stub,
         GPU-free) / 'raw' (the brain's own raw triples, no LLM).
     """
+    # CORPUS GUARD (2026-09-30, webapp/corpus_guard.py): without data/corpus/ the corpus-learned organs degrade
+    # silently. Present: no effect. Missing: a loud warning, or CorpusMissingError under BRAIN_REQUIRE_CORPUS=1.
+    from webapp import corpus_guard as _corpus_guard
+    _corpus_guard.check_at_build()
     # Make the global backend cache consistent with the bridge's actual arrays
     # BEFORE building any bridge in the chat brain (the cupy/numpy-flip bug).
     _pin_bridge_backend()
@@ -4625,7 +4629,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
     # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
     # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
-    return brain_reply(chat, req, source, cache_key)
+    # CORPUS GUARD (webapp/corpus_guard.py): corpus present -> this SAME response, untouched; missing -> the reply
+    # carries corpus_present=false + corpus_missing, so a degraded brain is never silent.
+    from webapp import corpus_guard as _corpus_guard
+    return _corpus_guard.mark_response(brain_reply(chat, req, source, cache_key))
 
 
 def brain_reply(chat, req, source, cache_key) -> JSONResponse:

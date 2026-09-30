@@ -89,6 +89,41 @@ import research.runners.spiking_qroute_selection_organ as _QROUTE  # noqa: E402
 # lesion (BRAIN_D6_HEBBIAN_FREEZE) targets learning-from-use only; a no-op unless BRAIN_D6_HEBBIAN_STORE is on.
 from research.runners.d6_hebbian_store import conversation_write as _d6_conversation_write  # noqa: E402
 
+# REQUEST SPEECH-ACT FILTER for in-loop acquisition (2026-09-30, research/FAILURE_LOG.md 2026-09-29, branch
+# research/chat-fact-fixes). `_maybe_acquire` teaches any declarative whose function-word-stripped content is three
+# tokens, so the REQUEST "tell me about the sky" was stored as the fact [tell, about, sky] (Stage-1 exit dev smoke).
+# A request, like a question, asserts nothing, so it must never reach `inner.hear`. Three request shapes, none of
+# which a declarative SVO assertion can start with: a `please` anywhere; a sentence-initial modal (subject-auxiliary
+# inversion: "can you describe the moon", "can dogs fly" -- a question or a request, never an assertion); a
+# listener-directed imperative (a closed class of request verbs first, or any word followed by the addressee
+# pronoun: "tell me ...", "show us ..."). Leading discourse particles ("now tell me ...") are skipped first.
+# HOST SCAFFOLD (declared, the same standing as the interrogative first-word list it extends): a closed-class lexical
+# read of the sentence mood; the neural replacement is a learned speech-act/mood read on the substrate (not built).
+_REQUEST_LEAD_PARTICLES = frozenset(("now", "so", "ok", "okay", "well", "then", "just", "and", "oh", "hey", "hi",
+                                     "hello"))
+_REQUEST_VERBS = frozenset(("tell", "show", "give", "teach", "explain", "describe", "talk", "say", "define", "name",
+                            "list", "let", "let's", "lets", "help", "remind", "think", "imagine", "remember",
+                            "recall", "consider", "pretend", "guess"))
+_REQUEST_MODALS = frozenset(("can", "could", "would", "will", "should", "shall", "may", "might", "must", "cannot",
+                             "can't", "couldn't", "wouldn't", "won't", "shouldn't"))
+_REQUEST_ADDRESSEE = frozenset(("me", "us"))
+_REQUEST_WORD_RE = re.compile(r"[a-z']+")
+
+
+def _is_request_speech_act(text) -> bool:
+    """True iff `text` has a REQUEST shape (see the block comment above): never an assertion to acquire."""
+    toks = _REQUEST_WORD_RE.findall((text or "").lower())
+    if "please" in toks:
+        return True
+    while toks and toks[0] in _REQUEST_LEAD_PARTICLES:
+        toks = toks[1:]
+    if not toks:
+        return False
+    if toks[0] in _REQUEST_VERBS or toks[0] in _REQUEST_MODALS:
+        return True
+    return len(toks) >= 2 and toks[1] in _REQUEST_ADDRESSEE
+
+
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
 _SK_CODES = os.path.join(_REPO, "research", "findings", "raw", "_self_knowledge_grounded_codes.json")
 _SK_CURRICULUM = os.path.join(_REPO, "research", "findings", "raw", "_curriculum_self_knowledge.json")
@@ -1158,6 +1193,8 @@ class ChatBrain:
         if "?" in q or ql.split()[:1] and ql.split()[0] in (
                 "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
             return None
+        if _is_request_speech_act(q):            # a REQUEST ("tell me about the sky") asserts nothing: never taught
+            return None                          # (both paths below; see the block comment at `_is_request_speech_act`)
         # ── NON-CONTRADICTION STORE-SIDE (Gate-B, B3, 2026-08-12) ──────────────────────────────────────────
         # So the non-contradiction gate has NEGATIONS to fire against (today the console stores ZERO negations — the
         # legacy path below hard-codes polarity="AFFIRM" and only acquires an EXACTLY-3-whitespace-token input),
@@ -1198,6 +1235,7 @@ class ChatBrain:
             self._refresh_facts()
             return [a, v, p]
         # (B3 unavailable / disabled) — the EXACT legacy path (byte-identical acquisition) + the SAME lemma canonicalization
+        # (a REQUEST never reaches here: `_is_request_speech_act` above declines it on both paths, 2026-09-30)
         toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
         if len(toks) != 3:                       # the minimal SVO assertion the parser handles
             return None
@@ -1223,6 +1261,8 @@ class ChatBrain:
         ql = q.lower()
         if "?" in q or ql.split()[:1] and ql.split()[0] in (
                 "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
+            return False
+        if _is_request_speech_act(q):            # mirrors `_maybe_acquire`'s request decline
             return False
         try:
             import research.runners.b3_noncontradiction_production_organ as _b3nc
