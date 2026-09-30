@@ -1,0 +1,710 @@
+{
+ "cited_blobs_at_pin": {
+  "research/runners/_affect_marker_wta_derisk.py": "40d632d1cabf3d20897d908315551e39b8f3ca27",
+  "research/runners/_appraisal_interoceptive_ladder_derisk.py": "95be1a872d8771b7f89af1f2ca0ab3eab1fd0d8f",
+  "research/runners/_episodic_dap_dialogue_memory.py": "1ccd238ba1d25b88f522ef43bb8ba29c8825adec",
+  "research/runners/affect_production_organ.py": "f5f0e11470b2b3b4beec260ccf40d0fc206fe1b8",
+  "research/runners/affective_tom_production_organ.py": "82ac49518e3eb94bc2cc8bd02f8e83c5dc969af0",
+  "research/runners/b3_noncontradiction_production_organ.py": "fa07af48efb8c258b2b4441ea40bc68fe7c82981",
+  "research/runners/bg_action_selection_production_organ.py": "77ccc6ab7bdfac18df5c9c9a6e6d7449f3b80194",
+  "research/runners/causal_whatif_production_organ.py": "19620254cdaf555c76bf83a7bc0753c049170d78",
+  "research/runners/common_ground_ledger_production_organ.py": "6a1ca1133526f97470d77c26dabdeec1a905c265",
+  "research/runners/comprehension_production_organ.py": "25f5cfbb4e1fbf56d9606c9c991154c63d969fef",
+  "research/runners/curiosity_production_organ.py": "caba4578dfd933bc57190bc864e2836f9d3e4739",
+  "research/runners/d3_discourse_event_register_production_organ.py": "7e778a1b367e2cba55cfe216591d60a1ca11dded",
+  "research/runners/d6_multiref_wm_production_organ.py": "6c2878ade1010121f967033ff31950394c290940",
+  "research/runners/load_bearing_fraction.py": "b4be22c0e04413d8fbbf0e1f0aa180a8dfdfe267",
+  "research/runners/metacog_production_organ.py": "803c5a28b926ec55094942a3dd7999986f48977e",
+  "research/runners/onebrain_regression_battery.py": "a504a69aac4c17eef024da2d26f4caa731ad1b54",
+  "research/runners/pragmatic_production_organ.py": "df5f6fd0585c7e8c3bf059393a8ffb9cb7cd06ae",
+  "research/runners/prospective_memory_production_organ.py": "c0cc10ced926f27cb1fd056698a67ed7653b5101",
+  "research/runners/reconsolidation_production_organ.py": "02afe8e2a4103c9516daa4d83a38a7821f6e34d9",
+  "research/runners/source_provenance_honesty.py": "cd4bb0a34968dcf001731a44e4239e4c85df3b44",
+  "research/runners/surprise_production_organ.py": "6d3c296e65010892078be2ba4ad6d6daf5ce324a",
+  "research/runners/vision_identity_production_organ.py": "1ade2a7eebf3ed44b952e9f927da24b26073c3ee",
+  "research/runners/worldmodel_production_organ.py": "2f7e07738a2c2fb8f40c2c7c23dc513de254e5f5",
+  "tools/lab.py": "202567ce34aa954a989f63442ced85f89315dcb4",
+  "webapp/affect_drives_chat.py": "55aec92e7b6632ad719892c5057b253c1b9abe36",
+  "webapp/common_ground_drives_chat.py": "91642804c7c00e429a578801f9ac17711fc03f72",
+  "webapp/confidence_forthcoming_chat.py": "c6e90497872f14200b8df730568503b9c8080a3d",
+  "webapp/da_mode_drives_chat.py": "f9bad44ffc3a3b9f97fec0097fbf42a5993b4d95",
+  "webapp/server.py": "f6c71d699bf27ba08fd87ce4688b696730b5eabc",
+  "webapp/swap_drives_chat.py": "052075d62aec02026fdd877db4b09a62877ea83e"
+ },
+ "definition": "SD = a statement reachable only with the row's lesion flag set assigns the field (or makes it absent/null) with a value not depending on any neural read after the cut; N = same code computes it in both arms from a neural read; R = top-level reply field; NX = leaf in _NOISE_FIELDS (onebrain_regression_battery.py:697), never compared",
+ "not_replayed": {
+  "open-ended-generation": "distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2"
+ },
+ "organ_error_rule": "a cell whose probe-turn response carries an 'error' key in the parent dict of any compared field, in any arm, is UNDEFINED:organ-error (class C) for S0-as-reported, S1 and S2",
+ "pin": "3c2907b85c10fe918ddc81b4c69de8888c9f321b",
+ "prereg": "research/findings/2026-09-29-production-default-battery-B2d-PREREGISTRATION.md",
+ "reply_fields": [
+  "answer",
+  "abstained",
+  "recalled_svo"
+ ],
+ "rows": {
+  "affect-appraisal-interoceptive": {
+   "fields": {
+    "affect.valence_sign": {
+     "class": "N",
+     "evidence": "research/runners/affect_production_organ.py:323-332; research/runners/_appraisal_interoceptive_ladder_derisk.py:218-229",
+     "note": "relay->ladder gate clamped to 0 upstream of the same read"
+    }
+   },
+   "kept": [
+    "affect.valence_sign"
+   ],
+   "probe_turn": "emo",
+   "sd_only": false
+  },
+  "affect-coloring": {
+   "fields": {
+    "affect.on": {
+     "class": "UNSURE",
+     "evidence": "webapp/server.py:4992-4993",
+     "note": "literal True in both arms"
+    },
+    "affect.tone_token": {
+     "class": "N",
+     "evidence": "webapp/server.py:4988,4998",
+     "note": "function of the same N differential"
+    },
+    "affect.valence_sign": {
+     "class": "N",
+     "evidence": "research/runners/affect_production_organ.py:247,258-276; webapp/server.py:4985-4995",
+     "note": "affect_out transmission gate clamped to 0; same read and sign formula"
+    }
+   },
+   "kept": [
+    "affect.on",
+    "affect.tone_token",
+    "affect.valence_sign"
+   ],
+   "probe_turn": "emo",
+   "sd_only": false
+  },
+  "affect-drives-response": {
+   "fields": {
+    "affect_drives.acted": {
+     "class": "N",
+     "evidence": "webapp/affect_drives_chat.py:474-483",
+     "note": "True whenever the read succeeds, same statement both arms"
+    },
+    "affect_drives.high_arousal": {
+     "class": "N",
+     "evidence": "webapp/affect_drives_chat.py:477,481,484",
+     "note": "felt > threshold from the spiking read, same code both arms"
+    },
+    "affect_drives.on": {
+     "class": "UNSURE",
+     "evidence": "webapp/affect_drives_chat.py:468-491",
+     "note": "never emitted by this organ in either arm"
+    },
+    "affect_drives.reason": {
+     "class": "SD",
+     "evidence": "webapp/affect_drives_chat.py:487-488",
+     "note": "'lesion_collapsed' if lesion (verified at filing)",
+     "sd_kind": "lesion-named-literal"
+    }
+   },
+   "kept": [
+    "affect_drives.acted",
+    "affect_drives.high_arousal",
+    "affect_drives.on"
+   ],
+   "probe_turn": "well",
+   "sd_only": false
+  },
+  "affect-marker-spiking-wta": {
+   "fields": {
+    "affect_drives.lead": {
+     "class": "N",
+     "evidence": "webapp/affect_drives_chat.py:345-358; research/runners/_affect_marker_wta_derisk.py:340-354",
+     "note": "lesion forces a uniform input to the spiking WTA; winner computed by shared code"
+    }
+   },
+   "kept": [
+    "affect_drives.lead"
+   ],
+   "probe_turn": "emo",
+   "sd_only": false
+  },
+  "affective-tom": {
+   "fields": {
+    "affective_tom.reason": {
+     "class": "SD",
+     "evidence": "research/runners/affective_tom_production_organ.py:319,328",
+     "note": "'lesion_collapsed' if lesion (verified at filing)",
+     "sd_kind": "lesion-named-literal"
+    },
+    "affective_tom.tone_level": {
+     "class": "NX",
+     "evidence": "research/runners/onebrain_regression_battery.py:697-702"
+    }
+   },
+   "kept": [],
+   "probe_turn": "lbf_tom1",
+   "sd_only": true
+  },
+  "bg-action-selection": {
+   "fields": {
+    "bg_select.on": {
+     "class": "N",
+     "evidence": "research/runners/bg_action_selection_production_organ.py:153-226,282-311; webapp/server.py:4943-4950",
+     "note": "present only when the spiking BG race commits; lesion removes the drive so it never commits"
+    }
+   },
+   "kept": [
+    "bg_select.on"
+   ],
+   "probe_turn": "bgdots",
+   "sd_only": false
+  },
+  "causal-whatif": {
+   "fields": {
+    "abstained": {
+     "class": "R",
+     "note": "top-level reply field"
+    },
+    "causal.confirmed": {
+     "class": "N",
+     "evidence": "research/runners/causal_whatif_production_organ.py:328-349,366-385",
+     "note": "lesion zeroes learned forward edges; the same rollout read computes confirmed"
+    }
+   },
+   "kept": [
+    "abstained",
+    "causal.confirmed"
+   ],
+   "probe_turn": "lbf_cau_whatif",
+   "sd_only": false
+  },
+  "common-ground-drives": {
+   "fields": {
+    "common_ground_drives.decision": {
+     "class": "N",
+     "evidence": "webapp/common_ground_drives_chat.py:115-117; research/runners/common_ground_ledger_production_organ.py:60-77,98-122",
+     "note": "lesion builds ledger self-loops at weight 0; decision from the same spiking margin"
+    }
+   },
+   "kept": [
+    "common_ground_drives.decision"
+   ],
+   "probe_turn": "cg_mention2",
+   "sd_only": false
+  },
+  "comprehension-learned-animacy-cue": {
+   "fields": {
+    "comprehension.on": {
+     "class": "N",
+     "evidence": "research/runners/comprehension_production_organ.py:165-173,233-246,705-734",
+     "note": "lesion zeroes the learned drive; the same WTA reads margin 0; judge returns None"
+    }
+   },
+   "kept": [
+    "comprehension.on"
+   ],
+   "probe_turn": "animacy",
+   "sd_only": false
+  },
+  "comprehension-learned-verb-selects": {
+   "fields": {
+    "comprehension.on": {
+     "class": "N",
+     "evidence": "research/runners/comprehension_production_organ.py:197-230,705-734",
+     "note": "same mechanism as the animacy row"
+    }
+   },
+   "kept": [
+    "comprehension.on"
+   ],
+   "probe_turn": "verbsel",
+   "sd_only": false
+  },
+  "comprehension-monitor": {
+   "fields": {
+    "comprehension.comprehended": {
+     "class": "SD",
+     "evidence": "webapp/server.py:6108-6109; research/runners/comprehension_production_organ.py:409-450,660-666",
+     "note": "ORGAN ERROR: the lesion twin raises 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)' (B2b lesion arm, all seeds checked s42/s101); the fallback dict drops the field. Cell is UNDEFINED:organ-error, class C",
+     "sd_kind": "branch-structural"
+    },
+    "comprehension.on": {
+     "class": "UNSURE",
+     "evidence": "webapp/server.py:6108-6109",
+     "note": "True in both arms; in the lesion arm it comes from the exception fallback dict"
+    }
+   },
+   "kept": [
+    "comprehension.on"
+   ],
+   "probe_turn": "well",
+   "sd_only": false
+  },
+  "confidence-forthcomingness": {
+   "fields": {
+    "confidence_forthcoming.granted": {
+     "class": "SD",
+     "evidence": "webapp/server.py:6427,6431,6456,6619-6620",
+     "note": "whether-disable: BRAIN_CONFIDENCE_FORTHCOMING=0 skips the block, the trace dict is never built",
+     "sd_kind": "branch-structural"
+    },
+    "confidence_forthcoming.reason": {
+     "class": "SD",
+     "evidence": "webapp/server.py:6427,6619-6620; webapp/confidence_forthcoming_chat.py:204-227",
+     "note": "same disable path",
+     "sd_kind": "branch-structural"
+    }
+   },
+   "kept": [],
+   "probe_turn": "rich_well",
+   "sd_only": true
+  },
+  "curiosity-followup": {
+   "fields": {
+    "curiosity.curious": {
+     "class": "N",
+     "evidence": "research/runners/curiosity_production_organ.py:142-146,508-523",
+     "note": "drive-removed twin; same want-rate threshold"
+    },
+    "curiosity.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/curiosity_production_organ.py:508-523",
+     "note": "literal True"
+    }
+   },
+   "kept": [
+    "curiosity.curious",
+    "curiosity.on"
+   ],
+   "probe_turn": "unknown",
+   "sd_only": false
+  },
+  "d5-consolidate": {
+   "fields": {
+    "answer": {
+     "class": "R",
+     "note": "top-level reply field"
+    },
+    "episodic.graded_cue.depth_hold": {
+     "class": "UNSURE",
+     "evidence": "webapp/server.py:5499-5506",
+     "note": "absent in both arms: the teach turn fails comprehension, Hook A never entered (seed-7 precondition-void finding 2026-09-25)"
+    }
+   },
+   "kept": [
+    "answer",
+    "episodic.graded_cue.depth_hold"
+   ],
+   "probe_turn": "d5c_recall2",
+   "sd_only": false
+  },
+  "da-gated-encoding": {
+   "fields": {
+    "da_encoding.on": {
+     "class": "UNSURE",
+     "evidence": "webapp/server.py:5345-5350",
+     "note": "True whenever the module is on, independent of the lesion flag"
+    }
+   },
+   "kept": [
+    "da_encoding.on"
+   ],
+   "probe_turn": "well",
+   "sd_only": false
+  },
+  "da-mode-drives-response": {
+   "fields": {
+    "da_drives.acted": {
+     "class": "N",
+     "evidence": "webapp/da_mode_drives_chat.py:453-458",
+     "note": "True whenever the read succeeds"
+    },
+    "da_drives.mode": {
+     "class": "N",
+     "evidence": "webapp/da_mode_drives_chat.py:456",
+     "note": "mode = da_to_mode(conc) from the DA read in both arms (verified at filing)"
+    },
+    "da_drives.on": {
+     "class": "UNSURE",
+     "evidence": "webapp/da_mode_drives_chat.py:584,588",
+     "note": "hard-coded True in both arms"
+    },
+    "da_drives.reason": {
+     "class": "SD",
+     "evidence": "webapp/da_mode_drives_chat.py:459-460",
+     "note": "'lesion_collapsed' if lesion and mode in (rest, neutral) (verified at filing)",
+     "sd_kind": "lesion-named-literal"
+    }
+   },
+   "kept": [
+    "da_drives.acted",
+    "da_drives.mode",
+    "da_drives.on"
+   ],
+   "probe_turn": "well",
+   "sd_only": false
+  },
+  "discourse-register": {
+   "fields": {
+    "discourse_register.abstained": {
+     "class": "SD",
+     "evidence": "research/runners/d3_discourse_event_register_production_organ.py:89-93,229-232",
+     "note": "lesion subclass forces prev slots to the identity index after the spiking observe (verified at filing)",
+     "sd_kind": "derived-from-forced"
+    },
+    "discourse_register.agent": {
+     "class": "SD",
+     "evidence": "research/runners/d3_discourse_event_register_production_organ.py:89-93,231",
+     "note": "agent = referents[ident] from the forced slot (verified at filing)",
+     "sd_kind": "derived-from-forced"
+    }
+   },
+   "kept": [],
+   "probe_turn": "dr2_c",
+   "sd_only": true
+  },
+  "episodic-memory": {
+   "fields": {
+    "episodic.in_memory": {
+     "class": "N",
+     "evidence": "research/runners/_episodic_dap_dialogue_memory.py:276-286,324-325",
+     "note": "lesion restores unformed recurrent weights; completion threshold read in both arms"
+    }
+   },
+   "kept": [
+    "episodic.in_memory"
+   ],
+   "probe_turn": "epi_recall",
+   "sd_only": false
+  },
+  "gnw-bus": {
+   "fields": {
+    "abstained": {
+     "class": "R",
+     "note": "top-level reply field"
+    }
+   },
+   "kept": [
+    "abstained"
+   ],
+   "probe_turn": "question",
+   "sd_only": false
+  },
+  "gnw-multistep-deliberation": {
+   "fields": {
+    "recalled_svo": {
+     "class": "R",
+     "note": "top-level reply field"
+    }
+   },
+   "kept": [
+    "recalled_svo"
+   ],
+   "probe_turn": "chase",
+   "sd_only": false
+  },
+  "metacog-monitor": {
+   "fields": {
+    "metacog.confident": {
+     "class": "N",
+     "evidence": "research/runners/metacog_production_organ.py:177-181,227-281,475-482",
+     "note": "evidence differential removed upstream; same margin code"
+    },
+    "metacog.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/metacog_production_organ.py:475-482",
+     "note": "literal True"
+    }
+   },
+   "kept": [
+    "metacog.confident",
+    "metacog.on"
+   ],
+   "probe_turn": "confirm",
+   "sd_only": false
+  },
+  "multiref-competition": {
+   "fields": {
+    "multiref.all_recovered": {
+     "class": "N",
+     "evidence": "research/runners/d6_multiref_wm_production_organ.py:463,465,489,531",
+     "note": "lesion routes every referent to register 0; the same spiking read-back computes the field in both arms"
+    }
+   },
+   "kept": [
+    "multiref.all_recovered"
+   ],
+   "probe_turn": "hold",
+   "sd_only": false
+  },
+  "noncontradiction-gate": {
+   "fields": {
+    "noncontradiction.asserted_polarity": {
+     "class": "UNSURE",
+     "evidence": "research/runners/b3_noncontradiction_production_organ.py:116-124,144-164,203",
+     "note": "host parse of the input text, identical in both arms"
+    },
+    "noncontradiction.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/b3_noncontradiction_production_organ.py:213-218",
+     "note": "literal True in both arms"
+    },
+    "noncontradiction.recalled_yn": {
+     "class": "SD",
+     "evidence": "research/runners/b3_noncontradiction_production_organ.py:178-179",
+     "note": "if self._lesion: return 'unknown' instead of the real recall",
+     "sd_kind": "branch-forced-constant"
+    },
+    "noncontradiction.reject": {
+     "class": "SD",
+     "evidence": "research/runners/b3_noncontradiction_production_organ.py:177-180,206-211,217",
+     "note": "decision stays the initial 'accept' because the shim forces 'unknown'",
+     "sd_kind": "derived-from-forced"
+    },
+    "noncontradiction.stored_polarity": {
+     "class": "SD",
+     "evidence": "research/runners/b3_noncontradiction_production_organ.py:212",
+     "note": "None because recalled_yn is the forced 'unknown'",
+     "sd_kind": "derived-from-forced"
+    }
+   },
+   "kept": [
+    "noncontradiction.asserted_polarity",
+    "noncontradiction.on"
+   ],
+   "probe_turn": "noncontra_neg",
+   "sd_only": false
+  },
+  "pragmatic-implicature": {
+   "fields": {
+    "pragmatic.enriched_interpretation": {
+     "class": "N",
+     "evidence": "research/runners/pragmatic_production_organ.py:183-213",
+     "note": "lesion rebuilds the RSA posterior with FS weight 0; the same margin code emits the collapse string; BORDERLINE: the string names the collapse"
+    },
+    "pragmatic.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/pragmatic_production_organ.py:191-207",
+     "note": "literal True in both arms"
+    }
+   },
+   "kept": [
+    "pragmatic.enriched_interpretation",
+    "pragmatic.on"
+   ],
+   "probe_turn": "scalar",
+   "sd_only": false
+  },
+  "prospective-memory": {
+   "fields": {
+    "prospective.fired": {
+     "class": "N",
+     "evidence": "research/runners/prospective_memory_production_organ.py:356-360,384-387",
+     "note": "lesion zeroes latch attractor edges; fired = rel >= FIRE_THR in both arms"
+    }
+   },
+   "kept": [
+    "prospective.fired"
+   ],
+   "probe_turn": "pmem_cue",
+   "sd_only": false
+  },
+  "reconsolidation": {
+   "fields": {
+    "reconsolidation.action": {
+     "class": "SD",
+     "evidence": "research/runners/reconsolidation_production_organ.py:167-169",
+     "note": "returns action 'lesioned_nowrite' when lesion (verified at filing)",
+     "sd_kind": "lesion-named-literal"
+    }
+   },
+   "kept": [],
+   "probe_turn": "contra",
+   "sd_only": true
+  },
+  "self-initiated-utterance": {
+   "fields": {
+    "abstained": {
+     "class": "R",
+     "note": "top-level reply field"
+    }
+   },
+   "kept": [
+    "abstained"
+   ],
+   "probe_turn": "selfinit",
+   "sd_only": false
+  },
+  "sleep-replay": {
+   "fields": {
+    "answer": {
+     "class": "R",
+     "note": "top-level reply field"
+    },
+    "episodic.graded_cue.depth_hold": {
+     "class": "UNSURE",
+     "evidence": "webapp/server.py:5499-5506",
+     "note": "absent in both arms, same void as d5-consolidate"
+    }
+   },
+   "kept": [
+    "answer",
+    "episodic.graded_cue.depth_hold"
+   ],
+   "probe_turn": "slp_recall",
+   "sd_only": false
+  },
+  "source-provenance-honesty": {
+   "fields": {
+    "provenance.agrees_with_encoded": {
+     "class": "N",
+     "evidence": "research/runners/source_provenance_honesty.py:171",
+     "note": "label == encoded_as, same formula"
+    },
+    "provenance.encoded_as": {
+     "class": "UNSURE",
+     "evidence": "research/runners/source_provenance_honesty.py:132-142,163,170",
+     "note": "recorded from the caller's claim"
+    },
+    "provenance.known": {
+     "class": "UNSURE",
+     "evidence": "research/runners/source_provenance_honesty.py:132-143,155-157,165",
+     "note": "set unconditionally"
+    },
+    "provenance.label": {
+     "class": "N",
+     "evidence": "research/runners/source_provenance_honesty.py:121-123,143,145-162",
+     "note": "lesion turns encode-time learning off; the same recall/judge code lands in the tie band -> None"
+    }
+   },
+   "kept": [
+    "provenance.agrees_with_encoded",
+    "provenance.encoded_as",
+    "provenance.known",
+    "provenance.label"
+   ],
+   "probe_turn": "well",
+   "sd_only": false
+  },
+  "spiking-anaphor": {
+   "fields": {
+    "abstained": {
+     "class": "R",
+     "note": "top-level reply field"
+    },
+    "recalled_svo": {
+     "class": "R",
+     "note": "top-level reply field"
+    }
+   },
+   "kept": [
+    "abstained",
+    "recalled_svo"
+   ],
+   "probe_turn": "bc_b",
+   "sd_only": false
+  },
+  "surprise-monitor": {
+   "fields": {
+    "surprise.surprised": {
+     "class": "N",
+     "evidence": "research/runners/surprise_production_organ.py:93-98,378-419",
+     "note": "twin with prediction edges zeroed; same drive/read/threshold"
+    }
+   },
+   "kept": [
+    "surprise.surprised"
+   ],
+   "probe_turn": "confirm",
+   "sd_only": false
+  },
+  "swap-drives-response": {
+   "fields": {
+    "swap_drives.acted": {
+     "class": "UNSURE",
+     "evidence": "webapp/swap_drives_chat.py:128-155",
+     "note": "absent in both arms on this probe"
+    },
+    "swap_drives.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/onebrain_regression_battery.py:143-150",
+     "note": "absent in both arms on 'held' (repair short-circuit)"
+    },
+    "swap_drives.reason": {
+     "class": "UNSURE",
+     "evidence": "webapp/swap_drives_chat.py:147-150",
+     "note": "absent in both arms on this probe; sibling reason_lead would be SD if reached"
+    },
+    "swap_drives.swapped": {
+     "class": "UNSURE",
+     "evidence": "webapp/swap_drives_chat.py:136,144",
+     "note": "absent in both arms on this probe"
+    }
+   },
+   "kept": [
+    "swap_drives.acted",
+    "swap_drives.on",
+    "swap_drives.reason",
+    "swap_drives.swapped"
+   ],
+   "probe_turn": "held",
+   "sd_only": false
+  },
+  "vision-identity-spiking-hmax": {
+   "fields": {
+    "vision_identity.recognized_category": {
+     "class": "N",
+     "evidence": "research/runners/vision_identity_production_organ.py:132-145,152-159; webapp/server.py:4912-4913",
+     "note": "lesion disables coincidence detection; the same infer() recognize path abstains"
+    }
+   },
+   "kept": [
+    "vision_identity.recognized_category"
+   ],
+   "probe_turn": "vision",
+   "sd_only": false
+  },
+  "wm-binding-advanced": {
+   "fields": {
+    "multiref.n_referents": {
+     "class": "UNSURE",
+     "evidence": "research/runners/d6_multiref_wm_production_organ.py:138-143,526",
+     "note": "host parse count; absent in both arms on 'held' (not-exercised); no lesion-only branch writes it"
+    }
+   },
+   "kept": [
+    "multiref.n_referents"
+   ],
+   "probe_turn": "held",
+   "sd_only": false
+  },
+  "worldmodel-forward": {
+   "fields": {
+    "worldmodel.on": {
+     "class": "UNSURE",
+     "evidence": "research/runners/worldmodel_production_organ.py:288-297",
+     "note": "literal True"
+    },
+    "worldmodel.pred_sign": {
+     "class": "N",
+     "evidence": "research/runners/worldmodel_production_organ.py:92-97,278-297",
+     "note": "twin with the learned transition zeroed; same _predict"
+    }
+   },
+   "kept": [
+    "worldmodel.on",
+    "worldmodel.pred_sign"
+   ],
+   "probe_turn": "expect_q",
+   "sd_only": false
+  }
+ },
+ "schema": "b2d-decision-fields-v1",
+ "status": "COMPLETE for the 35 brain_chat coverable rows at filing (three read-only audits; SD calls re-read); not independently re-audited",
+ "tag": "b2d0929",
+ "unsure_rule": "UNSURE fields are KEPT in S1; an S1 load-bearing verdict that rests only on an UNSURE field is reported as such",
+ "execution": "not_executed",
+ "argv": []
+}
