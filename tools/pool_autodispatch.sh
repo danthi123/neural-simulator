@@ -517,7 +517,7 @@ queue_snapshot() {
   # replace), i.e. a file the agent could read anyway. Anything else: no pop this cycle.
   local snap fd want got kind
   want=$(stat -c %d -- "$(dirname "$SIM_WORKSPACE")" 2>/dev/null) || return 1
-  exec {fd}<"$QUEUE" || return 1
+  { exec {fd}<"$QUEUE"; } 2>/dev/null || return 1   # no queue file yet: nothing to pop (quietly)
   got=$(stat -L -c %d /dev/stdin <&"$fd" 2>/dev/null); kind=$(stat -L -c %F /dev/stdin <&"$fd" 2>/dev/null)
   case "$kind" in "regular file"|"regular empty file") ;; *) got="" ;; esac
   if [ -z "$got" ] || [ "$got" != "$want" ]; then
