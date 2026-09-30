@@ -39,7 +39,7 @@ cupy-default value here (unlike Stage 1's `lived`): every organ these five group
 path. No sim/ or webapp/ edit anywhere.
 
   .venv/bin/python -m research.runners.stage2_exit_gate --selftest
-  bash tools/memcap.sh 9 -- .venv/bin/python -m research.runners.stage2_exit_gate --shard --seed 7 --group ask \
+  bash tools/memcap.sh 10 -- .venv/bin/python -m research.runners.stage2_exit_gate --shard --seed 7 --group ask \
       --arm intact_a --out research/findings/raw/_stage2_exit/dev/s7/ask__intact_a.json
   .venv/bin/python -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_exit/gate \
       --seeds 42,43,44,100,101,102 --out research/findings/raw/_stage2_exit/gate/aggregate.json
@@ -71,6 +71,10 @@ ASK_RATIO_BAR = 2.0           # the roadmap's own Stage-2 bar: ask-rate on gaps 
 ASK_GAP_FLOOR = 2.0 / 3.0     # and the gap rate itself must be >= 2/3 (two of the three novel-topic gaps asked)
 MOOD_TOL = 0.03               # the ladder's neutral tolerance (LADDER_NEUTRAL_TOL): |differential| below = neutral
 MAX_AGE_H = 240               # every pool line declares max_age_h (the dispatcher's 12 h debris guard; cap 240 h)
+# the lane's memory declaration (prereg amendment A2): dev seed 7 measured peak RSS 6.3-6.5 GB (conv/infer/ask/inner)
+# and 8.1 GB (emo) on the final runner, so mem_gb=9 (the dispatcher's budget) under a 10 GB memcap (the hard kill)
+MEM_GB = 9
+MEMCAP_GB = 10
 
 BASE_ENV = {"SIM_BACKEND": "numpy", "BRAIN_CHAT_RENDERER": "stub", "SIM_DISABLE_LLM": "1", "CUDA_VISIBLE_DEVICES": "",
             "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1",
@@ -1092,22 +1096,23 @@ def report(agg):
 
 # ══════════════════════════════════════════════ POOL JOBS ═══════════════════════════════════════════════════════════
 def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=GATE_OUT_DIR, informational=True, max_age_h=MAX_AGE_H):
-    """One pool job per (seed, group, arm). A tiny-demo+LTM build is ~6.3-7.7 GB RSS -> mem_gb=7, cap 9 GB. Every
-    line declares max_age_h (the dispatcher's 12 h debris guard would otherwise skip a deep, legitimate queue)."""
+    """One pool job per (seed, group, arm). Dev seed 7 peaked at 6.3-8.1 GB RSS (emo highest) -> mem_gb=MEM_GB under a
+    MEMCAP_GB cap. Every line declares max_age_h (the dispatcher's 12 h debris guard would otherwise skip a deep,
+    legitimate queue)."""
     out = []
     max_age_h = min(int(max_age_h), 240)
     for seed in seeds:
         for group in GROUPS:
             for arm in arms_for(group, with_informational=informational):
                 p = shard_path(out_dir, seed, group, arm)
-                cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh 7 1 && mkdir -p %s && "
-                       "bash tools/memcap.sh 9 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
+                cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && "
+                       "bash tools/memcap.sh %d -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
                        "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
                        "research.runners.stage2_exit_gate --shard --seed %d --group %s --arm %s --allow-gate-seed "
-                       "--prereg %s --out %s" % (sha, os.path.dirname(p), seed, group, arm, PREREG, p))
+                       "--prereg %s --out %s" % (sha, MEM_GB, os.path.dirname(p), MEMCAP_GB, seed, group, arm, PREREG, p))
                 why = ("prereg %s (%s); Stage-2 exit gate seed %d %s %s; record: second integrated stage-exit "
                        "measurement (before_you_build + RAG 2026-09-30: only isolated de-risks and single-faculty "
-                       "wire-ins exist); mem_gb=7 max_age_h=%d" % (PREREG, sha[:9], seed, group, arm, max_age_h))
+                       "wire-ins exist); mem_gb=%d max_age_h=%d" % (PREREG, sha[:9], seed, group, arm, MEM_GB, max_age_h))
                 out.append((cmd, why))
     return out
 
@@ -1261,8 +1266,8 @@ def selftest(verbose=True):
     lines = pool_job_lines("0123456789abcdef" * 2 + "01234567")
     checks["pool jobs: one per (seed, group, arm), pinned, memcapped, prereg-tagged, gate flag + max_age_h present"] = (
         len(lines) == len(GATE_SEEDS) * sum(len(arms_for(g)) for g in GROUPS)
-        and all("memcap.sh 9" in c and "--allow-gate-seed" in c and PREREG in c and "revisions/0123456789" in c
-                and "max_age_h=240" in w and "mem_gb=7" in w for c, w in lines))
+        and all(("memcap.sh %d" % MEMCAP_GB) in c and "--allow-gate-seed" in c and PREREG in c and "revisions/0123456789" in c
+                and "max_age_h=240" in w and ("mem_gb=%d" % MEM_GB) in w for c, w in lines))
     ok = all(checks.values())
     if verbose:
         for k, v in checks.items():

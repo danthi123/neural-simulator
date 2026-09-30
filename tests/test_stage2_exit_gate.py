@@ -143,8 +143,8 @@ def test_pool_job_lines_are_pinned_memcapped_prereg_tagged_and_carry_max_age():
     lines = SG.pool_job_lines(sha)
     assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 186
     for cmd, why in lines:
-        assert ("revisions/%s" % sha) in cmd and "memcap.sh 9" in cmd and "--prereg %s" % SG.PREREG in cmd
-        assert "mem_gb=7" in why and SG.PREREG in why and "max_age_h=240" in why
+        assert ("revisions/%s" % sha) in cmd and ("memcap.sh %d" % SG.MEMCAP_GB) in cmd and "--prereg %s" % SG.PREREG in cmd
+        assert ("mem_gb=%d" % SG.MEM_GB) in why and SG.PREREG in why and "max_age_h=240" in why
         assert "prereg %s " % SG.PREREG in why      # the queue's guard reads the path up to whitespace
     assert all("max_age_h=48" in w for _c, w in SG.pool_job_lines(sha, max_age_h=48))
     assert all("max_age_h=240" in w for _c, w in SG.pool_job_lines(sha, max_age_h=9999))   # capped
@@ -459,3 +459,14 @@ def test_every_group_passes_on_an_ideal_brain_and_each_clause_bites(tmp_path):
     _e2e_build(td, (1, 2), _echo)
     agg = SG.aggregate(td, seeds=(1, 2))
     assert all(d["n_correct"] == 0 for d in agg["groups"].values()) and agg["GO"] is False
+
+
+def test_pool_lines_declare_memory_above_the_measured_dev_peak():
+    """Dev seed 7 (2026-09-30, workstation, final runner) measured peak RSS 6.3-6.5 GB for conv/infer/ask/inner and
+    8.1 GB for emo. A line declaring mem_gb=7 under a 9 GB memcap under-declares the dispatcher's budget and leaves
+    ~1 GB before the cap kills a shard; the declaration must cover the measured peak with >= 10% headroom."""
+    peak_mb = 8101.1
+    assert SG.MEM_GB * 1024 >= 1.10 * peak_mb and SG.MEMCAP_GB > SG.MEM_GB
+    for cmd, why in SG.pool_job_lines("f" * 40):
+        assert ("mem_ok.sh %d 1" % SG.MEM_GB) in cmd and ("memcap.sh %d --" % SG.MEMCAP_GB) in cmd, cmd
+        assert ("mem_gb=%d " % SG.MEM_GB) in why, why
