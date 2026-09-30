@@ -509,3 +509,13 @@ recorded". (3) Section 4.5's internal secondary: the handler stashes the chase t
 `internal` (object identity: only a trace written that turn); the vole probe's trace is reported beside the lynx
 probe's. (4) Each arm also records its peak RSS and the LTM bundle the handler resolved (the shipped default is
 `wikidata_100k`, `wikidata_core_15k` the fallback; both give the same `source` string); reported, never scored.
+
+**2026-09-30, amendment A2 (lane, before any gate job; runner commit 8691e84c1).** Section 10's memory figures are
+replaced by the dev-seed-7 measurement on the final runner (workstation, numpy): peak RSS 6.3-6.5 GB for `conv`,
+`infer`, `ask` and `inner`, 8.1 GB for `emo`; so every gate line declares `mem_gb=9` under `memcap.sh 10` (was 7
+under 9, which left ~1 GB before the cap killed an `emo` shard). Measured walls (workstation; a pool node is ~1.4x
+slower): conv 876 s, infer 1246 s, ask 913 s, emo 557 s, inner 793 s. No bar, arm, turn, seed, prediction or scored
+field changes. The dev-seed-7 capability reads (C3's DA-gated threshold, C5's private utterance from the
+self-initiation organ's own fixed lexicon, C1's follow-up and wh-parse) are recorded in the packet's WORKLOG, not
+here: per section 11 a dev capability read changes nothing in this file; any protocol change they prompt is a
+separate, later amendment by Claude before GATE_SHA is pinned.
