@@ -133,8 +133,8 @@ bash -c 'R="iw2 step R: prereg research/findings/2026-09-30-iw2-neural-selfid-fl
 | an add fails (`ADD FAILED`, a shape-check or prereg refusal) | STOP that file. NEEDS-CLAUDE with the refusal text. Do not edit the line |
 
 Expected wall time once dispatched (section 9 has the dev-seed numbers): an identity arm about 20-40 min (three brain
-builds in sequence); an LB shard 20-40 min (the transitive shards longer: the chase simulates several re-entrant
-cycles per hop). 41 lines in all, about 20-30 node-hours.
+builds in sequence, one node each: `mem_gb=11`); an LB shard 10-20 min locally, so about 20-40 min on a pool node.
+41 lines in all, about 20-30 node-hours.
 
 ## 5. Score steps D, S and R (after `bash tools/status.sh` shows the lines done; results land under `$P`)
 
@@ -267,8 +267,53 @@ re-queued once the same way (its output file moved aside to `<arm>.attempt1.json
 
 ## 9. Dev seed 7 results (Claude, 2026-09-30, local numpy)
 
-Pending: the dev-seed-7 identity arms and dev LB rows run at the packet commit; this section is filled in the commit
-that adds their raw files under `research/findings/raw/_iw2/dev_s7/`.
+**Identity and scope (step D's shape).** Commit 1718c83d0 (the packet code as it will be pinned, determinism guard
+in), `PYTHONHASHSEED=0`, one BLAS thread, numpy, the real `/api/brain-chat` handler, one fresh process per arm. Arms:
+`research/findings/raw/_iw2/dev_s7/identity/*.json`; verdicts (the registered `--compare`):
+`research/findings/raw/_iw2/dev_s7/verdicts/`.
+
+- **D0: IDENTICAL** -- `default` equals `off` on all 16 turns.
+- **false-belief-chat: DIFFERS-IN-SCOPE**, turn 4 only: "I don't know about that. My curiosity is piqued -- I haven't
+  learned about sally yet ..." (flag off) -> "Sally will look in the basket for the marble." The three narration turns
+  are byte-identical (the fold is write-only).
+- **transitive-chat: DIFFERS-IN-SCOPE**, turn 9 only: the flag-off path answers a different question ("... the cat
+  precedes the ball", i.e. "what does cat precede?") -> "... I believe the cat precedes the river, but I reasoned that
+  myself rather than being told it directly." The scope turn "does the cat sleep?" is identical (the closed-class
+  guard) and so is the direct pair "does cat precede ball?".
+- **neural-selfid: DIFFERS-IN-SCOPE**, turns 14-15 ("what are you?", "who are you?"): "the brain uses the spikes" ->
+  "I don't know about that. My curiosity is piqued -- I haven't learned that yet: ..." (the prereg's "known behaviour
+  change"; packet NEEDS-CLAUDE 2). Turn 13 "what do you use?" is byte-identical (the substrate route gives the same
+  reply the router gave). The ordinary anaphora scope turns (11-12) are identical.
+- **Memory.** Peak RSS 11.08-11.37 GB per arm (getrusage). Each segment reset leaves most of the previous brain
+  resident (RSS about 7.1 -> 10.5 -> 11.5 GB across the three segments). Hence `mem_gb=11` (the largest job the
+  dispatcher hands a 15 GB node; wave 1 declared 11 for a measured 11.75), `mem_ok.sh 11 1`, `memcap.sh 15`.
+- **Time.** About 1050-1090 s per arm locally, with other jobs running: first build about 500 s, each segment rebuild
+  130-160 s, turns 4-48 s (the derived chase turn 8.9 s with the flag on).
+- **Two earlier attempts were set aside** (`dev_s7/_attempt1_2threads/`, `dev_s7/_attempt2_1thread_nohashseed/`): each
+  read OUT-OF-SCOPE on turn 5 from a +/-1.1e-16 residue in `curiosity.novelty` that also differs between two fresh
+  processes with the SAME flags (a scratch body diff, A vs C). It follows Python's hash-randomized iteration order;
+  PYTHONHASHSEED=0 removes it. The runner now refuses to run without it (research/FAILURE_LOG.md 2026-09-30).
+
+**Reply-level rows (step R's shape).** Local, `--repeats 2`, commit badabc703 (the row code has not changed since),
+`research/findings/raw/_iw2/dev_s7/{fb,tr,si}/<row>/`:
+
+| row | registered verdict (null clean, lesion reproduced) | intact reply | lesion reply |
+|---|---|---|---|
+| tom-false-belief | regressed (yes, yes) | Sally will look in the basket for the marble. | Sally will look in the box for the marble. |
+| tom-true-belief-ctl | pass (yes, yes) | Sally will look in the box for the marble. | the same |
+| reasoning-transitive-chat | regressed (yes, yes) | ... I believe the cat precedes the river, but I reasoned that myself rather than being told it directly. | ... I don't know about that. |
+| transitive-reversed-ctl | pass (yes, yes) | ... I don't know about that. | the same |
+| neural-selfid | regressed (yes, yes) | the brain uses the spikes | I don't know about that. |
+| selfid-nofact-ctl | pass (yes, yes) | I don't know about that. My curiosity is piqued -- I haven't learned about drink yet ... | the same |
+
+All three teach turns of the transitive chain were stored. `tools/iw2_score.py`'s own cell logic, run on these files
+with its provenance rules bypassed (they are local sidecars, not git_archive: the real step R reads them as E) and the
+dev tree placed in all six seed slots, reads R PASS for each packet (capability 6 of 6, control 6 of 6): the scorer
+parses real arm files as intended. These are dev runs and carry no gate weight.
+
+Scratch feasibility runs before the preregs were committed found the two probe defects the transitive prereg records
+as deviations (e0..e4 are not words to the acquisition path; a chain of animals is held back by other-repair) and the
+selfid class-(b) behaviour change.
 
 ## 10. Ranking (recorded in the shared prereg)
 
@@ -305,3 +350,12 @@ push. Then NEEDS-CLAUDE "iw2: flips <FLIP> validated at F=<F7> (provisional); ad
    sub-probe's arm files (reported, never counted, in that gate).
 4. If wave 1 and wave 2 both reach step B within a few days of each other, one combined battery at a branch holding
    both flip sets would halve the ~300-line cost; that is a prereg amendment (Claude's), not the local model's.
+5. Wave 1's identity runner (`research/runners/iw1_default_identity.py`, branch research/integration-wave1) does not
+   pin PYTHONHASHSEED, and its step-D lines are already queued. Wave 2 measured a hash-order-dependent rounding residue
+   (`curiosity.novelty`, +/-1.1e-16) that made two fresh processes with the SAME flags differ on one turn (section 9;
+   FAILURE_LOG 2026-09-30). Wave 1's 13-turn script read D0 IDENTICAL on its dev run, so it may not reach that field,
+   but if its D0/F2/F3 read DIFFERS on a turn no flag touches, this is the first suspect: rule whether its lines get
+   `PYTHONHASHSEED=0` (a re-queue) before they are scored.
+6. This build registered itself for CPU lanes C and E in `research/coordination/lane_builds.jsonl` (entries expire
+   after 6 h) so its commits could land while those lanes read unserved; the registrations name this branch and say
+   the packet's step-R jobs are the lanes' next work. Nothing was queued by Claude.
