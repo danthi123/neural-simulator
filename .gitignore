@@ -240,3 +240,10 @@ research/queue/pool.queue research/queue/pool.queue.claims research/queue/pool.q
 # subtree's own untracked convention; (b) a planted file here (e.g. a conftest.py) must never become part of
 # the tracked tree via an accidental `git add -A`.
 research/findings/raw/_agent_jobs/
+# Pool canary records (2026-09-30, tools/pool_canary.sh): live state the tool appends on this workstation and
+# `pool_queue.sh add` reads, untracked like pool.queue so no checkout, merge, restore or stash rewrites it.
+research/queue/pool_canaries.tsv
+research/queue/pool_canaries.tsv.lock
+# Pool canary outputs pulled back by pool-sync (canary result JSON; the 2026-09-30 sandbox tester's captured logs
+# are 150-300 MB each): instrument checks, never gate data, never committed.
+research/findings/raw/_pool_canary/
