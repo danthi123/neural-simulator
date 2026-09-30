@@ -325,8 +325,9 @@ def provided_modules(requirements: Iterable[str]) -> set[str]:
                 todo.append(_normalize(match.group(0)))
     if missing:
         raise RequirementNotInstalled(f"not installed here, cannot resolve: {sorted(missing)}")
-    return {module for module, owners in metadata.packages_distributions().items()
-            if any(_normalize(owner) in dists for owner in owners)}
+    from tools.pool.provisioning.pool_venv_check import top_level_modules   # the same inference the node runs
+
+    return {module for name in dists for module in top_level_modules(name)}
 
 
 def pool_gaps(closure: Closure, provided: set[str]) -> dict[str, dict[str, object]]:
