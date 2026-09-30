@@ -132,7 +132,7 @@ find $P/$OUT -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'agg
 
 When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued
 (`grep -c stage1_c1_category $P/research/queue/pool.queue` prints 0): run step 5's aggregate (its `missing_shards`
-list names them), re-queue exactly those lines from `$JOBS` ONCE (grep each by its `--seed N --arm A`), wait again.
+list names them), re-queue exactly those lines from `$JOBS` ONCE (grep each by the exact text `--seed N --arm A --allow-gate-seed`, so `lesion_inherit` does not also pick up `lesion_inherit.rep0`; add it with the same `pool_queue.sh add "$cmd" --checked "$why"` loop as step 3), wait again.
 Still missing: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and NEEDS-CLAUDE #5. If no shard has landed by
 2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before 2026-10-24).
 
