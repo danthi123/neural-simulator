@@ -6,6 +6,8 @@
 # research/coordination/b2d_mouth_reruns.tsv, and queue the cell's unchanged line from the mouth job file on the GPU.
 # A cell that NEVER RAN (no file at all in the export, e.g. its memory guard refused) is re-queued instead, at most twice
 # (A1.4 c), with nothing moved. Refuses a second re-run of the same cell and a cell whose line is queued or running.
+# CLAUDE ONLY (review 2026-09-30): it queues with tools/gpu_queue.sh add, which the local model's settings deny and
+# its runbook forbids (HANDOFF step 5); the local model writes NEEDS-CLAUDE instead of running this script.
 set -uo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/env.sh"
 SEED=${1:?seed}; ROW=${2:?row}; CAUSE=${3:?cause text}; DRY=${4:-}

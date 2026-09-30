@@ -185,3 +185,18 @@ def test_the_wave_script_reason_passes_the_gate_seed_guard_and_declares_its_age(
     assert path == PREREG and os.path.exists(os.path.join(ROOT, path))
     assert re.search(r"\bmem_gb=8\b", reason) and re.search(r"\bmax_age_h=168\b", reason)
     assert 'TAG=b2d0929\n' in src and 'JOBS="$HERE/b2d_jobs.txt"' in src
+
+
+def test_the_handoff_never_tells_the_local_model_to_queue_on_the_gpu():
+    """HANDOFF.md is executed by the local model. While its settings deny `tools/gpu_queue.sh add` (and its runbook
+    forbids touching gpu_queue.sh beyond `status`), no step before the NEEDS-CLAUDE list may run `gpu_queue.sh add` /
+    `start`, directly or through rerun_mouth_cell.sh (which queues on the GPU). Review 2026-09-30: step 5, step 9's
+    mouth re-run row and section 11 did."""
+    settings = json.load(open(os.path.join(ROOT, "tools", "local_llm", "claude_local_settings.json")))
+    if "Bash(bash tools/gpu_queue.sh add:*)" not in settings["permissions"]["deny"]:
+        return
+    text = open(os.path.join(K, "HANDOFF.md")).read()
+    executed = text.split("\n## NEEDS-CLAUDE")[0]
+    assert not re.findall(r"bash tools/gpu_queue\.sh (?:add|start)", executed)
+    assert not re.findall(r"bash \$K/rerun_mouth_cell\.sh", executed)
+    assert "bash tools/local_llm/llm.sh\nyield --max-hours 12" in executed or "llm.sh yield" in executed

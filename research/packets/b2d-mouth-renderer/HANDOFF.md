@@ -35,7 +35,8 @@ that is not blocked. Every verdict you write is PROVISIONAL until Claude inspect
   workstation export at `~/derisk-pool/revisions/<P>` verified, corpus rows at P recorded (all `7a00272e...`), and
   stub-arm wave 1 (43 lines, seed 42) queued at 11:30 EDT (ledger commit `9b8d909ea`). **Start at step 4's "Every
   later session" line, then step 5.** Redo steps 1-3 only if a later step's table sends you back there.
-- The mouth arm (step 5) is NOT queued: it needs a GPU window of about 12 h (a yield), which is yours to choose.
+- The mouth arm (step 5) is NOT queued, and queueing it is Claude's, not yours (review 2026-09-30, step 5):
+  your GPU path refuses these lines. Once Claude has queued them, the ~12 h GPU window (a yield) is yours to choose.
 
 ## 1. Pin P (DONE 2026-09-30; see section 0)
 
@@ -130,22 +131,33 @@ Wall time on pool41 + pool42 alone: the queue was about 446 lines (three to four
 then about 70 to 75 h of B2d work at one 8 GB job per node, so roughly a week; `max_age_h=168` on every line keeps
 them fresh. With AWS the prereg sizes it at about 20 h and at most $40 (NEEDS-CLAUDE #1: the owner's call).
 
-## 5. Queue the mouth arm (GPU) and yield the card
+## 5. The mouth arm (GPU): Claude queues it; you yield the card
+
+You cannot queue these lines, and must not try: `tools/gpu_queue.sh add` and `start` are denied to you
+(`tools/local_llm/claude_local_settings.json`) and your runbook forbids touching `gpu_queue.sh` beyond `status`; your
+GPU path, `tools/local_llm/gpu_add.sh`, refuses them because the export `~/derisk-pool/revisions/<P>` is not a git
+checkout (checked 2026-09-30). Never wrap `gpu_queue.sh add` in `bash -c`, a loop or a script to get past that.
+Queueing the 18 lines, and whether the registered arm runs at all, is Claude's (NEEDS-CLAUDE #3). Every session:
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
-cd $W && bash tools/gpu_queue.sh start >/dev/null 2>&1; bash -c 'while IFS= read -r line; do bash tools/gpu_queue.sh add "$line" </dev/null || { echo "ADD FAILED: $line"; exit 1; }; done < '"$K/jobs/mouth_$P7.txt"
 bash tools/gpu_queue.sh status | head -5
+grep -c -- "_shards/b2d0929-mouth/" $P/research/queue/gpu.queue 2>/dev/null || true   # mouth lines queued
 ```
 
-Then free the card (the queue holds every job while the local-llm unit is active): `bash tools/local_llm/llm.sh
+| result | do |
+|---|---|
+| 0 mouth lines queued and 0 landed (step 6 count) | nothing: the arm waits for Claude (NEEDS-CLAUDE #3). Continue the stub arm |
+| 1 or more mouth lines queued | free the card when you choose (below) |
+| 0 queued, 1 to 17 landed, no GPU job running | the queue drained: steps 7-8 score the arm; its re-runs are Claude's (step 9) |
+
+To free the card (the queue holds every job while the local-llm unit is active): `bash tools/local_llm/llm.sh
 yield --max-hours 12`. Your session resumes by itself when the window drains. If it prints `refusing to yield: ...
 not loaded`, the unit is already down and the queue is not held: nothing to do. `yield` refuses while a
 `.claude/worktrees/draft-*` worktree has uncommitted tracked changes: commit those through the normal gates first,
 or, if you cannot, NEEDS-CLAUDE "B2d mouth arm: yield refused (<its message>)". Never run a mouth line outside the
 queue. Measured on dev seed 7: about 10 min per arm on cupy, 4 arms per cell, so about 40 min per cell and about 12 h
-for all 18; if the window ends with lines left, yield again next session. `ADD FAILED`: STOP this arm, NEEDS-CLAUDE
-with the refusal text.
+for all 18; if the window ends with lines left, yield again next session.
 
 ## 6. While running (every session)
 
@@ -206,7 +218,7 @@ $PY tools/b2d_mouth_score.py --tag b2d0929-mouth --pin $PIN_P --base $P/$SH --fi
 | prints | do |
 |---|---|
 | `preconditions_failed` non-empty | STOP. NEEDS-CLAUDE with the names |
-| `rerun_cells` non-empty (MISSING, C-UNCONFIRMED, M-UNCONFIRMED) | for each cell ONCE: `bash $K/rerun_mouth_cell.sh <seed> <row> "<its fails text>"`, then yield (step 5), then steps 7-8 |
+| `rerun_cells` non-empty (MISSING, C-UNCONFIRMED, M-UNCONFIRMED) | STOP this arm. NEEDS-CLAUDE "B2d mouth re-run: <each cell and its fails text>" (`rerun_mouth_cell.sh` queues on the GPU, which only Claude may do; step 5). After Claude re-queues: yield (step 5), then steps 7-8 |
 | a cell whose state is M twice | final FAIL for that cell; NEEDS-CLAUDE "B2d mouth: renderer did not resolve to Qwen twice at s<seed>/<row>" |
 | `verdict: COMPLETE` | step 10. Read each row's `reading` against the predictions (Amendment 1, A1.3) |
 
@@ -230,9 +242,9 @@ seed-7 cells scored by `tools/b2d_mouth_score.py`, and the remap probe).
 
 **Two optional dev GPU checks were cancelled at handoff** (to give the card back to the local model; they waited
 on workstation RAM): the remap probe's production-mode lesion arm and the re-run of the dev drives cell. Run them
-only inside a GPU window you already hold for step 5, before the mouth lines (both lines are in
+only inside a GPU window held for step 5, before the mouth lines (both lines are in
 `$K/jobs/dev7_moodrender_5818dc6.txt` (its third line, `--arm lesion`) and `$K/jobs/dev7_diag2.txt` (its second
-line)); queue each with `bash tools/gpu_queue.sh add "<line>"`. When both files exist
+line)); Claude queues each (you cannot, step 5); you only yield. When both files exist
 (`$HOME/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03/research/findings/raw/_b2d_mood_render_probe/
 dev7_production/lesion.json` and `$HOME/derisk-pool/revisions/e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1/research/
 findings/raw/_load_bearing/_shards/b2d0929-mouth-dev7/s7/affect-drives-response/lesion_affect_drives_response_s7.json`):
@@ -265,9 +277,18 @@ Report the printed `probe` reading and the drives cell state to Claude in `resea
    stub-arm reply under `BRAIN_AFFECT_LESION=1` (`...cat! — ...` to `...cat — ...`), null clean, one dev seed
    (`dev7/README.md` section 3). Candidate: register that two-turn group as affect-coloring's (and
    affect-appraisal-interoceptive's) S2 probe in the stub arm, dev-check a second dev seed, then six seeds. The
-   registered 18-job mouth arm still runs as registered (step 5) unless Claude retires it by amendment.
+   registered 18-job mouth arm runs as registered only once Claude queues it (#6), unless Claude retires it by
+   amendment. Review note (2026-09-30): the probe's reply change is one appended `!`; the marker is chosen by a
+   spiking WTA (`mouth_tone_marker`) from a host-quantized `tone_level` and appended by host code
+   (`_apply_mouth_mood_tone`), so a remap that counts it should say which part the lesion removed.
 4. Carried from the B2d HANDOFF on main, unaffected by this packet: the harness-level S1 identity replay (not
    blocking); the four genuinely new probe remaps; swap-drives-response's five uncommitted seed artifacts; the B2b
    seed-102 A1.4 ruling (the drift block reports those cells as they stand); `lb_shard.py aggregate`'s `ltm_mode`
    recorder is still blind (the finding labels LTM from the arm files' `source` field instead).
 5. Any STOP row above.
+6. **Queue the mouth arm, its re-runs and the section 11 dev lines (Claude only; review 2026-09-30).** The local
+   model cannot (step 5). If #3 keeps the registered arm: first confirm the Qwen call counter reads above 0 on a
+   real Qwen-rendered turn (review record in the commit that added this item), then from `$W`:
+   `bash -c 'while IFS= read -r line; do bash tools/gpu_queue.sh add "$line" </dev/null || exit 1; done' < $K/jobs/mouth_$P7.txt`
+   and tell the local model (runbook) to yield. A mouth re-run: `bash $K/rerun_mouth_cell.sh <seed> <row>
+   "<fails>"` (it queues on the GPU). Until then the stub arm proceeds alone; step 10 needs both scorer outputs.
