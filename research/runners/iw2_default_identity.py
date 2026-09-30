@@ -41,6 +41,12 @@ anything) when a load_bearing_fraction CORPUS GUARD file is missing or the shipp
 records `corpus_present` and `ltm_bundle`; `--compare` is UNDEFINED unless both arms read corpus_present True and the
 same non-empty ltm_bundle. IW2_ALLOW_DEGRADED=1 measures the degraded brain on purpose (recorded). The arm also
 records its peak RSS (`peak_rss_gb`, getrusage) so the job lines' declared mem_gb is a measured number.
+
+SINGLE-THREAD GUARD (dev seed 7, 2026-09-30). With 2 BLAS threads, one turn's body carried a sign-flipped rounding
+residue (`curiosity.novelty` +1.1e-16 vs -1.1e-16) that differed between two fresh processes of the SAME code and flags,
+so a byte comparison read a difference no flag caused. A byte-identity instrument must be deterministic: an arm refuses
+(exit 3) unless OMP_NUM_THREADS, OPENBLAS_NUM_THREADS and MKL_NUM_THREADS are all "1" (the job lines set them), records
+them, and `--compare` is UNDEFINED unless both arms ran single-threaded.
 """
 from __future__ import annotations
 
@@ -83,6 +89,7 @@ TURNS = [
 ]
 # the same four files load_bearing_fraction's CORPUS GUARD requires (research/runners/load_bearing_fraction.py)
 CORPUS_FILES = ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")
+THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
 VOLATILE_KEY_RE = re.compile(r"(latency|elapsed|_ms$|_sec$|_secs$|seconds|time|timestamp|wall|duration|perf)", re.I)
 
 
@@ -133,6 +140,12 @@ def _refuse(msg: str):
     raise SystemExit(3)
 
 
+def _refuse_threads(th):
+    print("⛔ iw2_default_identity: BLAS/OpenMP thread variables %s must all be \"1\" (a multi-threaded reduction "
+          "is not bit-reproducible; see the module docstring). Refusing to run." % th, file=sys.stderr, flush=True)
+    raise SystemExit(3)
+
+
 def _rss_now_gb() -> float:
     try:
         return round(int(open("/proc/self/statm").read().split()[1]) * os.sysconf("SC_PAGE_SIZE") / 1e9, 2)
@@ -145,8 +158,16 @@ def _peak_rss_gb() -> float:
     return round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1048576.0, 2)
 
 
+def threads_status(environ=None) -> dict:
+    environ = os.environ if environ is None else environ
+    return {k: environ.get(k) for k in THREAD_VARS}
+
+
 def run_arm(arm: str, seed: int, out: str) -> dict:
     allow_degraded = os.environ.get("IW2_ALLOW_DEGRADED") == "1"
+    th = threads_status()
+    if any(v != "1" for v in th.values()):
+        _refuse_threads(th)
     cs = corpus_status(os.getcwd())
     if not cs["corpus_present"] and not allow_degraded:
         _refuse("data/corpus/ in %s is missing %s" % (os.getcwd(), cs["corpus_missing"]))
@@ -195,6 +216,7 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
            "corpus_present": cs["corpus_present"], "corpus_missing": cs["corpus_missing"],
            "ltm_bundle": os.path.basename(ltm_dir) if ltm_dir else None, "ltm_bundle_dir": ltm_dir,
            "allow_degraded": allow_degraded, "sources": sorted({str(r["source"]) for r in rows}),
+           "threads": th,
            "sim_backend": os.environ.get("SIM_BACKEND"), "n_turns": len(TURNS),
            "script_sha": hashlib.sha256(json.dumps(TURNS).encode()).hexdigest(),
            "wall_s": round(time.time() - t0, 1), "peak_rss_gb": _peak_rss_gb(), "turns": rows,
@@ -229,7 +251,8 @@ def compare(a: dict, b: dict, expect: str, packet: str = None) -> dict:
            "all_status_200": all(r.get("status") == 200 for r in ta + tb),
            "all_turns_present": all(len(x.get("turns", [])) == x.get("n_turns") for x in (a, b)),
            "corpus_present_both": a.get("corpus_present") is True and b.get("corpus_present") is True,
-           "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle")}
+           "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle"),
+           "single_threaded_both": all(set((x.get("threads") or {}).values()) == {"1"} for x in (a, b))}
     diff = [i for i, (x, y) in enumerate(zip(ta, tb)) if x.get("sha_canon") != y.get("sha_canon")]
     reply_diff = [i for i, (x, y) in enumerate(zip(ta, tb)) if _reply(x) != _reply(y)]
     backends = sorted({str(a.get("sim_backend")), str(b.get("sim_backend"))})

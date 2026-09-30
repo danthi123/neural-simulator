@@ -25,7 +25,7 @@ set -euo pipefail
 W="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$W"
 LB_NEED=8; LB_CAP=12
-IDENT_NEED=10; IDENT_CAP=14   # peak RSS measured 2026-09-30 (dev seed 7): see the HANDOFF section 9
+IDENT_NEED=11; IDENT_CAP=15   # peak RSS measured 2026-09-30 (dev seed 7): 7.8-11.0 GB over five arms, HANDOFF section 9
 capwrap() {  # insert the memory gate + hard cap in front of the FIRST ` && env ` of each line
   sed "s# \&\& env # \&\& bash tools/mem_ok.sh $1 2 \&\& bash tools/memcap.sh $2 -- env #"
 }

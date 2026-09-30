@@ -121,7 +121,7 @@ bash tools/push_both.sh research/integration-wave2
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/packets/integration-wave2/env.sh
 cd $P
-bash -c 'R="iw2 step D dev seed 7: prereg research/findings/2026-09-30-iw2-wave-battery-PREREGISTRATION.md ; mem_gb=10 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
+bash -c 'R="iw2 step D dev seed 7: prereg research/findings/2026-09-30-iw2-wave-battery-PREREGISTRATION.md ; mem_gb=11 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$P7.txt"
 bash -c 'R="iw2 step R: prereg research/findings/2026-09-30-iw2-false-belief-chat-flip-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_fb_$P7.txt"
 bash -c 'R="iw2 step R: prereg research/findings/2026-09-30-iw2-transitive-chat-flip-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_tr_$P7.txt"
 bash -c 'R="iw2 step R: prereg research/findings/2026-09-30-iw2-neural-selfid-flip-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/R_si_$P7.txt"
@@ -215,7 +215,7 @@ source /home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/p
 cd $P
 bash -c 'R="iw2 step B: prereg research/findings/2026-09-30-iw2-wave-battery-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216"; sed -n 1,43p '"$W/$K/jobs/flip_$F7.txt"' | while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done'
 # later waves: sed -n 44,86p, 87,129p, 130,172p, 173,215p, 216,258p, 259,301p, 302,344p (until the file ends)
-bash -c 'R="iw2 step F dev seed 7: prereg research/findings/2026-09-30-iw2-wave-battery-PREREGISTRATION.md ; mem_gb=10 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
+bash -c 'R="iw2 step F dev seed 7: prereg research/findings/2026-09-30-iw2-wave-battery-PREREGISTRATION.md ; mem_gb=11 ; max_age_h=216"; while IFS= read -r line; do bash tools/pool_queue.sh add "$line" --checked "$R" </dev/null || { echo "ADD FAILED: $line" >&2; exit 1; }; done < '"$W/$K/jobs/identity_$F7.txt"
 ```
 
 Log each wave (epoch, first-last line) in `$K/waves.tsv`. Every B line starts with
