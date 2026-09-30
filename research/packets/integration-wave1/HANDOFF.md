@@ -271,6 +271,15 @@ Dev LB rows (local, `--repeats 2`, commit 106a20da5): `d6-hebbian-write` regress
 freeze lesion abstains); `xedge-surprise-worldmodel` regressed at trace and reply level (the margin text). Details
 in each packet's HANDOFF. These are dev runs: their sidecars are not pool git_archive, so they carry no gate weight.
 
+Review checks (Claude, 2026-09-29, local numpy, OMP 2, seed 7, same 13-turn script):
+- OFF path vs main: the `default` arm run on a checkout of `origin/main` (8696e35d7, whose production code equals this
+  branch's merge base) equals this branch's `default` and `off` arms (6f4c02368) on all 13 turns (session sha
+  `7eba9e690eef...`); the fixed runner at 049d4bb0b reproduces it and records `corpus_present` True, `ltm_bundle`
+  wikidata_100k, `sources` ['tiny-demo +LTM'].
+- Peak RSS of one identity arm: 11.75 GB (main) and 11.58 GB (branch), measured with getrusage. Hence the job lines'
+  `mem_ok.sh 11 1` + `memcap.sh 15` (MemoryHigh 13 GB) and `mem_gb=11`, the largest size the dispatcher hands a
+  15 GB node.
+
 ## 10. Dropped from the wave: the learned-referent lexicon
 
 `BRAIN_LEARNED_REFERENT_LEXICON` (GO 6/6 on its route, 2026-09-24) was the third candidate. Screening found that
