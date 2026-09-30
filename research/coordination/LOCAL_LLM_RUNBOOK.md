@@ -49,6 +49,9 @@ nothing else. The dispatcher is FIRST-FIT in file order: a node (15 GB, 2 reserv
 `mem_gb` fits, so 2 GB lines slip past 7-11 GB ones; heavy lines run one per node. An expired line stays in
 `pool.queue` but never runs: when a packet's unrun lines are within 24 h of expiry (`bash tools/pool_queue.sh list`
 shows ages), NEEDS-CLAUDE "[<task>] <n> lines expire <date>". Never re-add queued, held or dead lines.
+**Pool canary (2026-09-30).** `pool_queue.sh add` refuses a gate-seed line until a gate-seed line of the same runner at
+the same revision has passed on a pool node (`bash tools/pool_canary.sh list`; every requeue_*.tsv pin already has
+one). A refusal naming the pool canary is a STOP: NEEDS-CLAUDE "[<task>] needs a pool canary at <sha>".
 **Re-queue missing shards ONCE** (only when the task says; section 1 must show queued=0 running=0 for the key; the
 block stops if any line at the file's revision is still queued or held, and re-adds only shards whose `--out` is absent):
 ```bash

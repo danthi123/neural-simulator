@@ -231,6 +231,19 @@ case "${1:-list}" in
              echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
              exit 2
            fi
+           # POOL-CANARY GUARD (2026-09-30, tools/pool_canary.sh). ~470 gate-seed lines for eight runner families
+           # were queued on 2026-09-29 after workstation dev-seed checks only; run for real on pool41/pool42, every
+           # line of three families died in the worker's argparse (host_share, stage1_exit_gate and
+           # stage1_c1_category spawned '--worker --seed N' without --allow-gate-seed) and a fourth died at import
+           # (no httpx in the pool venv). A dev-seed check exercises neither the gate-seed code path nor the pool's
+           # venv, so a gate-seed line is refused until a canary of the SAME runner module at the SAME revision has
+           # PASSED on a pool node (the latest record for the pair in research/queue/pool_canaries.tsv).
+           if ! CANARY_WHY=$(bash "$ROOT/tools/pool_canary.sh" check-line "$2" 2>&1); then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS]: $CANARY_WHY." >&2
+             echo "   Run ONE line of this runner at this revision on a pool node first; it records the verdict:" >&2
+             echo "   bash tools/pool_canary.sh run <node> '<this line>'" >&2
+             exit 2
+           fi
          fi
          # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
          # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node
