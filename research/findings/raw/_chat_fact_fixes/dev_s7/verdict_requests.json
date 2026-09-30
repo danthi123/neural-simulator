@@ -1,0 +1,486 @@
+{
+ "runner": "research/runners/chat_fact_fixes_identity.py --compare",
+ "script": "requests",
+ "sim_backend": "numpy",
+ "git_shas": [
+  "f5e3732fed28f70d849a5e4d6cdc6ef4d206f3f8",
+  "9fad5276888e8de6eb0fca19df8914d5dd057630"
+ ],
+ "preconditions": {
+  "same_script": true,
+  "same_seed": true,
+  "all_status_200": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true,
+  "same_pythonhashseed": true
+ },
+ "differing_turns": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "details": [
+  {
+   "turn": 1,
+   "message": "tell me about the sky",
+   "reply_differs": true,
+   "before": {
+    "answer": "the tell abouts the sky",
+    "abstained": false,
+    "recalled_svo": [
+     "tell",
+     "about",
+     "sky"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sky yet: what can you tell me about sky?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.abstained",
+    "$.activity.n_facts_scanned",
+    "$.activity.rf.mean_magnitude",
+    "$.activity.rf.n_readout_neurons",
+    "$.activity.roles",
+    "$.answer",
+    "$.curiosity",
+    "$.provenance",
+    "$.recalled_svo",
+    "$.verified"
+   ]
+  },
+  {
+   "turn": 2,
+   "message": "what does the wolf hunt",
+   "reply_differs": false,
+   "before": {
+    "answer": "the wolf hunts the deer",
+    "abstained": false,
+    "recalled_svo": [
+     "wolf",
+     "hunt",
+     "deer"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "the wolf hunts the deer",
+    "abstained": false,
+    "recalled_svo": [
+     "wolf",
+     "hunt",
+     "deer"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.activity.n_facts_scanned",
+    "$.provenance.d",
+    "$.provenance.rate_perceived"
+   ]
+  },
+  {
+   "turn": 3,
+   "message": "tell me about wolves",
+   "reply_differs": true,
+   "before": {
+    "answer": "Setting the held thread aside \u2014 On tell, then \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about sky. Updated \u2014 I'd stored that tell about sky; I've revised it in place to tell about wolves. the tell abouts the wolves",
+    "abstained": false,
+    "recalled_svo": [
+     "tell",
+     "about",
+     "wolves"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolves yet: what can you tell me about wolves?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.abstained",
+    "$.activity.abstained",
+    "$.activity.composer",
+    "$.activity.matched_fact_index",
+    "$.activity.n_facts_scanned",
+    "$.activity.rf.frac_fired",
+    "$.activity.rf.mean_magnitude",
+    "$.activity.rf.n_readout_neurons",
+    "$.activity.roles",
+    "$.answer",
+    "$.common_ground_drives.decision",
+    "$.common_ground_drives.evidence_rate (only-before)",
+    "$.common_ground_drives.first_mention (only-before)",
+    "$.common_ground_drives.in_common_ground (only-before)",
+    "$.common_ground_drives.introduce_rate (only-before)",
+    "$.common_ground_drives.margin (only-before)",
+    "$.common_ground_drives.reason (only-after)",
+    "$.common_ground_drives.reason_lead",
+    "$.common_ground_drives.reduce_rate (only-before)",
+    "$.common_ground_drives.slot (only-before)",
+    "$.common_ground_drives.topic",
+    "$.curiosity",
+    "$.gnw_stop (only-before)",
+    "$.metacog",
+    "$.noncontradiction.recalled_yn",
+    "$.noncontradiction.stored_polarity",
+    "$.provenance",
+    "$.recalled_svo",
+    "$.reconsolidation",
+    "$.surprise",
+    "$.swap_drives.acted",
+    "$.swap_drives.boost_max (only-before)",
+    "$.swap_drives.evicted_topic",
+    "$.swap_drives.held_slot (only-before)",
+    "$.swap_drives.held_topic",
+    "$.swap_drives.incumbent_slot (only-before)",
+    "$.swap_drives.lead",
+    "$.swap_drives.mm_peak (only-before)",
+    "$.swap_drives.n_ignited_post (only-before)",
+    "$.swap_drives.new_rate_post (only-before)",
+    "$.swap_drives.old_residual_post (only-before)",
+    "$.swap_drives.proposed_slot (only-before)",
+    "$.swap_drives.winner_slot (only-before)"
+   ]
+  },
+  {
+   "turn": 4,
+   "message": "talk about the moon",
+   "reply_differs": true,
+   "before": {
+    "answer": "the talk abouts the moon",
+    "abstained": false,
+    "recalled_svo": [
+     "talk",
+     "about",
+     "moon"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about talk yet: what can you tell me about talk?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.abstained",
+    "$.activity.composer",
+    "$.activity.n_facts_scanned",
+    "$.activity.rf.frac_fired",
+    "$.activity.rf.mean_magnitude",
+    "$.activity.rf.n_readout_neurons",
+    "$.activity.roles",
+    "$.answer",
+    "$.curiosity",
+    "$.provenance",
+    "$.recalled_svo",
+    "$.swap_drives.held_topic",
+    "$.swap_drives.held_topic_before",
+    "$.verified"
+   ]
+  },
+  {
+   "turn": 5,
+   "message": "can you describe the moon",
+   "reply_differs": true,
+   "before": {
+    "answer": "Setting the held thread aside \u2014 On moon, then \u2014 the can describes the moon",
+    "abstained": false,
+    "recalled_svo": [
+     "can",
+     "describe",
+     "moon"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about moon yet: what can you tell me about moon?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.abstained",
+    "$.activity.n_facts_scanned",
+    "$.activity.rf.mean_magnitude",
+    "$.activity.rf.n_readout_neurons",
+    "$.activity.roles",
+    "$.answer",
+    "$.common_ground_drives.decision",
+    "$.common_ground_drives.evidence_rate (only-before)",
+    "$.common_ground_drives.first_mention (only-before)",
+    "$.common_ground_drives.in_common_ground (only-before)",
+    "$.common_ground_drives.introduce_rate (only-before)",
+    "$.common_ground_drives.margin (only-before)",
+    "$.common_ground_drives.reason (only-after)",
+    "$.common_ground_drives.reason_lead",
+    "$.common_ground_drives.reduce_rate (only-before)",
+    "$.common_ground_drives.slot (only-before)",
+    "$.common_ground_drives.topic",
+    "$.curiosity",
+    "$.gnw_stop (only-before)",
+    "$.provenance",
+    "$.recalled_svo",
+    "$.swap_drives.acted",
+    "$.swap_drives.boost_max (only-before)",
+    "$.swap_drives.evicted_topic",
+    "$.swap_drives.held_slot (only-before)",
+    "$.swap_drives.held_topic",
+    "$.swap_drives.held_topic_before",
+    "$.swap_drives.incumbent_slot (only-before)",
+    "$.swap_drives.lead",
+    "$.swap_drives.mm_peak (only-before)",
+    "$.swap_drives.n_ignited_post (only-before)",
+    "$.swap_drives.new_rate_post (only-before)",
+    "$.swap_drives.new_topic",
+    "$.swap_drives.old_residual_post (only-before)",
+    "$.swap_drives.proposed_slot (only-before)",
+    "$.swap_drives.reason",
+    "$.swap_drives.reason_lead",
+    "$.swap_drives.swapped",
+    "$.swap_drives.topic",
+    "$.swap_drives.winner_slot (only-before)"
+   ]
+  },
+  {
+   "turn": 7,
+   "message": "the cat eats fish",
+   "reply_differs": false,
+   "before": {
+    "answer": "Setting the held thread aside \u2014 On cat, then \u2014 the cat eats the fish \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "Setting the held thread aside \u2014 On cat, then \u2014 the cat eats the fish \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.activity.n_facts_scanned",
+    "$.common_ground_drives.slot",
+    "$.provenance.d",
+    "$.provenance.rate_perceived",
+    "$.swap_drives.evicted_topic",
+    "$.swap_drives.held_slot",
+    "$.swap_drives.held_topic_before",
+    "$.swap_drives.incumbent_slot",
+    "$.swap_drives.mm_peak",
+    "$.swap_drives.proposed_slot",
+    "$.swap_drives.winner_slot"
+   ]
+  },
+  {
+   "turn": 8,
+   "message": "what does the cat eat",
+   "reply_differs": false,
+   "before": {
+    "answer": "As for it \u2014 the cat eats the fish",
+    "abstained": false,
+    "recalled_svo": [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "As for it \u2014 the cat eats the fish",
+    "abstained": false,
+    "recalled_svo": [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.activity.n_facts_scanned",
+    "$.common_ground_drives.slot",
+    "$.provenance.d",
+    "$.provenance.rate_perceived",
+    "$.swap_drives.boost_max",
+    "$.swap_drives.held_slot",
+    "$.swap_drives.incumbent_slot",
+    "$.swap_drives.proposed_slot",
+    "$.swap_drives.winner_slot"
+   ]
+  },
+  {
+   "turn": 9,
+   "message": "tell me more",
+   "reply_differs": true,
+   "before": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On tell, then \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.answer",
+    "$.common_ground_drives.decision",
+    "$.common_ground_drives.evidence_rate (only-before)",
+    "$.common_ground_drives.first_mention (only-before)",
+    "$.common_ground_drives.in_common_ground (only-before)",
+    "$.common_ground_drives.introduce_rate (only-before)",
+    "$.common_ground_drives.lead",
+    "$.common_ground_drives.margin (only-before)",
+    "$.common_ground_drives.reason (only-after)",
+    "$.common_ground_drives.reason_lead",
+    "$.common_ground_drives.reduce_rate (only-before)",
+    "$.common_ground_drives.slot (only-before)",
+    "$.common_ground_drives.topic",
+    "$.gnw_stop (only-before)",
+    "$.swap_drives.acted",
+    "$.swap_drives.boost_max (only-before)",
+    "$.swap_drives.evicted_topic",
+    "$.swap_drives.held_slot (only-before)",
+    "$.swap_drives.held_topic",
+    "$.swap_drives.incumbent_slot (only-before)",
+    "$.swap_drives.lead",
+    "$.swap_drives.mm_peak (only-before)",
+    "$.swap_drives.n_ignited_post (only-before)",
+    "$.swap_drives.new_rate_post (only-before)",
+    "$.swap_drives.new_topic",
+    "$.swap_drives.old_residual_post (only-before)",
+    "$.swap_drives.proposed_slot (only-before)",
+    "$.swap_drives.reason",
+    "$.swap_drives.reason_lead",
+    "$.swap_drives.swapped",
+    "$.swap_drives.topic",
+    "$.swap_drives.winner_slot (only-before)"
+   ]
+  },
+  {
+   "turn": 10,
+   "message": "i like the sky",
+   "reply_differs": false,
+   "before": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about like yet: what can you tell me about like?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about like yet: what can you tell me about like?",
+    "abstained": true,
+    "recalled_svo": null,
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.curiosity.graded_novelty.value",
+    "$.curiosity.novelty",
+    "$.swap_drives.held_topic",
+    "$.swap_drives.held_topic_before"
+   ]
+  },
+  {
+   "turn": 11,
+   "message": "the dog chases the ball",
+   "reply_differs": false,
+   "before": {
+    "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the ball \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+     "dog",
+     "chase",
+     "ball"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the ball \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+     "dog",
+     "chase",
+     "ball"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.common_ground_drives.introduce_rate",
+    "$.common_ground_drives.margin",
+    "$.common_ground_drives.slot",
+    "$.provenance.d",
+    "$.provenance.rate_perceived",
+    "$.swap_drives.evicted_topic",
+    "$.swap_drives.held_topic_before",
+    "$.swap_drives.mm_peak",
+    "$.swap_drives.old_residual_post"
+   ]
+  },
+  {
+   "turn": 12,
+   "message": "what does the dog chase",
+   "reply_differs": false,
+   "before": {
+    "answer": "As for it \u2014 the dog chases the ball",
+    "abstained": false,
+    "recalled_svo": [
+     "dog",
+     "chase",
+     "ball"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "after": {
+    "answer": "As for it \u2014 the dog chases the ball",
+    "abstained": false,
+    "recalled_svo": [
+     "dog",
+     "chase",
+     "ball"
+    ],
+    "source": "tiny-demo +LTM"
+   },
+   "differing_paths": [
+    "$.activity.n_facts_scanned",
+    "$.common_ground_drives.evidence_rate",
+    "$.common_ground_drives.margin",
+    "$.common_ground_drives.reduce_rate",
+    "$.common_ground_drives.slot",
+    "$.provenance.d",
+    "$.provenance.rate_perceived",
+    "$.swap_drives.boost_max",
+    "$.swap_drives.mm_peak"
+   ]
+  }
+ ],
+ "verdict": "DIFFERS",
+ "inputs": [
+  "/home/dant123/Projects/sim/.claude/worktrees/chat-fact-fixes/research/findings/raw/_chat_fact_fixes/dev_s7/base_requests.json",
+  "/home/dant123/Projects/sim/.claude/worktrees/chat-fact-fixes/research/findings/raw/_chat_fact_fixes/dev_s7/fix_requests.json"
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "run_id": "1790789882-2650362",
+ "runner": "research/runners/chat_fact_fixes_identity.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/chat-fact-fixes/research/runners/chat_fact_fixes_identity.py",
+  "--root",
+  "/home/dant123/Projects/sim/.claude/worktrees/chat-fact-fixes",
+  "--script",
+  "requests",
+  "--seed",
+  "7",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/chat-fact-fixes/research/findings/raw/_chat_fact_fixes/dev_s7/fix_requests.json"
+ ],
+ "git_sha": "9fad52768",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-30T13:38:02",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_DISABLE_LLM": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 13999.2,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_chat_fact_fixes/dev_s7/fix_requests.json"
+}
