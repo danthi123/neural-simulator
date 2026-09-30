@@ -1,13 +1,12 @@
 # OPENHANDS TAKEOVER — running this project on local Qwen when Claude usage is out
 
 This is the owner's operating manual for **OpenHands** driving this repo on the local **Qwen3.8-27B**
-brain, for when Claude usage is exhausted. It replaces **Hermes** (`tools/hermes_takeover.sh`,
-`docs/HERMES_HANDOFF.md`) as the recommended local fallback — Hermes stays installed and working
-until OpenHands is live-verified end-to-end (see "Status" below), so nothing is lost if this needs a
-fallback of its own.
+brain, for when Claude usage is exhausted. It replaced the workstation **Hermes** driver as the local
+fallback; that install was retired 2026-09-30 (`tools/hermes_takeover.sh` and `docs/HERMES_HANDOFF.md`
+removed) — the owner's Hermes Agent now runs on homelab-server, reached over its own SSH backend, not
+this repo's local-Qwen setup.
 
-**Run ONE driver at a time: Claude, Hermes, or OpenHands.** Hand the current one back before starting
-another.
+**Run ONE driver at a time: Claude or OpenHands.** Hand the current one back before starting another.
 
 ## THE single command (2026-09-08)
 
@@ -156,10 +155,10 @@ runs. The supervisor daemon is left running (harmless — it goes inert with no 
 | --- | --- | --- |
 | `run_turn.py` refuses with "endpoint not reachable" | Qwen is unloaded for a GPU research job (by design, see §3) | `bash tools/qwen_serve.sh status` — wait for the run to finish, it reloads automatically |
 | `openhands_takeover.sh on` says the venv isn't built | First-time setup skipped | Run the §0 build commands, then retry |
-| `openhands_takeover.sh on` refuses with "HERMES_ACTIVE is set" | Hermes is (or was) the active driver | `bash tools/hermes_takeover.sh off`, then retry |
+| `openhands_takeover.sh on` refuses with "HERMES_ACTIVE is set" | A stale sentinel from the retired (2026-09-30) workstation-Hermes driver | `rm -f research/queue/HERMES_ACTIVE`, then retry |
 | Qwen never loads after `on` | The local GPU queue never goes idle, or you ran `on` from a worktree (see §1) | `bash tools/qwen_supervisor.sh status` to see the live verdict; re-run `on` from `/home/dant123/Projects/sim` |
 | `openhands_loop.py` isn't running per `status` | It crashed on start | `tail -40 tools/openhands_proto/state/openhands_loop.log` |
-| Two drivers seem to be fighting over Qwen | Both `hermes_takeover.sh on` and `openhands_takeover.sh on` were run | Run `off` on both, then start only the one you want |
+| Two drivers seem to be fighting over Qwen | `openhands_takeover.sh on` was run twice, or a stale `HERMES_ACTIVE` sentinel remains from the retired workstation-Hermes driver | `bash tools/openhands_takeover.sh off`, clear any stale `research/queue/HERMES_ACTIVE`, then start only the one you want |
 | `openhands.sh` refuses with "another session is already attached" | A second terminal tried `openhands.sh` while one is already running the REPL | Use the first terminal, or if it's genuinely gone: `rm -f research/queue/openhands_repl.pid` |
 
 ## Status (2026-09-08) — what is verified vs. what is deferred

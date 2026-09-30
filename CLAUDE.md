@@ -66,8 +66,10 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
     GPU sweeps/long runs → `tools/gpu_queue.sh`, multi-seed → the controller's `--seeds`); agents only for genuine
     builds. Maximize parallelism AND minimize tokens. Tier every agent (haiku = mechanical · sonnet = moderate ·
     opus = hard judgment), never inherit Opus: `gates/workflow_cost_tiering`, `tools/cost_audit.py`, `cost-routing` skill.
-12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands or
-    Hermes, `docs/OPENHANDS_TAKEOVER.md`). Hand the current one back before starting another.
+12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands,
+    `docs/OPENHANDS_TAKEOVER.md`; the workstation-Hermes driver was retired 2026-09-30 — the owner's Hermes Agent now
+    runs on homelab-server via its own SSH backend, not through this repo's driver switches). Hand the current one
+    back before starting another.
 
 ## Workflow essentials
 
