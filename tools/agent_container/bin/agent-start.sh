@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # tools/agent_container/bin/agent-start.sh <profile> -- what `agent start [profile]` (the workstation's fish
 # function) sends into the tmux "agent" session's active pane. Never run automatically by the container itself
 # (entrypoint.sh only creates an IDLE tmux session) -- only the owner, or this script, starts a model session.
@@ -34,7 +34,7 @@ if [ -n "$TOKEN_VAR" ]; then export ANTHROPIC_AUTH_TOKEN="${!TOKEN_VAR:-}"; fi
 
 echo "== agent-start: profile=$PROFILE backend=$BASE_URL kind=${KIND:-local} =="
 echo "== agent-start: checking for a Claude Code update (see ~/claude_update.log) =="
-if ! bash /usr/local/bin/claude-safe-update.sh; then
+if ! /bin/bash /usr/local/bin/claude-safe-update.sh; then
   echo "== agent-start: claude-safe-update.sh reported a problem (see ~/claude_update.log) -- continuing on the current build =="
 fi
 

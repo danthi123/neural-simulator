@@ -107,17 +107,19 @@ def test_unknown_subcommand_is_refused_and_logged():
         assert "rm -rf /" in log
 
 
-def test_pool_submit_forwards_the_structured_request_as_argv():
+def test_pool_submit_is_refused_until_the_pool_nodes_are_sandboxed():
+    # 2026-09-30 security review (HIGH #2): pool jobs are agent-authored runner code dispatched UNSANDBOXED, with full
+    # network, to pool nodes whose job account has passwordless sudo -- a LAN foothold outside everything
+    # sim-agent.nft confines. Refused (one line, like results-sync) until the nodes run jobs under a no-sudo user
+    # inside the same bubblewrap recipe as gpu-submit.
     with tempfile.TemporaryDirectory() as tmp:
         log = _scaffold(tmp)
         res = _run("pool-submit --sha " + "a" * 40 + " --runner research.runners.foo "
                    "--checked 'corpus: nothing' -- --seed 7", tmp)
-        assert res.returncode == 0, res.stdout + res.stderr
-        calls = open(log).read()
-        assert "submit.py: argv[pool] argv[--sha] argv[" + "a" * 40 + "]" in calls
-        assert "argv[--runner] argv[research.runners.foo]" in calls
-        assert "argv[--checked] argv[corpus: nothing]" in calls
-        assert "argv[--] argv[--seed] argv[7]" in calls
+        assert res.returncode != 0
+        assert "refused" in res.stderr.lower() and "gpu-submit" in res.stderr
+        assert "REFUSED" in open(os.path.join(tmp, "gateway.log")).read()
+        assert "submit.py" not in (open(log).read() if os.path.exists(log) else "")
 
 
 def test_gpu_submit_forwards_the_structured_request_as_argv():
@@ -138,8 +140,9 @@ def test_gpu_submit_with_no_request_is_refused():
         assert "structured request" in res.stderr
 
 
-def test_pool_submit_command_substitution_is_never_executed_and_arrives_as_one_literal_token():
-    """H1 regression: the exact shape the security review used (`pool-submit x $(cmd) --checked y`) must never
+def test_submit_command_substitution_is_never_executed_and_arrives_as_one_literal_token():
+    """H1 regression: the exact shape the security review used (`pool-submit x $(cmd) --checked y`, now sent to
+    gpu-submit since pool-submit is refused outright) must never
     run `cmd` -- it must arrive at the (stubbed) submit script as ONE inert, literal argv token, exactly as
     `eval` never touching this text would produce."""
     with tempfile.TemporaryDirectory() as tmp:
@@ -147,8 +150,8 @@ def test_pool_submit_command_substitution_is_never_executed_and_arrives_as_one_l
         marker = os.path.join(tmp, "pwned")
         # $(id>marker) has NO internal whitespace, so it is exactly ONE shlex token either way -- isolating the
         # question this test asks (did the substitution get EXECUTED) from ordinary word-splitting.
-        res = _run("pool-submit --sha " + "c" * 40 +
-                   " --runner research.runners.foo --checked reason -- --out $(id>%s)" % marker, tmp)
+        res = _run("gpu-submit --sha " + "c" * 40 +
+                   " --runner research.runners.foo -- --out $(id>%s)" % marker, tmp)
         assert res.returncode == 0, res.stdout + res.stderr
         assert not os.path.exists(marker), "a command substitution in the request must NEVER execute"
         calls = open(log).read()
@@ -163,8 +166,8 @@ def test_a_control_character_in_an_argument_is_refused_before_reaching_the_submi
     # is not, and genuinely reaches agent_gateway_parse.py's per-token check embedded WITHIN one token).
     with tempfile.TemporaryDirectory() as tmp:
         log = _scaffold(tmp)
-        res = _run("pool-submit --sha " + "d" * 40 +
-                   " --runner research.runners.foo --checked reason -- --seed=7\x018", tmp)
+        res = _run("gpu-submit --sha " + "d" * 40 +
+                   " --runner research.runners.foo -- --seed=7\x018", tmp)
         assert res.returncode != 0
         assert "control character" in res.stderr or "could not parse" in res.stderr
         assert not os.path.exists(os.path.join(tmp, "calls.log")) or "submit.py" not in open(log).read()
