@@ -53,3 +53,8 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   equals the Stage-1 production-default dev shard (fac3f699c) on every key. (d) HEAD's organ in a fresh process
   reproduces the committed real-handler organ reads exactly (intact, permuted, lesion rates and the attribution);
   organ-only RSS about 0.5 GB.
+- 2026-09-30 14:35 Claude (review): the 54 lines are no longer in `pool.queue`: a concurrent pool-maintenance task
+  (pool venv lacked httpx; main 341e1490a/a4c9b5848, plus the pool-job-sandbox canaries) moved all 472 queued lines
+  to `research/queue/pool.queue.held` around 14:00; all 54 C1 lines are there, unchanged. Releasing them is that
+  task's job. Step 4's re-queue guard now also counts `pool.queue.held`, so a held line is never duplicated. The C1
+  runner at bb6705de6 has no import gap against requirements-pool.txt (import_closure --queue on the held file).

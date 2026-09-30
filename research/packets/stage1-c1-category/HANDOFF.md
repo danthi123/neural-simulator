@@ -41,6 +41,11 @@ then stop that line of work and continue with any other thread that is not block
   from ONE revision, `bb6705de6`: never merge main, never re-pin, never regenerate `$JOBS`, never run step 3's loop.
   A missing-shard re-queue is step 4's own block, which re-adds only the absent lines from `$JOBS` as pinned. If a
   node lost the `bb6705de6` revision (the dispatcher logs "revision ... not provisioned"): STOP, NEEDS-CLAUDE #3.
+- **Pool hold, 2026-09-30 ~14:00 (not this packet's action):** a concurrent pool-maintenance task (the pool venv
+  lacked httpx: main 341e1490a / a4c9b5848, and the pool job sandbox) moved all 472 queued pool lines, these 54
+  included, from `pool.queue` to `research/queue/pool.queue.held`. Releasing them belongs to that task. While any
+  `stage1_c1_category` line sits in `pool.queue.held`, never re-add it. The C1 runner at `bb6705de6` has no
+  import gap against `requirements-pool.txt` (`tools.pool.provisioning.import_closure --queue`).
 - **Scorer hardening, 2026-09-30 (adversarial review, before any gate job was dispatched; no bar, arm, turn or prereg
   line changed):** a swallowed organ exception (an `error` in a turn's `category_inherit` trace) now makes that arm
   "not applied", so the seed reads UNDEFINED instead of FAIL "capability absent" (prereg section 4: no errored turn,
@@ -144,18 +149,18 @@ source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/
 find $P/$OUT -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'aggregate.json' | wc -l   # 54 when complete
 ```
 
-When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued or running: re-queue
+When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued, held or running: re-queue
 ONCE with this block. It re-adds exactly the `$JOBS` lines whose shard is absent (counted and informational arms),
 pinned to `bb6705de6` as they are; it never touches a line whose shard landed.
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
 cd $P && grep -c "$GATE_SHA" $JOBS                                                    # 54 (every line at GATE_SHA)
-grep -c stage1_c1_category research/queue/pool.queue research/queue/pool.running       # both ...:0
+grep -c stage1_c1_category research/queue/pool.queue research/queue/pool.running research/queue/pool.queue.held 2>/dev/null   # every line ...:0
 bash -c 'n=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [ -f "$out" ] && continue; n=$((n+1)); bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $cmd"; done < '"$JOBS"'; echo "re-queued $n"'
 ```
 
-If the first line prints anything but 54, or either count is not 0: do not run the loop; STOP, NEEDS-CLAUDE #5.
+If the first line prints anything but 54, or any count is not 0: do not run the loop; STOP, NEEDS-CLAUDE #5.
 Then wait again. Still missing after that one re-queue: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and
 NEEDS-CLAUDE #5. If no shard has landed by 2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before
 2026-10-24). The lines carry `max_age_h=120`: after about 2026-10-05 12:20 EDT the dispatcher SKIPS them but leaves
