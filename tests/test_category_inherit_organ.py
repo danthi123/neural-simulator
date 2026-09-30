@@ -160,6 +160,7 @@ def test_read_lesion_abstains_and_restores(taught):
     try:
         r = o.infer("canary", "eat")
         assert r["patient"] is None and r["reason"] == "below_floor", r
+        assert r["lesion_held"] is True, "docs/TERMS.md: the cut must still hold at the end of the read"
     finally:
         o.lesion = None
     assert o.infer("canary", "eat")["patient"] == "worm", "the lesion must restore the weights after the read"

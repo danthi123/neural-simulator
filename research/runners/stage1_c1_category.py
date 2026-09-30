@@ -182,8 +182,8 @@ def wiring_applied(shard, arm):
         return False
     want = {None: None, "1": "all", "lateral": "lateral", "lateral_learn": "lateral_learn"}[ARMS[arm][0].get(LESION)]
     rd = (_trace(resp.get(DIRECT_PROBE)) or {}).get("read") or {}
-    if want in ("all", "lateral"):
-        return rd.get("lesion") == want
+    if want in ("all", "lateral"):                  # the read-time cut was in force AND still held (docs/TERMS.md)
+        return rd.get("lesion") == want and rd.get("lesion_held") is True
     return True
 
 
@@ -410,7 +410,8 @@ def _fake(answer, abstained=False, svo=None, hyp=None, trace=True, lesion=None, 
         d["hypothesis_svo"] = hyp
     if trace:
         d["category_inherit"] = {"observe": None, "read": {"patient": patient, "lesion": lesion, "reason": "x",
-                                                            "admitted": []}}
+                                                            "admitted": [], "lesion_held": (
+                                                                True if lesion in ("all", "lateral") else None)}}
     return d
 
 

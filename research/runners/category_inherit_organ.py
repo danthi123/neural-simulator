@@ -105,6 +105,7 @@ class CategoryInheritOrgan:
         self.n_overflow = 0
         self.n_reads = 0
         self.n_lesioned_reads = 0
+        self.last_lesion_held = None
         self._build()
 
     # ── the substrate ────────────────────────────────────────────────────────────────────────────────────────────
@@ -263,6 +264,9 @@ class CategoryInheritOrgan:
                 self.bridge._run_one_simulation_step()
                 acc += self.bridge.cp_firing_states[ctx_dev].astype(xp.float64)
             acc_h = np.asarray(to_host(acc))
+            # docs/TERMS.md "lesion": verify the cut STILL HOLDS at the end of the measured window
+            self.last_lesion_held = (None if not saved else all(
+                float(to_host(xp.abs(self.bridge.cp_connections.data[pos]).max())) == 0.0 for pos, _v in saved))
         finally:
             if saved:
                 for pos, vals in saved:
@@ -285,6 +289,7 @@ class CategoryInheritOrgan:
         admitted = sorted(((r, fr[1]) for fr, r in rates.items() if fr[0] == v), key=lambda t: (-t[0], t[1]))
         out = {"rates": {"%s %s" % fr: round(r, 4) for fr, r in rates.items()},
                "admitted": [[p, round(r, 4)] for r, p in admitted], "lesion": self.lesion,
+               "lesion_held": self.last_lesion_held,
                "floor_rate": FLOOR_RATE, "tie_margin": TIE_MARGIN}
         if not admitted or admitted[0][0] < FLOOR_RATE:
             out.update(patient=None, reason="below_floor")
