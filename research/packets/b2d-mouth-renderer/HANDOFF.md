@@ -128,12 +128,13 @@ them fresh. With AWS the prereg sizes it at about 20 h and at most $40 (NEEDS-CL
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
-cd $W && bash -c 'while IFS= read -r line; do bash tools/gpu_queue.sh add "$line" </dev/null || { echo "ADD FAILED: $line"; exit 1; }; done < '"$K/jobs/mouth_$P7.txt"
+cd $W && bash tools/gpu_queue.sh start >/dev/null 2>&1; bash -c 'while IFS= read -r line; do bash tools/gpu_queue.sh add "$line" </dev/null || { echo "ADD FAILED: $line"; exit 1; }; done < '"$K/jobs/mouth_$P7.txt"
 bash tools/gpu_queue.sh status | head -5
 ```
 
 Then free the card (the queue holds every job while the local-llm unit is active): `bash tools/local_llm/llm.sh
-yield --max-hours 12`. Your session resumes by itself when the window drains. `yield` refuses while a
+yield --max-hours 12`. Your session resumes by itself when the window drains. If it prints `refusing to yield: ...
+not loaded`, the unit is already down and the queue is not held: nothing to do. `yield` refuses while a
 `.claude/worktrees/draft-*` worktree has uncommitted tracked changes: commit those through the normal gates first,
 or, if you cannot, NEEDS-CLAUDE "B2d mouth arm: yield refused (<its message>)". Never run a mouth line outside the
 queue. Measured on dev seed 7: about 10 min per arm on cupy, 4 arms per cell, so about 40 min per cell and about 12 h
