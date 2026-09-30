@@ -304,6 +304,41 @@ def _record_absence(key_path, now_ts, history_file):
         _append({"ts": now_ts, "path": key_path, "present": False}, history_file)
 
 
+def clear_waiver(path, history_file=HISTORY_FILE, now_ts=None):
+    """Delete a waiver file AND close its ledger episode in the SAME instant.
+
+    THE GAP THIS CLOSES (2026-09-28/29 incident). `_record_absence` above only runs INSIDE `evaluate()`, and
+    `evaluate()` only runs when a gate or the heartbeat happens to read the path. Nothing before this function
+    ever deleted a waiver file itself -- every waiver so far has been removed by a bare `os.remove`/`rm`
+    outside this module, which leaves the ledger's last row saying "present" until whatever reads the path
+    NEXT (a commit's `gates/compute_idle_persistent` / `gates/lane_starvation`, or a live heartbeat cycle)
+    happens to run. On 2026-09-28/29 a waiver deleted at 22:30 had no such read until the next commit HOURS
+    later, so `_charged_intervals_for_path` charged the whole gap (capped at the episode's `waiver_max_h`,
+    ~6-7h combined across both waiver files) against the 6h/24h budget -- exhausting it before any real
+    contention existed. Deleting through THIS function instead of a raw `rm` records the "present: False"
+    row at the actual moment of deletion, so the charged interval ends there, not at the next incidental read.
+    Idempotent (safe to call on a path that is already gone -- routes to `_record_absence`, which itself only
+    ever appends once per present->absent transition). Returns True iff a file was actually removed here.
+
+    THIS DOES NOT WEAKEN THE BUDGET: it only makes the RECORDED end of a real episode match its TRUE end. An
+    episode a heartbeat or gate genuinely observed as still live is charged exactly as before; this changes
+    nothing about `WAIVER_BUDGET_H`, `_charged`, or any cap. It also does not rewrite any existing row --
+    `_append` is append-only, matching every other writer in this module."""
+    now_ts = now_ts if now_ts is not None else time.time()
+    key_path = os.path.realpath(path)
+    try:
+        os.remove(path)
+    except OSError:
+        _record_absence(key_path, now_ts, history_file)
+        return False
+    # A file WAS just removed here, so the transition is known to have happened at `now_ts` regardless of
+    # what the ledger's last row says (there may be no prior row at all, e.g. a waiver written but never once
+    # read by a gate) -- record it unconditionally rather than deferring to `_record_absence`'s "last row was
+    # present" check, which exists only to dedupe REPEATED reads of an already-closed episode.
+    _append({"ts": now_ts, "path": key_path, "present": False}, history_file)
+    return True
+
+
 def evaluate(gate_name, path, waiver_max_h, now_ts=None, budget_h=WAIVER_BUDGET_H,
              window_h=WAIVER_BUDGET_WINDOW_H, prior_cumulative_h=None, history_file=HISTORY_FILE,
              evidence_check=None):
@@ -482,4 +517,88 @@ def selftest():
         if evaluate("selftest-gate", os.path.join(td, "nope"), 6, now_ts=t0,
                     history_file=os.path.join(td, "h6.jsonl")).get("active"):
             bad.append("FALSE POSITIVE: a MISSING waiver file read as active")
+
+        # (f) THE 2026-09-28/29 INCIDENT, replayed: a waiver deleted by a bare `os.remove` (the ONLY way any
+        # waiver had ever been deleted before `clear_waiver` existed) is not observed absent until whatever
+        # reads the path NEXT -- here, a commit's gate run hours later -- so the whole gap is charged (capped
+        # at waiver_max_h). `clear_waiver`, used instead, records the absence at the true deletion instant, so
+        # the SAME gap charges only up to that instant.
+        hist_bare = os.path.join(td, "h7_bare_rm.jsonl")
+        _w(p, nrw, t0)
+        evaluate("lane-starvation", p, 6, now_ts=t0, budget_h=6.0, history_file=hist_bare)     # 22:30-ish write
+        os.remove(p)                                                                            # bare `rm`, no ledger update
+        v_late = evaluate("compute-idle-persistent", p, 6, now_ts=t0 + 7 * 3600.0, budget_h=6.0,
+                          history_file=hist_bare)                                                # the next commit, 7h later
+        if v_late.get("active"):
+            bad.append("a deleted waiver still read ACTIVE at the next gate run")
+        used_bare = cumulative_waived_hours(now_ts=t0 + 7 * 3600.0, history_file=hist_bare)
+        if used_bare < 5.9:
+            bad.append("EXPECTED the bare-rm gap to be charged near its 6h cap (got %.2fh) -- if this now "
+                       "reads LOW, `_record_absence`'s timing changed and the comparison below is stale"
+                       % used_bare)
+
+        hist_clear = os.path.join(td, "h7_clear.jsonl")
+        _w(p, nrw, t0)
+        evaluate("lane-starvation", p, 6, now_ts=t0, budget_h=6.0, history_file=hist_clear)     # the same write
+        clear_waiver(p, history_file=hist_clear, now_ts=t0 + 1800.0)                             # deleted 30 min later, via clear_waiver
+        v_after_clear = evaluate("compute-idle-persistent", p, 6, now_ts=t0 + 7 * 3600.0, budget_h=6.0,
+                                 history_file=hist_clear)                                        # same next-commit time, 7h later
+        if v_after_clear.get("active"):
+            bad.append("clear_waiver: the path still read ACTIVE at the next gate run")
+        used_clear = cumulative_waived_hours(now_ts=t0 + 7 * 3600.0, history_file=hist_clear)
+        if not (used_clear <= 1.0 + 1e-6):
+            bad.append("clear_waiver DID NOT STOP THE CHARGE AT DELETION TIME: expected ~%.2fh (30 min, "
+                       "floored to MIN_EPISODE_CHARGE_H), got %.2fh -- still charging past the real deletion "
+                       "instant, the exact 2026-09-28/29 defect" % (MIN_EPISODE_CHARGE_H, used_clear))
+        if not (used_bare > used_clear + 1.0):
+            bad.append("clear_waiver did not measurably reduce the charge vs a bare `os.remove` for the "
+                       "SAME real deletion time (bare=%.2fh, clear=%.2fh) -- the fix has no effect" %
+                       (used_bare, used_clear))
+
+        # (g) clear_waiver is idempotent and safe on a path that was never a waiver at all.
+        if clear_waiver(os.path.join(td, "never-existed"), history_file=os.path.join(td, "h8.jsonl")):
+            bad.append("clear_waiver reported removing a file that never existed")
     return bad
+
+
+def _cli(argv=None):
+    """`python3 tools/waiver_history.py clear <path>` (or `--compute`/`--lane` for the two registered gate
+    waiver files) -- delete a waiver AND close its ledger episode in one step. See `clear_waiver`'s docstring
+    for why this exists instead of a bare `rm`. `selftest` (the default with no subcommand) runs `selftest()`."""
+    import argparse
+    ap = argparse.ArgumentParser(prog="waiver_history.py")
+    sub = ap.add_subparsers(dest="cmd")
+    c = sub.add_parser("clear", help="delete a waiver file and record its absence immediately")
+    c.add_argument("path", nargs="?", help="the waiver file to clear")
+    c.add_argument("--compute", action="store_true",
+                    help="also clear the compute_idle_persistent gate's waiver file")
+    c.add_argument("--lane", action="store_true", help="also clear the lane_starvation gate's waiver file")
+    sub.add_parser("selftest", help="run this module's selftest")
+    a = ap.parse_args(argv)
+
+    if a.cmd == "clear":
+        paths = [a.path] if a.path else []
+        if a.compute:
+            from gates import compute_idle_persistent as _cip     # lazy: avoids any import-order fragility
+            paths.append(_cip.WAIVER_FILE)
+        if a.lane:
+            from gates import lane_starvation as _ls
+            paths.append(_ls._waiver_file())
+        if not paths:
+            ap.error("clear needs a PATH, or --compute/--lane")
+        for p in paths:
+            removed = clear_waiver(p)
+            print("%s: %s" % (p, "removed, absence recorded" if removed
+                              else "already absent (ledger closed if an episode was open)"))
+        return 0
+
+    bad = selftest()
+    for b in bad:
+        print("FAIL:", b)
+    print("waiver_history selftest: %d failure(s)" % len(bad))
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(_cli())
