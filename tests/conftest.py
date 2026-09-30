@@ -45,3 +45,21 @@ os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 import os as _os_llm
 _STUB = _os_llm.path.join(_os_llm.path.dirname(__file__), "_stub_systemctl_inactive.sh")
 _os_llm.environ.setdefault("LOCAL_LLM_SYSTEMCTL", _STUB)
+
+# 2026-09-29 INCIDENT: the guard above stubs `systemctl` (so `llm.sh`'s is-active/busy CHECKS are always safe),
+# but `llm.sh`'s cmd_on calls the actual process launcher, `systemd-run`, as a plain PATH lookup -- nothing
+# guarded that. tests/test_llm_gpu_autoswap.py's two "does not refuse forever" tests (LOCAL_LLM_SYSTEMCTL says
+# inactive/not-busy, correctly) run to completion with NO local PATH override, so on THIS box that call reached
+# the REAL `systemd-run`, which started a REAL "local-llm" transient unit running llama-swap from a worktree's
+# config. llm.sh's own activate_profile() then PUT an unrelated profile onto it and force-loaded ~21GB onto the
+# shared GPU for real, colliding with the owner's actual usage (research/FAILURE_LOG.md, this date). Mirror the
+# LOCAL_LLM_SYSTEMCTL fix exactly: prepend a directory holding an inert `systemd-run` stub to PATH for the WHOLE
+# session, so any test -- present or future -- that forgets its own local stub still cannot start a real unit.
+# A test that needs to OBSERVE a systemd-run call (its argv, a sentinel) prepends its OWN fake further to the
+# front of PATH, same as today (tests/test_llm_gpu_yield.py's _fake_curl_and_systemd_run and others) -- that
+# still wins, since it is prepended AFTER this one is already on PATH. See tests/test_llm_sh_never_touches_real_systemd.py
+# for the guard that pins this directly. tests/_stub_bin/ holds ONLY the systemd-run stub (not the whole tests/
+# directory) so this can never shadow an unrelated command by accident.
+_STUB_BIN_DIR = _os_llm.path.join(_os_llm.path.dirname(__file__), "_stub_bin")
+if _STUB_BIN_DIR not in _os_llm.environ.get("PATH", "").split(_os_llm.pathsep):
+    _os_llm.environ["PATH"] = _STUB_BIN_DIR + _os_llm.pathsep + _os_llm.environ.get("PATH", "")

@@ -1,0 +1,25 @@
+[Unit]
+# GPU bus-hang watchdog -- REBOOT ONLY, never restarts training. Runs tools/gpu_bus_watchdog.sh, a clean,
+# from-scratch replacement for ONLY the reboot half of the retired gpu-train-watchdog.service (that service
+# also restarted lmtrain-resume.service on failure -- THAT half is gone on purpose; see
+# docs/GPU_CRASH_RECOVERY.md's "2026-09-28: the July training auto-resume is retired" section, and the new
+# section appended for this unit). NOT installed automatically by this build -- the owner installs it by hand
+# on the actual machine; see docs/GPU_CRASH_RECOVERY.md for the exact commands.
+Description=GPU bus-hang watchdog (reboot-only; tools/gpu_bus_watchdog.sh -- never restarts training)
+After=multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/dant123/Projects/sim/tools/gpu_bus_watchdog.sh
+Restart=always
+# RestartSec=30 (not 0, not unset): once this boot has already triggered a reboot, the script finds its own
+# marker (/run/gpu_bus_watchdog.rebooted) and exits immediately every time it is (re)started -- without a
+# RestartSec, Restart=always would hot-loop restarting it instantly forever until the NEXT real reboot wipes
+# /run. 30s matches the retired gpu-train-watchdog.service's own RestartSec; the resulting idle churn between
+# then and the next reboot is harmless (one quick marker-check exit every 30s).
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
