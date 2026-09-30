@@ -630,7 +630,7 @@ ready and `auto` launches exactly as before.
    through the exact sandboxed launch, not the queue; exit 0 = every check passed):
 
    ```bash
-   cd /home/dant123/Projects/sim
+   cd /home/dant123/Projects/sim/.claude/worktrees/pool-job-sandbox   # /home/dant123/Projects/sim once merged
    bash tools/pool_autodispatch.sh --sandbox-probe pool41        # POOL_SANDBOX_READY bwrap=...
    bash tools/pool_sandbox_selftest.sh pool41 <provisioned-sha>
    bash tools/pool_sandbox_selftest.sh pool41 <provisioned-sha> --job '<one queued dev-seed-7 line, without #checked>'
