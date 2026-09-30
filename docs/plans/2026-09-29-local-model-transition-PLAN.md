@@ -100,6 +100,11 @@ pool/GPU utilization. Target: under 15K tokens, so one Pro session can inspect.
 
 ## 9. The harness on the server (owner 2026-09-29: containerized on 192.168.0.10, everything THIS week)
 
+**2026-09-30: RETIRED.** The owner decided against a custom harness; the sim-agent container described below was
+torn down. The owner runs the off-the-shelf Hermes Agent on homelab-server (`~/apps/hermes`) as a general
+harness instead, and the sim project's own local-model driver stays `tools/local_llm/llm.sh claude` on the
+workstation. The design below is kept as a record of the work done, not as current state.
+
 The server (`homelab-server`: 16 threads, 61 GB, no GPU, Docker 29, hosts gitea and many other services) runs the
 harness; the workstation keeps the 3090 for serving the model and for brain GPU runs, and keeps the pool dispatcher.
 
