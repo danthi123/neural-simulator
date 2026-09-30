@@ -54,3 +54,52 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   kept refusing (`mem_ok.sh 7`: avail 8 G after 19 G committed-unused). The shards land in
   `$P/research/findings/raw/_stage2_exit/dev/s7/` when they run; HANDOFF section 2 has the reader. GATE_SHA stays
   unpinned until they are read. The runner at `8b49dc1c1` is byte-identical to `6b9cb47f7` (tests/HANDOFF only).
+- 2026-09-30 11:07 Claude: local RAM freed; dev arms run on the workstation at the final runner (one brain at a
+  time, `mem_ok.sh 7 4` + `memcap.sh 9`). `inner__intact_a.json`: 10 turns, no errored turn, no organ error, source
+  `tiny-demo +LTM`, hash ok, corpus, builtin_facts 6, peak RSS 6295 MB, ltm `wikidata_100k`, wall 793 s. The chase
+  works: lynx -> mite (resolved_hops 3, cycles 4, the ignition trace n_ignited 1,1,1,0 -> COMMIT, captured by the
+  worker's `internal`), vole -> mite (2 hops), mite abstains, single hop vole. PRIVATE FAILS the grounding clause:
+  "Something's been on my mind — bird see seed." -- the self-initiation organ speaks from its OWN fixed 4-fact
+  demo lexicon (`_self_initiated_utterance_derisk.AGENTS/VERBS/PATIENTS`: dog chase ball, cat eat worm, bird see
+  seed, fish hear bug), never from the brain's facts or anything taught, so `private_voices_stored_fact` is False
+  by the prereg's own definition (build-time list or taught). Prereg 4.5 predicted PASS from the 2026-08-18
+  finding's example; per section 11 a dev capability read changes no prediction. NEEDS-CLAUDE #15. Also noted:
+  the chase terminal is spoken as a plain assertion ("the lynx chases the mite", `derived` false) although it was
+  never told -- a derived conclusion not framed as derived (production honesty, not this packet's instrument).
+- 2026-09-30 11:22 Claude: `ask__intact_a.json`: 19 turns, valid (no errors, peak RSS 6524 MB, wall 913 s). Taught
+  topics read LOW graded novelty (yak 2e-16, moose 0.0) and do not ask: the builder's question is answered yes.
+  BUT the production DA/engagement crave-threshold (`BRAIN_CURIOSITY_DA`, default-ON since 2026-08-21) rises with
+  every low-engagement abstain turn (DA 0.55 -> 0.26 -> 0.06 -> 0.046; eff threshold 17.7 -> 29.7 -> 57.4 -> 59.8 Hz
+  against a want of ~38 Hz), so after two asks the brain stops asking everywhere: eel asked, crab asked, newt NOT
+  (novelty 0.96), ibex_1 NOT, toad_1 NOT. Scores: ask_rate_gap 2/3, moat 0 (discriminates True at the bar edge),
+  lp_learnable False, lp_unlearnable False (toad_1 never asked). Also `the goat eats the hay` was NOT acquired
+  ("my role-binding didn't resolve the PATIENT"), so `m_goat` is a de facto novel gap (novelty 0.976) scored as a
+  taught moat. Prereg 4.3's premise "the 4th probe reads exactly as the 1st" is false at HEAD: C3's lp clauses and
+  its permuted arm (gaps at positions 2/4/6 instead of 1/3/5) are order-confounded by DA depletion. That is a
+  protocol-design question (turns are frozen), NEEDS-CLAUDE #16; GATE_SHA must not be pinned before it is ruled on.
+- 2026-09-30 11:43 Claude: `conv__intact_a.json`: 11 turns, valid (peak RSS 6303 MB, wall 876 s). fox_chase PASS ("As
+  for it — the fox chases the hare"); the passive is stored as (mole, hunt, owl) exactly as prereg 4.1 predicted
+  (owl_hunt abstains, the mole "hunts the owl"); the teach echo "the deer sleeps the meadow" shows the dropped
+  preposition. Two reads differ from the prereg's expectation: `tell me more` does NOT elaborate ("I don't have
+  anything more to add on that", abstained), and `where does the deer sleep` does NOT route to (deer, sleep): it
+  abstains, so `deer_sleep` fails at the question parse before any frame is rendered (the prepositional sub-bar then
+  measures the wh-parse, not the frame inventory; the teach echo is the frame evidence). Both still FAIL C1 as
+  predicted; which gap the FAIL names is NEEDS-CLAUDE #17 (probe wording is a frozen turn).
+- 2026-09-30 12:04 Claude: `infer__intact_a.json`: 10 turns, valid (peak RSS 6291 MB, wall 1246 s: longer than the
+  prereg's ~20 min planning figure; `p_yesno` 295 s, `c_heron_hunt` 203 s). C2 reads PASS on every clause at dev 7:
+  "I derived this from: heron hunt frog; frog eat gnat. the frog eats the gnat" (derived true), both premises, the
+  moat abstains. Production finding (not this instrument): the bare yes/no `does crow chase moth` is ACQUIRED as an
+  assertion and reconsolidates memory ("my mismatch monitor fired: I'd learned that crow chase wren. Updated --
+  I'd stored ..."), and the next turn volunteers "the crow chases the moth" -- a question rewrote a stored fact.
+  It comes after the scored C2 turns and the dog control still reads cat, so no C2 score moves. Open item for the
+  owner / next inspection (moat: a question must never be stored).
+- 2026-09-30 12:16 Claude: `emo__intact_a.json`: 13 turns, valid, wall 557 s, PEAK RSS 8101 MB (the highest group;
+  the gate lines' `mem_gb=7` / memcap 9 left ~1 GB): fixed in `8691e84c1` (`mem_gb=9`, memcap 10) + prereg
+  amendment A2 (`24dac499e`, lane only). C4 reads capability absent as predicted (no category word in any feel
+  read); signs joy +0.038, fear -0.023 (within the 0.03 neutral tolerance, so "neutral"), anger -0.052, sadness
+  -0.052: `sign_correct_all` False (prereg predicted 4/4 signs), `n_distinct_2d` 3. The exposure turns abstain and
+  ask about "win"/"wolf"/"someone"/"alone" (curiosity on the situation's topic word); no category is echoed.
+- 2026-09-30 12:30 Claude: committed the five `intact_a` dev shards (workstation, final worker). GATE_SHA NOT pinned:
+  NEEDS-CLAUDE #15 (C5 private store), #16 (C3 DA-order confound + failed acquisition), #17 (C1 probes) need a ruling
+  first. Remaining dev arms: `ask/intact_b`, `inner/intact_b`, `emo/lesion_affect` running locally (memcap 10); the
+  rest queued on the pool (FRONT=1, `max_age_h=24`; they may starve behind `mem_gb=2` lines and expire).
