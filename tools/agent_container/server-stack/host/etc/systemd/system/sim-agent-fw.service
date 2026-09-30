@@ -1,0 +1,30 @@
+# /etc/systemd/system/sim-agent-fw.service -- loads the sim-agent container isolation firewall (inet sim_agent).
+# Source of truth: neural-simulator repo, tools/agent_container/server-stack/host/etc/systemd/system/.
+[Unit]
+Description=sim-agent container isolation firewall (inet sim_agent table)
+Documentation=file:/etc/nftables.d/sim-agent.nft
+# BEFORE docker, unlike nft-fw.service: sim-agent.nft matches a fixed bridge NAME and SUBNET, which can sit in the
+# ruleset before the interface exists, so the container (restart: unless-stopped + live-restore) never starts
+# unfiltered at boot. Docker only WANTS this unit (WantedBy= below), never Requires= it: a broken edit here must
+# never keep Docker, and so every other stack, down.
+# The container fails closed on its own instead (tools/agent_container/bin/firewall_guard.sh refuses to start it
+# while a probe of this host's sshd through the bridge gateway is not dropped).
+Before=docker.service
+OnFailure=ntfy-notify@%n.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/nftables.d/sim-agent.nft
+# Best effort, bounded to 10 s so a DNS that is not up yet can never hold Docker (every stack) back at boot;
+# sim-agent-fw-selfwan.timer fills the set a minute later anyway. Until then only the hairpin is open, and nothing
+# in the container talks to this site's own services before the owner starts a session.
+ExecStartPost=-/usr/bin/timeout 10 /usr/local/sbin/sim-agent-fw-selfwan.sh
+# A reload recreates the table (and so empties self_wan): refill it in the same step.
+ExecReload=/usr/sbin/nft -f /etc/nftables.d/sim-agent.nft
+ExecReload=-/usr/bin/timeout 10 /usr/local/sbin/sim-agent-fw-selfwan.sh
+# On stop, remove only our table (leave fw.nft's and Docker's rules intact).
+ExecStop=/usr/sbin/nft delete table inet sim_agent
+
+[Install]
+WantedBy=multi-user.target docker.service

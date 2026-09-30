@@ -176,9 +176,10 @@ llama_swap_cmd() {   # the launch line for the "local-llm" unit itself: llama-sw
   # interface"), breaking every local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working.
   # There is no apiKeys: entry either, matching the old unauthenticated direct-llama-server setup.
   #
-  # THE ACTUAL RESTRICTION lives one layer down, where it is possible: the egress firewall on homelab-server
-  # (tools/agent_container/egress.sh) already limits the sim-agent CONTAINER to reaching ONLY
-  # 192.168.0.68:8080 (this box) among a narrow allowlist -- so the one real external consumer this port was
+  # THE ACTUAL RESTRICTION lives one layer down, where it is possible: the sim-agent firewall on homelab-server
+  # (tools/agent_container/server-stack/host/etc/nftables.d/sim-agent.nft) already limits the sim-agent
+  # CONTAINER to reaching ONLY 192.168.0.68:{22,8080} (this box) among a narrow allowlist -- so the one real
+  # external consumer this port was
   # opened up for is already fenced in. Tightening the WORKSTATION's own inbound side further (accept only
   # 127.0.0.1 + 192.168.0.10, drop everything else on :8080) is an optional, OWNER-applied hardening step --
   # see docs/AGENT_HARNESS_SETUP.md's "restrict who can reach the local-llm port" section for the exact

@@ -3,11 +3,15 @@
 # (tini is PID 1, set in the Dockerfile's ENTRYPOINT, and reaps/forwards signals for everything below).
 #
 # Responsibilities, in order:
-#   1. First boot only: install the Claude Code CLI via its NATIVE installer into the writable agent-home
-#      volume (owner 2026-09-29: NOT baked into the read-only image, so its own auto-updater can keep it
-#      current -- see claude-safe-update.sh, invoked by agent-start.sh, for the update+smoke+rollback cycle).
-#   2. Make sure ~/.ssh exists (700) so the owner's `docker cp` of the container's restricted key (
-#      docs/AGENT_HARNESS_SETUP.md step) has somewhere to land.
+#   0. Fail closed: bin/firewall_guard.sh refuses to start the container (exit 1) unless the host firewall
+#      (sim-agent.nft) is demonstrably dropping this bridge's traffic -- only when the server stack fragment sets
+#      SIM_AGENT_REQUIRE_FIREWALL=1; skipped for a workstation-local build.
+#   1. First boot only: install the Claude Code CLI via its NATIVE installer into the writable home bind mount
+#      (${DATA_ROOT}/sim-agent/home on the server; owner 2026-09-29: NOT baked into the read-only image, so its
+#      own auto-updater can keep it current -- see claude-safe-update.sh, invoked by agent-start.sh, for the
+#      update+smoke+rollback cycle).
+#   2. Make sure ~/.ssh exists (700). The owner installs the restricted keys into it from the HOST side
+#      (docs/AGENT_HARNESS_SETUP.md), never with `docker cp`.
 #   3. Start (or reattach to) one detached tmux session named "agent" -- an IDLE shell. This does NOT start a
 #      model session; that is `agent start [profile]` (tools/agent_container/bin/agent-start.sh), run by the
 #      owner via the `agent` fish function, or typed inside the session by hand.
@@ -22,6 +26,13 @@ log() { echo "$(date -u '+%F %T') entrypoint: $*" | tee -a "$LOG" >&2; }
 
 log "starting (repo=$REPO_DIR home=$AGENT_HOME)"
 
+# --- 0. fail closed if the host firewall is not filtering this bridge ------------------------------------------
+if ! bash /usr/local/lib/agent-container/bin/firewall_guard.sh 2>&1 | tee -a "$LOG" >&2; then
+  log "firewall guard FAILED -- not starting. Sleeping 30s before exit so the restart policy does not spin."
+  sleep 30
+  exit 1
+fi
+
 # --- 1. Claude Code CLI: install into the volume on first boot only --------------------------------------------
 # Layout verified live 2026-09-29 (this is the standalone native CLI installer, NOT the desktop app's own
 # bundled copy under ~/.config/Claude/claude-code/ that this repo's workstation happens to also have): the
@@ -35,8 +46,8 @@ if [ ! -e "$CLAUDE_BIN" ]; then
     log "native installer finished ($("$CLAUDE_BIN" --version 2>/dev/null || echo 'version unknown'))"
   else
     log "WARNING: native installer failed (see $LOG) -- 'claude' will not resolve until this is fixed; " \
-        "check network egress to claude.ai (docs/AGENT_HARNESS_SETUP.md's optional egress-restriction step " \
-        "must allow it), then re-run: bash /usr/local/lib/agent-container/bin/claude-safe-update.sh"
+        "check HTTPS egress to claude.ai (sim-agent.nft allows 443 to the public internet), then re-run: " \
+        "bash /usr/local/lib/agent-container/bin/claude-safe-update.sh"
   fi
 else
   log "Claude Code already installed ($("$CLAUDE_BIN" --version 2>/dev/null || echo 'version unknown'))"
@@ -62,12 +73,12 @@ if ! tmux has-session -t agent 2>/dev/null; then
   tmux set-option -t agent status-left "sim-agent " \; set-option -t agent status-right "%H:%M"
   log "tmux session 'agent' created (idle -- run: agent start [profile] to load a model)"
 else
-  log "tmux session 'agent' already present (surviving a container restart's volume state? unusual but harmless)"
+  log "tmux session 'agent' already present (unusual right after a start, but harmless)"
 fi
 
-# --- 4. stay up, OR run a one-off command (`docker compose run --rm sim-agent <cmd...>`, e.g. the smoke test --
-#        step 7 of the build) -- entrypoint's own setup (install/ssh-dir/tmux) still runs first either way, so
-#        a smoke test that checks `claude --version` sees a real install. ----------------------------------------
+# --- 4. stay up, OR run a one-off command (`cd ~/apps && docker compose run --rm --no-deps sim-agent <cmd...>`,
+#        e.g. smoke_test.sh) -- entrypoint's own setup (guard/install/ssh-dir/tmux) still runs first either way,
+#        so a smoke test that checks `claude --version` sees a real install. -------------------------------------
 if [ "$#" -gt 0 ]; then
   log "one-off command: $*"
   exec "$@"

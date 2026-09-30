@@ -1,16 +1,21 @@
 # tools/agent_container/Dockerfile -- the isolated local-model-harness container ("sim-agent"), owner directive
 # 2026-09-29 (docs/plans/2026-09-29-local-model-transition-PLAN.md section 9). Runs on homelab-server
-# (192.168.0.10), a shared box with many other services; this image is deliberately minimal and read-only at
-# runtime (see compose.yaml) so a rogue model has nothing to escalate through.
+# (srv-host-0, 192.168.0.10), a shared box with many other services, as the ~/apps stack `sim-agent`
+# (server-stack/sim-agent/compose.yaml). THIS is the one Dockerfile: the stack builds it from the owner's
+# checkout at ${DATA_ROOT}/sim-agent/src/tools/agent_container. Deliberately minimal and read-only at runtime
+# so a rogue model has nothing to escalate through.
 #
 # WHAT LIVES WHERE:
 #   - this image (read-only at runtime): OS + Node + git/ssh/tmux/jq + the project's own numpy venv (no cupy)
 #     + the RAG venv (no GPU torch) -- everything reproducible from the repo's requirements, baked in for speed
 #     and so a compromised container can't quietly swap a dependency.
-#   - the "sim-agent-home" volume (writable): the Claude Code CLI itself, installed by the NATIVE installer at
-#     first boot (see entrypoint.sh) so its own built-in auto-updater can keep it current without an image
-#     rebuild (owner 2026-09-29). Also: ssh keys the owner drops in, tmux state, --settings-adjacent state.
-#   - the "sim-agent-repo" volume (writable): the git clone at /work/sim.
+#   - /home/agent, bind-mounted from ${DATA_ROOT}/sim-agent/home (writable, ZFS, refquota-capped): the Claude
+#     Code CLI itself, installed by the NATIVE installer at first boot (see entrypoint.sh) so its own built-in
+#     auto-updater can keep it current without an image rebuild (owner 2026-09-29). Also: the restricted ssh
+#     keys the owner installs, tmux state, Claude Code session state.
+#   - /work/sim, bind-mounted from ${DATA_ROOT}/sim-agent/repo (writable): the agent's own git clone.
+#   A bind mount starts EMPTY (unlike a named volume, nothing is copied from the image), so the owner creates
+#   both directories owned by AGENT_UID:AGENT_GID on the host; nothing here relies on image content under them.
 FROM debian:bookworm-slim
 
 ARG AGENT_UID=1000
@@ -33,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git openssh-client tmux jq curl ca-certificates \
         nodejs npm \
         build-essential \
-        tini \
+        tini tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # --- non-root user -------------------------------------------------------------------------------------------
@@ -54,13 +59,16 @@ RUN python3 -m venv "${RAG_VENV}" \
     && "${RAG_VENV}/bin/pip" install --no-cache-dir -r /opt/requirements-rag.txt \
         --extra-index-url https://download.pytorch.org/whl/cpu
 
-# --- container-local bin (baked into the read-only image; the CLAUDE CODE BINARY ITSELF is NOT here -- it is
-# installed into the writable agent-home volume by entrypoint.sh, see the header comment above). There is
+# --- container-local bin (baked into the read-only image, including firewall_guard.sh, the fail-closed start
+# check entrypoint.sh runs first; the CLAUDE CODE BINARY ITSELF is NOT here -- it is installed into the writable
+# home bind mount by entrypoint.sh, see the header comment above). There is
 # deliberately NO custom `claude` shim: the native installer's own `~/.local/bin/claude` (a symlink to
 # ~/.local/share/claude/versions/<version>, verified live 2026-09-29) is already the correct resolution --
 # `claude update`/`claude install <version>` manage that symlink themselves. -------------------------------
 COPY bin/ /usr/local/lib/agent-container/bin/
-RUN chmod +x /usr/local/lib/agent-container/bin/*.sh \
+# chmod EVERY file (not just *.sh): `llm` has no extension, and the build source is a git clone in which all of
+# these are tracked 0644 (the repo runs core.fileMode=false), so nothing may rely on the checkout's own mode bits.
+RUN chmod +x /usr/local/lib/agent-container/bin/* \
     && ln -s /usr/local/lib/agent-container/bin/llm /usr/local/bin/llm \
     && ln -s /usr/local/lib/agent-container/bin/agent-start.sh /usr/local/bin/agent-start.sh \
     && ln -s /usr/local/lib/agent-container/bin/claude-safe-update.sh /usr/local/bin/claude-safe-update.sh \
@@ -74,8 +82,8 @@ COPY profiles/ /usr/local/lib/agent-container/profiles/
 #   1. claude_container_settings.json (this repo's own copy, kept as a build artifact for reference/CI too) is
 #      installed as Claude Code's MANAGED settings file -- /etc/claude-code/managed-settings.json on Linux,
 #      the highest-precedence, non-overridable settings tier (enterprise policy, not a project/user setting the
-#      model's own repo checkout could ever shadow or edit). It lives OUTSIDE both writable volumes
-#      (/work/sim, /home/agent) and under this image's read-only root filesystem (compose.yaml's
+#      model's own repo checkout could ever shadow or edit). It lives OUTSIDE both writable bind mounts
+#      (/work/sim, /home/agent) and under this image's read-only root filesystem (the stack fragment's
 #      `read_only: true`), so the model cannot edit, delete, or bypass it by editing files in its own checkout.
 #   2. The PreToolUse hook it points at (hooks/deny_protected_edits.{sh,py} -- vendored copies of tools/
 #      local_llm/hooks/deny_protected_edits.{sh,py}, kept byte-identical: tests/test_agent_container_config.py
@@ -94,7 +102,7 @@ RUN mkdir -p /etc/claude-code \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# tmux needs a runtime dir; /tmp is tmpfs at runtime (compose.yaml). Nothing else under / is written to.
+# tmux needs a runtime dir; /tmp is tmpfs at runtime (the stack fragment). Nothing else under / is written to.
 # ~/.local/bin (the native installer's own launcher location, NOT on PATH by default -- its own install output
 # says so, verified live 2026-09-29) must be ahead of nothing else named `claude`; there is none, but this is
 # also where `llm`/`agent-start.sh`/etc.'s symlinks above would collide if ever renamed, so put it first.

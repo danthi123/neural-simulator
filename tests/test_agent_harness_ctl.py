@@ -19,22 +19,16 @@ def _write_exec(path, body):
     return path
 
 
-def _fake_docker(tmp, status="running", exec_ok=True,
-                  df_v_output="sim-agent_sim-agent-repo   1   245.3MB\nsim-agent_sim-agent-home   1   1.2GB\n"):
+def _fake_docker(tmp, status="running", exec_ok=True):
     """A stand-in for `docker`: logs every invocation; answers `inspect -f {{.State.Status}}` with `status`;
     `exec ... tmux send-keys` and `exec ... cat ...` / `exec ... pgrep ...` succeed iff exec_ok; `pause`/
-    `unpause` always succeed and are logged; `system df -v` answers with `df_v_output` (the same column shape
-    real `docker system df -v` prints for its "Local Volumes" section: NAME ... SIZE, SIZE last)."""
+    `unpause` always succeed and are logged."""
     log = os.path.join(tmp, "docker_calls.log")
-    df_v_file = os.path.join(tmp, "df_v_output.txt")
-    with open(df_v_file, "w") as f:
-        f.write(df_v_output)
     body = """
 echo "docker $*" >> "%s"
 case "$1" in
   inspect) echo "%s" ;;
   pause|unpause) exit 0 ;;
-  system) cat "%s" ;;
   exec)
     %s
     case "$*" in
@@ -47,8 +41,21 @@ case "$1" in
     ;;
   *) exit 0 ;;
 esac
-""" % (log, status, df_v_file, "" if exec_ok else "exit 1")
+""" % (log, status, "" if exec_ok else "exit 1")
     return _write_exec(os.path.join(tmp, "fake_docker.sh"), body), log
+
+
+def _fake_zfs(tmp, referenced, refquota, ok=True):
+    """`zfs get -Hp -o value referenced,refquota <dataset>` -> one raw byte count per line, like the real one."""
+    log = os.path.join(tmp, "zfs_calls.log")
+    body = 'echo "zfs $*" >> "%s"\n' % log
+    body += ('printf "%%s\\n%%s\\n" "%s" "%s"\n' % (referenced, refquota)) if ok else "exit 1\n"
+    return _write_exec(os.path.join(tmp, "fake_zfs_%s_%s.sh" % (referenced, refquota)), body)
+
+
+def _fake_systemctl(tmp, state):
+    return _write_exec(os.path.join(tmp, "fake_systemctl_%s.sh" % state),
+                       'echo "%s"\n[ "%s" = active ]\n' % (state, state))
 
 
 def _run(cmd, tmp, docker_path, extra_env=None, timeout=10):
@@ -60,6 +67,9 @@ def _run(cmd, tmp, docker_path, extra_env=None, timeout=10):
     # ever read or write the actual workstation's own active-profile record or profile files.
     env.setdefault("AGENT_CTL_ACTIVE_PROFILE_STATE", os.path.join(tmp, ".sim_agent_active_profile"))
     env.setdefault("AGENT_CTL_PROFILE_DIR", os.path.join(tmp, "no-such-profile-dir"))
+    # never the real `zfs` / `systemctl`: a 50 GB-of-64 GB dataset and an active firewall unit by default
+    env.setdefault("AGENT_CTL_ZFS", _fake_zfs(tmp, "50000000000", "64000000000"))
+    env.setdefault("AGENT_CTL_SYSTEMCTL", _fake_systemctl(tmp, "active"))
     env["SSH_ORIGINAL_COMMAND"] = cmd
     if extra_env:
         env.update(extra_env)
@@ -266,31 +276,49 @@ def test_state_when_absent_does_not_attempt_docker_exec():
         assert "docker exec" not in open(log).read()
 
 
-def test_state_reports_volume_disk_usage_in_gb():
-    # 2026-09-29 security review, M3: "the digest that warns when the volumes exceed a threshold" reads these
-    # two lines. 245.3MB -> ~0.25GB, 1.2GB -> ~1.20GB.
+def test_state_reports_the_datasets_usage_against_its_refquota():
+    # 2026-09-29 security review M3, rebased onto the ZFS dataset 2026-09-30: tools/inspection_digest.py reads
+    # these lines. 50e9 bytes -> 50.00 GB, 64e9 -> 64.00 GB; the query names the sim-agent dataset explicitly.
     with tempfile.TemporaryDirectory() as tmp:
         docker, _ = _fake_docker(tmp, status="running")
         res = _run("state", tmp, docker)
         assert res.returncode == 0, res.stdout + res.stderr
-        assert "repo_volume_gb: 0.25" in res.stdout, res.stdout
-        assert "home_volume_gb: 1.20" in res.stdout, res.stdout
+        assert "appdata_gb: 50.00" in res.stdout, res.stdout
+        assert "appdata_quota_gb: 64.00" in res.stdout, res.stdout
+        calls = open(os.path.join(tmp, "zfs_calls.log")).read()
+        assert "get -Hp -o value referenced,refquota data/appdata/sim-agent" in calls
 
 
-def test_state_reports_volume_disk_usage_even_when_the_container_is_absent():
-    # the named volumes persist independently of whether the container itself is running.
+def test_state_reports_appdata_even_when_the_container_is_absent():
+    # the dataset persists independently of whether the container itself exists
     with tempfile.TemporaryDirectory() as tmp:
         docker, _ = _fake_docker(tmp, status="absent")
         res = _run("state", tmp, docker)
         assert res.returncode == 0, res.stdout + res.stderr
-        assert "repo_volume_gb: 0.25" in res.stdout, res.stdout
-        assert "home_volume_gb: 1.20" in res.stdout, res.stdout
+        assert "appdata_gb: 50.00" in res.stdout, res.stdout
 
 
-def test_state_volume_usage_is_unknown_when_not_found():
+def test_state_reports_no_refquota_as_none():
     with tempfile.TemporaryDirectory() as tmp:
-        docker, _ = _fake_docker(tmp, status="running", df_v_output="unrelated-volume   1   5MB\n")
-        res = _run("state", tmp, docker)
+        docker, _ = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker, extra_env={"AGENT_CTL_ZFS": _fake_zfs(tmp, "1000000000", "0")})
+        assert "appdata_gb: 1.00" in res.stdout, res.stdout
+        assert "appdata_quota_gb: none" in res.stdout, res.stdout
+
+
+def test_state_appdata_is_unknown_when_the_dataset_cannot_be_read():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker, extra_env={"AGENT_CTL_ZFS": _fake_zfs(tmp, "x", "y", ok=False)})
         assert res.returncode == 0, res.stdout + res.stderr
-        assert "repo_volume_gb: unknown" in res.stdout
-        assert "home_volume_gb: unknown" in res.stdout
+        assert "appdata_gb: unknown" in res.stdout
+        assert "appdata_quota_gb: unknown" in res.stdout
+
+
+def test_state_reports_the_firewall_unit_state():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker)
+        assert "firewall: active" in res.stdout, res.stdout
+        res = _run("state", tmp, docker, extra_env={"AGENT_CTL_SYSTEMCTL": _fake_systemctl(tmp, "failed")})
+        assert "firewall: failed" in res.stdout, res.stdout

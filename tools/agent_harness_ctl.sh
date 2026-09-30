@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# tools/agent_harness_ctl.sh -- runs ON THE SERVER (homelab-server) as the forced command for a WORKSTATION
-# ssh key (owner-applied: an `authorized_keys` line with `command="bash ~/sim-agent/tools/agent_harness_ctl.sh
-# ",restrict ssh-ed25519 AAAA...`, see docs/AGENT_HARNESS_SETUP.md). This is the ONLY way the workstation can
+# tools/agent_harness_ctl.sh -- runs ON THE SERVER (homelab-server / srv-host-0) as the forced command for a
+# WORKSTATION ssh key (owner-applied: an `authorized_keys` line with `command="bash /home/dant123/data/sim-agent/
+# src/tools/agent_harness_ctl.sh",restrict,from="192.168.0.68" ssh-ed25519 AAAA...`, see
+# docs/AGENT_HARNESS_SETUP.md -- it runs from the owner's source checkout on the dataset, which the container
+# cannot reach, never from the agent's own writable repo). This is the ONLY way the workstation can
 # reach into the sim-agent container from the server side -- it allows exactly four things and refuses (and
 # logs) everything else:
 #
@@ -17,8 +19,10 @@
 #              them itself.
 #   state      one-line-per-field status: container status (running/paused/absent/...), and -- if running --
 #              the active profile + its KIND (from the SERVER-LOCAL record `set-active-profile` writes, never
-#              from the container) and whether a claude process is currently active. Read by
-#              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile) and by tools/game.sh.
+#              from the container) and whether a claude process is currently active; always the ZFS dataset's
+#              usage against its refquota and whether sim-agent-fw.service is active. Read by
+#              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile), tools/game.sh and
+#              tools/inspection_digest.py.
 #   set-active-profile <name>   records which profile is active + its KIND (read from this script's OWN
 #              sibling profiles/<name>.env on the server), so `state`'s gaming-pause-skip decision never has to
 #              trust anything the container itself could write (2026-09-29 re-review, L3). Called by `agent
@@ -32,6 +36,10 @@ PAUSE_DELAY_S="${AGENT_CTL_PAUSE_DELAY_S:-5}"
 MAX_SAY_LEN=300
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROFILE_DIR="${AGENT_CTL_PROFILE_DIR:-$SELF_DIR/agent_container/profiles}"
+ZFS="${AGENT_CTL_ZFS:-zfs}"                        # TEST-ONLY override; NEVER set in production
+SYSTEMCTL="${AGENT_CTL_SYSTEMCTL:-systemctl}"      # TEST-ONLY override; NEVER set in production
+DATASET="${AGENT_CTL_DATASET:-data/appdata/sim-agent}"
+FW_UNIT=sim-agent-fw.service
 # SERVER-LOCAL active-profile record (2026-09-29 re-review, L3). NEVER inside the container's own writable
 # home volume: `state` used to `docker exec ... cat /home/agent/.active_profile_kind`, a file the CONTAINER
 # itself writes -- a possibly-adversarial model could simply `echo cloud > ~/.active_profile_kind` to claim a
@@ -55,26 +63,16 @@ read -r SUB REST <<< "$CMD"
 
 container_status() { "$DOCKER" inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "absent"; }
 
-# volume_size_gb <name-substring> -- the named volume's on-disk SIZE in GB (one decimal), via the daemon's own
-# accounting (`docker system df -v` -- no raw filesystem access needed, so this works under the same privilege
-# level `docker inspect`/`docker exec` already require). Grepped by SUBSTRING since compose prefixes the
-# declared volume name with the project name (e.g. "sim-agent_sim-agent-repo"), which can vary by how the stack
-# was deployed. Prints nothing (never a bare "0") if the volume cannot be found or its size cannot be parsed --
-# 2026-09-29 security review, M3 ("the digest that warns when the volumes exceed a threshold").
-volume_size_gb() {
-  local name_substr="$1" raw
-  raw=$("$DOCKER" system df -v 2>/dev/null | awk -v n="$name_substr" '$1 ~ n {print $NF; exit}')
-  [ -n "$raw" ] || return 0
-  python3 -c '
-import re, sys
-m = re.match(r"^([0-9.]+)\s*([a-zA-Z]*)$", sys.argv[1])
-if not m:
-    sys.exit(0)
-val = float(m.group(1)); unit = m.group(2).lower()
-mult = {"b": 1, "kb": 1e3, "mb": 1e6, "gb": 1e9, "tb": 1e12,
-        "kib": 2**10, "mib": 2**20, "gib": 2**30, "tib": 2**40, "": 1}.get(unit, 1e9)
-print(f"{val * mult / 1e9:.2f}")
-' "$raw" 2>/dev/null
+# appdata_usage -- prints "<referenced_gb> <refquota_gb|none>" for the sim-agent ZFS dataset (both 2 decimals), or
+# nothing if it cannot be read. `zfs get` needs no privilege, so this works as the forced-command account without
+# sudo, and it is instant (no du over a multi-GB checkout). REFERENCED is the live data the refquota caps;
+# snapshots are excluded on purpose (sanoid prunes them). 2026-09-29 security review M3 ("the digest that warns
+# when the volumes exceed a threshold"), rebased from named volumes onto the dataset 2026-09-30.
+appdata_usage() {
+  "$ZFS" get -Hp -o value referenced,refquota "$DATASET" 2>/dev/null | awk '
+    NR == 1 && $1 ~ /^[0-9]+$/ { used = sprintf("%.2f", $1 / 1e9) }
+    NR == 2 && $1 ~ /^[0-9]+$/ { quota = ($1 == 0) ? "none" : sprintf("%.2f", $1 / 1e9) }
+    END { if (used != "") print used, (quota != "" ? quota : "unknown") }'
 }
 
 case "$SUB" in
@@ -181,12 +179,13 @@ case "$SUB" in
       echo "claude_active: $([ -n "$busy" ] && echo yes || echo no)"
       echo "claude_version: $(sanitize "$cver")"
     fi
-    # VOLUME DISK USAGE -- always reported, regardless of container state (the named volumes persist across
-    # pause/stop); consumed by tools/inspection_digest.py to warn when either exceeds a threshold.
-    repo_gb="$(volume_size_gb "sim-agent-repo")"
-    home_gb="$(volume_size_gb "sim-agent-home")"
-    echo "repo_volume_gb: ${repo_gb:-unknown}"
-    echo "home_volume_gb: ${home_gb:-unknown}"
+    # APPDATA + FIREWALL -- always reported, regardless of container state (the dataset persists across
+    # pause/stop); consumed by tools/inspection_digest.py.
+    read -r used_gb quota_gb <<< "$(appdata_usage)"
+    echo "appdata_gb: ${used_gb:-unknown}"
+    echo "appdata_quota_gb: ${quota_gb:-unknown}"
+    fw="$("$SYSTEMCTL" is-active "$FW_UNIT" 2>/dev/null)"
+    echo "firewall: $(sanitize "${fw:-unknown}")"
     log "state queried (status=$st)"
     ;;
 

@@ -1,89 +1,159 @@
 #!/usr/bin/env bash
-# tools/agent_container/update.sh -- weekly OS/Node/Python layer rebuild for sim-agent, owner directive
-# 2026-09-29 (keep the harness current). Runs ON THE SERVER (homelab-server), against the deployed copy of
-# this directory (e.g. ~/sim-agent/). NOT scheduled by this repo or by any agent -- the owner adds a cron line
-# or systemd timer themselves (docs/AGENT_HARNESS_SETUP.md says exactly how); this script only knows how to run
-# ONE cycle safely when invoked.
+# tools/agent_container/update.sh -- weekly rebuild + smoke test + safe swap for the sim-agent stack, owner
+# directive 2026-09-29 (keep the harness current). Runs ON THE SERVER (srv-host-0) as the owner's account, from the
+# owner's source checkout on the dataset -- never from ~/apps and never from the agent's own writable repo:
 #
-# Safety rule: a rebuilt image is only SWAPPED IN (`docker compose up -d`, which recreates the container) when
-# doing so cannot lose in-progress work -- the harness is `docker pause`d (ground truth: `docker inspect
-# .State.Status`, not a sentinel file -- that IS what tools/agent_harness_ctl.sh's `pause` actually does), OR
-# the container is running but no `claude` process is active inside it (an idle shell in the tmux session).
-# Otherwise the image is still BUILT (so the next cycle doesn't have to redo that work) but the running
-# container is left alone, and the deferral is logged.
+#   bash /home/dant123/data/sim-agent/src/tools/agent_container/update.sh
 #
-#   bash tools/agent_container/update.sh            # run from the deployed copy's own directory, or:
-#   bash tools/agent_container/update.sh /path/to/deployed/tools/agent_container
+# NOT scheduled by this repo or by any agent; the owner installs the timer (docs/AGENT_HARNESS_SETUP.md).
+#
+# One cycle:
+#   1. Preconditions. ~/apps's root compose.yaml includes the sim-agent stack; the build source (this checkout's
+#      tools/agent_container + tools/agent_harness_ctl.sh) is a CLEAN git tree -- a modified, untracked or
+#      ignored file there would be built into the image (or run by the ctl forced command), so refuse; the
+#      ~/apps copy of the fragment matches this checkout's server-stack copy (warn on drift). Disk usage of the
+#      ZFS dataset (df reports it against its refquota) and of Docker's data-root is logged, loudly above 85%.
+#   2. Tag the current image sim-agent:rollback, then `docker compose build --pull sim-agent` from ~/apps.
+#   3. If the image changed: smoke-test the NEW image (`docker compose run --rm --no-deps sim-agent
+#      smoke_test.sh`, which includes the in-container network-isolation probes). On failure, point
+#      sim-agent:local back at the rollback image and stop -- the running container is never touched.
+#   4. Swap the running container onto the new image (`docker compose up -d --no-deps --no-build sim-agent`) only
+#      when that can neither lose work nor start it unfiltered:
+#        running, no active claude process, sim-agent-fw.service active  -> recreate
+#        running, a claude process active                               -> defer (the next cycle retries)
+#        paused (a gaming yield froze a session, maybe mid-task)        -> defer: recreating would kill it
+#        exited / created / absent                                      -> never started here: the owner
+#                                                                          stopped it, or never started it
+# Claude Code itself is not updated here: it lives in the home bind mount, and claude-safe-update.sh updates,
+# smoke-tests and rolls it back on every `agent start`.
 set -uo pipefail
-HERE="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-COMPOSE="$HERE/compose.yaml"
-LOG="$HERE/update.log"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="${SIM_AGENT_SRC_DIR:-$(cd "$HERE/../.." && pwd)}"          # the checkout this script lives in
+DATA_DIR="${SIM_AGENT_DATA_DIR:-$(dirname "$SRC_DIR")}"             # ${DATA_ROOT}/sim-agent (the dataset)
+APPS_DIR="${SIM_AGENT_APPS_DIR:-$HOME/apps}"
+LOG="${SIM_AGENT_UPDATE_LOG:-$DATA_DIR/update.log}"                 # never inside src/: that would dirty it
+SERVICE=sim-agent
 CONTAINER="${AGENT_CONTAINER_NAME:-sim-agent}"
-DF="${AGENT_UPDATE_DF:-df}"               # TEST-ONLY override; NEVER set in production
-DISK_ROOT="${AGENT_UPDATE_DISK_ROOT:-/var/lib/docker}"   # the filesystem docker's data (incl. named volumes)
-                                                          # actually lives on -- override if this daemon uses a
-                                                          # different data-root (`docker info -f '{{.DockerRootDir}}'`)
+IMAGE="${SIM_AGENT_IMAGE:-sim-agent:local}"
+ROLLBACK_IMAGE="${IMAGE%%:*}:rollback"
+FW_UNIT=sim-agent-fw.service
+DF="${AGENT_UPDATE_DF:-df}"                     # TEST-ONLY override; NEVER set in production
+SYSTEMCTL="${AGENT_UPDATE_SYSTEMCTL:-systemctl}" # TEST-ONLY override; NEVER set in production
 DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
+FRAGMENT_SRC="$SRC_DIR/tools/agent_container/server-stack/sim-agent/compose.yaml"
+FRAGMENT_LIVE="$APPS_DIR/sim-agent/compose.yaml"
 
 log() { printf '%s update.sh: %s\n' "$(date -u '+%F %T')" "$*" | tee -a "$LOG" >&2; }
+compose() { (cd "$APPS_DIR" && docker compose "$@"); }
+image_id() { docker image inspect -f '{{.Id}}' "$1" 2>/dev/null || true; }
 
-if [ ! -f "$COMPOSE" ]; then
-  echo "update.sh: no compose.yaml found at $HERE -- pass the deployed tools/agent_container directory as \$1" >&2
+# --- 1. preconditions --------------------------------------------------------------------------------------------
+if [ ! -f "$APPS_DIR/compose.yaml" ] || ! grep -qE '^[[:space:]]*-[[:space:]]*sim-agent/compose\.yaml[[:space:]]*(#.*)?$' "$APPS_DIR/compose.yaml"; then
+  log "REFUSED: $APPS_DIR/compose.yaml does not include sim-agent/compose.yaml -- install the stack first"
   exit 2
 fi
-
-# DISK-USAGE CHECK (2026-09-29 security review, M3). homelab-server is a SHARED box (gitea/nextcloud/home-
-# assistant/etc. all live on it too) with no per-container disk quota on the two named volumes (compose.yaml's
-# own log-size cap only bounds container STDOUT/STDERR, never volume content) -- warn LOUDLY, every cycle,
-# rather than let a runaway agent-authored job's disk growth go unnoticed between owner check-ins. This never
-# blocks the build/recreate below; it is a visibility fix, not a gate (tools/inspection_digest.py's own
-# per-volume GB breakdown, sourced from tools/agent_harness_ctl.sh's `state`, is the finer-grained companion
-# check -- this one is a coarse, always-available floor: it works even when the harness/ctl ssh path is down).
-disk_pct=$("$DF" --output=pcent "$DISK_ROOT" 2>/dev/null | tail -1 | tr -dc '0-9')
-if [ -n "$disk_pct" ]; then
-  log "disk usage at $DISK_ROOT: ${disk_pct}%"
-  if [ "$disk_pct" -ge "$DISK_WARN_PCT" ]; then
-    log "⚠️  WARNING: $DISK_ROOT is ${disk_pct}% full (threshold ${DISK_WARN_PCT}%) -- this is a SHARED server; " \
-        "investigate the sim-agent volumes (docker system df -v) before they threaten disk space for other services."
-  fi
-else
-  log "disk usage check: could not read $DF --output=pcent $DISK_ROOT -- skipped (non-fatal)"
+if [ ! -f "$FRAGMENT_LIVE" ]; then
+  log "REFUSED: no stack fragment at $FRAGMENT_LIVE"
+  exit 2
 fi
-
-log "checking $CONTAINER's state before deciding whether to recreate"
-status=$(docker inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "absent")
-log "current status: $status"
-
-log "building (docker compose build --pull) -- always safe, never touches the running container"
-if ! docker compose -f "$COMPOSE" build --pull >> "$LOG" 2>&1; then
-  log "BUILD FAILED -- see $LOG; leaving the running container (if any) untouched"
+dirty="$(git -C "$SRC_DIR" status --porcelain --ignored -- tools/agent_container tools/agent_harness_ctl.sh 2>&1)"
+if [ $? -ne 0 ] || [ -n "$dirty" ]; then
+  log "REFUSED: the build source $SRC_DIR is not a clean git checkout of tools/agent_container +" \
+      "tools/agent_harness_ctl.sh (a modified, untracked or ignored file there would be built into the image):"
+  printf '%s\n' "$dirty" | head -20 | tee -a "$LOG" >&2
   exit 1
 fi
+log "build source: $SRC_DIR at $(git -C "$SRC_DIR" rev-parse --short=12 HEAD 2>/dev/null || echo '?')"
+if [ -f "$FRAGMENT_SRC" ] && ! cmp -s "$FRAGMENT_SRC" "$FRAGMENT_LIVE"; then
+  log "WARNING: $FRAGMENT_LIVE differs from the reviewed copy $FRAGMENT_SRC -- deliberate? If not:" \
+      "cp $FRAGMENT_SRC $FRAGMENT_LIVE (the ~/apps copy is what runs)"
+fi
 
-recreate=0
-case "$status" in
-  absent) log "no existing container -- starting fresh"; recreate=1 ;;
-  paused) log "harness is paused -- safe to recreate"; recreate=1 ;;
-  running)
-    busy="$(docker exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
-    if [ -n "$busy" ]; then
-      log "DEFERRED: a claude process is active inside $CONTAINER (pid(s): $busy) and the harness is not paused -- image built, NOT recreating this cycle. The owner's schedule will retry next tick."
-      recreate=0
+# DISK USAGE (2026-09-29 security review, M3): a visibility floor, never a gate. The dataset's refquota is the real
+# ceiling (a runaway job hits ENOSPC inside the container, never the shared pool); this makes the approach visible.
+disk_roots="${AGENT_UPDATE_DISK_ROOTS:-$DATA_DIR $(docker info -f '{{.DockerRootDir}}' 2>/dev/null)}"
+for root in $disk_roots; do
+  pct=$("$DF" --output=pcent "$root" 2>/dev/null | tail -1 | tr -dc '0-9')
+  if [ -z "$pct" ]; then
+    log "disk usage check: could not read $DF --output=pcent $root -- skipped (non-fatal)"
+    continue
+  fi
+  log "disk usage at $root: ${pct}%"
+  if [ "$pct" -ge "$DISK_WARN_PCT" ]; then
+    log "WARNING: $root is ${pct}% full (threshold ${DISK_WARN_PCT}%) -- this is a SHARED server; clean up" \
+        "the agent's worktrees/results or raise the dataset refquota before writes start failing."
+  fi
+done
+
+# --- 2. build ----------------------------------------------------------------------------------------------------
+old_id="$(image_id "$IMAGE")"
+if [ -n "$old_id" ]; then
+  docker image tag "$IMAGE" "$ROLLBACK_IMAGE" >> "$LOG" 2>&1 && log "tagged the current image as $ROLLBACK_IMAGE"
+fi
+log "building (docker compose build --pull $SERVICE) -- never touches the running container"
+if ! compose build --pull "$SERVICE" >> "$LOG" 2>&1; then
+  log "BUILD FAILED -- see $LOG; $IMAGE and the running container are unchanged"
+  exit 1
+fi
+new_id="$(image_id "$IMAGE")"
+
+# --- 3. smoke-test a changed image before anything can run it ----------------------------------------------------
+if [ -n "$new_id" ] && [ "$new_id" = "$old_id" ]; then
+  log "image unchanged by the rebuild"
+else
+  log "smoke-testing the new image (docker compose run --rm --no-deps $SERVICE smoke_test.sh)"
+  if ! compose run --rm --no-deps -T "$SERVICE" smoke_test.sh >> "$LOG" 2>&1; then
+    if [ -n "$old_id" ]; then
+      docker image tag "$ROLLBACK_IMAGE" "$IMAGE" >> "$LOG" 2>&1
+      log "SMOKE TEST FAILED -- rolled $IMAGE back to the previous image ($ROLLBACK_IMAGE); the running" \
+          "container was not touched. See $LOG."
     else
-      log "running but idle (no active claude process) -- safe to recreate"
-      recreate=1
+      log "SMOKE TEST FAILED on the first build -- there is no previous image to roll back to; do not start" \
+          "the stack until this passes. See $LOG."
     fi
-    ;;
-  *) log "unrecognized status '$status' -- treating as safe to recreate"; recreate=1 ;;
-esac
-
-if [ "$recreate" = 1 ]; then
-  if docker compose -f "$COMPOSE" up -d >> "$LOG" 2>&1; then
-    log "recreate complete"
-  else
-    log "recreate FAILED -- see $LOG (the old container may still be running if compose left it alone)"
     exit 1
   fi
-else
-  log "cycle complete (build only, no recreate)"
+  log "smoke test passed"
 fi
+
+# --- 4. swap the running container only when it is safe ----------------------------------------------------------
+status=$(docker inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "absent")
+[ -n "$status" ] || status=absent
+log "current status of $CONTAINER: $status"
+case "$status" in
+  running)
+    current="$(docker inspect -f '{{.Image}}' "$CONTAINER" 2>/dev/null || true)"
+    if [ -n "$current" ] && [ "$current" = "$new_id" ]; then
+      log "already running the current image -- cycle complete"
+      exit 0
+    fi
+    busy="$(docker exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
+    if [ -n "$busy" ]; then
+      log "DEFERRED: a claude process is active inside $CONTAINER (pid(s): $busy) -- image built and smoke-tested," \
+          "NOT recreating this cycle; the next one retries."
+      exit 0
+    fi
+    if ! "$SYSTEMCTL" is-active --quiet "$FW_UNIT"; then
+      log "REFUSED to recreate: $FW_UNIT is not active (sudo systemctl status $FW_UNIT). The new container would" \
+          "refuse to start anyway (firewall_guard.sh); the old one keeps running."
+      exit 1
+    fi
+    log "running but idle (no active claude process), firewall active -- recreating"
+    if compose up -d --no-deps --no-build "$SERVICE" >> "$LOG" 2>&1; then
+      log "recreate complete (status now: $(docker inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo '?'))"
+    else
+      log "recreate FAILED -- see $LOG. Roll back by hand: docker image tag $ROLLBACK_IMAGE $IMAGE &&" \
+          "(cd $APPS_DIR && docker compose up -d --no-deps --no-build $SERVICE)"
+      exit 1
+    fi
+    ;;
+  paused)
+    log "DEFERRED: $CONTAINER is paused (a gaming yield may have frozen a session mid-task) -- recreating would" \
+        "kill it. Image built and smoke-tested; the next cycle retries."
+    ;;
+  *)
+    log "$CONTAINER is not running ($status) -- not starting it (the owner stopped it, or never started it). The" \
+        "new image is ready for: cd $APPS_DIR && docker compose up -d $SERVICE"
+    ;;
+esac
+log "cycle complete"

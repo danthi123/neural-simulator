@@ -1,0 +1,12 @@
+# /etc/systemd/system/sim-agent-fw-selfwan.service -- refresh sim-agent.nft's self_wan set (this site's own public
+# address, which DDNS can change). Triggered by sim-agent-fw-selfwan.timer.
+# Source of truth: neural-simulator repo, tools/agent_container/server-stack/host/etc/systemd/system/.
+[Unit]
+Description=Refresh the sim-agent firewall's own-WAN-address set
+Requisite=sim-agent-fw.service
+After=sim-agent-fw.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sim-agent-fw-selfwan.sh
