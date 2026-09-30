@@ -32,3 +32,7 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   Step 3: 54 lines emitted (54 carry max_age_h=120) and added, 0 ADD-FAILED, queue depth 526. The HANDOFF's own
   step-3 count used `pool_queue.sh list`, which truncates commands (read 0); corrected to grep the queue file.
   Next for the local model: step 4.
+- 2026-09-30 12:35 Claude: the remaining dev-seed-7 arms (`off`, `intact_b`, lateral_learn, lateral_read, draw) were
+  not run: `mem_ok.sh 9` refused for over an hour (sibling dev runs held the workstation), and they are informational
+  once the gate is queued. Launcher stopped; no dev process left running. Declared risk: the real-handler null was not
+  checked at a dev seed (organ determinism was, 8/8).
