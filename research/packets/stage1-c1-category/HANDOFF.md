@@ -37,8 +37,8 @@ then stop that line of work and continue with any other thread that is not block
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
 cd $W && ls data/corpus/tinystories.txt                                                   # the path, no error
-SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --selftest | tail -1        # SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py | tail -1   # 22 passed
+SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --selftest 2>/dev/null | tail -1        # SELFTEST OK
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py 2>/dev/null | tail -1   # 22 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null; git status --short --untracked-files=no | wc -l   # 0
 git merge-base --is-ancestor $GATE_SHA HEAD && echo GATE-SHA-OK                            # GATE-SHA-OK
 git diff $PREREG_SHA $GATE_SHA -- $PREREG | wc -l                                          # 0
@@ -58,8 +58,8 @@ Merge block (only on `NEEDS-MERGE`):
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
 cd $W && git merge --no-edit origin/main || { git merge --abort; echo MERGE-CONFLICT; exit 1; }
-SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --selftest | tail -1
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py | tail -1
+SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_c1_category --selftest 2>/dev/null | tail -1
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_category_inherit_organ.py tests/test_stage1_exit_gate.py 2>/dev/null | tail -1
 git diff $PREREG_SHA HEAD -- $PREREG | wc -l
 ```
 
