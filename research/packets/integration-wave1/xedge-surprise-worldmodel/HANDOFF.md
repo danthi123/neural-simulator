@@ -52,6 +52,6 @@ the step-R gate rests on the margin text; the notice habituation is reported, no
 
 ## NEEDS CLAUDE (packet-specific)
 
-1. Before the merge: the organ is process-shared (`_get_worldmodel_organ()` has no session key), so default-on means
+1. RULED (owner, 2026-09-29): accepted (one brain). Was: before the merge, the organ is process-shared (`_get_worldmodel_organ()` has no session key), so default-on means
    the world model learns across every conversation one server process serves. Accept, or require a per-session organ
    first. No step here measures cross-session accumulation.

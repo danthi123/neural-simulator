@@ -36,8 +36,11 @@ F1: in `iw1-flip-<F7>` the row `d6-hebbian-write` must read reply-level load-bea
 `research/findings/<date>-iw1-d6-hebbian-write-default-on-flip-validated-PROVISIONAL.md`, frontmatter
 `integration_faculty: in-loop-learning`, `status: provisional`, seeds 42/43/44/100/101/102, artifacts = the verdict
 JSONs + the three shard tags. Sections: what flipped (the three flags, one anchor), R per-seed table (from R_d6.json),
-B summary (S0/S2 robust core before/after from B.json), F1/F2/F3 lines, the prereg's declared residuals copied, and
-"Verdict: provisional until Claude's adversarial review". Say "on by default on branch research/integration-wave1"
+B summary (S0/S2 robust core before/after from B.json), F1/F2/F3 lines, the prereg's declared residuals copied,
+a "Per-turn cost" section (owner ruling 2026-09-29: the growth is accepted and must be reported): the read-time
+view's per-turn seconds at N = 5 / 50 / 500 / 2000 taught facts, HEBB and COPY, quoted per seed from
+`2026-09-25-d6-capacity-curve-N2000-6seed-CEILING-BETWEEN-50-AND-500.md`, plus the per-turn wall times of the
+step-D/F identity arms at P and F; and "Verdict: provisional until Claude's adversarial review". Say "on by default on branch research/integration-wave1"
 only; never "now on-by-default" (the PI gate's claim token) before the merge.
 
 ## Dev seed 7 (Claude, 2026-09-29, local numpy, worktree at the packet commit)
@@ -53,5 +56,6 @@ block 5 (128/128 synapses saturated), so the buffer held 6 facts: per-turn cost 
 
 ## NEEDS CLAUDE (packet-specific)
 
-1. Per-turn cost grows with the number of taught facts (read-time view: 3-5 s per turn at 50 facts, minutes at 500,
+1. RULED (owner, 2026-09-29): accepted (speed secondary); the finding MUST report the measured growth (template above). Was: per-turn
+   cost grows with the number of taught facts (read-time view: 3-5 s per turn at 50 facts, minutes at 500,
    pool CPU). Before the merge, rule whether a default-on write needs a cap or a consolidation path for long chats.

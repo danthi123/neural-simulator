@@ -306,12 +306,16 @@ push. Then NEEDS-CLAUDE "iw1: flips <FLIP> validated at F=<F7> (provisional); ad
 
 1. Adversarial review (verify-go) of each flip that passes, then the merge of `research/integration-wave1` to main.
    The flip bar's review leg is Claude's, not the local model's.
-2. The C1 world model is process-shared: once on by default it learns across every conversation a server process
-   serves. Rule on whether that is acceptable for production, or whether it needs a per-session organ first
+2. RULED (owner, 2026-09-29): accepted (one brain). The C1 world model is process-shared: once on by default it learns across every
+   conversation a server process serves. Rule on whether that is acceptable for production, or whether it needs a per-session organ first
    (xedge-surprise-worldmodel HANDOFF).
-3. After a wm-focus-bind flip: whether its paired-session probe should count in the headline fraction (kind
+3. RULED (owner, 2026-09-29): the focus probe counts toward the headline load-bearing fraction only if its reply-level lesion effect
+   reproduces 6/6 (step R PASS); the harness edit that counts it is Claude's. Was: after a wm-focus-bind flip, whether
+   its paired-session probe should count in the headline fraction (kind
    `neural-lesion-opt-in` is excluded by design today) -- a harness decision.
-4. The local-model runbook forbids flipping a default; this HANDOFF authorizes a scripted flip commit on the packet
+4. RULED (owner, 2026-09-29): one scripted flip commit on this branch is allowed; the merge to main stays Claude's call. Was: the
+   local-model runbook forbids flipping a default; this HANDOFF authorizes a scripted flip commit on the packet
    branch only. Confirm, or amend the runbook, before the local model reaches section 6.
-5. The reference battery for step B is B2b (a308f1e09). If B2d lands first and reads COMPLETE, decide whether it
+5. RULED (owner, 2026-09-29): the reference battery is B2b (B2d is not runnable). Was: the reference battery for step B is B2b
+   (a308f1e09). If B2d lands first and reads COMPLETE, decide whether it
    replaces B2b as the reference (that is an amendment to the shared prereg, committed before step B is scored).

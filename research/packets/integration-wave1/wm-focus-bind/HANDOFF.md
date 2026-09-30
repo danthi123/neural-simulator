@@ -54,6 +54,7 @@ chasing). The first ordering answers "the dog chases the cat" either way.
 
 1. Once default-on, should `LB_WMB_FOCUS_PROBE` count in the headline fraction (kind `neural-lesion-opt-in` today)?
    A harness decision; until then the faculty's reply-level evidence lives in this packet's R record.
-2. Product behavior after a flip: an anaphor now lands on whichever held referent wins the WTA (set by intrinsic
+2. RULED (owner, 2026-09-29): accepted as correct: an abstention on an anaphor whose two held referents are genuinely ambiguous is a
+   correct reply, not a regression. Was: product behavior after a flip: an anaphor now lands on whichever held referent wins the WTA (set by intrinsic
    excitability, not salience), so some "it" questions that the positional route answered will abstain (dev seed 7:
    "what does it chase" after "the cat and the dog walked in"). Rule whether that is acceptable before the merge.
