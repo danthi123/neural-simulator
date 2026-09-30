@@ -228,11 +228,14 @@ the end (what re-ran, what was slow). Then NEEDS-CLAUDE #2 (review + merge) and 
 See `$K/dev7/README.md` (the byte-identity check of the stub path before and after the change, the mouth arm's
 seed-7 cells scored by `tools/b2d_mouth_score.py`, and the remap probe).
 
-**Two dev GPU jobs were still in the GPU queue at handoff** (both wait for memory first): the remap probe's
-production-mode lesion arm (`$HOME/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03/research/findings/
-raw/_b2d_mood_render_probe/dev7_production/lesion.json`) and the re-run of the dev drives cell
-(`$HOME/derisk-pool/revisions/e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1/research/findings/raw/_load_bearing/_shards/
-b2d0929-mouth-dev7/s7/affect-drives-response/lesion_affect_drives_response_s7.json`). When both files exist:
+**Two optional dev GPU checks were cancelled at handoff** (to give the card back to the local model; they waited
+on workstation RAM): the remap probe's production-mode lesion arm and the re-run of the dev drives cell. Run them
+only inside a GPU window you already hold for step 5, before the mouth lines (both lines are in
+`$K/jobs/dev7_moodrender_5818dc6.txt` (its third line, `--arm lesion`) and `$K/jobs/dev7_diag2.txt` (its second
+line)); queue each with `bash tools/gpu_queue.sh add "<line>"`. When both files exist
+(`$HOME/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03/research/findings/raw/_b2d_mood_render_probe/
+dev7_production/lesion.json` and `$HOME/derisk-pool/revisions/e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1/research/
+findings/raw/_load_bearing/_shards/b2d0929-mouth-dev7/s7/affect-drives-response/lesion_affect_drives_response_s7.json`):
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -245,7 +248,7 @@ git add research/findings/raw/_b2d_mood_render_probe/dev7_production $SH/b2d0929
 ```
 
 Report the printed `probe` reading and the drives cell state to Claude in `research/coordination/LOCAL_LLM_RUNBOOK.md`
-(NEEDS-CLAUDE #3). If either job ended `DONE(rc!=0)`, do nothing more with it: these are dev checks, not gate cells.
+(NEEDS-CLAUDE #3). If either job ends `DONE(rc!=0)`, leave it: these are dev checks, not gate cells.
 
 ## NEEDS-CLAUDE (open; do not act on these)
 

@@ -3,8 +3,8 @@
 Dev seed only: nothing here is a gate-seed result or a claim about the faculties. The files are under
 `research/findings/raw/_load_bearing/_shards/b2d0929-{stubid-dev7-e8a0d0c,stubid-dev7-f5e3732,mouth-dev7}/` and
 `research/findings/raw/_b2d_mood_render_probe/dev7_{stub,production}/`; `summarize_dev7.json` beside this file is the
-machine-read summary (`summarize_dev7.py`), written once the two dev GPU jobs still queued at handoff land (HANDOFF
-section 11).
+machine-read summary (`summarize_dev7.py`), written once the two optional dev GPU checks cancelled at handoff have run
+(HANDOFF section 11).
 
 ## 1. The renderer change leaves the stub path byte-identical (the prereg's acceptance check)
 
@@ -32,8 +32,8 @@ Unit-level pins of the same claim, over every probe turn: `tests/test_arm_render
 - affect-drives-response on `well`: the intact arms' reply ('the wolf bites the apple') is an assertion echo with 0
   Qwen calls, so this row is also MOUTH-SILENT at dev seed 7. A1.3's first prediction for this row
   (MOUTH-NOT-LOAD-BEARING) did not hold; its stated alternative did. The first attempt's lesion arm was killed by
-  SIGTERM mid-build (see section 4); its re-run with `LB_RESUME_SKIP_EXISTING=1` was in the GPU queue at handoff
-  (HANDOFF section 11).
+  SIGTERM mid-build (see section 4); its re-run with `LB_RESUME_SKIP_EXISTING=1` was cancelled at handoff (optional,
+  HANDOFF section 11).
 - affect-appraisal-interoceptive on `emo`: same turn and same reply as affect-coloring; not run on the GPU at the dev
   seed (the six-seed arm runs it).
 - Cost: about 10 min per arm on cupy (brain build, Qwen load and calibration, the turn), so about 40 min per cell;
@@ -57,7 +57,7 @@ chase" in the same session, through the battery's own worker, intact / intact re
 | renderer mode | intact_a | intact_b (null) | lesion | reading |
 |---|---|---|---|---|
 | stub (numpy) | `the dog chases the cat! — worth going further here.` | same | `the dog chases the cat — worth going further here.` | reply changed; null clean; attributable 1.0 |
-| production (cupy) | `the dog chases the cat!` (0 Qwen calls) | same | in the GPU queue at handoff (HANDOFF section 11) | intact arms agree; lesion pending |
+| production (cupy) | `the dog chases the cat!` (0 Qwen calls) | same | not run (cancelled at handoff; HANDOFF section 11) | intact arms agree |
 
 One dev seed, one probe: a candidate for a remap amendment (a registered two-turn affect probe, checked at a second
 dev seed, then six seeds), not a result. The changed field is the answer text only (the tone marker); who composed
