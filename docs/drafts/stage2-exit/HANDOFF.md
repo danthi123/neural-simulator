@@ -88,6 +88,48 @@ cd $W && bash -c 'bash tools/mem_ok.sh 7 && bash tools/memcap.sh 9 -- env SIM_NO
 
 - Any other failure of the PASS list: STOP (NEEDS-CLAUDE #1). Do not edit code.
 
+**Claude's dev read (not the local model's job).** The pool copies land in `$P/research/findings/raw/_stage2_exit/dev/s7/`
+(the dev lines run at revision `6b9cb47f7`, whose runner is byte-identical to the final one). Copy them into `$W`,
+run the integrity block above, then this reader (every reply, the scorer's reads, each lesion's scored-turn diff):
+
+```bash
+cd $W && $PY - <<'EOF'
+import json, glob, os
+os.environ["SIM_NO_PROVENANCE"] = "1"
+from research.runners import stage2_exit_gate as SG
+D = "research/findings/raw/_stage2_exit/dev/s7"
+sh = {os.path.basename(p)[:-5]: json.load(open(p)) for p in sorted(glob.glob(D + "/*.json")) if not p.endswith(".prov.json")}
+for name, d in sh.items():
+    g, arm = name.split("__"); r = d["responses"]
+    print("\n==", name, d.get("process"), "wall", d.get("wall_s"))
+    for t in d["turns"]:
+        x = r.get(t["label"]) or {}
+        print("  %-16s %-42s -> %r abst=%s svo=%s der=%s" % (t["label"], t["message"][:42], str(x.get("answer"))[:150],
+              x.get("abstained"), x.get("recalled_svo"), x.get("derived")))
+    base = arm.split(".rep")[0]
+    if base in ("intact_a", "intact_b", "permuted") or base in SG.GROUPS[g]["informational"]:
+        s = SG.SCORERS[g](d, permuted=(base == "permuted"))
+        print("  SCORE", {k: v for k, v in s.items() if not isinstance(v, (list, dict)) or k in ("named", "curiosity_internal", "chain_internal", "chain_internal_vole")})
+    if base in SG.GROUPS[g]["lesions"] and (g + "__intact_a") in sh:
+        ia = sh[g + "__intact_a"]["responses"]
+        print("  LESION differs on scored turns:", {l: SG.reply_differs(ia, r, l) for l in SG.SCORED_LABELS[g][base]})
+    print("  VALIDITY", SG.arm_validity(g, arm, d) or "ok")
+for g in ("ask", "inner"):
+    if g + "__intact_a" in sh and g + "__intact_b" in sh:
+        print("NULL", g, SG.null_clean(sh[g + "__intact_a"]["responses"], sh[g + "__intact_b"]["responses"], SG._labels(g, 7)))
+EOF
+```
+
+What to read (the builder's open questions plus the review's): (a) `ask`: the taught topics (`m_yak`, `m_moose`,
+`m_goat`) read LOW graded novelty and do not ask while `g_eel`/`g_crab`/`g_newt` ask; if the taught moats ask at
+intact, the `lesion_graded` arm is vacuous (prereg 4.3) and that is an amendment, not a result. (b) `inner`: the
+lynx chase reaches `mite` and `chain_internal` shows `resolved_hops` >= 2 (the trace now comes from the worker's
+`internal` capture, not the response). (c) `conv`: the shape of `tell me more`; `where does the deer sleep` routes
+to (deer, sleep); no discourse lead or prefix creates a spurious `the X V the Y` frame. (d) every arm: peak RSS
+below the 9 GB memcap (the `inner` group builds the GNW workspace) and `ltm_bundle` `wikidata_100k`. (e) the two
+nulls clean. (f) each lesion arm differs on its scored turns and carries no organ error. A defect found here is a
+dated section-12 amendment in its own commit; then pin `git rev-parse HEAD > docs/drafts/stage2-exit/GATE_SHA`.
+
 ## 3. Checks before provisioning (every line must print what its comment says)
 
 ```bash

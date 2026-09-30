@@ -46,3 +46,11 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   20 tests pass (7 new ones fail against 8c934312a), 186 emitted lines pass `queue_job_shape_check.sh` and the
   pool_queue gate-seed guard (prereg present at the pinned revision), no sim/ or webapp/ file touched by the branch.
   Local RAM refused the dev smoke all morning (`mem_ok.sh 7 4`: avail -2 G), so the dev arms go to the pool FRONT=1.
+- 2026-09-30 10:40 Claude: provisioned `6b9cb47f7` on pool41 + pool42 (--isolated; LTM wikidata_100k + corpus OK on
+  both) and queued the 15 dev-seed-7 arms with `FRONT=1` (`mem_gb=7 max_age_h=24`, dev seed only, no gate flag).
+  They did not dispatch: each node carries six `mem_gb=2` long-delay-credit jobs (committed 12 GB of 15, so the
+  dispatcher's lifetime budget is 1 GB) and first-fit hands every freed slot to the next of the 97 queued `mem_gb=2`
+  lines, so a 7 GB line (these, and the 204 Stage-1 gate lines) waits until the small lines drain (hours). Local RAM
+  kept refusing (`mem_ok.sh 7`: avail 8 G after 19 G committed-unused). The shards land in
+  `$P/research/findings/raw/_stage2_exit/dev/s7/` when they run; HANDOFF section 2 has the reader. GATE_SHA stays
+  unpinned until they are read. The runner at `8b49dc1c1` is byte-identical to `6b9cb47f7` (tests/HANDOFF only).
