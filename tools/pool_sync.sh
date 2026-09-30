@@ -89,24 +89,63 @@ done
 NODES="${POOL_NODES:-$POOL_NODES_DEFAULT} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
-mkdir -p "$LOCAL_DIR"
+# RUNTIME MODE (2026-09-30, trust boundary of the server move; docs/plans/2026-09-30-home-to-server-MIGRATION.md
+# section 10). On srv-host-0 this script runs as the unprivileged user `sim` from a reviewed checkout the agent cannot
+# write ($ROOT), and SIM_WORKSPACE names the agent-writable workspace the results belong in. rsync follows symlinks in
+# the destination path it is given, and the agent owns every directory on the way to research/findings/raw, so a real
+# pull goes into POOL_SYNC_STAGE_DIR (private to `sim`) and tools/safe_copy_into.py moves the files across without
+# following any symlink (see its header). A --dry-run compares against the workspace directly (it writes nothing).
+# The repo-local ssh config, the extra-node list and the AWS state files are read from $ROOT, never the workspace;
+# the runtime has none of them, so the AWS lane is off there. Without SIM_WORKSPACE nothing changes.
+STAGE=""
+if [ -n "${SIM_WORKSPACE:-}" ]; then
+  LOCAL_DIR="$SIM_WORKSPACE/research/findings/raw/"
+  if [ -z "$DRY" ]; then
+    STAGE="${POOL_SYNC_STAGE_DIR:?SIM_WORKSPACE is set, so POOL_SYNC_STAGE_DIR must name a private staging directory}"
+    mkdir -p "$STAGE" && chmod 700 "$STAGE" || { echo "pool_sync: ⛔ cannot prepare the staging dir $STAGE" >&2; exit 1; }
+  fi
+else
+  mkdir -p "$LOCAL_DIR"
+fi
+_dest() {   # _dest <node> <main|rev/NAME> -- where one pull lands: $LOCAL_DIR, or this node's private staging subdir
+  if [ -n "$STAGE" ]; then mkdir -p "$STAGE/$1/$2" && printf '%s/%s/%s/\n' "$STAGE" "$1" "$2"
+  else printf '%s\n' "$LOCAL_DIR"; fi
+}
+_copy_stage() {   # _copy_stage <node> -- runtime mode: move this node's staged files into the workspace, safely
+  local srcs=("$STAGE/$1/main") d
+  while IFS= read -r -d '' d; do srcs+=("$d"); done < <(find "$STAGE/$1/rev" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
+  python3 -I "$ROOT/tools/safe_copy_into.py" --anchor "$(dirname "$SIM_WORKSPACE")" \
+      --dest "$(basename "$SIM_WORKSPACE")/research/findings/raw" "${srcs[@]}" 2>&1 | sed 's/^/  /'
+  [ "${PIPESTATUS[0]}" = 0 ] || { echo "  $1: ⛔ staged results NOT copied into the workspace (see above)"; FAILED=1; }
+}
 # STALE-HOSTNAME AUTO-REFRESH (2026-09-25, incident-driven -- pool1's public ip changes on every AWS stop/start,
 # no Elastic IP anywhere in this feature, so .pool_ssh_config's Host block for it can go stale between cadences;
 # the owner had to fix it by hand). AWS_STATE_DIR default matches tools/aws_pool_node.sh's own state-file
 # convention (research/queue/.aws_<node-name>) -- override exists so tests never touch the shared production dir.
 AWS_STATE_DIR="${POOL_SYNC_AWS_STATE_DIR:-$ROOT/research/queue}"
-_rsync_pull() {   # _rsync_pull <node> -- one itemized pull; the ONE place this shape is spelled out, so the
+_rsync_pull() {   # _rsync_pull <node> <dest> -- one itemized pull; the ONE place this shape is spelled out, so the
                    # main call and the post-refresh retry below can never drift apart.
   timeout 180 rsync -au $DRY --itemize-changes \
       "${RSYNC_SAFETY_ARGS[@]}" \
       -e "$RSYNC_SSH" \
-      "$1:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null
+      "$1:$REMOTE_DIR" "$2" 2>/dev/null
 }
 total=0
 FAILED=0
+set -f   # node names and revision paths come from files and nodes: split them, never glob-expand them
 for N in $NODES; do
+  # A host argument starting with '-' is an ssh/rsync OPTION (-oProxyCommand=... runs a shell): plain aliases only.
+  [[ $N =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "  ⛔ ignoring node name $(printf '%q' "$N") (not a plain host alias)"; FAILED=1; continue; }
   # -u protects newer local files; itemize so we can count + show what moved.
-  out=$(_rsync_pull "$N") || {
+  out=$(_rsync_pull "$N" "$(_dest "$N" main)"); _rc=$?
+  # REACHABLE BUT NO MAIN RESULTS DIR (2026-09-30). rsync exits 23 when it connected but could not read the source
+  # dir (e.g. no ~/derisk-pool/sim/research/findings/raw on that host, the workstation's case, which only serves
+  # per-job revisions) and 24 when files vanished mid-pull. Both used to read as "UNREACHABLE (skipped)" and skip the
+  # node's revisions too, so the server's first workstation pull brought back nothing.
+  if [ "$_rc" = 23 ] || [ "$_rc" = 24 ]; then
+    echo "  $N: main results dir not (fully) pulled (rsync rc=$_rc: missing ${REMOTE_DIR%/} there, or unreadable/vanished files); reachable, so its revisions are still pulled"
+    FAILED=1
+  elif [ "$_rc" != 0 ]; then {
     # Only for nodes tools/aws_pool_node.sh itself manages (a research/queue/.aws_<N> state file exists) --
     # pool40/41/42 (mini-PCs, no such file) are completely unaffected, byte-identical to before this change.
     # `refresh` is cheap and bounded to this ONE retry: it never starts a stopped instance, so a genuinely
@@ -130,11 +169,11 @@ for N in $NODES; do
       fi
     fi
     if [ "$_refreshed" = 1 ]; then
-      out=$(_rsync_pull "$N") || { echo "  $N: UNREACHABLE (skipped, even after a Host-block refresh)"; FAILED=1; continue; }
+      out=$(_rsync_pull "$N" "$(_dest "$N" main)") || { echo "  $N: UNREACHABLE (skipped, even after a Host-block refresh)"; FAILED=1; continue; }
     else
       echo "  $N: UNREACHABLE (skipped)"; FAILED=1; continue
     fi
-  }
+  }; fi
   n=$(printf '%s\n' "$out" | grep -cE '^>f' || true)
   echo "  $N: ${DRY:+would pull }$n file(s)"
   # BUGFIX (2026-09-03): under `set -eo pipefail`, this display-only pipeline dies with exit 1 whenever
@@ -161,15 +200,27 @@ for N in $NODES; do
   revs=$(timeout 20 $RSYNC_SSH "$N" 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null || true' 2>/dev/null) \
     || { echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; }
   for R in $revs; do
+    # The listing is the node's answer: only a plain revision path (its name also names a staging subdir) is used.
+    [[ $R =~ ^derisk-pool/revisions/[A-Za-z0-9][A-Za-z0-9._-]*/research/findings/raw$ ]] \
+      || { echo "  $N: ignoring unexpected revision path $(printf '%q' "$R")"; continue; }
+    _rev=${R#derisk-pool/revisions/}; _rev=${_rev%%/*}
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           "${RSYNC_SAFETY_ARGS[@]}" \
           -e "$RSYNC_SSH" \
-          "$N:$R/" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
+          "$N:$R/" "$(_dest "$N" "rev/$_rev")" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
     rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)
     [ "$rn" -gt 0 ] && echo "  $N:${R#derisk-pool/revisions/}: ${DRY:+would pull }$rn file(s)"
     total=$((total+rn))
   done
 done
+# Runtime mode: move every staged file of this run's nodes into the workspace (a node skipped above is still copied:
+# its staging dir holds whatever earlier runs pulled).
+if [ -n "$STAGE" ]; then
+  for N in $NODES; do
+    [[ $N =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] && [ -d "$STAGE/$N" ] && _copy_stage "$N"
+  done
+fi
+set +f
 echo "pool_sync: ${DRY:+(dry-run) }$total file(s) ${DRY:+would be }pulled from [$NODES]"
 if [ "$STRICT" = 1 ] && [ "$FAILED" = 1 ]; then
   echo "pool_sync: ⛔ STRICT: at least one node was unreachable or a pull failed -- see above (exit 1)." >&2

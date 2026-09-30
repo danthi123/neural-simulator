@@ -16,8 +16,9 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
 |---|---|---|
 | Canonical checkout, commits, gates | S | git + `tools/githooks` (Hermes in its container, or dant123 on the host) |
 | Driver | Hermes, default profile, cwd S | Hermes cron job for continuation (replaces `llm.sh claude --resume`) |
-| Pool dispatch | S host | `tools/pool_autodispatch.sh` under `sim-pool-dispatch.service` (NEW unit) |
-| Pool + GPU result pull, audit, RAG, push | S host | `pool_sync.sh` x2, `parallel_audit.py`, `rag/periodic_update.sh`, `push_both.sh main` under `sim-sync.timer` (NEW unit) |
+| Pool dispatch | S host, as user `sim` | `/home/sim/runtime/tools/pool_autodispatch.sh` under `sim-pool-dispatch.service` (NEW unit; §10) |
+| Pool + GPU result pull, publish `main` | S host, as user `sim` | runtime `pool_sync.sh` x2 + `/usr/local/sbin/sim-publish` under `sim-sync.timer` (NEW unit; §10) |
+| Audit, RAG refresh | Hermes | `parallel_audit.py`, `rag/periodic_update.sh`, run by the driver itself (§10: not in a privileged unit) |
 | GPU queue + daemon, game mode, driver model | W | `gpu_queue.sh` (`gpu-queue-dispatch`), `game.sh`, `llm.sh` (llama-swap :8080) |
 | GPU job submission | S to W | `tools/gpu_remote.sh add` (NEW): per-job worktree on W, then that worktree's own `gpu_add.sh` |
 | Pool provisioning | W (for Hermes) or S host | `tools/gpu_remote.sh provision <sha>` runs `pool_provision.sh` on W; the S host can run it directly |
@@ -57,13 +58,14 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
 
 ## 2. Decisions (simplest conventional option at each fork)
 
-1. **Pool dispatch and sync run as host systemd units.** They run as `User=dant123`, live in `/etc/systemd/system`,
+1. **Pool dispatch and sync run as host systemd units.** *(Superseded in part by §10: they run as the unprivileged
+   user `sim` from a reviewed checkout, not as dant123 from the workspace.)* They run as `User=dant123`, live in `/etc/systemd/system`,
    are mirrored in `~/apps/host/etc/systemd/system` and alert through `OnFailure=ntfy-notify@%n.service`, which is
    exactly how the box runs its non-container jobs (`apps-gitsync`). The owner manages them with `systemctl`, sees
    them in `systemctl --failed` and gets them in restic's host-layer backup. A compose service would need a custom
    image carrying the project's bash/ssh/rsync toolchain. A linger user unit would be invisible to `systemctl --failed`,
    and would have no backup and no alerts.
-2. **Two units plus one timer.** `sim-pool-dispatch.service` is long-running; `sim-sync.service` is a oneshot run by
+2. **Two units plus one timer.** *(§10: the audit and the RAG refresh left the unit; Hermes runs them.)* `sim-pool-dispatch.service` is long-running; `sim-sync.service` is a oneshot run by
    `sim-sync.timer` every 15 min. It pulls pool results, pulls workstation GPU results, runs `parallel_audit.py` (which
    feeds the freshness gates), refreshes the RAG index, then runs `push_both.sh main`. One unit replaces the
    workstation's `pool-sync.timer`, `sim-rag-autoupdate.timer`, the Claude heartbeat's audit and manual pushes.
@@ -95,7 +97,8 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
    - Leave on W: `bridges/lmtrain` (25G of GPU training), `~/models`, the HF cache (only MiniLM, about 90 MB, is
      fetched on first use), the 710 worktrees, the 8 stashes and the 42 branch tips that exist on no remote. Nothing
      is deleted.
-8. **Git: S is canonical and only S writes `main`.** `sim-sync` publishes `main` with `push_both.sh` using a deploy key.
+8. **Git: S is canonical and only S writes `main`.** *(§10: publishing is `sim-publish`, via a sim-owned mirror, not
+   `push_both.sh` in the workspace.)* `sim-sync` publishes `main` with `push_both.sh` using a deploy key.
    Fetch URLs stay HTTPS and anonymous; `pushurl`s are ssh aliases. No push credential enters the agent container,
    which mirrors `apps-gitsync`. W adds remote `server` (`homelab-server:Projects/neural-simulator`, using W's existing
    key) and fetches it for GPU jobs and inspection. Claude's changes reach S as branches and are merged there.
@@ -228,6 +231,10 @@ None of this touches W's queues, dispatchers, units or the pool nodes. All W acc
 
 ## 5. Owner steps (security, credentials, sudo), in order
 
+*§10 changes steps 11 to 13:* the keys move from dant123 to user `sim`, and the units, `sim-publish`, `backup.sh`
+and `sanoid.conf` are installed from `~/apps/host`. The recreation recipe is in `~/apps/OWNERSHIP-MAP.md` §11.
+Steps 1 to 10 are unchanged.
+
 Run on the workstation's terminal unless marked `[server]`. Each command is fish- and bash-safe.
 
 1. `[server]` `sudo apt install -y acl`
@@ -286,7 +293,8 @@ so it is an owner step too.
    `wc -l research/queue/pool.queue research/queue/pool.running` equals W's, and that
    `bash tools/pool_queue.sh list | tail -3` looks right.
 6. **Owner step 12: enable S's units; the pause ends.**
-7. **S: verify the handover.** Check `tail -n 30 research/queue/dispatch.log` for S probing pool41 and pool42. The
+7. **S: verify the handover.** Check `journalctl -u sim-pool-dispatch -n 30` (§10: no dispatch.log on S) for S probing
+   pool41 and pool42. The
    per-node `pgrep -fc research.runners` counts should be unchanged across the handover, meaning no duplicate launch.
    Then check `bash tools/pool_sync.sh`, `POOL_NODES=workstation bash tools/pool_sync.sh --dry-run` and
    `journalctl -u sim-sync -n 40` after the first timer run, which should end in `push_both` "verified: both remotes".
@@ -388,7 +396,74 @@ so it is an owner step too.
   Optionally, once owner step 2 is done, mirror them on S as remote-tracking refs (no remote gets them):
   `git remote add workstation workstation:Projects/sim && git fetch workstation`.
 
+## 10. Trust boundary (2026-09-30 evening; design reviewed by the server-admin session)
+
+**The problem.** The first units (Appendix A draft) ran as dant123, who has passwordless sudo and docker, so is
+root-equivalent. They executed scripts from the workspace, which the Hermes agent (uid 99, group `users`) can
+rewrite, since the tree is group-writable. And any git command a trusted user runs inside the workspace executes its
+agent-controlled `.git/config` (`core.fsmonitor`, `core.sshCommand`, `core.hooksPath`, aliases). So the agent could
+have become root on the server. The units were stopped the same evening.
+
+**The model.**
+
+- **The workspace is untrusted data.** No privileged process executes anything from it and none runs git in it. Its
+  path reaches the tools only as `SIM_WORKSPACE`.
+- **User `sim`** is a system user with no login shell, no sudo and no docker, in group `users`, with home
+  `/home/sim` at 0700. It holds the two keys: `sim_ed25519` for the pool nodes and the workstation, and
+  `sim_deploy_ed25519`, the GitHub/Gitea write deploy key. Both units run as `User=sim Group=users UMask=0002`.
+- **Code runs from outside the agent-writable tree.** `/home/sim/runtime` (0750, sim-owned) is a clone pinned to a
+  reviewed `main` commit. It is updated only deliberately: `git fetch`, then `git merge --ff-only <reviewed-sha>`,
+  both run as sim. `/usr/local/sbin/sim-publish` is root-owned. Any future privileged unit for a project follows the
+  same rule.
+- **Publishing.** `sim-publish` fetches the workspace's `main` into `/home/sim/mirror.git`, fast-forward only. It pushes
+  that `main` to both remotes with the deploy key and checks both with `ls-remote`. It never forces and pushes no
+  tags. `git fetch <path>` runs only git-upload-pack in the workspace, which does not honour its command-bearing
+  config. This was verified against a hostile, differently-owned repo: nothing ran, and no `safe.directory` was
+  needed. So sim has **no** `safe.directory` for the workspace, and any porcelain git as sim there is refused.
+- **Confinement** (systemd, beyond the reviewed design). sim cannot traverse `/home/dant123` (0750). The units therefore
+  see an empty tmpfs there, with only `/home/dant123/Projects` bind-mounted at its usual path, and they can write only
+  that dataset: `ProtectSystem=strict` and `ProtectHome=read-only`. `sim-sync` can also write its mirror and
+  `/var/lib/sim-sync`. The reason is that sim's writes into the workspace follow any symlink the agent plants.
+  `fs.protected_symlinks` does not cover group-writable, non-sticky directories, so without the confinement a planted
+  `pool.running -> /home/sim/runtime/tools/pool_sync.sh` would let queue text be appended to code that sim runs.
+- **Reads that copy content out** are guarded too. In runtime mode the dispatcher copies the queue into a private
+  snapshot, and only if the opened file is a regular file on the workspace's own filesystem. A symlink to
+  `~/.ssh/sim_ed25519` would otherwise be quarantined line by line into `pool.queue.malformed`, which the agent can
+  read.
+- **Results.** rsync follows symlinks in its destination path (reproduced: `raw -> /elsewhere` lands there). In runtime
+  mode `pool_sync.sh` therefore pulls into `/var/lib/sim-sync/stage`, and `tools/safe_copy_into.py` walks the
+  destination from the dataset mount with `O_NOFOLLOW`. It writes a fresh file and renames it into place, and it
+  refuses a symlink anywhere on the way. It keeps `rsync -u` semantics, needs only the stdlib and runs under the
+  system python3 with no venv.
+- **Node answers are untrusted.** The dispatcher's capacity probe passed two node-controlled fields (`cores`,
+  `total_gb`) straight into bash arithmetic, where `$(( ROOT[$(cmd)] ))` runs `cmd` on the dispatcher host. This was
+  reproduced on the pre-fix script, and every field is now checked as a number first. Node names read from files must
+  be plain host aliases (`-oProxyCommand=...` is an ssh option). In runtime mode, the repo-local ssh config, the
+  extra-node list, the AWS state and the pause markers are read from the runtime, not the workspace. The runtime has
+  none of them, so the AWS lane is off on S.
+- **Pool jobs** run with `POOL_SANDBOX=on` (bubblewrap, no network; `research/pool-job-sandbox`). A node that cannot
+  sandbox gets no work.
+- **Logs** go to the journal (no `research/queue/dispatch.log`). `tools/gates/lane_starvation.py` now also reads
+  `pool.running`, which carries the same dispatch record with a date.
+
+**Why the workstation pull said UNREACHABLE.** It was reachable: ssh with `sim_ed25519` works, and the audit's GPU probe
+over the same alias succeeded in the same run. The workstation has no `~/derisk-pool/sim/research/findings/raw`, so
+rsync's main pull exited 23 ("change_dir failed"). `pool_sync.sh` treated every non-zero rsync exit as UNREACHABLE and
+skipped the host's revision pulls with it. The fix has two parts. rc 23/24 now reads as "reachable, main results dir
+missing" and the revisions are still pulled. The workstation also gets the placeholder dir, which is cutover step 9's
+`mkdir`, brought forward.
+
+**Residual risks (stated).** The agent can still stop its own work: it can corrupt the queue, plant symlinks that make
+the dispatcher refuse the queue, or push a `main` that fails to publish. None of that escalates. Hermes's own
+workstation key (`workstation_ed25519`, W's `authorized_keys` line with `from=` only) is a full dant123 shell on W, and
+that is outside this boundary. What `sim-publish` pushes is whatever the agent committed on `main`: the gates in the
+agent's checkout are advisory, and GitHub/Gitea branch protection is the only remote-side check.
+
 ## Appendix A: host units (`~/apps/host/etc/systemd/system/`)
+
+*Superseded 2026-09-30 evening by §10.* The authoritative unit files are the ones in `~/apps/host` on the server
+(`sim-pool-dispatch.service`, `sim-sync.service`, `sim-sync.timer`, plus `usr/local/sbin/sim-publish`); the text below
+is the first draft, which ran as dant123 from the workspace, and is kept only as history.
 
 `sim-pool-dispatch.service`
 

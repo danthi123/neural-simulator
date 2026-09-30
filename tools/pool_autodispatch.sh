@@ -21,7 +21,20 @@ set -uo pipefail
 # worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
 # 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-_GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
+# RUNTIME MODE (2026-09-30, trust boundary of the server move; docs/plans/2026-09-30-home-to-server-MIGRATION.md
+# section 10). On srv-host-0 this script runs as the unprivileged user `sim` from a reviewed checkout
+# (/home/sim/runtime) that the agent cannot write, and the agent-writable workspace is DATA only: SIM_WORKSPACE names
+# it, and only the queue files below are read or written there. In this mode no git command runs at all (a git
+# command inside the workspace would execute its agent-controlled .git/config), and everything that can make this
+# process run a program or pick an ssh target stays in the code root ($ROOT): the repo-local ssh config (its
+# ProxyCommand runs a shell), the extra-node list, the AWS state files and the pause markers. On the server those
+# files do not exist in the runtime, so the AWS lane is off there. Without SIM_WORKSPACE nothing changes.
+if [ -n "${SIM_WORKSPACE:-}" ]; then
+  DATA_ROOT="$SIM_WORKSPACE"
+else
+  _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
+  DATA_ROOT="$ROOT"
+fi
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN tools/ dir (unlike $ROOT above,
 # this follows whichever checkout/worktree is actually running -- used below so the stale-HostName refresh
 # invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
@@ -29,7 +42,7 @@ SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN t
 source "$SELF_DIR/pool_revision_marker.sh"
 # shellcheck source=tools/pool_nodes.sh
 source "$SELF_DIR/pool_nodes.sh"
-QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
+QUEUE="${POOL_QUEUE_PATH:-$DATA_ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
 # MEMORY RESERVATIONS (2026-09-23). The RSS snapshot node_is_idle reads is taken seconds after the previous launch,
@@ -39,7 +52,7 @@ POLL="${POOL_DISPATCH_POLL:-60}"
 # --checked reason), else POOL_JOB_EST_GB. The reservation double-counts a job whose RSS has already caught up
 # (MemAvailable fell AND it is still reserved) -- deliberately conservative: an under-filled node costs minutes, an
 # OOM costs every job on the node plus a silent rc=0 from runners that swallow worker deaths.
-RESV="${POOL_RESERVATIONS_PATH:-$ROOT/research/queue/.pool_reservations}"
+RESV="${POOL_RESERVATIONS_PATH:-$DATA_ROOT/research/queue/.pool_reservations}"
 GROWTH_WINDOW_S="${POOL_GROWTH_WINDOW_S:-600}"   # D6/LB workers reach full RSS in ~4 min (measured 2026-09-23)
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23, tools/aws_pool_node.sh). Two gitignored, machine-local files, never
 # ~/.ssh/config (which this tooling must never edit):
@@ -114,6 +127,20 @@ extra_nodes() {
   [ -f "$EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
 }
 
+valid_node_names() {
+  # stdin: whitespace-separated node names -> stdout: the ones that are plain host aliases, one line. A host argument
+  # that starts with '-' is parsed by ssh/rsync as an OPTION (-oProxyCommand=... runs a shell), and a name arrives
+  # here from files (.pool_extra_nodes, pause markers), so every name is checked before any ssh sees it (2026-09-30
+  # trust boundary). `read -a` splits without glob expansion.
+  local n out="" names=()
+  read -r -a names || true
+  for n in "${names[@]}"; do
+    if [[ $n =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then out="$out $n"
+    else echo "[pool-dispatch] ⛔ ignoring node name $(printf '%q' "$n") (not a plain host alias)" >&2; fi
+  done
+  printf '%s\n' "${out# }"
+}
+
 cycle_setup() {
   # ONE-FUNCTION FIX (2026-09-23 fix round #2, re-review MEDIUM): the OLD `--print-ssh-f-loop` test seam called
   # `refresh_ssh_f` directly, inline -- a COPY of the production loop's shape, not the production loop itself.
@@ -129,7 +156,8 @@ cycle_setup() {
   # Runs BEFORE CYCLE_NODES is computed below so a node this call just re-registered is picked up THIS cycle,
   # not the next one.
   reregister_stale_paused_nodes
-  CYCLE_NODES="$NODES $(extra_nodes)"
+  CYCLE_NODES=$(printf '%s %s\n' "$NODES" "$(extra_nodes)" | valid_node_names)
+  SANDBOX_READY=()   # re-probe every node's sandbox readiness each cycle (bwrap can be installed between cycles)
   # Reset the per-cycle revision-availability cache (see its own comment, right before revision_available_cached())
   # so each cycle re-probes fresh (a node CAN gain a revision between cycles, e.g. aws_pool_node.sh's
   # pre-provision loop finishing after this cycle started, or tools/pool_backfill_provisioned_markers.sh running
@@ -265,7 +293,79 @@ POOL_FRESH_AWK='function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m =
 NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
 NODE_BUDGET=0
 
-mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
+# POOL-JOB SANDBOX (2026-09-30 security review, HIGH #2: "pool-submit is a LAN foothold"). Every job used to run over
+# ssh as the node's login user -- passwordless sudo, full network -- so an agent-authored line (the gateway's
+# pool-submit, or the local-model driver's `pool_queue.sh add`) could reach the LAN or take the node. A sandboxed
+# launch sends tools/pool_job_sandbox.sh as the remote wrapper instead of the legacy four lines: bubblewrap built from
+# empty, no network, no-new-privs, the pinned revision read-only, only its research/findings/raw writable (an agent
+# line: only its own _agent_jobs/<id>); see that file's header for the full recipe.
+#   POOL_SANDBOX=auto  (default) sandbox on every node whose probe says POOL_SANDBOX_READY; on a node that is not
+#                      ready, launch as before and log a loud UNSANDBOXED warning with every such dispatch.
+#   POOL_SANDBOX=on    sandbox or nothing: a node that is not ready gets no work (jobs stay queued).
+#   POOL_SANDBOX=off   the legacy launch everywhere (no probe).
+# Whatever the mode, a line carrying AGENT_JOB_SRC=sim-agent (built by tools/agent_gateway_submit.py) is only ever
+# handed to a node that is sandbox-ready (pop_job skips it otherwise, leaving it queued). Anything but on|auto|off
+# fails closed to `on`. The live loop publishes its mode each cycle to $SANDBOX_STATE; tools/agent_gateway.sh accepts
+# pool-submit only while that file says mode=on and is fresh.
+POOL_SANDBOX_MODE="${POOL_SANDBOX:-auto}"
+case "$POOL_SANDBOX_MODE" in
+  on|auto|off) ;;
+  *) echo "[pool-dispatch] ⛔ POOL_SANDBOX='$POOL_SANDBOX_MODE' is not on|auto|off -- treating it as on (fail closed)" >&2
+     POOL_SANDBOX_MODE=on ;;
+esac
+SANDBOX_WRAPPER="${POOL_SANDBOX_WRAPPER:-$SELF_DIR/pool_job_sandbox.sh}"   # TEST-ONLY override
+SANDBOX_STATE="${POOL_SANDBOX_STATE_PATH:-$DATA_ROOT/research/queue/.pool_sandbox_state}"
+AGENT_JOB_MARKER="AGENT_JOB_SRC=sim-agent"   # the marker tools/agent_gateway_submit.py embeds in every line it builds
+declare -A SANDBOX_READY=()   # node -> 1/0, reset every cycle in cycle_setup (fill_node runs in the main shell)
+NODE_SANDBOX=0                # the decision for the node fill_node is filling right now (read by pop_job too)
+
+sandbox_probe() {
+  # sandbox_probe <node> -- runs tools/pool_job_sandbox.sh's `probe` action ON the node (the same file a sandboxed
+  # launch runs, sent the same way), which starts the real base sandbox and checks no-new-privs inside it. Prints the
+  # probe's one-line answer; returns 0 only for POOL_SANDBOX_READY. `-n`: see revision_available's comment.
+  local node="$1" b64 out
+  b64=$(base64 -w0 < "$SANDBOX_WRAPPER" 2>/dev/null) || { echo "POOL_SANDBOX_NOT_READY reason=wrapper-unreadable"; return 1; }
+  out=$(timeout 20 ssh -n "${SSH_F[@]}" -o BatchMode=yes -o ConnectTimeout=6 "$node" \
+        "POOL_SANDBOX_ACTION=probe SANDBOX_B64='$b64' bash -c 'printf \"%s\" \"\$SANDBOX_B64\" | base64 -d | bash'" \
+        2>/dev/null | grep -m1 -E '^POOL_SANDBOX_(NOT_)?READY')
+  printf '%s\n' "${out:-POOL_SANDBOX_NOT_READY reason=no-answer (unreachable, or the probe printed nothing)}"
+  case "$out" in POOL_SANDBOX_READY*) return 0 ;; esac
+  return 1
+}
+
+node_sandbox_decision() {
+  # node_sandbox_decision <node> -- sets NODE_SANDBOX (1 = launch sandboxed) for the node about to be filled.
+  # Returns 1 (dispatch NOTHING to this node this cycle) only in `on` mode on a node that is not sandbox-ready.
+  local node="$1" ans
+  NODE_SANDBOX=0
+  [ "$POOL_SANDBOX_MODE" = off ] && return 0
+  if [ -z "${SANDBOX_READY[$node]:-}" ]; then
+    ans=$(sandbox_probe "$node")
+    case "$ans" in
+      POOL_SANDBOX_READY*) SANDBOX_READY[$node]=1 ;;
+      *) SANDBOX_READY[$node]=0
+         if [ "$POOL_SANDBOX_MODE" = on ]; then
+           echo "[pool-dispatch] ⛔ POOL_SANDBOX=on: $node is not sandbox-ready ($ans) -- dispatching nothing to it this cycle" >&2
+         else
+           echo "[pool-dispatch] ⚠ $node is not sandbox-ready ($ans) -- POOL_SANDBOX=auto launches there UNSANDBOXED" >&2
+         fi ;;
+    esac
+  fi
+  if [ "${SANDBOX_READY[$node]}" = 1 ]; then NODE_SANDBOX=1; return 0; fi
+  [ "$POOL_SANDBOX_MODE" = on ] && return 1
+  return 0
+}
+
+write_sandbox_state() {
+  # The live loop's effective mode, for tools/agent_gateway.sh (pool-submit only while mode=on and fresh).
+  local tmp="$SANDBOX_STATE.tmp.$$"
+  mkdir -p "$(dirname "$SANDBOX_STATE")" 2>/dev/null
+  printf 'mode=%s ts=%s pid=%s\n' "$POOL_SANDBOX_MODE" "$(date +%s)" "$$" > "$tmp" 2>/dev/null && mv -f "$tmp" "$SANDBOX_STATE"
+}
+
+# Runtime mode creates nothing up front: a missing queue just means nothing to pop, and every write into the
+# workspace happens inside the unit's confinement (see the guard before the main loop).
+[ -n "${SIM_WORKSPACE:-}" ] || { mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"; }
 
 node_is_idle() {
   # Has capacity = fewer than (cores - headroom) research runners AND load below its core count. The pool jobs are
@@ -288,8 +388,19 @@ node_is_idle() {
   out=$(printf '%s\n' "$raw" | head -1)
   local committed
   committed=$(printf '%s\n' "$raw" | tail -n +2 | committed_from_environ)
-  set -- $out
-  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}" avail_gb="${4:-0}" max_job_gb="${5:-0}" total_gb="${6:-0}"
+  local cores load procs avail_gb max_job_gb total_gb rest
+  read -r cores load procs avail_gb max_job_gb total_gb rest <<<"$out"
+  cores="${cores:-0}" load="${load:-99}" procs="${procs:-99}" avail_gb="${avail_gb:-0}" max_job_gb="${max_job_gb:-0}"
+  total_gb="${total_gb:-0}"
+  # A NODE'S ANSWER IS UNTRUSTED (2026-09-30 trust boundary). Pool jobs are agent-authored and run on the node, so
+  # its probe output must never reach bash arithmetic unchecked: $(( x )) evaluates a subscript such as
+  # `a[$(cmd)]` inside x, i.e. runs cmd here, as the dispatcher's user. `cores` and `total_gb` reached $(( )) with
+  # no check before this. Every field must be a plain number, else the node is treated as busy.
+  if ! [[ $cores =~ ^[0-9]+$ && $procs =~ ^[0-9]+$ && $avail_gb =~ ^[0-9]+$ && $max_job_gb =~ ^[0-9]+$ \
+          && $total_gb =~ ^[0-9]+$ && $committed =~ ^[0-9]+$ && $load =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    echo "[pool-dispatch] ⛔ $node: malformed capacity-probe answer, treated as busy: $(printf '%q' "$out" | cut -c1-160)" >&2
+    return 1
+  fi
   # COUNT ONLY PYTHON RUNNERS (2026-09-23). The old `pgrep -fc research.runners` also counted every `flock`
   # waiter, `bash -c` wrapper and ssh line carrying the job text, so a node with 2 working jobs + 4 jobs queued
   # behind a lab-chosen flock read 11/11 "full" at load ~5.6 on 12 cores while 13 jobs sat queued. Load stays
@@ -315,15 +426,25 @@ node_is_idle() {
 }
 
 remote_launch_command() {
+  # remote_launch_command <job> [sandbox=0|1]
   # Encode both the job and the fixed wrapper so shell metacharacters, tabs, and
   # newlines cannot corrupt the remote command or its one-line status record.
-  local job_b64 wrapper wrapper_b64
+  # sandbox=1 (2026-09-30): the wrapper is tools/pool_job_sandbox.sh (runs the job inside bubblewrap and writes the
+  # SAME v2 status row); the rest of the command -- cd, POOL_JOB_ID/MEM_GB, thread defaults, JOB_B64, setsid -- is
+  # identical, so node_is_idle's environ scan, pool_queue's JOB_B64 liveness scan and check_fast_fail are unchanged.
+  local job_b64 wrapper wrapper_b64 action=""
   job_b64=$(printf '%s' "$1" | base64 -w0) || return 1
+  if [ "${2:-0}" = 1 ]; then
+    [ -r "$SANDBOX_WRAPPER" ] || return 1
+    wrapper_b64=$(base64 -w0 < "$SANDBOX_WRAPPER") || return 1
+    action="POOL_SANDBOX_ACTION='run' "
+  else
   wrapper='job=$(printf "%s" "$JOB_B64" | base64 -d) || exit 125
 bash -c "$job" > autodispatch.out 2>&1
 rc=$?
 printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   wrapper_b64=$(printf '%s' "$wrapper" | base64 -w0) || return 1
+  fi
   # POOL_JOB_ID / POOL_JOB_MEM_GB are INHERITED by every process of the job (they survive bash's exec of the last
   # command and memcap's scope), so node_is_idle can sum the declared sizes of the jobs still running there.
   # THREADS (2026-09-24): node_is_idle fills a node to cores-1 jobs on the premise that each is single-threaded, but a
@@ -332,8 +453,8 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   # of POOL_JOB_THREADS (1); a job that sets its own OMP_NUM_THREADS=... in its command line still wins.
   local est jid th="${POOL_JOB_THREADS:-1}"
   est=$(job_est_gb "$1"); jid="$(date +%s%N)-$RANDOM"
-  printf "cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS='%s' OPENBLAS_NUM_THREADS='%s' MKL_NUM_THREADS='%s' NUMEXPR_NUM_THREADS='%s' JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
-    "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64"
+  printf "cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS='%s' OPENBLAS_NUM_THREADS='%s' MKL_NUM_THREADS='%s' NUMEXPR_NUM_THREADS='%s' JOB_B64='%s' WRAPPER_B64='%s' %ssetsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
+    "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64" "$action"
 }
 
 check_fast_fail() {
@@ -379,7 +500,46 @@ check_fast_fail() {
   case "$rc" in
     127|2)
       echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=$rc $(( ts - t0 ))s after dispatch (died on argv[0]/syntax, not a real run): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
+    126)
+      # tools/pool_job_sandbox.sh refused to build the sandbox (its reason is in the node's autodispatch.out); the job
+      # never ran. (bash's own "not executable" is also 126 -- equally a job that never ran.)
+      echo "[pool-dispatch] ⛔ FAST-FAIL: $node rc=126 $(( ts - t0 ))s after dispatch (sandbox refused or not executable -- job NOT run; see the node's autodispatch.out): $(printf '%s' "$job" | tr '\n\t' '  ' | cut -c1-160)" >&2 ;;
   esac
+}
+
+queue_snapshot() {
+  # queue_snapshot -- RUNTIME MODE ONLY (SIM_WORKSPACE set): copy the live queue into a PRIVATE file and print its
+  # path. pop_job copies queue text into files the agent can read (.claims, .malformed, .unchecked, pool.running) and
+  # to the nodes, and the agent owns every directory on the way to $QUEUE, so pool.queue could be a symlink to one of
+  # this user's secrets (~/.ssh/sim_ed25519: its lines would be quarantined as "malformed", readable). The check runs
+  # on the OPENED file, so no swap between a check and the read can beat it: it must be a regular file on the
+  # workspace's own filesystem (the device of the workspace's parent, the dataset mount, which the agent cannot
+  # replace), i.e. a file the agent could read anyway. Anything else: no pop this cycle.
+  local snap fd want got kind
+  want=$(stat -c %d -- "$(dirname "$SIM_WORKSPACE")" 2>/dev/null) || return 1
+  exec {fd}<"$QUEUE" || return 1
+  got=$(stat -L -c %d /dev/stdin <&"$fd" 2>/dev/null); kind=$(stat -L -c %F /dev/stdin <&"$fd" 2>/dev/null)
+  case "$kind" in "regular file"|"regular empty file") ;; *) got="" ;; esac
+  if [ -z "$got" ] || [ "$got" != "$want" ]; then
+    exec {fd}<&-
+    echo "[pool-dispatch] ⛔ REFUSING the queue: $QUEUE is not a regular file on the workspace filesystem (device ${got:-?} != ${want}, type ${kind:-?}) -- nothing popped" >&2
+    return 1
+  fi
+  snap=$(mktemp "${TMPDIR:-/tmp}/pool_queue_snap.XXXXXX") || { exec {fd}<&-; return 1; }
+  cat <&"$fd" > "$snap"; exec {fd}<&-
+  printf '%s\n' "$snap"
+}
+
+queue_install() {
+  # queue_install <new> <read-copy> -- make <new> the live queue. Legacy mode: <new> is $QUEUE.tmp, renamed over the
+  # queue (unchanged). Runtime mode: <new> and <read-copy> are private; the content is WRITTEN into the workspace
+  # (never read back from it) and renamed into place, and the private read copy follows it.
+  if [ -n "${SIM_WORKSPACE:-}" ]; then
+    cp -f "$1" "$2" && cat "$1" > "$QUEUE.tmp" && mv -f "$QUEUE.tmp" "$QUEUE"
+    rm -f "$1"
+  else
+    mv "$1" "$QUEUE"
+  fi
 }
 
 pop_job() {
@@ -388,9 +548,15 @@ pop_job() {
   # dispatcher instances from claiming the same job. [node] is OPTIONAL and omitted by test seams that only
   # care about size-based selection (--pop-once) -- when absent, the revision check is skipped entirely
   # (unchanged pre-fix behaviour), matching every caller that never dispatches to a real node.
-  local job="" node="${2:-}"
+  local job="" node="${2:-}" qin="$QUEUE" qnew="$QUEUE.tmp"
   exec 9>"$QUEUE.lock"
   flock 9 || return 1
+  # RUNTIME MODE: every read below is of a private snapshot (see queue_snapshot); legacy mode reads $QUEUE as before.
+  if [ -n "${SIM_WORKSPACE:-}" ]; then
+    qin=$(queue_snapshot) || { flock -u 9; return 1; }
+    qnew="$qin.new"
+    trap 'rm -f "$qin" "$qnew"; trap - RETURN' RETURN
+  fi
   # A generic queue producer once wrote GPU-style command-only lines into this
   # timestamped pool queue. Monitoring counted them, while this consumer could
   # never select them. Preserve such records for diagnosis and remove them from
@@ -399,17 +565,17 @@ pop_job() {
   malformed_count=$(awk -F'\t' '
     $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1) {n++}
     END {print n+0}
-  ' "$QUEUE")
+  ' "$qin")
   if [ "${malformed_count:-0}" -gt 0 ]; then
     awk -F'\t' '
       $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1)
-    ' "$QUEUE" | while IFS= read -r line; do
+    ' "$qin" | while IFS= read -r line; do
       printf '%s\t%s\n' "$(date +%s)" "$line"
     done >> "$QUEUE.malformed"
     awk -F'\t' '
       $0 ~ /^[[:space:]]*(#|$)/ || ($1 ~ /^[0-9]+$/ && NF > 1)
-    ' "$QUEUE" > "$QUEUE.tmp"
-    mv "$QUEUE.tmp" "$QUEUE"
+    ' "$qin" > "$qnew"
+    queue_install "$qnew" "$qin"
     echo "[pool-dispatch] BLOCKED + quarantined $malformed_count malformed queue record(s); use tools/pool_queue.sh" >&2
   fi
   # STALENESS GUARD: an entry older than MAX_AGE is debris, not staged work. Learned immediately -- the first
@@ -431,6 +597,10 @@ pop_job() {
     # never popped-and-lost for a node it does not name.
     want_node=$(printf '%s' "$cand" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
     if [ -n "$want_node" ] && [ -n "$node" ] && [ "$want_node" != "$node" ]; then continue; fi
+    # AGENT LINES ONLY SANDBOXED (2026-09-30 security review, HIGH #2). A line tools/agent_gateway_submit.py built
+    # carries AGENT_JOB_SRC=sim-agent; it is never popped for a launch that would not be sandboxed (NODE_SANDBOX is
+    # set by fill_node's node_sandbox_decision just before this pop), whatever POOL_SANDBOX says -- it stays queued.
+    case "$cand" in *"$AGENT_JOB_MARKER"*) [ "${NODE_SANDBOX:-0}" = 1 ] || continue ;; esac
     # REVISION-DIR SEAM (2026-09-23 fix round). A job pinned to `cd ~/derisk-pool/revisions/<sha>` must never be
     # popped for a node that does not have that revision -- that would remove it from the queue (below) with no
     # node able to run it, i.e. lose it. `continue` past it (leaving it in the queue) and keep scanning for a
@@ -439,7 +609,7 @@ pop_job() {
     if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
     job="$cand"; break
   done < <(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$QUEUE")
+             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$qin")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -450,14 +620,14 @@ pop_job() {
     ""|*"#checked:"*) ;;
     *) echo "[pool-dispatch] BLOCKED unchecked job -- requeue via: bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'" >&2
        echo "                $(echo "$job" | cut -c1-96)" >&2
-       grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
-       mv "$QUEUE.tmp" "$QUEUE"
+       grep -vF "	$job" "$qin" > "$qnew" 2>/dev/null || true
+       queue_install "$qnew" "$qin"
        printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.unchecked"
        flock -u 9; printf ''; return 0 ;;
   esac
   local stale
   stale=$(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-          "$POOL_FRESH_AWK"' NF>1 && $1+0 < now - maxage($0)' "$QUEUE" | wc -l)
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 < now - maxage($0)' "$qin" | wc -l)
   [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h" >&2
   if [ -z "$job" ]; then flock -u 9; printf ''; return 0; fi
   # Keep the full timestamped record, including the checked reason, before the
@@ -465,8 +635,8 @@ pop_job() {
   # to reconstruct the exact command and rationale.
   printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.claims"
   if true; then
-    grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
-    mv "$QUEUE.tmp" "$QUEUE"          # unconditional: grep -v exits 1 when it filters everything, and a
+    grep -vF "	$job" "$qin" > "$qnew" 2>/dev/null || true
+    queue_install "$qnew" "$qin"      # unconditional: grep -v exits 1 when it filters everything, and a
                                        # `&& mv` there once made a single-line queue never clear, relaunching
                                        # the same job nine times.
   fi
@@ -501,16 +671,22 @@ fill_node() {
   # node_is_idle's ssh round trip) on every iteration -- not just once per cycle -- stops filling THIS node the
   # INSTANT it is paused, closing the race within the same cycle it started in, not just the next one.
   while [ ! -f "$PAUSE_MARK_DIR/$NODE" ] && node_is_idle "$NODE"; do
+    node_sandbox_decision "$NODE" || break   # POOL_SANDBOX=on and this node cannot sandbox: nothing is popped
     JOB=$(pop_job "$NODE_BUDGET" "$NODE")
     [ -z "$JOB" ] && break
     echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
+    if [ "$NODE_SANDBOX" = 1 ]; then
+      echo "[pool-dispatch] $NODE: sandboxed launch (bubblewrap: no network, no-new-privs, revision read-only)" >&2
+    else
+      echo "[pool-dispatch] ⚠ UNSANDBOXED launch on $NODE (POOL_SANDBOX=$POOL_SANDBOX_MODE): full network + the node's sudo -- see tools/pool_job_sandbox.sh" >&2
+    fi
     printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"
     # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
     # so a job that died was indistinguishable from one that succeeded. Nine jobs died instantly on an argparse
     # error and went unnoticed for an hour, because the only evidence of failure sat in autodispatch.out on a
     # node nobody reads. The wrapper appends a timestamped v2 record with a numeric rc and base64-encoded job;
     # the encoding keeps multiline pytest expressions from becoming fake status rows.
-    REMOTE_COMMAND=$(remote_launch_command "$JOB") || {
+    REMOTE_COMMAND=$(remote_launch_command "$JOB" "$NODE_SANDBOX") || {
       echo "[pool-dispatch] failed to encode job for $NODE" >&2
       break
     }
@@ -542,9 +718,21 @@ if [ "${1:-}" = "--committed-gb" ]; then   # stdin: unique POOL_JOB_ID/POOL_JOB_
   committed_from_environ; exit 0
 fi
 if [ "${1:-}" = "--render-remote-command" ]; then
-  [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
-  remote_launch_command "$2"
+  # optional 3rd argument `sandbox` renders the sandboxed launch (tools/pool_job_sandbox.sh as the wrapper)
+  { [ "$#" -eq 2 ] || { [ "$#" -eq 3 ] && [ "$3" = sandbox ]; }; } \
+    || { echo "usage: $0 --render-remote-command '<job>' [sandbox]" >&2; exit 2; }
+  if [ "$#" -eq 3 ]; then remote_launch_command "$2" 1; else remote_launch_command "$2"; fi
   exit $?
+fi
+if [ "${1:-}" = "--sandbox-probe" ]; then
+  # TEST SEAM + live diagnostic (2026-09-30): the REAL readiness probe against one node; prints its one-line answer
+  # and exits 0 only for POOL_SANDBOX_READY.
+  [ "$#" -eq 2 ] || { echo "usage: $0 --sandbox-probe <node>" >&2; exit 2; }
+  sandbox_probe "$2"; exit $?
+fi
+if [ "${1:-}" = "--sandbox-mode" ]; then echo "$POOL_SANDBOX_MODE"; exit 0; fi
+if [ "${1:-}" = "--write-sandbox-state" ]; then   # TEST SEAM: the live loop's per-cycle state write, exactly
+  write_sandbox_state; exit $?
 fi
 if [ "${1:-}" = "--print-ssh-f-loop" ]; then
   # TEST SEAM (2026-09-23, hardened fix round #2): proves refresh_ssh_f is called EVERY cycle of the REAL
@@ -599,8 +787,18 @@ fi
 if [ "${1:-}" = "--nodes-this-cycle" ]; then
   # TEST SEAM: prints the node list ONE dispatch cycle would use -- POOL_NODES plus whatever
   # .pool_extra_nodes (or $POOL_EXTRA_NODES_FILE) currently names, re-read fresh on every call.
-  printf '%s %s\n' "$NODES" "$(extra_nodes)" | tr -s ' ' | sed 's/^ *//; s/ *$//'
+  printf '%s %s\n' "$NODES" "$(extra_nodes)" | valid_node_names
   exit 0
+fi
+
+# RUNTIME MODE NEEDS ITS CONFINEMENT. The loop appends to workspace files (pool.running, .claims, the reservations),
+# and a symlink the agent planted there is followed. sim-pool-dispatch.service makes this user's own code, keys and
+# config read-only (ProtectHome=read-only), so such a write cannot land in them. Run by hand as sim, it could: a
+# planted pool.running -> <runtime>/tools/pool_sync.sh would append queue text to code sim runs. So when the code
+# root is writable, the loop does not start. The one-shot seams above do not append to the workspace.
+if [ -n "${SIM_WORKSPACE:-}" ] && [ -w "$ROOT" ]; then
+  echo "[pool-dispatch] ⛔ REFUSING to start: runtime mode (SIM_WORKSPACE) with a writable code root ($ROOT) means no confinement -- run it as sim-pool-dispatch.service" >&2
+  exit 1
 fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
@@ -624,8 +822,9 @@ if systemctl --user is-active --quiet pool-dispatch.service 2>/dev/null && [ "${
   exit 0
 fi
 
-echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle)"
+echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle) | POOL_SANDBOX=$POOL_SANDBOX_MODE"
 while true; do
+  write_sandbox_state   # read by tools/agent_gateway.sh: pool-submit only while this says mode=on (and is fresh)
   cycle_setup
   for NODE in $CYCLE_NODES; do
     fill_node "$NODE"
