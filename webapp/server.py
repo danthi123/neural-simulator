@@ -4657,7 +4657,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # which facts the brain holds off the engrams as they are NOW (research/runners/d6_hebbian_store.readtime_refresh),
     # so a later loss of an engram (a lesion, decay) is reflected in the known-word sets. Off -> only this env read.
     # Not wrapped in try/except: with the flag on, a failure must surface, not silently fall back to the host list.
-    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+    from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+    if _d6_readtime_on():
         from research.runners.d6_hebbian_store import readtime_refresh as _d6_readtime_refresh
         _d6_readtime_refresh(chat)
 
@@ -5529,7 +5530,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     try:
                         _comp = getattr(getattr(chat, "inner", None), "composer", None)
                         _kb_iter = getattr(_comp, "kb", []) or []
-                        if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+                        from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+                        if _d6_readtime_on():
                             from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
                             _kb_iter = _d6_visible_kb(_comp) or []   # D6 (default-OFF): engram-held facts only
                         for _f, _h in _kb_iter:

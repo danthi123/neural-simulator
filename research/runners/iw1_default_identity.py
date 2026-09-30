@@ -1,0 +1,183 @@
+"""Integration wave 1: production-default identity check through the REAL /api/brain-chat handler (2026-09-29).
+
+One scripted session that reaches all three wave-1 mechanisms (focus-bind: a two-referent intro then an anaphor;
+D6 write: teach then recall; C1: alternating valence then an expectation query) is run in ONE FRESH PROCESS per arm,
+and the sha256 of every response body is recorded (canonical: keys whose NAME looks like a wall-clock timing are
+dropped first, the same VOLATILE_KEY_RE as research/runners/_flip_validated_fixes_chat_sha.py, and every dropped
+path is listed). Arms:
+
+  default              every wave-1 flag UNSET (whatever the checkout's anchors say)
+  off                  every wave-1 flag set EXPLICITLY to "0" (never popped: gates/flip_offarm_staleness)
+  on:<packet>          that packet's flags "1", the others unset
+  on:<p1>+<p2>...      several packets' flags "1"
+
+Checks the packets use (HANDOFF step D and step F):
+  pre-flip (pin P):  default == off on every turn            (byte-identical-off)
+                     on:<packet> != default on >= 1 turn      (the script reaches the flag; else the check is vacuous)
+  post-flip (pin F): default == on:<flipped set> on every turn (the flipped default IS the capability)
+                     off@F == default@P on every turn         (the explicit-off escape reproduces the pre-flip default)
+
+  python -m research.runners.iw1_default_identity --arm default --seed 7 --out A.json
+  python -m research.runners.iw1_default_identity --compare A.json B.json --expect same|differs [--out V.json]
+
+Numpy backend, stub renderer, LLM disabled (the battery workers' discipline). No sim/ edit; reads only.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+
+PACKET_FLAGS = {
+    "d6-hebbian-write": ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME"),
+    "wm-focus-bind": ("BRAIN_MULTIREF_FOCUS_BIND",),
+    "xedge-surprise-worldmodel": ("BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",),
+}
+SESSION = "iw1-identity"
+POS, NEG = "that was wonderful, I am so happy", "that was terrible, I am so sad"
+TURNS = [  # (message, which packet the turn is there for)
+    ("the dog and the cat walked in", "wm-focus-bind"),
+    ("what does it chase", "wm-focus-bind"),
+    ("the wolf hunts the deer", "d6-hebbian-write"),
+    ("what does the cat eat", "d6-hebbian-write"),
+    ("what does the wolf hunt", "d6-hebbian-write"),
+    (POS, "xedge-surprise-worldmodel"),
+    (NEG, "xedge-surprise-worldmodel"),
+    (POS, "xedge-surprise-worldmodel"),
+    (NEG, "xedge-surprise-worldmodel"),
+    (POS, "xedge-surprise-worldmodel"),
+    ("what do you expect?", "xedge-surprise-worldmodel"),
+]
+VOLATILE_KEY_RE = re.compile(r"(latency|elapsed|_ms$|_sec$|_secs$|seconds|time|timestamp|wall|duration|perf)", re.I)
+
+
+def arm_env(arm: str) -> dict:
+    """{flag: value or None(=unset)} for every wave-1 flag under `arm`."""
+    flags = [f for fl in PACKET_FLAGS.values() for f in fl]
+    if arm == "default":
+        return {f: None for f in flags}
+    if arm == "off":
+        return {f: "0" for f in flags}
+    if arm.startswith("on:"):
+        want = [p for p in arm[3:].split("+") if p]
+        bad = [p for p in want if p not in PACKET_FLAGS]
+        if bad or not want:
+            raise SystemExit("unknown packet(s) in %r (known: %s)" % (arm, sorted(PACKET_FLAGS)))
+        on = {f for p in want for f in PACKET_FLAGS[p]}
+        return {f: ("1" if f in on else None) for f in flags}
+    raise SystemExit("unknown arm %r" % arm)
+
+
+def _canon(obj, path, dropped):
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            p = "%s.%s" % (path, k)
+            if VOLATILE_KEY_RE.search(str(k)):
+                dropped.append(p)
+                continue
+            out[k] = _canon(v, p, dropped)
+        return out
+    if isinstance(obj, list):
+        return [_canon(v, "%s[%d]" % (path, i), dropped) for i, v in enumerate(obj)]
+    return obj
+
+
+def run_arm(arm: str, seed: int, out: str) -> dict:
+    env = arm_env(arm)
+    for f, v in env.items():
+        if v is None:
+            os.environ.pop(f, None)
+        else:
+            os.environ[f] = v
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    os.environ["SIM_DISABLE_LLM"] = "1"
+    os.environ["BRAIN_CHAT_SEED"] = str(int(seed))
+    sys.path.insert(0, os.getcwd())
+    from fastapi.testclient import TestClient  # noqa: E402
+    from webapp.server import app  # noqa: E402
+    client = TestClient(app)
+    rows, t0 = [], time.time()
+    for i, (msg, packet) in enumerate(TURNS):
+        t1 = time.time()
+        res = client.post("/api/brain-chat", json={"session": SESSION, "brain": "tiny-demo", "renderer": "stub",
+                                                   "message": msg, "rich": False})
+        body, dropped = res.content, []
+        try:
+            d = json.loads(body)
+            canon = json.dumps(_canon(d, "$", dropped), sort_keys=True).encode()
+        except Exception:
+            d, canon = {}, body
+        rows.append({"turn": i, "message": msg, "for": packet, "status": res.status_code,
+                     "sha_raw": hashlib.sha256(body).hexdigest(), "sha_canon": hashlib.sha256(canon).hexdigest(),
+                     "dropped_volatile_keys": dropped, "answer": d.get("answer"), "abstained": d.get("abstained"),
+                     "recalled_svo": d.get("recalled_svo"), "turn_wall_s": round(time.time() - t1, 2)})
+        print("[iw1-identity] %s turn %d status=%d canon=%s ans=%r" % (arm, i, res.status_code,
+              rows[-1]["sha_canon"][:12], (d.get("answer") or "")[:90]), flush=True)
+    rec = {"arm": arm, "seed": int(seed), "cwd": os.getcwd(), "flags_env": {f: os.environ.get(f) for f in env},
+           "sim_backend": os.environ.get("SIM_BACKEND"), "n_turns": len(TURNS),
+           "wall_s": round(time.time() - t0, 1), "turns": rows,
+           "session_sha_canon": hashlib.sha256("".join(r["sha_canon"] for r in rows).encode()).hexdigest()}
+    try:
+        import subprocess
+        rec["git_sha"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+                                        cwd=os.getcwd()).stdout.strip() or None
+    except Exception:
+        rec["git_sha"] = None
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    json.dump(rec, open(out, "w"), indent=1)
+    print("[iw1-identity] %s session_sha_canon=%s wrote %s" % (arm, rec["session_sha_canon"], out), flush=True)
+    return rec
+
+
+def compare(a: dict, b: dict, expect: str) -> dict:
+    """Per-turn sha_canon comparison. expect='same': every turn identical (and every status 200). expect='differs':
+    at least one turn differs. Returns a verdict dict; `ok` is the check's outcome; UNDEFINED when a precondition
+    (same seed, same script length, every status 200) fails."""
+    pre = {"same_seed": a.get("seed") == b.get("seed"), "same_n_turns": a.get("n_turns") == b.get("n_turns"),
+           "all_status_200": all(r.get("status") == 200 for r in a.get("turns", []) + b.get("turns", []))}
+    diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
+            if x.get("sha_canon") != y.get("sha_canon")]
+    reply_diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
+                  if [x.get(k) for k in ("answer", "abstained", "recalled_svo")]
+                  != [y.get(k) for k in ("answer", "abstained", "recalled_svo")]]
+    v = {"arms": [a.get("arm"), b.get("arm")], "git_shas": [a.get("git_sha"), b.get("git_sha")], "expect": expect,
+         "preconditions": pre, "differing_turns": diff, "reply_differing_turns": reply_diff}
+    if not all(pre.values()):
+        v["verdict"], v["ok"] = "UNDEFINED", None
+    elif expect == "same":
+        v["ok"] = not diff
+        v["verdict"] = "IDENTICAL" if v["ok"] else "DIFFERS"
+    else:
+        v["ok"] = bool(diff)
+        v["verdict"] = "DIFFERS" if v["ok"] else "IDENTICAL (vacuous: the script does not reach this flag)"
+    return v
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--arm", default=None)
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--out", default=None)
+    ap.add_argument("--compare", nargs=2, default=None)
+    ap.add_argument("--expect", choices=("same", "differs"), default="same")
+    a = ap.parse_args(argv)
+    if a.compare:
+        v = compare(json.load(open(a.compare[0])), json.load(open(a.compare[1])), a.expect)
+        print(json.dumps(v, indent=1))
+        if a.out:
+            os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+            json.dump(v, open(a.out, "w"), indent=1)
+        return 0 if v["ok"] else 1
+    if not (a.arm and a.out):
+        ap.error("--arm and --out are required unless --compare is given")
+    run_arm(a.arm, a.seed, a.out)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

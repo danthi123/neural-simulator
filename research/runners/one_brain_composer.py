@@ -878,8 +878,8 @@ class OneBrainComposer:
         # D6 LEARN-THROUGH-USE (default-OFF, BRAIN_D6_HEBBIAN_STORE): write the block by a LOCAL Hebbian rule on the
         # substrate instead of copying the host-read composite into the weights (research/runners/d6_hebbian_store.py).
         # Off (unset) -> only this env read happens -> the direct write below is byte-identical.
-        if os.environ.get("BRAIN_D6_HEBBIAN_STORE", "").strip().lower() in ("1", "true", "yes", "on"):
-            from research.runners import d6_hebbian_store as _d6
+        from research.runners import d6_hebbian_store as _d6
+        if _d6.hebbian_store_enabled():
             _freeze = _d6.hebbian_freeze_lesioned() and bool(getattr(self, "_d6_conv_write", False))
             w, self._d6_last_encode = _d6.hebbian_encode(self, i, fillers, roles, freeze=_freeze)
             self._write_block(i, w)
