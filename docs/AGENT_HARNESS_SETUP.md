@@ -107,7 +107,7 @@ The first three private halves go INTO the container's home (step 10); the ctl k
    This is the real enforcement that the container can never touch `main`, any other real branch, or a tag;
    `claude_container_settings.json`'s deny rules are belt-and-braces on top.
 3. **Deploy key:** Settings, Deploy Keys, add `~/.ssh/sim_agent_gitea_deploy.pub` with **write access** (it pushes
-   only `research/draft-*`, per step 2's rules). The container reaches Gitea at `192.168.0.10:2222`: the WAN only
+   only `research/draft-*`, per item 2's rules). The container reaches Gitea at `192.168.0.10:2222`: the WAN only
    forwards 80/443, and `git.dant123.com` hairpins through the WAN address, which the firewall drops.
 4. Optional, cheap: cap a single push at 512 MiB (the gitea dataset has no quota):
 
@@ -223,8 +223,10 @@ How it fits the box's firewall:
   with a LAN-looking source, which Caddy's private-range rules treat as a LAN client. The `self_wan` set holds that
   address (resolved at runtime by `sim-agent-fw-selfwan.sh` every 5 minutes; DDNS can change it, and this public
   repo never contains it), and the container's HTTPS rule excludes it.
-- `/etc/nftables.d/fw.nft` is owned by `dant123`, not root, although root loads it at boot; consider
-  `sudo chown root:root /etc/nftables.d/fw.nft` (the `sim-agent.*` files above are installed root-owned).
+- `/etc/nftables.d/` and `fw.nft` are owned by `dant123`, not root, although root loads them at boot. Because the
+  DIRECTORY is dant123's, that account could also replace the root-owned `sim-agent.nft` (unlink + recreate needs
+  only write access to the directory). Recommended: `sudo chown root:root /etc/nftables.d /etc/nftables.d/fw.nft`
+  (edits then go through the `~/apps/host` mirror + `sudo install`, as for `backup.sh`).
 - `nftables.service` must stay disabled: `/etc/nftables.conf` runs `flush ruleset`.
 
 ### 8. The stack fragment
