@@ -33,12 +33,13 @@ robust core 28/29, mean 0.843) + tools/b2b_score.py; B2d reply-level rescore (he
 comprehension-monitor lesion-twin crash fix + tools/b2d_score.py; docs-refresh's 25 ISSUES.md fixes; the local-model
 bake-off (Ollama vs Unsloth Studio). Pushed both remotes. Kept on their branches, not yet merged (packets awaiting
 their own gate verdicts): host-share-baselines, selection-seam-need-reversal (+ a host_share_bg_seam.py integration
-bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Next, this cycle:
-provision + queue host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit
-instrument sweep (243 pool jobs, dev seeds) per each branch's own HANDOFF. NOT queued: sleep transitive inference
-(its dev cupy seeds 8-11 were killed mid-build by a GPU pause/game cycle, not a code failure -- re-queued, gate
-seeds wait on its step-2 operating-point check passing first); B2d (needs a harness change first, NEEDS-CLAUDE per
-its own prereg).
+bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Queued this cycle:
+host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit instrument sweep
+(243 pool jobs, dev seeds). Sleep transitive inference: its dev cupy seeds 8-11 were killed mid-build once by a
+GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Step 2 operating-point check printed
+`all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
+went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
+NEEDS-CLAUDE per its own prereg).
 
 *Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
 
