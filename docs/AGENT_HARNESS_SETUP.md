@@ -386,6 +386,51 @@ case start
     and echo "agent: sent 'agent-start.sh $profile' into the tmux session -- attach with: agent"
 ```
 
+## Optional: restrict who can reach the workstation's local-llm port
+
+`tools/local_llm/llm.sh` runs llama-swap on `0.0.0.0:8080` on the WORKSTATION (192.168.0.68) -- required so
+both loopback (`llm.sh` itself, `llm claude`) and the LAN (this harness) can reach it on the same port; see the
+comment above `llama_swap_cmd()` in that script for why a single, narrower bind cannot serve both. The egress
+firewall above (step (d')) already confines the sim-agent CONTAINER to reaching only `192.168.0.68:8080` in the
+first place, but nothing yet stops an unrelated device elsewhere on the home LAN from also reaching that port
+directly -- low severity (no credentials, just inference + this workstation's own model selection), but cheap
+to close. Optional, on the WORKSTATION itself:
+
+```bash
+# accept from loopback and from homelab-server (192.168.0.10, the only real external caller); drop everything else
+sudo iptables -I INPUT 1 -i lo -p tcp --dport 8080 -j ACCEPT
+sudo iptables -I INPUT 1 -s 192.168.0.10 -p tcp --dport 8080 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+```
+
+Verify from another LAN device (should now time out): `curl -m 3 http://192.168.0.68:8080/health`. Verify
+homelab-server itself still works: `curl -m 3 http://192.168.0.68:8080/health` FROM 192.168.0.10. These rules
+are not persisted across reboot by `iptables` alone -- save them with this distro's usual mechanism (e.g.
+`iptables-save`, or a systemd unit / `nftables` equivalent) if you want them to survive one. Revert by deleting
+the two ACCEPT lines' effect: `sudo iptables -D INPUT -p tcp --dport 8080 -j DROP` (repeat if it was added more
+than once) and the matching `-D` for each `-I` rule above.
+
+## Optional: a cheap cloud model for the mechanical tier
+
+Two ready-made cloud profiles (owner-approved 2026-09-29) let `agent start` route mechanical work to a cheap,
+Anthropic-compatible cloud model instead of the workstation's local server: `tools/agent_container/profiles/
+deepseek-flash.env` (DeepSeek's `deepseek-flash` model, `https://api.deepseek.com/anthropic`) and `glm-lite.env`
+(Z.ai's `glm-4.7-flashx`, `https://api.z.ai/api/anthropic`) -- both files cite the provider's own docs for the
+base URL, model id and context window; read either file's header before using it. To use one: create an API
+account with that provider (DeepSeek platform / Z.ai platform) and generate a key; put the key in THIS compose
+project's own `.env` file on the server (next to `tools/agent_container/compose.yaml`, untracked -- never in
+this repo) as `DEEPSEEK_API_KEY=...` or `GLM_API_KEY=...` (compose.yaml has a matching commented example line
+to uncomment); then run `agent start deepseek-flash` (or `agent start glm-lite`) from the workstation. Both
+profiles are `KIND=cloud`, so `tools/agent_gateway.sh yield` and `tools/game.sh` skip pausing the harness for
+them -- mechanical work keeps flowing even while the workstation's GPU is busy or the owner is gaming. Before
+routing real work to either one, validate the endpoint + model name actually work with a quick bake-off run
+(from the workstation, outside the container -- this needs `claude` and this repo checked out locally, and
+costs a little real API spend): `python3 tools/local_llm/bakeoff.py --base-url https://api.deepseek.com/anthropic
+--model deepseek-flash --api-key-env DEEPSEEK_API_KEY --engine deepseek --long-tokens 8000` (swap in the GLM base
+URL/model/env var for that profile; `--long-tokens` keeps the long-context probe small, since it is paid input).
+It runs the same three objective agentic tasks (T1 locate / T2 debug / T3 extend) the local-model bake-off used
+and prints a PASS/fail verdict per task plus the full result at `tools/local_llm/results/<engine>-<model>.json`.
+
 ## MANDATORY (escalated from optional in the 2026-09-29 re-review, M3): a size-capped repo/home volume
 
 homelab-server is SHARED (gitea/nextcloud/home-assistant/etc.) and the two named volumes have no built-in size

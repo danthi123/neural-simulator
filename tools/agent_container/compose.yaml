@@ -85,6 +85,12 @@ services:
       # Cloud-profile secrets (tools/agent_container/profiles/*.env's TOKEN_VAR) are supplied here or via
       # env_file, NEVER written into a profile file or baked into the image. Example (commented):
       # - CLOUD_LLM_API_KEY=${CLOUD_LLM_API_KEY:?set in .env, not in this file}
+      #
+      # 2026-09-29 mechanical-tier cloud profiles (tools/agent_container/profiles/deepseek-flash.env,
+      # glm-lite.env) -- uncomment the matching line(s) below and set the real value in this compose project's
+      # own `.env` file (untracked, next to compose.yaml on the SERVER; never in this repo):
+      # - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:?set in .env, not in this file}
+      # - GLM_API_KEY=${GLM_API_KEY:?set in .env, not in this file}
 
 networks:
   agent-net:
