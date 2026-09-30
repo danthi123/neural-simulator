@@ -56,10 +56,25 @@ _TRANSITIVE_RE = re.compile(
 )
 
 
+# PRODUCTION-DEFAULT ANCHOR (integration wave 2, 2026-09-30; packet research/packets/integration-wave2/
+# transitive-chat/, prereg research/findings/2026-09-30-iw2-transitive-chat-flip-PREREGISTRATION.md). While False
+# the reader below is EXACTLY the pre-anchor expression (byte-identical for every env value; pinned by
+# tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
+# reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one production
+# reader of BRAIN_TRANSITIVE_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
+_TRANSITIVE_CHAT_DEFAULT_ON = False
+_ON = ("1", "true", "on", "yes")
+_OFF = ("0", "false", "no", "off", "")
+
+
 def transitive_chat_enabled() -> bool:
-    """The master flag, DEFAULT-OFF. `BRAIN_TRANSITIVE_CHAT` in {1,true,on,yes} enables the route; unset/anything
-    else -> the route never dispatches (byte-identical to today)."""
-    return os.environ.get("BRAIN_TRANSITIVE_CHAT", "").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag. While `_TRANSITIVE_CHAT_DEFAULT_ON` is False: `BRAIN_TRANSITIVE_CHAT` in {1,true,on,yes}
+    enables the route; unset/anything else -> the route never dispatches (byte-identical to today). After the wave-2
+    flip: unset -> enabled; an explicit 0/false/no/off/"" disables."""
+    v = os.environ.get("BRAIN_TRANSITIVE_CHAT")
+    if _TRANSITIVE_CHAT_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "").strip().lower() in _ON
 
 
 def transitive_lesion_on() -> bool:
@@ -69,12 +84,29 @@ def transitive_lesion_on() -> bool:
     return os.environ.get("BRAIN_TRANSITIVE_LESION", "").strip().lower() in ("1", "true", "on", "yes")
 
 
+# SCOPE GUARD (integration wave 2, 2026-09-30, before any gate data; research/findings/2026-09-30-iw2-transitive-chat-
+# flip-PREREGISTRATION.md). A matched question never falls through to the ordinary path, so default-on the bare regex
+# would also capture ordinary yes/no questions whose first or last token is a closed-class word ("does the cat
+# sleep?", "does it rain now?") and answer them with this route's abstain. Such a question is not the "does <entity>
+# <relation> <entity>?" shape: decline it (None), and the caller's ordinary path runs unchanged. A declared host
+# comprehension boundary, the same kind as the regex itself.
+_TRANSITIVE_CLOSED_CLASS = frozenset({
+    "the", "a", "an", "this", "that", "these", "those", "some", "any", "every", "each", "no", "all", "my", "your",
+    "his", "her", "its", "our", "their", "it", "he", "she", "they", "we", "you", "i", "me", "him", "them", "us",
+    "what", "who", "whom", "which", "where", "when", "why", "how", "there", "here", "not", "anything", "something",
+    "everything", "nothing", "anyone", "someone", "everyone",
+})
+
+
 def parse_transitive_question(question: str) -> Optional[Tuple[str, str, str]]:
-    """Detect the "does X R Y?" shape. Returns (agent, relation, target) (all lowercased) or None."""
+    """Detect the "does X R Y?" shape. Returns (agent, relation, target) (all lowercased) or None. None also when the
+    agent, relation or target is a closed-class word (the wave-2 scope guard above)."""
     if not isinstance(question, str):
         return None
     m = _TRANSITIVE_RE.match(question.strip().lower())
     if not m:
+        return None
+    if {m.group(1), m.group(2), m.group(3)} & _TRANSITIVE_CLOSED_CLASS:
         return None
     return m.group(1), m.group(2), m.group(3)
 

@@ -63,10 +63,25 @@ from typing import Optional
 
 _DEFAULT_SEED = 42
 
+# PRODUCTION-DEFAULT ANCHOR (integration wave 2, 2026-09-30; packet research/packets/integration-wave2/
+# false-belief-chat/, prereg research/findings/2026-09-30-iw2-false-belief-chat-flip-PREREGISTRATION.md). While
+# False the reader below is EXACTLY the pre-anchor expression (byte-identical for every env value; pinned by
+# tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
+# reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one reader of
+# BRAIN_FALSE_BELIEF_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
+_FALSE_BELIEF_CHAT_DEFAULT_ON = False
+_ON = ("1", "true", "on", "yes")
+_OFF = ("0", "false", "no", "off", "")
+
 
 def false_belief_chat_enabled() -> bool:
-    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled)."""
-    return os.environ.get("BRAIN_FALSE_BELIEF_CHAT", "0").strip().lower() in ("1", "true", "on", "yes")
+    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled) while the anchor
+    `_FALSE_BELIEF_CHAT_DEFAULT_ON` is False; after the wave-2 flip, unset -> enabled and an explicit
+    0/false/no/off/"" disables."""
+    v = os.environ.get("BRAIN_FALSE_BELIEF_CHAT")
+    if _FALSE_BELIEF_CHAT_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "0").strip().lower() in _ON
 
 
 def false_belief_lesioned() -> bool:
