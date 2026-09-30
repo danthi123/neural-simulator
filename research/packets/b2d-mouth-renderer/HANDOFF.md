@@ -29,9 +29,15 @@ that is not blocked. Every verdict you write is PROVISIONAL until Claude inspect
 - Packet tools (this directory): `env.sh`, `export_local_revision.sh`, `make_jobs.py`, `repin.py`,
   `registry_fingerprint.py` + `registry_at_H.json`, `copy_results.sh`, `rerun_stub_cell.sh`, `rerun_mouth_cell.sh`,
   `draft_finding.py`. Wave script: `research/coordination/b2d_queue_next_wave.sh`.
-- Dev seed 7: section 11. Nothing at a gate seed has been queued or run.
+- Dev seed 7: section 11.
+- **Steps 1 to 3 and step 4's first wave were run by Claude on 2026-09-30.** P = `5818dc629c5c0cd3cbb370c0c6cc16b314805b03`
+  (recorded in `$K/PIN_P`; commit `d91ac739f`): `repin.py apply` passed, pool41 and pool42 provisioned at P, the
+  workstation export at `~/derisk-pool/revisions/<P>` verified, corpus rows at P recorded (all `7a00272e...`), and
+  stub-arm wave 1 (43 lines, seed 42) queued at 11:30 EDT (ledger commit `9b8d909ea`). **Start at step 4's "Every
+  later session" line, then step 5.** Redo steps 1-3 only if a later step's table sends you back there.
+- The mouth arm (step 5) is NOT queued: it needs a GPU window of about 12 h (a yield), which is yours to choose.
 
-## 1. Pin P
+## 1. Pin P (DONE 2026-09-30; see section 0)
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -49,7 +55,7 @@ bash tools/push_both.sh research/b2d-mouth-renderer && git rev-parse HEAD > $K/P
 | any test fails | STOP. NEEDS-CLAUDE with the failing test name |
 | push verified on both remotes, PIN_P printed | continue |
 
-## 2. Export P on the workstation; provision the pool at P
+## 2. Export P on the workstation; provision the pool at P (DONE 2026-09-30)
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -66,7 +72,7 @@ cd $P && bash tools/pool_provision.sh --revision $PIN_P --isolated pool41 pool42
 Add AWS aliases (e.g. `pool1 pool2`) to the provisioner line only if they are already running (`bash tools/status.sh`
 shows them); starting them is not yours (NEEDS-CLAUDE #1).
 
-## 3. Re-pin to P, record the corpus hashes, commit
+## 3. Re-pin to P, record the corpus hashes, commit (DONE 2026-09-30)
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -102,7 +108,7 @@ bash tools/push_both.sh research/b2d-mouth-renderer
 Line counts other than 258 and 18: STOP (NEEDS-CLAUDE). Gate blocks: as in step 1's table. (This commit is a child of
 P and changes no code; every job runs at P.)
 
-## 4. Queue the stub arm (pool): wave 1 now, one wave per session after that
+## 4. Queue the stub arm (pool): wave 1 (DONE 2026-09-30 11:30), then one wave per session
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
@@ -154,6 +160,10 @@ cd $W && bash research/coordination/b2d_queue_next_wave.sh --status
 - A GPU job that ends `DONE(rc!=0)` in `research/queue/gpu_queue.log` (e.g. `mem_ok` refused, a pause killed it):
   wait until step 8 scores it, then use the mouth re-run row of step 9's table. Do not re-queue by hand.
 - `gpu_queue.sh pause --now` (the owner gaming) re-queues the running job itself; nothing to do.
+- A mouth cell whose lesion arm is missing while its `lb.json` reads `arm-build-failed`, or a GPU job log showing
+  `Terminated` / `rc=143`: a local test run can kill live GPU workers (research/FAILURE_LOG.md, 2026-09-30,
+  `tests/test_game_pause_resume.py`). Avoid running that test file while the mouth arm runs; the cell is handled by
+  step 9's mouth re-run row like any other.
 - A stub line the wave script reports stale: A1.4(c) (re-queue at most twice, after moving the stale line out of
   `research/queue/pool.queue` with `bash tools/pool_queue.sh` tooling); if unsure how: NEEDS-CLAUDE.
 
