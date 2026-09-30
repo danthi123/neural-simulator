@@ -65,3 +65,13 @@ copied from the primary checkout's uncommitted `research/coordination/lane_build
   is this fix); it is written to `GATE_SHA`, provisioned `--isolated` on pool41 + pool42, canaried sandboxed, and its
   104 lines are regenerated with `--emit-pool-jobs` (+ `max_age_h=168`) into
   `/home/dant123/Projects/sim/research/queue/requeue_host_share_<sha9>.tsv` for the coordinator to queue.
+- 2026-09-30 ~15:25  Gate revision is now f7f2bd1690783e60200d443c7442f63d3e5994a5 (fix cf7db278a + merge of origin/main
+  b604085a6), provisioned `--isolated` on pool41 and pool42 (venv check ok, remote brain build ok). SANDBOXED CANARY
+  PASS on pool41 (`tools/pool_sandbox_selftest.sh` from the pool-job-sandbox worktree): the real line `--shard --seed 42
+  --group recall --arm bg-select:intervene --allow-gate-seed` at f7f2bd169 exited rc=0 after 940 s; the shard has 4
+  turns, no errored turn, source `tiny-demo +LTM`, all six seams recorded, bg-select applied, PYTHONHASHSEED ok, seeds
+  threaded (42), provenance git_sha f7f2bd169 clean. That shard is a valid gate shard at the gate revision; its line
+  stays in the requeue set. The 104 held lines are regenerated at f7f2bd169 in
+  `research/queue/requeue_host_share_f7f2bd169.tsv` (identical to the held lines except the sha, plus `max_age_h=168`);
+  the four s42 recall lines that already died on 2026-09-29 (intact_a, intact_b, k-select:intervene,
+  k-select:substitute) are in `requeue_host_share_f7f2bd169_dispatched_failed.tsv`. Queueing is the coordinator's call.
