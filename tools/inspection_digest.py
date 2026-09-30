@@ -451,7 +451,9 @@ def query_container_appdata_usage():
     # independently monkeypatchable, matching the existing test seam. Returns {"used": float|None,
     # "quota": float|None, "firewall": str|None}; "unknown" or a missing line maps to None, and a quota of "none"
     # (no refquota set) maps to 0.0.
-    result = {"used": None, "quota": None, "firewall": None}
+    # gitea_used / gitea_quota (2026-09-30 security review, MEDIUM): the gitea dataset, which the container's write
+    # deploy key can push into and which shares the `data` pool with every other stack; quota "none" -> 0.0.
+    result = {"used": None, "quota": None, "firewall": None, "gitea_used": None, "gitea_quota": None}
     try:
         res = subprocess.run(["ssh", "-o", "ConnectTimeout=8", "-o", "BatchMode=yes", AGENT_CTL_HOST, "state"],
                               capture_output=True, text=True, timeout=SSH_STATE_TIMEOUT_S)
@@ -464,6 +466,10 @@ def query_container_appdata_usage():
                 result["quota"] = 0.0 if val == "none" else float(val)
             elif key == "firewall" and val:
                 result["firewall"] = val
+            elif key == "gitea_gb" and val not in ("", "unknown"):
+                result["gitea_used"] = float(val)
+            elif key == "gitea_quota_gb" and val not in ("", "unknown"):
+                result["gitea_quota"] = 0.0 if val == "none" else float(val)
     except Exception:
         pass
     return result
@@ -531,6 +537,20 @@ def render_agent_container_version_section():
             line += (f" and it is OVER the {APPDATA_WARN_GB:.0f} GB warn threshold -- this is a SHARED box; set "
                      "one: `sudo zfs set refquota=<N>G data/appdata/sim-agent` (docs/AGENT_HARNESS_SETUP.md)")
         out.append(line)
+    g_used, g_quota = usage.get("gitea_used"), usage.get("gitea_quota")
+    if g_used is not None:
+        if g_quota:
+            g_frac = g_used / g_quota
+            line = f"- gitea (ZFS data/appdata/gitea): {g_used:.2f} GB of its {g_quota:.2f} GB quota ({g_frac:.0%})"
+            if g_frac >= APPDATA_WARN_FRACTION:
+                line += (f" **-- OVER {APPDATA_WARN_FRACTION:.0%} of the quota:** Gitea pushes will start failing. "
+                         "Delete stale research/draft-* branches (only you can) or raise it: "
+                         "`sudo zfs set quota=<N>G data/appdata/gitea`.")
+            out.append(line)
+        else:
+            out.append(f"- gitea (ZFS data/appdata/gitea): {g_used:.2f} GB, **NO quota set** -- the sim-agent deploy "
+                       "key can push unlimited research/draft-* data into the SHARED `data` pool through it: "
+                       "`sudo zfs set quota=<N>G data/appdata/gitea` (docs/AGENT_HARNESS_SETUP.md)")
     if firewall is not None and firewall != "active":
         out.append(f"- **sim-agent-fw.service is `{firewall}`** -- the container refuses to (re)start without it "
                     "(firewall_guard.sh) and a running one may be unfiltered: `sudo systemctl status "

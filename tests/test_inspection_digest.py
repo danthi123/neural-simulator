@@ -429,14 +429,51 @@ def test_query_container_appdata_usage_parses_the_ctl_state_lines(monkeypatch):
     class _Res:
         stdout = ("container: running\nappdata_gb: 12.34\nappdata_quota_gb: 68.72\nfirewall: active\n")
     monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Res())
-    assert digest.query_container_appdata_usage() == {"used": 12.34, "quota": 68.72, "firewall": "active"}
+    assert digest.query_container_appdata_usage() == {"used": 12.34, "quota": 68.72, "firewall": "active",
+                                                       "gitea_used": None, "gitea_quota": None}
 
     class _NoQuota:
         stdout = "appdata_gb: 1.00\nappdata_quota_gb: none\nfirewall: inactive\n"
     monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _NoQuota())
-    assert digest.query_container_appdata_usage() == {"used": 1.0, "quota": 0.0, "firewall": "inactive"}
+    assert digest.query_container_appdata_usage() == {"used": 1.0, "quota": 0.0, "firewall": "inactive",
+                                                       "gitea_used": None, "gitea_quota": None}
 
     class _Unknown:
         stdout = "container: absent\nappdata_gb: unknown\nappdata_quota_gb: unknown\n"
     monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Unknown())
-    assert digest.query_container_appdata_usage() == {"used": None, "quota": None, "firewall": None}
+    assert digest.query_container_appdata_usage() == {"used": None, "quota": None, "firewall": None,
+                                                       "gitea_used": None, "gitea_quota": None}
+
+
+
+# ------------------------------------------ gitea dataset usage (2026-09-30 security review, MEDIUM storage)
+
+def test_query_container_appdata_usage_parses_the_gitea_lines(monkeypatch):
+    class _Res:
+        stdout = "appdata_gb: 1.00\nappdata_quota_gb: 64.00\nfirewall: active\ngitea_gb: 2.87\ngitea_quota_gb: none\n"
+    monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Res())
+    got = digest.query_container_appdata_usage()
+    assert got["gitea_used"] == 2.87 and got["gitea_quota"] == 0.0
+
+
+def _stub_gitea(monkeypatch, used, quota):
+    monkeypatch.setattr(digest, "query_container_appdata_usage",
+                        lambda: {"used": 5.0, "quota": 64.0, "firewall": "active", "gitea_used": used,
+                                 "gitea_quota": quota})
+
+
+def test_a_gitea_dataset_without_a_quota_is_flagged(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_gitea(monkeypatch, 2.87, 0.0)
+    text = digest.render_agent_container_version_section()
+    assert "data/appdata/gitea" in text and "NO quota" in text and "zfs set quota=" in text
+
+
+def test_a_gitea_dataset_near_its_quota_warns(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_gitea(monkeypatch, 28.0, 30.0)
+    text = digest.render_agent_container_version_section()
+    assert "28.00 GB of its 30.00 GB quota" in text and "OVER 85%" in text
+    _stub_gitea(monkeypatch, 3.0, 30.0)
+    text = digest.render_agent_container_version_section()
+    assert "3.00 GB of its 30.00 GB quota (10%)" in text and "OVER" not in text

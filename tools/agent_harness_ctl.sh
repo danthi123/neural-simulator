@@ -20,7 +20,8 @@
 #   state      one-line-per-field status: container status (running/paused/absent/...), and -- if running --
 #              the active profile + its KIND (from the SERVER-LOCAL record `set-active-profile` writes, never
 #              from the container) and whether a claude process is currently active; always the ZFS dataset's
-#              usage against its refquota and whether sim-agent-fw.service is active. Read by
+#              usage against its refquota, the gitea dataset's usage against its quota (the deploy key can push
+#              into it) and whether sim-agent-fw.service is active. Read by
 #              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile), tools/game.sh and
 #              tools/inspection_digest.py.
 #   set-active-profile <name>   records which profile is active + its KIND (read from this script's OWN
@@ -39,6 +40,7 @@ PROFILE_DIR="${AGENT_CTL_PROFILE_DIR:-$SELF_DIR/agent_container/profiles}"
 ZFS="${AGENT_CTL_ZFS:-zfs}"                        # TEST-ONLY override; NEVER set in production
 SYSTEMCTL="${AGENT_CTL_SYSTEMCTL:-systemctl}"      # TEST-ONLY override; NEVER set in production
 DATASET="${AGENT_CTL_DATASET:-data/appdata/sim-agent}"
+GITEA_DATASET="${AGENT_CTL_GITEA_DATASET:-data/appdata/gitea}"
 FW_UNIT=sim-agent-fw.service
 # Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review,
 # HIGH): an exec inherits the container's environment, and the home bind mount is model-writable. Nothing from
@@ -74,6 +76,16 @@ container_status() { "$DOCKER" inspect -f '{{.State.Status}}' "$CONTAINER" 2>/de
 # when the volumes exceed a threshold"), rebased from named volumes onto the dataset 2026-09-30.
 appdata_usage() {
   "$ZFS" get -Hp -o value referenced,refquota "$DATASET" 2>/dev/null | awk '
+    NR == 1 && $1 ~ /^[0-9]+$/ { used = sprintf("%.2f", $1 / 1e9) }
+    NR == 2 && $1 ~ /^[0-9]+$/ { quota = ($1 == 0) ? "none" : sprintf("%.2f", $1 / 1e9) }
+    END { if (used != "") print used, (quota != "" ? quota : "unknown") }'
+}
+
+# gitea_usage -- "<used_gb> <quota_gb|none>" for the gitea dataset (2026-09-30 security review, MEDIUM): the
+# container's write deploy key can push unlimited research/draft-* data into it, and it shares the `data` pool with
+# every other stack. USED and QUOTA (not refquota) because the recommended cap is `quota`, which counts snapshots.
+gitea_usage() {
+  "$ZFS" get -Hp -o value used,quota "$GITEA_DATASET" 2>/dev/null | awk '
     NR == 1 && $1 ~ /^[0-9]+$/ { used = sprintf("%.2f", $1 / 1e9) }
     NR == 2 && $1 ~ /^[0-9]+$/ { quota = ($1 == 0) ? "none" : sprintf("%.2f", $1 / 1e9) }
     END { if (used != "") print used, (quota != "" ? quota : "unknown") }'
@@ -191,6 +203,9 @@ case "$SUB" in
     read -r used_gb quota_gb <<< "$(appdata_usage)"
     echo "appdata_gb: ${used_gb:-unknown}"
     echo "appdata_quota_gb: ${quota_gb:-unknown}"
+    read -r g_used_gb g_quota_gb <<< "$(gitea_usage)"
+    echo "gitea_gb: ${g_used_gb:-unknown}"
+    echo "gitea_quota_gb: ${g_quota_gb:-unknown}"
     fw="$("$SYSTEMCTL" is-active "$FW_UNIT" 2>/dev/null)"
     echo "firewall: $(sanitize "${fw:-unknown}")"
     log "state queried (status=$st)"

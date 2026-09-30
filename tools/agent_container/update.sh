@@ -44,6 +44,8 @@ ROLLBACK_IMAGE="${IMAGE%%:*}:rollback"
 FW_UNIT=sim-agent-fw.service
 DF="${AGENT_UPDATE_DF:-df}"                     # TEST-ONLY override; NEVER set in production
 SYSTEMCTL="${AGENT_UPDATE_SYSTEMCTL:-systemctl}" # TEST-ONLY override; NEVER set in production
+ZFS="${AGENT_UPDATE_ZFS:-zfs}"                  # TEST-ONLY override; NEVER set in production
+GITEA_DATASET="${SIM_AGENT_GITEA_DATASET:-data/appdata/gitea}"
 DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
 FRAGMENT_SRC="$SRC_DIR/tools/agent_container/server-stack/sim-agent/compose.yaml"
 FRAGMENT_LIVE="$APPS_DIR/sim-agent/compose.yaml"
@@ -100,6 +102,30 @@ for root in $disk_roots; do
         "the agent's worktrees/results or raise the dataset refquota before writes start failing."
   fi
 done
+
+# GITEA DATASET (2026-09-30 security review, MEDIUM): the container's write deploy key can push unlimited
+# research/draft-* data into gitea, whose dataset shares the `data` pool with every other stack. Visibility only,
+# never a gate: the ZFS quota is the ceiling (docs/AGENT_HARNESS_SETUP.md step 3), this makes a missing one loud.
+g_vals="$("$ZFS" get -Hp -o value used,quota "$GITEA_DATASET" 2>/dev/null | tr '\n' ' ')"
+read -r g_used g_quota <<< "$g_vals"
+if [[ "${g_used:-}" =~ ^[0-9]+$ ]] && [[ "${g_quota:-}" =~ ^[0-9]+$ ]]; then
+  g_used_gb="$(awk -v b="$g_used" 'BEGIN { printf "%.2f", b / 1e9 }')"
+  if [ "$g_quota" -eq 0 ]; then
+    log "gitea dataset $GITEA_DATASET: $g_used_gb GB used, NO quota"
+    log "WARNING: $GITEA_DATASET has NO quota -- the sim-agent deploy key can fill the shared data pool through" \
+        "it. sudo zfs set quota=<N>G $GITEA_DATASET"
+  else
+    g_quota_gb="$(awk -v b="$g_quota" 'BEGIN { printf "%.2f", b / 1e9 }')"
+    g_pct=$(( (g_used * 100 + g_quota / 2) / g_quota ))   # rounded, like the digest
+    log "gitea dataset $GITEA_DATASET: $g_used_gb GB used of its $g_quota_gb GB quota (${g_pct}%)"
+    if [ "$g_pct" -ge "$DISK_WARN_PCT" ]; then
+      log "WARNING: $GITEA_DATASET is ${g_pct}% of its quota -- prune old research/draft-* branches (only the owner" \
+          "can delete them) or raise it: sudo zfs set quota=<N>G $GITEA_DATASET"
+    fi
+  fi
+else
+  log "gitea dataset check: could not read $ZFS get used,quota $GITEA_DATASET -- skipped (non-fatal)"
+fi
 
 # --- 2. build ----------------------------------------------------------------------------------------------------
 old_id="$(image_id "$IMAGE")"

@@ -110,6 +110,9 @@ def _run(tmp, *, status="running", old_id="sha256:old", new_id="sha256:new", cur
         "SIM_AGENT_SRC_DIR": src,
         "SIM_AGENT_DATA_DIR": data, "AGENT_UPDATE_DF": df, "AGENT_UPDATE_SYSTEMCTL": systemctl,
         "AGENT_UPDATE_DISK_ROOTS": data,
+        # never the real `zfs`: a gitea dataset with 2.87 GB used under a 30 GiB quota by default
+        "AGENT_UPDATE_ZFS": _exec(os.path.join(tmp, "fake_zfs"), '#!/usr/bin/env bash\necho "zfs $*" >> "%s/zfs.log"\n'
+                                  'printf "2870000000\\n32212254720\\n"\n' % tmp),
     })
     env.update(extra_env or {})
     res = subprocess.run(["bash", _UPDATE], env=env, capture_output=True, text=True, timeout=30)
@@ -336,3 +339,24 @@ def test_probe_targets_cover_this_host_and_never_require_the_workstation():
     assert "192.168.0.10:2222" in must_pass
     # the workstation may be asleep or gaming during the weekly rebuild: a miss there must never roll an image back
     assert not any(t.startswith("192.168.0.68:") for t in must_pass)
+
+
+# ------------------------------------------ gitea dataset usage (2026-09-30 security review, MEDIUM storage)
+
+def test_logs_the_gitea_dataset_usage_against_its_quota():
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, _ = _run(tmp)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "gitea dataset data/appdata/gitea: 2.87 GB used of its 32.21 GB quota (9%)" in log
+        assert "WARNING" not in log
+        assert "get -Hp -o value used,quota data/appdata/gitea" in open(os.path.join(tmp, "zfs.log")).read()
+
+
+def test_warns_when_the_gitea_dataset_has_no_quota():
+    with tempfile.TemporaryDirectory() as tmp:
+        zfs = _exec(os.path.join(tmp, "zfs_noquota"), '#!/usr/bin/env bash\nprintf "2870000000\\n0\\n"\n')
+        res, log, calls = _run(tmp, extra_env={"AGENT_UPDATE_ZFS": zfs})
+        assert res.returncode == 0, res.stdout + res.stderr    # visibility, never a gate on the rebuild
+        assert "gitea dataset data/appdata/gitea: 2.87 GB used, NO quota" in log
+        assert "WARNING" in log and "zfs set quota=" in log
+        assert "docker compose build --pull sim-agent" in calls

@@ -351,3 +351,33 @@ def test_state_reads_the_claude_version_from_its_symlink_and_never_runs_the_bina
         assert res.returncode == 0, res.stdout + res.stderr
         assert "claude_version: 2.1.280\n" in res.stdout
         assert "claude --version" not in open(log).read()
+
+
+# ------------------------------------------ gitea dataset usage (2026-09-30 security review, MEDIUM storage)
+def _fake_zfs_by_dataset(tmp, simagent=("50000000000", "64000000000"), gitea=("2870000000", "0")):
+    log = os.path.join(tmp, "zfs_calls.log")
+    body = 'echo "zfs $*" >> "%s"\ncase "$*" in\n' % log
+    body += '  *data/appdata/gitea*) printf "%%s\\n%%s\\n" "%s" "%s" ;;\n' % gitea
+    body += '  *) printf "%%s\\n%%s\\n" "%s" "%s" ;;\nesac\n' % simagent
+    return _write_exec(os.path.join(tmp, "fake_zfs_by_dataset.sh"), body)
+
+
+def test_state_reports_the_gitea_datasets_usage_against_its_quota():
+    # the write deploy key can push unlimited research/draft-* data; data/appdata/gitea shares the `data` pool with
+    # every other stack, so its usage and quota are reported beside the sim-agent dataset
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="running")
+        zfs = _fake_zfs_by_dataset(tmp, gitea=("2870000000", "32212254720"))
+        res = _run("state", tmp, docker, extra_env={"AGENT_CTL_ZFS": zfs})
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "appdata_gb: 50.00" in res.stdout
+        assert "gitea_gb: 2.87" in res.stdout, res.stdout
+        assert "gitea_quota_gb: 32.21" in res.stdout, res.stdout
+        assert "get -Hp -o value used,quota data/appdata/gitea" in open(os.path.join(tmp, "zfs_calls.log")).read()
+
+
+def test_state_reports_a_gitea_dataset_without_a_quota_as_none():
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, _ = _fake_docker(tmp, status="absent")
+        res = _run("state", tmp, docker, extra_env={"AGENT_CTL_ZFS": _fake_zfs_by_dataset(tmp)})
+        assert "gitea_quota_gb: none" in res.stdout, res.stdout
