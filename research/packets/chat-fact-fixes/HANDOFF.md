@@ -75,10 +75,25 @@ b8d32483a -- webapp research/runners/brain_chat_tui.py tests` is empty; the late
 `--compare` and data). `git_dirty_tracked: true` in the arm records is the provenance door's append to
 `research/findings/raw/_provenance/runs.jsonl` during the run, nothing else.
 
-Existing tests: the 22-file chat/server test set (section 2 lists the fast pair) is RUNNING at packet time; its result is appended in the next commit.
+Existing tests (each file in its own process, memcap 12, fix branch): `test_chat_fact_fixes` 35, `test_ai_teacher_isolation`
+14, `test_open_ended_generate_route` 7 (pins `_is_acquisition_candidate` == `_maybe_acquire`, B3 on and off),
+`test_rank2_integrated_loop_thread` 5, `test_rich_answer_batch_render` 5, `test_wm_referent_focus_bind` 5,
+`test_affect_marker_surface_flag` 16, `test_brain_prewarm_scratch_session` 1 (+1 skip), `test_comprehension_lesion_twin_snapshot`
+4, `test_curiosity_graded_novelty` 20, `test_multireferent_graded_bias_agent` 5, `test_tiered_fact_store` 7,
+`test_dialogue_agent` 13, `test_phasor_chat` 9, `test_wh_question_parser` 12, `test_no_qwen_fallback_flag` 21,
+`test_generator_trace_matches_producer` 19 all pass; `test_webapp_server` 67 pass: its 65 other tests plus 2 of its 28 brain-building
+`brain_chat` tests, `tiny_demo_answers_and_abstains` and `xedge_surprise_episodic_default_off_is_byte_identical` (it
+teaches "dog chase mouse"). `test_fluidconv_chat_repl` and `test_realcorpus_unified_console` skip entirely
+on both trees. Four failures are PRE-EXISTING (identical on the base `f5e3732fe`): `test_open_ended_generation_fluent`
+`::test_render_hypothesis_fluent_flagged_guess_stub` and `::test_render_hypothesis_template_fallback_without_mouth`,
+`test_emerge58_unified_fluent_console` `::test_derisk_go_single_seed` and `::test_membership_aware_routing_no_false_denial`.
+Not run: the other 26 brain-building `test_webapp_server` `brain_chat` tests (about 3-5 min and a few GB each under
+today's contention; a full-file run stalled at the 10 GB cap). None sends a request-shaped message (their inputs are
+recall questions, "dog chase mouse", "the dog and the cat are here", "hello"), so fix (1) is not reachable from them
+and fix (2) is a no-op with the corpus present; that is an argument, not a run (NEEDS-CLAUDE #8).
 
 What this evidence does NOT cover (by the TERMS.md rule, byte-identity is claimed only where it was measured): one
-dev seed (7), numpy only, stub renderer, and three scripts. The structural argument for other seeds is that the
+dev seed (7), numpy only, stub renderer, and four short scripts. The structural argument for other seeds is that the
 request predicate is a pure function of the input text and the guard a pure function of the file system, so neither
 can change a turn whose input is not a request with the corpus present; that is an argument, not a measurement.
 
@@ -138,4 +153,9 @@ If `mem_ok` refuses, wait and retry later; do not lower its margin.
    now that nothing stores such a triple, and left alone because changing it changes the `noncontradiction`
    diagnostic field and the substrate calls on request turns; say if it should be aligned.
 7. Pre-existing, unrelated: `tests/test_open_ended_generation_fluent.py::test_render_hypothesis_fluent_flagged_guess_stub`
-   and `::test_render_hypothesis_template_fallback_without_mouth` fail on the pre-fix base `f5e3732fe` too.
+   and `::test_render_hypothesis_template_fallback_without_mouth`, and `tests/test_emerge58_unified_fluent_console.py`
+   `::test_derisk_go_single_seed` and `::test_membership_aware_routing_no_false_denial`, fail on the pre-fix base
+   `f5e3732fe` too.
+8. Optional before merging: run the 26 unrun brain-building tests, `cd $W && bash -c 'bash $P/tools/mem_ok.sh 12 &&
+   bash $P/tools/memcap.sh 16 -- env SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy $PY -m pytest -q -p no:cacheprovider -rf
+   tests/test_webapp_server.py -k brain_chat'` (one process accumulates a brain per test; a 10 GB cap throttled it).
