@@ -1,0 +1,16 @@
+# /etc/systemd/system/sim-agent-fw-selfwan.service -- refresh sim-agent.nft's self_wan set (this site's own public
+# address, which DDNS can change). Triggered by sim-agent-fw-selfwan.timer.
+# Source of truth: neural-simulator repo, tools/agent_container/server-stack/host/etc/systemd/system/.
+[Unit]
+Description=Refresh the sim-agent firewall's own-WAN-address set
+Requisite=sim-agent-fw.service
+After=sim-agent-fw.service network-online.target
+Wants=network-online.target
+# A failed resolution leaves the set unchanged and exits 1; after a DDNS change that means the hairpin is open, so
+# it must never fail silently (2026-09-30 security review, MEDIUM). The container's firewall_guard.sh also refuses
+# to start while the WAN address is not dropped.
+OnFailure=ntfy-notify@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sim-agent-fw-selfwan.sh

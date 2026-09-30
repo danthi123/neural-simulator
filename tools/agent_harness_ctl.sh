@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# tools/agent_harness_ctl.sh -- runs ON THE SERVER (homelab-server) as the forced command for a WORKSTATION
-# ssh key (owner-applied: an `authorized_keys` line with `command="bash ~/sim-agent/tools/agent_harness_ctl.sh
-# ",restrict ssh-ed25519 AAAA...`, see docs/AGENT_HARNESS_SETUP.md). This is the ONLY way the workstation can
+# tools/agent_harness_ctl.sh -- runs ON THE SERVER (homelab-server / srv-host-0) as the forced command for a
+# WORKSTATION ssh key (owner-applied: an `authorized_keys` line with `command="bash /home/dant123/data/sim-agent/
+# src/tools/agent_harness_ctl.sh",restrict,from="192.168.0.68" ssh-ed25519 AAAA...`, see
+# docs/AGENT_HARNESS_SETUP.md -- it runs from the owner's source checkout on the dataset, which the container
+# cannot reach, never from the agent's own writable repo). This is the ONLY way the workstation can
 # reach into the sim-agent container from the server side -- it allows exactly four things and refuses (and
 # logs) everything else:
 #
@@ -17,8 +19,11 @@
 #              them itself.
 #   state      one-line-per-field status: container status (running/paused/absent/...), and -- if running --
 #              the active profile + its KIND (from the SERVER-LOCAL record `set-active-profile` writes, never
-#              from the container) and whether a claude process is currently active. Read by
-#              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile) and by tools/game.sh.
+#              from the container) and whether a claude process is currently active; always the ZFS dataset's
+#              usage against its refquota, the gitea dataset's usage against its quota (the deploy key can push
+#              into it) and whether sim-agent-fw.service is active. Read by
+#              tools/agent_gateway.sh's `yield` (skip the pause for a cloud profile), tools/game.sh and
+#              tools/inspection_digest.py.
 #   set-active-profile <name>   records which profile is active + its KIND (read from this script's OWN
 #              sibling profiles/<name>.env on the server), so `state`'s gaming-pause-skip decision never has to
 #              trust anything the container itself could write (2026-09-29 re-review, L3). Called by `agent
@@ -32,6 +37,15 @@ PAUSE_DELAY_S="${AGENT_CTL_PAUSE_DELAY_S:-5}"
 MAX_SAY_LEN=300
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROFILE_DIR="${AGENT_CTL_PROFILE_DIR:-$SELF_DIR/agent_container/profiles}"
+ZFS="${AGENT_CTL_ZFS:-zfs}"                        # TEST-ONLY override; NEVER set in production
+SYSTEMCTL="${AGENT_CTL_SYSTEMCTL:-systemctl}"      # TEST-ONLY override; NEVER set in production
+DATASET="${AGENT_CTL_DATASET:-data/appdata/sim-agent}"
+GITEA_DATASET="${AGENT_CTL_GITEA_DATASET:-data/appdata/gitea}"
+FW_UNIT=sim-agent-fw.service
+# Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review,
+# HIGH): an exec inherits the container's environment, and the home bind mount is model-writable. Nothing from
+# that home is ever executed here: the Claude Code version is read from the installer's symlink, not by running it.
+EXEC_ENV_PATH="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # SERVER-LOCAL active-profile record (2026-09-29 re-review, L3). NEVER inside the container's own writable
 # home volume: `state` used to `docker exec ... cat /home/agent/.active_profile_kind`, a file the CONTAINER
 # itself writes -- a possibly-adversarial model could simply `echo cloud > ~/.active_profile_kind` to claim a
@@ -44,7 +58,7 @@ ACTIVE_PROFILE_STATE="${AGENT_CTL_ACTIVE_PROFILE_STATE:-$HOME/.sim_agent_active_
 log() { printf '%s agent_harness_ctl: %s\n' "$(date -u '+%F %T')" "$*" >> "$LOG"; }
 
 # sanitize <text> (2026-09-29 re-review, L3): strips every non-printable/control/escape character, so nothing
-# `state` (claude_version is still container-sourced) or a logged request can smuggle an ANSI escape sequence
+# `state` (claude_version is a container-side symlink target) or a logged request can smuggle an ANSI escape sequence
 # or other control byte into a terminal that later displays it. Never strips ordinary printable text.
 sanitize() { printf '%s' "$1" | LC_ALL=C tr -dc '[:print:]'; }
 
@@ -55,26 +69,26 @@ read -r SUB REST <<< "$CMD"
 
 container_status() { "$DOCKER" inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo "absent"; }
 
-# volume_size_gb <name-substring> -- the named volume's on-disk SIZE in GB (one decimal), via the daemon's own
-# accounting (`docker system df -v` -- no raw filesystem access needed, so this works under the same privilege
-# level `docker inspect`/`docker exec` already require). Grepped by SUBSTRING since compose prefixes the
-# declared volume name with the project name (e.g. "sim-agent_sim-agent-repo"), which can vary by how the stack
-# was deployed. Prints nothing (never a bare "0") if the volume cannot be found or its size cannot be parsed --
-# 2026-09-29 security review, M3 ("the digest that warns when the volumes exceed a threshold").
-volume_size_gb() {
-  local name_substr="$1" raw
-  raw=$("$DOCKER" system df -v 2>/dev/null | awk -v n="$name_substr" '$1 ~ n {print $NF; exit}')
-  [ -n "$raw" ] || return 0
-  python3 -c '
-import re, sys
-m = re.match(r"^([0-9.]+)\s*([a-zA-Z]*)$", sys.argv[1])
-if not m:
-    sys.exit(0)
-val = float(m.group(1)); unit = m.group(2).lower()
-mult = {"b": 1, "kb": 1e3, "mb": 1e6, "gb": 1e9, "tb": 1e12,
-        "kib": 2**10, "mib": 2**20, "gib": 2**30, "tib": 2**40, "": 1}.get(unit, 1e9)
-print(f"{val * mult / 1e9:.2f}")
-' "$raw" 2>/dev/null
+# appdata_usage -- prints "<referenced_gb> <refquota_gb|none>" for the sim-agent ZFS dataset (both 2 decimals), or
+# nothing if it cannot be read. `zfs get` needs no privilege, so this works as the forced-command account without
+# sudo, and it is instant (no du over a multi-GB checkout). REFERENCED is the live data the refquota caps;
+# snapshots are excluded on purpose (sanoid prunes them). 2026-09-29 security review M3 ("the digest that warns
+# when the volumes exceed a threshold"), rebased from named volumes onto the dataset 2026-09-30.
+appdata_usage() {
+  "$ZFS" get -Hp -o value referenced,refquota "$DATASET" 2>/dev/null | awk '
+    NR == 1 && $1 ~ /^[0-9]+$/ { used = sprintf("%.2f", $1 / 1e9) }
+    NR == 2 && $1 ~ /^[0-9]+$/ { quota = ($1 == 0) ? "none" : sprintf("%.2f", $1 / 1e9) }
+    END { if (used != "") print used, (quota != "" ? quota : "unknown") }'
+}
+
+# gitea_usage -- "<used_gb> <quota_gb|none>" for the gitea dataset (2026-09-30 security review, MEDIUM): the
+# container's write deploy key can push unlimited research/draft-* data into it, and it shares the `data` pool with
+# every other stack. USED and QUOTA (not refquota) because the recommended cap is `quota`, which counts snapshots.
+gitea_usage() {
+  "$ZFS" get -Hp -o value used,quota "$GITEA_DATASET" 2>/dev/null | awk '
+    NR == 1 && $1 ~ /^[0-9]+$/ { used = sprintf("%.2f", $1 / 1e9) }
+    NR == 2 && $1 ~ /^[0-9]+$/ { quota = ($1 == 0) ? "none" : sprintf("%.2f", $1 / 1e9) }
+    END { if (used != "") print used, (quota != "" ? quota : "unknown") }'
 }
 
 case "$SUB" in
@@ -132,8 +146,8 @@ case "$SUB" in
     # forces the TEXT argument to be sent exactly as literal bytes; Enter must therefore be its OWN, separate,
     # NON-literal send-keys call -- folding it into the same `-l` invocation would type the four literal
     # characters "Enter" instead of pressing the key.
-    if "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" -l -- "$msg" >> "$LOG" 2>&1 \
-       && "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" Enter >> "$LOG" 2>&1; then
+    if "$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/tmux send-keys -t "$TMUX_SESSION" -l -- "$msg" >> "$LOG" 2>&1 \
+       && "$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/tmux send-keys -t "$TMUX_SESSION" Enter >> "$LOG" 2>&1; then
       log "said: $msg"; echo "sent"
     else
       log "say FAILED (container not running, or no '$TMUX_SESSION' tmux session?)"
@@ -174,19 +188,26 @@ case "$SUB" in
         [ -n "$prof" ] || prof="none"
         [ -n "$kind" ] || kind="unknown"
       fi
-      busy="$("$DOCKER" exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
-      cver="$("$DOCKER" exec "$CONTAINER" claude --version 2>/dev/null || echo unknown)"
+      busy="$("$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/pgrep -f '/claude$' 2>/dev/null || true)"
+      # the active version = the basename of the installer's symlink target (~/.local/share/claude/versions/<v>)
+      cver="$("$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/readlink /home/agent/.local/bin/claude 2>/dev/null)"
+      cver="${cver##*/}"
+      [ -n "$cver" ] || cver=unknown
       echo "active_profile: $(sanitize "$prof")"
       echo "profile_kind: $(sanitize "$kind")"
       echo "claude_active: $([ -n "$busy" ] && echo yes || echo no)"
       echo "claude_version: $(sanitize "$cver")"
     fi
-    # VOLUME DISK USAGE -- always reported, regardless of container state (the named volumes persist across
-    # pause/stop); consumed by tools/inspection_digest.py to warn when either exceeds a threshold.
-    repo_gb="$(volume_size_gb "sim-agent-repo")"
-    home_gb="$(volume_size_gb "sim-agent-home")"
-    echo "repo_volume_gb: ${repo_gb:-unknown}"
-    echo "home_volume_gb: ${home_gb:-unknown}"
+    # APPDATA + FIREWALL -- always reported, regardless of container state (the dataset persists across
+    # pause/stop); consumed by tools/inspection_digest.py.
+    read -r used_gb quota_gb <<< "$(appdata_usage)"
+    echo "appdata_gb: ${used_gb:-unknown}"
+    echo "appdata_quota_gb: ${quota_gb:-unknown}"
+    read -r g_used_gb g_quota_gb <<< "$(gitea_usage)"
+    echo "gitea_gb: ${g_used_gb:-unknown}"
+    echo "gitea_quota_gb: ${g_quota_gb:-unknown}"
+    fw="$("$SYSTEMCTL" is-active "$FW_UNIT" 2>/dev/null)"
+    echo "firewall: $(sanitize "${fw:-unknown}")"
     log "state queried (status=$st)"
     ;;
 

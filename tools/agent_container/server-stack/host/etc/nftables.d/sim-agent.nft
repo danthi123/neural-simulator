@@ -1,0 +1,97 @@
+#!/usr/sbin/nft -f
+# sim-agent container isolation firewall (nftables). Loaded by sim-agent-fw.service.
+# Source of truth: neural-simulator repo, tools/agent_container/server-stack/host/etc/nftables.d/sim-agent.nft;
+# mirrored into ~/apps/host/etc/nftables.d/ like fw.nft. Owner procedure: that repo's docs/AGENT_HARNESS_SETUP.md.
+#
+# Scope: ONLY packets from the sim-agent bridge (br-simagent / 172.30.30.0/24), plus new connections INTO it.
+# Every other packet on this host falls through untouched to fw.nft's `inet fw` and Docker's own ip/ip6 tables.
+#
+# Why a separate table, and why it beats fw.nft's `iifname "br-*" accept`: nftables runs EVERY base chain
+# registered on a hook, in priority order. These chains sit at `priority filter - 10`, so they run BEFORE
+# fw.nft's input chain (priority 0) and Docker's iptables-nft FORWARD chain (priority 0). A `drop` is final
+# for the packet; an `accept` is NOT (the packet still meets the later chains). So this table can only REMOVE
+# access, never grant access that fw.nft or Docker would deny.
+#
+# Boot order: the rules match a fixed interface NAME and SUBNET, which may exist in the ruleset before the
+# interface does, so sim-agent-fw.service loads this Before=docker.service and there is no unfiltered window.
+#
+# Idempotent: we recreate ONLY our own `inet sim_agent` table. Never `flush ruleset` (that wipes Docker's live
+# rules). nftables.service must stay disabled on this box: /etc/nftables.conf flushes the whole ruleset.
+#
+# Reload wipes the self_wan set; sim-agent-fw.service's ExecReload refills it via sim-agent-fw-selfwan.sh.
+
+define SIM_IF = "br-simagent"                 # compose: com.docker.network.bridge.name
+define SIM_NET = 172.30.30.0/24               # compose: ipam subnet
+define DNS_RESOLVERS = { 192.168.0.1, 1.1.1.1 } # compose: dns: (queries leave FROM the container's netns)
+define WORKSTATION = 192.168.0.68             # agent_gateway.sh + rrsync forced-command sshd, llama-swap
+define WORKSTATION_TCP = { 22, 8080 }
+define GITEA_ADDR = 192.168.0.10              # this host's LAN address; Docker DNATs :2222 -> gitea:22
+define GITEA_SSH_PORT = 2222
+
+add table inet sim_agent
+delete table inet sim_agent
+table inet sim_agent {
+	# This site's own public address(es). Every *.dant123.com name resolves to it and the router hairpins it
+	# back to Caddy with a LAN-looking source, so "HTTPS to the internet" must exclude it. Filled at runtime
+	# (DDNS can change it) by /usr/local/sbin/sim-agent-fw-selfwan.sh; the address is never written in a file.
+	set self_wan {
+		type ipv4_addr
+	}
+
+	# Everything that is not the public internet: RFC1918 (the LAN, every Docker bridge, WireGuard), CGNAT,
+	# loopback, link-local, this-network, benchmarking, multicast and reserved.
+	set not_internet4 {
+		type ipv4_addr
+		flags interval
+		elements = { 0.0.0.0/8, 10.0.0.0/8, 100.64.0.0/10, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12,
+			     192.0.0.0/24, 192.168.0.0/16, 198.18.0.0/15, 224.0.0.0/3 }
+	}
+
+	# sim-agent -> THIS host (sshd 22, rpcbind 111, smbd 139/445, nfsd 2049 + rpc.*, upsd, cockpit, ...).
+	# The container needs no host listener: gitea is reached through Docker's DNAT (the forward hook, below) and
+	# DNS goes to the resolvers directly. fw.nft L31-32 would otherwise accept every br-* bridge.
+	chain input {
+		type filter hook input priority filter - 10; policy accept;
+		iifname $SIM_IF limit rate 6/minute burst 10 packets log prefix "sim-agent-drop in " level info
+		iifname $SIM_IF counter drop comment "sim-agent -> host: nothing"
+		ip saddr $SIM_NET counter drop comment "same, by subnet (holds even if the bridge were renamed)"
+	}
+
+	chain forward {
+		type filter hook forward priority filter - 10; policy accept;
+		iifname $SIM_IF jump from_agent
+		ip saddr $SIM_NET jump from_agent
+		oifname $SIM_IF jump to_agent
+		ip daddr $SIM_NET jump to_agent
+	}
+
+	chain from_agent {
+		meta nfproto ipv6 counter drop comment "no IPv6 at all"
+		ct state established,related accept
+		ct state invalid counter drop
+
+		# DNS, only to the two resolvers pinned in the compose fragment
+		ip daddr $DNS_RESOLVERS meta l4proto { tcp, udp } th dport 53 accept
+
+		# the workstation: restricted-key sshd (agent_gateway.sh, rrsync results pull) + the model server
+		ip daddr $WORKSTATION tcp dport $WORKSTATION_TCP accept
+
+		# gitea git-over-ssh through this host's published 2222. Docker DNATs it in prerouting, BEFORE this hook,
+		# so the packet's daddr here is the gitea container; `ct original` matches what the client dialed.
+		meta l4proto tcp ct original ip daddr $GITEA_ADDR ct original proto-dst $GITEA_SSH_PORT accept
+
+		# HTTPS to the public internet only: never this site's own WAN address (hairpin), never a private range
+		ip daddr @self_wan counter drop comment "hairpin to this site's own services"
+		ip daddr @not_internet4 counter drop comment "LAN, other containers, this host"
+		tcp dport 443 accept
+
+		limit rate 6/minute burst 10 packets log prefix "sim-agent-drop fwd " level info
+		counter drop comment "everything else"
+	}
+
+	# Nothing initiates a connection INTO sim-agent (no published ports); only replies get in.
+	chain to_agent {
+		ct state established,related accept
+		counter drop
+	}
+}

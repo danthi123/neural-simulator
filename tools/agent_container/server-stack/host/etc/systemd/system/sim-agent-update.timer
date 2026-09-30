@@ -1,0 +1,11 @@
+# /etc/systemd/system/sim-agent-update.timer -- see sim-agent-update.service. Sunday 04:00: after backup.timer
+# (01:30), before apps-gitsync.timer (04:45).
+[Unit]
+Description=Weekly sim-agent rebuild
+
+[Timer]
+OnCalendar=Sun *-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

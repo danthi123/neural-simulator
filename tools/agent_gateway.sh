@@ -6,9 +6,8 @@
 # -- this script is the ENTIRE trust boundary between the container and the workstation's compute (the pool,
 # the GPU, the local-model server). THE CONTAINER'S OWN DRIVER MAY BE ADVERSARIAL (2026-09-29 security review):
 # it must not be able to run ANY text it supplies as a shell command, on this workstation or a pool node. It
-# allows exactly four things and refuses (and logs) everything else:
+# allows exactly three things and refuses (and logs) everything else:
 #
-#   pool-submit --sha <40hex> --runner research.runners.<name> [--prereg <path>] --checked <reason> -- <args...>
 #   gpu-submit  --sha <40hex> --runner research.runners.<name> [--prereg <path>] -- <args...>
 #       STRUCTURED requests only (2026-09-29 security review, H2) -- tools/agent_gateway_submit.py validates the
 #       sha (reachable from a refs/remotes/{origin,gitea}/* ref), the runner module (exists AT that sha), every
@@ -23,6 +22,15 @@
 #                                worktree refusals all still apply), with the restore step's "resume a
 #                                workstation session" behaviour swapped for "unpause the harness + say" (see
 #                                that command's --notify-cmd, and tools/gpu_queue.sh's LLM_YIELD_NOTIFY_CMD).
+#
+# POOL-SUBMIT IS REFUSED (2026-09-30 security review, HIGH #2). It dispatched agent-authored runner code (any
+# research/draft-* commit the gitea deploy key can push) to the pool40/41/42 mini-PCs UNSANDBOXED, with full
+# network, under a job account with passwordless sudo: a LAN foothold that bypasses everything sim-agent.nft
+# confines, because the code no longer runs in the container. The only compute channels left are the sandboxed GPU
+# path (bubblewrap --unshare-all, no network, resource limits) and the model port. Re-enabling it is a CODE CHANGE
+# here, reviewed by the owner, and only after every pool node runs agent jobs under a dedicated no-sudo user inside
+# the same bubblewrap recipe as gpu-submit (read-only checkout, writable per-job output directory, no network) --
+# docs/AGENT_HARNESS_SETUP.md, "Pool nodes". tools/agent_gateway_submit.py's `pool` builder is kept for that day.
 #
 # RESULTS-SYNC HAS MOVED OFF THIS SCRIPT ENTIRELY (2026-09-29 security review, H3): the old `results-sync`
 # subcommand here validated only the LAST rsync protocol argument, so `. /home/dant123/.ssh/ research/findings/
@@ -85,9 +93,7 @@ parse_rest_into_args() {
 
 case "$SUB" in
   pool-submit)
-    [ -n "$REST" ] || refuse "pool-submit needs a structured request (--sha ... --runner ... --checked ... -- <args...>)"
-    parse_rest_into_args
-    exec "$PYTHON_BIN" "$SUBMIT_PY" pool "${ARGS[@]}"
+    refuse "pool-submit is disabled: pool jobs would run unsandboxed, with network, on nodes with passwordless sudo (a LAN foothold outside sim-agent.nft) -- use gpu-submit (sandboxed, no network); see docs/AGENT_HARNESS_SETUP.md, Pool nodes"
     ;;
 
   gpu-submit)
@@ -139,6 +145,6 @@ case "$SUB" in
     ;;
 
   *)
-    refuse "unknown command '$SUB' (allowed: pool-submit, gpu-submit, status, yield)"
+    refuse "unknown command '$SUB' (allowed: gpu-submit, status, yield)"
     ;;
 esac

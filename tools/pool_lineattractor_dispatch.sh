@@ -8,10 +8,12 @@
 #         bash tools/pool_lineattractor_dispatch.sh --status   # collect progress
 set -uo pipefail
 cd "$(dirname "$0")/.."
+# shellcheck source=tools/pool_nodes.sh
+source tools/pool_nodes.sh
 REMOTE=derisk-pool/sim
 OUT=research/findings/raw/consol_lineattractor
 SEEDS="42 43"
-NODES=(pool40 pool41 pool42)
+NODES=($POOL_NODES_DEFAULT)
 NCFG=$(.venv/bin/python -m research.runners._consol_dendritic_lineattractor_derisk --list-configs 2>/dev/null | tail -1)
 
 if [ "${1:-}" = "--status" ]; then

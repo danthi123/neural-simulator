@@ -12,7 +12,7 @@
 #
 #   tools/pool_sync.sh              # pull newer/missing result JSONs from every POOL_NODES node (safe, non-destructive)
 #   tools/pool_sync.sh --dry-run    # show what WOULD transfer, change nothing
-#   POOL_NODES="pool40 pool41" tools/pool_sync.sh   # restrict to a subset
+#   POOL_NODES="pool41" tools/pool_sync.sh          # restrict to a subset (default nodes: tools/pool_nodes.conf)
 #   tools/pool_sync.sh --strict --node pool1        # STRICT: non-zero exit if pool1 is unreachable or ANY of
 #                                                    # its (main or per-revision) rsync pulls fails. Same as
 #                                                    # POOL_SYNC_STRICT=1 POOL_NODES=pool1 tools/pool_sync.sh.
@@ -39,6 +39,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 # pool_provision.sh / pool_queue.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
 # by default, so every rsync below is unchanged for anyone who hasn't run `aws_pool_node.sh up`. The default
 # node list also grows with .pool_extra_nodes, read fresh on every invocation (this script is not a daemon).
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
 [ -f "$POOL_SSH_CONFIG" ] && RSYNC_SSH="ssh -F $POOL_SSH_CONFIG -o BatchMode=yes -o ConnectTimeout=6"
@@ -84,7 +86,7 @@ done
 [ -n "$_NODE_ARG" ] && POOL_NODES="$_NODE_ARG"
 [ -z "${POOL_NODES:-}" ] && [ -f "$EXTRA_NODES_FILE" ] && \
   _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ') || true
-NODES="${POOL_NODES:-pool40 pool41 pool42} $_EXTRA"
+NODES="${POOL_NODES:-$POOL_NODES_DEFAULT} $_EXTRA"
 REMOTE_DIR="${POOL_REMOTE_DIR:-~/derisk-pool/sim/research/findings/raw/}"
 LOCAL_DIR="research/findings/raw/"
 mkdir -p "$LOCAL_DIR"

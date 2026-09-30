@@ -131,6 +131,15 @@ neither gaming nor GPU windows need to pause the harness.
 `research/draft-*` (branch protection on `main`); pushes to GitHub stay with the workstation/Claude. Optional: a
 Vikunja token. Optional egress limits for the container's subnet (a DOCKER-USER firewall snippet the owner applies).
 
+**2026-09-30 refit to srv-host-0's own conventions** (branch `research/harness-server-fit`; procedure
+`docs/AGENT_HARNESS_SETUP.md`). The design above assumed a generic Docker host. On the real box the harness is now an
+`~/apps` stack fragment (one compose project, secrets as `SIM_AGENT_*` in the one `~/apps/.env`), its repo and home are
+bind mounts on a refquota-capped, sanoid-snapshotted ZFS dataset (`data/appdata/sim-agent`, skipped by the nightly
+cold-stop backup), limits are 8 CPUs / 12 GB (the box has ~23 GB free), and the egress firewall is MANDATORY: an
+nftables table of its own (`sim-agent.nft`, loaded before Docker) replacing the DOCKER-USER snippet, which on this box
+matched no bridge, blocked the fallback resolver and let the container hairpin into the server's own HTTPS services.
+The container refuses to start unless that table is dropping its traffic.
+
 **Serving simplification (workstation).** Bake-off with the existing `tools/local_llm/bakeoff.py`: Ollama and Unsloth
 Studio (both serve the Anthropic Messages API) against today's llama-server profile, same model file where possible.
 Switch to the easiest one that passes the three tasks and stays within ~25% of today's speed; otherwise llama-swap
