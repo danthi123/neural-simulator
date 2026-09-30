@@ -225,8 +225,27 @@ the end (what re-ran, what was slow). Then NEEDS-CLAUDE #2 (review + merge) and 
 
 ## 11. Dev-seed record (seed 7, done by Claude; re-run only if Claude asks)
 
-See `$K/dev7/README.md` (the byte-identity check of the stub path before/after the change, and the mouth arm's
-seed-7 cells scored by `tools/b2d_mouth_score.py`).
+See `$K/dev7/README.md` (the byte-identity check of the stub path before and after the change, the mouth arm's
+seed-7 cells scored by `tools/b2d_mouth_score.py`, and the remap probe).
+
+**Two dev GPU jobs were still in the GPU queue at handoff** (both wait for memory first): the remap probe's
+production-mode lesion arm (`$HOME/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03/research/findings/
+raw/_b2d_mood_render_probe/dev7_production/lesion.json`) and the re-run of the dev drives cell
+(`$HOME/derisk-pool/revisions/e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1/research/findings/raw/_load_bearing/_shards/
+b2d0929-mouth-dev7/s7/affect-drives-response/lesion_affect_drives_response_s7.json`). When both files exist:
+
+```bash
+source /home/dant123/Projects/sim/.claude/worktrees/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/env.sh
+Q=$HOME/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03; E=$HOME/derisk-pool/revisions/e8a0d0cb1a32ba5ecdd867398caa0d21b0ce66c1
+cd $Q && .venv/bin/python -m research.runners._b2d_mood_render_probe --compare research/findings/raw/_b2d_mood_render_probe/dev7_production --out research/findings/raw/_b2d_mood_render_probe/dev7_production/compare.json
+mkdir -p $W/research/findings/raw/_b2d_mood_render_probe/dev7_production && rsync -a --exclude '*.log' $Q/research/findings/raw/_b2d_mood_render_probe/dev7_production/ $W/research/findings/raw/_b2d_mood_render_probe/dev7_production/
+rsync -a $E/$SH/b2d0929-mouth-dev7/s7/affect-drives-response $W/$SH/b2d0929-mouth-dev7/s7/
+cd $W && $PY $K/dev7/summarize_dev7.py --shards $W/$SH --probe $W/research/findings/raw/_b2d_mood_render_probe/dev7_production --out $K/dev7/summarize_dev7.json
+git add research/findings/raw/_b2d_mood_render_probe/dev7_production $SH/b2d0929-mouth-dev7 $K/dev7/summarize_dev7.json && git commit -m "data(B2d, dev seed 7): remap probe production-mode arms + the re-run dev drives cell (dev only)" && bash tools/push_both.sh research/b2d-mouth-renderer
+```
+
+Report the printed `probe` reading and the drives cell state to Claude in `research/coordination/LOCAL_LLM_RUNBOOK.md`
+(NEEDS-CLAUDE #3). If either job ended `DONE(rc!=0)`, do nothing more with it: these are dev checks, not gate cells.
 
 ## NEEDS-CLAUDE (open; do not act on these)
 
