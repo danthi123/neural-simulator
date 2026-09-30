@@ -14,7 +14,11 @@ source "$ROOT/tools/pool_revision_marker.sh"
 source "$ROOT/tools/queue_job_shape_check.sh"
 # shellcheck source=tools/pool_nodes.sh
 source "$ROOT/tools/pool_nodes.sh"
-Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+SHARED_ROOT=$ROOT; _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && SHARED_ROOT=$(dirname "$_GC")
+Q="${POOL_QUEUE_PATH:-$SHARED_ROOT/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
 # pool_provision.sh / pool_sync.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT

@@ -17,7 +17,11 @@
 #
 # A job line is a command run on the node, from ~/derisk-pool/sim. Lines starting with # are ignored.
 set -uo pipefail
-ROOT=/home/dant123/Projects/sim
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+_GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN tools/ dir (unlike $ROOT above,
 # this follows whichever checkout/worktree is actually running -- used below so the stale-HostName refresh
 # invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.

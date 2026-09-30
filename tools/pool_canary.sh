@@ -48,7 +48,11 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
-CANARIES="${POOL_CANARIES_PATH:-/home/dant123/Projects/sim/research/queue/pool_canaries.tsv}"
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+SHARED_ROOT=$ROOT; _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && SHARED_ROOT=$(dirname "$_GC")
+CANARIES="${POOL_CANARIES_PATH:-$SHARED_ROOT/research/queue/pool_canaries.tsv}"
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 HEADER=$'# recorded_at\tmodule\tsha\tverdict\tnode\tseed_kind\tvia\tevidence'

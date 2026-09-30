@@ -57,7 +57,13 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LIVE_ROOT = "/home/dant123/Projects/sim"
+# The shared repo root (parent of the git common dir), on whichever host holds the checkout (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+try:
+    LIVE_ROOT = os.path.dirname(subprocess.run(
+        ["git", "-C", REPO, "rev-parse", "--path-format=absolute", "--git-common-dir"],
+        capture_output=True, text=True, timeout=10, check=True).stdout.strip()) or REPO
+except Exception:
+    LIVE_ROOT = REPO
 # First dispatcher start after the revision probe reached main (merge 561efa586, 2026-09-23 22:44:43 -0400); the
 # dispatch.log records `[pool-dispatch] started 22:53:21` right after it. The whole file is still scanned, so the
 # pre-cutoff span is a negative control for the detector.

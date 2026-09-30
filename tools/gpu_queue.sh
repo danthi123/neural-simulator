@@ -481,8 +481,22 @@ FAKEEOF
   return "$rc"
 }
 
+# NO-GPU GUARD (2026-09-30, docs/plans/2026-09-30-home-to-server-MIGRATION.md). The project home moved to a GPU-less
+# server; a job queued there would sit in a queue no daemon serves, and a daemon started there would never find a GPU.
+# `add` and `start` therefore refuse on a host with no nvidia-smi and point at tools/gpu_remote.sh, which queues the job
+# on the workstation. An isolated queue (GPU_QUEUE_DIR, as --selftest and the tests use) or the nvidia-smi seam
+# (GPU_QUEUE_NVIDIA_SMI) is never the live queue, so either one skips the guard.
+require_gpu_host() {
+  [ -n "${GPU_QUEUE_DIR:-}" ] || [ -n "${GPU_QUEUE_NVIDIA_SMI:-}" ] && return 0
+  command -v nvidia-smi >/dev/null 2>&1 && return 0
+  echo "⛔ REFUSED: $(hostname) has no nvidia-smi, so no GPU queue daemon serves a queue here." >&2
+  echo "   Use: bash tools/gpu_remote.sh add '<cmd>'   (queues it on the workstation's 3090)" >&2
+  exit 3
+}
+
 case "${1:-}" in
   start)
+    require_gpu_host
     # Refuse if a daemon is already live ANYWHERE (dpid alive OR singleton lock held) — the cross-worktree check.
     # It is advisory: the AUTHORITATIVE guard is the DLOCK acquired inside __daemon, so even a TOCTOU race here
     # (two starts both passing this check) still cannot produce two daemons.
@@ -512,6 +526,7 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
+    require_gpu_host
     # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh): refuse a line whose first word could not
     # possibly run (a prose label, a torn line, a syntax error) BEFORE it is queued -- see that file's header
     # for the real historical failures (the SETTLE A2 pool lines; a bare `status` job in this very log,
