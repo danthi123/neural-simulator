@@ -45,7 +45,7 @@ $P/data $W/data`.
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/packets/integration-wave1/env.sh
-cd $W && git status --short --untracked-files=no          # must print nothing
+cd $W && git status --short --untracked-files=no -- . ":!research/findings/raw/_provenance/runs.jsonl"   # must print nothing
 git fetch -q origin
 git merge-base --is-ancestor origin/main HEAD || git merge --no-edit origin/main
 .venv/bin/python -m pytest -q tests/test_integration_wave1_anchors.py
