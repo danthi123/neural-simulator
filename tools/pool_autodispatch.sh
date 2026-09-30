@@ -23,6 +23,8 @@ SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"   # this script's OWN t
 # invokes the SAME checkout's aws_pool_node.sh, not always the one at the hardcoded $ROOT.
 # shellcheck source=tools/pool_revision_marker.sh
 source "$SELF_DIR/pool_revision_marker.sh"
+# shellcheck source=tools/pool_nodes.sh
+source "$SELF_DIR/pool_nodes.sh"
 QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
@@ -244,12 +246,19 @@ reserved_gb() {
 peek_est_gb() {
   # The size of the job pop_job would hand out next (same first-fresh-line rule), so a big job is not sent to a
   # node that only has room for a default-sized one.
-  local cutoff job
-  cutoff=$(( $(date +%s) - ${POOL_JOB_MAX_AGE:-43200} ))
-  job=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2; exit}' "$QUEUE" 2>/dev/null)
+  local job
+  job=$(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+        "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2; exit}' "$QUEUE" 2>/dev/null)
   job_est_gb "$job"
 }
-NODES="${POOL_NODES:-pool40 pool41 pool42}"
+# PER-LINE MAX AGE (2026-09-30). The staleness guard below treats a line older than POOL_JOB_MAX_AGE (12 h) as
+# debris. That is right for an abandoned sweep and wrong for a batch that is simply waiting in a deep queue: the
+# 2026-09-29 evening landing queued ~550 legitimate lines (three to five days of pool work), and every one would
+# have been skipped from the next morning on. A line may declare `max_age_h=N` anywhere in its text (usually the
+# --checked reason, beside mem_gb=N and pool_node=<name>) to set its own limit; it is capped at
+# POOL_JOB_MAX_AGE_CAP_H (240 h), so an abandoned batch still expires. A line with no token keeps the default.
+POOL_FRESH_AWK='function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m = substr(l, RSTART + 10, RLENGTH - 10) + 0; if (m > cap) m = cap; return m * 3600 } return d }'
+NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
 NODE_BUDGET=0
 
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
@@ -401,8 +410,8 @@ pop_job() {
   fi
   # STALENESS GUARD: an entry older than MAX_AGE is debris, not staged work. Learned immediately -- the first
   # dispatcher run found 69 jobs from an opsweep abandoned days earlier and launched three of them.
-  local now cutoff
-  now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
+  local now
+  now=$(date +%s)
   # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
   # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
   local max_gb="${1:-999}" cand sha want_node
@@ -425,7 +434,8 @@ pop_job() {
     sha=$(printf '%s' "$cand" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
     if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
     job="$cand"; break
-  done < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2}' "$QUEUE")
+  done < <(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$QUEUE")
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -442,7 +452,8 @@ pop_job() {
        flock -u 9; printf ''; return 0 ;;
   esac
   local stale
-  stale=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 < c' "$QUEUE" | wc -l)
+  stale=$(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 < now - maxage($0)' "$QUEUE" | wc -l)
   [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h" >&2
   if [ -z "$job" ]; then flock -u 9; printf ''; return 0; fi
   # Keep the full timestamped record, including the checked reason, before the
@@ -514,9 +525,10 @@ fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
 if [ "${1:-}" = "--min-queued-est-gb" ]; then   # smallest declared size among fresh queued jobs; empty if none
-  cutoff=$(( $(date +%s) - ${POOL_JOB_MAX_AGE:-43200} )); m=""
+  m=""
   while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
-    < <(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c && $0 ~ /#checked:/ {print $2}' "$QUEUE" 2>/dev/null)
+    < <(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) && $0 ~ /#checked:/ {print $2}' "$QUEUE" 2>/dev/null)
   echo "$m"; exit 0
 fi
 if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?

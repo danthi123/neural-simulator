@@ -1,0 +1,11 @@
+# /etc/systemd/system/sim-agent-fw-selfwan.timer -- see sim-agent-fw-selfwan.service.
+[Unit]
+Description=Refresh the sim-agent firewall's own-WAN-address set every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

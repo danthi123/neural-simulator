@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # tools/agent_container/bin/llm -- `llm use <profile>` inside the sim-agent container (section 9 of
 # docs/plans/2026-09-29-local-model-transition-PLAN.md, item 2 of the build). LLM-agnostic: a profile is a
 # small env file (tools/agent_container/profiles/<name>.env, baked into the image at

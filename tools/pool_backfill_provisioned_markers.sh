@@ -26,16 +26,19 @@
 # revision_available_cached) -- running this first just avoids waiting out the 12h staleness cutoff for no
 # reason on capacity that was already there.
 #
-# Usage: bash tools/pool_backfill_provisioned_markers.sh [--dry-run] [pool40 pool41 pool42 ...]
+# Usage: bash tools/pool_backfill_provisioned_markers.sh [--dry-run] [<node> ...]
 #   --dry-run   print what WOULD be marked/skipped without writing anything.
+#   (default node list comes from tools/pool_nodes.conf; pass explicit node names to override it)
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 
 DRY_RUN=0
 if [ "${1:-}" = "--dry-run" ]; then DRY_RUN=1; shift; fi
-NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
+NODES=("${@:-$POOL_NODES_DEFAULT}"); NODES=(${NODES[@]})
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")
 

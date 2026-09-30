@@ -23,6 +23,12 @@
 # chosen by tools/local_llm/bakeoff.py on this machine: 4 GB of the 24 GB card is left for the displays.
 # Add `alias llm='bash ~/Projects/sim/tools/local_llm/llm.sh'` to your shell config to type just `llm`.
 #
+# UNDER THE HOOD (2026-09-29): the "local-llm" unit runs llama-swap (tools/local_llm/llama-swap.yaml), which
+# itself launches the SAME llama-server command as before for whichever profile is selected, auto-unloads it
+# after an hour idle (globalTTL, frees the 3090), and serves both loopback and the LAN. See
+# docs/LOCAL_MODEL_GUIDE.md to add a model or change the default -- it is a plain-language walkthrough, no
+# Claude session needed.
+#
 # COORDINATION WITH tools/gpu_queue.sh (2026-09-25 auto-swap; retired 2026-09-29 for an explicit GPU YIELD --
 # docs/plans/2026-09-29-local-model-transition-PLAN.md section 3). This unit and tools/gpu_queue.sh jobs both want
 # the one 3090 and are not coordinated on their own. The ORIGINAL fix had gpu_queue.sh stop this unit itself the
@@ -46,6 +52,14 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PORT="${LLM_PORT:-8080}"
 UNIT="local-llm"
 SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}   # TEST-ONLY override (shared name with gpu_queue.sh); NEVER set in production
+# 2026-09-29 (serving bake-off, research/serving-bakeoff/tools/local_llm/results/summary.md): the "local-llm" unit
+# now runs llama-swap (tools/local_llm/llama-swap.yaml), not a bare llama-server -- llama-swap still spawns the
+# SAME llama-server command profile_cmd() builds below (reused byte-for-byte by the config; see __profile_cmd and
+# tests/test_llama_swap_config.py), just fronted by a proxy that can hold every profile.json entry, hot-swap
+# between them, and auto-unload an idle one (ttl). LLAMA_SWAP_BIN/LLAMA_SWAP_YAML are TEST-ONLY overrides.
+LLAMA_SWAP_YAML="${LLAMA_SWAP_YAML:-$HERE/llama-swap.yaml}"
+LLAMA_SWAP_BIN="${LLAMA_SWAP_BIN:-$(command -v llama-swap || echo "$HOME/.local/bin/llama-swap")}"
+LLAMA_SWAP_PROFILE_TIMEOUT_S="${LLAMA_SWAP_PROFILE_TIMEOUT_S:-620}"   # >= llama-swap.yaml's healthCheckTimeout
 # Resolve the SAME shared queue dir gpu_queue.sh uses (its singleton is per-repo, not per-worktree -- see that
 # file's SHARED_ROOT comment), so a marker either script writes is visible to the other regardless of which
 # worktree invoked them. GPU_QUEUE_DIR overrides it (tests only).
@@ -95,7 +109,10 @@ current_profile() {
   esac
 }
 
-profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile
+profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile (reused verbatim, with
+  # $PORT swapped for llama-swap's own ${PORT} macro, by tools/local_llm/llama-swap.yaml's `cmd:` entries --
+  # see the hidden `__profile_cmd` subcommand below and tests/test_llama_swap_config.py, which regenerates
+  # every profile's expected command line through THIS function and fails if the committed YAML has drifted.
   # -np 1 was INVESTIGATED, not merely inherited (research/local-llm-prompt-cache branch, 2026-09-25,
   # tools/local_llm/cache_probe.py + tools/local_llm/results/cache_probe.md): a live `llm claude` session
   # reprocesses its ENTIRE prompt every turn instead of reusing the cached prefix.
@@ -140,11 +157,51 @@ print(shlex.join(cmd))
 EOF
 }
 
-is_up() { curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; }
+is_up() { curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; }   # llama-swap's OWN health, not a profile's
 
 wait_up() {
   for _ in $(seq 1 300); do is_up && return 0; "$SYSTEMCTL" --user is-active --quiet "$UNIT" || break; sleep 1; done
-  echo "the model did not come up; recent log:"; journalctl --user -u "$UNIT" -n 20 --no-pager; return 1
+  echo "llama-swap did not come up; recent log:"; journalctl --user -u "$UNIT" -n 20 --no-pager; return 1
+}
+
+llama_swap_cmd() {   # the launch line for the "local-llm" unit itself: llama-swap, fronting every profile.json
+  # entry (tools/local_llm/llama-swap.yaml).
+  #
+  # -listen 0.0.0.0 (not 127.0.0.1): llm.sh itself needs loopback (is_up/activate_profile/cmd_claude all use
+  # 127.0.0.1), and the server harness needs the LAN address (docs/AGENT_HARNESS_SETUP.md, workstation.env) --
+  # both on the SAME port 8080. llama-swap's -listen takes exactly one address (it is a plain Go
+  # http.Server.ListenAndServe, not a multi-bind server), so "127.0.0.1 AND the LAN IP, nothing else" is not
+  # expressible as a single -listen value: binding to the specific LAN IP alone would make 127.0.0.1 itself
+  # unreachable (a different destination address at the TCP/IP layer, not merely a stricter version of "any
+  # interface"), breaking every local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working.
+  # There is no apiKeys: entry either, matching the old unauthenticated direct-llama-server setup.
+  #
+  # THE ACTUAL RESTRICTION lives one layer down, where it is possible: the sim-agent firewall on homelab-server
+  # (tools/agent_container/server-stack/host/etc/nftables.d/sim-agent.nft) already limits the sim-agent
+  # CONTAINER to reaching ONLY 192.168.0.68:{22,8080} (this box) among a narrow allowlist -- so the one real
+  # external consumer this port was
+  # opened up for is already fenced in. Tightening the WORKSTATION's own inbound side further (accept only
+  # 127.0.0.1 + 192.168.0.10, drop everything else on :8080) is an optional, OWNER-applied hardening step --
+  # see docs/AGENT_HARNESS_SETUP.md's "restrict who can reach the local-llm port" section for the exact
+  # commands; this script never touches the firewall itself.
+  #
+  # -watch-config: docs/LOCAL_MODEL_GUIDE.md's edits (add/switch a model) take effect without a restart.
+  printf '%s -config %s -listen 0.0.0.0:%s -watch-config' "$LLAMA_SWAP_BIN" "$LLAMA_SWAP_YAML" "$PORT"
+}
+
+activate_profile() {   # activate_profile <name> -- select it as llama-swap's active profile (pins the "local"
+  # model id -- what llm.sh/Claude Code always request, ANTHROPIC_MODEL=local -- to this profile's real model
+  # id) and force it to load NOW, synchronously, so `llm on <profile>` keeps its old eager-load meaning instead
+  # of silently deferring to the first real request. /upstream/<id>/health is llama-swap's own passthrough
+  # (README: "direct access to upstream server"); it waits for the backend's own /health inside
+  # llama-swap.yaml's healthCheckTimeout before answering, exactly like any other proxied request would.
+  local prof="$1"
+  curl -sf -X PUT -H 'Content-Type: application/json' -d "{\"name\":\"$prof\"}" \
+    "http://127.0.0.1:$PORT/api/profiles/active" >/dev/null || {
+    echo "could not select profile '$prof' (missing from tools/local_llm/llama-swap.yaml's profiles: block?)"; return 1; }
+  curl -sf --max-time "$LLAMA_SWAP_PROFILE_TIMEOUT_S" "http://127.0.0.1:$PORT/upstream/$prof/health" >/dev/null || {
+    echo "profile '$prof' did not become ready within ${LLAMA_SWAP_PROFILE_TIMEOUT_S}s; recent log:"
+    journalctl --user -u "$UNIT" -n 30 --no-pager; return 1; }
 }
 
 cmd_on() {
@@ -168,13 +225,19 @@ cmd_on() {
       return 1
     fi
   fi
-  local cmd; cmd="$(profile_cmd "$prof")"
+  local swap_cmd; swap_cmd="$(llama_swap_cmd)"
   # A unit left FAILED (e.g. a stop that timed out and was SIGKILLed, 2026-09-26) stays loaded, and systemd-run then
   # refuses the same name ("already loaded or has a fragment file"); clear it first. Harmless when there is none.
   "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
+  # LLAMA_SWAP_REPO_ROOT: llama-swap.yaml's `${repo_root}` macro (its --chat-template-file paths) resolves
+  # through THIS env var rather than a path baked into the committed YAML, so the same file is correct whether
+  # "local-llm" is ever started from the main checkout or from a .claude/worktrees/* dev copy.
   # shellcheck disable=SC2086
-  systemd-run --user --quiet --unit="$UNIT" --description="local LLM ($prof)" -p MemoryMax=12G bash -c "exec $cmd"
-  echo "loading $prof ..."; wait_up && echo "ready on http://127.0.0.1:$PORT ($prof)"
+  systemd-run --user --quiet --unit="$UNIT" --description="local LLM ($prof)" -p MemoryMax=12G \
+    --setenv=LLAMA_SWAP_REPO_ROOT="$(cd "$HERE/../.." && pwd)" bash -c "exec $swap_cmd"
+  echo "starting llama-swap, then loading $prof ..."
+  wait_up || return 1
+  activate_profile "$prof" && echo "ready on http://127.0.0.1:$PORT ($prof)"
 }
 
 cmd_off() {
@@ -204,7 +267,20 @@ cmd_stop_graceful() {
 }
 
 cmd_status() {
-  if is_up; then echo "loaded: $("$SYSTEMCTL" --user show -p Description --value "$UNIT")"; else echo "not loaded"; fi
+  if is_up; then
+    echo "loaded: $("$SYSTEMCTL" --user show -p Description --value "$UNIT")"
+    # GET /running (llama-swap API): which profile.json entry is ACTUALLY resident right now -- can legitimately
+    # be "none" after llama-swap.yaml's globalTTL idle-unloads it; the next request (or `llm on`) reloads it.
+    local running; running="$(curl -sf --max-time 5 "http://127.0.0.1:$PORT/running" 2>/dev/null)"
+    [ -n "$running" ] && printf '%s' "$running" | python3 -c '
+import json, sys
+try: models = json.load(sys.stdin).get("running", [])
+except Exception: models = []
+print("resident: " + (", ".join("%s (%s)" % (m["model"], m["state"]) for m in models) or "none (idle-unloaded, or not requested yet)"))
+' 2>/dev/null
+  else
+    echo "not loaded"
+  fi
   nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader | sed 's/^/GPU memory in use: /'
 }
 
@@ -377,5 +453,8 @@ case "${1:-status}" in
   yield) shift; cmd_yield "$@" ;;
   __stop_graceful) shift; cmd_stop_graceful "$@" ;;   # hidden: also used by tools/game.sh on --graceful
   __current_profile) current_profile ;;   # hidden diagnostic: which profile (if any) this unit is currently serving
+  __profile_cmd) shift; profile_cmd "$1" ;;   # hidden: exposes profile_cmd() so llama-swap.yaml's authoring step
+    # and tests/test_llama_swap_config.py can regenerate a profile's exact llama-server command line without
+    # duplicating the flag-building logic above (LLM_PORT=@@PORT@@ ... __profile_cmd <name> is how both do it).
   *) sed -n '2,24p' "$0"; exit 2 ;;
 esac

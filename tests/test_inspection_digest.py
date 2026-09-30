@@ -318,7 +318,7 @@ def test_build_digest_end_to_end_on_scratch_repo_produces_all_sections(tmp_path,
     monkeypatch.setattr(digest, "GPU_LOG", repo / "no-gpu.log")
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    monkeypatch.setattr(digest, "query_container_appdata_usage", lambda: {"used": None, "quota": None, "firewall": None})
 
     text = digest.build_digest("1970-01-01")
     for heading in ("## 1. Commits per branch", "## 2. New findings", "## 3. NEEDS-CLAUDE",
@@ -335,7 +335,7 @@ def test_build_digest_end_to_end_on_scratch_repo_produces_all_sections(tmp_path,
 def test_agent_container_version_section_reports_a_lag(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.266 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    monkeypatch.setattr(digest, "query_container_appdata_usage", lambda: {"used": None, "quota": None, "firewall": None})
     text = digest.render_agent_container_version_section()
     assert "installed" in text and "2.1.266" in text
     assert "latest published" in text and "2.1.280" in text
@@ -345,7 +345,7 @@ def test_agent_container_version_section_reports_a_lag(monkeypatch):
 def test_agent_container_version_section_reports_up_to_date(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    monkeypatch.setattr(digest, "query_container_appdata_usage", lambda: {"used": None, "quota": None, "firewall": None})
     text = digest.render_agent_container_version_section()
     assert "up to date" in text
     assert "LAG" not in text
@@ -354,7 +354,7 @@ def test_agent_container_version_section_reports_up_to_date(monkeypatch):
 def test_agent_container_version_section_skips_gracefully_when_harness_unreachable(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: None)
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    monkeypatch.setattr(digest, "query_container_appdata_usage", lambda: {"used": None, "quota": None, "firewall": None})
     text = digest.render_agent_container_version_section()
     assert "could not reach the sim-agent harness" in text
     assert "latest published" in text and "2.1.280" in text
@@ -363,41 +363,117 @@ def test_agent_container_version_section_skips_gracefully_when_harness_unreachab
 def test_agent_container_version_section_skips_gracefully_when_offline(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: None)
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    monkeypatch.setattr(digest, "query_container_appdata_usage", lambda: {"used": None, "quota": None, "firewall": None})
     text = digest.render_agent_container_version_section()
     assert "installed" in text and "2.1.280" in text
     assert "could not resolve the latest published version" in text
 
 
-# --------------------------------------------------------------- volume disk usage warning (2026-09-29, M3)
+# ------------------------------------ appdata (ZFS dataset) usage + firewall state (2026-09-29 M3, 2026-09-30)
 
 def _stub_version_queries(monkeypatch):
     monkeypatch.setattr(digest, "query_container_claude_version", lambda: "2.1.280 (Claude Code)")
     monkeypatch.setattr(digest, "query_latest_claude_code_version", lambda: "2.1.280")
 
 
-def test_volume_usage_reports_gb_with_no_warning_below_threshold(monkeypatch):
+def _stub_appdata(monkeypatch, used, quota, firewall="active"):
+    monkeypatch.setattr(digest, "query_container_appdata_usage",
+                        lambda: {"used": used, "quota": quota, "firewall": firewall})
+
+
+def test_appdata_usage_reports_gb_and_quota_share_with_no_warning_below_threshold(monkeypatch):
     _stub_version_queries(monkeypatch)
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": 2.5, "home": 3.1})
+    _stub_appdata(monkeypatch, used=20.0, quota=64.0)
     text = digest.render_agent_container_version_section()
-    assert "repo volume: 2.50 GB" in text
-    assert "home volume: 3.10 GB" in text
+    assert "20.00 GB of its 64.00 GB refquota (31%)" in text
     assert "OVER" not in text
-    assert "warn threshold" not in text
+    assert "sim-agent-fw.service" not in text
 
 
-def test_volume_usage_warns_when_over_the_threshold(monkeypatch):
+def test_appdata_usage_warns_near_the_refquota(monkeypatch):
     _stub_version_queries(monkeypatch)
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": 25.0, "home": 3.0})
+    _stub_appdata(monkeypatch, used=58.0, quota=64.0)
     text = digest.render_agent_container_version_section()
-    assert "repo volume: 25.00 GB" in text
-    assert "OVER" in text
-    assert "SHARED box" in text
+    assert "OVER 85% of the refquota" in text
+    assert "SHARED box is unaffected" in text
+    assert "zfs set refquota" in text
 
 
-def test_volume_usage_skips_gracefully_when_both_unknown(monkeypatch):
+def test_appdata_usage_flags_a_missing_refquota(monkeypatch):
     _stub_version_queries(monkeypatch)
-    monkeypatch.setattr(digest, "query_container_volume_usage_gb", lambda: {"repo": None, "home": None})
+    _stub_appdata(monkeypatch, used=3.0, quota=0.0)
     text = digest.render_agent_container_version_section()
-    assert "could not reach the sim-agent harness, or the volumes were not found" in text
+    assert "NO refquota set" in text
     assert "OVER" not in text
+    _stub_appdata(monkeypatch, used=60.0, quota=0.0)
+    text = digest.render_agent_container_version_section()
+    assert "NO refquota set" in text and "OVER the 48 GB warn threshold" in text
+
+
+def test_appdata_usage_skips_gracefully_when_unknown(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_appdata(monkeypatch, used=None, quota=None, firewall=None)
+    text = digest.render_agent_container_version_section()
+    assert "could not reach the sim-agent harness, or the ZFS dataset" in text
+    assert "OVER" not in text
+
+
+def test_inactive_firewall_unit_is_flagged(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_appdata(monkeypatch, used=5.0, quota=64.0, firewall="failed")
+    text = digest.render_agent_container_version_section()
+    assert "sim-agent-fw.service is `failed`" in text
+
+
+def test_query_container_appdata_usage_parses_the_ctl_state_lines(monkeypatch):
+    class _Res:
+        stdout = ("container: running\nappdata_gb: 12.34\nappdata_quota_gb: 68.72\nfirewall: active\n")
+    monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Res())
+    assert digest.query_container_appdata_usage() == {"used": 12.34, "quota": 68.72, "firewall": "active",
+                                                       "gitea_used": None, "gitea_quota": None}
+
+    class _NoQuota:
+        stdout = "appdata_gb: 1.00\nappdata_quota_gb: none\nfirewall: inactive\n"
+    monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _NoQuota())
+    assert digest.query_container_appdata_usage() == {"used": 1.0, "quota": 0.0, "firewall": "inactive",
+                                                       "gitea_used": None, "gitea_quota": None}
+
+    class _Unknown:
+        stdout = "container: absent\nappdata_gb: unknown\nappdata_quota_gb: unknown\n"
+    monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Unknown())
+    assert digest.query_container_appdata_usage() == {"used": None, "quota": None, "firewall": None,
+                                                       "gitea_used": None, "gitea_quota": None}
+
+
+
+# ------------------------------------------ gitea dataset usage (2026-09-30 security review, MEDIUM storage)
+
+def test_query_container_appdata_usage_parses_the_gitea_lines(monkeypatch):
+    class _Res:
+        stdout = "appdata_gb: 1.00\nappdata_quota_gb: 64.00\nfirewall: active\ngitea_gb: 2.87\ngitea_quota_gb: none\n"
+    monkeypatch.setattr(digest.subprocess, "run", lambda *a, **k: _Res())
+    got = digest.query_container_appdata_usage()
+    assert got["gitea_used"] == 2.87 and got["gitea_quota"] == 0.0
+
+
+def _stub_gitea(monkeypatch, used, quota):
+    monkeypatch.setattr(digest, "query_container_appdata_usage",
+                        lambda: {"used": 5.0, "quota": 64.0, "firewall": "active", "gitea_used": used,
+                                 "gitea_quota": quota})
+
+
+def test_a_gitea_dataset_without_a_quota_is_flagged(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_gitea(monkeypatch, 2.87, 0.0)
+    text = digest.render_agent_container_version_section()
+    assert "data/appdata/gitea" in text and "NO quota" in text and "zfs set quota=" in text
+
+
+def test_a_gitea_dataset_near_its_quota_warns(monkeypatch):
+    _stub_version_queries(monkeypatch)
+    _stub_gitea(monkeypatch, 28.0, 30.0)
+    text = digest.render_agent_container_version_section()
+    assert "28.00 GB of its 30.00 GB quota" in text and "OVER 85%" in text
+    _stub_gitea(monkeypatch, 3.0, 30.0)
+    text = digest.render_agent_container_version_section()
+    assert "3.00 GB of its 30.00 GB quota (10%)" in text and "OVER" not in text

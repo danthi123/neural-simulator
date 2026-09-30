@@ -1,0 +1,20 @@
+{
+ "profile": "qwen38-27b-iq4nl-mtp-128k-q4",
+ "device": "cuda (RTX 3090, llama-server; run via tools/gpu_queue.sh)",
+ "started": "2026-09-29 22:05:20",
+ "direct_llama_server": {
+  "gen_tok_s": 58.83,
+  "pp_tok_s": 218.4,
+  "predicted_n": 300,
+  "load_s": 22.0
+ },
+ "through_llama_swap": {
+  "gen_tok_s": 57.39,
+  "pp_tok_s": 173.66,
+  "predicted_n": 300,
+  "load_s": 18.4
+ },
+ "gen_tok_s_delta_pct": -2.45,
+ "within_5pct": true,
+ "finished": "2026-09-29 22:06:14"
+}
