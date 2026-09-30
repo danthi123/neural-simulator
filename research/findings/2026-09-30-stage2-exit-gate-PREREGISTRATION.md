@@ -490,3 +490,22 @@ seed 7 changes nothing here (the predictions in section 9 stand as written from 
 ## 12. Amendments
 
 (Appended dated entries only. The bars, arms and turns above are frozen at the commit that adds this file.)
+
+**2026-09-30, amendment A1 (instrument, filed before any gate job was queued or dispatched; adversarial review of
+the packet at 8c934312a; runner fix commit ed956d08b).** No bar, arm, turn, seed, prediction or scored field
+changes. (1) Harness: `--shard` spawned its `--worker` without `--allow-gate-seed`, and the gate-seed guard also
+applies to `--worker`, so every gate job would have exited rc=2 before building a brain; the shard now hands the
+flag and `--prereg` to its worker. (2) Section 7's defined-seed rule is applied to EVERY counted arm (intact_a,
+intact_b, each lesion arm and its `.rep0`, permuted), not only the intact pair: every response's `source` =
+`tiny-demo +LTM`, `PYTHONHASHSEED=0`, `corpus_present`; and three instrument failures are added to it, each making
+the seed UNDEFINED (never a pass, never a FAIL clause): an errored turn in any counted arm (section 7's
+"an ask-rate over a probe whose reply errored is UNDEFINED", generalized: an errored scored turn in a lesion arm had
+read as "no effect" -> FAIL "not load-bearing"); a caught organ exception (`<organ>.error` in a response, or a
+chase trace whose reason is an error) in any counted arm (FAILURE_LOG 2026-09-29, B2b: such a turn was scored as
+the lesion's effect); an empty `builtin_facts` in a `conv` or `inner` arm (the grounding set their scorers read).
+The aggregate's preconditions gain "no errored turn and no organ error in any counted arm" and "the grounding set
+recorded". (3) Section 4.5's internal secondary: the handler stashes the chase trace on the chat
+(`_last_gnw_multistep`) and never attaches it to the response, so the worker now records it per turn under
+`internal` (object identity: only a trace written that turn); the vole probe's trace is reported beside the lynx
+probe's. (4) Each arm also records its peak RSS and the LTM bundle the handler resolved (the shipped default is
+`wikidata_100k`, `wikidata_core_15k` the fallback; both give the same `source` string); reported, never scored.
