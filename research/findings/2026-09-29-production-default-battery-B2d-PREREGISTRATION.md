@@ -731,3 +731,20 @@ tinystories.txt`), which the mouth scorer's rule 4 reads.
 **A1.8 Unchanged.** The stub arm (258 lines, same command shape), S0/S1/S2, A1.2 to A1.8 of the main text, the
 drift comparison with B2b, and what a COMPLETE verdict licenses. The mouth arm licenses one more report: whether the
 three affect rows change the reply the production mouth writes on their registered turns, at P.
+
+### Amendment 1, dev-seed record (appended 2026-09-30 after the dev seed 7 runs; no rule, bar or arm changes)
+
+Dev seed 7 only; files and details in `research/packets/b2d-mouth-renderer/dev7/README.md`.
+- A1.1 acceptance check: the three mouth rows' stub-arm cells at `e8a0d0cb1` and at `f5e3732fe` are byte-identical,
+  15 of 15 files (every arm file and `lb.json`).
+- A1.2/A1.3: the mouth arm's affect-coloring cell resolved the production renderer in all four arms, passed every
+  validity rule, and read MOUTH-SILENT, as predicted. affect-drives-response's intact arms made 0 Qwen calls on
+  `well` (an assertion echo), so the first A1.3 prediction for that row (MOUTH-NOT-LOAD-BEARING) did not hold at the
+  dev seed and its stated alternative (MOUTH-SILENT) did; that cell's first lesion arm was killed by a test run
+  (SIGTERM, research/FAILURE_LOG.md 2026-09-30) and is re-run on the dev seed.
+- Job shape: after the dev run dropped three GPU lines on a refused `mem_ok`, the mouth lines' memory guard waits up
+  to 90 min before refusing, and a mouth cell that never ran is re-queued under A1.4(c) instead of spending its
+  re-run. Neither changes what is measured.
+- Pin: `repin.py apply` set P = `5818dc629c5c0cd3cbb370c0c6cc16b314805b03` (all checks passed); pool41 and pool42
+  were provisioned at P, the corpus rows at P all read `7a00272e...`, and stub-arm wave 1 (43 lines, seed 42) was
+  queued at 11:30 EDT. The mouth arm is not queued.

@@ -234,10 +234,16 @@ seed-7 cells scored by `tools/b2d_mouth_score.py`).
    r7i.4xlarge would take the prereg's ~20 h / <= $40 (cap $50/day). They would also serve the rest of the queue.
 2. **Review + merge** `research/b2d-mouth-renderer` once scored (the renderer mode is default-off; merging changes no
    default). Until then the jobs run at the branch pin P, which contains origin/main.
-3. **The mouth arm's next rung.** If A1.3's predictions hold (emo rows MOUTH-SILENT, affect-drives-response
-   MOUTH-NOT-LOAD-BEARING), no registered turn is both mood-engaged and rendered. A remap (for example the `emo`
-   session followed by a rendered recall turn in the same session, so the mood carries into a Qwen-rendered reply)
-   needs a new probe turn, a dev-seed check and an amendment: Claude's.
+3. **The mouth arm is expected to be vacuous; the remap that is not (Claude: an amendment).** At dev seed 7 the Qwen
+   mouth never ran on a registered mouth turn: affect-coloring's cell read MOUTH-SILENT (`emo` is an abstention
+   template), affect-drives-response's intact arms made 0 Qwen calls (`well` is an assertion echo; its first lesion
+   arm was killed, section 6), and affect-appraisal-interoceptive uses affect-coloring's turn and reply. At the console defaults a bounded recall is spoken by the default-on spiking recall mouth, which
+   pre-empts Qwen, runs under the stub renderer too, and carries a spiking mood-tone marker. The dev probe
+   `research/runners/_b2d_mood_render_probe.py` (emo, then "what does the dog chase" in the same session) changed the
+   stub-arm reply under `BRAIN_AFFECT_LESION=1` (`...cat! — ...` to `...cat — ...`), null clean, one dev seed
+   (`dev7/README.md` section 3). Candidate: register that two-turn group as affect-coloring's (and
+   affect-appraisal-interoceptive's) S2 probe in the stub arm, dev-check a second dev seed, then six seeds. The
+   registered 18-job mouth arm still runs as registered (step 5) unless Claude retires it by amendment.
 4. Carried from the B2d HANDOFF on main, unaffected by this packet: the harness-level S1 identity replay (not
    blocking); the four genuinely new probe remaps; swap-drives-response's five uncommitted seed artifacts; the B2b
    seed-102 A1.4 ruling (the drift block reports those cells as they stand); `lb_shard.py aggregate`'s `ltm_mode`
