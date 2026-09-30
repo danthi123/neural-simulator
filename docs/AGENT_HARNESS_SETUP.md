@@ -361,7 +361,7 @@ env SSH_ORIGINAL_COMMAND='pool-submit --sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 From the WORKSTATION, streaming each private key straight into place (it never lands anywhere else):
 
 ```bash
-ssh homelab-server "sudo install -d -o 61000 -g 61000 -m 700 /home/dant123/data/sim-agent/home/.ssh"
+ssh homelab-server "sudo mkdir -p /home/dant123/data/sim-agent/home/.ssh && sudo chown 61000:61000 /home/dant123/data/sim-agent/home/.ssh && sudo chmod 700 /home/dant123/data/sim-agent/home/.ssh"
 ssh homelab-server "sudo sh -c 'umask 077; cat > /home/dant123/data/sim-agent/home/.ssh/id_ed25519 && chown 61000:61000 /home/dant123/data/sim-agent/home/.ssh/id_ed25519'" < ~/.ssh/sim_agent_container_key
 ssh homelab-server "sudo sh -c 'umask 077; cat > /home/dant123/data/sim-agent/home/.ssh/id_ed25519_results_sync && chown 61000:61000 /home/dant123/data/sim-agent/home/.ssh/id_ed25519_results_sync'" < ~/.ssh/sim_agent_results_sync_key
 ssh homelab-server "sudo sh -c 'umask 077; cat > /home/dant123/data/sim-agent/home/.ssh/id_ed25519_gitea && chown 61000:61000 /home/dant123/data/sim-agent/home/.ssh/id_ed25519_gitea'" < ~/.ssh/sim_agent_gitea_deploy
@@ -373,7 +373,7 @@ On the SERVER, the ssh config and pinned host keys:
 ```bash
 S=/home/dant123/data/sim-agent/src/tools/agent_container/server-stack
 H=/home/dant123/data/sim-agent/home/.ssh
-sudo install -o 61000 -g 61000 -m 600 $S/agent-ssh-config $H/config
+sudo install -m 600 $S/agent-ssh-config $H/config && sudo chown 61000:61000 $H/config   # numeric chown: no such user here
 { ssh-keyscan -t ed25519 192.168.0.68; ssh-keyscan -t ed25519 -p 2222 192.168.0.10; } 2>/dev/null | sudo tee $H/known_hosts >/dev/null
 sudo chown 61000:61000 $H/known_hosts
 sudo ssh-keygen -lf $H/known_hosts                       # compare with the two below
