@@ -22,6 +22,10 @@ Per cell (row, seed), in this order; the first rule that fails decides the state
   MOUTH-SILENT (final, not re-run): the Qwen generation entry points ran 0 times on the probe turn in all four arms.
      The reply on this turn never came from the mouth (an abstention template, a host clause), so the mouth arm
      cannot measure this row on this turn; the row is named, never counted as 0 and never as a pass.
+     Known limit: the counter sees the renderer's entry points only. The open-ended generator
+     (`webapp/open_ended_chat.py`, BRAIN_OPEN_ENDED, default OFF) calls `model.generate` directly, so a reply it wrote
+     would read MOUTH-SILENT. A default flip of that flag changes webapp/server.py, a cited file, so repin.py stops the
+     run for a re-audit before any such line is queued.
   S2m: tools/b2d_score.py's S2 definition verbatim (answer, abstained, recalled_svo on the probe turn; null floor
      intact_a = intact_b, lesion floor lesion = lesion.rep0; UNDEFINED:null-noise / UNDEFINED:lesion-noise never 0).
 

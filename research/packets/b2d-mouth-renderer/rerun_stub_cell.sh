@@ -38,9 +38,11 @@ LOG="research/findings/raw/_load_bearing/_b2d0929_reruns/s${SEED}_$FAC.log"
 echo "cell $CELL: first host $FIRST -> re-run on $NODE"
 echo "  cmd: cd ~/derisk-pool/revisions/$PIN_P && $RUN"
 [ "$DRY" = "--dry-run" ] && { echo "(dry run: nothing moved, logged or started)"; exit 0; }
-# (a) move attempt 1 aside: primary checkout, then the first host (best effort there; E-stranded cells are handled by
+# (a) move attempt 1 aside: primary checkout and worktree, then the first host (best effort there; E-stranded cells are handled by
 #     the prereg's stranded-results rule, which this script does not touch)
-if [ -d "$P/$SH/b2d0929/s$SEED/$FAC" ]; then mkdir -p "$P/$A1" && mv "$P/$SH/b2d0929/s$SEED/$FAC" "$P/$A1/"; fi
+for root in "$P" "$W"; do   # the worktree too: copy_results.sh may already hold attempt 1 there (rsync, no --delete)
+  if [ -d "$root/$SH/b2d0929/s$SEED/$FAC" ]; then mkdir -p "$root/$A1" && rm -rf "$root/$A1/$FAC" && mv "$root/$SH/b2d0929/s$SEED/$FAC" "$root/$A1/"; fi
+done
 ssh -n -o BatchMode=yes -o ConnectTimeout=10 -F "$SSHCFG" "$FIRST" \
   "cd ~/derisk-pool/revisions/$PIN_P 2>/dev/null && if [ -d $SH/b2d0929/s$SEED/$FAC ]; then mkdir -p $A1 && mv $SH/b2d0929/s$SEED/$FAC $A1/; fi" \
   || echo "  (first host $FIRST unreachable: its copy stays; do NOT start $FIRST before this re-run lands -- prereg stranded-results rule)"

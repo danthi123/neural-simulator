@@ -81,7 +81,9 @@ def check(pin, tree, fields=None, python=None):
         return ["pin %r is not a full 40-hex sha" % pin]
     if _git("cat-file", "-e", pin + "^{commit}").returncode != 0:
         return ["pin %s is not a commit of this repository" % pin]
-    _git("fetch", "-q", "origin", "main")
+    if _git("fetch", "-q", "origin", "main").returncode != 0:
+        return problems + ["could not fetch origin/main, so 'P contains origin/main' cannot be checked (the export "
+                           "script refuses in the same case); retry when the remote is reachable"]
     main = _git("rev-parse", "origin/main").stdout.strip()
     if _git("merge-base", "--is-ancestor", main, pin).returncode != 0:
         problems.append("pin %s does not contain origin/main %s" % (pin, main))
