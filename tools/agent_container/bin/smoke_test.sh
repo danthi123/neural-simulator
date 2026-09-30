@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # tools/agent_container/bin/smoke_test.sh -- run ON THE SERVER via:
 #   cd ~/apps && docker compose run --rm --no-deps sim-agent smoke_test.sh
 # (tools/agent_container/update.sh runs exactly this against every freshly built image BEFORE swapping it in,
@@ -25,8 +25,10 @@ if [ "$(id -u)" != "0" ]; then pass "running as non-root (uid $(id -u), $(whoami
 if command -v tmux >/dev/null 2>&1; then pass "tmux present ($(tmux -V))"; else fail "tmux not found"; fi
 if tmux has-session -t agent 2>/dev/null; then pass "tmux session 'agent' exists"; else fail "tmux session 'agent' was not created by entrypoint.sh"; fi
 
-# 3. claude CLI (installed by entrypoint.sh's native installer into the home volume)
-if command -v claude >/dev/null 2>&1 && ver=$(claude --version 2>&1); then
+# 3. claude CLI (installed by entrypoint.sh's native installer into the home bind mount). Called by its install
+#    path: the image PATH deliberately excludes the writable home. A FUNCTIONAL check only -- that binary is
+#    model-writable, so this line proves the install runs, never anything about isolation.
+if [ -x "$AGENT_HOME/.local/bin/claude" ] && ver=$("$AGENT_HOME/.local/bin/claude" --version 2>&1); then
   pass "claude --version -> $ver"
 else
   fail "claude --version did not run (see ~/entrypoint.log -- the first-boot native install needs HTTPS egress to claude.ai)"

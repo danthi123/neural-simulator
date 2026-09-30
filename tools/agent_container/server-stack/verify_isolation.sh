@@ -19,6 +19,8 @@ CONTAINER="${SIM_AGENT_CONTAINER:-sim-agent}"
 BRIDGE=br-simagent
 SUBNET=172.30.30.0/24
 NETWORK=apps_sim-agent-net
+# Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review).
+EXEC_ENV_PATH="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 FAILS=0
 pass() { printf '  PASS  %s\n' "$*"; }
 fail() { printf '  FAIL  %s\n' "$*"; FAILS=$((FAILS + 1)); }
@@ -76,7 +78,7 @@ MUST_PASS="192.168.0.1:53 1.1.1.1:53 192.168.0.68:22 192.168.0.68:8080 192.168.0
 
 echo "== from inside $CONTAINER (probes run in parallel, ~5 s) =="
 # shellcheck disable=SC2086
-docker exec -i "$CONTAINER" bash -s -- "$(echo $MUST_FAIL)" "$MUST_PASS" <<'INNER'
+docker exec -i -e "$EXEC_ENV_PATH" "$CONTAINER" /bin/bash -s -- "$(echo $MUST_FAIL)" "$MUST_PASS" <<'INNER'
 fails=0
 probe() { timeout "$3" bash -c 'exec 3<>"/dev/tcp/$0/$1"' "$1" "$2" 2>/dev/null; echo $?; }
 out=$(mktemp -d)

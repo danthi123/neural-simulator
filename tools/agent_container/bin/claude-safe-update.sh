@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # tools/agent_container/bin/claude-safe-update.sh -- owner directive 2026-09-29: keep the harness's Claude Code
 # CLI current without ever running an untested build unattended. Called by agent-start.sh before every
 # `llm use <profile>` (i.e. on every `agent start`).

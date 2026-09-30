@@ -268,3 +268,13 @@ def test_never_starts_a_container_the_owner_stopped_or_never_started(status):
         assert res.returncode == 0, res.stdout + res.stderr
         assert "compose up" not in calls
         assert "not running" in log
+
+
+def test_the_idle_probe_pins_path_and_runs_an_absolute_pgrep():
+    # 2026-09-30 security review (HIGH #1): an exec inherits the container's environment, and the image PATH used to
+    # start with the model-writable home, so a planted ~/.local/bin/pgrep decided whether a live session was killed
+    with tempfile.TemporaryDirectory() as tmp:
+        res, log, calls = _run(tmp, status="running")
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert ("docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent "
+                "/usr/bin/pgrep -f /claude$") in calls

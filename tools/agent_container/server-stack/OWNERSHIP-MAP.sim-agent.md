@@ -47,7 +47,9 @@ sudo nft list table inet sim_agent        # counters;  journalctl -k | grep sim-
 - **Keep `nftables.service` disabled** (true box-wide): `/etc/nftables.conf` flushes the whole ruleset, which would
   drop this table (and Docker's) until a reload.
 - **Do not `docker compose up -d` the whole project while an agent session is live** if the sim-agent fragment
-  changed: it recreates the container. Check first: `docker exec sim-agent pgrep -f '/claude$'` (empty = idle).
+  changed: it recreates the container. Check first (PATH pinned, absolute binary: the home is model-writable):
+  `docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent /usr/bin/pgrep -f '/claude$'`
+  (empty = idle).
 - The fragment in `~/apps/sim-agent/compose.yaml` is a copy of the repo's reviewed one; `update.sh` warns on drift.
   Only `compose.yaml` is tracked there (its own `.gitignore`); secrets are `SIM_AGENT_*` in `~/apps/.env`.
 - Gitea: the container pushes only `research/draft-*` on `neural-simulator` with a write deploy key, over

@@ -494,7 +494,7 @@ def render_agent_container_version_section():
         out.append("_(could not reach the sim-agent harness -- `ssh homelab-agent-ctl state` did not answer; "
                     "skipped)_\n")
     else:
-        out.append(f"- installed (via the harness's `claude --version`): `{installed}`")
+        out.append(f"- installed (the harness's active build, read from its install symlink): `{installed}`")
     if latest is None:
         out.append("_(could not resolve the latest published version -- `npm view "
                     "@anthropic-ai/claude-code version` failed or timed out, likely offline; skipped)_\n")

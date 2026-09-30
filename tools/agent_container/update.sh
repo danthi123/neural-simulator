@@ -42,6 +42,9 @@ SYSTEMCTL="${AGENT_UPDATE_SYSTEMCTL:-systemctl}" # TEST-ONLY override; NEVER set
 DISK_WARN_PCT="${AGENT_UPDATE_DISK_WARN_PCT:-85}"
 FRAGMENT_SRC="$SRC_DIR/tools/agent_container/server-stack/sim-agent/compose.yaml"
 FRAGMENT_LIVE="$APPS_DIR/sim-agent/compose.yaml"
+# Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review,
+# HIGH): an exec inherits the container's environment, and the home bind mount is model-writable.
+EXEC_ENV_PATH="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 log() { printf '%s update.sh: %s\n' "$(date -u '+%F %T')" "$*" | tee -a "$LOG" >&2; }
 compose() { (cd "$APPS_DIR" && docker compose "$@"); }
@@ -127,7 +130,7 @@ case "$status" in
       log "already running the current image -- cycle complete"
       exit 0
     fi
-    busy="$(docker exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
+    busy="$(docker exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/pgrep -f '/claude$' 2>/dev/null || true)"
     if [ -n "$busy" ]; then
       log "DEFERRED: a claude process is active inside $CONTAINER (pid(s): $busy) -- image built and smoke-tested," \
           "NOT recreating this cycle; the next one retries."

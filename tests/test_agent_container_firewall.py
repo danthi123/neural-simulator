@@ -230,14 +230,44 @@ def test_selfwan_dry_run_changes_nothing():
 
 # ------------------------------------------------------------------------------------ fail-closed guard
 
+def _guard_copy(tmp, timeout_rc):
+    """The guard names /usr/bin/timeout by absolute path and resets PATH (so nothing on PATH can stand in for the
+    probe, which is the point). The stub therefore goes into a COPY of the script, at that absolute path."""
+    stub = _exec(os.path.join(tmp, "timeout_stub"), "exit %d\n" % timeout_rc)   # stands in for the probe's outcome
+    text = open(GUARD).read()
+    assert text.count("/usr/bin/timeout ") >= 1
+    copy = os.path.join(tmp, "firewall_guard.sh")
+    with open(copy, "w") as f:
+        f.write(text.replace("/usr/bin/timeout ", stub + " "))
+    return copy
+
+
 def _run_guard(tmp, timeout_rc, extra_env=None):
-    fakebin = os.path.join(tmp, "bin")
-    os.makedirs(fakebin, exist_ok=True)
-    _exec(os.path.join(fakebin, "timeout"), "exit %d\n" % timeout_rc)   # stands in for the probe's outcome
-    env = dict(os.environ, PATH=fakebin + os.pathsep + os.environ["PATH"], SIM_AGENT_REQUIRE_FIREWALL="1",
-               SIM_AGENT_FW_PROBE="172.30.30.1:22")
+    env = dict(os.environ, SIM_AGENT_REQUIRE_FIREWALL="1", SIM_AGENT_FW_PROBE="172.30.30.1:22")
     env.update(extra_env or {})
-    return subprocess.run(["bash", GUARD], env=env, capture_output=True, text=True, timeout=10)
+    return subprocess.run(["bash", _guard_copy(tmp, timeout_rc)], env=env, capture_output=True, text=True,
+                          timeout=10)
+
+
+def test_guard_ignores_a_timeout_planted_on_path():
+    # 2026-09-30 security review (HIGH #1): the image PATH used to start with the model-writable home, so a planted
+    # `timeout` that always exits 124 made "sim-agent.nft is not loaded" read as "dropped". A real listener
+    # answers here; a PATH-first fake timeout claims a drop; the guard must still refuse.
+    import socket
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    s.listen(1)
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            fakebin = os.path.join(tmp, "bin")
+            os.makedirs(fakebin)
+            _exec(os.path.join(fakebin, "timeout"), "exit 124\n")
+            env = dict(os.environ, PATH=fakebin + os.pathsep + os.environ["PATH"], SIM_AGENT_REQUIRE_FIREWALL="1",
+                       SIM_AGENT_FW_PROBE="127.0.0.1:%d" % s.getsockname()[1])
+            r = subprocess.run(["bash", GUARD], env=env, capture_output=True, text=True, timeout=10)
+            assert r.returncode == 1 and "ACCEPTED a connection" in r.stderr, r.stdout + r.stderr
+    finally:
+        s.close()
 
 
 def test_guard_starts_only_when_the_probe_is_dropped():

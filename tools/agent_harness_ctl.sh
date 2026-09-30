@@ -40,6 +40,10 @@ ZFS="${AGENT_CTL_ZFS:-zfs}"                        # TEST-ONLY override; NEVER s
 SYSTEMCTL="${AGENT_CTL_SYSTEMCTL:-systemctl}"      # TEST-ONLY override; NEVER set in production
 DATASET="${AGENT_CTL_DATASET:-data/appdata/sim-agent}"
 FW_UNIT=sim-agent-fw.service
+# Every `docker exec` into the container pins PATH and names its binary absolutely (2026-09-30 security review,
+# HIGH): an exec inherits the container's environment, and the home bind mount is model-writable. Nothing from
+# that home is ever executed here: the Claude Code version is read from the installer's symlink, not by running it.
+EXEC_ENV_PATH="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # SERVER-LOCAL active-profile record (2026-09-29 re-review, L3). NEVER inside the container's own writable
 # home volume: `state` used to `docker exec ... cat /home/agent/.active_profile_kind`, a file the CONTAINER
 # itself writes -- a possibly-adversarial model could simply `echo cloud > ~/.active_profile_kind` to claim a
@@ -52,7 +56,7 @@ ACTIVE_PROFILE_STATE="${AGENT_CTL_ACTIVE_PROFILE_STATE:-$HOME/.sim_agent_active_
 log() { printf '%s agent_harness_ctl: %s\n' "$(date -u '+%F %T')" "$*" >> "$LOG"; }
 
 # sanitize <text> (2026-09-29 re-review, L3): strips every non-printable/control/escape character, so nothing
-# `state` (claude_version is still container-sourced) or a logged request can smuggle an ANSI escape sequence
+# `state` (claude_version is a container-side symlink target) or a logged request can smuggle an ANSI escape sequence
 # or other control byte into a terminal that later displays it. Never strips ordinary printable text.
 sanitize() { printf '%s' "$1" | LC_ALL=C tr -dc '[:print:]'; }
 
@@ -130,8 +134,8 @@ case "$SUB" in
     # forces the TEXT argument to be sent exactly as literal bytes; Enter must therefore be its OWN, separate,
     # NON-literal send-keys call -- folding it into the same `-l` invocation would type the four literal
     # characters "Enter" instead of pressing the key.
-    if "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" -l -- "$msg" >> "$LOG" 2>&1 \
-       && "$DOCKER" exec "$CONTAINER" tmux send-keys -t "$TMUX_SESSION" Enter >> "$LOG" 2>&1; then
+    if "$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/tmux send-keys -t "$TMUX_SESSION" -l -- "$msg" >> "$LOG" 2>&1 \
+       && "$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/tmux send-keys -t "$TMUX_SESSION" Enter >> "$LOG" 2>&1; then
       log "said: $msg"; echo "sent"
     else
       log "say FAILED (container not running, or no '$TMUX_SESSION' tmux session?)"
@@ -172,8 +176,11 @@ case "$SUB" in
         [ -n "$prof" ] || prof="none"
         [ -n "$kind" ] || kind="unknown"
       fi
-      busy="$("$DOCKER" exec "$CONTAINER" pgrep -f '/claude$' 2>/dev/null || true)"
-      cver="$("$DOCKER" exec "$CONTAINER" claude --version 2>/dev/null || echo unknown)"
+      busy="$("$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/pgrep -f '/claude$' 2>/dev/null || true)"
+      # the active version = the basename of the installer's symlink target (~/.local/share/claude/versions/<v>)
+      cver="$("$DOCKER" exec -e "$EXEC_ENV_PATH" "$CONTAINER" /usr/bin/readlink /home/agent/.local/bin/claude 2>/dev/null)"
+      cver="${cver##*/}"
+      [ -n "$cver" ] || cver=unknown
       echo "active_profile: $(sanitize "$prof")"
       echo "profile_kind: $(sanitize "$kind")"
       echo "claude_active: $([ -n "$busy" ] && echo yes || echo no)"

@@ -32,10 +32,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # python3 here is Debian bookworm's default (3.11), matching the project's pinned .venv (3.11.16, CLAUDE.md /
 # tools/local_llm's own docs). build-essential covers the few RAG-venv wheels without prebuilt manylinux
 # binaries on some archs; curl+ca-certificates are needed for the Claude Code native installer (run at
-# container start, see entrypoint.sh) and for pip's own network access during this build.
+# container start, see entrypoint.sh) and for pip's own network access during this build. procps is listed
+# explicitly (the slim base does not guarantee it): the host-side idle check runs /usr/bin/pgrep by absolute path
+# (update.sh, agent_harness_ctl.sh), and a missing pgrep would read as "idle" and recreate a live session.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 python3-venv python3-pip \
         git openssh-client tmux jq curl ca-certificates \
+        procps \
         nodejs npm \
         build-essential \
         tini tzdata \
@@ -103,11 +106,14 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # tmux needs a runtime dir; /tmp is tmpfs at runtime (the stack fragment). Nothing else under / is written to.
-# ~/.local/bin (the native installer's own launcher location, NOT on PATH by default -- its own install output
-# says so, verified live 2026-09-29) must be ahead of nothing else named `claude`; there is none, but this is
-# also where `llm`/`agent-start.sh`/etc.'s symlinks above would collide if ever renamed, so put it first.
+# PATH is the image's own system directories ONLY, set explicitly (2026-09-30 security review, HIGH): it used to
+# start with /home/agent/.local/bin, the agent-writable home bind mount, so a model that had run once could plant
+# ~/.local/bin/bash or ~/.local/bin/timeout and own the fail-closed firewall guard, the smoke test and every
+# host-side `docker exec` check. ~/.local/bin (where the native installer puts `claude`) is appended LAST, and
+# only for the interactive tmux shell (entrypoint.sh); nothing that runs before a session, or from the host,
+# ever resolves a command there. tests/test_agent_container_config.py pins this.
 ENV TMUX_TMPDIR=/tmp \
-    PATH="/home/agent/.local/bin:${PATH}"
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 USER agent
 WORKDIR /work/sim

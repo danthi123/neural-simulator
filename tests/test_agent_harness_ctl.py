@@ -36,6 +36,7 @@ case "$1" in
       *"cat /home/agent/.active_profile"*) echo "workstation" ;;
       *"pgrep"*) exit 1 ;;   # no claude process "active" by default
       *"claude --version"*) echo "2.1.280 (Claude Code)" ;;
+      *"readlink /home/agent/.local/bin/claude"*) echo "/home/agent/.local/share/claude/versions/2.1.280" ;;
       *) exit 0 ;;
     esac
     ;;
@@ -256,8 +257,10 @@ def test_state_strips_control_characters_from_claude_version():
         docker, _ = _fake_docker(tmp)
         # override the version answer with an embedded ESC sequence + a literal control byte
         body = open(docker).read().replace(
-            '*"claude --version"*) echo "2.1.280 (Claude Code)" ;;',
-            '*"claude --version"*) printf "2.1.280\\x1b[31m EVIL\\x07 (Claude Code)\\n" ;;')
+            '*"readlink /home/agent/.local/bin/claude"*) echo "/home/agent/.local/share/claude/versions/2.1.280" ;;',
+            '*"readlink /home/agent/.local/bin/claude"*) '
+            'printf "/home/agent/.local/share/claude/versions/2.1.280\\x1b[31m EVIL\\x07\\n" ;;')
+        assert body != open(docker).read()
         with open(docker, "w") as f:
             f.write(body)
         res = _run("state", tmp, docker)
@@ -322,3 +325,29 @@ def test_state_reports_the_firewall_unit_state():
         assert "firewall: active" in res.stdout, res.stdout
         res = _run("state", tmp, docker, extra_env={"AGENT_CTL_SYSTEMCTL": _fake_systemctl(tmp, "failed")})
         assert "firewall: failed" in res.stdout, res.stdout
+
+
+# ------------------------------------------ docker exec hygiene (2026-09-30 security review, HIGH #1)
+SAFE_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+
+def test_every_docker_exec_pins_path_and_names_an_absolute_binary():
+    # an exec inherits the container's environment, and the image PATH used to start with the model-writable home
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, log = _fake_docker(tmp, status="running")
+        assert _run("state", tmp, docker).returncode == 0
+        assert _run("say 'hello'", tmp, docker).returncode == 0
+        execs = [l for l in open(log).read().splitlines() if l.startswith("docker exec")]
+        assert len(execs) >= 4, execs
+        for l in execs:
+            assert l.startswith("docker exec -e PATH=%s sim-agent /" % SAFE_PATH), l
+
+
+def test_state_reads_the_claude_version_from_its_symlink_and_never_runs_the_binary():
+    # the binary lives in the model-writable home: running it from the host-side ctl would run planted code
+    with tempfile.TemporaryDirectory() as tmp:
+        docker, log = _fake_docker(tmp, status="running")
+        res = _run("state", tmp, docker)
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert "claude_version: 2.1.280\n" in res.stdout
+        assert "claude --version" not in open(log).read()

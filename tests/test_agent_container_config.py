@@ -360,7 +360,7 @@ def test_entrypoint_runs_the_firewall_guard_first():
     text = open(os.path.join(AC, "entrypoint.sh")).read()
     guard = text.index("firewall_guard.sh")
     assert guard < text.index("claude.ai/install.sh")
-    assert guard < text.index("tmux new-session")
+    assert guard < text.index("new-session -d -s agent")
 
 
 def test_settings_only_allows_the_gateway_subcommands_over_ssh():
@@ -404,3 +404,93 @@ def test_every_shipped_shell_script_parses():
     for path in scripts:
         r = subprocess.run(["bash", "-n", path], capture_output=True, text=True)
         assert r.returncode == 0, "%s: %s" % (path, r.stderr)
+
+
+# ------------------------------------------------ PATH + interpreters (2026-09-30 security review, HIGH #1)
+# The image used to put the agent-writable home bind mount FIRST on PATH, so a model that had run once could plant
+# ~/.local/bin/{bash,timeout,...}: the fail-closed guard, the smoke test and every host-side `docker exec` check
+# would then run the model's code and report whatever it chose. PATH is now the image's system dirs only; the
+# home's ~/.local/bin is appended LAST, in the interactive tmux shell only (where `claude` lives).
+SAFE_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+HOST_SIDE_EXEC_SCRIPTS = [os.path.join(AC, "update.sh"), os.path.join(ROOT, "tools", "agent_harness_ctl.sh"),
+                          os.path.join(STACK, "verify_isolation.sh")]
+
+
+def _code(path):
+    return [l for l in open(path).read().splitlines() if l.strip() and not l.lstrip().startswith("#")]
+
+
+def _bin_files():
+    d = os.path.join(AC, "bin")
+    return [os.path.join(d, n) for n in sorted(os.listdir(d))]
+
+
+def test_image_path_never_includes_the_agent_writable_home():
+    code = "\n".join(_code(os.path.join(AC, "Dockerfile")))
+    values = re.findall(r'\bPATH="?([^"\s\\]+)"?', code)
+    assert values, "the Dockerfile must set PATH explicitly"
+    for v in values:
+        assert "/home" not in v and "AGENT_HOME" not in v and "~" not in v, "image PATH reaches the home: %s" % v
+    assert SAFE_PATH in values
+
+
+def test_container_scripts_use_absolute_interpreters():
+    for path in [os.path.join(AC, "entrypoint.sh")] + _bin_files():
+        first = open(path).readline().strip()
+        assert first.startswith("#!/") and not first.startswith("#!/usr/bin/env"), (path, first)
+
+
+def test_pre_session_scripts_reset_path_before_any_lookup():
+    # entrypoint.sh and firewall_guard.sh run at every start, before (and without) any model session
+    for rel in ("entrypoint.sh", "bin/firewall_guard.sh"):
+        code = [l.strip() for l in _code(os.path.join(AC, rel))]
+        first = next(l for l in code if not l.startswith("set -"))
+        assert first == "export PATH=%s" % SAFE_PATH, (rel, first)
+
+
+def test_guard_and_entrypoint_name_timeout_and_bash_by_absolute_path():
+    guard = os.path.join(AC, "bin", "firewall_guard.sh")
+    assert '/usr/bin/timeout "$wait_s" /bin/bash -c' in open(guard).read()
+    for l in _code(guard):
+        stripped = l.replace("/usr/bin/timeout", "").replace("/bin/bash", "")
+        assert not re.search(r"(^|[\s;&|(!])(timeout|bash|sh|env)\s", stripped), "relative interpreter: %s" % l
+    entry = open(os.path.join(AC, "entrypoint.sh")).read()
+    assert "/bin/bash /usr/local/lib/agent-container/bin/firewall_guard.sh" in entry
+
+
+def test_entrypoint_never_executes_the_home_claude_binary_at_start():
+    # the binary lives in the agent-writable home; running it at every start would run planted code before any
+    # session. Its version is read from the installer's symlink instead.
+    code = "\n".join(_code(os.path.join(AC, "entrypoint.sh")))
+    assert not re.search(r'"\$CLAUDE_BIN"\s+--version', code)
+    assert "readlink" in code
+
+
+def test_entrypoint_tmux_shell_skips_home_startup_files_and_puts_home_bin_last():
+    text = open(os.path.join(AC, "entrypoint.sh")).read()
+    assert "/usr/bin/tmux -f /dev/null new-session" in text
+    assert text.count("/bin/bash --noprofile --norc") >= 2      # the first window + default-command for later ones
+    assert 'PATH="$SAFE_PATH:$AGENT_HOME/.local/bin"' in text
+
+
+def test_smoke_test_calls_claude_by_its_install_path_not_path_lookup():
+    text = open(os.path.join(AC, "bin", "smoke_test.sh")).read()
+    assert '"$AGENT_HOME/.local/bin/claude" --version' in text
+    assert "command -v claude" not in text
+
+
+def test_dockerfile_installs_procps_so_the_absolute_pgrep_exists():
+    assert re.search(r"^\s+.*\bprocps\b", _dockerfile_text(), re.MULTILINE)
+
+
+def test_every_host_side_docker_exec_pins_path_and_calls_an_absolute_binary():
+    for path in HOST_SIDE_EXEC_SCRIPTS:
+        text = open(path).read()
+        assert 'EXEC_ENV_PATH="PATH=%s"' % SAFE_PATH in text, path
+        n = 0
+        for l in _code(path):
+            for m in re.finditer(r'(?:\bdocker|"\$DOCKER")\s+exec\b(.*)', l):
+                n += 1
+                assert re.match(r'\s+(-i\s+)?-e\s+"\$EXEC_ENV_PATH"\s+"\$CONTAINER"\s+/', m.group(1)), \
+                    "%s: %s" % (os.path.basename(path), l.strip())
+        assert n or path.endswith("verify_isolation.sh"), path

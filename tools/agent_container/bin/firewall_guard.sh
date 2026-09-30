@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # tools/agent_container/bin/firewall_guard.sh -- fail-closed start check, run by entrypoint.sh BEFORE anything
 # else (so also before every `docker compose run ... smoke_test.sh`). Baked into the read-only image.
 #
@@ -11,7 +11,11 @@
 # Why here and not only in systemd: Docker merely WANTS sim-agent-fw.service (a broken firewall edit must never
 # keep every other stack down), so if the unit fails at boot the container itself must refuse to run.
 # Without SIM_AGENT_REQUIRE_FIREWALL=1 (a workstation-local build/test) the check is skipped.
+#
+# PATH is reset below and every interpreter is absolute (2026-09-30 security review, HIGH): the environment this
+# runs in must never be able to substitute its own `timeout` or `bash` and turn "connected" into "dropped".
 set -uo pipefail
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 if [ "${SIM_AGENT_REQUIRE_FIREWALL:-0}" != "1" ]; then
   echo "firewall_guard: not required here (SIM_AGENT_REQUIRE_FIREWALL != 1) -- skipped"
   exit 0
@@ -24,7 +28,7 @@ if ! [[ "$host" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]] || ! [[ "$port" =~ ^[0-9]{1,
   exit 1
 fi
 wait_s="${SIM_AGENT_FW_PROBE_TIMEOUT_S:-3}"
-timeout "$wait_s" bash -c 'exec 3<>"/dev/tcp/$0/$1"' "$host" "$port" 2>/dev/null
+/usr/bin/timeout "$wait_s" /bin/bash -c 'exec 3<>"/dev/tcp/$0/$1"' "$host" "$port" 2>/dev/null
 rc=$?
 case "$rc" in
   124)
