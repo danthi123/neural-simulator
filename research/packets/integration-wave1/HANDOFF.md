@@ -328,3 +328,16 @@ push. Then NEEDS-CLAUDE "iw1: flips <FLIP> validated at F=<F7> (provisional); ad
 5. RULED (owner, 2026-09-29): the reference battery is B2b (B2d is not runnable). Was: the reference battery for step B is B2b
    (a308f1e09). If B2d lands first and reads COMPLETE, decide whether it
    replaces B2b as the reference (that is an amendment to the shared prereg, committed before step B is scored).
+
+## Claude rulings after the adversarial review (2026-09-30)
+
+- **Reference battery coverage.** B2b is 210/216 DEFINED under this scorer, not 216/216 as the prereg states. Rows
+  that are UNDEFINED in the reference cannot be compared and are skipped (comprehension-monitor; at S0 also
+  wm-binding-advanced and swap-drives-response). The finding lists every skipped row by name and never counts it
+  either way. This corrects a factual statement in the prereg; it changes no bar.
+- **Degenerate-reply guard.** Kept, although stricter than the prereg's wording: it can only turn a pass into a
+  fail (an empty, abstaining or echoed reply no longer passes). Record it in the finding as a deviation made before
+  any gate data existed.
+- **Queue age.** Every job line this packet queues from here on must carry `max_age_h=N` in its `--checked` reason
+  (N = the expected wait in hours, at most 240), or the dispatcher skips it as debris after 12 h. The 23 lines
+  already queued were tagged `max_age_h=168` on 2026-09-30 (main f5e3732fe).
