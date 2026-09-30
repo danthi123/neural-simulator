@@ -4,17 +4,20 @@
 #   1. rsync the code (sim/ + webapp/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
 #   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse)
 #      + fastapi/pydantic (REQUIRED by any runner that imports webapp.server, e.g. onebrain_regression_battery.py).
-# Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
+# Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [<node> ...]
+#         (default node list comes from tools/pool_nodes.conf; pass explicit node names to override it)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"   # used by the local reference-brain sanity build below (was unbound under set -u, 2026-09-23)
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 REVISION_REF=HEAD
 ISOLATED=0
 while (( $# )); do
   case "$1" in
     --revision)
       if [[ -z "${2:-}" ]]; then
-        echo "usage: bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]" >&2
+        echo "usage: bash tools/pool_provision.sh [--revision <commit>] [--isolated] [<node> ...]" >&2
         exit 2
       fi
       REVISION_REF=$2
@@ -37,7 +40,7 @@ while (( $# )); do
       ;;
   esac
 done
-NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
+NODES=("${@:-$POOL_NODES_DEFAULT}"); NODES=(${NODES[@]})
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
 # pool_sync.sh / pool_queue.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT by
 # default, so every ssh/rsync call below is unchanged for anyone who hasn't run `aws_pool_node.sh up` (a bare

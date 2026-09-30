@@ -27,10 +27,11 @@ docstring for why forcing a minimum agent count to commit is a judgement call le
 import json, os, re, subprocess, sys, time
 
 import parallel_state
+import pool_nodes  # single source of truth: tools/pool_nodes.conf
 import waiver_history
 
 ROOT = "/home/dant123/Projects/sim"
-POOL = ["pool40", "pool41", "pool42"]
+POOL = pool_nodes.default_nodes()
 VIK = os.path.join(ROOT, "tools", "vikunja.sh")
 # (print label, gate NAME, waiver file, waiver max age h) -- IMPORTED from the gates themselves (fix round 3,
 # 2026-09-23), not restated: fix 2 hand-copied the NAME strings, the paths and the 6h cap here and pinned them

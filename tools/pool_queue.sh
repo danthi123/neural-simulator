@@ -12,6 +12,8 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$ROOT/tools/pool_revision_marker.sh"
 # shellcheck source=tools/queue_job_shape_check.sh
 source "$ROOT/tools/queue_job_shape_check.sh"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -24,7 +26,7 @@ EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_node
 probe_nodes() {
   local extra=""
   [ -f "$EXTRA_NODES_FILE" ] && extra=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
-  printf '%s %s' "${POOL_NODES:-pool40 pool41 pool42}" "$extra"
+  printf '%s %s' "${POOL_NODES:-$POOL_NODES_DEFAULT}" "$extra"
 }
 
 if [ "${1:-}" = "--probe-node" ]; then
