@@ -46,11 +46,26 @@ then stop that line of work and continue with any other thread that is not block
   included, from `pool.queue` to `research/queue/pool.queue.held`. Releasing them belongs to that task. While any
   `stage1_c1_category` line sits in `pool.queue.held`, never re-add it. The C1 runner at `bb6705de6` has no
   import gap against `requirements-pool.txt` (`tools.pool.provisioning.import_closure --queue`).
+- **Pre-data runner fix + re-pin, 2026-09-30 (Claude; before any gate data; prereg byte-unchanged, no bar, arm, turn
+  or seed changed). This supersedes the ONE-revision rule above: the gate revision is now `6c2cb1362` (the last GATE
+  row), not `bb6705de6`.** The 54 lines at `bb6705de6` could never have run: `run_shard` spawned `--worker` without
+  `--allow-gate-seed`, and `main()`'s gate-seed guard applies to `--worker` too. Measured by a pool canary of the held
+  line seed 42 `intact_a` at `bb6705de6` on pool42 inside the pool-job sandbox: `GATE seed 42 refused` -> `[stage1-c1
+  shard] worker FAILED rc=2`; no line had been dispatched, so no gate shard exists at `bb6705de6`. Fix: commit
+  `7762da223` (the shard hands `--allow-gate-seed` and `--prereg` to its worker; failing-first test; tests now `26
+  passed`), main merged at `6c2cb1362` (no brain code changed: webapp/, sim/, research/runners/ untouched by the
+  merge), provisioned isolated on pool41+pool42 (LTM, corpus, runner OK). A sandboxed pool canary of the held line
+  seed 42 `intact_a` at `6c2cb1362` completed on pool42 (rc 0, 16 turns, no errored turn, no organ error, source
+  `tiny-demo +LTM`, hash ok, corpus present, 1667 s); its shard is a real gate shard at the pinned revision and the
+  queued line re-runs it. `$JOBS` (env.sh) now names the replacement file
+  `research/queue/requeue_stage1_c1_category_6c2cb1362.tsv` (the same 54 seed x arm lines at `6c2cb1362`,
+  `max_age_h=168`); step 4's guard and loop read it unchanged. The `bb6705de6` lines in `pool.queue.held` are retired,
+  never released.
 - **Scorer hardening, 2026-09-30 (adversarial review, before any gate job was dispatched; no bar, arm, turn or prereg
   line changed):** a swallowed organ exception (an `error` in a turn's `category_inherit` trace) now makes that arm
   "not applied", so the seed reads UNDEFINED instead of FAIL "capability absent" (prereg section 4: no errored turn,
   the wiring applied). Commit 8ff2547ed; the scorer runs from the worktree HEAD in step 5, the shards from
-  `bb6705de6`. Test count is now 25.
+  the gate revision. Test count is now 26 (25 + the gate-flag test).
 
 ## 1. Checks before provisioning (every line must print what its comment says)
 
@@ -151,7 +166,7 @@ find $P/$OUT -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'agg
 
 When the count stops rising for 6 h below 54 and no `stage1_c1_category` line is still queued, held or running: re-queue
 ONCE with this block. It re-adds exactly the `$JOBS` lines whose shard is absent (counted and informational arms),
-pinned to `bb6705de6` as they are; it never touches a line whose shard landed.
+pinned to `GATE_SHA` (`6c2cb1362`) as they are; it never touches a line whose shard landed.
 
 ```bash
 source /home/dant123/Projects/sim/.claude/worktrees/stage1-c1-category/research/packets/stage1-c1-category/env.sh
@@ -163,7 +178,8 @@ bash -c 'n=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [
 If the first line prints anything but 54, or any count is not 0: do not run the loop; STOP, NEEDS-CLAUDE #5.
 Then wait again. Still missing after that one re-queue: score anyway (the verdict reads UNDEFINED (INCOMPLETE)) and
 NEEDS-CLAUDE #5. If no shard has landed by 2026-10-12: NEEDS-CLAUDE #10 (the Stage-1 calendar needs this before
-2026-10-24). The lines carry `max_age_h=120`: after about 2026-10-05 12:20 EDT the dispatcher SKIPS them but leaves
+2026-10-24). The replacement lines carry `max_age_h=168` (seven days from their re-queue time, WORKLOG); the original
+`bb6705de6` lines carried `max_age_h=120`: after about 2026-10-05 12:20 EDT the dispatcher SKIPS them but leaves
 them in `pool.queue`, so the block's guard (count not 0) stops you. If `stage1_c1_category` lines are still queued
 after 2026-10-05 12:20 EDT with fewer than 54 shards landed: STOP, NEEDS-CLAUDE #10 (a fresh re-queue or another lane).
 

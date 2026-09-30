@@ -58,3 +58,16 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   to `research/queue/pool.queue.held` around 14:00; all 54 C1 lines are there, unchanged. Releasing them is that
   task's job. Step 4's re-queue guard now also counts `pool.queue.held`, so a held line is never duplicated. The C1
   runner at bb6705de6 has no import gap against requirements-pool.txt (import_closure --queue on the held file).
+- 2026-09-30 15:50 Claude (pool canary, pre-data fix): the held line seed 42 intact_a at bb6705de6, run on pool42
+  through tools/pool_sandbox_selftest.sh (pool-job sandbox), printed 'GATE seed 42 refused' and '[stage1-c1 shard]
+  worker FAILED rc=2': run_shard spawned --worker without --allow-gate-seed and main()'s guard applies to --worker, so
+  none of the 54 lines could run. No line had been dispatched (no gate file at bb6705de6 on either node). Fixed in
+  7762da223 (the shard hands --allow-gate-seed and --prereg to its worker; failing-first test fails at bb6705de6; 26
+  passed, SELFTEST OK), merged origin/main b604085a6 at 6c2cb1362 (the merge touches no webapp/, sim/ or
+  research/runners/ file; prereg byte-identical to PREREG_SHA; default anchor still False), pushed both remotes,
+  provisioned 6c2cb1362 isolated on pool41+pool42 (LTM wikidata_100k + wikidata_core_15k, corpus, runner, venv check
+  ok). Canary at 6c2cb1362 on pool42: rc 0, 16 turns, no errored turn, no category_inherit error, sources ['tiny-demo
+  +LTM'], hash_ok, corpus present, wall 1667 s (the ~25-30 min planning figure holds on pool42). Its shard is a real
+  gate shard at the pinned revision; the queued line re-runs it. New GATE row 6c2cb1362 in PINS.tsv; env.sh JOBS ->
+  research/queue/requeue_stage1_c1_category_6c2cb1362.tsv (the same 54 seed x arm lines, max_age_h=168 in place of
+  120). The bb6705de6 lines in pool.queue.held are retired, never released.

@@ -7,7 +7,8 @@ PY=$P/.venv/bin/python
 BR=research/stage1-c1-category
 PREREG=research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md
 OUT=research/findings/raw/_stage1_c1_category/gate
-JOBS=$P/research/queue/stage1_c1_category_jobs.tsv
+JOBS=$P/research/queue/requeue_stage1_c1_category_6c2cb1362.tsv   # 2026-09-30 re-pin (HANDOFF section 0); the
+# original 54 lines at bb6705de6 are research/queue/stage1_c1_category_jobs.tsv (never ran: worker gate-flag bug)
 PREREG_SHA=""; GATE_SHA=""
 if [ -f "$W/$K/PINS.tsv" ]; then
   PREREG_SHA=$(awk -F'\t' '$1=="PREREG"{p=$2} END{print p}' "$W/$K/PINS.tsv")
