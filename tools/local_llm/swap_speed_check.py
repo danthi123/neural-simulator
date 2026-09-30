@@ -125,7 +125,7 @@ def measure_through_swap():
 
 def main():
     os.makedirs(RESULTS, exist_ok=True)
-    rec = {"profile": PROFILE, "started": time.strftime("%Y-%m-%d %H:%M:%S")}
+    rec = {"profile": PROFILE, "device": "cuda (RTX 3090, llama-server; run via tools/gpu_queue.sh)", "started": time.strftime("%Y-%m-%d %H:%M:%S")}
     rec["direct_llama_server"] = measure_direct()
     rec["through_llama_swap"] = measure_through_swap()
     d, s = rec["direct_llama_server"]["gen_tok_s"], rec["through_llama_swap"]["gen_tok_s"]
