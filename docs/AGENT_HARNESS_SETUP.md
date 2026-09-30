@@ -503,10 +503,22 @@ inside the container, whose git config and hooks are model-writable), hooks off:
 ssh homelab-agent-ctl state                              # from the workstation: appdata_gb / gitea_gb / firewall: active
 ssh homelab-server "docker exec -e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin sim-agent /usr/bin/ssh workstation-gateway status"   # the gateway answers
 cd /home/dant123/Projects/sim
-env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/research/draft-protection-probe   # expect: accepted
-env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/protection-probe            # expect: REJECTED
-env GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sim_agent_gitea_deploy -o IdentitiesOnly=yes" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/tags/protection-probe-tag         # expect: REJECTED
+env GIT_SSH_COMMAND="ssh -F /dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -i $HOME/.ssh/sim_agent_gitea_deploy" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/research/draft-protection-probe   # expect: accepted
+env GIT_SSH_COMMAND="ssh -F /dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -i $HOME/.ssh/sim_agent_gitea_deploy" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/heads/protection-probe            # expect: REJECTED
+env GIT_SSH_COMMAND="ssh -F /dev/null -o IdentityAgent=none -o IdentitiesOnly=yes -i $HOME/.ssh/sim_agent_gitea_deploy" git -c core.hooksPath=/dev/null push ssh://git@192.168.0.10:2222/dant123/neural-simulator.git HEAD:refs/tags/protection-probe-tag         # expect: REJECTED
 ```
+
+First confirm the probe authenticates AS THE DEPLOY KEY: `ssh -F /dev/null -o IdentityAgent=none -o IdentitiesOnly=yes
+-i ~/.ssh/sim_agent_gitea_deploy -p 2222 git@192.168.0.10` must greet "the deploy key named sim-agent". Without
+`-F /dev/null -o IdentityAgent=none`, the workstation's `Host 192.168.0.10` entry (and the ssh agent) offers the
+owner's own key first, Gitea greets "Hi there, dant123!", and every probe passes as the allowlisted owner, proving
+nothing (found 2026-09-30). The probes must also move a ref (a new throwaway commit, e.g. `git commit-tree`), since an
+already-up-to-date push is not a test.
+
+**Tags (Gitea 1.27, measured 2026-09-30):** protected-tag rules check the pushing USER, and a deploy-key push counts
+as the repo owner, so a tag rule whose allowlist includes the owner does NOT stop the deploy key (branch rules do
+check deploy keys separately and held). The project uses no tags, so the tag rule `*` must allow NOBODY (empty
+allowlist); the tag probe above must then be rejected.
 
 Delete `research/draft-protection-probe` in the Gitea UI afterwards (and anything else that was accepted: then
 step 3's rules are wrong, fix them before going further).
