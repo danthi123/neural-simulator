@@ -75,7 +75,7 @@ PIN_P=$(git rev-parse HEAD); echo "$PIN_P"
 
 | result | do |
 |---|---|
-| status printed tracked changes | `git checkout -- research/findings/raw/_provenance/runs.jsonl` if that is the only file and retry; otherwise STOP. NEEDS-CLAUDE "iw2: uncommitted tracked changes in the worktree" |
+| status printed tracked changes | STOP. NEEDS-CLAUDE "iw2: uncommitted tracked changes in the worktree" (the shared run log `research/findings/raw/_provenance/runs.jsonl` is excluded from the check and never committed) |
 | the merge reports a conflict | `git merge --abort`; STOP. NEEDS-CLAUDE "iw2: merge conflict with origin/main: <files>" |
 | a test fails, or a packet is not "off" | STOP. NEEDS-CLAUDE with the failing test name or the status line |
 | the pre-commit/merge hook blocks | compute gates (`compute_idle_persistent`, `lane_starvation`): wait and retry. Any other gate: STOP, NEEDS-CLAUDE with its message. Never `--no-verify`, never a waiver file |
@@ -183,6 +183,7 @@ cd $W && FLIP=<the list, typed literally, e.g. false-belief-chat,neural-selfid>
 .venv/bin/python tools/integration_wave2_flip.py apply ${FLIP//,/ } --date $(date +%F)
 SIM_NO_PROVENANCE=1 .venv/bin/python -m pytest -q -p no:cacheprovider tests/test_integration_wave2_anchors.py
 .venv/bin/python tools/assert_iw2_defaults.py --expect-on=$FLIP && echo guard-ok
+git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null   # the shared run log; never part of a flip commit
 git add -u && git commit -m "flip(iw2, PROVISIONAL, branch only): $FLIP default-on via tools/integration_wave2_flip.py; ledger anchors + subflag notes; LBF rows lifted into the headline registry. Validation pending (shared prereg steps B, F)"
 bash tools/push_both.sh research/integration-wave2
 PIN_F=$(git rev-parse HEAD); printf 'F\t%s\t%s\t%s\n' "$PIN_F" "$FLIP" "$(date -u +%FT%TZ)" >> $K/PINS.tsv
