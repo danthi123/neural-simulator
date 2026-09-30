@@ -22,6 +22,19 @@ per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end an
   file is missing, STOP (NEEDS-CLAUDE #1).
 - Dev verification (dev seed 7) is DONE and PASSED (prereg section 11). Step 2 is only for a re-check.
 - The gate has NOT been queued. Nothing in `research/findings/raw/_stage1_exit/gate/` exists yet.
+- **Pre-data runner fix, 2026-09-30 (Claude; before any gate data; prereg byte-unchanged, no bar/arm/turn/seed
+  changed).** The 204 lines queued at `4f6d9d7fb` could never have run: `run_shard` spawned `--worker` without
+  `--allow-gate-seed`, and `main()`'s gate-seed guard applies to `--worker` too, so every gate shard died rc=2 before
+  building a brain. A pool maintenance hold moved all 204 lines to `research/queue/pool.queue.held` before any
+  dispatch; a pool canary of the same runner shape (stage1_c1_category at `bb6705de6`, pool42, inside the pool-job
+  sandbox) printed `GATE seed 42 refused` -> `worker FAILED rc=2`. Fix: commit `38fd327f3` (the shard hands
+  `--allow-gate-seed` and `--prereg` to its worker; failing-first test, now `9 passed`), main merged at `c238ff325`
+  (no brain code changed: webapp/, sim/, research/runners/ untouched), GATE_SHA re-pinned to `c238ff325`, provisioned
+  isolated on pool41+pool42 (LTM, corpus OK), and a pool canary of the held line seed 42 `val_novel`/`intact_a` at
+  `c238ff325` ran to completion on pool41 inside the sandbox (rc 0, 17 turns, no errored turn, source `tiny-demo
+  +LTM`, hash ok, corpus present, 740 s). The 204 replacement lines (same seed x group x arm set, `max_age_h=168`) are
+  `research/queue/requeue_stage1_exit_gate_c238ff325.tsv` in the primary checkout; step 6's single re-queue greps THAT
+  file, never `stage1_exit_gate_jobs.tsv` (it pins `4f6d9d7fb`).
 
 ## 1. When to start
 
@@ -62,7 +75,7 @@ cd $W && bash -c 'bash tools/mem_ok.sh 7 && bash tools/memcap.sh 9 -- '"$PY"' -u
 ```bash
 cd $W
 $PY -m research.runners.stage1_exit_gate --selftest | tail -1                    # must print: SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage1_exit_gate.py | tail -1   # must print: 8 passed
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage1_exit_gate.py | tail -1   # must print: 9 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null       # every runner appends to this shared log; never commit it
 git status --short | grep -v "^??" | wc -l                                      # must print 0 (nothing uncommitted)
 SHA=$(cat docs/drafts/stage1-exit/GATE_SHA); git merge-base --is-ancestor $SHA HEAD && echo GATE-SHA-OK
@@ -128,7 +141,7 @@ find $P/research/findings/raw/_stage1_exit/gate -name '*.json' ! -name '*.prov.j
 ```
 
 When the count stops rising for 6 h below 204: run step 7's aggregate (its `missing_shards` list names them),
-re-queue exactly those lines from `research/queue/stage1_exit_gate_jobs.tsv` ONCE (grep the line by its `--group`
+re-queue exactly those lines from `research/queue/requeue_stage1_exit_gate_c238ff325.tsv` (section 0) ONCE (grep the line by its `--group`
 and `--arm` and `--seed`), wait again. Still missing after that: score anyway (the verdict will be UNDEFINED
 (INCOMPLETE)) and add NEEDS-CLAUDE #5.
 

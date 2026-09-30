@@ -43,3 +43,16 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   fired on each company flip. Instrument intact. All six dev arms now landed; HANDOFF section 2 PASS list holds.
 
 - 2026-09-29 23:1x (Claude): GATE_SHA 4f6d9d7fb69124a4d16797a236ac388b67eb73c6 provisioned isolated on pool41+pool42 (LTM OK, CORPUS OK on both); 204 jobs queued, 0 ADD-FAILED; pool depth 551 after queueing. AWS lane NOT used (NEEDS-CLAUDE #13 ruled: the pool ETA of about Oct 2-5 lands inside the Oct 24 window and before the Pro downgrade).
+- 2026-09-30 15:25 Claude (pool canary, pre-data fix): the 204 lines at 4f6d9d7fb never ran: a pool maintenance hold
+  moved them to research/queue/pool.queue.held before any dispatch, and a canary of the same runner shape
+  (stage1_c1_category at bb6705de6, pool42, in the pool-job sandbox) showed every gate shard dies rc=2: run_shard
+  spawned --worker without --allow-gate-seed and main()'s guard applies to --worker. Fixed in 38fd327f3 (the shard
+  hands --allow-gate-seed and --prereg to its worker; failing-first test fails at 4f6d9d7fb; 9 passed, SELFTEST OK),
+  merged origin/main b604085a6 at c238ff325 (the merge touches no webapp/, sim/ or research/runners/ file; prereg
+  byte-identical to PREREG_SHA), pushed both remotes, provisioned c238ff325 isolated on pool41+pool42 (LTM
+  wikidata_100k + wikidata_core_15k, corpus OK, venv check ok). Canary at c238ff325: held line seed 42
+  val_novel/intact_a through tools/pool_sandbox_selftest.sh on pool41: rc 0, 17 turns, no errored turn, sources
+  ['tiny-demo +LTM'], hash_ok, corpus present, wall 740 s (1.7x the dev-seed-7 workstation 442 s; a stage2 dev shard
+  ran 3.6x slower on pool42, so the section-5 ETA is optimistic). That canary's shard is a real gate shard at the
+  pinned revision (the queued line re-runs it). GATE_SHA re-pinned to c238ff325; the 204 replacement lines (same seed
+  x group x arm set, max_age_h=168) are research/queue/requeue_stage1_exit_gate_c238ff325.tsv.
