@@ -194,8 +194,9 @@ docker image rm sim-agent:latest                                  # the new imag
 ```bash
 sudo zfs create -o mountpoint=/home/dant123/data/sim-agent -o refquota=64G -o quota=192G data/appdata/sim-agent
 sudo chown dant123:dant123 /home/dant123/data/sim-agent
-sudo install -d -o 61000 -g 61000 -m 750 /home/dant123/data/sim-agent/repo
-sudo install -d -o 61000 -g 61000 -m 700 /home/dant123/data/sim-agent/home
+sudo mkdir -p /home/dant123/data/sim-agent/repo /home/dant123/data/sim-agent/home
+sudo chown 61000:61000 /home/dant123/data/sim-agent/repo /home/dant123/data/sim-agent/home   # numeric: no such user on the box
+sudo chmod 750 /home/dant123/data/sim-agent/repo && sudo chmod 700 /home/dant123/data/sim-agent/home
 zfs get -o property,value mountpoint,refquota,quota data/appdata/sim-agent
 ```
 
@@ -211,7 +212,8 @@ zfs get -o property,value mountpoint,refquota,quota data/appdata/sim-agent
   snapshots of this dataset.
 - **uid 61000, not the box's PUID 99:** the image's non-root user (61000, chosen in the 2026-09-29 review so an
   escape never lands as the workstation's uid 1000 or any existing account). A bind mount starts empty (no
-  copy-up from the image, unlike a named volume), so these two `install -d` lines are the whole ownership story.
+  copy-up from the image, unlike a named volume), so these `mkdir`/`chown` lines are the whole ownership story
+  (`install -o 61000` fails on this box: coreutils `install` wants an existing user name).
 - **Shorter snapshot retention for this dataset** (it churns: worktrees, result pulls, git gc). Append to
   `/etc/sanoid/sanoid.conf`, mirror into `~/apps/host/etc/sanoid/sanoid.conf`, and preview:
 
