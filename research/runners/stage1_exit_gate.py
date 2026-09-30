@@ -371,7 +371,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     return 0
 
 
-def run_shard(seed, group, arm, out_path, backend="numpy", labels=None):
+def run_shard(seed, group, arm, out_path, backend="numpy", labels=None, allow_gate_seed=False, prereg=None):
     """One (seed, group, arm) arm in a FRESH subprocess with the frozen env (PYTHONHASHSEED must be set before the
     interpreter starts, so it cannot be applied in-process)."""
     env = dict(os.environ)
@@ -384,6 +384,12 @@ def run_shard(seed, group, arm, out_path, backend="numpy", labels=None):
            "--group", group, "--arm", arm, "--out", part]
     if labels:
         cmd += ["--labels", labels]
+    if allow_gate_seed:
+        # the worker's own main() applies the gate-seed guard too: without the flag every gate shard dies rc=2
+        # (pre-data fix 2026-09-30, found by the pool canary; the prereg is unchanged)
+        cmd += ["--allow-gate-seed"]
+    if prereg:
+        cmd += ["--prereg", prereg]
     p = subprocess.run(cmd, env=env, cwd=_REPO)
     if p.returncode != 0 or not os.path.exists(part):
         print("[stage1 shard] worker FAILED rc=%s for seed=%s %s/%s" % (p.returncode, seed, group, arm), flush=True)
@@ -1039,7 +1045,8 @@ def main():
             sys.exit(2)
         if a.worker:
             sys.exit(run_worker(a.seed, a.group, a.arm, a.out, labels=a.labels))
-        sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels))
+        sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels,
+                           allow_gate_seed=a.allow_gate_seed, prereg=a.prereg))
     ap.error("choose one of --worker/--shard/--aggregate/--report/--selftest/--emit-pool-jobs")
 
 
