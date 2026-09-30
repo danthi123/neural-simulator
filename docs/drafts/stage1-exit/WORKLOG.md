@@ -33,3 +33,6 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   per seed and lesion (treatment = primary-field differences intact_a-vs-lesion on the scored turns; control = the
   same count intact_a-vs-intact_b; C4 uses |r_intact - r_lesion| vs |r_a - r_b|), recorded as `attributable` in
   each lesion record; the aggregate's prints go to stderr so `--aggregate > report.md` stays clean.
+- 2026-09-29 22:58 Claude: origin/main moved (serving-simplify merge, 5 commits) after commit 2; merged it in
+  cleanly (4f6d9d7fb; FAILURE_LOG appends auto-merged), selftest/tests green, prereg byte-identical to
+  PREREG_SHA; GATE_SHA re-pinned to the merge commit so pool_provision.sh accepts it.
