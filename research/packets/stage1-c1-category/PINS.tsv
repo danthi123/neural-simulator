@@ -1,0 +1,2 @@
+PREREG	e3ef82263013fc96f70e94124c452e112a0c7821	2026-09-30T16:10:26Z	the prereg commit (alone)
+GATE	f9e9b532e66e1a79a53a24e9180ef46669816d37	2026-09-30T16:10:26Z	the gate revision: prereg byte-unchanged + runner + organ + wiring + packet
