@@ -42,11 +42,15 @@ records `corpus_present` and `ltm_bundle`; `--compare` is UNDEFINED unless both 
 same non-empty ltm_bundle. IW2_ALLOW_DEGRADED=1 measures the degraded brain on purpose (recorded). The arm also
 records its peak RSS (`peak_rss_gb`, getrusage) so the job lines' declared mem_gb is a measured number.
 
-SINGLE-THREAD GUARD (dev seed 7, 2026-09-30). With 2 BLAS threads, one turn's body carried a sign-flipped rounding
-residue (`curiosity.novelty` +1.1e-16 vs -1.1e-16) that differed between two fresh processes of the SAME code and flags,
-so a byte comparison read a difference no flag caused. A byte-identity instrument must be deterministic: an arm refuses
-(exit 3) unless OMP_NUM_THREADS, OPENBLAS_NUM_THREADS and MKL_NUM_THREADS are all "1" (the job lines set them), records
-them, and `--compare` is UNDEFINED unless both arms ran single-threaded.
+DETERMINISM GUARD (dev seed 7, 2026-09-30). One turn's body ("does the cat sleep?", right after a segment reset)
+carried a rounding residue in `curiosity.novelty` / `curiosity.graded_novelty.value` that took the values +1.1e-16,
+-1.1e-16 or 0.0 in fresh processes of the SAME code and flags (measured with 2 BLAS threads, and again with 1), so a byte
+comparison read a difference no flag caused. The residue follows the order of a floating-point sum, and that order
+follows Python's per-process string-hash randomization (the Stage-1 exit runner pins PYTHONHASHSEED=0 for the same
+reason). A byte-identity instrument must be deterministic: an arm refuses (exit 3) unless PYTHONHASHSEED is "0" and
+OMP_NUM_THREADS, OPENBLAS_NUM_THREADS and MKL_NUM_THREADS are all "1" (the job lines set them; PYTHONHASHSEED must be
+in the environment BEFORE the interpreter starts), records them, and `--compare` is UNDEFINED unless both arms ran
+that way.
 """
 from __future__ import annotations
 
@@ -90,6 +94,7 @@ TURNS = [
 # the same four files load_bearing_fraction's CORPUS GUARD requires (research/runners/load_bearing_fraction.py)
 CORPUS_FILES = ("tinystories.txt", "wikitext.txt", "simplewiki.txt", "websters1913.json")
 THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
+DETERMINISM_ENV = {"PYTHONHASHSEED": "0", "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
 VOLATILE_KEY_RE = re.compile(r"(latency|elapsed|_ms$|_sec$|_secs$|seconds|time|timestamp|wall|duration|perf)", re.I)
 
 
@@ -141,8 +146,9 @@ def _refuse(msg: str):
 
 
 def _refuse_threads(th):
-    print("⛔ iw2_default_identity: BLAS/OpenMP thread variables %s must all be \"1\" (a multi-threaded reduction "
-          "is not bit-reproducible; see the module docstring). Refusing to run." % th, file=sys.stderr, flush=True)
+    print("⛔ iw2_default_identity: the environment %s must equal %s (hash-randomized iteration order or a "
+          "multi-threaded reduction is not bit-reproducible; see the module docstring). Refusing to run."
+          % (th, DETERMINISM_ENV), file=sys.stderr, flush=True)
     raise SystemExit(3)
 
 
@@ -159,14 +165,15 @@ def _peak_rss_gb() -> float:
 
 
 def threads_status(environ=None) -> dict:
+    """The determinism-relevant environment of this process (see DETERMINISM GUARD)."""
     environ = os.environ if environ is None else environ
-    return {k: environ.get(k) for k in THREAD_VARS}
+    return {k: environ.get(k) for k in DETERMINISM_ENV}
 
 
 def run_arm(arm: str, seed: int, out: str) -> dict:
     allow_degraded = os.environ.get("IW2_ALLOW_DEGRADED") == "1"
     th = threads_status()
-    if any(v != "1" for v in th.values()):
+    if th != DETERMINISM_ENV:
         _refuse_threads(th)
     cs = corpus_status(os.getcwd())
     if not cs["corpus_present"] and not allow_degraded:
@@ -252,7 +259,7 @@ def compare(a: dict, b: dict, expect: str, packet: str = None) -> dict:
            "all_turns_present": all(len(x.get("turns", [])) == x.get("n_turns") for x in (a, b)),
            "corpus_present_both": a.get("corpus_present") is True and b.get("corpus_present") is True,
            "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle"),
-           "single_threaded_both": all(set((x.get("threads") or {}).values()) == {"1"} for x in (a, b))}
+           "deterministic_env_both": all((x.get("threads") or {}) == DETERMINISM_ENV for x in (a, b))}
     diff = [i for i, (x, y) in enumerate(zip(ta, tb)) if x.get("sha_canon") != y.get("sha_canon")]
     reply_diff = [i for i, (x, y) in enumerate(zip(ta, tb)) if _reply(x) != _reply(y)]
     backends = sorted({str(a.get("sim_backend")), str(b.get("sim_backend"))})

@@ -392,7 +392,7 @@ def _row(sha, ans="x", tag="scope"):
     return {"status": 200, "sha_canon": sha, "answer": ans, "abstained": False, "recalled_svo": None, "for": tag}
 
 
-_ONE = {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
+_ONE = {"PYTHONHASHSEED": "0", "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
 
 
 def _arm(turns, **kw):
@@ -420,6 +420,7 @@ def test_identity_compare_verdicts():
     assert t.compare(a, dict(b, corpus_present=False), "same")["verdict"] == "UNDEFINED"
     assert t.compare(a, dict(b, ltm_bundle="wikidata_core_15k"), "same")["verdict"] == "UNDEFINED"
     assert t.compare(a, dict(b, threads=dict(_ONE, OMP_NUM_THREADS="2")), "same")["verdict"] == "UNDEFINED"
+    assert t.compare(a, dict(b, threads=dict(_ONE, PYTHONHASHSEED="random")), "same")["verdict"] == "UNDEFINED"
     assert t.compare(a, {k: v for k, v in b.items() if k != "threads"}, "same")["verdict"] == "UNDEFINED"
     with pytest.raises(SystemExit):
         t.compare(a, c, "differs")
@@ -436,13 +437,15 @@ def test_identity_compare_cli_exit_codes(tmp_path):
     assert run("--expect", "differs", "--packet", "transitive-chat") == 3       # vacuous = UNDEFINED, never a pass
 
 
-def test_identity_arm_refuses_multithreaded_blas(tmp_path, monkeypatch):
-    """A byte-identity arm must be bit-reproducible: refuse (exit 3) before any build unless all thread vars are 1."""
+@pytest.mark.parametrize("bad", [("OMP_NUM_THREADS", "2"), ("PYTHONHASHSEED", None), ("PYTHONHASHSEED", "1")])
+def test_identity_arm_refuses_a_nondeterministic_env(tmp_path, monkeypatch, bad):
+    """A byte-identity arm must be bit-reproducible: refuse (exit 3) before any build unless PYTHONHASHSEED=0 and every
+    BLAS/OpenMP thread var is 1."""
     from research.runners import iw2_default_identity as t
     monkeypatch.chdir(tmp_path)
-    for k in t.THREAD_VARS:
-        monkeypatch.setenv(k, "1")
-    monkeypatch.setenv("OMP_NUM_THREADS", "2")
+    for k, v in t.DETERMINISM_ENV.items():
+        monkeypatch.setenv(k, v)
+    _set(monkeypatch, bad[0], bad[1])
     with pytest.raises(SystemExit) as e:
         t.run_arm("default", 7, str(tmp_path / "out.json"))
     assert e.value.code == 3 and not (tmp_path / "out.json").exists()
@@ -453,15 +456,15 @@ def test_identity_job_lines_pin_single_threaded_blas(tmp_path):
     r = _mk("identity", head, "default", env_extra={"IW2_JOBS_OUTD": str(tmp_path)})
     assert r.returncode == 0, r.stderr
     ln = (tmp_path / ("identity_%s.txt" % head[:7])).read_text()
-    for k in ("OMP_NUM_THREADS=1", "OPENBLAS_NUM_THREADS=1", "MKL_NUM_THREADS=1"):
+    for k in ("PYTHONHASHSEED=0", "OMP_NUM_THREADS=1", "OPENBLAS_NUM_THREADS=1", "MKL_NUM_THREADS=1"):
         assert k in ln, ln
 
 
 def test_identity_arm_refuses_to_build_without_the_corpus(tmp_path, monkeypatch):
     from research.runners import iw2_default_identity as t
     monkeypatch.chdir(tmp_path)
-    for k in t.THREAD_VARS:
-        monkeypatch.setenv(k, "1")
+    for k, v in t.DETERMINISM_ENV.items():
+        monkeypatch.setenv(k, v)
     monkeypatch.delenv("IW2_ALLOW_DEGRADED", raising=False)
     before = dict(os.environ)
     with pytest.raises(SystemExit) as e:

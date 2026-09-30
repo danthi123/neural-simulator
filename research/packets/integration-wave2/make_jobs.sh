@@ -95,7 +95,7 @@ case "$STEP" in
     for ARM in "$@"; do
       SAFE="$(printf '%s' "$ARM" | tr ':+' '__')"
       D="research/findings/raw/_iw2/identity/$P7"
-      echo "cd $ROOT && mkdir -p $D && bash tools/mem_ok.sh $IDENT_NEED 1 && bash tools/memcap.sh $IDENT_CAP -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 $PY -u -m research.runners.iw2_default_identity --arm $ARM --seed 7 --out $D/$SAFE.json" >> "$OUT"
+      echo "cd $ROOT && mkdir -p $D && bash tools/mem_ok.sh $IDENT_NEED 1 && bash tools/memcap.sh $IDENT_CAP -- env SIM_BACKEND=numpy PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 $PY -u -m research.runners.iw2_default_identity --arm $ARM --seed 7 --out $D/$SAFE.json" >> "$OUT"
     done ;;
   *) echo "make_jobs: unknown step $STEP" >&2; exit 2 ;;
 esac
