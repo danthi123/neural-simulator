@@ -36,3 +36,13 @@ Build agent log for this branch (worktree `.claude/worktrees/sleep-transitive-in
   0.07), so STI3 now binds on `wperm` (the night's own weight changes permuted; U6 on it), `scr` REPORTED. Plumbing
   smoke of every arm on numpy (dev seed 7, tiny): no error, replica exact. Tests 8/8, grader selftest 28/28.
   Nothing committed (compute-idle gate). GPU dev seeds 9-11 still queued; seed 8 running.
+- 2026-09-29 LANDING (Claude): dev cupy seeds 9-11 were killed mid-build (rc=143/137, a GPU pause/game cycle, not a
+  code failure); re-queued identically, all 4 (8-11) completed clean (no Traceback). Step 2 operating-point check:
+  `--devcheck` on all four prints `all_pass: true` (opcheck.json). Step 3 pre-commit checks all pass (8/8 tests,
+  SELFTEST PASS, check_docs OK). claim_check flagged the prereg's own `seedS.json`/`seedS_*.json` naming-template
+  prose as missing artifacts (a literal-path false positive); reworded to `seed<S>...` (matches the doc's existing
+  `<sha>`/`<PART>`/`<tag>` bracket convention) -- claim_check now clean, no other change. Commit 1 (code+tests+dev)
+  812c2af78; commit 2 (prereg+docs) 35e6b85bd; merged origin/main (bfde9a195, no conflicts, prereg unchanged, tests
+  re-verified); pushed both remotes. Provisioned pool41/pool42 at bfde9a195; queued 30 gate jobs (6 seeds x 5 arm
+  parts), 0 failures. Awaiting the pool; score with `sleep_transitive_inference_grade` per prereg section 8 once all
+  30 parts land.
