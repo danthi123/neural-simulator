@@ -221,7 +221,9 @@ bash -c 'R="iw2 step F dev seed 7: prereg research/findings/2026-09-30-iw2-wave-
 
 Log each wave (epoch, first-last line) in `$K/waves.tsv`. Every B line starts with
 `cd ~/derisk-pool/revisions/<F> && .venv/bin/python tools/assert_iw2_node.py && .venv/bin/python
-tools/assert_iw2_defaults.py --expect-on=<FLIP> &&`; a line that does not: STOP, NEEDS-CLAUDE. AWS: starting it is not
+tools/assert_iw2_defaults.py <FLIP> &&` (the packet list is POSITIONAL: `pool_queue.sh add` refuses a pinned line
+carrying any `--flag` its `-m` module does not accept, and `--expect-on` is not a load_bearing_fraction flag); a line
+that does not: STOP, NEEDS-CLAUDE. AWS: starting it is not
 yours (NEEDS-CLAUDE if the pool alone would take more than 3 days).
 
 When every line has landed:

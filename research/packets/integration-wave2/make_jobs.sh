@@ -29,13 +29,13 @@ IDENT_NEED=11; IDENT_CAP=15   # peak RSS measured 2026-09-30 (dev seed 7, determ
 capwrap() {  # insert the memory gate + hard cap in front of the FIRST ` && env ` of each line
   sed "s# \&\& env # \&\& bash tools/mem_ok.sh $1 2 \&\& bash tools/memcap.sh $2 -- env #"
 }
-if [ "${1:-}" = capwrap ]; then capwrap "${2:?need_gb}" "${3:?cap_gb}"; exit 0; fi
 STEP="${1:?step}"; PIN="${2:?pin}"
-[ "${#PIN}" -eq 40 ] || { echo "make_jobs: pin must be a full 40-char sha" >&2; exit 2; }
+case "$STEP" in capwrap|guardwrap) ;; *)
+[ "${#PIN}" -eq 40 ] || { echo "make_jobs: pin must be a full 40-char sha" >&2; exit 2; } ;; esac
 HEAD="$(git rev-parse HEAD)"
 # the checkout must BE the pin, or a descendant that differs from it only in this packet directory and raw results
 # (the job-file / PINS.tsv / data commits the HANDOFF makes on top of a pin)
-if [ "$HEAD" != "$PIN" ]; then
+if [ "$STEP" != capwrap ] && [ "$STEP" != guardwrap ] && [ "$HEAD" != "$PIN" ]; then
   git merge-base --is-ancestor "$PIN" HEAD || { echo "make_jobs: pin $PIN is not an ancestor of HEAD" >&2; exit 2; }
   git diff --quiet "$PIN" HEAD -- . ':!research/packets/integration-wave2' ':!research/findings/raw' || {
     echo "make_jobs: HEAD differs from pin $PIN outside the packet dir and raw results (code moved; re-pin)" >&2; exit 2; }
@@ -47,8 +47,9 @@ PY=".venv/bin/python"
 nodeguard() {  # insert the degraded-node preflight right after `cd <root> && ` (corpus + LTM bundle; exit 3)
   sed "s#^cd \([^ ]*\) && #cd \1 \&\& $PY tools/assert_iw2_node.py \&\& #"
 }
-guard() {  # insert the defaults guard right after `cd <root> && `
-  sed "s#^cd \([^ ]*\) && #cd \1 \&\& $PY tools/assert_iw2_defaults.py --expect-on=$1 \&\& #"
+guard() {  # insert the defaults guard right after `cd <root> && ` -- POSITIONAL packet list: tools/pool_queue.sh checks
+  # every `--flag` of a pinned line against the -m module's --help and refuses `--expect-on` (review 2026-09-30)
+  sed "s#^cd \([^ ]*\) && #cd \1 \&\& $PY tools/assert_iw2_defaults.py $1 \&\& #"
 }
 off_env() {  # the explicit-off env for one packet
   case "$1" in
@@ -59,6 +60,8 @@ off_env() {  # the explicit-off env for one packet
   esac
 }
 case "$STEP" in
+  capwrap) capwrap "${2:?need_gb}" "${3:?cap_gb}"; exit 0 ;;
+  guardwrap) guard "${2:?comma-separated packets}"; exit 0 ;;   # the flip lines' defaults guard only (tests)
   R)  # three files, one per packet (each is queued with its own prereg in --checked): the capability row AND its
       # permuted control row (research/runners/lbf_rows/iw2_controls.py, opt-in by LB_IW2_CONTROLS=1), 12 lines each
     $PY tools/lb_shard.py jobs --seeds $SEEDS --tag "iw2-R-fb-$P7" --no-fixes \

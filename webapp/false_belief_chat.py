@@ -305,6 +305,11 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 "belief_location": belief_name, "reality_location": scen.loc_name(read["world_loc"]),
                 "belief_loc_idx": read["belief_loc"], "world_loc_idx": read["world_loc"],
                 "n_events": read["n_events"], "reason": "queried",
+                # the late-window store rates behind the argmax (trace only; the reply is unchanged). Locations take
+                # slots in order of mention and an all-zero read returns slot 0, so a silent store "answers" the
+                # first-named location: tools/iw2_score.py reads these to tell a store read from that default.
+                "belief_rates": {str(k): round(float(v), 6) for k, v in (read.get("belief_rates") or {}).items()},
+                "world_rates": {str(k): round(float(v), 6) for k, v in (read.get("world_rates") or {}).items()},
             })
     except Exception as e:   # never let the false-belief read/write crash a turn
         info = {"acted": False, "answer": None, "events": [], "reason": f"error:{type(e).__name__}: {e}",

@@ -6,7 +6,11 @@ production-default battery passes NO BRAIN_* flag, so it measures whatever the c
 dispatched from the wrong revision would silently measure the wrong defaults and still look valid (the 2026-09-23
 lesson, tools/assert_flipped_defaults.py). Every job line of those batteries therefore starts with
 
-    .venv/bin/python tools/assert_iw2_defaults.py --expect-on=<comma-separated packet names> &&
+    .venv/bin/python tools/assert_iw2_defaults.py <comma-separated packet names> &&
+
+(positional in job lines: tools/pool_queue.sh checks every `--flag` of a revision-pinned line against the `-m`
+module's --help and would refuse a line carrying `--expect-on`, adversarial review 2026-09-30; `--expect-on=<list>`
+stays accepted for the interactive checks in the HANDOFF),
 
 which exits 1 unless
   * each wave-2 anchor named in --expect-on reads True in the SOURCE of this checkout, and every other wave-2 anchor
@@ -69,10 +73,15 @@ def problems(expect_on, environ=None, root=ROOT):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--expect-on", required=True,
+    ap.add_argument("expect_on_pos", nargs="?", default=None, metavar="PACKETS",
+                    help="the same list as --expect-on, positional (the form job lines use)")
+    ap.add_argument("--expect-on", default=None,
                     help='comma-separated packet names whose anchor must read True ("" = none, the pre-flip state)')
     a = ap.parse_args(argv)
-    expect = [p.strip() for p in a.expect_on.split(",") if p.strip()]
+    if (a.expect_on is None) == (a.expect_on_pos is None):
+        ap.error("give the packet list exactly once: positional PACKETS or --expect-on")
+    raw = a.expect_on if a.expect_on is not None else a.expect_on_pos
+    expect = [p.strip() for p in raw.split(",") if p.strip()]
     probs = problems(expect)
     if probs:
         for p in probs:

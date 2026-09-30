@@ -505,7 +505,10 @@ def _r(ans, abstained=False, svo=None):
 
 _ABSTAIN = _r("I don't know about that.", True)
 FB = {"BRAIN_FALSE_BELIEF_CHAT": "1"}
-FB_INTACT = _r("Sally will look in the basket for the marble.")
+FB_INTACT = dict(_r("Sally will look in the basket for the marble."),
+                 # the handler's trace: the belief store carries the answered slot (the scorer's store-read guard)
+                 false_belief_tom={"acted": True, "belief_loc_idx": 0, "world_loc_idx": 1,
+                                   "belief_rates": {"0": 0.3333, "1": 0.0, "2": 0.0, "3": 0.0}})
 FB_LESION = _r("Sally will look in the box for the marble.")
 
 
@@ -787,3 +790,132 @@ def test_flip_passes_the_real_production_integration_gate(tmp_path, monkeypatch)
     assert pi._check_anchors(after) == base_a, pi._check_anchors(after)
     assert pi._check_ratchet(after) == base_c
     assert pi._check_retire_status(after) == base_d
+
+
+# ── adversarial review 2026-09-30 (Claude): two pre-gate defects, each pinned failing-first ──────────────────────
+def _fb_trace(belief_idx, rates):
+    """The false_belief_tom trace block the handler returns on an answered query (webapp/false_belief_chat.py)."""
+    return {"acted": True, "belief_loc_idx": belief_idx, "world_loc_idx": 1,
+            "belief_rates": {str(k): v for k, v in rates.items()}}
+
+
+def test_iw2_score_R_silent_belief_store_never_passes(tmp_path):
+    """The chat wire names locations in order of mention, so the stale location of the Sally-Anne probe is ALWAYS slot
+    0, and the organ's read is `max(rates, key=rates.get)`, which returns slot 0 when every rate is 0. A belief store
+    that never ignited (or could not hold across the move) therefore answers 'basket', the correct false-belief text,
+    with no store content behind it; the lesion (witnessing gate forced open) drives 'box' at the move and changes the
+    reply. The prereg says such a seed must read degenerate or intact-wrong, never a pass: the intact arm's trace must
+    show the belief store actually carrying the answered slot (a positive rate, strictly above every other slot)."""
+    sc = _fill(tmp_path)
+    silent = dict(FB_INTACT, false_belief_tom=_fb_trace(0, {0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}))
+    _write_cell(str(tmp_path), "R", 100, "tom-false-belief", "tom_fb", {"ia": silent, "le": FB_LESION}, env=FB,
+                arm_env=dict(FB, BRAIN_FALSE_BELIEF_LESION="1"))
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code != sc.PASS, res["per_seed"]["100"]
+    assert res["per_seed"]["100"]["state"] == "UNDEFINED:degenerate-intact", res["per_seed"]["100"]
+    tied = dict(FB_INTACT, false_belief_tom=_fb_trace(0, {0: 0.3, 1: 0.3, 2: 0.0, 3: 0.0}))
+    _write_cell(str(tmp_path), "R", 100, "tom-false-belief", "tom_fb", {"ia": tied, "le": FB_LESION}, env=FB,
+                arm_env=dict(FB, BRAIN_FALSE_BELIEF_LESION="1"))
+    assert sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))[1] != sc.PASS
+    no_trace = dict(FB_INTACT)
+    no_trace.pop("false_belief_tom", None)
+    _write_cell(str(tmp_path), "R", 100, "tom-false-belief", "tom_fb", {"ia": no_trace, "le": FB_LESION}, env=FB,
+                arm_env=dict(FB, BRAIN_FALSE_BELIEF_LESION="1"))
+    assert sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))[1] != sc.PASS
+
+
+def test_false_belief_answer_exports_the_store_rates(monkeypatch):
+    """The scorer's silent-store guard reads the rates from the handler's trace block: observe_turn must return them."""
+    fbc = importlib.import_module("webapp.false_belief_chat")
+    monkeypatch.setattr(fbc._Scenario, "loc_index",
+                        lambda self, name: self.locations.setdefault(name.lower(), len(self.locations)))
+
+    class _Organ:
+        def observe_event(self, loc, witnessed, lesion=False):
+            return loc
+
+        def query(self, lesion=False):
+            return {"belief_loc": 0, "world_loc": 1, "belief_rates": {0: 0.3333, 1: 0.0, 2: 0.0, 3: 0.0},
+                    "world_rates": {0: 0.0, 1: 0.02, 2: 0.0, 3: 0.0}, "n_events": 2}
+
+    key = "iw2-review-rates"
+    fbc.reset_session(key)
+    orig = fbc._get_or_start_scenario
+
+    def fake(cache_key, agent, seed):
+        with fbc._SESSIONS_LOCK:
+            scen = fbc._SESSIONS.get(cache_key)
+            if scen is None:
+                scen = fbc._Scenario(_Organ())
+                scen.tracked_agent = agent
+                fbc._SESSIONS[cache_key] = scen
+            return scen
+    fbc._get_or_start_scenario = fake
+    try:
+        info = fbc.observe_turn(key, "Sally puts the marble in the basket. Sally leaves the room. Anne moves the "
+                                     "marble to the box. Where will Sally look for the marble?", seed=7, lesion=False)
+    finally:
+        fbc._get_or_start_scenario = orig
+        fbc.reset_session(key)
+    assert info["acted"] and info["belief_loc_idx"] == 0, info
+    assert info["belief_rates"] == {"0": 0.3333, "1": 0.0, "2": 0.0, "3": 0.0}, info
+    assert json.loads(json.dumps(info))["belief_rates"]["0"] == 0.3333
+
+
+def _module_flags(module):
+    """The flags a runner's argparse accepts, read statically (tools/pool_queue.sh greps each `--flag` of a pinned job
+    line in the pinned module's --help and REFUSES the add when one is missing)."""
+    src = open(os.path.join(REPO, *module.split("."))  + ".py").read()
+    return set(re.findall(r"add_argument\(\s*[\"'](--[a-z][a-z0-9-]*)", src)) | {"--help"}
+
+
+def _line_flags(ln):
+    return set(re.findall(r"[-][-][a-z][a-z0-9-]*", ln))   # tools/pool_queue.sh's own FLAGS regex
+
+
+def test_every_job_line_flag_is_accepted_by_its_module(tmp_path):
+    """tools/pool_queue.sh's PINNED-REVISION FLAG CHECK collects EVERY `--flag` in the whole line (guards included) and
+    refuses the add unless each appears in the `-m` module's --help. A defaults guard written `--expect-on=<list>` in a
+    step-B line is therefore refused (load_bearing_fraction has no --expect-on), and the flip battery could never be
+    queued. Checks the R and identity lines at HEAD and a flip line built with the same guard/nodeguard/capwrap."""
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
+    env = {"IW2_JOBS_OUTD": str(tmp_path)}
+    r = _mk("R", head, env_extra=env)
+    assert r.returncode == 0, r.stderr
+    r = _mk("identity", head, "default", "off", env_extra=env)
+    assert r.returncode == 0, r.stderr
+    shutil.rmtree(os.path.join(REPO, "research", "findings", "raw", "_load_bearing", "_shards", "iw2-R-fb-" + head[:7]),
+                  ignore_errors=True)
+    for t in ("tr", "si"):
+        shutil.rmtree(os.path.join(REPO, "research", "findings", "raw", "_load_bearing", "_shards",
+                                   "iw2-R-%s-%s" % (t, head[:7])), ignore_errors=True)
+    lines = []
+    for fn in os.listdir(str(tmp_path)):
+        lines += (tmp_path / fn).read_text().splitlines()
+    sample = ("cd ~/derisk-pool/revisions/%s && mkdir -p x && env SIM_BACKEND=numpy .venv/bin/python -u -m "
+              "research.runners.load_bearing_fraction --only neural-selfid --seed 42 --repeats 2 --out x/lb.json" % head)
+    w = _mk("guardwrap", "false-belief-chat,neural-selfid", inp=sample + "\n")
+    assert w.returncode == 0, w.stderr
+    flip_line = w.stdout.strip()
+    assert "tools/assert_iw2_defaults.py" in flip_line and "false-belief-chat,neural-selfid" in flip_line, flip_line
+    lines.append(flip_line)
+    assert len(lines) == 36 + 2 + 1
+    for ln in lines:
+        mod = re.search(r"-m (research\.runners\.[A-Za-z0-9_]+)", ln).group(1)
+        bad = _line_flags(ln) - _module_flags(mod)
+        assert not bad, (mod, sorted(bad), ln)
+        ok, err = _shape_ok(ln)
+        assert ok, (ln, err)
+
+
+def test_guard_positional_form_matches_the_flag_form():
+    env = {k: v for k, v in os.environ.items() if not k.startswith("BRAIN_")}
+    on = ",".join(_on_now())
+    g = os.path.join(REPO, "tools", "assert_iw2_defaults.py")
+    for args in (["--expect-on=%s" % on], [on] if on else []):
+        if not args:
+            continue
+        assert subprocess.run([sys.executable, g] + args, cwd=REPO, env=env).returncode == 0
+    wrong = "" if on else "false-belief-chat"
+    if wrong:
+        assert subprocess.run([sys.executable, g, wrong], cwd=REPO, env=env).returncode == 1

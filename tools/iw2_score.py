@@ -19,6 +19,10 @@ A step-R / F1 cell counts as reply-level load-bearing ONLY when all of these hol
     `intact_must_contain`, lower-cased substring match) and none of `intact_must_not_contain`. A regressed cell whose
     intact reply is non-degenerate but WRONG (e.g. the false-belief answer names the true location) is DEFINED and
     reads `intact-wrong`: not load-bearing, so R reads FAIL (a real negative on that seed, not an undefined cell).
+  * STORE-READ guard (adversarial review 2026-09-30, false-belief-chat only): the intact arm's `false_belief_tom`
+    trace must show the belief store carrying the answered slot (a positive late-window rate, strictly above every
+    other slot); an all-zero or tied store answers slot 0 -- the stale location -- by argmax default, so it reads
+    UNDEFINED:degenerate-intact, never a pass.
 
   R  (reply-level capability, pre-flip, at pin P):
      python tools/iw2_score.py R --packet false-belief-chat --tag iw2-R-fb-<P7> --pin <P>
@@ -53,6 +57,8 @@ PACKETS = {
                           "probe_message": FB_MSG,
                           # the stale (pre-move) location, never the true one
                           "intact_must_contain": ["basket"], "intact_must_not_contain": ["box"],
+                          # the intact answer must be a READ of the belief store, not argmax's slot-0 default
+                          "store_trace": "false_belief_tom",
                           "control": {"row": "tom-true-belief-ctl", "shard_dir": "tom-true-belief-ctl",
                                       # a witnessed move: the TRUE location, never the stale one
                                       "intact_must_contain": ["box"], "intact_must_not_contain": ["basket"],
@@ -116,6 +122,33 @@ def degenerate_intact(canon, probe_message=None):
     return out
 
 
+def silent_store(canon, trace_key):
+    """Why the intact answer is not a read of the false-belief store (adversarial review 2026-09-30). The chat wire
+    gives locations slots in order of mention, so the Sally-Anne probe's stale location is ALWAYS slot 0, and the
+    organ's read `max(rates, key=rates.get)` returns slot 0 when every rate is 0: a store that never ignited, or did
+    not hold across the move, 'answers' the correct false-belief text with no store content behind it. The answered
+    slot must carry a positive late-window rate strictly above every other slot; a missing or unreadable trace never
+    passes either."""
+    out = []
+    for k, t in _intact_turns(canon):
+        tr = t.get(trace_key)
+        if not isinstance(tr, dict):
+            out.append("%s: no %s trace" % (k, trace_key))
+            continue
+        rates, idx = tr.get("belief_rates"), tr.get("belief_loc_idx")
+        try:
+            r = {int(a): float(b) for a, b in (rates or {}).items()}
+            mine = r[int(idx)]
+        except (TypeError, ValueError, KeyError):
+            out.append("%s: %s carries no readable belief_rates at belief_loc_idx %r" % (k, trace_key, idx))
+            continue
+        others = [v for a, v in r.items() if a != int(idx)]
+        if not mine > 0.0 or any(v >= mine for v in others):
+            out.append("%s: belief store silent or tied (slot %s rate %r, others %r): the answer is argmax's "
+                       "first-slot default, not a store read" % (k, idx, mine, others))
+    return out
+
+
 def wrong_intact(canon, must, must_not):
     """Why a non-degenerate intact reply does not state the capability's content (packet-specific tokens)."""
     out = []
@@ -157,6 +190,10 @@ def _cell_std(d, fac, pin, allowed, spec=None, guard=False):
         wrong = wrong_intact(canon, spec.get("intact_must_contain", []), spec.get("intact_must_not_contain", []))
         if wrong:
             return state, "intact-wrong", dict(det, fails=wrong)
+        # right text, but is it a store read? (a wrong text is a FAIL above whatever the store did)
+        why = silent_store(canon, spec["store_trace"]) if spec.get("store_trace") else []
+        if why:
+            return "UNDEFINED:degenerate-intact", None, dict(det, fails=why)
     return state, s2, det
 
 
