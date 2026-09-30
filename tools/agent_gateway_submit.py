@@ -39,10 +39,11 @@ shape tools/pool_provision.sh --isolated / tools/pool_queue.sh / tools/pool_auto
 throughout) and forwards it to tools/pool_queue.sh add, which re-applies its OWN full guard suite (shape/
 gate-seed/node-validation/--checked control-character rejection) independently -- this script's own validation
 above is not a substitute for that, it is what makes the CONSTRUCTED command line trustworthy in the first
-place. Pool nodes are NOT sandboxed (see docs/AGENT_HARNESS_SETUP.md's "pool nodes are dedicated compute" note,
-M2/H2) -- they are dedicated, disposable compute with no credentials of their own beyond what
-tools/pool_provision.sh deploys, not shared infrastructure a malicious job could pivot from the way the
-workstation's own GPU process could.
+place. 2026-09-30 security review (HIGH #2): tools/agent_gateway.sh REFUSES pool-submit, so nothing reaches this
+builder from the container today; it is kept for when every pool node runs agent jobs under a no-sudo user inside
+the gpu path's bubblewrap recipe (docs/AGENT_HARNESS_SETUP.md, "Pool nodes"). The earlier reasoning -- pool nodes
+are dedicated, disposable compute, so an unsandboxed job there is acceptable -- did not hold: their job account has
+passwordless sudo and full LAN access, so a malicious job is a LAN foothold, not a contained nuisance.
 """
 import os
 import re
