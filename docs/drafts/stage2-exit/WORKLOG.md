@@ -33,3 +33,16 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   `mem_ok.sh 7` + `memcap.sh 9` once the B2d mouth-arm GPU job has finished) and its lines go here. The pin files
   are written after that smoke. NEEDS-CLAUDE: read the first dev shards against prereg section 4 before any gate
   seed (an instrument defect is a section-12 amendment in its own commit).
+- 2026-09-30 11:00 Claude (adversarial review of 8c934312a): (1) CRITICAL, fixed `ed956d08b`: `--shard` spawned
+  `--worker` without `--allow-gate-seed` and the gate-seed guard applies to `--worker`, so all 186 gate jobs would
+  have died rc=2 (reproduced: `--shard --seed 42 --allow-gate-seed ...` -> "worker FAILED rc=2"). The Stage-1 runner
+  (branch research/stage1-exit-gate, 204 lines already in the pool queue) has the identical code: raised to the
+  orchestrator, not fixed here. (2) fixed: validity checked only on the intact pair; an errored scored turn in a lesion
+  arm read "no effect" -> FAIL "not load-bearing"; organ errors unguarded (B2b); now UNDEFINED over every counted arm
+  (prereg amendment A1, `7e3b2972c`). (3) fixed: the chase trace is never attached to the response (it lives on
+  `chat._last_gnw_multistep`); the worker captures it. (4) fixed: the shipped LTM default is `wikidata_100k`, not
+  `wikidata_core_15k` (HANDOFF pool check + test; the novel words are absent from both bundles, checked). (5) the
+  HANDOFF section 0 claimed a done dev smoke and a GATE_SHA that did not exist: corrected. Checks run: selftest OK,
+  20 tests pass (7 new ones fail against 8c934312a), 186 emitted lines pass `queue_job_shape_check.sh` and the
+  pool_queue gate-seed guard (prereg present at the pinned revision), no sim/ or webapp/ file touched by the branch.
+  Local RAM refused the dev smoke all morning (`mem_ok.sh 7 4`: avail -2 G), so the dev arms go to the pool FRONT=1.

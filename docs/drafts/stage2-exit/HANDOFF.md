@@ -17,13 +17,19 @@ per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end an
 
 ## 0. State at handoff
 
-- Three commits are on `research/stage2-exit-gate`, pushed to both remotes: commit 1 = the prereg alone; commit 2 =
-  runner, tests, this packet, the WORKLOG, the FAILURE_LOG rows, the dev smoke shards; commit 3 = the two pin files.
-  `docs/drafts/stage2-exit/PREREG_SHA` holds commit 1 (the prereg's own commit); `docs/drafts/stage2-exit/GATE_SHA`
-  holds the revision the gate runs at (it contains the prereg byte-unchanged plus the runner). If either file is
-  missing, STOP (NEEDS-CLAUDE #1).
-- Dev verification (dev seed 7) is DONE (prereg section 11; the WORKLOG has the per-arm lines). Step 2 is only for
-  a re-check.
+- Commits on `research/stage2-exit-gate`, pushed to both remotes (newest last): `9e76e1299` the prereg alone;
+  `e4bdf9f41` runner + tests + this packet + the WORKLOG; `8c934312a` the PREREG_SHA pin; then the 2026-09-30
+  adversarial review: `ed956d08b` runner/test fixes (a gate-seed shard's worker was refused rc=2, so no gate job
+  could ever have produced a shard; errored/organ-error arms now read UNDEFINED), `7e3b2972c` prereg amendment A1
+  (section 12, instrument only, filed before any gate job), then this HANDOFF fix with PREREG_SHA re-pinned.
+- `docs/drafts/stage2-exit/PREREG_SHA` holds the LAST commit that touched the prereg (the original plus its dated
+  pre-dispatch amendments; today `7e3b2972c`). `docs/drafts/stage2-exit/GATE_SHA` holds the revision the gate runs
+  at; it is written by Claude only after the dev-seed-7 smoke has been read. **GATE_SHA does not exist yet.** If
+  either file is missing when you reach step 3, STOP (NEEDS-CLAUDE #1).
+- Dev verification (dev seed 7): NOT yet read. The review queued the dev arms (section 2's list) on the pool with
+  `FRONT=1` at the review's final revision; their shards land in `$P/research/findings/raw/_stage2_exit/dev/s7/`
+  (`pool-sync.service`). Claude reads them, writes the WORKLOG lines, commits the shards and pins GATE_SHA. Until
+  the WORKLOG says so, do not start step 3.
 - The gate has NOT been queued. Nothing in `research/findings/raw/_stage2_exit/gate/` exists yet. It is queued in
   November (section 1), never earlier.
 
@@ -46,7 +52,7 @@ Before queueing, also confirm commits are possible on the primary checkout: `cd 
 grep -c "UNDER-PARALLELIZED"` prints 0, or the pool queue depth (`bash tools/pool_queue.sh depth`) is below 40; if
 neither holds, queue anyway (the calendar wins) and note it in the WORKLOG.
 
-## 2. Dev verification (DONE by Claude; re-run only if a shard file is missing)
+## 2. Dev verification (Claude reads it; you only re-check that the committed files exist)
 
 ```bash
 cd $W
@@ -57,14 +63,16 @@ for p in sorted(glob.glob("research/findings/raw/_stage2_exit/dev/s7/*.json")):
     if p.endswith(".prov.json"): continue
     d = json.load(open(p)); r = d["responses"]
     errs = [k for k, v in r.items() if "_error" in v]
-    print("- `%s`: %d turns, sources %s, hash_ok %s, corpus %s, patch %s, errored %s, builtin_facts %s, wall %ss" % (
+    orgs = [k for k, v in r.items() if any(isinstance(x, dict) and x.get("error") for x in v.values())]
+    print("- `%s`: %d turns, sources %s, hash_ok %s, corpus %s, patch %s, errored %s, organ_errors %s, builtin_facts %s, process %s, wall %ss" % (
         p.split("/")[-1], len(r), d.get("sources"), d.get("pythonhashseed_ok"), d.get("corpus_present"), d.get("patch"), errs,
-        len(d.get("builtin_facts") or []), d.get("wall_s")))
+        orgs, len(d.get("builtin_facts") or []), d.get("process"), d.get("wall_s")))
 EOF
 ```
 
-- PASS if: every listed file exists; no errored turn; every source is `['tiny-demo +LTM']`; hash_ok True;
-  corpus True; builtin_facts > 0 on every arm.
+- PASS if: every listed file exists; no errored turn; no organ error; every source is `['tiny-demo +LTM']`;
+  hash_ok True; corpus True; builtin_facts > 0 on every arm; `process` shows `ltm_bundle` `wikidata_100k` and
+  `peak_rss_mb` below 9216 (the memcap).
 - If a file is missing and no `stage2_exit_gate --worker` process is running (`ps aux | grep "[s]tage2_exit_gate --worker"`):
   re-run that one shard once with the command below (the worktree needs `data -> $P/data` linked:
   `ls $W/data/corpus/tinystories.txt` must exist; if not: `ln -s $P/data $W/data`), then re-check. If it fails
@@ -72,7 +80,10 @@ EOF
 
 ```bash
 cd $W && bash -c 'bash tools/mem_ok.sh 7 && bash tools/memcap.sh 9 -- env SIM_NO_PROVENANCE=1 '"$PY"' -u -m research.runners.stage2_exit_gate --shard --seed 7 --group GROUP --arm ARM --out research/findings/raw/_stage2_exit/dev/s7/GROUP__ARM.json'
-# GROUP/ARM: ask/intact_a ; conv/intact_a ; inner/intact_a ; infer/intact_a ; emo/intact_a ; ask/lesion_graded ; inner/lesion_workspace ; conv/lesion_mouth
+# GROUP/ARM (the review's dev list, 2026-09-30): the prereg's ten (the five intact_a ; ask/lesion_graded ;
+#   inner/lesion_workspace ; conv/lesion_mouth ; emo/lesion_affect ; infer/transitive_chat) plus the null check
+#   (ask/intact_b ; inner/intact_b) and the lesion arms no dev run had covered (ask/lesion_curiosity ;
+#   inner/lesion_selfinit ; infer/lesion_chain_route)
 ```
 
 - Any other failure of the PASS list: STOP (NEEDS-CLAUDE #1). Do not edit code.
@@ -82,11 +93,12 @@ cd $W && bash -c 'bash tools/mem_ok.sh 7 && bash tools/memcap.sh 9 -- env SIM_NO
 ```bash
 cd $W
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --selftest | tail -1                    # must print: SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py | tail -1   # must print: 12 passed
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py | tail -1   # must print: 20 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null       # every runner appends to this shared log; never commit it
 git status --short | grep -v "^??" | wc -l                                      # must print 0 (nothing uncommitted)
 SHA=$(cat docs/drafts/stage2-exit/GATE_SHA); git merge-base --is-ancestor $SHA HEAD && echo GATE-SHA-OK
 git diff $(cat docs/drafts/stage2-exit/PREREG_SHA) $SHA -- research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md | wc -l   # must print 0
+test "$(git log -1 --format=%H $SHA -- research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md)" = "$(cat docs/drafts/stage2-exit/PREREG_SHA)" && echo PREREG-PIN-OK
 git fetch origin main && git merge-base --is-ancestor origin/main $SHA && echo CONTAINS-MAIN || echo NEEDS-MERGE
 ```
 
@@ -95,7 +107,7 @@ origin/main`; if that reports a conflict, `git merge --abort` and STOP (NEEDS-CL
 the selftest and the tests; any failure: STOP (NEEDS-CLAUDE #2). Then re-pin: `git rev-parse HEAD >
 docs/drafts/stage2-exit/GATE_SHA`, commit it with the message `chore(stage2-exit): re-pin GATE_SHA after merging main
 (prereg unchanged)` and push (`bash tools/push_both.sh research/stage2-exit-gate`). The prereg file must be
-byte-identical to commit 1: `git diff $(cat docs/drafts/stage2-exit/PREREG_SHA) HEAD --
+byte-identical to PREREG_SHA: `git diff $(cat docs/drafts/stage2-exit/PREREG_SHA) HEAD --
 research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md` prints nothing; if it prints anything, STOP
 (NEEDS-CLAUDE #2). **A merge that changes a production default the gate reads is not yours to judge**: after the
 merge, run `cd $W && SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py -k
@@ -106,7 +118,7 @@ lesion_env_flags` (must pass) and note the merge SHA in the WORKLOG; Claude read
 ```bash
 cd $P && SHA=$(cat $W/docs/drafts/stage2-exit/GATE_SHA) && bash tools/pool_provision.sh --revision $SHA --isolated pool41 pool42
 for n in pool41 pool42; do
-  ssh -o BatchMode=yes $n "ls ~/Projects/sim-data/knowledge_bundles/ 2>/dev/null | grep -q wikidata_core_15k && echo '$n LTM OK' || echo '$n LTM MISSING'; test -f ~/derisk-pool/revisions/$SHA/data/corpus/tinystories.txt && echo '$n CORPUS OK' || echo '$n CORPUS MISSING'"
+  ssh -o BatchMode=yes $n "ls ~/Projects/sim-data/knowledge_bundles/ 2>/dev/null | grep -q wikidata_100k && echo '$n LTM OK' || echo '$n LTM MISSING'; test -f ~/derisk-pool/revisions/$SHA/data/corpus/tinystories.txt && echo '$n CORPUS OK' || echo '$n CORPUS MISSING'"
 done
 ```
 
@@ -193,6 +205,8 @@ Stage line (first line of the report):
 | `UNDEFINED (INCOMPLETE)` naming `null clean` | finding marked UNDEFINED; NEEDS-CLAUDE #8 (a non-deterministic build). Do not re-run. |
 | `UNDEFINED (INCOMPLETE)` naming `expected brain` or `corpus` | finding marked UNDEFINED; NEEDS-CLAUDE #3 (a node built a different or degraded brain). |
 | `UNDEFINED (INCOMPLETE)` naming `lesion applied` or `PYTHONHASHSEED` | finding marked UNDEFINED; NEEDS-CLAUDE #8. |
+| `UNDEFINED (INCOMPLETE)` naming `errored turn` or `organ error` | finding marked UNDEFINED; NEEDS-CLAUDE #8 (an instrument or organ crash; never read it as a lesion effect). Do not re-run. |
+| `UNDEFINED (INCOMPLETE)` naming `grounding set` | finding marked UNDEFINED; NEEDS-CLAUDE #1 (the worker did not find the session's ChatBrain). |
 
 Per-criterion sentence (copy the one matching each group's verdict; `<crit>` = C1..C5, `<group>` = its group; the
 numbers come from the report's table row and the sub-clause line):
