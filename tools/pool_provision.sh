@@ -2,8 +2,9 @@
 # Provision the mini-PC pool (pool40/41/42) for numpy-backend sim runs, from the LOCAL box over the LAN.
 # The nodes have python3 + internet but NO pip/numpy/repo (reimaged). This is IDEMPOTENT — safe to re-run.
 #   1. rsync the code (sim/ + webapp/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
-#   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse)
-#      + fastapi/pydantic (REQUIRED by any runner that imports webapp.server, e.g. onebrain_regression_battery.py).
+#   2. create a venv (python3 -m venv) and install requirements-pool.txt into it via tools/pool_venv_deps.sh (the
+#      pinned CPU-node set: numpy/scipy for SIM_BACKEND=numpy, fastapi/pydantic for webapp.server, httpx for the
+#      in-process brain-chat harness, ...), then verify every pin and import; a failure marks the node FAILED.
 # Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [<node> ...]
 #         (default node list comes from tools/pool_nodes.conf; pass explicit node names to override it)
 set -euo pipefail
@@ -84,10 +85,17 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
+# requirements-pool.txt (2026-09-30) ships only when the revision has it: older revisions have no such file.
+POOL_REQ_PATHSPEC=()
+git cat-file -e "$SOURCE_SHA:requirements-pool.txt" 2>/dev/null && POOL_REQ_PATHSPEC=(requirements-pool.txt)
 git archive "$SOURCE_SHA" sim webapp research/__init__.py research/runners research/specs research/fixtures \
   research/findings ':(exclude)research/findings/raw' experiment tools tests \
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
-  | tar -x -C "$STAGE"
+  "${POOL_REQ_PATHSPEC[@]}" | tar -x -C "$STAGE"
+# The pool venv's package set: the revision's own requirements-pool.txt, else (a revision that predates the file)
+# this checkout's. Before 2026-09-30 the set was a pip list hard-coded below and httpx was missing from it.
+POOL_REQ="$STAGE/requirements-pool.txt"
+[ -f "$POOL_REQ" ] || POOL_REQ="$ROOT/requirements-pool.txt"
 # Execute the generator extracted from HEAD. A dirty worktree copy must not mint
 # the trust record for a different archived source revision.
 python3 "$STAGE/tools/pool/provisioning/ancestry_attestation.py" create \
@@ -187,6 +195,9 @@ for h in "${NODES[@]}"; do
     "$STAGE/ROADMAP.md" "$h:~/$REMOTE_ROOT/"
   rsync -az -e "$SSH_CMD" "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
   rsync -az -e "$SSH_CMD" "$STAGE/requirements-dev.txt" "$h:~/$REMOTE_ROOT/requirements-dev.txt" 2>/dev/null
+  if [ -f "$STAGE/requirements-pool.txt" ]; then
+    rsync -az -e "$SSH_CMD" "$STAGE/requirements-pool.txt" "$h:~/$REMOTE_ROOT/requirements-pool.txt"
+  fi
   rsync -az -e "$SSH_CMD" "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az -e "$SSH_CMD" "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
   rsync -az -e "$SSH_CMD" "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
@@ -209,18 +220,17 @@ for h in "${NODES[@]}"; do
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get update -y >/dev/null 2>&1 && \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1; }"
-  # 3. venv + numpy + scipy (idempotent: recreate if the prior broken attempt left a pip-less venv)
+  # 3. venv + requirements-pool.txt (idempotent; tools/pool_venv_deps.sh is the one venv code path, also used to
+  #    top up an already-provisioned revision). It fails on a pip error, an unmet pin, or a package / the
+  #    brain-chat harness (starlette.testclient -> httpx) failing to import, and writes .pool_environment.json.
+  #    (Before 2026-09-30 pip's exit status was swallowed by `| tail -1` and a node could be marked ready anyway.)
+  if ! bash "$ROOT/tools/pool_venv_deps.sh" --remote-root "$REMOTE_ROOT" --requirements "$POOL_REQ" "$h"; then
+    FAILED_NODES+=("$h:venv-deps")
+    continue
+  fi
   $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && \
-    { test -x .venv/bin/python && .venv/bin/python -m pip --version >/dev/null 2>&1 || \
-      { rm -rf .venv; python3 -m venv .venv; }; } && \
-    .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
-    .venv/bin/python -m pip -q install \
-      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0 pyyaml==6.0.3 pytest==8.4.1 \
-      fastapi==0.139.1 pydantic==2.13.4 2>&1 | tail -1; \
-    echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
     echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1; \
     echo -n '  webapp imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from webapp.server import brain_chat, BrainChatRequest; print(\"ok\")' 2>&1 | tail -1"
-  $SSH_CMD "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml,fastapi,pydantic; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__,\"fastapi\":fastapi.__version__,\"pydantic\":pydantic.VERSION},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
   REMOTE_MANIFEST=$($SSH_CMD "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
   if [ "$REMOTE_MANIFEST" != "$MANIFEST_SHA" ]; then
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2
