@@ -449,9 +449,12 @@ have become root on the server. The units were stopped the same evening.
 **Why the workstation pull said UNREACHABLE.** It was reachable: ssh with `sim_ed25519` works, and the audit's GPU probe
 over the same alias succeeded in the same run. The workstation has no `~/derisk-pool/sim/research/findings/raw`, so
 rsync's main pull exited 23 ("change_dir failed"). `pool_sync.sh` treated every non-zero rsync exit as UNREACHABLE and
-skipped the host's revision pulls with it. The fix has two parts. rc 23/24 now reads as "reachable, main results dir
-missing" and the revisions are still pulled. The workstation also gets the placeholder dir, which is cutover step 9's
-`mkdir`, brought forward.
+skipped the host's revision pulls with it. rc 23/24 now reads as "reachable, main results dir missing" and the
+revisions are still pulled. The workstation also has the placeholder dir now (cutover step 9's `mkdir`, done
+2026-09-30). A second defect sat behind the first. The revision listing ran as a bare `ls -d` in the remote login
+shell, and on the workstation that is fish with `ls` wrapped in a long, coloured listing. The listing returned
+permission, owner and date tokens, so no workstation revision could have been pulled even with the dir in place. It
+now runs through `sh -c`. A real dry-run from srv-host-0 lists the three GPU-job revisions (97 files).
 
 **Residual risks (stated).** The agent can still stop its own work: it can corrupt the queue, plant symlinks that make
 the dispatcher refuse the queue, or push a `main` that fails to publish. None of that escalates. Hermes's own
