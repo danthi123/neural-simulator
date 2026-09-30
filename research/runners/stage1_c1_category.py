@@ -133,7 +133,7 @@ def run_worker(seed, arm, out_path):
     return 0
 
 
-def run_shard(seed, arm, out_path, backend="numpy"):
+def run_shard(seed, arm, out_path, backend="numpy", allow_gate_seed=False, prereg=None):
     """One (seed, arm) in a FRESH subprocess with the Stage-1 harness env (PYTHONHASHSEED must precede the
     interpreter)."""
     env = dict(os.environ)
@@ -144,6 +144,12 @@ def run_shard(seed, arm, out_path, backend="numpy"):
     part = out_path + ".part.json"
     cmd = [sys.executable, "-u", "-m", "research.runners.stage1_c1_category", "--worker", "--seed", str(int(seed)),
            "--arm", arm, "--out", part]
+    if allow_gate_seed:
+        # the worker's own main() applies the gate-seed guard too: without the flag every gate shard dies rc=2
+        # (pre-data fix 2026-09-30, found by the pool canary; the prereg is unchanged)
+        cmd += ["--allow-gate-seed"]
+    if prereg:
+        cmd += ["--prereg", prereg]
     p = subprocess.run(cmd, env=env, cwd=_REPO)
     if p.returncode != 0 or not os.path.exists(part):
         print("[stage1-c1 shard] worker FAILED rc=%s for seed=%s %s" % (p.returncode, seed, arm), flush=True)
@@ -597,7 +603,8 @@ def main():
             sys.exit(2)
         if a.worker:
             sys.exit(run_worker(a.seed, a.arm, a.out))
-        sys.exit(run_shard(a.seed, a.arm, a.out, backend=a.backend))
+        sys.exit(run_shard(a.seed, a.arm, a.out, backend=a.backend, allow_gate_seed=a.allow_gate_seed,
+                           prereg=a.prereg))
     ap.error("choose one of --worker/--shard/--aggregate/--report/--selftest/--emit-pool-jobs")
 
 

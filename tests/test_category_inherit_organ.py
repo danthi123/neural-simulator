@@ -231,3 +231,51 @@ def test_a_swallowed_organ_error_is_undefined_never_a_capability_fail(tmp_path, 
     agg = R.aggregate(str(tmp_path))
     assert agg["verdict"].startswith("UNDEFINED"), (agg["verdict"], agg["why"])
     assert any("not applied" in u for u in agg["rows"][42]["undefined_reasons"]), agg["rows"][42]["undefined_reasons"]
+
+
+def test_gate_seed_shard_hands_the_gate_flag_to_its_worker(monkeypatch, tmp_path):
+    """Pre-data fix 2026-09-30 (pool canary): a pool line runs `--shard --seed 42 --allow-gate-seed --prereg <p>`;
+    run_shard spawns `--worker` in a fresh process and main()'s gate-seed guard applies to --worker too, so the
+    worker argv must carry the flag, or every one of the 54 gate jobs dies rc=2 before building a brain (measured on
+    pool42 at bb6705de6 through the pool sandbox: 'GATE seed 42 refused' -> 'worker FAILED rc=2')."""
+    import json
+    import sys
+    from research.runners import stage1_c1_category as R
+    seen = {}
+
+    class _P:
+        returncode = 0
+
+    def _fake_worker(seed, arm, out_path):
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump({"responses": {}, "seed": seed}, f)
+        return 0
+
+    def _fake_run(cmd, env=None, cwd=None):
+        seen["cmd"] = list(cmd)
+        assert cmd[1:4] == ["-u", "-m", "research.runners.stage1_c1_category"], cmd
+        monkeypatch.setattr(sys, "argv", ["stage1_c1_category"] + list(cmd[4:]))
+        with pytest.raises(SystemExit) as e:
+            R.main()
+        p = _P()
+        p.returncode = e.value.code
+        seen["worker_rc"] = e.value.code
+        return p
+
+    monkeypatch.setattr(R, "run_worker", _fake_worker)
+    monkeypatch.setattr(R.subprocess, "run", _fake_run)
+    out = str(tmp_path / "s42" / "cat_disc__intact_a.json")
+    monkeypatch.setattr(sys, "argv", ["stage1_c1_category", "--shard", "--seed", "42", "--arm", "intact_a",
+                                      "--allow-gate-seed", "--prereg", R.PREREG, "--out", out])
+    with pytest.raises(SystemExit) as outer:
+        R.main()
+    assert seen.get("worker_rc") == 0, seen
+    assert outer.value.code == 0 and os.path.exists(out)
+    assert seen["cmd"][seen["cmd"].index("--prereg") + 1] == R.PREREG
+    # a dev seed never needs (or gets) the flag
+    monkeypatch.setattr(sys, "argv", ["stage1_c1_category", "--shard", "--seed", "7", "--arm", "intact_a",
+                                      "--out", str(tmp_path / "s7.json")])
+    with pytest.raises(SystemExit) as dev:
+        R.main()
+    assert dev.value.code == 0 and "--allow-gate-seed" not in seen["cmd"]
