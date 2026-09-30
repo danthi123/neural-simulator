@@ -42,7 +42,14 @@ only; never "now on-by-default" (the PI gate's claim token) before the merge.
 
 ## Dev seed 7 (Claude, 2026-09-29, local numpy, worktree at the packet commit)
 
-D6_DEV_PLACEHOLDER
+`research/findings/raw/_iw1/dev_s7/d6/` (row `d6-hebbian-write`, flags set as in step R, `--repeats 2`, commit
+106a20da5; the local sidecars are not pool git_archive, so `iw1_score.py` would class the cell E on provenance --
+that is expected for a dev run, and the gate seeds run on the pool). Registered trace verdict `regressed`, null clean,
+lesion reproduced; `b2d_score.score_s2` on the same arm files reads `regressed` (reply level). Probe turn "what does
+the wolf hunt": both intact builds answer "Setting the held thread aside -- On wolf, then -- the wolf hunts the deer"
+(`recalled_svo` `['wolf', 'hunt', 'deer']`); the freeze lesion and its rebuild abstain with "I don't know about that.
+My curiosity is piqued -- I haven't learned about wolf yet: what can you tell me about wolf?". The teach turn wrote
+block 5 (128/128 synapses saturated), so the buffer held 6 facts: per-turn cost was not visible at this size.
 
 ## NEEDS CLAUDE (packet-specific)
 

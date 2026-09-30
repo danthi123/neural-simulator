@@ -40,7 +40,15 @@ process-shared caveat from the prereg copied verbatim.
 
 ## Dev seed 7 (Claude, 2026-09-29, local numpy, worktree at the packet commit)
 
-SWM_DEV_PLACEHOLDER
+`research/findings/raw/_iw1/dev_s7/swm/` (row `xedge-surprise-worldmodel`, `--repeats 2`, commit 106a20da5; local
+sidecars, so the scorer would class it E on provenance, as expected for a dev run). Registered verdict `regressed`,
+null clean, lesion reproduced; `b2d_score.score_s2` reads `regressed`. On "what do you expect?" the flag-on arms say
+"... predicted next-turn valence +, pool-rate margin +372 Hz" and the flag-off arms "... +430 Hz": the stated margin
+is the only difference on the probe turn (same predicted sign). The sequence turns show more: with the edge on, the
+gate opened on the first four violation turns (the two transitions' weights grew 0.010 -> 0.184 and 0.010 -> 0.258) and from the fifth
+violation on the surprise notice ("That shifts the mood unexpectedly -- ...") no longer fires; with the edge off it
+fires on every violation turn (turns n3, p3, n4, p4 differ). The registered probe compares only the query turn, so
+the step-R gate rests on the margin text; the notice habituation is reported, not scored.
 
 ## NEEDS CLAUDE (packet-specific)
 
