@@ -4,7 +4,9 @@ Status reviewed: 2026-08-11; refreshed 2026-09-25 for the headline counts, the
 permanent-mouth decision, the shared spiking pool, and the load-bearing
 metric below. The detailed "Demonstrated" / "Partially Achieved" tables
 further down describe the original fourteen-turn toy-world demo as it stood
-on 2026-08-11 and have not been re-audited row by row since.
+on 2026-08-11 and have not been re-audited row by row since. The current
+phase asks which part of the system caused each answer, shown causally: see
+[the plan](plans/2026-09-25-prove-who-owns-the-computation-PLAN.md).
 
 Neural Simulator is a capable CPU/GPU spiking-network simulator and a large
 collection of neuroscience-inspired experiments. It is **not yet an autonomous
@@ -15,35 +17,44 @@ all of its cognition through one self-organizing spiking brain.
 The current frontier is **continuous integration**: validated faculties are
 wired into a live conversational loop, and each change is judged by whether
 the conversation actually improves, because running the real chat is what
-exposes results that only looked good in isolation. As of the 2026-09-16
-ledger head, the production-integration ledger tracks 69 faculties in total,
-30 of them default-on and genuinely spiking, and 5 with their host scaffold
-fully retired (one-brain-substrate — the recall composer's own retirement —
+exposes results that only looked good in isolation. As of the current ledger
+(2026-09-25; counts unchanged since 2026-09-16), the production-integration
+ledger tracks 69 faculties in total, 30 of them default-on and genuinely
+spiking, and 5 with their host scaffold fully retired: one-brain-substrate
+was retired 2026-09-02 by demoting the host rf scan to an opt-out oracle (a
+mechanism claim proven by an activity trace, not an answer diff);
 selective-attention-biased-competition, spiking-novelty-habituation,
-spiking-anaphor-detection, and spiking-qroute-selection). Since 2026-09-19 the
-tracked #1 metric is a lesion-verified **load-bearing fraction** of the whole
-production conversation, always reported as a pair: a 2026-09-25 re-scored
-6-seed battery reads mean 0.603 (robust core 15/26, union 16) with the thin
-measurement probes the shipped default actually uses, and mean 0.949 (robust
-core 24/26, union 25) with adequate measurement-only probe fixes not yet
-shipped (`research/findings/2026-09-25-production-default-battery-B2a-rescored-PASS.md`).
+spiking-anaphor-detection, and spiking-qroute-selection were each retired
+2026-09-16 and verified by a byte-identical branch-vs-main `/api/brain-chat`
+differential. Since 2026-09-19 the tracked #1 metric is a lesion-verified
+**load-bearing fraction** of the whole production conversation, always
+reported as a pair: measured on the shipped default brain two ways, with the
+adequate measurement-only probe set, mean 0.949 (robust core 24/26, union 25,
+SD 0.018; 2026-09-25 re-scored B2a battery), and with the older thin probe
+set, mean 0.603 (robust core 15/26, union 16, SD 0.018; 2026-09-24 flip
+battery), a known under-measurement
+(`research/findings/2026-09-25-production-default-battery-B2a-rescored-PASS.md`).
 Eleven cortical organs (surprise, world-model, self-monitoring, comprehension,
 pragmatic inference, self-schema, curiosity, the causal what-if model,
 source-provenance, prospective memory, and multi-referent working memory) are
 validated together on one shared spiking pool, with 8 of them routed through
 it on the default chat path today (`onebrain-merge-organs` in the ledger).
+This is co-residency on one pool, not one self-organized substrate: most
+organ-to-organ exchanges are still host relays, with two learned cross-edges
+default-on (`BRAIN_ONEBRAIN_XEDGE`, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6`).
 
 As of 2026-09-19, the external Qwen2.5-0.5B-Instruct language model is treated
 as a **permanent** articulation "mouth" rather than a scaffold being phased
 out: an earlier arc to retire it in favor of the brain's own from-scratch
 spiking fluency was closed as falsified (that spiking mouth beat a simple
-word-pair baseline on simple text at a deployable size, but was not fluent
-enough on broad, arbitrary-topic text). A narrower, bounded-scope spiking
-mouth that renders single-role transitive-SVO recall sentences directly
-remains default-on for that narrow case and is a separate, older mechanism,
-unaffected by that closure. The tracked question is now whether the spiking
-brain, not Qwen, is provably load-bearing on what gets said (the load-bearing
-fraction above), not how much of the mouth has been replaced.
+three-word (trigram) statistical baseline on simple text at a deployable size
+on 2026-09-03, but fell below it on broad, arbitrary-topic text on
+2026-09-04). A narrower, bounded-scope spiking mouth that renders
+single-role transitive-SVO recall sentences directly remains default-on for
+that narrow case and is a separate, older mechanism, unaffected by that
+closure. The tracked question is now whether the spiking brain, not Qwen, is
+provably load-bearing on what gets said (the load-bearing fraction above),
+not how much of the mouth has been replaced.
 
 The original fourteen-turn demo conversation described in the tables below
 still runs in a small toy world (two agents, three actions, a small fact
@@ -85,9 +96,9 @@ They do not imply human-level versions of the named ability.
 
 | Capability | What exists | What prevents the full claim |
 |---|---|---|
-| **A shared brain** | A live conversational loop now runs several validated faculties together — grounded fact recall, a no-confab check, episodic dialogue memory, functional affect and self-model read-outs, and a curiosity ask — and judges changes by whether the whole conversation improves. | Integration has begun but is not complete: the loop still spans two separate spiking bridges rather than one merged substrate, many faculties were developed and tested in separate runners, and the world is a small toy set. Merging the co-resident bridges into one brain is the named next arc. |
+| **A shared brain** | A live conversational loop now runs several validated faculties together — grounded fact recall, a no-confab check, episodic dialogue memory, functional affect and self-model read-outs, and a curiosity ask — and judges changes by whether the whole conversation improves. | Integration has begun but is not complete: as of 2026-08-11 the loop spanned two separate spiking bridges; that merge landed 2026-09-19 as the Wave-3 shared pool (see above), though most organ-to-organ exchanges within it are still host relays, not one true substrate. Many faculties were developed and tested in separate runners, and the world is a small toy set. |
 | **Stage B experiment screening** | The V14 engine completed a fresh 512-candidate, five-arm GPU engineering screen for Sobol indices 512-1023 and selected batch width 512 through a separate benchmark. Strict triage classified 421 candidates as engineering failures, 91 as inconclusive, and 0 as passes. A follow-up authenticated 36-trace diagnostic retired the old packet. The corrected successor's fused Stage 1 fast-Na/Kv3 clamp now runs on CPU and GPU, re-fits all 18 source endpoints, and produces an authenticated verdict with little manual handling. Eleven endpoints passed and seven failed. The exact failure set now opens a fixed, authenticated research gate automatically. | The current packet and the successor's first fast-channel state equations are structural NO-GOs, so no candidate is eligible for confirmation or compartment integration. Fast-Na activation/deactivation and Kv3 deactivation must be redesigned from focused current-level evidence before another search. The engine can plan, seal, dispatch, persist, resume, analyze, compile bounded observations, and route a preregistered failure into research, but it cannot accept scientific claims or preregister a valid replacement architecture by itself. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK cohort is unavailable. See the [fresh screen](../research/findings/2026-08-05-v14-stageB-sobol-v3-fresh-gpu-screen-ENGINEERING-NO-GO.md), [failure diagnostic](../research/findings/2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md), [Stage 1 source transfer](../research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md), and [V2 successor contract](../research/specs/v14_snr_stageB_structural_successor_v2.json). |
-| **Conversation** | The live fourteen-turn chat parses constrained questions, recalls grounded facts and the prior dialogue topic, reports functional affect and self-model read-outs with a graded certainty band, asks a curiosity question, and abstains on out-of-domain cues. A sub-clausal no-confab check keeps invented causal clauses out of every reply. | The world is a small toy set, so most turns correctly abstain rather than converse. The language "mouth" is a conventionally trained spiking model kept as an articulation scaffold, and host fact mining and storage, response templates, and some read-outs still perform important work. Dialogue is prompted and bounded, not autonomous and open-ended. |
+| **Conversation** | The live fourteen-turn chat parses constrained questions, recalls grounded facts and the prior dialogue topic, reports functional affect and self-model read-outs with a graded certainty band, asks a curiosity question, and abstains on out-of-domain cues. A sub-clausal no-confab check keeps invented causal clauses out of every reply. | The world is a small toy set, so most turns correctly abstain rather than converse. As of 2026-08-11 the language "mouth" was a conventionally trained spiking model kept as an articulation scaffold; since 2026-09-19 the external Qwen2.5-0.5B-Instruct model fills that role and is treated as a permanent articulation layer rather than a scaffold to be retired (see above). Host fact mining and storage, response templates, and some read-outs still perform important work. Dialogue is prompted and bounded, not autonomous and open-ended. |
 | **Grounded language** | Preverbal experiments now show one fixed request loop and learned selection among two intent and two referent channels from consequences. The tiny learned factors compose in combinations absent from training. Other experiments connect words with visual or conceptual patterns. | The learned signals are raw channels rather than words. Motor exploration, regional structure, perception currents, listener semantics, and readout remain scaffolded. The first intrinsic same-brain reversal attempt failed repeatability. Natural input, sequence learning, and conversation are unvalidated. |
 | **Honest uncertainty** | Familiarity, decision confidence, self-monitoring, authorship, and learned source-support mechanisms exist. In the live chat, a sub-clausal no-confab check verifies each clause against neural memory, a graded certainty band accompanies self-report, one demo fact-gate is now fully spiking, and unsupported turns abstain — all stated as functional read-outs, never as claims about experience. | Earlier source-strength work missed a development repeatability gate, and honesty is not yet driven end-to-end from lived sensory experience through speech choice. Some gates and thresholds remain host-side, and the brain is not a general truth checker. |
 | **Memory-guided behavior** | Episodic storage, completion, replay, consolidation, and correction mechanisms work in small controlled tasks. | Some memories use engineered codes or slots; replay has known write/selectivity limits; retention and useful transfer have not been shown over an open-ended lifetime. |
@@ -113,15 +124,24 @@ They do not imply human-level versions of the named ability.
 
 ## Main Blockers
 
+*(Written 2026-08-11 against the toy-world demo. Items 1, 2, 4, and 5 still
+hold as stated. Items 3 and 6, and the "Highest-Value Work" next-steps below,
+are corrected inline for 2026-09-25: the language-mouth framing changed with
+the permanent-Qwen decision, and the named "merge the two bridges" step has
+landed as the Wave-3 shared pool.)*
+
 1. **Grounded communication is still too narrow.** The latest result learns a
    two-intent by two-referent convention, but exploration is injected, channel
    anatomy is fixed, and there is no learned word or sequence production.
 2. **Learning does not yet span the whole behavior.** Local learning works in
    several shallow or specialized circuits, but delayed credit through deeper
    spiking pathways is unreliable.
-3. **Language fluency and biological learning are disconnected.** The largest
-   language circuit was trained conventionally; grounded loops remain small and
-   template-like.
+3. **Language fluency and biological learning are disconnected.** The external
+   Qwen2.5-0.5B-Instruct mouth is now treated as a permanent articulation layer
+   rather than a scaffold to be retired (2026-09-19); the brain's own grounded
+   loops remain small and template-like. The tracked question is now whether
+   the spiking brain, not Qwen, is provably load-bearing on what gets said (the
+   load-bearing fraction above).
 4. **Self-monitoring is improving but not yet end to end.** The live chat now
    runs a sub-clausal no-confab check and a graded certainty band, and one demo
    fact-gate is fully spiking, but earlier source-margin work stayed
@@ -130,8 +150,10 @@ They do not imply human-level versions of the named ability.
 5. **Memory, affect, and curiosity are components rather than a life history.**
    Their tests are informative but too bounded to establish an enduring person-
    like state.
-6. **Integration is partial and scaffolds are widespread.** The live loop still
-   spans two separate spiking bridges rather than one merged brain, and host
+6. **Integration is partial and scaffolds are widespread.** Since 2026-09-19,
+   eleven cortical organs share one spiking pool (eight routed through it on
+   the default chat path), but this is co-residency, not one self-organized
+   substrate: most organ-to-organ exchanges are still host relays, and host
    fact mining and storage, response templates, an argmax read-out, and other
    fixed representations, routing, thresholds, and teachers must still be removed
    under explicit tests. Continual, sequential learning of many facts without
@@ -150,14 +172,18 @@ demo-scale fact learned as spiking weight changes behind a fully spiking
 no-confab gate. Each held across six seeds with zero confabulations and no
 regression on the other turns.
 
-The named next steps, each a mechanism rather than a deferral, are: merge the
-two co-resident spiking bridges into one brain (the "one brain" step); replace
+The named next steps, each a mechanism rather than a deferral, are: turn the
+eleven-organ shared pool's remaining host relays into learned cross-edges (two
+are default-on today; most organ-to-organ exchanges still are not); replace
 the host-side fact mining and vector-symbolic storage with a stream cortex that
 learns co-occurrence in synapses; make the dendritic completion read the default
 episodic path; replace the argmax read-out and remaining response templates with
 neural mechanisms; and reach continual, sequential learning of many facts
 without forgetting, which currently blocks scaling the learned-fact demo up to
-the corpus-learned breadth.
+the corpus-learned breadth. The current phase frames this as raising the
+lesion-verified load-bearing fraction under the permanent Qwen mouth, and
+showing causally which part of the system produced each answer (see the plan
+linked above).
 
 Component arcs continue in support of this frontier — reward credit for actions
 the brain actually completed, replay-driven consolidation, source monitoring,

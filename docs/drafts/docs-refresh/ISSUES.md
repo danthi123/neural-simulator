@@ -2,6 +2,22 @@
 
 Fix every item; re-check each number against the ledger and findings.
 
+## Resolution status (2026-09-29)
+
+All 25 items below were fixed directly in README.md, CHANGELOG.md, USER_GUIDE.md, and
+docs/CURRENT-STATE.md, re-derived against docs/PRODUCTION_INTEGRATION_LEDGER.yaml (total_faculties: 69,
+scaffold_retired: 5, default_on_spiking_faculties: 30, the `onebrain-merge-organs`/`moat-verify`/
+`semantic-recall`/`affect-drives-response`/`swap-drives-response`/`affect-coloring` rows), ROADMAP.md's
+2026-09-24 evening entry, and the cited findings (`2026-09-25-production-default-battery-B2a-rescored-PASS.md`,
+`2026-09-25-gap4-sliding-baseline-c25-c27-and-c26-fullsize-UNDEFINED.md`,
+`2026-09-25-awake-replay-capture-arc-no-go-6seed.md`,
+`2026-09-25-da-capture-sleep-replay-pair-verify-go-review.md`, `2026-09-03-OPEN-FLUENCY-BREAKTHROUGH-*`).
+None were dismissed as not-an-issue — every quoted problem was real and is now fixed at its cited location(s).
+No new honesty problems were introduced by these edits as far as this pass could tell; `tools/check_docs.py`
+passes (W1/W2 clean). Commit-gate note: the compute-idle-persistent gate does not exempt this drafts/ file or
+docs/CURRENT-STATE.md, so this edit and the CURRENT-STATE.md edit are staged but not yet committed as of
+2026-09-29; README.md/CHANGELOG.md/USER_GUIDE.md (generic-docs exempt) were committed separately.
+
 ## 1. README.md (same framing in CHANGELOG.md and docs/CURRENT-STATE.md)
 
 - Quote: "with adequate measurement-only probe fixes not yet shipped"
