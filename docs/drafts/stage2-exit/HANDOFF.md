@@ -30,9 +30,10 @@ per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end an
   either file is missing when you reach step 3, STOP (NEEDS-CLAUDE #1).
 - Dev verification (dev seed 7): the five `intact_a` arms ran on the workstation at the final runner and are
   committed under `research/findings/raw/_stage2_exit/dev/s7/`; the WORKLOG has the per-arm reads. They raised three
-  protocol questions (NEEDS-CLAUDE #15-#17) that Claude must rule on BEFORE pinning GATE_SHA; the remaining dev arms
-  (nulls, lesions, the informational arm) are queued on the pool (`FRONT=1`, revision `6b9cb47f7`, same worker)
-  and land in `$P/research/findings/raw/_stage2_exit/dev/s7/`. Until the WORKLOG records a GATE_SHA pin by Claude,
+  protocol questions (NEEDS-CLAUDE #15-#17) that Claude must rule on BEFORE pinning GATE_SHA. Also committed: the
+  `ask` and `inner` nulls (byte-identical to intact_a) and `emo/lesion_affect`. The other six lesion arms,
+  `infer/transitive_chat` and one `inner/intact_a` (a workstation-vs-pool check) are queued on the pool (`FRONT=1`,
+  revision `6b9cb47f7`, same worker, `max_age_h=24`) and land in `$P/research/findings/raw/_stage2_exit/dev/s7/`. Until the WORKLOG records a GATE_SHA pin by Claude,
   do not start step 3.
 - The gate has NOT been queued. Nothing in `research/findings/raw/_stage2_exit/gate/` exists yet. It is queued in
   November (section 1), never earlier.

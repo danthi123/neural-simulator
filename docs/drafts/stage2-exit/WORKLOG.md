@@ -109,3 +109,8 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   (under memcap 10), every feel read clamped to "+0.000 neutral", so all four scored turns differ from intact
   (lesion effect present, no organ error). Committed the three shards. Still on the pool (FRONT=1, may starve):
   the other lesion arms, `infer/transitive_chat`, and duplicate intact_a arms (a workstation-vs-pool check).
+- 2026-09-30 13:05 Claude: removed from `research/queue/pool.queue` (under its lock) the seven pool dev lines that the
+  local runs made redundant; kept `inner/intact_a` as a workstation-vs-pool determinism check plus the seven
+  lesion/informational arms no dev run has covered (`ask/lesion_graded`, `ask/lesion_curiosity`,
+  `inner/lesion_workspace`, `inner/lesion_selfinit`, `conv/lesion_mouth`, `infer/lesion_chain_route`,
+  `infer/transitive_chat`). They carry `max_age_h=24`; if the `mem_gb=2` backlog holds them past that they expire.
