@@ -33,8 +33,12 @@ STUB_TAG = "b2d0929"
 MOUTH_TAG = "b2d0929-mouth"
 MOUTH_ROWS = ("affect-coloring", "affect-appraisal-interoceptive", "affect-drives-response")
 ASSERT = ".venv/bin/python tools/assert_flipped_defaults.py && "
-# mouth-arm memory: a cupy brain build plus the Qwen2.5-0.5B faculty in the worker; measured on dev seed 7 (HANDOFF §9)
-MOUTH_MEM_OK = "bash tools/mem_ok.sh 10 4"
+# mouth-arm memory: a cupy brain build plus the Qwen2.5-0.5B faculty in the worker (about 8 GB RSS per arm at dev seed
+# 7). The workstation is shared, and a refused mem_ok makes the GPU queue record DONE(rc=1) and drop the line (dev seed
+# 7, 2026-09-30: three lines dropped in one second), so the guard WAITS up to 90 min for room, then checks once more
+# and refuses loudly if there is still none.
+MOUTH_MEM_OK = ("for _w in $(seq 90); do bash tools/mem_ok.sh 10 4 >/dev/null 2>&1 && break; sleep 60; done; "
+                "bash tools/mem_ok.sh 10 4")
 MOUTH_MEMCAP = "bash tools/memcap.sh 16 --"
 
 

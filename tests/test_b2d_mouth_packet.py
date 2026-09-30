@@ -52,7 +52,9 @@ def test_mouth_lines_differ_from_the_stub_line_only_by_backend_mode_and_memory_g
         assert ln.startswith("cd ~/derisk-pool/revisions/%s && .venv/bin/python tools/assert_flipped_defaults.py && "
                              % pin)
         assert " SIM_BACKEND=cupy " in ln and " LB_ARM_RENDERER=production " in ln and "SIM_BACKEND=numpy" not in ln
-        assert "bash tools/mem_ok.sh 10 4 && bash tools/memcap.sh 16 -- env " in ln
+        assert ("for _w in $(seq 90); do bash tools/mem_ok.sh 10 4 >/dev/null 2>&1 && break; sleep 60; done; "
+                "bash tools/mem_ok.sh 10 4 && bash tools/memcap.sh 16 -- env ") in ln
+        assert subprocess.run(["bash", "-n", "-c", ln]).returncode == 0
         assert "/_shards/b2d0929-mouth/s" in ln and ln.endswith("/lb.json") and "BRAIN_" not in ln
         assert " --repeats 2 " in ln
         for flag in ("LB_AFFECT_DRIVE_PROBE=1", "LB_EPISODIC_DRIVE_PROBE=1", "LB_OPEN_ENDED_DISTRIB_PROBE=1"):
