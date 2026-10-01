@@ -320,6 +320,17 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   before the 09-30 20:31 dispatcher restart, which killed them; Claude re-queued both at the queue head 10-01 12:50.
   T2 starts when 5/5 identity files are in `_iw2/identity/573a943/`. (2026-10-01)
 
+- verify-go: (owner-approved 2026-10-01) the project's `verify-go` skill is now one of your skills (read-only; the
+  other project skills are disabled for you). Before you write any line that reports a PASS, a GO, or that something
+  works, load it (`skill_view verify-go`) and give the result to TWO independent MiMo Pro delegates, each told to run
+  the skill's checks and try to refute the claim; quote both answers in the WORKLOG. If either finds a problem or
+  they disagree, write a STOP line instead of the PASS. Where the skill names a Claude-only tool, do the check by
+  hand and say so. A PASS still goes to Claude to confirm. (2026-10-01)
+
+- owner-merges: the owner now opens the Claude sessions for merges and rulings, prompted by the report's "Claude
+  check-in" line (due once a NEEDS-CLAUDE line is 72 h old). Make every NEEDS-CLAUDE line self-contained so it can be
+  pasted as is: the branch @ sha, what to merge or rule, and what it unblocks. (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
