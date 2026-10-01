@@ -12,7 +12,13 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$ROOT/tools/pool_revision_marker.sh"
 # shellcheck source=tools/queue_job_shape_check.sh
 source "$ROOT/tools/queue_job_shape_check.sh"
-Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+SHARED_ROOT=$ROOT; _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && SHARED_ROOT=$(dirname "$_GC")
+Q="${POOL_QUEUE_PATH:-$SHARED_ROOT/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
 # pool_provision.sh / pool_sync.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
@@ -24,7 +30,7 @@ EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_node
 probe_nodes() {
   local extra=""
   [ -f "$EXTRA_NODES_FILE" ] && extra=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
-  printf '%s %s' "${POOL_NODES:-pool40 pool41 pool42}" "$extra"
+  printf '%s %s' "${POOL_NODES:-$POOL_NODES_DEFAULT}" "$extra"
 }
 
 if [ "${1:-}" = "--probe-node" ]; then
@@ -168,6 +174,20 @@ case "${1:-list}" in
            echo "   Then:       bash tools/pool_queue.sh add '<cmd>' --checked 'corpus: nothing covers laps x dwell at w_max>W0'" >&2
            exit 2
          fi
+         # REJECT A NEWLINE/CONTROL CHARACTER IN --checked (2026-09-29 security review, H2). Every queue record
+         # is written as ONE line ("<ts>\t<cmd>  #checked:<CHECKED>\n", below) and every reader (valid_depth/
+         # malformed_depth/list/pop_job) parses the queue file LINE BY LINE. An embedded newline in CHECKED would
+         # split one record into two lines on disk -- letting a crafted --checked value inject what LOOKS like a
+         # second, independently-parseable queue line (potentially a fully-formed, attacker-chosen "#checked:"
+         # record that never went through any of the gates above, since only the FIRST, intended command was
+         # ever checked). `case` matches the pattern against the WHOLE string in bash's own memory (never an
+         # external pipeline that could itself be fooled by a line-split), so this cannot be defeated the way a
+         # `grep -q` per-line scan of the same text could be.
+         case "$CHECKED" in
+           *[![:print:]]*)
+             echo "⛔ REFUSED: --checked must not contain a newline or other control character." >&2
+             exit 2 ;;
+         esac
          # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh). Six SETTLE A2 lines were queued as
          # 'A2 wiring seed 42: mem_gb=8 && cd ~/derisk-pool/revisions/... && ...' -- a prose label as the first
          # word -- so the node ran `A2`, got "command not found" (rc=127), and nothing ran, while the board said
@@ -176,6 +196,58 @@ case "${1:-list}" in
          if ! SHAPE_MSG=$(queue_job_runnable_check "$2"); then
            echo "$SHAPE_MSG" >&2
            exit 2
+         fi
+         # GATE-SEED GUARD (2026-09-29, docs/plans/2026-09-29-local-model-transition-PLAN.md section 4). The
+         # local model ran the six GATE seeds (42/43/44/100/101/102) on 2026-09-28 with no committed
+         # preregistration -- a GATE-seed result is meant to be a VERDICT, and a verdict without a prereg is
+         # exactly the tuning-toward-the-answer failure mode the runbook's dev/gate-seed split exists to prevent
+         # (dev seeds 7, 1-15 are unaffected; see LOCAL_LLM_RUNBOOK.md's 2026-09-28 VIOLATION entry). Refuse at
+         # enqueue time, cheaply and locally (no ssh), before the node-reachability probes below spend anything.
+         GATE_SEEDS_LIST="42 43 44 100 101 102"
+         JOB_SEED_NUMS=$(printf '%s' "$2" | grep -oE -- '--seeds?(=|[[:space:]]+)[0-9]+([,[:space:]]+[0-9]+)*' \
+           | grep -oE '[0-9]+')
+         HIT_GATE_SEEDS=""
+         for _s in $JOB_SEED_NUMS; do
+           for _g in $GATE_SEEDS_LIST; do
+             if [ "$_s" = "$_g" ]; then
+               case " $HIT_GATE_SEEDS " in *" $_s "*) ;; *) HIT_GATE_SEEDS="$HIT_GATE_SEEDS $_s" ;; esac
+             fi
+           done
+         done
+         HIT_GATE_SEEDS="${HIT_GATE_SEEDS# }"
+         if [ -n "$HIT_GATE_SEEDS" ]; then
+           # A prereg is named in the --checked REASON as "prereg <path>" (matches the convention already used
+           # live in research/queue/dispatch.log, e.g. "prereg research/findings/...-PREREGISTRATION.md ...").
+           PREREG_PATH=$(printf '%s' "$CHECKED" | grep -oE 'prereg[[:space:]]+[^[:space:]]+' | head -1 | awk '{print $2}')
+           GS_PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1 | sed 's#.*/##')
+           if [ -z "$PREREG_PATH" ]; then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS] require a committed preregistration." >&2
+             echo "   Add to --checked: '... prereg <path/to/PREREGISTRATION.md> ...'. Dev seeds (7, 1-15) are unaffected." >&2
+             exit 2
+           fi
+           if [ -z "$GS_PINNED_REV" ]; then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS] need the job pinned to a revision (cd ~/derisk-pool/revisions/<sha>)" >&2
+             echo "   so prereg '$PREREG_PATH' can be verified to exist there." >&2
+             exit 2
+           fi
+           if ! git -C "$ROOT" cat-file -e "$GS_PINNED_REV:$PREREG_PATH" 2>/dev/null; then
+             echo "⛔ REFUSED: prereg '$PREREG_PATH' does not exist at pinned revision $GS_PINNED_REV (git cat-file -e failed)." >&2
+             echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
+             exit 2
+           fi
+           # POOL-CANARY GUARD (2026-09-30, tools/pool_canary.sh). ~470 gate-seed lines for eight runner families
+           # were queued on 2026-09-29 after workstation dev-seed checks only; run for real on pool41/pool42, every
+           # line of three families died in the worker's argparse (host_share, stage1_exit_gate and
+           # stage1_c1_category spawned '--worker --seed N' without --allow-gate-seed) and a fourth died at import
+           # (no httpx in the pool venv). A dev-seed check exercises neither the gate-seed code path nor the pool's
+           # venv, so a gate-seed line is refused until a canary of the SAME runner module at the SAME revision has
+           # PASSED on a pool node (the latest record for the pair in research/queue/pool_canaries.tsv).
+           if ! CANARY_WHY=$(bash "$ROOT/tools/pool_canary.sh" check-line "$2" 2>&1); then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS]: $CANARY_WHY." >&2
+             echo "   Run ONE line of this runner at this revision on a pool node first; it records the verdict:" >&2
+             echo "   bash tools/pool_canary.sh run <node> '<this line>'" >&2
+             exit 2
+           fi
          fi
          # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
          # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node
@@ -228,7 +300,15 @@ case "${1:-list}" in
          # main refused every such job ("does not even import/parse"). For pinned jobs the flag check runs below,
          # against the pinned revision's own --help on the node; unpinned jobs keep this local check.
          PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
-         FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
+         # Flags are scoped to $MOD's own invocation (2026-10-01, RULING iw1-stepB): a line may chain a guard script before
+         # `&&` (e.g. `tools/assert_iw1_defaults.py --expect-on=<packets> &&`) whose flags belong to a different argparse;
+         # scanning the whole line refused every guarded iw1 job. $MOD's flags follow its own `-m research.runners.X`.
+         FLAGS_SCOPE="$2"
+         if [ -n "$MOD" ]; then
+           FLAGS_SCOPE=$(printf '%s' "$2" | grep -oE -- "-m +$MOD.*" | head -1)
+           [ -n "$FLAGS_SCOPE" ] || FLAGS_SCOPE="$2"
+         fi
+         FLAGS=$(printf '%s' "$FLAGS_SCOPE" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
          if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
            # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first

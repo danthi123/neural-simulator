@@ -1,0 +1,67 @@
+{
+ "profile": "ollama-qwen38-27b-iq4nl",
+ "model": "qwen38-27b-iq4nl",
+ "started": "2026-09-29 17:45:53",
+ "device": "cuda:0 (ollama at http://127.0.0.1:11434, externally managed)",
+ "kind": "generic",
+ "ctx": 131072,
+ "long_tokens": 60000,
+ "base_url": "http://127.0.0.1:11434",
+ "vram_before_mib": 2712,
+ "vram_total_mib": 24576,
+ "load_s": 17.9,
+ "server_cmd": "<external: http://127.0.0.1:11434>",
+ "vram_after_load_mib": 20810,
+ "short_gen_tok_s": 35.9,
+ "long_prompt_tokens": 74452,
+ "long_pp_tok_s": 781.5,
+ "long_gen_tok_s": 1.0,
+ "long_answer": "ORCHID-7431-TANGERINE",
+ "long_recall_ok": true,
+ "vram_peak_mib_long": 20872,
+ "long_timing_note": "wall-clock only (no llama.cpp /completion timings on this backend): long_pp_tok_s is a lower bound (prompt+gen time combined)",
+ "tasks": {
+  "T1_locate": {
+   "wall_s": 175,
+   "exit": 1,
+   "num_turns": 1,
+   "is_error": true,
+   "result": "API Error: 500 {\"error\":{\"code\":500,\"message\":\"\\n------------\\nWhile executing CallExpression at line 110, column 28 in source:\\n...eveloper\\\" %}\u21b5        {{- raise_exception('System message must be at the beginnin...\\n                                           ^\\nError: Jinja Exception: System message must be at the beginning.\",\"type\":\"server_error\"}}. This is a server-side issue, usually temporary \u2014 try again in a moment. If it persists, check your inference gateway (127.0.0.1:11434).",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"qwen38-27b-iq4nl\",\"query_source\":\"sdk\"}\n",
+   "pass": false
+  },
+  "T2_debug": {
+   "wall_s": 189,
+   "exit": 1,
+   "num_turns": 1,
+   "is_error": true,
+   "result": "API Error: 500 {\"error\":{\"code\":500,\"message\":\"\\n------------\\nWhile executing CallExpression at line 110, column 28 in source:\\n...eveloper\\\" %}\u21b5        {{- raise_exception('System message must be at the beginnin...\\n                                           ^\\nError: Jinja Exception: System message must be at the beginning.\",\"type\":\"server_error\"}}. This is a server-side issue, usually temporary \u2014 try again in a moment. If it persists, check your inference gateway (127.0.0.1:11434).",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"qwen38-27b-iq4nl\",\"query_source\":\"sdk\"}\n",
+   "pass": false,
+   "pytest": [
+    "2 failed, 20 passed in 0.09s"
+   ],
+   "test_untouched": true,
+   "changed": [
+    ".claude/hooks/require_memcap_for_brain_builds.py"
+   ]
+  },
+  "T3_extend": {
+   "wall_s": 184,
+   "exit": 1,
+   "num_turns": 1,
+   "is_error": true,
+   "result": "API Error: 500 {\"error\":{\"code\":500,\"message\":\"\\n------------\\nWhile executing CallExpression at line 110, column 28 in source:\\n...eveloper\\\" %}\u21b5        {{- raise_exception('System message must be at the beginnin...\\n                                           ^\\nError: Jinja Exception: System message must be at the beginning.\",\"type\":\"server_error\"}}. This is a server-side issue, usually temporary \u2014 try again in a moment. If it persists, check your inference gateway (127.0.0.1:11434).",
+   "stderr_tail": "[claude-code:unrecognized_model] {\"model\":\"qwen38-27b-iq4nl\",\"query_source\":\"sdk\"}\n",
+   "pass": false,
+   "pytest": [
+    "22 passed in 0.09s"
+   ],
+   "case_added": false,
+   "changed": []
+  }
+ },
+ "vram_peak_mib": 20890,
+ "vram_headroom_mib": 3686,
+ "finished": "2026-09-29 17:57:18"
+}

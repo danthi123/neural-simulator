@@ -13,7 +13,46 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Operations (owner 2026-09-30):** the project's home moved to homelab-server (canonical checkout
+`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+(`/home/dant123/Projects/sim`) is now a follower + compute node (GPU queue, local model serving). Research state and
+phase below are unaffected. Details: `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
+
+**North star:** a sim-brain that converses genuinely; Qwen2.5-0.5B stays the permanent mouth; #1 metric = the load-bearing
+fraction, with a host-decision share (by intervention) beside it. **Plan:** docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md.
+**Frontier (2026-09-29 12:15, Claude back after the usage reset; local model OFF, one driver):** seven agents launched on the
+Tuesday list: host-share baselines (research/host-share-baselines, reviews the local model's seam map + metacog probe), one
+selection seam with need-state reversal (research/selection-seam-need-reversal, reviews the N=5 BG work), spiking long-delay
+credit (research/long-delay-credit-spiking; the local model's rate-level draft is the reference: ruling, the claim needs the spiking
+substrate), sleep transitive inference inside the prioritized-memory prereg (research/sleep-transitive-inference), B2b s102 A1.4
+ruling + B2c readiness + fill the pool (research/b2-rulings-2026-09-29), arcc score + D6 canonical-run facts + waiver-absence
+latency fix (research/arcc-b2b-d6-scoring), docs refresh publish-ready (docs-refresh-readme). Lanes A/B/C registered in
+lane_builds.jsonl (primary checkout, uncommitted: `gates/compute_idle_persistent` blocks non-Markdown commits until the
+pool/GPU are busy; waiver budget 6.73/6 h frees ~18:30). **Next:** harvest each agent, review, merge SOUND branches.
+
+**SERVING SWITCH (2026-09-29, 22:40):** research/serving-simplify merged (3ee54e338): the `local-llm` unit now runs
+llama-swap in front of the same llama-server command (speed check: generation -2.45%, within the 5% bar; live
+smoke via `llm on` + one Anthropic Messages request passed; idle model auto-unloads after 1 h). GPU-crash watchdog and
+cloud profiles are merged but not installed (owner steps: docs/GPU_CRASH_RECOVERY.md, a cloud API key).
+
+**LANDING (2026-09-29, evening):** merged to main (7801d0813, b8c50b492, 4c6b62722, 99986c950, ea4977d29): arcc
+awake-completion GO 6/6 + D6 doubled-cell ruling + waiver_history clear_waiver fix; B2b COMPLETE (216/216 DEFINED,
+robust core 28/29, mean 0.843) + tools/b2b_score.py; B2d reply-level rescore (headline reply core 17/33) +
+comprehension-monitor lesion-twin crash fix + tools/b2d_score.py; docs-refresh's 25 ISSUES.md fixes; the local-model
+bake-off (Ollama vs Unsloth Studio). Pushed both remotes. Kept on their branches, not yet merged (packets awaiting
+their own gate verdicts): host-share-baselines, selection-seam-need-reversal (+ a host_share_bg_seam.py integration
+bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Queued this cycle:
+host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit instrument sweep
+(243 pool jobs, dev seeds). Sleep transitive inference: its dev cupy seeds 8-11 were killed mid-build once by a
+GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Step 2 operating-point check printed
+`all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
+went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
+NEEDS-CLAUDE per its own prereg).
+
+*Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
+
 
 **🌙 02:35 progress (overnight):** sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74);
 open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as

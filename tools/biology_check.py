@@ -95,9 +95,11 @@ WHAT THIS STILL CANNOT CATCH (state it, so nobody mistakes green for verified):
 """
 from __future__ import annotations
 
+import functools
 import glob
 import os
 import re
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -140,7 +142,28 @@ def _parse_frontmatter(text):
     return out
 
 
+@functools.lru_cache(maxsize=1)
+def _projects_dir():
+    """The folder that holds the main checkout and its sibling folders (sim-catalog, sim-data, ...): the parent of
+    the main checkout, found through git's common dir so a .claude/worktrees/* copy resolves the same way."""
+    try:
+        common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=ROOT,
+                                capture_output=True, text=True, timeout=10, check=True).stdout.strip()
+        if common:
+            return os.path.dirname(os.path.dirname(common))
+    except Exception:
+        pass
+    return os.path.dirname(ROOT)
+
+
 def _expand(p):
+    # A source written as ~/Projects/<folder>/... resolves next to the main checkout first: inside the Hermes
+    # container on homelab-server, HOME is not /home/dant123, so plain ~ expansion missed sim-catalog there and
+    # this gate blocked every commit (2026-09-30).
+    if p.startswith("~/Projects/"):
+        sibling = os.path.join(_projects_dir(), p[len("~/Projects/"):])
+        if os.path.exists(sibling):
+            return sibling
     return os.path.expanduser(p) if p.startswith("~") else (p if os.path.isabs(p) else os.path.join(ROOT, p))
 
 

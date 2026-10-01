@@ -17,6 +17,11 @@ mouth; the #1 metric is the lesion-verified load-bearing fraction:
 **Current phase (owner 2026-09-25): prove who owns the computation.** Which part of the system caused the answer,
 shown causally? A host-decision share, measured by intervention, sits beside the load-bearing fraction:
 `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`.
+**Integration-first + pivot dwell (owner 2026-09-29):** the unit of progress is a faculty ON BY DEFAULT whose lesion
+changes the REPLY; stop adding new faculties while de-risked ones sit off by default; stage-exit attempts are on the
+calendar (Stage 1 by 10-24, Stage 2 by 11-21, Stage 3 by 12-19) and run even if expected to fail. No phase-level
+redirect for four weeks unless a six-seed falsification forces it; every pivot lists what it retires. Evidence:
+`docs/plans/2026-09-29-acceleration-report.md`; long-range path: `docs/plans/2026-09-29-roadmap-to-the-primary-goal.md`.
 
 - **PLAN:** [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
   (faculty map, one-brain architecture, 6 stages, walls ledger; the old 5-gap cluster is a sub-view). Foundation:
@@ -26,6 +31,11 @@ shown causally? A host-decision share, measured by intervention, sits beside the
 - **To SKIM:** [`ROADMAP.md`](ROADMAP.md), plain-language status; its "Project shorthand" table decodes
   FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer.
 - Cross-session continuation is MANUAL by owner choice ("continue" + the roadmap + the board): no watchdog/daemon.
+  One exception (owner 2026-09-29): after the local-model driver yields the GPU (`llm yield`), its session
+  auto-resumes when the GPU window ends. **Where things run (owner 2026-09-30): home = homelab-server**
+  (`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+  (`/home/dant123/Projects/sim`) is a follower + compute node (GPU queue, local model serving); Claude Code
+  inspects occasionally. `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
 
 ## Non-negotiables
 
@@ -58,8 +68,10 @@ shown causally? A host-decision share, measured by intervention, sits beside the
     GPU sweeps/long runs → `tools/gpu_queue.sh`, multi-seed → the controller's `--seeds`); agents only for genuine
     builds. Maximize parallelism AND minimize tokens. Tier every agent (haiku = mechanical · sonnet = moderate ·
     opus = hard judgment), never inherit Opus: `gates/workflow_cost_tiering`, `tools/cost_audit.py`, `cost-routing` skill.
-12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands or
-    Hermes, `docs/OPENHANDS_TAKEOVER.md`). Hand the current one back before starting another.
+12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands,
+    `docs/OPENHANDS_TAKEOVER.md`; the workstation-Hermes driver was retired 2026-09-30 — the owner's Hermes Agent now
+    runs on homelab-server via its own SSH backend, not through this repo's driver switches). Hand the current one
+    back before starting another.
 
 ## Workflow essentials
 

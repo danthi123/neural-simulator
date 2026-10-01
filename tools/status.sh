@@ -10,13 +10,16 @@
 # Env overrides (tests only -- never set these in production; each is honoured by the underlying tool it names):
 #   GPU_QUEUE_DIR, POOL_QUEUE_PATH, POOL_NODES, POOL_SSH_CONFIG, AWS_DAILY_CAP_USD, SIM_ENGINE_PYTHON,
 #   HANDOFF_BATTERIES_TSV, STATUS_SSH (ssh binary override, for a stub in tests)
+#   (POOL_NODES unset -> default node list comes from tools/pool_nodes.conf)
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 PY="${SIM_ENGINE_PYTHON:-$ROOT/.venv/bin/python}"
 [ -x "$PY" ] || PY=python3
 TSV="${HANDOFF_BATTERIES_TSV:-$ROOT/research/coordination/handoff_batteries.tsv}"
-NODES="${POOL_NODES:-pool40 pool41 pool42}"
+NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
 SSH_BIN="${STATUS_SSH:-ssh}"
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && SSH_F=(-F "$POOL_SSH_CONFIG")

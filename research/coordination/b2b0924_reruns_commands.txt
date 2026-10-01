@@ -99,3 +99,15 @@ FRONT=1 bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/a308f1e09babcc9
 # prereg's A1.4(c) ("never reached a node") was written for a stale/lost queue line, not this case (there IS a
 # dispatch record), and A1.4 does not otherwise say whether a memory-guard refusal consumes the cell's one re-run
 # -- do not assume either reading; flag it to the owner and re-queue only after that call.
+
+# ==== 2026-09-29: the two seed-102 cells (ruling: research/coordination/b2b0924_s102_ruling.md) ====
+# Their first (and only) B2b attempt ran on AWS pool1 (discourse-register) and pool2 (episodic-memory); both nodes
+# were stopped by the idle-stopper before pool-sync pulled the last files. The local move (A1.4(a)) ran 2026-09-29
+# 12:14:49 EDT; the one re-run each runs by direct ssh on pool41 / pool42. PENDING, together with Steps 1a/1b above,
+# BEFORE pool1 or pool2 next starts (and not before both re-runs' lb.json have landed locally): move the node copies
+# aside, then pull them into the primary's _b2b0924_attempt1/ tree so attempt 1's rep0 + lb.json (if they exist) and
+# the node's job_status.log record are kept and reported (never scored).
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool1 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s102/discourse-register research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102/discourse-register'
+ssh -n -o BatchMode=yes -F research/queue/.pool_ssh_config pool2 'cd ~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c && mkdir -p research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102 && mv research/findings/raw/_load_bearing/_shards/b2b0924-base/s102/episodic-memory research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102/episodic-memory'
+# then (primary checkout): rsync -a <node>:~/derisk-pool/revisions/a308f1e09babcc9ed096c3c8046d00040391368c/research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102/<faculty>/ research/findings/raw/_load_bearing/_b2b0924_attempt1/b2b0924-base/s102/<faculty>/
+#      and: ssh <node> "grep -n '' ~/derisk-pool/sim/job_status.log | tail -20"   (the v2 rc record of the 09-25 13:15/13:16 dispatch)

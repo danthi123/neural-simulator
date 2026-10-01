@@ -44,9 +44,9 @@ LANE_WAIVER_MAX_H = 6
 RECENT_DISPATCH_MIN = 45   # a dispatched pool job runs remotely; it serves its lane for this long
 
 CPU_LANES = {
-    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion"],
-    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress"],
-    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom"],
+    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion", "need_reversal", "bg_live_seam"],
+    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress", "long_delay_credit"],
+    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom", "host_share"],
     "D · Perception":    ["v1_selforg", "_b1_", "visual", "retina", "gabor", "v2_", "_it_", "nav_"],
     "E · Language":      ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                           "comprehension", "producer", "confidence_gate"],
@@ -78,9 +78,22 @@ def _queue_dir():
     return os.path.join(_shared_queue_root(), "research", "queue")
 
 
+# Self-declared FILLER never serves a lane (2026-09-29, FAILURE_LOG). Twice in one day a subagent passed this gate by
+# queueing cheap "keepalive" smokes it described in POOL_CHECKED_REASON as "lane-service only ... not a research lever":
+# honest labels on dishonest work. A lane is served by research, not by a job whose own reason says it is not research.
+FILLER_MARKERS = ("lane-service", "lane service", "keepalive", "keep-alive", "not a research lever", "not research")
+
+
+def _is_filler(line):
+    c = line.lower().replace("\\ ", " ")
+    return any(m in c for m in FILLER_MARKERS)
+
+
 def _served(text_blobs):
     served = set()
     for ln in text_blobs:
+        if _is_filler(ln):
+            continue
         c = ln.lower()
         for lane, keys in CPU_LANES.items():
             if any(k in c for k in keys):
@@ -114,6 +127,26 @@ def _work_lines():
             if os.path.getmtime(dl) >= cutoff:
                 tail = open(dl, errors="ignore").read().split("\n")[-80:]
                 lines += [l.split("<- ", 1)[1] for l in tail if "<- " in l]
+        except OSError:
+            pass
+    # pool.running holds the same record WITH a date ("YYYY-MM-DD HH:MM:SS<TAB>node<TAB>job"). On srv-host-0 the
+    # dispatcher logs to the journal (2026-09-30: sim-pool-dispatch.service, no dispatch.log), so this is the file
+    # that still says what went out recently there.
+    pr = os.path.join(queue_dir, "pool.running")
+    if os.path.exists(pr):
+        cutoff = time.time() - RECENT_DISPATCH_MIN * 60
+        try:
+            if os.path.getmtime(pr) >= cutoff:
+                for l in open(pr, errors="ignore").read().split("\n")[-200:]:
+                    parts = l.split("\t", 2)
+                    if len(parts) != 3:
+                        continue
+                    try:
+                        ts = time.mktime(time.strptime(parts[0], "%Y-%m-%d %H:%M:%S"))
+                    except ValueError:
+                        continue
+                    if ts >= cutoff:
+                        lines.append(parts[2].split("#checked:")[0])
         except OSError:
             pass
     return lines
@@ -214,7 +247,13 @@ def check(paths=None):
     # files -- and the board is always a MODIFY -- so board commits arrived empty and STILL blocked, the exact
     # case this targeted. Read the real staged set ourselves. Standalone (`python tools/gates/...`, no staged
     # commit) reads empty -> falls through to the corpus scan, unaffected.
-    if _is_doc_only(_staged_files()):
+    staged = _staged_files()
+    if _is_doc_only(staged):
+        return []
+    # INFRA-ONLY EXEMPTION (2026-09-29): the same allow-list gates/compute_idle_persistent uses (tools/** and tests/**
+    # minus the enforcement machinery, generic docs, .gitignore). A tooling commit queues no research and adds no
+    # research artifact, so idle lanes are not its fault; blocking it is what pushed agents to queue filler.
+    if _is_infra_only(staged):
         return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
@@ -223,9 +262,27 @@ def check(paths=None):
     return _idle_message(idle, verdict)
 
 
+def _is_infra_only(staged):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_cip_for_lane", os.path.join(os.path.dirname(os.path.abspath(__file__)), "compute_idle_persistent.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod._is_infra_only(staged)
+
+
 def selftest():
     """FAILING DIRECTION FIRST: with nothing queued and no waiver, this MUST fire."""
     bad = []
+    filler = ("POOL_CHECKED_REASON=lane-service\\ only\\ (CLASS\\ L):\\ cheap\\ --smoke\\ dev-seed\\ 7\\ keepalive\\ for\\ lane\\ A "
+              "SIM_BACKEND=numpy .venv/bin/python -m research.runners._affect_state_region_derisk --smoke --seed 7")
+    if _served([filler]):
+        bad.append("FALSE NEGATIVE-PROOF: a self-declared keepalive/lane-service filler job still served a lane")
+    if not _served(["POOL_CHECKED_REASON=prereg\\ x.md python -m research.runners._affect_state_region_derisk --seeds 42"]):
+        bad.append("a genuine prereg'd affect job no longer serves lane A")
+    if not _is_infra_only(["tools/foo.py", "tests/test_foo.py"]):
+        bad.append("a tools/tests-only commit is not exempt")
+    if _is_infra_only(["tools/gates/lane_starvation.py"]) or _is_infra_only(["research/runners/x.py", "tools/a.py"]):
+        bad.append("FALSE POSITIVE: enforcement files or research paths were treated as infra-only")
     if not _served(["python -m research.runners._affect_state_region_derisk --seeds 42"]):
         bad.append("did NOT recognise an affect job as serving lane A")
     if len(set(CPU_LANES) - _served([])) < MAX_IDLE_LANES:

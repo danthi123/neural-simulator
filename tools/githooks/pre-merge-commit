@@ -19,12 +19,23 @@ CANONICAL=$(dirname "$COMMON")
 HOOKS_PATH=$(git config core.hooksPath 2>/dev/null || echo "")
 # Normalize the path: handle both relative (tools/githooks), absolute, and trailing slashes
 NORMALIZED_HOOKS="${HOOKS_PATH%/}"  # Remove trailing slash if present
-if [ -z "$NORMALIZED_HOOKS" ] || ! { [ "$NORMALIZED_HOOKS" = "tools/githooks" ] || [ "$NORMALIZED_HOOKS" = "$ROOT/tools/githooks" ]; }; then
+# $ROOT is THIS checkout's own toplevel -- in a LINKED WORKTREE that is the worktree's own path, not the
+# primary checkout core.hooksPath's absolute form was configured against (core.hooksPath is repo-common
+# config, so every worktree shares the one value, typically an absolute path into the primary checkout).
+# $CANONICAL (dirname of --git-common-dir) is that primary checkout's root regardless of which worktree is
+# running. Accept either so a worktree merge is not blocked on a false mismatch (found 2026-09-29 landing
+# host-share-baselines: ROOT-only comparison rejected the correctly-configured shared absolute path).
+if [ -z "$NORMALIZED_HOOKS" ] || ! { [ "$NORMALIZED_HOOKS" = "tools/githooks" ] || [ "$NORMALIZED_HOOKS" = "$ROOT/tools/githooks" ] || [ "$NORMALIZED_HOOKS" = "$CANONICAL/tools/githooks" ]; }; then
   echo "⛔ pre-merge-commit: git config core.hooksPath is '$HOOKS_PATH'."
   echo "   It should be either 'tools/githooks' (relative) or the absolute path to tools/githooks."
   echo "   Run: git config core.hooksPath tools/githooks"
   exit 1
 fi
 
-# Exec the pre-commit hook to run document-structure checks
+# Exec the pre-commit hook to run document-structure checks. Prefer the canonical (primary-checkout) copy,
+# since that is what an absolute core.hooksPath actually points at from any worktree; fall back to $ROOT for
+# the relative "tools/githooks" form (git itself resolves that against $ROOT before this script ever runs).
+if [ -x "$CANONICAL/tools/githooks/pre-commit" ]; then
+  exec "$CANONICAL/tools/githooks/pre-commit"
+fi
 exec "$ROOT/tools/githooks/pre-commit"
