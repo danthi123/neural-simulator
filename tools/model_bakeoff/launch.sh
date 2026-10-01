@@ -44,7 +44,7 @@ case "$cmd" in
       'mkdir -p /bk/tools /bk/bases /bk/runs /bk/home && touch /bk/home/.env && chown -R 99:100 /bk'
     echo "volume $VOL ready" ;;
   prepare)
-    rev=${1:?rev}; [[ "$rev" =~ ^[A-Za-z0-9/._-]+$ ]] || { echo "bad rev"; exit 2; }
+    rev=${1:?rev}; shift; [[ "$rev" =~ ^[A-Za-z0-9/._-]+$ ]] || { echo "bad rev"; exit 2; }
     # No network; the workspace and Hermes's config read-only. git's ownership check is relaxed for this read-only use
     # through a global config in the throwaway container's own HOME (env-only config does not reach the clone's
     # upload-pack helper).

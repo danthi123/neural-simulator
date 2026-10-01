@@ -1,6 +1,6 @@
 {
  "schema": "model-bakeoff-suite-v1",
- "_comment": "Real tasks mined from this repo's history with ground truth, each adversarially verified (workflow wf_66053f39-f3c, 2026-09-30): leakage at base, ground truth re-derived, graders run against the known-good and base states. Dropped: tasks needing rsync (not in the Hermes image).",
+ "_comment": "Real tasks mined from this repo's history with ground truth, each adversarially verified (workflow wf_66053f39-f3c, 2026-09-30): leakage at base, ground truth re-derived, graders run against the known-good and base states. Dropped: tasks needing rsync (not in the Hermes image). The five operate tasks were verified but dropped: they need sandbox state (extra refs, .git internals, ignored files, worktrees) the per-run clone does not carry, and run management is what Hermes's local model already does in production, so it is judged from its live sessions instead.",
  "screen": [
   "implement-d6-dead-worker-exit",
   "implement-pool-venv-check-record-modules",

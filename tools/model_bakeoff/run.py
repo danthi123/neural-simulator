@@ -269,9 +269,12 @@ def run_one(batch, model, task, budget_s, max_turns, lock):
         if ev.get("type") == "result":
             final = ev
     flags, warns = audit(transcript, run_dir)
-    answer = os.path.join(repo, "BAKEOFF_ANSWER.md")
-    if os.path.exists(answer):
-        shutil.copy2(answer, os.path.join(run_dir, "answer.md"))
+    # The deliverable: BAKEOFF_ANSWER.md for most tasks, BAKEOFF_REVIEW.md (etc.) for some. Keep every one; the
+    # first found is also answer.md, which judge.py reads.
+    for name in sorted(f for f in os.listdir(repo) if f.startswith("BAKEOFF_") and f.endswith(".md")):
+        shutil.copy2(os.path.join(repo, name), os.path.join(run_dir, name))
+        if not os.path.exists(os.path.join(run_dir, "answer.md")):
+            shutil.copy2(os.path.join(repo, name), os.path.join(run_dir, "answer.md"))
     subprocess.run(git + ["add", "-A", "--", ".", ":!.venv"], capture_output=True)
     diff = subprocess.run(git + ["diff", "--cached", setup_tree, "--", ".", ":!.venv"], capture_output=True, text=True).stdout
     with open(os.path.join(run_dir, "diff.patch"), "w") as f:
