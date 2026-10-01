@@ -1,0 +1,325 @@
+{
+ "step": "R",
+ "packet": "transitive-chat",
+ "tag": "iw2-R-tr-573a943",
+ "pin": "573a9438f075239069c8966dd62f1da4d981e158",
+ "per_seed": {
+  "42": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  },
+  "43": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  },
+  "44": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  },
+  "100": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  },
+  "101": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  },
+  "102": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "transitive_nonadjacent",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+    "intact_abstained": false,
+    "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+   }
+  }
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 6,
+ "control": {
+  "row": "transitive-reversed-ctl",
+  "per_seed": {
+   "42": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "43": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "44": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "100": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "101": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "102": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_rv",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "Setting the held thread aside \u2014 On cat, then \u2014 I don't know about that.",
+     "control_fails": []
+    }
+   }
+  },
+  "n_defined": 6,
+  "n_ok": 6
+ },
+ "verdict": "PASS",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "permuted-control cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/iw2_score.py",
+ "argv": [
+  "tools/iw2_score.py",
+  "R",
+  "--packet",
+  "transitive-chat",
+  "--tag",
+  "iw2-R-tr-573a943",
+  "--pin",
+  "573a9438f075239069c8966dd62f1da4d981e158",
+  "--out",
+  "research/findings/raw/_iw2/verdicts/573a943/R_tr.json"
+ ],
+ "sim_backend": "numpy (the scored shards'; this scorer builds no brain)"
+}
