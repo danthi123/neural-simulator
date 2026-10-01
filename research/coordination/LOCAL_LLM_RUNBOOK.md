@@ -99,8 +99,7 @@ only by `compute_idle_persistent` / `lane_starvation`: retry every 30 min (max 6
 research/coordination/LOCAL_LLM_RUNBOOK.md` (the checkout has unrelated uncommitted files: the staged list must be
 exactly this file), `git commit -m "runbook: <what>"` — then STOP: do not run `push_both.sh main` yourself.
 `sim-sync.timer` (host unit on S, user `sim`, every 15 min) publishes `main` to both remotes via `sim-publish`;
-confirm with `git ls-remote origin main` once its sha matches your commit (allow up to 15 min). Still unpublished
-after 20 min: NEEDS-CLAUDE "[runbook] main unpublished at <sha>".
+do not check the remotes (RULING `private-repos`): a failed publish fails the unit, which alerts the owner.
 
 **Verdict rule.** Every GO/NO-GO/PASS/FAIL you write is PROVISIONAL until Claude inspects it or records a matching
 re-derivation with the registered scorer. Keep the HANDOFF's finding template; under the H1 add `**PROVISIONAL**:
@@ -237,6 +236,10 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   draft branches live in this checkout (ZFS-snapshotted and backed up); do not run `push_both.sh`. After committing on a
   branch, name `<branch> @ <sha>` in the RESULT line; Claude reviews and merges on S. GPU jobs need no push
   (`gpu_remote.sh` sends the revision to W itself). (2026-09-30)
+- private-repos: GitHub and Gitea are private and S has no credential, so never `git fetch`, `pull` or `ls-remote` a
+  remote from here. Every pushed `research/*` branch was imported as `origin/research/<name>` (2026-09-30); later
+  branches are created here. Start a packet/draft worktree from `origin/research/<name>` or the local branch.
+  (2026-09-30)
 - permissions: the seeded item was about Claude Code's workstation allow list, which Hermes does not use. Under
   Hermes, scheduled runs may use ssh, rsync, `source`, file edits, `bash -c`/`-lc`, pytest and git without a
   prompt; `python -c`/`-e` one-liners are still refused: write the snippet to `_scratch/<name>.py` and run that.
