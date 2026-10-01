@@ -73,14 +73,20 @@ cd /home/dant123/Projects/neural-simulator && F=<requeue file> bash -c 's=$(head
 (W); from here queue a job with `bash tools/gpu_remote.sh add 'cd <clean committed checkout> && ...'` (gate seeds
 also `--prereg <committed path>`) — it pushes your committed revision to W as `refs/server-jobs/<sha>`, builds a
 sparse per-job worktree there and execs that worktree's own `gpu_add.sh`; you never `ssh` by hand. Status: `bash
-tools/gpu_remote.sh status`; log: `bash tools/gpu_remote.sh log [N]`. To free the 3090 for queued jobs: commit,
-WORKLOG "yielding for <jobs>; resume at <task/step>", then `bash tools/gpu_remote.sh yield --max-hours N` (1-12).
-Results come back through `sim-sync.timer`'s 15-min pull (`POOL_NODES=workstation bash tools/pool_sync.sh`), not
-directly from this session — re-check `research/findings/raw/...` after a sync cycle rather than polling W.
+tools/gpu_remote.sh status`; log: `bash tools/gpu_remote.sh log [N]`. Your queued jobs wait while your model is
+up (it shares the 3090), so hand the card over at the END of the run that queued them: commit, WORKLOG "yielding
+for <jobs>; resume at <task/step>", then `bash tools/gpu_remote.sh yield --max-hours N` (1-12; the jobs' expected
+hours plus margin) as your last command (the model stops ~45 s later). The queue then runs the jobs; when it
+drains, or N hours pass, W restarts llama-swap with the model unloaded. Your `sim-driver` wake gate starts
+the next run within ~5 min of llama-swap answering, with "Woken: the workstation model server just came back" at
+the top of the prompt. If the owner games mid-window, the window pauses and gets the time back. Results come back
+through `sim-sync.timer`'s 15-min pull (`POOL_NODES=workstation bash tools/pool_sync.sh`), not directly from this
+session: if a job's `--out` is not under `research/findings/raw/...` yet, do another task and harvest next run
+rather than polling W.
 `tools/local_llm/gpu_add.sh` / `llm.sh yield` run directly only when actually on W (e.g. Claude inspecting there).
-**Model unreachable.** When the owner is gaming on W, `game on` stops llama-swap (and pauses W's GPU queue) and your
-calls to `http://192.168.0.68:8080/v1` fail with a connection error until `game off`: do not retry in a loop; WORKLOG
-"model unreachable, gaming" and move to another task (section 4's pool-only work is unaffected). The same applies if
+**Model unreachable.** When the owner is gaming on W, `game on` stops llama-swap (and pauses W's GPU queue); the
+wake gate then skips runs until `game off` restarts it (or resumes your GPU window). If a call still fails
+mid-run with a connection error: do not retry in a loop; WORKLOG "model unreachable" and end the run. The same applies if
 llama-swap is down for another reason (check `bash tools/gpu_remote.sh status`'s remote log, or ask Claude to check
 `journalctl --user -u local-llm` on W). A cloud `fallback_model` can be added to Hermes's config for this case but is
 not set up yet.

@@ -1,8 +1,10 @@
 """tools/game.sh (rewritten 2026-09-29 for the local-model-driver setup, docs/plans/2026-09-29-local-model-
 transition-PLAN.md section 3): `on` pauses the GPU queue, SIGSTOPs any standalone local research.runners/webapp
 python (recording pids for `off` to SIGCONT), stops the local-llm server if it was loaded (recording its profile
-+ last session so `off` can bring both back), and sets GAME_MODE; `off` reverses all three, then resumes the
-recorded session -- interactively from a TTY, headless (logged) otherwise.
+and when the pause began), and sets GAME_MODE; `off` reverses all three. 2026-09-30 (owner: resume what was
+running, do not just load the model): a GPU window Hermes had yielded gets back the time the pause took and the
+server stays off for it; otherwise a server that was running restarts with the model UNLOADED (`on --lazy`), and
+no local session is resumed (Hermes on homelab-server is the driver).
 
 Hermetic throughout: GPU_QUEUE_DIR isolates every state file (GAME_MODE, the frozen-pid list, the llm-state
 record) from the live research/queue/; GAME_LLM_SH stubs tools/local_llm/llm.sh entirely (never spawns a real
@@ -133,7 +135,7 @@ def test_on_off_round_trip_freezes_and_resumes_a_standalone_local_process():
                 proc.kill()
 
 
-def test_on_records_the_llm_state_when_it_was_loaded_and_off_reloads_it():
+def test_on_records_the_llm_state_when_it_was_loaded_and_off_restarts_it_lazily():
     with tempfile.TemporaryDirectory() as tmp:
         llm_sh, log = _fake_llm_sh(tmp, up=True, profile="qwen38-27b-iq4nl-mtp")
         bindir = _fake_curl(tmp, up=True)
@@ -151,16 +153,50 @@ def test_on_records_the_llm_state_when_it_was_loaded_and_off_reloads_it():
         state = open(os.path.join(tmp, ".game_llm_state")).read()
         assert "GAME_LLM_WAS_ON=1" in state
         assert "GAME_LLM_PROFILE=qwen38-27b-iq4nl-mtp" in state
-        assert "GAME_LLM_SESSION=sess-abc" in state
+        assert "GAME_LLM_STARTED=" in state
+        assert "SESSION" not in state, "no local session is recorded any more"
 
         res_off = _run(["off"], env)
         assert res_off.returncode == 0, res_off.stdout + res_off.stderr
         log_text = open(log).read()
-        assert "CALLED: on qwen38-27b-iq4nl-mtp --wait" in log_text, "off must reload the SAME profile"
+        assert "CALLED: on qwen38-27b-iq4nl-mtp --lazy" in log_text, "off must restart the SAME profile, model unloaded"
+        assert "--wait" not in log_text, "off must never block on, or eagerly load, the model"
         assert not os.path.exists(os.path.join(tmp, ".game_llm_state")), "the state record must be consumed"
-        # this test process has no controlling tty under pytest -- so `off` must take the headless path.
-        assert _wait_for(lambda: "CALLED: claude --resume sess-abc -p" in open(log).read()), (
-            "the SAME session must be resumed headless: %s" % log_text)
+        time.sleep(0.5)
+        assert "CALLED: claude" not in open(log).read(), "no local session may be resumed (Hermes is the driver)"
+
+
+def test_off_continues_a_yielded_gpu_window_and_gives_it_back_the_pause():
+    """Hermes had yielded the GPU (`llm yield`: server down, .llm_yield marker with a deadline) when the owner ran
+    `game on`. `off` must resume that window -- leave the model server off (gpu_queue.sh restarts it when the jobs
+    drain) and push the window's deadline out by however long the pause took."""
+    with tempfile.TemporaryDirectory() as tmp:
+        llm_sh, log = _fake_llm_sh(tmp, up=False)
+        bindir = _fake_curl(tmp, up=False)
+        systemctl = _fake_systemctl(tmp, active=False)      # the yield already stopped the server
+        env = dict(os.environ)
+        env["PATH"] = bindir + os.pathsep + env["PATH"]
+        env.update({"GPU_QUEUE_DIR": tmp, "GAME_LLM_SH": llm_sh, "LOCAL_LLM_SYSTEMCTL": systemctl})
+        deadline = int(time.time()) + 3600
+        marker = os.path.join(tmp, ".llm_yield")
+        open(marker, "w").write("LLM_YIELD_PROFILE=prof-1\nLLM_YIELD_DEADLINE=%d\n" % deadline)
+
+        assert _run(["on"], env).returncode == 0
+        state_path = os.path.join(tmp, ".game_llm_state")
+        state = open(state_path).read()
+        assert "GAME_LLM_WAS_ON=0" in state
+        # pretend the pause began 10 minutes ago
+        state = "\n".join("GAME_LLM_STARTED=%d" % (int(time.time()) - 600) if l.startswith("GAME_LLM_STARTED=") else l
+                          for l in state.splitlines()) + "\n"
+        open(state_path, "w").write(state)
+
+        res_off = _run(["off"], env)
+        assert res_off.returncode == 0, res_off.stdout + res_off.stderr
+        assert "CALLED: on" not in _log_text(log), "the server must stay off while the yielded jobs run"
+        new_deadline = int(next(l for l in open(marker).read().splitlines()
+                                if l.startswith("LLM_YIELD_DEADLINE=")).split("=", 1)[1])
+        assert 595 <= new_deadline - deadline <= 610, "the window must get back the 10-minute pause: %d" % (new_deadline - deadline)
+        assert "continue now" in res_off.stdout, res_off.stdout
 
 
 def test_on_off_decide_llm_state_from_the_unit_not_the_health_port():
@@ -192,7 +228,7 @@ def test_on_off_decide_llm_state_from_the_unit_not_the_health_port():
         assert "not loaded before the pause" in res_off.stdout
         log_text = _log_text(log)
         assert "CALLED: on" not in log_text and "CALLED: claude" not in log_text, (
-            "off must never reload/resume a session for a unit that was never actually active: %s" % log_text)
+            "off must never restart the server or resume a session for a unit that was never actually active: %s" % log_text)
 
 
 def test_status_reports_local_model_up_only_when_the_unit_is_active():

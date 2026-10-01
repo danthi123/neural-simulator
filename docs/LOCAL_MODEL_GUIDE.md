@@ -116,7 +116,7 @@ just delete the `--chat-template-file` line to make the error go away.
 
 ## Idle auto-unload (TTL)
 
-`llama-swap.yaml`'s `globalTTL: 3600` means a model that's been idle (no requests) for an hour unloads itself
+`llama-swap.yaml`'s `globalTTL: 900` means a model that's been idle (no requests) for 15 minutes unloads itself
 automatically, freeing the 3090 for other work. The next request for it (or `llm on <profile>`) reloads it
 transparently — this is expected, not a failure. Set `globalTTL: 0` to turn this off entirely, or add a `ttl:`
 line under one specific model's own entry to override it just for that one.

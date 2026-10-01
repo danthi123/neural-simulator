@@ -330,7 +330,12 @@ so it is an owner step too.
     agent-writable hooks); `sim-sync` publishes it. Sync the board (vikunja).
 15. **Hermes cron, last:** `docker exec -it -u 99 hermes /opt/hermes/.venv/bin/hermes cron create`, every 30 min in the
     default profile, with the prompt "Continue per CLAUDE.md and research/coordination/LOCAL_LLM_RUNBOOK.md; one task
-    per run; this repo's path is /home/dant123/Projects/neural-simulator, never /workspace".
+    per run; this repo's path is /home/dant123/Projects/neural-simulator, never /workspace". Changed the same evening
+    (owner: resume what was running, do not wait out the cadence): the job runs every 5 min behind a wake gate,
+    `/opt/data/scripts/sim-driver-gate.sh` (Hermes cron's own `wakeAgent` gate, set with `hermes cron edit <id>
+    --schedule "every 5m" --script sim-driver-gate.sh --continuity`). It starts a run when W's llama-swap answers and
+    either it has just come back (`game off`, or a yielded GPU window drained) or 30 min (`CADENCE_MIN`) have passed;
+    while llama-swap is down it skips quietly. `--continuity` shows each run the previous run's output.
 16. **Stragglers.** Pre-cutover GPU jobs that `cd` into W's main checkout write to W's raw. Once `gpu_remote.sh status`
     shows none left, run
     `bash -c 'cd ~/Projects/sim && git ls-files -z -o --exclude-standard -- research/findings/raw | rsync -rlt --from0 --files-from=- --ignore-existing --chmod=Dg+rwx,Fg+rw ./ homelab-server:Projects/neural-simulator/'`.
