@@ -231,3 +231,11 @@ Added 4 roadmap tasks for "prove who owns the computation" (host-decision share,
 - Created #241 (prioritized memory / remember-what-matters design, Memory label, p4) and #242 (feelings shape
   speech not a marker word, Emotion & self-awareness label, p3) after confirming neither existed under other wording.
 - Left untouched per instruction: #224, #225 (load-bearing re-score running today).
+
+## 2026-09-30  home-to-server move
+- Created + closed #243 (plain-language: "The project now runs from the home server, driven by the Hermes agent"),
+  Big picture label, priority 0 (done landing). Ref: docs/plans/2026-09-30-home-to-server-MIGRATION.md — canonical
+  checkout moved to /home/dant123/Projects/neural-simulator on homelab-server; the workstation
+  (/home/dant123/Projects/sim) is now a follower + compute node (GPU queue, local model serving). Infra/operations
+  landing, no research capability status changed; docs synced in the same commit (CLAUDE.md, GAP_CLOSURE_MISSION.md,
+  ROADMAP.md, docs/LOCAL_MODEL_GUIDE.md, research/coordination/LOCAL_LLM_RUNBOOK.md v4).

@@ -15,6 +15,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
+**Operations (owner 2026-09-30):** the project's home moved to homelab-server (canonical checkout
+`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+(`/home/dant123/Projects/sim`) is now a follower + compute node (GPU queue, local model serving). Research state and
+phase below are unaffected. Details: `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
+
 **North star:** a sim-brain that converses genuinely; Qwen2.5-0.5B stays the permanent mouth; #1 metric = the load-bearing
 fraction, with a host-decision share (by intervention) beside it. **Plan:** docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md.
 **Frontier (2026-09-29 12:15, Claude back after the usage reset; local model OFF, one driver):** seven agents launched on the

@@ -1,20 +1,29 @@
-# Local-LLM runbook v3 (2026-09-30; covers about 2026-10-01 to 2026-10-14)
+# Local-LLM runbook v4 (2026-09-30; Hermes on the server; covers about 2026-10-01 to 2026-10-14)
 
-**For** the local model (Qwen3.8-27B, `bash tools/local_llm/llm.sh claude`, 128K context), daily driver from
-2026-10-06; Claude inspects about weekly (`docs/plans/2026-09-29-local-model-transition-PLAN.md`). One driver at a
+**For** Hermes Agent (official image, `~/apps/hermes` on homelab-server), default profile, driving from
+`/home/dant123/Projects/neural-simulator` (S, canonical home since 2026-09-30 —
+`docs/plans/2026-09-30-home-to-server-MIGRATION.md`) via its local terminal backend; it talks to the local model
+(Qwen3.8-27B, llama-swap `qwen38-27b-iq4nl-mtp-128k-q4`) served from the workstation at `http://192.168.0.68:8080/v1`.
+The repo-driven `tools/local_llm/llm.sh claude` session is retired; the 2026-10-06 date in
+`docs/plans/2026-09-29-local-model-transition-PLAN.md` is superseded by this move. Claude Code inspects occasionally
+from the workstation checkout `/home/dant123/Projects/sim` (W, now a follower + compute node). One driver at a
 time: if the owner says a Claude session is driving, run only `bash tools/status.sh`. Read this whole file at the
 start of every session; after a compaction read only sections 2-3, your task in section 4 and `tail -n 25` of its
 WORKLOG. Each task links a packet HANDOFF: read only the section you execute. The HANDOFF governs its commands and
 tables; this runbook governs order, permissions, `max_age_h`, verdicts, NEEDS-CLAUDE and where results go.
-Set in every Bash call that uses them: `P=/home/dant123/Projects/sim; PY=$P/.venv/bin/python; WT=$P/.claude/worktrees`.
-"#n" = the HANDOFF's NEEDS-CLAUDE item n.
+Set in every Bash call that uses them: `P=/home/dant123/Projects/neural-simulator; PY=$P/.venv/bin/python;
+WT=$P/.claude/worktrees`. **Caveat (2026-09-30):** the packet worktrees section 4 names under `$WT` were built
+before today's move and were deliberately left on the workstation, not copied to S (migration plan prep item 7) —
+read an existing `$WT/<packet>` path at `/home/dant123/Projects/sim/.claude/worktrees/<packet>` until it is
+recreated on S; committed files under `$P/research/findings/raw/...` are the same on both checkouts once
+`sim-sync.timer` has run. "#n" = the HANDOFF's NEEDS-CLAUDE item n.
 
 ## 1. Every session
 
 1. `bash tools/status.sh` (its READY rows `b2b_base`, `arcc_awake_completion` are stale: scored 09-29).
 2. Packet status (`running>0` = still running):
    ```bash
-   cd /home/dant123/Projects/sim && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts _host_share/gate _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
+   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts _host_share/gate _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
    ```
 3. Read section 6 (RULINGS) and your open lines under NEEDS CLAUDE.
 4. Work the FIRST task in section 4 whose "Start" holds and that no open NEEDS CLAUDE line blocks. After every step
@@ -43,7 +52,9 @@ Set in every Bash call that uses them: `P=/home/dant123/Projects/sim; PY=$P/.ven
 
 ## 3. Standing operations
 
-**Pool.** Every line you add carries `max_age_h=N` in its `--checked` reason (N = expected wait in hours, at most
+**Pool (dispatch runs on S).** `sim-pool-dispatch.service` (host unit, user `sim`, not a user unit) dispatches
+`pool.queue` from S to pool41/pool42; the queue files are the same `research/queue/pool.queue*` commands below, just
+under S's `$P`. Every line you add carries `max_age_h=N` in its `--checked` reason (N = expected wait in hours, at most
 240; without it the dispatcher skips the line after 12 h). If a HANDOFF line lacks it, append ` max_age_h=168`,
 nothing else. The dispatcher is FIRST-FIT in file order: a node (15 GB, 2 reserved) takes the first fresh line whose
 `mem_gb` fits, so 2 GB lines slip past 7-11 GB ones; heavy lines run one per node. An expired line stays in
@@ -55,24 +66,34 @@ one). A refusal naming the pool canary is a STOP: NEEDS-CLAUDE "[<task>] needs a
 **Re-queue missing shards ONCE** (only when the task says; section 1 must show queued=0 running=0 for the key; the
 block stops if any line at the file's revision is still queued or held, and re-adds only shards whose `--out` is absent):
 ```bash
-cd /home/dant123/Projects/sim && F=<requeue file> bash -c 's=$(head -1 "$F" | grep -oE "revisions/[0-9a-f]{9}"); n=$(cat research/queue/pool.queue research/queue/pool.queue.held 2>/dev/null | grep -c "$s"); [ "$n" = 0 ] || { echo "STOP: $n lines at $s queued/held"; exit 1; }; m=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [ -f "$out" ] && continue; m=$((m+1)); bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $out"; done < "$F"; echo "re-queued $m"'
+cd /home/dant123/Projects/neural-simulator && F=<requeue file> bash -c 's=$(head -1 "$F" | grep -oE "revisions/[0-9a-f]{9}"); n=$(cat research/queue/pool.queue research/queue/pool.queue.held 2>/dev/null | grep -c "$s"); [ "$n" = 0 ] || { echo "STOP: $n lines at $s queued/held"; exit 1; }; m=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [ -f "$out" ] && continue; m=$((m+1)); bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $out"; done < "$F"; echo "re-queued $m"'
 ```
 
-**GPU.** The local-llm server holds the 3090; GPU jobs wait while it is loaded. Queue only with
-`bash tools/local_llm/gpu_add.sh 'cd <clean committed checkout> && ...'` (gate seeds also `--prereg <committed
-path>`). To run them: commit, WORKLOG "yielding for <jobs>; resume at <task/step>", then
-`bash tools/local_llm/llm.sh yield --max-hours N` (1-12; refuses in GAME_MODE, with an empty GPU queue, or with
-uncommitted tracked changes in a `draft-*` worktree). You resume headless when the queue drains ("GPU window
-finished ..."): read `tail -n 20 research/queue/gpu_queue.log`, then your WORKLOG line. **Gaming:** when the owner
-says so, WORKLOG your step, commit if you can, run `bash tools/game.sh on --graceful`, end your reply; `game.sh off`
-(the owner's) resumes you; gaming overrides a yield; `bash tools/game.sh status` shows it.
+**GPU (runs on W via `gpu_remote.sh`).** The GPU queue and the local-llm server (llama-swap) live on the workstation
+(W); from here queue a job with `bash tools/gpu_remote.sh add 'cd <clean committed checkout> && ...'` (gate seeds
+also `--prereg <committed path>`) — it pushes your committed revision to W as `refs/server-jobs/<sha>`, builds a
+sparse per-job worktree there and execs that worktree's own `gpu_add.sh`; you never `ssh` by hand. Status: `bash
+tools/gpu_remote.sh status`; log: `bash tools/gpu_remote.sh log [N]`. To free the 3090 for queued jobs: commit,
+WORKLOG "yielding for <jobs>; resume at <task/step>", then `bash tools/gpu_remote.sh yield --max-hours N` (1-12).
+Results come back through `sim-sync.timer`'s 15-min pull (`POOL_NODES=workstation bash tools/pool_sync.sh`), not
+directly from this session — re-check `research/findings/raw/...` after a sync cycle rather than polling W.
+`tools/local_llm/gpu_add.sh` / `llm.sh yield` run directly only when actually on W (e.g. Claude inspecting there).
+**Model unreachable.** When the owner is gaming on W, `game on` stops llama-swap (and pauses W's GPU queue) and your
+calls to `http://192.168.0.68:8080/v1` fail with a connection error until `game off`: do not retry in a loop; WORKLOG
+"model unreachable, gaming" and move to another task (section 4's pool-only work is unaffected). The same applies if
+llama-swap is down for another reason (check `bash tools/gpu_remote.sh status`'s remote log, or ask Claude to check
+`journalctl --user -u local-llm` on W). A cloud `fallback_model` can be added to Hermes's config for this case but is
+not set up yet.
 
 **Commits.** Pathspec only (never `-A` or `.`); `git diff --cached --name-only` lists only what you meant. Blocked
 only by `compute_idle_persistent` / `lane_starvation`: retry every 30 min (max 6), then commit the Markdown part
-(exempt) and NEEDS-CLAUDE; any other gate: STOP, NEEDS-CLAUDE with its message. Push: `bash tools/push_both.sh
-<branch>`. On `main` commit ONLY this file: `git add research/coordination/LOCAL_LLM_RUNBOOK.md` (the checkout has
-unrelated uncommitted files: the staged list must be exactly this file), `git commit -m "runbook: <what>"`,
-`bash tools/push_both.sh main`.
+(exempt) and NEEDS-CLAUDE; any other gate: STOP, NEEDS-CLAUDE with its message. Push a packet/draft branch:
+`bash tools/push_both.sh <branch>`, as before. On `main` commit ONLY this file: `git add
+research/coordination/LOCAL_LLM_RUNBOOK.md` (the checkout has unrelated uncommitted files: the staged list must be
+exactly this file), `git commit -m "runbook: <what>"` — then STOP: do not run `push_both.sh main` yourself.
+`sim-sync.timer` (host unit on S, user `sim`, every 15 min) publishes `main` to both remotes via `sim-publish`;
+confirm with `git ls-remote origin main` once its sha matches your commit (allow up to 15 min). Still unpublished
+after 20 min: NEEDS-CLAUDE "[runbook] main unpublished at <sha>".
 
 **Verdict rule.** Every GO/NO-GO/PASS/FAIL you write is PROVISIONAL until Claude inspects it or records a matching
 re-derivation with the registered scorer. Keep the HANDOFF's finding template; under the H1 add `**PROVISIONAL**:
@@ -83,7 +104,11 @@ Numbers only from the scorer's output; words only the HANDOFF's fixed sentences.
 the HANDOFF's board line in the WORKLOG and as a RESULT line under NEEDS CLAUDE. Where a HANDOFF says to edit
 `GAP_CLOSURE_MISSION.md` or Vikunja, write the RESULT line instead (Claude syncs both).
 
-**Units.** `systemctl --user status|restart pool-dispatch` or `pool-sync`: restart once, then NEEDS-CLAUDE.
+**Units.** On S (host units, user `sim`): `systemctl status sim-pool-dispatch.service sim-sync.timer`; logs via
+`journalctl -u sim-pool-dispatch` / `-u sim-sync`. You are not `sim` and cannot restart them (never `sudo`): a failed
+or stopped unit is NEEDS-CLAUDE "[units] <unit> <state>". W's own `pool-dispatch`/`pool-sync` user units were
+disabled at cutover and stay off; `memcap.sh` does not run inside Hermes's container (heavy local work: route to the
+pool instead, per CLAUDE.md non-negotiable 10).
 **Inspection.** When the owner says Claude will inspect, and after a session that wrote a RESULT: `mkdir -p _scratch
 && $PY tools/inspection_digest.py > _scratch/inspection_digest.md`, check your NEEDS CLAUDE lines appear in its
 section 3, give the owner the path. Never `--mark` (Claude's).

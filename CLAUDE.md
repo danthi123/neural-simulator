@@ -32,8 +32,10 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
   FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer.
 - Cross-session continuation is MANUAL by owner choice ("continue" + the roadmap + the board): no watchdog/daemon.
   One exception (owner 2026-09-29): after the local-model driver yields the GPU (`llm yield`), its session
-  auto-resumes when the GPU window ends. **Transition to local-model-first operation (Claude inspects rarely):**
-  `docs/plans/2026-09-29-local-model-transition-PLAN.md`.
+  auto-resumes when the GPU window ends. **Where things run (owner 2026-09-30): home = homelab-server**
+  (`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+  (`/home/dant123/Projects/sim`) is a follower + compute node (GPU queue, local model serving); Claude Code
+  inspects occasionally. `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
 
 ## Non-negotiables
 
