@@ -350,16 +350,23 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
   already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
-  dev seeds only for drafts). You CANNOT provision a new revision yet: that step uses a key the workstation's agent
-  only releases interactively (server-side provisioning is being built). Until then, new draft code runs on the
-  workstation: from the committed `$WT/draft-<topic>`, `bash tools/gpu_remote.sh add 'bash tools/mem_ok.sh 8 && bash
-  tools/memcap.sh 10 -- bash <your committed batch script>'`, ONE job per batch that runs its cells in parallel (for
-  example `xargs -P 8`), at most about 2 hours, numpy only (`SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=`). It waits while
-  the owner games; results arrive in `$P/research/findings/raw/` through `sim-sync.timer`. Never fall back to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
+  on a `research/*` branch that you created from `main` (an older branch needs Claude to merge main into it first; you
+  cannot merge), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
+  $P/research/queue/provision.req && touch $P/research/queue/provision.req/$(git rev-parse <branch>)`. Read the result
+  in `/opt/host-status/sim-provision/<sha>.json` (`state`, `reason`, `hint`; the server checks every 5 minutes). `ok`
+  or `already`: queue your pool lines. `queued`, `waiting`, `running` or `deferred`, or `failed` with a
+  `next_retry_utc`: wait, the server retries by itself. `refused`: read `reason`/`hint` and fix it if it is yours (for
+  example, the sha is not on a `research/*` branch). NEEDS-CLAUDE when the result is `blocked`, `refused` over
+  `tools/pool/provisioning/` or published main, `failed` with no `next_retry_utc`, or when no result file appears
+  within 15 minutes. GPU work still goes to the workstation (`bash tools/gpu_remote.sh add '<line>'`). Never fall back
+  to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
   `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
   (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
+
+- gate-stale: (2026-10-01) Claude merged main into research/b2d-mouth-renderer, draft-seam-map, integration-wave2, conductance-overshoot-guard, integration-wave1 and sleep-transitive-inference; the files you had staged are still staged, so commit again. When a gate fails because a branch carries an old copy of a tool, write NEEDS-CLAUDE for a main merge (you cannot merge). (2026-10-01)
 
 - routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
   only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
@@ -382,5 +389,3 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
 - 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
 - 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
-- 2026-10-01 16:55 [iw2-gate] section-5 commit blocked: branch @ 758519b3f has pre-fix tools/biology_check.py (no container-HOME _expand) -> 101 unresolved ~/Projects/sim-catalog paths. Needs main merged into research/integration-wave2; D/S/R verdicts staged (all PASS; flip list all 3).
-- 2026-10-01 17:15 [gate-stale] pre-fix tools/biology_check.py on pre-10-01 packet branches blocks every commit on S (container HOME): confirmed research/integration-wave2 + research/b2d-mouth-renderer (101 ~/Projects/sim-catalog errors). Needs main merged into each. T9 WORKLOG written, uncommitted.
