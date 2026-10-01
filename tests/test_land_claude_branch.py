@@ -143,7 +143,8 @@ def test_fetches_an_import_repo_owned_by_another_uid(tmp_path):
 
 def test_keeps_the_callers_trust_in_the_main_checkout_while_fetching(tmp_path):
     """Server case 2: BOTH repos belong to another uid; the caller trusts the main checkout through its own global
-    config. The fetch's throwaway GIT_CONFIG_GLOBAL must include that config, or git distrusts the main checkout."""
+    config (here the XDG file). The fetch's ownership exception must not replace that config, or git distrusts the
+    main checkout (a GIT_CONFIG_GLOBAL override did exactly that on the server, 2026-10-01)."""
     import pytest
     if os.geteuid() != 0:
         pytest.skip("needs root to give the repos another owner")
@@ -158,3 +159,22 @@ def test_keeps_the_callers_trust_in_the_main_checkout_while_fetching(tmp_path):
     r = subprocess.run(["bash", "tools/land_claude_branch.sh", "claude/work", sha], cwd=main, env=env,
                        capture_output=True, text=True)
     assert "dubious ownership" not in r.stderr and r.returncode == 0, r.stdout + r.stderr
+
+
+def test_a_conflict_names_the_conflicting_files(tmp_path):
+    main, git, run, sha = _setup(tmp_path)
+    with open(main / ".gitattributes", "a") as fh:
+        fh.write("# main moved\n")
+    git("add", ".gitattributes"); git("commit", "-q", "-m", "main edits .gitattributes")
+    cloud = tmp_path / "cloud"
+    with open(cloud / ".gitattributes", "a") as fh:
+        fh.write("# the branch moved differently\n")
+    subprocess.run(["git", "commit", "-qam", "branch edits .gitattributes"], cwd=cloud, check=True)
+    subprocess.run(["git", "push", "-q", "origin", "claude/work"], cwd=cloud, check=True)
+    sha2 = subprocess.run(["git", "rev-parse", "HEAD"], cwd=cloud, capture_output=True, text=True).stdout.strip()
+    head = git("rev-parse", "HEAD").stdout
+    r = run("claude/work", sha2)
+    assert r.returncode == 2 and "conflict: .gitattributes" in r.stderr, r.stderr
+    assert git("rev-parse", "HEAD").stdout == head
+    assert (main / "research/findings/raw/_iw2/r0.json").exists()                         # moved files put back
+    assert (main / LEDGER).read_text() == '{"run": 1}\n{"run": "live job"}\n'

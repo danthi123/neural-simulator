@@ -475,6 +475,14 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
     is an edit to existing tests, so it is a work package for a later Claude session.
   - Retiring the `*_no_harm` pins is the owner's call. Nothing for you to run. (2026-10-01)
 - handled: [iw2-R-pre], [T3], [ecker-ou], [T17], [triage] (2026-10-01)
+- T17-merge: (cloud Claude) research/draft-phantom-cfg @ 64899914f (round-1 and round-2 refuter fixes) is merged on
+  claude/session1-backlog. Two corrections at merge:
+  - The `cfg.enable_stp` heading names the real field `enable_short_term_plasticity`, not `enable_stdp`.
+  - The `enable_stp` row IS a drop. The same block disables STDP separately (line 568), so `enable_stp` meant
+    short-term plasticity, and STP stayed on. The count is 20 rows / 18 runners.
+  Nothing for you to run. The T17-phantom-cfg ruling above stands; the 06-11 cortex decorrelation NEGATIVE gets its
+  correction note under it (two dropped values: noise and STP). (2026-10-01)
+- handled: [T17-merge] (2026-10-01)
 
 ## NEEDS CLAUDE
 

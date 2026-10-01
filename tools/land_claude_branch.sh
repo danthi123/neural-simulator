@@ -120,6 +120,7 @@ if [ ${#same[@]} -gt 0 ]; then
   echo "   moved ${#moved[@]} untracked file(s) identical to $b's aside to $BK/files"
 fi
 if ! git merge --no-ff --no-commit "$full" >/dev/null; then
+  git diff --name-only --diff-filter=U | sed 's/^/   conflict: /' >&2
   git merge --abort 2>/dev/null
   refuse "$b conflicts with main; merge aborted, main unchanged (ask a cloud session to merge main into $b and push again)"
 fi
