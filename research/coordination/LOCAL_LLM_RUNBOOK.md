@@ -334,14 +334,17 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
 
 - compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
   in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
-  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). For a draft build on the pool:
-  commit the draft branch; `bash tools/gpu_remote.sh provision <sha>` (ships the commit, provisions the pool nodes);
-  then one `bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<sha> && bash tools/mem_ok.sh <gb> 1 && bash
-  tools/memcap.sh <gb+2> -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.<runner>
-  ... --out research/findings/raw/<dir>/<cell>.json' --checked '<task>: <why>; dev seeds; mem_gb=<gb> ;
-  max_age_h=48'` per cell, dev seeds only. Results arrive in `$P/research/findings/raw/` through `sim-sync.timer`, not
-  in your worktree. A refusal or a failed provision is a STOP. The Step 4a grid already running on S (started 10-01
-  14:47) may finish there; the next run goes out. (2026-10-01)
+  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
+  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
+  revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
+  dev seeds only for drafts). You CANNOT provision a new revision: that step uses a key the workstation's agent only
+  releases interactively, so `gpu_remote.sh provision` fails unattended. For new draft code: commit, then
+  NEEDS-CLAUDE "[<task>] provision <sha> and queue <n> pool lines: <the line template>", and work on another task.
+  Never fall back to running it on S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
+  (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
+  arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
+  are in. (2026-10-01)
 
 ## NEEDS CLAUDE
 
