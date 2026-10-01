@@ -185,3 +185,27 @@ D2 to the floor: unsigned drift, void_floor_ceiling); `late_immediate/full` term
 1.00 (anti-mapping, as in the standalone circuit). Not tuned in session (owner mode change). The handoff sweep now
 leads with critic tags (outc->striosome 60, striosome->SNc 10). A structural cause (the D2 route, the held-memory bias
 on both channels) is possible; if no tag passes, it is NEEDS-CLAUDE item 4.
+
+## 2026-09-30 22:36: Step 4 instrument sweep -> rc=2 (STOP, NEEDS-CLAUDE item 4)
+
+All 243 dev files (9 tags x 3 schedules x 9 seeds 7-15) were in $P and were copied into the worktree
+(`research/findings/raw/_long_delay_credit_bg/sweep`). Ran the registered section-7 instrument scorer
+(`research/runners/long_delay_credit_bg_instrument.py`): **rc=2, chosen=null** — no tag passes every criterion.
+The failing criteria are the same across all 9 tags: c5_positive_controls (success 0.16-0.53, never >=0.8 on
+>=6 seeds; n_ok and n_ok_late both 0 except strio60 n_ok=3) and c6_no_bound (void_floor_ceiling on most seeds:
+D1 weights of both channels drift up, D2 to the floor — unsigned drift, exactly as the seed-7 dev note
+predicted). c3_dopamine also fails (no critic dip: da_outcome_unrewarded_min_mean ~0.498 > 0.47). c1 commit
+rates are fine (0.90-1.00) but c1_intervening / c2_memory / c4_sanity also fail on most tags. This is the
+HANDOFF's own anticipated outcome: "If the Step 4 sweep finds no passing tag, NEEDS-CLAUDE item 4 applies, with
+this reading as the starting point." Item 4: the substrate's operating point or the eligibility mode needs a new
+method (Gate-B history: credit on this selector is hard even at short gaps).
+
+Scorer bug worked around (NOT fixed; the scorer is a registered artifact I may not edit): its glob
+`<tag>_<schedule>_*.json` in `long_delay_credit_bg_instrument.py` also matches the 243 `.prov.json` provenance
+sidecars (no `rows` key) -> `KeyError: 'rows'`. I ran it against a prov-free copy of the same 243 data files
+(identical data; the report is dir-agnostic). Report:
+`research/findings/raw/_long_delay_credit_bg/sweep/instrument_report.json` (untracked in the worktree). The
+243 sweep JSONs + provs are untracked in $P. No Amendment A, no gate runs, no CreditParams edit (chosen is
+null). The sweep data + report are NOT committed: the HANDOFF sequences the data commit after the amendment
+commit, which does not happen at a STOP. Packet branch: research/long-delay-credit-spiking (this WORKLOG commit
+is the new tip; unpushed per the push-credential ruling).
