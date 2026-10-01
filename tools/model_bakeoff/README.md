@@ -52,18 +52,26 @@ production approvals (`HERMES_CRON_SESSION=1`, the deny list, `command_allowlist
 
 ## Running it (Claude, from the workstation)
 
+Everything lives in one Docker volume, `sim-bakeoff`, on Docker's own storage. That is outside `backup.sh` and
+sanoid, so about 20 GB of disposable clones never reach the nightly or offsite backups. `launch.sh` is piped over
+ssh from a reviewed checkout, never run from the agent-writable workspace.
+
 ```bash
-# 1. bases (inside Hermes, as the agent; reads the full history, writes only /opt/data/bakeoff)
-ssh homelab-server 'docker exec -u 99 -e HOME=/opt/data/home -e BAKEOFF_REV=<rev> hermes bash -c "git -C /home/dant123/Projects/neural-simulator show <rev>:tools/model_bakeoff/prepare.sh > /tmp/prepare.sh && bash /tmp/prepare.sh"'
-# 2. which models are allowed (data_collection=deny)
-ssh homelab-server 'bash -s -- preflight' < tools/model_bakeoff/launch.sh
-# 3. a batch (detached; log at /opt/data/bakeoff/runs/<batch>.log, read as the agent)
-ssh homelab-server 'bash -s -- run screen1 --parallel 3' < tools/model_bakeoff/launch.sh
-# 4. rubric grading, then the table
-ssh homelab-server 'bash -s -- judge screen1'  < tools/model_bakeoff/launch.sh
-ssh homelab-server 'bash -s -- report screen1' < tools/model_bakeoff/launch.sh
+L=tools/model_bakeoff/launch.sh
+# 1. once: the volume
+ssh homelab-server 'bash -s -- init' < $L
+# 2. bases at a revision the workspace has (no network; workspace read-only)
+ssh homelab-server 'bash -s -- prepare origin/research/model-bakeoff' < $L
+# 3. which models are allowed (data_collection=deny)
+ssh homelab-server 'bash -s -- preflight' < $L
+# 4. a batch (detached), its log, the table
+ssh homelab-server 'bash -s -- run screen1 --tasks a,b --models x,y --max-spend 4' < $L
+ssh homelab-server 'bash -s -- log screen1' < $L
+ssh homelab-server 'bash -s -- report screen1' < $L
+# 5. results (no clones) as a tarball, then remove the volume
+ssh homelab-server 'bash -s -- fetch screen1' < $L > screen1.tgz
+ssh homelab-server 'bash -s -- destroy' < $L
 ```
 
-The local model shares one slot with Hermes's own driver: pause `sim-driver` while the local runs go, or run them
-overnight. When the bake-off is over, delete `/opt/data/bakeoff` as the agent; the results worth keeping are
-committed under `research/findings/raw/_model_bakeoff/`.
+The local model shares one slot with Hermes's own driver, so run its batch with `sim-driver` paused (or overnight).
+The results worth keeping are committed under `research/findings/raw/_model_bakeoff/`.
