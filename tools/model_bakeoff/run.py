@@ -150,7 +150,19 @@ def audit(transcript_path, run_dir):
     return sorted(set(flags)), sorted(set(warns))[:20]
 
 
-def restore_protected(task_id, repo):
+def is_protected(task, rel):
+    """Files the model must not be able to change to pass: the task's explicit `protect` list, else (implement
+    tasks) the test files setup brought in. Setup's other files (e.g. the code to fix) are the model's to edit."""
+    if task.get("protect") is not None:
+        return any(rel == p or rel.startswith(p.rstrip("/") + "/") for p in task["protect"])
+    base = os.path.basename(rel)
+    return task.get("category") == "implement" and (rel.startswith("tests/") or "/tests/" in rel
+                                                     or base.startswith("test_") or base == "conftest.py")
+
+
+def restore_protected(task_id, repo, only=None):
+    """Recreate setup's state in a fresh clone (only=None), or, before grading, put back just the files for which
+    only(rel) is true."""
     src = os.path.join(BASES, task_id + ".protected")
     n = 0
     try:
@@ -158,6 +170,8 @@ def restore_protected(task_id, repo):
     except OSError:
         deleted = []
     for rel in deleted:   # setup removed these from the base clone; mirror that inside this run's clone only
+        if only is not None and not only(rel):
+            continue
         target = os.path.realpath(os.path.join(repo, rel))
         if rel and target.startswith(os.path.realpath(repo) + os.sep) and os.path.isfile(target):
             os.unlink(target)
@@ -167,7 +181,10 @@ def restore_protected(task_id, repo):
             if fn in (".base_sha", ".deleted"):
                 continue
             s = os.path.join(dp, fn)
-            d = os.path.join(repo, os.path.relpath(s, src))
+            rel = os.path.relpath(s, src)
+            if only is not None and not only(rel):
+                continue
+            d = os.path.join(repo, rel)
             os.makedirs(os.path.dirname(d), exist_ok=True)
             shutil.copy2(s, d)
             n += 1
@@ -180,8 +197,7 @@ def grade(task, repo, run_dir):
     if g["type"] == "rubric":
         out["pending"] = "judge.py"
         return out
-    if task.get("category") == "implement" or task.get("protect_setup"):
-        out["restored_protected"] = restore_protected(task["id"], repo)
+    out["restored_protected"] = restore_protected(task["id"], repo, only=lambda rel: is_protected(task, rel))
     try:
         rc, text = sh(g["command"], repo, timeout=int(task.get("grade_timeout_s", 1500)))
     except subprocess.TimeoutExpired:
@@ -212,6 +228,10 @@ def run_one(batch, model, task, budget_s, max_turns, lock):
     subprocess.run(git + ["config", "user.name", "Bake-off Agent"], check=True)
     subprocess.run(git + ["config", "user.email", "bakeoff@localhost"], check=True)
     restore_protected(task["id"], repo)                       # setup's own files (uncommitted in the base)
+    # The post-setup state as a tree object (no commit, no hooks), so the saved diff shows only the model's work.
+    subprocess.run(git + ["add", "-A"], check=True)
+    setup_tree = subprocess.run(git + ["write-tree"], capture_output=True, text=True, check=True).stdout.strip()
+    subprocess.run(git + ["reset", "-q"], check=True)
     os.symlink(WS_VENV, os.path.join(repo, ".venv"))
     os.symlink(CATALOG, os.path.join(run_dir, "sim-catalog"))  # biology gate: ~/Projects/sim-catalog = a sibling
     for h in (os.path.join(run_dir, "home"), os.path.join(HOME, "home")):
@@ -253,7 +273,7 @@ def run_one(batch, model, task, budget_s, max_turns, lock):
     if os.path.exists(answer):
         shutil.copy2(answer, os.path.join(run_dir, "answer.md"))
     subprocess.run(git + ["add", "-A", "--", ".", ":!.venv"], capture_output=True)
-    diff = subprocess.run(git + ["diff", "--cached", base_sha, "--", ".", ":!.venv"], capture_output=True, text=True).stdout
+    diff = subprocess.run(git + ["diff", "--cached", setup_tree, "--", ".", ":!.venv"], capture_output=True, text=True).stdout
     with open(os.path.join(run_dir, "diff.patch"), "w") as f:
         f.write(diff)
     commits = subprocess.run(git + ["log", "--oneline", base_sha + "..HEAD"], capture_output=True, text=True).stdout

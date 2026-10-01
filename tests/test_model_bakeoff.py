@@ -68,3 +68,19 @@ def test_slug_is_path_safe():
     r = _run_module()
     assert r.slug("anthropic/claude-sonnet-5.5") == "anthropic_claude-sonnet-5.5"
     assert "/" not in r.slug("../../etc/passwd")
+
+
+def test_only_tests_are_protected_by_default_for_implement_tasks():
+    """Grading restores what the model must not change (the given tests), never the code it was asked to fix
+    (2026-09-30 smoke run: restoring every setup file put the planted bug back and failed a correct fix)."""
+    r = _run_module()
+    impl = {"category": "implement"}
+    assert r.is_protected(impl, "tests/test_x.py")
+    assert r.is_protected(impl, "bakeoff_smoke/test_calc.py")
+    assert r.is_protected(impl, "sim/tests/conftest.py")
+    assert not r.is_protected(impl, "bakeoff_smoke/calc.py")
+    assert not r.is_protected(impl, "tools/gpu_queue.sh")
+    assert not r.is_protected({"category": "operate"}, "tests/test_x.py")
+    explicit = {"category": "operate", "protect": ["research/queue/"]}
+    assert r.is_protected(explicit, "research/queue/pool.queue")
+    assert not r.is_protected(explicit, "research/queue_other.txt")

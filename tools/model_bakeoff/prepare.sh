@@ -75,6 +75,6 @@ for id in "${IDS[@]}"; do
   # Leak check: no ref and no object newer than base can exist in the clone.
   n=$(git -C "$dst" for-each-ref | wc -l)
   [ "$n" = 1 ] || { echo "LEAK: $id has $n refs"; exit 1; }
-  echo "   ready: $(git -C "$dst" log --oneline -1 | cut -c1-80); setup touched $(find "$dst.protected" -type f ! -name .base_sha | wc -l) file(s)"
+  echo "   ready: $(git -C "$dst" log --oneline -1 | cut -c1-80); setup touched $(find "$dst.protected" -type f ! -name .base_sha ! -name .deleted | wc -l) file(s)"
 done
 echo "prepared ${#IDS[@]} task(s) in $BK/bases; mirror removed"
