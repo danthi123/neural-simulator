@@ -37,7 +37,14 @@ git diff --cached --quiet || refuse "the index is not clean; commit or unstage f
 [ -f .git/MERGE_HEAD ] && refuse "a merge is already in progress"
 
 ref="refs/claude-import/${b#claude/}"
-git -c safe.directory="$REPO" fetch -q --no-tags "$REPO" "+refs/heads/$b:$ref" || refuse "could not fetch $b from $REPO"
+# The import repo belongs to another uid, so git's ownership check guards it. `-c safe.directory=...` does NOT reach the
+# upload-pack that a local fetch spawns (git 2.43: "detected dubious ownership", owner 2026-10-01); a protected GLOBAL
+# config does. So fetch through a throwaway global config that includes the caller's own and adds the exception.
+gcfg=$(mktemp) || exit 1
+printf '[include]\n\tpath = %s\n[safe]\n\tdirectory = %s\n' "${HOME:-/nonexistent}/.gitconfig" "$REPO" > "$gcfg"
+GIT_CONFIG_GLOBAL="$gcfg" git fetch -q --no-tags "$REPO" "+refs/heads/$b:$ref"; frc=$?
+rm -f "$gcfg"
+[ "$frc" = 0 ] || refuse "could not fetch $b from $REPO"
 full=$(git rev-parse "$ref^{commit}") || exit 1
 [[ "$full" == "$want"* ]] || refuse "$b is at ${full:0:12}, not the reported $want; ask the cloud session which sha it pushed"
 git merge-base --is-ancestor "$full" HEAD && { echo "$b @ ${full:0:9} is already on main"; exit 0; }

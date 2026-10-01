@@ -127,3 +127,15 @@ def test_a_ledger_change_that_is_not_a_pure_append_refuses(tmp_path):
     assert git("rev-parse", "HEAD").stdout == head
     assert (main / LEDGER).read_text() == '{"run": "REWRITTEN"}\n'
     assert (main / "research/findings/raw/_iw2/r0.json").exists()
+
+
+def test_fetches_an_import_repo_owned_by_another_uid(tmp_path):
+    """The server's import repo belongs to another uid. `git -c safe.directory=...` does not reach the upload-pack a
+    local fetch spawns (git 2.43: 'detected dubious ownership'); the script must still fetch it."""
+    import pytest
+    if os.geteuid() != 0:
+        pytest.skip("needs root to give the import repo another owner")
+    main, git, run, sha = _setup(tmp_path)
+    subprocess.run(["chown", "-R", "nobody", str(tmp_path / "import.git")], check=True)
+    r = run("claude/work", sha)
+    assert "dubious ownership" not in r.stderr and r.returncode == 0, r.stdout + r.stderr
