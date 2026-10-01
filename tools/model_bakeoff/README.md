@@ -75,3 +75,6 @@ ssh homelab-server 'bash -s -- destroy' < $L
 
 The local model shares one slot with Hermes's own driver, so run its batch with `sim-driver` paused (or overnight).
 The results worth keeping are committed under `research/findings/raw/_model_bakeoff/`.
+
+Results and the model set they chose: `RESULTS.md`. Run paid batches one at a time: `--max-spend` reads the
+OpenRouter key-wide usage counter, so a concurrent batch's spend counts against this one.
