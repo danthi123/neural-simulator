@@ -268,3 +268,38 @@ Draft build per HANDOFF Step 4a: worktree `.claude/worktrees/draft-ldc-outcome-t
   differs, HANDOFF 4a.1 says stop and say so — that would be a STOP line, not a fix.
 - Not yet run: the 4a grid (step 2), the lr=0 seed 9/12/14 probes (step 3), PILOT.md (step 4). They wait on
   the reproduction verdict. No PASS claimed here (RULING verify-go applies when a PASS is written).
+
+## 2026-10-01 14:35 (Hermes, local model): Step 4a.1 reproduction gate — PASSES (verify-go, 2 lenses)
+
+Claim verified: the pilot at DEFAULT flags reproduces the banked Step 4 base row exactly
+(`sweep/base_credit_immediate_s7.json`, credit_immediate/seed 7/n_train 200). Run finished 13:43,
+wall_s 1090.9 (banked 2681.4 on the pool worker). My comparison: 36/36 keysets, 0 value diffs, 0 type
+diffs excluding wall_s, params and schedule equal.
+
+Per RULING verify-go (skill loaded) the claim was put to adversarial refuters:
+
+**Refuter 1 (MiMo Pro delegate, code-identity + instrument-trust lens): SURVIVES** — quoted:
+> Diff pilot vs registered runner: exactly 12 added lines, 0 removed ... argparse defaults literally
+> reference the module constants ... runner_sha256: banked doc = 8e5d8838 = composite of registered
+> runner; repro doc = e902550b = composite of pilot bytes; they differ ... 35/35 fields compare equal
+> (zero diffs, including nested test/instrument/probe_lr0/weights dicts) ... wall_s is the only
+> nondeterministic row field and is the only one that differs.
+
+Defects it found, all non-blocking: (a) the repro LOG names no module (module identity proven instead
+by the output doc's runner_sha256 + runs.jsonl argv), (b) `_scratch/` outputs get no `.prov.json`
+sidecar (sidecars stamp only research/findings/raw paths), (c) banked runner_sha256 is a composite
+hash, (d) doc-level provenance fields differ (banked git_head null / hand-added declarations).
+
+**Refuter 2 (done inline by hand — delegation budget was exhausted at 2/2, so this lens was NOT a
+delegate; stated for honesty): SURVIVES** — own script `lens_b_recompute.py`, not compare_repro.py:
+inputs are different files (sha256 6f87bec3 vs 62ab67f3, sizes 9486/8859); keysets equal 36/36; zero
+value/type diffs excl wall_s; exact float equality on stochastic fields (da_outcome_unrewarded_min
+0.49826075778867274, early_share 0.17166935403268332, weights_final e.g. ctx_a->str_d1_0
+69.25879669189453, train_reward_sequence 200/200 equal, test and probe_lr0 equal) — match is NOT
+vacuous; runner_sha256 recomputed under the runner's own formula: banked == registered composite,
+repro == pilot composite, the two differ (repro provably ran the pilot code); seeding derives from
+`a.seeds` into `default_rng(seed*7919+11)` / `default_rng(seed*104729+3)`.
+
+Both refuters survived; HANDOFF 4a.1 is satisfied — the grid (step 2) may run on this pilot copy.
+Caveat carried forward: outputs must go under `research/findings/raw/` (not `_scratch/`) from here so
+provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated in step 2.
