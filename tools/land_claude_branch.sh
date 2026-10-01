@@ -20,6 +20,7 @@ b=${1:-} want=${2:-}
 [[ "$b" =~ ^claude/[A-Za-z0-9._-]+$ ]] || refuse "usage: land_claude_branch.sh claude/<topic> <sha>"
 [[ "$want" =~ ^[0-9a-f]{7,40}$ ]] || refuse "give the sha the cloud session reported (7-40 hex)"
 REPO=${CLAUDE_IMPORT_REPO:-/opt/host-status/claude-import.git}
+[[ "$REPO" =~ ^/[A-Za-z0-9._/-]+$ ]] || refuse "CLAUDE_IMPORT_REPO must be a plain absolute path"
 ROOT=$(git rev-parse --show-toplevel) || exit 1
 cd "$ROOT" || exit 1
 [ "$(git rev-parse --git-dir)" = "$(git rev-parse --git-common-dir)" ] || refuse "run in the main checkout, not a worktree"
@@ -28,7 +29,10 @@ git diff --cached --quiet || refuse "the index is not clean; commit or unstage f
 [ -f .git/MERGE_HEAD ] && refuse "a merge is already in progress"
 
 ref="refs/claude-import/${b#claude/}"
-git -c safe.directory="$REPO" fetch -q --no-tags "$REPO" "+refs/heads/$b:$ref" || refuse "could not fetch $b from $REPO"
+# The mirror is owned by another user on purpose (read-only for uid 99). For a local-path fetch git starts
+# upload-pack with a cleaned environment, so `-c safe.directory` must be repeated inside --upload-pack.
+git -c safe.directory="$REPO" fetch -q --no-tags --upload-pack="git -c safe.directory='$REPO' upload-pack" \
+  "$REPO" "+refs/heads/$b:$ref" || refuse "could not fetch $b from $REPO"
 full=$(git rev-parse "$ref^{commit}") || exit 1
 [[ "$full" == "$want"* ]] || refuse "$b is at ${full:0:12}, not the reported $want; ask the cloud session which sha it pushed"
 git merge-base --is-ancestor "$full" HEAD && { echo "$b @ ${full:0:9} is already on main"; exit 0; }
