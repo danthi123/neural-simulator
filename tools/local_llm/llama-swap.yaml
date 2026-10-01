@@ -31,10 +31,11 @@ healthCheckTimeout: 600
 logLevel: info
 
 # globalTTL: idle-unload after this many seconds with no requests to the resident model (owner 2026-09-29: the
-# GPU should not stay pinned by a model nobody is using). 0 disables it, matching the old always-on-until-`llm
-# off` behaviour, if that is ever preferred instead. The NEXT request for "local" (or `llm on <profile>`)
-# reloads the same model transparently -- see docs/LOCAL_MODEL_GUIDE.md. Override per model with a `ttl:` key.
-globalTTL: 3600
+# GPU should not stay pinned by a model nobody is using; owner 2026-09-30: 15 minutes, was an hour). 0 disables
+# it, matching the old always-on-until-`llm off` behaviour, if that is ever preferred instead. The NEXT request
+# for "local" (or `llm on <profile>`) reloads the same model transparently -- see docs/LOCAL_MODEL_GUIDE.md.
+# Override per model with a `ttl:` key.
+globalTTL: 900
 
 # unloadTimeout: seconds llama-swap gives a model to shut down cleanly (manual, API, or the ttl above) before
 # it force-kills the process. The default (10s) is usually enough; bumped slightly for a large KV cache.
