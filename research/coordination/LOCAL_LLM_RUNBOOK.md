@@ -299,6 +299,10 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   What section 2 reserves (merge, gates, preregs, scorers, bars, `gpu_queue.sh add`) still goes to NEEDS-CLAUDE.
   Every call costs money now: one task per run, no idle exploration. (2026-10-01)
 
+- server-load: the server's CPU reaches 100 C and throttles, and long test runs in this container are the biggest load
+  (homelab, 2026-10-01). Run any test run longer than a few minutes under `nice -n 10`, one at a time, and never start a
+  full suite while another is running; prefer the test files a change touches over the whole suite. (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
