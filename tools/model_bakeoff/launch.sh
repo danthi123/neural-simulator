@@ -53,6 +53,10 @@ case "$cmd" in
       -v "$VOL:/bk" -v "$WS:$WS:ro" -v "$HD/config.yaml:/bk-hermes-config.yaml:ro" -e BAKEOFF_HERMES_CONFIG=/bk-hermes-config.yaml \
       --entrypoint /bin/sh "$IMG" -c \
       "git config --global --add safe.directory '*' && git -C $WS show $rev:tools/model_bakeoff/prepare.sh > /tmp/prepare.sh && bash /tmp/prepare.sh ${*}" ;;
+  tools)   # refresh only tools/ from a revision (bases untouched); no network, workspace read-only
+    rev=${1:?rev}; [[ "$rev" =~ ^[A-Za-z0-9/._-]+$ ]] || { echo "bad rev"; exit 2; }
+    docker run --rm --user 99:100 --network none -e HOME=/tmp -v "$VOL:/bk" -v "$WS:$WS:ro" --entrypoint /bin/sh "$IMG" -c \
+      "git config --global --add safe.directory '*' && rm -rf /bk/tools.new && mkdir /bk/tools.new && git -C $WS archive $rev tools/model_bakeoff | tar -x -C /bk/tools.new --strip-components=2 && rm -rf /bk/tools && mv /bk/tools.new /bk/tools && echo tools refreshed from $rev" ;;
   run)
     batch=${1:?batch}; shift
     inner="python3 run.py --batch $batch $* >> /bk/runs/$batch.log 2>&1"
