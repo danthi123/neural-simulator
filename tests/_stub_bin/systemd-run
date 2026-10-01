@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# tests/_stub_bin/systemd-run -- session-wide, inert stand-in for `systemd-run` (see tests/conftest.py). Must be
+# named exactly `systemd-run` (not a `.sh` file) so a bare PATH lookup for that command name resolves to it;
+# tests/_stub_bin/ holds ONLY this one file so prepending it to PATH cannot shadow any other command by accident.
+# Accepts any arguments, launches nothing, exits 0. Any test that needs to OBSERVE what a `systemd-run` call
+# would have looked like (its argv, a sentinel to prove it "started" something, a specific exit code) must
+# still prepend its OWN fake systemd-run further to the front of PATH, exactly as tests already do (e.g.
+# tests/test_llm_gpu_autoswap.py, tests/test_llm_gpu_yield.py's _fake_curl_and_systemd_run) -- that local stub
+# wins over this one because it is prepended after this global one is already on PATH. This script exists only
+# so a test that FORGETS to do that can never reach the real binary and start a real systemd unit.
+exit 0
