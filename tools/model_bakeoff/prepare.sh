@@ -25,8 +25,8 @@ rm -rf "$BK/tools" && mv "$BK/tools.new" "$BK/tools"
 # The bake-off's HERMES_HOME: production settings (approvals, deny list, command_allowlist, provider_routing with
 # data_collection deny, the local model as default), but no terminal.cwd: each run's terminal starts in its clone.
 "$PY" - "$BK/home/config.yaml" <<'EOF'
-import sys, yaml
-cfg = yaml.safe_load(open("/opt/data/config.yaml"))
+import os, sys, yaml
+cfg = yaml.safe_load(open(os.environ.get("BAKEOFF_HERMES_CONFIG", "/opt/data/config.yaml")))
 term = cfg.setdefault("terminal", {})
 term.pop("cwd", None)
 term["backend"] = "local"
