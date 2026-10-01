@@ -41,7 +41,10 @@ ref="refs/claude-import/${b#claude/}"
 # upload-pack that a local fetch spawns (git 2.43: "detected dubious ownership", owner 2026-10-01); a protected GLOBAL
 # config does. So fetch through a throwaway global config that includes the caller's own and adds the exception.
 gcfg=$(mktemp) || exit 1
-printf '[include]\n\tpath = %s\n[safe]\n\tdirectory = %s\n' "${HOME:-/nonexistent}/.gitconfig" "$REPO" > "$gcfg"
+# Both global files are included (a missing one is skipped): GIT_CONFIG_GLOBAL REPLACES them, and the caller's own
+# safe.directory entry for THIS checkout lives there -- dropping it makes git distrust the main checkout itself.
+printf '[include]\n\tpath = %s\n\tpath = %s\n[safe]\n\tdirectory = %s\n' "${HOME:-/nonexistent}/.gitconfig" \
+  "${XDG_CONFIG_HOME:-${HOME:-/nonexistent}/.config}/git/config" "$REPO" > "$gcfg"
 GIT_CONFIG_GLOBAL="$gcfg" git fetch -q --no-tags "$REPO" "+refs/heads/$b:$ref"; frc=$?
 rm -f "$gcfg"
 [ "$frc" = 0 ] || refuse "could not fetch $b from $REPO"
