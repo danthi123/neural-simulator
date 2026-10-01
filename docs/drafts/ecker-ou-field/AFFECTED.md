@@ -61,3 +61,17 @@ apical-R finding (runs the consolidation runner), the 2026-08-26 cls-interleaved
 `nmda_compositional_consolidation`), and the 2026-07-25 onebrain-sleepcycle-merge + 2026-08-26 sleep-replay-wirein
 findings (run `_gap5_onebrain_sleepcycle_merge` / `_sleep_replay_flip_soak`, which import the phase-switch/roundtrip
 helpers but do not run their OU-setting `build`/`_build` functions).
+
+## Possibly affected, not verifiable (Claude review, 2026-10-01)
+
+Two of the 8 renamed runners are missing from the direct table above. `_gap5_ecker_recurrent_replay.py` and
+`_gap5_izh_replay_merge_derisk.py` each set the phantom field in their builder (`build` and `build_izh`). The other
+runners import only `decode_and_width` from them, which sets no OU field. Two 2026-07-25 findings ran scratchpad
+predecessors of these runners, and those scratchpad files are not in the repo:
+- `2026-07-25-gap5-ecker-nS-recurrent-model-SCAFFOLD-built-dt-fixed-recurrent-transmission-blocker` ran
+  `scratchpad/gap5_ecker_recurrent_model.py`.
+- `2026-07-25-gap5-replay-onebrain-merge-derisk-replay-is-AdEx-substrate-specific` ran `scratchpad/gap5_izh_replay.py`.
+
+Neither finding states an OU value, so there is no stated-vs-run pair to correct and no note was added to either.
+If the scratchpad builders carried the committed runners' line, they also ran at 100 pA. Read the noise level of
+those two runs as unknown (40 pA intended, 100 pA likely).
