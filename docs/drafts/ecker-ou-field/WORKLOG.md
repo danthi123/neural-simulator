@@ -15,3 +15,9 @@
   `## Correction (PROVISIONAL, local model)` paragraph to each (both values, nothing re-interpreted). No runs.
 - No re-runs (T15: no runs). Commit on `research/draft-ecker-ou-field` through the gates; no push (RULING
   push-credential). NEEDS-CLAUDE: FAILURE_LOG row + gate (task_8f9171ae); onebrain_capstone dead-line judgment.
+- 2026-10-01 04:44 (local model, Hermes): T15 follow-up per the `ecker-ou` ruling (2026-10-01): AFFECTED.md was
+  incomplete — 6 runners import `_gap5_ecker_adex_ca3_stdp_band_derisk`'s OU-setting `build_store` and ran under
+  the same phantom-field bug (stated 40 pA / ran 100 pA). Listed all 6 importers + the 8 findings that ran them
+  in AFFECTED.md (new importer table), added the PROVISIONAL note to each of the 8 findings, and appended the
+  onebrain_capstone dead-code sentence. `_gap5_decorrelation_read_ltu_derisk` imports the builder but no finding
+  ran it (listed, no note). No re-runs; FAILURE_LOG row + gate PF already on main.
