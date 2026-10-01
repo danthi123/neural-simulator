@@ -11,7 +11,7 @@
 # 25GB bridges/ + 11GB data/ haul the existing provisioners already (correctly) exclude -- it is a separate,
 # small (~105MB) directory neither script knows exists. This script ships ONLY that.
 #
-# Usage: bash tools/pool_sync_assets.sh [pool40 pool41 pool42]
+# Usage: bash tools/pool_sync_assets.sh [<node> ...]   (default node list: tools/pool_nodes.conf)
 #   SIM_DATA_ROOT=<dir>    override the LOCAL source root (default: ~/Projects/sim-data, matching
 #                          webapp/server.py::_default_ltm_bundle_dir()'s own 3rd-candidate fallback)
 #   REMOTE_SIM_DATA=<dir>  override the REMOTE destination's path component under $HOME (default:
@@ -21,6 +21,8 @@
 #                          independently of the checkout location)
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# shellcheck source=tools/pool_nodes.sh
+source tools/pool_nodes.sh
 
 SRC_ROOT="${SIM_DATA_ROOT:-$HOME/Projects/sim-data}"
 SRC="$SRC_ROOT/knowledge_bundles"
@@ -29,7 +31,7 @@ if [ ! -d "$SRC" ]; then
   exit 1
 fi
 
-NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
+NODES=("${@:-$POOL_NODES_DEFAULT}"); NODES=(${NODES[@]})
 REMOTE_SUFFIX="${REMOTE_SIM_DATA:-Projects/sim-data}/knowledge_bundles"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config pool_provision.sh (which calls
 # this script per node) now honours; see its header comment for the full rationale. ABSENT by default, so

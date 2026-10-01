@@ -70,6 +70,11 @@ def _is_structural_record(obj):
         # gates, 2026-09-08) are coordination/state files under research/coordination/, not scientific runs;
         # a backend/cost receipt would be meaningless for them (the same rationale as the workboard above).
         return True
+    if schema in ("model-bakeoff-models-v1", "model-bakeoff-suite-v1") and not any(
+            k in obj for k in BACKEND_KEYS + ELAPSED_KEYS + ("means", "results", "verdict")):
+        # tools/model_bakeoff/'s candidate list and task suite (2026-09-30) are inputs to an LLM comparison,
+        # not runs; the bake-off's own result files record their backend and timing and are still checked.
+        return True
     if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
         return True
     return (
@@ -212,6 +217,14 @@ def selftest():
         if _check_one(w("parallel_audit_state.json", {"schema": "parallel-audit-state-v1", "under_agents": True}),
                       "research/coordination/parallel_audit_state.json"):
             bad.append("FALSE POSITIVE: treated the parallel-audit persistence record as a completed result")
+        # 11c2. NEGATIVE CONTROL -- the model bake-off's candidate list and task suite are inputs, not runs...
+        if _check_one(w("models.json", {"schema": "model-bakeoff-models-v1", "models": []}),
+                      "tools/model_bakeoff/models.json"):
+            bad.append("FALSE POSITIVE: treated the bake-off candidate list as a completed result")
+        # ...but the same schema carrying run-like keys is still checked (no blanket schema exemption).
+        if not any("NO backend" in x for x in _check_one(
+                w("bk.json", {"schema": "model-bakeoff-suite-v1", "results": {"acc": 1}}), "tools/model_bakeoff/bk.json")):
+            bad.append("FALSE NEGATIVE: a bake-off schema let a result-shaped file skip the device check")
         # 11d. NEGATIVE CONTROL -- a Claude Code settings file is agent configuration, not a run (2026-09-25).
         if _check_one(w("claude_local_settings.json", {"enabledPlugins": {"x@y": False},
                                                        "permissions": {"allow": ["Bash(ls)"], "deny": []}}),

@@ -13,7 +13,46 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-19 (RESUME HERE) — NEW ARC: PERMANENT LLM MOUTH + LOAD-BEARING METRIC
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Operations (owner 2026-09-30):** the project's home moved to homelab-server (canonical checkout
+`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+(`/home/dant123/Projects/sim`) is now a follower + compute node (GPU queue, local model serving). Research state and
+phase below are unaffected. Details: `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
+
+**North star:** a sim-brain that converses genuinely; Qwen2.5-0.5B stays the permanent mouth; #1 metric = the load-bearing
+fraction, with a host-decision share (by intervention) beside it. **Plan:** docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md.
+**Frontier (2026-09-29 12:15, Claude back after the usage reset; local model OFF, one driver):** seven agents launched on the
+Tuesday list: host-share baselines (research/host-share-baselines, reviews the local model's seam map + metacog probe), one
+selection seam with need-state reversal (research/selection-seam-need-reversal, reviews the N=5 BG work), spiking long-delay
+credit (research/long-delay-credit-spiking; the local model's rate-level draft is the reference: ruling, the claim needs the spiking
+substrate), sleep transitive inference inside the prioritized-memory prereg (research/sleep-transitive-inference), B2b s102 A1.4
+ruling + B2c readiness + fill the pool (research/b2-rulings-2026-09-29), arcc score + D6 canonical-run facts + waiver-absence
+latency fix (research/arcc-b2b-d6-scoring), docs refresh publish-ready (docs-refresh-readme). Lanes A/B/C registered in
+lane_builds.jsonl (primary checkout, uncommitted: `gates/compute_idle_persistent` blocks non-Markdown commits until the
+pool/GPU are busy; waiver budget 6.73/6 h frees ~18:30). **Next:** harvest each agent, review, merge SOUND branches.
+
+**SERVING SWITCH (2026-09-29, 22:40):** research/serving-simplify merged (3ee54e338): the `local-llm` unit now runs
+llama-swap in front of the same llama-server command (speed check: generation -2.45%, within the 5% bar; live
+smoke via `llm on` + one Anthropic Messages request passed; idle model auto-unloads after 1 h). GPU-crash watchdog and
+cloud profiles are merged but not installed (owner steps: docs/GPU_CRASH_RECOVERY.md, a cloud API key).
+
+**LANDING (2026-09-29, evening):** merged to main (7801d0813, b8c50b492, 4c6b62722, 99986c950, ea4977d29): arcc
+awake-completion GO 6/6 + D6 doubled-cell ruling + waiver_history clear_waiver fix; B2b COMPLETE (216/216 DEFINED,
+robust core 28/29, mean 0.843) + tools/b2b_score.py; B2d reply-level rescore (headline reply core 17/33) +
+comprehension-monitor lesion-twin crash fix + tools/b2d_score.py; docs-refresh's 25 ISSUES.md fixes; the local-model
+bake-off (Ollama vs Unsloth Studio). Pushed both remotes. Kept on their branches, not yet merged (packets awaiting
+their own gate verdicts): host-share-baselines, selection-seam-need-reversal (+ a host_share_bg_seam.py integration
+bug found and fixed during the merge), long-delay-credit-spiking, sleep-transitive-inference. Queued this cycle:
+host-share baselines (108 pool jobs), the BG live-seam gate (6 pool jobs), the long-delay-credit instrument sweep
+(243 pool jobs, dev seeds). Sleep transitive inference: its dev cupy seeds 8-11 were killed mid-build once by a
+GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Step 2 operating-point check printed
+`all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
+went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
+NEEDS-CLAUDE per its own prereg).
+
+*Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
+
 
 **🌙 02:35 progress (overnight):** sleep-replay capture rc family GO 6/6, independently re-derived (merged 4a2093a74);
 open-ended provenance fix merged with content binding (56c0465c9, re-review SOUND): B2a's six oed cells now count as
@@ -228,6 +267,26 @@ line-oriented queue splits it: refuse any job containing a newline) + LOWs; frag
 AWS stop/start r4 result in the journal. Wrap-up list: merge/park per the one-more-round rule; apply marker retirement + GPU<->llm
 auto-swap; fill LOCAL_LLM_RUNBOOK 'Queue next'; queue reviewed pool/AWS batteries; owner approves the condensed CLAUDE.md/memory;
 live-check `llm claude`; then hand off.
+
+**🌅 TUESDAY 2026-09-29 RESUME (Claude usage resets 11:00; written 2026-09-28 21:15 with ~4% left):** in order --
+(1) Review the local model's branch `research/draft-seam-map`: the host-decision seam map (task 1, complete), the host-share
+probe on the metacog confidence seam (task 2; check how it degrades the store), and the N-channel BG race / GPi-tonic work
+(ran the six GATE seeds and edited `_tone_bg_nchannel_selector.py` against the runbook: treat as an unregistered dev result).
+(2) DONE 2026-09-28 81f08f972: `gates/lane_starvation` now requires a registered branch to exist.
+(3) Score: arcc awake-replay -- preconditions CHECKED 2026-09-28 22:50: 6/6 seed files, 90 arm files, 0 arm errors, all
+git_sha f7693a36f via git_archive; registered aggregate reproduces GO 6/6 (signflip p 0.015625 both contrasts). CAVEAT for the
+finding (faithfulness-first-but-falsifiable rule): n_completion_load_bearing = 1 -- pattern completion was necessary on only 1 of
+6 seeds (n_awake_completion_needed 1, n_night_completion_needed 0), so the GO is carried mostly by replay, not by completion.
+Still needed: an independent re-derivation and the preconditions block written into aggregate.json. B2b (256/258;
+rule on the two seed-102 cells under A1.4 (A1.4 allows EXACTLY ONE re-run per UNDEFINED cell, by direct ssh on a
+different named host; they were dispatched 00:54 pool2 and 13:15 pool1/pool2 on 09-25 -- decide whether the 13:15 dispatch was
+their one re-run; if not, run it per A1.4(b)); the 3 torn-cell re-runs reproduce attempt 1 exactly, logged 0d4e5c81). (4) D6: the overwritten raw files are RESTORED (2026-09-28 22:30; duplicate outputs kept in
+`.claude/worktrees/_d6_duplicate_run_outputs_2026-09-28/`). Cause found: the 09-25 00:03 OOM-recovery re-queue of 14 N=2000
+combos (pool.queue.claims 1740ff) ran cells whose first attempt had also completed; the harvest (fe1066f64) committed the
+first-landed runs and pool-sync later pulled the re-runs over them. Needs a RULING: which run per doubled cell is canonical
+for the D6 score (then re-score if it changes). (5) Publish the docs refresh (branch docs-refresh-readme; 25 issues in ISSUES.md). (6) Plan
+phase: host-share baselines -> one selection seam -> long-delay credit -> sleep transitive inference. GPU: under the local
+model it runs at 82 C / 297 W with LACT limits; consider a 250 W cap. Full list: LOCAL_LLM_RUNBOOK.md "Parked for Claude".
 
 **☀️ 21:30 NEXT PHASE -- ADOPTED by the owner 2026-09-25 ~22:00 (plan: docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md; nothing built yet):** after two outside AI reviews, the proposed
 frame is "prove who owns the computation" with the permanent mouth held fixed. Candidates, in order: (1) host-decision seam map of the

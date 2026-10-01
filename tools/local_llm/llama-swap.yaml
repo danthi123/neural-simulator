@@ -1,0 +1,121 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
+#
+# llama-swap config for tools/local_llm/llm.sh's "local-llm" unit (docs/plans/2026-09-29-local-model-transition-PLAN.md
+# section on serving; decision + bake-off numbers: research/serving-bakeoff branch,
+# tools/local_llm/results/summary.md). Ollama (36 tok/s) and Unsloth Studio (13 tok/s) both fell short of the
+# llama-server profile below (74 tok/s, 3/3 tasks) mainly because Ollama's chat template cannot handle a
+# mid-conversation Claude Code "system-reminder" message -- so we kept llama-server and put llama-swap in front
+# of it, purely to (a) hold every tools/local_llm/profiles.json entry in ONE config instead of llm.sh rebuilding
+# one command at a time, (b) auto-unload an idle model (globalTTL below) to free the 3090 for other work, and
+# (c) serve on the LAN as well as loopback for the server harness. It does NOT change a single llama-server flag
+# (tests/test_llama_swap_config.py regenerates every `cmd:` below from tools/local_llm/llm.sh's own
+# profile_cmd() -- the SAME function `llm on` used before llama-swap existed -- and fails on any drift).
+#
+# HOW TO ADD OR CHANGE A MODEL: see docs/LOCAL_MODEL_GUIDE.md for the full walkthrough. Short version: copy one
+# `models:` entry below, change its key + `-m <path>` + `-c <ctx>`/`-ctk`/`-ctv <kv quant>`, then copy the
+# matching `profiles:` entry so `llm on <your-new-name>` can pin "local" to it. Editing this file takes effect
+# WITHOUT restarting anything (-watch-config, set by llm.sh when it starts this unit) -- `llm status` after a
+# few seconds will show it.
+#
+# DO NOT CHANGE the --chat-template-file line on a qwen38-27b-iq4nl-mtp* entry. It points at
+# tools/local_llm/templates/*.jinja, a patched copy of the model's chat template: the STOCK embedded template
+# rejects a mid-conversation Claude Code "system-reminder" message outright ("System message must be at the
+# beginning"), and a cruder first fix for that silently broke prompt-cache reuse (0% -> 60.6% once corrected,
+# tools/local_llm/results/cache_probe.md). Point a NEW model's own --chat-template-file at the SAME kind of
+# patched file only if llama-server logs that identical error for it; otherwise leave the flag out.
+#
+# healthCheckTimeout: how long a request may wait for a model to finish loading before llama-swap gives up.
+# 600s is generous for a cold 27B GGUF load plus the MTP draft model's own warmup on one 3090.
+healthCheckTimeout: 600
+
+logLevel: info
+
+# globalTTL: idle-unload after this many seconds with no requests to the resident model (owner 2026-09-29: the
+# GPU should not stay pinned by a model nobody is using; owner 2026-09-30: 15 minutes, was an hour). 0 disables
+# it, matching the old always-on-until-`llm off` behaviour, if that is ever preferred instead. The NEXT request
+# for "local" (or `llm on <profile>`) reloads the same model transparently -- see docs/LOCAL_MODEL_GUIDE.md.
+# Override per model with a `ttl:` key.
+globalTTL: 900
+
+# unloadTimeout: seconds llama-swap gives a model to shut down cleanly (manual, API, or the ttl above) before
+# it force-kills the process. The default (10s) is usually enough; bumped slightly for a large KV cache.
+unloadTimeout: 20
+
+# macros: ${repo_root} resolves through LLAMA_SWAP_REPO_ROOT, an env var tools/local_llm/llm.sh's cmd_on sets
+# when it starts this unit (to wherever ITS OWN checkout lives -- the main checkout in normal operation, a
+# .claude/worktrees/* copy in development) -- so this file needs no hand-edited absolute path.
+macros:
+  "repo_root": "${env.LLAMA_SWAP_REPO_ROOT}"
+
+# models: one entry per tools/local_llm/profiles.json profile. Each `cmd:` is EXACTLY what
+# `bash tools/local_llm/llm.sh __profile_cmd <name>` prints for that profile, with the one necessary change:
+# --port 8080 (llm.sh's own hardcoded port, meaningful when it launched llama-server directly) becomes --port
+# ${PORT}, llama-swap's own per-backend port macro (llama-swap itself now owns 8080; see llm.sh's -listen flag).
+# -cram 4096 -ctxcp 8 on the qwen38 entries (2026-10-01): llama-server's defaults keep up to 8 GiB of prompt cache in
+# host RAM plus 32 checkpoints per slot (~150 MiB each for this hybrid model, the full DeltaNet state), ~12.7 GiB no
+# memcap sees on a 46 GB box. A logged 6.1 GiB cache entry made it the suspected contributor to the 09-30 OOM kill.
+# Capped: ~5.2 GiB worst case. Fewer checkpoints means a prompt that diverges mid-history re-reads from further back.
+models:
+  qwen38-27b-iq4nl-mtp-128k-q4:
+    # this is tools/local_llm/default_profile's profile and the bake-off winner: MTP speculative decoding,
+    # q4_0 KV at 128K context, 74 tok/s, 3/3 tasks (research/serving-bakeoff, tools/local_llm/results/summary.md)
+    name: "Qwen3.8 27B IQ4_NL + MTP, 128K ctx, q4_0 KV (default)"
+    description: "bake-off winner: 74 tok/s, 3/3 tasks -- research/serving-bakeoff, tools/local_llm/results/summary.md"
+    cmd: >
+      llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
+      --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja
+      --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
+
+  qwen38-27b-iq4nl-mtp:
+    name: "Qwen3.8 27B IQ4_NL + MTP, 65K ctx, q8_0 KV"
+    description: "same weights as the default profile, smaller context / higher-precision KV cache"
+    cmd: >
+      llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
+      --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 65536 -ctk q8_0 -ctv q8_0 --jinja
+      --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
+
+  qwen38-27b-iq4nl-mtp-128k-q8:
+    name: "Qwen3.8 27B IQ4_NL + MTP, 128K ctx, q8_0 KV"
+    description: "same weights as the default profile, higher-precision (more VRAM) KV cache at the same 128K context"
+    cmd: >
+      llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
+      --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q8_0 -ctv q8_0 --jinja
+      --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
+
+  devstral-small2-24b-iq4xs:
+    name: "Devstral Small 2 24B IQ4_XS, 65K ctx, q8_0 KV"
+    description: "coding-focused alternative model, no speculative decoding"
+    cmd: >
+      llama-server -m /home/dant123/models/devstral-small-2-gguf/Devstral-Small-2-24B-Instruct-2512-IQ4_XS.gguf
+      --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 65536 -ctk q8_0 -ctv q8_0 --jinja
+      --chat-template-file ${repo_root}/tools/local_llm/templates/devstral-small2-24b-iq4xs.jinja
+      --temp 0.15
+
+# profiles: pins the virtual "local" model id -- what llm.sh always requests (ANTHROPIC_MODEL=local, so Claude
+# Code never needs to know a real profile name) -- to whichever real model `llm on <name>` selected. One entry
+# per model above, same name; `llm.sh`'s activate_profile() calls `PUT /api/profiles/active {"name": "<name>"}`
+# to switch which one is active. Do not add a "local" entry under `models:` itself -- it is a pin target, not a
+# model of its own.
+profiles:
+  qwen38-27b-iq4nl-mtp-128k-q4:
+    description: "default profile"
+    pins: { local: qwen38-27b-iq4nl-mtp-128k-q4 }
+  qwen38-27b-iq4nl-mtp:
+    pins: { local: qwen38-27b-iq4nl-mtp }
+  qwen38-27b-iq4nl-mtp-128k-q8:
+    pins: { local: qwen38-27b-iq4nl-mtp-128k-q8 }
+  devstral-small2-24b-iq4xs:
+    pins: { local: devstral-small2-24b-iq4xs }
+
+# hooks.on_startup.profile: pins "local" to the default profile as soon as llama-swap itself starts, so a
+# request for "local" resolves correctly even before `llm on` ever runs (it does NOT preload the model into
+# memory -- that still only happens on `llm on` or the first real request).
+hooks:
+  on_startup:
+    profile: qwen38-27b-iq4nl-mtp-128k-q4
+
+# routing is deliberately left at its default (one model resident at a time, loading a new one unloads the
+# old): this machine has exactly one 3090, so no profile.json entry is ever meant to share it with another.

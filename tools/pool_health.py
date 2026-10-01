@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Correct health check for the mini-PC pool (pool40/41/42). Tests what actually matters.
+"""Correct health check for the mini-PC pool (nodes: tools/pool_nodes.conf). Tests what actually matters.
 
 WHY (2026-08-06): the pool is deployed by RSYNC, not `git clone` — `tools/pool_provision.sh` archives HEAD and
 rsyncs it into `~/derisk-pool/sim` with a venv (numpy+scipy). There is NO `.git` there BY DESIGN. Two sub-agents
@@ -22,10 +22,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 
-NODES = ["pool40", "pool41", "pool42"]
+# tools/ dir on sys.path so this resolves whether pool_health.py is run directly, as `python -m
+# tools.pool_health`, or loaded by path in a test.
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+import pool_nodes  # noqa: E402 -- single source of truth: tools/pool_nodes.conf
+
+NODES = pool_nodes.default_nodes()
 REMOTE = "~/derisk-pool/sim"
 
 

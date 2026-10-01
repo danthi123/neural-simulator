@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import os
 import stat
+import sys
 from pathlib import Path
 import subprocess
 import time
@@ -11,6 +12,12 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 DISPATCHER = ROOT / "tools" / "pool_autodispatch.sh"
 WORKFLOW = ROOT / "tools" / "workflow_check.sh"
+
+sys.path.insert(0, str(ROOT / "tools"))
+import pool_nodes  # noqa: E402 -- single source of truth: tools/pool_nodes.conf
+
+# Read, not pinned, so this tracks tools/pool_nodes.conf rather than independently re-hardcoding it.
+DEFAULT_NODES = " ".join(pool_nodes.default_nodes())
 
 
 def run_bash(script: Path, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
@@ -286,7 +293,7 @@ def test_workflow_check_pool_nodes_default_unaffected_when_no_extra_nodes_file(t
                         "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist")})
     assert res.returncode == 0, res.stderr
     lines = res.stdout.splitlines()
-    assert lines[0].strip() == "pool40 pool41 pool42"
+    assert lines[0].strip() == DEFAULT_NODES
     assert lines[1] == "NOF"
 
 
@@ -301,7 +308,7 @@ def test_workflow_check_pool_nodes_grows_with_extra_nodes_file_and_honours_dash_
                    env={"POOL_EXTRA_NODES_FILE": str(extra), "POOL_SSH_CONFIG": str(config)})
     assert res.returncode == 0, res.stderr
     lines = res.stdout.splitlines()
-    assert lines[0].strip() == "pool40 pool41 pool42 pool1"
+    assert lines[0].strip() == f"{DEFAULT_NODES} pool1"
     assert lines[1] == "F"
 
 
@@ -896,3 +903,40 @@ def test_queue_add_front_puts_the_line_at_the_head(tmp_path: Path) -> None:
                    env={**env, "FRONT": "1"}, check=True, capture_output=True, text=True)
     lines = queue.read_text().splitlines()
     assert "echo front" in lines[0] and "old-job" in lines[1] and "echo back" in lines[2]
+
+
+def test_a_line_may_declare_its_own_max_age_capped_at_240h(tmp_path: Path) -> None:
+    # 2026-09-30: ~550 legitimate lines queued on 09-29 needed three to five days of pool time, but every line
+    # older than 12 h was skipped as debris. `max_age_h=N` lets a batch declare its expected wait; the 240 h cap
+    # keeps an abandoned batch expiring; a line with no token keeps the 12 h default.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(
+        f"{now - 50_000}\told-default  #checked:r mem_gb=1\n"            # 13.9 h, no token -> stale
+        f"{now - 1_000_000}\tover-cap  #checked:r max_age_h=9999\n"      # 11.6 days > 240 h cap -> stale
+        f"{now - 50_000}\tdeclared  #checked:r mem_gb=1 max_age_h=120\n"  # 13.9 h < 120 h -> fresh
+    )
+    env = {"POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running")}
+    res = run_bash(DISPATCHER, "--pop-once", env=env)
+    assert res.stdout.endswith("declared"), res.stdout + res.stderr
+    assert "SKIPPING 2 stale" in res.stderr
+    assert run_bash(DISPATCHER, "--pop-once", env=env).stdout == ""
+    assert "old-default" in queue.read_text() and "over-cap" in queue.read_text()   # skipped, never deleted
+
+
+def test_queue_health_honours_the_per_line_max_age(tmp_path: Path) -> None:
+    now = 2_000_000_000
+    queue = tmp_path / "pool.queue"
+    queue.write_text(
+        f"{now - 50_000}\tstale #checked:test\n"
+        f"{now - 50_000}\tdeclared #checked:test max_age_h=48\n"
+    )
+    assert run_bash(WORKFLOW, "--queue-health", str(queue), str(now), "43200").stdout == "1\t1\t0\t2\n"
+
+
+def test_dispatcher_and_monitor_share_one_max_age_rule() -> None:
+    import re
+    fn = re.compile(r"function maxage\(l,  m\) \{.*?return d \}")
+    a = fn.findall(DISPATCHER.read_text())
+    b = fn.findall(WORKFLOW.read_text())
+    assert a and b and set(a) == set(b), "the dispatcher and workflow_check.sh must apply the same max_age_h rule"

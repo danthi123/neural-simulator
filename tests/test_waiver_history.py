@@ -590,3 +590,78 @@ def test_R4_brief_waivers_written_only_around_each_commit_cannot_escape_the_budg
             wh.evaluate("compute-idle-persistent", p, 6, now_ts=t + 60.0, budget_h=6.0, history_file=hist)
         assert rejected_k is not None, "brief around-commit waivers were NEVER rejected -- budget escapable"
         assert rejected_k <= 6, "brief waivers accepted %d times in 24h; expected the budget to stop them by the 7th" % rejected_k
+
+
+# ══ 2026-09-29 (research/arcc-b2b-d6-scoring, TASK 3): `_record_absence` only ever runs INSIDE `evaluate()`, ═
+# so a waiver deleted by a bare `os.remove`/`rm` (every waiver had ONLY ever been deleted that way before
+# `clear_waiver` existed) stays charged as "present" in the ledger until whatever reads the path NEXT -- a
+# commit's gate run, or a live heartbeat cycle -- happens to run. On 2026-09-28/29 a waiver deleted at 22:30
+# had no such read until the next commit hours later, charging ~7h against the 6h/24h budget and exhausting
+# it. These tests FAIL against `os.remove` alone (the pre-fix behaviour, reproduced directly below) and PASS
+# once the deletion goes through `clear_waiver`, which records the absence at the true deletion instant.
+
+def test_deleting_a_waiver_with_bare_os_remove_still_charges_the_full_gap_until_next_read():
+    """Reproduces the incident directly: delete with `os.remove` (the only way before this fix), then let a
+    LATE read (a commit's gate run, hours later) be the first thing to observe it gone. The whole gap is
+    charged, capped at `waiver_max_h` -- this is the DEFECT, asserted here so the next test's improvement is
+    measured against a real baseline, not a strawman."""
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, ".waiver")
+        hist = os.path.join(td, "h.jsonl")
+        t0 = 700_000.0
+        _write(p, _NRW, t0)
+        wh.evaluate("lane-starvation", p, 6, now_ts=t0, budget_h=6.0, history_file=hist)   # e.g. 22:30 write
+        os.remove(p)                                                                        # bare rm, no ledger update
+        v = wh.evaluate("compute-idle-persistent", p, 6, now_ts=t0 + 7 * 3600.0, budget_h=6.0,
+                        history_file=hist)                                                  # next commit, 7h later
+        assert not v["active"], "a deleted waiver must read inactive once observed gone"
+        used = wh.cumulative_waived_hours(now_ts=t0 + 7 * 3600.0, history_file=hist)
+        assert used >= 5.9, (
+            "expected the bare-rm gap to be charged near its 6h cap (got %.2fh) -- confirms the defect this "
+            "task fixes is real and reproducible before relying on it as a baseline" % used)
+
+
+def test_clear_waiver_stops_the_charge_at_the_true_deletion_instant():
+    """The fix: delete through `clear_waiver` instead of a bare `rm`. For the SAME real deletion time (30 min
+    after the waiver was written) and the SAME late next-read time (7h later, unchanged from the test above),
+    the charged amount must reflect the true ~30-minute lifetime, not the 7h gap until the next read."""
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, ".waiver")
+        hist = os.path.join(td, "h.jsonl")
+        t0 = 700_000.0
+        _write(p, _NRW, t0)
+        wh.evaluate("lane-starvation", p, 6, now_ts=t0, budget_h=6.0, history_file=hist)
+        removed = wh.clear_waiver(p, history_file=hist, now_ts=t0 + 1800.0)   # deleted 30 min later, via the fix
+        assert removed is True
+        assert not os.path.exists(p)
+        v = wh.evaluate("compute-idle-persistent", p, 6, now_ts=t0 + 7 * 3600.0, budget_h=6.0,
+                        history_file=hist)
+        assert not v["active"]
+        used = wh.cumulative_waived_hours(now_ts=t0 + 7 * 3600.0, history_file=hist)
+        assert used <= wh.MIN_EPISODE_CHARGE_H + 1e-6, (
+            "clear_waiver should have closed the episode at t0+30min, charging ~%.1fh (floored to the "
+            "per-episode minimum), got %.2fh -- still charging past the real deletion instant"
+            % (wh.MIN_EPISODE_CHARGE_H, used))
+
+
+def test_clear_waiver_is_idempotent_on_an_already_absent_path():
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, ".never-existed")
+        hist = os.path.join(td, "h.jsonl")
+        assert wh.clear_waiver(p, history_file=hist) is False
+        assert wh.clear_waiver(p, history_file=hist) is False        # a second call must not raise or duplicate rows
+
+
+def test_clear_waiver_does_not_rewrite_any_existing_history_row():
+    """THE LAW (CLAUDE.md, this task): do not rewrite existing history rows. `clear_waiver` must only APPEND."""
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, ".waiver")
+        hist = os.path.join(td, "h.jsonl")
+        t0 = 700_000.0
+        _write(p, _NRW, t0)
+        wh.evaluate("lane-starvation", p, 6, now_ts=t0, budget_h=6.0, history_file=hist)
+        before = open(hist).read().splitlines()
+        wh.clear_waiver(p, history_file=hist, now_ts=t0 + 60.0)
+        after = open(hist).read().splitlines()
+        assert after[:len(before)] == before, "clear_waiver must only APPEND, never rewrite an existing row"
+        assert len(after) == len(before) + 1

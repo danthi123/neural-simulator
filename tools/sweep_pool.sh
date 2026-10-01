@@ -18,9 +18,12 @@
 #
 # NOTE: a single {V} axis is substituted; extra axes are cartesian-producted and appended as --AXIS VALUE.
 set -e
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 OUT_REL="$1"; TEMPLATE="$2"; shift 2
 [ -z "$OUT_REL" ] || [ -z "$TEMPLATE" ] && { echo "see header for usage" >&2; exit 1; }
-NODES=(${POOL_NODES:-pool40 pool41 pool42})
+NODES=(${POOL_NODES:-$POOL_NODES_DEFAULT})
 # SINGLE-NODE RESILIENCE (2026-09-03, matches tools/pool_queue.sh): drop unreachable nodes so one
 # down node (e.g. pool40 offline) does NOT round-robin ~1/3 of the sweep onto a dead host. Respects a
 # POOL_NODES override too. Refuses only if NO node is reachable.

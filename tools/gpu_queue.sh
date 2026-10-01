@@ -71,34 +71,43 @@ gpu_resident_brain_pids() {
   done
 }
 
-# LOCAL-LLM AUTOSWAP (2026-09-25, fix-round same day): the interactive local-llm service (tools/local_llm/llm.sh,
-# ~22GB of the 24GB 3090) and this queue are NOT coordinated on their own -- a queued job starting while it is
-# loaded exhausts the card (this machine has fallen off the bus on such hangs before, see
-# docs/GPU_CRASH_RECOVERY.md). Mirrors the older Hermes-era tools/qwen_supervisor.sh pattern (stop the model for
-# a job, reload it once idle), inlined here because nothing else drives the owner's own interactive model.
-# `.local_llm_was_on` is a ONE-SHOT marker whose CONTENTS are the profile to restore, written only when THIS code
-# actually VERIFIES it stopped a running unit (never fabricates an "it was on" memory, and never claims success
-# on a stop that didn't take) and consumed the moment a real restore attempt is made, win or lose -- so a
-# failed/hung `llm on` can never retry forever, and llm.sh's own `off` also removes it (a manual off, even
-# mid-job, always cancels the pending restore -- see llm.sh's cmd_off).
+# LOCAL-LLM COORDINATION (2026-09-25 auto-swap; retired 2026-09-29 in favour of an explicit GPU YIELD --
+# docs/plans/2026-09-29-local-model-transition-PLAN.md section 3). The interactive local-llm service
+# (tools/local_llm/llm.sh, ~22GB of the 24GB 3090) and this queue are not coordinated on their own -- a queued
+# job starting while it is loaded exhausts the card (this machine has fallen off the bus on such hangs before,
+# see docs/GPU_CRASH_RECOVERY.md). The ORIGINAL fix stopped the unit itself, automatically, the instant a job was
+# queued -- but with the local model now the day-to-day DRIVER of this repo, that stop lands mid-session: every
+# request fails until the queue drains, and whatever the model was doing is lost. So a queued GPU job no longer
+# stops the driver by itself; instead it is HELD (never popped, never started) for as long as the unit is active
+# and no yield is in force. The driver frees the card only when IT chooses to: `tools/local_llm/llm.sh yield`
+# stops its own server (gracefully -- see cmd_stop_graceful) and writes `.llm_yield`, a marker naming the
+# session/profile to bring back and a deadline. While that marker exists the queue drains normally; once it is
+# empty (or the deadline has passed and nothing is still running) the dispatcher removes the marker, reloads the
+# SAME profile, and resumes the SAME session headless with a summary prompt (see llm_yield_restore_if_drained
+# below). GAME_MODE takes precedence over all of this (checked first, both here and by `llm on`'s own refusal
+# path) -- gaming already sets GPU_PAUSE via `game.sh on`'s own `pause --now` call, which the daemon loop checks
+# before ever reaching this code, but the restore function also checks the sentinel file directly (belt and
+# suspenders: nothing must reload a ~22GB model, or resume a session, mid-game).
 #
-# BLOCKER fixed here (2026-09-25 fix-round): the stop path used to write the marker and THEN call `llm.sh off`
-# for the actual stop -- but `off`'s own cmd_off unconditionally deletes that SAME marker file (its own "a
-# manual off cancels the pending restore" behavior), so the marker this code had just written was destroyed a
-# few lines later, and the model was never auto-restored. Stopping is now done DIRECTLY via
-# $LOCAL_LLM_SYSTEMCTL (never through llm.sh's `off`), and the marker is written only AFTER a verified stop.
-# `llm on`'s own profile resolution / systemd-run / health-wait are still reused for the RESTORE side (that path
-# never touches the marker).
+# A SEPARATE, still-live concern this block also serves: the OWNER (not the driver) running `llm on` while a GPU
+# job is busy. `llm.sh`'s own refusal path there still wants the model to auto-load once the queue clears, and it
+# still writes `.local_llm_was_on` (CONTENTS = the profile) to record that intent -- `llm_restore_if_idle` below
+# is what honours it. Nothing in THIS file writes that marker any more (only llm.sh's own `cmd_on` refusal does),
+# but the drain-side restore is identical machinery either way, so it stays here.
 LLM_SH="${GPU_QUEUE_LLM_SH:-$ROOT/tools/local_llm/llm.sh}"   # override is TEST-ONLY (a fake script); NEVER set in production
 LLM_UNIT="local-llm"
-LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # CONTENTS = the profile to restore; presence == "gpu_queue stopped it; restore when idle"
+LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # CONTENTS = the profile to restore; written by llm.sh's own `on` refusal (owner wanted it loaded, GPU was busy)
+LLM_YIELD_MARKER="$QDIR/.llm_yield"                          # written by `llm.sh yield`: LLM_YIELD_PROFILE=/LLM_YIELD_DEADLINE=<epoch seconds> (game.sh off may push the deadline out)
+LLM_YIELD_COUNT="$QDIR/.llm_yield_job_count"                 # jobs run so far during the CURRENT yield window (for the drain log line); removed with the marker
+GAME_FILE="$QDIR/GAME_MODE"                                  # owner gaming/away (tools/game.sh) -- absolute priority, checked directly as well as via PAUSE
 LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}        # TEST-ONLY override (shared name with llm.sh); NEVER set in production
 export LOCAL_LLM_SYSTEMCTL                                   # llm.sh (invoked as a subprocess below) must see the same stub
 # The dispatcher runs as a SYSTEM unit (gpu-queue-dispatch.service, User=dant123) whose environment has no
 # XDG_RUNTIME_DIR / DBUS_SESSION_BUS_ADDRESS, so every `systemctl --user` call failed ("Failed to connect to user
-# scope bus") and llm_is_active() read the live local model as inactive: the autoswap never stopped it and the
-# queued job waited forever for VRAM (caught live 2026-09-25 17:12; the stubbed tests could not see it). Point
-# the user-bus variables at this user's own runtime dir when they are unset (exported, so llm.sh sees them too).
+# scope bus") and llm_is_active() read the live local model as inactive -- a queued job would then wrongly bypass
+# the HELD guard below and dispatch straight over a loaded model (caught live 2026-09-25 17:12, back when this
+# code auto-stopped for a job instead of holding; the stubbed tests could not see it). Point the user-bus
+# variables at this user's own runtime dir when they are unset (exported, so llm.sh sees them too).
 if [ -z "${XDG_RUNTIME_DIR:-}" ] && [ -d "/run/user/$(id -u)" ]; then export XDG_RUNTIME_DIR="/run/user/$(id -u)"; fi
 if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && [ -S "${XDG_RUNTIME_DIR:-/nonexistent}/bus" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
@@ -106,46 +115,71 @@ fi
 
 llm_is_active() { "$LOCAL_LLM_SYSTEMCTL" --user is-active --quiet "$LLM_UNIT" 2>/dev/null; }
 
-# Call right before a queued job is allowed to compete for VRAM (before the freevram wait, so the wait can
-# actually succeed), AND from the dispatcher's own contention loop below as a retry while the unit is still
-# active. A no-op unless the unit is genuinely active -- never writes the marker for a model that was already
-# down, which would fabricate a restore the owner never asked for. Stops the unit DIRECTLY via
-# $LOCAL_LLM_SYSTEMCTL (see the BLOCKER note above) and only writes the marker -- carrying the profile name, so
-# the restore brings back the SAME profile -- once the stop is VERIFIED (still active afterward => log the
-# failure and return 1 instead of ever claiming "stopped"; the caller's own retry loop tries again).
-llm_stop_for_job() {
-  llm_is_active || return 0
-  local prof; prof=$(bash "$LLM_SH" __current_profile 2>/dev/null || true)
-  "$LOCAL_LLM_SYSTEMCTL" --user stop "$LLM_UNIT" >> "$LOG" 2>&1
-  "$LOCAL_LLM_SYSTEMCTL" --user reset-failed "$LLM_UNIT" >/dev/null 2>&1 || true
-  if llm_is_active; then
-    echo "$(date '+%F %T') LLM-AUTOSWAP: FAILED to stop $LLM_UNIT for a queued job -- still active, will retry" >> "$LOG"
-    return 1
-  fi
-  printf '%s\n' "$prof" > "$LLM_WAS_ON"
-  echo "$(date '+%F %T') LLM-AUTOSWAP: stopped $LLM_UNIT for a queued GPU job" >> "$LOG"
+# yield_field NAME -> the value of LLM_YIELD_<NAME> from the marker (last line wins), or empty if there is no
+# marker / no such field. A tiny `sed`, not a `source`, so a marker's contents are never executed as code.
+yield_field() {
+  [ -f "$LLM_YIELD_MARKER" ] || return 0
+  sed -n "s/^LLM_YIELD_$1=//p" "$LLM_YIELD_MARKER" | tail -1
 }
 
-# Call on every idle poll (queue empty). Cheap no-op unless llm_stop_for_job set the marker. Two conditions
-# DEFER (leave the marker for the next idle poll, retried every ~12s) rather than give up: GPU_PAUSE (gaming --
-# reloading a ~22GB model mid-game would be exactly backwards) and a brain process still GPU-resident (a job
-# that outlived a dead daemon incarnation, or a truly-standalone launch -- restoring now would double-load the
-# card). Only the restart attempt itself is one-shot: the marker is consumed immediately before it, so a crash
-# or a failed `llm on` is never retried forever.
+yield_deadline_passed() {
+  local d; d=$(yield_field DEADLINE)
+  [ -n "$d" ] && [ "$(date +%s)" -ge "$d" ]
+}
+
+# Call on every idle poll (queue empty). Cheap no-op unless `llm on`'s own refusal path set the marker (see the
+# block comment above -- nothing in this file writes it any more). Two conditions DEFER (leave the marker for the
+# next idle poll, retried every ~12s) rather than give up: GPU_PAUSE (gaming -- reloading a ~22GB model mid-game
+# would be exactly backwards) and a brain process still GPU-resident (a job that outlived a dead daemon
+# incarnation, or a truly-standalone launch -- restoring now would double-load the card). Only the restart
+# attempt itself is one-shot: the marker is consumed immediately before it, so a crash or a failed `llm on` is
+# never retried forever.
 llm_restore_if_idle() {
   [ -f "$LLM_WAS_ON" ] || return 0
   if [ -f "$PAUSE" ]; then return 0; fi
   if [ -n "$(gpu_resident_brain_pids)" ]; then
-    echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
+    echo "$(date '+%F %T') LLM-RESTORE: queue drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
     return 0
   fi
   local prof; prof=$(cat "$LLM_WAS_ON" 2>/dev/null || true)
   rm -f "$LLM_WAS_ON"                       # consumed HERE, before the one attempt below
   llm_is_active && return 0                 # owner (or a race) already reloaded it manually
-  echo "$(date '+%F %T') LLM-AUTOSWAP: queue drained -- restoring $LLM_UNIT${prof:+ ($prof)}" >> "$LOG"
+  echo "$(date '+%F %T') LLM-RESTORE: queue drained -- restoring $LLM_UNIT${prof:+ ($prof)} (owner's \`llm on\` was refused while the GPU was busy)" >> "$LOG"
   # backgrounded (loading can take a while, must not block dispatch) + 8>&- so this child can never keep the
   # daemon's singleton lock held after the daemon itself dies (same fd-inheritance hazard as the dispatched job).
-  bash "$LLM_SH" on ${prof:+"$prof"} >> "$LOG" 2>&1 8>&- &
+  bash "$LLM_SH" on ${prof:+"$prof"} --lazy >> "$LOG" 2>&1 8>&- &
+}
+
+# Call on every idle poll (queue empty). Cheap no-op unless a GPU YIELD is in force. Once the window has genuinely
+# drained (queue empty, nothing running, no yield deadline still ticking with work left OR the deadline itself has
+# passed) it removes the marker and restarts the server for the SAME profile with the model unloaded (`llm on
+# --lazy`); the driver (Hermes on homelab-server, 2026-09-30) is started by its own sim-driver wake gate once the
+# server answers, and loads the model with its first request. A LLM_YIELD_SESSION line in an older marker is
+# ignored: resuming a local session headless here would start a second driver beside Hermes. Never while GAME_MODE (checked directly, not just via PAUSE: the two are usually
+# set together by `game.sh on`, but this must hold even if that ordering ever changes) or while a brain process is
+# still GPU-resident (double-load risk, identical reasoning to llm_restore_if_idle above).
+llm_yield_restore_if_drained() {
+  [ -f "$LLM_YIELD_MARKER" ] || return 0
+  if [ -f "$GAME_FILE" ] || [ -f "$PAUSE" ]; then return 0; fi
+  if [ -s "$QUEUE" ] && ! yield_deadline_passed; then return 0; fi   # still work to do and time left -- not drained yet
+  if [ -f "$RUNNING" ]; then return 0; fi                            # a job is still finishing -- not drained yet
+  if [ -n "$(gpu_resident_brain_pids)" ]; then
+    echo "$(date '+%F %T') LLM-YIELD: window drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
+    return 0
+  fi
+  local prof n
+  prof=$(yield_field PROFILE)
+  n=$(cat "$LLM_YIELD_COUNT" 2>/dev/null || echo 0)
+  rm -f "$LLM_YIELD_MARKER" "$LLM_YIELD_COUNT"   # consumed HERE, before the one attempt below
+  llm_is_active && return 0                       # owner (or a race) already reloaded it manually
+  echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}, model unloaded until its first request" >> "$LOG"
+  # backgrounded (starting the server can take a moment, must not block dispatch) + 8>&- for the same
+  # fd-inheritance reason as every other forked child here.
+  : > "$QDIR/.llm_restoring"                        # HOLD new jobs until `llm on` returns (else a job can race the model load)
+  (
+    bash "$LLM_SH" on ${prof:+"$prof"} --lazy >> "$LOG" 2>&1
+    rm -f "$QDIR/.llm_restoring"
+  ) >> "$LOG" 2>&1 8>&- &
 }
 
 # Serialise every queue read-modify-write: `add` (>> append) racing the daemon's pop (tail>tmp;mv) could clobber a
@@ -195,13 +229,13 @@ daemon() {
     # tracking-loss fix in exactly the scenario it exists for.
     if [ -f "$PAUSE" ]; then sleep 8 8>&-; continue; fi
     job=$(head -1 "$QUEUE" 2>/dev/null || true)
-    if [ -z "$job" ]; then llm_restore_if_idle; sleep 12 8>&-; continue; fi
-    llm_stop_for_job   # free the model's VRAM BEFORE waiting for headroom below -- retried in the loop right below if it failed
-    # Contention guard: wait for (1) no PAUSE, (2) local-llm to be GENUINELY stopped (never dispatch over a
-    # loaded model just because raw VRAM headroom happens to clear -- the ~22GB unit alone can still leave
-    # ~3-4GB free, comfortably above MIN_FREE's default 3000MiB while very much still holding the card; a
-    # stop attempt above can also simply fail, e.g. a wedged unit -- HIGH finding, 2026-09-25 fix-round), (3)
-    # the GPU to be genuinely free of any OTHER brain-loading process — GROUND TRUTH via nvidia-smi, not just
+    if [ -z "$job" ]; then llm_restore_if_idle; llm_yield_restore_if_drained; sleep 12 8>&-; continue; fi
+    # Contention guard: wait for (1) no PAUSE, (2) local-llm to be HELD OFF -- either it was never on, or the
+    # driver itself yielded (`llm.sh yield`, stopped its own server) -- NEVER dispatch over a model that is still
+    # active: the queue no longer stops the driver mid-session on its own (2026-09-29, see the block comment
+    # above), it just waits. Also HOLD past a yield's own deadline: no NEW job starts once the driver's promised
+    # window has expired, even though nothing is actively running (a job already dispatched is left to finish).
+    # (3) the GPU to be genuinely free of any OTHER brain-loading process — GROUND TRUTH via nvidia-smi, not just
     # "does our own gpu.running say something is running" — and (4) raw VRAM headroom (auto-yields to a game
     # / another run). (3) is what closes the tracking-loss bug: a prior daemon incarnation can die mid-job
     # without ever cleaning up gpu.running or killing the job it launched; the orphan keeps running+holding
@@ -212,13 +246,9 @@ daemon() {
     # it must NEVER be set in production.
     while :; do
       [ -f "$PAUSE" ] && break
-      if llm_is_active; then
-        # a stop attempt failed (or the owner/something else reloaded it mid-wait) -- retry rather than EVER
-        # proceed to dispatch over a loaded model.
-        llm_stop_for_job
-        sleep "$POLL_SEC" 8>&-
-        continue
-      fi
+      if llm_is_active; then sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: the driver owns the card, no auto-stop
+      if [ -f "$QDIR/.llm_restoring" ]; then sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: the driver is being restored
+      if [ -f "$LLM_YIELD_MARKER" ] && yield_deadline_passed; then llm_yield_restore_if_drained; sleep "$POLL_SEC" 8>&-; continue; fi   # HELD: yield window expired
       if [ -z "${GPU_QUEUE_NO_RESIDENCY_GUARD:-}" ]; then
         resident=$(gpu_resident_brain_pids)
         if [ -n "$resident" ]; then _adopt_resident "$resident"; sleep "$POLL_SEC" 8>&-; continue; fi
@@ -237,6 +267,12 @@ daemon() {
     rm -f "$RUNNING"
     dur=$(( $(date +%s) - start_s ))
     echo "$(date '+%F %T') DONE(rc=$rc): $job" >> "$LOG"
+    # Count this job toward the CURRENT yield window's resume prompt ("<n> jobs ran"), if one is in force -- a
+    # no-op the rest of the time (no yield marker, or a job that finished after llm_yield_restore_if_drained
+    # already consumed it, is simply not counted; the drain condition already requires nothing left running).
+    if [ -f "$LLM_YIELD_MARKER" ]; then
+      echo "$(( $(cat "$LLM_YIELD_COUNT" 2>/dev/null || echo 0) + 1 ))" > "$LLM_YIELD_COUNT"
+    fi
     # FAST-FAIL, LOUDLY (2026-09-25). rc=127 ("command not found") or rc=2 (a shell syntax/usage error) inside
     # FAST_FAIL_S of START means the job never actually ran -- it died on argv[0]/syntax, exactly like the
     # historical `status` job (2026-08-31/09-01, three cycles, rc=127 in under a second each time) that sat in
@@ -443,8 +479,22 @@ FAKEEOF
   return "$rc"
 }
 
+# NO-GPU GUARD (2026-09-30, docs/plans/2026-09-30-home-to-server-MIGRATION.md). The project home moved to a GPU-less
+# server; a job queued there would sit in a queue no daemon serves, and a daemon started there would never find a GPU.
+# `add` and `start` therefore refuse on a host with no nvidia-smi and point at tools/gpu_remote.sh, which queues the job
+# on the workstation. An isolated queue (GPU_QUEUE_DIR, as --selftest and the tests use) or the nvidia-smi seam
+# (GPU_QUEUE_NVIDIA_SMI) is never the live queue, so either one skips the guard.
+require_gpu_host() {
+  [ -n "${GPU_QUEUE_DIR:-}" ] || [ -n "${GPU_QUEUE_NVIDIA_SMI:-}" ] && return 0
+  command -v nvidia-smi >/dev/null 2>&1 && return 0
+  echo "⛔ REFUSED: $(hostname) has no nvidia-smi, so no GPU queue daemon serves a queue here." >&2
+  echo "   Use: bash tools/gpu_remote.sh add '<cmd>'   (queues it on the workstation's 3090)" >&2
+  exit 3
+}
+
 case "${1:-}" in
   start)
+    require_gpu_host
     # Refuse if a daemon is already live ANYWHERE (dpid alive OR singleton lock held) — the cross-worktree check.
     # It is advisory: the AUTHORITATIVE guard is the DLOCK acquired inside __daemon, so even a TOCTOU race here
     # (two starts both passing this check) still cannot produce two daemons.
@@ -474,6 +524,7 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
+    require_gpu_host
     # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh): refuse a line whose first word could not
     # possibly run (a prose label, a torn line, a syntax error) BEFORE it is queued -- see that file's header
     # for the real historical failures (the SETTLE A2 pool lines; a bare `status` job in this very log,
@@ -570,11 +621,12 @@ case "${1:-}" in
     fi
     exit 0 ;;
   stop) [ -f "$DPID" ] && kill "$(cat "$DPID")" 2>/dev/null && rm -f "$DPID" && echo "dispatcher stopped" || echo "not running" ;;
-  # TEST-ONLY hidden entry points: run one autoswap decision synchronously, without the daemon's infinite loop,
-  # so tests can drive it deterministically with stubbed LOCAL_LLM_SYSTEMCTL / GPU_QUEUE_NVIDIA_SMI /
+  # TEST-ONLY hidden entry points: run one coordination decision synchronously, without the daemon's infinite
+  # loop, so tests can drive it deterministically with stubbed LOCAL_LLM_SYSTEMCTL / GPU_QUEUE_NVIDIA_SMI /
   # GPU_QUEUE_LLM_SH. The real daemon() calls the same functions in-process (see above).
-  __llm_stop_for_job) llm_stop_for_job ;;
   __llm_restore_if_idle) llm_restore_if_idle ;;
+  __llm_yield_restore_if_drained) llm_yield_restore_if_drained ;;
+  __llm_is_active) llm_is_active && echo active || echo inactive ;;
   --selftest) selftest; exit $? ;;
   *) grep '^#' "$0" | sed 's/^# \{0,1\}//' | head -20 ;;
 esac

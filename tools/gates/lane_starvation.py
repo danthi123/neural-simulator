@@ -44,9 +44,9 @@ LANE_WAIVER_MAX_H = 6
 RECENT_DISPATCH_MIN = 45   # a dispatched pool job runs remotely; it serves its lane for this long
 
 CPU_LANES = {
-    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion"],
-    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress"],
-    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom"],
+    "A · Affect":        ["affect", "appraisal", "valence", "liking", "_dr2", "emotion", "need_reversal", "bg_live_seam"],
+    "B · Curiosity":     ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress", "long_delay_credit"],
+    "C · Self/Workspace": ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom", "host_share"],
     "D · Perception":    ["v1_selforg", "_b1_", "visual", "retina", "gabor", "v2_", "_it_", "nav_"],
     "E · Language":      ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                           "comprehension", "producer", "confidence_gate"],
@@ -78,9 +78,22 @@ def _queue_dir():
     return os.path.join(_shared_queue_root(), "research", "queue")
 
 
+# Self-declared FILLER never serves a lane (2026-09-29, FAILURE_LOG). Twice in one day a subagent passed this gate by
+# queueing cheap "keepalive" smokes it described in POOL_CHECKED_REASON as "lane-service only ... not a research lever":
+# honest labels on dishonest work. A lane is served by research, not by a job whose own reason says it is not research.
+FILLER_MARKERS = ("lane-service", "lane service", "keepalive", "keep-alive", "not a research lever", "not research")
+
+
+def _is_filler(line):
+    c = line.lower().replace("\\ ", " ")
+    return any(m in c for m in FILLER_MARKERS)
+
+
 def _served(text_blobs):
     served = set()
     for ln in text_blobs:
+        if _is_filler(ln):
+            continue
         c = ln.lower()
         for lane, keys in CPU_LANES.items():
             if any(k in c for k in keys):
@@ -116,6 +129,26 @@ def _work_lines():
                 lines += [l.split("<- ", 1)[1] for l in tail if "<- " in l]
         except OSError:
             pass
+    # pool.running holds the same record WITH a date ("YYYY-MM-DD HH:MM:SS<TAB>node<TAB>job"). On srv-host-0 the
+    # dispatcher logs to the journal (2026-09-30: sim-pool-dispatch.service, no dispatch.log), so this is the file
+    # that still says what went out recently there.
+    pr = os.path.join(queue_dir, "pool.running")
+    if os.path.exists(pr):
+        cutoff = time.time() - RECENT_DISPATCH_MIN * 60
+        try:
+            if os.path.getmtime(pr) >= cutoff:
+                for l in open(pr, errors="ignore").read().split("\n")[-200:]:
+                    parts = l.split("\t", 2)
+                    if len(parts) != 3:
+                        continue
+                    try:
+                        ts = time.mktime(time.strptime(parts[0], "%Y-%m-%d %H:%M:%S"))
+                    except ValueError:
+                        continue
+                    if ts >= cutoff:
+                        lines.append(parts[2].split("#checked:")[0])
+        except OSError:
+            pass
     return lines
 
 
@@ -123,7 +156,21 @@ LANE_BUILD_MAX_H = 6
 _LANE_BUILDS = os.path.join(_ROOT, "research", "coordination", "lane_builds.jsonl")
 
 
-def _build_served(now_ts, path=None):
+def _branch_exists(branch):
+    """A registered build must name a REAL branch (2026-09-27: a local model registered two builds whose branches did not
+    exist, with notes claiming "6-seed run queued on the pool" while the queue was empty). Local or origin ref."""
+    for ref in ("refs/heads/%s" % branch, "refs/remotes/origin/%s" % branch):
+        try:
+            r = subprocess.run(["git", "-C", _ROOT, "rev-parse", "--verify", "--quiet", ref],
+                               capture_output=True, text=True, timeout=10)
+        except Exception:
+            continue
+        if r.returncode == 0:
+            return True
+    return False
+
+
+def _build_served(now_ts, path=None, branch_exists=None):
     """Lanes whose next work is a BUILD in flight (2026-09-24). Every unserved lane's genuine next job sat inside an
     agent build that could not commit while the lane read unserved -- a deadlock (waiver budget exhausted, no honest
     job to queue). A registration names the lane, the workflow/task id and the branch, is committed (auditable), and
@@ -140,7 +187,8 @@ def _build_served(now_ts, path=None):
         except ValueError:
             continue
         if (e.get("lane") in CPU_LANES and e.get("workflow") and e.get("branch")
-                and 0 <= now_ts - float(e.get("started", -1)) <= LANE_BUILD_MAX_H * 3600):
+                and 0 <= now_ts - float(e.get("started", -1)) <= LANE_BUILD_MAX_H * 3600
+                and (branch_exists or _branch_exists)(e["branch"])):
             served.add(e["lane"])
     return served
 
@@ -199,7 +247,13 @@ def check(paths=None):
     # files -- and the board is always a MODIFY -- so board commits arrived empty and STILL blocked, the exact
     # case this targeted. Read the real staged set ourselves. Standalone (`python tools/gates/...`, no staged
     # commit) reads empty -> falls through to the corpus scan, unaffected.
-    if _is_doc_only(_staged_files()):
+    staged = _staged_files()
+    if _is_doc_only(staged):
+        return []
+    # INFRA-ONLY EXEMPTION (2026-09-29): the same allow-list gates/compute_idle_persistent uses (tools/** and tests/**
+    # minus the enforcement machinery, generic docs, .gitignore). A tooling commit queues no research and adds no
+    # research artifact, so idle lanes are not its fault; blocking it is what pushed agents to queue filler.
+    if _is_infra_only(staged):
         return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
@@ -208,9 +262,27 @@ def check(paths=None):
     return _idle_message(idle, verdict)
 
 
+def _is_infra_only(staged):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_cip_for_lane", os.path.join(os.path.dirname(os.path.abspath(__file__)), "compute_idle_persistent.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod._is_infra_only(staged)
+
+
 def selftest():
     """FAILING DIRECTION FIRST: with nothing queued and no waiver, this MUST fire."""
     bad = []
+    filler = ("POOL_CHECKED_REASON=lane-service\\ only\\ (CLASS\\ L):\\ cheap\\ --smoke\\ dev-seed\\ 7\\ keepalive\\ for\\ lane\\ A "
+              "SIM_BACKEND=numpy .venv/bin/python -m research.runners._affect_state_region_derisk --smoke --seed 7")
+    if _served([filler]):
+        bad.append("FALSE NEGATIVE-PROOF: a self-declared keepalive/lane-service filler job still served a lane")
+    if not _served(["POOL_CHECKED_REASON=prereg\\ x.md python -m research.runners._affect_state_region_derisk --seeds 42"]):
+        bad.append("a genuine prereg'd affect job no longer serves lane A")
+    if not _is_infra_only(["tools/foo.py", "tests/test_foo.py"]):
+        bad.append("a tools/tests-only commit is not exempt")
+    if _is_infra_only(["tools/gates/lane_starvation.py"]) or _is_infra_only(["research/runners/x.py", "tools/a.py"]):
+        bad.append("FALSE POSITIVE: enforcement files or research paths were treated as infra-only")
     if not _served(["python -m research.runners._affect_state_region_derisk --seeds 42"]):
         bad.append("did NOT recognise an affect job as serving lane A")
     if len(set(CPU_LANES) - _served([])) < MAX_IDLE_LANES:
@@ -230,10 +302,16 @@ def selftest():
         fh.write(json.dumps({"lane": lane_a, "workflow": "wX", "branch": "research/x", "started": 1000.0}) + "\n")
         fh.write(json.dumps({"lane": lane_a, "workflow": "", "branch": "research/x", "started": 1000.0}) + "\n")
         reg = fh.name
-    if _build_served(1000.0 + 60, reg) != {lane_a}:
+    real = lambda b: True  # noqa: E731  (the selftest's registrations name a branch assumed to exist)
+    if _build_served(1000.0 + 60, reg, branch_exists=real) != {lane_a}:
         bad.append("did NOT count a fresh, well-formed lane-build registration as serving its lane")
-    if _build_served(1000.0 + LANE_BUILD_MAX_H * 3600 + 1, reg):
+    if _build_served(1000.0 + LANE_BUILD_MAX_H * 3600 + 1, reg, branch_exists=real):
         bad.append("FALSE NEGATIVE-PROOF: an EXPIRED lane-build registration still served its lane")
+    # 2026-09-27: a registration naming a branch that does NOT exist must not serve its lane
+    if _build_served(1000.0 + 60, reg, branch_exists=lambda b: False):
+        bad.append("counted a registration whose branch does not exist (the 2026-09-27 fabricated-build hole)")
+    if _build_served(1000.0 + 60, reg):  # real git: 'research/x' does not exist in this repo
+        bad.append("real-git branch check accepted the non-existent branch 'research/x'")
     os.unlink(reg)
     idle5 = sorted(CPU_LANES)
     rejected = {"active": True, "ok": False, "class": None,

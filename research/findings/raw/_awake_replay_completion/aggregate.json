@@ -1,0 +1,162 @@
+{
+  "family": "arcc",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "seed_verdicts": {
+    "100": "GO",
+    "101": "GO",
+    "102": "GO",
+    "42": "GO",
+    "43": "GO",
+    "44": "GO"
+  },
+  "n_go": 6,
+  "verdict": "GO",
+  "signflip_p_rest_rescue_on_vs_off": 0.015625,
+  "signflip_p_rest_rescue_intact_vs_awake_lesion": 0.015625,
+  "diffs_on_minus_off": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "diffs_intact_minus_lesion": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "diffs_completion_minus_nocomp": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "diffs_both_minus_awakeonly": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "diffs_both_minus_sleeponly": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+  ],
+  "n_completion_load_bearing": 1,
+  "n_awake_completion_needed": 1,
+  "n_night_completion_needed": 0,
+  "reported_correct_counts": {
+    "lq_arc": 2,
+    "lz_arc": 0,
+    "lr_ledger_off": 6,
+    "lr_arc_nocomp": 5,
+    "lr_arc_awakeonly": 6,
+    "lr_arc_sleeponly": 5
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all 6 seed files present",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "missing=[]"
+    },
+    {
+      "kind": "require",
+      "name": "0 arm errors across all gated arms, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G0 null-rebuild (lr_arc_a vs lr_arc_b) clean on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "P1 immediate precondition (neu_imm_arc correct) on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "gamma consistent across gated arms, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "I1: awake branch ran as scheduled on every gated arm, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "I2: every armed lesion (awake edge / night edge / DA) STILL HELD at measurement, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "docs/TERMS.md 'lesion': verified to still hold, not merely flagged"
+    },
+    {
+      "kind": "require",
+      "name": "I3: awake bouts add no PRP of their own, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "I4: completion record held (present iff armed) on every arm, all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no gated-arm outcome reads undefined, any seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all 90 arm files pinned to the registered commit via git_archive",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "expected f7693a36f6b352fe805fb7e7c26fc9d34cd72129"
+    },
+    {
+      "kind": "require",
+      "name": "independent re-derivation (fresh code, not the registered aggregator) agrees: family verdict, n_go, both signflip p, n_completion_load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "preconditions_label": "arcc 6-seed replay-completion gate (Amendment 8 / Addendum 8a)",
+  "caveat_completion_load_bearing": "GO 6/6 is carried mostly by the margin-only route, not by pattern completion: n_completion_load_bearing=1/6 (completion necessary for lr_arc_a's correct recall on only 1 of 6 seeds -- awake_completion_needed=1/6, night_completion_needed=0/6). See the finding doc for the per-seed breakdown."
+}

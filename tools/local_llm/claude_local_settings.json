@@ -7,6 +7,9 @@
       "Bash(bash tools/status.sh)",
       "Bash(bash tools/status.sh:*)",
       "Bash(bash tools/game.sh status)",
+      "Bash(bash tools/game.sh on --graceful)",
+      "Bash(bash tools/local_llm/llm.sh yield:*)",
+      "Bash(bash tools/local_llm/gpu_add.sh:*)",
       "Bash(bash tools/gpu_queue.sh status)",
       "Bash(bash tools/pool_queue.sh depth)",
       "Bash(bash tools/aws_budget.sh status)",
@@ -28,7 +31,6 @@
       "Bash(git restore --staged:*)",
       "Bash(git commit -m:*)",
       "Bash(git commit -q -m:*)",
-      "Bash(git switch -c research/draft-:*)",
       "Bash(bash tools/push_both.sh:*)",
       "Bash(bash tools/pool_provision.sh --revision * --isolated pool41 pool42)",
       "Edit(research/coordination/LOCAL_LLM_RUNBOOK.md)",
@@ -43,7 +45,10 @@
       "Bash(.venv/bin/python -m pytest:*)",
       "Bash(bash tools/memcap.sh 8 --:*)",
       "Bash(bash tools/pool_queue.sh add:*)",
-      "Bash(bash tools/queue_job_shape_check.sh:*)"
+      "Bash(bash tools/queue_job_shape_check.sh:*)",
+      "Bash(git worktree add .claude/worktrees/draft-:*)",
+      "Edit(.claude/worktrees/draft-*/**)",
+      "Bash(git -C .claude/worktrees/draft-:*)"
     ],
     "deny": [
       "Bash(git commit --no-verify:*)",
@@ -62,7 +67,26 @@
       "Edit(webapp/**)",
       "Edit(tools/gates/**)",
       "Bash(POOL_PROVISION_ALLOW_STALE=1:*)",
-      "Bash(bash tools/gpu_queue.sh add:*)"
+      "Bash(bash tools/gpu_queue.sh add:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout:*)",
+      "Edit(research/coordination/lane_builds.jsonl)",
+      "Edit(research/coordination/**.jsonl)",
+      "Edit(research/queue/pool.queue)",
+      "Edit(research/queue/gpu.queue)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/tools/local_llm/hooks/deny_protected_edits.sh"
+          }
+        ]
+      }
     ]
   }
 }
