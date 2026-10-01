@@ -69,7 +69,7 @@ _DEFAULT_SEED = 42
 # tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
 # reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one reader of
 # BRAIN_FALSE_BELIEF_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
-_FALSE_BELIEF_CHAT_DEFAULT_ON = False
+_FALSE_BELIEF_CHAT_DEFAULT_ON = True
 _ON = ("1", "true", "on", "yes")
 _OFF = ("0", "false", "no", "off", "")
 

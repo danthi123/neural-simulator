@@ -178,6 +178,15 @@ rows:
     de_risked: YES
     wired: YES                  # 2026-08-12 INTEGRATION #1: substrate-first recall + honest abstain on /api/brain-chat
     on_by_default: YES          # default gate behavior; probe CHOOSE True + lesion-load-bearing
+    # >>> iw2-flip:neural-selfid
+    subflag_flip_iw2_neural_selfid: "BRAIN_NEURAL_SELFID flipped default-ON alone (integration wave 2; BRAIN_NEURAL_ANAPHORA_ABSTAIN stays OFF): a self-referential factual question ('what do you use?') goes through the on-brain BridgeParser and the substrate recall like any other factual question, and a bare identity question is answered by the substrate recall, so the host QuestionRouter no longer owns self/identity. The noisy-anaphora fallback is still host-owned. Explicit =0 is the escape. Validation per the prereg; LBF row neural-selfid joins the headline registry. (2026-10-01; prereg research/findings/2026-09-30-iw2-neural-selfid-flip-PREREGISTRATION.md)"
+    default_anchor:
+      - file: research/runners/brain_chat_tui.py
+        assign: _NEURAL_SELFID_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
+    # <<< iw2-flip:neural-selfid
     scaffold_retired: PARTIAL   # 2026-08-12 #1 CHOOSE: the question->(agent,action) PARSE is now NEURAL (on-brain BridgeParser role_of) + AUTHORITATIVE for factual-SVO questions -> the host QuestionRouter is RETIRED for them (a declined/lesioned parse ABSTAINS, no keyword-confab). Router still handles self/identity + the anaphora fallback.
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host QuestionRouter still routes self/identity + noisy-anaphora; neural comprehension of those + the neural language surface (neural-render) not GO.
     retire_status: "BLOCKED:neural-render"
@@ -690,11 +699,21 @@ rows:
     de_risked: "YES"            # 6/6-seed live GO, adversarially verified (finding 2026-08-19-gnw-multistep-reentrant-deliberation-GO): reentrant_acc 1.00 (variable depth L in {1,2,3,4}, depth NOT told) vs single-pass 0.25; workspace-silence LESION 0.00 while the 1-hop reflex 1.00 (full dissociation); DIFFICULTY-GRADED (spearman(resolved_hops, depth)=1.00, no halt at H_cap). Runner _gnw_multistep_reentrant_deliberation_derisk.py; keystone offline _gnw_reentrant_metacog_gated_deliberation_derisk.py.
     wired: "YES"                # 2026-08-19 T1-1 rung d: webapp/server.py brain_chat installs webapp/gnw_multistep_deliberation.install_multistep_gate on the ChatBrain (AFTER install_deliberation_gate) -> on a chase-form question the wrapper strips the marker, runs the UNCHANGED inner gate for (agent, action) + first hop ONCE, then drives confidence_gated_chase on the LIVE composer + the SHARED P1.2 workspace; the emergent cycle count is the substrate's n_ignited read. reuse-by-import of _gnw_reentrant_metacog_gated_deliberation_derisk + _p1_2_workspace_deliberation_loop_derisk (NO sim/ edit). Verified numpy-CPU through the REAL production ChatBrain + handler.
     on_by_default: "YES"        # 2026-08-19 PRODUCTION-DEFAULT FLIP (board #68): _GNW_MULTISTEP_DEFAULT_ON=True installs the gate by default + multistep_enabled() default-ON; BRAIN_GNW_MULTISTEP=0 -> the installed wrapper is a pure PASS-THROUGH (returns the inner gate's svo untouched) -> byte-identical to the pre-flip default. Additive + moat-safe: only an explicit chase-FORM question can change the outcome (ADD the chain terminal); every non-chase turn is byte-identical (the wrapper is inert without a chase marker). Verified through the REAL handler: default-ON chase -> terminal 'munt'; =0 -> first-hop 'blib' byte-identical to pre-flip; LESION -> abstain; non-chase panel md5 identical across all arms.
+    # >>> iw2-flip:transitive-chat
+    subflag_flip_iw2_transitive_chat: "BRAIN_TRANSITIVE_CHAT flipped default-ON (integration wave 2): a yes/no question about a never-told non-adjacent pair ('does A precede D?') is answered by the keystone re-entrant chase this row already runs (the substrate's own n_ignited read decides each hop), with an honest abstain when the chase does not reach the target. Host residuals: the question-shape regex and the yes/no template. Explicit =0 is the escape. Validation per the prereg; LBF row reasoning-transitive-chat joins the headline registry. (2026-10-01; prereg research/findings/2026-09-30-iw2-transitive-chat-flip-PREREGISTRATION.md)"
+    # <<< iw2-flip:transitive-chat
     scaffold_retired: "NO"      # declared residuals (unchanged by the flip; SAME boundaries as the single-hop gnw-deliberation): (1) the chase-form DETECT + the (agent, action) EXTRACT are host comprehension of the teacher/world utterance (the boundary the SVO question parser occupies); (2) PROPOSE is composer.query_patient (the declared modular-processor boundary — the composer's unbind SPIKES do not yet directly drive the workspace slots in ONE merged bridge; rides the one-brain merge #1); (3) PER-HOP-RESET form only (snapshot-restore wash-out; the continuous no-reset train-of-thought is gated on the unbuilt async attractor); (4) CO-RESIDENT on the SHARED P1.2 workspace bridge (not merged with the recall composer's bridge). The load-bearing spiking part — the whole novelty — is the CYCLE COUNT / when-to-halt as a spiking n_ignited read (off cp_firing_states) replacing the host query_chain counter.
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host chase-form detect + extract; per-hop-reset only -> a continuous async train-of-thought attractor UNBUILT (the frontier), surfaced via the neural language mouth.
     retire_status: "BLOCKED:neural-render"
     host_scaffold_in_default: "the chase-form DETECT + (agent, action) EXTRACT are host comprehension of the teacher/world utterance (the SVO-parser boundary); PROPOSE is composer.query_patient (the declared modular-processor boundary, read-only unbind); per-hop-reset form only (the continuous train-of-thought is deferred on the unbuilt async attractor); the organ runs on its own co-resident P1.2 workspace bridge — the load-bearing spiking part is the workspace re-entrant WTA ignition + the n_ignited read + the acc_conflict_gate deciding ADVANCE-vs-COMMIT-vs-ABSTAIN (the emergent cycle count)"
     default_anchor:
+      # >>> iw2-flip:transitive-chat
+      - file: webapp/reasoning_transitive_chat.py
+        assign: _TRANSITIVE_CHAT_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
+      # <<< iw2-flip:transitive-chat
       - file: webapp/server.py
         assign: _GNW_MULTISTEP_DEFAULT_ON
         off_value: "False"
@@ -948,11 +967,21 @@ rows:
     de_risked: YES              # 6/6-seed GO de-risk for the OTHER-tagged P0.3 affect region (dissociable egocentric|incongruent=0.000 vs other|incongruent=1.000 dissociation). Reused-by-import, NO sim/ edit.
     wired: YES                  # 2026-08-26 wire-in (2026-08-26-W5-affective-tom-production-wirein-GO.md): research/runners/affective_tom_production_organ.py (affective_tom_enabled/affective_tom_off/affective_tom_lesioned) + webapp/server.py brain_chat >>> W5 AFFECTIVE ToM block (_affective_tom_on(), _AFFECTIVE_TOM_DEFAULT_ON anchor) prepends the empathic lead OUTERMOST on a triggered other-agent turn; content fields (abstained/recalled_svo/verified) stay byte-identical throughout.
     on_by_default: YES          # FLIPPED default-ON 2026-08-26 (wave 1/2 flip): _AFFECTIVE_TOM_DEFAULT_ON=True. Re-ran the 6-seed no-regression/load-bearing soak in this session (research/runners/_affective_tom_flip_soak.py --seeds 42 43 44 100 101 102, numpy, through the REAL webapp.server.brain_chat handler with the other default-ON drive faculties silenced for isolation) -- 6/6 GO, seeds=[42,43,44,100,101,102] (research/findings/raw/_affective_tom_prodflip/soak_summary_6seed.json, n_go=6, go=[True]*6). BRAIN_AFFECTIVE_TOM=0 is the byte-identical escape. GRADED-UPGRADE SUB-FLAG (board #198) ALSO FLIPPED default-ON 2026-09-01 (BRAIN_AFFECTIVE_TOM_GRADED unset -> ON, =0 opts out): the OTHER-model read now uses the #81 Koulakov 7-tier graded valence x arousal ladder instead of the bistable valence-SIGN. Full-brain HANDLER soak 6/6 GO (research/runners/_affective_tom_graded_flip_soak.py --seeds 42 43 44 100 101 102: ordinary_identical + triggered_content_identical + lesion_collapsed all True every seed, research/findings/raw/_affective_tom_graded/flip_soak_summary_6seed.json); byte-identical/off-lesion unchanged (graded module not imported when off). Honest residual: single-word appraisals realize only 2-3 of the 7 tiers (Warriner strong-affect gate); a third co-resident affect bridge now exists (one-brain affect-merge follow-on).
+    # >>> iw2-flip:false-belief-chat
+    subflag_flip_iw2_false_belief_chat: "BRAIN_FALSE_BELIEF_CHAT flipped default-ON (integration wave 2): a narrated change-of-location scenario (Sally-Anne) is folded onto the W3 agent-keyed false-belief register and 'where will <agent> look for the <object>?' is answered off the register's witnessing-gated belief store (the stale location when the agent did not see the move). Cognitive (false-belief) theory of mind, recorded under this ToM row as a sub-rung: the ledger has no separate cognitive-ToM row. Host residuals: witnessing/presence parse and the belief-location argmax. Explicit =0 is the escape. Validation per the prereg; LBF row tom-false-belief joins the headline registry. (2026-10-01; prereg research/findings/2026-09-30-iw2-false-belief-chat-flip-PREREGISTRATION.md)"
+    # <<< iw2-flip:false-belief-chat
     scaffold_retired: NO        # host residual: the message -> ANOTHER-agent-situation trigger + valence extraction (which turns are 'about another agent' and whether their situation reads good/bad) is a host comprehension boundary supplying the OTHER region's afferent context, mirroring the #84/#79 pattern (the DA LEVEL / valence VALUE is the brain's own read; the linguistic trigger detection is host). The empathic-expression STRING (comfort vs share-joy template) is a host conditioned-articulation scaffold DRIVEN by the neural tone read (owner-sanctioned articulation crutch, per feedback_scaffold_ok_as_conditioned_articulation_if_faculties_load_bearing).
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host other-agent-situation trigger + valence extraction + tone->EXPRESSION-STRING template -> comprehension + articulation not GO.
     retire_status: "BLOCKED:neural-render"
     host_scaffold_in_default: "the other-agent-situation trigger detection + good/bad valence extraction from the message text is host comprehension; the tone->EXPRESSION-STRING map (comfort/share-joy) is a host conditioned-articulation template driven by the neural OTHER-region read; the OTHER affect region runs on its own co-resident bridge (not yet merged with the recall composer bridge)."
     default_anchor:
+      # >>> iw2-flip:false-belief-chat
+      - file: webapp/false_belief_chat.py
+        assign: _FALSE_BELIEF_CHAT_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
+      # <<< iw2-flip:false-belief-chat
       - file: webapp/server.py
         assign: _AFFECTIVE_TOM_DEFAULT_ON
         off_value: "False"

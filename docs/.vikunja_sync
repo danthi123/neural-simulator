@@ -240,3 +240,8 @@ Added 4 roadmap tasks for "prove who owns the computation" (host-decision share,
   landing, no research capability status changed; docs synced in the same commit (CLAUDE.md, GAP_CLOSURE_MISSION.md,
   ROADMAP.md, docs/LOCAL_MODEL_GUIDE.md, research/coordination/LOCAL_LLM_RUNBOOK.md v4).
 ## 2026-10-01  phantom-cfg config-field audit (T17): no board task needed (housekeeping audit, no capability status changed); AFFECTED.md lists the fix-up work.
+
+## 2026-10-01  integration-wave2 provisional flip (board_sync gate)
+- append-desc notes on #232 (false-belief in chat), #141 (reasoning across
+  connected facts), #209 (self-identity routing, rank-13): ON by default in the
+  test branch only, validation pending; no task closed by the provisional flip.
