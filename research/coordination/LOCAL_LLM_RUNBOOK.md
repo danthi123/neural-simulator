@@ -38,7 +38,7 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 
 - `$P` stays on `main` (live services run from it). Packet work: the packet's worktree. Your own builds:
   `$WT/draft-<topic>` on `research/draft-<topic>`, dev seeds only (7, 1-15).
-- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
+- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`) and main into your own branch through `tools/agent_sync_branch.sh` (RULING `sync-branch`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
   files, ledgers); delete data; touch AWS; edit `sim/`, `webapp/`, `tools/gates/`; flip a default on main; change a
   prereg, bar, arm, seed list, scorer or job line (except adding `max_age_h`). Gate seeds (42/43/44/100/101/102) run
   only through lines a HANDOFF registers. Scripted exceptions: the iw1/iw2 flip commit on the packet branch (owner
@@ -351,14 +351,13 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
   dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
-  on a `research/*` branch that you created from `main` (an older branch needs Claude to merge main into it first; you
-  cannot merge), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
+  on a `research/*` branch that you created from `main` (for an older branch, run `bash tools/agent_sync_branch.sh research/<branch>` first), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
   $P/research/queue/provision.req && touch $P/research/queue/provision.req/$(git rev-parse <branch>)`. Read the result
   in `/opt/host-status/sim-provision/<sha>.json` (`state`, `reason`, `hint`; the server checks every 5 minutes). `ok`
   or `already`: queue your pool lines. `queued`, `waiting`, `running` or `deferred`, or `failed` with a
   `next_retry_utc`: wait, the server retries by itself. `refused`: read `reason`/`hint` and fix it if it is yours (for
   example, the sha is not on a `research/*` branch). NEEDS-CLAUDE when the result is `blocked`, `refused` over
-  `tools/pool/provisioning/` or published main, `failed` with no `next_retry_utc`, or when no result file appears
+  `tools/pool/provisioning/`, `failed` with no `next_retry_utc`, or when no result file appears
   within 15 minutes. GPU work still goes to the workstation (`bash tools/gpu_remote.sh add '<line>'`). Never fall back
   to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
   `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
@@ -366,7 +365,19 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
 
-- gate-stale: (2026-10-01) Claude merged main into research/b2d-mouth-renderer, draft-seam-map, integration-wave2, conductance-overshoot-guard, integration-wave1 and sleep-transitive-inference; the files you had staged are still staged, so commit again. When a gate fails because a branch carries an old copy of a tool, write NEEDS-CLAUDE for a main merge (you cannot merge). (2026-10-01)
+- sync-branch: (owner 2026-10-01) When your branch carries an old copy of something main has since fixed (a gate fails
+  on a tool main already fixed, provisioning is `refused` for published main, or the GPU queue's stale-revision guard
+  refuses), bring main into it yourself: in `$P`, `bash tools/agent_sync_branch.sh research/<branch>`. It only ever
+  merges main INTO a research branch, runs every gate on the result, keeps your staged files staged, takes main's
+  runbook and keeps both sides' FAILURE_LOG rows. Exit 2 means it refused: NEEDS-CLAUDE with its message. Never edit
+  `tools/agent_*`. (2026-10-01)
+
+- results-without-pass: (owner 2026-10-01) A RESULT that is not a PASS or GO (a NO-GO, an UNDEFINED, an audit, a
+  triage) does not wait for Claude. Write it up as a new PROVISIONAL finding, merge it per RULING `routine-merges`,
+  then take the next method it points to and keep going (no-defer: a NO-GO retires a method, never the capability; run
+  `before_you_build` first). Only what section 2 reserves waits for Claude (a prereg, a bar, a scorer, a seed list,
+  `sim/` code, a default flip, an edit to an existing finding, confirming a PASS): put that on ONE NEEDS-CLAUDE line
+  and move on to other work. (2026-10-01)
 
 - routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
   only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
@@ -377,7 +388,11 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   to find a reason not to merge; merge only if both approve, and quote both in the WORKLOG. A new finding stays
   PROVISIONAL until a Claude check-in confirms it. A refusal or a failed gate: NEEDS-CLAUDE "[<task>] merge
   research/<branch> @ <sha>: <the refusal>; unblocks <what>". Never edit `tools/agent_merge*` or run `git merge`
-  yourself. (2026-10-01)
+  yourself. When it refuses only for something on your own branch, fix that on the branch and run it again: a new
+  finding without PROVISIONAL, add the word; a `research/coordination/` file, commit those lines on main directly,
+  then on the branch `git checkout main -- <file>` and commit. Draft data files (`.txt`, `.csv`, `.tsv`, `.json` under
+  `docs/drafts/`) and run-ledger lines that only append (`research/findings/raw/_provenance/*.jsonl`) are routine.
+  `research/draft-phantom-cfg` already passes the policy: merge it. (2026-10-01)
 
 ## NEEDS CLAUDE
 

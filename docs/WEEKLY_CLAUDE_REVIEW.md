@@ -13,8 +13,8 @@ budget runs low; the items are ranked by what they unblock.
    evidence. Merge what is Claude's (anything `tools/agent_merge.sh` refuses). If a branch's gates are stale, merge
    main into it first. Write rulings as `- <KEY>: <ruling> (<date>)` in runbook section 6, and delete handled lines.
 4. **Any PASS or GO:** run the verify-go skill before it touches main or the board.
-5. **Draft results (runbook section 5):** promote a good one to a preregistered gate-seed packet, or rule it closed.
-6. **Pool provisioning:** the server provisions by itself (`sim-provision`, results in `/opt/host-status/sim-provision/`). Act only on Hermes's NEEDS-CLAUDE: merge main into an old branch, or re-pin the runtime when a change touches `tools/pool/provisioning/` or the pool provisioning helpers (OWNERSHIP-MAP section 11).
+5. **PROVISIONAL findings Hermes merged** (RULINGs `routine-merges`, `results-without-pass`): confirm or retract each one, and check the next method Hermes chose. **Draft results (runbook section 5):** promote a good one to a preregistered gate-seed packet, or rule it closed.
+6. **Pool provisioning:** the server provisions by itself (`sim-provision`, results in `/opt/host-status/sim-provision/`). Act only on Hermes's NEEDS-CLAUDE: a branch `tools/agent_sync_branch.sh` refused (Hermes brings main into its own branches itself), or re-pin the runtime when a change touches `tools/pool/provisioning/` or the pool provisioning helpers (OWNERSHIP-MAP section 11).
 7. **Spend:** OpenRouter `usage_daily` against the $6.66/day cap, and the key's $100 total limit.
 8. **Resume Hermes** (`hermes cron resume sim-driver`), then bring W's main level with S (below).
 

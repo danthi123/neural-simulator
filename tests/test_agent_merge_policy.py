@@ -134,3 +134,15 @@ def test_staged_backstop_allows_coordination_but_not_code():
     assert policy.reason_reserved("M", "research/coordination/LOCAL_LLM_RUNBOOK.md", lambda p: "", staged=True) is None
     assert policy.reason_reserved("M", "research/coordination/LOCAL_LLM_RUNBOOK.md", lambda p: "") is not None
     assert policy.reason_reserved("M", "sim/core.py", lambda p: "", staged=True) is not None
+
+
+def test_draft_data_files_and_append_only_ledger_are_routine():
+    assert _reserved("A", "docs/drafts/x/grouped-first-error-lines.txt") is None
+    assert _reserved("M", "docs/drafts/x/cells.csv") is None
+    assert _reserved("A", "docs/drafts/x/run.sh") is not None
+    led = "research/findings/raw/_provenance/runs.jsonl"
+    grow = lambda p: '{"a":1}\n{"b":2}\n'
+    assert policy.reason_reserved("M", led, grow, old=lambda p: '{"a":1}\n') is None
+    assert policy.reason_reserved("M", led, grow, old=lambda p: '{"z":0}\n') is not None   # a rewrite
+    assert policy.reason_reserved("M", led, grow) is not None                                 # unprovable
+    assert policy.reason_reserved("A", "research/findings/raw/_provenance/new.jsonl", grow, old=lambda p: "") is not None
