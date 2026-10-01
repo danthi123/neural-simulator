@@ -12,11 +12,14 @@ start of every session; after a compaction read only sections 2-3, your task in 
 WORKLOG. Each task links a packet HANDOFF: read only the section you execute. The HANDOFF governs its commands and
 tables; this runbook governs order, permissions, `max_age_h`, verdicts, NEEDS-CLAUDE and where results go.
 Set in every Bash call that uses them: `P=/home/dant123/Projects/neural-simulator; PY=$P/.venv/bin/python;
-WT=$P/.claude/worktrees`. **Caveat (2026-09-30):** the packet worktrees section 4 names under `$WT` were built
-before today's move and were deliberately left on the workstation, not copied to S (migration plan prep item 7) —
-read an existing `$WT/<packet>` path at `/home/dant123/Projects/sim/.claude/worktrees/<packet>` until it is
-recreated on S; committed files under `$P/research/findings/raw/...` are the same on both checkouts once
-`sim-sync.timer` has run. "#n" = the HANDOFF's NEEDS-CLAUDE item n.
+WT=$P/.claude/worktrees`. **Work only on S (2026-10-01, replaces the 09-30 caveat).** Every packet branch is on S:
+a local `research/<packet>` branch, else `origin/research/<packet>`. If `$WT/<packet>` is missing, create it with
+`git worktree add $WT/<packet> research/<packet>` (or `git worktree add -b research/<packet> $WT/<packet>
+origin/research/<packet>`). Never read, edit or commit in the workstation's checkout (`/home/dant123/Projects/sim`,
+reached over ssh): commits there are invisible here and to the inspector. Queue GPU jobs only with `bash
+tools/gpu_remote.sh add` from a clean, committed `$WT/<packet>` (section 3); a `/home/dant123/Projects/sim/...` path
+in an older task line means the same packet under `$WT`. Committed files under `$P/research/findings/raw/...` arrive
+from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's NEEDS-CLAUDE item n.
 
 ## 1. Every session
 
@@ -46,7 +49,8 @@ recreated on S; committed files under `$P/research/findings/raw/...` are the sam
 - A command that asks for permission while the owner is away (always so in a headless resume): skip it, WORKLOG it,
   continue elsewhere.
 - Never run `tests/test_game_pause_resume.py` (it kills live GPU jobs). One fix round per issue; a second failure is
-  a STOP. Heavy local runs: `bash tools/mem_ok.sh <gb>` first, then `bash tools/memcap.sh <gb> -- ...`.
+  a STOP. S is not a compute node (RULING `compute-placement`); a short run here still goes under `bash
+  tools/mem_ok.sh <gb>`, then `bash tools/memcap.sh <gb> -- ...`.
 - Context: `grep -n` first, then Read at most 120 lines; never a whole source file or HANDOFF; never re-read a file
   you are writing (append; `tail -n 20`); pipe output through `head -40` / `cut -c1-200`.
 
@@ -200,11 +204,12 @@ WORKLOG, the data commit, RESULT; the finding prose is Claude's (#7-#9).
 research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md` = 0. Append the quoted block of T5's HANDOFF
 ("Separate staged work", second bullet) without the leading `> `; Markdown commit; push `research/draft-seam-map`.
 
-**T13. Conductance-overshoot guard.** `$WT/conductance-overshoot-guard` (5 files staged 09-29, never committed).
-`SIM_BACKEND=numpy $PY -m pytest -q tests/test_bounded_conductance_integration.py` (4 passed); `git commit -m
-"feat(engine): enable_bounded_conductance_integration (default off), bounded conductance currents, off path
-byte-identical"`; push; `bash tools/local_llm/gpu_add.sh 'cd /home/dant123/Projects/sim/.claude/worktrees/conductance-overshoot-guard && SIM_BACKEND=cupy /home/dant123/Projects/sim/.venv/bin/python -m pytest -q tests/test_bounded_conductance_integration.py'`;
-run it in your next yield; rc from `gpu_queue.log` into its WORKLOG; INFO line.
+**T13. Conductance-overshoot guard.** Branch `research/conductance-overshoot-guard` (on S since 10-01; make
+`$WT/conductance-overshoot-guard` from it). The first cupy run failed 3/4 in the test file, not the feature (NumPy
+conversion of CuPy arrays); Claude fixed the test (9e8edbec1) and queued the cupy re-run on the workstation 10-01
+12:40. Start: `bash tools/gpu_remote.sh log 400` shows a `DONE(rc=` line for `test_bounded_conductance_integration.py`
+after 2026-10-01 12:40. Write its rc and pass count in the WORKLOG; rc=0: RESULT line "ready to merge"; rc!=0: STOP
+line with the failing test names.
 
 **T14. Stage-2 dev arms.** When 8 new files land in `$P/research/findings/raw/_stage2_exit/dev/s7/` (or their
 `max_age_h=24` lines expire): INFO line. The gate is queued 11-03..11-10, never before 11-01
@@ -303,6 +308,41 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   (homelab, 2026-10-01). Run any test run longer than a few minutes under `nice -n 10`, one at a time, and never start a
   full suite while another is running; prefer the test files a change touches over the whole suite. (2026-10-01)
 
+- work-on-S: you committed T3 (f18da9f8f) and T13 (91608ce47) in the workstation's checkout because this runbook's
+  header and T13 text told you to; that was the runbook's error, not yours. Both branches are now on S; the header now
+  says work only on S. Judgment that section 2 does not reserve (a verdict on results, a design proposal, an ASK) goes
+  to one MiMo Pro delegate per RULING `models`, not to NEEDS-CLAUDE. (2026-10-01)
+
+- T1-stop2: main is merged into `research/long-delay-credit-spiking` (0b935bec7), so its biology gate has the fix.
+  Your 488 staged sweep files were unstaged for the merge and re-staged byte-identical (checked); commit the bank as
+  the HANDOFF says, then continue to Step 4a. (2026-10-01)
+
+- T0-identity: the 2 missing iw2 identity lines (`--arm default`, `--arm off`, revision 573a943) were claimed just
+  before the 09-30 20:31 dispatcher restart, which killed them; Claude re-queued both at the queue head 10-01 12:50.
+  T2 starts when 5/5 identity files are in `_iw2/identity/573a943/`. (2026-10-01)
+
+- verify-go: (owner-approved 2026-10-01) the project's `verify-go` skill is now one of your skills (read-only; the
+  other project skills are disabled for you). Before you write any line that reports a PASS, a GO, or that something
+  works, load it (`skill_view verify-go`) and give the result to TWO independent MiMo Pro delegates, each told to run
+  the skill's checks and try to refute the claim; quote both answers in the WORKLOG. If either finds a problem or
+  they disagree, write a STOP line instead of the PASS. Where the skill names a Claude-only tool, do the check by
+  hand and say so. A PASS still goes to Claude to confirm. (2026-10-01)
+
+- owner-merges: the owner now opens the Claude sessions for merges and rulings, prompted by the report's "Claude
+  check-in" line (due once a NEEDS-CLAUDE line is 72 h old). Make every NEEDS-CLAUDE line self-contained so it can be
+  pasted as is: the branch @ sha, what to merge or rule, and what it unblocks. (2026-10-01)
+
+- compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
+  in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
+  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). For a draft build on the pool:
+  commit the draft branch; `bash tools/gpu_remote.sh provision <sha>` (ships the commit, provisions the pool nodes);
+  then one `bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<sha> && bash tools/mem_ok.sh <gb> 1 && bash
+  tools/memcap.sh <gb+2> -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.<runner>
+  ... --out research/findings/raw/<dir>/<cell>.json' --checked '<task>: <why>; dev seeds; mem_gb=<gb> ;
+  max_age_h=48'` per cell, dev seeds only. Results arrive in `$P/research/findings/raw/` through `sim-sync.timer`, not
+  in your worktree. A refusal or a failed provision is a STOP. The Step 4a grid already running on S (started 10-01
+  14:47) may finish there; the next run goes out. (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
@@ -311,7 +351,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-01 04:05 [T3] RESULT #8: sleep-TI 6-seed gate family UNDEFINED: 4 NO-GO (STI7 false 43/44/100/102; STI3b false 43/44/102) + 2 U6-UNDEFINED (42/101 wperm invalid); pm UNDEFINED. Finding+16 files on research/sleep-transitive-inference @ f18da9f8f. U6 -> prereg s10. Hands back.
 - 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
-- 2026-10-01 05:31 [T1] STOP #2: bank commit blocked by stale biology gate on the LDC branch @ bab667eb7 (predates fix da0e80669; worktree gate misses ~/Projects/sim-catalog, 101 UNRESOLVED; OK from main). Merge DENIED. Ask: merge main or cherry-pick da0e80669 in. Blocks: T1 bank + Step 4a.
 - 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
-- 2026-10-01 06:40 [T0] ASK: pool-hold _iw2/identity (T2 Start 3/5): queued=0 running=0; claims show identity lines claimed at writing; nodes hold only the 3 results already on S (none in transit); 2 identity results never produced. Ask: re-queue the 2 missing iw2 identity lines. Blocks: T2.
-- 2026-10-01 07:22 [T13] INFO: conductance-overshoot-guard committed research/conductance-overshoot-guard @ 91608ce47 (5 files, gates passed; numpy 4/4). cupy test queued via gpu_add.sh (GPU busy); rc pending, into WORKLOG next yield. No push (push-credential ruling); branch ready for Claude review.
+- 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
