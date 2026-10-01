@@ -297,3 +297,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-01 04:05 [T3] RESULT #8: sleep-TI 6-seed gate family UNDEFINED: 4 NO-GO (STI7 false 43/44/100/102; STI3b false 43/44/102) + 2 U6-UNDEFINED (42/101 wperm invalid); pm UNDEFINED. Finding+16 files on research/sleep-transitive-inference @ f18da9f8f. U6 -> prereg s10. Hands back.
