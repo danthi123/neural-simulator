@@ -149,6 +149,8 @@ def audit(transcript_path, run_dir):
         for path in re.findall(r"(/[A-Za-z0-9_.-]+(?:/[^\s'\"`;|&)<>]*)?)", text):
             if not path.startswith(LEAKY_ROOTS) or path.startswith(run_dir) or path.startswith(ALLOWED_OUTSIDE):
                 continue
+            if run_dir.startswith(path.rstrip("/") + "/"):
+                continue   # an ancestor of the run's own dir (e.g. `ls -ld /bk/runs`): names no other run's files
             flags.append("outside: " + path[:160])
     return sorted(set(flags)), sorted(set(warns))[:20]
 

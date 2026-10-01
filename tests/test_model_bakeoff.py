@@ -64,6 +64,7 @@ def test_audit_allows_hermes_scratch_and_the_empty_opt_data(tmp_path):
     t = _transcript(tmp_path, [
         ("write_file", {"path": "/bk/home/cache/scratch/probe_lane.py", "content": "print(1)"}),
         ("terminal", {"command": "touch /opt/data/.probe_write_test 2>&1; ls -ld /opt/data"}),
+        ("terminal", {"command": "ls -ld /bk /bk/runs; readlink -f ."}),   # ancestors of the run's own dir
     ])
     flags, _ = r.audit(t, RUN_DIR)
     assert flags == [], flags
