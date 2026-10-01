@@ -11,9 +11,11 @@ any PASS. `tools/agent_merge.sh` runs this check before it merges; anything not 
 (with <sha>, that exact commit is checked -- agent_merge.sh pins the commit it then merges)
 
 Routine (everything else, and every deletion or rename, is reserved):
-  research/findings/raw/**              NEW results files only (an edit would rewrite evidence); never _provenance/
+  research/findings/raw/**              NEW results files only (an edit would rewrite evidence); _provenance/ below
   **/*WORKLOG*.md                        worklogs: add or modify
-  docs/drafts/**/*.md                    draft docs: add or modify, except HANDOFF.md and *PREREG* (Claude's)
+  docs/drafts/**/*.{md,txt,csv,tsv,json} draft docs and their data: add or modify, except HANDOFF.md and *PREREG*
+  research/findings/raw/_provenance/*.jsonl  the run ledger: APPEND-ONLY growth of an existing ledger (2026-10-01)
+  docs/.vikunja_sync                     the board-sync stamp: APPEND-ONLY (after a vikunja-skill board sync)
   tests/test_*.py                        NEW test files only (editing an existing test could weaken it)
   research/findings/*.md                 NEW findings only, and only if the file says PROVISIONAL; never *PREREG*
   research/runners/_*.py                 NEW draft runner copies only (underscore-prefixed); never an edit
@@ -32,28 +34,36 @@ def _is_prereg(path: str) -> bool:
 
 
 def reason_reserved(status: str, path: str, content: Callable[[str], str], mode: str = "100644",
-                    staged: bool = False) -> str | None:
+                    staged: bool = False, old: Callable[[str], str] | None = None) -> str | None:
     """None if the change is routine, else why it is reserved. `status` is git's status letter (A, M, D, R...),
     `mode` the destination file mode. `staged` = a direct commit on main (the pre-commit backstop), where the
-    coordination files the runbook has the agent edit on main are allowed."""
+    coordination files the runbook has the agent edit on main are allowed. `old` reads the path before the change;
+    without it an append-only ledger change cannot be proven and stays reserved."""
     name = path.rsplit("/", 1)[-1]
     if status not in ("A", "M"):
         return f"{status}: only additions and modifications are routine (no delete, rename, copy or type change)"
     if mode not in ("100644", "100755"):
         return f"mode {mode}: only plain files are routine (no symlink or submodule)"
+    if path == "docs/.vikunja_sync":   # the board-sync stamp the vikunja-freshness gate reads (owner 2026-10-01)
+        if status == "M" and old is not None and content(path).startswith(old(path)):
+            return None
+        return "the board-sync stamp may only grow by appended lines"
     if staged and path.startswith("research/coordination/"):
         return None
     if _is_prereg(path):
         return "a preregistration is Claude's"
     if path.startswith("research/findings/raw/"):
         if path.startswith("research/findings/raw/_provenance/"):
-            return "the provenance ledger is never merged by the agent"
+            if status == "M" and name.endswith(".jsonl") and path.count("/") == 4 and old is not None \
+                    and content(path).startswith(old(path)):
+                return None
+            return "the provenance ledger may only grow by appended lines (no new ledger, no rewrite)"
         return None if status == "A" else "editing an existing results file would rewrite evidence"
     if path.startswith("research/coordination/"):
         return "coordination files are edited on main (several are gate inputs), never merged"
     if fnmatch.fnmatch(name, "*WORKLOG*.md"):
         return None
-    if path.startswith("docs/drafts/") and name.endswith(".md"):
+    if path.startswith("docs/drafts/") and name.rsplit(".", 1)[-1] in ("md", "txt", "csv", "tsv", "json"):
         return "a HANDOFF is Claude's" if name == "HANDOFF.md" else None
     if path.startswith("tests/") and path.count("/") == 1 and fnmatch.fnmatch(name, "test_*.py"):
         return None if status == "A" else "editing an existing test is reserved"
@@ -66,11 +76,12 @@ def reason_reserved(status: str, path: str, content: Callable[[str], str], mode:
     return "outside the routine classes"
 
 
-def reserved_changes(changes: Iterable[tuple], content: Callable[[str], str], staged: bool = False) -> list[tuple[str, str]]:
+def reserved_changes(changes: Iterable[tuple], content: Callable[[str], str], staged: bool = False,
+                     old: Callable[[str], str] | None = None) -> list[tuple[str, str]]:
     """`changes` holds (status, path) or (status, path, dst_mode) tuples."""
     out = []
     for status, path, *mode in changes:
-        why = reason_reserved(status, path, content, mode[0] if mode else "100644", staged)
+        why = reason_reserved(status, path, content, mode[0] if mode else "100644", staged, old)
         if why:
             out.append((path, why))
     return out
@@ -103,7 +114,8 @@ def staged_changes() -> list[tuple[str, str, str]]:
 
 def main(argv: list[str]) -> int:
     if argv[1:] == ["--staged"]:   # the pre-commit backstop: the agent's commits on main, merges included
-        bad = reserved_changes(staged_changes(), lambda p: _git("show", f":{p}"), staged=True)
+        bad = reserved_changes(staged_changes(), lambda p: _git("show", f":{p}"), staged=True,
+                               old=lambda p: _git("show", f"HEAD:{p}"))
         if bad:
             print(f"⛔ agent commit on main touches {len(bad)} reserved path(s); that change is Claude's:")
             for path, why in bad[:40]:
@@ -119,7 +131,8 @@ def main(argv: list[str]) -> int:
     if not changes:
         print(f"agent-merge policy: {branch} has no changes against main")
         return 1
-    bad = reserved_changes(changes, lambda p: _git("show", f"{rev}:{p}"))
+    base = _git("merge-base", "refs/heads/main", rev).strip()
+    bad = reserved_changes(changes, lambda p: _git("show", f"{rev}:{p}"), old=lambda p: _git("show", f"{base}:{p}"))
     if bad:
         print(f"⛔ agent-merge policy: {branch} touches {len(bad)} reserved path(s); this merge is Claude's:")
         for path, why in bad[:40]:

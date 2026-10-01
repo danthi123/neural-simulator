@@ -167,7 +167,7 @@ def build_adex_from_real(extract, seed, *, b_override, ou_sigma, dt):
     cfg.stdp_a_plus = 0.0; cfg.stdp_a_minus = 0.0
     cfg.stdp_tau_plus_ms = 20.0; cfg.stdp_tau_minus_ms = 20.0
     cfg.stdp_w_min = 0.0; cfg.stdp_w_max = 900.0
-    cfg.enable_ou_process = ou_sigma > 0; cfg.ou_noise_sigma_pa = float(ou_sigma)
+    cfg.enable_ou_process = ou_sigma > 0; cfg.ou_std_current_pA = float(ou_sigma)  # T15: was ou_noise_sigma_pa (phantom field the engine never read; it reads ou_std_current_pA)
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)

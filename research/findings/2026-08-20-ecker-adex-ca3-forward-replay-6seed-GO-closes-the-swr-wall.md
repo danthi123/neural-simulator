@@ -60,3 +60,7 @@ untargeted-noise/afferent D5 transfer AND the brain-pure sleep-replay store were
 band by STDP instead of hand-wiring (the emergence version); (b) wire this discrete-forward-replay reactivation into the
 D5 episodic organ (the learn-through-use transfer) and the spiking-CA3 sleep-replay store (the brain-pure consolidation).
 Not wired live. (Agent-built; parent verified the 6/6 verdict + the reverse-asym-lesion collapse from the artifact.)
+
+## Correction (PROVISIONAL, local model) — 2026-09-30
+
+T15 (Ecker CA3 OU-noise field): the runner `_gap5_ecker_adex_ca3_replay_derisk` set `cfg.ou_noise_sigma_pa` (40 pA), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA, `sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** stated. The runner now sets `ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

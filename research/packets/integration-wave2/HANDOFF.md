@@ -374,8 +374,12 @@ Verdict: SOUND-WITH-ISSUES. Two defects fixed on the branch (commit bb149f522, e
 
 1. Adversarial review (verify-go) of each flip that passes, then the merge of `research/integration-wave2` to main.
    The flip bar's review leg is Claude's, not the local model's.
+   RULED 2026-10-01 (runbook `iw2-verify-go`): the step-R review is done; the PASSes hold, and the claim is bounded by
+   the sentences that ruling fixes for section 11. The merge review stays open until B and F read PASS.
 2. Ledger placement: false-belief chat is recorded as a sub-rung of `w5-affective-tom` (the only ToM row; that row is
    affective ToM). Decide at merge whether cognitive ToM gets its own row (a ratchet-count change, Check C).
+   RULED 2026-10-01 (`iw2-verify-go`): it stays a sub-rung. There is no cognitive-ToM row while the witnessing
+   decision is host-owned.
 3. neural-selfid default-on changes who answers every "what do you <verb>?" / "what/who are you?" question (the host
    router retires for these). Its step S covers one ordinary anaphora turn ("the cat eats fish" / "what does it eat?");
    the Stage-1 exit gate's reported sub-probe "what does it eat" after a NEW word (C2) is the same shape with an
@@ -399,12 +403,16 @@ Verdict: SOUND-WITH-ISSUES. Two defects fixed on the branch (commit bb149f522, e
    reply pair, so a 6/6 R here shows the store carries the belief, not that the substrate computes who saw what. Rule
    how the finding and the host-decision share report it (the prereg declares the witnessing parse and the argmax as
    residuals; the row's kind is `neural-lesion`).
+   RULED 2026-10-01 (`iw2-verify-go`): R shows the store carries the belief. Section 11 must say the witnessing
+   decision is host-owned, using that ruling's sentence. Next method: a spiking witness population drives the gate.
 8. (review) What the neural-selfid lesion removes. `BridgeParser.role_of(position)` drives one (position, voice)
    conjunction and reads the winning role; the words never enter it, so `_neural_question_parse` returns
    (content[0], content[1]) for every active-voice question, and `BRAIN_SUBSTRATE_PARSE_LESION` cuts that fixed
    positional map (the same cut the `content-selection` row already counts). Rule whether `neural-selfid` counts as a
    separate load-bearing row or as the content-selection mechanism reaching a new question class (the host router
    retiring for self questions is the real change).
+   RULED 2026-10-01 (`iw2-verify-go`): count it as the content-selection mechanism reaching self questions, not as a
+   new mechanism. The real change is the host router retiring for them.
 9. (review) The scorer counts a capability cell when S2 reads `regressed` and the INTACT reply is right; it does not
    check that the LESION reply lost the capability's content (e.g. a lesion reply that still says "river ...
    reasoned" but differs in `recalled_svo`). The dev lesion replies do lose it (box / abstain / abstain). Tightening

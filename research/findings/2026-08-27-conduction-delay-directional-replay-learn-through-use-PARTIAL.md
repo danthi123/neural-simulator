@@ -39,3 +39,12 @@ Banked positives carry forward: the Ecker store segments; replay drives durable 
 Residual, precisely isolated: learn-through-use does not clear the bar because recall is at ceiling under the separation op-point + reverse still grows.
 Named next: (1) Braun 2022 inhibitory GAP-CODING — sparse sequences with NO overlapping synfire excitation, so volleys separate WITHOUT a long-period read that saturates recall; (2) a recall instrument with headroom decoupled from the separation op-point (degraded-cue read on a shorter period).
 Production D5 wire-in stays separately blocked at the AdEx soma-recurrence seam ([[2026-08-20-ecker-real-d5-store-does-NOT-reactivate-via-soma-recurrence-dendritic-latch-is-the-read]]).
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_ecker_replay_learn_through_use_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

@@ -958,3 +958,57 @@ def test_iw2_score_R_lesion_content_rule_transitive_and_selfid(tmp_path):
                     env=dict(SI, LB_IW2_CONTROLS="1"), arm_env=SI, verdict="pass")
     res, code = sc.score_R("neural-selfid", "S", PIN, base=str(tmp_path))
     assert code == sc.FAIL and {c["reply_verdict"] for c in res["per_seed"].values()} == {"lesion-kept"}, res
+
+
+# ── shared prereg Amendment 2 (2026-10-01, Claude): every R/B/A verdict carries the preconditions that earned it ──
+def _gate_problems(tmp_path, res):
+    """tools/gates/verdict_preconditions.py on the verdict file exactly as `--out` writes it."""
+    import tools.gates.verdict_preconditions as g
+    p = os.path.join(str(tmp_path), "verdict_%d.json" % id(res))
+    json.dump(res, open(p, "w"), indent=1, default=str)
+    return g._check_one(p, "raw/" + os.path.basename(p))
+
+
+def test_iw2_score_R_B_A_verdicts_carry_preconditions_the_gate_accepts(tmp_path):
+    """[iw2-R-pre] score_R wrote `verdict: PASS` with no `preconditions` block, so the verdict-preconditions gate refused
+    the three step-R files. Every asserted PASS/FAIL must now carry a non-empty block whose checks all hold."""
+    sc = _fill(tmp_path)
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code == sc.PASS and res["preconditions"] and _gate_problems(tmp_path, res) == [], res
+    _write_cell(str(tmp_path), "R", 44, "tom-false-belief", "tom_fb", {"ia": FB_INTACT, "le": FB_INTACT}, env=FB,
+                arm_env=FB, verdict="pass")
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code == sc.FAIL and _gate_problems(tmp_path, res) == [], res
+    shutil.rmtree(os.path.join(str(tmp_path), "R", "s100", "tom-false-belief"))
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code == sc.UNDEF and res["verdict"] == "UNDEFINED" and _gate_problems(tmp_path, res) == [], res
+    _std(tmp_path, "base", "affect-coloring", "emo", "warm", "flat")
+    _std(tmp_path, "flip", "affect-coloring", "emo", "warm", "flat")
+    _fill(tmp_path, tag="flip", env={}, arm_env={})
+    b, bcode = sc.score_B("base", PIN, "flip", PIN, ["false-belief-chat"], base=str(tmp_path))
+    assert bcode == sc.PASS and b["preconditions"] and _gate_problems(tmp_path, b) == [], b
+    _std(tmp_path, "flip", "affect-coloring", "emo", "warm", "warm", seeds=[101], verdict="pass")
+    b, bcode = sc.score_B("base", PIN, "flip", PIN, ["false-belief-chat"], base=str(tmp_path))
+    assert bcode == sc.FAIL and _gate_problems(tmp_path, b) == [], b
+    _std(tmp_path, "alloff", "affect-coloring", "emo", "warm", "flat")
+    a, acode = sc.score_A(b, "alloff", PIN, base=str(tmp_path))
+    assert acode == sc.FAIL and a["preconditions"] and _gate_problems(tmp_path, a) == [], a
+
+
+def test_iw2_score_A_with_nothing_to_attribute_is_undefined_not_a_pass(tmp_path):
+    """An A run over a B result that has no regression attributes nothing: vacuous, never a PASS."""
+    sc = importlib.import_module("tools.iw2_score")
+    a, acode = sc.score_A({"regressions": [], "undefined": []}, "alloff", PIN, base=str(tmp_path))
+    assert acode == sc.UNDEF and a["verdict"] == "UNDEFINED" and a.get("verdict_unearned") == "PASS", a
+
+
+@pytest.mark.parametrize("flag", ["0", None])
+def test_iw2_score_R_cell_without_the_packet_flag_on_is_undefined(tmp_path, flag):
+    """verify-go 2026-10-01: `_allowing` tolerated the packet's BRAIN_* key by NAME, so a cell run with the flag at "0"
+    (or never set) still read DEFINED regressed. At P the flag is opt-in: every sidecar must carry it = "1"."""
+    sc = _fill(tmp_path)
+    env = {} if flag is None else {"BRAIN_FALSE_BELIEF_CHAT": flag}
+    _write_cell(str(tmp_path), "R", 42, "tom-false-belief", "tom_fb", {"ia": FB_INTACT, "le": FB_LESION}, env=env,
+                arm_env=env)
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code == sc.UNDEF and res["per_seed"]["42"]["state"] != "DEFINED", res["per_seed"]["42"]

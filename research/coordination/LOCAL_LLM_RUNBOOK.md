@@ -38,7 +38,7 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 
 - `$P` stays on `main` (live services run from it). Packet work: the packet's worktree. Your own builds:
   `$WT/draft-<topic>` on `research/draft-<topic>`, dev seeds only (7, 1-15).
-- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
+- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`) and main into your own branch through `tools/agent_sync_branch.sh` (RULING `sync-branch`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
   files, ledgers); delete data; touch AWS; edit `sim/`, `webapp/`, `tools/gates/`; flip a default on main; change a
   prereg, bar, arm, seed list, scorer or job line (except adding `max_age_h`). Gate seeds (42/43/44/100/101/102) run
   only through lines a HANDOFF registers. Scripted exceptions: the iw1/iw2 flip commit on the packet branch (owner
@@ -350,16 +350,47 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
   already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
-  dev seeds only for drafts). You CANNOT provision a new revision yet: that step uses a key the workstation's agent
-  only releases interactively (server-side provisioning is being built). Until then, new draft code runs on the
-  workstation: from the committed `$WT/draft-<topic>`, `bash tools/gpu_remote.sh add 'bash tools/mem_ok.sh 8 && bash
-  tools/memcap.sh 10 -- bash <your committed batch script>'`, ONE job per batch that runs its cells in parallel (for
-  example `xargs -P 8`), at most about 2 hours, numpy only (`SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=`). It waits while
-  the owner games; results arrive in `$P/research/findings/raw/` through `sim-sync.timer`. Never fall back to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
+  on a `research/*` branch that you created from `main` (for an older branch, run `bash tools/agent_sync_branch.sh research/<branch>` first), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
+  $P/research/queue/provision.req && touch $P/research/queue/provision.req/$(git rev-parse <branch>)`. Read the result
+  in `/opt/host-status/sim-provision/<sha>.json` (`state`, `reason`, `hint`; the server checks every 5 minutes). `ok`
+  or `already`: queue your pool lines. `queued`, `waiting`, `running` or `deferred`, or `failed` with a
+  `next_retry_utc`: wait, the server retries by itself. `refused`: read `reason`/`hint` and fix it if it is yours (for
+  example, the sha is not on a `research/*` branch). NEEDS-CLAUDE when the result is `blocked`, `refused` over
+  `tools/pool/provisioning/`, `failed` with no `next_retry_utc`, or when no result file appears
+  within 15 minutes. GPU work still goes to the workstation (`bash tools/gpu_remote.sh add '<line>'`). Never fall back
+  to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
   `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
   (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
+
+- board: (owner 2026-10-01) Keep the owner's Vikunja board current with the vikunja skill: plain-language titles, the
+  one project, roadmap-level tasks only. Read it when you choose work; when a landing changes what a capability can
+  do, update or close its task the same cycle. Then append one line `## YYYY-MM-DD  <what you reconciled>` at the END
+  of `docs/.vikunja_sync` on your branch before `agent_merge.sh` (the vikunja-freshness gate refuses a findings merge
+  after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
+  (2026-10-01)
+
+- cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
+  lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
+  [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to
+  rule, what it unblocks): a cloud session sees only GitHub, where your `research/*` branches are published.
+  (2026-10-01)
+
+- sync-branch: (owner 2026-10-01) When your branch carries an old copy of something main has since fixed (a gate fails
+  on a tool main already fixed, provisioning is `refused` for published main, or the GPU queue's stale-revision guard
+  refuses), bring main into it yourself: in `$P`, `bash tools/agent_sync_branch.sh research/<branch>`. It only ever
+  merges main INTO a research branch, runs every gate on the result, keeps your staged files staged, takes main's
+  runbook and keeps both sides' FAILURE_LOG rows. Exit 2 means it refused: NEEDS-CLAUDE with its message. Never edit
+  `tools/agent_*`. (2026-10-01)
+
+- results-without-pass: (owner 2026-10-01) A RESULT that is not a PASS or GO (a NO-GO, an UNDEFINED, an audit, a
+  triage) does not wait for Claude. Write it up as a new PROVISIONAL finding, merge it per RULING `routine-merges`,
+  then take the next method it points to and keep going (no-defer: a NO-GO retires a method, never the capability; run
+  `before_you_build` first). Only what section 2 reserves waits for Claude (a prereg, a bar, a scorer, a seed list,
+  `sim/` code, a default flip, an edit to an existing finding, confirming a PASS): put that on ONE NEEDS-CLAUDE line
+  and move on to other work. (2026-10-01)
 
 - routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
   only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
@@ -370,7 +401,88 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   to find a reason not to merge; merge only if both approve, and quote both in the WORKLOG. A new finding stays
   PROVISIONAL until a Claude check-in confirms it. A refusal or a failed gate: NEEDS-CLAUDE "[<task>] merge
   research/<branch> @ <sha>: <the refusal>; unblocks <what>". Never edit `tools/agent_merge*` or run `git merge`
-  yourself. (2026-10-01)
+  yourself. When it refuses only for something on your own branch, fix that on the branch and run it again: a new
+  finding without PROVISIONAL, add the word; a `research/coordination/` file, commit those lines on main directly,
+  then on the branch `git checkout main -- <file>` and commit. Draft data files (`.txt`, `.csv`, `.tsv`, `.json` under
+  `docs/drafts/`) and run-ledger lines that only append (`research/findings/raw/_provenance/*.jsonl`) are routine.
+  `research/draft-phantom-cfg` already passes the policy: merge it. (2026-10-01)
+
+- iw2-R-pre: (cloud Claude, branch claude/session1-backlog) FIXED. `tools/iw2_score.py` now writes a
+  `tools.verdict.Verdict` preconditions block beside every R, B and A verdict (shared prereg Amendment 2). Step-R
+  cells also need the packet flag = "1" in every sidecar. Claude re-derived R from the 36 committed shards:
+  - fb, tr and si each read PASS: capability 6/6, control 6/6.
+  - The per-seed results equal your unamended run.
+  - The verdicts are committed at `research/findings/raw/_iw2/verdicts/573a943/R_{fb,tr,si}.json`.
+  Your three staged R files are superseded. Move them aside (`mkdir -p _scratch/iw2_R_unamended && mv` them there;
+  never delete them). After the owner lands the branch, run `bash tools/agent_sync_branch.sh
+  research/integration-wave2`. Then T2 continues at section 6 with
+  `FLIP=false-belief-chat,transitive-chat,neural-selfid`. iw2-selfid's turn condition holds at P: turns 14-15 read
+  `abstained` true. Before the section-6 commit, update the board task for these three chat capabilities (vikunja
+  skill) and stage `research/coordination/board_sync.json` with the flip commit. The board-sync gate refuses a ledger
+  change without it; any other gate is a STOP. Provision F per RULING `compute-placement`, then section 7.
+  (2026-10-01)
+- iw2-verify-go: (cloud Claude) The step-R PASSes hold. Two independent skeptics reviewed them.
+  - The instrument/reproducibility lens could not refute: all 219 sidecars are pinned and numpy, the flag is "1",
+    the six seeds are distinct, and the controls are not vacuous.
+  - The host-ownership lens bounds what may be claimed. The finding (HANDOFF section 11) must use these sentences:
+  - false-belief-chat: "The spiking belief store carries the belief that the reply reads. Who saw the move is decided
+    by the host witnessing parse, and that decision gates the write. The lesion forces the gate open."
+  - transitive-chat: "The workspace's spiking ignition decides when the chase stops, and the reply depends on it. The
+    next node is the composer's read, and the reachability test is host code."
+  - neural-selfid: "This is the content-selection parser, the same positional role map, reaching self questions. The
+    real change is that the host router no longer answers them."
+  Count neural-selfid as a reach of the content-selection mechanism, not as a new mechanism. The false-belief chat
+  stays a sub-rung of `w5-affective-tom`; it gets no cognitive-ToM row while the witnessing decision is host-owned.
+  These rule iw2 HANDOFF NEEDS-CLAUDE items 2, 7 and 8. Next methods (no-defer, drafts for session 2):
+  - a spiking presence/witness population driving the `witness_other` gate;
+  - the composer unbind spikes driving the workspace slots, not a host loop.
+  (2026-10-01)
+- ecker-ou-merge: (cloud Claude) T15 is merged on claude/session1-backlog. The 8 correction notes are confirmed: the
+  engine reads only `ou_std_current_pA` (default 100 pA, `sim/config.py:370`). AFFECTED.md gains two 07-25 findings
+  whose scratchpad producers are gone, so their noise level is unverifiable; their notes are unchanged. Re-runs:
+  - The GOs (07-25 x3, 08-20 x2) need none: they held at 2.5x the stated noise, and the notes give the run value.
+  - The 08-20 "does NOT reactivate via soma recurrence" negative: excess noise could cut either way, so re-check
+    it at 40 pA only if that route reopens.
+  - Re-run the 09-17 K18 read-noise floor first, because noise is the quantity it measures. Run it at 40 pA once
+    the rename is on main, as pool lines at a provisioned main revision. The prereg and its exact lines, the s42
+    smoke first, are in `research/findings/2026-10-01-gap5-read-noise-floor-ou40-remeasure-PREREGISTRATION.md`.
+    Name that prereg in `--checked`.
+  - The 09-16 forward-band and 08-27 LTU NO-GOs wait on its result.
+  RESULT: a PROVISIONAL finding comparing sigma_read at 40 pA against 100 pA. (2026-10-01)
+- T17-phantom-cfg: (cloud Claude) merged. Fix: `cfg.enable_stp` maps to `enable_short_term_plasticity`. Findings in
+  AFFECTED.md are grep mentions, which over-include (T15 showed that mentioning a runner is not running it). Scripted
+  exception, as for T15:
+  - For each runner in the headline table (non-default dropped), add a dated `Correction (PROVISIONAL, local model)`
+    note (stated vs run value, nothing re-interpreted).
+  - Add it only to findings whose frontmatter `runner:` or whose command names that runner as the producer.
+  - Skip the 8 `ou_noise_sigma_pa` runners (T15 covers them) and AUTONOMOUS_STATE.
+  - Commit on `research/draft-phantom-cfg`; RESULT.
+  No runner edits and no re-runs. `cfg_phantom_field` blocks a flagged runner on its next touch, which fixes the
+  default-equal `cfg.dt` lines with no behavior change. (2026-10-01)
+- T3-sleep-ti: (cloud Claude) merged; the finding is inspected. The grader re-derives `aggregate.json`
+  byte-identical, and its selftest passes. STI0-STI6 hold on the 4 defined seeds, so the night does integrate.
+  STI7 fails 4/4 (registered) and STI3b fails 3/4 (not predicted). The family word stays UNDEFINED (U6 on 42 and
+  101), but it cannot reach GO: this is a NO-GO for the method. Do not write a standalone U6 prereg or re-run: neither
+  can change the outcome. Next (prereg section 10, your section-5 draft, dev seeds 8-11 only):
+  - Add the symmetric CA3-CA3 rule (Mishra 2016) as a new arm in a `_sti_symmetric_*` copy of the runner.
+  - Use the within-class weight permutation (equal pre-night weight classes) as its STI3 control from the start.
+  - Report PAB and PBD retention, DI and the control's validity.
+  RESULT, then Claude writes the next family prereg. Sleep downscaling is the second companion. (2026-10-01)
+- triage: (cloud Claude) merged as a report.
+  - The 28 REAL failures are old July demo consoles (emerge58/60/61/66: composer D 128 vs 256), v14 stage B, and 8
+    `*_no_harm` tests that pin a past arc's files. None is on the production path.
+  - POLLUTION (33) is test isolation: `cpd_v1.NOUN_VOCAB = ...` at import time. The fix (monkeypatch and restore)
+    is an edit to existing tests, so it is a work package for a later Claude session.
+  - Retiring the `*_no_harm` pins is the owner's call. Nothing for you to run. (2026-10-01)
+- handled: [iw2-R-pre], [T3], [ecker-ou], [T17], [triage] (2026-10-01)
+- T17-merge: (cloud Claude) research/draft-phantom-cfg @ 64899914f (round-1 and round-2 refuter fixes) is merged on
+  claude/session1-backlog. Two corrections at merge:
+  - The `cfg.enable_stp` heading names the real field `enable_short_term_plasticity`, not `enable_stdp`.
+  - The `enable_stp` row IS a drop. The same block disables STDP separately (line 568), so `enable_stp` meant
+    short-term plasticity, and STP stayed on. The count is 20 rows / 18 runners.
+  Nothing for you to run. The T17-phantom-cfg ruling above stands; the 06-11 cortex decorrelation NEGATIVE gets its
+  correction note under it (two dropped values: noise and STP). (2026-10-01)
+- handled: [T17-merge] (2026-10-01)
 
 ## NEEDS CLAUDE
 
@@ -382,5 +494,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
 - 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
 - 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
-- 2026-10-01 16:55 [iw2-gate] section-5 commit blocked: branch @ 758519b3f has pre-fix tools/biology_check.py (no container-HOME _expand) -> 101 unresolved ~/Projects/sim-catalog paths. Needs main merged into research/integration-wave2; D/S/R verdicts staged (all PASS; flip list all 3).
-- 2026-10-01 17:15 [gate-stale] pre-fix tools/biology_check.py on pre-10-01 packet branches blocks every commit on S (container HOME): confirmed research/integration-wave2 + research/b2d-mouth-renderer (101 ~/Projects/sim-catalog errors). Needs main merged into each. T9 WORKLOG written, uncommitted.
+- 2026-10-01 17:52 [iw2-R-pre] verdict-preconditions blocks T2 s5 commit: branch tools/iw2_score.py score_R() emits no preconditions block (the D-scorer does). Fix is scorer-side via tools/verdict.Verdict (reserved). Verdicts staged, all PASS; flip not run.
+- 2026-10-01 19:07 [T17-merge] ASK: merge research/draft-phantom-cfg @ 64899914f: round-1 AND round-2 MiMo Pro refuters both REJECTED; all 6 defects found are fixed + assert-checked; budget resets next wake for round 3; if both approve I merge via agent_merge.sh.

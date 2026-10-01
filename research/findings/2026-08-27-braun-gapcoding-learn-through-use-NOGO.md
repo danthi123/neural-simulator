@@ -35,3 +35,12 @@ Named next: (1) a GRADED recall instrument with headroom, decoupled from volley 
 Production D5 learn-through-use is CLOSED + on-by-default separately ([[2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact-not-substrate-crosstalk]]); this NO-GO is the TOY-STORE replay-strengthens-recall research thread only.
 Source: Braun & Memmesheimer 2022, PLoS Comput Biol, doi:10.1371/journal.pcbi.1009891 (PubMed PMID 35176028). <!--derived-->
 
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_ecker_replay_learn_through_use_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.
