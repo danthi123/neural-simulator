@@ -1,0 +1,43 @@
+{
+ "run_id": "1790702195-1675196",
+ "runner": "research/runners/sleep_transitive_inference.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference/research/runners/sleep_transitive_inference.py",
+  "--dev",
+  "--seed",
+  "7",
+  "--arms",
+  "wake",
+  "sleep",
+  "off",
+  "yok",
+  "scr",
+  "--set",
+  "swr_period=1500",
+  "night_steps=240000",
+  "probe_trials=4",
+  "between_init=5.0",
+  "--out",
+  "research/findings/raw/_sleep_transitive_inference/dev/q2_s7.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T13:16:35",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4080.1,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_transitive_inference/dev/q2_s7.json"
+}
