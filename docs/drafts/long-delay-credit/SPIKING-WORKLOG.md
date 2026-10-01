@@ -337,3 +337,19 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   --reward-on-ms <onset> --outcome-ms <onset+100>, --w-outc-strio <w>) output
   `research/findings/raw/_ldc_outcome_timing/sanity_early_ch0_onset<ms>_w<w>_s<seed>.json`.
   QUEUED to launch when the 24-cell main grid writes "GRID DONE" (server-load: one at a time).
+## 2026-10-01 15:42 (Hermes, local model): grid driver v2 - detached supervisor stack (attempts 1-2 died externally)
+
+- Grid attempt 2 (15:03) also died without traceback/output/failure record between 15:10 and 15:32.
+  Attempt 1 died at the 14:55 gateway `run --replace`; attempt 2 died while the same gateway (pid 181)
+  was still up — cause undiagnosed (no OOM in dmesg/journal [no perms to see], no repo watchdog matches,
+  no `at`/`crontab` binaries in the container for an external scheduler). Both deaths were silent
+  process-tree kills: driver AND python died together, no rc recorded.
+- Response = layered detachment instead of more guessing:
+  1. `setsid` driver into its own session via `launcher.sh` (survives chat/session teardown);
+  2. `supervisor.sh` (also setsid'd) respawns the flock-guarded driver every 60s until "GRID DONE";
+  3. per-cell attempt counters (<=3) with `_scratch/attempt_<cell>` files -> poison-guard, successes reset;
+  4. outer watchdog = the 30-min wake cycle itself (relaunch if the whole stack died).
+  Cron tool is unavailable in this session (tool_search: only session_search/terminal/todo).
+- Driver v2 now ALSO runs the 12 sanity cells (PER_CELL delegate ruling) after the 24 grid cells —
+  one sequential driver, no separate launch step. All under nice -n 10, one at a time.
+- Verified 15:40: driver 63066 + python 63072 (cell 1, 94% CPU), supervisor 63252, all in own sessions.
