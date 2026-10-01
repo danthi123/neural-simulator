@@ -197,3 +197,25 @@ the work staged... and stop"), this is exactly that case: `git log -1` on the wo
 `3c2907b85` (the branch point) as HEAD, nothing was committed, `--no-verify` was NOT used, and no
 waiver file was written. `HEAD` unchanged; all five files remain staged (`git status --short`
 shows `A`/`M` for all of them). No push, no merge.
+
+## 2026-10-01 07:18 (local model, Hermes) — commit landed, cupy queued
+
+- **numpy test re-run (this session):** `SIM_BACKEND=numpy .venv/bin/python -m pytest -q
+  tests/test_bounded_conductance_integration.py` from the worktree -> **4 passed in 1.10s**
+  (byte-identical-off, overshoot-reproduced-flag-off, bounded-flag-on, small-conductance-equivalence).
+- **Commit landed:** the earlier block (lane-starvation + compute-idle-persistent, both
+  repo-wide compute-utilization gates, auto-expiring) has cleared. `git commit` with the
+  prescribed message now passes the gates (no `--no-verify`, no waiver).
+  HEAD = `91608ce47` on `research/conductance-overshoot-guard` (5 files: sim/config.py,
+  sim/kernels.py, sim/bridge.py, tests/test_bounded_conductance_integration.py,
+  docs/drafts/conductance-overshoot-guard/WORKLOG.md).
+- **cupy test queued (GPU busy):** enqueued via the sanctioned `tools/local_llm/gpu_add.sh`
+  (the only GPU-queue path allowed to the local model; `gpu_queue.sh add` itself stays denied).
+  Job: `cd <worktree> && SIM_BACKEND=cupy .venv/bin/python -m pytest -q
+  tests/test_bounded_conductance_integration.py`. Queue depth 1 at enqueue. The 3090 was
+  busy (~22/24 GB used, below the 3000 MiB free threshold) so the job is WAITING; it will run
+  in the next yield. **rc: PENDING — read from `research/queue/gpu_queue.log` on W in the next
+  yield and record it here.**
+- **No push, no merge:** per the `push-credential` ruling (S has no push credential; the branch
+  lives in this W checkout where Claude reviews and merges) and the wake's "never push". The
+  branch `research/conductance-overshoot-guard @ 91608ce47` is ready for Claude to review/merge.
