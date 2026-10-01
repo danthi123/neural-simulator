@@ -31,10 +31,11 @@ healthCheckTimeout: 600
 logLevel: info
 
 # globalTTL: idle-unload after this many seconds with no requests to the resident model (owner 2026-09-29: the
-# GPU should not stay pinned by a model nobody is using). 0 disables it, matching the old always-on-until-`llm
-# off` behaviour, if that is ever preferred instead. The NEXT request for "local" (or `llm on <profile>`)
-# reloads the same model transparently -- see docs/LOCAL_MODEL_GUIDE.md. Override per model with a `ttl:` key.
-globalTTL: 3600
+# GPU should not stay pinned by a model nobody is using; owner 2026-09-30: 15 minutes, was an hour). 0 disables
+# it, matching the old always-on-until-`llm off` behaviour, if that is ever preferred instead. The NEXT request
+# for "local" (or `llm on <profile>`) reloads the same model transparently -- see docs/LOCAL_MODEL_GUIDE.md.
+# Override per model with a `ttl:` key.
+globalTTL: 900
 
 # unloadTimeout: seconds llama-swap gives a model to shut down cleanly (manual, API, or the ttl above) before
 # it force-kills the process. The default (10s) is usually enough; bumped slightly for a large KV cache.
@@ -50,6 +51,10 @@ macros:
 # `bash tools/local_llm/llm.sh __profile_cmd <name>` prints for that profile, with the one necessary change:
 # --port 8080 (llm.sh's own hardcoded port, meaningful when it launched llama-server directly) becomes --port
 # ${PORT}, llama-swap's own per-backend port macro (llama-swap itself now owns 8080; see llm.sh's -listen flag).
+# -cram 4096 -ctxcp 8 on the qwen38 entries (2026-10-01): llama-server's defaults keep up to 8 GiB of prompt cache in
+# host RAM plus 32 checkpoints per slot (~150 MiB each for this hybrid model, the full DeltaNet state), ~12.7 GiB no
+# memcap sees on a 46 GB box. A logged 6.1 GiB cache entry made it the suspected contributor to the 09-30 OOM kill.
+# Capped: ~5.2 GiB worst case. Fewer checkpoints means a prompt that diverges mid-history re-reads from further back.
 models:
   qwen38-27b-iq4nl-mtp-128k-q4:
     # this is tools/local_llm/default_profile's profile and the bake-off winner: MTP speculative decoding,
@@ -60,7 +65,7 @@ models:
       llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
       --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q4_0 -ctv q4_0 --jinja
       --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
-      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
 
   qwen38-27b-iq4nl-mtp:
     name: "Qwen3.8 27B IQ4_NL + MTP, 65K ctx, q8_0 KV"
@@ -69,7 +74,7 @@ models:
       llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
       --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 65536 -ctk q8_0 -ctv q8_0 --jinja
       --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
-      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
 
   qwen38-27b-iq4nl-mtp-128k-q8:
     name: "Qwen3.8 27B IQ4_NL + MTP, 128K ctx, q8_0 KV"
@@ -78,7 +83,7 @@ models:
       llama-server -m /home/dant123/models/qwen3.8-27b-gguf/unsloth-iq4nl/Qwen3.8-27B-IQ4_NL.gguf
       --host 127.0.0.1 --port ${PORT} --alias local -ngl 99 -np 1 -fa on -c 131072 -ctk q8_0 -ctv q8_0 --jinja
       --chat-template-file ${repo_root}/tools/local_llm/templates/qwen38-27b-iq4nl-mtp.jinja
-      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20
+      --spec-type draft-mtp --spec-draft-n-max 3 --temp 0.6 --top-p 0.95 --top-k 20 -cram 4096 -ctxcp 8
 
   devstral-small2-24b-iq4xs:
     name: "Devstral Small 2 24B IQ4_XS, 65K ctx, q8_0 KV"

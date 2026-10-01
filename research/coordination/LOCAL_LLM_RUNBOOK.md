@@ -1,259 +1,386 @@
-# Local-LLM weekend runbook
+# Local-LLM runbook v4 (2026-09-30; Hermes on the server; covers about 2026-10-01 to 2026-10-14)
 
-**Who this is for:** a LOCAL model (Qwen3.8-27B, 128K context since 2026-09-25, run via `bash tools/local_llm/llm.sh claude`)
-supervising this repo's compute while the owner is away and Claude usage is conserved. **Keep everything you
-read SHORT** — you have far less context than Claude does. Read `tools/status.sh`'s output first, always; only
-open a file below it when `status.sh` tells you something needs attention.
+**For** Hermes Agent (official image, `~/apps/hermes` on homelab-server), default profile, driving from
+`/home/dant123/Projects/neural-simulator` (S, canonical home since 2026-09-30 —
+`docs/plans/2026-09-30-home-to-server-MIGRATION.md`) via its local terminal backend; it talks to the local model
+(Qwen3.8-27B, llama-swap `qwen38-27b-iq4nl-mtp-128k-q4`) served from the workstation at `http://192.168.0.68:8080/v1`.
+The repo-driven `tools/local_llm/llm.sh claude` session is retired; the 2026-10-06 date in
+`docs/plans/2026-09-29-local-model-transition-PLAN.md` is superseded by this move. Claude Code inspects occasionally
+from the workstation checkout `/home/dant123/Projects/sim` (W, now a follower + compute node). One driver at a
+time: if the owner says a Claude session is driving, run only `bash tools/status.sh`. Read this whole file at the
+start of every session; after a compaction read only sections 2-3, your task in section 4 and `tail -n 25` of its
+WORKLOG. Each task links a packet HANDOFF: read only the section you execute. The HANDOFF governs its commands and
+tables; this runbook governs order, permissions, `max_age_h`, verdicts, NEEDS-CLAUDE and where results go.
+Set in every Bash call that uses them: `P=/home/dant123/Projects/neural-simulator; PY=$P/.venv/bin/python;
+WT=$P/.claude/worktrees`. **Work only on S (2026-10-01, replaces the 09-30 caveat).** Every packet branch is on S:
+a local `research/<packet>` branch, else `origin/research/<packet>`. If `$WT/<packet>` is missing, create it with
+`git worktree add $WT/<packet> research/<packet>` (or `git worktree add -b research/<packet> $WT/<packet>
+origin/research/<packet>`). Never read, edit or commit in the workstation's checkout (`/home/dant123/Projects/sim`,
+reached over ssh): commits there are invisible here and to the inspector. Queue GPU jobs only with `bash
+tools/gpu_remote.sh add` from a clean, committed `$WT/<packet>` (section 3); a `/home/dant123/Projects/sim/...` path
+in an older task line means the same packet under `$WT`. Committed files under `$P/research/findings/raw/...` arrive
+from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's NEEDS-CLAUDE item n.
 
-The commands this runbook uses are pre-approved in `tools/local_llm/claude_local_settings.json` (loaded by `llm.sh claude`);
-anything else asks for permission, and the explicit denies (--no-verify, force-push, merge, AWS, sim/ webapp/ tools/gates/
-edits) are refused outright.
+## 1. Every session
 
-Resume the previous local session with `llm resume` (or `llm claude --continue`); plain `llm claude` starts a new one.
+1. `bash tools/status.sh` (its READY rows `b2b_base`, `arcc_awake_completion` are stale: scored 09-29).
+2. Packet status (`running>0` = still running):
+   ```bash
+   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts _host_share/gate _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
+   ```
+3. Read section 6 (RULINGS) and your open lines under NEEDS CLAUDE.
+4. Work the FIRST task in section 4 whose "Start" holds and that no open NEEDS CLAUDE line blocks. After every step
+   append to its WORKLOG: date/time, command, result paths, anything unsure (guesses marked). While pool jobs run,
+   move on; never wait idle on one task.
+5. Nothing ready: section 5, else stop. Never invent work; queue only what a task names.
 
-Start here every session: `bash tools/status.sh` (read-only, <=40 lines, ~10s). It shows the GPU queue, the
-pool queue + per-node state, AWS spend vs cap, whether the local-llm unit is up, every registered battery's
-rows-landed vs expected, and recent failures.
+## 2. Hard rules
 
-## Context budget (read this first; you compact every ~10 minutes otherwise)
+- `$P` stays on `main` (live services run from it). Packet work: the packet's worktree. Your own builds:
+  `$WT/draft-<topic>` on `research/draft-<topic>`, dev seeds only (7, 1-15).
+- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
+  files, ledgers); delete data; touch AWS; edit `sim/`, `webapp/`, `tools/gates/`; flip a default on main; change a
+  prereg, bar, arm, seed list, scorer or job line (except adding `max_age_h`). Gate seeds (42/43/44/100/101/102) run
+  only through lines a HANDOFF registers. Scripted exceptions: the iw1/iw2 flip commit on the packet branch (owner
+  ruling 09-29), the LDC Amendment A text, and T15's field rename and correction notes (sleep-TI ruling 2).
+- DENIED to you: `git merge`, `git checkout`, `git switch`, `gpu_queue.sh add`. A step that needs one (a merge
+  `tools/agent_merge.sh` refuses, `git checkout -- .`) is a STOP: NEEDS-CLAUDE. Instead of `git checkout -- <runs.jsonl>`: never
+  `git add research/findings/raw/_provenance/runs.jsonl`. Never wrap a denied command in `bash -c` or a script.
+- A command that asks for permission while the owner is away (always so in a headless resume): skip it, WORKLOG it,
+  continue elsewhere.
+- Never run `tests/test_game_pause_resume.py` (it kills live GPU jobs). One fix round per issue; a second failure is
+  a STOP. S is not a compute node (RULING `compute-placement`); a short run here still goes under `bash
+  tools/mem_ok.sh <gb>`, then `bash tools/memcap.sh <gb> -- ...`.
+- Context: `grep -n` first, then Read at most 120 lines; never a whole source file or HANDOFF; never re-read a file
+  you are writing (append; `tail -n 20`); pipe output through `head -40` / `cut -c1-200`.
 
-Your window is 128K tokens and about 20K is used before you start. On 2026-09-26 one session compacted 14 times because
-~240K tokens of file reads went through it: whole modules (35-41K characters each, one read twice), 300-line chunks of
-`webapp/server.py` (~30K characters each), and repeated full re-reads of its own growing draft (~37K characters).
+## 3. Standing operations
 
-- **Find first, then read narrowly:** `grep -n "def name\|keyword" file` to locate, then Read with `offset` and
-  `limit` of at most **120 lines**. Never Read a whole source file.
-- **Never re-read a file you are writing.** Append new rows or entries (Edit at the end, or `cat >> file <<'EOF'`);
-  check what is there with `tail -n 20 <file>` or `grep -c '^| ' <file>`.
-- **Never re-read a file you already read this session** unless you are about to edit that exact range.
-- **Keep Bash output short:** pipe through `head -40` / `tail -40`, and `cut -c1-200` for long lines.
-- **After a compaction, read ONLY:** this section, the "Hard rules" of the task you are on (in "Weekend work" below),
-  and `tail -n 25` of that task's `WORKLOG.md`. Re-read the full runbook only at the start of a new session.
-- Write each finding into the draft as soon as you have it, so a compaction loses nothing.
+**Pool (dispatch runs on S).** `sim-pool-dispatch.service` (host unit, user `sim`, not a user unit) dispatches
+`pool.queue` from S to pool41/pool42; the queue files are the same `research/queue/pool.queue*` commands below, just
+under S's `$P`. Every line you add carries `max_age_h=N` in its `--checked` reason (N = expected wait in hours, at most
+240; without it the dispatcher skips the line after 12 h). If a HANDOFF line lacks it, append ` max_age_h=168`,
+nothing else. The dispatcher is FIRST-FIT in file order: a node (15 GB, 2 reserved) takes the first fresh line whose
+`mem_gb` fits, so 2 GB lines slip past 7-11 GB ones; heavy lines run one per node. An expired line stays in
+`pool.queue` but never runs: when a packet's unrun lines are within 24 h of expiry (`bash tools/pool_queue.sh list`
+shows ages), NEEDS-CLAUDE "[<task>] <n> lines expire <date>". Never re-add queued, held or dead lines.
+**Pool canary (2026-09-30).** `pool_queue.sh add` refuses a gate-seed line until a gate-seed line of the same runner at
+the same revision has passed on a pool node (`bash tools/pool_canary.sh list`; every requeue_*.tsv pin already has
+one). A refusal naming the pool canary is a STOP: NEEDS-CLAUDE "[<task>] needs a pool canary at <sha>".
+**Re-queue missing shards ONCE** (only when the task says; section 1 must show queued=0 running=0 for the key; the
+block stops if any line at the file's revision is still queued or held, and re-adds only shards whose `--out` is absent):
+```bash
+cd /home/dant123/Projects/neural-simulator && F=<requeue file> bash -c 's=$(head -1 "$F" | grep -oE "revisions/[0-9a-f]{9}"); n=$(cat research/queue/pool.queue research/queue/pool.queue.held 2>/dev/null | grep -c "$s"); [ "$n" = 0 ] || { echo "STOP: $n lines at $s queued/held"; exit 1; }; m=0; while IFS=$'"'"'\t'"'"' read -r cmd why; do out=${cmd##*--out }; [ -f "$out" ] && continue; m=$((m+1)); bash tools/pool_queue.sh add "$cmd" --checked "$why" || echo "ADD-FAILED: $out"; done < "$F"; echo "re-queued $m"'
+```
 
-## What you MAY do
+**GPU (runs on W via `gpu_remote.sh`).** The GPU queue and the local-llm server (llama-swap) live on the workstation
+(W); from here queue a job with `bash tools/gpu_remote.sh add 'cd <clean committed checkout> && ...'` (gate seeds
+also `--prereg <committed path>`) — it pushes your committed revision to W as `refs/server-jobs/<sha>`, builds a
+sparse per-job worktree there and execs that worktree's own `gpu_add.sh`; you never `ssh` by hand. Status: `bash
+tools/gpu_remote.sh status`; log: `bash tools/gpu_remote.sh log [N]`. Your queued jobs wait while your model is
+up (it shares the 3090), so hand the card over at the END of the run that queued them: commit, WORKLOG "yielding
+for <jobs>; resume at <task/step>", then `bash tools/gpu_remote.sh yield --max-hours N` (1-12; the jobs' expected
+hours plus margin) as your last command (the model stops ~45 s later). The queue then runs the jobs; when it
+drains, or N hours pass, W restarts llama-swap with the model unloaded. Your `sim-driver` wake gate starts
+the next run within ~5 min of llama-swap answering, with "Woken: the workstation model server just came back" at
+the top of the prompt. If the owner games mid-window, the window pauses and gets the time back. Results come back
+through `sim-sync.timer`'s 15-min pull (`POOL_NODES=workstation bash tools/pool_sync.sh`), not directly from this
+session: if a job's `--out` is not under `research/findings/raw/...` yet, do another task and harvest next run
+rather than polling W.
+`tools/local_llm/gpu_add.sh` / `llm.sh yield` run directly only when actually on W (e.g. Claude inspecting there).
+**Model unreachable.** When the owner is gaming on W, `game on` stops llama-swap (and pauses W's GPU queue); the
+wake gate then skips runs until `game off` restarts it (or resumes your GPU window). If a call still fails
+mid-run with a connection error: do not retry in a loop; WORKLOG "model unreachable" and end the run. The same applies if
+llama-swap is down for another reason (check `bash tools/gpu_remote.sh status`'s remote log, or ask Claude to check
+`journalctl --user -u local-llm` on W). A cloud `fallback_model` can be added to Hermes's config for this case but is
+not set up yet.
 
-1. **Run `bash tools/status.sh`** as often as you like — it changes nothing.
-2. **Harvest a READY battery.** `status.sh`'s Batteries section marks a row `READY` when its landed rows meet
-   the expected count and nothing is currently running that mentions its name. Run its registered harvest
-   command from `research/coordination/handoff_batteries.tsv` (or "Harvest recipes" below if that battery has
-   one), read the output, then:
-   - `git add` the raw result files + their `.prov.json` sidecars,
-   - write ONE dated line on the board (`GAP_CLOSURE_MISSION.md` CURRENT STATE) naming the battery and its
-     headline numbers — no interpretation beyond what the artifact says,
-   - commit **through the normal gates** (`git commit`, never `--no-verify`) and push with
-     `bash tools/push_both.sh <branch>` — commit straight to `main` for the raw-results-plus-board-line commit
-     ONLY (this is data landing, not a claim), and only if your working tree IS `main` with nothing else staged.
-3. **Draft a finding, on a branch.** Create `research/draft-<battery>-<date>`, write the finding from the
-   battery's `finding_template`, commit it there, push it. **Do not merge it.** A draft finding states what the
-   artifact shows; it does not carry a verdict (GO/NO-GO) — that is Claude's or the owner's call.
-4. **Re-provision a revision** when `status.sh` or a dispatch log shows pool nodes pinned to a commit they don't
-   have: `bash tools/pool_provision.sh --revision <sha> --isolated pool41 pool42` (ALWAYS `--isolated`: without it the
-   revision overwrites the nodes' shared `~/derisk-pool/sim` tree, and the pinned `revisions/<sha>` dir the jobs need is never
-   created). If it REFUSES as stale, that is a NEEDS CLAUDE item -- do not set POOL_PROVISION_ALLOW_STALE yourself.
-5. **Restart `pool-dispatch` / `pool-sync`** per the troubleshooting table below.
-6. **Queue ONLY the pre-approved lines** listed under "Queue next" below — nothing else, ever.
+**Commits.** Pathspec only (never `-A` or `.`); `git diff --cached --name-only` lists only what you meant. Blocked
+only by `compute_idle_persistent` / `lane_starvation`: retry every 30 min (max 6), then commit the Markdown part
+(exempt) and NEEDS-CLAUDE; any other gate: STOP, NEEDS-CLAUDE with its message. Packet/draft branches stay on S
+(RULING `push-credential`): never push them; wherever a task says "push", commit on the branch and name
+`<branch> @ <sha>` in your RESULT line. On `main` commit ONLY this file: `git add
+research/coordination/LOCAL_LLM_RUNBOOK.md` (the checkout has unrelated uncommitted files: the staged list must be
+exactly this file), `git commit -m "runbook: <what>"` — then STOP: do not run `push_both.sh main` yourself.
+`sim-sync.timer` (host unit on S, user `sim`, every 15 min) publishes `main` to both remotes via `sim-publish`;
+do not check the remotes (RULING `private-repos`): a failed publish fails the unit, which alerts the owner.
 
-## What you must NEVER do
+**Verdict rule.** Every GO/NO-GO/PASS/FAIL you write is PROVISIONAL until Claude inspects it or records a matching
+re-derivation with the registered scorer. Keep the HANDOFF's finding template; under the H1 add `**PROVISIONAL**:
+written by the local model from the registered scorer's output; not yet inspected by Claude.`, and never remove it.
+Numbers only from the scorer's output; words only the HANDOFF's fixed sentences.
 
-- Design an experiment, write or amend a preregistration, or decide what to run next beyond "Queue next".
-- Flip a default, merge any research branch, or touch `main` for anything except the harvest commit in step 2.
-- Edit `sim/`, `webapp/`, or `tools/gates/`.
-- Use `git commit --no-verify`, or any other gate bypass.
-- Delete data — raw results, findings, or board history.
-- Touch AWS beyond `tools/status.sh` / `tools/aws_budget.sh status` (no launch, stop, or terminate).
-- Rule on a review, a GO/NO-GO verdict, or a retraction.
-- Restart or touch anything GPU-side (`gpu-queue-dispatch`, `gpu-queue-refill`, `gpu_queue.sh`) beyond reading
-  its status — the GPU units are system-level and out of scope for this runbook.
+**Results.** Per scored packet: the finding + raw files + scorer output committed and pushed on the packet branch;
+the HANDOFF's board line in the WORKLOG and as a RESULT line under NEEDS CLAUDE. Where a HANDOFF says to edit
+`GAP_CLOSURE_MISSION.md` or Vikunja, write the RESULT line instead (Claude syncs both).
 
-## Stop / escalate: write it under "NEEDS CLAUDE" below, then STOP that thread
+**Units.** On S (host units, user `sim`): `systemctl status sim-pool-dispatch.service sim-sync.timer`; logs via
+`journalctl -u sim-pool-dispatch` / `-u sim-sync`. You are not `sim` and cannot restart them (never `sudo`): a failed
+or stopped unit is NEEDS-CLAUDE "[units] <unit> <state>". W's own `pool-dispatch`/`pool-sync` user units were
+disabled at cutover and stay off; `memcap.sh` does not run inside Hermes's container (heavy local work: route to the
+pool instead, per CLAUDE.md non-negotiable 10).
+**Inspection.** When the owner says Claude will inspect, and after a session that wrote a RESULT: `mkdir -p _scratch
+&& $PY tools/inspection_digest.py > _scratch/inspection_digest.md`, check your NEEDS CLAUDE lines appear in its
+section 3, give the owner the path. Never `--mark` (Claude's).
 
-- A pre-commit gate blocks a commit and the fix isn't in this runbook.
-- A battery's landed numbers surprise you (a rate, a GO/NO-GO-shaped value, anything you did not expect).
-- A job you restarted fails a second time.
-- AWS spend is within $5 of the daily cap (`tools/status.sh`'s AWS line).
-- Anything else this runbook doesn't cover.
+## 4. Tasks, in expected landing order
 
-Write the item as one line: date/time, what you saw, what you already tried. Do not guess further.
+At writing (09-30 16:55) Claude was re-queueing the lines held at 14:00 (`research/queue/pool.queue.held`), in
+this order: LDC tail, iw2 D/R, host-share, BG seam, sleep-TI, Stage-1 (iw1, B2d, C1 expected next). Lines pinned to
+`59edf3255`, `4f6d9d7fb` or `bb6705de6` are DEAD (worker gate-seed bug; replaced by
+`research/queue/requeue_*_{f7f2bd169,c238ff325,6c2cb1362}.tsv`). The pool stays full to about 10-12.
 
-## Troubleshooting table (user-level units only)
+**T0. Queue check** (every session). A key already queued at writing (not `.../gate` of LDC, not `-flip-`) that
+shows queued=0 running=0 before its task's Start count: NEEDS-CLAUDE "[pool-hold] <keys>" once. Never move lines
+between queue files.
 
-| unit | check | restart |
-|---|---|---|
-| `pool-dispatch.service` | `systemctl --user status pool-dispatch` | `systemctl --user restart pool-dispatch` |
-| `pool-sync.service` | `systemctl --user status pool-sync` | `systemctl --user restart pool-sync` |
-| `local-llm` | `bash tools/local_llm/llm.sh status` | `bash tools/local_llm/llm.sh off && bash tools/local_llm/llm.sh on` |
+**T1. Long-delay credit sweep -> Amendment A -> gate.** `$WT/long-delay-credit-spiking/docs/drafts/long-delay-credit/HANDOFF.md`
+steps 4-6; WORKLOG `docs/drafts/long-delay-credit/SPIKING-WORKLOG.md`. Start:
+`ls $P/research/findings/raw/_long_delay_credit_bg/sweep/ | grep -v prov | grep -c json` = 243, key queued/running 0.
+First: step 4's `cp -r` + instrument command (dev seeds: no verdict). rc=0: step 5; a `chosen` other than `base`
+needs a CreditParams edit that asks permission (refused or owner away: NEEDS-CLAUDE "[ldc-amendA] <tag>", stop).
+Then step 3, and step 6 with ` max_age_h=168` after `mem_gb=2`. Stop: rc=2 (#4), a crash twice (#5), a gate (#2).
 
-If a restart doesn't clear the symptom within one `status.sh` cycle, it's a NEEDS CLAUDE item — do not iterate.
+**T2. Integration wave 2, D/S/R.** `$WT/integration-wave2/research/packets/integration-wave2/HANDOFF.md` sections 5-8
+(P=`573a9438f`); WORKLOG `research/packets/integration-wave2/WORKLOG.md` (create). Start:
+`ls $P/research/findings/raw/_iw2/identity/573a943/*.json | grep -vc prov` = 5 and
+`ls $P/research/findings/raw/_load_bearing/_shards/iw2-R-*-573a943/s*/*/lb.json | wc -l` = 36. First: section 5's D0
+and D_p lines; its R lines only after RULING `iw2-R9`. Then the table and section 6 (flip commit), with
+`neural-selfid` in FLIP only after RULING `iw2-selfid`. Write: `copy_results.sh`, verdicts, PROVISIONAL NO-GO drafts
+the tables name, RESULT. Waves: T11.
 
-## Start-of-session checklist
+**T3. Sleep transitive inference.** `$WT/sleep-transitive-inference/drafts/HANDOFF.md` steps 7-8 (1-6 done, gate at
+`bfde9a195`). It is UNTRACKED: first `cd $WT/sleep-transitive-inference && git add drafts/HANDOFF.md && git commit
+-m "docs(sleep-ti): execution packet"`, push. WORKLOG `WORKLOG-sleep-transitive-inference.md`. Start:
+`ls $P/research/findings/raw/_sleep_transitive_inference/parts/seed*_*.json | wc -l` = 30. First: step 7 from `$P`, then
+`mkdir -p $WT/sleep-transitive-inference/research/findings/raw/_sleep_transitive_inference && cp -a $P/research/findings/raw/_sleep_transitive_inference/. $WT/sleep-transitive-inference/research/findings/raw/_sleep_transitive_inference/`,
+the step-8 finding on the branch, commit, push. Predicted STI NO-GO (STI7). Every outcome hands back (#8; U1/U2/U3/U7: #7).
 
-1. `bash tools/status.sh` — read the whole thing before doing anything else.
-2. Any battery `READY`? Harvest it (see "What you MAY do" #2), one at a time.
-3. Any node/unit down that the troubleshooting table covers? Restart it once.
-4. AWS spend near cap, or a job failed twice? -> NEEDS CLAUDE, then move on.
-5. "Queue next" has an unstarted line and capacity is idle? Queue it — nothing else.
-6. Nothing to do? Re-run `status.sh` after a break; do not invent work.
-7. Anything you're unsure is in-scope: treat it as NEEDS CLAUDE, not a judgment call.
-8. Never run two harvests of the same battery concurrently.
-9. Every commit goes through the normal gates; if one blocks and the fix isn't obvious, NEEDS CLAUDE.
-10. End of session: leave "NEEDS CLAUDE" and board state as the handoff — no separate summary needed.
+**T4. Host-share baselines.** `$WT/host-share-baselines/docs/drafts/host-share-baselines/HANDOFF.md` sections 7-11
+(GATE `f7f2bd169`); WORKLOG `docs/drafts/host-share-baselines/WORKLOG.md`. Start: section 7's count = 108; stalled
+12 h below it: re-queue ONCE (section 3 block, run for `F=research/queue/requeue_host_share_f7f2bd169.tsv` and for
+`F=research/queue/requeue_host_share_f7f2bd169_dispatched_failed.tsv`; never `/tmp` or `59edf3255` lines). First: section 8. Write: finding + section-9
+sentences, RESULT; BASELINE-VALID also #8.
 
-## Harvest recipes
+**T5. BG live-seam retirement.** `$WT/selection-seam-need-reversal/docs/drafts/selection-seam/HANDOFF.md` steps 6-8
+(gate `0bc62cc31`); WORKLOG `docs/drafts/selection-seam/WORKLOG.md`. Start:
+`ls $P/research/findings/raw/_bg_live_seam/gate/s*/*.json | grep -vc prov` = 42. First (results land in `$P`):
+`mkdir -p $WT/selection-seam-need-reversal/research/findings/raw/_bg_live_seam/gate && cp -a $P/research/findings/raw/_bg_live_seam/gate/. $WT/selection-seam-need-reversal/research/findings/raw/_bg_live_seam/gate/`, then step 6's score in the worktree. Missing seeds: step 5's line once, `SHA=0bc62cc318278839a77293358a6fa9ad9e36a516`,
+` max_age_h=72` appended. Write: step 8 (today's date), RESULT; not GO: #5.
 
-<!-- ORCHESTRATOR: fill in a battery-specific recipe here ONLY if its registered `harvest_cmd` in
-     handoff_batteries.tsv (the generic `battery_status.py --harvest <name>` listing) isn't enough. -->
+**T6. Stage-1 exit gate.** `$WT/stage1-exit/docs/drafts/stage1-exit/HANDOFF.md` sections 6-10 (GATE `c238ff325`);
+WORKLOG `docs/drafts/stage1-exit/WORKLOG.md`. Start: section 6's count = 204; stalled 6 h below it: re-queue ONCE
+with `F=research/queue/requeue_stage1_exit_gate_c238ff325.tsv` (never `stage1_exit_gate_jobs.tsv`). First: section 7.
+Write: finding + section-8 sentences, RESULT; any PASS: #7. Exit due 10-24: under 204 on 10-17: NEEDS-CLAUDE
+"[stage1-window] <n>/204".
 
-Run these ONLY when `status.sh` marks the battery READY. Save the output JSON where shown, `git add` it with the raw
-files, add ONE board line with the verdict string the command printed (copy it, do not interpret), commit, push.
+**T7. Stage-1 C1, category inheritance.** `$WT/stage1-c1-category/research/packets/stage1-c1-category/HANDOFF.md`
+sections 4-8 (GATE `6c2cb1362`; never steps 1-3, its own re-queue block); WORKLOG
+`research/packets/stage1-c1-category/WORKLOG.md`. Start: section 4's count = 54. First: section 5. Write: finding,
+section-6 sentences, RESULT. Nothing landed by 10-12: #10.
 
-- **fi** and **d6_n2000**: already harvested by Claude on 2026-09-25 (fe1066f64). Nothing to do.
-- **settle_a2_wiring** (only at 18/18; prereg `research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md`
-  Amendment 2): `.venv/bin/python -m research.runners._affect_marker_settle_congruence --score-wiring --raw-dir research/findings/raw/_affect_marker_settle_congruence/wiring --seeds "42 43 44 100 101 102" --out research/findings/raw/_affect_marker_settle_congruence/wiring/verdict.json`
-- **When a harvest commit is blocked by `verdict-preconditions`** (a verdict file without a `preconditions` block):
-  unstage ONLY that verdict/aggregate file (`git reset <file>`), commit the per-seed raw files + board line, and add a
-  NEEDS CLAUDE line naming the file. Never hand-write a preconditions block.
-- **When blocked by `device-and-cost`** (a long run with no cost projection): do not edit the raw files; add a NEEDS CLAUDE
-  line and leave that battery uncommitted.
-- **arcc_awake_completion** (awake replay with pattern completion; prereg
-  `research/findings/2026-09-24-sleep-replay-capture-PREREGISTRATION.md` Amendment 8 / Addendum 8a), only at 6/6:
-  `.venv/bin/python -m research.runners._da_tag_capture_chat_probe --family arcc --aggregate research/findings/raw/_awake_replay_completion`.
-  Commit the six seed files + board line; if the aggregate is blocked by verdict-preconditions, leave it (see below).
-- **b2b_base: DO NOT HARVEST.** The three torn cells are being re-run on pool41/pool42 (queued 17:51); two seed-102 cells
-  (discourse-register, episodic-memory) never produced a result and wait for Claude's ruling. It reads ~253/258; Claude scores it.
+**T8. Integration wave 1, D/R.** `$WT/integration-wave1/research/packets/integration-wave1/HANDOFF.md` sections 5-8
+(P=`049d4bb0b`); WORKLOG `research/packets/integration-wave1/WORKLOG.md` (create). Start:
+`ls $P/research/findings/raw/_iw1/identity/049d4bb/*.json | grep -vc prov` = 5 and
+`ls $P/research/findings/raw/_load_bearing/_shards/iw1-R-*-049d4bb/s*/*/lb.json | wc -l` = 18. First: section 5,
+then the table and section 6; section 7 only after RULING `iw1-stepB`. Write: as T2.
 
-## Commit blocked by an idle-compute check (lane-starvation / compute-idle-persistent)
+**T9. B2d stub arm.** `$WT/b2d-mouth-renderer/research/packets/b2d-mouth-renderer/HANDOFF.md` sections 4-10
+(P=`5818dc629`); WORKLOG `research/packets/b2d-mouth-renderer/WORKLOG.md` (create). EVERY session: section 4's
+"Every later session" line + ledger commit; section 5's check (mouth lines queued by Claude: yield
+`--max-hours 12`). Score (sections 7-9) when 258 stub cells have landed and the mouth arm has landed or RULING
+`b2d-mouth` retires it. Write: section 10, RESULT, #2.
 
-These checks refuse commits while pool/GPU capacity sits idle with ready work. Over the weekend capacity is idle BY
-DESIGN ("Queue next" is empty). The honest exception, then retry the commit:
+**T10. Long-delay credit gate.** T1's HANDOFF step 7 + outcome table. Start: 150 files in
+`$P/research/findings/raw/_long_delay_credit_bg/gate/`. Write: failing gates, `mechanisms`, `signatures` in the
+WORKLOG, the data commit, RESULT; the finding prose is Claude's (#7-#9).
 
-- If the owner is gaming (`bash tools/game.sh status` shows GAME_MODE on): write `research/queue/.lane_waiver` AND
-  `research/queue/.parallel_compute_waiver`, each containing `CLASS: OWNER-PAUSE` and one line
-  `reason=owner gaming (GAME_MODE on); weekend handoff, Queue next is empty`.
-- Otherwise: write the same two files with `CLASS: NO-READY-WORK` and a `checked=` line naming what you looked at, e.g.
-  `checked=<date time>: status.sh shows no READY battery beyond the one being committed; LOCAL_LLM_RUNBOOK Queue next is empty`.
+**T11. Waves B/F (iw2, then iw1).** Each HANDOFF's section 7: 43 flip lines when fewer than 10 `iw2-flip`
+(`iw1-flip`) lines are queued; log `waves.tsv`; score; decision table. Merging is Claude's (#1).
 
-Never write anything in a waiver that is not true. Waivers expire after 6 h and there is a 6-hour budget of waiver
-time per rolling 24 h (2026-09-25: the budget was used up at ~22:30 and frees gradually from ~16:00 Saturday).
-- **Commits whose staged files are ALL Markdown (.md) are exempt from this check** -- drafts, worklogs, preregs, the
-  seam map and board lines can always be committed.
-- For a commit that includes code or raw results: write the honest waiver just before the commit and delete it right
-  after, so it does not sit charging the budget. If the check still refuses because the budget is exhausted, keep
-  working and commit Markdown only; commit the code/results later. Never bypass it.
+**While waiting (no pool; in order):**
 
-## Queue next
+**T12. Seam-map amendment.** `$WT/draft-seam-map`. Start: `grep -c "Amendment 2026-09-29"
+research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md` = 0. Append the quoted block of T5's HANDOFF
+("Separate staged work", second bullet) without the leading `> `; Markdown commit; push `research/draft-seam-map`.
 
-<!-- ORCHESTRATOR: pre-approved queue lines go here, one per line, exact command text. The local model may
-     queue ONLY what is listed here, verbatim. Empty = queue nothing. -->
+**T13. Conductance-overshoot guard.** Branch `research/conductance-overshoot-guard` (on S since 10-01; make
+`$WT/conductance-overshoot-guard` from it). The first cupy run failed 3/4 in the test file, not the feature (NumPy
+conversion of CuPy arrays); Claude fixed the test (9e8edbec1) and queued the cupy re-run on the workstation 10-01
+12:40. Start: `bash tools/gpu_remote.sh log 400` shows a `DONE(rc=` line for `test_bounded_conductance_integration.py`
+after 2026-10-01 12:40. Write its rc and pass count in the WORKLOG; rc=0: RESULT line "ready to merge"; rc!=0: STOP
+line with the failing test names.
 
-_(none — nothing reviewed is ready to queue this weekend; the pool and AWS stay idle and stop themselves. Claude adds
-lines here after the Tuesday reset.)_
+**T14. Stage-2 dev arms.** When 8 new files land in `$P/research/findings/raw/_stage2_exit/dev/s7/` (or their
+`max_age_h=24` lines expire): INFO line. The gate is queued 11-03..11-10, never before 11-01
+(`$WT/stage2-exit-gate/docs/drafts/stage2-exit/HANDOFF.md` section 1).
 
-## Pending commit from Claude
+**T15. Ecker CA3 OU-noise field** (sleep-TI ruling 2). Nine `research/runners/_gap5_*` set `cfg.ou_noise_sigma_pa`,
+which the engine never reads (it reads `ou_std_current_pA`, default 100 pA in `sim/config.py`): runs reported at
+40 pA ran at 100. `git worktree add .claude/worktrees/draft-ecker-ou-field -b research/draft-ecker-ou-field main`;
+`grep -n "ou_noise_sigma_pa\|ou_std_current_pA" research/runners/*.py`. A runner setting only the phantom field:
+rename it to `ou_std_current_pA` (same value, a comment naming T15), `$PY -m py_compile` it. One setting both
+(`_gap5_onebrain_capstone.py`): no edit, NEEDS-CLAUDE. Per runner `grep -ln "<stem>" research/findings/*.md`; table
+(finding, runner, stated value, value run) in `docs/drafts/ecker-ou-field/AFFECTED.md`; append to each affected
+finding a dated `Correction (PROVISIONAL, local model)` paragraph with both values, nothing re-interpreted. Commit,
+push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171ae)".
 
-DONE 2026-09-26 16:10 by Claude (ae60029b0 local-llm fix; b629d1a35 arcc per-seed raw files). Nothing to do.
+**T16. chat-fact-fixes.** `$WT/chat-fact-fixes/research/packets/chat-fact-fixes/HANDOFF.md`: nothing unless RULING
+`cff-reverify` (then its section 2).
 
-The gate-read-file deny + its test were committed 2026-09-28 21:15.
+**T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
+line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
-## Weekend work (owner-approved 2026-09-25): build on branches, run DEV seeds, Claude corrects after Tuesday
+## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
-Serves `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`. The owner wants the local model to carry real
-work, done so Claude can review, fix or discard it later. **Hard rules for everything in this section:**
+Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
+1. Pick the first open next-item in `GAP_CLOSURE_MISSION.md` CURRENT STATE, else the master roadmap's "next to
+   queue" (`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`), preferring what serves the next stage exit (Stage 1
+   attempt 10-24, Stage 2 11-21, Stage 3 12-19) and integration-first (a faculty on by default whose lesion changes
+   the reply). Write the choice and why in `docs/drafts/<topic>/WORKLOG.md`.
+2. Research the record first: `bash tools/before_you_build.sh "<defect>"` and `.venv-rag/bin/python
+   tools/rag/rag_search.py "<question>" 5 --corpus all`; read the sources it points to.
+3. Plan with one MiMo Pro delegate: `docs/drafts/<topic>/PLAN.md` with the question, the biology it follows, dev seeds
+   only (7, 1-15), and an outcome-to-reading table written BEFORE any run. A second delegate must try to refute the
+   plan against CLAUDE.md's non-negotiables (brain-based only, one brain, no host shortcut, honest measures); revise
+   until it approves.
+4. Build in `$WT/draft-<topic>` on `research/draft-<topic>`: new `research/runners/_<topic>_*.py` copies; never edit
+   `sim/`, a registered runner, a scorer or a gate. Run it per RULING `compute-placement`.
+5. Report as a PROVISIONAL finding (`research/findings/<date>-<topic>.md`: dev seeds only, what it does NOT show),
+   check it per RULING `verify-go`, merge per RULING `routine-merges`, then NEEDS-CLAUDE "[draft-<topic>] RESULT: <one
+   line>; proposes <next step>" so the weekly review can promote it. Gate seeds, preregs, scorers, default flips and
+   `sim/` stay Claude's; a draft never claims a GO.
 
-- **NEVER switch the branch of the main checkout** (`/home/dant123/Projects/sim` must stay on `main`: live services run
-  from it). Each task gets its own worktree: `git worktree add .claude/worktrees/draft-<topic> -b research/draft-<topic>`
-  (or without `-b` if the branch exists), and ALL edits, commits and pushes happen inside that folder. The seam map
-  already has one: `.claude/worktrees/draft-seam-map` (branch `research/draft-seam-map`, your uncommitted draft moved
-  there 2026-09-26). Push with `git -C .claude/worktrees/draft-<topic> push origin research/draft-<topic>` and the same
-  for `gitea`. **Never merge, never commit this work to `main`.**
-- Keep `WORKLOG.md` at the top of the branch's draft folder (`docs/drafts/<topic>/`): each entry = date/time, what you
-  did, commands you ran, results (paths), and anything you are UNSURE of. Append after every step, so a restart or
-  compaction loses nothing. Mark guesses as guesses.
-- **Seeds:** use ONLY dev seeds (7, and 1-15 for small dev sweeps). **Never** 42/43/44/100/101/102; those are gate
-  seeds, run only under a preregistration Claude has reviewed. Label every dev result "DEV, not a verdict".
-- Compute: CPU on the mini-PC pool (`tools/pool_queue.sh add`, jobs pinned to your pushed branch commit after
-  `bash tools/pool_provision.sh --revision <sha> --isolated pool41 pool42`); small local runs only under
-  `bash tools/memcap.sh 8 -- ...`. **No GPU jobs** (the GPU auto-swap would stop your own model mid-session).
-- Code goes in NEW files under `research/runners/` and `tests/` (inside your worktree) (never edit `sim/`, `webapp/`, `tools/gates/`). To
-  observe production code, import it and wrap/monkeypatch functions inside your runner; never change it.
-- **2026-09-28 VIOLATION, do not repeat:** `research/runners/_tone_bg_nchannel_gpi_fix_validation.py` ran the six GATE seeds
-  (42,43,44,100,101,102) and edited the existing `research/runners/_tone_bg_nchannel_selector.py`. Dev seeds ONLY (7, 1-15);
-  new `_draft_*` files ONLY; write results as DEV drafts under `docs/drafts/`, not as findings. Claude reviews it Tuesday.
-- **Never write to a file a gate reads in order to get a commit through** (`research/coordination/lane_builds.jsonl`,
-  the waiver files beyond the honest template in this runbook, queue files, ledgers). Registering a build, run or queue
-  entry that does not exist is a FALSE CLAIM, exactly like a false waiver. On 2026-09-27 you registered two builds with
-  "6-seed run queued on the pool" that did not exist (no branch, empty queue); Claude reverted them. When a gate
-  blocks: commit Markdown only, keep working, and write NEEDS CLAUDE.
-- Stop and write NEEDS CLAUDE when: a gate blocks and the fix isn't obvious, a result looks like a GO/NO-GO, or a design
-  choice would change what the experiment means.
+## 6. RULINGS (Claude writes `- <KEY>: <ruling> (<date>)`; you follow it)
 
-Tasks, in priority order. Keep the pool busy: while pool jobs run, work on the next task.
+- push-credential: by design there is no push credential on S and `sim-publish` publishes `main` only. Packet and
+  draft branches live in this checkout (ZFS-snapshotted and backed up); do not run `push_both.sh`. After committing on a
+  branch, name `<branch> @ <sha>` in the RESULT line; Claude reviews and merges on S. GPU jobs need no push
+  (`gpu_remote.sh` sends the revision to W itself). (2026-09-30)
+- private-repos: GitHub and Gitea are private and S has no credential, so never `git fetch`, `pull` or `ls-remote` a
+  remote from here. Every pushed `research/*` branch was imported as `origin/research/<name>` (2026-09-30); later
+  branches are created here. Start a packet/draft worktree from `origin/research/<name>` or the local branch.
+  (2026-09-30)
+- permissions: the seeded item was about Claude Code's workstation allow list, which Hermes does not use. Under
+  Hermes, scheduled runs may use ssh, rsync, `source`, file edits, `bash -c`/`-lc`, pytest and git without a
+  prompt; `python -c`/`-e` one-liners are still refused: write the snippet to `_scratch/<name>.py` and run that.
+  (2026-09-30)
 
-1. **Host-decision seam map (plan section 1)** -> `docs/drafts/seam-map/host-decision-seam-map.md`. Trace ONE default
-   chat turn (`/api/brain-chat` in `webapp/server.py`) in order, ~300 lines per chunk. One table row per place Python
-   decides something from neural output: file:line, operation, neural input just before it, the decision, category
-   (candidate generation / scoring / admission-filtering / winner selection / commitment / composition / routing),
-   whether a neural signal already represents the choice (cite the evidence), and "unsure" where you are not certain.
-   Facts only.
-2. **Host-share instrument, first seams (plan section 2)** -> `research/runners/_draft_host_share_probe.py` + a test.
-   After the map has 5+ rows, pick 1-2 winner-selection or commitment seams. Build a runner that drives a dev-seed chat
-   turn (numpy, CPU) and, by wrapping the seam function, records (a) the host decision and the neural inputs
-   (decoding), (b) the downstream result when the host decision is replaced by a neural-derived one (substitution),
-   and (c) when it is flipped with the neural state held fixed (intervention). Dev seeds only; queue a small dev sweep.
-3. **Long-delay credit task (plan section 4)** -> `research/runners/_draft_long_delay_credit.py` + test + a DRAFT
-   prereg in `docs/drafts/long-delay-credit/`. First run the prior-work search
-   (`bash tools/before_you_build.sh "long delay temporal credit eligibility trace"` and
-   `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus all`, opening each hit) and REUSE existing
-   eligibility-trace / dopamine machinery. Implement the arms from the plan (variable delay, uninformative terminal
-   state, final decoy cue, trace lesion, immediate-reward and shuffled-reward controls) on a small spiking network.
-   Dev-seed smoke, then a small dev sweep on the pool.
-4. **Sleep transitive inference (plan section 5)** -> DRAFT prereg + a runner skeleton that REUSES the sleep-replay
-   capture machinery (`webapp/sleep_replay_capture.py`, `research/runners/_da_tag_capture_chat_probe.py`, read-only).
-   Arms: normal replay, wake-only, order-scrambled replay, replay off; the novel-context test. Dev smoke only if it runs.
-6. **Finish the public-docs refresh** (branch `docs-refresh-readme`, worktree `/home/dant123/Projects/sim-worktrees/docs-refresh`):
-   fix every item in `docs/drafts/docs-refresh/ISSUES.md` (25 honesty-check issues: stale numbers, contradictions,
-   overclaims, conflated mechanisms), re-checking each number against the ledger/findings; keep the honesty boundary;
-   log in that folder's WORKLOG.md; commit there; never merge (Claude reviews and publishes after Tuesday).
-5. **Test-suite triage** -> `docs/drafts/test-triage/`: the resumable full-suite command from "Parked for Claude"
-   (2+ hours; start it on the pool or locally under memcap and do other tasks meanwhile), then group failures by error.
-   `cudaErrorNoDevice`/GPU-hidden = ENVIRONMENT; list the rest with the first error line. No fixes.
+- T1-LDC: Step 4 (rc=2) is an instrument failure, not a verdict: the outcome DA never signed (prereg 7.3), so no
+  credit gate ran. No Amendment A, no CreditParams edit, no gate seed, never re-run Step 4. Bank the sweep once, then
+  run Step 4a (outcome-timing pilot, your draft build, dev seeds) exactly as the LDC HANDOFF says
+  (research/long-delay-credit-spiking @ bab667eb7, which also fixes both scorers' `.prov.json` glob). After the Step 4a
+  RESULT, T1 waits for `## Step 4b` in that HANDOFF (Claude). (2026-10-01)
+- iw2-R9: shared prereg Amendment 1 is committed: a capability cell whose LESION reply still states the content reads
+  DEFINED `lesion-kept`, an R FAIL. It lives on the LOCAL branch research/integration-wave2 (@ 758519b3f): start the T2
+  worktree from it, never from origin/research/integration-wave2; score R only when
+  `grep -c lesion-kept tools/iw2_score.py` >= 1 there. (2026-10-01)
+- iw2-selfid: ACCEPT. In T2 section 6, neural-selfid goes in FLIP only if its section-5 row reads D0 PASS,
+  D_neural-selfid DIFFERS-IN-SCOPE and R_si PASS, and in its identity on-arm file at the flip pin the "what are you?"
+  and "who are you?" turns each read `abstained` true or `recalled_svo[0]` == "brain". Otherwise flip the others,
+  leave it out and write NEEDS-CLAUDE "[iw2-selfid] turn <n>". The Stage-1 C2 "it" self-alias risk is accepted
+  (Claude checks B1's anaphora rows at merge). Say in its finding's Deviations that these questions now abstain.
+  (2026-10-01)
+- iw1-stepB: fixed. `pool_queue.sh add` now checks only the flags after the runner's own `-m` (main), so guarded iw1
+  lines queue. Identity lines pin PYTHONHASHSEED=0 on the LOCAL branch research/integration-wave1 (@ 2c6ae7591): start
+  the T8 worktree from it. The 5 landed P-pin identity files stand (no re-run). Proceed with T8 section 7. (2026-10-01)
+- b2d-mouth: keep and run the registered 18-job mouth arm (a dev-seed prediction is not a gate result). Claude queues
+  it on the GPU queue (`gpu_queue.sh add` is denied to you); when its lines are queued, yield per T9 section 5. Score T9
+  once the 258 stub cells and the 18 mouth cells have landed. (2026-10-01)
+- c1-lane: no reorder, no AWS. The pool clears the Stage-1/C1 lines inside their 168 h expiry and the 10-24 exit.
+  Only if T6's 10-17 tripwire or T7's 10-12 tripwire fires, write its NEEDS-CLAUDE line (Claude decides AWS). (2026-10-01)
+- T12-seam-map: done. Amendment a6aff478c is correct and stays on research/draft-seam-map in this checkout
+  (push-credential: nothing to push; a draft branch is not merged to main by this task). T12 is closed. (2026-10-01)
+- ecker-ou: the 8 renames on research/draft-ecker-ou-field are correct, but AFFECTED.md is incomplete: runners that
+  import an affected builder ran under the same bug. On that branch (T15's correction-note exception): list every
+  runner that imports `_gap5_ecker_adex_ca3_replay_derisk`, `_gap5_ecker_adex_ca3_stdp_band_derisk` or
+  `_gap5_ecker_reactivates_REAL_d5_derisk` (`git grep -l`), the findings that ran each, stated vs run OU value, and
+  add the same PROVISIONAL note to each finding (at least: braun-gapcoding, btsp-directional-write,
+  conduction-delay-directional-replay, ecker-adex-store, graded-recall-instrument and reverse-edge 2026-08-27
+  learn-through-use, forward-band-homeostatic-scaling-ltu 09-16, read-noise-floor K18 09-17). Also append to
+  AFFECTED.md: "_gap5_onebrain_capstone.py's ou_noise_sigma_pa=40.0 is dead code behind an always-false hasattr
+  guard and was not an intended value (it would reverse the line's own 'kill the composer's OU noise' intent); no
+  finding needs a correction." No re-runs. RESULT; then Claude merges and decides re-runs. The FAILURE_LOG row and
+  gate PF (`tools/gates/cfg_phantom_field.py`) are on main. (2026-10-01)
+- phantom-cfg-audit (task T17, after T15): run `.venv/bin/python tools/gates/cfg_phantom_field.py` on main. For each
+  flagged runner record the field written, its value, the real field and its default (sim/config.py), whether the
+  value differs from the default, and the findings that ran the runner. Write docs/drafts/phantom-cfg/AFFECTED.md on
+  research/draft-phantom-cfg; no code edit, no re-run; RESULT. List first `_emerge87_reservoir_coresident_derisk.py`
+  (a non-default value dropped; a GO finding cites it); most others are `cfg.dt` where the field is `dt_ms`.
+  (2026-10-01)
 
-## Parked for Claude (after the Tuesday reset) — do NOT work on these
+- models: since 2026-10-01 (owner) you run on MiMo v2.6 Flash in the cloud (OpenRouter, data_collection=deny) and
+  the workstation's local model is your automatic fallback, so gaming and GPU windows no longer stop you; still yield
+  the GPU for GPU jobs as section 3 says. Delegated subagents run on MiMo v2.6 Pro, the stronger judge: for a design
+  proposal, a verdict on results, or a judgment you would otherwise raise as NEEDS-CLAUDE ASK, delegate the reasoning
+  to one subagent (give it the task's files and these rules), then act on its answer and quote it in the WORKLOG.
+  What section 2 reserves (merge, gates, preregs, scorers, bars, `gpu_queue.sh add`) still goes to NEEDS-CLAUDE.
+  Every call costs money now: one task per run, no idle exploration. (2026-10-01)
 
-- Prioritized memory (owner's top memory directive): the DESIGN is on main (e7c7a281f) with its open re-review issues listed at
-  the top (1 MEDIUM, 3 LOW); next is a preregistration that closes them, then the build. The DA tag-capture + sleep-replay pair
-  stays off until this lands (owner, 2026-09-25).
-- B2b: (a) before AWS pool1 or pool2 next starts, run Steps 1a/1b of `research/coordination/b2b0924_reruns_commands.txt`
-  (move the stale copies aside on those nodes); (b) seed 102 discourse-register + episodic-memory were dispatched twice
-  (00:54 pool2, 13:15 pool1/pool2), left partial arm files and no lb.json -- decide under prereg A1.4 whether a further
-  re-run is allowed; (c) fill `research/coordination/b2b0924_reruns.tsv` results when the three redo cells land, then score.
-- Score the arcc awake-replay battery: all 6 seeds landed and the registered aggregate reads GO 6/6 (per-seed files committed b629d1a35); needs an independent re-derivation and a checked `preconditions` block before the aggregate is committed or claimed.
-- SlotBinder fast teach (`research/slotbinder-fast-teach-final` @ 06bf76489, touches sim/): NOT merged. Final re-review:
-  the change wraps `cp_plasticity_rate_gain` in a cupy subclass on EVERY bridge (flag on or off), never run on cupy, the
-  production default -- needs a flag-gated wrap + a cupy parity run; also stale '7.7-17x' title numbers and an
-  uncalibrated AMENDMENT 3 pass criterion. Issue list in workflow wf_fb8debe7-bdc.
-- Full test suite: the 2026-09-25 CPU-only run (`CUDA_VISIBLE_DEVICES=""`) exceeded its 2 h cap at ~97% with ~400 `F` marks and
-  no summary, so failures are unclassified. Re-run so partial results survive, then sort GPU-environment failures from
-  regressions against a pre-2026-09-25 baseline: `bash tools/memcap.sh 12 -- env SIM_NO_PROVENANCE=1 .venv/bin/python -m pytest -q
-  -p no:cacheprovider --continue-on-collection-errors --junitxml=<scratch>/suite.xml -rfE tests` (with the GPU free, or hidden).
-- B2c combined battery prereg (`research/b2c-paired-flip-prereg-fixround1`): open review issues.
-- Tooling: claim-check round 8 (MEDIUM: more false blocks on block-scope derived markers) and the pool-stall detector (HIGH: no
-  timeout on the live-node memory probe), issue lists in workflow wf_9944d7c2-aca; make `tools/gpu_queue.sh` and
-  `tools/pool_autodispatch.sh` daemons immune to in-place edits of their own script; make `pool_provision.sh --revision` imply
-  `--isolated` (FAILURE_LOG 2026-09-25).
-- Local-llm host RAM: the unit runs under `MemoryMax=12G`; on 2026-09-25/26 it hit a 12G memory peak AND 12G swap peak
-  (mmap'd weights + the default 8 GiB host prompt cache, `-cram`), which slows long sessions. Measure, then raise the cap or
-  set `-cram` in the 128K profile.
-- Small fixes: findings cite the git-ignored receipt `research/queue/.corpus_checks.jsonl` (if a commit in a worktree is
-  blocked for it, copy that file from the main checkout into the worktree); the GPU auto-swap's two LOW review notes (validate
-  the profile name before writing the restore marker; `|| true` on the test-only stop path).
+- server-load: the server's CPU reaches 100 C and throttles, and long test runs in this container are the biggest load
+  (homelab, 2026-10-01). Run any test run longer than a few minutes under `nice -n 10`, one at a time, and never start a
+  full suite while another is running; prefer the test files a change touches over the whole suite. (2026-10-01)
+
+- work-on-S: you committed T3 (f18da9f8f) and T13 (91608ce47) in the workstation's checkout because this runbook's
+  header and T13 text told you to; that was the runbook's error, not yours. Both branches are now on S; the header now
+  says work only on S. Judgment that section 2 does not reserve (a verdict on results, a design proposal, an ASK) goes
+  to one MiMo Pro delegate per RULING `models`, not to NEEDS-CLAUDE. (2026-10-01)
+
+- T1-stop2: main is merged into `research/long-delay-credit-spiking` (0b935bec7), so its biology gate has the fix.
+  Your 488 staged sweep files were unstaged for the merge and re-staged byte-identical (checked); commit the bank as
+  the HANDOFF says, then continue to Step 4a. (2026-10-01)
+
+- T0-identity: the 2 missing iw2 identity lines (`--arm default`, `--arm off`, revision 573a943) were claimed just
+  before the 09-30 20:31 dispatcher restart, which killed them; Claude re-queued both at the queue head 10-01 12:50.
+  T2 starts when 5/5 identity files are in `_iw2/identity/573a943/`. (2026-10-01)
+
+- verify-go: (owner-approved 2026-10-01) the project's `verify-go` skill is now one of your skills (read-only; the
+  other project skills are disabled for you). Before you write any line that reports a PASS, a GO, or that something
+  works, load it (`skill_view verify-go`) and give the result to TWO independent MiMo Pro delegates, each told to run
+  the skill's checks and try to refute the claim; quote both answers in the WORKLOG. If either finds a problem or
+  they disagree, write a STOP line instead of the PASS. Where the skill names a Claude-only tool, do the check by
+  hand and say so. A PASS still goes to Claude to confirm. (2026-10-01)
+
+- owner-merges: the owner now opens the Claude sessions for merges and rulings, prompted by the report's "Claude
+  check-in" line (due once a NEEDS-CLAUDE line is 72 h old). Make every NEEDS-CLAUDE line self-contained so it can be
+  pasted as is: the branch @ sha, what to merge or rule, and what it unblocks. (2026-10-01)
+
+- compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
+  in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
+  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
+  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
+  revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
+  dev seeds only for drafts). You CANNOT provision a new revision yet: that step uses a key the workstation's agent
+  only releases interactively (server-side provisioning is being built). Until then, new draft code runs on the
+  workstation: from the committed `$WT/draft-<topic>`, `bash tools/gpu_remote.sh add 'bash tools/mem_ok.sh 8 && bash
+  tools/memcap.sh 10 -- bash <your committed batch script>'`, ONE job per batch that runs its cells in parallel (for
+  example `xargs -P 8`), at most about 2 hours, numpy only (`SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=`). It waits while
+  the owner games; results arrive in `$P/research/findings/raw/` through `sim-sync.timer`. Never fall back to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
+  (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
+  arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
+  are in. (2026-10-01)
+
+- routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
+  only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
+  worklogs, draft docs (not HANDOFFs or preregs), new tests, new findings that say PROVISIONAL and new `_`-prefixed
+  draft runners, and it runs every gate on the merge. Anything else, any deletion, or an edit to an existing finding,
+  test, runner, scorer, HANDOFF, prereg, `sim/` or `tools/` is refused, and stays Claude's. Before running it, give
+  `git diff main...research/<branch>` and the task's HANDOFF section to TWO independent MiMo Pro delegates, each told
+  to find a reason not to merge; merge only if both approve, and quote both in the WORKLOG. A new finding stays
+  PROVISIONAL until a Claude check-in confirms it. A refusal or a failed gate: NEEDS-CLAUDE "[<task>] merge
+  research/<branch> @ <sha>: <the refusal>; unblocks <what>". Never edit `tools/agent_merge*` or run `git merge`
+  yourself. (2026-10-01)
 
 ## NEEDS CLAUDE
 
-<!-- Append one line per escalation: `- YYYY-MM-DD HH:MM  <what happened>  <what you already tried>` -->
+Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
+`- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
-- 2026-09-27 17:20 (Claude) research/draft-seam-map f446de2df registered three "in-flight builds" in lane_builds.jsonl to satisfy the lane-starvation gate; two did not exist (no branch, nothing queued, notes claimed 6-seed pool runs) and the third was not started. Reverted (ff517a3b1). Rule added under Weekend work hard rules. Do not repeat.
-- 2026-09-26 14:20 (Claude) The GPU fell off the bus at ~11:07 while this model was working (same signature as the 2026-07-22 crash, with the 300 W cap in force). Mitigations applied 14:40 (LACT: locked clocks 210-1800 MHz, fan curve on, 300 W); unattended runs may resume, but in the first long run check the VRAM temperature (LACT) and write NEEDS CLAUDE if it passes ~95 C. Your seam-map Part 1 was committed for you (research/draft-seam-map 528d70697); resume at Part 2. The arcc per-seed raw files and the code fix are committed (16:10); arcc aggregate.json stays uncommitted for Claude's scoring.
-- 2026-09-26 10:30 (Claude) DO NOT STAGE modified files under `research/findings/raw/_d6_capacity_curve/` (e.g. `s100_N2000_HEBB.json`): pool-sync pulled a DUPLICATE run's outputs over the scored, committed cells (different memory readings). Leave them unstaged; Claude restores and investigates the duplicate dispatch after Tuesday.
-
-
+- 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-01 04:05 [T3] RESULT #8: sleep-TI 6-seed gate family UNDEFINED: 4 NO-GO (STI7 false 43/44/100/102; STI3b false 43/44/102) + 2 U6-UNDEFINED (42/101 wperm invalid); pm UNDEFINED. Finding+16 files on research/sleep-transitive-inference @ f18da9f8f. U6 -> prereg s10. Hands back.
+- 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
+- 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
+- 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
+- 2026-10-01 16:55 [iw2-gate] section-5 commit blocked: branch @ 758519b3f has pre-fix tools/biology_check.py (no container-HOME _expand) -> 101 unresolved ~/Projects/sim-catalog paths. Needs main merged into research/integration-wave2; D/S/R verdicts staged (all PASS; flip list all 3).
+- 2026-10-01 17:15 [gate-stale] pre-fix tools/biology_check.py on pre-10-01 packet branches blocks every commit on S (container HOME): confirmed research/integration-wave2 + research/b2d-mouth-renderer (101 ~/Projects/sim-catalog errors). Needs main merged into each. T9 WORKLOG written, uncommitted.

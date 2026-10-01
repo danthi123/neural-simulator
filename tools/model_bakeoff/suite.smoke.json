@@ -1,0 +1,29 @@
+{
+ "schema": "model-bakeoff-suite-v1",
+ "_comment": "Plumbing smoke test for the bake-off harness (not a measurement): one trivial implement task with a protected test. BAKEOFF_SUITE=suite.smoke.json selects it.",
+ "tasks": [
+  {
+   "id": "smoke-fix-subtract",
+   "category": "implement",
+   "role": "implement",
+   "title": "Fix a planted bug so a given test passes",
+   "why_representative": "harness plumbing only",
+   "base_commit": "7edfa4795",
+   "setup": [
+    "mkdir -p bakeoff_smoke",
+    "printf 'def add(a, b):\\n    return a - b\\n' > bakeoff_smoke/calc.py",
+    "printf 'import importlib.util, os\\nspec = importlib.util.spec_from_file_location(\"calc\", os.path.join(os.path.dirname(__file__), \"calc.py\"))\\ncalc = importlib.util.module_from_spec(spec); spec.loader.exec_module(calc)\\n\\ndef test_add():\\n    assert calc.add(2, 3) == 5\\n' > bakeoff_smoke/test_calc.py"
+   ],
+   "prompt": "The test bakeoff_smoke/test_calc.py fails. Fix bakeoff_smoke/calc.py so it passes (run it with `.venv/bin/python -m pytest -q bakeoff_smoke/test_calc.py`). Do not edit the test. Then write BAKEOFF_ANSWER.md containing one line: DONE. Do not commit.",
+   "grading": {
+    "type": "command",
+    "command": ".venv/bin/python -m pytest -q -p no:cacheprovider bakeoff_smoke/test_calc.py",
+    "reference_answer": "add returns a + b"
+   },
+   "leak_check": "n/a (synthetic)",
+   "sources": [],
+   "est_minutes": 3,
+   "cpu_only": true
+  }
+ ]
+}

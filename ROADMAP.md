@@ -7,6 +7,11 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+**Operating setup (2026-09-30):** the project's home moved to homelab-server, driven by the Hermes Agent there
+(`/home/dant123/Projects/neural-simulator`); the workstation (`/home/dant123/Projects/sim`) is now a follower +
+compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
+`docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
+
 ## 2026-09-25 (afternoon) — owner rulings, a backlog of results scored, and handoff to the local model
 
 **Owner rulings:** the memory pair waits for a fix that makes the brain remember what matters (important facts and key
