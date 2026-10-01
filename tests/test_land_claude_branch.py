@@ -139,3 +139,22 @@ def test_fetches_an_import_repo_owned_by_another_uid(tmp_path):
     subprocess.run(["chown", "-R", "nobody", str(tmp_path / "import.git")], check=True)
     r = run("claude/work", sha)
     assert "dubious ownership" not in r.stderr and r.returncode == 0, r.stdout + r.stderr
+
+
+def test_keeps_the_callers_trust_in_the_main_checkout_while_fetching(tmp_path):
+    """Server case 2: BOTH repos belong to another uid; the caller trusts the main checkout through its own global
+    config. The fetch's throwaway GIT_CONFIG_GLOBAL must include that config, or git distrusts the main checkout."""
+    import pytest
+    if os.geteuid() != 0:
+        pytest.skip("needs root to give the repos another owner")
+    main, git, run, sha = _setup(tmp_path)
+    home = tmp_path / "home"; (home / ".config/git").mkdir(parents=True)
+    (home / ".gitconfig").write_text("[user]\n\tname = o\n\temail = o@o\n")
+    (home / ".config/git/config").write_text("[safe]\n\tdirectory = %s\n" % main)     # the XDG location
+    subprocess.run(["chown", "-R", "nobody", str(main), str(tmp_path / "import.git")], check=True)
+    env = dict(os.environ, HOME=str(home), CLAUDE_IMPORT_REPO=str(tmp_path / "import.git"),
+               LAND_BACKUP_ROOT=str(tmp_path / "scratch"))
+    env.pop("XDG_CONFIG_HOME", None); env.pop("GIT_CONFIG_GLOBAL", None)
+    r = subprocess.run(["bash", "tools/land_claude_branch.sh", "claude/work", sha], cwd=main, env=env,
+                       capture_output=True, text=True)
+    assert "dubious ownership" not in r.stderr and r.returncode == 0, r.stdout + r.stderr
