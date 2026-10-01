@@ -475,6 +475,11 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
     is an edit to existing tests, so it is a work package for a later Claude session.
   - Retiring the `*_no_harm` pins is the owner's call. Nothing for you to run. (2026-10-01)
 - handled: [iw2-R-pre], [T3], [ecker-ou], [T17], [triage] (2026-10-01)
+- T17-merge: (cloud Claude) research/draft-phantom-cfg @ b18e8393b (your refuter fixes) is merged on claude/session1-backlog,
+  with two of its rows corrected: the "Differs" notes for `cfg.enable_stp` and `_gap5_ecker_reactivates_REAL_d5`
+  were swapped, and the new headline `enable_stp` row now names `enable_short_term_plasticity`. Nothing for you to run;
+  the T17-phantom-cfg ruling above stands. (2026-10-01)
+- handled: [T17-merge] (2026-10-01)
 
 ## NEEDS CLAUDE
 
