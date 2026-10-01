@@ -219,3 +219,30 @@ is the new tip; unpushed per the push-credential ruling).
 - The sweep ran --n-train 200; prereg 7.6 and the gate use 400.
 - Scorer `.prov.json` glob bug fixed in the same commit as this entry; on the real sweep dir the fixed scorer gives exactly the workaround report (rc=2, chosen null).
 - Next: Step 4a pilot (Hermes, draft build, dev seeds), then Claude writes Amendment A0 and Step 4b; see the HANDOFF.
+
+## 2026-10-01 13:15 (Hermes, local model): Step 4 sweep banked — 492416302
+
+Banked per HANDOFF Step 4a: `git add research/findings/raw/_long_delay_credit_bg/sweep` + the verbatim
+prescribed message, committed through the gates (no --no-verify): 488 files, `research/long-delay-credit-spiking
+@ 492416302`. `research/findings/raw/_provenance/runs.jsonl` left modified-but-unstaged per Step 2.
+
+**The below-chance gate blocked the first attempt** (155 of the staged sweep JSONs — the "31" in the hook
+output was the report cap, not the count). Per RULING `models` this verdict-on-results judgment went to one
+MiMo Pro subagent first; **its verdict: DECLARE** (high confidence), quoted:
+
+> The gate is authoritative and its own blocked message prescribes this exact remedy: declare it
+> ("below_chance": true / an UNDEFINED verdict) so the artifact owns its own status; its docstring calls
+> the escape 'the desired behaviour, not a loophole'. [...] Patch only gate-flagged files, where
+> below_chance:true is verified true per-file [...]; measured values untouched; note mirrors the precedent's
+> wording and is true of every patched file; rc=2 chosen=null stays in the verbatim commit message.
+
+Acted on it: added `below_chance: true`, `instrument_failed: true` and a `below_chance_note` (the reading is
+UNDEFINED, never a capability NO-GO; outcome DA never signed per prereg 7.3; Step 4 tag selection rc=2,
+instrument report chosen=null) to exactly the 155 gate-flagged files under `sweep/` — none of the other 88
+sweep JSONs, `instrument_report.json` not among them. Every file went through a round-trip check
+(json.loads->dumps byte-identical before the addition; all original keys re-verified equal after), so no
+measured value changed. Re-staged: `run_all` on the staged list returns `BLOCKING: []` (only the report-only
+`tool-health-fresh` warning remains). Same-file precedent: Claude's own `a4cbb7daa` hand-declared
+`below_chance` on the two dev JSONs for this same gate; the runner never writes these fields.
+
+Next per RULING T1-LDC: Step 4a (outcome-timing pilot, draft build, dev seeds) exactly as the HANDOFF says.
