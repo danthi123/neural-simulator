@@ -144,12 +144,24 @@ _copy_stage() {   # _copy_stage <node> -- runtime mode: move this node's staged 
 # the owner had to fix it by hand). AWS_STATE_DIR default matches tools/aws_pool_node.sh's own state-file
 # convention (research/queue/.aws_<node-name>) -- override exists so tests never touch the shared production dir.
 AWS_STATE_DIR="${POOL_SYNC_AWS_STATE_DIR:-$ROOT/research/queue}"
+# READ-ONLY rsync HOSTS (2026-09-30 security re-review). A host named in POOL_SYNC_RRSYNC_NODES (space-separated; the
+# server's unit names the workstation) forces this key to `rrsync -ro /home/<user>/derisk-pool` in its authorized_keys,
+# so the key reads result files there and can do nothing else: no shell. The workstation is the owner's desktop, and
+# sim's key used to be a full dant123 shell on it (passwordless sudo, the owner's credentials). On such a host every
+# remote path is relative to ~/derisk-pool, and the revisions are listed with rsync itself (`--list-only`), since the
+# `sh -c 'ls ...'` probe below needs a shell. Pool nodes are unaffected.
+_rr() { [[ " ${POOL_SYNC_RRSYNC_NODES:-} " == *" $1 "* ]]; }
+_rpath() {   # _rpath <node> <path under the remote home, e.g. ~/derisk-pool/... or derisk-pool/...> -> the path to send
+  local p="$2"
+  if _rr "$1"; then p=${p#\~/}; p=${p#derisk-pool/}; fi
+  printf '%s\n' "$p"
+}
 _rsync_pull() {   # _rsync_pull <node> <dest> -- one itemized pull; the ONE place this shape is spelled out, so the
                    # main call and the post-refresh retry below can never drift apart.
   timeout 180 rsync -au $DRY --itemize-changes \
       "${RSYNC_SAFETY_ARGS[@]}" \
       -e "$RSYNC_SSH" \
-      "$1:$REMOTE_DIR" "$2" 2>/dev/null
+      "$1:$(_rpath "$1" "$REMOTE_DIR")" "$2" 2>/dev/null
 }
 total=0
 FAILED=0
@@ -222,8 +234,18 @@ for N in $NODES; do
   # `sh -c` (2026-09-30): the remote LOGIN shell runs this string, and on the workstation that is fish with `ls`
   # wrapped in a long, coloured listing, so the old bare `ls -d` returned "drwxr-xr-x - dant123 30 Sep ..." tokens
   # and no revision was ever pulled from it. A non-interactive sh has no aliases and POSIX glob semantics everywhere.
+  if _rr "$N"; then
+    # rsync's own recursive listing of ~/derisk-pool/revisions, pruned to the four directory levels that lead to a
+    # results dir: the same set as the shell glob below (a revision whose job wrote nothing yet has no raw/ dir).
+    # rc 23 is "no revisions dir at all".
+    _ls=$(timeout 60 rsync -r --list-only --include='/*/' --include='/*/research/' --include='/*/research/findings/' \
+          --include='/*/research/findings/raw/' --exclude='*' -e "$RSYNC_SSH" "$N:revisions/" 2>/dev/null); _lrc=$?
+    if [ "$_lrc" != 0 ] && [ "$_lrc" != 23 ]; then echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; fi
+    revs=$(printf '%s\n' "$_ls" | awk '$1 ~ /^d/ && $NF ~ /^[^\/]+\/research\/findings\/raw$/ {print "derisk-pool/revisions/" $NF}')
+  else
   revs=$(timeout 20 $RSYNC_SSH "$N" "sh -c 'ls -d derisk-pool/revisions/*/research/findings/raw 2>/dev/null || true'" 2>/dev/null) \
     || { echo "  $N: revision-list probe failed (unreachable)"; FAILED=1; continue; }
+  fi
   for R in $revs; do
     # The listing is the node's answer: only a plain revision path (its name also names a staging subdir) is used.
     [[ $R =~ ^derisk-pool/revisions/[A-Za-z0-9][A-Za-z0-9._-]*/research/findings/raw$ ]] \
@@ -233,7 +255,7 @@ for N in $NODES; do
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           "${RSYNC_SAFETY_ARGS[@]}" \
           -e "$RSYNC_SSH" \
-          "$N:$R/" "$(_dest "$N" "rev/$_rev")" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
+          "$N:$(_rpath "$N" "$R")/" "$(_dest "$N" "rev/$_rev")" 2>/dev/null) || { echo "  $N:${R#derisk-pool/revisions/}: rsync FAILED"; FAILED=1; continue; }
     rn=$(printf '%s\n' "$rout" | grep -cE '^>f' || true)
     [ "$rn" -gt 0 ] && echo "  $N:${R#derisk-pool/revisions/}: ${DRY:+would pull }$rn file(s)"
     total=$((total+rn))

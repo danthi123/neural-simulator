@@ -489,7 +489,10 @@ only remote-side check (it did not exist on 2026-09-30; owner step below).
   hostile: the defences are the client side (node answers checked as numbers, revision paths by regex, rsync
   `--safe-links` + allow-list + `--max-size` + a capped stage, the symlink-refusing copy) and a patched rsync/OpenSSH
   on S (standing requirement; 2026-09-30: rsync 3.4.1, OpenSSH 10.2, unattended-upgrades on). `sim_ed25519` is
-  `from=`-only on the nodes (root via `node`'s sudo) and a dant123 shell on W, so it must never leave `/home/sim`.
+  `from=`-only on the nodes (root via `node`'s sudo), so it must never leave `/home/sim`. On W it was a full dant123
+  shell (the owner's desktop, passwordless sudo); W's `authorized_keys` now forces it to `rrsync -ro ~/derisk-pool`
+  (owner step) and `pool_sync.sh` lists W's revisions with rsync itself (`POOL_SYNC_RRSYNC_NODES=workstation`), so a
+  compromised sim can read W's results and nothing else.
 - **No remote-side history protection.** GitHub `main` had no protection (404), and the deploy key writes every branch.
   Owner step: a GitHub ruleset on all branches (no force-push, no deletion; repository admins bypass) and a Gitea
   protection rule `**`.
