@@ -491,4 +491,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-01 19:31 [iw2-provision] STOP: T2 flip F @ 1fb805e9e committed (gates green, PINS row F, board synced); pool_provision.sh: rsync command-not-found on S (rc=127). Needs rsync on S or provisioning from a host that has it. Blocks: T2 validation (prereg steps B/F).
-- 2026-10-01 19:31 [LDC-grid] INFO: pool grid _ldc_outcome_timing reads 0/36 outputs and 0 runner processes (33 alive at 18:46) — ended or died silently; diagnose next wake before any relaunch.
+- 2026-10-01 19:54 [LDC-grid] INFO (corrected): grid ALIVE and progressing - 33 runner procs each on pool41 + pool42, outputs landing (4 + 8 in the nodes' checkouts); the earlier 0/0 read S-side ps (pool jobs never run on S) plus the S output dir (copy-back pending).
