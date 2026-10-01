@@ -280,3 +280,11 @@ seed-robust by construction (it does not depend on a hand-tuned tonic operating 
 (`research/runners/_draft_host_share_tone_probe.py`) stays in view: its substitution arm is recorded but not gated on, so
 the moment the N-way race commits cleanly the probe's `n_committed` rises and the seam's host-share verdict can be
 re-read against a neural winner.
+## Amendment 2026-09-29 (Claude review): the N=5 "tonic-firing wall" is an integration overshoot
+With four `commit_fs -> commit` GABA-A projections of weight 40 onto each commit pool, one explicit step drives the
+commit membrane to -377 mV; the pools then fire at the refractory ceiling with arousal off and the thalamus silent.
+Scaling the cross-inhibition to 40/(N-1) = 10 removes it at the default tonic (commit 0.83-1.0, dev seed 7). The
+GPi 500 / thal 45 point avoids the overshoot only because it silences the thalamus; the gpi 50 / thal 45 "window"
+is the same -386 mV overshoot. The six-seed run (`_gpi_fix_6seed.json`, dirty tree, no prereg) is DEV. "0% of the
+selection is host-owned" does not follow: the candidate scores are host-computed. Review:
+`docs/drafts/selection-seam/REVIEW-of-local-model-nchannel-bg.md` on `research/selection-seam-need-reversal`.
