@@ -37,3 +37,12 @@ At plat_tau=0.1ms the plateau is a ~1-step pulse (no tail), so a reverse edge B�
 
 ## Verdict + next mechanism (a wall defers a METHOD, not the capability)
 PARTIAL: the BTSP-eligibility write materially improves the replay-time write (forward flips from depressing to potentiating, reverse excess ~6x → ~1.9x, recall preserved) but does NOT achieve directional forward-only consolidation (0/6; 14 op-points). BANKED positives carried forward: the Ecker store segments, replay drives durable lesion-controlled 100%-attributable plasticity, and pure-potentiation removes the STDP reverse-runaway. The residual is now precisely isolated and STRUCTURAL — the reactivation VOLLEYS OVERLAP, so no coincidence-read write can be forward-selective. Named next mechanism (the finding's alternative #1): a forward-edge CONDUCTION DELAY that SEPARATES the volleys (B ignites only AFTER A terminates → clean pre-before-post, zero overlap → directional under either BTSP or STDP) — Ecker's own separation; then Braun 2022 inhibitory gap-coding (sparse sequences with no overlapping synfire excitation). Production D5 wire-in stays separately blocked at the AdEx soma-recurrence seam ([[2026-08-20-ecker-real-d5-store-does-NOT-reactivate-via-soma-recurrence-dendritic-latch-is-the-read]]).
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_ecker_replay_learn_through_use_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

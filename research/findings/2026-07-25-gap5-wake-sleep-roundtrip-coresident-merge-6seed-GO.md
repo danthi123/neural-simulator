@@ -50,3 +50,7 @@ RF composer's neuron model to the mix) + a sleep-phase trigger; the mechanism is
 `_gap5_wake_sleep_phase_switch` (`switch_to_adex_sleep`, `50255443`) + the replay decoder (`decode_and_width`, `d6e140bf`)
 + the ECKER_CA3_PC preset (`d707bf34`). NO `sim/` edit. GPU. Builds on the gap#5 replay/learned-band/merge arc
 (`d6e140bf`, `a051d84d`, `6ed6f0a2`, `50255443`).
+
+## Correction (PROVISIONAL, local model) — 2026-09-30
+
+T15 (Ecker CA3 OU-noise field): the runner `_gap5_wake_sleep_roundtrip` set `cfg.ou_noise_sigma_pa` (40 pA), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA, `sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** stated. The runner now sets `ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.
