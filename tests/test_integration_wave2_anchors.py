@@ -919,3 +919,42 @@ def test_guard_positional_form_matches_the_flag_form():
     wrong = "" if on else "false-belief-chat"
     if wrong:
         assert subprocess.run([sys.executable, g, wrong], cwd=REPO, env=env).returncode == 1
+
+
+# ── shared prereg Amendment 1 (2026-10-01, HANDOFF NEEDS-CLAUDE 9): the lesion must take the content out ──────────
+def test_iw2_score_R_lesion_that_keeps_the_content_is_a_fail(tmp_path):
+    """S2 reads `regressed` when ANY reply field moves. A lesion that moves only `recalled_svo` and still answers
+    'basket' did not take the false belief out of the reply: DEFINED `lesion-kept`, R FAIL, never a pass."""
+    sc = _fill(tmp_path)
+    kept = dict(FB_INTACT, recalled_svo=["sally", "look", "basket"])
+    _write_cell(str(tmp_path), "R", 102, "tom-false-belief", "tom_fb", {"ia": FB_INTACT, "le": kept}, env=FB,
+                arm_env=dict(FB, BRAIN_FALSE_BELIEF_LESION="1"))
+    res, code = sc.score_R("false-belief-chat", "R", PIN, base=str(tmp_path))
+    assert code == sc.FAIL and res["per_seed"]["102"]["reply_verdict"] == "lesion-kept", res["per_seed"]["102"]
+    assert res["n_defined"] == 6 and res["n_reply_load_bearing"] == 5, res
+
+
+def test_iw2_score_R_lesion_content_rule_transitive_and_selfid(tmp_path):
+    """transitive: a lesion 'yes' that differs only in recalled_svo is `lesion-kept`; an abstaining lesion reply
+    counts even when a discourse prefix names the target. neural-selfid: the host router's 'spikes' text under the
+    parse lesion (substrate recall gone, content kept) is `lesion-kept` on every seed."""
+    sc = importlib.import_module("tools.iw2_score")
+    TR = {"BRAIN_TRANSITIVE_CHAT": "1"}
+    yes = _r("I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.")
+    for le, want in ((dict(yes, recalled_svo=["cat", "precede", "river"]), sc.FAIL),
+                     (_r("On river, then -- I don't know about that.", True), sc.PASS), (_ABSTAIN, sc.PASS)):
+        for s in sc.SEEDS:
+            _write_cell(str(tmp_path), "T", s, "reasoning-transitive-chat", "transitive_nonadjacent",
+                        {"ia": yes, "le": le}, env=TR, arm_env=TR)
+            _write_cell(str(tmp_path), "T", s, "transitive-reversed-ctl", "iw2ctl_rv", {"ia": _ABSTAIN, "le": _ABSTAIN},
+                        env=dict(TR, LB_IW2_CONTROLS="1"), arm_env=TR, verdict="pass")
+        assert sc.score_R("transitive-chat", "T", PIN, base=str(tmp_path))[1] == want, le
+    SI = {"BRAIN_NEURAL_SELFID": "1"}
+    use = _r("the brain uses the spikes", svo=["brain", "use", "spikes"])
+    for s in sc.SEEDS:
+        _write_cell(str(tmp_path), "S", s, "neural-selfid", "iw2si_use", {"ia": use, "le": _r("the brain uses the spikes")},
+                    env=SI, arm_env=SI)
+        _write_cell(str(tmp_path), "S", s, "selfid-nofact-ctl", "iw2ctl_nf", {"ia": _ABSTAIN, "le": _ABSTAIN},
+                    env=dict(SI, LB_IW2_CONTROLS="1"), arm_env=SI, verdict="pass")
+    res, code = sc.score_R("neural-selfid", "S", PIN, base=str(tmp_path))
+    assert code == sc.FAIL and {c["reply_verdict"] for c in res["per_seed"].values()} == {"lesion-kept"}, res

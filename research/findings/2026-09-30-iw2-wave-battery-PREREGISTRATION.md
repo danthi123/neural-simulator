@@ -181,3 +181,31 @@ path) and the transitive route's closed-class scope guard.
 - **The Qwen mouth.** Every arm uses the stub renderer, as every battery does.
 - **Multi-scenario conversations** (a second false-belief scenario in one session, a second chain), and the rich path
   (neither route is wired into `rich=True`).
+
+## Amendment 1 (2026-10-01): the lesion reply must lose the capability's content (step R and F1)
+
+Written before any step-R cell was read or scored. At writing, the first step-R `lb.json` files had landed on the
+server (`iw2-R-fb-573a943`), none read; no step-R verdict file or WORKLOG existed. The only replies consulted are dev
+seed 7's (shared HANDOFF section 9). Source: the shared HANDOFF's NEEDS-CLAUDE 9 (adversarial review, section 12).
+
+**Why.** S2 reads `regressed` when any primary reply field moves (`answer`, `abstained`, `recalled_svo`). A lesion
+that moves only `recalled_svo`, or rewords the reply, while the reply still states the capability's content would
+count as load-bearing although the lesion did not take the capability out of the reply (for neural-selfid: the host
+router answering "spikes" after the substrate parse is cut, a host decision credited to the substrate). Each packet
+prereg already predicts a lesion reply without the content (false belief: the true location; transitive and selfid:
+an abstention). This amendment makes the scorer check that prediction.
+
+**Rule.** Added to step R's capability-cell rule (here and in all three packet preregs) and so to F1, which reads
+with step R's guards. A capability cell counts only if, in addition, the LESION reply on the probe turn does not
+state the capability's content. "States the content" is the intact test, reused: the reply is not degenerate (not
+empty or absent, not an abstention, not an echo of the probe), contains every `intact_must_contain` token and no
+`intact_must_not_contain` token (lower-cased substring; `tools/iw2_score.py` PACKETS). Tokens: false-belief-chat
+`basket` and not `box`; transitive-chat `river` and `reasoned`; neural-selfid `spikes`. A regressed cell whose lesion
+reply states the content is DEFINED `lesion-kept`: not load-bearing, a DEFINED miss (R FAIL), never UNDEFINED and
+never re-run. The permuted controls are unchanged.
+
+**Unchanged.** P (`573a9438f`), the job lines, seeds, arms, bars (capability 6/6, control 6/6) and every other guard.
+The dev seed 7 lesion replies (box; abstain; abstain) pass the new check, so every prediction stands. The amendment
+commit changes only `tools/iw2_score.py` (`lesion_keeps_content`), two failing-first tests in
+`tests/test_integration_wave2_anchors.py`, these preregs, the HANDOFF tables and one FAILURE_LOG row; no file a
+step-D, R, B or F job executes changes, so "nothing else changes between P and F" holds for every run.

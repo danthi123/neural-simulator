@@ -24,7 +24,7 @@ control `transitive-reversed-ctl` (the chain taught in reverse; the same questio
 | R verdict | per-seed detail (`R_tr.json`) | do |
 |---|---|---|
 | PASS | capability 6/6 `regressed` (the intact reply names river, says "reasoned" and does not abstain), control 6/6 `control-ok` | into the flip list (if D0 and D_transitive-chat read PASS / DIFFERS-IN-SCOPE) |
-| FAIL | a capability seed `pass` (the lesion did not change the reply) or `intact-wrong`, or a control `control-violated` (a "yes" to a reversed chain) | not flipped. Draft `research/findings/<date>-iw2-transitive-chat-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows, and which rule failed |
+| FAIL | a capability seed `pass` (the lesion did not change the reply), `intact-wrong` or `lesion-kept` (the lesion reply still states the derived answer; prereg Amendment 1), or a control `control-violated` (a "yes" to a reversed chain) | not flipped. Draft `research/findings/<date>-iw2-transitive-chat-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows, and which rule failed |
 | UNDEFINED | a cell not DEFINED; `UNDEFINED:degenerate-intact` means the intact chase ABSTAINED on the forward chain while the lesion said something else | shared re-run rule once; still UNDEFINED: not flipped, NEEDS-CLAUDE "iw2 tr R UNDEFINED: <seed>: <fails>" |
 
 A seed whose intact reply abstains AND whose lesion also abstains reads `pass`, so R is FAIL (the capability is absent

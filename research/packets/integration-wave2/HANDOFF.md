@@ -409,6 +409,8 @@ Verdict: SOUND-WITH-ISSUES. Two defects fixed on the branch (commit bb149f522, e
    check that the LESION reply lost the capability's content (e.g. a lesion reply that still says "river ...
    reasoned" but differs in `recalled_svo`). The dev lesion replies do lose it (box / abstain / abstain). Tightening
    this now would add a criterion the preregs do not state; rule whether to add it by prereg amendment before P.
+   RULED 2026-10-01 (runbook RULING `iw2-R9`): added by the shared prereg's Amendment 1 before any step-R cell was
+   read; `tools/iw2_score.py` reads such a cell DEFINED `lesion-kept`, an R (and F1) FAIL.
 10. (review) Wave 1's step-B lines have the same defect this review fixed here: `research/packets/integration-wave1/
     make_jobs.sh` inserts `assert_iw1_defaults.py --expect-on=<list>`, which `pool_queue.sh add` will refuse. Fix
     on that branch before its step B.

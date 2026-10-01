@@ -97,3 +97,10 @@ part is the workspace's re-entrant ignition and its n_ignited read deciding ADVA
 
 The chase runs a multi-cycle spiking simulation per hop on a small workspace bridge; the identity arms record the
 chase turn's `turn_wall_s` (non-negotiable 4: speed is secondary).
+
+## Amendment 1 (2026-10-01): lesion-content check
+
+Step R's capability-cell rule (and F1) gains the shared prereg's Amendment 1, written before any step-R cell was
+read: the lesion reply must not state the derived relation. A lesion reply that is not degenerate and contains both
+`river` and `reasoned` makes the cell DEFINED `lesion-kept`, an R FAIL. The prediction (the lesion abstains) is
+unchanged.

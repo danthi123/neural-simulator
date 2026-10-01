@@ -21,7 +21,7 @@ lesion `BRAIN_FALSE_BELIEF_LESION=1`) and control `tom-true-belief-ctl` (the sam
 | R verdict | per-seed detail (`R_fb.json`) | do |
 |---|---|---|
 | PASS | capability 6/6 `regressed` (intact names basket), control 6/6 `control-ok` | into the flip list (if D0 and D_false-belief-chat read PASS / DIFFERS-IN-SCOPE) |
-| FAIL | a capability seed `pass` or `intact-wrong`, or a control `control-violated` | not flipped. Draft `research/findings/<date>-iw2-false-belief-chat-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows (`detail.intact_answer`, `detail.lesion_answer`), and which rule failed |
+| FAIL | a capability seed `pass`, `intact-wrong` or `lesion-kept` (the lesion reply still names basket; prereg Amendment 1), or a control `control-violated` | not flipped. Draft `research/findings/<date>-iw2-false-belief-chat-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows (`detail.intact_answer`, `detail.lesion_answer`), and which rule failed |
 | UNDEFINED | a cell not DEFINED (`state` not DEFINED, or `UNDEFINED:*`; includes `UNDEFINED:degenerate-intact` with fails "belief store silent or tied": the reply said basket, but the store carried no rate there, so the text was the read-out's first-slot default) | shared re-run rule once; still UNDEFINED: not flipped, NEEDS-CLAUDE "iw2 fb R UNDEFINED: <seed>: <fails>" |
 
 ## Production default (shared steps B and F)

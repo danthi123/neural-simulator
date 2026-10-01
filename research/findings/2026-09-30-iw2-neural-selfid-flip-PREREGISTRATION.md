@@ -84,3 +84,10 @@ mirrors the router's own `_resolve_self`. The noisy-anaphora fallback stays host
 Default-on, 'it' is also a self-alias: a bare "it" that the discourse WM does not substitute resolves to the brain
 itself on the substrate path (the router did the same on the host path); step S plays one ordinary anaphora turn to
 check that a held referent still wins.
+
+## Amendment 1 (2026-10-01): lesion-content check
+
+Step R's capability-cell rule (and F1) gains the shared prereg's Amendment 1, written before any step-R cell was
+read: the lesion reply must not state the self fact. A lesion reply that is not degenerate and names `spikes` (for
+example the host router's text after the parse lesion) makes the cell DEFINED `lesion-kept`, an R FAIL. The
+prediction (the lesion abstains) is unchanged.

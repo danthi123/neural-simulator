@@ -68,3 +68,9 @@ a PLACE naming a new agent starts a new scenario. The open-ended and rich paths 
 narration that matches the PLACE/MOVE/LEAVE/RETURN grammar updates the per-session scenario silently (the reply to a
 narration turn is unchanged: a write-only fold) and a matching "where will X look for the Y?" is answered by the
 register.
+
+## Amendment 1 (2026-10-01): lesion-content check
+
+Step R's capability-cell rule (and F1) gains the shared prereg's Amendment 1, written before any step-R cell was
+read: the lesion reply must not state the false belief. A lesion reply that is not degenerate, names `basket` and
+does not name `box` makes the cell DEFINED `lesion-kept`, an R FAIL. The prediction (lesion names `box`) is unchanged.

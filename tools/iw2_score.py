@@ -23,6 +23,11 @@ A step-R / F1 cell counts as reply-level load-bearing ONLY when all of these hol
     trace must show the belief store carrying the answered slot (a positive late-window rate, strictly above every
     other slot); an all-zero or tied store answers slot 0 -- the stale location -- by argmax default, so it reads
     UNDEFINED:degenerate-intact, never a pass.
+  * LESION-CONTENT check (shared prereg Amendment 1, 2026-10-01; HANDOFF NEEDS-CLAUDE 9): the LESION reply must no
+    longer state the capability's content. S2 reads `regressed` when ANY reply field moves, so a lesion that moves
+    only `recalled_svo` (or rewords the reply) while still stating the content would otherwise count. The test is
+    the intact one, reused: a lesion reply that is not degenerate, has every `intact_must_contain` token and no
+    `intact_must_not_contain` token reads DEFINED `lesion-kept`: not load-bearing, so R reads FAIL (and so does F1).
 
   R  (reply-level capability, pre-flip, at pin P):
      python tools/iw2_score.py R --packet false-belief-chat --tag iw2-R-fb-<P7> --pin <P>
@@ -163,10 +168,28 @@ def wrong_intact(canon, must, must_not):
     return out
 
 
+def lesion_keeps_content(canon, spec):
+    """Why the LESION reply on the probe turn still states the capability's content (shared prereg Amendment 1,
+    2026-10-01): the intact content test applied to the lesion arm. A degenerate lesion reply (empty, absent,
+    abstaining, an echo of the probe) states nothing. Empty list = the lesion took the content out of the reply."""
+    must, must_not = spec.get("intact_must_contain", []), spec.get("intact_must_not_contain", [])
+    t = ((canon.get("arms") or {}).get("lesion") or {}).get(canon.get("turn")) or {}
+    ans = t.get("answer")
+    if not must or not isinstance(ans, str) or not ans.strip() or t.get("abstained") is True:
+        return []
+    if spec.get("probe_message") and _norm(ans) == _norm(spec["probe_message"]):
+        return []
+    low = ans.lower()
+    if all(w in low for w in must) and not any(w in low for w in must_not):
+        return ["lesion: still states %s (%r)" % (must, ans)]
+    return []
+
+
 def _cell_std(d, fac, pin, allowed, spec=None, guard=False):
     """b2d_score.judge_dir with the capability-shard relaxation; returns (state, s2_verdict, detail). With `guard`
     (step R and F1, pass criteria): a `regressed` cell with a degenerate intact reply is UNDEFINED:degenerate-intact;
-    one with a non-degenerate but wrong intact reply is DEFINED `intact-wrong` (not load-bearing)."""
+    one with a non-degenerate but wrong intact reply is DEFINED `intact-wrong` (not load-bearing); one whose lesion reply
+    still states the content is DEFINED `lesion-kept` (not load-bearing; Amendment 1)."""
     saved = B.sidecar_fails
     B.sidecar_fails = _allowing(set(allowed))
     try:
@@ -194,6 +217,10 @@ def _cell_std(d, fac, pin, allowed, spec=None, guard=False):
         why = silent_store(canon, spec["store_trace"]) if spec.get("store_trace") else []
         if why:
             return "UNDEFINED:degenerate-intact", None, dict(det, fails=why)
+        # the reply changed, but did the lesion take the capability's content out of it? (Amendment 1)
+        kept = lesion_keeps_content(canon, spec)
+        if kept:
+            return state, "lesion-kept", dict(det, fails=kept)
     return state, s2, det
 
 
@@ -238,7 +265,7 @@ def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
             cst, cv, cdet = control_cell(dc, ctl["row"], pin, allowed, ctl)
             ctl_per[str(s)] = {"state": cst, "verdict": cv, "detail": cdet}
     n_def = sum(1 for c in per.values()
-                if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass", "intact-wrong"))
+                if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass", "intact-wrong", "lesion-kept"))
     n_lb = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] == "regressed")
     c_def = sum(1 for c in ctl_per.values() if c["state"] == "DEFINED" and c["verdict"])
     c_ok = sum(1 for c in ctl_per.values() if c["state"] == "DEFINED" and c["verdict"] == "control-ok")

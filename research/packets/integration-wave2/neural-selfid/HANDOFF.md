@@ -25,7 +25,7 @@ session; lesion `BRAIN_SUBSTRATE_PARSE_LESION=1`, the parser's role-conjunction 
 | R verdict | per-seed detail (`R_si.json`) | do |
 |---|---|---|
 | PASS | capability 6/6 `regressed` (the intact reply names spikes), control 6/6 `control-ok` | into the flip list (if D0 and D_neural-selfid read PASS / DIFFERS-IN-SCOPE) |
-| FAIL | a capability seed `pass` or `intact-wrong`, or a control `control-violated` (a self fact confabulated for "what do you drink?") | not flipped. Draft `research/findings/<date>-iw2-neural-selfid-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows, and which rule failed |
+| FAIL | a capability seed `pass`, `intact-wrong` or `lesion-kept` (the lesion reply still names spikes; prereg Amendment 1), or a control `control-violated` (a self fact confabulated for "what do you drink?") | not flipped. Draft `research/findings/<date>-iw2-neural-selfid-reply-level-NO-GO-<n>of6.md` (provisional): per seed, the intact and lesion answers of both rows, and which rule failed |
 | UNDEFINED | a cell not DEFINED | shared re-run rule once; still UNDEFINED: not flipped, NEEDS-CLAUDE "iw2 si R UNDEFINED: <seed>: <fails>" |
 
 ## Production default (shared steps B and F)
