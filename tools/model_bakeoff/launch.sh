@@ -45,13 +45,14 @@ case "$cmd" in
     echo "volume $VOL ready" ;;
   prepare)
     rev=${1:?rev}; [[ "$rev" =~ ^[A-Za-z0-9/._-]+$ ]] || { echo "bad rev"; exit 2; }
-    # No network; the workspace and Hermes's config read-only; git's ownership check relaxed for this read-only use.
+    # No network; the workspace and Hermes's config read-only. git's ownership check is relaxed for this read-only use
+    # through a global config in the throwaway container's own HOME (env-only config does not reach the clone's
+    # upload-pack helper).
     docker run --rm --user 99:100 --network none -e HOME=/tmp \
-      -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' \
       -e BAKEOFF_DIR=/bk -e BAKEOFF_REV="$rev" -e BAKEOFF_SUITE="${BAKEOFF_SUITE:-suite.json}" \
       -v "$VOL:/bk" -v "$WS:$WS:ro" -v "$HD/config.yaml:/bk-hermes-config.yaml:ro" -e BAKEOFF_HERMES_CONFIG=/bk-hermes-config.yaml \
       --entrypoint /bin/sh "$IMG" -c \
-      "git -C $WS show $rev:tools/model_bakeoff/prepare.sh > /tmp/prepare.sh && bash /tmp/prepare.sh ${*}" ;;
+      "git config --global --add safe.directory '*' && git -C $WS show $rev:tools/model_bakeoff/prepare.sh > /tmp/prepare.sh && bash /tmp/prepare.sh ${*}" ;;
   run)
     batch=${1:?batch}; shift
     inner="python3 run.py --batch $batch $* >> /bk/runs/$batch.log 2>&1"
