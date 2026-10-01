@@ -51,6 +51,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import b2d_score as B  # noqa: E402
+from verdict import UNDEFINED as V_UNDEFINED, Verdict  # noqa: E402
 
 SEEDS = [42, 43, 44, 100, 101, 102]
 BASE = "research/findings/raw/_load_bearing/_shards"
@@ -92,14 +93,40 @@ CONTROL_ENV = {"LB_IW2_CONTROLS": "1"}   # the control rows' opt-in probe flag (
 PASS, FAIL, UNDEF = 0, 1, 3
 
 
-def _allowing(allowed):
-    """A sidecar_fails that tolerates BRAIN_* keys inside `allowed` (and still fails on any other BRAIN_* key)."""
+def _earn(res, label, checks):
+    """Attach the `preconditions` block that earned `res["verdict"]` (tools.verdict.Verdict; shared prereg
+    Amendment 2, 2026-10-01). `checks` is a list of (name, measured, expect) that must hold for THIS verdict: for a
+    PASS, every condition whose failure the step reads as UNDEFINED; for a FAIL, that the evidence it rests on is
+    DEFINED. The step's own logic decides PASS/FAIL/UNDEFINED as registered; the block only makes the artifact carry
+    what earned it (gate verdict-preconditions). If a check does not hold under an asserted PASS/FAIL, the verdict
+    reads UNDEFINED (never reached by R; for B and A only on a vacuous or scorer-precondition-failed input).
+    Returns the exit code for the final verdict."""
+    v = Verdict(label)
+    for name, measured, expect in checks:
+        v.require(name, measured, expect=expect)
+    if not checks:
+        v.require("the step registered a precondition", None)
+    d = v.decide(go=(res["verdict"] == "PASS"), verbose=False)
+    if res["verdict"] in ("PASS", "FAIL") and d["status"] == V_UNDEFINED:
+        res["verdict_unearned"] = res["verdict"]
+        res["verdict"] = "UNDEFINED"
+    res["preconditions"] = d["preconditions"]
+    res["undefined_reasons"] = d["undefined_reasons"]
+    return {"PASS": PASS, "FAIL": FAIL}.get(res["verdict"], UNDEF)
+
+
+def _allowing(allowed, require_on=()):
+    """A sidecar_fails that tolerates BRAIN_* keys inside `allowed` (and still fails on any other BRAIN_* key). Each
+    flag in `require_on` must be PRESENT with value "1" in every sidecar's env (step R at P, where the packet's flag is
+    opt-in): a key tolerated by name alone would let a cell run with the flag at "0" pass (verify-go, 2026-10-01)."""
     orig = B.sidecar_fails
 
     def f(pj, pin, is_lb):
         env = dict(pj.get("env") or {})
         pj2 = dict(pj, env={k: v for k, v in env.items() if k not in allowed})
-        return orig(pj2, pin, is_lb)
+        out = orig(pj2, pin, is_lb)
+        out += ["%s=%r (must be '1')" % (k, env.get(k)) for k in require_on if str(env.get(k)) != "1"]
+        return out
     return f
 
 
@@ -185,13 +212,13 @@ def lesion_keeps_content(canon, spec):
     return []
 
 
-def _cell_std(d, fac, pin, allowed, spec=None, guard=False):
+def _cell_std(d, fac, pin, allowed, spec=None, guard=False, require_on=()):
     """b2d_score.judge_dir with the capability-shard relaxation; returns (state, s2_verdict, detail). With `guard`
     (step R and F1, pass criteria): a `regressed` cell with a degenerate intact reply is UNDEFINED:degenerate-intact;
     one with a non-degenerate but wrong intact reply is DEFINED `intact-wrong` (not load-bearing); one whose lesion reply
     still states the content is DEFINED `lesion-kept` (not load-bearing; Amendment 1)."""
     saved = B.sidecar_fails
-    B.sidecar_fails = _allowing(set(allowed))
+    B.sidecar_fails = _allowing(set(allowed), tuple(require_on))
     try:
         canon = B.judge_dir(d, fac, pin)
     finally:
@@ -224,11 +251,11 @@ def _cell_std(d, fac, pin, allowed, spec=None, guard=False):
     return state, s2, det
 
 
-def control_cell(d, fac, pin, allowed, ctl):
+def control_cell(d, fac, pin, allowed, ctl, require_on=()):
     """A permuted-control cell (step R): DEFINED, the intact reply meets the control's expectation (abstains, or names
     the control's content), and the packet's lesion leaves the reply unchanged (S2 `pass`). Returns (state, verdict,
     detail); verdict is `control-ok`, `control-violated` (a DEFINED cell that breaks the prediction) or None."""
-    st, s2, det = _cell_std(d, fac, pin, allowed)
+    st, s2, det = _cell_std(d, fac, pin, allowed, require_on=require_on)
     if st != "DEFINED" or s2 not in ("regressed", "pass"):
         return (st if st != "DEFINED" else "UNDEFINED:%s" % s2), None, det
     why = []
@@ -248,21 +275,23 @@ def control_cell(d, fac, pin, allowed, ctl):
     return "DEFINED", ("control-violated" if why else "control-ok"), dict(det, control_fails=why)
 
 
-def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
+def score_R(packet, tag, pin, base=BASE, seeds=SEEDS, flag_in_env=True):
     """Step R for one packet: the capability row must be reply-level load-bearing (with both intact guards) on 6/6
     seeds AND the packet's permuted control must hold on 6/6 seeds. Any not-DEFINED cell -> UNDEFINED (never a pass);
-    a DEFINED miss in either -> FAIL."""
+    a DEFINED miss in either -> FAIL. `flag_in_env` (step R at P): every sidecar must carry the packet's flag = "1";
+    step B's F1 read passes False (at F the flag is the default and no BRAIN_* key is set)."""
     spec = PACKETS[packet]
     allowed = spec["flags"] + spec["lesion_flags"]
+    require_on = spec["flags"] if flag_in_env else []
     per, ctl_per = {}, {}
     for s in seeds:
         d = os.path.join(base, tag, "s%d" % s, spec["shard_dir"])
-        st, v, det = _cell_std(d, spec["row"], pin, allowed, spec=spec, guard=True)
+        st, v, det = _cell_std(d, spec["row"], pin, allowed, spec=spec, guard=True, require_on=require_on)
         per[str(s)] = {"state": st, "reply_verdict": v, "detail": det}
         ctl = spec.get("control")
         if ctl:
             dc = os.path.join(base, tag, "s%d" % s, ctl["shard_dir"])
-            cst, cv, cdet = control_cell(dc, ctl["row"], pin, allowed, ctl)
+            cst, cv, cdet = control_cell(dc, ctl["row"], pin, allowed, ctl, require_on=require_on)
             ctl_per[str(s)] = {"state": cst, "verdict": cv, "detail": cdet}
     n_def = sum(1 for c in per.values()
                 if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass", "intact-wrong", "lesion-kept"))
@@ -276,10 +305,16 @@ def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
         verdict, code = "PASS", PASS
     else:
         verdict, code = "FAIL", FAIL
-    return {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
-            "n_reply_load_bearing": n_lb, "control": {"row": (spec.get("control") or {}).get("row"),
-                                                      "per_seed": ctl_per, "n_defined": c_def, "n_ok": c_ok},
-            "verdict": verdict}, code
+    res = {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
+           "n_reply_load_bearing": n_lb, "control": {"row": (spec.get("control") or {}).get("row"),
+                                                     "per_seed": ctl_per, "n_defined": c_def, "n_ok": c_ok},
+           "verdict": verdict}
+    # PASS and FAIL both rest on every cell being DEFINED (a not-DEFINED cell already reads UNDEFINED above)
+    checks = [("capability cells DEFINED on %d/%d seeds" % (len(seeds), len(seeds)), n_def, len(seeds))]
+    if need_ctl:
+        checks.append(("permuted-control cells DEFINED on %d/%d seeds" % (len(seeds), len(seeds)), c_def, len(seeds)))
+    code = _earn(res, "iw2 step R %s at %s" % (packet, pin), checks)
+    return res, code
 
 
 ALL_FLAGS = sorted({f for p in PACKETS.values() for f in p["flags"] + p["lesion_flags"]})
@@ -348,7 +383,7 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
         n = _counts(f, "s2").get(row)
         if isinstance(n, int):
             # the same guarded per-seed read as step R (degenerate or wrong intact never counts toward F1)
-            fr, _fcode = score_R(p, flip_tag, flip_pin, base=base, seeds=seeds)
+            fr, _fcode = score_R(p, flip_tag, flip_pin, base=base, seeds=seeds, flag_in_env=False)
             out.setdefault("f1_cells", {})[p] = fr["per_seed"]
             if fr["n_defined"] < len(seeds):
                 n = "UNDEFINED (%d/%d seeds DEFINED after the intact guards)" % (fr["n_defined"], len(seeds))
@@ -366,11 +401,21 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
     out["new_rows_s2_at_flip"] = rows_F
     out["regressions"], out["undefined"] = regressions, undefined
     if regressions:
-        out["verdict"], code = "FAIL", FAIL
+        out["verdict"] = "FAIL"
     elif undefined:
-        out["verdict"], code = "UNDEFINED", UNDEF
+        out["verdict"] = "UNDEFINED"
     else:
-        out["verdict"], code = "PASS", PASS
+        out["verdict"] = "PASS"
+    checks = [("%s scorer precondition: %s" % (name, p["name"]), p["ok"], True)
+              for name, r in (("base", b), ("flip", f)) for p in r["preconditions"]]
+    if out["verdict"] == "FAIL":
+        # a regression is recorded only between two DEFINED counts; undefined criteria elsewhere stay listed and
+        # never turn the FAIL into a pass (step A reads them)
+        checks.append(("every regression compares DEFINED counts",
+                       all(isinstance(r["reference"], int) and isinstance(r["flip"], int) for r in regressions), True))
+    else:
+        checks.append(("no criterion UNDEFINED (B1 cells, B2 completeness, F1 rows)", len(undefined), 0))
+    code = _earn(out, "iw2 step B %s at %s" % (",".join(flipped), flip_pin), checks)
     return out, code
 
 
@@ -402,13 +447,25 @@ def score_A(b_result, tag, pin, base=BASE, seeds=SEEDS):
         verdicts.append(v)
     b_undefined = list(b_result.get("undefined") or [])
     if any(v in ("flip-caused", "FAIL") for v in verdicts):
-        verdict, code = "FAIL", FAIL
+        verdict = "FAIL"
     elif b_undefined or any(v == "UNDEFINED" for v in verdicts):
-        verdict, code = "UNDEFINED", UNDEF
+        verdict = "UNDEFINED"
     else:
-        verdict, code = "PASS", PASS
-    return {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined,
-            "verdict": verdict}, code
+        verdict = "PASS"
+    res = {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined, "verdict": verdict}
+    # an A with nothing to attribute is vacuous, never a PASS
+    checks = [("the B result carries a regression to attribute", len(b_result.get("regressions") or []),
+               lambda n: n > 0)]
+    if verdict == "FAIL":
+        # flip-caused needs a DEFINED off run; F1-not-excusable is B's own DEFINED regression
+        checks.append(("every failing row rests on DEFINED cells", all(
+            r["verdict"] != "UNDEFINED" for r in rows.values() if r["verdict"] in ("flip-caused", "F1-not-excusable")),
+            True))
+    else:
+        checks.append(("B carried no UNDEFINED criterion", len(b_undefined), 0))
+        checks.append(("every attributed row DEFINED", sum(1 for v in verdicts if v == "UNDEFINED"), 0))
+    code = _earn(res, "iw2 step A %s at %s" % (tag, pin), checks)
+    return res, code
 
 
 def main(argv=None):

@@ -209,3 +209,29 @@ The dev seed 7 lesion replies (box; abstain; abstain) pass the new check, so eve
 commit changes only `tools/iw2_score.py` (`lesion_keeps_content`), two failing-first tests in
 `tests/test_integration_wave2_anchors.py`, these preregs, the HANDOFF tables and one FAILURE_LOG row; no file a
 step-D, R, B or F job executes changes, so "nothing else changes between P and F" holds for every run.
+
+## Amendment 2 (2026-10-01): every R, B and A verdict carries the preconditions that earned it; R cells need the flag ON
+
+Written by Claude (cloud session) after all 36 step-R `lb.json` shards had landed and before any R verdict was
+committed. Hermes had scored them (all PASS) but the verdict-preconditions gate refused the three files, because
+`score_R` wrote `verdict: PASS` with no `preconditions` block (runbook NEEDS-CLAUDE `[iw2-R-pre]`). No criterion, bar,
+seed, arm or job line changes.
+
+**Rule.** `tools/iw2_score.py` now emits, beside each R, B and A verdict, the `preconditions` list of a
+`tools.verdict.Verdict` holding exactly the conditions that verdict rests on. For a PASS these are the conditions whose
+failure the step already reads as UNDEFINED. For a FAIL they say that the evidence is DEFINED. The step's own logic
+still decides PASS, FAIL or UNDEFINED. The block can turn an asserted verdict into UNDEFINED only where that verdict
+was unearned, in two cases that step R never reaches:
+- A step A run on a B result with no regression attributes nothing. It now reads UNDEFINED, not PASS.
+- A B FAIL whose b2d scorer preconditions failed now reads UNDEFINED. The iw2 calls pass no fields, corpus or
+  dispatch file, so those preconditions always hold.
+
+**Rule (flag value).** A step-R cell is DEFINED only if every sidecar's env carries the packet's flag with the value
+`"1"`. Before this, the scorer tolerated the flag's `BRAIN_*` key by name alone, so a cell run with the flag at `"0"`
+or unset would still have read DEFINED. The adversarial audit found this hole by test, and all 219 landed sidecars
+carry the flag at `"1"`. At F, step B's F1 read does not apply this rule, because the flag is the default there and
+no `BRAIN_*` key is set.
+
+**Effect on the landed data.** Re-scored with the amended scorer, R reads PASS for all three packets: capability 6/6
+and control 6/6. The per-seed results are identical to the unamended scorer's output.
+Pinned failing-first in `tests/test_integration_wave2_anchors.py`: four tests that fail on the unamended scorer.
