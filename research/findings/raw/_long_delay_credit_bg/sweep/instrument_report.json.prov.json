@@ -1,0 +1,33 @@
+{
+ "run_id": "1790821625-2937",
+ "runner": "research/runners/long_delay_credit_bg_instrument.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/long-delay-credit-spiking/research/runners/long_delay_credit_bg_instrument.py",
+  "--tags",
+  "base,strio60,snc10,strio60snc10,ctx40,ctx10,lr10,lr2,mem20",
+  "--dir",
+  "/opt/data/cache/scratch/ldc_sweep_noprov",
+  "--out",
+  "research/findings/raw/_long_delay_credit_bg/sweep/instrument_report.json"
+ ],
+ "git_sha": "373e074d2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-30T22:27:05",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "43a11582b5cb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_long_delay_credit_bg/sweep/instrument_report.json"
+}

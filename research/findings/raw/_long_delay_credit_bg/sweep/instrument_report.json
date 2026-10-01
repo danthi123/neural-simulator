@@ -1,0 +1,165 @@
+{
+ "base": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "strio60": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "snc10": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "strio60snc10": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "ctx40": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "ctx10": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "lr10": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "lr2": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "mem20": {
+  "pass": false,
+  "criteria": {
+   "c1_commit_rates": false,
+   "c1_exploration": false,
+   "c1_intervening_commits": false,
+   "c2_memory": false,
+   "c3_dopamine": false,
+   "c4_sanity": false,
+   "c5_positive_controls": false,
+   "c6_no_bound": false,
+   "n_seeds": {
+    "credit_immediate": 9,
+    "late_immediate": 9,
+    "sanity_early_ch0": 9
+   }
+  }
+ },
+ "chosen": null
+}
