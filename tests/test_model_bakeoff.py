@@ -97,3 +97,36 @@ def test_only_tests_are_protected_by_default_for_implement_tasks():
     explicit = {"category": "operate", "protect": ["research/queue/"]}
     assert r.is_protected(explicit, "research/queue/pool.queue")
     assert not r.is_protected(explicit, "research/queue_other.txt")
+
+
+# launch.sh: a model run must get a bake-off-only key file, never Hermes's whole .env (2026-10-01: it mounted the
+# whole file, so every run could read all of Hermes's secrets). The file check runs in a container on the server;
+# here the same shell test runs against temp files.
+def _launch_sh():
+    with open(os.path.join(_ROOT, "tools", "model_bakeoff", "launch.sh")) as f:
+        return f.read()
+
+
+def test_launch_never_mounts_hermes_env():
+    src = _launch_sh()
+    assert '$HD/.env:' not in src
+    assert '-v "$ENVF:/bk/home/.env:ro"' in src
+    assert "case \"$cmd\" in run|preflight|judge|reaudit|report) check_envf ;; esac" in src
+
+
+def _envf_check_accepts(tmp_path, content):
+    import re
+    import subprocess
+    inner = re.search(r'-c \\\n\s+"(test -r /e .*?/e)"', _launch_sh()).group(1).replace("\\$", "$")
+    p = tmp_path / "openrouter.env"
+    p.write_text(content)
+    return subprocess.run(["sh", "-c", inner.replace("/e", str(p))]).returncode == 0
+
+
+def test_envf_check_accepts_only_the_bakeoff_key(tmp_path):
+    assert _envf_check_accepts(tmp_path, "OPENROUTER_API_KEY=x\n")
+    assert _envf_check_accepts(tmp_path, "# bake-off key\n\nOPENROUTER_API_KEY=x\nHERMES_CUSTOM_192_168_0_68_11434_API_KEY=n\n")
+    assert not _envf_check_accepts(tmp_path, "OPENROUTER_API_KEY=x\nNTFY_TOKEN=y\n")
+    assert not _envf_check_accepts(tmp_path, "OPENROUTER_API_KEY=x\nAPI_SERVER_KEY=y\n")
+    assert not _envf_check_accepts(tmp_path, "NTFY_TOKEN=y\n")
+    assert not _envf_check_accepts(tmp_path, "")

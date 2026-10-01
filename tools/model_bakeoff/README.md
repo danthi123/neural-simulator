@@ -42,11 +42,24 @@ and is removed on exit. It mounts:
 | Read-only | Read-write |
 |---|---|
 | these tools and the per-task bases | its runs dir |
-| the OpenRouter key file | its own `HERMES_HOME` (production config minus `terminal.cwd`) |
+| a bake-off-only key file (below) | its own `HERMES_HOME` (production config minus `terminal.cwd`) |
 | the project's `.venv` / `.python` | |
 | the reference library | |
 
-It mounts no workspace, no ssh keys, no RAG index (it holds later findings), and no Hermes data. Runs use the
+It mounts no workspace, no ssh keys, no RAG index (it holds later findings), and no Hermes data.
+
+**The key file.** A model run can read its own environment and has network access, so it gets a dedicated OpenRouter
+key with its own spend limit, never Hermes's `.env` (until 2026-10-01 it got the whole file, so every run could read all
+of Hermes's secrets; `research/FAILURE_LOG.md`). `launch.sh` reads `$BAKEOFF_ENV`, default
+`/home/dant123/data/sim-bakeoff-secrets/openrouter.env`, and refuses to start a run if the file sets anything but
+`OPENROUTER_API_KEY` (plus `HERMES_CUSTOM_192_168_0_68_11434_API_KEY` when the local model is a candidate). Before a
+relaunch:
+
+1. Owner: create an OpenRouter key named `sim-bakeoff` with a limit equal to the bake-off budget. `--max-spend` then
+   reads that key's own counter, so Hermes's spend no longer counts against the batch cap.
+2. Owner, on the server: `sudo install -d -o 99 -g 100 -m 0700 /home/dant123/data/sim-bakeoff-secrets`, then write
+   `openrouter.env` there holding only `OPENROUTER_API_KEY=...`, mode 0400, owner 99:100.
+3. After the bake-off: delete the key at OpenRouter and `sudo shred -u` the file. Runs use the
 production approvals (`HERMES_CRON_SESSION=1`, the deny list, `command_allowlist`) and the production gates
 (`core.hooksPath`).
 

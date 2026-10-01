@@ -17,8 +17,13 @@
 # `destroy` removes it when the bake-off is over.
 #
 # A model run's container gets ONLY: the tools and per-task bases (read-only sub-paths of the volume), its runs dir
-# and HERMES_HOME (read-write), the OpenRouter key file (read-only), the project's Python environment and the
+# and HERMES_HOME (read-write), a bake-off-only key file (read-only), the project's Python environment and the
 # reference library (read-only, at their real paths). No workspace, no ssh keys, no RAG index, no Hermes data.
+#
+# The key file ($BAKEOFF_ENV, default below) holds ONLY a dedicated OpenRouter key with its own spend limit (README
+# "Isolation"), never Hermes's .env: a model run can read its own environment and has network access. Every command
+# that starts a run container checks the file first and refuses anything but the allowed variable names.
+# (2026-10-01: until then this mounted Hermes's whole .env, so every bake-off run could read all of Hermes's secrets.)
 # Same image as Hermes, the agent's uid, 6 CPUs / 10 GB, removed when it exits. `prepare` alone sees the workspace
 # (read-only, no network): it builds the bases, each holding history only up to its task's base commit.
 set -euo pipefail
@@ -26,16 +31,28 @@ cmd=${1:?usage: launch.sh init|prepare <rev>|preflight|run <batch> [args]|log|ju
 HD=/home/dant123/data/hermes          # Hermes's data dir on the host (= /opt/data in the Hermes container)
 WS=/home/dant123/Projects/neural-simulator
 VOL=sim-bakeoff
+ENVF=${BAKEOFF_ENV:-/home/dant123/data/sim-bakeoff-secrets/openrouter.env}   # 0400, owned by the agent uid (99:100)
 IMG=$(docker inspect -f '{{.Config.Image}}' hermes)
 mnt() { echo "type=volume,src=$VOL,dst=/bk/$1,volume-subpath=$1${2:+,$2}"; }
 COMMON=(--rm --user 99:100 --cpus 6 --memory 10g --pids-limit 4096
   -e HERMES_HOME=/bk/home -e BAKEOFF_ROOT=/bk -e BAKEOFF_SUITE="${BAKEOFF_SUITE:-suite.json}"
   -e PATH=/opt/hermes/.venv/bin:/usr/local/bin:/usr/bin:/bin
   --mount "$(mnt tools readonly)" --mount "$(mnt bases readonly)" --mount "$(mnt runs)" --mount "$(mnt home)"
-  -v "$HD/.env:/bk/home/.env:ro"
+  -v "$ENVF:/bk/home/.env:ro"
   -v "$WS/.venv:$WS/.venv:ro" -v "$WS/.python:$WS/.python:ro"
   -v /home/dant123/Projects/sim-catalog:/home/dant123/Projects/sim-catalog:ro
   -w /bk/tools --entrypoint /bin/sh)
+
+# check_envf: the key file exists, sets OPENROUTER_API_KEY, and sets nothing else (the local-model placeholder is the one
+# allowed extra). Read inside a throwaway container as the agent uid, because the host user cannot read the file; prints
+# no content either way.
+check_envf() {
+  [ "$ENVF" != "$HD/.env" ] || { echo "refusing: BAKEOFF_ENV is Hermes's own .env"; exit 2; }
+  docker run --rm --user 99:100 --network none -v "$ENVF:/e:ro" --entrypoint /bin/sh "$IMG" -c \
+    "test -r /e && grep -q '^OPENROUTER_API_KEY=' /e && ! grep -qvE '^(#.*|OPENROUTER_API_KEY=.*|HERMES_CUSTOM_192_168_0_68_11434_API_KEY=.*|)\$' /e" \
+    || { echo "refusing: $ENVF is missing, unreadable to uid 99, or holds more than the bake-off OpenRouter key (README: Isolation)"; exit 2; }
+}
+case "$cmd" in run|preflight|judge|reaudit|report) check_envf ;; esac
 
 case "$cmd" in
   init)
