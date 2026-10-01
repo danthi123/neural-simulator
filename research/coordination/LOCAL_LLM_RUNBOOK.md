@@ -38,13 +38,13 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 
 - `$P` stays on `main` (live services run from it). Packet work: the packet's worktree. Your own builds:
   `$WT/draft-<topic>` on `research/draft-<topic>`, dev seeds only (7, 1-15).
-- Never: merge; `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
+- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
   files, ledgers); delete data; touch AWS; edit `sim/`, `webapp/`, `tools/gates/`; flip a default on main; change a
   prereg, bar, arm, seed list, scorer or job line (except adding `max_age_h`). Gate seeds (42/43/44/100/101/102) run
   only through lines a HANDOFF registers. Scripted exceptions: the iw1/iw2 flip commit on the packet branch (owner
   ruling 09-29), the LDC Amendment A text, and T15's field rename and correction notes (sleep-TI ruling 2).
-- DENIED to you: `git merge`, `git checkout`, `git switch`, `gpu_queue.sh add`. A step that needs one (every
-  NEEDS-MERGE path, `git checkout -- .`) is a STOP: NEEDS-CLAUDE. Instead of `git checkout -- <runs.jsonl>`: never
+- DENIED to you: `git merge`, `git checkout`, `git switch`, `gpu_queue.sh add`. A step that needs one (a merge
+  `tools/agent_merge.sh` refuses, `git checkout -- .`) is a STOP: NEEDS-CLAUDE. Instead of `git checkout -- <runs.jsonl>`: never
   `git add research/findings/raw/_provenance/runs.jsonl`. Never wrap a denied command in `bash -c` or a script.
 - A command that asks for permission while the owner is away (always so in a headless resume): skip it, WORKLOG it,
   continue elsewhere.
@@ -231,12 +231,25 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
 line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
-## 5. Idle (only when no task can move)
+## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
-Test triage on `research/draft-test-triage` (`docs/drafts/test-triage/`): `bash tools/mem_ok.sh 12 && bash
-tools/memcap.sh 12 -- env SIM_NO_PROVENANCE=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -m pytest -q -p
-no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_resume.py
---junitxml=_scratch/suite.xml -rfE tests`; group failures by first error line (GPU hidden = ENVIRONMENT). No fixes.
+Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
+1. Pick the first open next-item in `GAP_CLOSURE_MISSION.md` CURRENT STATE, else the master roadmap's "next to
+   queue" (`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`), preferring what serves the next stage exit (Stage 1
+   attempt 10-24, Stage 2 11-21, Stage 3 12-19) and integration-first (a faculty on by default whose lesion changes
+   the reply). Write the choice and why in `docs/drafts/<topic>/WORKLOG.md`.
+2. Research the record first: `bash tools/before_you_build.sh "<defect>"` and `.venv-rag/bin/python
+   tools/rag/rag_search.py "<question>" 5 --corpus all`; read the sources it points to.
+3. Plan with one MiMo Pro delegate: `docs/drafts/<topic>/PLAN.md` with the question, the biology it follows, dev seeds
+   only (7, 1-15), and an outcome-to-reading table written BEFORE any run. A second delegate must try to refute the
+   plan against CLAUDE.md's non-negotiables (brain-based only, one brain, no host shortcut, honest measures); revise
+   until it approves.
+4. Build in `$WT/draft-<topic>` on `research/draft-<topic>`: new `research/runners/_<topic>_*.py` copies; never edit
+   `sim/`, a registered runner, a scorer or a gate. Run it per RULING `compute-placement`.
+5. Report as a PROVISIONAL finding (`research/findings/<date>-<topic>.md`: dev seeds only, what it does NOT show),
+   check it per RULING `verify-go`, merge per RULING `routine-merges`, then NEEDS-CLAUDE "[draft-<topic>] RESULT: <one
+   line>; proposes <next step>" so the weekly review can promote it. Gate seeds, preregs, scorers, default flips and
+   `sim/` stay Claude's; a draft never claims a GO.
 
 ## 6. RULINGS (Claude writes `- <KEY>: <ruling> (<date>)`; you follow it)
 
@@ -337,14 +350,27 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
   already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
-  dev seeds only for drafts). You CANNOT provision a new revision: that step uses a key the workstation's agent only
-  releases interactively, so `gpu_remote.sh provision` fails unattended. For new draft code: commit, then
-  NEEDS-CLAUDE "[<task>] provision <sha> and queue <n> pool lines: <the line template>", and work on another task.
-  Never fall back to running it on S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  dev seeds only for drafts). You CANNOT provision a new revision yet: that step uses a key the workstation's agent
+  only releases interactively (server-side provisioning is being built). Until then, new draft code runs on the
+  workstation: from the committed `$WT/draft-<topic>`, `bash tools/gpu_remote.sh add 'bash tools/mem_ok.sh 8 && bash
+  tools/memcap.sh 10 -- bash <your committed batch script>'`, ONE job per batch that runs its cells in parallel (for
+  example `xargs -P 8`), at most about 2 hours, numpy only (`SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=`). It waits while
+  the owner games; results arrive in `$P/research/findings/raw/` through `sim-sync.timer`. Never fall back to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
   `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
   (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
+
+- routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
+  only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
+  worklogs, draft docs (not HANDOFFs or preregs), new tests, new findings that say PROVISIONAL and new `_`-prefixed
+  draft runners, and it runs every gate on the merge. Anything else, any deletion, or an edit to an existing finding,
+  test, runner, scorer, HANDOFF, prereg, `sim/` or `tools/` is refused, and stays Claude's. Before running it, give
+  `git diff main...research/<branch>` and the task's HANDOFF section to TWO independent MiMo Pro delegates, each told
+  to find a reason not to merge; merge only if both approve, and quote both in the WORKLOG. A new finding stays
+  PROVISIONAL until a Claude check-in confirms it. A refusal or a failed gate: NEEDS-CLAUDE "[<task>] merge
+  research/<branch> @ <sha>: <the refusal>; unblocks <what>". Never edit `tools/agent_merge*` or run `git merge`
+  yourself. (2026-10-01)
 
 ## NEEDS CLAUDE
 
