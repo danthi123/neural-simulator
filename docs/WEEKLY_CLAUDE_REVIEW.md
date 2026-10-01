@@ -5,6 +5,9 @@ when the 3x/day report says "Claude check-in DUE" (a waiting item is 72 h old), 
 `~/Projects/sim` on the workstation (W) and say "do a Claude check-in". Work down this list in order and stop when the
 budget runs low; the items are ranked by what they unblock.
 
+
+A cloud Claude session can do this review (credits until 2026-11-05): `docs/CLOUD_CLAUDE_SESSIONS.md`.
+
 1. **Pause Hermes** so two drivers never edit main at once:
    `ssh homelab-server 'docker exec -u 99 -e HOME=/opt/data/home hermes hermes cron pause sim-driver'`.
 2. **Read the waiting list** on S (newest last):

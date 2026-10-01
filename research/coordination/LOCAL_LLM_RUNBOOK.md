@@ -365,6 +365,12 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
 
+- cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
+  lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
+  [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to
+  rule, what it unblocks): a cloud session sees only GitHub, where your `research/*` branches are published.
+  (2026-10-01)
+
 - sync-branch: (owner 2026-10-01) When your branch carries an old copy of something main has since fixed (a gate fails
   on a tool main already fixed, provisioning is `refused` for published main, or the GPU queue's stale-revision guard
   refuses), bring main into it yourself: in `$P`, `bash tools/agent_sync_branch.sh research/<branch>`. It only ever
