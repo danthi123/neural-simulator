@@ -16,6 +16,16 @@ set -uo pipefail
 ROOT=$(git rev-parse --show-toplevel); export ROOT
 COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 1
 CANONICAL=$(dirname "$COMMON")
+
+# AGENT BACKSTOP (owner ruling 2026-10-01, "Routine merges"). The driver agent (Hermes) runs as uid 99 on the server.
+# Its commits on main -- direct ones, and tools/agent_merge.sh's merge commits, whose staged index IS the real merge
+# result -- may touch only the routine classes in tools/agent_merge_policy.py, plus the coordination files the runbook
+# has it edit on main. A Claude review session on the server sets SIM_CLAUDE_REVIEW=1 (the agent's command deny list
+# refuses that string). Mistake-proofing, not a sandbox (security review 2026-10-01: SIGN-OFF with these fixes).
+if [ "$(id -u)" = 99 ] && [ "$(git branch --show-current)" = main ] && [ "${SIM_CLAUDE_REVIEW:-0}" != 1 ] \
+   && [ -f "$ROOT/tools/agent_merge_policy.py" ]; then
+  python3 "$ROOT/tools/agent_merge_policy.py" --staged || exit 1
+fi
 PY=${SIM_ENGINE_PYTHON:-$CANONICAL/.venv/bin/python}
 if [ ! -x "$PY" ]; then
   echo "COMMIT BLOCKED: canonical engine interpreter missing: $PY"

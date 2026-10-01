@@ -116,7 +116,7 @@ just delete the `--chat-template-file` line to make the error go away.
 
 ## Idle auto-unload (TTL)
 
-`llama-swap.yaml`'s `globalTTL: 3600` means a model that's been idle (no requests) for an hour unloads itself
+`llama-swap.yaml`'s `globalTTL: 900` means a model that's been idle (no requests) for 15 minutes unloads itself
 automatically, freeing the 3090 for other work. The next request for it (or `llm on <profile>`) reloads it
 transparently — this is expected, not a failure. Set `globalTTL: 0` to turn this off entirely, or add a `ttl:`
 line under one specific model's own entry to override it just for that one.
@@ -124,10 +124,11 @@ line under one specific model's own entry to override it just for that one.
 ## What NOT to do
 
 - Don't edit the `-listen` address or remove `-watch-config` from `tools/local_llm/llm.sh`'s `llama_swap_cmd()`
-  unless you mean to change how llama-swap is reached — the LAN address is there on purpose, for whatever else
-  on the LAN needs it (2026-09-30: the sim-agent harness was retired; the owner runs Hermes Agent on
-  homelab-server (`~/apps/hermes`) as a general harness; the sim driver is `tools/local_llm/llm.sh claude` on
-  the workstation).
+  unless you mean to change how llama-swap is reached — the LAN address is there on purpose: the project's home
+  (and driver) moved to homelab-server on 2026-09-30 (`docs/plans/2026-09-30-home-to-server-MIGRATION.md`), and the
+  Hermes Agent there (`~/apps/hermes`) reaches this workstation's llama-swap over the LAN as its model server
+  (`http://192.168.0.68:8080/v1`, `qwen38-27b-iq4nl-mtp-128k-q4`); the old workstation-local `tools/local_llm/llm.sh
+  claude` driver is retired. Gaming (`game on`) stops llama-swap, so Hermes's requests fail until `game off`.
 - Don't add an `apiKeys:` block to `llama-swap.yaml` without checking what else on the LAN currently talks to it
   unauthenticated — today nothing needs a key, so adding one would break existing callers until they're updated
   too.

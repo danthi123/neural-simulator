@@ -3,21 +3,21 @@ now the day-to-day DRIVER of this repo, tools/gpu_queue.sh no longer auto-stops 
 retired design -- and the tests that pinned it -- live in tests/test_llm_gpu_autoswap.py's history/docstring).
 Instead:
   - a queued GPU job is HELD (never started) for as long as the local-llm unit is active and no yield is in force;
-  - `tools/local_llm/llm.sh yield` is the driver's OWN explicit handoff: it refuses under GAME_MODE, with an
-    empty GPU queue, or with uncommitted TRACKED changes in a `draft-*` worktree, else it writes
-    research/queue/.llm_yield (session/profile/deadline) and stops itself gracefully (~45s delay, so it can
-    finish replying inside its own chat turn);
+  - `tools/local_llm/llm.sh yield` is the driver's OWN explicit handoff: it refuses under GAME_MODE or with an
+    empty GPU queue, else it writes research/queue/.llm_yield (profile/deadline) and stops itself gracefully
+    (~45s delay, so it can finish replying inside its own chat turn);
   - gpu_queue.sh's dispatcher drains its queue while that marker exists, starts no NEW job once the deadline has
     passed (a job already running is left to finish), and once the window is genuinely drained removes the
-    marker, reloads the SAME profile, and resumes the SAME session HEADLESS with a summary prompt;
+    marker and restarts the server for the SAME profile with the model unloaded (`llm on --lazy`);
+  - 2026-09-30: the driver is Hermes on homelab-server (it yields through tools/gpu_remote.sh), so the
+    workstation draft-worktree refusal and the headless resume of a local session are gone -- a resumed local
+    session would be a second driver beside Hermes, whose own sim-driver wake gate starts its next run;
   - GAME_MODE (tools/game.sh) takes precedence over all of this, always.
 
 Hermetic throughout: every test runs against an isolated GPU_QUEUE_DIR (never the live research/queue/) and stubs
 systemctl (LOCAL_LLM_SYSTEMCTL), llm.sh itself (GPU_QUEUE_LLM_SH, where used), nvidia-smi (GPU_QUEUE_NVIDIA_SMI),
 and curl/systemd-run via PATH where `llm yield` itself is exercised -- no real systemd unit or GPU is ever
-touched. `llm yield`'s own draft-worktree dirty-check is redirected away from the real repo's `.claude/worktrees/`
-via LLM_YIELD_DRAFT_ROOT (a TEST-ONLY override), so a real in-progress draft branch elsewhere in this checkout
-can never make these tests flaky.
+touched.
 """
 import os
 import stat
@@ -220,10 +220,11 @@ def test_no_new_job_starts_after_yield_deadline_even_with_unit_inactive():
             _kill(daemon)
 
 
-def test_yield_window_drains_restores_profile_and_resumes_session_headless():
+def test_yield_window_drains_and_restarts_the_server_lazily_without_resuming_a_session():
     """The full cycle: a queued job runs during the yield window, the window then drains (queue empty, nothing
-    running), and the dispatcher removes the marker, reloads the SAME profile, and resumes the SAME session
-    headless with a prompt naming how many jobs ran -- the claude launch itself is stubbed (fake llm.sh)."""
+    running), and the dispatcher removes the marker and restarts the SAME profile with the model unloaded
+    (`on <profile> --lazy`). A LLM_YIELD_SESSION line (an older marker) is ignored: no local session is ever
+    resumed headless -- Hermes on homelab-server is the driver and starts its own next run."""
     with tempfile.TemporaryDirectory() as tmp:
         systemctl, state_file, _ = _fake_systemctl(tmp, "inactive")
         llm_sh, log = _fake_llm_sh_yield(tmp, state_file=state_file)
@@ -234,15 +235,12 @@ def test_yield_window_drains_restores_profile_and_resumes_session_headless():
         daemon = _spawn_daemon(_daemon_env(tmp, systemctl, nvidia_smi, llm_sh=llm_sh))
         try:
             assert _wait_for(lambda: os.path.exists(sentinel), timeout=10), "the queued job never ran"
-            assert _wait_for(lambda: "CALLED: on prof-x" in _log_text(log), timeout=10), "the SAME profile was not reloaded"
+            assert _wait_for(lambda: "CALLED: on prof-x --lazy" in _log_text(log), timeout=10), (
+                "the SAME profile was not restarted lazily: %s" % _log_text(log))
             assert _wait_for(lambda: not os.path.exists(os.path.join(tmp, ".llm_yield")), timeout=10), "marker must be consumed once drained"
             assert not os.path.exists(os.path.join(tmp, ".llm_yield_job_count")), "the per-window job counter must be cleared with the marker"
-            resumed = _wait_for(lambda: any(l.startswith("CALLED: claude --resume sess-42")
-                                             for l in _log_text(log).splitlines()), timeout=10)
-            assert resumed, "the SAME session was not resumed: %s" % _log_text(log)
-            resume_line = next(l for l in _log_text(log).splitlines() if l.startswith("CALLED: claude --resume"))
-            assert "-p " in resume_line, "the resume must be headless (print mode), not interactive: %r" % resume_line
-            assert "1 jobs ran" in resume_line, "the prompt must say how many jobs ran: %r" % resume_line
+            time.sleep(1)
+            assert "CALLED: claude" not in _log_text(log), "no local session may be resumed: %s" % _log_text(log)
         finally:
             _kill(daemon)
 
@@ -314,7 +312,7 @@ esac
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# llm.sh: `yield` refusals and its success path (real script; curl/systemd-run/draft-root stubbed where touched)
+# llm.sh: `yield` refusals and its success path (real script; curl/systemd-run stubbed where touched)
 # ---------------------------------------------------------------------------------------------------------------
 
 def test_yield_refuses_under_game_mode():
@@ -335,56 +333,16 @@ def test_yield_refuses_with_empty_gpu_queue():
         assert not os.path.exists(os.path.join(tmp, ".llm_yield"))
 
 
-def test_yield_refuses_with_a_dirty_draft_worktree():
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
-        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
-        wt = os.path.join(draft_root, ".claude", "worktrees", "draft-example")
-        os.makedirs(wt)
-        subprocess.run(["git", "init", "-q"], cwd=wt, check=True)
-        subprocess.run(["git", "config", "user.email", "t@t.com"], cwd=wt, check=True)
-        subprocess.run(["git", "config", "user.name", "t"], cwd=wt, check=True)
-        fpath = os.path.join(wt, "f.txt")
-        open(fpath, "w").write("a\n")
-        subprocess.run(["git", "add", "-A"], cwd=wt, check=True)
-        subprocess.run(["git", "commit", "-q", "-m", "init"], cwd=wt, check=True)
-        open(fpath, "w").write("b\n")   # tracked, uncommitted change
-        res = _run_llm(["yield"], {"GPU_QUEUE_DIR": tmp, "LLM_YIELD_DRAFT_ROOT": draft_root, "LLM_PORT": "18080"})
-        assert res.returncode != 0
-        assert "uncommitted" in res.stdout.lower()
-        assert not os.path.exists(os.path.join(tmp, ".llm_yield"))
-
-
-def test_yield_ignores_untracked_files_in_a_draft_worktree():
-    """Only TRACKED changes should block a yield -- an untracked scratch/log file mid-draft is not a reason to
-    refuse. Proven by reaching a LATER refusal (the model isn't loaded in this test) instead of the
-    'uncommitted' one."""
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
-        open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
-        wt = os.path.join(draft_root, ".claude", "worktrees", "draft-example")
-        os.makedirs(wt)
-        subprocess.run(["git", "init", "-q"], cwd=wt, check=True)
-        subprocess.run(["git", "config", "user.email", "t@t.com"], cwd=wt, check=True)
-        subprocess.run(["git", "config", "user.name", "t"], cwd=wt, check=True)
-        open(os.path.join(wt, "f.txt"), "w").write("a\n")
-        subprocess.run(["git", "add", "-A"], cwd=wt, check=True)
-        subprocess.run(["git", "commit", "-q", "-m", "init"], cwd=wt, check=True)
-        open(os.path.join(wt, "scratch.log"), "w").write("noise\n")   # untracked
-        res = _run_llm(["yield"], {"GPU_QUEUE_DIR": tmp, "LLM_YIELD_DRAFT_ROOT": draft_root, "LLM_PORT": "18080"})
-        assert res.returncode != 0
-        assert "uncommitted" not in res.stdout.lower(), "an untracked file must not block a yield"
-        assert "not loaded" in res.stdout.lower()
-
-
 def test_yield_refuses_when_the_model_is_not_loaded():
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+    with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
-        res = _run_llm(["yield"], {"GPU_QUEUE_DIR": tmp, "LLM_YIELD_DRAFT_ROOT": draft_root, "LLM_PORT": "18080"})
+        res = _run_llm(["yield"], {"GPU_QUEUE_DIR": tmp, "LLM_PORT": "18080"})
         assert res.returncode != 0
         assert "not loaded" in res.stdout.lower()
 
 
 def test_yield_writes_marker_and_schedules_graceful_stop():
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+    with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
         systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
         bindir = _fake_curl_and_systemd_run(tmp, state_file)
@@ -393,14 +351,14 @@ def test_yield_writes_marker_and_schedules_graceful_stop():
         open(os.path.join(state_home, "sim-local-llm", "last_session"), "w").write("session-xyz\n")
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root,
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl,
                     "XDG_STATE_HOME": state_home})
         res = _run_llm(["yield", "--max-hours", "2"], env)
         assert res.returncode == 0, res.stdout + res.stderr
         marker = os.path.join(tmp, ".llm_yield")
         assert os.path.exists(marker)
         content = open(marker).read()
-        assert "LLM_YIELD_SESSION=session-xyz" in content
+        assert "LLM_YIELD_SESSION" not in content, "a local session must never be recorded for a headless resume"
         assert "LLM_YIELD_PROFILE=myprofile" in content
         deadline_line = next(l for l in content.splitlines() if l.startswith("LLM_YIELD_DEADLINE="))
         deadline = int(deadline_line.split("=", 1)[1])
@@ -417,7 +375,7 @@ def test_yield_refuses_a_max_hours_value_that_is_not_plain_digits():
     `cmd`, not merely fail to parse as a number (confirmed standalone: `max_hours="a[$(touch marker)]";
     $(( ... + max_hours * 3600 ))` creates `marker` even though the surrounding expression then errors on a bad
     array subscript). --max-hours must be validated as 1-2 plain digits BEFORE it ever reaches `$(( ))`."""
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root, \
+    with tempfile.TemporaryDirectory() as tmp, \
          tempfile.TemporaryDirectory() as scratch:
         marker = os.path.join(scratch, "pwned")
         open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
@@ -425,7 +383,7 @@ def test_yield_refuses_a_max_hours_value_that_is_not_plain_digits():
         bindir = _fake_curl_and_systemd_run(tmp, state_file)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run_llm(["yield", "--max-hours", "a[$(touch %s)]" % marker], env)
         assert res.returncode != 0
         assert "1-12" in res.stdout
@@ -436,13 +394,13 @@ def test_yield_refuses_a_max_hours_value_that_is_not_plain_digits():
 def test_yield_refuses_a_max_hours_value_over_12():
     """2026-09-29 re-review, M2: the digit-only check alone still let a container-triggered `yield --max-hours
     N` claim an arbitrarily long window (up to 99h) over the shared GPU -- capped at 12."""
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+    with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
         systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
         bindir = _fake_curl_and_systemd_run(tmp, state_file)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run_llm(["yield", "--max-hours", "13"], env)
         assert res.returncode != 0
         assert "1-12" in res.stdout
@@ -450,12 +408,12 @@ def test_yield_refuses_a_max_hours_value_over_12():
 
 
 def test_yield_accepts_a_max_hours_value_of_exactly_12():
-    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as draft_root:
+    with tempfile.TemporaryDirectory() as tmp:
         open(os.path.join(tmp, "gpu.queue"), "w").write("some job\n")
         systemctl, state_file, _ = _fake_systemctl(tmp, "active", desc="local LLM (myprofile)")
         bindir = _fake_curl_and_systemd_run(tmp, state_file)
         env = dict(os.environ)
         env["PATH"] = bindir + os.pathsep + env["PATH"]
-        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl, "LLM_YIELD_DRAFT_ROOT": draft_root})
+        env.update({"GPU_QUEUE_DIR": tmp, "LOCAL_LLM_SYSTEMCTL": systemctl})
         res = _run_llm(["yield", "--max-hours", "12"], env)
         assert res.returncode == 0, res.stdout + res.stderr

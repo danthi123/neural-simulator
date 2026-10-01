@@ -97,8 +97,8 @@ gpu_resident_brain_pids() {
 LLM_SH="${GPU_QUEUE_LLM_SH:-$ROOT/tools/local_llm/llm.sh}"   # override is TEST-ONLY (a fake script); NEVER set in production
 LLM_UNIT="local-llm"
 LLM_WAS_ON="$QDIR/.local_llm_was_on"                         # CONTENTS = the profile to restore; written by llm.sh's own `on` refusal (owner wanted it loaded, GPU was busy)
-LLM_YIELD_MARKER="$QDIR/.llm_yield"                          # written by `llm.sh yield`: LLM_YIELD_SESSION=/LLM_YIELD_PROFILE=/LLM_YIELD_DEADLINE=<epoch seconds>
-LLM_YIELD_COUNT="$QDIR/.llm_yield_job_count"                 # jobs run so far during the CURRENT yield window (for the resume prompt); removed with the marker
+LLM_YIELD_MARKER="$QDIR/.llm_yield"                          # written by `llm.sh yield`: LLM_YIELD_PROFILE=/LLM_YIELD_DEADLINE=<epoch seconds> (game.sh off may push the deadline out)
+LLM_YIELD_COUNT="$QDIR/.llm_yield_job_count"                 # jobs run so far during the CURRENT yield window (for the drain log line); removed with the marker
 GAME_FILE="$QDIR/GAME_MODE"                                  # owner gaming/away (tools/game.sh) -- absolute priority, checked directly as well as via PAUSE
 LOCAL_LLM_SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}        # TEST-ONLY override (shared name with llm.sh); NEVER set in production
 export LOCAL_LLM_SYSTEMCTL                                   # llm.sh (invoked as a subprocess below) must see the same stub
@@ -147,13 +147,15 @@ llm_restore_if_idle() {
   echo "$(date '+%F %T') LLM-RESTORE: queue drained -- restoring $LLM_UNIT${prof:+ ($prof)} (owner's \`llm on\` was refused while the GPU was busy)" >> "$LOG"
   # backgrounded (loading can take a while, must not block dispatch) + 8>&- so this child can never keep the
   # daemon's singleton lock held after the daemon itself dies (same fd-inheritance hazard as the dispatched job).
-  bash "$LLM_SH" on ${prof:+"$prof"} >> "$LOG" 2>&1 8>&- &
+  bash "$LLM_SH" on ${prof:+"$prof"} --lazy >> "$LOG" 2>&1 8>&- &
 }
 
 # Call on every idle poll (queue empty). Cheap no-op unless a GPU YIELD is in force. Once the window has genuinely
 # drained (queue empty, nothing running, no yield deadline still ticking with work left OR the deadline itself has
-# passed) it removes the marker, reloads the SAME profile, then resumes the SAME session HEADLESS so the driver
-# picks its own work back up -- never while GAME_MODE (checked directly, not just via PAUSE: the two are usually
+# passed) it removes the marker and restarts the server for the SAME profile with the model unloaded (`llm on
+# --lazy`); the driver (Hermes on homelab-server, 2026-09-30) is started by its own sim-driver wake gate once the
+# server answers, and loads the model with its first request. A LLM_YIELD_SESSION line in an older marker is
+# ignored: resuming a local session headless here would start a second driver beside Hermes. Never while GAME_MODE (checked directly, not just via PAUSE: the two are usually
 # set together by `game.sh on`, but this must hold even if that ordering ever changes) or while a brain process is
 # still GPU-resident (double-load risk, identical reasoning to llm_restore_if_idle above).
 llm_yield_restore_if_drained() {
@@ -165,22 +167,18 @@ llm_yield_restore_if_drained() {
     echo "$(date '+%F %T') LLM-YIELD: window drained but a brain process is still GPU-resident -- deferring restore" >> "$LOG"
     return 0
   fi
-  local sess prof n
-  sess=$(yield_field SESSION); prof=$(yield_field PROFILE)
+  local prof n
+  prof=$(yield_field PROFILE)
   n=$(cat "$LLM_YIELD_COUNT" 2>/dev/null || echo 0)
   rm -f "$LLM_YIELD_MARKER" "$LLM_YIELD_COUNT"   # consumed HERE, before the one attempt below
   llm_is_active && return 0                       # owner (or a race) already reloaded it manually
-  echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}${sess:+, resuming session $sess}" >> "$LOG"
-  # backgrounded (loading + a full headless turn can take a while, must not block dispatch) + 8>&- for the same
+  echo "$(date '+%F %T') LLM-YIELD: window drained ($n job(s) ran) -- restoring $LLM_UNIT${prof:+ ($prof)}, model unloaded until its first request" >> "$LOG"
+  # backgrounded (starting the server can take a moment, must not block dispatch) + 8>&- for the same
   # fd-inheritance reason as every other forked child here.
   : > "$QDIR/.llm_restoring"                        # HOLD new jobs until `llm on` returns (else a job can race the model load)
   (
-    bash "$LLM_SH" on ${prof:+"$prof"} >> "$LOG" 2>&1
+    bash "$LLM_SH" on ${prof:+"$prof"} --lazy >> "$LOG" 2>&1
     rm -f "$QDIR/.llm_restoring"
-    msg="GPU window finished: $n jobs ran (see research/queue/gpu_queue.log). Harvest their outputs, then continue per the runbook."
-    if [ -n "$sess" ]; then
-      bash "$LLM_SH" claude --resume "$sess" -p "$msg" >> "$QDIR/llm_session.log" 2>&1
-    fi
   ) >> "$LOG" 2>&1 8>&- &
 }
 
@@ -481,8 +479,22 @@ FAKEEOF
   return "$rc"
 }
 
+# NO-GPU GUARD (2026-09-30, docs/plans/2026-09-30-home-to-server-MIGRATION.md). The project home moved to a GPU-less
+# server; a job queued there would sit in a queue no daemon serves, and a daemon started there would never find a GPU.
+# `add` and `start` therefore refuse on a host with no nvidia-smi and point at tools/gpu_remote.sh, which queues the job
+# on the workstation. An isolated queue (GPU_QUEUE_DIR, as --selftest and the tests use) or the nvidia-smi seam
+# (GPU_QUEUE_NVIDIA_SMI) is never the live queue, so either one skips the guard.
+require_gpu_host() {
+  [ -n "${GPU_QUEUE_DIR:-}" ] || [ -n "${GPU_QUEUE_NVIDIA_SMI:-}" ] && return 0
+  command -v nvidia-smi >/dev/null 2>&1 && return 0
+  echo "⛔ REFUSED: $(hostname) has no nvidia-smi, so no GPU queue daemon serves a queue here." >&2
+  echo "   Use: bash tools/gpu_remote.sh add '<cmd>'   (queues it on the workstation's 3090)" >&2
+  exit 3
+}
+
 case "${1:-}" in
   start)
+    require_gpu_host
     # Refuse if a daemon is already live ANYWHERE (dpid alive OR singleton lock held) — the cross-worktree check.
     # It is advisory: the AUTHORITATIVE guard is the DLOCK acquired inside __daemon, so even a TOCTOU race here
     # (two starts both passing this check) still cannot produce two daemons.
@@ -512,6 +524,7 @@ case "${1:-}" in
     daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
+    require_gpu_host
     # SHAPE GATE (2026-09-25, tools/queue_job_shape_check.sh): refuse a line whose first word could not
     # possibly run (a prose label, a torn line, a syntax error) BEFORE it is queued -- see that file's header
     # for the real historical failures (the SETTLE A2 pool lines; a bare `status` job in this very log,
