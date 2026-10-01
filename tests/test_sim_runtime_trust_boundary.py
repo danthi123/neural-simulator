@@ -99,6 +99,35 @@ def test_runtime_mode_accepts_a_same_filesystem_symlink_and_legacy_mode_is_uncha
     assert q.read_text() == ""
 
 
+def test_runtime_mode_read_only_seams_go_through_the_snapshot_guard(tmp_path: Path) -> None:
+    # --peek-est-gb / --min-queued-est-gb used to read $QUEUE directly, a second reader path around queue_snapshot's
+    # device check (2026-09-30 re-review, LOW). A queue symlinked off the workspace filesystem is now refused there too.
+    shm = Path("/dev/shm")
+    if not (shm.is_dir() and os.access(shm, os.W_OK)) or os.stat(shm).st_dev == os.stat(tmp_path).st_dev:
+        pytest.skip("needs a writable /dev/shm on a different filesystem from the pytest tmp dir")
+    now = int(time.time())
+    ws = _workspace(tmp_path)
+    snapdir = tmp_path / "snaps"
+    snapdir.mkdir()
+    env = {"SIM_WORKSPACE": str(ws), "TMPDIR": str(snapdir), "POOL_JOB_EST_GB": "1"}
+    off = shm / f"pool_queue_offfs_{os.getpid()}_{now}"
+    off.write_text(f"{now}\tpython x mem_gb=9  #checked:r\n")
+    try:
+        q = ws / "research" / "queue" / "pool.queue"
+        q.symlink_to(off)
+        res = _run(DISPATCHER, ["--peek-est-gb"], env)
+        assert res.stdout.strip() == "1" and "REFUSING the queue" in res.stderr, (res.stdout, res.stderr)
+        res = _run(DISPATCHER, ["--min-queued-est-gb"], env)
+        assert res.stdout.strip() == "" and "REFUSING the queue" in res.stderr, (res.stdout, res.stderr)
+        q.unlink()
+        q.write_text(f"{now}\tpython x mem_gb=9  #checked:r\n")     # a regular file on the workspace: read as before
+        assert _run(DISPATCHER, ["--peek-est-gb"], env).stdout.strip() == "9"
+        assert _run(DISPATCHER, ["--min-queued-est-gb"], env).stdout.strip() == "9"
+        assert list(snapdir.iterdir()) == [], "a seam left its private snapshot behind"
+    finally:
+        off.unlink()
+
+
 def test_runtime_mode_loop_refuses_to_start_unconfined(tmp_path: Path) -> None:
     # The worktree running this test is writable, exactly like /home/sim/runtime outside its unit's ProtectHome.
     ws = _workspace(tmp_path)
@@ -306,6 +335,38 @@ def test_runtime_dry_run_writes_nothing(tmp_path: Path) -> None:
     assert res.returncode == 0, res.stderr
     assert "would pull 1 file(s)" in res.stdout and list(raw.iterdir()) == []
     assert not (tmp_path / "stage").exists()
+
+
+def test_runtime_pull_skips_a_file_over_the_size_cap(tmp_path: Path) -> None:
+    bin_dir, home = _fake_node(tmp_path)
+    _node_file(home, "derisk-pool/sim/research/findings/raw/small.json", "{}\n")
+    _node_file(home, "derisk-pool/sim/research/findings/raw/huge.npz", "x" * 5000)
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_MAX_FILE_SIZE": "1K"})
+    assert res.returncode == 0, res.stderr
+    assert (raw / "small.json").exists() and not (raw / "huge.npz").exists()
+    assert not (tmp_path / "stage" / "pool41" / "main" / "huge.npz").exists()
+
+
+def test_runtime_pull_stops_and_fails_loudly_at_the_stage_cap(tmp_path: Path) -> None:
+    # The stage is on the server's root fs and the nodes are agent-controlled: past its cap no pull starts, and the
+    # run exits 1 (the unit fails, ntfy fires) whatever --strict says.
+    bin_dir, home = _fake_node(tmp_path)
+    _node_file(home, "derisk-pool/sim/research/findings/raw/main.json", "main\n")
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    filler = tmp_path / "stage" / "pool41" / "main" / "earlier.npz"
+    filler.parent.mkdir(parents=True)
+    filler.write_bytes(b"\0" * (2 * 1024 * 1024))
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_STAGE_MAX_MB": "1"})
+    assert res.returncode == 1 and "no further pull" in res.stdout, (res.stdout, res.stderr)
+    assert not (raw / "main.json").exists(), "a pull started although the stage was over its cap"
+    assert (raw / "earlier.npz").exists(), "what was already staged is still copied into the workspace"
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_STAGE_MAX_MB": "64"})
+    assert res.returncode == 0 and (raw / "main.json").read_text() == "main\n", res.stdout
 
 
 # ------------------------------------------------------------------ lane_starvation reads pool.running

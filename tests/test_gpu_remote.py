@@ -1,13 +1,15 @@
 """tools/gpu_remote.sh: the server -> workstation GPU bridge (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
 
-Hermetic: a stub `ssh` on PATH runs the remote script with `bash -s` locally, with HOME set to a temp "workstation"
-home whose ~/Projects/sim is a clone with a `server` remote pointing at a temp "server" repo. The server repo commits
-tools/gpu_remote.sh itself plus a stub tools/local_llm/gpu_add.sh that records the job it was handed (and whether its
-checkout was clean). No real ssh, queue, GPU or workstation is touched.
+Hermetic: a stub `ssh` on PATH runs the remote script with `bash -s` (and git's `git-receive-pack`) locally, with HOME
+set to a temp "workstation" home whose ~/Projects/sim is a clone of a temp "server" repo, with NO remote back to it.
+The server repo commits tools/gpu_remote.sh itself plus a stub tools/local_llm/gpu_add.sh that records the job it was
+handed (and whether its checkout was clean). No real ssh, queue, GPU or workstation is touched.
 
-Pins: the job survives base64 transport byte for byte (the workstation's login shell is fish), the refusals on
-uncommitted code and on a HEAD that is on no branch, the sparse per-job worktree (no research/findings/raw, clean to
-`git status`), the cleanup of a refused job's worktree, and --dry-run running nothing.
+Pins: the job's revision reaches the workstation by PUSH over the same ssh connection (refs/server-jobs/<sha>), so the
+workstation needs no credential to the server (2026-09-30 security re-review, CRITICAL); the job survives base64
+transport byte for byte (the workstation's login shell is fish); the refusals on uncommitted code and on a HEAD that is
+on no branch; the sparse per-job worktree (no research/findings/raw, clean to `git status`); the cleanup of a refused
+job's worktree; and --dry-run running nothing.
 """
 import os
 import shutil
@@ -33,6 +35,7 @@ exit "${STUB_GPU_ADD_RC:-0}"
 
 STUB_SSH = """#!/usr/bin/env bash
 printf '%s\\n' "$*" >> "$SSH_LOG"
+case "${@: -1}" in "git-receive-pack "*) cd "$FAKE_HOME" && HOME="$FAKE_HOME" exec sh -c "${@: -1}" ;; esac
 [ "${@: -2:1}" = bash ] && [ "${@: -1}" = -s ] || { echo "stub ssh: unexpected args: $*" >&2; exit 97; }
 HOME="$FAKE_HOME" exec bash -s
 """
@@ -67,7 +70,7 @@ def _setup(tmp_path):
     wrepo = home / "Projects" / "sim"
     wrepo.parent.mkdir(parents=True)
     _git(["clone", "-q", str(server), str(wrepo)], tmp_path)
-    _git(["remote", "add", "server", str(server)], wrepo)
+    _git(["remote", "remove", "origin"], wrepo)      # the workstation has no way to fetch from the server
     (wrepo / ".venv").mkdir()
     (wrepo / "data").mkdir()
     with open(wrepo / ".git" / "info" / "exclude", "a") as fh:   # as on the workstation
@@ -89,15 +92,23 @@ def _run(server, env, *args):
 
 def test_add_hands_the_exact_job_to_the_worktrees_own_gpu_add(tmp_path):
     server, home, env = _setup(tmp_path)
+    (server / "code.py").write_text("x = 'new on the server only'\n")   # a commit the workstation does not have
+    _git(["commit", "-q", "-am", "server-only"], server)
     job = """echo "a  b" 'c$d' && x=$(date) ; printf '%s\\n' "`q`" | cat # ü"""
     res = _run(server, env, "add", job)
     assert res.returncode == 0, res.stderr
-    assert (tmp_path / "ssh.log").read_text().split() == ["-o", "BatchMode=yes", "workstation", "bash", "-s"]
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    calls = (tmp_path / "ssh.log").read_text().splitlines()
+    assert len(calls) == 2 and "git-receive-pack 'Projects/sim'" in calls[0], calls
+    assert calls[1].split() == ["-o", "BatchMode=yes", "workstation", "bash", "-s"]
+    wrepo = home / "Projects" / "sim"
+    pushed = subprocess.run(["git", "rev-parse", "refs/server-jobs/" + sha], cwd=wrepo, capture_output=True, text=True)
+    assert pushed.stdout.strip() == sha, "the job's revision must arrive by push, not by a fetch from the server"
     handed = (home / "gpu_add_job").read_text()
     prefix, _, rest = handed.partition(" && ")
     assert rest == job, "the job must reach gpu_add.sh byte for byte"
     wt = Path(prefix[len("cd "):])
-    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    assert "new on the server only" in (wt / "code.py").read_text()
     assert wt.parent == home / "derisk-pool" / "revisions" and wt.name.startswith(sha + "-")
     assert (home / "gpu_add_status").read_text() == "", "the per-job worktree must be clean for gpu_add.sh"
     assert (wt / "code.py").exists() and (wt / "research" / "coordination" / "state.json").exists()
@@ -121,7 +132,7 @@ def test_refuses_uncommitted_code_but_not_results_or_state(tmp_path):
     (server / "code.py").write_text("x = 2\n")
     res = _run(server, env, "add", "echo no")
     assert res.returncode == 1 and "uncommitted" in res.stderr
-    assert len((tmp_path / "ssh.log").read_text().splitlines()) == 1, "a refused add must not reach the workstation"
+    assert len((tmp_path / "ssh.log").read_text().splitlines()) == 2, "a refused add must not reach the workstation"
 
 
 def test_refuses_a_head_on_no_branch(tmp_path):
@@ -143,6 +154,7 @@ def test_dry_run_prints_the_remote_script_and_runs_nothing(tmp_path):
     assert 'bash "$HOME/Projects/sim/tools/gpu_queue.sh" status' in res.stdout
     res = _run(server, env, "--dry-run", "add", "echo hi")
     assert res.returncode == 0 and "sparse-checkout set --no-cone" in res.stdout and "gpu_add.sh" in res.stdout
+    assert "# git push workstation:Projects/sim " in res.stdout and "fetch" not in res.stdout
     assert not (tmp_path / "ssh.log").exists()
     assert not (home / "derisk-pool").exists()
 
@@ -154,4 +166,17 @@ def test_status_log_yield_provision_argument_checks(tmp_path):
     assert _run(server, env, "provision", "not-a-sha").returncode == 2
     res = _run(server, env, "--dry-run", "yield", "--max-hours", "1.5")
     assert res.returncode == 0 and "llm.sh\" yield --max-hours 1.5" in res.stdout
+    assert not (tmp_path / "ssh.log").exists()
+
+
+def test_provision_pushes_the_revision_and_keeps_the_given_sha(tmp_path):
+    server, home, env = _setup(tmp_path)
+    (server / "code.py").write_text("x = 'provision me'\n")
+    _git(["commit", "-q", "-am", "to-provision"], server)
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    res = _run(server, env, "--dry-run", "provision", sha[:10])
+    assert res.returncode == 0, res.stderr
+    assert "# git push workstation:Projects/sim %s:refs/server-jobs/%s" % (sha, sha) in res.stdout
+    assert "--revision %s\n" % sha[:10] in res.stdout, "the remote script must keep the sha as given"
+    assert _run(server, env, "provision", "deadbeef00").returncode == 2, "an unknown commit is refused before any ssh"
     assert not (tmp_path / "ssh.log").exists()

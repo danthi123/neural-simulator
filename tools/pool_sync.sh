@@ -25,8 +25,10 @@
 #                                                    # must not change, so strict is opt-in, never the default).
 #
 # SAFETY: rsync -au (archive + UPDATE) copies remote->local ONLY when the remote file is newer or absent locally,
-# so a committed local result is never clobbered by a stale remote copy. *.log and per-node _provenance/ are
-# excluded (merging three nodes' runs.jsonl would clobber); provenance sidecars (*.prov.json) ARE pulled.
+# so a committed local result is never clobbered by a stale remote copy. Only result file types are pulled (the
+# allow-list at RSYNC SAFETY below: *.json, *.log -- 1460 tracked results under raw/ are logs --, *.csv, *.npz, ...);
+# per-node _provenance/ is excluded (merging three nodes' runs.jsonl would clobber); provenance sidecars (*.prov.json)
+# ARE pulled.
 #
 # STALE-HOSTNAME AUTO-REFRESH (2026-09-25): a first pull failure for a node with a research/queue/.aws_<node>
 # state file (i.e. one tools/aws_pool_node.sh manages) triggers one cheap `aws_pool_node.sh refresh <node>` --
@@ -97,9 +99,21 @@ LOCAL_DIR="research/findings/raw/"
 # following any symlink (see its header). A --dry-run compares against the workspace directly (it writes nothing).
 # The repo-local ssh config, the extra-node list and the AWS state files are read from $ROOT, never the workspace;
 # the runtime has none of them, so the AWS lane is off there. Without SIM_WORKSPACE nothing changes.
-STAGE=""
+# STAGE BOUNDS (2026-09-30 re-review, LOW). The staging dir sits on the server's root filesystem and holds what the
+# nodes send, and the nodes are agent-controlled (Hermes is root on them). So in runtime mode no single file over
+# POOL_SYNC_MAX_FILE_SIZE (default 2G; the largest real result on 2026-09-30 was 540 MB) is transferred, and once the
+# stage holds POOL_SYNC_STAGE_MAX_MB (default 51200, i.e. 50 GB; about 5 GB is legitimate today) no further pull starts
+# and the run exits 1, so the unit fails and ntfy fires. The stage is never pruned automatically: it is what `rsync -u`
+# compares against, and pruning it would re-pull every result. To free it: `sudo rm -rf /var/lib/sim-sync/stage/<node>`
+# (the next run re-pulls that node's results, and the copy into the workspace skips the unchanged ones).
+STAGE=""; STAGE_CAP_HIT=0
 if [ -n "${SIM_WORKSPACE:-}" ]; then
   LOCAL_DIR="$SIM_WORKSPACE/research/findings/raw/"
+  STAGE_MAX_MB="${POOL_SYNC_STAGE_MAX_MB:-51200}"
+  [[ $STAGE_MAX_MB =~ ^[0-9]+$ ]] || { echo "pool_sync: ⛔ POOL_SYNC_STAGE_MAX_MB='$STAGE_MAX_MB' is not a number" >&2; exit 1; }
+  MAX_FILE="${POOL_SYNC_MAX_FILE_SIZE:-2G}"
+  [[ $MAX_FILE =~ ^[0-9]+[KMG]?$ ]] || { echo "pool_sync: ⛔ POOL_SYNC_MAX_FILE_SIZE='$MAX_FILE' is not a size" >&2; exit 1; }
+  RSYNC_SAFETY_ARGS+=(--max-size="$MAX_FILE")
   if [ -z "$DRY" ]; then
     STAGE="${POOL_SYNC_STAGE_DIR:?SIM_WORKSPACE is set, so POOL_SYNC_STAGE_DIR must name a private staging directory}"
     mkdir -p "$STAGE" && chmod 700 "$STAGE" || { echo "pool_sync: ⛔ cannot prepare the staging dir $STAGE" >&2; exit 1; }
@@ -110,6 +124,13 @@ fi
 _dest() {   # _dest <node> <main|rev/NAME> -- where one pull lands: $LOCAL_DIR, or this node's private staging subdir
   if [ -n "$STAGE" ]; then mkdir -p "$STAGE/$1/$2" && printf '%s/%s/%s/\n' "$STAGE" "$1" "$2"
   else printf '%s\n' "$LOCAL_DIR"; fi
+}
+_stage_room() {   # runtime mode: 0 while the staging dir is under POOL_SYNC_STAGE_MAX_MB; otherwise say so once, return 1
+  [ -n "$STAGE" ] || return 0
+  local kb; kb=$(du -sk -- "$STAGE" 2>/dev/null | awk '{print $1}')
+  [ "${kb:-0}" -lt $(( STAGE_MAX_MB * 1024 )) ] && return 0
+  [ "$STAGE_CAP_HIT" = 1 ] || echo "  ⛔ the staging dir $STAGE holds $(( ${kb:-0} / 1024 )) MB, at or over POOL_SYNC_STAGE_MAX_MB=$STAGE_MAX_MB: no further pull this run (see the STAGE BOUNDS note in tools/pool_sync.sh)"
+  STAGE_CAP_HIT=1; FAILED=1; return 1
 }
 _copy_stage() {   # _copy_stage <node> -- runtime mode: move this node's staged files into the workspace, safely
   local srcs=("$STAGE/$1/main") d
@@ -136,6 +157,7 @@ set -f   # node names and revision paths come from files and nodes: split them, 
 for N in $NODES; do
   # A host argument starting with '-' is an ssh/rsync OPTION (-oProxyCommand=... runs a shell): plain aliases only.
   [[ $N =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || { echo "  ⛔ ignoring node name $(printf '%q' "$N") (not a plain host alias)"; FAILED=1; continue; }
+  _stage_room || break
   # -u protects newer local files; itemize so we can count + show what moved.
   out=$(_rsync_pull "$N" "$(_dest "$N" main)"); _rc=$?
   # REACHABLE BUT NO MAIN RESULTS DIR (2026-09-30). rsync exits 23 when it connected but could not read the source
@@ -207,6 +229,7 @@ for N in $NODES; do
     [[ $R =~ ^derisk-pool/revisions/[A-Za-z0-9][A-Za-z0-9._-]*/research/findings/raw$ ]] \
       || { echo "  $N: ignoring unexpected revision path $(printf '%q' "$R")"; continue; }
     _rev=${R#derisk-pool/revisions/}; _rev=${_rev%%/*}
+    _stage_room || break
     rout=$(timeout 180 rsync -au $DRY --itemize-changes \
           "${RSYNC_SAFETY_ARGS[@]}" \
           -e "$RSYNC_SSH" \
@@ -225,6 +248,10 @@ if [ -n "$STAGE" ]; then
 fi
 set +f
 echo "pool_sync: ${DRY:+(dry-run) }$total file(s) ${DRY:+would be }pulled from [$NODES]"
+if [ "$STAGE_CAP_HIT" = 1 ]; then   # loud whatever --strict says: the unit fails and ntfy fires
+  echo "pool_sync: ⛔ the staging dir reached its cap; pulls stopped (exit 1)." >&2
+  exit 1
+fi
 if [ "$STRICT" = 1 ] && [ "$FAILED" = 1 ]; then
   echo "pool_sync: ⛔ STRICT: at least one node was unreachable or a pull failed -- see above (exit 1)." >&2
   exit 1

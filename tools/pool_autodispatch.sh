@@ -278,9 +278,11 @@ reserved_gb() {
 peek_est_gb() {
   # The size of the job pop_job would hand out next (same first-fresh-line rule), so a big job is not sent to a
   # node that only has room for a default-sized one.
-  local job
+  local job src
+  src=$(queue_for_reading)
   job=$(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-        "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2; exit}' "$QUEUE" 2>/dev/null)
+        "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2; exit}' "$src" 2>/dev/null)
+  queue_done_reading "$src"
   job_est_gb "$job"
 }
 # PER-LINE MAX AGE (2026-09-30). The staleness guard below treats a line older than POOL_JOB_MAX_AGE (12 h) as
@@ -530,6 +532,19 @@ queue_snapshot() {
   printf '%s\n' "$snap"
 }
 
+queue_for_reading() {
+  # queue_for_reading -- the file a READ-ONLY seam (--peek-est-gb, --min-queued-est-gb) reads. Legacy mode: $QUEUE.
+  # Runtime mode: a private snapshot taken through queue_snapshot's device check, or /dev/null when the queue is
+  # missing or refused, so no reader of the workspace queue bypasses that check (2026-09-30 re-review, LOW: these two
+  # seams read $QUEUE directly; their output is numeric-only, but a second reader path must not skip the guard).
+  if [ -z "${SIM_WORKSPACE:-}" ]; then printf '%s\n' "$QUEUE"; return 0; fi
+  queue_snapshot || printf '%s\n' /dev/null
+}
+
+queue_done_reading() {   # queue_done_reading <path from queue_for_reading> -- removes a private snapshot, nothing else
+  case "$1" in "$QUEUE"|/dev/null|"") ;; *) rm -f -- "$1" ;; esac
+}
+
 queue_install() {
   # queue_install <new> <read-copy> -- make <new> the live queue. Legacy mode: <new> is $QUEUE.tmp, renamed over the
   # queue (unchanged). Runtime mode: <new> and <read-copy> are private; the content is WRITTEN into the workspace
@@ -705,10 +720,11 @@ fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
 if [ "${1:-}" = "--min-queued-est-gb" ]; then   # smallest declared size among fresh queued jobs; empty if none
-  m=""
+  m=""; src=$(queue_for_reading)
   while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
     < <(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-          "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) && $0 ~ /#checked:/ {print $2}' "$QUEUE" 2>/dev/null)
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) && $0 ~ /#checked:/ {print $2}' "$src" 2>/dev/null)
+  queue_done_reading "$src"
   echo "$m"; exit 0
 fi
 if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?
