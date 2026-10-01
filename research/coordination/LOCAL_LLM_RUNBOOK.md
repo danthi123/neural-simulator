@@ -49,7 +49,8 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 - A command that asks for permission while the owner is away (always so in a headless resume): skip it, WORKLOG it,
   continue elsewhere.
 - Never run `tests/test_game_pause_resume.py` (it kills live GPU jobs). One fix round per issue; a second failure is
-  a STOP. Heavy local runs: `bash tools/mem_ok.sh <gb>` first, then `bash tools/memcap.sh <gb> -- ...`.
+  a STOP. S is not a compute node (RULING `compute-placement`); a short run here still goes under `bash
+  tools/mem_ok.sh <gb>`, then `bash tools/memcap.sh <gb> -- ...`.
 - Context: `grep -n` first, then Read at most 120 lines; never a whole source file or HANDOFF; never re-read a file
   you are writing (append; `tail -n 20`); pipe output through `head -40` / `cut -c1-200`.
 
@@ -330,6 +331,17 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
 - owner-merges: the owner now opens the Claude sessions for merges and rulings, prompted by the report's "Claude
   check-in" line (due once a NEEDS-CLAUDE line is 72 h old). Make every NEEDS-CLAUDE line self-contained so it can be
   pasted as is: the branch @ sha, what to merge or rule, and what it unblocks. (2026-10-01)
+
+- compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
+  in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
+  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). For a draft build on the pool:
+  commit the draft branch; `bash tools/gpu_remote.sh provision <sha>` (ships the commit, provisions the pool nodes);
+  then one `bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<sha> && bash tools/mem_ok.sh <gb> 1 && bash
+  tools/memcap.sh <gb+2> -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.<runner>
+  ... --out research/findings/raw/<dir>/<cell>.json' --checked '<task>: <why>; dev seeds; mem_gb=<gb> ;
+  max_age_h=48'` per cell, dev seeds only. Results arrive in `$P/research/findings/raw/` through `sim-sync.timer`, not
+  in your worktree. A refusal or a failed provision is a STOP. The Step 4a grid already running on S (started 10-01
+  14:47) may finish there; the next run goes out. (2026-10-01)
 
 ## NEEDS CLAUDE
 
