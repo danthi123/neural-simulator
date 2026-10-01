@@ -16,3 +16,21 @@
   Long run (~1.5–2h). Log: `/tmp/triage_run.log`. On completion: read `_scratch/suite.xml`, group failures by
   first error line (GPU-hidden = ENVIRONMENT), write the triage finding in `docs/drafts/test-triage/`, commit
   through the gates. No fixes (per section 5).
+## 2026-10-01 12:45 (local model, Hermes) — suite complete, triage written
+
+- **Suite finished 12:07:** `175 failed, 7258 passed, 497 skipped, 3 xfailed, 4 errors in 13587.50s (3:46:27)`,
+  rc=1 (expected for a triage run). `_scratch/suite.xml` (5.6 MB) written. Started 08:20 without `nice`
+  (the `server-load` ruling landed after start; isolation re-runs used `nice -n 10`).
+- **Grouping (section 5):** 179 failed/errored tests → **76 distinct first-error lines** via
+  `_scratch` script parsing suite.xml (`E `-prefixed first line, message-attr fallback; 0 ungrouped).
+  Full list: `docs/drafts/test-triage/grouped-first-error-lines.txt`.
+- **Classification** (evidence-backed, counts sum to 179): **ENVIRONMENT 66** (no cupy/torch/dearpygui/rsync/
+  systemctl in container; gitignored `data/` absent from worktree — verified `git check-ignore`; hardcoded
+  `/home/dant123/Projects/sim` POOL_ROOT absent on S); **POLLUTION 33** (vocabulary KeyErrors — verified
+  representative tests PASS in isolation, import-time `cpd_v1.*_VOCAB` mutation by other runners);
+  **REAL 28** (composer-D mismatch, emerge61 broadcast, PROTECTED divergence — verified FAIL in isolation
+  AND on the main checkout, `%o` format bug, provenance sidecar); **UNVERIFIED 52** (grouped only, no
+  isolation run, no fixes per section 5).
+- **Document:** `docs/drafts/test-triage/TRIAGE.md` (372 lines, max line 304 ≤ W2's 800). No fixes.
+- **Deviations:** memcap refused in container (no systemd --user) → uncapped per its documented clause;
+  run predated the `server-load` nice ruling.
