@@ -7,6 +7,8 @@ mechanism: re-measure the gap#5 read-noise-floor instrument (K18) at the OU nois
   the Ecker store builder set the field the engine reads; no code change, the registered runner unchanged
 seeds: [42, 43, 44, 100, 101, 102]
 runner: research/runners/_gap5_read_noise_floor_ltu_derisk.py
+artifacts:
+  - research/findings/raw/gap5_ecker_adex/read_noise_floor_6seed.json
 builds_on:
   - research/findings/2026-09-17-gap5-read-noise-floor-instrument-lane-is-read-noise-dominated-K18.md
   - docs/drafts/ecker-ou-field/AFFECTED.md
@@ -18,8 +20,9 @@ Registered by Claude (cloud session) on 2026-10-01, before any run at 40 pA. Run
 
 ## Why
 
-The 2026-09-17 K18 finding measured the weak-cue read noise of the gap#5 learn-through-use lane. It found:
-- `sigma_read_bar` = 0.0745 against `sigma_substrate` = 0.0446;
+The 2026-09-17 K18 finding measured the weak-cue read noise of the gap#5 learn-through-use lane. Its artifact
+`research/findings/raw/gap5_ecker_adex/read_noise_floor_6seed.json` holds these values:
+- `sigma_read_bar` = 0.07448 against `sigma_substrate` = 0.04460;
 - `read_SNR` = 0.60, classified READ-NOISE-DOMINATED;
 - 18 reads per arm needed to resolve the 0.05 gain bar.
 
@@ -33,12 +36,15 @@ stated noise. Two weight-lever NO-GOs were re-scoped on it: 2026-09-16 forward-b
 - Revision: a main revision that carries the T15 rename. Precondition P0, checked before scoring: `git grep -n
   "ou_std_current_pA" <rev> -- research/runners/_gap5_ecker_adex_ca3_stdp_band_derisk.py` shows the builder setting the
   real field. P0 fails: UNDEFINED.
+- Outputs: the runs below write them, so they do not exist yet. Each command sets the prefix `O` itself:
+  `${O}_ou40_s42.json` (smoke) and `${O}_6seed_ou40.json` (gate).
 - Smoke first, one seed, for time and memory:
-  `SIM_BACKEND=numpy .venv/bin/python -m research.runners._gap5_read_noise_floor_ltu_derisk --seeds 42
-  --n-read-trials 12 --out research/findings/raw/gap5_ecker_adex/read_noise_floor_ou40_s42.json`
+  `O=research/findings/raw/gap5_ecker_adex/read_noise_floor; SIM_BACKEND=numpy .venv/bin/python -m
+  research.runners._gap5_read_noise_floor_ltu_derisk --seeds 42 --n-read-trials 12 --out ${O}_ou40_s42.json`
 - The gate run, six seeds:
-  `SIM_BACKEND=numpy .venv/bin/python -m research.runners._gap5_read_noise_floor_ltu_derisk --seeds 42 43 44 100 101
-  102 --n-read-trials 12 --out research/findings/raw/gap5_ecker_adex/read_noise_floor_6seed_ou40.json`
+  `O=research/findings/raw/gap5_ecker_adex/read_noise_floor; SIM_BACKEND=numpy .venv/bin/python -m
+  research.runners._gap5_read_noise_floor_ltu_derisk --seeds 42 43 44 100 101 102 --n-read-trials 12 --out
+  ${O}_6seed_ou40.json`
 - The K18 run took 966 s for six seeds on numpy. Pool lines carry ` ; prereg <this file> ; mem_gb=4 ; max_age_h=72`
   in `--checked`. The smoke's peak memory replaces the `mem_gb` estimate if it is larger.
 - Every default is the runner's own, as in K18: `--ou-sigma` 40, `--n-read-trials` 12, `--resolve-bar` 0.05.
@@ -55,7 +61,7 @@ least 5 of 6 seeds (anti-cheat).
 | P0 fails, or the instrument is not VALID | UNDEFINED, never a verdict on the lane | NEEDS-CLAUDE with the artifact path |
 
 Reported beside the reading, never gated: `sigma_read_bar`, `sigma_substrate`, `read_SNR`, `MDG` and `K_reads_needed` at
-40 pA, next to K18's values at 100 pA (0.0745, 0.0446, 0.60, 0.2107, 18).
+40 pA, next to K18's values at 100 pA from its artifact (0.07448, 0.04460, 0.5988, 0.21065, 18).
 
 ## Prediction
 
