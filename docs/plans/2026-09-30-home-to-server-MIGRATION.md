@@ -291,7 +291,8 @@ so it is an owner step too.
        homelab-server:Projects/neural-simulator/'
    ```
 5. **S: sanity.** If W's main moved since prep, run `git fetch gitea && git merge gitea/main` as the agent
-   (§10: `docker exec -u 99 -e HOME=/opt/data/home -w /home/dant123/Projects/neural-simulator hermes git ...`). Check that
+   (§10; before step 11 the container sees S only at `/workspace`:
+   `docker exec -u 99 -e HOME=/opt/data/home hermes git -c 'safe.directory=*' -C /workspace/neural-simulator ...`). Check that
    `wc -l research/queue/pool.queue research/queue/pool.running` equals W's, and that
    `bash tools/pool_queue.sh list | tail -3` looks right.
 6. **Owner step 12: enable S's units; the pause ends.**
@@ -318,7 +319,7 @@ so it is an owner step too.
       `docker exec -u 99 -e HOME=/opt/data/home hermes git config --global user.name 'Daniel Thiberge'`, the same for
       `user.email` (W's `git config user.email`), and `--add safe.directory '/home/dant123/Projects/*'`.
 12. **GPU bridge canary** (from S as the agent, `docker exec -u 99 -e HOME=/opt/data/home -w
-    /home/dant123/Projects/neural-simulator hermes`, never as dant123, §10):
+    /home/dant123/Projects/neural-simulator hermes`, never as dant123, §10; skip it while Hermes's W key is withdrawn):
     `bash tools/gpu_remote.sh add 'mkdir -p research/findings/raw/_migration && .venv/bin/python -c "import json,cupy; json.dump({\"gpus\": cupy.cuda.runtime.getDeviceCount()}, open(\"research/findings/raw/_migration/gpu_bridge_canary.json\",\"w\"))"'`.
     If `local-llm` is up, follow with `bash tools/gpu_remote.sh yield --max-hours 1`. After it runs, the next
     `sim-sync` pull should put the file in S's `research/findings/raw/_migration/`. The queue restores the model
@@ -505,7 +506,8 @@ only remote-side check (it did not exist on 2026-09-30; owner step below).
   refusal or crash loop alerts a bounded number of times; sim's ssh uses `StrictHostKeyChecking yes` (an unknown host
   fails, as a changed one does).
 - **Never run the workspace's git or tools as dant123 on S, including during cutover.** Steps 5, 12 and 14 run as the
-  agent (`docker exec -u 99 -e HOME=/opt/data/home -w /home/dant123/Projects/neural-simulator hermes ...`). Before the
+  agent: `docker exec -u 99 -e HOME=/opt/data/home hermes git -c 'safe.directory=*' -C /workspace/neural-simulator ...`
+  (the path that exists before step 11's bind; afterwards `-w /home/dant123/Projects/neural-simulator`). Before the
   W-to-S rsyncs (steps 3, 4, 16), check that `find /home/dant123/Projects/neural-simulator/research -type l` prints
   nothing: rsync as dant123 follows a symlinked destination directory.
 
