@@ -239,3 +239,4 @@ Added 4 roadmap tasks for "prove who owns the computation" (host-decision share,
   (/home/dant123/Projects/sim) is now a follower + compute node (GPU queue, local model serving). Infra/operations
   landing, no research capability status changed; docs synced in the same commit (CLAUDE.md, GAP_CLOSURE_MISSION.md,
   ROADMAP.md, docs/LOCAL_MODEL_GUIDE.md, research/coordination/LOCAL_LLM_RUNBOOK.md v4).
+## 2026-10-01  phantom-cfg config-field audit (T17): no board task needed (housekeeping audit, no capability status changed); AFFECTED.md lists the fix-up work.
