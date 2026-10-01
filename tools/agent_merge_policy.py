@@ -15,6 +15,7 @@ Routine (everything else, and every deletion or rename, is reserved):
   **/*WORKLOG*.md                        worklogs: add or modify
   docs/drafts/**/*.{md,txt,csv,tsv,json} draft docs and their data: add or modify, except HANDOFF.md and *PREREG*
   research/findings/raw/_provenance/*.jsonl  the run ledger: APPEND-ONLY growth of an existing ledger (2026-10-01)
+  docs/.vikunja_sync                     the board-sync stamp: APPEND-ONLY (after a vikunja-skill board sync)
   tests/test_*.py                        NEW test files only (editing an existing test could weaken it)
   research/findings/*.md                 NEW findings only, and only if the file says PROVISIONAL; never *PREREG*
   research/runners/_*.py                 NEW draft runner copies only (underscore-prefixed); never an edit
@@ -43,6 +44,10 @@ def reason_reserved(status: str, path: str, content: Callable[[str], str], mode:
         return f"{status}: only additions and modifications are routine (no delete, rename, copy or type change)"
     if mode not in ("100644", "100755"):
         return f"mode {mode}: only plain files are routine (no symlink or submodule)"
+    if path == "docs/.vikunja_sync":   # the board-sync stamp the vikunja-freshness gate reads (owner 2026-10-01)
+        if status == "M" and old is not None and content(path).startswith(old(path)):
+            return None
+        return "the board-sync stamp may only grow by appended lines"
     if staged and path.startswith("research/coordination/"):
         return None
     if _is_prereg(path):

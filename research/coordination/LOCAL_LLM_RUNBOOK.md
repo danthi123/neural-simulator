@@ -365,6 +365,13 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
 
+- board: (owner 2026-10-01) Keep the owner's Vikunja board current with the vikunja skill: plain-language titles, the
+  one project, roadmap-level tasks only. Read it when you choose work; when a landing changes what a capability can
+  do, update or close its task the same cycle. Then append one line `## YYYY-MM-DD  <what you reconciled>` at the END
+  of `docs/.vikunja_sync` on your branch before `agent_merge.sh` (the vikunja-freshness gate refuses a findings merge
+  after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
+  (2026-10-01)
+
 - cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
   lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
   [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to

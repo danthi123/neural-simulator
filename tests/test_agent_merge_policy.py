@@ -146,3 +146,11 @@ def test_draft_data_files_and_append_only_ledger_are_routine():
     assert policy.reason_reserved("M", led, grow, old=lambda p: '{"z":0}\n') is not None   # a rewrite
     assert policy.reason_reserved("M", led, grow) is not None                                 # unprovable
     assert policy.reason_reserved("A", "research/findings/raw/_provenance/new.jsonl", grow, old=lambda p: "") is not None
+
+
+def test_board_sync_stamp_is_append_only():
+    grow = lambda p: "## a\n## b\n"
+    assert policy.reason_reserved("M", "docs/.vikunja_sync", grow, old=lambda p: "## a\n") is None
+    assert policy.reason_reserved("M", "docs/.vikunja_sync", grow, staged=True, old=lambda p: "## a\n") is None
+    assert policy.reason_reserved("M", "docs/.vikunja_sync", grow, old=lambda p: "## z\n") is not None
+    assert policy.reason_reserved("M", "docs/.vikunja_sync", grow) is not None
