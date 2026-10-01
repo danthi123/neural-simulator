@@ -45,7 +45,7 @@ from sim import (  # noqa: E402
     SimulationBridge,
     VisualizationConfig,
 )
-from sim.backend import get_backend  # noqa: E402
+from sim.backend import get_backend, to_host  # noqa: E402
 from sim.regions import BrainRegion, RegionPathway  # noqa: E402
 
 
@@ -203,9 +203,9 @@ def _run_and_hash(bridge, n_steps):
     for _ in range(int(n_steps)):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
-        raster.append(np.asarray(bridge.cp_firing_states, dtype=np.uint8).copy())
+        raster.append(np.asarray(to_host(bridge.cp_firing_states), dtype=np.uint8).copy())
     raster = np.stack(raster, axis=0)
-    v_final = np.asarray(bridge.cp_membrane_potential_v, dtype=np.float32)
+    v_final = np.asarray(to_host(bridge.cp_membrane_potential_v), dtype=np.float32)
     h = hashlib.sha256()
     h.update(raster.tobytes())
     h.update(v_final.tobytes())
@@ -271,7 +271,7 @@ def test_bounded_flag_on():
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
         v_min = min(v_min, float(bridge.cp_membrane_potential_v[commit_idx].min()))
-        if bool(np.asarray(bridge.cp_firing_states)[commit_idx].any()):
+        if bool(np.asarray(to_host(bridge.cp_firing_states))[commit_idx].any()):
             fired_any = True
     assert v_min >= floor, f"bounded path overshot past E_i-1={floor}: v_min={v_min}"
     assert not fired_any, "commit pool fired with its excitatory drive silent (flag on)"
@@ -312,7 +312,7 @@ def test_small_conductance_equivalence():
         for _ in range(200):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
-            rows.append(np.asarray(bridge.cp_firing_states, dtype=np.uint8)[commit_idx].copy())
+            rows.append(np.asarray(to_host(bridge.cp_firing_states), dtype=np.uint8)[commit_idx].copy())
         return np.stack(rows, axis=0)
 
     raster_off = _raster(False)
