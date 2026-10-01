@@ -23,7 +23,7 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
 | GPU job submission | S to W | `tools/gpu_remote.sh add` (NEW): per-job worktree on W, then that worktree's own `gpu_add.sh` |
 | Pool provisioning | W (for Hermes) or S host | `tools/gpu_remote.sh provision <sha>` runs `pool_provision.sh` on W; the S host can run it directly |
 | AWS lane, `aws-guard.timer` | W (unchanged) | `.pool_extra_nodes` is empty, so no AWS pool node is in use |
-| Claude inspection | W | `git fetch server`; read in a detached worktree; changes go to S as branches |
+| Claude inspection | W | Published `main` from Gitea/GitHub; a server branch through Hermes (§10: W holds no unattended credential to S); changes go to S as branches |
 
 ## 1. Facts verified today (read-only), including corrections to the survey
 
@@ -70,7 +70,8 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
    feeds the freshness gates), refreshes the RAG index, then runs `push_both.sh main`. One unit replaces the
    workstation's `pool-sync.timer`, `sim-rag-autoupdate.timer`, the Claude heartbeat's audit and manual pushes.
 3. **GPU jobs from S to W reuse `gpu_add.sh`.** `tools/gpu_remote.sh add '<cmd>'` checks that S's HEAD is committed
-   and on a branch. On W it then runs `git fetch server`, creates a sparse worktree
+   and on a branch. It pushes that commit to W's repo as `refs/server-jobs/<sha>` over the same ssh connection (§10:
+   W needs no credential to S), then on W creates a sparse worktree
    `~/derisk-pool/revisions/<sha>-<epoch>` without `research/findings/raw` (as `pool_provision.sh` also excludes
    it), symlinks `.venv` and `data` to W's (the existing workstation pattern), and execs **that worktree's**
    `tools/local_llm/gpu_add.sh "cd <worktree> && <cmd>"`. The guard runs where the queue lives, at the job's own
@@ -100,8 +101,8 @@ Short names used below: **S** = `/home/dant123/Projects/neural-simulator` on the
 8. **Git: S is canonical and only S writes `main`.** *(§10: publishing is `sim-publish`, via a sim-owned mirror, not
    `push_both.sh` in the workspace.)* `sim-sync` publishes `main` with `push_both.sh` using a deploy key.
    Fetch URLs stay HTTPS and anonymous; `pushurl`s are ssh aliases. No push credential enters the agent container,
-   which mirrors `apps-gitsync`. W adds remote `server` (`homelab-server:Projects/neural-simulator`, using W's existing
-   key) and fetches it for GPU jobs and inspection. Claude's changes reach S as branches and are merged there.
+   which mirrors `apps-gitsync`. *(§10: W adds no `server` remote. GPU-job revisions are pushed to W by
+   `gpu_remote.sh`, and W's key no longer opens S.)* Claude's changes reach S as branches and are merged there.
 9. **Hermes sees S at its host path.** Add the bind `/home/dant123/Projects:/home/dant123/Projects` and set the default
    profile's cwd to S, not `/workspace/neural-simulator`. Venv interpreter links, git worktree gitdirs and
    `pre-commit`'s canonical-venv check are absolute paths shared by host units and the container, and one path
@@ -127,7 +128,7 @@ New files:
 | File | Why an existing mechanism cannot do it |
 |---|---|
 | `tools/gpu_remote.sh` | `gpu_add.sh`/`gpu_queue.sh` are single-host by design (queue + singleton lock beside the 3090); nothing creates a checkout of a server revision on W. Subcommands: `add`, `status`, `log [N]`, `yield [--max-hours N]`, `provision <sha>`, and `--dry-run` (prints the remote script). |
-| `tests/test_gpu_remote.py` | Project convention (tools are tested). Stub `ssh` on PATH that runs `bash -s` locally against a temp repo with a `server` remote and a stub `gpu_add.sh`; pins base64 job transport (W's login shell is fish), the refusal on a dirty/detached HEAD, and the sparse worktree. |
+| `tests/test_gpu_remote.py` | Project convention (tools are tested). Stub `ssh` on PATH that runs `bash -s` and `git-receive-pack` locally against a temp W repo with no way back to the server, and a stub `gpu_add.sh`; pins the push of the job's revision, base64 job transport (W's login shell is fish), the refusal on a dirty/detached HEAD, and the sparse worktree. |
 | `requirements-rag.txt` | `.venv-rag` has no requirements file, so it cannot be rebuilt on S. Generated on W: `.venv-rag/bin/pip freeze \| grep -vE '^(nvidia-\|triton==\|torch==)'` (CPU torch is installed separately on S). |
 | `~/apps/host/etc/systemd/system/sim-pool-dispatch.service` | The existing unit is a W user unit with a W path; the server's convention is a mirrored host unit (Appendix A). |
 | `~/apps/host/etc/systemd/system/sim-sync.service` | Replaces W's `pool-sync.timer` + `sim-rag-autoupdate.timer` + heartbeat audit + manual push (Appendix A). |
@@ -262,8 +263,8 @@ so it is an owner step too.
    - The pool.queue requeue workflow has finished: its report is in, and `flock -n research/queue/pool.queue.lock true`
      succeeds on W.
    - Prep is done and owner steps 1 to 11 are done.
-   - From S, `ssh pool41 true`, `ssh pool42 true` and `ssh workstation true` pass, both as dant123 and through
-     `docker exec -u 99 hermes`.
+   - From S, `ssh pool41 true`, `ssh pool42 true` and `ssh workstation true` pass, both as sim (§10's `simrun`) and
+     through `docker exec -u 99 hermes`.
    - `git push --dry-run origin main` and `git push --dry-run gitea main` pass on S.
    - No driver is committing on W's main checkout.
    - `git -C ~/Projects/sim status --porcelain -- sim webapp tools tests docs experiment` is empty on W; commit any code
@@ -289,20 +290,20 @@ so it is an owner step too.
      | rsync -rlt --from0 --files-from=- --ignore-missing-args --chmod=Dg+rwx,Fg+rw ./ \
        homelab-server:Projects/neural-simulator/'
    ```
-5. **S: sanity.** If W's main moved since prep, run `git fetch gitea && git merge gitea/main`. Check that
+5. **S: sanity.** If W's main moved since prep, run `git fetch gitea && git merge gitea/main` as the agent
+   (§10: `docker exec -u 99 -e HOME=/opt/data/home -w /home/dant123/Projects/neural-simulator hermes git ...`). Check that
    `wc -l research/queue/pool.queue research/queue/pool.running` equals W's, and that
    `bash tools/pool_queue.sh list | tail -3` looks right.
 6. **Owner step 12: enable S's units; the pause ends.**
 7. **S: verify the handover.** Check `journalctl -u sim-pool-dispatch -n 30` (§10: no dispatch.log on S) for S probing
    pool41 and pool42. The
    per-node `pgrep -fc research.runners` counts should be unchanged across the handover, meaning no duplicate launch.
-   Then check `bash tools/pool_sync.sh`, `POOL_NODES=workstation bash tools/pool_sync.sh --dry-run` and
-   `journalctl -u sim-sync -n 40` after the first timer run, which should end in `push_both` "verified: both remotes".
+   Then check `journalctl -u sim-sync -n 40` after the first timer run, which should end in `sim-publish: verified:
+   both remotes` (the pull dry-runs are §10's checklist, run as sim, never the workspace's tools as dant123).
 8. **W: disable the moved units.** `systemctl --user disable pool-dispatch.service pool-sync.timer pool-opsweep.timer`.
    The unit files stay, for rollback.
 9. **W: become a follower and compute node.**
-   - `git -C ~/Projects/sim remote add server homelab-server:Projects/neural-simulator`
-   - `git -C ~/Projects/sim fetch server`
+   - (§10) no `server` remote: `gpu_remote.sh` pushes each job's revision to W.
    - `mkdir -p ~/derisk-pool/sim/research/findings/raw`
    - `mv ~/.local/state/sim-local-llm/last_session ~/.local/state/sim-local-llm/last_session.retired-2026-09-30`
 10. **S: finish the shared-folder permissions**, after owner step 1 and before Hermes writes:
@@ -316,15 +317,16 @@ so it is an owner step too.
     - Set git identity and safe.directory in the tools' HOME:
       `docker exec -u 99 -e HOME=/opt/data/home hermes git config --global user.name 'Daniel Thiberge'`, the same for
       `user.email` (W's `git config user.email`), and `--add safe.directory '/home/dant123/Projects/*'`.
-12. **GPU bridge canary** (from S as dant123):
+12. **GPU bridge canary** (from S as the agent, `docker exec -u 99 -e HOME=/opt/data/home -w
+    /home/dant123/Projects/neural-simulator hermes`, never as dant123, §10):
     `bash tools/gpu_remote.sh add 'mkdir -p research/findings/raw/_migration && .venv/bin/python -c "import json,cupy; json.dump({\"gpus\": cupy.cuda.runtime.getDeviceCount()}, open(\"research/findings/raw/_migration/gpu_bridge_canary.json\",\"w\"))"'`.
     If `local-llm` is up, follow with `bash tools/gpu_remote.sh yield --max-hours 1`. After it runs, the next
     `sim-sync` pull should put the file in S's `research/findings/raw/_migration/`. The queue restores the model
     after the drain.
 13. **Hermes smoke turn** in the default profile: `echo $HOME`, `git status`, `bash tools/gpu_remote.sh status`,
     `bash tools/pool_queue.sh list | tail -2`, `ssh pool41 true`, and `bash tools/vikunja.sh list-tasks 2 | head -3`.
-14. **Docs** (section 8): commit on S as dant123 through the gates, then run `bash tools/push_both.sh main` once by
-    hand. On W, `git fetch server`. Sync the board (vikunja).
+14. **Docs** (section 8): commit on S as the agent through the gates (as in step 12, never as dant123: the gates are
+    agent-writable hooks); `sim-sync` publishes it. Sync the board (vikunja).
 15. **Hermes cron, last:** `docker exec -it -u 99 hermes /opt/hermes/.venv/bin/hermes cron create`, every 30 min in the
     default profile, with the prompt "Continue per CLAUDE.md and research/coordination/LOCAL_LLM_RUNBOOK.md; one task
     per run; this repo's path is /home/dant123/Projects/neural-simulator, never /workspace".
@@ -350,7 +352,7 @@ so it is an owner step too.
 - **`CLAUDE.md`:** keep it small.
   - Replace the "Transition to local-model-first" line with a "Where things run" line pointing here: home = S,
     driver = Hermes, GPU and model serving = W.
-  - Non-negotiable 8: on S, `sim-sync.timer` runs `push_both.sh main`; from W, changes go to S as branches.
+  - Non-negotiable 8: on S, `sim-sync.timer` runs `sim-publish` (§10); from W, changes go to S as branches.
   - Non-negotiable 9: from S, `tools/gpu_remote.sh add`; `game.sh` and `gpu_queue.sh pause` are W commands.
   - Non-negotiable 10: no heavy jobs on the server. Hermes is capped at 12 GB, `memcap.sh` does not run inside Hermes,
     and heavy work goes to the pool.
@@ -459,8 +461,53 @@ now runs through `sh -c`. A real dry-run from srv-host-0 lists the three GPU-job
 **Residual risks (stated).** The agent can still stop its own work: it can corrupt the queue, plant symlinks that make
 the dispatcher refuse the queue, or push a `main` that fails to publish. None of that escalates. Hermes's own
 workstation key (`workstation_ed25519`, W's `authorized_keys` line with `from=` only) is a full dant123 shell on W, and
-that is outside this boundary. What `sim-publish` pushes is whatever the agent committed on `main`: the gates in the
-agent's checkout are advisory, and GitHub/Gitea branch protection is the only remote-side check.
+that is outside this boundary (but see the re-review below: it loops back to S). What `sim-publish` pushes is whatever
+the agent committed on `main`: the gates in the agent's checkout are advisory, and GitHub/Gitea branch protection is the
+only remote-side check (it did not exist on 2026-09-30; owner step below).
+
+**Security re-review (2026-09-30 night, server-admin session; verdict UNSOUND until the W chain is broken).**
+
+- **CRITICAL: the boundary was bypassable from W.** Hermes's W key is a full dant123 shell on W. W's dant123 held a
+  passphrase-free key (`~/.ssh/homelab_ed25519`) that S's dant123 trusts, and S's dant123 has passwordless sudo: agent
+  to root on S in three hops, without touching `sim`. W's dant123 also has passwordless sudo. Fixed in code:
+  `gpu_remote.sh` now pushes each job's revision to W (`refs/server-jobs/<sha>`) over Hermes's own connection, so W
+  needs no credential to S. Owner steps: S trusts a Bitwarden-held key instead (Bitwarden asks on every use), no
+  longer the on-disk key; W's NOPASSWD sudo goes (`train.sh` and `gpu_recover.sh` then ask for a password). The
+  on-disk key stays on W for pool40-42 (the agent is root there anyway). Note: the Bitwarden agent's `homelab_ed25519`
+  item is a *different* key from the file of that name; S trusted only the file.
+  **Still open (owner decision):** Hermes lands as dant123 on W, and every GPU job runs as dant123 there, so
+  everything W's dant123 holds is agent-reachable: the owner's `gh` token (`repo` scope, admin on this repo, so it can
+  also undo branch protection), `~/.aws` credentials, the Gitea account key (the same on-disk file is dant123's Gitea
+  user key "Unraid": git read/write on every repo of the owner's, `srv-host-0` included) and the libsecret Gitea
+  credential. The owner's own sessions on W are steerable too (`~/.ssh/config` ControlMaster, a `PATH` shim, shell
+  rc), so one owner login from W to S can still be hijacked. The fix is to stop the agent landing in the owner's
+  account: a dedicated unprivileged GPU-job user on W, or a `restrict,command=` gate plus bubblewrap-confined GPU jobs.
+  Until then the containment is to remove Hermes's W key (the GPU lane from Hermes pauses; the pool lane and sim's
+  result pull are unaffected).
+- **Pool nodes are agent-controlled.** Hermes's node key (`from=` only) reaches `node`, which has passwordless sudo,
+  so `POOL_SANDBOX=on` constrains pool-submit lines, not Hermes. Every byte sim receives from pool41/42 and W is
+  hostile: the defences are the client side (node answers checked as numbers, revision paths by regex, rsync
+  `--safe-links` + allow-list + `--max-size` + a capped stage, the symlink-refusing copy) and a patched rsync/OpenSSH
+  on S (standing requirement; 2026-09-30: rsync 3.4.1, OpenSSH 10.2, unattended-upgrades on). `sim_ed25519` is
+  `from=`-only on the nodes (root via `node`'s sudo), so it must never leave `/home/sim`. On W it was a full dant123
+  shell (the owner's desktop, passwordless sudo); W's `authorized_keys` now forces it to `rrsync -ro ~/derisk-pool`
+  (owner step) and `pool_sync.sh` lists W's revisions with rsync itself (`POOL_SYNC_RRSYNC_NODES=workstation`), so a
+  compromised sim can read W's results and nothing else.
+- **No remote-side history protection.** GitHub `main` had no protection (404), and the deploy key writes every branch.
+  Owner step: a GitHub ruleset on all branches (no force-push, no deletion; repository admins bypass) and a Gitea
+  protection rule `**`.
+- **Container root on the dataset.** The Hermes container's init runs as uid 0 without a user-namespace remap and binds
+  `~/Projects` read-write; `data/projects` had `setuid=on devices=on`. Owner step: `zfs set setuid=off devices=off`
+  (venvs need `exec`, which stays on). Longer term: userns-remap or a non-root init for the container.
+- **Smaller fixes in code and units.** `--peek-est-gb`/`--min-queued-est-gb` read the queue through the same
+  device-checked snapshot as `pop_job`; the stage is bounded (`POOL_SYNC_MAX_FILE_SIZE`, `POOL_SYNC_STAGE_MAX_MB`,
+  loud exit 1 at the cap); `sim-pool-dispatch` has `RestartPreventExitStatus=1` and a start limit (5 in 10 min), so a
+  refusal or crash loop alerts a bounded number of times; sim's ssh uses `StrictHostKeyChecking yes` (an unknown host
+  fails, as a changed one does).
+- **Never run the workspace's git or tools as dant123 on S, including during cutover.** Steps 5, 12 and 14 run as the
+  agent (`docker exec -u 99 -e HOME=/opt/data/home -w /home/dant123/Projects/neural-simulator hermes ...`). Before the
+  W-to-S rsyncs (steps 3, 4, 16), check that `find /home/dant123/Projects/neural-simulator/research -type l` prints
+  nothing: rsync as dant123 follows a symlinked destination directory.
 
 ## Appendix A: host units (`~/apps/host/etc/systemd/system/`)
 

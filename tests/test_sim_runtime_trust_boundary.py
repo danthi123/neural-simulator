@@ -99,6 +99,35 @@ def test_runtime_mode_accepts_a_same_filesystem_symlink_and_legacy_mode_is_uncha
     assert q.read_text() == ""
 
 
+def test_runtime_mode_read_only_seams_go_through_the_snapshot_guard(tmp_path: Path) -> None:
+    # --peek-est-gb / --min-queued-est-gb used to read $QUEUE directly, a second reader path around queue_snapshot's
+    # device check (2026-09-30 re-review, LOW). A queue symlinked off the workspace filesystem is now refused there too.
+    shm = Path("/dev/shm")
+    if not (shm.is_dir() and os.access(shm, os.W_OK)) or os.stat(shm).st_dev == os.stat(tmp_path).st_dev:
+        pytest.skip("needs a writable /dev/shm on a different filesystem from the pytest tmp dir")
+    now = int(time.time())
+    ws = _workspace(tmp_path)
+    snapdir = tmp_path / "snaps"
+    snapdir.mkdir()
+    env = {"SIM_WORKSPACE": str(ws), "TMPDIR": str(snapdir), "POOL_JOB_EST_GB": "1"}
+    off = shm / f"pool_queue_offfs_{os.getpid()}_{now}"
+    off.write_text(f"{now}\tpython x mem_gb=9  #checked:r\n")
+    try:
+        q = ws / "research" / "queue" / "pool.queue"
+        q.symlink_to(off)
+        res = _run(DISPATCHER, ["--peek-est-gb"], env)
+        assert res.stdout.strip() == "1" and "REFUSING the queue" in res.stderr, (res.stdout, res.stderr)
+        res = _run(DISPATCHER, ["--min-queued-est-gb"], env)
+        assert res.stdout.strip() == "" and "REFUSING the queue" in res.stderr, (res.stdout, res.stderr)
+        q.unlink()
+        q.write_text(f"{now}\tpython x mem_gb=9  #checked:r\n")     # a regular file on the workspace: read as before
+        assert _run(DISPATCHER, ["--peek-est-gb"], env).stdout.strip() == "9"
+        assert _run(DISPATCHER, ["--min-queued-est-gb"], env).stdout.strip() == "9"
+        assert list(snapdir.iterdir()) == [], "a seam left its private snapshot behind"
+    finally:
+        off.unlink()
+
+
 def test_runtime_mode_loop_refuses_to_start_unconfined(tmp_path: Path) -> None:
     # The worktree running this test is writable, exactly like /home/sim/runtime outside its unit's ProtectHome.
     ws = _workspace(tmp_path)
@@ -306,6 +335,86 @@ def test_runtime_dry_run_writes_nothing(tmp_path: Path) -> None:
     assert res.returncode == 0, res.stderr
     assert "would pull 1 file(s)" in res.stdout and list(raw.iterdir()) == []
     assert not (tmp_path / "stage").exists()
+
+
+RRSYNC = Path("/usr/bin/rrsync")
+
+
+def _rrsync_node(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """A stub ssh that behaves like sshd with `command="rrsync -ro ~/derisk-pool"`: the REAL rrsync judges every remote
+    command (a shell command is refused). Returns (bin dir, node home, command log)."""
+    home = tmp_path / "nodehome"
+    (home / "derisk-pool").mkdir(parents=True)
+    log = tmp_path / "remote_commands.log"
+    bin_dir = tmp_path / "bin"
+    _exe(bin_dir / "ssh", f"""while [ $# -gt 0 ]; do
+  case "$1" in -o|-F) shift 2 ;; -*) shift ;; *) break ;; esac
+done
+shift   # the host
+printf '%s\\n' "$*" >> "{log}"
+cd "{home}" && HOME="{home}" SSH_ORIGINAL_COMMAND="$*" exec python3 {RRSYNC} -ro "{home}/derisk-pool"
+""")
+    return bin_dir, home, log
+
+
+@pytest.mark.skipif(not RRSYNC.exists(), reason="needs rsync's rrsync script")
+def test_a_read_only_rrsync_host_still_has_its_results_and_revisions_pulled(tmp_path: Path) -> None:
+    # sim's key on the workstation is restricted to `rrsync -ro ~/derisk-pool` (no shell): the pull must work through
+    # it, listing revisions with rsync itself and skipping a revision whose job has written nothing yet.
+    bin_dir, home, log = _rrsync_node(tmp_path)
+    _node_file(home, "derisk-pool/sim/research/findings/raw/.keep.json", "{}\n")
+    _node_file(home, "derisk-pool/revisions/abc1234-1759270000/research/findings/raw/gpu.json", "gpu\n")
+    (home / "derisk-pool" / "revisions" / "def5678-1759270001" / "tools").mkdir(parents=True)   # no results yet
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    env = {**_sync_env(bin_dir, tmp_path, ws, node="workstation"), "POOL_SYNC_RRSYNC_NODES": "workstation"}
+    res = _run(POOL_SYNC, ["--strict"], env)
+    assert res.returncode == 0, (res.stdout, res.stderr)
+    assert (raw / "gpu.json").read_text() == "gpu\n"
+    cmds = log.read_text().splitlines()
+    assert cmds and all(c.startswith("rsync --server --sender ") for c in cmds), cmds
+    # The forced command refuses a shell, so without the mode nothing is pulled at all (fresh stage and workspace).
+    shell = subprocess.run([str(bin_dir / "ssh"), "-o", "BatchMode=yes", "workstation", "sh -c 'id'"],
+                           capture_output=True, text=True, timeout=30)
+    assert shell.returncode != 0 and "uid=" not in shell.stdout
+    raw2 = tmp_path / "projects2" / "neural-simulator" / "research" / "findings" / "raw"
+    raw2.mkdir(parents=True)
+    res = _run(POOL_SYNC, [], {**env, "POOL_SYNC_RRSYNC_NODES": "", "SIM_WORKSPACE": str(raw2.parents[2]),
+                               "POOL_SYNC_STAGE_DIR": str(tmp_path / "stage2")})
+    assert "0 file(s) pulled" in res.stdout and list(raw2.iterdir()) == [], res.stdout
+
+
+def test_runtime_pull_skips_a_file_over_the_size_cap(tmp_path: Path) -> None:
+    bin_dir, home = _fake_node(tmp_path)
+    _node_file(home, "derisk-pool/sim/research/findings/raw/small.json", "{}\n")
+    _node_file(home, "derisk-pool/sim/research/findings/raw/huge.npz", "x" * 5000)
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_MAX_FILE_SIZE": "1K"})
+    assert res.returncode == 0, res.stderr
+    assert (raw / "small.json").exists() and not (raw / "huge.npz").exists()
+    assert not (tmp_path / "stage" / "pool41" / "main" / "huge.npz").exists()
+
+
+def test_runtime_pull_stops_and_fails_loudly_at_the_stage_cap(tmp_path: Path) -> None:
+    # The stage is on the server's root fs and the nodes are agent-controlled: past its cap no pull starts, and the
+    # run exits 1 (the unit fails, ntfy fires) whatever --strict says.
+    bin_dir, home = _fake_node(tmp_path)
+    _node_file(home, "derisk-pool/sim/research/findings/raw/main.json", "main\n")
+    ws = tmp_path / "projects" / "neural-simulator"
+    raw = ws / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    filler = tmp_path / "stage" / "pool41" / "main" / "earlier.npz"
+    filler.parent.mkdir(parents=True)
+    filler.write_bytes(b"\0" * (2 * 1024 * 1024))
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_STAGE_MAX_MB": "1"})
+    assert res.returncode == 1 and "no further pull" in res.stdout, (res.stdout, res.stderr)
+    assert not (raw / "main.json").exists(), "a pull started although the stage was over its cap"
+    assert (raw / "earlier.npz").exists(), "what was already staged is still copied into the workspace"
+    res = _run(POOL_SYNC, [], {**_sync_env(bin_dir, tmp_path, ws), "POOL_SYNC_STAGE_MAX_MB": "64"})
+    assert res.returncode == 0 and (raw / "main.json").read_text() == "main\n", res.stdout
 
 
 # ------------------------------------------------------------------ lane_starvation reads pool.running

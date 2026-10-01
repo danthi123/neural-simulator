@@ -12,7 +12,7 @@
 # with no GPU; the 3090, its queue (tools/gpu_queue.sh, one daemon, one singleton lock) and the local model stay on the
 # workstation. gpu_add.sh/gpu_queue.sh are single-host by design, and nothing else creates a checkout of a server
 # revision there, so this is the one bridge. It adds no queue of its own:
-#   add        fetches this repo on the workstation (remote `server`), makes a per-job worktree of HEAD under
+#   add        pushes HEAD's commit to the workstation's repo (as refs/server-jobs/<sha>), makes a per-job worktree of it under
 #              ~/derisk-pool/revisions/<sha>-<epoch> WITHOUT research/findings/raw (as pool_provision.sh excludes it;
 #              the results come back through `POOL_NODES=workstation tools/pool_sync.sh`, the pool-node layout),
 #              symlinks .venv and data to the workstation's, then execs THAT worktree's tools/local_llm/gpu_add.sh
@@ -20,6 +20,10 @@
 #              One worktree per job, because gpu_add.sh refuses a checkout holding untracked outputs.
 #   provision  pool_provision.sh needs rsync, the pool-node keys and the corpus; the workstation has all three.
 # The job travels base64-encoded (the workstation's login shell is fish), like the pool dispatcher's JOB_B64.
+# The revision travels by PUSH over this same ssh connection (2026-09-30 security re-review, CRITICAL): the workstation
+# used to `git fetch server` with its own passphrase-free key to dant123@srv-host-0, a key that also opened a root
+# shell on the server (passwordless sudo) to anything running as dant123 on the workstation, GPU jobs included. With
+# the push, the workstation holds no credential to the server at all, and that key can leave its disk.
 #
 # Env: SIM_GPU_HOST (ssh host, default `workstation`), SIM_GPU_HOST_REPO (the checkout there, default
 # $HOME/Projects/sim, expanded on the workstation).
@@ -37,13 +41,19 @@ mkwt() {
   cat <<EOF
 R="$WREPO"
 W="$2"
-git -C "\$R" fetch -q server
 git -C "\$R" worktree add -q --no-checkout --detach "\$W" $1
 git -C "\$W" sparse-checkout set --no-cone '/*' '!/research/findings/raw/'
 git -C "\$W" reset -q --hard
 ln -s "\$R/.venv" "\$W/.venv"
 ln -s "\$R/data" "\$W/data"
 EOF
+}
+
+push_revision() {   # push_revision <full sha>: put the commit into the workstation's repo before the remote script uses it
+  local url="$HOST:${WREPO#\$HOME/}"
+  if [ "$DRY" = 1 ]; then echo "# git push $url $1:refs/server-jobs/$1"; return 0; fi
+  GIT_SSH_COMMAND="ssh -o BatchMode=yes" git -C "$ROOT" push -q "$url" "$1:refs/server-jobs/$1" \
+    || { echo "⛔ could not push revision $1 to $url" >&2; exit 1; }
 }
 
 run_remote() {   # stdin: the remote script
@@ -62,12 +72,13 @@ cmd_add() {
     exit 1
   fi
   if [ -z "$(git -C "$ROOT" branch --contains HEAD 2>/dev/null | grep -v 'HEAD detached')" ]; then
-    echo "⛔ REFUSED: HEAD is on no branch, so the workstation cannot fetch it; commit on a branch first." >&2
+    echo "⛔ REFUSED: HEAD is on no branch (a commit on no branch is eventually garbage-collected on the server, and the job's results would name a revision nobody can check out); commit on a branch first." >&2
     exit 1
   fi
   local sha b64
   sha=$(git -C "$ROOT" rev-parse HEAD)
   b64=$(printf '%s' "$cmd" | base64 -w0)
+  push_revision "$sha"
   {
     echo 'set -euo pipefail'
     mkwt "$sha" "\$HOME/derisk-pool/revisions/$sha-\$(date +%s)"
@@ -82,6 +93,9 @@ cmd_add() {
 cmd_provision() {
   local sha="${1:-}"
   [[ "$sha" =~ ^[0-9a-f]{7,40}$ ]] || { echo "usage: gpu_remote.sh provision <commit sha>" >&2; exit 2; }
+  local full   # the push needs the full id; the remote script keeps the sha as given (it names the revision dirs)
+  full=$(git -C "$ROOT" rev-parse -q --verify "$sha^{commit}") || { echo "⛔ no such commit here: $sha" >&2; exit 2; }
+  push_revision "$full"
   {
     echo 'set -euo pipefail'
     mkwt "$sha" "\$HOME/Projects/sim-worktrees/prov-$sha-\$(date +%s)"
