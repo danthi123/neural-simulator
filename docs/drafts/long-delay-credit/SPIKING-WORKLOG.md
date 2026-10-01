@@ -320,3 +320,20 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   GUESS (marked): the grid sentence names only these two schedules; whether "record ... sanity ...
   success" ALSO needs a sanity_early_ch0 run per cell is ambiguous — 12 extra runs, deferred to a MiMo
   Pro delegate next run (fresh delegation budget) before launching them.
+## 2026-10-01 15:10 (Hermes, local model): pilot committed; grid relaunched after gateway kill; sanity = PER_CELL (delegated)
+
+- `lane-starvation` block cleared overnight-morning: `research/runners/_ldc_outcome_timing_pilot.py`
+  committed **@ ba918bd82** (gates passed, no --no-verify), block-note WORKLOG committed **@ 049d80322**.
+- First grid attempt (14:47) died silently mid-cell: the Hermes gateway restarted at 14:55
+  (`hermes gateway run --replace`), killing the tracked background process tree; no OOM (25G free), no
+  traceback in `_scratch/grid.log`. Relaunched 15:03 (resume-safe skip: completed cells are not rerun).
+  Risk accepted: a future gateway restart kills the driver again -> detectable next wake, relaunch cheap.
+- Sanity ambiguity resolved by MiMo Pro delegate (fresh budget, 333s): **PER_CELL**. `c4_sanity` is defined
+  as `all(success >= 0.9 for sanity_early_ch0 rows)`, so sanity success is not in-row for the ci/li cells;
+  the Step-4 banked sanity files are n-train 200 / default timing (wrong axis) and "(not evidence)"; prereg
+  7.4 scopes the sanity bar to "IN credit_immediate timing" (i.e. cell timing); A0's "sanity/credit_immediate
+  stay below 0.8 on most seeds" needs the rate at the same cell whose DA signed. -> 12 extra runs
+  (seeds 8,11 x onset 30,150,300 x w 30,60, --schedule sanity_early_ch0, --arms full, --n-train 400,
+  --reward-on-ms <onset> --outcome-ms <onset+100>, --w-outc-strio <w>) output
+  `research/findings/raw/_ldc_outcome_timing/sanity_early_ch0_onset<ms>_w<w>_s<seed>.json`.
+  QUEUED to launch when the 24-cell main grid writes "GRID DONE" (server-load: one at a time).
