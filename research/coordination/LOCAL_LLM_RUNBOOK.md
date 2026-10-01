@@ -291,6 +291,14 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   (a non-default value dropped; a GO finding cites it); most others are `cfg.dt` where the field is `dt_ms`.
   (2026-10-01)
 
+- models: since 2026-10-01 (owner) you run on MiMo v2.6 Flash in the cloud (OpenRouter, data_collection=deny) and
+  the workstation's local model is your automatic fallback, so gaming and GPU windows no longer stop you; still yield
+  the GPU for GPU jobs as section 3 says. Delegated subagents run on MiMo v2.6 Pro, the stronger judge: for a design
+  proposal, a verdict on results, or a judgment you would otherwise raise as NEEDS-CLAUDE ASK, delegate the reasoning
+  to one subagent (give it the task's files and these rules), then act on its answer and quote it in the WORKLOG.
+  What section 2 reserves (merge, gates, preregs, scorers, bars, `gpu_queue.sh add`) still goes to NEEDS-CLAUDE.
+  Every call costs money now: one task per run, no idle exploration. (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
