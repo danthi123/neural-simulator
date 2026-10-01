@@ -303,3 +303,20 @@ repro == pilot composite, the two differ (repro provably ran the pilot code); se
 Both refuters survived; HANDOFF 4a.1 is satisfied — the grid (step 2) may run on this pilot copy.
 Caveat carried forward: outputs must go under `research/findings/raw/` (not `_scratch/`) from here so
 provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated in step 2.
+## 2026-10-01 14:45 (Hermes, local model): pilot commit blocked by lane-starvation (staged) + 4a.2 grid launched
+
+- Commit of `research/runners/_ldc_outcome_timing_pilot.py` (only the two options, verified by refuter 1)
+  was BLOCKED by `lane-starvation` (pool.queue currently carries no `checked:lane` markers; 4 of 5 CPU
+  lanes unserved). Per HANDOFF Step 0 / Step 2 this exact message = leave it STAGED, write one WORKLOG
+  line, retry when the block clears; never `--no-verify`, never a waiver. NOT a STOP (not "any other gate
+  message"). `tools/parallel_audit.py` prints ✓ SATURATED (no ready board tasks to restock with), so there
+  is no job to add that I am permitted to queue (queue files are off-limits to me).
+- 4a.2 grid launched as a background driver (`_scratch/grid_driver.sh`, log `_scratch/grid.log`,
+  failures `_scratch/grid.fail`): dev seeds 8/11 x {credit_immediate, late_immediate} x reward onset
+  {30,150,300} (outcome screen onset+100) x w_outc_strio {30,60} = 24 cells, --n-train 400, --arms full,
+  runner-default n-test, numpy, nice -n 10, one at a time (RULING server-load), outputs
+  `research/findings/raw/_ldc_outcome_timing/<sch>_onset<ms>_w<w>_s<seed>.json` (+ automatic provenance
+  sidecars; outputs land untracked until the block clears and they can be committed).
+  GUESS (marked): the grid sentence names only these two schedules; whether "record ... sanity ...
+  success" ALSO needs a sanity_early_ch0 run per cell is ambiguous — 12 extra runs, deferred to a MiMo
+  Pro delegate next run (fresh delegation budget) before launching them.
