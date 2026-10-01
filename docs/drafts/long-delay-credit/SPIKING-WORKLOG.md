@@ -246,3 +246,25 @@ measured value changed. Re-staged: `run_all` on the staged list returns `BLOCKIN
 `below_chance` on the two dev JSONs for this same gate; the runner never writes these fields.
 
 Next per RULING T1-LDC: Step 4a (outcome-timing pilot, draft build, dev seeds) exactly as the HANDOFF says.
+
+## 2026-10-01 13:38 (Hermes, local model): Step 4a step 1 — pilot copy + reproduction in flight
+
+Draft build per HANDOFF Step 4a: worktree `.claude/worktrees/draft-ldc-outcome-timing` on
+`research/draft-ldc-outcome-timing`, started from `research/long-delay-credit-spiking @ 62132d0f5`.
+
+- Copied the registered runner to `research/runners/_ldc_outcome_timing_pilot.py` (the registered runner is
+  untouched). Added `--outcome-ms` and `--reward-on-ms` (HANDOFF 4a.1), defaults = the registered constants
+  100 / 30, unchanged; both are module globals read at call time inside `outcome()`, so the rebinding in
+  `main()` covers every read site (lines 213/215). Window sanity checks reject a reward window outside the
+  outcome screen. `py_compile` clean; `--help` shows defaults 100 / 30.
+- Reproduction check launched 13:24 (HANDOFF 4a.1: with the defaults it must reproduce one Step 4 base row
+  exactly): `nice -n 10 env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m
+  research.runners._ldc_outcome_timing_pilot --schedule credit_immediate --arms full --seeds 7 --n-train 200
+  --n-test 100 --out _scratch/repro_base_credit_immediate_s7.json` (bg proc_9a6f92ad57d9, log
+  `_scratch/repro_s7.log`; banked row wall_s 2681, so ~45 min). Comparison target:
+  `sweep/base_credit_immediate_s7.json` rows[0]. Plan: every row field except `wall_s` (wall clock) and the
+  doc-level `runner_sha256`/`git_head`/`git_dirty` (different file, dirty worktree — not row fields).
+  GUESS (marked): row fields should match bit-for-bit under SIM_BACKEND=numpy OMP_NUM_THREADS=1; if any
+  differs, HANDOFF 4a.1 says stop and say so — that would be a STOP line, not a fix.
+- Not yet run: the 4a grid (step 2), the lr=0 seed 9/12/14 probes (step 3), PILOT.md (step 4). They wait on
+  the reproduction verdict. No PASS claimed here (RULING verify-go applies when a PASS is written).
