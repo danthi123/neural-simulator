@@ -76,3 +76,67 @@ local-model runs need that, write a watchdog that only reboots and never restart
    if crashes persist.
 4. **Hardware:** repeated hangs under load can also be PSU (3090 transient spikes) or a degrading card — if software
    mitigations don't hold, suspect power delivery.
+
+## 2026-09-29: a new, hardware-only auto-reboot watchdog (reboot-only replacement for the retired one)
+
+The 2026-09-28 entry above left a real gap: with `gpu-train-watchdog.service` disabled, nothing auto-reboots after a
+GPU-off-the-bus crash any more, so an unattended local-model run (or anything else) just sits dead on a wedged card
+until a human notices and reboots by hand. `tools/gpu_bus_watchdog.sh` (+ `tools/systemd/gpu-bus-watchdog.service`)
+is a from-scratch, narrowly-scoped replacement for ONLY the reboot half of that retired service.
+
+**What it does, and does not, do.** It watches `journalctl -k -b 0 -f` (the kernel log, current boot then live) for
+the crash signature from this doc's 2026-07-22 diagnosis (`_scrubWaitAndSave` AND `NV_ERR_TIMEOUT` together on one
+line) or either of two more-robust phrasings of the same event (`GPU has fallen off the bus`, `GPU lost from the
+bus`, matched independently in case a future kernel/driver spells it differently). On a match, and only if this
+boot has not already triggered a reboot (a marker file under `/run`, tmpfs, so it is automatically absent again
+after every real reboot — no boot-id bookkeeping needed), it does exactly two things: broadcasts a `wall(1)`
+message explaining why and roughly when, waits 2 minutes (deliberately not instant), then reboots. **It NEVER
+restarts training, a session, a queue, or any other process** — that is the exact feature that made the OLD
+`gpu-train-watchdog.service` crash-loop and fight the local LLM for the GPU (see the 2026-09-28 entry above); this
+new unit is reboot-only by construction, with no code path that starts, stops, or resumes anything else.
+
+**Testability.** The journal-reading command and the reboot command are overridable via
+`GPU_WATCHDOG_JOURNALCTL` / `GPU_WATCHDOG_REBOOT_CMD` (TEST-ONLY — never set either in production; same
+convention as `tools/local_llm/llm.sh`'s `LOCAL_LLM_SYSTEMCTL` and `tools/gpu_queue.sh`'s `GPU_QUEUE_NVIDIA_SMI`),
+and the delay + marker path are overridable via `GPU_WATCHDOG_DELAY_S` / `GPU_WATCHDOG_MARKER` for fast, hermetic
+tests. `tests/test_gpu_bus_watchdog.py` exercises it fully hermetically (fake journalctl/reboot/wall, isolated
+marker path) — no real journalctl, systemd unit, wall broadcast, or reboot is touched by the tests.
+
+**This build did NOT install the unit.** Per policy, no schedule/unit is installed without being asked — the
+OWNER installs it, on the actual machine, with these exact commands:
+
+```bash
+sudo cp tools/systemd/gpu-bus-watchdog.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now gpu-bus-watchdog.service
+```
+
+**Verify it is running:**
+
+```bash
+systemctl status gpu-bus-watchdog.service
+journalctl -u gpu-bus-watchdog.service -f
+```
+
+The status should show `active (running)`; the journal should show one "watching the kernel log ..." line at
+start and nothing further until a real crash (or a manual test — see below) matches.
+
+**Manually provoke a test reboot WITHOUT waiting for a real crash** (careful: this really reboots the machine
+after 2 minutes once the real unit is running and sees a matching line in the live kernel log, e.g. via `sudo
+logger -p kern.err --id=$$ -- "NVRM: GPU0 _scrubWaitAndSave: Timed out ... [NV_ERR_TIMEOUT]"` fed through a
+facility that reaches the kernel log — the safer way to validate the logic end-to-end is instead to run
+`tests/test_gpu_bus_watchdog.py`, which drives the exact same script hermetically with a fake crash line and a
+1-second delay).
+
+**Disable it** (mirrors how `gpu-train-watchdog.service` was retired 2026-09-28):
+
+```bash
+sudo systemctl disable --now gpu-bus-watchdog.service
+```
+
+**Differences from the retired `gpu-train-watchdog.service`, explicitly:** the old service polled `nvidia-smi -L`
+on a timer and, on repeated failures, rebooted — AND separately restarted `lmtrain-resume.service` whenever it
+was found stopped; both behaviors lived in one script with one systemd unit. The new watchdog keeps only the
+reboot behavior, reads the kernel log directly for the documented signature rather than polling `nvidia-smi -L`,
+and has no training-restart code path at all — so a future WKV/lmtrain-style run being paused, stopped, or moved
+to a different worktree can never interact with this watchdog in any way.

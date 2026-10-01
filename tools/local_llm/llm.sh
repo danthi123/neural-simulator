@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # llm -- run a local model for Claude Code, and get the GPU back for experiments with one command.
 #
-#   llm on [profile] [--wait]  load the model (default profile: tools/local_llm/default_profile). Refuses while
-#                              a tools/gpu_queue.sh job is running/queued (same 3090 -- see COORDINATION below);
-#                              --wait blocks until the queue drains instead of refusing.
+#   llm on [profile] [--wait] [--lazy]  load the model (default profile: tools/local_llm/default_profile). Refuses
+#                              while a tools/gpu_queue.sh job is running/queued (same 3090 -- see COORDINATION
+#                              below); --wait blocks until the queue drains instead of refusing. --lazy starts the
+#                              server but leaves the model unloaded until its first request (what `game off` and
+#                              the GPU queue's own restores use: no VRAM is taken until Hermes actually asks).
 #   llm off              unload it (frees its VRAM); also cancels any pending gpu_queue auto-restore (below)
 #   llm status           what is loaded, and GPU memory in use
 #   llm claude [args]    open Claude Code in the current directory, talking to the local model (no Anthropic account);
@@ -14,14 +16,21 @@
 #   llm resume           same as `llm claude --continue`
 #   llm run <command>    unload the model, run <command> to completion, reload the model, print how it ended
 #   llm yield [--max-hours N]   DRIVER-initiated GPU handoff (default 10h): stop this unit (gracefully) so
-#                                tools/gpu_queue.sh can drain its queue, then auto-reload the SAME profile and
-#                                resume THIS session headless once the queue empties or the window expires.
-#                                Refuses under GAME_MODE, with an empty GPU queue, or with uncommitted tracked
-#                                changes in any .claude/worktrees/draft-* worktree.
+#                                tools/gpu_queue.sh can drain its queue, then restart it (model unloaded until
+#                                its first request) once the queue empties or the window expires. Refuses under
+#                                GAME_MODE or with an empty GPU queue. Hermes calls it from homelab-server through
+#                                tools/gpu_remote.sh yield; its sim-driver wake gate starts the next run as soon as
+#                                the server is back (research/coordination/LOCAL_LLM_RUNBOOK.md, GPU).
 #
 # Profiles (model file, context size, sampling, speculative decoding) live in tools/local_llm/profiles.json and were
 # chosen by tools/local_llm/bakeoff.py on this machine: 4 GB of the 24 GB card is left for the displays.
 # Add `alias llm='bash ~/Projects/sim/tools/local_llm/llm.sh'` to your shell config to type just `llm`.
+#
+# UNDER THE HOOD (2026-09-29): the "local-llm" unit runs llama-swap (tools/local_llm/llama-swap.yaml), which
+# itself launches the SAME llama-server command as before for whichever profile is selected, auto-unloads it
+# after 15 minutes idle (globalTTL, frees the 3090), and serves both loopback and the LAN. See
+# docs/LOCAL_MODEL_GUIDE.md to add a model or change the default -- it is a plain-language walkthrough, no
+# Claude session needed.
 #
 # COORDINATION WITH tools/gpu_queue.sh (2026-09-25 auto-swap; retired 2026-09-29 for an explicit GPU YIELD --
 # docs/plans/2026-09-29-local-model-transition-PLAN.md section 3). This unit and tools/gpu_queue.sh jobs both want
@@ -46,6 +55,14 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PORT="${LLM_PORT:-8080}"
 UNIT="local-llm"
 SYSTEMCTL=${LOCAL_LLM_SYSTEMCTL:-systemctl}   # TEST-ONLY override (shared name with gpu_queue.sh); NEVER set in production
+# 2026-09-29 (serving bake-off, research/serving-bakeoff/tools/local_llm/results/summary.md): the "local-llm" unit
+# now runs llama-swap (tools/local_llm/llama-swap.yaml), not a bare llama-server -- llama-swap still spawns the
+# SAME llama-server command profile_cmd() builds below (reused byte-for-byte by the config; see __profile_cmd and
+# tests/test_llama_swap_config.py), just fronted by a proxy that can hold every profile.json entry, hot-swap
+# between them, and auto-unload an idle one (ttl). LLAMA_SWAP_BIN/LLAMA_SWAP_YAML are TEST-ONLY overrides.
+LLAMA_SWAP_YAML="${LLAMA_SWAP_YAML:-$HERE/llama-swap.yaml}"
+LLAMA_SWAP_BIN="${LLAMA_SWAP_BIN:-$(command -v llama-swap || echo "$HOME/.local/bin/llama-swap")}"
+LLAMA_SWAP_PROFILE_TIMEOUT_S="${LLAMA_SWAP_PROFILE_TIMEOUT_S:-620}"   # >= llama-swap.yaml's healthCheckTimeout
 # Resolve the SAME shared queue dir gpu_queue.sh uses (its singleton is per-repo, not per-worktree -- see that
 # file's SHARED_ROOT comment), so a marker either script writes is visible to the other regardless of which
 # worktree invoked them. GPU_QUEUE_DIR overrides it (tests only).
@@ -95,7 +112,10 @@ current_profile() {
   esac
 }
 
-profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile
+profile_cmd() {   # profile_cmd <name> -> the llama-server command line for that profile (reused verbatim, with
+  # $PORT swapped for llama-swap's own ${PORT} macro, by tools/local_llm/llama-swap.yaml's `cmd:` entries --
+  # see the hidden `__profile_cmd` subcommand below and tests/test_llama_swap_config.py, which regenerates
+  # every profile's expected command line through THIS function and fails if the committed YAML has drifted.
   # -np 1 was INVESTIGATED, not merely inherited (research/local-llm-prompt-cache branch, 2026-09-25,
   # tools/local_llm/cache_probe.py + tools/local_llm/results/cache_probe.md): a live `llm claude` session
   # reprocesses its ENTIRE prompt every turn instead of reusing the cached prefix.
@@ -140,16 +160,59 @@ print(shlex.join(cmd))
 EOF
 }
 
-is_up() { curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; }
+is_up() { curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; }   # llama-swap's OWN health, not a profile's
 
 wait_up() {
   for _ in $(seq 1 300); do is_up && return 0; "$SYSTEMCTL" --user is-active --quiet "$UNIT" || break; sleep 1; done
-  echo "the model did not come up; recent log:"; journalctl --user -u "$UNIT" -n 20 --no-pager; return 1
+  echo "llama-swap did not come up; recent log:"; journalctl --user -u "$UNIT" -n 20 --no-pager; return 1
+}
+
+llama_swap_cmd() {   # the launch line for the "local-llm" unit itself: llama-swap, fronting every profile.json
+  # entry (tools/local_llm/llama-swap.yaml).
+  #
+  # -listen 0.0.0.0 (not 127.0.0.1): llm.sh itself needs loopback (is_up/activate_profile/cmd_claude all use
+  # 127.0.0.1); 0.0.0.0 also keeps the port reachable from the LAN (workstation.env) for whatever else on the
+  # LAN needs it. llama-swap's -listen takes exactly one address (it is a plain Go http.Server.ListenAndServe,
+  # not a multi-bind server), so "127.0.0.1 AND the LAN IP, nothing else" is not expressible as a single
+  # -listen value: binding to the specific LAN IP alone would make 127.0.0.1 itself unreachable (a different
+  # destination address at the TCP/IP layer, not merely a stricter version of "any interface"), breaking every
+  # local llm.sh/Claude Code use. 0.0.0.0 is the only value that keeps both working. There is no apiKeys: entry
+  # either, matching the old unauthenticated direct-llama-server setup.
+  #
+  # 2026-09-30: the sim-agent harness was retired; the owner runs Hermes Agent on homelab-server (~/apps/hermes)
+  # as a general harness, and the per-container firewall that used to fence its LAN reach to this port
+  # (tools/agent_container/server-stack/host/etc/nftables.d/sim-agent.nft) went with it. Nothing currently
+  # restricts who on the LAN can reach :8080; tightening that is an optional, OWNER-applied workstation
+  # firewall step, not something this script does.
+  #
+  # -watch-config: docs/LOCAL_MODEL_GUIDE.md's edits (add/switch a model) take effect without a restart.
+  printf '%s -config %s -listen 0.0.0.0:%s -watch-config' "$LLAMA_SWAP_BIN" "$LLAMA_SWAP_YAML" "$PORT"
+}
+
+select_profile() {   # select_profile <name> -- make it llama-swap's active profile (pins the "local" model id --
+  # what llm.sh/Claude Code always request, ANTHROPIC_MODEL=local -- to this profile's real model id). Loads
+  # nothing by itself: `llm on --lazy` stops here, and the model loads on its first request.
+  local prof="$1"
+  curl -sf -X PUT -H 'Content-Type: application/json' -d "{\"name\":\"$prof\"}" \
+    "http://127.0.0.1:$PORT/api/profiles/active" >/dev/null || {
+    echo "could not select profile '$prof' (missing from tools/local_llm/llama-swap.yaml's profiles: block?)"; return 1; }
+}
+
+activate_profile() {   # activate_profile <name> -- select_profile, then force it to load NOW, synchronously, so
+  # `llm on <profile>` keeps its old eager-load meaning instead of silently deferring to the first real request.
+  # /upstream/<id>/health is llama-swap's own passthrough (README: "direct access to upstream server"); it waits
+  # for the backend's own /health inside llama-swap.yaml's healthCheckTimeout before answering, exactly like any
+  # other proxied request would.
+  local prof="$1"
+  select_profile "$prof" || return 1
+  curl -sf --max-time "$LLAMA_SWAP_PROFILE_TIMEOUT_S" "http://127.0.0.1:$PORT/upstream/$prof/health" >/dev/null || {
+    echo "profile '$prof' did not become ready within ${LLAMA_SWAP_PROFILE_TIMEOUT_S}s; recent log:"
+    journalctl --user -u "$UNIT" -n 30 --no-pager; return 1; }
 }
 
 cmd_on() {
-  local wait_for_gpu=0 prof=""
-  for a in "$@"; do case "$a" in --wait) wait_for_gpu=1 ;; *) prof="$a" ;; esac; done
+  local wait_for_gpu=0 lazy=0 prof=""
+  for a in "$@"; do case "$a" in --wait) wait_for_gpu=1 ;; --lazy) lazy=1 ;; *) prof="$a" ;; esac; done
   prof="${prof:-$(cat "$HERE/default_profile" 2>/dev/null || echo qwen38-27b-iq4nl-mtp)}"
   if "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then echo "already loaded ($UNIT is running)"; return 0; fi
   if gpu_job_busy; then
@@ -168,13 +231,25 @@ cmd_on() {
       return 1
     fi
   fi
-  local cmd; cmd="$(profile_cmd "$prof")"
+  local swap_cmd; swap_cmd="$(llama_swap_cmd)"
   # A unit left FAILED (e.g. a stop that timed out and was SIGKILLed, 2026-09-26) stays loaded, and systemd-run then
   # refuses the same name ("already loaded or has a fragment file"); clear it first. Harmless when there is none.
   "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
+  # LLAMA_SWAP_REPO_ROOT: llama-swap.yaml's `${repo_root}` macro (its --chat-template-file paths) resolves
+  # through THIS env var rather than a path baked into the committed YAML, so the same file is correct whether
+  # "local-llm" is ever started from the main checkout or from a .claude/worktrees/* dev copy.
   # shellcheck disable=SC2086
-  systemd-run --user --quiet --unit="$UNIT" --description="local LLM ($prof)" -p MemoryMax=12G bash -c "exec $cmd"
-  echo "loading $prof ..."; wait_up && echo "ready on http://127.0.0.1:$PORT ($prof)"
+  systemd-run --user --quiet --unit="$UNIT" --description="local LLM ($prof)" -p MemoryMax=12G \
+    --setenv=LLAMA_SWAP_REPO_ROOT="$(cd "$HERE/../.." && pwd)" bash -c "exec $swap_cmd"
+  if [ "$lazy" = 1 ]; then
+    echo "starting llama-swap ($prof loads on its first request) ..."
+    wait_up || return 1
+    select_profile "$prof" && echo "ready on http://127.0.0.1:$PORT ($prof not loaded until something asks for it)"
+    return
+  fi
+  echo "starting llama-swap, then loading $prof ..."
+  wait_up || return 1
+  activate_profile "$prof" && echo "ready on http://127.0.0.1:$PORT ($prof)"
 }
 
 cmd_off() {
@@ -204,7 +279,20 @@ cmd_stop_graceful() {
 }
 
 cmd_status() {
-  if is_up; then echo "loaded: $("$SYSTEMCTL" --user show -p Description --value "$UNIT")"; else echo "not loaded"; fi
+  if is_up; then
+    echo "loaded: $("$SYSTEMCTL" --user show -p Description --value "$UNIT")"
+    # GET /running (llama-swap API): which profile.json entry is ACTUALLY resident right now -- can legitimately
+    # be "none" after llama-swap.yaml's globalTTL idle-unloads it; the next request (or `llm on`) reloads it.
+    local running; running="$(curl -sf --max-time 5 "http://127.0.0.1:$PORT/running" 2>/dev/null)"
+    [ -n "$running" ] && printf '%s' "$running" | python3 -c '
+import json, sys
+try: models = json.load(sys.stdin).get("running", [])
+except Exception: models = []
+print("resident: " + (", ".join("%s (%s)" % (m["model"], m["state"]) for m in models) or "none (idle-unloaded, or not requested yet)"))
+' 2>/dev/null
+  else
+    echo "not loaded"
+  fi
   nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader | sed 's/^/GPU memory in use: /'
 }
 
@@ -292,13 +380,15 @@ cmd_run() {
 }
 
 # cmd_yield [--max-hours N]: the driver's own GPU handoff (default 10h). Refuses (returns 1, changes nothing)
-# under GAME_MODE (gaming is the owner's absolute priority, and the marker/session bookkeeping below would only
-# race it), with an empty GPU queue (nothing to yield FOR), or with uncommitted tracked changes in any
-# `draft-*` worktree (a yield can auto-resume hours later into a checkout the driver never finished; the
-# runbook's own hard rule is "commit before you queue", so this just enforces it at the handoff itself). Only
-# TRACKED changes count (--untracked-files=no): a scratch/log file mid-draft is not a reason to refuse.
+# under GAME_MODE (gaming is the owner's absolute priority, and the marker bookkeeping below would only race it)
+# or with an empty GPU queue (nothing to yield FOR). 2026-09-30: the driver is Hermes on homelab-server, which
+# reaches this through tools/gpu_remote.sh yield. Two workstation-era steps are gone: the refusal on a dirty
+# `draft-*` worktree here (Hermes works in the server checkout; its runbook commits and writes the WORKLOG resume
+# line before yielding) and recording a local `llm claude` session for gpu_queue.sh to resume headless once the
+# window drains (that would start a second driver beside Hermes; CLAUDE.md non-negotiable 12). Hermes's next run
+# is started by its own sim-driver wake gate as soon as this server is back.
 cmd_yield() {
-  local max_hours=10 notify_cmd=""
+  local max_hours=10
   while [ $# -gt 0 ]; do
     case "$1" in
       --max-hours)
@@ -309,21 +399,13 @@ cmd_yield() {
         # substitution and run `cmd`, not merely fail to parse as a number. A plain digit-only check on the
         # value, BEFORE it ever reaches `$(( ))`, closes this off entirely: no arithmetic context ever sees
         # anything but a string already proven to be 1-2 digits.
-        # MAX 12 (2026-09-29 re-review, M2): the digit-only check alone still let a container-triggered yield
-        # (tools/agent_gateway.sh's `yield --max-hours N`) claim an arbitrarily long window (up to 99h) over
-        # the shared GPU -- a resource-exhaustion concern distinct from the injection this check also closes.
+        # MAX 12 (2026-09-29 re-review, M2): the digit-only check alone still let a caller claim an arbitrarily
+        # long window (up to 99h) over the shared GPU -- a resource-exhaustion concern distinct from the
+        # injection this check also closes.
         [[ "$max_hours" =~ ^[0-9]{1,2}$ ]] && [ "$max_hours" -ge 1 ] && [ "$max_hours" -le 12 ] || {
           echo "refusing to yield: --max-hours must be 1-12 (got: $max_hours)"; return 1
         }
         shift 2 ;;
-      # --notify-cmd (2026-09-29, tools/agent_gateway.sh's `yield`, docs/plans/2026-09-29-local-model-
-      # transition-PLAN.md section 9): the CONTAINERIZED agent has no workstation `llm claude` session to
-      # resume, so its restore step is different -- run this shell command instead (its "$1" is filled in by
-      # the restorer with the same "GPU window finished..." message the workstation flow would otherwise
-      # resume a session with; see tools/gpu_queue.sh's llm_yield_restore_if_drained). Skips capturing
-      # LLM_SESSION_FILE below: a container-triggered yield has nothing to do with the workstation's own last
-      # local session, and restoring should not accidentally resume it.
-      --notify-cmd) notify_cmd="${2:-}"; shift 2 ;;
       *) shift ;;
     esac
   done
@@ -333,32 +415,15 @@ cmd_yield() {
   if [ ! -s "$QDIR/gpu.queue" ]; then
     echo "refusing to yield: the GPU queue is empty -- nothing queued to run in the window."; return 1
   fi
-  local wt dirty=""
-  local draft_root="${LLM_YIELD_DRAFT_ROOT:-$_LLM_SHARED_ROOT}"   # TEST-ONLY override; NEVER set in production
-  for wt in "$draft_root"/.claude/worktrees/draft-*; do
-    [ -d "$wt" ] || continue
-    if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then dirty="$dirty $wt"; fi
-  done
-  if [ -n "$dirty" ]; then
-    echo "refusing to yield: uncommitted tracked changes in:$dirty -- commit (through the normal gates) before yielding."
-    return 1
-  fi
   is_up || { echo "refusing to yield: $UNIT is not loaded -- nothing to yield."; return 1; }
-  local sess prof deadline
-  if [ -n "$notify_cmd" ]; then
-    sess=""   # see --notify-cmd's case comment above: no workstation session bookkeeping for this path
-  else
-    sess="$(cat "$LLM_SESSION_FILE" 2>/dev/null || true)"
-  fi
+  local prof deadline
   prof="$(current_profile)"
   deadline=$(( $(date +%s) + max_hours * 3600 ))
   {
-    echo "LLM_YIELD_SESSION=$sess"
     echo "LLM_YIELD_PROFILE=$prof"
     echo "LLM_YIELD_DEADLINE=$deadline"
-    [ -n "$notify_cmd" ] && echo "LLM_YIELD_NOTIFY_CMD=$notify_cmd"
   } > "$LLM_YIELD_MARKER"
-  echo "yielding for up to ${max_hours}h (session=${sess:-<none>} profile=${prof:-<default>} deadline=$deadline); stopping $UNIT gracefully"
+  echo "yielding for up to ${max_hours}h (profile=${prof:-<default>} deadline=$deadline); stopping $UNIT gracefully"
   cmd_stop_graceful 45
 }
 
@@ -377,5 +442,8 @@ case "${1:-status}" in
   yield) shift; cmd_yield "$@" ;;
   __stop_graceful) shift; cmd_stop_graceful "$@" ;;   # hidden: also used by tools/game.sh on --graceful
   __current_profile) current_profile ;;   # hidden diagnostic: which profile (if any) this unit is currently serving
+  __profile_cmd) shift; profile_cmd "$1" ;;   # hidden: exposes profile_cmd() so llama-swap.yaml's authoring step
+    # and tests/test_llama_swap_config.py can regenerate a profile's exact llama-server command line without
+    # duplicating the flag-building logic above (LLM_PORT=@@PORT@@ ... __profile_cmd <name> is how both do it).
   *) sed -n '2,24p' "$0"; exit 2 ;;
 esac

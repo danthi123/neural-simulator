@@ -12,6 +12,8 @@
 #   bash tools/pull_pool_results.sh 'g5w0_*.json' gap5_density
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd); cd "$ROOT" || exit 1
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 GLOB="${1:?usage: pull_pool_results.sh '<glob>' <dest-subdir>}"; DEST="research/findings/raw/${2:?}"
 mkdir -p "$DEST"
 # AWS-AS-EXTRA-POOL-NODE (fix round #2): same repo-local, gitignored ssh config + extra-nodes list every other
@@ -22,7 +24,7 @@ _SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && _SSH_F=(-F "$POOL_SSH_CONFIG")
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 _EXTRA=""
 [ -f "$EXTRA_NODES_FILE" ] && _EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' ')
-for H in pool40 pool41 pool42 $_EXTRA; do
+for H in $POOL_NODES_DEFAULT $_EXTRA; do
   timeout 30 rsync -q -e "ssh ${_SSH_F[*]} -o BatchMode=yes -o ConnectTimeout=6" "$H:derisk-pool/sim/g5s_out/$GLOB" "$DEST/" 2>/dev/null
 done
 SHA=$(git rev-parse --short HEAD)

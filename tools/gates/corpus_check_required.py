@@ -68,10 +68,20 @@ ELAPSED_KEYS = ("elapsed_seconds", "elapsed_s", "elapsed", "runtime_seconds", "w
 MIN_COST_S = 3600.0            # an hour. Below this, re-deriving costs less than the check's friction.
 FRESHNESS_WINDOW_S = 24.0 * 3600.0   # matches research/runners._corpus_check_state's default max_age_h
 # LEGACY, per-worktree logs from before this log was made shared -- a real check that happened to run in a
-# worktree that has since been deleted or never wrote to the new shared location. Hardcoded to this one
-# machine's checkout, matching the rest of this single-owner repo's tooling (tools/parallel_audit.py,
-# tools/pool_queue.sh, ...).
-_WORKTREE_LOG_GLOB = "/home/dant123/Projects/sim/.claude/worktrees/*/research/queue/.corpus_checks.jsonl"
+# worktree that has since been deleted or never wrote to the new shared location. Resolved under the shared
+# repo root (the parent of the git common dir), on whichever host holds the checkout (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+def _shared_root():
+    try:
+        common = subprocess.run(
+            ["git", "-C", _ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+    except Exception:
+        common = ""
+    return os.path.dirname(common) if common else _ROOT
+
+
+_WORKTREE_LOG_GLOB = os.path.join(_shared_root(), ".claude", "worktrees", "*", "research", "queue", ".corpus_checks.jsonl")
 
 
 def _find(obj, keys, depth=0):

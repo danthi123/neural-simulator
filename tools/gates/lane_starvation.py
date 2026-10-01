@@ -129,6 +129,26 @@ def _work_lines():
                 lines += [l.split("<- ", 1)[1] for l in tail if "<- " in l]
         except OSError:
             pass
+    # pool.running holds the same record WITH a date ("YYYY-MM-DD HH:MM:SS<TAB>node<TAB>job"). On srv-host-0 the
+    # dispatcher logs to the journal (2026-09-30: sim-pool-dispatch.service, no dispatch.log), so this is the file
+    # that still says what went out recently there.
+    pr = os.path.join(queue_dir, "pool.running")
+    if os.path.exists(pr):
+        cutoff = time.time() - RECENT_DISPATCH_MIN * 60
+        try:
+            if os.path.getmtime(pr) >= cutoff:
+                for l in open(pr, errors="ignore").read().split("\n")[-200:]:
+                    parts = l.split("\t", 2)
+                    if len(parts) != 3:
+                        continue
+                    try:
+                        ts = time.mktime(time.strptime(parts[0], "%Y-%m-%d %H:%M:%S"))
+                    except ValueError:
+                        continue
+                    if ts >= cutoff:
+                        lines.append(parts[2].split("#checked:")[0])
+        except OSError:
+            pass
     return lines
 
 

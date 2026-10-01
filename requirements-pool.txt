@@ -1,0 +1,35 @@
+# Pool (mini-PC CPU node) virtualenv: the EXACT package set tools/pool_provision.sh installs into every revision's
+# .venv (through tools/pool_venv_deps.sh). Every line is pinned `name==version`, so two nodes provisioned on
+# different days get the same environment. Transitive dependencies not listed here float (pip picks them).
+#
+# This is NOT requirements.txt: pool jobs run SIM_BACKEND=numpy on CPU-only nodes, so the GPU / GUI / LLM stack
+# (cupy, torch, transformers, dearpygui, PyOpenGL) is deliberately absent. A pool job whose code path reaches one
+# of those fails; tools/pool/provisioning/import_closure.py lists them as NOT_ON_POOL with the reason.
+#
+# Why this file exists (2026-09-30): the list used to be hard-coded in tools/pool_provision.sh and nothing
+# compared it with what pool jobs import. httpx was missing, so every runner that drives the live /api/brain-chat
+# handler in-process (starlette.testclient / fastapi.testclient import httpx; starlette only lists it as an
+# optional extra) died at import on the pool, while the workstation venv, which has httpx, never showed it.
+# tests/test_pool_venv_deps.py fails when a pool runner's static import closure reaches a module this set does
+# not provide.
+
+numpy==2.2.6
+scipy==1.15.3        # REQUIRED by SIM_BACKEND=numpy (sim.backend -> scipy.sparse)
+h5py==3.16.0
+pillow==12.0.0
+pyyaml==6.0.3
+pytest==8.4.1
+fastapi==0.139.1     # webapp.server (brain_chat / BrainChatRequest), imported by many runners
+pydantic==2.13.4
+# fastapi's ASGI core. Pinned at the version every pool venv already had (it floated before): starlette 1.x's
+# TestClient prefers httpx2 and keeps httpx only as a deprecated fallback, so an unpinned newer starlette could
+# drop that fallback and break the harness again on the next provision.
+starlette==1.7.0
+
+# The in-process brain-chat harness (from starlette.testclient / fastapi.testclient import TestClient).
+# httpx, not httpx2: the same client (and version) the workstation .venv runs this harness with (starlette's
+# deprecated-fallback path there too). Pinned with its own dependencies at the workstation versions.
+httpx==0.28.1
+httpcore==1.0.9
+h11==0.16.0
+certifi==2026.6.17
