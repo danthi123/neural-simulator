@@ -223,6 +223,9 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T16. chat-fact-fixes.** `$WT/chat-fact-fixes/research/packets/chat-fact-fixes/HANDOFF.md`: nothing unless RULING
 `cff-reverify` (then its section 2).
 
+**T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
+line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
+
 ## 5. Idle (only when no task can move)
 
 Test triage on `research/draft-test-triage` (`docs/drafts/test-triage/`): `bash tools/mem_ok.sh 12 && bash
@@ -245,18 +248,52 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
   prompt; `python -c`/`-e` one-liners are still refused: write the snippet to `_scratch/<name>.py` and run that.
   (2026-09-30)
 
+- T1-LDC: Step 4 (rc=2) is an instrument failure, not a verdict: the outcome DA never signed (prereg 7.3), so no
+  credit gate ran. No Amendment A, no CreditParams edit, no gate seed, never re-run Step 4. Bank the sweep once, then
+  run Step 4a (outcome-timing pilot, your draft build, dev seeds) exactly as the LDC HANDOFF says
+  (research/long-delay-credit-spiking @ bab667eb7, which also fixes both scorers' `.prov.json` glob). After the Step 4a
+  RESULT, T1 waits for `## Step 4b` in that HANDOFF (Claude). (2026-10-01)
+- iw2-R9: shared prereg Amendment 1 is committed: a capability cell whose LESION reply still states the content reads
+  DEFINED `lesion-kept`, an R FAIL. It lives on the LOCAL branch research/integration-wave2 (@ 758519b3f): start the T2
+  worktree from it, never from origin/research/integration-wave2; score R only when
+  `grep -c lesion-kept tools/iw2_score.py` >= 1 there. (2026-10-01)
+- iw2-selfid: ACCEPT. In T2 section 6, neural-selfid goes in FLIP only if its section-5 row reads D0 PASS,
+  D_neural-selfid DIFFERS-IN-SCOPE and R_si PASS, and in its identity on-arm file at the flip pin the "what are you?"
+  and "who are you?" turns each read `abstained` true or `recalled_svo[0]` == "brain". Otherwise flip the others,
+  leave it out and write NEEDS-CLAUDE "[iw2-selfid] turn <n>". The Stage-1 C2 "it" self-alias risk is accepted
+  (Claude checks B1's anaphora rows at merge). Say in its finding's Deviations that these questions now abstain.
+  (2026-10-01)
+- iw1-stepB: fixed. `pool_queue.sh add` now checks only the flags after the runner's own `-m` (main), so guarded iw1
+  lines queue. Identity lines pin PYTHONHASHSEED=0 on the LOCAL branch research/integration-wave1 (@ 2c6ae7591): start
+  the T8 worktree from it. The 5 landed P-pin identity files stand (no re-run). Proceed with T8 section 7. (2026-10-01)
+- b2d-mouth: keep and run the registered 18-job mouth arm (a dev-seed prediction is not a gate result). Claude queues
+  it on the GPU queue (`gpu_queue.sh add` is denied to you); when its lines are queued, yield per T9 section 5. Score T9
+  once the 258 stub cells and the 18 mouth cells have landed. (2026-10-01)
+- c1-lane: no reorder, no AWS. The pool clears the Stage-1/C1 lines inside their 168 h expiry and the 10-24 exit.
+  Only if T6's 10-17 tripwire or T7's 10-12 tripwire fires, write its NEEDS-CLAUDE line (Claude decides AWS). (2026-10-01)
+- T12-seam-map: done. Amendment a6aff478c is correct and stays on research/draft-seam-map in this checkout
+  (push-credential: nothing to push; a draft branch is not merged to main by this task). T12 is closed. (2026-10-01)
+- ecker-ou: the 8 renames on research/draft-ecker-ou-field are correct, but AFFECTED.md is incomplete: runners that
+  import an affected builder ran under the same bug. On that branch (T15's correction-note exception): list every
+  runner that imports `_gap5_ecker_adex_ca3_replay_derisk`, `_gap5_ecker_adex_ca3_stdp_band_derisk` or
+  `_gap5_ecker_reactivates_REAL_d5_derisk` (`git grep -l`), the findings that ran each, stated vs run OU value, and
+  add the same PROVISIONAL note to each finding (at least: braun-gapcoding, btsp-directional-write,
+  conduction-delay-directional-replay, ecker-adex-store, graded-recall-instrument and reverse-edge 2026-08-27
+  learn-through-use, forward-band-homeostatic-scaling-ltu 09-16, read-noise-floor K18 09-17). Also append to
+  AFFECTED.md: "_gap5_onebrain_capstone.py's ou_noise_sigma_pa=40.0 is dead code behind an always-false hasattr
+  guard and was not an intended value (it would reverse the line's own 'kill the composer's OU noise' intent); no
+  finding needs a correction." No re-runs. RESULT; then Claude merges and decides re-runs. The FAILURE_LOG row and
+  gate PF (`tools/gates/cfg_phantom_field.py`) are on main. (2026-10-01)
+- phantom-cfg-audit (task T17, after T15): run `.venv/bin/python tools/gates/cfg_phantom_field.py` on main. For each
+  flagged runner record the field written, its value, the real field and its default (sim/config.py), whether the
+  value differs from the default, and the findings that ran the runner. Write docs/drafts/phantom-cfg/AFFECTED.md on
+  research/draft-phantom-cfg; no code edit, no re-run; RESULT. List first `_emerge87_reservoir_coresident_derisk.py`
+  (a non-default value dropped; a GO finding cites it); most others are `cfg.dt` where the field is `dt_ms`.
+  (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
-- 2026-09-30 16:50 [iw2-R9] ASK (seeded): iw2 scorer does not check that the lesion reply lost the capability content; any amendment must precede R scoring; blocks: T2 R
-- 2026-09-30 16:50 [iw2-selfid] ASK (seeded): accept neural-selfid's abstain on "what/who are you?" and the Stage-1 C2 "it" self-alias risk, or hold its flip; blocks: T2 section 6
-- 2026-09-30 16:50 [iw1-stepB] ASK (seeded): iw1 make_jobs.sh writes `--expect-on=`, which pool_queue.sh add refuses; also PYTHONHASHSEED for the queued iw1 identity lines; blocks: T8 section 7
-- 2026-09-30 16:50 [b2d-mouth] ASK (seeded): run or retire the 18-job mouth arm (predicted MOUTH-SILENT); Claude queues it if kept; blocks: T9 scoring
-- 2026-09-30 16:50 [c1-lane] ASK (seeded): Stage-1 and C1 replacement lines (max_age_h=168) sit behind ~300 node-hours of heavy lines; order or lane (AWS CPU, local) for the 10-24 window; blocks: T6, T7 timing
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-09-30 21:53 [T12] RESULT: seam-map Amendment 2026-09-29 committed on research/draft-seam-map at a6aff478c (8-line append, gates passed, committed via HOME=/home/dant123 so the branch's pre-da0e80669 biology_check resolves ~/Projects/sim-catalog); UNPUSHED: push_both.sh fails both remotes (github-sim/gitea-sim unresolved, no push credential in container); blocks: T12 publish
-- 2026-09-30 22:36 [T1] STOP #4: LDC Step 4 sweep rc=2, no passing tag (success 0.16-0.53 all tags, void bounds, no DA dip); tried: scorer on prov-free copy of 243 dev files (glob also matches .prov.json -> KeyError: rows; workaround only); blocks: T1 Amendment A + gate. WORKLOG @ 67cd0eac6
-- 2026-09-30 23:32 [T15] RESULT: Ecker OU-noise field done on research/draft-ecker-ou-field @ 0cbe8a401 (8 phantom-only runners renamed ou_noise_sigma_pa->ou_std_current_pA, same value, py_compile OK; 6 affected findings got PROVISIONAL correction stated-40pA/ran-100pA; AFFECTED.md+WORKLOG; no re-runs); UNPUSHED (push-credential); blocks: none
-- 2026-09-30 23:32 [ecker-ou] ASK: T15 needs a FAILURE_LOG row + a gate (task_8f9171ae: a runner setting a cfg field the engine never reads); also judge _gap5_onebrain_capstone.py's dead ou_noise_sigma_pa=40.0 line (it sets real ou_std_current_pA=20/0, so NOT affected; was 40 pA intended?); blocks: T15 closure

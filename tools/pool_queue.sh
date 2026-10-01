@@ -300,7 +300,15 @@ case "${1:-list}" in
          # main refused every such job ("does not even import/parse"). For pinned jobs the flag check runs below,
          # against the pinned revision's own --help on the node; unpinned jobs keep this local check.
          PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
-         FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
+         # Flags are scoped to $MOD's own invocation (2026-10-01, RULING iw1-stepB): a line may chain a guard script before
+         # `&&` (e.g. `tools/assert_iw1_defaults.py --expect-on=<packets> &&`) whose flags belong to a different argparse;
+         # scanning the whole line refused every guarded iw1 job. $MOD's flags follow its own `-m research.runners.X`.
+         FLAGS_SCOPE="$2"
+         if [ -n "$MOD" ]; then
+           FLAGS_SCOPE=$(printf '%s' "$2" | grep -oE -- "-m +$MOD.*" | head -1)
+           [ -n "$FLAGS_SCOPE" ] || FLAGS_SCOPE="$2"
+         fi
+         FLAGS=$(printf '%s' "$FLAGS_SCOPE" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
          if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
            # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first
