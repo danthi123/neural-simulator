@@ -20,12 +20,19 @@ tasks through the real Hermes harness with each candidate model, grades them, an
 - **Grading.**
   - Pass/fail tasks run a command after the model finishes. Files a task protects, such as a given test, are
     restored first.
-  - Rubric tasks are scored blind by two judges from different vendors (`judge.py`). Runs where they disagree by
-    more than 0.25 are adjudicated by Claude.
+  - Rubric tasks are scored blind: by Claude by default, or by two OpenRouter judges from different vendors
+    (`judge.py`) when `models.json` lists `judges`. Judge disagreements above 0.25 are adjudicated by Claude.
 - **Audit.** A run whose tool calls reached the network, or read a path that could hold an answer, is disqualified
   and counted, never dropped silently.
 - **Cost.** Estimated from Hermes's token counts at OpenRouter list prices, and checked against the key's own spend
   counter for each batch.
+- **Spending as little as possible** (owner, 2026-09-30):
+  - The candidates are the local model plus cheap and mid-priced OpenRouter models. There are no frontier models
+    by default, because the reference answers are Claude's own past work.
+  - Rubric tasks are judged blind by Claude, not by paid judges.
+  - `run.py --max-spend` (default $3) starts no new paid run once the batch's real spend passes the cap.
+  - The plan is staged: first a small screen (one or two tasks per role, every candidate), then the full suite on
+    the two or three best only.
 
 ## Isolation
 

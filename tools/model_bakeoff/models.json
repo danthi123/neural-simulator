@@ -1,10 +1,7 @@
 {
  "schema": "model-bakeoff-models-v1",
- "_comment": "Bake-off candidates (2026-09-30). Prices are NOT stored here: report.py reads them from OpenRouter's public /api/v1/models at report time. Every OpenRouter request carries provider.data_collection=deny (owner: never a provider that may train on or store our data); run.py --preflight drops a model with no compliant endpoint. Tiers are by list price, not quality.",
- "judges": [
-  "anthropic/claude-opus-5.5",
-  "openai/gpt-6.1-sol"
- ],
+ "_comment": "Bake-off candidates (2026-09-30), cheapest-first by owner request: spend as little as possible. Prices are read from OpenRouter's public /api/v1/models at report time. Every OpenRouter request carries provider.data_collection=deny (owner: never a provider that may train on or store our data); run.py --preflight drops a model with no compliant endpoint. No frontier model by default: the reference answers are Claude's own past work. Rubric tasks are judged blind by Claude (no paid judges); judge.py uses OpenRouter judges only if 'judges' is filled in.",
+ "judges": [],
  "models": [
   {
    "id": "local",
@@ -44,46 +41,10 @@
    "tier": "mid"
   },
   {
-   "id": "moonshotai/kimi-k3",
-   "label": "Kimi K3",
-   "provider": "openrouter",
-   "tier": "mid"
-  },
-  {
-   "id": "google/gemini-3.8-flash",
-   "label": "Gemini 3.8 Flash",
-   "provider": "openrouter",
-   "tier": "mid"
-  },
-  {
    "id": "deepseek/deepseek-v4-pro-0813",
    "label": "DeepSeek V4 Pro",
    "provider": "openrouter",
    "tier": "mid"
-  },
-  {
-   "id": "qwen/qwen3.8-max-0902",
-   "label": "Qwen3.8 Max",
-   "provider": "openrouter",
-   "tier": "frontier"
-  },
-  {
-   "id": "anthropic/claude-sonnet-5.5",
-   "label": "Claude Sonnet 5.5",
-   "provider": "openrouter",
-   "tier": "frontier"
-  },
-  {
-   "id": "openai/gpt-6.1-sol",
-   "label": "GPT-6.1 Sol",
-   "provider": "openrouter",
-   "tier": "frontier"
-  },
-  {
-   "id": "anthropic/claude-opus-5.5",
-   "label": "Claude Opus 5.5",
-   "provider": "openrouter",
-   "tier": "frontier-reference"
   }
  ]
 }

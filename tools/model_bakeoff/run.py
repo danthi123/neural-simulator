@@ -304,6 +304,8 @@ def main():
     ap.add_argument("--parallel", type=int, default=3)
     ap.add_argument("--max-turns", type=int, default=150)
     ap.add_argument("--preflight", action="store_true")
+    ap.add_argument("--max-spend", type=float, default=3.0,
+                    help="USD: no new paid run starts once this batch's real OpenRouter spend passes it (owner: as cheap as possible)")
     a = ap.parse_args()
     cfg = load_json(os.path.join(TOOLS, "models.json"))
     models = cfg["models"]
@@ -337,8 +339,17 @@ def main():
     def budget(t):
         return int(min(45, max(15, 3 * float(t.get("est_minutes") or 10))) * 60)
 
+    def guarded(m, t):
+        # Spend cap, checked against OpenRouter's own counter before every paid run (unknown usage = stop).
+        now = key_usage()
+        if usage0 is None or now is None or now - usage0 >= a.max_spend:
+            with lock:
+                print("SKIPPED (spend cap $%.2f reached or usage unknown): %s %s" % (a.max_spend, m["id"], t["id"]), flush=True)
+            return None
+        return run_one(a.batch, m, t, budget(t), a.max_turns, lock)
+
     with cf.ThreadPoolExecutor(max_workers=max(1, a.parallel)) as ex:
-        futs = [ex.submit(run_one, a.batch, m, t, budget(t), a.max_turns, lock) for m, t in remote]
+        futs = [ex.submit(guarded, m, t) for m, t in remote]
         # the local model has one slot: its runs go one at a time, beside the remote ones
         def local_chain():
             return [run_one(a.batch, m, t, budget(t), a.max_turns, lock) for m, t in local]
