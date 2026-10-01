@@ -38,13 +38,13 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 
 - `$P` stays on `main` (live services run from it). Packet work: the packet's worktree. Your own builds:
   `$WT/draft-<topic>` on `research/draft-<topic>`, dev seeds only (7, 1-15).
-- Never: merge; `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
+- Never: merge, except your routine work through `tools/agent_merge.sh` (RULING `routine-merges`) and main into your own branch through `tools/agent_sync_branch.sh` (RULING `sync-branch`); `--no-verify`; a waiver file; a filler job; write a file a gate reads (`lane_builds.jsonl`, queue
   files, ledgers); delete data; touch AWS; edit `sim/`, `webapp/`, `tools/gates/`; flip a default on main; change a
   prereg, bar, arm, seed list, scorer or job line (except adding `max_age_h`). Gate seeds (42/43/44/100/101/102) run
   only through lines a HANDOFF registers. Scripted exceptions: the iw1/iw2 flip commit on the packet branch (owner
   ruling 09-29), the LDC Amendment A text, and T15's field rename and correction notes (sleep-TI ruling 2).
-- DENIED to you: `git merge`, `git checkout`, `git switch`, `gpu_queue.sh add`. A step that needs one (every
-  NEEDS-MERGE path, `git checkout -- .`) is a STOP: NEEDS-CLAUDE. Instead of `git checkout -- <runs.jsonl>`: never
+- DENIED to you: `git merge`, `git checkout`, `git switch`, `gpu_queue.sh add`. A step that needs one (a merge
+  `tools/agent_merge.sh` refuses, `git checkout -- .`) is a STOP: NEEDS-CLAUDE. Instead of `git checkout -- <runs.jsonl>`: never
   `git add research/findings/raw/_provenance/runs.jsonl`. Never wrap a denied command in `bash -c` or a script.
 - A command that asks for permission while the owner is away (always so in a headless resume): skip it, WORKLOG it,
   continue elsewhere.
@@ -231,12 +231,25 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
 line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
-## 5. Idle (only when no task can move)
+## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
-Test triage on `research/draft-test-triage` (`docs/drafts/test-triage/`): `bash tools/mem_ok.sh 12 && bash
-tools/memcap.sh 12 -- env SIM_NO_PROVENANCE=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -m pytest -q -p
-no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_resume.py
---junitxml=_scratch/suite.xml -rfE tests`; group failures by first error line (GPU hidden = ENVIRONMENT). No fixes.
+Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
+1. Pick the first open next-item in `GAP_CLOSURE_MISSION.md` CURRENT STATE, else the master roadmap's "next to
+   queue" (`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`), preferring what serves the next stage exit (Stage 1
+   attempt 10-24, Stage 2 11-21, Stage 3 12-19) and integration-first (a faculty on by default whose lesion changes
+   the reply). Write the choice and why in `docs/drafts/<topic>/WORKLOG.md`.
+2. Research the record first: `bash tools/before_you_build.sh "<defect>"` and `.venv-rag/bin/python
+   tools/rag/rag_search.py "<question>" 5 --corpus all`; read the sources it points to.
+3. Plan with one MiMo Pro delegate: `docs/drafts/<topic>/PLAN.md` with the question, the biology it follows, dev seeds
+   only (7, 1-15), and an outcome-to-reading table written BEFORE any run. A second delegate must try to refute the
+   plan against CLAUDE.md's non-negotiables (brain-based only, one brain, no host shortcut, honest measures); revise
+   until it approves.
+4. Build in `$WT/draft-<topic>` on `research/draft-<topic>`: new `research/runners/_<topic>_*.py` copies; never edit
+   `sim/`, a registered runner, a scorer or a gate. Run it per RULING `compute-placement`.
+5. Report as a PROVISIONAL finding (`research/findings/<date>-<topic>.md`: dev seeds only, what it does NOT show),
+   check it per RULING `verify-go`, merge per RULING `routine-merges`, then NEEDS-CLAUDE "[draft-<topic>] RESULT: <one
+   line>; proposes <next step>" so the weekly review can promote it. Gate seeds, preregs, scorers, default flips and
+   `sim/` stay Claude's; a draft never claims a GO.
 
 ## 6. RULINGS (Claude writes `- <KEY>: <ruling> (<date>)`; you follow it)
 
@@ -334,14 +347,52 @@ no:cacheprovider --continue-on-collection-errors --ignore=tests/test_game_pause_
 
 - compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
   in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
-  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). For a draft build on the pool:
-  commit the draft branch; `bash tools/gpu_remote.sh provision <sha>` (ships the commit, provisions the pool nodes);
-  then one `bash tools/pool_queue.sh add 'cd ~/derisk-pool/revisions/<sha> && bash tools/mem_ok.sh <gb> 1 && bash
-  tools/memcap.sh <gb+2> -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 .venv/bin/python -u -m research.runners.<runner>
-  ... --out research/findings/raw/<dir>/<cell>.json' --checked '<task>: <why>; dev seeds; mem_gb=<gb> ;
-  max_age_h=48'` per cell, dev seeds only. Results arrive in `$P/research/findings/raw/` through `sim-sync.timer`, not
-  in your worktree. A refusal or a failed provision is a STOP. The Step 4a grid already running on S (started 10-01
-  14:47) may finish there; the next run goes out. (2026-10-01)
+  out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
+  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
+  revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
+  dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
+  on a `research/*` branch that you created from `main` (for an older branch, run `bash tools/agent_sync_branch.sh research/<branch>` first), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
+  $P/research/queue/provision.req && touch $P/research/queue/provision.req/$(git rev-parse <branch>)`. Read the result
+  in `/opt/host-status/sim-provision/<sha>.json` (`state`, `reason`, `hint`; the server checks every 5 minutes). `ok`
+  or `already`: queue your pool lines. `queued`, `waiting`, `running` or `deferred`, or `failed` with a
+  `next_retry_utc`: wait, the server retries by itself. `refused`: read `reason`/`hint` and fix it if it is yours (for
+  example, the sha is not on a `research/*` branch). NEEDS-CLAUDE when the result is `blocked`, `refused` over
+  `tools/pool/provisioning/`, `failed` with no `next_retry_utc`, or when no result file appears
+  within 15 minutes. GPU work still goes to the workstation (`bash tools/gpu_remote.sh add '<line>'`). Never fall back
+  to S. Step 4a: Claude stopped the S grid at the owner's request (its script is now
+  `/opt/data/cache/scratch/grid_driver.sh.moved-to-pool`; do not restore it), merged main into the draft branch
+  (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
+  arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
+  are in. (2026-10-01)
+
+- sync-branch: (owner 2026-10-01) When your branch carries an old copy of something main has since fixed (a gate fails
+  on a tool main already fixed, provisioning is `refused` for published main, or the GPU queue's stale-revision guard
+  refuses), bring main into it yourself: in `$P`, `bash tools/agent_sync_branch.sh research/<branch>`. It only ever
+  merges main INTO a research branch, runs every gate on the result, keeps your staged files staged, takes main's
+  runbook and keeps both sides' FAILURE_LOG rows. Exit 2 means it refused: NEEDS-CLAUDE with its message. Never edit
+  `tools/agent_*`. (2026-10-01)
+
+- results-without-pass: (owner 2026-10-01) A RESULT that is not a PASS or GO (a NO-GO, an UNDEFINED, an audit, a
+  triage) does not wait for Claude. Write it up as a new PROVISIONAL finding, merge it per RULING `routine-merges`,
+  then take the next method it points to and keep going (no-defer: a NO-GO retires a method, never the capability; run
+  `before_you_build` first). Only what section 2 reserves waits for Claude (a prereg, a bar, a scorer, a seed list,
+  `sim/` code, a default flip, an edit to an existing finding, confirming a PASS): put that on ONE NEEDS-CLAUDE line
+  and move on to other work. (2026-10-01)
+
+- routine-merges: (owner 2026-10-01) you merge your own ROUTINE work into main yourself; Claude keeps the rest. The
+  only way: in `$P` on main, `bash tools/agent_merge.sh research/<branch>`. It merges only new results files,
+  worklogs, draft docs (not HANDOFFs or preregs), new tests, new findings that say PROVISIONAL and new `_`-prefixed
+  draft runners, and it runs every gate on the merge. Anything else, any deletion, or an edit to an existing finding,
+  test, runner, scorer, HANDOFF, prereg, `sim/` or `tools/` is refused, and stays Claude's. Before running it, give
+  `git diff main...research/<branch>` and the task's HANDOFF section to TWO independent MiMo Pro delegates, each told
+  to find a reason not to merge; merge only if both approve, and quote both in the WORKLOG. A new finding stays
+  PROVISIONAL until a Claude check-in confirms it. A refusal or a failed gate: NEEDS-CLAUDE "[<task>] merge
+  research/<branch> @ <sha>: <the refusal>; unblocks <what>". Never edit `tools/agent_merge*` or run `git merge`
+  yourself. When it refuses only for something on your own branch, fix that on the branch and run it again: a new
+  finding without PROVISIONAL, add the word; a `research/coordination/` file, commit those lines on main directly,
+  then on the branch `git checkout main -- <file>` and commit. Draft data files (`.txt`, `.csv`, `.tsv`, `.json` under
+  `docs/drafts/`) and run-ledger lines that only append (`research/findings/raw/_provenance/*.jsonl`) are routine.
+  `research/draft-phantom-cfg` already passes the policy: merge it. (2026-10-01)
 
 ## NEEDS CLAUDE
 
