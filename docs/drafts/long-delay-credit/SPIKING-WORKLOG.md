@@ -353,3 +353,17 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
 - Driver v2 now ALSO runs the 12 sanity cells (PER_CELL delegate ruling) after the 24 grid cells —
   one sequential driver, no separate launch step. All under nice -n 10, one at a time.
 - Verified 15:40: driver 63066 + python 63072 (cell 1, 94% CPU), supervisor 63252, all in own sessions.
+## 2026-10-01 16:14 (Hermes, local model): stale S supervisor stopped (grid moved by Claude); 12 sanity cells queued at the pool
+
+- New wake rule + RULING `compute-placement`: no research jobs >~10 min on S. My local stack (supervisor
+  63252) was already defunct (driver script deleted by Claude's cleanup -> rc=127 loops) and is now
+  KILLED (0 matching processes); `grid_driver.sh.moved-to-pool` NOT restored. Claude merged main into the
+  draft (e63b22f6d, docs only), provisioned that revision, and queued the 24 grid cells at the pool head;
+  results arrive in `research/findings/raw/_ldc_outcome_timing/` via sim-sync; score when 24/24 are in.
+- Per the same ruling ("You can queue lines for a provisioned revision yourself") I queued the 12
+  PER_CELL sanity cells the delegate required (0 were present): seeds 8/11 x onset 30/150/300 x
+  w_outc_strio 30/60, `--schedule sanity_early_ch0`, pilot runner, memcap 2 GB, mem_gb=2, max_age_h=48,
+  checked reason names the delegate ruling + prereg 7.4. Result: ADDED=12 FAILED=0, depth 384 -> 396,
+  `grep -c sanity_early_ch0 research/queue/pool.queue` = 12.
+- Pending: 36 pool outputs (24 grid + 12 sanity); next T1 step = score bars into the PILOT.md table when
+  they land.
