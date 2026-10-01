@@ -20,7 +20,8 @@ import os
 import re
 import sys
 
-ROOT = "/home/dant123/Projects/sim"
+# The shared repo root (parent of the git common dir), on whichever host holds the checkout (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+ROOT = __import__("waiver_history").shared_root()
 # ad-hoc workflow scripts persist here; committed reusable ones live in .claude/workflows/. The heartbeat cares
 # about LIVE burn (scripts run this session) + the durable committed workflows — NOT ancient history from other
 # projects. So the ad-hoc glob is filtered to recently-touched scripts; committed workflows are always scanned.
@@ -28,7 +29,7 @@ ROOT = "/home/dant123/Projects/sim"
 # note that must age out fast (a persistent ⛔ on an unfixable historical script is a false alarm, and a false
 # alarm trains the reader to ignore the check). Committed workflows ARE fixable, so their violation is persistent.
 RECENT_MIN = 25   # ad-hoc scripts touched within this window are "just launched" (a brief note, then age out)
-_AD_HOC_GLOB = "/home/dant123/.claude/projects/*/*/workflows/scripts/*.js"
+_AD_HOC_GLOB = os.path.join(os.path.expanduser("~"), ".claude", "projects", "*", "*", "workflows", "scripts", "*.js")
 _COMMITTED_GLOB = os.path.join(ROOT, ".claude", "workflows", "*.js")
 
 

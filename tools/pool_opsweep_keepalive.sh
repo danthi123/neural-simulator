@@ -6,10 +6,12 @@
 # A flock makes concurrent keepalives impossible. Driven by pool-opsweep.timer (systemd --user; linger on).
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 LOCK="$ROOT/research/queue/.opsweep_keepalive.lock"
 exec 9>"$LOCK"; flock -n 9 || { echo "[opsweep-keepalive] another instance holds the lock; skipping"; exit 0; }
 
-NODES=(pool40 pool41 pool42)
+NODES=($POOL_NODES_DEFAULT)
 all_reachable=1; any_busy=0; reachable=0
 for h in "${NODES[@]}"; do
   out=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$h" "pgrep -fc '[r]un_cell.sh'" 2>/dev/null); rc=$?

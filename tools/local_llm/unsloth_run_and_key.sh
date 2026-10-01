@@ -5,8 +5,7 @@
 # ~/.unsloth/studio/auth/agent_api_key.json), which is AFTER bakeoff.py's readiness check already needs to know
 # the server is up (see generic_ready()'s 401/403-counts-as-ready handling), so the key cannot be a CLI literal.
 #
-# Queued as the generic profile's --start-cmd (tools/agent_container/profiles/unsloth-studio.env documents the
-# manual equivalent). bakeoff.py owns stopping this: it killpg's THIS script's pid, which is also the `unsloth
+# Queued as the generic profile's --start-cmd. bakeoff.py owns stopping this: it killpg's THIS script's pid, which is also the `unsloth
 # run` child's process group (it is forked without its own setsid, so it inherits ours) -- so one killpg tears
 # down both. --stop-cmd (`unsloth studio stop`) is the belt-and-braces second path.
 set -uo pipefail
