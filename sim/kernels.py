@@ -1116,6 +1116,70 @@ def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
     return g_e_new, g_i_new, I_syn
 
 @fuse()
+def fused_bounded_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i, C, dt):
+    """BOUNDED (exponential-Euler) sibling of fused_conductance_decay_and_current
+    (cfg.enable_bounded_conductance_integration). Fixes the 2026-09-29 explicit-step
+    overshoot: the caller advances the membrane by an explicit-Euler step
+    v_new = v + dv_dt*dt with dv_dt including I_syn/C. When I_syn = g_e*(E_e-v) +
+    g_i*(E_i-v) is naively computed from the PREVIOUS v, a large summed conductance
+    (g_tot*dt/C not << 1) drives v_new arbitrarily far PAST the conductance-weighted
+    reversal E_eff instead of toward it (measured: 4x weight-40 GABA-A convergence
+    drove a basal-ganglia 'commit' pool to -377 mV in 60 steps; see
+    docs/drafts/conductance-overshoot-guard/WORKLOG.md).
+
+    Derivation: hold g_tot = g_e_new + g_i_new and E_eff = (g_e_new*E_e +
+    g_i_new*E_i)/g_tot fixed over this step and solve the LOCAL LINEAR ODE
+    dv/dt = g_tot*(E_eff - v)/C EXACTLY:
+        v(dt) = E_eff + (v0 - E_eff) * exp(-g_tot*dt/C)
+    then back out the CONSTANT effective current I_syn_eff that would produce this
+    SAME v(dt) under the caller's own explicit-Euler update v0 + dt/C*I_syn_eff:
+        I_syn_eff = (C/dt) * (E_eff - v0) * (1 - exp(-g_tot*dt/C))
+    As g_tot*dt/C -> 0, I_syn_eff -> g_tot*(E_eff-v0) (recovers the unbounded
+    formula to first order -- see test_small_conductance_equivalence). As
+    g_tot*dt/C -> inf, I_syn_eff -> (C/dt)*(E_eff-v0), i.e. the explicit step lands
+    v_new AT E_eff, never past it: the overshoot is bounded BY CONSTRUCTION, not by
+    clamping v after the fact. g_tot==0 (no synaptic drive this step) must give
+    I_syn_eff=0, not the 0/0 the E_eff formula would produce -- guarded by
+    g_tot_safe/cp.where below (mirrors the C_param==0 guard pattern used
+    throughout this file, e.g. fused_izhikevich2007_dynamics_update).
+
+    C is the per-neuron (Izhikevich-2007) or scalar (AdEx) membrane capacitance in
+    pF, matching the caller's own dv_dt = (...)/C; dt is the step in ms (same units
+    as every other kernel in this file). The exponent is clipped to [-80, 0] purely
+    to avoid an exp() underflow warning for a pathological g_tot -- exp(-80) is
+    already exactly 0.0 in float32/float64, so the clip changes no value, only
+    silences the (harmless) underflow.
+    """
+    g_e_new = g_e * decay_e
+    g_i_new = g_i * decay_i
+    g_tot = g_e_new + g_i_new
+    g_tot_safe = cp.where(g_tot > 0.0, g_tot, 1.0)  # avoid 0/0 in E_eff; result discarded via cp.where below
+    E_eff = (g_e_new * E_e + g_i_new * E_i) / g_tot_safe
+    C_safe = cp.where(C > 0.0, C, 1.0)
+    exponent = cp.clip(-(g_tot_safe * dt) / C_safe, -80.0, 0.0)
+    decay_factor = cp.exp(exponent)
+    I_syn = cp.where(
+        g_tot > 0.0,
+        (C_safe / dt) * (E_eff - v) * (1.0 - decay_factor),
+        0.0,
+    )
+    return g_e_new, g_i_new, I_syn
+
+def conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i, *,
+                                   bounded=False, C=None, dt=None):
+    """Dispatch the opt-in bounded correction without changing the legacy path
+    (mirrors izhikevich2007_dynamics_update's backend_neutral_arithmetic dispatch
+    above). bounded=False (the default) calls the ORIGINAL fused kernel with the
+    ORIGINAL arguments -- byte-identical to before this function existed."""
+    if type(bounded) is not bool:
+        raise TypeError("bounded must be a boolean")
+    if not bounded:
+        return fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
+    if C is None or dt is None:
+        raise ValueError("bounded conductance integration requires C and dt")
+    return fused_bounded_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i, C, dt)
+
+@fuse()
 def fused_readonly_izh_step(
     g_e, g_i, g_e_increase, g_i_increase, decay_e, decay_i, E_e, E_i,
     v, u, external_current, ou_current,
@@ -1183,6 +1247,50 @@ def fused_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab):
     return g_gabab_new, I_gabab
 
 @fuse()
+def fused_bounded_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab, C, dt):
+    """BOUNDED (exponential-Euler) sibling of fused_gabab_decay_and_current
+    (cfg.enable_bounded_conductance_integration). Single-conductance case of the
+    same derivation as fused_bounded_conductance_decay_and_current (g_tot=g_gabab_new,
+    E_eff=E_gabab) -- see that kernel's docstring for the full derivation.
+
+    Bounded INDEPENDENTLY of the AMPA/GABA-A pair above, not folded into one
+    shared g_tot/E_eff across every conductance source: GABA_B/GIRK is computed
+    at a LATER point in `_run_one_simulation_step` (after AMPA/GABA-A's I_syn has
+    already been read out into total_input_current_pA), so a single shared bound
+    across all conductance pathways would need the step reordered to sum every
+    g before any bound is applied. Bounding each conductance TERM independently
+    against its OWN reversal is the deliberate, documented choice here (see
+    cfg.enable_bounded_conductance_integration's docstring in sim/config.py): it
+    guarantees no SINGLE pathway can drive v_new past ITS OWN reversal in one
+    step (the measured defect -- 4x weight-40 GABA-A alone drove v to -377 mV),
+    at the cost of not catching an AGGREGATE overshoot from several
+    simultaneously-large terms adding up. See
+    docs/drafts/conductance-overshoot-guard/WORKLOG.md open questions.
+    """
+    g_gabab_new = g_gabab * decay_gabab
+    C_safe = cp.where(C > 0.0, C, 1.0)
+    exponent = cp.clip(-(g_gabab_new * dt) / C_safe, -80.0, 0.0)
+    decay_factor = cp.exp(exponent)
+    I_gabab = cp.where(
+        g_gabab_new > 0.0,
+        (C_safe / dt) * (E_gabab - v) * (1.0 - decay_factor),
+        0.0,
+    )
+    return g_gabab_new, I_gabab
+
+def gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab, *, bounded=False, C=None, dt=None):
+    """Dispatch the opt-in bounded correction (mirrors conductance_decay_and_current
+    above). bounded=False (the default) calls the ORIGINAL fused kernel with the
+    ORIGINAL arguments -- byte-identical to before this function existed."""
+    if type(bounded) is not bool:
+        raise TypeError("bounded must be a boolean")
+    if not bounded:
+        return fused_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab)
+    if C is None or dt is None:
+        raise ValueError("bounded conductance integration requires C and dt")
+    return fused_bounded_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab, C, dt)
+
+@fuse()
 def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc):
     """Fused kernel for NMDA conductance with voltage-dependent Mg2+ block.
 
@@ -1205,6 +1313,54 @@ def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_ri
     # NMDA current with Mg2+ gating
     I_nmda = g_eff * mg_block * (E_nmda - v)
     return g_nmda_new, g_nmda_rise_new, I_nmda
+
+@fuse()
+def fused_bounded_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc, C, dt):
+    """BOUNDED (exponential-Euler) sibling of fused_nmda_update_and_current
+    (cfg.enable_bounded_conductance_integration). Uses the voltage-gated EFFECTIVE
+    conductance g_cond = g_eff*mg_block (the same quantity the unbounded kernel
+    multiplies by (E_nmda - v)) as the single conductance term in the same
+    exponential-Euler bound derived in fused_bounded_conductance_decay_and_current
+    (g_tot=g_cond, E_eff=E_nmda) -- see that kernel's docstring for the derivation.
+    mg_block is evaluated at v0 exactly like the unbounded kernel (held fixed over
+    this step's local linearization, consistent with g_cond itself being frozen
+    at its v0 value for the bound); it is NOT re-solved self-consistently with the
+    bounded v(dt), so a step where v moves far enough to materially change the
+    Mg2+ block is only approximately bounded by this term (same caveat as the
+    independent-terms choice documented in fused_bounded_gabab_decay_and_current
+    and cfg.enable_bounded_conductance_integration). Covers BOTH call sites that
+    reuse this kernel: the global NMDA conductance and the slow-NMDA recurrent
+    conductance (bridge.py `_run_one_simulation_step`, sections 2.3 / 2.3a).
+    """
+    g_nmda_new = g_nmda * decay_nmda
+    g_nmda_rise_new = g_nmda_rise * decay_nmda_rise
+    g_eff = g_nmda_new - g_nmda_rise_new
+    g_eff = cp.maximum(g_eff, 0.0)
+    mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+    g_cond = g_eff * mg_block
+    C_safe = cp.where(C > 0.0, C, 1.0)
+    exponent = cp.clip(-(g_cond * dt) / C_safe, -80.0, 0.0)
+    decay_factor = cp.exp(exponent)
+    I_nmda = cp.where(
+        g_cond > 0.0,
+        (C_safe / dt) * (E_nmda - v) * (1.0 - decay_factor),
+        0.0,
+    )
+    return g_nmda_new, g_nmda_rise_new, I_nmda
+
+def nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc, *,
+                             bounded=False, C=None, dt=None):
+    """Dispatch the opt-in bounded correction (mirrors conductance_decay_and_current
+    above). bounded=False (the default) calls the ORIGINAL fused kernel with the
+    ORIGINAL arguments -- byte-identical to before this function existed."""
+    if type(bounded) is not bool:
+        raise TypeError("bounded must be a boolean")
+    if not bounded:
+        return fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc)
+    if C is None or dt is None:
+        raise ValueError("bounded conductance integration requires C and dt")
+    return fused_bounded_nmda_update_and_current(
+        g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc, C, dt)
 
 @fuse()
 def fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
