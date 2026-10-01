@@ -53,8 +53,11 @@ TASK:
 NET_RE = re.compile(r"(?:^|[\s;&|(`$])(curl|wget|pip3?\s+install|uv\s+(?:pip|add|sync)|npm\s+(?:i|install)|apt(?:-get)?\s+install"
                     r"|ssh|scp|sftp|ncat|telnet)\b|\bgit\s+(?:fetch|pull|clone|ls-remote|push|remote\s+add)\b", re.I)
 URL_RE = re.compile(r"https?://(?!localhost|127\.0\.0\.1)", re.I)
-LEAKY_ROOTS = ("/bk/", "/opt/data", "/home/", "/root", "/srv", "/mnt")
-ALLOWED_OUTSIDE = (WS_VENV, "/home/dant123/Projects/neural-simulator/.python", CATALOG)
+LEAKY_ROOTS = ("/bk/", "/home/", "/root", "/srv", "/mnt")
+# Allowed beyond the run's own dir: the read-only Python environment and reference library, and Hermes's own scratch
+# dir (its file tools write there). /opt/data is not listed as leaky: in this container it is the image's empty,
+# untraversable directory (2026-09-30: a probe of it disqualified a legitimate run).
+ALLOWED_OUTSIDE = (WS_VENV, "/home/dant123/Projects/neural-simulator/.python", CATALOG, "/bk/home/cache/")
 
 
 def load_json(p):

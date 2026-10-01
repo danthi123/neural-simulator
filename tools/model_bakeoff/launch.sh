@@ -60,6 +60,7 @@ case "$cmd" in
     docker run -d --name "sim-bakeoff-$batch" "${COMMON[@]}" "$IMG" -c "$inner" ;;
   preflight) docker run -i "${COMMON[@]}" "$IMG" -c "python3 run.py --preflight" ;;
   judge)  b=${1:?batch}; [[ "$b" =~ ^[A-Za-z0-9_-]+$ ]] || exit 2; docker run -i "${COMMON[@]}" "$IMG" -c "python3 judge.py --batch $b" ;;
+  reaudit) b=${1:?batch}; [[ "$b" =~ ^[A-Za-z0-9_-]+$ ]] || exit 2; docker run -i "${COMMON[@]}" "$IMG" -c "python3 reaudit.py --batch $b" ;;
   report) b=${1:?batch}; [[ "$b" =~ ^[A-Za-z0-9_-]+$ ]] || exit 2
           docker run -i "${COMMON[@]}" "$IMG" -c "python3 report.py --batch $b --out /bk/runs/$b/report.md" ;;
   log)    b=${1:?batch}; [[ "$b" =~ ^[A-Za-z0-9_-]+$ ]] || exit 2
