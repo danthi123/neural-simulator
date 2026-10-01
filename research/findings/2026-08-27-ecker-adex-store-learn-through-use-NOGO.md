@@ -39,3 +39,12 @@ The population hand-off needs a within-assembly VOLLEY, and the strong forward w
 
 ## Verdict + next mechanism (a wall defers a METHOD, not the capability)
 NO-GO for coincidence-STDP-during-replay as the forward-consolidating write — refuted robustly (6 seeds x 8 op-points). BANKED positives to build on: the Ecker store segments, and replay drives durable, lesion-controlled, 100%-attributable plasticity. Named next mechanisms: (1) temporally-SEPARATED volleys via a forward-edge conduction DELAY (B ignites after A terminates → clean pre-before-post) — Ecker's own separation; (2) Braun 2022 inhibitory gap-coding sparse sequences (no overlapping synfire excitation); (3) a BTSP-eligibility-gated write (seconds-long window) instead of ms-coincidence STDP. Separately, wiring replay INTO the production D5 organ stays blocked at the AdEx SOMA-recurrence seam ([[2026-08-20-ecker-real-d5-store-does-NOT-reactivate-via-soma-recurrence-dendritic-latch-is-the-read]], NO-GO), needing the dendritic-dAP-latch composition.
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_ecker_replay_learn_through_use_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

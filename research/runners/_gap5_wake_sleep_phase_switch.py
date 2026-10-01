@@ -56,7 +56,7 @@ def _build(model, dt, seed=SEED):
     for f in ("enable_homeostasis", "enable_stdp", "enable_hebbian_learning", "enable_structural_plasticity",
               "enable_parameter_heterogeneity"):
         setattr(cfg, f, False)
-    cfg.enable_ou_process = True; cfg.ou_noise_sigma_pa = 40.0
+    cfg.enable_ou_process = True; cfg.ou_std_current_pA = 40.0  # T15: was ou_noise_sigma_pa (phantom field the engine never read; it reads ou_std_current_pA)
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)

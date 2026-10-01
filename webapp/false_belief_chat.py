@@ -63,10 +63,25 @@ from typing import Optional
 
 _DEFAULT_SEED = 42
 
+# PRODUCTION-DEFAULT ANCHOR (integration wave 2, 2026-09-30; packet research/packets/integration-wave2/
+# false-belief-chat/, prereg research/findings/2026-09-30-iw2-false-belief-chat-flip-PREREGISTRATION.md). While
+# False the reader below is EXACTLY the pre-anchor expression (byte-identical for every env value; pinned by
+# tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
+# reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one reader of
+# BRAIN_FALSE_BELIEF_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
+_FALSE_BELIEF_CHAT_DEFAULT_ON = False
+_ON = ("1", "true", "on", "yes")
+_OFF = ("0", "false", "no", "off", "")
+
 
 def false_belief_chat_enabled() -> bool:
-    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled)."""
-    return os.environ.get("BRAIN_FALSE_BELIEF_CHAT", "0").strip().lower() in ("1", "true", "on", "yes")
+    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled) while the anchor
+    `_FALSE_BELIEF_CHAT_DEFAULT_ON` is False; after the wave-2 flip, unset -> enabled and an explicit
+    0/false/no/off/"" disables."""
+    v = os.environ.get("BRAIN_FALSE_BELIEF_CHAT")
+    if _FALSE_BELIEF_CHAT_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "0").strip().lower() in _ON
 
 
 def false_belief_lesioned() -> bool:
@@ -290,6 +305,11 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 "belief_location": belief_name, "reality_location": scen.loc_name(read["world_loc"]),
                 "belief_loc_idx": read["belief_loc"], "world_loc_idx": read["world_loc"],
                 "n_events": read["n_events"], "reason": "queried",
+                # the late-window store rates behind the argmax (trace only; the reply is unchanged). Locations take
+                # slots in order of mention and an all-zero read returns slot 0, so a silent store "answers" the
+                # first-named location: tools/iw2_score.py reads these to tell a store read from that default.
+                "belief_rates": {str(k): round(float(v), 6) for k, v in (read.get("belief_rates") or {}).items()},
+                "world_rates": {str(k): round(float(v), 6) for k, v in (read.get("world_rates") or {}).items()},
             })
     except Exception as e:   # never let the false-belief read/write crash a turn
         info = {"acted": False, "answer": None, "events": [], "reason": f"error:{type(e).__name__}: {e}",

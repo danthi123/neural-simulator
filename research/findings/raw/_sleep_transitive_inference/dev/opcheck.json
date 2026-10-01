@@ -1,0 +1,39 @@
+{
+ "records": {
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed8.json": {
+   "premises_learned": true,
+   "no_saturation": true,
+   "events_apart": true,
+   "disruption_holds": true,
+   "no_error": true,
+   "all": true
+  },
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed9.json": {
+   "premises_learned": true,
+   "no_saturation": true,
+   "events_apart": true,
+   "disruption_holds": true,
+   "no_error": true,
+   "all": true
+  },
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed10.json": {
+   "premises_learned": true,
+   "no_saturation": true,
+   "events_apart": true,
+   "disruption_holds": true,
+   "no_error": true,
+   "all": true
+  },
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed11.json": {
+   "premises_learned": true,
+   "no_saturation": true,
+   "events_apart": true,
+   "disruption_holds": true,
+   "no_error": true,
+   "all": true
+  }
+ },
+ "all_pass": true,
+ "backend": "cupy",
+ "device": "as recorded in each dev record (cupy = the local RTX 3090 via tools/gpu_queue.sh)"
+}

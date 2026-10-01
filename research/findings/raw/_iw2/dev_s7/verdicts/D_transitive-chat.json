@@ -1,0 +1,73 @@
+{
+ "runner": "research.runners.iw2_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/runners/iw2_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw2/dev_s7/identity/default.json",
+  "research/findings/raw/_iw2/dev_s7/identity/on_transitive-chat.json",
+  "--expect",
+  "differs",
+  "--packet",
+  "transitive-chat",
+  "--out",
+  "research/findings/raw/_iw2/dev_s7/verdicts/D_transitive-chat.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "on:transitive-chat"
+ ],
+ "git_shas": [
+  "1718c83d07b06c376ded7bc81d66679237041c12",
+  "1718c83d07b06c376ded7bc81d66679237041c12"
+ ],
+ "expect": "differs",
+ "packet": "transitive-chat",
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "same_script": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true,
+  "deterministic_env_both": true
+ },
+ "differing_turns": [
+  9
+ ],
+ "reply_differing_turns": [
+  9
+ ],
+ "reply_diffs": [
+  {
+   "turn": 9,
+   "message": "does cat precede river?",
+   "for": "transitive-chat",
+   "a": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 the cat precedes the ball",
+   "b": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly."
+  }
+ ],
+ "own_differing_turns": [
+  9
+ ],
+ "out_of_scope_differing_turns": [],
+ "ok": true,
+ "verdict": "DIFFERS-IN-SCOPE",
+ "inputs": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/dev_s7/identity/default.json",
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/dev_s7/identity/on_transitive-chat.json"
+ ]
+}

@@ -407,6 +407,75 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   `docs/drafts/`) and run-ledger lines that only append (`research/findings/raw/_provenance/*.jsonl`) are routine.
   `research/draft-phantom-cfg` already passes the policy: merge it. (2026-10-01)
 
+- iw2-R-pre: (cloud Claude, branch claude/session1-backlog) FIXED. `tools/iw2_score.py` now writes a
+  `tools.verdict.Verdict` preconditions block beside every R, B and A verdict (shared prereg Amendment 2). Step-R
+  cells also need the packet flag = "1" in every sidecar. Claude re-derived R from the 36 committed shards:
+  - fb, tr and si each read PASS: capability 6/6, control 6/6.
+  - The per-seed results equal your unamended run.
+  - The verdicts are committed at `research/findings/raw/_iw2/verdicts/573a943/R_{fb,tr,si}.json`.
+  Your three staged R files are superseded. Move them aside (`mkdir -p _scratch/iw2_R_unamended && mv` them there;
+  never delete them). After the owner lands the branch, run `bash tools/agent_sync_branch.sh
+  research/integration-wave2`. Then T2 continues at section 6 with
+  `FLIP=false-belief-chat,transitive-chat,neural-selfid`. iw2-selfid's turn condition holds at P: turns 14-15 read
+  `abstained` true. Before the section-6 commit, update the board task for these three chat capabilities (vikunja
+  skill) and stage `research/coordination/board_sync.json` with the flip commit. The board-sync gate refuses a ledger
+  change without it; any other gate is a STOP. Provision F per RULING `compute-placement`, then section 7.
+  (2026-10-01)
+- iw2-verify-go: (cloud Claude) The step-R PASSes hold. Two independent skeptics reviewed them.
+  - The instrument/reproducibility lens could not refute: all 219 sidecars are pinned and numpy, the flag is "1",
+    the six seeds are distinct, and the controls are not vacuous.
+  - The host-ownership lens bounds what may be claimed. The finding (HANDOFF section 11) must use these sentences:
+  - false-belief-chat: "The spiking belief store carries the belief that the reply reads. Who saw the move is decided
+    by the host witnessing parse, and that decision gates the write. The lesion forces the gate open."
+  - transitive-chat: "The workspace's spiking ignition decides when the chase stops, and the reply depends on it. The
+    next node is the composer's read, and the reachability test is host code."
+  - neural-selfid: "This is the content-selection parser, the same positional role map, reaching self questions. The
+    real change is that the host router no longer answers them."
+  Count neural-selfid as a reach of the content-selection mechanism, not as a new mechanism. The false-belief chat
+  stays a sub-rung of `w5-affective-tom`; it gets no cognitive-ToM row while the witnessing decision is host-owned.
+  These rule iw2 HANDOFF NEEDS-CLAUDE items 2, 7 and 8. Next methods (no-defer, drafts for session 2):
+  - a spiking presence/witness population driving the `witness_other` gate;
+  - the composer unbind spikes driving the workspace slots, not a host loop.
+  (2026-10-01)
+- ecker-ou-merge: (cloud Claude) T15 is merged on claude/session1-backlog. The 8 correction notes are confirmed: the
+  engine reads only `ou_std_current_pA` (default 100 pA, `sim/config.py:370`). AFFECTED.md gains two 07-25 findings
+  whose scratchpad producers are gone, so their noise level is unverifiable; their notes are unchanged. Re-runs:
+  - The GOs (07-25 x3, 08-20 x2) need none: they held at 2.5x the stated noise, and the notes give the run value.
+  - The 08-20 "does NOT reactivate via soma recurrence" negative: excess noise could cut either way, so re-check
+    it at 40 pA only if that route reopens.
+  - Re-run the 09-17 K18 read-noise floor first, because noise is the quantity it measures. Run it at 40 pA once
+    the rename is on main, as pool lines at a provisioned main revision. The prereg and its exact lines, the s42
+    smoke first, are in `research/findings/2026-10-01-gap5-read-noise-floor-ou40-remeasure-PREREGISTRATION.md`.
+    Name that prereg in `--checked`.
+  - The 09-16 forward-band and 08-27 LTU NO-GOs wait on its result.
+  RESULT: a PROVISIONAL finding comparing sigma_read at 40 pA against 100 pA. (2026-10-01)
+- T17-phantom-cfg: (cloud Claude) merged. Fix: `cfg.enable_stp` maps to `enable_short_term_plasticity`. Findings in
+  AFFECTED.md are grep mentions, which over-include (T15 showed that mentioning a runner is not running it). Scripted
+  exception, as for T15:
+  - For each runner in the headline table (non-default dropped), add a dated `Correction (PROVISIONAL, local model)`
+    note (stated vs run value, nothing re-interpreted).
+  - Add it only to findings whose frontmatter `runner:` or whose command names that runner as the producer.
+  - Skip the 8 `ou_noise_sigma_pa` runners (T15 covers them) and AUTONOMOUS_STATE.
+  - Commit on `research/draft-phantom-cfg`; RESULT.
+  No runner edits and no re-runs. `cfg_phantom_field` blocks a flagged runner on its next touch, which fixes the
+  default-equal `cfg.dt` lines with no behavior change. (2026-10-01)
+- T3-sleep-ti: (cloud Claude) merged; the finding is inspected. The grader re-derives `aggregate.json`
+  byte-identical, and its selftest passes. STI0-STI6 hold on the 4 defined seeds, so the night does integrate.
+  STI7 fails 4/4 (registered) and STI3b fails 3/4 (not predicted). The family word stays UNDEFINED (U6 on 42 and
+  101), but it cannot reach GO: this is a NO-GO for the method. Do not write a standalone U6 prereg or re-run: neither
+  can change the outcome. Next (prereg section 10, your section-5 draft, dev seeds 8-11 only):
+  - Add the symmetric CA3-CA3 rule (Mishra 2016) as a new arm in a `_sti_symmetric_*` copy of the runner.
+  - Use the within-class weight permutation (equal pre-night weight classes) as its STI3 control from the start.
+  - Report PAB and PBD retention, DI and the control's validity.
+  RESULT, then Claude writes the next family prereg. Sleep downscaling is the second companion. (2026-10-01)
+- triage: (cloud Claude) merged as a report.
+  - The 28 REAL failures are old July demo consoles (emerge58/60/61/66: composer D 128 vs 256), v14 stage B, and 8
+    `*_no_harm` tests that pin a past arc's files. None is on the production path.
+  - POLLUTION (33) is test isolation: `cpd_v1.NOUN_VOCAB = ...` at import time. The fix (monkeypatch and restore)
+    is an edit to existing tests, so it is a work package for a later Claude session.
+  - Retiring the `*_no_harm` pins is the owner's call. Nothing for you to run. (2026-10-01)
+- handled: [iw2-R-pre], [T3], [ecker-ou], [T17], [triage] (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):

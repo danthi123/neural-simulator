@@ -1,0 +1,147 @@
+{
+ "family": {
+  "verdict": "UNDEFINED",
+  "pm_verdict": "UNDEFINED",
+  "necessity": {
+   "offline_activity": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "swr_replay_propagation": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "weight_change_structure": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "replay_coreactivation": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "temporal_order": {
+    "necessary_on": 1,
+    "of": 4,
+    "label": "contributing"
+   },
+   "shared_item": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "pattern_completion": {
+    "necessary_on": 0,
+    "of": 4,
+    "label": "not necessary"
+   },
+   "adaptation": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   },
+   "plasticity_during_replay": {
+    "necessary_on": 4,
+    "of": 4,
+    "label": "contributing"
+   }
+  }
+ },
+ "per_seed": {
+  "42": {
+   "verdict": "UNDEFINED",
+   "pm_verdict": "UNDEFINED",
+   "gates": null,
+   "undefined": [
+    "U6 the weight-permutation control lost the premises or flooded the foils: STI3 has no valid control"
+   ]
+  },
+  "43": {
+   "verdict": "NO-GO",
+   "pm_verdict": "NO-GO",
+   "gates": {
+    "STI0_premises_learned": true,
+    "STI1_sleep_infers": true,
+    "STI2_replay_necessary": true,
+    "STI3_structure_necessary": true,
+    "STI3b_order_necessary": false,
+    "STI4_chain_decides": true,
+    "STI5_no_false_inference": true,
+    "STI6_representation": true,
+    "STI7_premises_survive": false,
+    "PM1_what_matters_kept": false,
+    "PM2_replay_follows_strength": false,
+    "PM3_detail_fades": false
+   },
+   "undefined": null
+  },
+  "44": {
+   "verdict": "NO-GO",
+   "pm_verdict": "NO-GO",
+   "gates": {
+    "STI0_premises_learned": true,
+    "STI1_sleep_infers": true,
+    "STI2_replay_necessary": true,
+    "STI3_structure_necessary": true,
+    "STI3b_order_necessary": false,
+    "STI4_chain_decides": true,
+    "STI5_no_false_inference": true,
+    "STI6_representation": true,
+    "STI7_premises_survive": false,
+    "PM1_what_matters_kept": false,
+    "PM2_replay_follows_strength": false,
+    "PM3_detail_fades": false
+   },
+   "undefined": null
+  },
+  "100": {
+   "verdict": "NO-GO",
+   "pm_verdict": "NO-GO",
+   "gates": {
+    "STI0_premises_learned": true,
+    "STI1_sleep_infers": true,
+    "STI2_replay_necessary": true,
+    "STI3_structure_necessary": true,
+    "STI3b_order_necessary": true,
+    "STI4_chain_decides": true,
+    "STI5_no_false_inference": true,
+    "STI6_representation": true,
+    "STI7_premises_survive": false,
+    "PM1_what_matters_kept": false,
+    "PM2_replay_follows_strength": false,
+    "PM3_detail_fades": false
+   },
+   "undefined": null
+  },
+  "101": {
+   "verdict": "UNDEFINED",
+   "pm_verdict": "UNDEFINED",
+   "gates": null,
+   "undefined": [
+    "U6 the weight-permutation control lost the premises or flooded the foils: STI3 has no valid control"
+   ]
+  },
+  "102": {
+   "verdict": "NO-GO",
+   "pm_verdict": "NO-GO",
+   "gates": {
+    "STI0_premises_learned": true,
+    "STI1_sleep_infers": true,
+    "STI2_replay_necessary": true,
+    "STI3_structure_necessary": true,
+    "STI3b_order_necessary": false,
+    "STI4_chain_decides": true,
+    "STI5_no_false_inference": true,
+    "STI6_representation": true,
+    "STI7_premises_survive": false,
+    "PM1_what_matters_kept": false,
+    "PM2_replay_follows_strength": false,
+    "PM3_detail_fades": false
+   },
+   "undefined": null
+  }
+ }
+}

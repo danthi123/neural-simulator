@@ -50,3 +50,12 @@ NO-GO by the stated bar (2/6 < 5/6) -- but a materially DIFFERENT, improved nega
 Residual, precisely isolated: for 4/6 seeds, recall depth is INSENSITIVE to reverse-edge suppression even when driven far past full elimination -- the limiting factor for those seeds is something the write side does not touch.
 Named next mechanism: characterize the READ-side noise floor directly (repeated graded-instrument reads of the SAME frozen weights, to separate genuine per-seed substrate variance from instrument read noise at the weak-cue operating point) and/or investigate whether forward-band ABSOLUTE magnitude at encode time (not just its ratio to reverse) is the actual limiting factor for weak-cue completion depth -- a homeostatic forward-band strengthening process (rather than further reverse suppression) is the next candidate lever.
 Source: Kim and Kim 2025, PLoS Comput Biol, doi:10.1371/journal.pcbi.1013267 (PMID 40623085). <!--derived-->
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_reverse_edge_hetero_depression_ltu_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.
