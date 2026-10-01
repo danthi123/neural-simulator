@@ -254,7 +254,10 @@ def run_one(batch, model, task, budget_s, max_turns, lock):
            "--max-turns", str(max_turns), "--run-budget", str(budget_s), "-t", TOOLSETS]
     if model["provider"] == "openrouter":
         cmd += ["-m", model["id"], "--provider", "openrouter"]
-    env = dict(os.environ, HERMES_HOME=HOME, HERMES_CRON_SESSION="1", HOME=os.path.join(run_dir, "home"))
+    # Production Hermes lets its file tools write in the projects folder (owner 2026-09-30); here, the run's own dir
+    # and Hermes's scratch only. (Batch screen1 ran before this, with the image default /opt/data, for every model.)
+    env = dict(os.environ, HERMES_HOME=HOME, HERMES_CRON_SESSION="1", HOME=os.path.join(run_dir, "home"),
+               HERMES_WRITE_SAFE_ROOT=os.pathsep.join([run_dir, os.path.join(HOME, "cache")]))
     t0 = time.time()
     transcript = os.path.join(run_dir, "transcript.jsonl")
     with open(transcript, "w") as tf:
