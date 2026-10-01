@@ -46,12 +46,15 @@ EXTRA_LESIONS = {
 # (faculty_key, turn_label, decision_field_paths, thin)
 # OPT-IN row (2026-09-24): it measures a default-OFF capability, so it enters the registry only when BRAIN_FALSE_BELIEF_CHAT=1 is
 # set in both arms, i.e. in a capability battery launched with tools/lb_shard.py ... --extra-env BRAIN_FALSE_BELIEF_CHAT=1.
+# tools/integration_wave2_flip.py comments this line out when the packet flips (the row then joins the headline set).
 REQUIRED_ENV = {'BRAIN_FALSE_BELIEF_CHAT': "1"}
 
+# REPLY FIELDS (integration wave 2, 2026-09-30; packet research/packets/integration-wave2/false-belief-chat/): the row
+# compares the probe turn's primary reply fields (docs/TERMS.md `load-bearing`), not the trace block, so its registered
+# verdict IS the reply-level one ("Sally will look in the basket ..." intact vs "... box ..." lesioned). The trace
+# block (`false_belief_tom.belief_location` etc.) is still in every arm file for reading.
 EXTRA_PROBES = [
-    ("tom-false-belief", "tom_fb",
-     ["false_belief_tom.acted", "false_belief_tom.belief_location", "false_belief_tom.reality_location"],
-     False),
+    ("tom-false-belief", "tom_fb", ["answer", "abstained", "recalled_svo"], False),
 ]
 
 # (label, message, session, reset, percept, rich) -- see onebrain_regression_battery.PROBE_TURNS for the shape.
@@ -61,3 +64,21 @@ EXTRA_TURNS = [
      "Where will Sally look for the marble?",
      "tomfb", True, None, False),
 ]
+
+
+def selftest() -> dict:
+    """Shape checks only (no brain build)."""
+    from research.runners.onebrain_regression_battery import _TURN_BY_LABEL, PROBE_TURNS, _EXTRA_TURNS
+    from webapp.false_belief_chat import _split_sentences, classify
+    labels = {t[0] for t in list(PROBE_TURNS) + list(_EXTRA_TURNS)} | set(_TURN_BY_LABEL)
+    msg = EXTRA_TURNS[0][1]
+    kinds = [(classify(s) or {}).get("kind") for s in _split_sentences(msg)]
+    checks = {
+        "EXTRA_LESIONS keys == EXTRA_PROBES keys": set(EXTRA_LESIONS) == {r[0] for r in EXTRA_PROBES},
+        "probe turn reachable by the battery": all(r[1] in labels for r in EXTRA_PROBES),
+        "one fresh session": len(EXTRA_TURNS) == 1 and EXTRA_TURNS[0][3] is True,
+        "the story is PLACE, LEAVE, MOVE, QUERY (an unwitnessed move)": kinds == ["place", "leave", "move", "query"],
+        "reply fields only, not thin": all(set(r[2]) == {"answer", "abstained", "recalled_svo"} and r[3] is False
+                                           for r in EXTRA_PROBES),
+    }
+    return {"ok": all(checks.values()), "checks": checks}

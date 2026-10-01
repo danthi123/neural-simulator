@@ -1,0 +1,83 @@
+{
+ "runner": "research.runners.iw2_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/runners/iw2_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw2/dev_s7/identity/default.json",
+  "research/findings/raw/_iw2/dev_s7/identity/on_neural-selfid.json",
+  "--expect",
+  "differs",
+  "--packet",
+  "neural-selfid",
+  "--out",
+  "research/findings/raw/_iw2/dev_s7/verdicts/D_neural-selfid.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "on:neural-selfid"
+ ],
+ "git_shas": [
+  "1718c83d07b06c376ded7bc81d66679237041c12",
+  "1718c83d07b06c376ded7bc81d66679237041c12"
+ ],
+ "expect": "differs",
+ "packet": "neural-selfid",
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "same_script": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true,
+  "deterministic_env_both": true
+ },
+ "differing_turns": [
+  14,
+  15
+ ],
+ "reply_differing_turns": [
+  14,
+  15
+ ],
+ "reply_diffs": [
+  {
+   "turn": 14,
+   "message": "what are you?",
+   "for": "neural-selfid",
+   "a": "the brain uses the spikes",
+   "b": "I don't know about that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?"
+  },
+  {
+   "turn": 15,
+   "message": "who are you?",
+   "for": "neural-selfid",
+   "a": "the brain uses the spikes",
+   "b": "I don't know about that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?"
+  }
+ ],
+ "own_differing_turns": [
+  14,
+  15
+ ],
+ "out_of_scope_differing_turns": [],
+ "ok": true,
+ "verdict": "DIFFERS-IN-SCOPE",
+ "inputs": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/dev_s7/identity/default.json",
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/dev_s7/identity/on_neural-selfid.json"
+ ]
+}
