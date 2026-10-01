@@ -106,7 +106,7 @@ These runners wrote a **non-default** value to a phantom field, so the engine ra
 | `spiking_novelty_habituation_organ.py` | `1.0` | 111 | no | 2026-09-09-spiking-novelty-wirein-engagement-of-default-off, 2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO, 2026-09-25-prioritized-memory-remember-what-matters-DESIGN |
 | `spiking_sm_cortex.py` | `1.0` | 175 | no | 2026-06-15-L1-SM-on-spiking-deep-research, 2026-06-15-phaseB-spiking-cortex-WALL-rate-to-spike, 2026-06-15-phaseB-task3-centering-RESULT, AUTONOMOUS_STATE |
 
-### `cfg.enable_stp` (real: `enable_stdp`, default True)
+### `cfg.enable_stp` (real: `enable_short_term_plasticity`, default True; Claude review 2026-10-01: STP is short-term plasticity, not `enable_stdp`)
 
 | Runner | Value written | Line(s) | Differs from default? | Findings |
 |---|---|---|---|---|
