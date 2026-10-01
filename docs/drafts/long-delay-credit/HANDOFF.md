@@ -113,6 +113,32 @@ cp -r /home/dant123/Projects/sim/research/findings/raw/_long_delay_credit_bg/swe
 rc=2 (no tag passes every criterion): STOP -> NEEDS-CLAUDE item 4. rc=0: the printed `"chosen"` tag is the
 configuration. A job that crashes twice: STOP -> NEEDS-CLAUDE item 5.
 
+## Step 4a: outcome-timing pilot (2026-10-01, RULING T1-LDC; your draft build, dev seeds only)
+
+Step 4 (rc=2) was an instrument failure, not a verdict: the signed-DA precondition (prereg 7.3) never held, so no
+credit gate ran (reading in SPIKING-WORKLOG.md, 2026-10-01). Never re-run Step 4. Bank its sweep once, by the Step 2
+rules: `git add research/findings/raw/_long_delay_credit_bg/sweep`, commit `data(long-delay credit): Step 4 instrument
+sweep, dev seeds 7-15, rc=2 chosen=null (not evidence)`.
+
+Then this pilot, in `$WT/draft-ldc-outcome-timing` on `research/draft-ldc-outcome-timing` started from this branch,
+run the way your draft builds run. The registered runner is never edited; the pilot uses a copy.
+1. Copy `research/runners/long_delay_credit_bg.py` to `research/runners/_ldc_outcome_timing_pilot.py`; make
+   OUTCOME_MS and REWARD_ON_MS (runner lines 49-50) command-line options with unchanged defaults. With the defaults it
+   must reproduce one Step 4 base row exactly (same seed, schedule, `--n-train`); if not, stop and say so.
+2. Grid, numpy, dev seeds 8 and 11, schedules credit_immediate and late_immediate, `--n-train 400`: reward onset 30,
+   150 and 300 ms into an outcome screen of onset + 100 ms, crossed with w_outc_strio 30 and 60. Per cell record the
+   unrewarded in-window DA min (bar <= 0.47), rewarded max (bar >= 0.60), ITI offset at the lr=0 probe (bar
+   |x| <= 0.005), sanity and credit_immediate success.
+3. At lr=0 and default constants: why seeds 9 and 12 do not clear memory (rates after the clear while varying clear_pA,
+   w_clear_fs, CLEAR_MS one at a time) and why seed 14 never explores (p(ch0|A), p(ch0|B); organ channel asymmetry).
+4. Commit the outputs and a short `PILOT.md` table on the draft branch; write `[T1] RESULT: Step 4a pilot @ <sha>`.
+   T1 then stops: Claude writes prereg Amendment A0 and `## Step 4b` from the pilot.
+
+For A0 (Claude): if no onset of 300 ms or less signs the outcome DA (unrewarded min <= 0.47 with |ITI offset| <=
+0.005), the striosome-GABA_B critic on this organ is banked as a finding and the next method is a timed omission route
+(LHb -> RMTg GABA onto SNc); the capability stays. If DA is signed but sanity/credit_immediate stay below 0.8 on most
+seeds, the next method targets the eligibility tag's action-specificity.
+
 ## Step 5: Amendment A (freeze the constants; nothing else may change)
 
 1. If `chosen` is not `base`, edit the default(s) in `CreditParams` (`research/runners/bg_corticostriatal_credit.py`)

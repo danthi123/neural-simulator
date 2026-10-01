@@ -20,9 +20,21 @@ import sys
 DEV_SEEDS = tuple(range(7, 16))
 
 
+def _data_files(d, tag, schedule):
+    """The tag's data artifacts. The pattern also matches the provenance sidecars (`<artifact>.json.prov.json`,
+    written next to every artifact by research/runners/__init__.py), which hold no rows: they are skipped."""
+    return sorted(f for f in glob.glob(os.path.join(d, "%s_%s_*.json" % (tag, schedule)))
+                  if not f.endswith(".prov.json"))
+
+
+def _num(x, missing):
+    """A measured 0.0 is a value; only None (not measured) takes the fail-safe default."""
+    return missing if x is None else x
+
+
 def _rows(d, tag, schedule):
     out = {}
-    for f in glob.glob(os.path.join(d, "%s_%s_*.json" % (tag, schedule))):
+    for f in _data_files(d, tag, schedule):
         for r in json.load(open(f))["rows"]:
             if r["arm"] == "full" and r["schedule"] == schedule:
                 out[int(r["seed"])] = r
@@ -46,9 +58,11 @@ def criteria(d, tag):
                                           and (i["mem_after_decoy_acc_probe"] or 0) >= 0.9
                                           and (i["mem_after_clear_hz"] if i["mem_after_clear_hz"] is not None
                                                else 99) <= 5.0 for i in inst)
-    res["c3_dopamine"] = bool(ci) and all(
-        (r["da_outcome_rewarded_max_mean"] or 0) >= 0.60 and (r["da_outcome_unrewarded_min_mean"] or 1) <= 0.47
-        and abs(r["instrument"]["da_iti_offset_probe"] or 1) <= 0.005 for r in ci.values())
+    # prereg section 7 item 3: the outcome bars on the critic-trained schedule; the tonic offset on EVERY probe
+    # (it is not schedule-limited: a critic tail that leaks into the ITI shows only where the outcome precedes it)
+    res["c3_dopamine"] = bool(ci) and bool(inst) and all(
+        _num(r["da_outcome_rewarded_max_mean"], 0) >= 0.60 and _num(r["da_outcome_unrewarded_min_mean"], 1) <= 0.47
+        for r in ci.values()) and all(abs(_num(i["da_iti_offset_probe"], 1)) <= 0.005 for i in inst)
     res["c4_sanity"] = bool(sa) and all(r["success"] >= 0.9 for r in sa.values())
     pos = [r for r in list(ci.values()) + list(li.values())]
     n_ok = sum(1 for r in ci.values() if r["success"] >= 0.8 and r["response_rate"] >= 0.8)

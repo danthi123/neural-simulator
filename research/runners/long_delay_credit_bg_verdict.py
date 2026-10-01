@@ -22,6 +22,8 @@ RESP_FLOOR, MEM_HOLD_OK, EARLY_SHARE_MIN, DOSE_DELTA, DROP = 0.80, 0.90, 0.5, 0.
 def load(paths):
     cells, hashes = {}, set()
     for p in paths:
+        if p.endswith(".prov.json"):     # Step 7's shell glob `gate/*.json` also passes the provenance sidecars
+            continue
         d = json.load(open(p))
         hashes.add(d.get("runner_sha256"))
         for r in d["rows"]:

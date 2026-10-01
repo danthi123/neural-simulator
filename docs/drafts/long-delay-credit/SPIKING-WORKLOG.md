@@ -209,3 +209,13 @@ sidecars (no `rows` key) -> `KeyError: 'rows'`. I ran it against a prov-free cop
 null). The sweep data + report are NOT committed: the HANDOFF sequences the data commit after the amendment
 commit, which does not happen at a STOP. Packet branch: research/long-delay-credit-spiking (this WORKLOG commit
 is the new tip; unpushed per the push-credential ruling).
+
+## 2026-10-01: Claude's reading of the Step 4 sweep (NEEDS-CLAUDE item 4)
+- An instrument failure, not a NO-GO. No credit gate ran; the method's precondition, a signed DA signal at the outcome (prereg 7.3), was never met, so nothing here measures corticostriatal credit.
+- No signed DA at defaults: unrewarded DA min 0.489-0.498 (bar 0.47) in every tag except strio60/strio60snc10. The rule then only potentiates: cue->D1 rose ~26-52 on both channels and D2 went to ~0 (void 9/9, base credit_immediate), although the correct mapping still rose more (s8 cue A: +48 vs +26).
+- strio60, the one tag that made DA signed, removed the void on 7/9 seeds; weights moved both ways; sanity 0.80-0.86 (s7, s8, s11) and credit_immediate 0.80-0.84 (s8, s11, s13) in 200 trials.
+- strio60's depression is not a timed omission dip: the unrewarded in-window min is ~0.48, while late_immediate's following-trial ITI sits 0.10-0.13 below baseline at the lr=0 probe on all 9 seeds (0.16-0.19 with snc10), so before any value is learned. Inferred, to be measured by a pilot: most of the striosome GABA_B inhibition lands after the 100 ms outcome window. The record's working GABA_B subtraction used a 150 ms expectation lead overlapping the reward (2026-06-09-N9-SNc-rV-subtraction-research.md section 1.0); here the reward is 30-80 ms into the screen (runner lines 49-50). Wall reframe: the expectation's time course was replaced by a 30-80 ms constant.
+- Seed defects that do not depend on the tag, at lr=0 and identical in all 9 tags: in s9 and s12 the memory is not cleared (32 and 29 Hz after the clear; hold 0.84/0.87); s14 has no exploration (p(ch0|A) = p(ch0|B) = 1.0). They fail c1/c2 in every tag. A gate seed like s14 would score as a G1 fail, not UNDEFINED (prereg line 155), so the scorer's all-seeds rule is kept: relaxing it changes no tag's result here (no seed passes every item in any tag) and would hide defects that also threaten the gate.
+- The sweep ran --n-train 200; prereg 7.6 and the gate use 400.
+- Scorer `.prov.json` glob bug fixed in the same commit as this entry; on the real sweep dir the fixed scorer gives exactly the workaround report (rc=2, chosen null).
+- Next: Step 4a pilot (Hermes, draft build, dev seeds), then Claude writes Amendment A0 and Step 4b; see the HANDOFF.
