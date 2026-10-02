@@ -75,3 +75,9 @@ copied from the primary checkout's uncommitted `research/coordination/lane_build
   `research/queue/requeue_host_share_f7f2bd169.tsv` (identical to the held lines except the sha, plus `max_age_h=168`);
   the four s42 recall lines that already died on 2026-09-29 (intact_a, intact_b, k-select:intervene,
   k-select:substitute) are in `requeue_host_share_f7f2bd169_dispatched_failed.tsv`. Queueing is the coordinator's call.
+
+## 2026-10-02 16:44 EDT - section 8 scored (T4)
+
+- 108/108 gate cells (gate f7f2bd169) scored by the registered scorer -> **BASELINE-VALID** (V1 sham-clean 6/6, V3 applied, V4 registrable, V5 drift 0, V6 tiny-demo +LTM, PYTHONHASHSEED ok, seed threading ok, missing shards 0). Finding: research/findings/2026-10-02-host-share-baselines-RESULT.md.
+- Board line (Claude moves to the board): 2026-10-02 host-share baseline (plan step 2): BASELINE-VALID; measured panel host_decision_share 0.958, neural_decision_fraction 0.042; classes k-select HOST-OWNED, v-choice HOST-OWNED, bg-select HOST-OWNED; content learned 0.667, python-selected 0.333. Finding: research/findings/2026-10-02-host-share-baselines-RESULT.md.
+- NEEDS-CLAUDE #8 recorded in the runbook (sync summary docs + board; hand the bg-select and ignition numbers to the step-3 builder as its "before" values).
