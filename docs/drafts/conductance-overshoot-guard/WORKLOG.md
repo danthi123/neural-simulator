@@ -219,3 +219,12 @@ shows `A`/`M` for all of them). No push, no merge.
 - **No push, no merge:** per the `push-credential` ruling (S has no push credential; the branch
   lives in this W checkout where Claude reviews and merges) and the wake's "never push". The
   branch `research/conductance-overshoot-guard @ 91608ce47` is ready for Claude to review/merge.
+
+- **cupy re-run result (2026-10-01 23:12 EDT):** `bash tools/gpu_remote.sh log 40` (T13 Start condition)
+  shows `DONE(rc=1)` at 2026-10-01 19:39:47 for `SIM_BACKEND=cupy .venv/bin/python -m pytest -q
+  tests/test_bounded_conductance_integration.py` from the W worktree: **1 failed, 3 passed in
+  1.14s** - failing: `tests/test_bounded_conductance_integration.py::test_byte_identical_when_off`.
+  The previous 3/4 NumPy-conversion failure is cleared (the other three pass now: overshoot flag
+  off, bounded flag on, small-conductance equivalence). **T13 = STOP per the task line (rc != 0):
+  NEEDS-CLAUDE "[T13]" carries the failing test name; whether byte-identical-when-off is a real
+  regression of the guard or a test expectation is Claude's call.**
