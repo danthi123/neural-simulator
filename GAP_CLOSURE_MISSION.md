@@ -40,6 +40,8 @@ instrument sweep (243 pool jobs, dev seeds) per each branch's own HANDOFF. NOT q
 seeds wait on its step-2 operating-point check passing first); B2d (needs a harness change first, NEEDS-CLAUDE per
 its own prereg).
 
+**2026-10-02 (local model):** plan step 3 - BG live-seam retirement - gate NO-GO: all five other gates hold (production host owns the reply; neural seam correct on empty/content; value lesion moves it; bus argmax clean) but G4 latch read threshold-invariance FAILS (latch_thr_change 0.25), so the host read still owns part of the commit; nothing retired, NEEDS-CLAUDE #5 (next method). Finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md (branch research/selection-seam-need-reversal 0466e8c24). Also landed today: step-2 host-share baselines BASELINE-VALID (NEEDS #8: summary docs + board sync + before-values for the step-3 redo).
+
 *Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
 
 
