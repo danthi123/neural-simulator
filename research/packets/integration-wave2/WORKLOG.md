@@ -47,3 +47,16 @@
   provisional note only, NOT marked done by the flip (validation pending).
 - F commit through gates, no push (standing rule: sim-sync publishes main),
   then PINS row F + pool_provision isolated pool41 pool42.
+
+## 2026-10-01 20:43 EDT - section 7 step B/F start (provision ok, jobs committed, wave 1 held for canary)
+- RULING iw2-provision: provision request for F=1fb805e9e REFUSED (stale vs published main
+  8df14a06d) -> agent_sync_branch main into the branch @ 94e0760a7 (contains main + the flip);
+  PINS re-pinned F = 94e0760a7 (append-only row, env.sh takes the last F); provision requested
+  for 94e0760a7 -> state ok, "provisioned on pool41, pool42" (6998 files, 111 MiB + 278 MiB data).
+- make_jobs flip @ F = 276 lines (240 LB + 36 guard), identity = 3 lines; all 276 carry the
+  required assert_iw2_node + assert_iw2_defaults <FLIP> prefix (0 violations); committed
+  3f9d77449 (jobs + PINS row + shard PIN.txt; no push - standing rule).
+- wave 1 queue REFUSED by pool_queue: no pool canary record for (load_bearing_fraction,
+  94e0760a7). Canary launched on pool41 (line 1 of flip_94e0760, background, wait<=14400s).
+  NEXT WAKE: on PASS -> queue wave 1 (sed 1,43) + step F identity (3 lines) + waves.tsv, then
+  waves 2-7 while fewer than 10 iw2-flip lines remain.
