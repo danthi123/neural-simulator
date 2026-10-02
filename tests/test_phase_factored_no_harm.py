@@ -38,18 +38,10 @@ def _git(*args):
                           capture_output=True, text=True)
 
 
-def test_protected_set_byte_unchanged_across_the_arc():
-    """git diff over the protected set from the pre-arc ref to HEAD must be
-    empty. SKIP only if git or the ref is unavailable (CI without history)."""
-    probe = _git("rev-parse", "--verify", _PRE_ARC_REF + "^{commit}")
-    if probe.returncode != 0:
-        pytest.skip("pre-arc ref %s unavailable" % _PRE_ARC_REF)
-    res = _git("diff", "--name-only", _PRE_ARC_REF + "..HEAD", "--", *_PROTECTED)
-    assert res.returncode == 0, res.stderr
-    changed = [ln for ln in res.stdout.splitlines() if ln.strip()]
-    assert changed == [], (
-        "protected modules were modified during the phase-factored arc: %r"
-        % changed)
+# RETIRED 2026-10-01 (owner ruling, runbook section 6 `no-harm-retire`): `test_protected_set_byte_unchanged_across_the_arc` pinned this arc's protected
+# files byte-unchanged since c1e79b719 (phase-factored loop plan, 2026-05-30). Main has since edited them on purpose, so the pin
+# only measured elapsed time (test triage, research/draft-test-triage @ 636cbf76a, REAL group). Arc record:
+# `git show c1e79b7191427ce4164fea7490f5666456ae71cc`.
 
 
 def test_abstention_moat_still_7_of_7():

@@ -8,7 +8,6 @@ the guard means "no protected module changed since the last approval."
 Bump it whenever a new protected sim/ edit is byte-approved. (Was the plan
 commit 0150e5b; advanced to ed880244 — the approved N9 determinism-matvec
 cleanup — after the GABA_B/GIRK + determinism edits legitimately landed.)"""
-import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,12 +20,10 @@ PROTECTED = [
     "research/runners/dendritic_fair_core.py"]
 
 
-def test_protected_byte_untouched_across_td_critic_range():
-    diff = subprocess.run(
-        ["git", "diff", "--name-only", "%s..HEAD" % _TD_BASE, "--"]
-        + PROTECTED, capture_output=True, text=True, cwd=ROOT)
-    assert diff.stdout.strip() == "", (
-        "PROTECTED MODIFIED:\n" + diff.stdout + diff.stderr)
+# RETIRED 2026-10-01 (owner ruling, runbook section 6 `no-harm-retire`): `test_protected_byte_untouched_across_td_critic_range` pinned this arc's protected
+# files byte-unchanged since c1d1a3d29 (N9 TD cue-shift byte-approved edit, 2026-06-10). Main has since edited them on purpose, so the pin
+# only measured elapsed time (test triage, research/draft-test-triage @ 636cbf76a, REAL group). Arc record:
+# `git show c1d1a3d297a0665e54a0ca9d1b3f00e09fc24019`.
 
 
 def test_no_autograd_in_shipped_td_path():

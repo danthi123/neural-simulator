@@ -231,6 +231,28 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
 line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
+**Session-2 packets (cloud Claude, 2026-10-01; branch `claude/session2-packets`).** T18-T20 move the three host
+decisions RULING `iw2-stage1-credit` names into the spiking substrate. T21 then makes them the default paths. Start
+each when `git -C $P log --oneline -1 -- tools/s2p_score.py` prints a commit (the owner landed the branch).
+T18-T20 are independent: run them in parallel, since the pool takes all three.
+
+**T18. fb-spiking-witness** (who saw the move: a spiking presence/absence flip-flop). `$WT/fb-spiking-witness`,
+`docs/drafts/fb-spiking-witness/HANDOFF.md` sections 0-5 (it creates the branch from main); WORKLOG
+`docs/drafts/fb-spiking-witness/WORKLOG.md` (create). Write: selection, O/R verdicts, finding, RESULT.
+
+**T19. transitive-spiking-reach** (the chain walk and the reachability test as a spiking wave + goal detector).
+`$WT/transitive-spiking-reach`, `docs/drafts/transitive-spiking-reach/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/transitive-spiking-reach/WORKLOG.md`. Write: as T18.
+
+**T20. word-role-parse** (the self-ID role map reads the words: a Hebbian word x position -> role parser).
+`$WT/word-role-parse`, `docs/drafts/word-role-parse/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/word-role-parse/WORKLOG.md`. Write: as T18.
+
+**T21. s2p-flip** (the three spiking paths become their faculties' defaults; full Stage-1 credit).
+`docs/drafts/s2p-flip/HANDOFF.md`. Start: the iw2 flips are on main (RULING `iw2-flip-hold`: after steps B and F
+passed and Claude merged them), AND Claude has confirmed at least one of T18-T20 with O PASS + R PASS. Flip only the
+confirmed ones. Due before the Stage-1 exit attempt (10-24): if not started by 10-17, NEEDS-CLAUDE "[s2p-window]".
+
 ## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
 Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
@@ -372,6 +394,28 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
   (2026-10-01)
 
+- t18-credit: (owner 2026-10-02) T18's read-out mode, where a host threshold read gates the belief write, earns
+  PARTIAL Stage-1 credit only, never FULL: the host still decides when the belief is written. If read-out is the
+  operating point T18 selects, report it as PARTIAL and start the fully synaptic write as the next method (no-defer).
+  (2026-10-02)
+
+- host-share-packet: (owner 2026-10-02) The 10-08 Claude review adds a fifth package, a host-share measurement at the
+  Stage-1 seams (T6 NEEDS-CLAUDE #10). Do not build it yourself before then. (2026-10-02)
+
+- aws-capacity: (owner 2026-10-02) If T6's 10-17 tripwire fires (the pool cannot finish the Stage-1 gate in time),
+  write NEEDS-CLAUDE with the queue numbers. Claude decides on AWS at the review, within the owner's cap of about
+  $50/day with auto-stop. Never start AWS yourself. (2026-10-02)
+
+- iw2-provision: (2026-10-02) Never run `tools/pool_provision.sh` on S: it needs the workstation's key and rsync,
+  which S does not have. Provision a revision only through the server, per RULING `compute-placement`: `touch
+  $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
+  `/opt/host-status/sim-provision/<sha>.json`. This overrides any HANDOFF line that says to run `pool_provision.sh` or
+  `gpu_remote.sh provision`. A `refused` with "does not contain published main" means: run `bash
+  tools/agent_sync_branch.sh research/<branch>` first, then request the new head at once. For the iw2 flip F
+  (1fb805e9e was refused for that reason): sync research/integration-wave2, redo the flip-F pin at the new head by the
+  HANDOFF's own procedure (NEEDS-CLAUDE if a gate or the HANDOFF refuses the re-pin), request it, then continue steps
+  B and F. handled: [iw2-provision] (2026-10-02)
+
 - cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
   lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
   [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to
@@ -484,15 +528,47 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   correction note under it (two dropped values: noise and STP). (2026-10-01)
 - handled: [T17-merge] (2026-10-01)
 
+- iw2-stage1-credit: (owner decision 2026-10-01, cloud Claude session 2) The three iw2 flips (false-belief-chat,
+  transitive-chat, neural-selfid) count toward Stage 1 as PARTIAL. Each is on by default and changes the reply, but a
+  host decision still sits inside it:
+  - false-belief: "who saw the move" (the host `present` dict);
+  - transitive: the chain walk and its reachability test (`target in path`);
+  - self-ID: the positional role map, which never reads the words.
+  No double count: self-ID is the content-selection parser reaching a new question class (RULING `iw2-verify-go`), not
+  a second mechanism. Each flip counts FULLY once its packet (T18, T19, T20) passes O and R AND T21 makes that path
+  the default with steps B/F passing. In the Stage-1 exit report write "PARTIAL (host decision: <name>)" beside each
+  until then. (2026-10-01)
+- iw2-flip-hold: (owner decision 2026-10-01) The iw2 flip commit stays on research/integration-wave2 and off main
+  until its steps B and F pass (HANDOFF section 7's decision table). Then Claude merges it. Never ask the owner to
+  land a branch that carries the flip before both read PASS. (2026-10-01)
+- no-harm-retire: (owner decision 2026-10-01) The eight protected-pin tests from the triage's REAL group are
+  retired on claude/session2-packets. Each now holds a comment naming its arc commit; the other tests in each file
+  stay:
+  - tests/test_compose_bind_no_harm.py (2fde0ed24)
+  - tests/test_compose_bridge_no_harm.py (c1d1a3d29)
+  - tests/test_td_critic_no_harm.py (c1d1a3d29)
+  - tests/test_engram_bootstrap_no_harm.py (bda6e462c)
+  - tests/test_phase_factored_no_harm.py (c1e79b719)
+  - tests/test_q2_no_harm.py (02addfa63)
+  - tests/test_q2r_no_harm.py (a1035cff5)
+  - tests/test_generative_replay_soundness.py::test_reuse_by_import_only (ec567ab2a)
+  Each pinned files that main has since edited on purpose, so it measured elapsed time, not harm. Do not restore them.
+  The POLLUTION class (`cpd_v1.NOUN_VOCAB` set at import) is still a later Claude work package. (2026-10-01)
+- s2p-canary: (cloud Claude session 2) For T18-T21, run the pool canary yourself exactly as each HANDOFF's step 4
+  says: `bash tools/pool_canary.sh run <node> '<the first line of that job file>' --wait-s N`. A canary PASS lets the
+  gate-seed lines queue. A canary FAIL is a code defect: STOP with NEEDS-CLAUDE. This replaces section 3's "needs a
+  pool canary" STOP for these four tasks only. (2026-10-01)
+- t13-merged: (cloud Claude session 2) research/conductance-overshoot-guard is merged on claude/session2-packets.
+  The flag `enable_bounded_conductance_integration` stays default-OFF, so the merge is byte-identical. T18's organ
+  turns it on in its own bridge: without it, strong GABA_A overshoots (the T13 defect) and the presence attractor
+  cannot be silenced. T13's cupy re-run result still goes in its WORKLOG; an rc != 0 is NEEDS-CLAUDE as before.
+  (2026-10-01)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-01 04:05 [T3] RESULT #8: sleep-TI 6-seed gate family UNDEFINED: 4 NO-GO (STI7 false 43/44/100/102; STI3b false 43/44/102) + 2 U6-UNDEFINED (42/101 wperm invalid); pm UNDEFINED. Finding+16 files on research/sleep-transitive-inference @ f18da9f8f. U6 -> prereg s10. Hands back.
-- 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
-- 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
-- 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
-- 2026-10-01 17:52 [iw2-R-pre] verdict-preconditions blocks T2 s5 commit: branch tools/iw2_score.py score_R() emits no preconditions block (the D-scorer does). Fix is scorer-side via tools/verdict.Verdict (reserved). Verdicts staged, all PASS; flip not run.
-- 2026-10-01 19:07 [T17-merge] ASK: merge research/draft-phantom-cfg @ 64899914f: round-1 AND round-2 MiMo Pro refuters both REJECTED; all 6 defects found are fixed + assert-checked; budget resets next wake for round 3; if both approve I merge via agent_merge.sh.
+- 2026-10-01 19:31 [iw2-provision] STOP: T2 flip F @ 1fb805e9e committed (gates green, PINS row F, board synced); pool_provision.sh: rsync command-not-found on S (rc=127). Needs rsync on S or provisioning from a host that has it. Blocks: T2 validation (prereg steps B/F).
+- 2026-10-01 19:54 [LDC-grid] INFO (corrected): grid ALIVE and progressing - 33 runner procs each on pool41 + pool42, outputs landing (4 + 8 in the nodes' checkouts); the earlier 0/0 read S-side ps (pool jobs never run on S) plus the S output dir (copy-back pending).
