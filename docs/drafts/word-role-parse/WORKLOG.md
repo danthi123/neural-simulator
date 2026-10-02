@@ -7,3 +7,4 @@
 - Section 1: make_jobs sweep -> 8 lines committed; queued 8/8, failures=0 (pool depth 390).
 - NEXT: section 2 when all 64 sweep files land in research/findings/raw/_s2p/word-role-parse/9ea7411/sweep/.
 2026-10-02 word-role-parse: SELECTED op=0 (dev seeds 1-8); sweep 64/64 + selection committed; O=6/R=12 lines committed. Data + job commits this wake.
+2026-10-02 word-role-parse: canary O PASS (pool41, 6 O queued); canary R INCONCLUSIVE x2 (mem_ok 8G refused pool42 + pool41) - 12 R held, NEEDS added. Sections 4-5 blocked.
