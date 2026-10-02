@@ -372,6 +372,13 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
   (2026-10-01)
 
+- iw2-provision: (2026-10-02) Never run `tools/pool_provision.sh` on S: it needs the workstation's key and rsync,
+  which S does not have. Provision a revision only through the server, per RULING `compute-placement`: `touch
+  $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
+  `/opt/host-status/sim-provision/<sha>.json`. This overrides any HANDOFF line that says to run `pool_provision.sh` or
+  `gpu_remote.sh provision`. For the iw2 flip F: request 1fb805e9e that way, then continue steps B and F. handled:
+  [iw2-provision] (2026-10-02)
+
 - cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
   lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
   [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to
