@@ -34,3 +34,4 @@
 - LIVE SEEDS per criterion x seam (reported, not a pass condition): {"C2": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}, "C3": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}}
 - Next: step 3 gate lines (132), step 4 canary + queue.
 - Section 4: canary PASS recorded on pool42 (complete artifact 14:30, prov at_exit clean; pool41 mem_ok refused 7G, pool42 dispatch false-negative but setsid job completed); queued 132 gate lines (failures=132, max_age_h=168).
+- Correction: the previous line's '(failures=132)' was the add-refusal count (canary record had the bare module name; re-recorded with research.runners.stage1_host_share); all 132 gate lines are now queued (final added=8, fail=0 on this retry).
