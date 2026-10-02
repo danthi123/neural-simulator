@@ -66,11 +66,11 @@ PACKETS = {
                     "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True}},
     "word-role-parse": {
         "prereg": "research/findings/2026-10-01-word-role-parse-PREREGISTRATION.md",
-        "organ": "word_role_parser", "grid_len": None,
+        "organ": "word_role_parser", "grid_len": 8,
         "row": "word-role-selfid", "shard_dir": "word-role-selfid",
         "flags": ["BRAIN_NEURAL_SELFID", "BRAIN_WORD_ROLE_PARSE"],
         "op_env": "BRAIN_WORD_ROLE_OP", "lesion_flags": ["BRAIN_WORD_ROLE_LESION"],
-        "probe_message": None, "intact_must_contain": ["spikes"], "intact_must_not_contain": [],
+        "probe_message": "what do you usually use?", "intact_must_contain": ["spikes"], "intact_must_not_contain": [],
         "control": {"row": "word-role-nofact-ctl", "shard_dir": "word-role-nofact-ctl",
                     "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True}},
 }
