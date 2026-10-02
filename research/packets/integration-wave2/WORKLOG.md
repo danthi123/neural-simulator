@@ -74,3 +74,15 @@
 - Canary (load_bearing_fraction, 1fb805e9e) NOT yet run: both pool nodes still refuse mem_ok 8 2
   (LDC grid's memcap scopes hold 5-6G committed-unused). NEXT: canary when mem_ok passes -> wave 1
   (sed 1,43) + step F identity + waves 2-7 while fewer than 10 iw2-flip lines remain.
+
+## 2026-10-01 22:12 EDT - canary PASS; wave 1 (43 lines) + step F identity (3 lines) QUEUED
+- Canary (load_bearing_fraction, 1fb805e9e, gate seed) PASS on pool41 at 22:09 (rc=0, json=1,
+  errors=0; recorded in pool_canaries.tsv) after the LDC grid's last cells freed the memory window
+  (mem_ok 8 2 passed: avail 10G - 4G committed). The canary's own outcome is n/a 0/0 by design -
+  the redirected _pool_canary dir carries no interaction data; the rule reads only rc/json/errors.
+- Queued through pool_queue: wave 1 = 43 lines (sed 1,43 of flip_1fb805e.txt, reason "iw2 step B:
+  prereg ...wave-battery-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216") + step F = 3 identity
+  lines (mem_gb=11). iw2-flip lines in pool.queue: 0 -> 43. waves.tsv rows written (epoch
+  1790907126 = 1-43, epoch 1790907133 = F-identity-3).
+- Pacing: waves 2-7 only when fewer than 10 iw2-flip lines remain (HANDOFF section 7). After every
+  line has landed: score B, F2, F3 (section 7 decision table).
