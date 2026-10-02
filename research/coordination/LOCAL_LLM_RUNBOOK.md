@@ -398,8 +398,11 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   which S does not have. Provision a revision only through the server, per RULING `compute-placement`: `touch
   $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
   `/opt/host-status/sim-provision/<sha>.json`. This overrides any HANDOFF line that says to run `pool_provision.sh` or
-  `gpu_remote.sh provision`. For the iw2 flip F: request 1fb805e9e that way, then continue steps B and F. handled:
-  [iw2-provision] (2026-10-02)
+  `gpu_remote.sh provision`. A `refused` with "does not contain published main" means: run `bash
+  tools/agent_sync_branch.sh research/<branch>` first, then request the new head at once. For the iw2 flip F
+  (1fb805e9e was refused for that reason): sync research/integration-wave2, redo the flip-F pin at the new head by the
+  HANDOFF's own procedure (NEEDS-CLAUDE if a gate or the HANDOFF refuses the re-pin), request it, then continue steps
+  B and F. handled: [iw2-provision] (2026-10-02)
 
 - cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
   lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
