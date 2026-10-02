@@ -160,3 +160,8 @@ WHAT CHANGED
   numbers in the prereg's "DEV expectations". All 26 tests pass. Committed the infra-only part: 81d5cf2a9
   (`tools/lab.py::membrane_bound_check` + its test). Everything else is staged; the prereg is untracked on purpose
   (commit B, alone). Execution packet: `HANDOFF.md`. STOP here (owner token directive).
+
+- 2026-10-02 (local model) steps 6-8: 42/42 gate cells present; score rc=0 -> verdict NO-GO (only G4 false,
+  latch_thr_change 0.25; all 8 preconditions pass); finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md;
+  NEEDS-CLAUDE #5 recorded in the runbook (verdict not GO, no fix started); push skipped per RULING push-credential
+  (sim-sync publishes main); board: GAP_CLOSURE_MISSION.md line + Vikunja; optional dev_cupy s7 check skipped (0/7 files).
