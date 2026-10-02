@@ -18,6 +18,10 @@ battery reads it with ast and never imports this module).
 """
 from __future__ import annotations
 
+# Attribution discipline (tools.lab; gate class AT): `expectation_holds` below makes the lesion's MOVE an executed check
+# (`lever`) beside each row's directional expectation, the pattern lbf_rows/iw2_controls.py uses.
+from tools.lab import lever
+
 REQUIRED_ENV = {"BRAIN_TRANSITIVE_CHAT": "1", "BRAIN_TRANSITIVE_SPIKING_REACH": "1"}
 
 # (label, message, session, reset, percept, rich) -- the PROBE_TURNS shape. Two sessions; each first turn resets.
@@ -56,9 +60,28 @@ EXTRA_PROBES = [
 
 # the control prediction (the reversed chain is not derivable: abstain, lesion leaves it)
 EXPECT = {
-    "transitive-spiking-reach": {"abstains": False},
-    "transitive-spiking-reversed-ctl": {"abstains": True},
+    "transitive-spiking-reach": {"abstains": False, "must": ["river", "reasoned"], "must_not": [],
+                                 "lesion_moves": True},
+    "transitive-spiking-reversed-ctl": {"abstains": True, "must": [], "must_not": [], "lesion_moves": False},
 }
+
+
+def expectation_holds(key: str, intact: dict, lesion: dict) -> dict:
+    """Given a row's intact and lesion reply dicts, return {"held", "moved", "detail"}. The capability row holds when
+    the intact reply states its content AND the lesion MOVED the reply; the control holds when the intact reply meets
+    its prediction AND the lesion did NOT move it. `lever(required=False)` makes the move an executed check (gate class
+    AT, the lbf_rows/iw2_controls.py pattern). The registered verdict is tools/s2p_score.py R; this is a data check
+    the HANDOFF's dev reads may call. Never raises."""
+    try:
+        e = EXPECT[key]
+        ia, la = str(intact.get("answer") or ""), str(lesion.get("answer") or "")
+        moved = lever("%s reply" % key, ia, la, required=False)
+        ok = (intact.get("abstained") is True) if e["abstains"] else (intact.get("abstained") is not True and bool(ia))
+        ok = ok and all(w in ia.lower() for w in e["must"]) and not any(w in ia.lower() for w in e["must_not"])
+        held = ok and (bool(moved) if e["lesion_moves"] else not moved)
+        return {"held": bool(held), "moved": moved, "detail": "intact=%r lesion=%r" % (ia, la)}
+    except Exception as ex:  # noqa: BLE001 -- reported, never swallowed as held
+        return {"held": False, "moved": None, "detail": "unreadable arm: %s" % ex}
 
 
 def selftest() -> dict:
