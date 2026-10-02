@@ -60,3 +60,17 @@
   94e0760a7). Canary launched on pool41 (line 1 of flip_94e0760, background, wait<=14400s).
   NEXT WAKE: on PASS -> queue wave 1 (sed 1,43) + step F identity (3 lines) + waves.tsv, then
   waves 2-7 while fewer than 10 iw2-flip lines remain.
+
+## 2026-10-01 20:59 EDT - CORRECTION: F back to 1fb805e9e (RULING iw2-provision UPDATE 00:40Z)
+- Ruling: "flip F 1fb805e9e IS provisioned (owner-approved one-off). Do NOT sync or re-pin flip F:
+  run steps B and F at 1fb805e9e as the HANDOFF says." The 94e0760a7 re-pin (my response to the
+  stale-refusal) is superseded; its PINS row stays as audit trail - append-only, env.sh takes the
+  LAST F row = 1fb805e9e.
+- make_jobs needs HEAD==PIN when the branch head differs beyond the packet dir (94e0760a7 has
+  runbook + session2-packets code) -> built the battery in a detached worktree at 1fb805e9e
+  (git worktree add; .venv + data symlinks per HANDOFF line 28): flip_1fb805e.txt 276 lines
+  (240 LB + 36 guard, 0 prefix violations), identity_1fb805e.txt 3 lines; copied into the branch;
+  superseded 94e0760 job files removed (they were never queued - pool_queue refused, 0 landed).
+- Canary (load_bearing_fraction, 1fb805e9e) NOT yet run: both pool nodes still refuse mem_ok 8 2
+  (LDC grid's memcap scopes hold 5-6G committed-unused). NEXT: canary when mem_ok passes -> wave 1
+  (sed 1,43) + step F identity + waves 2-7 while fewer than 10 iw2-flip lines remain.
