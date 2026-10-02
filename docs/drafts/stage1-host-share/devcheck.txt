@@ -2,7 +2,9 @@
     => 100.0% of the effect is attributable to the manipulation; 0.0% is ALSO PRESENT IN THE CONTROL
   attributable_to C2 host_decision_share vs sham reply-noise floor: treatment=+1  control=+0  diff=+1
     => 100.0% of the effect is attributable to the manipulation; 0.0% is ALSO PRESENT IN THE CONTROL
-FAIL no shard missing
+  attributable_to C3 host_decision_share vs sham reply-noise floor: treatment=+1  control=+0  diff=+1
+    => 100.0% of the effect is attributable to the manipulation; 0.0% is ALSO PRESENT IN THE CONTROL
+PASS no shard missing
 PASS no errored turn
 PASS every turn resolved to its label
 PASS V6 every reply from tiny-demo +LTM
@@ -11,5 +13,5 @@ PASS PYTHONHASHSEED=0 in every arm
 PASS seed threading in every arm
 PASS V1 sham clean
 PASS V3 every live intervention applied
-LIVE SEEDS per criterion x seam (reported, not a pass condition): {"C2": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}, "C3": {"k-select": 0, "bg-select": 0, "organ-c": 0, "metacog": 0, "ignition": 0}}
-DEVCHECK FAILED
+LIVE SEEDS per criterion x seam (reported, not a pass condition): {"C2": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}, "C3": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}}
+DEVCHECK OK
