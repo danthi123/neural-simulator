@@ -14,7 +14,7 @@ beside that criterion. It answers the Stage-1 exit HANDOFF's NEEDS-CLAUDE #10.
 
 Rules for this packet: every step below is routine for you EXCEPT where a row says NEEDS-CLAUDE. You never edit the
 runner, the instrument, the tests, the prereg, `make_jobs.sh` or a job line; you never flip a default. RULING
-`s1hs-canary` lets you run the pool canary yourself (step 4). The verdict you write is PROVISIONAL until Claude
+`s1hs-canary` lets you run the pool canary yourself (step 4). "WORKLOG <x>" means append <x> to `$K/WORKLOG.md` (step 0 creates it). The verdict you write is PROVISIONAL until Claude
 confirms it; INVALID-OR-INCOMPLETE follows RULING `results-without-pass`.
 
 Every block is ONE Bash call. Set first in each: `P=/home/dant123/Projects/neural-simulator; PY=$P/.venv/bin/python;
@@ -28,9 +28,10 @@ Start when `git -C $P log --oneline -1 -- research/runners/stage1_host_share.py`
 ```bash
 cd $P && git worktree add -b research/stage1-host-share $WT/stage1-host-share main && cd $WT/stage1-host-share && ln -s $P/.venv .venv && ln -s $P/data data
 PIN=$(git rev-parse HEAD); mkdir -p $K && printf 'P\t%s\t%s\n' "$PIN" "$(date -u +%FT%TZ)" > $K/PINS.tsv
+printf '# WORKLOG stage1-host-share (T22)\n' > $K/WORKLOG.md
 SIM_NO_PROVENANCE=1 nice -n 10 $PY -m pytest -q -p no:cacheprovider tests/test_stage1_host_share.py tests/test_host_share.py
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_host_share --selftest | tail -1
-git add $K/PINS.tsv && git commit -m "ops(stage1-host-share): pin P=${PIN:0:9}" && echo "$PIN"
+git add $K/PINS.tsv $K/WORKLOG.md && git commit -m "ops(stage1-host-share): pin P=${PIN:0:9}" && echo "$PIN"
 ```
 
 | result | do |

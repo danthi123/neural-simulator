@@ -90,6 +90,7 @@ def test_aggregate_valid_host_owned_ignition(tmp_path):
         assert cr["seams"]["ignition"]["class"].startswith("HOST-OWNED")
         assert cr["seams"]["k-select"]["class"] == "UNDEFINED"
         assert cr["credit"] == "PARTIAL (host decision: ignition)"
+        assert cr["sham_noise_rate"] == 0.0
     assert "recall" in H.GROUPS and "s1_word" not in H.GROUPS
     md = T.report_markdown(rep)
     assert "C2 (`s1_word`" in md and "PARTIAL (host decision: ignition)" in md

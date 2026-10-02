@@ -366,13 +366,21 @@ def aggregate(shard_dir, seeds, min_live_seeds=SCHEMA.MIN_LIVE_SEEDS_GATE, stage
             pm = SCHEMA.panel(evs, [s for s in H.MEASURED_SEAMS if s in g["seams"]])
             # ATTRIBUTION (gates/attribution_required): the criterion's host share vs the sham (no-intervention)
             # reply-noise floor, as the instrument does for its own panel.
+            # per-criterion sham noise: share of this group's seeds whose intact_a != intact_b on any turn
+            sham = []
+            for seed in seeds:
+                pa, pb = (H.shard_path(shard_dir, seed, group, a) for a in ("intact_a", "intact_b"))
+                if os.path.exists(pa) and os.path.exists(pb):
+                    ra, rb = json.load(open(pa)).get("responses") or {}, json.load(open(pb)).get("responses") or {}
+                    sham.append(any(H.sham_diff(ra.get(lab), rb.get(lab)) for lab in H.turn_specs(group)))
+            sham_rate = (sum(sham) / len(sham)) if sham else None
             attr = None
-            if pm.get("host_decision_share") is not None and v.get("sham_noise_rate") is not None:
+            if pm.get("host_decision_share") is not None and sham_rate is not None:
                 attr = attributable_to("%s host_decision_share vs sham reply-noise floor" % g["criterion"],
-                                       pm["host_decision_share"], v["sham_noise_rate"])
+                                       pm["host_decision_share"], sham_rate)
             crit[g["criterion"]] = {
                 "group": group, "stage1_group": g["stage1_group"], "seams": seams, "turns": turns,
-                "panel_measured": pm, "sham_noise_attribution": attr,
+                "panel_measured": pm, "sham_noise_rate": sham_rate, "sham_noise_attribution": attr,
                 "panel_call_graph_checks": SCHEMA.panel(evs, [s for s in g["seams"] if s not in H.MEASURED_SEAMS]),
                 "credit": credit_line(classes) if ok else "UNDEFINED (measurement %s)" % rep["verdict"]}
         rep["criteria"] = crit
