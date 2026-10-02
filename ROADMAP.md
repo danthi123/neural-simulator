@@ -12,6 +12,21 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-02 — three chat abilities pass their reply test; the moves that make them fully the brain's own are written; sleep inference needs a new method
+
+**Passed:** tracking another person's false belief, chaining "A chases B, B chases C" in chat, and answering questions
+about itself each now change the reply on all six seeds when switched on, with the right controls, independently
+re-checked. Two more checks (switching them on by default without harming anything else) are running next; they stay
+off by default until both pass. Each still has one decision made by host code (who saw the move; the chain's
+reachability test; which word plays which role), so each counts only partly toward Stage 1.
+**Written for the server agent to run:** four packages that move those three host decisions into the spiking brain
+and then switch them on, and a fifth that measures, by intervention, whether the brain or host code decides the answer
+on the Stage-1 test's word-learning and lived-memory questions. **Sleep inference** (inferring A-D after learning A-B
+and B-D on different days, then sleeping): the night does link the memories, but two registered checks failed, so
+this method is a no; the next one adds a symmetric memory-strengthening rule. **Housekeeping merged:** a mislabelled
+noise setting in nine old runners, a config-name audit, a test-suite clean-up, and a guard against unstable inhibition
+(off by default). The Stage-1 exit attempt is due 10-24.
+
 ## 2026-09-25 (afternoon) — owner rulings, a backlog of results scored, and handoff to the local model
 
 **Owner rulings:** the memory pair waits for a fix that makes the brain remember what matters (important facts and key
