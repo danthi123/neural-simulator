@@ -6,3 +6,10 @@
   provision requested -> state ok at 07:05 (attempt 12).
 - Section 1: make_jobs sweep -> 8 lines committed; queued 8/8, failures=0 (pool depth 389).
 - NEXT: section 2 when all 56 sweep files land in research/findings/raw/_s2p/transitive-spiking-reach/9ea7411/sweep/.
+## 2026-10-02 07:23 EDT - section 2 SELECTED op=0 (table row below), section 3 lines made
+- 56/56 sweep files in; select rc=0 -> SELECTED op=0, table rows all true:
+  {"0": {1..8: true}} (dev seeds 1-8, grid_len 7, missing []). Commit 5da6c475c
+  (sweep + selection + gate sidecar selection.json.prov.json - the gate pairs *.prov.json,
+  same pattern as T18).
+- Section 3: O=6 + R=12 lines committed at op=0.
+- NEXT: section 4 canaries (O pool41, R pool42) then queue O+R.
