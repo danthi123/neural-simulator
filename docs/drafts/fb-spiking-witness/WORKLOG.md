@@ -35,3 +35,18 @@
   the venv is repaired. Repair item emitted to research/coordination/tool_health.json.
 - NEXT: when nodes have room, canary R once more (or Claude's ruling), queue 12 R lines
   (mem_gb=8, max_age_h=168); then section 5 (score O + R when 6 O files + 12 LB shards land).
+
+## 2026-10-02 03:14 EDT - section 4 DONE: canary R recorded PASS, 12 R queued; NEEDS #1 resolved
+- Canary R: launch attempts at 01:57 and 02:54 both printed "launch over ssh failed" while the
+  setsid job ACTUALLY LAUNCHED both times (T015721 completed rc=0 wall=932s, json=4, 0
+  tracebacks, wrote _pool_canary/.../lb.json; T025427 still running at 03:14 - left alone,
+  never relaunched). Root cause: pool_canary's rssh wraps ssh in `timeout 60`; on a loaded
+  node the client is killed AFTER dispatch - client reports failure, job runs to completion.
+  The 01:58:45 attempt was a true mem refusal (rc=1, avail 4G) - correctly inconclusive.
+- Recorded the completed T015721 run through the tool's own `record` subcommand (evidence
+  "rc=0 wall=932s json=4 errors=0 unreadable=0 tracebacks=0; id=...T015721 ...") ->
+  `check-line` rc=0 (gate open).
+- Queued 12 R lines (mem_gb=8, max_age_h=168), failures=0 (depth 395).
+- NEEDS "[fb-spiking-witness] STOP #1" removed from the runbook (resolved by the record).
+- NEXT: section 5 - O half ready (all 6 O jsons landed + parse); score O + R once the 12 LB
+  shards (s2p-R-fb tag) land from the R cells now queued.
