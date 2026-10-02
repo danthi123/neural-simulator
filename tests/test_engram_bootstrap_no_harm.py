@@ -2,22 +2,10 @@
 import subprocess, sys, importlib, inspect
 
 
-def test_protected_set_byte_empty_diff():
-    protected = [
-        "research/runners/abstention_gate.py",
-        "tests/test_abstention_gate.py",
-        "sim/td_value_critic.py", "sim/compose_temporal_bind.py",
-        "sim/kernels.py", "sim/bridge.py", "sim/neuromodulators.py",
-        "sim/train_checkpoint.py", "sim/backend.py",
-        "sim/dendritic_plasticity.py",
-        "research/runners/text_minimal_isolation.py",
-        "research/runners/compose_bridge_core.py",
-        "research/runners/compose_bind_core.py",
-        "research/runners/td_critic_core.py",
-        "research/runners/dendritic_fair_core.py"]
-    d = subprocess.run(["git", "diff", "bda6e46..HEAD", "--", *protected],
-                        capture_output=True, text=True)
-    assert d.stdout.strip() == "", "PROTECTED set changed:\n" + d.stdout
+# RETIRED 2026-10-01 (owner ruling, runbook section 6 `no-harm-retire`): `test_protected_set_byte_empty_diff` pinned this arc's protected
+# files byte-unchanged since bda6e462c (engram-bootstrap arc base, 2026-05-18). Main has since edited them on purpose, so the pin
+# only measured elapsed time (test triage, research/draft-test-triage @ 636cbf76a, REAL group). Arc record:
+# `git show bda6e462cf8d012a70966e93921a35aa5201182d`.
 
 
 def test_no_confab_moat_still_7_of_7():

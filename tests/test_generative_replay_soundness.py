@@ -723,55 +723,10 @@ def test_consolidated_schema_is_substrate_trained_content():
 # the current worktree.
 # ----------------------------------------------------------------------
 
-def test_reuse_by_import_only():
-    # (a) Protected files: byte-unchanged since Task 2 commit.
-    drift = []
-    for path_rel in PROTECTED_FILES:
-        try:
-            sha_at = _git_show_blob_sha(path_rel, TASK_2_COMMIT)
-        except subprocess.CalledProcessError as e:
-            drift.append((path_rel, "not_in_commit", str(e)))
-            continue
-        try:
-            sha_now = _git_show_blob_sha_worktree(path_rel)
-        except FileNotFoundError:
-            drift.append((path_rel, "missing_in_worktree", ""))
-            continue
-        if sha_at != sha_now:
-            drift.append((path_rel, sha_at, sha_now))
-    assert not drift, (
-        "Protected files diverged from Task 2 commit:\n  " +
-        "\n  ".join(f"{p}: committed={a} worktree={b}"
-                     for (p, a, b) in drift))
-
-    # (b) The loop controller imports its primitives from the
-    # protected modules (reuse-by-import). Check the import surface.
-    m = _import_loop_controller()
-    mod_src = inspect.getsource(m)
-    required_imports = [
-        "from research.runners.resonate_fire_fhrr",
-        "from research.runners.spiking_phasor_fhrr",
-        ("from research.findings.raw.cross_bridge_mode_"
-         "unification_probe"),
-        ("from research.findings.raw.biologized_spiking_mode_"
-         "unification_helpers"),
-    ]
-    flat = mod_src.replace("\n", " ")
-    for needed in required_imports:
-        assert needed in flat, (
-            f"Loop controller must import from `{needed}` (reuse-"
-            f"by-import discipline); not found in module source.")
-
-    # (c) The two genuinely-new files exist; the other "new files
-    # allowed" set is exactly what's been added in this task chain.
-    for path_rel in NEW_FILES_ALLOWED:
-        full = os.path.join(_REPO_ROOT, path_rel)
-        # Test files (current one) and previously-landed task files
-        # all must exist. (test_generative_replay_soundness.py is the
-        # current file being added.)
-        assert os.path.exists(full), (
-            f"NEW_FILES_ALLOWED entry missing from worktree: "
-            f"{path_rel}")
+# RETIRED 2026-10-01 (owner ruling, runbook section 6 `no-harm-retire`): `test_reuse_by_import_only` pinned this arc's protected
+# files byte-unchanged since ec567ab2a (generative-replay Task 2, 2026-05-24). Main has since edited them on purpose, so the pin
+# only measured elapsed time (test triage, research/draft-test-triage @ 636cbf76a, REAL group). Arc record:
+# `git show ec567ab2a7e225f7ac0200141f82ffa6053694b8`.
 
 
 # ----------------------------------------------------------------------

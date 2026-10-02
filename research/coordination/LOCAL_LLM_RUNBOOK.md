@@ -231,6 +231,28 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
 line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
+**Session-2 packets (cloud Claude, 2026-10-01; branch `claude/session2-packets`).** T18-T20 move the three host
+decisions RULING `iw2-stage1-credit` names into the spiking substrate. T21 then makes them the default paths. Start
+each when `git -C $P log --oneline -1 -- tools/s2p_score.py` prints a commit (the owner landed the branch).
+T18-T20 are independent: run them in parallel, since the pool takes all three.
+
+**T18. fb-spiking-witness** (who saw the move: a spiking presence/absence flip-flop). `$WT/fb-spiking-witness`,
+`docs/drafts/fb-spiking-witness/HANDOFF.md` sections 0-5 (it creates the branch from main); WORKLOG
+`docs/drafts/fb-spiking-witness/WORKLOG.md` (create). Write: selection, O/R verdicts, finding, RESULT.
+
+**T19. transitive-spiking-reach** (the chain walk and the reachability test as a spiking wave + goal detector).
+`$WT/transitive-spiking-reach`, `docs/drafts/transitive-spiking-reach/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/transitive-spiking-reach/WORKLOG.md`. Write: as T18.
+
+**T20. word-role-parse** (the self-ID role map reads the words: a Hebbian word x position -> role parser).
+`$WT/word-role-parse`, `docs/drafts/word-role-parse/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/word-role-parse/WORKLOG.md`. Write: as T18.
+
+**T21. s2p-flip** (the three spiking paths become their faculties' defaults; full Stage-1 credit).
+`docs/drafts/s2p-flip/HANDOFF.md`. Start: the iw2 flips are on main (RULING `iw2-flip-hold`: after steps B and F
+passed and Claude merged them), AND Claude has confirmed at least one of T18-T20 with O PASS + R PASS. Flip only the
+confirmed ones. Due before the Stage-1 exit attempt (10-24): if not started by 10-17, NEEDS-CLAUDE "[s2p-window]".
+
 ## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
 Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
@@ -490,6 +512,42 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   Nothing for you to run. The T17-phantom-cfg ruling above stands; the 06-11 cortex decorrelation NEGATIVE gets its
   correction note under it (two dropped values: noise and STP). (2026-10-01)
 - handled: [T17-merge] (2026-10-01)
+
+- iw2-stage1-credit: (owner decision 2026-10-01, cloud Claude session 2) The three iw2 flips (false-belief-chat,
+  transitive-chat, neural-selfid) count toward Stage 1 as PARTIAL. Each is on by default and changes the reply, but a
+  host decision still sits inside it:
+  - false-belief: "who saw the move" (the host `present` dict);
+  - transitive: the chain walk and its reachability test (`target in path`);
+  - self-ID: the positional role map, which never reads the words.
+  No double count: self-ID is the content-selection parser reaching a new question class (RULING `iw2-verify-go`), not
+  a second mechanism. Each flip counts FULLY once its packet (T18, T19, T20) passes O and R AND T21 makes that path
+  the default with steps B/F passing. In the Stage-1 exit report write "PARTIAL (host decision: <name>)" beside each
+  until then. (2026-10-01)
+- iw2-flip-hold: (owner decision 2026-10-01) The iw2 flip commit stays on research/integration-wave2 and off main
+  until its steps B and F pass (HANDOFF section 7's decision table). Then Claude merges it. Never ask the owner to
+  land a branch that carries the flip before both read PASS. (2026-10-01)
+- no-harm-retire: (owner decision 2026-10-01) The eight protected-pin tests from the triage's REAL group are
+  retired on claude/session2-packets. Each now holds a comment naming its arc commit; the other tests in each file
+  stay:
+  - tests/test_compose_bind_no_harm.py (2fde0ed24)
+  - tests/test_compose_bridge_no_harm.py (c1d1a3d29)
+  - tests/test_td_critic_no_harm.py (c1d1a3d29)
+  - tests/test_engram_bootstrap_no_harm.py (bda6e462c)
+  - tests/test_phase_factored_no_harm.py (c1e79b719)
+  - tests/test_q2_no_harm.py (02addfa63)
+  - tests/test_q2r_no_harm.py (a1035cff5)
+  - tests/test_generative_replay_soundness.py::test_reuse_by_import_only (ec567ab2a)
+  Each pinned files that main has since edited on purpose, so it measured elapsed time, not harm. Do not restore them.
+  The POLLUTION class (`cpd_v1.NOUN_VOCAB` set at import) is still a later Claude work package. (2026-10-01)
+- s2p-canary: (cloud Claude session 2) For T18-T21, run the pool canary yourself exactly as each HANDOFF's step 4
+  says: `bash tools/pool_canary.sh run <node> '<the first line of that job file>' --wait-s N`. A canary PASS lets the
+  gate-seed lines queue. A canary FAIL is a code defect: STOP with NEEDS-CLAUDE. This replaces section 3's "needs a
+  pool canary" STOP for these four tasks only. (2026-10-01)
+- t13-merged: (cloud Claude session 2) research/conductance-overshoot-guard is merged on claude/session2-packets.
+  The flag `enable_bounded_conductance_integration` stays default-OFF, so the merge is byte-identical. T18's organ
+  turns it on in its own bridge: without it, strong GABA_A overshoots (the T13 defect) and the presence attractor
+  cannot be silenced. T13's cupy re-run result still goes in its WORKLOG; an rc != 0 is NEEDS-CLAUDE as before.
+  (2026-10-01)
 
 ## NEEDS CLAUDE
 
