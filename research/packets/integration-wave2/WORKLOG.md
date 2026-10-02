@@ -89,3 +89,6 @@
 
 ## 2026-10-02 03:55 EDT - wave 2 (T11)
 - Queued flip lines 44-86 (43 lines, failures=0) at F=1fb805e; start condition iw2-flip<10 held (q=4). Prefix rule verified (cd revisions/1fb805e9e + assert_iw2_node + assert_iw2_defaults). waves.tsv row appended. Next: wave 3 (87-129) when q<10 again.
+
+## 2026-10-02 11:34 EDT - wave 3 (T11)
+- Queued flip lines 87-129 (43 lines, failures=0) at F=1fb805e; start condition flip-in-queue<10 held (q=0). Prefix rule verified (assert_iw2_node). waves.tsv row appended. Next: wave 4 when q<10 again.
