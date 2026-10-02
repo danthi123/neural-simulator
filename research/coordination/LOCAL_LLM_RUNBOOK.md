@@ -394,6 +394,18 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
   (2026-10-01)
 
+- t18-credit: (owner 2026-10-02) T18's read-out mode, where a host threshold read gates the belief write, earns
+  PARTIAL Stage-1 credit only, never FULL: the host still decides when the belief is written. If read-out is the
+  operating point T18 selects, report it as PARTIAL and start the fully synaptic write as the next method (no-defer).
+  (2026-10-02)
+
+- host-share-packet: (owner 2026-10-02) The 10-08 Claude review adds a fifth package, a host-share measurement at the
+  Stage-1 seams (T6 NEEDS-CLAUDE #10). Do not build it yourself before then. (2026-10-02)
+
+- aws-capacity: (owner 2026-10-02) If T6's 10-17 tripwire fires (the pool cannot finish the Stage-1 gate in time),
+  write NEEDS-CLAUDE with the queue numbers. Claude decides on AWS at the review, within the owner's cap of about
+  $50/day with auto-stop. Never start AWS yourself. (2026-10-02)
+
 - iw2-provision: (2026-10-02) Never run `tools/pool_provision.sh` on S: it needs the workstation's key and rsync,
   which S does not have. Provision a revision only through the server, per RULING `compute-placement`: `touch
   $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
