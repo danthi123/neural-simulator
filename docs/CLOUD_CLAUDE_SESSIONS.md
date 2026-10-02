@@ -48,6 +48,9 @@ does routine work; you do only what research/coordination/LOCAL_LLM_RUNBOOK.md s
 3. **Weekly reviews (10-08, 10-15, 10-22, 10-29, 11-05).** Sonnet unless a PASS or a design call needs Opus. Follow
    `docs/WEEKLY_CLAUDE_REVIEW.md`, then sync the summary docs (sync-documentation skill, Check I).
 4. **Stage 1 exit attempt (10-24).** Opus. Review the attempt Hermes ran and rule on it.
+5. **GPU work (10-02, session 4, done).** The pool is the bottleneck and the 3090 was idle: an audit found no
+   queued pool task can move to cupy (every one pins numpy), so two GPU packets were written instead (runbook T23
+   B2d mouth arm, T24 Stage-1 `lived` on cupy) plus `gpu_remote.sh add --rev`.
 
 ## Landing a cloud branch on the server (the owner, during a check-in)
 
