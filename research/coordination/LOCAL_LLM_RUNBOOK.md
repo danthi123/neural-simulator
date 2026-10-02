@@ -623,4 +623,3 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-01 19:54 [LDC-grid] INFO (corrected): grid ALIVE and progressing - 33 runner procs each on pool41 + pool42, outputs landing (4 + 8 in the nodes' checkouts); the earlier 0/0 read S-side ps (pool jobs never run on S) plus the S output dir (copy-back pending).
 - 2026-10-01 23:12 [T13] STOP #1: cupy re-run DONE(rc=1) 19:39 - 3 passed/1 failed; failing tests/test_bounded_conductance_integration.py::test_byte_identical_when_off; tried: re-run on W gpu after test fix 9e8edbec1; blocks: T13 merge
-- 2026-10-02 00:57 [fb-spiking-witness] STOP #1: canary R rc=3 twice (pool42, pool41) - mem_ok refused the 8G+2 line on both nodes; O canary PASS 00:56; tried: other node per packet rule; blocks: T18 section 4 (12 R lines unqueued)
