@@ -50,3 +50,5 @@
 - NEEDS "[fb-spiking-witness] STOP #1" removed from the runbook (resolved by the record).
 - NEXT: section 5 - O half ready (all 6 O jsons landed + parse); score O + R once the 12 LB
   shards (s2p-R-fb tag) land from the R cells now queued.
+2026-10-02 fb-spiking-witness: O PASS, R PASS at op 4 (readout). Finding: research/findings/2026-10-02-fb-spiking-witness-gate.md (PROVISIONAL; 2 refuters SURVIVES).
+2026-10-02 fb-spiking-witness: O PASS, R PASS at op 4 (readout). Finding: research/findings/2026-10-02-fb-spiking-witness-gate.md (PROVISIONAL; 2 refuters SURVIVES).
