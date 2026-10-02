@@ -1,0 +1,40 @@
+{
+ "run_id": "1790915584-2",
+ "runner": "research/runners/tom_spiking_witness_organ.py",
+ "argv": [
+  "/srv/simpool/derisk-pool/revisions/40c43d520cbee67210b85ad767e88bdd176f88c1/research/runners/tom_spiking_witness_organ.py",
+  "--sweep",
+  "--seeds",
+  "6",
+  "--out-dir",
+  "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/sweep"
+ ],
+ "git_sha": "40c43d520cbee67210b85ad767e88bdd176f88c1",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "56bba42c3dbfccc2c0fc0b28a0aeb3ee43fed6849c4d4cbe6082c141ab8a9f6c",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-02T00:33:04",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1790915584242162451-31606",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "4G",
+  "POOL_JOB_MEM_GB": "2",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/sweep/op2_s6.json"
+}
