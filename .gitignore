@@ -238,7 +238,25 @@ research/queue/provision.req/
 # TRACKED on purpose.
 research/queue/.aws_*
 # Live queue / lock state (2026-09-24): untracked so no checkout, merge, restore or stash can rewrite it mid-run
-research/queue/pool.queue research/queue/pool.queue.claims research/queue/pool.queue.running research/queue/pool.queue.done research/queue/pool.queue.lock research/queue/pool.queue.malformed research/queue/pool.running research/queue/gpu.queue research/queue/gpu.queue.running research/queue/gpu.queue.done research/queue/gpu_queue.dpid research/queue/.gpu.queue.lock research/queue/.gpu_daemon.lock research/queue/.gpu_queue.lock research/queue/.opsweep_keepalive.lock research/queue/.last_cpu_dispatch research/queue/.qwen_llm_active research/queue/.autofill_cycle research/queue/.agent_waiver
+research/queue/pool.queue
+research/queue/pool.queue.claims
+research/queue/pool.queue.running
+research/queue/pool.queue.done
+research/queue/pool.queue.lock
+research/queue/pool.queue.malformed
+research/queue/pool.running
+research/queue/gpu.queue
+research/queue/gpu.queue.running
+research/queue/gpu.queue.done
+research/queue/gpu_queue.dpid
+research/queue/.gpu.queue.lock
+research/queue/.gpu_daemon.lock
+research/queue/.gpu_queue.lock
+research/queue/.opsweep_keepalive.lock
+research/queue/.last_cpu_dispatch
+research/queue/.qwen_llm_active
+research/queue/.autofill_cycle
+research/queue/.agent_waiver
 # Per-job GPU/pool sandbox output (2026-09-29 security re-review, M1): tools/agent_gateway_submit.py's
 # per-job output confinement (see its own header) -- a sandboxed job's ONLY writable output location.
 # Never committed: (a) it is scratch/output data, not source, matching every other research/findings/raw/
