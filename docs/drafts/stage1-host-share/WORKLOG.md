@@ -33,3 +33,4 @@
 - Corpus gate fix: 3 cells (s1_lived intact_a/intact_b/metacog_intervene, 1.0-1.2h compute) had no fresh corpus check before their 04:57-06:09 runs. before_you_build ran 10:34 (priors = the packet's own prereg), identical lines re-queued 10:40, re-ran 11:25/11:34/11:35 (landed 12:04/12:15/12:28); gate accepted via fallback (consult precedes re-run starts). attempt-1 copies: /opt/data/cache/scratch/t22_attempt1.
 - LIVE SEEDS per criterion x seam (reported, not a pass condition): {"C2": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}, "C3": {"k-select": 1, "bg-select": 1, "organ-c": 1, "metacog": 1, "ignition": 1}}
 - Next: step 3 gate lines (132), step 4 canary + queue.
+- Section 4: canary PASS recorded on pool42 (complete artifact 14:30, prov at_exit clean; pool41 mem_ok refused 7G, pool42 dispatch false-negative but setsid job completed); queued 132 gate lines (failures=132, max_age_h=168).
