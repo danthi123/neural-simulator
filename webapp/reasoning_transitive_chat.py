@@ -84,6 +84,74 @@ def transitive_lesion_on() -> bool:
     return os.environ.get("BRAIN_TRANSITIVE_LESION", "").strip().lower() in ("1", "true", "on", "yes")
 
 
+# SPIKING REACHABILITY (session-2 packet `transitive-spiking-reach`, 2026-10-01; research/runners/
+# transitive_spiking_reach_organ.py). Default OFF and byte-identical when off: `resolve_transitive_query` runs the host
+# chase above, untouched. ON: after the direct-fact short-circuit the "yes"/abstain decision is the spike count of a
+# `detect` population fed by a wave that propagates along the stored edges (no host hop loop, no `target in path`).
+# Same anchor convention as `_TRANSITIVE_CHAT_DEFAULT_ON` (flip is a separate, gated act).
+_TRANSITIVE_SPIKING_REACH_DEFAULT_ON = False
+_TRANSITIVE_REACH_DEFAULT_OP = 0   # the operating point used when BRAIN_TRANSITIVE_REACH_OP is unset (T21 sets it)
+
+
+def transitive_spiking_reach_enabled() -> bool:
+    """`BRAIN_TRANSITIVE_SPIKING_REACH` in {1,true,on,yes} -> the spiking reachability route (while the anchor is
+    False). After a flip: unset -> enabled; an explicit 0/false/no/off/"" disables."""
+    v = os.environ.get("BRAIN_TRANSITIVE_SPIKING_REACH")
+    if _TRANSITIVE_SPIKING_REACH_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "").strip().lower() in _ON
+
+
+def transitive_reach_lesion_on() -> bool:
+    """`BRAIN_TRANSITIVE_REACH_LESION` truthy -> the organ's `reach_hop` transmission gate is closed (the wave cannot
+    leave the start assembly), so detect is silent and a derivable pair abstains."""
+    return os.environ.get("BRAIN_TRANSITIVE_REACH_LESION", "").strip().lower() in _ON
+
+
+def transitive_reach_op() -> int:
+    """`BRAIN_TRANSITIVE_REACH_OP`: the organ's frozen operating-point GRID index (default 0; bad value -> 0)."""
+    try:
+        return int(os.environ.get("BRAIN_TRANSITIVE_REACH_OP", str(_TRANSITIVE_REACH_DEFAULT_OP)).strip()
+                   or _TRANSITIVE_REACH_DEFAULT_OP)
+    except Exception:
+        return _TRANSITIVE_REACH_DEFAULT_OP
+
+
+# the last spiking-reach read (diagnostics only: detect count, the read-out path, whether the path held the target)
+last_reach_meta: dict = {}
+
+
+def _spiking_reach_answer(composer, agent: str, relation: str, target: str, seed: int):
+    """Run the spiking reachability organ over the composer's stored facts. Returns (True, ChainedSVO | None); never
+    raises (any failure is an honest abstain). The path is narration for `derived_from` only; the decision is
+    `reached` (detect's spike count)."""
+    global last_reach_meta
+    last_reach_meta = {}
+    try:
+        if target == agent:                                # a host scope guard: a trivial self-reach is not a derivation
+            return True, None
+        from research.runners import transitive_spiking_reach_organ as organ
+        organ.set_operating_point(transitive_reach_op())
+        r = organ.reach_from_composer(composer, agent, relation, target, seed=int(seed),
+                                      # the older BRAIN_TRANSITIVE_LESION cuts this path too, so iw2's row keeps
+                                      # its meaning once T21 makes the spiking reach the default
+                                      lesion=transitive_reach_lesion_on() or transitive_lesion_on())
+        path = [str(x) for x in (r.get("path") or [])]
+        last_reach_meta = {"reached": bool(r.get("reached")), "detect_spikes": r.get("detect_spikes"), "path": path,
+                           "n_concepts": r.get("n_concepts"), "lesioned": bool(r.get("lesioned")),
+                           "path_has_target": bool(target in path[1:])}
+        if not r.get("reached"):
+            return True, None
+        if target in path[1:] and path and path[0] == agent:
+            idx = path.index(target)
+            derived_from = [[path[i], relation, path[i + 1]] for i in range(idx)]
+        else:                                              # detect fired but the read-out path is incomplete: recorded
+            derived_from = [[agent, relation, target]]
+        return True, ChainedSVO([agent, relation, target], derived_from=derived_from)
+    except Exception:
+        return True, None
+
+
 # SCOPE GUARD (integration wave 2, 2026-09-30, before any gate data; research/findings/2026-09-30-iw2-transitive-chat-
 # flip-PREREGISTRATION.md). A matched question never falls through to the ordinary path, so default-on the bare regex
 # would also capture ordinary yes/no questions whose first or last token is a closed-class word ("does the cat
@@ -169,6 +237,10 @@ def resolve_transitive_query(chat, question: str, *, seed: Optional[int] = None
         direct = None
     if direct == target:
         return True, [agent, relation, target]
+    if transitive_spiking_reach_enabled():                 # default OFF: the host chase below runs untouched
+        if seed is None:
+            seed = int(os.environ.get("BRAIN_CHAT_SEED", "42"))
+        return _spiking_reach_answer(composer, agent, relation, target, seed)
     # SUBSTRATE CHASE (only reached when there is no direct fact): the keystone's own emergent-stop re-entrant
     # chase, UNCHANGED. `seed` threads through exactly like the rest of the tiny-demo brain (BRAIN_CHAT_SEED).
     if seed is None:
