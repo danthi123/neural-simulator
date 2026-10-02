@@ -26,7 +26,7 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 1. `bash tools/status.sh` (its READY rows `b2b_base`, `arcc_awake_completion` are stale: scored 09-29).
 2. Packet status (`running>0` = still running):
    ```bash
-   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts raw/_host_share/gate _stage1_host_share/ _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
+   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts raw/_host_share/gate _stage1_host_share/ _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool40 pool41 pool42 wspool; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
    ```
 3. Read section 6 (RULINGS) and your open lines under NEEDS CLAUDE.
 4. Work the FIRST task in section 4 whose "Start" holds and that no open NEEDS CLAUDE line blocks. After every step
@@ -396,7 +396,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
   in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
   out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
-  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
+  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`); every line must start with that pin, because
+  pool40 and wspool have no unpinned checkout and an unpinned line fails there. You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
   dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
   on a `research/*` branch that you created from `main` (for an older branch, run `bash tools/agent_sync_branch.sh research/<branch>` first), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
