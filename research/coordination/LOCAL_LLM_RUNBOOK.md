@@ -411,10 +411,12 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
   `/opt/host-status/sim-provision/<sha>.json`. This overrides any HANDOFF line that says to run `pool_provision.sh` or
   `gpu_remote.sh provision`. A `refused` with "does not contain published main" means: run `bash
-  tools/agent_sync_branch.sh research/<branch>` first, then request the new head at once. For the iw2 flip F
-  (1fb805e9e was refused for that reason): sync research/integration-wave2, redo the flip-F pin at the new head by the
-  HANDOFF's own procedure (NEEDS-CLAUDE if a gate or the HANDOFF refuses the re-pin), request it, then continue steps
-  B and F. handled: [iw2-provision] (2026-10-02)
+  tools/agent_sync_branch.sh research/<branch>` first, then request the new head at once. UPDATE 00:40Z: flip F
+  1fb805e9e IS provisioned on pool41 and pool42 (owner-approved one-off;
+  `/opt/host-status/sim-provision/1fb805e9e0bedcce684a47388d95848daf1008a2.json` reads ok). Do NOT sync or re-pin flip
+  F: run steps B and F at 1fb805e9e as the HANDOFF says. The server will soon also accept a revision when main's lead
+  over it is docs-only, or when it contains a main published within the last 60 minutes (results then carry
+  `behind_main`). handled: [iw2-provision] (2026-10-02)
 
 - cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
   lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
