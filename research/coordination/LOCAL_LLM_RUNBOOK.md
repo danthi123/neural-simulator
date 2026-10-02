@@ -26,7 +26,7 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 1. `bash tools/status.sh` (its READY rows `b2b_base`, `arcc_awake_completion` are stale: scored 09-29).
 2. Packet status (`running>0` = still running):
    ```bash
-   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts _host_share/gate _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
+   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts raw/_host_share/gate _stage1_host_share/ _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
    ```
 3. Read section 6 (RULINGS) and your open lines under NEEDS CLAUDE.
 4. Work the FIRST task in section 4 whose "Start" holds and that no open NEEDS CLAUDE line blocks. After every step
@@ -253,6 +253,14 @@ T18-T20 are independent: run them in parallel, since the pool takes all three.
 passed and Claude merged them), AND Claude has confirmed at least one of T18-T20 with O PASS + R PASS. Flip only the
 confirmed ones. Due before the Stage-1 exit attempt (10-24): if not started by 10-17, NEEDS-CLAUDE "[s2p-window]".
 
+**Session-3 packet (cloud Claude, 2026-10-02; branch `claude/session3-packets`).**
+
+**T22. stage1-host-share** (who owns the decision at the Stage-1 C2/C3 seams, by intervention; T6 #10). `$WT/stage1-host-share`,
+`docs/drafts/stage1-host-share/HANDOFF.md` sections 0-6 (it creates the branch from main); WORKLOG
+`docs/drafts/stage1-host-share/WORKLOG.md` (create). Start: `git -C $P log --oneline -1 -- research/runners/stage1_host_share.py`
+prints a commit. Independent of T6 and T18-T21 (its own 22 dev + 132 gate lines; FIFO puts them behind T6's gate). Write:
+devcheck, verdict, finding, RESULT. Under 132 on 10-21: NEEDS-CLAUDE "[s1hs-window]".
+
 ## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
 Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
@@ -399,8 +407,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   operating point T18 selects, report it as PARTIAL and start the fully synaptic write as the next method (no-defer).
   (2026-10-02)
 
-- host-share-packet: (owner 2026-10-02) The 10-08 Claude review adds a fifth package, a host-share measurement at the
-  Stage-1 seams (T6 NEEDS-CLAUDE #10). Do not build it yourself before then. (2026-10-02)
+- host-share-packet: (owner 2026-10-02; REPLACED by the cloud Claude session 3, 2026-10-02) The fifth package, a host-share
+  measurement at the Stage-1 seams (T6 NEEDS-CLAUDE #10), was BUILT EARLY with the owner's approval in session 3 instead
+  of at the 10-08 review: runbook task T22, `docs/drafts/stage1-host-share/HANDOFF.md`. Run it as T22 says once the
+  owner lands `claude/session3-packets`; still never build or edit it yourself. (2026-10-02)
 
 - aws-capacity: (owner 2026-10-02) If T6's 10-17 tripwire fires (the pool cannot finish the Stage-1 gate in time),
   write NEEDS-CLAUDE with the queue numbers. Claude decides on AWS at the review, within the owner's cap of about
@@ -560,6 +570,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   says: `bash tools/pool_canary.sh run <node> '<the first line of that job file>' --wait-s N`. A canary PASS lets the
   gate-seed lines queue. A canary FAIL is a code defect: STOP with NEEDS-CLAUDE. This replaces section 3's "needs a
   pool canary" STOP for these four tasks only. (2026-10-01)
+- s1hs-canary: (cloud Claude session 3) For T22, run the pool canary yourself exactly as its HANDOFF's step 4 says
+  (`bash tools/pool_canary.sh run pool41 '<the s1_lived intact_a gate line>' --wait-s 7200`). A canary PASS lets the
+  132 gate-seed lines queue; a canary FAIL is a code defect: STOP with NEEDS-CLAUDE. Same scope as `s2p-canary`.
+  (2026-10-02)
 - t13-merged: (cloud Claude session 2) research/conductance-overshoot-guard is merged on claude/session2-packets.
   The flag `enable_bounded_conductance_integration` stays default-OFF, so the merge is byte-identical. T18's organ
   turns it on in its own bridge: without it, strong GABA_A overshoots (the T13 defect) and the presence attractor
