@@ -15,3 +15,23 @@
   <P7>/sweep/ -> cp + `s2p_score.py select`; rc=0 step 3 (OP), rc=1 PROVISIONAL finding +
   NEEDS-CLAUDE, rc=3 requeue missing seeds once. Queue is 413 deep (FIFO), so sweep results
   arrive late; sections 2+ continue on later wakes.
+
+## 2026-10-02 00:57 EDT - sections 2-4 (partial): select op=4, data committed, O queued, R blocked
+- Section 2: 64/64 sweep jsons landed (queue ran them fast); `tools/s2p_score.py select` ->
+  **SELECTED op=4** (rc=0). First commit blocked by device-and-cost + artifact-provenance
+  (the scorer writes no sidecar). Fixed per the gate's OWN fix text with a truthful sibling
+  `selection.json.prov.json` (exact argv, host, backend python-stdlib/cpu, seeds 1-8);
+  data commit **d868f5ee5** (132 files). Lesson: do NOT set SIM_NO_PROVENANCE for select -
+  the HANDOFF's line has no such flag.
+- Section 3: `op=4` -> O_40c43d5.txt **6 lines** + R_40c43d5.txt **12 lines** (exact counts);
+  landed in d868f5ee5 (staged alongside the data).
+- Section 4: canary O on pool41 **PASS** (rc=0, wall=11s, 00:56). canary R **rc=3
+  INCONCLUSIVE twice** (pool42, then pool41 per the packet rule; mem_ok refused the 8G+2 line
+  both times) -> NEEDS-CLAUDE "[fb-spiking-witness] STOP #1" added (00:57). O lines queued
+  (6/6, 0 failures). R lines NOT queued - blocked on the canary.
+- tool-health note: `tool_health --emit` shows **auto-tune ROTTED on S** - `dearpygui` is
+  declared in requirements.txt but absent from .venv, and pip install is blocked by the
+  sandbox; non-blocking for commits (warning lane) but the smoke cannot go green on S until
+  the venv is repaired. Repair item emitted to research/coordination/tool_health.json.
+- NEXT: when nodes have room, canary R once more (or Claude's ruling), queue 12 R lines
+  (mem_gb=8, max_age_h=168); then section 5 (score O + R when 6 O files + 12 LB shards land).
