@@ -97,3 +97,25 @@ escalation on provisioning refusals, runner-name deferral (Claude confirms at re
 then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake.
 - State: no runs exist yet (outcome table genuinely precedes all runs); draft folder uncommitted → committing
   choice + PLAN + this WORKLOG now through the gates.
+- 2026-10-03 10:58 [ca3-symmetric-ti] §4 BUILD DONE: `research/runners/_ca3_symmetric_ti_symrule.py` (914 lines)
+  written on branch `research/draft-ca3-symmetric-ti` (worktree `.claude/worktrees/draft-ca3-symmetric-ti`,
+  committed **d4a533ae7** through the gates) as a copy of the registered sleep runner carrying only the §12
+  delta: arms (wake/sym/wpermc/dis/rev — rev instrument-only, registered arm blocks removed); `night(hebbian=True)`
+  runs STDP off + the engine's symmetric Hebbian rule + plastic mask + the §11 constants (echoed to each night
+  record as `rule_echo`); `permute_dw_classes` (within-class Δw permutation + class histogram with size-1 mass
+  share); `replica_sym` (same-step `lr*(w_max−w)`, clip [0,900], activity gate = `F.any | pv_any` mirroring the
+  engine's all-neuron `_prev_any and _fired_any` — the PV/any trace is recorded every night step so the identity
+  check is exact, not approximate); `cospike_counts` (FᵀF self-product over plastic between synapses → per-pair
+  matrix + `cospike_total` for row 2's U8 read); `--merge` record assembly (U7-analogue encode-hash check FIRST,
+  loud AssertionError on part disagreement, row-8 sym-vs-dis attribution computed there); gate-seed and numpy
+  refusals now unconditional (§12 item 6); the sleep-vs-dis attribution block left with the arm-set reduction.
+  Smokes, all on the worktree with NO brain run: py_compile rc=0; `--seed 42` refused rc=2; `SIM_BACKEND=cupy`
+  refused rc=2; `--selftest` SELFTEST PASS; `--merge` good path → u7=True + attribution 0.975, mismatch path →
+  AssertionError rc=1. Gates: `single-draw-null` cleared via its own prescribed waiver `# single-draw-null: ok …`
+  (the seed-derived within-class permutation is the control TREATMENT and §7 row 12 forbids any single-seed
+  verdict, so no row reads one draw alone); `tool-health-fresh` reported-only (`BLOCKING=False`; the auto-tune
+  rot — dearpygui absent from the venv — is pre-existing on main and already a tracked repair-backlog item).
+  smoke1: scipy 1.15.3 present. NEXT (§10): provisioning touch-flow for the branch, then queue the 11 jobs —
+  the 3 ladder rungs (seed 8, `--set hebbian_learning_rate` ∈ {0.002, 0.006, 0.02}) FIRST, then parts a/b ×
+  seeds 8–11 — `mem_gb=2`, `max_age_h=48`, `bash tools/queue_job_shape_check.sh` pre-check + `--checked`,
+  full 40-char SHA. No runs exist yet.
