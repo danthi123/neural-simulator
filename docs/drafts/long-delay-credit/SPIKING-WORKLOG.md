@@ -367,3 +367,15 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   `grep -c sanity_early_ch0 research/queue/pool.queue` = 12.
 - Pending: 36 pool outputs (24 grid + 12 sanity); next T1 step = score bars into the PILOT.md table when
   they land.
+## 2026-10-02 22:09 (local model) — Step 4a.1 repro EXACT + 4a.2 grid queued
+
+- 4a.1: pilot copy (`ba918bd82`) run with default flags on `base_credit_immediate` s7, `--n-train 200`; deep JSON
+  compare vs the Step 4 sweep row: payload identical except `runner_sha256` (the mandated copy is a different file),
+  plus `wall_s` and git-stamp provenance keys. MiMo Pro delegate verdict (independently re-verified): **EXACT** —
+  proceed.
+- 4a.2: corpus consult logged (`before_you_build`, 22:07); revision `57c0f6ce` provision `state=ok` on pool41/pool42
+  (done 10-01, same SHA); **24/24 grid cells queued** (seeds 8/11 x credit_immediate/late_immediate x onset
+  30/150/300 ms x w_outc_strio 30/60, `--n-train 400`, dev seeds, not evidence). NOTE: one repro row took ~17 min
+  locally — every further pilot run goes to the pool.
+- Next: 4a.3 lr=0 diagnosis runs (seeds 9/12 memory, seed 14 explore) once the grid lands, then 4a.4 PILOT.md +
+  `[T1] RESULT: Step 4a pilot @ <sha>`; T1 then stops for Claude's Amendment A0 + Step 4b.
