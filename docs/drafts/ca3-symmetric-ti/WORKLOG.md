@@ -131,3 +131,14 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
   parts a/b) — they wait for the §11 rung freeze (non-DI criteria only; ladder exhausted without a satisfying rung
   → SPECIFICITY-FLOOD stop, §11). Next: rung outputs land → §11 selection (judgment → MiMo Pro per RULING
   models) → freeze → queue 8 standard jobs → merge+§7 reads. No numbers read yet (blind).
+- **§10 rung attempt outcomes (2026-10-03 17:15 EDT)** — **1/3 landed, 2 dead-claims requeued ONCE.**
+  `seed8_rung_lr0.002.json` **landed 16:39** (51 min run, `.prov.json` sidecar written; content unread — blind,
+  §11 waits). `seed8_rung_lr0.02` + `seed8_rung_lr0.006` = **dead claims**: dispatched pool40 15:48:02/15:48:08,
+  alive at 16:47 (pgrep), gone from pool40/41/wspool by 17:12; no output files, no exit records — and
+  `sim-pool-jobs/exits.json` has **zero** ca3 rows even for the landed rung, so for these jobs file-presence +
+  node liveness are the liveness signals, not exits. Same silent-vanish signature as the 14:37 event that killed
+  the 4 stage1-host-share gate cells. Requeue ONCE (runbook §3 + duplicate-claim guard): both original TSV lines
+  re-`add --checked`ed → "a previous identical claim exists … **no longer alive** -- queueing", `requeued=2
+  failures=0` (depths 185–186; lr0.002 excluded — never requeue a landed cell). If either vanishes again without
+  a file: §10 report **#4** with both attempt outcomes — no second requeue. §11 selection still ordered
+  largest-first: needs lr0.02 verdict, then 0.006, then 0.002 (already in hand).
