@@ -42,7 +42,31 @@ amendment / merge stay Claude's.
   enumerated delta (dropped arms, strengthened gate refusal).
 - All six fixes applied (u8 condition pinned to `cospike_total == 0`; qualitative words numbered; catch-all
   row 13; ladder rungs sequenced before the 8 standard jobs and counted at 11 total; name note; §12 full
-  hunk enumeration). **Re-refute pending: next wake must run delegate #2 again and get REFUTE-APPROVE
-  before any build (§4) or run.** Delegate budget: 2/2 used this wake.
+  hunk enumeration).
+
+## 2026-10-03 04:36 — re-refute round 2 (REFUTE-BLOCK) + all fixes applied
+
+Second refute delegate: verdict **REFUTE-BLOCK**, 2 blocking violations, and it verified all six round-1 fixes
+landed in the text. Both blocks fixed per the reviewer's exact prescriptions, plus all 9 nits:
+
+1. §7 table still not fully fixed before runs (§5 rule 3): rows 4/5/6 had unpinned predicates ("foil/other
+   reads rise", "most |Δw| mass", "foil/C flooded") and rows 5/6 could fire together with contradictory
+   readings. Fixed: row 4 foil pinned "> 0.05 above `wake`'s"; row 6 fully pinned (premises < 0.30 OR foil >
+   0.05 above wake OR C ≥ 0.10 OR > 0.5 of |Δw| mass in size-1 classes) and declared to **override row 5**;
+   row 5 gains "and row 6 does not fire"; row 4b dedup; row 7 gains §9's DI(sym)−DI(dis) ≥ 0.15 clause.
+2. §10 violated RULING `iw2-provision` (quoted the forbidden `pool_provision.sh` from the 09-29 prereg) and
+   `pool_queue.sh add` without `--checked`. Fixed: server touch-flow
+   (`touch $P/research/queue/provision.req/$(... rev-parse research/draft-ca3-symmetric-ti)`, poll
+   `/opt/host-status/sim-provision/<sha>.json`, refusal → NEEDS-CLAUDE), branch/worktree named
+   (`research/draft-ca3-symmetric-ti` @ `$WT/draft-ca3-symmetric-ti`), every queue line gains the mandatory
+   `--checked '<task>: <why> ; mem_gb=2 ; max_age_h=48'`.
+Nits fixed: §12 hunk list enumerates `sleep`→`sym` + the --merge record-assembly mode; "9–11 jobs total"
+wording; core-hours scoped to the 8 standard jobs; §2 numbers cited to dev raw records (0.591→0.433 /
+0.52→0.41, `cupy_seed8.json`); §14 "healthy" → `cospike_total ≥ 1`; §11 absolute-vs-above-wake bar
+disambiguated + ladder-exhaustion reworded as an §11 rung-selection outcome (not a §7 seed reading); row 2's
+ambiguous WAD gloss dropped; §10 now names the branch/worktree.
+
+**A third refute round (REFUTE-APPROVE) runs next wake** (2-delegate/wake budget spent this wake: draft was
+round 1's legacy, this was round 2). No build, no runs, no queue until REFUTE-APPROVE.
 - State: no runs exist yet (outcome table genuinely precedes all runs); draft folder uncommitted → committing
   choice + PLAN + this WORKLOG now through the gates.
