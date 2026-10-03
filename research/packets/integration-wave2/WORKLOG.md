@@ -105,3 +105,13 @@
   on this host — used the S-equivalent primary
   (/home/dant123/Projects/neural-simulator) + worktree paths directly. Next: wave 6 (216-258 of 276) when q<10
   again.
+
+## 2026-10-03 18:20 EDT - wave 6 (T11)
+- Queued flip lines 216-258 (43 lines, failures=0, depths 168-210) at F=1fb805e; start condition
+  flip-in-queue<10 held (q=5; 7 at the 18:14 wake, 2 dispatched mid-wake). Prefix rule verified 43/43 (same
+  `cd revisions/1fb805e9e… && assert_iw2_node.py && assert_iw2_defaults.py false-belief-chat,transitive-chat,
+  neural-selfid && ` rule as waves 4-5); R reason string + `add … --checked` shape verbatim from section 7.
+  After: iw2-flip q=48 (0 dispatched mid-loop). waves.tsv row appended (epoch 1791066018). Informational:
+  later adds reported `skipping unreachable node(s): wspool` (dispatcher health-checks + skips it too — same as
+  t0's wspool ssh-fail this wake; pool40/41/42 unaffected). Next: wave 7 (259-276, the last 18 lines) when q<10
+  again.
