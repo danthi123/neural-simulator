@@ -23,7 +23,7 @@
 set -uo pipefail
 
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-POOL_ROOT="${POOL_ROOT:-/home/dant123/Projects/sim}"
+POOL_ROOT="${POOL_ROOT:-/home/dant123/Projects/neural-simulator}"
 QUEUE_TOOL="$POOL_ROOT/tools/pool_queue.sh"          # the primary checkout's copy: it has the AWS nodes' ssh config
 Q="${POOL_QUEUE_PATH:-$POOL_ROOT/research/queue/pool.queue}"
 RUNNING="${Q%.queue}.running"                        # the dispatcher's cumulative record of every dispatched job

@@ -18,3 +18,11 @@
   fresh-queued=43, stale=0, dispatched-ever=0, lb.json 2 of 258) - the documented "previous wave is
   still waiting" case; ledger b2d_waves.tsv unchanged, no commit. Section-5 mouth check skipped per
   RULING b2d-mouth-gpu (T23 replaces it).
+
+## 2026-10-02 23:33 (local model) — every-session §4 duty
+
+- Wave script refused at first: its `POOL_ROOT` default still pointed at the pre-migration workstation tree
+  `/home/dant123/Projects/sim` (gone). Default migrated to `/home/dant123/Projects/neural-simulator` (RULING
+  home-to-server); the driver also exports `POOL_ROOT` explicitly.
+- Duty result: `fresh-queued=43 stale-queued=0 lb.json-landed=2 of 258` → **nothing queued** (43 ≥ 10 threshold,
+  normal — wave 1 still waiting in the deep queue). Ledger unchanged.
