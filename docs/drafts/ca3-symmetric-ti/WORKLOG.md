@@ -119,3 +119,15 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
   the 3 ladder rungs (seed 8, `--set hebbian_learning_rate` ∈ {0.002, 0.006, 0.02}) FIRST, then parts a/b ×
   seeds 8–11 — `mem_gb=2`, `max_age_h=48`, `bash tools/queue_job_shape_check.sh` pre-check + `--checked`,
   full 40-char SHA. No runs exist yet.
+- **§10 order 1 DONE (2026-10-03 15:56 EDT)** — provisioning touch-flow (`touch research/queue/provision.req/d4a533ae77186050e3e8bc6156e24bb81af3221b`):
+  `sim-provision/<sha>.json` → **state=ok** after ~7 min ("provisioned on pool41, pool42, pool40; not on optional
+  wspool (backfilled later)"; `behind_main` = docs-only 1 commit, accepted per RULING iw2-provision). Then queued
+  the **3 ladder rung jobs** (PLAN §10/§11 order: rungs first) — seed 8, `--dev --arms wake sym --set
+  hebbian_learning_rate=` {0.02, 0.006, 0.002} **descending**, so §11's "largest that satisfies" evaluates from the
+  top as runs land; each line = the §10 template (env SIM_BACKEND=numpy + thread pins + CUDA_VISIBLE_DEVICES=),
+  `queue_job_shape_check.sh` pass, then `pool_queue.sh add --checked '<task>: … ; mem_gb=2 ; max_age_h=48'` →
+  **queued 3/3** (depths 195–197; `pool.queue` grep = 3). Line record: `jobs/rungs_d4a533ae7.tsv` (header + 3 rows;
+  scratch copy `research/queue/ca3_rungs_d4a533ae7.tsv` untracked). NOT queued: the 8 standard jobs (4 dev seeds ×
+  parts a/b) — they wait for the §11 rung freeze (non-DI criteria only; ladder exhausted without a satisfying rung
+  → SPECIFICITY-FLOOD stop, §11). Next: rung outputs land → §11 selection (judgment → MiMo Pro per RULING
+  models) → freeze → queue 8 standard jobs → merge+§7 reads. No numbers read yet (blind).
