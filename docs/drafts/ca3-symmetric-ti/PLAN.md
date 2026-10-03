@@ -24,10 +24,11 @@ reduction and the strengthened gate-seed refusal — is enumerated in section 12
 From `research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md` (the family word is the scorer's
 UNDEFINED; inspected, grader re-derives `aggregate.json` byte-identical):
 
-- **STI7 fails 4/4 (as registered):** the night that writes A→D erodes the premises. PAB 0.591→0.433, PBD
-  0.52→0.41 on dev (dev raw records, e.g.
-  `research/findings/raw/_sleep_transitive_inference/dev/cupy_seed8.json`) — an A→D link bought by erasing B→D is a
-  lossy rewire, not relational integration.
+- **STI7 fails 4/4 (as registered):** the night that writes A→D erodes the premises. PAB 0.59→0.43, PBD 0.52→0.41
+  (the prereg's rounded q3_s7 exploration summary,
+  `research/findings/2026-09-29-sleep-transitive-inference-PREREGISTRATION.md:301`; the per-seed dev records under
+  `research/findings/raw/_sleep_transitive_inference/dev/` carry the same directions) — an A→D link bought by erasing
+  B→D is a lossy rewire, not relational integration.
 - **STI3b fails 3/4 (not predicted):** a night replayed in **reverse order also writes the inference**. The asymmetric
   rule's temporal order is not what does the work; the effect is co-activation-driven integration — the regime of the
   symmetric CA3-CA3 rule.
@@ -110,8 +111,8 @@ reading/field it is read on and to its interpretation. No cell claims GO or a ga
 | 2 | `sym`: premises kept but DI gain < 0.15 | PAB, PBD, DI, WAD, `cospike` counts | **WRITE-ABSENT**. If total same-step co-spike pairs over the whole night `cospike_total` == 0 → **UNDEFINED(dev): rule never exercised** (U8; the 2026-07-08 same-step co-spike bottleneck), never "the rule is wrong". If `cospike_total` ≥ 1 → the symmetric write is too weak at these constants; dev evidence for the broad-window stand-in (section 13), Claude's call. The raw counts and the WAD rise are reported either way. |
 | 3 | `sym`: DI gain ≥ 0.15 but PAB or PBD < max(0.30, 0.9×wake), with that arm's B_k read below its own wake value | PAB/PBD components, per-arm recruited fractions | **EROSION-PERSISTS**: the erosion is not rule-asymmetry; the night needs the brake → the sleep-downscaling companion (section 14) is the necessary next method. |
 | 4 | `sym`: DI gain ≥ 0.15 but PAB or PBD < max(0.30, 0.9×wake), with that arm's B_k read ≥ its wake value, and the foil read > 0.05 above `wake`'s | PAB/PBD components, foil read, C read | **SPECIFICITY-FLOOD**: potentiation-only without a brake raises the foils (the Wang plasticity-plus-noise confound). Downscaling / PV companions again. |
-| 4b | `sym`: DI gain ≥ 0.15 with premises kept but WAD rise < 20 pA | DI, WAD | Reported as-is under row 1's fields with the WAD number stated; the WAD clause of row 1 is not met, so this is row 1 **not** REPAIR-SHAPED on the WAD clause (DI-only gain, read cautiously). |
-| 5 | `wpermc`: DI(`wpermc`)−DI(`wake`) ≤ 0.05, premises ≥ 0.30, foil ≤ 0.05 above `wake`, C < 0.10, **and row 6 does not fire** | DI, PAB/PBD, foil, C, class histogram | **VALID-CONTROL**: STI3 is readable; if also DI(`sym`)−DI(`wpermc`) ≥ 0.5×the gain, the inference rides the night's weight structure (the STI3 shape), at matched plasticity. |
+| 4b | `sym`: DI gain ≥ 0.15 with premises kept (= PAB and PBD ≥ max(0.30, 0.9×wake)) but WAD rise < 20 pA | DI, WAD | Reported as-is under row 1's fields with the WAD number stated; the WAD clause of row 1 is not met, so this is row 1 **not** REPAIR-SHAPED on the WAD clause (DI-only gain, read cautiously). |
+| 5 | `wpermc`: DI(`wpermc`)−DI(`wake`) ≤ 0.05, premises ≥ 0.30, foil ≤ 0.05 above `wake`, C < 0.10, **and row 6 does not fire** | DI, PAB/PBD, foil, C, class histogram | **VALID-CONTROL**: STI3 is readable; if also DI(`sym`)−DI(`wpermc`) ≥ 0.5×the gain **with the gain > 0** (the registered STI3 guard), the inference rides the night's weight structure (the STI3 shape), at matched plasticity. |
 | 6 | `wpermc`: premises < 0.30, **or** foil > 0.05 above `wake`, **or** C ≥ 0.10, **or** > 0.5 of the night's \|Δw\| mass sits in classes of size 1 — **this row overrides row 5** whenever it fires | control validity reads + class histogram | **CONTROL-DEGENERATE** (U6-analogue): no STI3 reading is taken from this seed — UNDEFINED(dev), never a pass and never a zero. |
 | 7 | `dis`: DI(`dis`)−DI(`wake`) ≤ 0.05 **and** DI(`sym`)−DI(`dis`) ≥ 0.15 **and** premises ≥ 0.30, with the lesion verified on raster+weights | DI, PAB/PBD, U2-analogue checks | **REPLAY-NECESSARY** shape: the link needs the replay night and not the disrupted one; the premises do not. |
 | 8 | `dis`: DI(`dis`)−DI(`wake`) > 0.05 while the lesion held | DI(`dis`), pre-sleep WAD | **ROUTE-FIRST**: the write is not carried by replay events; read pre-sleep WAD for encode-time integration (Zeithamova 2012) before any claim; no interpretation is taken from `sym`'s DI. |
@@ -146,7 +147,7 @@ this draft's own results.
 |---|---|
 | premises learned (STI0) | PAB ≥ 0.30 and PBD ≥ 0.30 in `wake` |
 | premise retention (STI7) | PAB/PBD(`sym`) ≥ max(0.30, 0.9 × `wake`) |
-| inference written (STI1/STI6) | DI(`sym`)−DI(`wake`) ≥ 0.15; WAD rise ≥ 20 pA |
+| inference written (STI1/STI6) | DI(`sym`)−DI(`wake`) ≥ 0.15 **and** DI(`sym`) ≥ 0.15 absolute (the registered STI1 clause); WAD rise ≥ 20 pA |
 | replay necessary (STI2) | DI(`dis`)−DI(`wake`) ≤ 0.05; DI(`sym`)−DI(`dis`) ≥ 0.15 |
 | structure necessary (STI3) | DI(`sym`)−DI(`wpermc`) ≥ 0.5 × the gain, gain > 0 |
 | no false inference (STI5) | foil ≤ 0.05 above `wake`; never-encoded C < 0.10 |
@@ -162,8 +163,9 @@ the server touch flow that RULING `iw2-provision` mandates (it overrides any lin
 with `$P` = the repo root on this server, then poll `/opt/host-status/sim-provision/<40-hex sha>.json` until
 `state=ok` (a refusal → NEEDS-CLAUDE, per the ruling). Queue each line with its mandatory check reason:
 `bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=2 ; max_age_h=48'` (the script refuses
-without `--checked`), each line pre-checked by `bash tools/queue_job_shape_check.sh`. Backend numpy only (the copy
-keeps the registered runner's refusal of any other backend for a recorded run); no GPU, no `gpu_queue.sh`, no local
+without `--checked`), each line pre-checked by `bash tools/queue_job_shape_check.sh`. Backend numpy only (the
+registered runner's refusal of any other backend is gate-run-only at `sleep_transitive_inference.py:748-749`; the
+copy strengthens it to unconditional for its recorded runs — §12 item 6); no GPU, no `gpu_queue.sh`, no local
 heavy job.
 
 Per seed, two parts (each part re-runs the same deterministic waking episodes; the U7-analogue compares their
@@ -219,8 +221,9 @@ name — §5's pattern governs here (Claude confirms at review). Everything is b
 the copy must ship a diff against the original, and **every** hunk is enumerated here: the items below plus the
 arm-set reduction (the registered `off/yok/scr/cross/nohub/nostdp/nocomp/noadapt` arms are dropped from the copy, and
 the registered `sleep` arm is replaced by `sym`), `wperm` → `wpermc`, `rev` demoted from a gate arm to an instrument,
-the new instrument fields (§8), the record-assembly/`--merge`-style report mode (§10), and the gate-seed refusal
-strengthening in item 6. No other hunk may appear in the shipped diff.
+the new instrument fields (§8), the record-assembly/`--merge`-style report mode (§10), the §11 `DEFAULTS` constants
+set explicitly (`hebbian_max_weight/hebbian_min_weight/hebbian_weight_decay/hebbian_learning_rate`), and the
+gate-seed refusal strengthening in item 6. No other hunk may appear in the shipped diff.
 
 1. **The night's rule (the whole point).** The `sym` night runs with `enable_stdp = False` and
    `enable_hebbian_learning = True`, `hebbian_symmetric = True` — the engine's own symmetric (offset-free)
@@ -245,7 +248,8 @@ strengthening in item 6. No other hunk may appear in the shipped diff.
    (≤ 1e-3 pA) or the seed is UNDEFINED(dev)-instrument; on the raster time-reversed inside each SWR period it must
    give the identical Δw (the order-independence expected-pass).
 6. **Guards kept:** `--dev` semantics, `cfg.seed` setting, fresh-build-per-phase, provenance sidecars (run as a
-   module), and the numpy-only refusal carry over verbatim. The gate-seed refusal is **strengthened** to
+   module), and the numpy-only refusal is **strengthened to unconditional** for the copy's recorded runs (the
+   registered refusal at `sleep_transitive_inference.py:748-749` is gate-run-only — §10 states this). The gate-seed refusal is **strengthened** to
    unconditional (the registered runner makes it `--dev`-conditional: `sleep_transitive_inference.py:744-745`) —
    gate seeds stay Claude's under every invocation. Output root: `research/findings/raw/_ca3_symmetric_ti/`.
 7. **Reads** (DI/FI/PAB/PBD/PBP/WAD/WDA/replay) and the probe protocol are the registered functions verbatim, so the

@@ -68,5 +68,32 @@ ambiguous WAD gloss dropped; §10 now names the branch/worktree.
 
 **A third refute round (REFUTE-APPROVE) runs next wake** (2-delegate/wake budget spent this wake: draft was
 round 1's legacy, this was round 2). No build, no runs, no queue until REFUTE-APPROVE.
+
+## 2026-10-03 05:38 — refute round 3: REFUTE-APPROVE ✅ + approve-round nits fixed
+
+Third refute delegate verified all round-2 fixes landed (quoted each) and returned **REFUTE-APPROVE**: no
+remaining blocking violation against non-negotiables 1–6 or §5 rules. Independently checked clean: no
+sim//registered/grader/gate edits, no GO words on dev, §7/§9/§11 bars agree, rows disjoint with catch-all,
+gate-seed strengthening real vs :744-745, cospike U8 pin consistent across rows 2/12 + §13/§14, engine
+evidence (hebbian_symmetric config:873, bridge:1240/:10128, delta lr·(w_max−w) :10136), registered constants
+match, placement follows compute-placement + iw2-provision.
+
+Its 9 nits — the 6 actionable ones fixed now, per the reviewer's prescriptions (nits, not design changes):
+
+1. §2's 0.591→0.433 citation was WRONG (that value is in no dev/gate record — it traces to the prereg's rounded
+   q3_s7 exploration summary, PREREGISTRATION.md:301). Reverted to 0.59→0.43 with the prereg:301 citation; dev
+   records cited only for direction.
+2. §10's "keeps the registered backend refusal" corrected: registered refusal is gate-run-only (:748-749); the
+   copy strengthens it to unconditional (§12 item 6 now says the same instead of "verbatim").
+3. §12's hunk enumeration now includes the §11 DEFAULTS constants (without it, §12 forbade what §11 requires).
+4. Row 5's STI3 clause gains the registered `gain > 0` guard (non-positive gain could pass it spuriously).
+5. §9 STI1 line gains the registered absolute clause DI(sym) ≥ 0.15.
+6. Row 4b's "premises kept" parenthetically pinned to the max(0.30, 0.9×wake) bar.
+Left as reviewer judged safe: wpermc-also-infers → row 13 (never a pass), conservative NEEDS-CLAUDE
+escalation on provisioning refusals, runner-name deferral (Claude confirms at review).
+
+**Status: APPROVED for build.** Next wake: §4 build — write the runner copy
+`research/runners/_ca3_symmetric_ti_symrule.py` with the enumerated §12 delta only, smoke on seed 8 (dev),
+then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake.
 - State: no runs exist yet (outcome table genuinely precedes all runs); draft folder uncommitted → committing
   choice + PLAN + this WORKLOG now through the gates.
