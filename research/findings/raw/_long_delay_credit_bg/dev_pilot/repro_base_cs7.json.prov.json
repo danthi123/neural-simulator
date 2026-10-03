@@ -1,0 +1,40 @@
+{
+ "run_id": "1790992030-823028",
+ "runner": "research/runners/_ldc_outcome_timing_pilot.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/draft-ldc-outcome-timing/research/runners/_ldc_outcome_timing_pilot.py",
+  "--schedule",
+  "credit_immediate",
+  "--arms",
+  "full",
+  "--seeds",
+  "7",
+  "--n-train",
+  "200",
+  "--n-test",
+  "100",
+  "--out",
+  "research/findings/raw/_long_delay_credit_bg/dev_pilot/repro_base_cs7.json"
+ ],
+ "git_sha": "57c0f6ce0",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-02T21:47:10",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 40382.9,
+ "corpus_check_query": "stage1 host share: which part of the stage-1 reply is attributable to host decisions vs the neural substrate (s1_lived dev cells)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_long_delay_credit_bg/dev_pilot/repro_base_cs7.json"
+}

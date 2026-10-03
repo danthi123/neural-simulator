@@ -403,3 +403,12 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   for `--clear-ms` (no second local 17-min row needed).
 - Next: when the 24 timing-grid + 17 diagnosis cells land, run 4a.4 (PILOT.md + `[T1] RESULT: Step 4a pilot @ <sha>`),
   then T1 stops for Claude's Amendment A0 + Step 4b.
+
+- 2026-10-03 — **Step 4a pilot complete (item 4).** All 41 cells landed (24 grid @ 57c0f6ce0, 17 diagnosis @
+  50f52c23e): DA signs in 1/24 cells (credit_immediate on150/w60/s11 — marginal, 0.0013 under-then-over the
+  0.47 bar; late_immediate 0/12, w60 ITI leak −0.111…−0.150), sanity ≥0.8 in 1/12, credit_immediate ≥0.8 in
+  0/12; s9/s12 clear-dose monotone (def 32.3/28.6 Hz → any stronger/longer knob 0.00 Hz), s14 p(ch0|A)=
+  p(ch0|B)=1.000 (ch0-vs-ch1 bias, not organ asymmetry). Evidence-backed A0 branch = the eligibility tag's
+  action-specificity (branch 1 contradicted: one onset does sign); marginal-signature caveat flagged for
+  Claude. `PILOT.md` written; `[T1] RESULT` filed to NEEDS-CLAUDE. **T1 stops: Claude writes prereg
+  Amendment A0 and Step 4b.**

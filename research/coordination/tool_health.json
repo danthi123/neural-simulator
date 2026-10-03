@@ -1,40 +1,40 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-09-24T13:09:50Z",
- "any_rotted": false,
+ "generated_at": "2026-10-03T08:02:51Z",
+ "any_rotted": true,
  "results": [
   {
    "tool": "experiment-engine",
    "lane": "experiment",
-   "status": "ready",
-   "why": "built 4 current presets; swept basic_stimulus_response [[100.0, 4221], [200.0, 4221]] on cupy",
-   "checked": "build 4 presets + step basic_stimulus_response x2",
-   "at": "2026-09-24T13:09:23Z"
+   "status": "degraded",
+   "why": "current presets build fine; step-sweep needs a GPU \u2014 presets build; step needs GPU (no-cupy: ModuleNotFoundError(\"No module named 'cupy'\"))",
+   "checked": "build 4 presets (step needs cupy/GPU)",
+   "at": "2026-10-03T08:02:32Z"
   },
   {
    "tool": "auto-tune",
    "lane": "experiment",
-   "status": "ready",
-   "why": "quick tuning sweep completed (rc=0)",
+   "status": "ROTTED",
+   "why": "exit rc=1. Traceback (most recent call last):\n  File \"/home/dant123/Projects/neural-simulator/.claude/worktrees/draft-ldc-outcome-timing/neural-simulator.py\", line 2, in <module>\n    import dearpygui.dearpygui as dpg\nModuleNotFoundError: No module named 'dearpygui'\n",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-09-24T13:09:40Z"
+   "at": "2026-10-03T08:02:32Z"
   },
   {
    "tool": "gpu-queue",
    "lane": "gpu",
    "status": "ready",
-   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim && export XDG_RUNTIME_DIR=/run/user/1000; until bash tools/mem_ok.sh 1 (pi",
+   "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-09-24T13:09:40Z"
+   "at": "2026-10-03T08:02:32Z"
   },
   {
    "tool": "pool",
    "lane": "pool",
    "status": "ready",
-   "why": "2/3 nodes healthy",
+   "why": "2/4 nodes healthy",
    "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-09-24T13:09:44Z"
+   "at": "2026-10-03T08:02:42Z"
   },
   {
    "tool": "pool-checkout",
@@ -42,17 +42,31 @@
    "status": "ready",
    "why": "2 nodes: code present + venv imports numpy/scipy",
    "checked": "code present + venv import",
-   "at": "2026-09-24T13:09:49Z"
+   "at": "2026-10-03T08:02:51Z"
   },
   {
    "tool": "cloud-aws",
    "lane": "cloud",
    "status": "unknown",
-   "why": "rc=254 \n\naws: [error]: an error occurred (missingparameter) when calling the describeinstances operation: the request must contain the parameter instanceid\n",
+   "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
    "checked": "aws_gpu.sh status",
-   "at": "2026-09-24T13:09:50Z"
+   "at": "2026-10-03T08:02:51Z"
   }
  ],
- "backlog_items": [],
+ "backlog_items": [
+  {
+   "id": "toolrot-auto-tune",
+   "what": "Repair rotted tool 'auto-tune' \u2014 exit rc=1. Traceback (most recent call last):\n  File \"/home/dant123/Projects/neural-simulator/.claude/worktrees/draft-ldc-outcome-timing/neural-simulator.py\", l",
+   "source": "tools/tool_health.py",
+   "anchor": "auto-tune",
+   "files": "neural-simulator.py",
+   "verify_cmd": "python tools/tool_health.py --only auto-tune",
+   "dependencies": [],
+   "lane": "agent",
+   "priority": 3,
+   "rough_start": "2026-10-03",
+   "rough_target": "2026-10-03"
+  }
+ ],
  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }
