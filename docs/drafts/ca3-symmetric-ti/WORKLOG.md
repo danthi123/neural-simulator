@@ -142,3 +142,27 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
   failures=0` (depths 185–186; lr0.002 excluded — never requeue a landed cell). If either vanishes again without
   a file: §10 report **#4** with both attempt outcomes — no second requeue. §11 selection still ordered
   largest-first: needs lr0.02 verdict, then 0.006, then 0.002 (already in hand).
+
+## 2026-10-03 19:55 EDT - §11 selection: `hebbian_learning_rate = 0.02` FROZEN; §10 order 2 queued (8/8)
+- **Attempt-record correction (supersedes the previous entry's "dead claims"):** the lr0.02/0.006 originals
+  **completed at 17:12 on-node**; sim-sync made them visible at 17:16 (parts dir mtime) — after my 17:15 requeue,
+  a check-then-sync race, so that requeue was a spurious duplicate. The same-config reruns (seed 8, `--dev`,
+  arms `wake sym`) completed **18:37** and overwrote both files (size delta ≤1 byte → runs not byte-deterministic;
+  prov sidecars 18:37). All §11 numbers below read the 18:37 versions; lr0.002 = original 16:39.
+- **§11 rung selection (one MiMo Pro delegate, blind to DI/FI/PBP): ALL THREE rungs PASS every criterion → the
+  ladder's largest satisfying value, `hebbian_learning_rate = 0.02`, is FROZEN** (before seeds 9–11, before any
+  §9 read). Every number (per §11): wake premise reads `PAB = 0.42734374999999997`, `PBD = 0.3890625`, both
+  ≥ 0.30 (identical across rungs — wake arm byte-identical, `w_hash 83ada2e44e402d34`); sym saturation reads
+  `foil_direct_max = 0.0` and `spurious_C_max = 0.0` (< 0.05 absolute, all three rungs); sym between-pair means
+  `40.10912005120209` (0.02), `39.914202875262916` (0.006), `39.85872334452092` (0.002) — all ≪ 720 = 0.8 ×
+  w_max 900. Wording source: the registered §3 criteria live in
+  `research/findings/2026-09-29-sleep-transitive-inference-PREREGISTRATION.md` §3 (lines 173–176), **not** the
+  ca3-capacity prereg that PLAN §11's pointer names (it lacks them); STI0 bar (PAB/PBD ≥ 0.30) from PLAN §9.
+- **§10 order 2: 8 standard jobs queued, 8/8, failures=0, depths 199–206** — seeds 8–11 × parts a
+  (`sym wpermc rev`) / b (`wake dis`), outs `parts/seed<S>_<part>.json`, PLAN §10 template + `--dev
+  --set hebbian_learning_rate=0.02` (runner lines 882–883: `--set` requires `--dev`, which is otherwise inert;
+  `DEFAULTS` lr stays 0.006 — no default flip, that action is Claude-reserved). Provision `state=ok`
+  (re-finished 19:44, docs-only behind main). Record: `docs/drafts/ca3-symmetric-ti/jobs/std_d4a533ae7.tsv`.
+- Next: the 8 land (~20–50 min each) → §10 `--merge` record assembly (U7 encode-hash compare) → §9 dev
+  inspection per the §7 table; finding written PROVISIONAL by the local model, inspected by Claude (T3
+  precedent). §7/§9 reads stay blind until then.
