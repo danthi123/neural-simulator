@@ -295,6 +295,68 @@ POOL_FRESH_AWK='function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m =
 NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
 NODE_BUDGET=0
 
+# PER-NODE LIMITS (2026-10-02, cloud session 5: the workstation joins the pool as node `wspool`, user `simpool`).
+# Every capacity knob below is global and node_is_idle reads nproc, loadavg and /proc/meminfo host-wide, which is
+# right for a dedicated mini-PC and wrong for a shared machine whose owner also games, trains and serves a model on
+# it. POOL_NODE_LIMITS holds space-separated entries `<node>:jobs=N,mem_gb=M,min_avail_gb=K` (any non-empty subset of
+# the three keys, each a positive integer). For a node with an entry:
+#   jobs=N          the job cap is min(the usual cap, N);
+#   mem_gb=M        NODE_BUDGET is also capped at M minus the POOL_JOB_MEM_GB of every live job on that node (the
+#                   environ scan below; the pool account on such a node sees only its own processes, which are
+#                   exactly the pool's jobs), so the pool never holds more than M GB there by declaration;
+#   min_avail_gb=K  replaces POOL_MIN_AVAIL_GB for that node, in the floor check and in the budget.
+# A node with no entry runs the identical global code path (pinned by tests/test_pool_autodispatch_workflow.py).
+# Parsed and validated ONCE, here, before any seam or the loop: a malformed value stops the process (exit 2) rather
+# than silently dispatching a shared machine at mini-PC limits.
+declare -A NODE_LIM_SET=() NODE_LIM_JOBS=() NODE_LIM_MEM=() NODE_LIM_MINAVAIL=()
+_node_limits_die() {
+  echo "[pool-dispatch] ⛔ POOL_NODE_LIMITS: $1 -- expected space-separated <node>:jobs=N,mem_gb=M,min_avail_gb=K (keys optional, each N a positive integer); refusing to run" >&2
+  exit 2
+}
+parse_node_limits() {
+  local entry node kvs kv key val entries=() pairs=()
+  read -r -a entries <<<"${POOL_NODE_LIMITS:-}" || true   # `read -a` splits without glob expansion
+  for entry in "${entries[@]}"; do
+    [[ $entry == *:* ]] || _node_limits_die "entry $(printf '%q' "$entry") has no ':'"
+    node="${entry%%:*}" kvs="${entry#*:}"
+    # The node-name rule valid_node_names applies (a name is later an ssh host argument).
+    [[ $node =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || _node_limits_die "node name $(printf '%q' "$node") is not a plain host alias"
+    [ -z "${NODE_LIM_SET[$node]:-}" ] || _node_limits_die "node $node has more than one entry"
+    [[ -n $kvs && $kvs != ,* && $kvs != *, && $kvs != *,,* ]] || _node_limits_die "entry $(printf '%q' "$entry") has an empty limit list or an empty item"
+    IFS=, read -r -a pairs <<<"$kvs"
+    for kv in "${pairs[@]}"; do
+      [[ $kv == *=* ]] || _node_limits_die "item $(printf '%q' "$kv") for $node is not key=N"
+      key="${kv%%=*}" val="${kv#*=}"
+      # Leading zeros are refused (bash arithmetic reads 08 as bad octal) and six digits is far above any node.
+      [[ $val =~ ^[1-9][0-9]{0,5}$ ]] || _node_limits_die "$key=$(printf '%q' "$val") for $node is not a positive integer"
+      case "$key" in
+        jobs)         [ -z "${NODE_LIM_JOBS[$node]:-}" ]     || _node_limits_die "key jobs repeated for $node";     NODE_LIM_JOBS[$node]=$val ;;
+        mem_gb)       [ -z "${NODE_LIM_MEM[$node]:-}" ]      || _node_limits_die "key mem_gb repeated for $node";   NODE_LIM_MEM[$node]=$val ;;
+        min_avail_gb) [ -z "${NODE_LIM_MINAVAIL[$node]:-}" ] || _node_limits_die "key min_avail_gb repeated for $node"; NODE_LIM_MINAVAIL[$node]=$val ;;
+        *) _node_limits_die "unknown key $(printf '%q' "$key") for $node (known: jobs, mem_gb, min_avail_gb)" ;;
+      esac
+    done
+    NODE_LIM_SET[$node]="$kvs"
+  done
+}
+parse_node_limits
+# One log line per node per POOL_NODE_LIMIT_LOG_RATE_S (default 10 min) when a per-node limit is what refused a
+# dispatch. Kept in memory, not in a mark file: node_is_idle and fill_node run in the loop's own shell (never a
+# subshell), and on the server's runtime mode the code root is read-only, so a mark file there could never be
+# written and the rate limit would silently become one line per poll.
+NODE_LIMIT_LOG_RATE_S="${POOL_NODE_LIMIT_LOG_RATE_S:-600}"
+[[ $NODE_LIMIT_LOG_RATE_S =~ ^[0-9]+$ ]] || NODE_LIMIT_LOG_RATE_S=600
+declare -A NODE_LIMIT_LOGGED_AT=()
+NODE_LIMIT_GLOBAL_BUDGET=0   # for a node with an entry: the budget the global settings alone would give (0 = refused)
+
+log_node_limit_refusal() {   # log_node_limit_refusal <node> <why> -- rate-limited per node
+  local node="$1" now last
+  now=$(date +%s); last="${NODE_LIMIT_LOGGED_AT[$node]:-}"
+  if [ -n "$last" ] && [ $(( now - last )) -lt "$NODE_LIMIT_LOG_RATE_S" ]; then return 0; fi
+  NODE_LIMIT_LOGGED_AT[$node]=$now
+  echo "[pool-dispatch] $(date '+%H:%M:%S') $node: per-node limit refused dispatch (POOL_NODE_LIMITS $node:${NODE_LIM_SET[$node]}): $2; the global settings alone would have dispatched (next such line for $node in >= ${NODE_LIMIT_LOG_RATE_S}s)" >&2
+}
+
 # POOL-JOB SANDBOX (2026-09-30 security review, HIGH #2: "pool-submit is a LAN foothold"). Every job used to run over
 # ssh as the node's login user -- passwordless sudo, full network -- so an agent-authored line (the gateway's
 # pool-submit, or the local-model driver's `pool_queue.sh add`) could reach the LAN or take the node. A sandboxed
@@ -408,23 +470,53 @@ node_is_idle() {
   # behind a lab-chosen flock read 11/11 "full" at load ~5.6 on 12 cores while 13 jobs sat queued. Load stays
   # the CPU gate; a MemAvailable floor (POOL_MIN_AVAIL_GB, default 3) now guards RAM (15 GB nodes).
   local cap="${POOL_JOBS_PER_NODE:-$(( cores > 2 ? cores - 1 : 1 ))}"   # single-threaded jobs: fill to cores-1
-  [ "${procs:-99}" -lt "$cap" ] || return 1
-  [ "${avail_gb:-0}" -ge "${POOL_MIN_AVAIL_GB:-3}" ] || return 1
+  _NI_PROCS="$procs" _NI_AVAIL="$avail_gb" _NI_MAXJOB="$max_job_gb" _NI_TOTAL="$total_gb" _NI_COMMITTED="$committed"
+  _NI_LOAD="$load" _NI_CORES="$cores" _NI_RESV=""   # reservations are read only once the cheap checks pass
+  NODE_LIMIT_GLOBAL_BUDGET=0
+  if [ -z "${NODE_LIM_SET[$node]:-}" ]; then
+    capacity_verdict "$node" "$cap" "${POOL_MIN_AVAIL_GB:-3}" ""   # no entry: the global path, unchanged
+    return
+  fi
+  # A node with a POOL_NODE_LIMITS entry: the verdict under its limits decides. When that refuses, the same probe is
+  # judged under the global settings alone; if THOSE would dispatch, the limit is what refused, and that is logged.
+  local lcap="$cap" lmin="${NODE_LIM_MINAVAIL[$node]:-${POOL_MIN_AVAIL_GB:-3}}" lmem="${NODE_LIM_MEM[$node]:-}"
+  if [ -n "${NODE_LIM_JOBS[$node]:-}" ] && [ "${NODE_LIM_JOBS[$node]}" -lt "$cap" ] 2>/dev/null; then lcap="${NODE_LIM_JOBS[$node]}"; fi
+  local lim_budget lim_rc why
+  capacity_verdict "$node" "$lcap" "$lmin" "$lmem"; lim_rc=$?
+  lim_budget="$NODE_BUDGET" why="$NI_REASON"
+  if capacity_verdict "$node" "$cap" "${POOL_MIN_AVAIL_GB:-3}" ""; then NODE_LIMIT_GLOBAL_BUDGET="$NODE_BUDGET"; fi
+  NODE_BUDGET="$lim_budget"
+  if [ "$lim_rc" -ne 0 ] && [ "$NODE_LIMIT_GLOBAL_BUDGET" -ge 1 ]; then log_node_limit_refusal "$node" "$why"; fi
+  return "$lim_rc"
+}
+
+capacity_verdict() {
+  # capacity_verdict <node> <job-cap> <min-avail-gb> <mem-gb-or-empty> -- judge node_is_idle's probe (the _NI_*
+  # values it just set) under these settings. Returns 0 = has capacity; sets NODE_BUDGET at the same point the
+  # inline code always did (a refusal before that point leaves it as it was) and NI_REASON on a refusal.
+  local node="$1" cap="$2" min_avail="$3" mem="$4"
+  NI_REASON=""
+  [ "${_NI_PROCS:-99}" -lt "$cap" ] || { NI_REASON="${_NI_PROCS} pool runner(s) running, job cap $cap"; return 1; }
+  [ "${_NI_AVAIL:-0}" -ge "$min_avail" ] || { NI_REASON="MemAvailable ${_NI_AVAIL} GB is below the ${min_avail} GB floor"; return 1; }
   # Jobs GROW after dispatch (2026-09-23: three D6 workers reached 4-5 GB each and left pool41 with 167 MB free,
   # load 29/12) -- so also require headroom for one more job the size of the largest one already running there.
-  [ "${avail_gb:-0}" -ge "${max_job_gb:-0}" ] || return 1
+  [ "${_NI_AVAIL:-0}" -ge "${_NI_MAXJOB:-0}" ] || { NI_REASON="MemAvailable ${_NI_AVAIL} GB < largest running job ${_NI_MAXJOB} GB"; return 1; }
   # ...and room for the NEXT job on top of everything dispatched here within the growth window (see RESV above).
-  local resv
-  resv=$(reserved_gb "$node")
-  NODE_BUDGET=$(( ${avail_gb:-0} - ${resv:-0} - ${POOL_MIN_AVAIL_GB:-3} ))   # GB pop_job may hand this node
+  [ -n "$_NI_RESV" ] || _NI_RESV=$(reserved_gb "$node")
+  NODE_BUDGET=$(( ${_NI_AVAIL:-0} - ${_NI_RESV:-0} - min_avail ))   # GB pop_job may hand this node
   # COMMITTED (2026-09-23 20:45): a snapshot between an LB job's worker phases read 9 GB free on pool42 while two
   # swap-probe jobs (each peaking ~6 GB) were running; the growth-window reservations had expired, a third was sent,
   # and BOTH nodes thrashed until ssh timed out. So the budget is also capped by MemTotal minus an OS reserve minus
   # the declared size of every job still running there, for as long as it runs.
-  local lifetime_budget=$(( ${total_gb:-0} - ${POOL_OS_RESERVE_GB:-2} - committed ))
-  [ "${total_gb:-0}" -gt 0 ] && [ "$lifetime_budget" -lt "$NODE_BUDGET" ] && NODE_BUDGET=$lifetime_budget
-  [ "$NODE_BUDGET" -ge 1 ] || return 1
-  awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c - 0.5)}'
+  local lifetime_budget=$(( ${_NI_TOTAL:-0} - ${POOL_OS_RESERVE_GB:-2} - _NI_COMMITTED ))
+  [ "${_NI_TOTAL:-0}" -gt 0 ] && [ "$lifetime_budget" -lt "$NODE_BUDGET" ] && NODE_BUDGET=$lifetime_budget
+  # PER-NODE mem_gb (POOL_NODE_LIMITS): the pool's own declared total on this node stays within mem_gb.
+  if [ -n "$mem" ]; then
+    local node_mem_budget=$(( mem - _NI_COMMITTED ))
+    [ "$node_mem_budget" -lt "$NODE_BUDGET" ] && NODE_BUDGET=$node_mem_budget
+  fi
+  [ "$NODE_BUDGET" -ge 1 ] || { NI_REASON="memory budget ${NODE_BUDGET} GB (MemAvailable ${_NI_AVAIL}, reserved ${_NI_RESV:-0}, floor ${min_avail}, committed ${_NI_COMMITTED}${mem:+, mem_gb $mem}) is below 1 GB"; return 1; }
+  awk -v l="$_NI_LOAD" -v c="$_NI_CORES" 'BEGIN{exit !(l < c - 0.5)}' || { NI_REASON="load ${_NI_LOAD} on ${_NI_CORES} cores"; return 1; }
 }
 
 remote_launch_command() {
@@ -670,6 +762,31 @@ pop_job() {
   printf '%s' "$job"
 }
 
+min_queued_est_gb() {   # smallest declared size among fresh #checked queued jobs; empty if none
+  local m="" e cand src
+  src=$(queue_for_reading)
+  while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
+    < <(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
+          "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) && $0 ~ /#checked:/ {print $2}' "$src" 2>/dev/null)
+  queue_done_reading "$src"
+  echo "$m"
+}
+
+note_budget_limit_refusal() {
+  # note_budget_limit_refusal <node> -- pop_job found nothing for a node node_is_idle passed. When the node has a
+  # POOL_NODE_LIMITS entry whose limits shrank its budget, and the smallest queued job fits the budget the global
+  # settings alone would give but not the per-node one, the limit is what refused it: log (rate-limited). Read-only;
+  # the size test ignores pool_node/revision pins, so it can only say a job of that size was waiting.
+  local node="$1" m
+  [ -n "${NODE_LIM_SET[$node]:-}" ] || return 0
+  [ "$NODE_LIMIT_GLOBAL_BUDGET" -gt "$NODE_BUDGET" ] || return 0
+  m=$(min_queued_est_gb)
+  [[ $m =~ ^[0-9]+$ ]] || return 0
+  if [ "$m" -gt "$NODE_BUDGET" ] && [ "$m" -le "$NODE_LIMIT_GLOBAL_BUDGET" ]; then
+    log_node_limit_refusal "$node" "the smallest queued job (${m} GB) exceeds the per-node memory budget (${NODE_BUDGET} GB; the global budget is ${NODE_LIMIT_GLOBAL_BUDGET} GB)"
+  fi
+}
+
 fill_node() {
   # fill_node <node> -- FILL the node to capacity within this cycle (while, not if) — with the per-node cap
   # raised for single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to
@@ -688,7 +805,7 @@ fill_node() {
   while [ ! -f "$PAUSE_MARK_DIR/$NODE" ] && node_is_idle "$NODE"; do
     node_sandbox_decision "$NODE" || break   # POOL_SANDBOX=on and this node cannot sandbox: nothing is popped
     JOB=$(pop_job "$NODE_BUDGET" "$NODE")
-    [ -z "$JOB" ] && break
+    if [ -z "$JOB" ]; then note_budget_limit_refusal "$NODE"; break; fi
     echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
     if [ "$NODE_SANDBOX" = 1 ]; then
       echo "[pool-dispatch] $NODE: sandboxed launch (bubblewrap: no network, no-new-privs, revision read-only)" >&2
@@ -720,12 +837,14 @@ fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
 if [ "${1:-}" = "--peek-est-gb" ]; then peek_est_gb; exit 0; fi
 if [ "${1:-}" = "--min-queued-est-gb" ]; then   # smallest declared size among fresh queued jobs; empty if none
-  m=""; src=$(queue_for_reading)
-  while IFS= read -r cand; do e=$(job_est_gb "$cand"); { [ -z "$m" ] || [ "$e" -lt "$m" ]; } && m="$e"; done \
-    < <(awk -F'\t' -v now="$(date +%s)" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-          "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) && $0 ~ /#checked:/ {print $2}' "$src" 2>/dev/null)
-  queue_done_reading "$src"
-  echo "$m"; exit 0
+  min_queued_est_gb; exit 0
+fi
+if [ "${1:-}" = "--node-idle-repeat" ]; then
+  # TEST SEAM (2026-10-02): node_is_idle <n> times in ONE process (as the live loop does across polls), printing
+  # its return code each time, so the per-node-limit log's in-memory rate limit can be observed.
+  [ "$#" -eq 3 ] || { echo "usage: $0 --node-idle-repeat <node> <n>" >&2; exit 2; }
+  for _i in $(seq 1 "$3"); do node_is_idle "$2"; echo "$?"; done
+  exit 0
 fi
 if [ "${1:-}" = "--node-budget" ]; then   # live diagnostic: would this node take work, and how many GB?
   if node_is_idle "$2"; then echo "idle budget=${NODE_BUDGET}GB"; else echo "busy/unreachable (budget=${NODE_BUDGET}GB)"; fi; exit 0
@@ -838,7 +957,7 @@ if systemctl --user is-active --quiet pool-dispatch.service 2>/dev/null && [ "${
   exit 0
 fi
 
-echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle) | POOL_SANDBOX=$POOL_SANDBOX_MODE"
+echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES (+ any in $EXTRA_NODES_FILE, re-read each cycle) | POOL_SANDBOX=$POOL_SANDBOX_MODE | POOL_NODE_LIMITS=${POOL_NODE_LIMITS:-none}"
 while true; do
   write_sandbox_state   # read by tools/agent_gateway.sh: pool-submit only while this says mode=on (and is fresh)
   cycle_setup

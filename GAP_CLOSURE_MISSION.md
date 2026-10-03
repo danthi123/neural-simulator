@@ -13,7 +13,32 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-02 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-02. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** the Stage-1 exit attempt (due
+10-24) and the three iw2 chat faculties' flips (steps B/F at flip F `1fb805e9e`). **Next command (Hermes, on S):**
+`bash tools/status.sh`, then runbook section 4 in order (T2/T11 iw2 steps B and F; T18-T20 and T22 once their branches are on main).
+
+**Landed 2026-10-01/02 (cloud Claude sessions 1-3, owner-landed):**
+- **Integration wave 2, step R PASS re-derived** (false-belief chat, transitive chat, neural self-ID: capability 6/6, control
+  6/6 each, from the 36 committed shards at `573a943` under shared prereg Amendment 2; verify-go held, with bounded
+  claim sentences, runbook RULING `iw2-verify-go`). **Steps B and F pending**: flip F `1fb805e9e` is provisioned on
+  pool41/42; the flip stays off main until both pass (RULING `iw2-flip-hold`). Stage-1 credit: PARTIAL (RULING
+  `iw2-stage1-credit`: a host decision still sits inside each).
+- **Sleep transitive inference (T3): NO-GO for the method** (`research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md`;
+  STI0-6 hold on the 4 defined seeds, STI7 fails 4/4, STI3b 3/4; family word UNDEFINED by rule). Next method: the
+  symmetric CA3-CA3 rule (Mishra 2016) with a within-class weight-permutation control (RULING `T3-sleep-ti`).
+- **Merged:** T15 Ecker OU field (8 correction notes), T17 phantom-cfg audit, the test-suite triage (report; 8 no-harm
+  pins retired by owner ruling), the conductance-overshoot guard (default OFF).
+- **Packets written (not yet run):** T18 fb-spiking-witness, T19 transitive-spiking-reach, T20 word-role-parse, T21
+  s2p-flip (session 2: the three host decisions inside the iw2 faculties move into the spiking substrate), and T22
+  stage1-host-share (session 3: host share by intervention at the Stage-1 C2/C3 seams, 22 dev + 132 gate pool jobs,
+  `docs/drafts/stage1-host-share/HANDOFF.md`). Owner ruling `t18-credit`: T18's read-out mode earns PARTIAL only.
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-29 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Operations (owner 2026-09-30):** the project's home moved to homelab-server (canonical checkout
 `/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation

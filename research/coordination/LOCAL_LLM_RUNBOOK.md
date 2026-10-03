@@ -26,7 +26,7 @@ from the pool and the workstation through `sim-sync.timer`. "#n" = the HANDOFF's
 1. `bash tools/status.sh` (its READY rows `b2b_base`, `arcc_awake_completion` are stale: scored 09-29).
 2. Packet status (`running>0` = still running):
    ```bash
-   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts _host_share/gate _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool41 pool42; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
+   cd /home/dant123/Projects/neural-simulator && bash -c 'for k in _long_delay_credit_bg/sweep _long_delay_credit_bg/gate _iw2/identity iw2-R- iw2-flip- _sleep_transitive_inference/parts raw/_host_share/gate _stage1_host_share/ _stage1_exit/gate _stage1_c1_category/gate _bg_live_seam/gate _iw1/identity iw1-R- iw1-flip- b2d0929/ _stage2_exit/dev; do q=$(grep -c -- "$k" research/queue/pool.queue); h=$(grep -c -- "$k" research/queue/pool.queue.held 2>/dev/null); r=$(for n in pool40 pool41 pool42 wspool; do ssh -n -o BatchMode=yes -o ConnectTimeout=5 $n "pgrep -fc -- $k" 2>/dev/null; done | awk "{s+=\$1} END {print s+0}"); echo "$k queued=$q held=${h:-0} running=$r"; done'
    ```
 3. Read section 6 (RULINGS) and your open lines under NEEDS CLAUDE.
 4. Work the FIRST task in section 4 whose "Start" holds and that no open NEEDS CLAUDE line blocks. After every step
@@ -76,7 +76,8 @@ cd /home/dant123/Projects/neural-simulator && F=<requeue file> bash -c 's=$(head
 **GPU (runs on W via `gpu_remote.sh`).** The GPU queue and the local-llm server (llama-swap) live on the workstation
 (W); from here queue a job with `bash tools/gpu_remote.sh add 'cd <clean committed checkout> && ...'` (gate seeds
 also `--prereg <committed path>`) — it pushes your committed revision to W as `refs/server-jobs/<sha>`, builds a
-sparse per-job worktree there and execs that worktree's own `gpu_add.sh`; you never `ssh` by hand. Status: `bash
+sparse per-job worktree there and execs that worktree's own `gpu_add.sh`; you never `ssh` by hand. `add --rev <sha>
+'<cmd>'` runs at a pinned older commit on a branch instead of HEAD (a gate pin; only where a HANDOFF says so). Status: `bash
 tools/gpu_remote.sh status`; log: `bash tools/gpu_remote.sh log [N]`. Your queued jobs wait while your model is
 up (it shares the 3090), so hand the card over at the END of the run that queued them: commit, WORKLOG "yielding
 for <jobs>; resume at <task/step>", then `bash tools/gpu_remote.sh yield --max-hours N` (1-12; the jobs' expected
@@ -231,6 +232,53 @@ push, no runs. Then NEEDS-CLAUDE "[ecker-ou] FAILURE_LOG row + gate (task_8f9171
 **T17. Phantom-cfg audit.** `$WT/draft-phantom-cfg` on `research/draft-phantom-cfg` from `main`. Start: T15's RESULT
 line exists and `docs/drafts/phantom-cfg/AFFECTED.md` does not. Do RULING `phantom-cfg-audit`; Markdown only.
 
+**Session-2 packets (cloud Claude, 2026-10-01; branch `claude/session2-packets`).** T18-T20 move the three host
+decisions RULING `iw2-stage1-credit` names into the spiking substrate. T21 then makes them the default paths. Start
+each when `git -C $P log --oneline -1 -- tools/s2p_score.py` prints a commit (the owner landed the branch).
+T18-T20 are independent: run them in parallel, since the pool takes all three.
+
+**T18. fb-spiking-witness** (who saw the move: a spiking presence/absence flip-flop). `$WT/fb-spiking-witness`,
+`docs/drafts/fb-spiking-witness/HANDOFF.md` sections 0-5 (it creates the branch from main); WORKLOG
+`docs/drafts/fb-spiking-witness/WORKLOG.md` (create). Write: selection, O/R verdicts, finding, RESULT.
+
+**T19. transitive-spiking-reach** (the chain walk and the reachability test as a spiking wave + goal detector).
+`$WT/transitive-spiking-reach`, `docs/drafts/transitive-spiking-reach/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/transitive-spiking-reach/WORKLOG.md`. Write: as T18.
+
+**T20. word-role-parse** (the self-ID role map reads the words: a Hebbian word x position -> role parser).
+`$WT/word-role-parse`, `docs/drafts/word-role-parse/HANDOFF.md` sections 0-5; WORKLOG
+`docs/drafts/word-role-parse/WORKLOG.md`. Write: as T18.
+
+**T21. s2p-flip** (the three spiking paths become their faculties' defaults; full Stage-1 credit).
+`docs/drafts/s2p-flip/HANDOFF.md`. Start: the iw2 flips are on main (RULING `iw2-flip-hold`: after steps B and F
+passed and Claude merged them), AND Claude has confirmed at least one of T18-T20 with O PASS + R PASS. Flip only the
+confirmed ones. Due before the Stage-1 exit attempt (10-24): if not started by 10-17, NEEDS-CLAUDE "[s2p-window]".
+
+**Session-3 packet (cloud Claude, 2026-10-02; branch `claude/session3-packets`).**
+
+**T22. stage1-host-share** (who owns the decision at the Stage-1 C2/C3 seams, by intervention; T6 #10). `$WT/stage1-host-share`,
+`docs/drafts/stage1-host-share/HANDOFF.md` sections 0-6 (it creates the branch from main); WORKLOG
+`docs/drafts/stage1-host-share/WORKLOG.md` (create). Start: `git -C $P log --oneline -1 -- research/runners/stage1_host_share.py`
+prints a commit. Independent of T6 and T18-T21 (its own 22 dev + 132 gate lines; FIFO puts them behind T6's gate). Write:
+devcheck, verdict, finding, RESULT. Under 132 on 10-21: NEEDS-CLAUDE "[s1hs-window]".
+
+**Session-4 GPU packets (cloud Claude, 2026-10-02; branch `claude/session4-gpu`).** The pool is the bottleneck and the
+3090 sits idle. No queued pool task can move to the GPU (RULING `gpu-audit`), so these two give the GPU its own work.
+Both queue from S with `bash tools/gpu_remote.sh add` and run one brain process at a time; T23 first (FIFO). Work
+them alongside the pool tasks: they never wait on the pool, and the pool never waits on them.
+
+**T23. gpu-b2d-mouth** (B2d's registered 18-job mouth arm, Qwen on cupy; about 12 GPU-h). `docs/drafts/gpu-b2d-mouth/HANDOFF.md`
+sections 0-6, from `$WT/b2d-mouth-renderer` (T9's worktree); WORKLOG T9's. Start: `git -C $P log --oneline -1 --
+docs/drafts/gpu-b2d-mouth/HANDOFF.md` prints a commit. It replaces T9's "mouth lines queued by Claude" wait and the
+B2d HANDOFF's section 5 (RULING `b2d-mouth-gpu`). Write: the mouth score on the packet branch, RESULT; the B2d
+finding stays T9's step 10.
+
+**T24. gpu-s1-lived-cupy** (Stage-1 C3 `lived` on cupy, the gate's runner at `c238ff325`, informational; about 7-14
+GPU-h). `docs/drafts/gpu-s1-lived-cupy/HANDOFF.md` sections 0-4; WORKLOG `docs/drafts/gpu-s1-lived-cupy/WORKLOG.md`
+on `research/s1-lived-cupy` (create). Start: as T23, with `docs/drafts/gpu-s1-lived-cupy/make_jobs.sh`. Queue now;
+aggregate and write up only after T6 is scored (RULING `s1-lived-cupy`). Write: devcheck, aggregate, the
+informational finding, RESULT.
+
 ## 5. Idle: self-directed draft research (owner 2026-10-01; only when no section 4 task can move)
 
 Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE draft at a time:
@@ -348,7 +396,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - compute-placement: (owner 2026-10-01) S is the project's home, not a compute node. On S run only checks that finish
   in about 10 minutes (a smoke test, one reproduction cell, a scorer). Anything longer, and every grid or sweep, goes
   out: CPU work to the mini-PC pool, GPU work to the workstation (`gpu_remote.sh add`). Pool lines run at a revision
-  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`). You can queue lines for a provisioned
+  already provisioned on the nodes (`cd ~/derisk-pool/revisions/<sha>`); every line must start with that pin, because
+  pool40 and wspool have no unpinned checkout and an unpinned line fails there. You can queue lines for a provisioned
   revision yourself (`bash tools/pool_queue.sh add '<line>' --checked '<task>: <why> ; mem_gb=<gb> ; max_age_h=48'`,
   dev seeds only for drafts). To provision a new revision yourself (server-side, owner-approved 2026-10-01): commit it
   on a `research/*` branch that you created from `main` (for an older branch, run `bash tools/agent_sync_branch.sh research/<branch>` first), then create an EMPTY regular file named for the full 40-hex sha: `mkdir -p
@@ -364,6 +413,45 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (e63b22f6d, docs only, code unchanged), provisioned that revision and queued all 24 cells at the pool head. Results
   arrive in `$P/research/findings/raw/_ldc_outcome_timing/` through `sim-sync.timer`; score them from there when 24/24
   are in. (2026-10-01)
+
+- board: (owner 2026-10-01) Keep the owner's Vikunja board current with the vikunja skill: plain-language titles, the
+  one project, roadmap-level tasks only. Read it when you choose work; when a landing changes what a capability can
+  do, update or close its task the same cycle. Then append one line `## YYYY-MM-DD  <what you reconciled>` at the END
+  of `docs/.vikunja_sync` on your branch before `agent_merge.sh` (the vikunja-freshness gate refuses a findings merge
+  after 4 findings without it). Never delete tasks or projects, and never rewrite earlier lines of that file.
+  (2026-10-01)
+
+- t18-credit: (owner 2026-10-02) T18's read-out mode, where a host threshold read gates the belief write, earns
+  PARTIAL Stage-1 credit only, never FULL: the host still decides when the belief is written. If read-out is the
+  operating point T18 selects, report it as PARTIAL and start the fully synaptic write as the next method (no-defer).
+  (2026-10-02)
+
+- host-share-packet: (owner 2026-10-02; REPLACED by the cloud Claude session 3, 2026-10-02) The fifth package, a host-share
+  measurement at the Stage-1 seams (T6 NEEDS-CLAUDE #10), was BUILT EARLY with the owner's approval in session 3 instead
+  of at the 10-08 review: runbook task T22, `docs/drafts/stage1-host-share/HANDOFF.md`. Run it as T22 says once the
+  owner lands `claude/session3-packets`; still never build or edit it yourself. (2026-10-02)
+
+- aws-capacity: (owner 2026-10-02) If T6's 10-17 tripwire fires (the pool cannot finish the Stage-1 gate in time),
+  write NEEDS-CLAUDE with the queue numbers. Claude decides on AWS at the review, within the owner's cap of about
+  $50/day with auto-stop. Never start AWS yourself. (2026-10-02)
+
+- iw2-provision: (2026-10-02) Never run `tools/pool_provision.sh` on S: it needs the workstation's key and rsync,
+  which S does not have. Provision a revision only through the server, per RULING `compute-placement`: `touch
+  $P/research/queue/provision.req/<full 40-hex sha>` for a commit on a `research/*` branch, then read
+  `/opt/host-status/sim-provision/<sha>.json`. This overrides any HANDOFF line that says to run `pool_provision.sh` or
+  `gpu_remote.sh provision`. A `refused` with "does not contain published main" means: run `bash
+  tools/agent_sync_branch.sh research/<branch>` first, then request the new head at once. UPDATE 00:40Z: flip F
+  1fb805e9e IS provisioned on pool41 and pool42 (owner-approved one-off;
+  `/opt/host-status/sim-provision/1fb805e9e0bedcce684a47388d95848daf1008a2.json` reads ok). Do NOT sync or re-pin flip
+  F: run steps B and F at 1fb805e9e as the HANDOFF says. The server will soon also accept a revision when main's lead
+  over it is docs-only, or when it contains a main published within the last 60 minutes (results then carry
+  `behind_main`). handled: [iw2-provision] (2026-10-02)
+
+- cloud-claude: (owner 2026-10-01) Claude may also work from cloud sessions (docs/CLOUD_CLAUDE_SESSIONS.md); the owner
+  lands their `claude/<topic>` branches on main. Their rulings read like any other. When a ruling says `handled:
+  [key], ...`, delete those NEEDS-CLAUDE lines yourself. Keep each NEEDS line self-contained (branch @ sha, what to
+  rule, what it unblocks): a cloud session sees only GitHub, where your `research/*` branches are published.
+  (2026-10-01)
 
 - sync-branch: (owner 2026-10-01) When your branch carries an old copy of something main has since fixed (a gate fails
   on a tool main already fixed, provisioning is `refused` for published main, or the GPU queue's stale-revision guard
@@ -394,13 +482,151 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   `docs/drafts/`) and run-ledger lines that only append (`research/findings/raw/_provenance/*.jsonl`) are routine.
   `research/draft-phantom-cfg` already passes the policy: merge it. (2026-10-01)
 
+- iw2-R-pre: (cloud Claude, branch claude/session1-backlog) FIXED. `tools/iw2_score.py` now writes a
+  `tools.verdict.Verdict` preconditions block beside every R, B and A verdict (shared prereg Amendment 2). Step-R
+  cells also need the packet flag = "1" in every sidecar. Claude re-derived R from the 36 committed shards:
+  - fb, tr and si each read PASS: capability 6/6, control 6/6.
+  - The per-seed results equal your unamended run.
+  - The verdicts are committed at `research/findings/raw/_iw2/verdicts/573a943/R_{fb,tr,si}.json`.
+  Your three staged R files are superseded. Move them aside (`mkdir -p _scratch/iw2_R_unamended && mv` them there;
+  never delete them). After the owner lands the branch, run `bash tools/agent_sync_branch.sh
+  research/integration-wave2`. Then T2 continues at section 6 with
+  `FLIP=false-belief-chat,transitive-chat,neural-selfid`. iw2-selfid's turn condition holds at P: turns 14-15 read
+  `abstained` true. Before the section-6 commit, update the board task for these three chat capabilities (vikunja
+  skill) and stage `research/coordination/board_sync.json` with the flip commit. The board-sync gate refuses a ledger
+  change without it; any other gate is a STOP. Provision F per RULING `compute-placement`, then section 7.
+  (2026-10-01)
+- iw2-verify-go: (cloud Claude) The step-R PASSes hold. Two independent skeptics reviewed them.
+  - The instrument/reproducibility lens could not refute: all 219 sidecars are pinned and numpy, the flag is "1",
+    the six seeds are distinct, and the controls are not vacuous.
+  - The host-ownership lens bounds what may be claimed. The finding (HANDOFF section 11) must use these sentences:
+  - false-belief-chat: "The spiking belief store carries the belief that the reply reads. Who saw the move is decided
+    by the host witnessing parse, and that decision gates the write. The lesion forces the gate open."
+  - transitive-chat: "The workspace's spiking ignition decides when the chase stops, and the reply depends on it. The
+    next node is the composer's read, and the reachability test is host code."
+  - neural-selfid: "This is the content-selection parser, the same positional role map, reaching self questions. The
+    real change is that the host router no longer answers them."
+  Count neural-selfid as a reach of the content-selection mechanism, not as a new mechanism. The false-belief chat
+  stays a sub-rung of `w5-affective-tom`; it gets no cognitive-ToM row while the witnessing decision is host-owned.
+  These rule iw2 HANDOFF NEEDS-CLAUDE items 2, 7 and 8. Next methods (no-defer, drafts for session 2):
+  - a spiking presence/witness population driving the `witness_other` gate;
+  - the composer unbind spikes driving the workspace slots, not a host loop.
+  (2026-10-01)
+- ecker-ou-merge: (cloud Claude) T15 is merged on claude/session1-backlog. The 8 correction notes are confirmed: the
+  engine reads only `ou_std_current_pA` (default 100 pA, `sim/config.py:370`). AFFECTED.md gains two 07-25 findings
+  whose scratchpad producers are gone, so their noise level is unverifiable; their notes are unchanged. Re-runs:
+  - The GOs (07-25 x3, 08-20 x2) need none: they held at 2.5x the stated noise, and the notes give the run value.
+  - The 08-20 "does NOT reactivate via soma recurrence" negative: excess noise could cut either way, so re-check
+    it at 40 pA only if that route reopens.
+  - Re-run the 09-17 K18 read-noise floor first, because noise is the quantity it measures. Run it at 40 pA once
+    the rename is on main, as pool lines at a provisioned main revision. The prereg and its exact lines, the s42
+    smoke first, are in `research/findings/2026-10-01-gap5-read-noise-floor-ou40-remeasure-PREREGISTRATION.md`.
+    Name that prereg in `--checked`.
+  - The 09-16 forward-band and 08-27 LTU NO-GOs wait on its result.
+  RESULT: a PROVISIONAL finding comparing sigma_read at 40 pA against 100 pA. (2026-10-01)
+- T17-phantom-cfg: (cloud Claude) merged. Fix: `cfg.enable_stp` maps to `enable_short_term_plasticity`. Findings in
+  AFFECTED.md are grep mentions, which over-include (T15 showed that mentioning a runner is not running it). Scripted
+  exception, as for T15:
+  - For each runner in the headline table (non-default dropped), add a dated `Correction (PROVISIONAL, local model)`
+    note (stated vs run value, nothing re-interpreted).
+  - Add it only to findings whose frontmatter `runner:` or whose command names that runner as the producer.
+  - Skip the 8 `ou_noise_sigma_pa` runners (T15 covers them) and AUTONOMOUS_STATE.
+  - Commit on `research/draft-phantom-cfg`; RESULT.
+  No runner edits and no re-runs. `cfg_phantom_field` blocks a flagged runner on its next touch, which fixes the
+  default-equal `cfg.dt` lines with no behavior change. (2026-10-01)
+- T3-sleep-ti: (cloud Claude) merged; the finding is inspected. The grader re-derives `aggregate.json`
+  byte-identical, and its selftest passes. STI0-STI6 hold on the 4 defined seeds, so the night does integrate.
+  STI7 fails 4/4 (registered) and STI3b fails 3/4 (not predicted). The family word stays UNDEFINED (U6 on 42 and
+  101), but it cannot reach GO: this is a NO-GO for the method. Do not write a standalone U6 prereg or re-run: neither
+  can change the outcome. Next (prereg section 10, your section-5 draft, dev seeds 8-11 only):
+  - Add the symmetric CA3-CA3 rule (Mishra 2016) as a new arm in a `_sti_symmetric_*` copy of the runner.
+  - Use the within-class weight permutation (equal pre-night weight classes) as its STI3 control from the start.
+  - Report PAB and PBD retention, DI and the control's validity.
+  RESULT, then Claude writes the next family prereg. Sleep downscaling is the second companion. (2026-10-01)
+- triage: (cloud Claude) merged as a report.
+  - The 28 REAL failures are old July demo consoles (emerge58/60/61/66: composer D 128 vs 256), v14 stage B, and 8
+    `*_no_harm` tests that pin a past arc's files. None is on the production path.
+  - POLLUTION (33) is test isolation: `cpd_v1.NOUN_VOCAB = ...` at import time. The fix (monkeypatch and restore)
+    is an edit to existing tests, so it is a work package for a later Claude session.
+  - Retiring the `*_no_harm` pins is the owner's call. Nothing for you to run. (2026-10-01)
+- handled: [iw2-R-pre], [T3], [ecker-ou], [T17], [triage] (2026-10-01)
+- T17-merge: (cloud Claude) research/draft-phantom-cfg @ 64899914f (round-1 and round-2 refuter fixes) is merged on
+  claude/session1-backlog. Two corrections at merge:
+  - The `cfg.enable_stp` heading names the real field `enable_short_term_plasticity`, not `enable_stdp`.
+  - The `enable_stp` row IS a drop. The same block disables STDP separately (line 568), so `enable_stp` meant
+    short-term plasticity, and STP stayed on. The count is 20 rows / 18 runners.
+  Nothing for you to run. The T17-phantom-cfg ruling above stands; the 06-11 cortex decorrelation NEGATIVE gets its
+  correction note under it (two dropped values: noise and STP). (2026-10-01)
+- handled: [T17-merge] (2026-10-01)
+
+- iw2-stage1-credit: (owner decision 2026-10-01, cloud Claude session 2) The three iw2 flips (false-belief-chat,
+  transitive-chat, neural-selfid) count toward Stage 1 as PARTIAL. Each is on by default and changes the reply, but a
+  host decision still sits inside it:
+  - false-belief: "who saw the move" (the host `present` dict);
+  - transitive: the chain walk and its reachability test (`target in path`);
+  - self-ID: the positional role map, which never reads the words.
+  No double count: self-ID is the content-selection parser reaching a new question class (RULING `iw2-verify-go`), not
+  a second mechanism. Each flip counts FULLY once its packet (T18, T19, T20) passes O and R AND T21 makes that path
+  the default with steps B/F passing. In the Stage-1 exit report write "PARTIAL (host decision: <name>)" beside each
+  until then. (2026-10-01)
+- iw2-flip-hold: (owner decision 2026-10-01) The iw2 flip commit stays on research/integration-wave2 and off main
+  until its steps B and F pass (HANDOFF section 7's decision table). Then Claude merges it. Never ask the owner to
+  land a branch that carries the flip before both read PASS. (2026-10-01)
+- no-harm-retire: (owner decision 2026-10-01) The eight protected-pin tests from the triage's REAL group are
+  retired on claude/session2-packets. Each now holds a comment naming its arc commit; the other tests in each file
+  stay:
+  - tests/test_compose_bind_no_harm.py (2fde0ed24)
+  - tests/test_compose_bridge_no_harm.py (c1d1a3d29)
+  - tests/test_td_critic_no_harm.py (c1d1a3d29)
+  - tests/test_engram_bootstrap_no_harm.py (bda6e462c)
+  - tests/test_phase_factored_no_harm.py (c1e79b719)
+  - tests/test_q2_no_harm.py (02addfa63)
+  - tests/test_q2r_no_harm.py (a1035cff5)
+  - tests/test_generative_replay_soundness.py::test_reuse_by_import_only (ec567ab2a)
+  Each pinned files that main has since edited on purpose, so it measured elapsed time, not harm. Do not restore them.
+  The POLLUTION class (`cpd_v1.NOUN_VOCAB` set at import) is still a later Claude work package. (2026-10-01)
+- s2p-canary: (cloud Claude session 2) For T18-T21, run the pool canary yourself exactly as each HANDOFF's step 4
+  says: `bash tools/pool_canary.sh run <node> '<the first line of that job file>' --wait-s N`. A canary PASS lets the
+  gate-seed lines queue. A canary FAIL is a code defect: STOP with NEEDS-CLAUDE. This replaces section 3's "needs a
+  pool canary" STOP for these four tasks only. (2026-10-01)
+- s1hs-canary: (cloud Claude session 3) For T22, run the pool canary yourself exactly as its HANDOFF's step 4 says
+  (`bash tools/pool_canary.sh run pool41 '<the s1_lived intact_a gate line>' --wait-s 7200`). A canary PASS lets the
+  132 gate-seed lines queue; a canary FAIL is a code defect: STOP with NEEDS-CLAUDE. Same scope as `s2p-canary`.
+  (2026-10-02)
+- t13-merged: (cloud Claude session 2) research/conductance-overshoot-guard is merged on claude/session2-packets.
+  The flag `enable_bounded_conductance_integration` stays default-OFF, so the merge is byte-identical. T18's organ
+  turns it on in its own bridge: without it, strong GABA_A overshoots (the T13 defect) and the presence attractor
+  cannot be silenced. T13's cupy re-run result still goes in its WORKLOG; an rc != 0 is NEEDS-CLAUDE as before.
+  (2026-10-01)
+- gpu-audit: (cloud Claude session 4) No queued pool task moves to the GPU. T4, T6, T7, T18-T22 and the LDC sweep,
+  gate and outcome-timing grid all pin `SIM_BACKEND=numpy` in their preregs, job lines or scorers (T6/T7/T22: "numpy/
+  CPU" in the prereg; T18-T21: `tools/lb_shard.py` rejects a non-numpy cell; LDC: numpy job lines and an exact
+  numpy-row reproduction). numpy and cupy at the same seed build different networks (docs/ENGINE_REFERENCE.md, the
+  cross-backend seed trap), so a cupy run of any of them would be a different experiment. Never add a pool line to
+  the GPU queue. The GPU gets its own work: T23, T24. (2026-10-02)
+- b2d-mouth-gpu: (cloud Claude session 4) Claude's queueing decision for the B2d mouth arm (RULING `b2d-mouth`): you
+  queue the 18 registered lines yourself from S, unchanged, with `cd $WT/b2d-mouth-renderer && bash
+  tools/gpu_remote.sh add '<line>'`, and run its A1.4 re-runs as `docs/drafts/gpu-b2d-mouth/HANDOFF.md` section 5 says.
+  The per-job worktree `gpu_remote.sh` makes carries only the guard; each line then runs in the registered export of P
+  on the workstation, as A1.2 registers. This supersedes the B2d HANDOFF's section 5 and its NEEDS-CLAUDE #6 for
+  queueing (not #3, the remap amendment, which stays Claude's). (2026-10-02)
+- s1-lived-cupy: (cloud Claude session 4) T24 runs now, not after the pool gate (T6 #11's wording): it uses no pool
+  time and the gate's bars are frozen. Keep it blind: do not aggregate, read or report its numbers until T6's gate is
+  scored. It is informational: never a gate arm, never averaged with or substituted for the numpy C3, and a
+  numpy-vs-cupy difference is not a backend effect on one network. (2026-10-02)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-01 04:05 [T3] RESULT #8: sleep-TI 6-seed gate family UNDEFINED: 4 NO-GO (STI7 false 43/44/100/102; STI3b false 43/44/102) + 2 U6-UNDEFINED (42/101 wperm invalid); pm UNDEFINED. Finding+16 files on research/sleep-transitive-inference @ f18da9f8f. U6 -> prereg s10. Hands back.
-- 2026-10-01 04:59 [ecker-ou] RESULT: AFFECTED.md lists the 6 importers of the OU-setting build_store (stdp_band) that ran at 100 pA not 40; PROVISIONAL note on the 8 affected findings; onebrain_capstone dead-code sentence. research/draft-ecker-ou-field @ 8d461f11d. No re-runs; hands back.
-- 2026-10-01 06:25 [T17] RESULT: phantom-cfg audit AFFECTED.md: 60 runners/71 lines, 10 phantom fields; 16 non-default-dropped (head _emerge87 cfg.dt=0.5->dt_ms 1.0); per-field tables + findings. research/draft-phantom-cfg @ 2311efc8f. Markdown only, no re-runs; hands back.
-- 2026-10-01 12:48 [triage] RESULT: section 5 full-suite triage: 175 failed + 4 errors -> 76 first-error lines; ENVIRONMENT 66, POLLUTION 33 (vocab KeyErrors pass in isolation), REAL 28 (composer-D, PROTECTED on main), UNVERIFIED 52. No fixes. research/draft-test-triage @ 636cbf76a.
+- 2026-10-01 19:54 [LDC-grid] INFO (corrected): grid ALIVE and progressing - 33 runner procs each on pool41 + pool42, outputs landing (4 + 8 in the nodes' checkouts); the earlier 0/0 read S-side ps (pool jobs never run on S) plus the S output dir (copy-back pending).
+- 2026-10-01 23:12 [T13] STOP #1: cupy re-run DONE(rc=1) 19:39 - 3 passed/1 failed; failing tests/test_bounded_conductance_integration.py::test_byte_identical_when_off; tried: re-run on W gpu after test fix 9e8edbec1; blocks: T13 merge
+- 2026-10-02 04:56 [T23] 18 mouth cells already present: b2d0929-mouth/s{42,43,44,100,101,102} x3 fac, mtimes 10-01 10:57-19:39, ran at P=5818dc6 from /home/dant123/derisk-pool/revisions export, uncommitted, no s7; tried: n/a (packet table STOP); blocks: T23 preflight+18-line queue
+- 2026-10-02 07:28 [transitive-spiking-reach] canary R INCONCLUSIVE x2: mem_ok refused 8G on pool42 07:26 and pool41 07:27 (same block as [fb-spiking-witness] STOP #1); 12 R lines held; O canary PASS + 6 O queued; blocks: T19 sections 4-5
+- 2026-10-02 08:47 [fb-spiking-witness] O PASS + R PASS at research/fb-spiking-witness @ 40c43d520 (op 4 readout; verify-go 2 MiMo Pro refuters both SURVIVES; finding research/findings/2026-10-02-fb-spiking-witness-gate.md PROVISIONAL); confirm + merge; unblocks P4 (s2p-flip)
+- 2026-10-02 09:31 [word-role-parse] canary R INCONCLUSIVE x2: mem_ok refused 8G on pool42 + pool41 09:29 (same 8G block as the [fb-spiking-witness] and [transitive-spiking-reach] lines); 12 R lines held; O canary PASS + 6 O queued; blocks: word-role-parse sections 4-5
+- 2026-10-02 16:55 [host-share-baselines] BASELINE-VALID (e7475748c): k/v/bg HOST-OWNED, organ-c HOST, metacog host-replaceable, ignition MIXED. HANDOFF #8: sync summary docs + board and hand the bg-select and ignition numbers to the step-3 builder as its "before" values.
+- 2026-10-02 17:45 [selection-seam-need-reversal] BG live-seam retirement gate NO-GO: only G4 fails (latch read not threshold-invariant, latch_thr_change 0.25) - finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md (0466e8c24). No fix started; NEEDS the next method.
+- 2026-10-02 18:45 [draft-seam-map] T12 amend committed locally (a6aff478c; amendment verbatim, >-stripped, Markdown-only) but research/draft-seam-map is unpushed (amend + main merge ahead of gitea) - push is reserved for Claude.

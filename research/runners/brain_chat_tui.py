@@ -181,6 +181,44 @@ def _substrate_parse_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# WORD-READING ROLE MAP (packet word-role-parse, session 2; default OFF, byte-identical when off). The on-brain
+# BridgeParser read in `_neural_question_parse` maps (position, voice) -> role and never sees a word (content[0] is
+# the agent, content[1] the action, whatever they are). BRAIN_WORD_ROLE_PARSE=1 swaps that read for the spiking
+# word-role organ (research/runners/word_role_parser_organ.py): word and position assemblies project onto
+# agent/action/patient ensembles through Hebbian-trained synapses, so the role comes from the WORD ("usually", never
+# heard, gets no role and is skipped). BRAIN_WORD_ROLE_LESION=1 closes the word -> role transmission gate (position
+# alone is subthreshold, so the parse declines); BRAIN_WORD_ROLE_OP picks the organ's frozen GRID index (default 0).
+# Named residuals: the organ is trained on the composer's fact index (a host transcription), the self-alias ->
+# 'brain' resolution stays host. See the organ's docstring.
+_WORD_ROLE_PARSE_DEFAULT_ON = False
+_WORD_ROLE_DEFAULT_OP = 0   # the operating point used when BRAIN_WORD_ROLE_OP is unset (T21 sets it)
+
+
+def _word_role_parse_enabled() -> bool:
+    """BRAIN_WORD_ROLE_PARSE=1 -> `_neural_question_parse` reads the roles from the words (spiking word-role organ).
+    Default OFF (`_WORD_ROLE_PARSE_DEFAULT_ON`) -> today's positional BridgeParser read, byte-identical."""
+    v = os.environ.get("BRAIN_WORD_ROLE_PARSE")
+    if v is None:
+        return _WORD_ROLE_PARSE_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+def _word_role_lesioned() -> bool:
+    """BRAIN_WORD_ROLE_LESION in {1,true,yes,on} (default OFF) -> the organ's word -> role gate is closed."""
+    v = os.environ.get("BRAIN_WORD_ROLE_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _word_role_op() -> int:
+    """BRAIN_WORD_ROLE_OP -> the organ's GRID index (default 0; an unreadable value reads 0)."""
+    try:
+        return int(os.environ.get("BRAIN_WORD_ROLE_OP", str(_WORD_ROLE_DEFAULT_OP)))
+    except (TypeError, ValueError):
+        return _WORD_ROLE_DEFAULT_OP
+
+
 def _substrate_recall_lesioned() -> bool:
     """`BRAIN_SUBSTRATE_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `ChatBrain.
     _substrate_recall` returns None unconditionally, below. See that method's docstring."""
@@ -1250,6 +1288,20 @@ class ChatBrain:
         if _substrate_parse_lesioned():
             return None            # BRAIN_SUBSTRATE_PARSE_LESION=1: the role-conjunction read is CUT (never
                                     # sampled) -- see _substrate_parse_lesioned()'s docstring.
+        if _word_role_parse_enabled():
+            # WORD-READING role map (BRAIN_WORD_ROLE_PARSE, default OFF): the roles come from the words on the
+            # spiking organ, not from content position. A decline (None) falls to the caller's abstain, as below.
+            try:
+                from research.runners import word_role_parser_organ as _WR
+                _WR.set_operating_point(_word_role_op())
+                seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
+                res = _WR.parse_from_brain(self, content, seed=seed, lesion=_word_role_lesioned())
+                a, v = res.get("agent"), res.get("action")
+            except Exception:
+                return None
+            if not (a and v) or a == v:
+                return None
+            return a, v
         padded = [content[0], content[1], "__q__"]           # SVO with the queried patient a placeholder
         try:
             role_map = {}

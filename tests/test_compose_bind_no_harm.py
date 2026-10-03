@@ -2,7 +2,6 @@
 across the whole compose-bind range (plan-base 2fde0ed..HEAD); NO
 shipped path imports autograd/torch. Self-contained (base SHA is a
 module default; no shared conftest change)."""
-import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,11 +14,10 @@ PROTECTED = [
     "research/runners/dendritic_fair_core.py"]
 
 
-def test_protected_byte_untouched_across_range():
-    diff = subprocess.run(
-        ["git", "diff", "--name-only", "%s..HEAD" % _BASE, "--"]
-        + PROTECTED, capture_output=True, text=True, cwd=ROOT)
-    assert diff.stdout.strip() == "", "PROTECTED MODIFIED:\n" + diff.stdout
+# RETIRED 2026-10-01 (owner ruling, runbook section 6 `no-harm-retire`): `test_protected_byte_untouched_across_range` pinned this arc's protected
+# files byte-unchanged since 2fde0ed24 (compose-bind plan base, 2026-05-18). Main has since edited them on purpose, so the pin
+# only measured elapsed time (test triage, research/draft-test-triage @ 636cbf76a, REAL group). Arc record:
+# `git show 2fde0ed246ea93d59ab9b5e06d8e49466ca81fbe`.
 
 
 def test_no_autograd_in_shipped_path():

@@ -953,6 +953,33 @@ class CoreSimConfig:
     # and the precondition the step-megakernel guard requires.
     fast_spike_reset: bool = True
 
+    # CORRECTNESS fix, ADDITIVE + DEFAULT-OFF (2026-09-29): explicit-step conductance overshoot. The
+    # per-step synaptic current I_syn = g_e*(E_e-v) + g_i*(E_i-v) (sim/kernels.py
+    # fused_conductance_decay_and_current) is computed from the PREVIOUS step's v, then the membrane is
+    # advanced by an explicit-Euler step v_new = v + dv_dt*dt. When the summed conductance is large
+    # relative to C/dt (e.g. several strong convergent GABA-A pathways), one step drives v far PAST the
+    # reversal potential instead of toward it -- measured: 4x weight-40 GABA-A projections onto one
+    # basal-ganglia 'commit' pool drove v to -377 mV within 60 steps (docs/drafts/conductance-overshoot-
+    # guard/WORKLOG.md), after which the pool fires at the refractory ceiling with its excitatory drive
+    # silent (driving force sign flips next step) -- a numerical artifact, not a modeled AHP/rebound.
+    # When True, sim/kernels.py routes the AMPA/GABA-A pair (fused_conductance_decay_and_current), GABA_B
+    # (fused_gabab_decay_and_current) and NMDA/slow-NMDA (fused_nmda_update_and_current) currents through
+    # an EXPONENTIAL-EULER bounded sibling kernel instead: it solves the local linear ODE driven by that
+    # conductance term exactly over dt, so ONE step can only move v toward its own reversal potential,
+    # never past it (see the kernels' docstrings for the derivation). Each conductance TERM is bounded
+    # INDEPENDENTLY against its own reversal (not folded into one shared g_tot across AMPA+GABA_A+GABA_B+
+    # NMDA -- they are computed at different points in the step); this catches the measured single-
+    # pathway overshoot but not an aggregate overshoot from several simultaneously-large terms. SCOPED to
+    # NeuronModel.IZHIKEVICH (2007, self.cp_izh_C per-neuron) and NeuronModel.ADEX (cfg.adex_C scalar) --
+    # the two membrane models the defect was measured on; enabling this flag with any other
+    # neuron_model_type raises (bridge.py `_bounded_conductance_C`) rather than silently no-op. Mutually
+    # exclusive with enable_step_megakernel/_v2 (the fused inference megakernel does not implement the
+    # bounded path): `_step_megakernel_can_dispatch` returns False when this flag is set, so the step
+    # falls through to the (bounded) Python path instead of erroring. DEFAULT-OFF => byte-identical to
+    # today (the unbounded fused_*_decay_and_current kernels are called exactly as before; see
+    # tests/test_bounded_conductance_integration.py::test_byte_identical_when_off).
+    enable_bounded_conductance_integration: bool = False
+
     # Performance: VECTORIZED activity-driven transmission-gate couplings
     # (couple_gate_to_pool / _apply_gate_couplings). The per-step hook reads
     # each registered coupling's control-pool firing fraction

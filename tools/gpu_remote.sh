@@ -2,6 +2,7 @@
 # gpu_remote.sh -- queue and watch GPU jobs from the project's home (the server, no GPU) on the workstation's 3090.
 #
 #   bash tools/gpu_remote.sh add '<cmd>'             # queue <cmd> at THIS checkout's committed HEAD (cmd runs from the repo root)
+#   bash tools/gpu_remote.sh add --rev <sha> '<cmd>' # queue <cmd> at an older committed revision on a branch (a gate pin)
 #   bash tools/gpu_remote.sh status                  # the workstation's queue: dispatcher, current job, depth
 #   bash tools/gpu_remote.sh log [N]                 # last N (default 30) lines of the workstation's gpu_queue.log
 #   bash tools/gpu_remote.sh yield [--max-hours N]   # ask the local model to yield the 3090 to the queue (llm.sh yield)
@@ -34,7 +35,7 @@ WREPO=${SIM_GPU_HOST_REPO:-'$HOME/Projects/sim'}
 DRY=0
 [ "${1:-}" = "--dry-run" ] && { DRY=1; shift; }
 
-usage() { sed -n '4,9p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+usage() { sed -n '4,10p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
 
 # mkwt <sha> <remote worktree path>: the remote lines that make a clean, sparse (no research/findings/raw) worktree.
 mkwt() {
@@ -62,21 +63,44 @@ run_remote() {   # stdin: the remote script
 }
 
 cmd_add() {
+  # --rev <sha> (2026-10-02, cloud Claude session 4): run the job at a pinned, already-committed revision instead of
+  # HEAD -- a gate's pin (e.g. the Stage-1 gate's c238ff325), which predates this bridge, so its own tree has no
+  # gpu_remote.sh to run from and moving a branch to it would move the gate's branch. The working tree is then
+  # irrelevant (nothing uncommitted can reach the job), so only the revision is checked: it must be a commit, on a
+  # branch (local or remote-tracking), and carry its own tools/local_llm/gpu_add.sh (the guard runs at the job's
+  # revision, as for HEAD).
+  local rev=""
+  if [ "${1:-}" = "--rev" ]; then
+    [[ "${2:-}" =~ ^[0-9a-f]{7,40}$ ]] || { echo "usage: gpu_remote.sh add --rev <commit sha> '<cmd>'" >&2; exit 2; }
+    rev="$2"; shift 2
+  fi
   local cmd="${1:-}"
-  [ -n "$cmd" ] || { echo "usage: gpu_remote.sh add '<cmd>'" >&2; exit 2; }
-  # The job runs the COMMITTED revision, so a local code edit would silently not be in it. Results and coordination
-  # state (research/findings, research/coordination, research/queue) are data the job does not run, so they may differ.
-  if ! git -C "$ROOT" diff --quiet HEAD -- . ':!research/findings' ':!research/coordination' ':!research/queue'; then
-    echo "⛔ REFUSED: $ROOT has uncommitted changes to tracked code; commit them first (the job runs HEAD):" >&2
-    git -C "$ROOT" diff --stat HEAD -- . ':!research/findings' ':!research/coordination' ':!research/queue' | tail -5 >&2
-    exit 1
-  fi
-  if [ -z "$(git -C "$ROOT" branch --contains HEAD 2>/dev/null | grep -v 'HEAD detached')" ]; then
-    echo "⛔ REFUSED: HEAD is on no branch (a commit on no branch is eventually garbage-collected on the server, and the job's results would name a revision nobody can check out); commit on a branch first." >&2
-    exit 1
-  fi
+  [ -n "$cmd" ] || { echo "usage: gpu_remote.sh add [--rev <sha>] '<cmd>'" >&2; exit 2; }
   local sha b64
-  sha=$(git -C "$ROOT" rev-parse HEAD)
+  if [ -n "$rev" ]; then
+    sha=$(git -C "$ROOT" rev-parse -q --verify "$rev^{commit}") || { echo "⛔ REFUSED: no such commit here: $rev" >&2; exit 2; }
+    if [ -z "$(git -C "$ROOT" branch -a --contains "$sha" 2>/dev/null | grep -v 'HEAD detached')" ]; then
+      echo "⛔ REFUSED: $sha is on no branch (local or remote-tracking): its results would name a revision nobody can check out." >&2
+      exit 1
+    fi
+    if ! git -C "$ROOT" cat-file -e "$sha:tools/local_llm/gpu_add.sh" 2>/dev/null; then
+      echo "⛔ REFUSED: $sha has no tools/local_llm/gpu_add.sh, so its job could not pass the guard at its own revision." >&2
+      exit 1
+    fi
+  else
+    # The job runs the COMMITTED revision, so a local code edit would silently not be in it. Results and coordination
+    # state (research/findings, research/coordination, research/queue) are data the job does not run, so they may differ.
+    if ! git -C "$ROOT" diff --quiet HEAD -- . ':!research/findings' ':!research/coordination' ':!research/queue'; then
+      echo "⛔ REFUSED: $ROOT has uncommitted changes to tracked code; commit them first (the job runs HEAD):" >&2
+      git -C "$ROOT" diff --stat HEAD -- . ':!research/findings' ':!research/coordination' ':!research/queue' | tail -5 >&2
+      exit 1
+    fi
+    if [ -z "$(git -C "$ROOT" branch --contains HEAD 2>/dev/null | grep -v 'HEAD detached')" ]; then
+      echo "⛔ REFUSED: HEAD is on no branch (a commit on no branch is eventually garbage-collected on the server, and the job's results would name a revision nobody can check out); commit on a branch first." >&2
+      exit 1
+    fi
+    sha=$(git -C "$ROOT" rev-parse HEAD)
+  fi
   b64=$(printf '%s' "$cmd" | base64 -w0)
   push_revision "$sha"
   {

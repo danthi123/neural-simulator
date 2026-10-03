@@ -940,3 +940,195 @@ def test_dispatcher_and_monitor_share_one_max_age_rule() -> None:
     a = fn.findall(DISPATCHER.read_text())
     b = fn.findall(WORKFLOW.read_text())
     assert a and b and set(a) == set(b), "the dispatcher and workflow_check.sh must apply the same max_age_h rule"
+
+
+# --------------------------------------------------------------------- POOL_NODE_LIMITS (2026-10-02, session 5)
+# The workstation joins the pool as `wspool`: a shared machine, so its job cap, the pool's declared memory there and
+# its MemAvailable floor are set per node. A node with no entry must behave exactly as before.
+
+def _write_capacity_probe_stub(tmp_path: Path) -> Path:
+    """A stub `ssh` whose node_is_idle answer comes from the env: PROBE (the metrics line: cores load procs
+    avail_gb max_job_gb total_gb) and ENVL (optional live-job environ lines). Every other ssh call succeeds."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(exist_ok=True)
+    stub = bin_dir / "ssh"
+    stub.write_text("""#!/usr/bin/env bash
+case "$*" in
+  *MemAvailable*) printf '%s\\n' "$PROBE"; [ -n "${ENVL:-}" ] && printf '%s\\n' "$ENVL"; exit 0 ;;
+esac
+exit 0
+""")
+    stub.chmod(stub.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+    return bin_dir
+
+
+def _limits_run(tmp_path: Path, *args: str, probe: str, envl: str = "", limits: str | None = None,
+                extra: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    bin_dir = _write_capacity_probe_stub(tmp_path)
+    env = {k: v for k, v in os.environ.items() if not k.startswith("POOL_")}
+    env.update({
+        "PATH": f"{bin_dir}:{os.environ.get('PATH', '')}",
+        "PROBE": probe, "ENVL": envl,
+        "POOL_QUEUE_PATH": str(tmp_path / "pool.queue"),
+        "POOL_RUNNING_PATH": str(tmp_path / "pool.running"),
+        "POOL_RESERVATIONS_PATH": str(tmp_path / "resv"),
+        "POOL_SSH_CONFIG": str(tmp_path / "does-not-exist"),
+        "POOL_DISPATCH_LAUNCH_SLEEP": "0",
+        "POOL_SKIP_FAST_FAIL_CHECK": "1",
+        "POOL_SANDBOX": "off",
+    })
+    if limits is not None:
+        env["POOL_NODE_LIMITS"] = limits
+    env.update(extra or {})
+    return subprocess.run(["bash", str(DISPATCHER), *args], cwd=ROOT, env=env, capture_output=True, text=True,
+                          timeout=60)
+
+
+def _budget(tmp_path: Path, node: str, **kw) -> str:
+    res = _limits_run(tmp_path, "--node-budget", node, **kw)
+    assert res.returncode == 0, res.stderr
+    return res.stdout.strip()
+
+
+def test_node_limits_parse_accepts_well_formed_entries(tmp_path: Path) -> None:
+    for good in ("", "wspool:jobs=4,mem_gb=24,min_avail_gb=6", "wspool:jobs=4",
+                 "wspool:mem_gb=24 pool1:min_avail_gb=2,jobs=3", "  ws.pool-1_a:jobs=1  "):
+        res = _limits_run(tmp_path, "--nodes-this-cycle", probe="", limits=good, extra={"POOL_NODES": "pool40"})
+        assert res.returncode == 0, (good, res.stderr)
+        assert "POOL_NODE_LIMITS" not in res.stderr, (good, res.stderr)
+
+
+def test_node_limits_parse_rejects_malformed_entries_loudly(tmp_path: Path) -> None:
+    bad_values = [
+        "wspool",                      # no ':'
+        "wspool:",                     # empty limit list
+        "wspool:jobs",                 # not key=N
+        "wspool:jobs=0",               # not positive
+        "wspool:jobs=-1",
+        "wspool:jobs=01",              # leading zero (bash would read octal)
+        "wspool:jobs=1.5",
+        "wspool:jobs=abc",
+        "wspool:jobs=1234567",         # absurdly large
+        "wspool:mem=4",                # unknown key
+        "wspool:jobs=1,foo=2",
+        "wspool:jobs=1,jobs=2",        # repeated key
+        "wspool:jobs=1,",              # empty item
+        "wspool:,jobs=1",
+        "wspool:jobs=1,,mem_gb=2",
+        "wspool:jobs=1 wspool:mem_gb=2",   # two entries for one node
+        "-oProxyCommand=x:jobs=1",     # node name ssh would parse as an option
+        "w*:jobs=1",
+        ":jobs=1",
+    ]
+    for bad in bad_values:
+        # Validated at startup, so even a read-only seam refuses to run.
+        res = _limits_run(tmp_path, "--nodes-this-cycle", probe="", limits=bad, extra={"POOL_NODES": "pool40"})
+        assert res.returncode == 2, (bad, res.returncode, res.stdout, res.stderr)
+        assert "POOL_NODE_LIMITS" in res.stderr and "refusing to run" in res.stderr, (bad, res.stderr)
+        assert res.stdout == "", (bad, res.stdout)
+
+
+def test_node_limits_jobs_caps_the_node_at_min_of_global_cap_and_jobs(tmp_path: Path) -> None:
+    # 8 cores -> global cap 7. Two runners live.
+    assert _budget(tmp_path, "wspool", probe="8 1 2 20 1 32").startswith("idle")
+    assert _budget(tmp_path, "wspool", probe="8 1 2 20 1 32", limits="wspool:jobs=2").startswith("busy")
+    assert _budget(tmp_path, "wspool", probe="8 1 2 20 1 32", limits="wspool:jobs=3").startswith("idle")
+    # jobs above the global cap does not RAISE it: min(7, 20) = 7.
+    assert _budget(tmp_path, "wspool", probe="8 1 7 20 1 32", limits="wspool:jobs=20").startswith("busy")
+    # ...nor above an explicit POOL_JOBS_PER_NODE.
+    assert _budget(tmp_path, "wspool", probe="8 1 2 20 1 32", limits="wspool:jobs=5",
+                   extra={"POOL_JOBS_PER_NODE": "2"}).startswith("busy")
+
+
+def test_node_limits_mem_gb_caps_the_budget_by_the_pools_declared_jobs_there(tmp_path: Path) -> None:
+    # MemAvailable 20, floor 3, MemTotal 32: global budget = min(20-0-3, 32-2-committed).
+    live6 = "POOL_JOB_ID=a POOL_JOB_MEM_GB=6"
+    assert _budget(tmp_path, "wspool", probe="8 1 1 20 1 32", envl=live6) == "idle budget=17GB"
+    assert _budget(tmp_path, "wspool", probe="8 1 1 20 1 32", envl=live6,
+                   limits="wspool:mem_gb=10") == "idle budget=4GB"         # 10 - 6 declared
+    assert _budget(tmp_path, "wspool", probe="8 1 0 20 1 32",
+                   limits="wspool:mem_gb=10") == "idle budget=10GB"        # nothing live yet
+    two = "POOL_JOB_ID=a POOL_JOB_MEM_GB=6\nPOOL_JOB_ID=b POOL_JOB_MEM_GB=4"
+    assert _budget(tmp_path, "wspool", probe="8 1 2 20 1 32", envl=two,
+                   limits="wspool:mem_gb=10").startswith("busy")             # 10 - 10 = 0 < 1
+    # A larger mem_gb never raises the budget above the global one.
+    assert _budget(tmp_path, "wspool", probe="8 1 1 20 1 32", envl=live6,
+                   limits="wspool:mem_gb=500") == "idle budget=17GB"
+
+
+def test_node_limits_min_avail_gb_replaces_the_global_floor_for_that_node(tmp_path: Path) -> None:
+    # MemAvailable 6 GB: global floor 3 -> idle, budget 3.
+    assert _budget(tmp_path, "wspool", probe="8 1 0 6 1 32") == "idle budget=3GB"
+    assert _budget(tmp_path, "wspool", probe="8 1 0 6 1 32", limits="wspool:min_avail_gb=8").startswith("busy")
+    assert _budget(tmp_path, "wspool", probe="8 1 0 6 1 32", limits="wspool:min_avail_gb=5") == "idle budget=1GB"
+    # It REPLACES the floor (a lower value relaxes it too), and it beats POOL_MIN_AVAIL_GB for that node only.
+    assert _budget(tmp_path, "wspool", probe="8 1 0 6 1 32", limits="wspool:min_avail_gb=1") == "idle budget=5GB"
+    assert _budget(tmp_path, "wspool", probe="8 1 0 6 1 32", limits="wspool:min_avail_gb=1",
+                   extra={"POOL_MIN_AVAIL_GB": "7"}) == "idle budget=5GB"
+    assert _budget(tmp_path, "pool40", probe="8 1 0 6 1 32", limits="wspool:min_avail_gb=1",
+                   extra={"POOL_MIN_AVAIL_GB": "7"}).startswith("busy")
+
+
+def test_node_without_an_entry_behaves_exactly_as_with_no_limits_at_all(tmp_path: Path) -> None:
+    now = int(time.time())
+    (tmp_path / "resv").write_text(f"{now} pool40 3\n")
+    probes = ["8 1 0 20 1 32", "8 1 7 20 1 32", "8 1 6 20 1 32", "8 9 0 20 1 32", "8 1 0 2 1 32", "8 1 0 5 6 32",
+              "8 1 0 4 1 32", "12 3.2 2 10 4 15", "4 0.1 0 30 0 0", "8 1 0 20 1 6", "1 0 0 9 1 9", "8 1 0 20 x 32"]
+    envls = ["", "POOL_JOB_ID=a POOL_JOB_MEM_GB=6", "POOL_JOB_ID=a POOL_JOB_MEM_GB=25"]
+    extras = [{}, {"POOL_MIN_AVAIL_GB": "1"}, {"POOL_JOBS_PER_NODE": "2"}]
+    others = "wspool:jobs=1,mem_gb=1,min_avail_gb=9 pool41:jobs=1"
+    for probe in probes:
+        for envl in envls:
+            for extra in extras:
+                base = _limits_run(tmp_path, "--node-budget", "pool40", probe=probe, envl=envl, extra=extra)
+                withl = _limits_run(tmp_path, "--node-budget", "pool40", probe=probe, envl=envl, extra=extra,
+                                    limits=others)
+                case = (probe, envl, extra)
+                assert (base.returncode, base.stdout, base.stderr) == (withl.returncode, withl.stdout, withl.stderr), case
+                assert "per-node limit" not in withl.stderr, case
+    # Pinned against the pre-feature arithmetic (min(20-3-3, 32-2-6) = 14), so "equal to unset" cannot hide a
+    # shared regression in both runs.
+    assert _budget(tmp_path, "pool40", probe="8 1 1 20 1 32", envl="POOL_JOB_ID=a POOL_JOB_MEM_GB=6",
+                   limits=others) == "idle budget=14GB"
+    assert _budget(tmp_path, "pool40", probe="8 1 7 20 1 32", limits=others).startswith("busy")
+
+
+def test_node_limit_refusal_is_logged_once_per_node_per_ten_minutes(tmp_path: Path) -> None:
+    res = _limits_run(tmp_path, "--node-idle-repeat", "wspool", "3", probe="8 1 2 20 1 32", limits="wspool:jobs=2")
+    assert res.returncode == 0, res.stderr
+    assert res.stdout.split() == ["1", "1", "1"]
+    lines = [ln for ln in res.stderr.splitlines() if "per-node limit refused" in ln]
+    assert len(lines) == 1, res.stderr
+    assert "wspool" in lines[0] and "jobs=2" in lines[0] and "job cap 2" in lines[0]
+    # The window is what suppresses repeats: with it at 0 every refusal logs.
+    res = _limits_run(tmp_path, "--node-idle-repeat", "wspool", "3", probe="8 1 2 20 1 32", limits="wspool:jobs=2",
+                      extra={"POOL_NODE_LIMIT_LOG_RATE_S": "0"})
+    assert len([ln for ln in res.stderr.splitlines() if "per-node limit refused" in ln]) == 3, res.stderr
+    # Not logged when the global settings would refuse too (load 9 on 8 cores): the limit is not what refused.
+    res = _limits_run(tmp_path, "--node-idle-repeat", "wspool", "2", probe="8 9 2 20 1 32", limits="wspool:jobs=2")
+    assert res.stdout.split() == ["1", "1"] and "per-node limit" not in res.stderr, res.stderr
+    # Not logged for an accepted node, nor for a node without an entry.
+    res = _limits_run(tmp_path, "--node-idle-repeat", "wspool", "2", probe="8 1 1 20 1 32", limits="wspool:jobs=2")
+    assert res.stdout.split() == ["0", "0"] and "per-node limit" not in res.stderr, res.stderr
+    res = _limits_run(tmp_path, "--node-idle-repeat", "pool40", "2", probe="8 1 7 20 1 32", limits="wspool:jobs=2")
+    assert res.stdout.split() == ["1", "1"] and "per-node limit" not in res.stderr, res.stderr
+
+
+def test_fill_node_logs_when_the_per_node_memory_budget_is_why_a_job_stays_queued(tmp_path: Path) -> None:
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tpython -m research.runners.big  #checked:r mem_gb=8\n")
+    res = _limits_run(tmp_path, "--fill-node", "wspool", probe="8 1 0 20 1 32", limits="wspool:mem_gb=4")
+    assert res.returncode == 0, res.stderr
+    assert "research.runners.big" in queue.read_text()        # never dispatched past the per-node budget
+    lines = [ln for ln in res.stderr.splitlines() if "per-node limit refused" in ln]
+    assert len(lines) == 1 and "8 GB" in lines[0] and "4 GB" in lines[0], res.stderr
+    # The same queue on a node without an entry dispatches (global budget 17 GB) and logs nothing.
+    res = _limits_run(tmp_path, "--fill-node", "pool40", probe="8 1 0 20 1 32", limits="wspool:mem_gb=4")
+    assert res.returncode == 0, res.stderr
+    assert queue.read_text().strip() == "" and "per-node limit" not in res.stderr, res.stderr
+    # A job that fits the per-node budget is dispatched to wspool, with no limit line.
+    queue.write_text(f"{now}\tpython -m research.runners.small  #checked:r mem_gb=2\n")
+    res = _limits_run(tmp_path, "--fill-node", "wspool", probe="8 1 0 20 1 32", limits="wspool:mem_gb=4")
+    assert res.returncode == 0, res.stderr
+    assert queue.read_text().strip() == "" and "per-node limit" not in res.stderr, res.stderr

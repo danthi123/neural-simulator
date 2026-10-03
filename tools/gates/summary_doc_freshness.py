@@ -86,12 +86,21 @@ def _stale_count():
     return len(findings)
 
 
+def _provisional(text):
+    """True if a finding marks itself PROVISIONAL in its first 40 lines (title / status block)."""
+    return "PROVISIONAL" in "\n".join(text.splitlines()[:40])
+
+
 def check(paths):
     if paths is None or len(paths) == 0:
         return []                                           # standalone/empty: nothing to judge
     added_findings = [p for p in paths
                       if p.replace("\\", "/").endswith(".md") and "research/findings/" in p.replace("\\", "/")
                       and "research/findings/raw/" not in p.replace("\\", "/")]
+    # A PROVISIONAL finding (the driver agent's, owner 2026-10-01) is not yet a status change: the forward-looking
+    # docs follow CONFIRMED findings, which a Claude check-in syncs. Counting them would stall the agent's routine
+    # merges, since it may not edit these docs.
+    added_findings = [p for p in added_findings if not _provisional(_git("show", f":{p}"))]
     if not added_findings:
         return []
     staged = _git("diff", "--cached", "--name-only").split()
@@ -104,6 +113,8 @@ def check(paths):
 def selftest():
     """FAILING DIRECTION FIRST: budget exhausted + a finding added + no forward doc staged -> block."""
     bad = []
+    if not _provisional("# X\n\n**Status: PROVISIONAL**\n") or _provisional("# X\n" + "x\n" * 50 + "PROVISIONAL\n"):
+        bad.append("_provisional misreads the status block")
     # 1. THE REAL CASE — over budget, finding added, roadmap not touched.
     if _decide(1, THRESHOLD, False) is None:
         bad.append("did NOT block when the budget was exhausted and a finding was added with no roadmap sync")

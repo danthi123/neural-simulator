@@ -909,6 +909,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-10-02 — sleep transitive inference (plan step 5): method NO-GO, capability open.** The six-seed run
+> (`research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md`) shows the night integrates (STI0-6
+> on the 4 defined seeds) but fails its registered STI7 4/4 and STI3b 3/4. Method banked; next method: the symmetric
+> CA3-CA3 plasticity rule (Mishra 2016) as a new arm, with a within-class weight-permutation STI3 control; sleep
+> downscaling is the second companion (runbook RULING `T3-sleep-ti`).
+
 > **⭐ 2026-09-03 (board #135 continuation) — the satdiv divisive-normalization readout lever (named 2026-09-01)
 > is characterized BORDERLINE, not exhausted and not GO.** A full decisive 6-seed sweep of satdiv's (sigma,
 > scale) operating point (Carandini & Heeger 2012 semi-saturating ratio, `--s2-norm satdiv`) — 9 cells, sigma in
@@ -1187,6 +1193,13 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-10-02 (cloud sessions 1-3):** integration wave 2 step R PASS for false-belief chat, transitive chat and neural
+self-ID (6/6 capability and control each, re-derived; verify-go held), steps B/F next at flip F `1fb805e9e`, the flip
+off main until both pass. Packets T18-T21 (move each faculty's remaining host decision into the substrate, then flip)
+and T22 (host share by intervention at the Stage-1 C2/C3 seams: `research/findings/2026-10-02-stage1-host-share-PREREGISTRATION.md`)
+are written for Hermes. Sleep transitive inference: method NO-GO; next method the symmetric CA3-CA3 rule. Stage-1 exit
+attempt due 10-24 (runbook T6, 204 pool jobs).
 
 **2026-09-24 (night, provenance-fix scoring):** **CA3 superposed-fact-attractor capacity law: GO 6/6 RE-CONFIRMED,
 this time with valid provenance for every registered cell** (`research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md`).

@@ -1,0 +1,64 @@
+{
+  "tom_fb": {
+    "answer": "Sally will look in the basket for the marble.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "false_belief_tom": {
+      "acted": true,
+      "answer": "Sally will look in the basket for the marble.",
+      "events": [
+        {
+          "kind": "place",
+          "agent": "Sally",
+          "location": "basket"
+        },
+        {
+          "kind": "leave",
+          "agent": "Sally"
+        },
+        {
+          "kind": "move",
+          "agent": "Anne",
+          "location": "box",
+          "witnessed_by_tracked": false
+        }
+      ],
+      "reason": "queried",
+      "seed": 7,
+      "lesioned": false,
+      "tracked_agent": "Sally",
+      "object": "marble",
+      "belief_location": "basket",
+      "reality_location": "box",
+      "belief_loc_idx": 0,
+      "world_loc_idx": 1,
+      "n_events": 2
+    },
+    "inner_state_readout": true
+  }
+}

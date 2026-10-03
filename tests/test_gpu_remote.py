@@ -180,3 +180,42 @@ def test_provision_pushes_the_revision_and_keeps_the_given_sha(tmp_path):
     assert "--revision %s\n" % sha[:10] in res.stdout, "the remote script must keep the sha as given"
     assert _run(server, env, "provision", "deadbeef00").returncode == 2, "an unknown commit is refused before any ssh"
     assert not (tmp_path / "ssh.log").exists()
+
+
+def test_add_rev_runs_a_pinned_older_revision_not_head(tmp_path):
+    """--rev <sha> (session 4): a gate pin older than HEAD runs at that pin; the working tree does not matter."""
+    server, home, env = _setup(tmp_path)
+    pin = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    (server / "code.py").write_text("x = 'newer than the pin'\n")
+    _git(["commit", "-q", "-am", "newer"], server)
+    (server / "code.py").write_text("x = 'uncommitted'\n")      # irrelevant under --rev
+    res = _run(server, env, "add", "--rev", pin[:9], "echo pinned")
+    assert res.returncode == 0, res.stderr
+    wrepo = home / "Projects" / "sim"
+    pushed = subprocess.run(["git", "rev-parse", "refs/server-jobs/" + pin], cwd=wrepo, capture_output=True, text=True)
+    assert pushed.stdout.strip() == pin
+    prefix, _, rest = (home / "gpu_add_job").read_text().partition(" && ")
+    assert rest == "echo pinned"
+    wt = Path(prefix[len("cd "):])
+    assert wt.name.startswith(pin + "-") and (wt / "code.py").read_text() == "x = 1\n"
+
+
+def test_add_rev_refusals(tmp_path):
+    server, home, env = _setup(tmp_path)
+    assert _run(server, env, "add", "--rev", "zz", "echo x").returncode == 2
+    assert _run(server, env, "add", "--rev", "deadbeef00", "echo x").returncode == 2
+    _git(["checkout", "-q", "--detach", "HEAD"], server)          # a commit on no branch
+    (server / "code.py").write_text("x = 9\n")
+    _git(["commit", "-q", "-am", "orphan"], server)
+    orphan = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    _git(["checkout", "-q", "main"], server)
+    res = _run(server, env, "add", "--rev", orphan, "echo x")
+    assert res.returncode == 1 and "no branch" in res.stderr
+    _git(["rm", "-q", "tools/local_llm/gpu_add.sh"], server)        # a revision without the guard
+    _git(["commit", "-q", "-m", "no guard"], server)
+    res = _run(server, env, "add", "--rev", "HEAD", "echo x")
+    assert res.returncode == 2   # not a hex sha
+    noguard = subprocess.run(["git", "rev-parse", "HEAD"], cwd=server, capture_output=True, text=True).stdout.strip()
+    res = _run(server, env, "add", "--rev", noguard, "echo x")
+    assert res.returncode == 1 and "gpu_add.sh" in res.stderr
+    assert not (tmp_path / "ssh.log").exists()
