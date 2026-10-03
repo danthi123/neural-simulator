@@ -95,3 +95,13 @@
 
 ## 2026-10-02 15:40 EDT - wave 4 (T11)
 - Queued flip lines 130-172 (43 lines, failures=0) at F=1fb805e; start condition flip-in-queue<10 held (q=5). Prefix rule verified (assert_iw2_node). waves.tsv row appended. Next: wave 5 when q<10 again.
+
+## 2026-10-03 13:41 EDT - wave 5 (T11)
+- Queued flip lines 173-215 (43 lines, failures=0, depths 181-219) at F=1fb805e; start condition
+  flip-in-queue<10 held (q=0, with 4 still running). Prefix rule verified 43/43 (cd revisions/1fb805e9e… &&
+  assert_iw2_node.py && assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid); R reason string
+  and `add … --checked` shape verbatim from section 7. After: iw2-flip q=40 (3 dispatched mid-loop). waves.tsv
+  row appended (epoch 1791049235). Host note: env.sh hardcodes P=/home/dant123/Projects/sim, which does not exist
+  on this host — used the S-equivalent primary
+  (/home/dant123/Projects/neural-simulator) + worktree paths directly. Next: wave 6 (216-258 of 276) when q<10
+  again.
