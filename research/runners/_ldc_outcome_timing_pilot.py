@@ -480,7 +480,7 @@ def _mean(v):
 
 
 def main(argv=None):
-    global OUTCOME_MS, REWARD_ON_MS
+    global OUTCOME_MS, REWARD_ON_MS, CLEAR_MS
     ap = argparse.ArgumentParser()
     ap.add_argument("--schedule", choices=sorted(SCHEDULES), required=True)
     ap.add_argument("--arms", required=True, help="comma list; shuffled_yoked must follow full")
@@ -494,6 +494,8 @@ def main(argv=None):
                     help="outcome screen duration, ms (default: %(default)s)")
     ap.add_argument("--reward-on-ms", type=int, default=REWARD_ON_MS,
                     help="reward onset into the outcome screen, ms (default: %(default)s)")
+    ap.add_argument("--clear-ms", type=int, default=CLEAR_MS,
+                    help="trial-end clear duration, ms (HANDOFF 4a.3 knob; default: %(default)s)")
     ap.add_argument("--param-json", default=None, help="DEV ONLY (instrument tuning, prereg section 7)")
     # one flag per CreditParams field (DEV ONLY, prereg section 7): tools/sweep_pool.sh appends extra axes as
     # `--<axis> <value>`, so both the dashed and the underscored spelling are accepted.
@@ -511,7 +513,9 @@ def main(argv=None):
         ap.error("--reward-on-ms must lie inside [0, --outcome-ms)")
     if a.reward_on_ms + REWARD_MS > a.outcome_ms:
         ap.error("--reward-on-ms + REWARD_MS must fit inside --outcome-ms")
-    OUTCOME_MS, REWARD_ON_MS = a.outcome_ms, a.reward_on_ms
+    if a.clear_ms <= 0:
+        ap.error("--clear-ms must be positive")
+    OUTCOME_MS, REWARD_ON_MS, CLEAR_MS = a.outcome_ms, a.reward_on_ms, a.clear_ms
     os.environ["BRAIN_BG_CREDIT"] = "1"      # the benchmark turns the default-off extension on for this process
     from dataclasses import replace
     p = CreditParams()
