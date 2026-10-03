@@ -26,3 +26,14 @@
   home-to-server); the driver also exports `POOL_ROOT` explicitly.
 - Duty result: `fresh-queued=43 stale-queued=0 lb.json-landed=2 of 258` → **nothing queued** (43 ≥ 10 threshold,
   normal — wave 1 still waiting in the deep queue). Ledger unchanged.
+
+## 2026-10-03 11:39 (local model) — every-session §4/§6 duty
+
+- Wave script (S paths, POOL_ROOT override as of 10-02): `fresh-queued=43 stale-queued=0 dispatched-ever=0
+  lb.json-landed=2 of 258` → **nothing queued** (43 ≥ 10 threshold — the documented "previous wave is still
+  waiting" case; rc=0, ledger b2d_waves.tsv unchanged, no ledger commit).
+- §6 counts: stub 2/258 landed; mouth lb.json **18 present but unvetted** (NEEDS-CLAUDE #4: ran at P=5818dc6
+  from the workstation revisions export, uncommitted, no s7) → T23 preflight and the registered 18-line GPU
+  queue stay blocked on that open line; §5's own check is superseded by RULING b2d-mouth-gpu (T23's HANDOFF
+  governs). W gpu.queue holds 0 b2d0929-mouth lines and the card is idle — nothing to yield.
+- T9 scoring stays gated: 258 stub cells not landed (2/258) and the mouth arm awaits Claude's #4 ruling.
