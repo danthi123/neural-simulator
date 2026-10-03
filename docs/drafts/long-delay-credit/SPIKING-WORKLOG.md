@@ -379,3 +379,27 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   locally — every further pilot run goes to the pool.
 - Next: 4a.3 lr=0 diagnosis runs (seeds 9/12 memory, seed 14 explore) once the grid lands, then 4a.4 PILOT.md +
   `[T1] RESULT: Step 4a pilot @ <sha>`; T1 then stops for Claude's Amendment A0 + Step 4b.
+
+## 2026-10-02 23:23 (local model) — Step 4a.3 diagnosis design + queue
+
+- Design went to a MiMo Pro delegate (RULING models): **REVISE** and applied — (1) `--clear-ms` added to the pilot
+  copy (module constant CLEAR_MS had no flag; default 250 = registered no-op, `34bed924d`); (2) "rates after the
+  clear" = `probe_lr0`/probe-block `mem_after_clear_hz` + `mem_hold_acc` (per-trial rows are not persisted — probe-
+  mean-only is the readout, documented as the limitation; `mem_after_clear_hz` averages mem_a+mem_b, so which pool
+  keeps the stale cue is undeliverable without another edit); (3) clear_pA half/double = {300, **1200**}; (4) seed 14
+  channel asymmetry reads `weights_initial/final` (s14 weights already symmetric — MSN-weight asymmetry ruled out;
+  motor-pool latency not recorded = unavailable).
+- Matrix: **17 runs queued** at `50f52c23e` (provision `state=ok` pool40/41/42/wspool) — seeds 9+12 x 7 knobs
+  (default, clear-pA 300/1200, w-clear-fs 15/60, clear-ms 125/500) on credit_immediate, seed 14 default, plus
+  seeds 9+12 default on late_immediate (mem_hold_acc schedule dependence). All `--arms full --lr 0 --n-train 200
+  --n-test 100` (delegate cost trim; lr=0 adds no readout at n-train 400), `--n-probe` untouched (changing it shifts
+  the world-RNG stream). Corpus consult logged 22:07 covers the `--checked` sentences.
+- Branch hygiene: `agent_sync_branch` refused twice — first `runs.jsonl` local dirt (backed up 16,008 lines to
+  scratch, restored), then `lane_builds.jsonl` both-side appends (my union script miscounted and DROPPED main's 3
+  shared lines; fixed by taking main's exact copy — our 3 lanes were already present in it). main merged clean as
+  `50f52c23e`; gates: tool-health-fresh + lever-efficacy warnings only.
+- Baseline verification anchors (delegate, from banked sweep): s9 `mem_after_clear_hz`=32.2699, s12=28.6447, s14
+  p_ch0_given_A/B=1.0/1.0, 0.04932 — the three default runs landing on these doubles as the post-edit repro check
+  for `--clear-ms` (no second local 17-min row needed).
+- Next: when the 24 timing-grid + 17 diagnosis cells land, run 4a.4 (PILOT.md + `[T1] RESULT: Step 4a pilot @ <sha>`),
+  then T1 stops for Claude's Amendment A0 + Step 4b.
