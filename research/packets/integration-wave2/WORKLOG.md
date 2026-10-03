@@ -115,3 +115,17 @@
   later adds reported `skipping unreachable node(s): wspool` (dispatcher health-checks + skips it too — same as
   t0's wspool ssh-fail this wake; pool40/41/42 unaffected). Next: wave 7 (259-276, the last 18 lines) when q<10
   again.
+
+## 2026-10-03 18:35 EDT - section 8 re-run: 2 rc=137 OOM kills on wspool
+- Event: flip lines 206–207 (`s101/episodic-memory`, `s101/discourse-register`) killed **rc=137 on wspool at
+  18:16:58 EDT** (exits.json, both in the same second = node-level memory kill); partial intact_a/intact_b
+  outputs (17:46–17:56) but no `lb.json`. **First failure for any iw2-flip cell** — the 9 prior rc=143 rows are
+  d6/c1/canary/iw1 cells — so §8 applies once; a repeat kill = STOP, NEEDS-CLAUDE (HANDOFF stop conditions).
+- §8 executed: partial attempt-1 dirs moved aside (`_attempt1_s101_episodic-memory` 2 files,
+  `_attempt1_s101_discourse-register` 4 files); **`reruns.tsv` created** with 2 rows (`utc tag seed faculty
+  reason` — rc evidence; scorer-fails-text deferred: battery incomplete, `iw2_score.py B` runs once at §7);
+  flip lines 206–207 re-queued **unchanged** with the wave's `--checked` reason → depths 210–211, iw2-flip q=50.
+- Duplicate-claim guard first refused (wspool unreachable → fails closed); used **FORCE_DUP=1 on evidence**: the
+  exits.json rc=137 rows are positive proof the old claims ended, not mere unverifiability (both adds printed
+  the FORCE_DUP warning). wspool stays skipped by the dispatcher (down since ~18:17) — pool40/41/42 take the
+  reruns. If either fails again: stays UNDEFINED, STOP, NEEDS-CLAUDE.
