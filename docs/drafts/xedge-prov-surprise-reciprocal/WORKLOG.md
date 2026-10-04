@@ -151,3 +151,17 @@ sentence embedded). Duties: T0 no-hold clean; T9 fresh-queued=43 >= 10 -> no new
 still refused GAME_MODE (8th; standing NEEDS 06:45). Selftest STOP remains open (NEEDS 13:35, Claude's call) —
 smoke outcome still readable per row 1-4/6/7 once the file lands; INTACT_FLOOR freezes ONLY if smoke sign = +1
 and the selftest guard question is resolved before the 6-seed queue.
+
+## 2026-10-04 13:44 — §5 smoke attempt 1 FAILED (rc=1, 33s) -> REQUEUE-ONCE with stderr capture
+
+Evidence: /opt/host-status/sim-pool-jobs/exits.json entry {node pool40, ts 1791135275, rc 1, out
+research/findings/raw/_xedge_prov_surprise_reciprocal/smoke_seed7.json, rev 62a83bbb..., reason xedge};
+claims tail shows dispatch ts 1791135242 -> lifetime 33s = startup failure (not compute). First-attempt
+stderr was NOT redirected, so no traceback on S (pool dispatcher logs are remote-only). No output file.
+Tried: claims/dispatch/exits/logs inspection (dispatch.log has dispatch only; agent_gateway/dashboard: no
+match); /opt/host-status/sim-pool-jobs/ holds exits.json only.
+Fix-round 1 for THIS issue: REQUEUED ONCE — same line verbatim + `2> research/findings/raw/
+_xedge_prov_surprise_reciprocal/diag_smoke_seed7.txt` (stderr syncs back with raw/ via pool_sync; the CA3
+10-03 merge-diag pattern). Shape-check RC=0; add ADD_RC=0, depth 108. Candidates if it fails again: mem_ok
+refusal on a busy pool40 (33s ~= two-retry window; mem_ok.sh 6 2), pool-side memcap, or import/arg error —
+stderr will discriminate. SECOND failure on this issue = STOP (NEEDS Claude) per §2.
