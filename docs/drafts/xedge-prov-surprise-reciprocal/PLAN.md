@@ -21,14 +21,17 @@ modulates the PE read on later inputs — the Lisman-Grace loop's feedback limb,
 
 **Probe (exact):** one fixed D2 mismatch trial — cue block c (CUE_PA operating point) + asserted patient block
 c'!=c — read = windowed mean firing rate of `cp_firing_states[surprise]` over the trial window. delta_intact per
-seed = read(perceived-verdict) - read(generated-verdict). **Load-bearing means:** removing exactly the declared
+seed = read(perceived-verdict) - read(generated-verdict). **Trace-level load-bearing means** (TERMS.md 09-29: unqualified 'load-bearing' now defaults to reply-level;
+ours is a trace field): removing exactly the declared
 edge's synapses (harness lesion) collapses that delta on the same input:
 |delta_lesion| < lesion_ratio(0.34)*|delta_intact|, frac_attributable ~ 1.
 
 ## 2. Biology it follows
 
-- Johnson, Hashtroudi & Lindsay 1993 — source monitoring is a continuously-updated inferential loop, not a
-  one-way read-out (already the 2026-09-01 reciprocal GO's rationale). Confident.
+- Johnson, Hashtroudi & Lindsay 1993 — CONFIDENT on: source monitoring is inferential, not a one-way read-out.
+  The 'continuously-updated loop, each side informing the other' framing is this project's argued extension (the
+  2026-09-01 reciprocal GO's rationale section, which recruits Northoff & Bermpohl for the self-model limb) —
+  NOT a claim JHL itself states.
 - Lisman & Grace 2005 (Neuron) — hippocampal-VTA loop: hippocampal novelty/subicular signal drives the VTA/DA
   (PE-gain) side; the design doc's R3 entry (phase-DESIGN ~line 220) names exactly this loop around
   surprise->provenance encoding. Confident on the paper; exact-tract detail (unverified).
@@ -38,7 +41,10 @@ edge's synapses (harness lesion) collapses that delta on the same input:
   auditory-cortical responses to self- vs externally-produced speech — replicated finding class (specific paper
   unverified).
 - Rao & Ballard 1999 (predictive coding); Friston 2005 predictive coding (unverified exact ref).
-- Plasticity: the repo-bound symmetric/Hebbian family, docs/biology.md:284 (Fremaux & Gerstner 2016).
+- Plasticity: the repo's plain TWO-factor symmetric Hebbian rule — grounding: `sim/config.py` hebbian_symmetric note
+  (~lines 869-873: Kandel 6e Ch 54; Marr 1971 autoassociator). Fremaux & Gerstner 2016 (`docs/biology.md:284`)
+  grounds the THREE-factor (pre x post x dopamine) family this rule is the plain two-factor cousin of — not the
+  citation for what this draft trains.
 
 **SIGN CONSTRAINT (design finding, load-bearing):** cross-edge weights grow positive only (excitatory). The
 anchor's attenuation half (self-generated -> LESS surprise) cannot ride a direct excitatory edge onto the
@@ -103,9 +109,9 @@ around this edge's training window, STANDARD (non-rate-window) symmetric rule.
 
 | # | Outcome (pre-registered BEFORE any run) | What it DOES show | What it DOES NOT show |
 |---|---|---|---|
-| 1 | Edge grows (0.05 -> > grow_factor*0.05) + delta_intact in predicted sign clears floor + 100% lesion-attributable + byte-off PASS + clean-zero control, ALL 6 dev seeds | PROVISIONAL-supports: the substrate's own source verdict modulates its own surprise read through the declared reciprocal edge; the pair surprise->prov (encoding gate) + prov->surprise (read modulation) is a functional closed loop at the synapse level | Not GO, not gate-seed evidence, not phenomenal, not self-organized (host-supervised episodes), not production wiring |
-| 2 | Grows, delta sign correct but below floor on some seeds (heterogeneous) | Wiring works; effect size is operating-point dependent — supports the mechanism weakly | Not load-bearing at this operating point; do NOT claim the verdict is load-bearing; next lever is drive/operating-point recalibration (CUE_PA class), not a new mechanism |
-| 3 | Grows, but delta does NOT collapse under lesion (delta_lesion large / frac_attributable low) | Nothing about the edge's function — the observed shift is base-wiring leak or co-drive artifact | NOT load-bearing; the edge exists but does not carry the effect; a negative on the mechanism (fix the instrument first — the precedent's read-isolation correction is the template) |
+| 1 | Edge grows (0.05 -> > grow_factor*0.05) + delta_intact in predicted sign clears floor + 100% lesion-attributable + byte-off PASS + clean-zero control, ALL 6 dev seeds | PROVISIONAL-supports: the substrate's source verdict shifts the windowed surprise-pool rate (honest functional read-out) through the declared edge; the pair surprise->prov (encoding gate) + prov->surprise (read modulation) forms a reciprocal feedback loop at the synapse level — NOT a 'closed' capability (default-OFF; wire-in is Claude's) | Not GO, not gate-seed evidence, not phenomenal, not self-organized (host-supervised episodes), not production wiring |
+| 2 | Grows, delta sign correct but below floor on some seeds (heterogeneous) | Wiring works; effect size is operating-point dependent — supports the mechanism weakly | Not trace-level load-bearing at this operating point; do NOT claim the verdict is load-bearing (even qualified); next lever is drive/operating-point recalibration (CUE_PA class), not a new mechanism |
+| 3 | Grows, but delta does NOT collapse under lesion (delta_lesion large / frac_attributable low) | Only that the shift is NOT carried by the declared edge (candidates: base-wiring leak, co-drive artifact, unmodeled path — this cell cannot distinguish them) | NOT trace-level load-bearing; run the instrument checks FIRST and repair only one that actually fails; if the instrument is clean, bank the honest negative (edge exists, does not carry the effect) and iterate the episode recipe per no-defer — never presume instrument fault |
 | 4 | Does NOT grow (grown <= grow_factor*init) | Verdict on the TRAINING RECIPE: the co-drive episodes do not produce the co-occurrence the substrate's rule needs | NOT a verdict on the biology or the pair; per no-defer, change the episode recipe and re-run — never a license to drop the capability |
 | 5 | Grows + load-bearing, but the no-edge/lesioned arm ALSO moves the read beyond tolerance, or byte-off FAIL | CONFOUND: effect not attributable to the declared edge | NO biological reading is permitted from this cell; instrument bug (leaky graded control, merge-wiring leak, read-isolation, threshold drift) — fix and re-run |
 | 6 | Sign REVERSED (generated > perceived) | The edge implements self-contradiction AMPLIFICATION, not foreign-content amplification | A directional negative on the anchor; report it, never flip expected sign post hoc; the pre-declared variant (prov_generated -> patient_expected) becomes the next draft |
@@ -121,9 +127,11 @@ a draft may not touch them).
 Per-seed checks (the precedent's 6-seed pattern, unmodified harness): (1) Hebbian growth — grown mean weight
 over the declared mask > grow_factor * init_weight (0.05), trajectory recorded; (2) no-corruption —
 frozen_maxdrift over every NON-edge synapse < drift_tol=1e-6 after training (also the rate-window-hijack
-detector); (3) load-bearing — delta_intact per seed in the predicted sign, clearing the frozen floor, and
-|delta_lesion| < lesion_ratio(0.34)*|delta_intact| with frac_attributable ~ 1 after lesioning exactly the
-declared slots; (4) byte-identical-off — the cross_edges=None pool's base connectivity is byte-identical to the
+detector); (3) trace-level load-bearing — delta_intact per seed in the predicted sign, clearing the frozen
+floor, and |delta_lesion| < lesion_ratio(0.34)*|delta_intact| with frac_attributable ~ 1 after lesioning
+exactly the declared slots — with the persistence-at-measurement check: the declared (pre,post) slots read
+EXACTLY 0 at the moment of every lesion re-read (enable_hebbian_learning OFF for all re-reads; the TERMS
+'lesion' code condition held at measurement); (4) byte-identical-off — the cross_edges=None pool's base connectivity is byte-identical to the
 intact pool minus the declared (pre,post) slots (verify_byte_off), and the no-edge pool's perceived-generated
 delta must be ~0 (the pre-registered negative control); (5) clean-zero control — measured prov_perceived
 activity under the 'generated' control exemplar must sit near zero (the precedent's leaky-graded-trace lesson).
@@ -146,9 +154,12 @@ only).
 3. **Leaky graded provenance baseline** (the precedent's root-cause note) — the opponent trace is GRADIENT;
    ambiguous/dual-context exemplars drive both lines partway and make a leaky control. Control must be a
    genuinely GENERATED exemplar with measured prov_perceived ~ 0 (row 7 of the table).
-4. **Adaptive-threshold drift in the surprise pool** (arousal runner's own note) — un-reset threshold drift
-   between reads; _hard_reset does not restore thresholds. Fixed read order (control first), report the
-   residual; if it rivals the effect, counterbalance in the follow-up.
+4. **Adaptive-threshold drift in the surprise pool** — MANDATORY Port-A reset: every between-condition reset
+   goes through `MergedPool._PER_NEURON_STATE` (`onebrain_merge_framework.py:246-250`: restores
+   cp_neuron_firing_thresholds, cp_refractory_timers, cp_prev_firing_states, cp_neuron_activity_ema — the
+   2026-09-02 C2 read-isolation fix; the 15 hand-copied `_hard_reset` versions that omitted it are the recorded
+   FAILURE_LOG class). Smoke check: thresholds byte-restored at re-read. Read order: COUNTERBALANCED IN THIS
+   RUN (or order-invariance proven at smoke) — never deferred to a follow-up.
 5. **Operating-point fragility** — the surprise->prov runner needed a 600->2000pA recalibration; the merged
    pool with one more edge may again. Smoke may recalibrate and FREEZE INTACT_FLOOR, all before the 6-seed
    queue (declared).
@@ -166,5 +177,7 @@ into the runner docstring FIRST, then run one cell end-to-end via the pool/works
 (a) the edge wires (harness mask assert non-empty); (b) config reconciliation holds (frozen_maxdrift ~ 0 — no
 hebbian_rate_window hijack); (c) clean-zero control (measured prov_perceived under the generated exemplar
 ~ 0); (d) verdict drive present across the trial window (log per-condition prov-line rates + surprise window
-rate); (e) rough delta sign and magnitude -> set and FREEZE INTACT_FLOOR, then queue the 6 clean cells. If any
-of (a)-(d) fails, fix the instrument before queueing — never read rows 1-6 with a broken instrument.
+(e) delta sign must be +1 as predicted; INTACT_FLOOR := 0.5 x smoke seed-7 delta_intact — the floor-setting
+rule is PRE-DECLARED HERE: frozen verbatim into the runner docstring + WORKLOG before the 6-seed queue, never
+revisited, never re-set from later seeds; then queue the 6 clean cells. If any of (a)-(d) fails, fix the
+instrument before queueing — never read rows 1-6 with a broken instrument.

@@ -59,3 +59,19 @@ confidence tag (loop framing = precedent's extension, not JHL's); (8) pre-declar
 (never set post-smoke). Refuter verified the sign constraint TRUE in code (sim/bridge.py:1240-1257 clip) and
 everything else compliant.
 Next wake: revise PLAN.md per the 8 fixes, re-run refuter until APPROVES, then step 4 (build). No run yet.
+
+## 2026-10-04 11:2x — §5 step 3: PLAN revised per refuter's 8 fixes
+
+Applied all 8 to PLAN.md: (1) 'load-bearing' qualified 'trace-level' at every occurrence (probe, rows 2-3,
+§6 check 3); (2) row 1 no longer spends the governed word 'closed' (reciprocal feedback loop at the synapse
+level, NOT a closed capability, default-OFF wire-in=Claude); (3) plasticity citation fixed to the TWO-factor
+symmetric rule grounding (sim/config.py hebbian_symmetric ~869-873; Fremaux & Gerstner kept only as the
+three-factor family this rule is the cousin of); (4) risk 4 rewritten: MANDATORY Port-A reset via
+MergedPool._PER_NEURON_STATE (onebrain_merge_framework.py:246-250) + smoke threshold-restore check +
+read-order COUNTERBALANCED THIS RUN; (5) row 3 reworded (only 'not carried by the declared edge'; instrument
+checks first, bank honest negative if clean); (6) §6 check 3 gains persistence-at-measurement (slots read
+exactly 0 at every lesion re-read, learning OFF); (7) JHL confidence split (loop framing = precedent's
+extension, not JHL's); (8) INTACT_FLOOR rule PRE-DECLARED (0.5 x smoke seed-7 delta, frozen before 6-seed
+queue, never revisited).
+Standing duties: T0 clean (flip 9q+8r draining, c1 54q, b2d 43q, iw1-R 2q+8r, stage2 8q); no new NEEDS/rulings.
+Next: refuter re-run until APPROVES, then step 4 build.
