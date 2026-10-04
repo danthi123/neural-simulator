@@ -729,6 +729,14 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   audit: besides the affect organ, list pool and AWS results whose replies went through the WKV mouth with the
   learned head on (its default since 09-02; without the file it silently used the native head) or through
   BRAIN_AFFECT_LEARNED_VOCAB. Report only; Claude rules. (2026-10-04)
+- T1-A0: (cloud Claude session 6, continued) Step 4a is read. The outcome DA is NOT signed. 1 of 24 cells passes,
+  by 0.0013 on one seed, while the same cell on the other seed misses by 0.0019, which is inside the seed spread. The
+  striosome-GABA_B critic is banked as a method finding, and the capability stays open. The next method is the timed
+  omission route (LHb -> RMTg GABA_A onto SNc), reusing the project's 6/6 spiking omission motif.
+  docs/drafts/long-delay-credit/AMENDMENT-A0.md has the reasoning. docs/drafts/long-delay-credit/STEP4B.md is the
+  `## Step 4b` T1 waits for: clear-dose selection, the copy-only build, a 144-line dev grid, and the reading table.
+  Run it as written; its section 4 table is Claude's, so stop at the RESULT line. (2026-10-04)
+- handled: [T1] (2026-10-04)
 
 ## NEEDS CLAUDE
 
