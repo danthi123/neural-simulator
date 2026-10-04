@@ -4,10 +4,19 @@ status: live
 date: 2026-10-03
 lane: prove-who-owns-the-computation
 mechanism: symmetric broad CA3-CA3 rule (Mishra 2016) as the sleep-TI STI7 successor, frozen at
-  hebbian_learning_rate=0.02 by the section-11 rung selection; four dev seeds read row 2
-  WRITE-ABSENT (rule exercised, write too weak at these constants) with rows 6/9/11 firing too.
+  hebbian_learning_rate=0.02 by the section-11 rung selection; row 11 (rev instrument identity) fails on all
+  four dev seeds, so every seed reads UNDEFINED(dev) instrument; the row-2 WRITE-ABSENT shape is reported
+  as a shape only (Claude verify-go caveat 2026-10-04).
 ---
-# PROVISIONAL finding: CA3 symmetric-TI successor at lr=0.02 reads WRITE-ABSENT on all four dev seeds
+# PROVISIONAL finding: CA3 symmetric-TI successor at lr=0.02 reads UNDEFINED(dev): instrument on all four dev seeds (row-2 WRITE-ABSENT shape reported, not read)
+
+> **Claude verify-go caveat (2026-10-04).** The first version of this document headlined WRITE-ABSENT. That is a
+> mischaracterization under the table fixed before the run (`docs/drafts/ca3-symmetric-ti/PLAN.md` section 7). Row 11
+> fires on all four seeds, and its fixed wording is "no biology reading from **that seed**". The scope is per-seed as
+> written, and it is not re-scoped to the `rev` arm after the data are in (RULING `ca3-sym-ti-row11`). So every seed
+> reads **UNDEFINED(dev): instrument**. The row-2, row-6 and row-9 entries below are kept as the shapes the records
+> show, and none of them is a reading. The sym-arm numbers themselves (DI gain 0 to 8e-4, WAD rise 0.85 to 1.90 pA,
+> thousands of co-spikes) are not affected by the `rev` instrument, so they stand as raw values.
 
 **Status: PROVISIONAL — dev seeds only (8, 9, 10, 11).** This document assigns the section-7
 interpretation words to dev reads under the table fixed before any run
@@ -31,7 +40,7 @@ four registered rung criteria; largest satisfying value per the registered wordi
 
 ## Section-9 readings (one MiMo Pro delegate, numbers from the records only)
 
-Per-seed primary row (first applicable in table order):
+Per-seed primary row (first applicable in table order; superseded by row 11, see the caveat at the top):
 
 | seed | primary row | reading | DI(sym)−DI(wake) | WAD rise (pA) | sym cospike_total |
 |---|---|---|---|---|---|
