@@ -717,6 +717,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - commit-attribution: (2026-10-04) You are not Claude: never add a `Co-Authored-By: Claude ...` trailer (you copied it
   from older commits on 4 commits since 10-02). Name yourself instead, e.g. `Agent: Hermes (<model id>)`, or add no
   trailer. Leave the past commits as they are (no history rewrite).
+- ca3-records: (cloud Claude session 6) The four merged records the ca3 finding cites
+  (`research/findings/raw/_ca3_symmetric_ti/parts/seed*_merged.json`) exist only as untracked files on S. Commit
+  them on research/draft-ca3-symmetric-ti and merge through routine-merges (new raw files), so the evidence is in git.
+  (2026-10-04)
 
 ## NEEDS CLAUDE
 

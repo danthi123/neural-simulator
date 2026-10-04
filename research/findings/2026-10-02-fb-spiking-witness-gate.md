@@ -24,7 +24,7 @@ mechanism: BRAIN_FALSE_BELIEF_SPIKING_WITNESS=1 at WITNESS_OP=4 (readout mode: p
 > mode: ops 0-3 failed all 8 dev seeds and must be revisited (no-defer).
 > (3) **The lesion** forces the write ("ignore the presence read"); it does not silence the population (presence
 > reads 0.0 in both arms). The population's necessity rests on the O battery's `silence_true_belief` case (6/6). The
-> read is bimodal (0.0 vs about 0.09), so the frozen 0.03 threshold carries little weight; any value in (0, 0.085)
+> read is bimodal (0.0 vs about 0.09, the move-time `spiking_write.presence_rate` in research/findings/raw/_load_bearing/_shards/s2p-R-fb-40c43d5/s*/fb-spiking-*/*.json), so the frozen 0.03 threshold carries little weight; any value in (0, 0.085) <!--derived-->
 > gives the same answer. Other host residuals: the regex event classifier and the belief-location argmax.
 
 **PROVISIONAL: owner confirm + merge pending (NEEDS-CLAUDE). Not yet the faculty's default path — the Stage-1

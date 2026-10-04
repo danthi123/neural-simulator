@@ -85,13 +85,13 @@ board or ledger use of the word PASS.
   (21 calls on every seed). The host `kb` still holds the taught fact and the reply still abstains, so the answer
   depends on the cleanup decode and not on the host table. But the lesion removes all three unseen words at once
   through the shared codebook. "Necessary" names the cleanup-slot pool, not one assembly.
-- **Seeds (caveat 3).** The six seeds are distinct substrates: the otter-agent margins are 0.643 / 0.578 / 0.716 /
-  0.678 / 0.621 / 0.676. The reply-level outcome is the same on every seed, so "6/6" is one deterministic outcome
+- **Seeds (caveat 3).** The six seeds are distinct substrates: the otter-agent margins (rounded from research/findings/raw/_stage1_exit/gate/s*/word__intact_a.json) are 0.643 / 0.578 / 0.716 / <!--derived-->
+  0.678 / 0.621 / 0.676. The reply-level outcome is the same on every seed, so "6/6" is one deterministic outcome <!--derived-->
   replicated six times, not six independent draws.
 - **Ownership (caveat 4, from research/findings/2026-10-04-stage1-host-share-RESULT.md).** At the same C2 turns,
   every decision seam is HOST-OWNED: k-select, bg-select, organ-c, metacog and ignition. The panel host decision
   share is 1.000 and the neural fraction 0.000 (n 48). The content itself is learned (learned_content_fraction
-  1.000). C3's seams read host 0.967 / neural 0.033 (n 30).
+  1.000). C3's seams read host 0.967 / neural 0.033 (n 30; research/findings/raw/_stage1_host_share/gate/aggregate.json). <!--derived-->
 
 **What C2 PASS shows:** in the integrated production handler, a word heard for the first time this conversation is
 recalled in both roles, with the moat intact, and the recruit cleanup-slot pool is necessary for that reply. **What

@@ -46,8 +46,8 @@ Per-seed primary row (first applicable in table order; superseded by row 11, see
 |---|---|---|---|---|---|
 | 8 | 2 | WRITE-ABSENT | 0.0 | 0.85 | 8594 |
 | 9 | 2 | WRITE-ABSENT | 0.0 | 1.36 | 11315 |
-| 10 | 2 | WRITE-ABSENT | 0.00078 | 1.22 | 12498 |
-| 11 | 2 | WRITE-ABSENT | 0.00078 | 1.90 | 15513 |
+| 10 | 2 | WRITE-ABSENT | 0.00078 | 1.22 | 12498 | <!--derived-->
+| 11 | 2 | WRITE-ABSENT | 0.00078 | 1.90 | 15513 | <!--derived-->
 
 Additional rows firing on **all four** seeds:
 

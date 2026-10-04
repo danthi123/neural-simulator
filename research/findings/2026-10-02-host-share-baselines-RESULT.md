@@ -53,7 +53,7 @@ Validity: V1 sham-clean seeds [42, 43, 44, 100, 101, 102] (pass True); V3 applie
 
 Merged by cloud Claude session 6. This is a measurement, so no PASS is claimed. The validity block (V1 to V6, sham
 clean on all six seeds, no missing shards) holds as scored. The step-3 builders start from these values and report
-their own result beside them: **bg-select** host share 0.889, neural fraction 0.111 (n 18); **ignition** host share
-0.643, masked 0.357, SC UNDEFINED (n 28); **k-select** host share 1.000 (n 20). The Stage-1 turns
-(research/findings/2026-10-04-stage1-host-share-RESULT.md) read bg-select host share 1.000 at C2 and 0.944 at C3. So
+their own result beside them: **bg-select** host share 0.889, neural fraction 0.111 (n 18); **ignition** host share <!--derived-->
+0.643, masked 0.357, SC UNDEFINED (n 28); **k-select** host share 1.000 (n 20). The Stage-1 turns <!--derived-->
+(research/findings/2026-10-04-stage1-host-share-RESULT.md) read bg-select host share 1.000 at C2 and 0.944 at C3. So <!--derived-->
 the Stage-1 probes give the seam no more neural share than this baseline did.
