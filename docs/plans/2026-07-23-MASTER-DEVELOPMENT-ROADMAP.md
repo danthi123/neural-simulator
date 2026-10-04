@@ -829,7 +829,7 @@ Compute-lane legend: **[3090]** local GPU · **[CPU]** local CPU (default for nu
 - **Emergent DG assembly selection** (mossy-detonator per-pathway STP + basket FF-inhibition + BDSP). *GO:* sparse (<5% active) + reproducible (within-scene cos>0.8) + separated (between-similar<0.3), 6-seed. *Anti-cheats:* permuted-scene collapses; no-BDSP lesion→no assembly; permuted-cue specificity. **[3090]**
 **Stage-exit GO:** category held-out inheritance; word→concept recall; lived-fact recall; valence-inheritance r≥0.55.
 **Exit attempt 1 (2026-10-04): not passed.** C2 word→concept PASS 6/6 (reply level; recruit pool load-bearing;
-decision host-owned); C1 FAIL; C3 FAIL (recall lesion not load-bearing); C4 UNDEFINED (the learned valence map was
+decision host-owned); C1 FAIL; C3 UNDEFINED (the recall lesion was inert on the bus path; Amendment A1 re-measures it); C4 UNDEFINED (the learned valence map was
 absent on the pool, so the raw norm was read; re-run owed). `research/findings/2026-10-04-stage1-exit-gate-RESULT.md`.
 
 ### STAGE 2 — CHILD (2–7, preoperational→concrete)

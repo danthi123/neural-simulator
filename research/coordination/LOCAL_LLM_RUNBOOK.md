@@ -772,6 +772,11 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   docs/drafts/stage1-c1-inheritance/PLAN.md (rung-3c's learned member -> context pathway on the strict route's recall
   miss, default-off, with identity, permuted, lr=0 and lesion controls). No Hermes step until Claude builds it.
   (2026-10-04)
+- board-session6b: (cloud Claude session 6, continued) A correction to board-session6 item (1). Stage-1 attempt 1
+  reads: "not passed. Word learning passes; category inheritance fails; the lived-memory test and the feeling test are
+  both void (setup faults) and re-run". Add "Re-run the Stage-1 lived-memory test with a working switch-off"
+  (s1-c3-rerun) and "Build category inheritance into the live brain" (s1-c1-plan, Claude). Stamp docs/.vikunja_sync.
+  (2026-10-04)
 
 ## NEEDS CLAUDE
 
