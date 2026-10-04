@@ -16,6 +16,19 @@ Prereg: research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md (gate r
 
 **Stage-1 exit verdict: FAIL** (primary criteria: C1 FAIL, C2 PASS, C3 FAIL, C4 FAIL)
 
+> **⚠ Claude correction (2026-10-04, verify-go): C4 is UNDEFINED (instrument), not "not exposure-driven".** The
+> permuted-map arm deranged **0 of 24** held-out words on every seed (`patch.n_words 0`), and the `dr2_off` arm reads
+> the same r as intact. The DR-2 learned map is stored under `research/findings/raw/`, which pool provisioning
+> excluded, so on the pool nodes `_get_learned_valence()` returned `{}`. The affect organ then silently read the
+> **raw Warriner norm**, the value prereg section 4.4 says the brain never reads at run time. So r = 0.94 is the
+> norm read through the ladder, and both C4 controls were inert. Re-scored with an engagement guard (a permuted map
+> that does not derange all 24 words makes the seed UNDEFINED):
+> `research/findings/raw/_stage1_exit/gate/aggregate-rescore-c4guard-2026-10-04.json`, which reads **C4 INCOMPLETE
+> (0 of 6 seeds defined)**, so the registered stage verdict becomes **UNDEFINED (INCOMPLETE)**. C1 and C3 fail on
+> defined data either way, so the stage did not pass. The committed `aggregate.json` is left as scored. Fixes:
+> `tools/pool_provision.sh` now ships the map as a runtime input, and the scorer carries the guard. The C4 arms
+> re-run at the same pin on re-provisioned nodes (RULING `s1-c4-void`).
+
 | group | criterion | role | verdict | correct | lesion effect | reproduced | permuted tracks | why |
 |---|---|---|---|---|---|---|---|---|
 | cat_disc | C1 | primary | FAIL | 0/6 | lesion_draw 0/6 | lesion_draw 6/6 | 0/6 | capability absent on 6 of 6 seeds |
@@ -86,5 +99,6 @@ it does not show:** that neurons made the decision. The SVO acquisition, the fir
 commitment are host scaffolds, as prereg section 5 predicted. In-session words also never become discourse referents
 (anaphora 0/6, reported, not counted).
 
-Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): FAIL (C1, C3, C4); C2 word PASS 6/6, reply-level, recruit pool
-load-bearing, decision host-owned (host share 1.000)`.
+Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): not passed: C1 FAIL, C3 FAIL, C4 UNDEFINED (learned map absent on
+the pool, raw norm read; re-run owed); C2 word PASS 6/6, reply-level, recruit pool load-bearing, decision host-owned
+(host share 1.000)`.

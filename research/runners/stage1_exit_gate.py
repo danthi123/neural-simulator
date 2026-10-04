@@ -648,6 +648,15 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                             row["undefined_reasons"].append("%s arm missing or unreadable" % arm_name)
                 if have.get("permuted") is None or "responses" not in (have.get("permuted") or {}):
                     row["undefined_reasons"].append("permuted arm missing or unreadable")
+                elif group == "val_heldout":
+                    # Claude ruling 2026-10-04 (s1-c4-void): the permuted-map patch must have deranged every held-out
+                    # word. On the first attempt it deranged 0 of 24 on every seed (the learned map was absent on the
+                    # pool nodes, so the organ silently read the raw norm), and the arm read as "not tracked".
+                    _pp = (have.get("permuted") or {}).get("patch") or {}
+                    if _pp.get("n_words") != len(HELDOUT_WORDS):
+                        row["undefined_reasons"].append(
+                            "permuted map deranged %s of %d held-out words (the learned map was not loaded)"
+                            % (_pp.get("n_words"), len(HELDOUT_WORDS)))
                 ra = ia["responses"]
                 # ── correctness (intact_a) ──
                 if group in ("cat_disc", "cat_told"):

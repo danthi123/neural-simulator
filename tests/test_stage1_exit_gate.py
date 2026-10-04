@@ -110,3 +110,25 @@ def test_permuted_arm_of_val_novel_keeps_the_probe_words():
     perm = dict((l, m) for l, m, _r in SG.GROUPS["val_novel"]["permuted_turns"])
     assert intact["x_pos"] == perm["x_pos"] == "glorp" and intact["x_neg"] == perm["x_neg"] == "blick"
     assert intact["e_pos1"] != perm["e_pos1"]
+
+
+def test_val_heldout_permuted_map_must_derange_every_held_out_word(tmp_path):
+    """Claude ruling s1-c4-void (2026-10-04): on the first gate attempt the learned map was absent on the pool, the
+    permuted-map patch deranged 0 of 24 words, and the inert control read as "not tracked". A permuted arm that did not
+    derange all 24 held-out words now makes the seed UNDEFINED. Uses the committed seed-42 shards."""
+    import json
+    import shutil
+    src = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "research", "findings", "raw", "_stage1_exit", "gate", "s42")
+    dst = tmp_path / "s42"
+    dst.mkdir()
+    for name in os.listdir(src):
+        if name.startswith("val_heldout__") and name.endswith((".json", ".rep0.json")) and ".prov." not in name:
+            shutil.copy(os.path.join(src, name), dst / name)
+    reasons = lambda: SG.aggregate(str(tmp_path), seeds=[42], informational=False)[
+        "groups"]["val_heldout"]["seeds"][42]["undefined_reasons"]
+    assert any("deranged 0 of 24" in r for r in reasons())
+    p = dst / "val_heldout__permuted.json"
+    d = json.loads(p.read_text())
+    d["patch"]["n_words"] = len(SG.HELDOUT_WORDS)
+    p.write_text(json.dumps(d))
+    assert not any("deranged" in r for r in reasons())
