@@ -1,6 +1,6 @@
 ---
 type: finding
-status: go
+status: live
 claim_check: measured
 date: 2026-10-02
 lane: false-belief (s2p packet fb-spiking-witness)
@@ -9,7 +9,23 @@ mechanism: BRAIN_FALSE_BELIEF_SPIKING_WITNESS=1 at WITNESS_OP=4 (readout mode: p
   BRAIN_FALSE_BELIEF_WITNESS_LESION=1
 ---
 
-# PROVISIONAL — fb-spiking-witness gate: O PASS + R PASS at op 4 (readout)
+# fb-spiking-witness gate: O PASS + R PASS at op 4 (read-out mode; PARTIAL Stage-1 credit)
+
+> **Claude verify-go (2026-10-04): the PASS stands, narrowed.** A third, independent skeptic re-ran `select`, `O`
+> and `R` from the raw data and got byte-identical verdicts. It traced the data path: presence spikes over 20 steps,
+> divided by 80 neurons, compared with 0.03, decide the W3 write, and `_Scenario.present` is dead on this path. It
+> confirmed six distinct substrates (per-seed belief and presence rates differ). Three caveats follow, and they
+> replace the headline and the credit sentence below.
+> (1) **What it shows:** the witness state is a spiking presence/absence population, and a host threshold read of
+> it decides the write. "Substrate-decided" overstates it; the prereg's own sentence is "substrate-decided/
+> host-actuated (readout)".
+> (2) **Credit: PARTIAL, never FULL** in read-out mode (owner RULING `t18-credit`), whatever P4 does. The finding's
+> "FULL when P4 makes this the default" sentence is superseded. The next method is the fully synaptic write, the relay
+> mode: ops 0-3 failed all 8 dev seeds and must be revisited (no-defer).
+> (3) **The lesion** forces the write ("ignore the presence read"); it does not silence the population (presence
+> reads 0.0 in both arms). The population's necessity rests on the O battery's `silence_true_belief` case (6/6). The
+> read is bimodal (0.0 vs about 0.09), so the frozen 0.03 threshold carries little weight; any value in (0, 0.085)
+> gives the same answer. Other host residuals: the regex event classifier and the belief-location argmax.
 
 **PROVISIONAL: owner confirm + merge pending (NEEDS-CLAUDE). Not yet the faculty's default path — the Stage-1
 credit becomes FULL only when P4 makes this the faculty's default and steps B/F pass there (prereg section 6).**
@@ -58,5 +74,5 @@ sidecars — here every lesion sidecar's recorded argv shows it; (b) degenerate-
 separate guards, both held; (c) the six seeds' surface answers are verbatim identical — per-seed variation lives
 in the spiking rates.
 
-**Headline:** O PASS + R PASS at op 4 — false-belief witnessing at this operating point is substrate-decided,
+**Headline (superseded by the Claude caveat at the top):** O PASS + R PASS at op 4 — false-belief witnessing at this operating point is substrate-decided,
 load-bearing on 6/6 seeds, with a clean permuted control.
