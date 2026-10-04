@@ -77,3 +77,21 @@
   refusal). Remote queue unchanged since 08:04's rc=143 kill: PAUSED, idle, queued 17, VRAM free 3056; no new
   mouth dispatch. Open NEEDS unchanged (yield + arm-failed lines stand for Claude). Pool depth 125, pool40
   fail24h=3 (pre-existing).
+
+## 2026-10-04 15:00 — RULING game-mode-pauses applied: re-queued the one rc=143 line (once); arm ALIVE
+
+New rulings read (RUNBOOK 618-625): game-mode-pauses (rc=143 during owner game/test = expected pause, not a
+failure; re-queue each such job ONCE when W accepts a yield again; "Act now: GAME_MODE is off") +
+commit-attribution (never a Co-Authored-By Claude trailer; self-identify).
+Evidence gathered before acting: game.sh status -> GAME_MODE off, GPU_PAUSE off; gpu_remote status ->
+state running, queued 13, VRAM free 20347MiB; gpu_queue.log tail shows a b2d0929-mouth cell RUNNING NOW
+(s43 affect-appraisal-interoceptive, revision 5818dc6) -> the 17 queued lines dispatch on their own again;
+today's load_bearing result arrivals (8+24) are the 4 queue departures completing as lb shards, not more
+kills. Only ONE rc=143 kill is documented (b2d0929-mouth/s42/affect-coloring, 08:04, DONE(rc=143)).
+Action: re-queued THAT line exactly once via gpu_remote add -> ADD_RC=0, depth 13->14. Notes: (a) gpu_queue
+add has NO dedupe (blind append), so a blanket re-add of all 18 would duplicate the 13 still queued — skipped
+per the "each job that ended rc=143 ... once" wording; (b) gpu_remote add queues at the worktree HEAD
+(c8b48244d, worklog-only commits since the pinned 5818dc6 -> identical code, assert_flipped_defaults.py in
+the line still gates); (c) no yield attempted this round — the arm is healthy and dispatching, and yield
+would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-line dispatch/rc history in a
+6000-line window (stdout dominates), so outcome accounting is via arrivals (results) + queued depth.
