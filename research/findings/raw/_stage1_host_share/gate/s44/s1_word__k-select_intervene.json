@@ -1,0 +1,3133 @@
+{
+ "instrument": "stage1_host_share",
+ "prereg": "research/findings/2026-10-02-stage1-host-share-PREREGISTRATION.md",
+ "seed": 44,
+ "group": "s1_word",
+ "criterion": "C2",
+ "arm": "k-select:intervene",
+ "seam": "k-select",
+ "mode": "intervene",
+ "backend": "numpy",
+ "session_index": null,
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_LTM_SHIP_DEFAULT": "1",
+  "BRAIN_CHAT_SEED": "44"
+ },
+ "pythonhashseed_ok": true,
+ "corpus_present": true,
+ "seeds_used": {
+  "value_choice_seed": 44,
+  "bg_select_seed": 44,
+  "shared_salience_seed": 44
+ },
+ "unresolved_turns": [],
+ "turns": {
+  "s1w_pre_bear_chase": {
+   "message": "what does the bear chase",
+   "session": "hs_s1_word_0",
+   "reset": true,
+   "cue": null,
+   "target": false
+  },
+  "s1w_t_otter_eat": {
+   "message": "the otter eats the clam",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": null,
+   "target": false
+  },
+  "s1w_t_bear_chase": {
+   "message": "the bear chases the otter",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": null,
+   "target": false
+  },
+  "s1w_p_bear_chase": {
+   "message": "what does the bear chase",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": [
+    "bear",
+    "chase"
+   ],
+   "target": true
+  },
+  "s1w_p_it_eat": {
+   "message": "what does it eat",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": null,
+   "target": false
+  },
+  "s1w_p_otter_eat": {
+   "message": "what does the otter eat",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": [
+    "otter",
+    "eat"
+   ],
+   "target": true
+  },
+  "s1w_c_otter_chase": {
+   "message": "what does the otter chase",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": [
+    "otter",
+    "chase"
+   ],
+   "target": true
+  },
+  "s1w_c_clam_eat": {
+   "message": "what does the clam eat",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": [
+    "clam",
+    "eat"
+   ],
+   "target": true
+  },
+  "s1w_c_dog_chase": {
+   "message": "what does the dog chase",
+   "session": "hs_s1_word_0",
+   "reset": false,
+   "cue": [
+    "dog",
+    "chase"
+   ],
+   "target": true
+  }
+ },
+ "responses": {
+  "s1w_pre_bear_chase": {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bear yet: what can you tell me about bear?",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "bear",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "bear"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 5,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.16744186046511628,
+     "mean_magnitude": 1454.3766477143126
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.960325438487048,
+    "want_hz": 45.138888888888886,
+    "threshold": 23.263888888888886,
+    "curious": true,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "bear",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.960325438487048,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.24340733103339182,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.6151109965500878,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 37.8206356565998,
+     "want_hz": 45.138888888888886,
+     "want_eff_hz": 27.76542692760813,
+     "curious": true
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 1,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": null,
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 44,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.2222222222222222,
+    "ema_engagement": 0.13333333333333333,
+    "afferent_pA": 186.66666666666666,
+    "da_level": 0.24340733103339182,
+    "snc_firing": 0.03250000000000001,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.6222222222222221,
+     "want_hz": 11.11111111111111,
+     "normalized": 0.2222222222222222,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.8703703703703703,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.8888888888888888,
+      0.8518518518518519
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.2733103108041435,
+    "da_level": 0.24340733103339182,
+    "lesioned": false
+   }
+  },
+  "s1w_t_otter_eat": {
+   "answer": "the otter eats the clam the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "otter",
+    "eat",
+    "clam"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 3,
+   "supporting_facts": [
+    [
+     "otter",
+     "eat",
+     "clam"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "otter",
+      "confidence": 1.0,
+      "margin": 0.7159696256863711,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "otter"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6806236115368813,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "clam",
+      "confidence": 1.0,
+      "margin": 0.6086341137563239,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "words",
+      "confidence": 1.0,
+      "margin": 0.22554686401070673,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 5,
+    "n_facts_scanned": 6,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 76977.71280491025
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "otter",
+     "eats",
+     "clam"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.10824040987653143,
+    "threshold": 0.06622809519551844,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08889814844306777,
+     "min_hi": 0.07254849552927276,
+     "mean_lo": 0.0445632270543238,
+     "max_lo": 0.059907694861764116,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6461548429980566
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 3,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 3,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 2,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": null,
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 44,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "turn_engagement": 0.41269841269841256,
+    "ema_engagement": 0.30095238095238086,
+    "afferent_pA": 421.3333333333332,
+    "da_level": 0.5428015794157072,
+    "snc_firing": 0.08333333333333329,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.6981481481481481,
+     "want_hz": 19.44444444444444,
+     "normalized": 0.41269841269841256,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.9135802469135802,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.8148148148148148,
+      0.9259259259259259,
+      1.0
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.6995559940799208,
+    "da_level": 0.5428015794157072,
+    "lesioned": false
+   }
+  },
+  "s1w_t_bear_chase": {
+   "answer": "the bear chases the otter",
+   "abstained": false,
+   "recalled_svo": [
+    "bear",
+    "chase",
+    "otter"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "bear",
+     "chase",
+     "otter"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "otter",
+      "confidence": 1.0,
+      "margin": 0.7159696256863711,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "otter"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6806236115368813,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "clam",
+      "confidence": 1.0,
+      "margin": 0.6086341137563239,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "words",
+      "confidence": 1.0,
+      "margin": 0.22554686401070673,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 5,
+    "n_facts_scanned": 7,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 76977.71280491025
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "bear",
+     "chases",
+     "otter"
+    ],
+    "recall_action": "chases",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.10824040987653143,
+    "threshold": 0.06622809519551844,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08889814844306777,
+     "min_hi": 0.07254849552927276,
+     "mean_lo": 0.0445632270543238,
+     "max_lo": 0.059907694861764116,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6461548429980566
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 3,
+    "topic": "otter",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "otter",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.0,
+    "boost_max": 0.0,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "otter",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.055,
+    "evidence_rate": 0.0,
+    "margin": -0.055,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "turn_engagement": 0.1587301587301587,
+    "ema_engagement": 0.21561904761904757,
+    "afferent_pA": 301.8666666666666,
+    "da_level": 0.41112176733574457,
+    "snc_firing": 0.059166666666666624,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.5351851851851852,
+     "want_hz": 8.333333333333332,
+     "normalized": 0.1587301587301587,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6419753086419753,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.6296296296296297,
+      0.8518518518518519,
+      0.4444444444444444
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.471632955106068,
+    "da_level": 0.41112176733574457,
+    "lesioned": false
+   }
+  },
+  "s1w_p_bear_chase": {
+   "answer": "Setting the held thread aside \u2014 On bear, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "bear",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "bear"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 7,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 0.995331603934332
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 1.3888888888888888,
+    "threshold": 23.263888888888886,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "bear",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.24541843959889822,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.6181276593983474,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 37.63605872536544,
+     "want_hz": 1.3888888888888888,
+     "want_eff_hz": 0.8585106380532602,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 4,
+    "topic": "bear",
+    "swapped": true,
+    "held_topic_before": "otter",
+    "held_topic": "bear",
+    "evicted_topic": "otter",
+    "reason": "topic_change_swap",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2777777777777778,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On bear, then \u2014 ",
+    "new_topic": "bear",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "bear",
+    "slot": 1,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.04833333333333333,
+    "evidence_rate": 0.0,
+    "margin": -0.04833333333333333,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "turn_engagement": 0.07936507936507933,
+    "ema_engagement": 0.13386666666666663,
+    "afferent_pA": 187.4133333333333,
+    "da_level": 0.24541843959889822,
+    "snc_firing": 0.02916666666666668,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.4,
+     "want_hz": 4.86111111111111,
+     "normalized": 0.07936507936507933,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.2962962962962963,
+      0.7037037037037037
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.214109521460286,
+    "da_level": 0.24541843959889822,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "bear",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "s1w_p_it_eat": {
+   "answer": "the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "fish"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "cat",
+      "confidence": 1.0,
+      "margin": 0.6800254269335136,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "cat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7117087359574958,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "fish",
+      "confidence": 1.0,
+      "margin": 0.5749399151079866,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.05044863482492224,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.962321418204165,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 4,
+    "n_facts_scanned": 7,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 40600.41904113665
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.10824040987653143,
+    "threshold": 0.06622809519551844,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08889814844306777,
+     "min_hi": 0.07254849552927276,
+     "mean_lo": 0.0445632270543238,
+     "max_lo": 0.059907694861764116,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5958888262056167
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 5,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": "bear",
+    "held_topic": "bear",
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 44,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "turn_engagement": 0.2222222222222222,
+    "ema_engagement": 0.18688,
+    "afferent_pA": 261.632,
+    "da_level": 0.3595065113101656,
+    "snc_firing": 0.04916666666666666,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.6277777777777778,
+     "want_hz": 11.11111111111111,
+     "normalized": 0.2222222222222222,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.9629629629629629,
+     "n_tokens": 1,
+     "per_word_freshness": [
+      0.9629629629629629
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.4035520473606318,
+    "da_level": 0.3595065113101656,
+    "lesioned": false
+   }
+  },
+  "s1w_p_otter_eat": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On otter, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "otter",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "otter"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 7,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00043604651162790697,
+     "mean_magnitude": 0.9671676804429348
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 1.3888888888888888,
+    "threshold": 23.263888888888886,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "otter",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.18695310448834282,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.5304296567325142,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 43.858575012936036,
+     "want_hz": 1.3888888888888888,
+     "want_eff_hz": 0.7367078565729364,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 6,
+    "topic": "otter",
+    "swapped": true,
+    "held_topic_before": "bear",
+    "held_topic": "otter",
+    "evicted_topic": "bear",
+    "reason": "topic_change_swap",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 1,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.002,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2833333333333333,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On otter, then \u2014 ",
+    "new_topic": "otter",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "otter",
+    "slot": 0,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.095,
+    "introduce_rate": 0.03666666666666667,
+    "evidence_rate": 0.11,
+    "margin": 0.058333333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "turn_engagement": 0.06349206349206347,
+    "ema_engagement": 0.11284723809523808,
+    "afferent_pA": 157.98613333333333,
+    "da_level": 0.18695310448834282,
+    "snc_firing": 0.019166666666666672,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.37777777777777777,
+     "want_hz": 4.166666666666666,
+     "normalized": 0.06349206349206347,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.4629629629629629,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.25925925925925924,
+      0.6666666666666666
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.0957079427725698,
+    "da_level": 0.18695310448834282,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "otter",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "s1w_c_otter_chase": {
+   "answer": "As for it \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "otter",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "otter"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 7,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 0.995331603934332
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 1.3888888888888888,
+    "threshold": 23.263888888888886,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "otter",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.04616293556102311,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.3192444033415347,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 72.8717203665452,
+     "want_hz": 1.3888888888888888,
+     "want_eff_hz": 0.4433950046410204,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 7,
+    "topic": "otter",
+    "swapped": false,
+    "held_topic_before": "otter",
+    "held_topic": "otter",
+    "evicted_topic": null,
+    "reason": "same_topic_hold",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.3333333333333333,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.0,
+    "boost_max": 0.0,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "same_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "otter",
+    "slot": 0,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.09833333333333333,
+    "introduce_rate": 0.03833333333333333,
+    "evidence_rate": 0.11333333333333333,
+    "margin": 0.06,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "turn_engagement": 0.031746031746031744,
+    "ema_engagement": 0.06418651428571429,
+    "afferent_pA": 89.86112,
+    "da_level": 0.04616293556102311,
+    "snc_firing": 0.0,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.26666666666666666,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.031746031746031744,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.2777777777777778,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.14814814814814814,
+      0.4074074074074074
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.04616293556102311,
+    "lesioned": false
+   }
+  },
+  "s1w_c_clam_eat": {
+   "answer": "Setting the held thread aside \u2014 On clam, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "clam",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "clam"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 7,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00043604651162790697,
+     "mean_magnitude": 0.9671676804429348
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 1.3888888888888888,
+    "threshold": 23.263888888888886,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "clam",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.21039288908244322,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.5655893336236648,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 41.1321209681234,
+     "want_hz": 1.3888888888888888,
+     "want_eff_hz": 0.7855407411439789,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 8,
+    "topic": "clam",
+    "swapped": true,
+    "held_topic_before": "otter",
+    "held_topic": "clam",
+    "evicted_topic": "otter",
+    "reason": "topic_change_swap",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 0,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2722222222222222,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On clam, then \u2014 ",
+    "new_topic": "clam",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "clam",
+    "slot": 2,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.043333333333333335,
+    "evidence_rate": 0.0,
+    "margin": -0.043333333333333335,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "turn_engagement": 0.1587301587301587,
+    "ema_engagement": 0.12091270095238094,
+    "afferent_pA": 169.2777813333333,
+    "da_level": 0.21039288908244322,
+    "snc_firing": 0.025000000000000012,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.5444444444444444,
+     "want_hz": 8.333333333333332,
+     "normalized": 0.1587301587301587,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7407407407407407,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.8888888888888888,
+      0.5925925925925926
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.1608288110508138,
+    "da_level": 0.21039288908244322,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "clam",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "s1w_c_dog_chase": {
+   "answer": "Setting the held thread aside \u2014 On dog, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "dog",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "dog"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 7,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 0.995331603934332
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 1.3888888888888888,
+    "threshold": 23.263888888888886,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 45.138888888888886,
+     "want_familiar_hz": 1.3888888888888888,
+     "threshold_hz": 23.263888888888886,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "dog",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.22131016049514635,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.5819652407427195,
+     "base_threshold": 23.263888888888886,
+     "eff_threshold": 39.97470512018706,
+     "want_hz": 1.3888888888888888,
+     "want_eff_hz": 0.8082850565871104,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0026666666666666644,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 44,
+    "vplus_rate": 0.04,
+    "vminus_rate": 0.037333333333333336,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 9,
+    "topic": "dog",
+    "swapped": true,
+    "held_topic_before": "clam",
+    "held_topic": "dog",
+    "evicted_topic": "clam",
+    "reason": "topic_change_swap",
+    "seed": 44,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 2,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2611111111111111,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On dog, then \u2014 ",
+    "new_topic": "dog",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "dog",
+    "slot": 3,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.04666666666666667,
+    "evidence_rate": 0.0,
+    "margin": -0.04666666666666667,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "turn_engagement": 0.12698412698412698,
+    "ema_engagement": 0.12455555657142856,
+    "afferent_pA": 174.37777919999996,
+    "da_level": 0.22131016049514635,
+    "snc_firing": 0.026666666666666682,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 44,
+    "shared_salience": {
+     "raw": 0.48888888888888893,
+     "want_hz": 6.944444444444444,
+     "normalized": 0.12698412698412698,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 45.138888888888886,
+      "want_familiar_hz": 1.3888888888888888,
+      "threshold_hz": 23.263888888888886,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6481481481481481,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      1.0,
+      0.2962962962962963
+     ],
+     "fresh_ref": 27.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.1845091267883567,
+    "da_level": 0.22131016049514635,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "dog",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  }
+ },
+ "events": {
+  "s1w_pre_bear_chase": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "bear_chase",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "agent": "bear",
+    "action": "chase",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the bear chase",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ],
+  "s1w_t_otter_eat": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "otter",
+    "action": "eats",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "agent": "otter",
+    "action": "eat",
+    "patient": "clam",
+    "seam": "_recall"
+   },
+   {
+    "agent": "clam",
+    "action": "eat",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "clam",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "clam",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "eat",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "cat",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "fish",
+    "facts": [
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "chase",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "dog",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "otter",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "kind": "mrc",
+    "mode": "observe",
+    "mrc": 0.646155,
+    "spiking_present": false,
+    "role_margins": [
+     0.71597,
+     0.680624,
+     0.608634,
+     0.225547,
+     1.0
+    ],
+    "role_margins_spiking": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "seam": "metacog"
+   },
+   {
+    "kind": "evidence",
+    "mode": "observe",
+    "applied": false,
+    "host_evidence": 1.0,
+    "returned_evidence": 1.0,
+    "seam": "metacog"
+   }
+  ],
+  "s1w_t_bear_chase": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "bear",
+    "action": "chases",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "otter",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "agent": "otter",
+    "action": "eat",
+    "patient": "clam",
+    "seam": "_recall"
+   },
+   {
+    "agent": "clam",
+    "action": "eat",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "clam",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "bear",
+    "facts": [
+     [
+      "bear",
+      "chase",
+      "otter"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "chase",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "clam",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "eat",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "cat",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "dog",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "fish",
+    "facts": [
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "otter",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ],
+     [
+      "bear",
+      "chase",
+      "otter"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "kind": "mrc",
+    "mode": "observe",
+    "mrc": 0.646155,
+    "spiking_present": false,
+    "role_margins": [
+     0.71597,
+     0.680624,
+     0.608634,
+     0.225547,
+     1.0
+    ],
+    "role_margins_spiking": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "seam": "metacog"
+   },
+   {
+    "kind": "evidence",
+    "mode": "observe",
+    "applied": false,
+    "host_evidence": 1.0,
+    "returned_evidence": 1.0,
+    "seam": "metacog"
+   }
+  ],
+  "s1w_p_bear_chase": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "bear_chase",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "mode": "intervene",
+    "path": "fact_shard",
+    "applied": true,
+    "host_idx": 6,
+    "returned_idx": null,
+    "decoded_matches": [
+     6
+    ],
+    "matches": [
+     6
+    ],
+    "match_patients": [
+     "otter"
+    ],
+    "seam": "k-select"
+   },
+   {
+    "agent": "bear",
+    "action": "chase",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the bear chase",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ],
+  "s1w_p_it_eat": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "cat",
+    "action": "eat",
+    "patient": "fish",
+    "seam": "_recall"
+   },
+   {
+    "agent": "cat",
+    "action": "eat",
+    "patient": "fish",
+    "seam": "_recall"
+   },
+   {
+    "agent": "fish",
+    "action": "eat",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "fish",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "chase",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "dog",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "eat",
+    "facts": [],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "fish",
+    "facts": [
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "bear",
+    "facts": [
+     [
+      "bear",
+      "chase",
+      "otter"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "clam",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "otter",
+    "facts": [
+     [
+      "otter",
+      "eat",
+      "clam"
+     ],
+     [
+      "bear",
+      "chase",
+      "otter"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "fn": "_facts_mentioning",
+    "concept": "cat",
+    "facts": [
+     [
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "seam": "_hostlist"
+   },
+   {
+    "kind": "mrc",
+    "mode": "observe",
+    "mrc": 0.595889,
+    "spiking_present": false,
+    "role_margins": [
+     0.680025,
+     0.711709,
+     0.57494,
+     0.050449,
+     0.962321
+    ],
+    "role_margins_spiking": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "seam": "metacog"
+   },
+   {
+    "kind": "evidence",
+    "mode": "observe",
+    "applied": false,
+    "host_evidence": 1.0,
+    "returned_evidence": 1.0,
+    "seam": "metacog"
+   }
+  ],
+  "s1w_p_otter_eat": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "otter_eat",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "mode": "intervene",
+    "path": "fact_shard",
+    "applied": true,
+    "host_idx": 5,
+    "returned_idx": null,
+    "decoded_matches": [
+     5
+    ],
+    "matches": [
+     5
+    ],
+    "match_patients": [
+     "clam"
+    ],
+    "seam": "k-select"
+   },
+   {
+    "agent": "otter",
+    "action": "eat",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the otter eat",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ],
+  "s1w_c_otter_chase": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "otter_chase",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "mode": "intervene",
+    "path": "fact_shard",
+    "applied": false,
+    "host_idx": null,
+    "returned_idx": null,
+    "decoded_matches": [],
+    "matches": [],
+    "match_patients": [],
+    "seam": "k-select"
+   },
+   {
+    "agent": "otter",
+    "action": "chase",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the otter chase",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ],
+  "s1w_c_clam_eat": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "clam_eat",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "mode": "intervene",
+    "path": "fact_shard",
+    "applied": false,
+    "host_idx": null,
+    "returned_idx": null,
+    "decoded_matches": [],
+    "matches": [],
+    "match_patients": [],
+    "seam": "k-select"
+   },
+   {
+    "agent": "clam",
+    "action": "eat",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the clam eat",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ],
+  "s1w_c_dog_chase": [
+   {
+    "kind": "salience",
+    "mode": "observe",
+    "applied": false,
+    "host_speak": 1.079365,
+    "host_silent": 0.0,
+    "used": [
+     1.079365,
+     0.0
+    ],
+    "prefilter_host_runs_race": false,
+    "seam": "bg-select"
+   },
+   {
+    "agent": "dog_chase",
+    "action": "alias_of",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "mode": "intervene",
+    "path": "fact_shard",
+    "applied": true,
+    "host_idx": 3,
+    "returned_idx": null,
+    "decoded_matches": [
+     3
+    ],
+    "matches": [
+     3
+    ],
+    "match_patients": [
+     "cat"
+    ],
+    "seam": "k-select"
+   },
+   {
+    "agent": "dog",
+    "action": "chase",
+    "patient": null,
+    "seam": "_recall"
+   },
+   {
+    "fn": "_facts_about",
+    "concept": "what does the dog chase",
+    "facts": [],
+    "seam": "_hostlist"
+   }
+  ]
+ },
+ "snapshots": {
+  "s1w_pre_bear_chase": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_t_otter_eat": {
+   "three_organ": {
+    "authored_by": "host_out_of_scope",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": null,
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "out_of_scope_or_no_bus_info",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_t_bear_chase": {
+   "three_organ": {
+    "authored_by": "host_out_of_scope",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": null,
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "out_of_scope_or_no_bus_info",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_p_bear_chase": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_p_it_eat": {
+   "three_organ": {
+    "authored_by": "host_router",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": null,
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "out_of_scope_or_no_bus_info",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_p_otter_eat": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_c_otter_chase": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_c_clam_eat": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  },
+  "s1w_c_dog_chase": {
+   "three_organ": {
+    "authored_by": "three_organ_bus",
+    "committed": null,
+    "organ_a_recall": null,
+    "organ_b_confirmed": null,
+    "organ_c_votes": null,
+    "organ_c_real_vocab_known": null,
+    "abstain_reason": "primary_recall_miss",
+    "n_votes": null,
+    "recall_source": null
+   },
+   "deliberation": {
+    "acted": false,
+    "reason": "already_abstained",
+    "decision": null,
+    "n_candidates": null
+   }
+  }
+ },
+ "turn_seconds": {
+  "s1w_pre_bear_chase": 143.06,
+  "s1w_t_otter_eat": 251.05,
+  "s1w_t_bear_chase": 27.08,
+  "s1w_p_bear_chase": 8.52,
+  "s1w_p_it_eat": 21.92,
+  "s1w_p_otter_eat": 9.04,
+  "s1w_c_otter_chase": 8.83,
+  "s1w_c_clam_eat": 8.77,
+  "s1w_c_dog_chase": 9.19
+ },
+ "wall_seconds": 487.5,
+ "n_session_processes": 1
+}
