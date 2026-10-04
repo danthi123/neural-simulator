@@ -737,6 +737,14 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   `## Step 4b` T1 waits for: clear-dose selection, the copy-only build, a 144-line dev grid, and the reading table.
   Run it as written; its section 4 table is Claude's, so stop at the RESULT line. (2026-10-04)
 - handled: [T1] (2026-10-04)
+- fb-relay2: (cloud Claude session 6, continued) The synaptic (relay) write is diagnosed on dev seed 7:
+  docs/drafts/fb-spiking-witness-relay2/DIAGNOSIS.md. A dendritic AND now works: world on Mg2+-gated NMDA, relay
+  bias -250, presence 3.0, world 2.0. Witnessed moves fire their target relay 179-202 spikes and unwitnessed ones
+  0-2. The open defect is that a synaptically written belief does not persist through the hold. The new organ
+  constants are opt-in: the registered GRID and the T18 PASS are unchanged (ops 0 and 4 reproduce the pool sweep;
+  tests/test_fb_relay_nmda_optin.py). Next, and only on dev seeds 1-8: DIAGNOSIS section "Next measurement", items 1-2,
+  as a draft build using the scripts in docs/drafts/fb-spiking-witness-relay2/scans/. Report a table, then
+  NEEDS-CLAUDE `[fb-relay2]`. Never a gate seed, never a new GRID index (Claude's). (2026-10-04)
 
 ## NEEDS CLAUDE
 
