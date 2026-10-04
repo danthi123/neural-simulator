@@ -37,3 +37,19 @@
   queue stay blocked on that open line; §5's own check is superseded by RULING b2d-mouth-gpu (T23's HANDOFF
   governs). W gpu.queue holds 0 b2d0929-mouth lines and the card is idle — nothing to yield.
 - T9 scoring stays gated: 258 stub cells not landed (2/258) and the mouth arm awaits Claude's #4 ruling.
+- 2026-10-04 06:3x (local model) **T0 queue check (runbook 1.2)**: no pool-hold — every key with an unmet Start
+  still has lines moving (`_stage1_c1_category/gate` 54q, `_stage2_exit/dev` 8q, `b2d0929/` 43q, `iw1-R-` 4q+8r,
+  `iw2-flip-` 25q+8r); no `[pool-hold]` NEEDS.
+- 2026-10-04 06:4x (local model) **T23 mouth arm queued (RULING b2d-mouth-gpu)**: all **18/18** registered lines
+  from `jobs/mouth_5818dc6.txt`, unchanged, queued from S with
+  `cd $WT/b2d-mouth-renderer && bash tools/gpu_remote.sh add '<line>'` (failures=0). Verified:
+  `gpu_remote.sh status` → queued: **18**, dispatcher up (pid 2502), state PAUSED, current idle,
+  VRAM free 1177MiB (min_free 3000); 0 pre-existing b2d0929-mouth lines before the adds.
+  **yield attempted and refused**: `gpu_remote.sh yield --max-hours 12` printed
+  `refusing to yield: GAME_MODE is set (owner gaming/away) -- see: bash tools/game.sh status` (not the
+  `not loaded` case) → NEEDS "B2d mouth arm: yield refused (...)" per HANDOFF section 5; the lines wait for the
+  owner's card, nothing forced. Note (guess marked): `draft-ca3-symmetric-ti` also holds 2 tracked changes
+  (`tool_health.json` auto-stamp + `runs.jsonl` append) that section 5 says would also block yield, and
+  `runs.jsonl` is never addable by rule — the GAME_MODE line carries the block regardless.
+  Next (sections 6-9): per-session counts; steps 7-9 after 258+18 land; A1.4(c) re-runs only as reported.
+  HANDOFF NEEDS #6's queueing clause superseded by the ruling; #3 and the HANDOFF untouched (Claude's).
