@@ -763,6 +763,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   `ChatBrain._substrate_recall`, which the production bus path never calls. docs/drafts/stage1-exit/AMENDMENT-A1.md
   has the full account; the runner now uses a counted patch on the read the bus makes. After this branch lands, at the
   landed main sha P2: request provisioning (`provision.req/<P2>`), then
+  run the dev check in AMENDMENT-A1 (A1.2, two seed-7 shards; it must show the lesion engaged), then
   `python -m research.runners.stage1_exit_gate --emit-pool-jobs <P2>`. Keep ONLY the `--group lived` lines (42 = 7
   arms x 6 seeds) and change their out-dir from `_stage1_exit/gate/` to `_stage1_exit/gate_c3rerun/`. Canary one
   line first (pool canary rule), then queue the rest with `#checked:` naming AMENDMENT-A1, and run `before_you_build.sh`

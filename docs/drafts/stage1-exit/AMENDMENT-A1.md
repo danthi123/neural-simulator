@@ -29,8 +29,13 @@ engaged (`rec["applied"] = True`).
   published main. So C3 is re-measured **entirely** at the new pin P2: all 7 `lived` arms x 6 gate seeds, 42 lines,
   out-dir `research/findings/raw/_stage1_exit/gate_c3rerun/`. Intact, lesion and permuted then share one revision.
   C3 is judged at P2 alone and reported as "attempt 1, C3 re-measured at P2". It is never pooled with c238ff325 arms.
-- **Dev check before the gate lines** (dev seed 7, labels `t_wolf_bite,p_wolf_bite,c_dog_chase`): see the section
-  below.
+- **Dev check before the gate lines (Hermes, on the pool):** at P2, dev seed 7, run the two shards
+  `python -m research.runners.stage1_exit_gate --shard --seed 7 --group lived --arm <intact_a|lesion_recall> --labels
+  t_wolf_bite,p_wolf_bite,c_dog_chase --out research/findings/raw/_stage1_exit/dev_c3/s7/lived__<arm>.json`.
+  Required before the 42 gate lines: `lesion_recall`'s `patch.calls` > 0, its `p_wolf_bite` abstains or names
+  something other than `apple`, and `c_dog_chase` still names `cat`. If `patch.calls` is 0, the bus is not reading
+  through `OneBrainComposer.query_patient` on that path: STOP, NEEDS-CLAUDE. (Claude's local attempt timed out: the
+  cloud container has no corpus and is too slow for a production build.)
 
 ## Stage verdict after A1
 
