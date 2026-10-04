@@ -62,3 +62,12 @@
   `refusing to yield: GAME_MODE is set (owner gaming/away)` **on the workstation** (S's game.sh reads off; the two
   hosts differ, guess marked) -> the 06:45 NEEDS line stands unchanged, no duplicate written. Next sessions:
   retry yield; wave when fresh-queued drops below 10; steps 7-9 after 258+18.
+- 2026-10-04 08:1x (local model) **T0 + T9 session duty**: T0 clean (no pool-hold: c1 54q, stage2 8q, b2d 43q,
+  iw1-R 4q+8r, iw2-flip 18q+8r). Wave status: fresh-queued=43 stale-0 -> **nothing queued** (>=10 rule); stub
+  lb 2/258, mouth 18/18 (10-01 export). **Mouth queue 18 -> 17: first dispatch b2d0929-mouth/s42/affect-coloring
+  START 08:04:42 -> DONE(rc=143) at 08:04:51 (killed ~9 s; GAME_MODE pause-term suspected - GUESS).** Yield
+  retried 08:1x: still `refusing to yield: GAME_MODE is set` workstation-side. Remote queue: PAUSED, current idle,
+  queued 17, VRAM free 3056 (>= min_free 3000), dispatcher up. Per HANDOFF section 5 ("If a run fails, take
+  NEEDS-CLAUDE 'B2d mouth arm failed (<its message>)'") wrote the NEEDS line; did NOT auto-requeue the killed
+  line (17 remain; Claude's call on retry order). Note: status.sh reads `wspool: unreachable` (T0 r-counts may
+  under-read that node; pool40/41/42 reachable) - guess marked.
