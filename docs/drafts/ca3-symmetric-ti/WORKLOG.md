@@ -198,3 +198,21 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
   (`_ca3_symmetric_ti/merge_diag_seed9.txt`, syncs to main): queued 1/1, depth 186, evidence = exits ts
   1791079834 (pool40 rc=1). A second rc≠0 for this merge → UNDEFINED + STOP+NEEDS per the family rule.
 - seeds 9/10/11 records remain unassembled; §9 inspection + the PROVISIONAL finding wait on the diag traceback.
+
+## 2026-10-03 23:00 EDT - §10 root cause = cross-node parts (FileNotFoundError); staged 8/8 to all nodes, 3 merges requeued
+- Diag traceback captured (`merge_diag_seed9.txt`): the merge dies at L831 reading
+  `parts/seed9_b.json` — **FileNotFoundError, not a data/U7 problem** (hashes equal per the 22:35 entry).
+- Cause: `<revision>/research/findings/raw` is a **real per-node directory** (verified: not a symlink; pool40's
+  `sim/raw` holds no ca3 parts) and a seed's part a + part b can land on **different nodes** (seed9: a on
+  `node-mxl1462drl`, b on `node-dl4g243`) — a `--merge` job on one node only sees that node's tree. seed8 merged
+  only because both its parts happened to run on the same node (`mxl1462drl`).
+- `pool_sync.sh` is **pull-only** (remote→local, no push direction), so there is no sanctioned propagation of
+  main's copies to the nodes → staged main's 8 part JSONs by scp into every node's revision-local parts dir:
+  **parts_visible=8/8 on pool40, pool41, pool42**.
+- Requeued the 3 failed merges (seeds 9/10/11) with rc=1 exits evidence (ts 1791079834/841/847, pool40) plus the
+  staging note: **queued 3/3, failures=0, depths 183–185** (duplicate-claim guard saw the dead 22:10 claims and
+  passed them as no-longer-alive).
+- Condition set: any merge failure **after** staging = unknown cause → STOP + NEEDS-CLAUDE immediately (no
+  third attempt for these lines).
+- Next: harvest the 3 merged records → all 4 seeds assembled → §9 dev inspection (one MiMo Pro delegate) →
+  PROVISIONAL finding.
