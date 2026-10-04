@@ -195,7 +195,7 @@ def test_board_inserts_stay_reserved_until_the_owner_switches_them_on(monkeypatc
     old = "# Board\n\n## STATE\n\n- line one\n- line two\n"
     nogo = old.replace("- line one\n", "- line one\n- **2026-10-02:** BG live-seam gate NO-GO (G4 only).\n")
     check = lambda new, **kw: policy.reason_reserved("M", board, lambda p: new, old=lambda p: old, **kw)
-    assert policy.OWNER_APPROVED_BOARD_INSERTS is False
+    monkeypatch.setattr(policy, "OWNER_APPROVED_BOARD_INSERTS", False)
     assert check(nogo) is not None
     monkeypatch.setattr(policy, "OWNER_APPROVED_BOARD_INSERTS", True)
     assert check(nogo) is None
