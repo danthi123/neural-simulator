@@ -71,3 +71,9 @@
   NEEDS-CLAUDE 'B2d mouth arm failed (<its message>)'") wrote the NEEDS line; did NOT auto-requeue the killed
   line (17 remain; Claude's call on retry order). Note: status.sh reads `wspool: unreachable` (T0 r-counts may
   under-read that node; pool40/41/42 reachable) - guess marked.
+- 2026-10-04 09:1x (local model) **T0 + T9 session duty**: T0 clean (no pool-hold; iw2-flip 16q+4r, c1 54q,
+  b2d 43q, iw1-R 4q+8r, stage2 8q). Wave status fresh-queued=43 stale-0 -> nothing queued (>=10); stub lb 2/258,
+  mouth 18/18 (10-01 export). Yield retried: still `refusing to yield: GAME_MODE is set` workstation-side (4th
+  refusal). Remote queue unchanged since 08:04's rc=143 kill: PAUSED, idle, queued 17, VRAM free 3056; no new
+  mouth dispatch. Open NEEDS unchanged (yield + arm-failed lines stand for Claude). Pool depth 125, pool40
+  fail24h=3 (pre-existing).
