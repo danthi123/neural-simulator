@@ -16,8 +16,9 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 
 **The first stage-exit attempt** ran the whole production brain on six seeds. **Learning a new word** passes: a word
 heard once is recalled as doer and as done-to, and switching off the part that makes room for new words removes the
-answer. **Inheriting a category** fails, and so does showing that **remembering a lived event** needs the memory
-system. **The feeling test is void:** the pool machines never received the brain's learned feeling values, so it
+answer. **Inheriting a category** fails. **Whether remembering a lived event needs the memory system** could not be
+measured: the switch-off test cut a route the brain no longer uses, so it re-runs with a corrected switch. **The
+feeling test is void:** the pool machines never received the brain's learned feeling values, so it
 quietly used dictionary values. The setup is fixed and the test re-runs. A separate measurement shows host code still
 makes every decision on the word and memory questions, though what is recalled was learned. **Tracking who saw a
 move** passes as a spiking population, with partial credit, because host code still reads it. The basal-ganglia

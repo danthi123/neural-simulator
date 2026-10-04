@@ -28,6 +28,15 @@ Prereg: research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md (gate r
 > defined data either way, so the stage did not pass. The committed `aggregate.json` is left as scored. Fixes:
 > `tools/pool_provision.sh` now ships the map as a runtime input, and the scorer carries the guard. The C4 arms
 > re-run at the same pin on re-provisioned nodes (RULING `s1-c4-void`).
+>
+> **⚠ Claude correction 2 (2026-10-04): C3 is UNDEFINED (instrument), not "not load-bearing".** `lesion_recall` set
+> `BRAIN_SUBSTRATE_RECALL_LESION`, which cuts `ChatBrain._substrate_recall`. The production default never calls that
+> method: `brain_reply` installs the GNW bus gate, and a routable recall goes through `gnw_bus_shadow.gate_via_bus` ->
+> `composer.query_patient`. So the lesion never engaged, and the reply was unchanged on every seed for that reason.
+> The scorer had assumed every env-flag lesion engaged. Amendment A1 (`docs/drafts/stage1-exit/AMENDMENT-A1.md`)
+> replaces the arm with a patch on the read the bus makes, which records its engagement. It also adds the rule that a
+> no-effect env lesion with no engagement record is UNDEFINED. With both corrections the attempt reads C1 FAIL, C2
+> PASS, C3 and C4 INCOMPLETE. The stage did not pass, because C1 fails on defined data.
 
 | group | criterion | role | verdict | correct | lesion effect | reproduced | permuted tracks | why |
 |---|---|---|---|---|---|---|---|---|
@@ -99,6 +108,6 @@ it does not show:** that neurons made the decision. The SVO acquisition, the fir
 commitment are host scaffolds, as prereg section 5 predicted. In-session words also never become discourse referents
 (anaphora 0/6, reported, not counted).
 
-Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): not passed: C1 FAIL, C3 FAIL, C4 UNDEFINED (learned map absent on
-the pool, raw norm read; re-run owed); C2 word PASS 6/6, reply-level, recruit pool load-bearing, decision host-owned
-(host share 1.000)`.
+Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): not passed: C1 FAIL; C3 UNDEFINED (recall lesion inert on the bus
+path; re-measured at a new pin, Amendment A1); C4 UNDEFINED (learned map absent on the pool, raw norm read; re-run owed);
+C2 word PASS 6/6, reply-level, recruit pool load-bearing, decision host-owned (host share 1.000)`.

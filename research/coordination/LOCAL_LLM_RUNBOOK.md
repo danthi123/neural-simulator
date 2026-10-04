@@ -759,6 +759,25 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   paste its output into the WORKLOG. Exit 0 means every file verified. A later revision provisioned after the
   runtime-inputs fix ships them by itself. (2026-10-04)
 - handled: [s1-c4-void] (the 17:14 re-provision STOP; RULING s1-c4-topup) (2026-10-04)
+- s1-c3-rerun: (cloud Claude session 6, continued) C3 is UNDEFINED (instrument), not FAIL. The recall lesion cut
+  `ChatBrain._substrate_recall`, which the production bus path never calls. docs/drafts/stage1-exit/AMENDMENT-A1.md
+  has the full account; the runner now uses a counted patch on the read the bus makes. After this branch lands, at the
+  landed main sha P2: request provisioning (`provision.req/<P2>`), then
+  run the dev check in AMENDMENT-A1 (A1.2, two seed-7 shards; it must show the lesion engaged), then
+  `python -m research.runners.stage1_exit_gate --emit-pool-jobs <P2>`. Keep ONLY the `--group lived` lines (42 = 7
+  arms x 6 seeds) and change their out-dir from `_stage1_exit/gate/` to `_stage1_exit/gate_c3rerun/`. Canary one
+  line first (pool canary rule), then queue the rest with `#checked:` naming AMENDMENT-A1, and run `before_you_build.sh`
+  first (packet-corpus-step). Score with `--aggregate research/findings/raw/_stage1_exit/gate_c3rerun --seeds
+  42,43,44,100,101,102`. Then RESULT and NEEDS-CLAUDE `[s1-c3-rerun]`; Claude reads C3. (2026-10-04)
+- s1-c1-plan: (cloud Claude session 6, continued) C1's next method is a production build that is Claude's:
+  docs/drafts/stage1-c1-inheritance/PLAN.md (rung-3c's learned member -> context pathway on the strict route's recall
+  miss, default-off, with identity, permuted, lr=0 and lesion controls). No Hermes step until Claude builds it.
+  (2026-10-04)
+- board-session6b: (cloud Claude session 6, continued) A correction to board-session6 item (1). Stage-1 attempt 1
+  reads: "not passed. Word learning passes; category inheritance fails; the lived-memory test and the feeling test are
+  both void (setup faults) and re-run". Add "Re-run the Stage-1 lived-memory test with a working switch-off"
+  (s1-c3-rerun) and "Build category inheritance into the live brain" (s1-c1-plan, Claude). Stamp docs/.vikunja_sync.
+  (2026-10-04)
 
 ## NEEDS CLAUDE
 

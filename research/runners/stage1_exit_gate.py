@@ -76,6 +76,8 @@ BASE_ENV = {"SIM_BACKEND": "numpy", "BRAIN_CHAT_RENDERER": "stub", "SIM_DISABLE_
 # value is INFERRED from the company it keeps in the corpus, never its own norm). Chosen once from the 78 words that
 # satisfy both, spanning the range on each side (every 4th positive, every 2nd negative, by norm), then frozen here.
 # (word, warriner_v9): the norm is the CRITERION, read nowhere by the brain at run time.
+LIVED_CUES = {("wolf", "bite")}   # Amendment A1: the lived fact the C3 recall lesion cuts (intact exposure)
+
 HELDOUT_WORDS = [   # norms copied verbatim from research/runners/affect_production_organ.WARRINER (v9)
     ("nice", 7.4), ("home", 7.4), ("proud", 7.6), ("help", 7.3), ("brave", 7.2), ("sing", 7.0), ("gift", 7.6),
     ("friend", 7.9), ("warm", 7.1), ("smile", 7.7), ("kind", 7.3), ("happy", 8.5),
@@ -202,8 +204,13 @@ GROUPS = {
                   ("t_wolf_bite", "the wolf bites the apple", "teach")] + _LIVED_DISTRACT + _LIVED_PROBES,
         "permuted_turns": [("pre_wolf_bite", "what does the wolf bite", "pre"), ("pre_wolf_discuss", "did we discuss the wolf", "pre"),
                            ("t_wolf_bite", "the wolf bites the pear", "teach")] + _LIVED_DISTRACT + _LIVED_PROBES,
-        "lesions": {"lesion_recall": {"env": {"BRAIN_SUBSTRATE_RECALL_LESION": "1"}, "patch": None,
-                                      "cuts": "the substrate-first spiking recall read (ChatBrain._substrate_recall -> None)"},
+        # Amendment A1 (Claude, 2026-10-04): the registered env lesion BRAIN_SUBSTRATE_RECALL_LESION cuts
+        # ChatBrain._substrate_recall, which the production default never calls (install_bus_gate routes the recall
+        # through gnw_bus_shadow.gate_via_bus -> composer.query_patient), so on attempt 1 it never engaged. The arm now
+        # cuts the read the bus actually makes, for the lived cue only, and records its engagement.
+        "lesions": {"lesion_recall": {"env": {}, "patch": "lesion_lived_recall",
+                                      "cuts": "the spiking forward recall of the lived fact (composer.query_patient for "
+                                              "the lived (agent, action) -> None; built-in facts untouched)"},
                     "lesion_episodic": {"env": {"BRAIN_EPISODIC_LESION": "1"}, "patch": None,
                                         "cuts": "the D5 hippocampal dAP episodic recall gate"}},
         "informational": {},
@@ -293,6 +300,19 @@ def install_patch(name, seed):
             rec["calls"] += 1
             return False
         OBC.OneBrainComposer._recruit_word = _recruit_word
+        return rec
+    if name == "lesion_lived_recall":
+        from research.runners import one_brain_composer as OBC
+        rec = {"patch": name, "calls": 0, "calls_total": 0}
+        _orig = OBC.OneBrainComposer.query_patient
+
+        def query_patient(self, agent, action, order_fn=None):
+            rec["calls_total"] += 1
+            if (str(agent), str(action)) in LIVED_CUES:      # the lived fact's spiking read is cut, nothing else
+                rec["calls"] += 1
+                return None
+            return _orig(self, agent, action, order_fn=order_fn)
+        OBC.OneBrainComposer.query_patient = query_patient
         return rec
     if name == "permuted_map":
         import numpy as np
@@ -715,7 +735,15 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         if isinstance(p, dict) and "calls" in p:
                             rec["patch_calls"] = p["calls"]; rec["applied"] = p["calls"] > 0
                         else:
-                            rec["applied"] = True      # env-flag lesions are read per call by production code
+                            # Amendment A1: an env-flag lesion carries no engagement record. On attempt 1 one of them
+                            # (C3's) cut a path production never calls, and its "no effect" was scored as "not
+                            # load-bearing". Engagement is unknown, so a no-effect env lesion on a seed whose
+                            # capability is present makes that seed UNDEFINED, never a FAIL.
+                            rec["applied"] = None
+                            if rec.get("effect") is False and row.get("correct") is True:
+                                row["undefined_reasons"].append(
+                                    "%s: an env-flag lesion with no reply change and no engagement record "
+                                    "(inert lesion and non-load-bearing path are indistinguishable)" % les)
                     else:
                         rec["effect"] = None; rec["reproduced"] = None
                     row["lesions"][les] = rec

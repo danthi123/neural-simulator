@@ -24,7 +24,8 @@ C4 re-run) and `board-session6`, then section 4 in order.
 **Landed 2026-10-04 (cloud Claude session 6, branch claude/session6-needs):**
 - **Stage-1 exit attempt 1: not passed** (`research/findings/2026-10-04-stage1-exit-gate-RESULT.md`). C2 word->concept
   **PASS 6/6** survives verify-go, at reply level: the recruit pool is load-bearing and the decision is host-owned.
-  C1 (category inheritance) and C3 (lived-fact recall load-bearing) FAIL on defined data. **C4 is UNDEFINED
+  C1 (category inheritance) FAILS on defined data. **C3 is UNDEFINED (instrument):** its recall lesion cut a path the
+  production bus never calls (Amendment A1; re-measured at the next pin, RULING `s1-c3-rerun`). **C4 is UNDEFINED
   (instrument):** pool provisioning never shipped the DR-2 learned valence map, so the organ read the raw Warriner
   norm and both C4 controls were inert. Fixed in `tools/pool_provision.sh` plus a scorer guard; re-run owed (RULING
   `s1-c4-void`).
