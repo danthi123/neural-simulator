@@ -48,3 +48,12 @@ Validity: V1 sham-clean seeds [42, 43, 44, 100, 101, 102] (pass True); V3 applie
 - organ-c: host-owned. Flipping the host decision moved the reply on at least 80% of events. (call-graph check, not pooled)
 - metacog: host-owned, and the neural-derived rule gave the same reply on these probes, so it is a replacement candidate. (call-graph check, not pooled)
 - ignition: mixed; no single owner on these probes. (call-graph check, not pooled)
+
+## Claude review (2026-10-04): BASELINE-VALID confirmed; the "before" values for the step-3 builders
+
+Merged by cloud Claude session 6. This is a measurement, so no PASS is claimed. The validity block (V1 to V6, sham
+clean on all six seeds, no missing shards) holds as scored. The step-3 builders start from these values and report
+their own result beside them: **bg-select** host share 0.889, neural fraction 0.111 (n 18); **ignition** host share
+0.643, masked 0.357, SC UNDEFINED (n 28); **k-select** host share 1.000 (n 20). The Stage-1 turns
+(research/findings/2026-10-04-stage1-host-share-RESULT.md) read bg-select host share 1.000 at C2 and 0.944 at C3. So
+the Stage-1 probes give the seam no more neural share than this baseline did.
