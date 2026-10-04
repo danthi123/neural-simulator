@@ -36,3 +36,19 @@
 - Section 4: canary PASS recorded on pool42 (complete artifact 14:30, prov at_exit clean; pool41 mem_ok refused 7G, pool42 dispatch false-negative but setsid job completed); queued 132 gate lines (failures=132, max_age_h=168).
 - Correction: the previous line's '(failures=132)' was the add-refusal count (canary record had the bare module name; re-recorded with research.runners.stage1_host_share); all 132 gate lines are now queued (final added=8, fail=0 on this retry).
 - 2026-10-03 14:45 EDT - section 5 watch: gate = 128/132 (s42/s43/s44/s101/s102 complete at 22); the 4 remaining s100 cells (intact_a, intact_b, metacog_substitute, ignition_intervene) were DEAD CLAIMS: claimed on wspool 01:23/01:35/04:37/04:37 EDT, alive at the 13:35 T0 (running=4), gone by 14:40 with no exits.json record, no output, nothing queued/running on any node (pool40/41/42/wspool) - the 14:37 sandbox-state event killed them. ONCE requeue unused for these 4 (the 10:32 requeue covered only the 2 rc-failed s101/s102 cells, which landed 14:34). Section 3 block re-queued all 4 (`re-queued 4`, depth 203-206; queue's duplicate-claim detector confirmed each: "previous identical claim exists ... but is no longer alive"). Next: gate 132/132 -> step 5 wait done -> section 6 (score + finding + RESULT; note the ≤132 clause: write with what exists and flag if the missing re-runs do not land). Never push (sim-sync publishes main).
+
+## 2026-10-04 02:2x EDT - section 6 score (gate 132/132) + finding
+
+- Gate complete: exactly 132 cells (22 x 6 seeds, s100's 4 requeued cells landed). Section 5 wait DONE.
+- `cp -a` staged `$P/$RAW/gate` into the worktree (rsync absent on S, skipped-logged earlier wake); registered
+  aggregate `python -m research.runners.stage1_host_share --aggregate $RAW/gate --seeds
+  42,43,44,100,101,102 --out $RAW/gate/aggregate.json --stage1-dir $P/research/findings/raw/_stage1_exit/gate`
+  -> **rc=0, MEASUREMENT-VALID**; report `$K/report.md`. DEVIATION (logged): provenance left ON (§6 says
+  SIM_NO_PROVENANCE=1) so `aggregate.json.prov.json` stamps `sim_backend=numpy` — the device-and-cost gate
+  blocked the identical omission on T6's aggregate 01:0x; scoring inputs/outputs unaffected.
+- Verdict: **C2 PARTIAL, C3 PARTIAL — all five seams HOST-OWNED on both** (C2 panel host 1.000 / neural 0.000,
+  n 48; C3 panel host 0.967 / neural 0.033, n 30); V1-V7 all pass, missing shards 0; harness agreement 48/48.
+- Finding (§6 exact header + report block unchanged, PROVISIONAL): `research/findings/
+  2026-10-04-stage1-host-share-RESULT.md`.
+- Board line (Claude folds into the Stage-1 exit report): 2026-10-04 stage1-host-share: MEASUREMENT-VALID; C2 PARTIAL host 1.000 all-5 HOST-OWNED (neural 0.000); C3 PARTIAL host 0.967 all-5 HOST-OWNED (neural 0.033). Finding: research/findings/2026-10-04-stage1-host-share-RESULT.md.
+- rc=0 -> NEEDS-CLAUDE "[stage1-host-share] RESULT MEASUREMENT-VALID ..." filed on main; never push.
