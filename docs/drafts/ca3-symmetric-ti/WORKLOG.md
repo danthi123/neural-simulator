@@ -216,3 +216,18 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
   third attempt for these lines).
 - Next: harvest the 3 merged records → all 4 seeds assembled → §9 dev inspection (one MiMo Pro delegate) →
   PROVISIONAL finding.
+
+## 2026-10-03 23:55 EDT - §10 complete: 4/4 merged (rc=0 22:53), §9 dev inspection, PROVISIONAL finding written
+- Staging worked: seeds 9/10/11 merges all **rc=0** (exits ts 1791082396/841/408, 22:53); structural sanity
+  4/4: `u7_encode_hash_equal=true`, 5 arms each, `error=null`, cfg.lr=0.02 (scratch/ca3_merged_sanity.py).
+- §9 dev inspection by ONE MiMo Pro delegate (schema-valid) against the section-7 table fixed at `31eea95e2`:
+  **primary row 2 WRITE-ABSENT on all four seeds** — DI(sym)−DI(wake) = 0 / 0 / 0.00078 / 0.00078 (vs 0.15),
+  WAD rise 0.85–1.90 pA (vs 20 pA), sym `cospike_total` 8594–15513 ≥ 1 (rule exercised, not U8).
+- Rows 6, 9, 11 additionally fire 4/4: row 6 CONTROL-DEGENERATE on the histogram clause alone (70–73% of
+  |Δw| mass in size-1 classes → no STI3 reading from any seed); row 9 NO-FALSE-INFERENCE holds 4/4 (all
+  foils/C = 0.0); row 11 UNDEFINED instrument (`rev` replica residual 34.3–47.2 pA vs the 1e-3 expectation,
+  pair-mean cross-check 0.28–0.42 pA) → no biology reading from `rev`.
+- Bars: STI0/STI7/STI5/U6-clauses met 4/4; STI1/STI6 and STI2 not-met 4/4; STI3 no reading taken.
+- PROVISIONAL finding written: `research/findings/2026-10-03-ca3-symmetric-ti.md` (dev seeds only, what it
+  does NOT show, numbers only from the delegate's scoring output). Next: verify-go + routine-merges pre-check
+  → NEEDS-CLAUDE "[draft-ca3-symmetric-ti] RESULT" (promotion arc, next run).
