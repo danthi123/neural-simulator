@@ -82,3 +82,17 @@ Round-2 refuter (deleg_a71022d6) confirmed 7/8 original fixes land correctly; 3 
 'load-bearing' -> 'trace-level load-bearing' (TERMS stated-result site); (b) §8 fail-gate didn't cover new
 item (e) -> added: (e) failure at smoke = no floor freeze, no queue, report per row 6; (c) risk-4 line span
 stale (246-250 -> 254-259, verified by refuter in code). All 3 applied. Next: round-3 refuter for APPROVES.
+
+## 2026-10-04 11:5x — refuter round 3: APPROVES — §5 step 3 COMPLETE
+
+Round-3 refuter (deleg_b1d38151): APPROVES, zero required changes. Verified via git show fa119e951 + live
+reads: all 3 round-2 fixes landed (row 5 'trace-level load-bearing'; §8 dual fail-gate coherent with row 6;
+_PER_NEURON_STATE span 254-259 = real definition site, 4 fields present). Non-negotiables hold; W2 line-length
+clean. One pre-existing cosmetic dangling paren at L179 noted as out-of-scope (non-semantic).
+Refutation arc: round 1 REVISE (8 fixes, deleg_dc6a7b54) -> applied -> round 2 REVISE (3 fixes,
+deleg_a71022d6) -> applied -> round 3 APPROVES (deleg_b1d38151). Planning delegates: 3 this session
+(total session delegates now 9).
+STEP 3 DONE. Next wake = step 4: build `research/runners/_xedge_prov_surprise_reciprocal.py` in
+$WT/draft-xedge-prov-surprise-reciprocal on research/draft-xedge-prov-surprise-reciprocal (new file copy,
+sim//registered/scorers/gates untouched), embed the outcome table in the runner docstring first, then smoke
+seed 7 on pool/workstation per compute-placement.
