@@ -53,3 +53,12 @@
   `runs.jsonl` is never addable by rule — the GAME_MODE line carries the block regardless.
   Next (sections 6-9): per-session counts; steps 7-9 after 258+18 land; A1.4(c) re-runs only as reported.
   HANDOFF NEEDS #6's queueing clause superseded by the ruling; #3 and the HANDOFF untouched (Claude's).
+- 2026-10-04 07:1x (local model) **T9 every-session duty + T0**: queue check clean (no [pool-hold]: c1 54q,
+  stage2-dev 8q, b2d 43q, iw1-R 4q+8r, iw2-flip 25q+4r all with lines). `b2d_queue_next_wave.sh --status`:
+  fresh-queued=43 stale-0 dispatched-ever=0, all 43 well-formed, threshold 10 -> **nothing queued** (previous wave
+  still waiting; no unqueued line action; ledger unchanged so no wave-ledger commit). Counts: stub lb 2/258
+  (HANDOFF glob), mouth lb **18/18 landed** (from the 10-01 export, per NEEDS 04:56). §5 check: 18 mouth lines
+  queued from S (06:4x); `gpu_remote.sh yield` retried at 07:1x -> still
+  `refusing to yield: GAME_MODE is set (owner gaming/away)` **on the workstation** (S's game.sh reads off; the two
+  hosts differ, guess marked) -> the 06:45 NEEDS line stands unchanged, no duplicate written. Next sessions:
+  retry yield; wave when fresh-queued drops below 10; steps 7-9 after 258+18.
