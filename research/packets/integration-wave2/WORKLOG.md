@@ -129,3 +129,17 @@
   exits.json rc=137 rows are positive proof the old claims ended, not mere unverifiability (both adds printed
   the FORCE_DUP warning). wspool stays skipped by the dispatcher (down since ~18:17) — pool40/41/42 take the
   reruns. If either fails again: stays UNDEFINED, STOP, NEEDS-CLAUDE.
+- 2026-10-04 04:3x (local model) — **section 5 scored (table read; scorers not re-run).** Start held at 04:07:
+  identity 5/5 + `iw2-R-*-573a943` lb 36/36. Verdicts `research/findings/raw/_iw2/verdicts/573a943/` = landed
+  authoritative set: `b242a0870` (Claude's R re-derivation) is an ancestor of HEAD and my three R files are
+  byte-identical to it, so nothing superseded needed the `_scratch/iw2_R_unamended` move; D/S came from `83a963caf`.
+  Per RULING `iw2-R-pre` the R scorers were NOT re-run (re-running risked overwriting Claude's authoritative
+  output); `env.sh` hardcodes the workstation `P` so `copy_results.sh` now takes `RESULTS_P` override (its own
+  §4 write item) — no data move was needed, the branch status was clean. Table: D0 `IDENTICAL` (PASS);
+  D_false-belief-chat / D_transitive-chat / D_neural-selfid all `DIFFERS-IN-SCOPE` (D_p pass, S_p pass);
+  R_fb / R_tr / R_si all `PASS` at PIN_P `573a9438f075239069c8966dd62f1da4d981e158` (preconditions block +
+  `sim_backend` stamped). Shared-table row 1 → **all three packets in the FLIP list**, consistent with the
+  already-executed section-6 F rows (PINS.tsv, FLIP=false-belief-chat,transitive-chat,neural-selfid) and RULING
+  `iw2-selfid` (D0 PASS admits neural-selfid). No NO-GO draft named, no section-8 re-run, no NEEDS line —
+  nothing stopped. Section 5 DONE; next: section 7 remainder = T11 wave 7 (iw2-flip q=12, needs <10),
+  section 8 re-run rule if any §7 cell reads UNDEFINED, section 11 finding only after §7 PASS.
