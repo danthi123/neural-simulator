@@ -113,7 +113,7 @@ around this edge's training window, STANDARD (non-rate-window) symmetric rule.
 | 2 | Grows, delta sign correct but below floor on some seeds (heterogeneous) | Wiring works; effect size is operating-point dependent — supports the mechanism weakly | Not trace-level load-bearing at this operating point; do NOT claim the verdict is load-bearing (even qualified); next lever is drive/operating-point recalibration (CUE_PA class), not a new mechanism |
 | 3 | Grows, but delta does NOT collapse under lesion (delta_lesion large / frac_attributable low) | Only that the shift is NOT carried by the declared edge (candidates: base-wiring leak, co-drive artifact, unmodeled path — this cell cannot distinguish them) | NOT trace-level load-bearing; run the instrument checks FIRST and repair only one that actually fails; if the instrument is clean, bank the honest negative (edge exists, does not carry the effect) and iterate the episode recipe per no-defer — never presume instrument fault |
 | 4 | Does NOT grow (grown <= grow_factor*init) | Verdict on the TRAINING RECIPE: the co-drive episodes do not produce the co-occurrence the substrate's rule needs | NOT a verdict on the biology or the pair; per no-defer, change the episode recipe and re-run — never a license to drop the capability |
-| 5 | Grows + load-bearing, but the no-edge/lesioned arm ALSO moves the read beyond tolerance, or byte-off FAIL | CONFOUND: effect not attributable to the declared edge | NO biological reading is permitted from this cell; instrument bug (leaky graded control, merge-wiring leak, read-isolation, threshold drift) — fix and re-run |
+| 5 | Grows + trace-level load-bearing, but the no-edge/lesioned arm ALSO moves the read beyond tolerance, or byte-off FAIL | CONFOUND: effect not attributable to the declared edge | NO biological reading is permitted from this cell; instrument bug (leaky graded control, merge-wiring leak, read-isolation, threshold drift) — fix and re-run |
 | 6 | Sign REVERSED (generated > perceived) | The edge implements self-contradiction AMPLIFICATION, not foreign-content amplification | A directional negative on the anchor; report it, never flip expected sign post hoc; the pre-declared variant (prov_generated -> patient_expected) becomes the next draft |
 | 7 | Byte-off PASS but clean-zero control FAILS (prov_perceived active under the 'generated' exemplar) | The control is leaky (graded opponent trace) — measurement artifact class already seen | No reading of rows 1-6 valid until the control exemplar is replaced with a genuinely-generated one (precedent's calibration lesson) |
 
@@ -155,7 +155,7 @@ only).
    ambiguous/dual-context exemplars drive both lines partway and make a leaky control. Control must be a
    genuinely GENERATED exemplar with measured prov_perceived ~ 0 (row 7 of the table).
 4. **Adaptive-threshold drift in the surprise pool** — MANDATORY Port-A reset: every between-condition reset
-   goes through `MergedPool._PER_NEURON_STATE` (`onebrain_merge_framework.py:246-250`: restores
+   goes through `MergedPool._PER_NEURON_STATE` (`onebrain_merge_framework.py:254-259`: restores
    cp_neuron_firing_thresholds, cp_refractory_timers, cp_prev_firing_states, cp_neuron_activity_ema — the
    2026-09-02 C2 read-isolation fix; the 15 hand-copied `_hard_reset` versions that omitted it are the recorded
    FAILURE_LOG class). Smoke check: thresholds byte-restored at re-read. Read order: COUNTERBALANCED IN THIS
@@ -179,5 +179,7 @@ hebbian_rate_window hijack); (c) clean-zero control (measured prov_perceived und
 ~ 0); (d) verdict drive present across the trial window (log per-condition prov-line rates + surprise window
 (e) delta sign must be +1 as predicted; INTACT_FLOOR := 0.5 x smoke seed-7 delta_intact — the floor-setting
 rule is PRE-DECLARED HERE: frozen verbatim into the runner docstring + WORKLOG before the 6-seed queue, never
-revisited, never re-set from later seeds; then queue the 6 clean cells. If any of (a)-(d) fails, fix the
-instrument before queueing — never read rows 1-6 with a broken instrument.
+revisited, never re-set from later seeds; then queue the 6 clean cells. If any
+of (a)-(d) fails, fix the instrument before queueing — never read rows 1-6 with a broken instrument.
+If (e) fails at smoke (sign not +1): do NOT freeze INTACT_FLOOR, do NOT queue — a negative floor would be
+nonsense; report the sign-reversed smoke per row 6.

@@ -75,3 +75,10 @@ extension, not JHL's); (8) INTACT_FLOOR rule PRE-DECLARED (0.5 x smoke seed-7 de
 queue, never revisited).
 Standing duties: T0 clean (flip 9q+8r draining, c1 54q, b2d 43q, iw1-R 2q+8r, stage2 8q); no new NEEDS/rulings.
 Next: refuter re-run until APPROVES, then step 4 build.
+
+## 2026-10-04 11:4x — refuter round 2: REVISE (3 fixes) applied
+
+Round-2 refuter (deleg_a71022d6) confirmed 7/8 original fixes land correctly; 3 remaining: (a) row 5's bare
+'load-bearing' -> 'trace-level load-bearing' (TERMS stated-result site); (b) §8 fail-gate didn't cover new
+item (e) -> added: (e) failure at smoke = no floor freeze, no queue, report per row 6; (c) risk-4 line span
+stale (246-250 -> 254-259, verified by refuter in code). All 3 applied. Next: round-3 refuter for APPROVES.
