@@ -182,3 +182,19 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
 - Next: merged records → §9 dev inspection against the §7 table (one MiMo Pro delegate) → PROVISIONAL finding
   `research/findings/2026-10-03-ca3-symmetric-ti.md` on `research/draft-ca3-symmetric-ti` → verify-go +
   `routine-merges` two-delegate pre-check → NEEDS `[draft-ca3-symmetric-ti] RESULT`.
+
+## 2026-10-03 22:35 EDT - §10 record assembly: 3 of 4 merges rc=1; seed9 diag re-run queued (stderr capture)
+- **seed8 merged OK** (`u7_encode_hash_equal=true`, 22:10:26). **seeds 9/10/11 merge rc=1** (all pool40, exits ts
+  1791079834/841/847 ≈ 6–8 s each) = the 3 "pool jobs ended badly". Original tracebacks are gone: each job's
+  stdout/stderr goes to the node's `~/derisk-pool/sim/autodispatch.out`, which `>` truncates per job (later jobs
+  already overwrote it); the prov sidecars carry no hash fields.
+- Static root-cause pass via scanner-safe script (`scratch/ca3_u7diag.py`): **for ALL FOUR seeds the U7-analogue
+  encode hashes are EQUAL across the a/b parts** (seed9 `88132bb32ad0812c` ×2, seed10 `d91ce19af2b2399b` ×2, seed11
+  `4b538b2e0509ab4c` ×2 — even across different hosts) and `init_hash` agrees — so `merge_parts`' seed assert (L833)
+  and encode-hash assert (L835) PASS; the failure is downstream (attribution block L843–848 or the write L850) and
+  is not visible statically (`attributable_to` returns `None` instead of raising on degenerates; a json round-trip
+  of loaded data cannot raise).
+- §3 re-run **ONCE** for seed9's merge with stderr captured into the SHARED raw dir
+  (`_ca3_symmetric_ti/merge_diag_seed9.txt`, syncs to main): queued 1/1, depth 186, evidence = exits ts
+  1791079834 (pool40 rc=1). A second rc≠0 for this merge → UNDEFINED + STOP+NEEDS per the family rule.
+- seeds 9/10/11 records remain unassembled; §9 inspection + the PROVISIONAL finding wait on the diag traceback.
