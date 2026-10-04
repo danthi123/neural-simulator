@@ -93,14 +93,15 @@ git archive "$SOURCE_SHA" sim webapp research/__init__.py research/runners resea
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   "${POOL_REQ_PATHSPEC[@]}" | tar -x -C "$STAGE"
 # RUNTIME INPUTS under research/findings/raw (2026-10-04, Claude session 6). The archive above excludes raw/ (run
-# OUTPUTS), but a few files there are INPUTS production organs read at run time. The affect organ's DR-2 learned map
-# was one: missing on every pool node, `_get_learned_valence()` returned {} and the organ silently read the raw
-# Warriner norm, so the Stage-1 exit gate's C4 arms all scored the norm (permuted map deranged 0 of 24 words; FAILURE_LOG
-# 2026-10-04). Each listed file ships from the revision itself, at the same relative path.
-RUNTIME_RAW_INPUTS=(research/findings/raw/_affect_learned_valence_map.json)
+# OUTPUTS), but some files there are INPUTS production organs read at run time; missing, they fall back silently (the
+# affect organ to the raw Warriner norm: the Stage-1 C4 void, FAILURE_LOG 2026-10-04). The list is shared with the AWS
+# provisioners: tools/pool/runtime_raw_inputs.txt. Each path ships from the revision itself (file or directory).
+mapfile -t RUNTIME_RAW_INPUTS < <(git show "$SOURCE_SHA:tools/pool/runtime_raw_inputs.txt" 2>/dev/null \
+  || cat "$ROOT/tools/pool/runtime_raw_inputs.txt")
+RUNTIME_RAW_INPUTS=($(printf '%s\n' "${RUNTIME_RAW_INPUTS[@]}" | sed 's/#.*//; s/[[:space:]]*$//' | grep -v '^$'))
 for _rf in "${RUNTIME_RAW_INPUTS[@]}"; do
-  if git cat-file -e "$SOURCE_SHA:$_rf" 2>/dev/null; then
-    mkdir -p "$STAGE/$(dirname "$_rf")" && git show "$SOURCE_SHA:$_rf" > "$STAGE/$_rf"
+  if [ -n "$(git ls-tree -r --name-only "$SOURCE_SHA" -- "$_rf")" ]; then
+    git archive "$SOURCE_SHA" -- "$_rf" | tar -x -C "$STAGE"
   else
     echo "  ⛔ WARNING: runtime input $_rf is not in $SOURCE_SHA -- organs that read it fall back on the pool" >&2
   fi
@@ -181,10 +182,11 @@ for h in "${NODES[@]}"; do
     "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
   rsync -az -e "$SSH_CMD" "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
-  for _rf in "${RUNTIME_RAW_INPUTS[@]}"; do   # the runtime inputs staged above (raw/ is excluded everywhere else)
-    [ -f "$STAGE/$_rf" ] && { rsync -az -e "$SSH_CMD" "$STAGE/$_rf" "$h:~/$REMOTE_ROOT/$_rf" \
-      || { echo "  ⛔ runtime input $_rf failed to sync to $h" >&2; FAILED_NODES+=("$h:runtime-input"); }; }
-  done
+  # the runtime inputs staged above (raw/ is excluded everywhere else); no --delete: the node's own outputs stay
+  if [ -d "$STAGE/research/findings/raw" ]; then
+    rsync -az -e "$SSH_CMD" "$STAGE/research/findings/raw/" "$h:~/$REMOTE_ROOT/research/findings/raw/" \
+      || { echo "  ⛔ runtime inputs failed to sync to $h" >&2; FAILED_NODES+=("$h:runtime-input"); }
+  fi
   # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
   $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
   # data/corpus is git-excluded, so a git WORKTREE (every isolated agent) has none: fall back to the PRIMARY

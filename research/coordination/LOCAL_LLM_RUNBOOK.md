@@ -721,6 +721,14 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (`research/findings/raw/_ca3_symmetric_ti/parts/seed*_merged.json`) exist only as untracked files on S. Commit
   them on research/draft-ca3-symmetric-ti and merge through routine-merges (new raw files), so the evidence is in git.
   (2026-10-04)
+- runtime-inputs: (cloud Claude session 6, continued) The run-time inputs under research/findings/raw/ are now one
+  shared list, tools/pool/runtime_raw_inputs.txt: the DR-2 valence map, the learned-vocabulary weights, the WKV
+  mouth's six e-prop heads and the affect-tone verdict. tools/pool_provision.sh, tools/aws_provision.sh and
+  tools/aws_cpu_provision.sh all ship it, and tests/test_runtime_raw_inputs.py fails when a production reader's
+  default path is not covered. AWS may run affect arms again once a node is re-provisioned. WIDEN the s1-c4-void
+  audit: besides the affect organ, list pool and AWS results whose replies went through the WKV mouth with the
+  learned head on (its default since 09-02; without the file it silently used the native head) or through
+  BRAIN_AFFECT_LEARNED_VOCAB. Report only; Claude rules. (2026-10-04)
 
 ## NEEDS CLAUDE
 
