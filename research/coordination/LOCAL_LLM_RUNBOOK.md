@@ -721,6 +721,11 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (`research/findings/raw/_ca3_symmetric_ti/parts/seed*_merged.json`) exist only as untracked files on S. Commit
   them on research/draft-ca3-symmetric-ti and merge through routine-merges (new raw files), so the evidence is in git.
   (2026-10-04)
+- owner-board-inserts: (owner 2026-10-04; the owner set the switch in f38d89107; recorded by cloud Claude session 6)
+  You may add lines to GAP_CLOSURE_MISSION.md, on main or in a routine merge. Insert only: never edit or delete a
+  line, and never write PASS or GO, which Claude confirms. NO-GO, UNDEFINED, FAIL and INFO lines are yours, dated,
+  one per result. tools/agent_merge_policy.py enforces it (OWNER_APPROVED_BOARD_INSERTS). The affect-results audit
+  in s1-c4-void is also approved: list the results, change nothing, and Claude rules on which are void. (2026-10-04)
 
 ## NEEDS CLAUDE
 
