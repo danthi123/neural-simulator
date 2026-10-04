@@ -33,3 +33,25 @@ GATE `c238ff325a38e40a68b1f9751822630ff729377b` reachable (guard-at-pin verified
   `gpu_remote.sh yield --max-hours 12` (local-llm stopping gracefully, deadline epoch 1791089919).
   Counting note for §3: two stale `.part.json` debris files sit beside finished s42/s100
   `lesion_episodic` shards — exclude them from shard counts. sections 3-4 still wait for T6's gate score.
+
+- 2026-10-04 03:2x (local model) — **sections 3 + 4 DONE.** Preconditions: T6's gate scored (stage FAIL, C3
+  FAIL, 01:03 wake); 42 lived shards in `$P/$O` (44 glob = 42 + 2 stale `.part.json`, excluded per the note
+  above); no mouth/lived lines left in either queue. `rsync` absent on S (exit 127, logged skip) →
+  `cp -a $P/$O/. $WT/s1-lived-cupy/$O/` (same end state, dev included). Runner byte-identical first:
+  `git -C $WT/stage1-exit diff --quiet c238ff325 HEAD -- research/runners/stage1_exit_gate.py` → **same**
+  (the module is not on main, so the aggregate runs cwd `$WT/stage1-exit`). Aggregate rc=0; report: stage
+  verdict UNDEFINED (INCOMPLETE) by design (other criteria not run), `lived` C3 **FAIL — correct 5/6,
+  lesion_recall 0/6, lesion_episodic 5/6, permuted 5/6, reproduced 6/6 + 6/6; seed 102 fails
+  (correct=False; lesion_episodic did not change p_wolf_discuss)**. PROVENANCE fix (root-caused, not
+  bypassed): the first aggregate wrote no sidecar — `_stamp_outputs` stamps only paths under the running
+  package's root and my `--out` was an absolute path into the OTHER worktree → silently filtered (n=0, no
+  warning). Re-ran byte-identical with a RELATIVE `--out` under `$WT/stage1-exit` → stamped
+  `aggregate.json.prov.json` (`sim_backend: numpy`), moved the three files over; `cmp` confirms the
+  re-run output identical. Stage-out tmp files in `$WT/stage1-exit/.../gpu_lived_cupy/` remain untracked
+  scratch (delete bursts are scanner-blocked; never staged). Finding
+  `research/findings/2026-10-04-stage1-lived-cupy-replication-INFORMATIONAL.md` (PROVISIONAL line, the
+  HANDOFF's fixed sentences, `lived` block pasted unedited).
+- Board line: 2026-10-04 stage1-lived-cupy: informational cupy C3 lived FAIL (5/6 seeds, seed 102 absent), numpy gate C3 FAIL at the same seeds; not a gate arm. Finding: research/findings/2026-10-04-stage1-lived-cupy-replication-INFORMATIONAL.md.
+- Next: commit branch (finding + `$O` + this WORKLOG), merge per RULING `routine-merges` (informational,
+  RULING `results-without-pass`), RESULT `[T24] RESULT: cupy lived FAIL (5/6); numpy gate C3 FAIL;
+  research/s1-lived-cupy @ <sha>`. Never push (sim-sync publishes main).
