@@ -56,3 +56,14 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   ran 3.6x slower on pool42, so the section-5 ETA is optimistic). That canary's shard is a real gate shard at the
   pinned revision (the queued line re-runs it). GATE_SHA re-pinned to c238ff325; the 204 replacement lines (same seed
   x group x arm set, max_age_h=168) are research/queue/requeue_stage1_exit_gate_c238ff325.tsv.
+- 2026-10-04 01:0x Hermes (T6 sections 6-7): section-6 count = **204/204** (exact filtered count; the 7 new
+  stage1_exit files were s102 val_novel cells). `rsync` not installed on S (skipped, noted) → `cp -a` sync into
+  the worktree, then `SIM_NO_PROVENANCE=1 $PY -m research.runners.stage1_exit_gate --aggregate research/findings/
+  raw/_stage1_exit/gate --seeds 42,43,44,100,101,102 --out .../aggregate.json` → **AGG_RC=0**, report at
+  `research/queue/stage1_exit_report.md`. Verdict: **Stage-1 exit FAIL** (C1 FAIL, **C2 PASS**, C3 FAIL, C4
+  FAIL) — the expected prereg-section-9 measurement. Finding written per section 7's exact header + report block
+  unchanged + section-8 fixed sentences: `research/findings/2026-10-04-stage1-exit-gate-RESULT.md`.
+- Board line (Claude moves it): 2026-10-04 Stage-1 exit gate (first integrated stage-exit attempt): FAIL; C1 FAIL, C2 PASS, C3 FAIL, C4 FAIL (r per seed: 42 0.938, 43 0.946, 44 0.951, 100 0.947, 101 0.946, 102 0.944). Finding: research/findings/2026-10-04-stage1-exit-gate-RESULT.md.
+- C2 PASS triggers section 10 #7 → NEEDS-CLAUDE filed on main (verify-go before any board/ledger word for the
+  PASS; stage FAIL itself needs no NEEDS). `bash tools/push_both.sh` skipped (push reserved for Claude); commit
+  is local on `research/stage1-exit-gate`.
