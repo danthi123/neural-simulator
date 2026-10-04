@@ -149,3 +149,9 @@
   (iw1's wave follows when its HANDOFF section 7 jobs are ready). T5 bookkeeping this wake: step-6 re-run
   reproduced NO-GO exactly (branch WORKLOG ca5ac43ae); NEEDS merge line on main 3343f2ef0 (policy-proven
   refusal: tools/lab.py, webapp/server.py, GAP_CLOSURE outside routine classes).
+
+- 1791152800 iw2 section 8 (re-run ONCE, wake 18:23 2026-10-04): flip cells s101/self-initiated-utterance
+  and s101/vision-identity-spiking-hmax wrote intact_a/intact_b at 00:49-00:52 then vanished - no
+  exits.json record (0 hits), zero rev-1fb805e procs on pool41/42; battery stood at 274/276. Moved
+  both partial dirs to _attempt1_s101_<fac> (main), appended 2 reruns.tsv rows, re-queued both job
+  lines unchanged from jobs/flip_1fb805e.txt (lines 209-210, step-B reason). First failure each.
