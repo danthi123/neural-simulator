@@ -74,3 +74,11 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   map. Per the ruling's order (confirm THEN re-queue): the 72 val_heldout+val_novel lines of
   research/queue/requeue_stage1_exit_gate_c238ff325.tsv are NOT queued (gate -> gate_c4rerun out-dir rewrite staged for
   when the map ships). NEEDS [s1-c4-void] filed on main; no code or queue touched.
+
+- 2026-10-04 18:55 s1-c4-void continued (RULING s1-c4-topup): the owner's tools/pool/ship_runtime_inputs.sh top-up
+  landed (50b949e21); confirm step PASSED - `ls .../c238ff325*/research/findings/raw/_affect_learned_valence_map.json`
+  exit 0 on BOTH pool41 and pool42. Queued the 72 val_heldout + val_novel lines of
+  research/queue/requeue_stage1_exit_gate_c238ff325.tsv (field 1 verbatim, out path under
+  _stage1_exit/gate_c4rerun/, field 2 as the --checked reason): ok=72 fail=0, queue depth 105 -> 177.
+  The TSV stays an untracked working file (agent main-commit backstop: queue TSVs are outside
+  the routine classes). Next: cells land -> guarded-scorer step of RULING s1-c4-void.
