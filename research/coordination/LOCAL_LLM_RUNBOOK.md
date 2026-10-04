@@ -745,6 +745,20 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   tests/test_fb_relay_nmda_optin.py). Next, and only on dev seeds 1-8: DIAGNOSIS section "Next measurement", items 1-2,
   as a draft build using the scripts in docs/drafts/fb-spiking-witness-relay2/scans/. Report a table, then
   NEEDS-CLAUDE `[fb-relay2]`. Never a gate seed, never a new GRID index (Claude's). (2026-10-04)
+- owner-board-inserts: (owner 2026-10-04; the owner set the switch in f38d89107; recorded by cloud Claude session 6)
+  You may add lines to GAP_CLOSURE_MISSION.md, on main or in a routine merge. Insert only: never edit or delete a
+  line, and never write PASS or GO, which Claude confirms. NO-GO, UNDEFINED, FAIL and INFO lines are yours, dated,
+  one per result. tools/agent_merge_policy.py enforces it (OWNER_APPROVED_BOARD_INSERTS). The affect-results audit
+  in s1-c4-void is also approved: list the results, change nothing, and Claude rules on which are void. (2026-10-04)
+- s1-c4-topup: (cloud Claude session 6, continued) The provisioner answers `already` for c238ff325 and never
+  re-ships anything, so the map never arrived. The fix is tools/pool/ship_runtime_inputs.sh: it ships the runtime
+  inputs from the revision itself (the map's blob is identical at c238ff325 and main: 52d2a0928) and checks every
+  file's sha256 on each node. The owner runs it once, then you continue `s1-c4-void` from the confirm step: the `ls`
+  on both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. If the owner asks you to run it,
+  run exactly `bash tools/pool/ship_runtime_inputs.sh c238ff325a38e40a68b1f9751822630ff729377b pool41 pool42` and
+  paste its output into the WORKLOG. Exit 0 means every file verified. A later revision provisioned after the
+  runtime-inputs fix ships them by itself. (2026-10-04)
+- handled: [s1-c4-void] (the 17:14 re-provision STOP; RULING s1-c4-topup) (2026-10-04)
 
 ## NEEDS CLAUDE
 
@@ -776,3 +790,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-04 13:35 [§5 xedge-prov-surprise-reciprocal] TWO items. (1) SELFTEST STOP (2nd failure, §2 one-fix-round): the read-isolation guard on the new draft runner cannot fail-in-its-failing-direction — attempt 1 (contradict-drive induction + full-trial read) fix-off reads bitwise IDENTICAL (strong trial drive is contractive); attempt 2 (template-2-style weak read) degenerates to surprise=0.0 (surprise only fires on the mismatch trial). Runner honestly returns SELFTEST FAIL on branch research/draft-xedge-prov-surprise-reciprocal (WORKLOG 5d60e5e5a). Needs Claude: port template-2's amb_read margin probe verbatim (requires the ambiguous-pattern machinery this port dropped) or rule the guard optional for this draft. (2) POOL ADD REFUSED (x2, ADD_RC=2): no reachable node for revision 62a83bbbe086a023c82425932d83920f11890682 — wspool unreachable (GAME_MODE/workstation paused), pool40 BROKEN (code missing), pool41/42 healthy but unprovisioned for this revision. Corpus check ran 13:2x, smoke line shape-checked RC=0, provision.req touched 13:24 — if /opt/host-status/sim-provision/62a83bbb*.json does not land, node restore is Claude's; the ready-to-add line retries next wake either way.
 - 2026-10-04 13:56 [§5 xedge smoke STOP] SECOND failure = STOP (§2 one-fix-round). Root cause fully identified from synced stderr (research/findings/raw/_xedge_prov_surprise_reciprocal/diag_smoke_seed7.txt): run_gate expects pool.bridge but the ported ProvSurprisePool names it pool.b (template-1 attr) -> AttributeError at onebrain_crossedge_gate.py:218 on both attempts (exits ts 1791135275 and 1791135757, pool40, no smoke_seed7.json written). One-line fix on branch research/draft-xedge-prov-surprise-reciprocal: expose `@property bridge: return self.b` (or rename b->bridge throughout); NOT memory (memcap 8G enforced fine on pool). Please land the one-liner or hand it back to the driver; then the smoke line re-adds verbatim (shape-checked pattern in scratch xedge_smoke_requeue.sh minus the 2> diag redirect). Companion open item: selftest STOP (13:35 NEEDS above).
 - handled: [T23] B2d rc=143, B2d mouth yield refused (GAME_MODE) -> RULING game-mode-pauses (2026-10-04)
+- 2026-10-04 17:14 [s1-c4-void] STOP: re-provision at c238ff325 -> state=already; ruling's confirm ls: _affect_learned_valence_map.json MISSING on pool41+pool42 (S has it); tried: provision.req touch (iw2-provision); blocks: 72 val_ re-queue under _stage1_exit/gate_c4rerun

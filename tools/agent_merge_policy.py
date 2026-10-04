@@ -48,7 +48,7 @@ _FAILURE_ROW = re.compile(r"^\| \d{4}-\d{2}-\d{2} \| \S.*\S \| \S.*\|$")
 # or a GO (a NO-GO / UNDEFINED / FAIL / INFO line is fine). This is what made T5 (selection-seam-need-reversal)
 # non-routine: its HANDOFF had the driver add one NO-GO board line. Shipped False: it widens what the driver may merge
 # beyond bookkeeping, because that file steers every session.
-OWNER_APPROVED_BOARD_INSERTS = False
+OWNER_APPROVED_BOARD_INSERTS = True    # owner approved 2026-10-04
 _CLAIMS_PASS = re.compile(r"(?<!NO-)(?<!NO )\bGO\b|\bPASS(?:ES|ED)?\b")
 
 

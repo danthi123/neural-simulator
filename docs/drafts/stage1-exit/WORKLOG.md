@@ -67,3 +67,10 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - C2 PASS triggers section 10 #7 → NEEDS-CLAUDE filed on main (verify-go before any board/ledger word for the
   PASS; stage FAIL itself needs no NEEDS). `bash tools/push_both.sh` skipped (push reserved for Claude); commit
   is local on `research/stage1-exit-gate`.
+- 2026-10-04 17:14 RULING s1-c4-void step 1 (re-provision): touched research/queue/provision.req/c238ff325a38e40a68b1f9751822630ff729377b
+  per RULING iw2-provision -> /opt/host-status/sim-provision/ reports state=already (pool41/42 keep .provisioned_ok;
+  pool40/wspool stale-guarded, optional). The ruling's confirm step fails: ssh pool41/pool42 'ls ~/derisk-pool/revisions/
+  c238ff325*/research/findings/raw/_affect_learned_valence_map.json' = No such file on BOTH nodes, while S's main has the
+  map. Per the ruling's order (confirm THEN re-queue): the 72 val_heldout+val_novel lines of
+  research/queue/requeue_stage1_exit_gate_c238ff325.tsv are NOT queued (gate -> gate_c4rerun out-dir rewrite staged for
+  when the map ships). NEEDS [s1-c4-void] filed on main; no code or queue touched.
