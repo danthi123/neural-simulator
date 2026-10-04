@@ -96,3 +96,25 @@ STEP 3 DONE. Next wake = step 4: build `research/runners/_xedge_prov_surprise_re
 $WT/draft-xedge-prov-surprise-reciprocal on research/draft-xedge-prov-surprise-reciprocal (new file copy,
 sim//registered/scorers/gates untouched), embed the outcome table in the runner docstring first, then smoke
 seed 7 on pool/workstation per compute-placement.
+
+## 2026-10-04 12:3x — §5 STEP 4: BUILD (branch research/draft-xedge-prov-surprise-reciprocal)
+
+Worktree $WT/draft-xedge-prov-surprise-reciprocal off main; branch research/draft-xedge-prov-surprise-reciprocal.
+Runner research/runners/_xedge_prov_surprise_reciprocal.py (516 lines): reshaped from the 2026-09-01
+reciprocal precedent (_onebrain_crossedge_provenance_to_selfschema — generic GATE_SPEC/run_gate/byte-off
+harness) onto template-2's calibrated SURPRISE+source_provenance organ pair (_onebrain_integration_surprise_
+episodic_crossedge — mismatch-trial drives, CUE_PA=2000, LR=0.15, HMAX=20, N_EPISODES=150, Port-A
+_EXTRA_RESET_ARRAYS). Edge FLIPPED to the draft's declared direction: CrossEdge prov_perceived -> surprise
+(gate provper_to_surprise), full-mask (no concept blocks on the prov side). Train = CONTRADICT trial +
+ctx_perceived + perceived-exemplar content, Hebbian learning on; read = same trial + verdict HELD through the
+window, N_READS=8, surprise-region windowed mean rate; delta = perceived - generated (sign +1).
+Docstring = table-first: all 7 outcome rows embedded, MUST-NOT-CLAIM block, sign constraint + variant B,
+dev seeds 7,1,4,9,12,15 as the --seeds default (smoke = seed 7 only; gate seeds never run here).
+PROVISIONAL-only strings (tags PROVISIONAL-SUPPORTS / NOT-SUPPORTED / smoke indicator; payload key
+provisional_supports; probe xedge_prov_surprise_reciprocal). INTACT_FLOOR = 0.005 PLACEHOLDER with the
+pre-declared smoke rule (0.5 x smoke delta) in the comment + printed by --smoke. Smoke adds the
+order-invariance check (a->b->a, drift must be <=1e-12; FAIL => do NOT queue). Selftest = read-isolation
+fails-in-its-failing-direction guard (seed 7). Clean-zero control checked per seed (perc rate < 0.005).
+Verified: py_compile OK; import-only check OK (GATE/SPEC/expected/docstring seeds confirmed; no pool build,
+no seeds run). NOT YET RUN — smoke/selftest next, and per RULING compute-placement they do NOT run on this
+server: queued to the pool (numpy CPU) next wake.
