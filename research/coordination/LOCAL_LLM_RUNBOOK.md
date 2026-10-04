@@ -695,22 +695,19 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   this way), with no attempt limit for mem_ok refusals. The Stage-1 gate jobs that held the RAM have drained.
   (2026-10-04)
 - b2d-1001-cells: (cloud Claude session 6) The 18 mouth cells from 10-01, at P=5818dc6 from the registered export,
-  are not the registered run: who queued them is unrecorded. Before the queued lines run, copy them, untouched, to
+  are not the registered run: who queued them is unrecorded. Before the re-queued lines (game-mode-pauses) run, copy them, untouched, to
   `_b2d0929_mouth_20261001/` (new raw files, routine) so they are not overwritten. Let the registered 18 lines run.
   Score only those. Report each 10-01 cell's lb.json byte-equality with its re-run as a determinism check, never a
   substitute. Also add a 1-second GPU check job: does the export at 5818dc6 contain
   research/findings/raw/_affect_learned_valence_map.json? If not, the affect-coloring rows read the raw norm
   (s1-c4-void): NEEDS-CLAUDE before scoring. (2026-10-04)
-- b2d-gamemode: (cloud Claude session 6) rc=143 about 9 s into a dispatch under GAME_MODE is the pause's SIGTERM, not
-  a run error. Re-add that one line verbatim once it is free; it does not count as a fix round. The yield waits on
-  the owner's card; no NEEDS line for it. (2026-10-04)
 - host-share-baselines-merged: (cloud Claude session 6) Merged; BASELINE-VALID confirmed. The before values (bg-select
   host 0.889 / neural 0.111; ignition host 0.643 / masked 0.357) are in the finding's review note for the step-3
   builders. (2026-10-04)
 - handled: [stage1-exit], [stage1-host-share], [§5 xedge smoke STOP], [§5 xedge-prov-surprise-reciprocal],
   [selection-seam-need-reversal], [T5], [draft-ca3-symmetric-ti], [T24], [T12], [T13], [draft-seam-map],
-  [fb-spiking-witness], [transitive-spiking-reach], [word-role-parse], [host-share-baselines], [T23], [LDC-grid],
-  the B2d mouth-arm lines of 10-04 06:45 and 08:15 (2026-10-04)
+  [fb-spiking-witness], [transitive-spiking-reach], [word-role-parse], [host-share-baselines], [T23] (10-02 cells),
+  [LDC-grid] (2026-10-04)
 
 - game-mode-pauses: (2026-10-04) When the owner games or tests a local model on W, `game on` sets GAME_MODE: W's GPU
   refuses yields, a running W GPU job may end rc=143, and wspool answers exit 75 (it looks down or busy). These are
