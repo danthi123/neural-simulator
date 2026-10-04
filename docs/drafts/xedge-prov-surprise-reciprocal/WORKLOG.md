@@ -139,3 +139,15 @@ unreachable (GAME_MODE / workstation paused), pool40 BROKEN (code missing), pool
 provisioned for revision 62a83bbb.... Touched research/queue/provision.req/62a83bbb... (iw2-provision flow);
 /host-status/sim-provision/62a83bbb*.json not present yet — retry the ready-to-add line next wake; node
 restore/provisioning beyond the req file is Claude's if it does not land. NEEDS line filed on main.
+
+## 2026-10-04 13:36 — §5 step 5b RETRY OK: smoke QUEUED on the pool
+
+Provisioning landed 13:31 (host-status /opt/host-status/sim-provision/62a83bbb....json; pool41 pool42 pool40 ok,
+wspool skipped — GAME_MODE backfill). Retried the shape-checked line verbatim: pool_queue add ADD_RC=0,
+"queued (depth now 108)". Job: cd ~/derisk-pool/revisions/62a83bbb... && mem_ok 6 -> memcap 8 ->
+.venv/bin/python -u -m research.runners._xedge_prov_surprise_reciprocal --smoke --out
+research/findings/raw/_xedge_prov_surprise_reciprocal/smoke_seed7.json (dev seed 7, numpy CPU, --checked record
+sentence embedded). Duties: T0 no-hold clean; T9 fresh-queued=43 >= 10 -> no new stub wave; yield retried ->
+still refused GAME_MODE (8th; standing NEEDS 06:45). Selftest STOP remains open (NEEDS 13:35, Claude's call) —
+smoke outcome still readable per row 1-4/6/7 once the file lands; INTACT_FLOOR freezes ONLY if smoke sign = +1
+and the selftest guard question is resolved before the 6-seed queue.
