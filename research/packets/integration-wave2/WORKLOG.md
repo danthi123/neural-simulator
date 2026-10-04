@@ -143,3 +143,9 @@
   `iw2-selfid` (D0 PASS admits neural-selfid). No NO-GO draft named, no section-8 re-run, no NEEDS line —
   nothing stopped. Section 5 DONE; next: section 7 remainder = T11 wave 7 (iw2-flip q=12, needs <10),
   section 8 re-run rule if any §7 cell reads UNDEFINED, section 11 finding only after §7 PASS.
+- Queued wave 7 (FINAL): flip lines 259-276 of 276 (18/18, failures=0) at F=1fb805e; start condition held
+  (iw2-flip q=8 < 10 at start; 18/18 lines passed the mandatory prefix check); q now 26. waves.tsv logged.
+  The full B battery (lines 1-276) is queued across 7 waves - the balance resolves as they land; iw1-flip q=0
+  (iw1's wave follows when its HANDOFF section 7 jobs are ready). T5 bookkeeping this wake: step-6 re-run
+  reproduced NO-GO exactly (branch WORKLOG ca5ac43ae); NEEDS merge line on main 3343f2ef0 (policy-proven
+  refusal: tools/lab.py, webapp/server.py, GAP_CLOSURE outside routine classes).
