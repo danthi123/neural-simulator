@@ -721,11 +721,44 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (`research/findings/raw/_ca3_symmetric_ti/parts/seed*_merged.json`) exist only as untracked files on S. Commit
   them on research/draft-ca3-symmetric-ti and merge through routine-merges (new raw files), so the evidence is in git.
   (2026-10-04)
+- runtime-inputs: (cloud Claude session 6, continued) The run-time inputs under research/findings/raw/ are now one
+  shared list, tools/pool/runtime_raw_inputs.txt: the DR-2 valence map, the learned-vocabulary weights, the WKV
+  mouth's six e-prop heads and the affect-tone verdict. tools/pool_provision.sh, tools/aws_provision.sh and
+  tools/aws_cpu_provision.sh all ship it, and tests/test_runtime_raw_inputs.py fails when a production reader's
+  default path is not covered. AWS may run affect arms again once a node is re-provisioned. WIDEN the s1-c4-void
+  audit: besides the affect organ, list pool and AWS results whose replies went through the WKV mouth with the
+  learned head on (its default since 09-02; without the file it silently used the native head) or through
+  BRAIN_AFFECT_LEARNED_VOCAB. Report only; Claude rules. (2026-10-04)
+- T1-A0: (cloud Claude session 6, continued) Step 4a is read. The outcome DA is NOT signed. 1 of 24 cells passes,
+  by 0.0013 on one seed, while the same cell on the other seed misses by 0.0019, which is inside the seed spread. The
+  striosome-GABA_B critic is banked as a method finding, and the capability stays open. The next method is the timed
+  omission route (LHb -> RMTg GABA_A onto SNc), reusing the project's 6/6 spiking omission motif.
+  docs/drafts/long-delay-credit/AMENDMENT-A0.md has the reasoning. docs/drafts/long-delay-credit/STEP4B.md is the
+  `## Step 4b` T1 waits for: clear-dose selection, the copy-only build, a 144-line dev grid, and the reading table.
+  Run it as written; its section 4 table is Claude's, so stop at the RESULT line. (2026-10-04)
+- handled: [T1] (2026-10-04)
+- fb-relay2: (cloud Claude session 6, continued) The synaptic (relay) write is diagnosed on dev seed 7:
+  docs/drafts/fb-spiking-witness-relay2/DIAGNOSIS.md. A dendritic AND now works: world on Mg2+-gated NMDA, relay
+  bias -250, presence 3.0, world 2.0. Witnessed moves fire their target relay 179-202 spikes and unwitnessed ones
+  0-2. The open defect is that a synaptically written belief does not persist through the hold. The new organ
+  constants are opt-in: the registered GRID and the T18 PASS are unchanged (ops 0 and 4 reproduce the pool sweep;
+  tests/test_fb_relay_nmda_optin.py). Next, and only on dev seeds 1-8: DIAGNOSIS section "Next measurement", items 1-2,
+  as a draft build using the scripts in docs/drafts/fb-spiking-witness-relay2/scans/. Report a table, then
+  NEEDS-CLAUDE `[fb-relay2]`. Never a gate seed, never a new GRID index (Claude's). (2026-10-04)
 - owner-board-inserts: (owner 2026-10-04; the owner set the switch in f38d89107; recorded by cloud Claude session 6)
   You may add lines to GAP_CLOSURE_MISSION.md, on main or in a routine merge. Insert only: never edit or delete a
   line, and never write PASS or GO, which Claude confirms. NO-GO, UNDEFINED, FAIL and INFO lines are yours, dated,
   one per result. tools/agent_merge_policy.py enforces it (OWNER_APPROVED_BOARD_INSERTS). The affect-results audit
   in s1-c4-void is also approved: list the results, change nothing, and Claude rules on which are void. (2026-10-04)
+- s1-c4-topup: (cloud Claude session 6, continued) The provisioner answers `already` for c238ff325 and never
+  re-ships anything, so the map never arrived. The fix is tools/pool/ship_runtime_inputs.sh: it ships the runtime
+  inputs from the revision itself (the map's blob is identical at c238ff325 and main: 52d2a0928) and checks every
+  file's sha256 on each node. The owner runs it once, then you continue `s1-c4-void` from the confirm step: the `ls`
+  on both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. If the owner asks you to run it,
+  run exactly `bash tools/pool/ship_runtime_inputs.sh c238ff325a38e40a68b1f9751822630ff729377b pool41 pool42` and
+  paste its output into the WORKLOG. Exit 0 means every file verified. A later revision provisioned after the
+  runtime-inputs fix ships them by itself. (2026-10-04)
+- handled: [s1-c4-void] (the 17:14 re-provision STOP; RULING s1-c4-topup) (2026-10-04)
 
 ## NEEDS CLAUDE
 

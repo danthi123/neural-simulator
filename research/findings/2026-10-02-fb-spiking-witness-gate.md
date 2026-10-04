@@ -26,6 +26,10 @@ mechanism: BRAIN_FALSE_BELIEF_SPIKING_WITNESS=1 at WITNESS_OP=4 (readout mode: p
 > reads 0.0 in both arms). The population's necessity rests on the O battery's `silence_true_belief` case (6/6). The
 > read is bimodal (0.0 vs about 0.09, the move-time `spiking_write.presence_rate` in research/findings/raw/_load_bearing/_shards/s2p-R-fb-40c43d5/s*/fb-spiking-*/*.json), so the frozen 0.03 threshold carries little weight; any value in (0, 0.085) <!--derived-->
 > gives the same answer. Other host residuals: the regex event classifier and the belief-location argmax.
+> (4) **The write itself is host-actuated** in read-out mode (Claude, 2026-10-04): after the read, `_write_readout`
+> resets the belief store to a quiescent snapshot (`_restore_slice`, a host clear) and injects a 5000 pA helper
+> current into the target slot. A synaptic write ignites the target slot but does not yet persist through the hold
+> (docs/drafts/fb-spiking-witness-relay2/DIAGNOSIS.md), so these two host actuations are part of what passes.
 
 **PROVISIONAL: owner confirm + merge pending (NEEDS-CLAUDE). Not yet the faculty's default path — the Stage-1
 credit becomes FULL only when P4 makes this the faculty's default and steps B/F pass there (prereg section 6).**
