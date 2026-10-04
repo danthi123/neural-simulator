@@ -118,3 +118,24 @@ fails-in-its-failing-direction guard (seed 7). Clean-zero control checked per se
 Verified: py_compile OK; import-only check OK (GATE/SPEC/expected/docstring seeds confirmed; no pool build,
 no seeds run). NOT YET RUN — smoke/selftest next, and per RULING compute-placement they do NOT run on this
 server: queued to the pool (numpy CPU) next wake.
+
+## 2026-10-04 13:3x — §5 step 5 ATTEMPTED: selftest STOP (2nd failure, §2) + pool add refused
+
+Selftest attempt 1 (S, mem_ok 23G avail; memcap refused — no systemd --user, known §2 skip, ran UNCAPPED
+accepting OOM risk, job stayed <1G): FAIL — fix-disabled probe DIVERGED=False (both reads 0.00333...) AND
+fix-enabled identical=True => ok=False. Root: my teeth design (induction contradict+ctx drive, then two
+back-to-back full-trial read_verdict) — with the Port-A restore off, the two reads still agree because the
+strong trial drive reproduces the same extra-array end-state each call (contractive), so the probe cannot
+fail-in-its-failing-direction.
+Fix round (one allowed): attempt 2 = template-2-style WEAK probe (episode+ctx only, edge lesioned, untrained,
+no trial): TEETH_MISSING — surprise=0.0 both arms, because surprise ONLY fires on the mismatch trial; degenerate.
+SECOND failure on the same issue => §2 "one fix round per issue; a second failure is a STOP". STOP recorded;
+runner left as committed @ 62a83bbbbe (its --selftest honestly returns FAIL). Needs Claude: either port
+template-2's amb_read margin probe verbatim (needs the ambiguous-pattern machinery dropped from this port) or
+rule the read-isolation guard optional for this draft. NEEDS line filed on main.
+Pool: before_you_build corpus check ran 13:2x (logged .git/corpus_checks_shared.jsonl); smoke line SHAPE-CHECKED
+queue_job_shape_check RC=0; pool_queue add REFUSED twice (ADD_RC=2): "no reachable pool node" — wspool
+unreachable (GAME_MODE / workstation paused), pool40 BROKEN (code missing), pool41/42 healthy but not yet
+provisioned for revision 62a83bbb.... Touched research/queue/provision.req/62a83bbb... (iw2-provision flow);
+/host-status/sim-provision/62a83bbb*.json not present yet — retry the ready-to-add line next wake; node
+restore/provisioning beyond the req file is Claude's if it does not land. NEEDS line filed on main.
