@@ -231,3 +231,19 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
 - PROVISIONAL finding written: `research/findings/2026-10-03-ca3-symmetric-ti.md` (dev seeds only, what it
   does NOT show, numbers only from the delegate's scoring output). Next: verify-go + routine-merges pre-check
   → NEEDS-CLAUDE "[draft-ca3-symmetric-ti] RESULT" (promotion arc, next run).
+
+## 2026-10-04 00:35 EDT - verify-go: REFUTED-as-stated → caveat rewrite landed; NEEDS RESULT #1 added
+
+- ONE adversarial MiMo Pro skeptic, 4 lenses: units/same-quantity **SURVIVED** (rung lr=0.02 WAD
+  byte-identical to standard; same registered pA space as the ≥20 bar — genuinely 10–25× short);
+  instrument-trust **SURVIVED** (DI positive control: identical read 6/6 prior-family at 0.236–0.392);
+  repro/power **SURVIVED** (every table number exact vs the records); control-integrity + table-fidelity
+  **REFUTED**: row 11 fires 4/4 (rev residual 34.3–47.2 vs ≤1e-3) and PLAN.md:121/248 make it a per-seed
+  void — "first applicable in table order" was never registered (only row 6 carries an explicit override).
+- Commit-with-caveat applied: headline = **UNDEFINED(dev):instrument 4/4**, row-2 shape reported under
+  row 2's "either way" clause, STI2 bar → "no reading taken", row-12 sym-scoping stated, pA label
+  qualified (weight-space, family-labeled), provenance of both delegates recorded.
+- NEEDS-CLAUDE line added (runbook `## NEEDS CLAUDE`): `[draft-ca3-symmetric-ti] RESULT #1` — ASK on
+  row-11 scope (rev-scoped vs per-seed), which gates the WRITE-ABSENT word and section 13.
+- Next: `routine-merges` two-delegate pre-check on `git diff main...research/draft-ca3-symmetric-ti` +
+  HANDOFF, then `tools/agent_merge.sh`; finding stays PROVISIONAL until Claude confirms.
