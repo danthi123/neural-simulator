@@ -165,3 +165,11 @@ WHAT CHANGED
   latch_thr_change 0.25; all 8 preconditions pass); finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md;
   NEEDS-CLAUDE #5 recorded in the runbook (verdict not GO, no fix started); push skipped per RULING push-credential
   (sim-sync publishes main); board: GAP_CLOSURE_MISSION.md line + Vikunja; optional dev_cupy s7 check skipped (0/7 files).
+- 2026-10-04 05:2x (local model) step-6 re-verification: Start recount read 42 = stale (steps 6-8 were already
+  completed 2026-10-02: score + finding 2026-10-02-bg-live-seam-retirement-RESULT.md + board line, NEEDS #5 open).
+  Re-ran the Step-6 scorer anyway as the wake's Start instruction implied: rc=0, reproduced the identical verdict
+  NO-GO with only G4 false, latch_thr_change 0.25, all preconditions ok, [provenance] stamped. score.json differs
+  from the committed copy in 8 lines (argv/timestamp-style fields) - LEFT UNCOMMITTED; the committed 10-02 score
+  stands. Merge assessed instead of run: git diff main...HEAD touches tools/lab.py, webapp/server.py and
+  GAP_CLOSURE_MISSION.md = outside agent-merge's routine classes (policy-proven refusal) -> NEEDS-CLAUDE merge line
+  added on main; no fix started per Stop condition 5.
