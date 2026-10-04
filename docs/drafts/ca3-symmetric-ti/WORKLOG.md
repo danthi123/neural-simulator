@@ -166,3 +166,19 @@ then §10's queue flow (ladder rungs first). Delegate budget: 1/2 used this wake
 - Next: the 8 land (~20–50 min each) → §10 `--merge` record assembly (U7 encode-hash compare) → §9 dev
   inspection per the §7 table; finding written PROVISIONAL by the local model, inspected by Claude (T3
   precedent). §7/§9 reads stay blind until then.
+
+## 2026-10-03 22:20 EDT - §10 record assembly: memcap unavailable on S (skipped per §2), 4 merge jobs queued
+- All **8/8 standard parts landed** (seeds 8–11 × a/b, 20:41–21:16; a-files ~1.6 MB, b ~19.5 KB).
+- Local assembly attempt under the mandatory `mem_ok` → `memcap` wrap: `mem_ok` OK (26 G avail) but **`memcap`
+  refuses on S — no systemd --user in this environment at all** (`systemctl`/`loginctl` absent, `/run/user/99`
+  missing), and its refusal is a permission-ask ("run the job yourself only if you accept the OOM risk").
+  §2 rule applied: a command that asks permission while the owner is away → **skipped, WORKLOGged, work
+  continued elsewhere**. No uncapped S-side run was taken (the ~50 MB merge would have been safe, but the rule is
+  the rule).
+- Elsewhere = **4 pool merge job lines** at revision `d4a533ae7` (per seed: `--merge parts/seed<S>_a.json
+  parts/seed<S>_b.json --out parts/seed<S>_merged.json`), shape-checked, `--checked` reason `mem_gb=1 ;
+  max_age_h=48` → **queued 4/4, failures=0, depths 188–191** (CA3 lines dispatched within ~45 min earlier
+  tonight, so records should land quickly).
+- Next: merged records → §9 dev inspection against the §7 table (one MiMo Pro delegate) → PROVISIONAL finding
+  `research/findings/2026-10-03-ca3-symmetric-ti.md` on `research/draft-ca3-symmetric-ti` → verify-go +
+  `routine-merges` two-delegate pre-check → NEEDS `[draft-ca3-symmetric-ti] RESULT`.
