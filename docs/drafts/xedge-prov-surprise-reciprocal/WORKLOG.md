@@ -165,3 +165,19 @@ _xedge_prov_surprise_reciprocal/diag_smoke_seed7.txt` (stderr syncs back with ra
 10-03 merge-diag pattern). Shape-check RC=0; add ADD_RC=0, depth 108. Candidates if it fails again: mem_ok
 refusal on a busy pool40 (33s ~= two-retry window; mem_ok.sh 6 2), pool-side memcap, or import/arg error —
 stderr will discriminate. SECOND failure on this issue = STOP (NEEDS Claude) per §2.
+
+## 2026-10-04 13:56 — §5 smoke attempt 2 FAILED -> SECOND failure = STOP (§2); root cause IDENTIFIED
+
+Attempt 2 (the stderr-capture requeue) also rc=1: exits ts 1791135757 pool40. The diag file landed and syncs:
+research/findings/raw/_xedge_prov_surprise_reciprocal/diag_smoke_seed7.txt (1517 bytes, first-attempt stderr —
+the file existed from the FIRST run's redirect? No: written 13:42 by attempt 2's dispatch). Traceback:
+  run_seed -> run_gate(pool, GATE_SPEC)
+  onebrain_crossedge_gate.py:218 cross_edge_masks(pool.bridge, spec.cross_edges)
+  AttributeError: 'ProvSurprisePool' object has no attribute 'bridge'
+ROOT CAUSE: the generic harness contract is pool.bridge (the merged brain); my port kept template-1's
+attribute name pool.b (template-1 ran its own bespoke checks, not run_gate). One-line fix: expose
+@property bridge -> self.b (or rename b to bridge throughout). memcap enforced fine on pool (MemoryMax=8G,
+pool-sandbox scope) — NOT a memory issue; the 33s/2min lifetimes are import + first pool build then crash.
+§2: one fix round used (the diagnostic requeue), second failure => STOP. Runner left as-is on the branch;
+needs Claude to land the one-liner (or delegate the fix back to me). NEEDS filed on main. Both smoke
+attempts produced NO smoke_seed7.json; INTACT_FLOOR remains unfrozen.
