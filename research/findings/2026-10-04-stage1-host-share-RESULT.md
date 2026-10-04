@@ -65,3 +65,14 @@ Validity: V1 sham-clean seeds [42, 43, 44, 100, 101, 102] (pass True); V3 applie
 Content (30 turns): learned_content_fraction 1.000, python_selected_fraction 0.000, unattributed 0.000.
 
 Harness agreement with the Stage-1 gate's intact_a (descriptive): 48 of 48 target turns.
+
+## Claude review (2026-10-04): MEASUREMENT-VALID confirmed; the HOST-OWNED reading stands
+
+Checked against the Stage-1 exit gate's own shards, during the verify-go pass on its C2 PASS. The harness agrees with
+the gate's `intact_a` on 48 of 48 target turns. The sham arms are clean on all six seeds, and the shard set is
+complete. The reading is a measurement and not a capability claim, so PROVISIONAL is lifted for it: at Stage 1, the
+C2/C3 answers carry learned content, but the host makes every decision that selects and commits them. Two limits
+travel with it. First, the replies are identical across seeds (the per-seed margins differ), so the six seeds
+replicate one reply-level outcome. Second, ignition's SC is UNDEFINED at every C2/C3 seam. These numbers are the
+"before" values for the step-3 neural-replacement builders (the k-select, bg-select and ignition seams first). The
+Stage-1 exit finding carries them as its caveat 4.

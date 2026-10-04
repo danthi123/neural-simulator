@@ -47,3 +47,44 @@ C4 (`val_heldout`): FAIL, not exposure-driven: the permuted exposure was tracked
 `cat_told` (diagnostic, not counted): FAIL, correct 0/6.
 
 `val_novel` (diagnostic, not counted): FAIL, correct 0/6.
+
+## Claude review (2026-10-04, verify-go): the C2 PASS stands, narrowed
+
+Two independent skeptics were told to refute the C2 PASS: one on gate-cheat and instrument trust, one on control
+integrity and reproducibility. Neither refuted it. Both found caveats, which are recorded here and travel with every
+board or ledger use of the word PASS.
+
+- **Re-score.** The registered scorer, re-run from the committed raw shards, gives a `groups.word` block equal to
+  `aggregate.json`.
+- **Instrument.** "Correct" is read from the structured `recalled_svo` / `abstained` fields, not by substring
+  matching on reply text. The counted replies are genuine: `p_bear_chase` "... the bear chases the otter",
+  `p_otter_eat` "... the otter eats the clam". Both moat probes and the pre-exposure probe say "I don't know about
+  that", and dog->cat survives.
+- **Determinism and null.** `intact_a` and `intact_b` are whole-JSON identical on every turn of every seed, and
+  `lesion_recruit` equals its `.rep0`. The lesion effect is therefore not run-to-run noise.
+- **Scorer weaker than the prereg prose (caveat 1).** The aggregate's lesion `effect` is `any(differs)` over the two
+  counted probes, and it never scores dog->cat survival in the lesion arm. The prereg asks that BOTH answers are
+  removed and the built-in fact survives. Checked by hand on all six seeds: the only labels that differ from intact
+  are `p_bear_chase` and `p_otter_eat`, both become abstains, and `c_dog_chase` stays `[dog, chase, cat]`. The claim
+  holds in the data, but the registered scorer would not have caught a one-answer or a dog-killing lesion. Tighten
+  it before the next stage-exit attempt; this result stands as scored.
+- **Lesion scope (caveat 2).** `lesion_recruit` replaces `OneBrainComposer._recruit_word` with `return False`
+  (21 calls on every seed). The host `kb` still holds the taught fact and the reply still abstains, so the answer
+  depends on the cleanup decode and not on the host table. But the lesion removes all three unseen words at once
+  through the shared codebook. "Necessary" names the cleanup-slot pool, not one assembly.
+- **Seeds (caveat 3).** The six seeds are distinct substrates: the otter-agent margins are 0.643 / 0.578 / 0.716 /
+  0.678 / 0.621 / 0.676. The reply-level outcome is the same on every seed, so "6/6" is one deterministic outcome
+  replicated six times, not six independent draws.
+- **Ownership (caveat 4, from research/findings/2026-10-04-stage1-host-share-RESULT.md).** At the same C2 turns,
+  every decision seam is HOST-OWNED: k-select, bg-select, organ-c, metacog and ignition. The panel host decision
+  share is 1.000 and the neural fraction 0.000 (n 48). The content itself is learned (learned_content_fraction
+  1.000). C3's seams read host 0.967 / neural 0.033 (n 30).
+
+**What C2 PASS shows:** in the integrated production handler, a word heard for the first time this conversation is
+recalled in both roles, with the moat intact, and the recruit cleanup-slot pool is necessary for that reply. **What
+it does not show:** that neurons made the decision. The SVO acquisition, the first-match selection and the
+commitment are host scaffolds, as prereg section 5 predicted. In-session words also never become discourse referents
+(anaphora 0/6, reported, not counted).
+
+Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): FAIL (C1, C3, C4); C2 word PASS 6/6, reply-level, recruit pool
+load-bearing, decision host-owned (host share 1.000)`.
