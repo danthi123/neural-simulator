@@ -4940,7 +4940,12 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _bg_select_flag_on():
         try:
             import research.runners.bg_action_selection_production_organ as _BG
-            _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
+            if _BG.neural_seam_enabled():
+                # DEFAULT-OFF neural seam (BRAIN_BG_NEURAL_SEAM=1): no host admission pre-filter, no host salience,
+                # neural latch commitment; the race runs on EVERY turn (see the organ's `neural-seam` region).
+                _bg = _BG.decide_action_neural(msg)
+            else:
+                _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
             if _bg is not None:
                 return JSONResponse({
                     "answer": _BG.HOLD_TEXT, "abstained": True, "recalled_svo": None,

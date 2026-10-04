@@ -13,7 +13,32 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-02 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-04 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-04. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
+pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3 decisions into the substrate.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-c4-void` (re-provision,
+C4 re-run) and `board-session6`, then section 4 in order.
+
+**Landed 2026-10-04 (cloud Claude session 6, branch claude/session6-needs):**
+- **Stage-1 exit attempt 1: not passed** (`research/findings/2026-10-04-stage1-exit-gate-RESULT.md`). C2 word->concept
+  **PASS 6/6** survives verify-go, at reply level: the recruit pool is load-bearing and the decision is host-owned.
+  C1 (category inheritance) and C3 (lived-fact recall load-bearing) FAIL on defined data. **C4 is UNDEFINED
+  (instrument):** pool provisioning never shipped the DR-2 learned valence map, so the organ read the raw Warriner
+  norm and both C4 controls were inert. Fixed in `tools/pool_provision.sh` plus a scorer guard; re-run owed (RULING
+  `s1-c4-void`).
+- **Host share at the Stage-1 C2/C3 seams: MEASUREMENT-VALID**: every decision seam is host-owned (C2 host 1.000, C3
+  0.967), while the content is learned. The baseline (bg-select 0.889, ignition 0.643) is merged as the step-3 "before".
+- **fb-spiking-witness O+R PASS** holds at read-out mode, with **PARTIAL** credit (t18-credit). The synaptic write is
+  next. **BG live seam: NO-GO (G4 latch read)**; next, measure the latch rates, then a downstream all-or-none relay.
+  **CA3 symmetric-TI: UNDEFINED(dev): instrument** (row 11, per-seed).
+- **Driver policy:** FAILURE_LOG rows are now routine for Hermes (insert-only). Board-line inserts are implemented
+  behind an owner switch, shipped off.
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-02 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-02. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** the Stage-1 exit attempt (due
@@ -75,6 +100,8 @@ GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Ste
 `all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
 went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
 NEEDS-CLAUDE per its own prereg).
+
+**2026-10-02 (local model):** plan step 3 - BG live-seam retirement - gate NO-GO: all five other gates hold (production host owns the reply; neural seam correct on empty/content; value lesion moves it; bus argmax clean) but G4 latch read threshold-invariance FAILS (latch_thr_change 0.25), so the host read still owns part of the commit; nothing retired, NEEDS-CLAUDE #5 (next method). Finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md (branch research/selection-seam-need-reversal 0466e8c24). Also landed today: step-2 host-share baselines BASELINE-VALID (NEEDS #8: summary docs + board sync + before-values for the step-3 redo).
 
 *Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
 

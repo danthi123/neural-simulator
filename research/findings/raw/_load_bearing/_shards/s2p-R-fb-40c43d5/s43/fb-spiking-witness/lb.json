@@ -1,0 +1,59 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 43,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": null,
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "fb-spiking-witness",
+      "turn": "s2fb_fb",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_FALSE_BELIEF_WITNESS_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "answer",
+          "on": "Sally will look in the basket for the marble.",
+          "off": "Sally will look in the box for the marble."
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "removes the spiking presence population's influence on the belief write (research/runners/tom_spiking_witness_organ.py: relay mode builds without presence->relay and drives the relays tonically; readout mode ignores the presence read): every move is written, so the belief store tracks reality. Needs BRAIN_FALSE_BELIEF_CHAT=1 and BRAIN_FALSE_BELIEF_SPIKING_WITNESS=1 in both arms. Residuals declared in the prereg: the sentence classifier, agent-name routing, the location argmax and (readout mode) the threshold read that sets the W3 write gate."
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 1,
+    "n_exercised": 1,
+    "n_load_bearing": 1,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": 1.0,
+  "load_bearing_faculties": [
+    "fb-spiking-witness"
+  ],
+  "not_load_bearing_faculties": []
+}

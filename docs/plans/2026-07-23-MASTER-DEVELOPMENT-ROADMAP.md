@@ -828,6 +828,9 @@ Compute-lane legend: **[3090]** local GPU · **[CPU]** local CPU (default for nu
 - **B1 on-bridge V1 self-org** (retinal-wave rate-Hebbian). *GO:* on-bridge OSI/RSA-to-host ≥ B1 numpy (0.988). *Anti-cheats:* per-frame scramble collapses; no-learning frozen flat. **[3090]**
 - **Emergent DG assembly selection** (mossy-detonator per-pathway STP + basket FF-inhibition + BDSP). *GO:* sparse (<5% active) + reproducible (within-scene cos>0.8) + separated (between-similar<0.3), 6-seed. *Anti-cheats:* permuted-scene collapses; no-BDSP lesion→no assembly; permuted-cue specificity. **[3090]**
 **Stage-exit GO:** category held-out inheritance; word→concept recall; lived-fact recall; valence-inheritance r≥0.55.
+**Exit attempt 1 (2026-10-04): not passed.** C2 word→concept PASS 6/6 (reply level; recruit pool load-bearing;
+decision host-owned); C1 FAIL; C3 FAIL (recall lesion not load-bearing); C4 UNDEFINED (the learned valence map was
+absent on the pool, so the raw norm was read; re-run owed). `research/findings/2026-10-04-stage1-exit-gate-RESULT.md`.
 
 ### STAGE 2 — CHILD (2–7, preoperational→concrete)
 **Comes online:** **grammar self-organizes**; fluent bounded **production** (spiking Broca) + **comprehension**; genuine **inference** (inheritance, taxonomy, transitive, induction); **curiosity→ask** (crave, don't refuse); **differentiated emotion** read-out; **private→inner speech** (Vygotsky, self-cued chain); **common ground**; **affect biases cognition**.
@@ -1193,6 +1196,11 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-10-04 (cloud session 6):** Stage-1 exit attempt 1 not passed (above). C4 re-runs after the provisioning fix;
+the C1 and C3 gaps (category inheritance, lived recall needing the memory system) go to the prereg's section-8 named
+mechanisms. Host share at the Stage-1 seams is 1.000 host at C2, so the step-3 seam moves (k-select, bg-select,
+ignition) are the ownership work. fb-spiking-witness: read-out PASS with PARTIAL credit; the synaptic write is next.
 
 **2026-10-02 (cloud sessions 1-3):** integration wave 2 step R PASS for false-belief chat, transitive chat and neural
 self-ID (6/6 capability and control each, re-derived; verify-go held), steps B/F next at flip F `1fb805e9e`, the flip

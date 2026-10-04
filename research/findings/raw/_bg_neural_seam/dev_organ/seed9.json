@@ -1,0 +1,303 @@
+{
+ "probe": "bg_neural_seam_organ_derisk",
+ "label": "DEV, not a verdict",
+ "seeds": [
+  9
+ ],
+ "constants": {
+  "VALUE_WEIGHT": 20.0,
+  "HOLD_TONIC_PA": 350.0,
+  "HEARD_PA": 500.0,
+  "LATCH_INTERNAL_W": 64.0,
+  "LATCH_CROSS_W": 10.0,
+  "MOTOR_TO_LATCH_W": 40.0,
+  "T_DRIVE": 300,
+  "T_HOLD": 200,
+  "READ_WINDOW": 100,
+  "LATCH_READ_RATE": 0.02
+ },
+ "per_seed": {
+  "9": {
+   "intact": {
+    "empty": {
+     "n": 20,
+     "p_commit": 1.0,
+     "p_silent_given_commit": 0.95,
+     "winners": "11111111011111111111",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.05,
+      "first_to_6_motor": 0.05,
+      "first_to_24_motor": 0.05,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -82.9,
+      40.0
+     ]
+    },
+    "one_word": {
+     "n": 20,
+     "p_commit": 0.8,
+     "p_silent_given_commit": 0.25,
+     "winners": "--10-011000-00001000",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.05,
+      "first_to_12_motor (production rule)": 0.6,
+      "first_to_6_motor": 0.6,
+      "first_to_24_motor": 0.6,
+      "motor_majority_drive_window": 0.4
+     },
+     "v_range": [
+      -83.3,
+      40.0
+     ]
+    },
+    "content": {
+     "n": 20,
+     "p_commit": 1.0,
+     "p_silent_given_commit": 0.0,
+     "winners": "00000000000000000000",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -82.7,
+      40.0
+     ]
+    }
+   },
+   "value": {
+    "empty": {
+     "n": 20,
+     "p_commit": 0.85,
+     "p_silent_given_commit": 0.5882,
+     "winners": "10101--100110110-011",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.3,
+      "first_to_6_motor": 0.3,
+      "first_to_24_motor": 0.3,
+      "motor_majority_drive_window": 0.25
+     },
+     "v_range": [
+      -82.9,
+      40.0
+     ]
+    },
+    "one_word": {
+     "n": 20,
+     "p_commit": 1.0,
+     "p_silent_given_commit": 0.55,
+     "winners": "10110011100100101110",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.05,
+      "latch_rate_x2": 0.05,
+      "first_to_12_motor (production rule)": 0.5,
+      "first_to_6_motor": 0.5,
+      "first_to_24_motor": 0.5,
+      "motor_majority_drive_window": 0.5
+     },
+     "v_range": [
+      -82.9,
+      40.0
+     ]
+    },
+    "content": {
+     "n": 20,
+     "p_commit": 0.95,
+     "p_silent_given_commit": 0.5789,
+     "winners": "1001011-010111010101",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.7,
+      "first_to_6_motor": 0.7,
+      "first_to_24_motor": 0.7,
+      "motor_majority_drive_window": 0.7
+     },
+     "v_range": [
+      -82.4,
+      40.0
+     ]
+    }
+   },
+   "latch": {
+    "empty": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 1.0,
+      "first_to_6_motor": 1.0,
+      "first_to_24_motor": 1.0,
+      "motor_majority_drive_window": 1.0
+     },
+     "v_range": [
+      -82.9,
+      40.0
+     ]
+    },
+    "one_word": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 1.0,
+      "first_to_6_motor": 1.0,
+      "first_to_24_motor": 1.0,
+      "motor_majority_drive_window": 1.0
+     },
+     "v_range": [
+      -83.3,
+      40.0
+     ]
+    },
+    "content": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 1.0,
+      "first_to_6_motor": 1.0,
+      "first_to_24_motor": 1.0,
+      "motor_majority_drive_window": 1.0
+     },
+     "v_range": [
+      -82.7,
+      40.0
+     ]
+    }
+   },
+   "arousal": {
+    "empty": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -80.0,
+      35.0
+     ]
+    },
+    "one_word": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -80.0,
+      35.0
+     ]
+    },
+    "content": {
+     "n": 20,
+     "p_commit": 0.75,
+     "p_silent_given_commit": 0.0,
+     "winners": "0-000-000-000-000-00",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -80.0,
+      40.0
+     ]
+    }
+   },
+   "direct_path": {
+    "empty": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -82.9,
+      40.0
+     ]
+    },
+    "one_word": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -83.3,
+      40.0
+     ]
+    },
+    "content": {
+     "n": 20,
+     "p_commit": 0.0,
+     "p_silent_given_commit": null,
+     "winners": "--------------------",
+     "readout_change_fraction": {
+      "latch_rate_x0.5": 0.0,
+      "latch_rate_x2": 0.0,
+      "first_to_12_motor (production rule)": 0.0,
+      "first_to_6_motor": 0.0,
+      "first_to_24_motor": 0.0,
+      "motor_majority_drive_window": 0.0
+     },
+     "v_range": [
+      -82.7,
+      40.0
+     ]
+    }
+   }
+  }
+ }
+}
