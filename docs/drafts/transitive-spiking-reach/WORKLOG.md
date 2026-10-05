@@ -71,3 +71,19 @@
   /opt/data/cache/scratch/t1_r12_queue.sh), then WORKLOG.
 - word-role lanes untouched (present in pool.running/queue.claims); the eight queued
   6b9cb47f lines left alone per RULING canary-node.
+
+## 2026-10-05 10:12 EDT - gate-seed canary PASS at 83efc766c; the 12 R lines queued
+
+- pool_queue.sh add refused the 12 (gate seed 42 needs a pool canary record for
+  (research.runners.load_bearing_fraction, 83efc766c)). Canary launched per RULING
+  canary-auto: run auto picked wspool; the launch ssh call hung past POOL_CANARY_SSH_TIMEOUT
+  (60s) and reported rc=3, but the detached job ran to completion (verified: log,
+  ps, status file). Id load_bearing_fraction_83efc766c_wspool_20261005T093506,
+  rc=0 wall=1136s, 0 Tracebacks, 0 mem refusals; local scan of lb.json: n_files=1
+  n_bad=0 n_unreadable=0. Recorded PASS (gate) via pool_canary.sh record - evidence
+  in research/queue/pool_canaries.tsv. NEEDS [pool-canary] ASK filed for the
+  launch-hang defect (it also fired on pool40 twice: two duplicate canary runs there,
+  each writing its own _pool_canary id - left to finish, unrecorded).
+- The 12 R lines (jobs/R_83efc76.txt) ADDED x12 FAIL=0; queue depth 20. Packet step 4
+  (queue gate seeds 42/43/44/100/101/102) complete for transitive; word-role lines
+  untouched (in pool.running/queue.claims).
