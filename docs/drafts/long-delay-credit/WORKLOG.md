@@ -138,3 +138,19 @@ The fixed working-memory buffer (MEM_DECAY=0.98) holds the cue perfectly through
 `buffer_accuracy` does not discriminate between arms. It is a valid sanity check (memory is intact,
 and — crucially — it stays 1.000 in `trace_ablated`, confirming the ablation cut CREDIT not MEMORY),
 but the discriminating read-out is `value_discrimination`. Flagged in PREREG §8.6.
+
+## 2026-10-04 21:12 -- Step 4b.1 (clear dose) queued
+
+- Branch synced by the owner (RULING T1-sync; tip 45db3fd09); BYB corpus check rc=0
+  earlier today. Ran STEP4B as written, step 1.
+- 27 lines = 3 candidates x dev seeds 7-15, on the step-4a template at
+  50f52c23e (pilot runner byte-identical to branch tip; revision verified present
+  on pool41+pool42): --schedule credit_immediate --arms full --n-train 200
+  --n-test 100 --lr 0 plus the candidate flag, fixed candidate order:
+  (1) --w-clear-fs 60, (2) --clear-ms 500, (3) --clear-pA 1200.
+- Out: research/findings/raw/_long_delay_credit_bg/dev_pilot_4b/clear_<name>_s<s>.json
+- Shape-check + pool_queue --checked each (mem_gb=2, max_age_h=168): ok=27 fail=0;
+  9 dispatched within the minute, T0 no-hold clean, depth 190.
+- Next: when the 27 records land, read mem_after_clear (A, B), hold, leak (cue ITI
+  vs baseline) and behavior, write the 27-row table and the weakest-knob choice
+  here, then STEP4B step 2 (omission build).
