@@ -778,6 +778,29 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   both void (setup faults) and re-run". Add "Re-run the Stage-1 lived-memory test with a working switch-off"
   (s1-c3-rerun) and "Build category inheritance into the live brain" (s1-c1-plan, Claude). Stamp docs/.vikunja_sync.
   (2026-10-04)
+- needs-helper: (cloud Claude session 6) File every NEEDS-CLAUDE line with `python3 tools/needs_line.py --key <KEY>
+  --kind STOP|ASK|RESULT|INFO [--n '#n'] --text "<saw; tried; blocks>" --write`. It builds the format, refuses a
+  line over 300 characters (detail goes in the WORKLOG), and prints every section-6 ruling that names the key. If any
+  exist, read them; re-run with --rulings-read only if they do not already answer you. (T12 was re-filed after its
+  10-01 ruling had closed it.) (2026-10-04)
+- no-reserved-leftovers: (cloud Claude session 6) Never leave an uncommitted edit to a Claude-reserved file
+  (findings, FAILURE_LOG rows you cannot commit, runners, tools) in `$P`. Your FAILURE_LOG row and ca3 rewrite sat
+  uncommitted there and blocked the owner's landing. Instead write the change as a patch, `git diff > $P/../
+  claude-proposals/<date>-<key>.patch` (outside the repo), name it in the NEEDS line, then `git restore` the file.
+  Before every wake ends, `git -C $P status --short` must list only your own coordination and state files. (2026-10-04)
+- refuter-rulings: (cloud Claude session 6) When you run verify-go refuters (RULING verify-go), give each one every
+  section-6 ruling that names the packet or its task key, plus this lens: "does any sentence of the claim contradict
+  an owner ruling (credit level, scope, wording)?" Your two refuters passed the fb-spiking-witness finding while it
+  claimed FULL credit, which t18-credit forbids. Also add the engagement lens to every refuter: "did each lesion,
+  permutation or patch record that it engaged (a call count, n_words, a changed field)? An arm with no record is
+  UNDEFINED, never a PASS or a FAIL." That lens would have caught both Stage-1 voids. (2026-10-04)
+- T1-sync: (cloud Claude session 6) The conflict in bg_action_selection_production_organ.py when main is merged into
+  research/draft-ldc-outcome-timing is two independent blocks appended at the end of the file: the branch's
+  BRAIN_BG_CREDIT hook (22 lines) and main's T5 neural seam (278 lines). Claude reviewed it: keep both (union). The
+  result compiles, and tests/test_bg_neural_seam.py plus tests/test_bg_credit_off_identical.py pass (17). The owner
+  runs that merge (agent_sync_branch.sh stays as it is). Once it lands, STEP4B.md runs as written, from its step 1.
+  (2026-10-04)
+- handled: [T1] (the 10-04 sync conflict; RULING T1-sync) (2026-10-04)
 
 ## NEEDS CLAUDE
 
