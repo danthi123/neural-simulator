@@ -69,3 +69,19 @@ latest `origin/main` into its branch, fixes the cause and pushes again.
 - Publish the server's `research/*` branches to GitHub (and Gitea) alongside `main`.
 - Mirror GitHub's `claude/*` branches into a bare repo the hermes container can read, at
   `/opt/host-status/claude-import.git` (or pass `-e CLAUDE_IMPORT_REPO=<path>` in the command above).
+
+## Checklist for every work package a cloud session writes (2026-10-04)
+
+Session 6 found three voids that came from packets, not from Hermes: a gate arm whose input file never reached the
+pool, a lesion that cut a code path production no longer calls, and a GPU packet queued with no corpus check. Before
+a packet goes to Hermes:
+1. **Corpus step:** its queue step runs `bash tools/before_you_build.sh "<question>"` first (RULING packet-corpus-step).
+2. **Engagement per arm:** every lesion, permutation or patch records that it engaged (a call count, a changed count,
+   `n_words`), and the scorer makes an arm with no record UNDEFINED. An env-flag lesion is checked against the path
+   production actually takes: grep the call site from the handler down, not the function's own docstring.
+3. **Runtime inputs:** any file the runner or a production organ reads under `research/findings/raw/` is listed in
+   `tools/pool/runtime_raw_inputs.txt` (tests/test_runtime_raw_inputs.py checks the known readers).
+4. **Dev check before gate lines:** one dev-seed shard per manipulation, with the engagement field printed, before
+   any gate seed is queued.
+5. **Before pushing:** run `tools/claim_check.py` on every finding you touch and the gate registry
+   (`tools.gates.run_all`) on the files your branch adds. Two landings failed on gates the cloud had not run.
