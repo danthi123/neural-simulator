@@ -28,3 +28,11 @@
 - Queue adds this wake: transitive ok=12 fail=0, word-role ok=12 fail=0 (12 expected each) with the HANDOFF --checked note.
 - fb-spiking-witness canary not re-run: its step R already scored PASS at 40c43d520.
 - Trigger: results wake 2026-10-05 01:42 (22 files).
+
+## 2026-10-05 02:53 -- queue hold detail for the NEEDS ASK
+
+- RULING iw2-merged(b) landed on main at 02:06 EDT; the 12 s2p-R-tr-9ea7411 lines were added at 02:25 EDT (this branch's section-4 run), so they must not dispatch.
+- Verified: none started (pool.queue rows ~129-140, pool.queue.running empty, no load_bearing_fraction procs). Pinned rev 9ea7411 predates the required chase trace (n_ignited per hop + error field), so a rerun at this pin can never record it.
+- pool_queue.sh has add|list|depth only -- no hold/withdraw -- and moving/editing lines is forbidden to the driver. NEEDS ASK filed 02:52 for Claude to hold/withdraw and re-queue at a post-fix revision.
+- If they slip out before Claude acts: quarantine _load_bearing/_shards/s2p-R-tr-9ea7411/ (never gate on it) and rerun at the fixed revision.
+- The 12 word-role lines (s2p-R-wr) are NOT covered by the ruling and stay queued.
