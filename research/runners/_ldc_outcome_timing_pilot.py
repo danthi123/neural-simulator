@@ -479,8 +479,72 @@ def _mean(v):
     return float(np.mean(v)) if len(v) else None
 
 
+# LEARNING-OFF CELLS (RULING T1-lr0, cloud Claude session 7, 2026-10-05). With `--lr 0` the weights never move, so the
+# cue->choice map is the seed's untrained one and `success` sits at chance by design: the 27 Step 4b.1 clear-dose
+# cells read acc_among_responders 0.52 on average (9 seeds x 3 candidates; per-cell spread close to the binomial 0.05
+# of n_test 100), with no bias below 0.5. Each per-race score dict holds two arms the below-chance gate reads, and
+# success <= acc_among_responders by construction (a non-response scores as wrong; `response_rate` is a rate, which
+# the gate does not count), so a chance-level cell reads "every arm below 0.5" whenever its accuracy draw lands under
+# 0.5, about half the time. The behaviour of such a cell is not a measurement: the runner says so in the artifact
+# (tools/gates/below_chance.py accepts an UNDEFINED verdict string) and only the instrument fields are read.
+LR0_BEHAVIOR_VERDICT = ("UNDEFINED (lr 0 diagnostic cell): the weights never learn, so behaviour sits at chance by "
+                        "design and reads below 0.5 on about half the cells by sampling noise alone; not a test of "
+                        "the hypothesis. Read only the instrument fields (mem_after_clear_hz, mem_hold_acc, ...).")
+
+
+def lr0_declaration(params):
+    """The below-chance declaration for a learning-off cell (`params.lr == 0`), or None for a learning cell, whose
+    behaviour IS the measurement and is never declared."""
+    lr = params.get("lr") if isinstance(params, dict) else getattr(params, "lr", None)
+    try:
+        lr = float(lr)
+    except (TypeError, ValueError):
+        return None
+    if lr != 0.0:
+        return None
+    return {"behavior_verdict": LR0_BEHAVIOR_VERDICT, "behavior_undefined_reason": "lr0-diagnostic"}
+
+
+def declare_lr0(paths):
+    """`--declare-lr0 FILE...`: add the same declaration to records this runner wrote before the declaration existed
+    (Step 4b.1, 27 cells at 50f52c23e). Refuses any record whose params.lr is not 0 or that has no rows. Records the
+    declaring runner's sha256 and the time beside the declaration; changes no measured value. Returns an exit code."""
+    import datetime
+    rc = 0
+    for path in paths:
+        with open(path) as f:
+            doc = json.load(f)
+        decl = lr0_declaration(doc.get("params") or {})
+        if decl is None or not doc.get("rows"):
+            sys.stderr.write("LDCBG_DECLARE_REFUSED %s: params.lr is not 0 or the record has no rows (a learning "
+                             "cell's behaviour is a measurement and is never declared)\n" % path)
+            rc = 2
+            continue
+        if all(doc.get(k) == v for k, v in decl.items()):
+            sys.stderr.write("LDCBG_DECLARE_ALREADY %s\n" % path)
+            continue
+        doc.update(decl)
+        doc["declared_after_run"] = {
+            "by": "research/runners/_ldc_outcome_timing_pilot.py --declare-lr0",
+            "declaring_runner_sha256": RUNNER_SHA256,
+            "at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "fields": sorted(decl)}
+        tmp = path + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(doc, f, indent=1, default=str)
+        os.replace(tmp, path)
+        sys.stderr.write("LDCBG_DECLARED %s\n" % path)
+    return rc
+
+
 def main(argv=None):
     global OUTCOME_MS, REWARD_ON_MS, CLEAR_MS
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["--declare-lr0"]:
+        if len(argv) < 2:
+            sys.stderr.write("usage: --declare-lr0 RECORD.json [RECORD.json ...]\n")
+            return 2
+        return declare_lr0(argv[1:])
     ap = argparse.ArgumentParser()
     ap.add_argument("--schedule", choices=sorted(SCHEDULES), required=True)
     ap.add_argument("--arms", required=True, help="comma list; shuffled_yoked must follow full")
@@ -538,6 +602,7 @@ def main(argv=None):
                 "schedule", "arm", "seed", "success", "response_rate", "early_share", "mem_hold_acc")}))
     doc = {"runner_sha256": RUNNER_SHA256, "git_head": head, "git_dirty": dirty,
            "params": p.__dict__, "schedule": a.schedule, "rows": rows}
+    doc.update(lr0_declaration(p.__dict__) or {})
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(doc, f, indent=1, default=str)
@@ -545,4 +610,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)
