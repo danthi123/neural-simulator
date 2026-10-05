@@ -128,3 +128,17 @@ Owed: a store lesion (the belief store's weights cut with the witnessing gate le
 chance answer). It belongs with T18, whose spiking witness population replaces the host decision this lesion
 overrides. The same gate-versus-module question arises in modular networks: ablating a module and re-routing around it
 are different interventions (MiCRo, https://arxiv.org/abs/2506.13331). <!--derived-->
+
+### Owner-delegated decision (2026-10-05, cloud session 7)
+
+The owner asked Claude to decide. The flip stays on by default: the reply is correct and honest on the probe and
+its control, the explicit-off escape is exact, and the host witnessing decision is the declared scaffold whose spiking
+replacement (T18) is under way. It counts PARTIAL for Stage 1 and does not count as spiking ownership. Until a store
+lesion reads, every load-bearing-fraction report lists `tom-false-belief` as a host-input lesion.
+
+The owed store lesion is now built and registered (`research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md`,
+six gate seeds for Hermes). On three dev seeds, cutting the store's self-recurrence did not change the reply, so the
+prediction is that the store is not necessary on this probe. The reason is a companion process the probe replaced
+with zero: no simulated time passes between the narration and the question. Separately, an empty or tied store now
+abstains instead of answering the host argmax's slot-0 default, which on this probe is the false-belief location; this
+matters most for T18's synaptic write, whose belief does not yet persist through the hold (RULING `fb-relay2`).

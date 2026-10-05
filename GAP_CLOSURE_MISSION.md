@@ -18,8 +18,8 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 **Date:** 2026-10-05. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
 pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3 decisions into the substrate.
-**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `iw2-merged`, `T1-lr0` and
-`iw1-R-pre`, then section 4 in order.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `iw2-merged`, `iw2-decision`,
+`T1-lr0` and `iw1-R-pre`, then section 4 in order.
 
 **Landed 2026-10-05 (cloud Claude session 7, branch claude/session7-iw2):**
 - **iw2 false-belief-chat: on by default at F `1fb805e9e`.** R 6/6, control 6/6; F1 6/6; F2/F3 IDENTICAL (exact
@@ -32,8 +32,11 @@ pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3
 - **iw2 neural-selfid: on by default at F.** R 6/6 inside the flag-ON configuration, F1 6/6, F2/F3 IDENTICAL.
   NARROWED: no new answer; turns 15-16 become honest abstains. PARTIAL
   (`research/findings/2026-10-05-iw2-neural-selfid-default-on-flip-validated-PROVISIONAL.md`).
+- **Owner-delegated decision (RULING `iw2-decision`):** all three flips stay on at PARTIAL. An empty belief store now
+  abstains, and a store lesion is registered (`research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md`; dev
+  seeds predict the store is not necessary on the immediate-question probe, which points to a delayed-question probe).
 - **Owed:** bisect the affect-marker-spiking-wta S2 loss between B2b and F on main (not iw2's); record the chase
-  trace in the transitive arms (T19/T21); a store-lesion arm for false belief (T18).
+  trace in the transitive arms (T19/T21); run fb-store-lesion on six gate seeds.
 - **T1 (long-delay credit) Step 4b.1:** the lr-0 clear-dose cells sit AT chance (mean accuracy 0.52 over 27 cells),
   not below it; the runner now declares their behaviour UNDEFINED (RULING `T1-lr0`). The clear dose `--w-clear-fs 60`
   stands; next is STEP4B step 2, the omission build.

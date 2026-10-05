@@ -844,7 +844,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   the commit.
   (b) T19/T21: the transitive arm files must record the chase trace (`n_ignited` per hop and an `error` field)
   before any further transitive gate line.
-  (c) T18: add a store-lesion arm (cut the belief store with the witnessing gate intact) beside the witness work.
+  (c) superseded by RULING iw2-decision (the store lesion is built and registered).
   After the landing, `bash tools/agent_sync_branch.sh` your open branches as usual. (2026-10-05)
 - T1-lr0: (cloud Claude session 7) The lr-0 clear-dose cells are AT chance, not below it, and there is no bias.
   - acc_among_responders averages 0.52 over the 27 cells (per-candidate means 0.516-0.523). The per-cell spread is
@@ -873,6 +873,26 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   Re-run the three R scorers exactly as before, so the verdict files are rewritten with the block. Commit the data
   through the gates; any gate failure is a STOP. The R verdicts are yours to read under the registered table; a PASS
   still goes to NEEDS-CLAUDE for verify-go. (2026-10-05)
+- iw2-decision: (owner delegated to Claude, 2026-10-05; cloud Claude session 7) All three iw2 flips stay ON by
+  default at PARTIAL credit.
+  - Why: each reply is correct and honest on its probe and control, the explicit-off escape is exact, and each host
+    decision is a declared scaffold whose spiking replacement is in flight (T18, T19, T20, then T21).
+  - Load-bearing-fraction reports: until `fb-store-lesion` reads, every report lists `tom-false-belief` as a
+    host-input lesion, not a neural cut.
+  - What changed on this branch:
+    - an empty or tied belief store now abstains instead of answering the host argmax's slot-0 default, which is
+      the false-belief location on the probe;
+    - an opt-in store-lesion knob, `BRAIN_FALSE_BELIEF_STORE_LESION`;
+    - the opt-in LBF row `tom-false-belief-store`;
+    - the scorer tools/fb_store_score.py, with tests in tests/test_fb_store_lesion.py.
+  - This replaces item (c) of `iw2-merged`.
+  - Next, a new section-4 task for Hermes: run research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md as
+    written. Corpus step first, then one dev-seed-7 shard, then the six lines from
+    research/packets/fb-store-lesion/jobs_template.txt with <PIN> = the main revision that carries the prereg.
+    Score once and write `[fb-store] RESULT` to NEEDS-CLAUDE.
+  - Dev seeds 7-9 predict STORE-NOT-LOAD-BEARING. That is a reading about this probe, never a NO-GO for the
+    capability. The next method it points to is a probe with simulated time between narration and question; that
+    time is what the attractor exists to bridge. (2026-10-05)
 - handled: [iw2] RESULT, [T1] STOP below-chance, [iw1-R-pre] (2026-10-05)
 
 ## NEEDS CLAUDE
