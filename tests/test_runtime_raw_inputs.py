@@ -70,29 +70,3 @@ def test_coverage_check_fails_in_its_failing_direction():
     assert not _covered("research/findings/raw/_new_map.json", ["research/findings/raw/_affect_learned_valence_map.json"])
     assert _covered("research/findings/raw/_a/run1/w.npz", ["research/findings/raw/_a/run1"])
     assert not _covered("research/findings/raw/_a/run10/w.npz", ["research/findings/raw/_a/run1"])
-
-
-def test_ship_runtime_inputs_copies_and_verifies_with_a_local_ssh_shim(tmp_path):
-    """tools/pool/ship_runtime_inputs.sh end to end against a fake `ssh` that runs the remote command locally under a
-    temporary HOME: the files land in ~/derisk-pool/revisions/<sha>/ and the sha256 check passes; a node without the
-    revision directory fails."""
-    sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_ROOT, capture_output=True, text=True).stdout.strip()
-    home = tmp_path / "home"
-    (home / "derisk-pool" / "revisions" / sha).mkdir(parents=True)
-    shim = tmp_path / "bin"
-    shim.mkdir()
-    (shim / "ssh").write_text(
-        "#!/usr/bin/env bash\n"
-        "args=(); while [ $# -gt 0 ]; do case \"$1\" in -n) shift;; -o) shift 2;; *) args+=(\"$1\"); shift;; esac; done\n"
-        "host=${args[0]}; cmd=\"${args[*]:1}\"\n"
-        "[ \"$host\" = nonode ] && exit 1\n"
-        "HOME=\"$SHIM_HOME\" bash -c \"$cmd\"\n")
-    (shim / "ssh").chmod(0o755)
-    env = dict(os.environ, PATH="%s:%s" % (shim, os.environ["PATH"]), SHIM_HOME=str(home))
-    r = subprocess.run(["bash", "tools/pool/ship_runtime_inputs.sh", sha, "poolX"], cwd=_ROOT, env=env,
-                       capture_output=True, text=True)
-    assert r.returncode == 0, r.stdout + r.stderr
-    assert (home / "derisk-pool" / "revisions" / sha / "research/findings/raw/_affect_learned_valence_map.json").is_file()
-    r = subprocess.run(["bash", "tools/pool/ship_runtime_inputs.sh", sha, "nonode"], cwd=_ROOT, env=env,
-                       capture_output=True, text=True)
-    assert r.returncode == 1

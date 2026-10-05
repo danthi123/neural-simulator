@@ -818,6 +818,12 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   repo whose config you can write, which is a code-execution path); any future manual ship goes through the
   homelab session. Revisions provisioned after the next runtime bump ship these inputs automatically.
 
+- canary-auto: (2026-10-05) `bash tools/pool_canary.sh run auto '<line>'` now picks, of all pool nodes, the one that
+  holds the line's revision and has the most free memory, and refuses (exit 3, inconclusive: not a FAIL) when none
+  has the line's mem_gb + 2 GB. Prefer `run auto` to naming a node; it supersedes the pool40-only part of RULING
+  canary-node. tools/pool/ship_runtime_inputs.sh is removed (it let an agent-writable git config run code as the
+  pool user); manual input ships go through the homelab session.
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
