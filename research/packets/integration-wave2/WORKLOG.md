@@ -183,3 +183,13 @@
   A PASS = the flips stand. Verdicts B/F2/F3/A in _iw2/verdicts/1fb805e/.
 - Data commit below carries the flip + alloff shards (provisional). Not pushed
   (wake rule: sim-sync publishes main).
+
+## 2026-10-05 00:30 — section 11: three PROVISIONAL findings + GAP sync
+- Findings written (templates + required iw2-verify-go sentences, PARTIAL per
+  iw2-stage1-credit): research/findings/2026-10-05-iw2-{false-belief-chat,
+  transitive-chat,neural-selfid}-default-on-flip-validated-PROVISIONAL.md.
+- Numbers only from verdict JSONs (573a943 D0/D_*/R_*, 1fb805e B/A/F2/F3);
+  claim_check + doc_type pass on all three.
+- GAP_CLOSURE_MISSION.md: one dated line per packet (numbers only).
+- NEEDS-CLAUDE [iw2] RESULT filed for adversarial review + merge. No push
+  (wake rule: sim-sync publishes main).

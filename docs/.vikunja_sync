@@ -245,3 +245,10 @@ Added 4 roadmap tasks for "prove who owns the computation" (host-decision share,
 - append-desc notes on #232 (false-belief in chat), #141 (reasoning across
   connected facts), #209 (self-identity routing, rank-13): ON by default in the
   test branch only, validation pending; no task closed by the provisional flip.
+## 2026-10-05  T2 section 11 board reconcile (iw2 flips validated): set-desc #232 (false-belief-chat flip
+on-by-default at F=1fb805e, provisional — R 6/6, B 1 B1 drop A-excused, F1 6/6, F2/F3 IDENTICAL; stage-1
+PARTIAL until T18; witness-gate confirm+merge still owed). transitive-chat and neural-selfid flips recorded in
+GAP_CLOSURE + their PROVISIONAL findings (runbook RULING iw2-stage1-credit: each counts FULLY only when its
+packet passes O and R and T21 keeps the path default — boards #143/#209 already carry those arcs; no new
+tasks needed). deep-research-at-wall cleared: local record (corpus check logged) + external source recorded
+(MoE gate-vs-expert error attribution; MiCRo arXiv:2506.13331).
