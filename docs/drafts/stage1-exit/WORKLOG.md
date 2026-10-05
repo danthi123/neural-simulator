@@ -82,3 +82,22 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   _stage1_exit/gate_c4rerun/, field 2 as the --checked reason): ok=72 fail=0, queue depth 105 -> 177.
   The TSV stays an untracked working file (agent main-commit backstop: queue TSVs are outside
   the routine classes). Next: cells land -> guarded-scorer step of RULING s1-c4-void.
+
+## 2026-10-05 10:55 EDT - C4 rerun scored (guarded scorer) + affect audit
+
+- 72 val lines (val_heldout + val_novel, 6 seeds) complete under
+  research/findings/raw/_stage1_exit/gate_c4rerun (144 records). Scored:
+  `python -m research.runners.stage1_exit_gate --aggregate .../gate_c4rerun
+  --seeds 42,43,44,100,101,102` (AGG_RC=0) -> gate_c4rerun/aggregate.json.
+- Verdict: val_heldout FAIL (6/6 correct, lesion_affect 6/6 reproduced, but
+  permuted exposure tracked on 4 of 6 seeds); val_novel FAIL (0/6, capability
+  absent on 6 of 6 seeds); per-seed intact r 0.805-0.836 defined, lesion r
+  None (all-neutral guard -> UNDEFINED, not 0). Stage verdict reads UNDEFINED
+  (INCOMPLETE): this dir carries C4 only, 132 other-group shards missing by
+  design. This replaces C4's earlier UNDEFINED(instrument) reading (RULING
+  s1-c4-void): the data are now defined and the verdict is FAIL.
+- Audit (RULING s1-c4-void): docs/drafts/stage1-exit/AUDIT-affect-pool-results.md
+  lists 702 pool results since 09-01 across 23 runners that import
+  affect_production_organ (top: stage1_exit_gate 335, _lbf_affect_conditioned_mouth
+  193, _affect_learned_vocabulary_derisk 67); NEEDS INFO filed for Claude to decide
+  which are void.
