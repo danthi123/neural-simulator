@@ -1,0 +1,190 @@
+From 15d665e2030d251f844b540a11146b3bce3c68d9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 5 Oct 2026 05:59:27 +0000
+Subject: [PATCH] fix(ldc pilot): lr-0 cells declare their behaviour UNDEFINED
+ in the artifact (RULING T1-lr0)
+
+A learning-off cell's success sits at chance by design; each per-race score dict
+holds two gate arms with success <= acc_among_responders, so a chance-level cell
+reads 'every arm below 0.5' about half the time. The runner now writes
+behavior_verdict UNDEFINED (lr 0 diagnostic) for lr 0 runs, and --declare-lr0
+adds the same declaration to records written before it (refuses lr > 0, changes
+no measured value, records the declaring runner sha256). Pinned by
+tests/test_ldc_pilot_lr0_declaration.py, failing-first on the T1 record shape.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01YFsTogbFUHqkhjUeERc6a5
+---
+ research/runners/_ldc_outcome_timing_pilot.py | 67 +++++++++++++++++-
+ tests/test_ldc_pilot_lr0_declaration.py       | 68 +++++++++++++++++++
+ 2 files changed, 134 insertions(+), 1 deletion(-)
+ create mode 100644 tests/test_ldc_pilot_lr0_declaration.py
+
+diff --git a/research/runners/_ldc_outcome_timing_pilot.py b/research/runners/_ldc_outcome_timing_pilot.py
+index a9ac13ad..903a134f 100644
+--- a/research/runners/_ldc_outcome_timing_pilot.py
++++ b/research/runners/_ldc_outcome_timing_pilot.py
+@@ -479,8 +479,72 @@ def _mean(v):
+     return float(np.mean(v)) if len(v) else None
+ 
+ 
++# LEARNING-OFF CELLS (RULING T1-lr0, cloud Claude session 7, 2026-10-05). With `--lr 0` the weights never move, so the
++# cue->choice map is the seed's untrained one and `success` sits at chance by design: the 27 Step 4b.1 clear-dose
++# cells read acc_among_responders 0.52 on average (9 seeds x 3 candidates; per-cell spread close to the binomial 0.05
++# of n_test 100), with no bias below 0.5. Each per-race score dict holds two arms the below-chance gate reads, and
++# success <= acc_among_responders by construction (a non-response scores as wrong; `response_rate` is a rate, which
++# the gate does not count), so a chance-level cell reads "every arm below 0.5" whenever its accuracy draw lands under
++# 0.5, about half the time. The behaviour of such a cell is not a measurement: the runner says so in the artifact
++# (tools/gates/below_chance.py accepts an UNDEFINED verdict string) and only the instrument fields are read.
++LR0_BEHAVIOR_VERDICT = ("UNDEFINED (lr 0 diagnostic cell): the weights never learn, so behaviour sits at chance by "
++                        "design and reads below 0.5 on about half the cells by sampling noise alone; not a test of "
++                        "the hypothesis. Read only the instrument fields (mem_after_clear_hz, mem_hold_acc, ...).")
++
++
++def lr0_declaration(params):
++    """The below-chance declaration for a learning-off cell (`params.lr == 0`), or None for a learning cell, whose
++    behaviour IS the measurement and is never declared."""
++    lr = params.get("lr") if isinstance(params, dict) else getattr(params, "lr", None)
++    try:
++        lr = float(lr)
++    except (TypeError, ValueError):
++        return None
++    if lr != 0.0:
++        return None
++    return {"behavior_verdict": LR0_BEHAVIOR_VERDICT, "behavior_undefined_reason": "lr0-diagnostic"}
++
++
++def declare_lr0(paths):
++    """`--declare-lr0 FILE...`: add the same declaration to records this runner wrote before the declaration existed
++    (Step 4b.1, 27 cells at 50f52c23e). Refuses any record whose params.lr is not 0 or that has no rows. Records the
++    declaring runner's sha256 and the time beside the declaration; changes no measured value. Returns an exit code."""
++    import datetime
++    rc = 0
++    for path in paths:
++        with open(path) as f:
++            doc = json.load(f)
++        decl = lr0_declaration(doc.get("params") or {})
++        if decl is None or not doc.get("rows"):
++            sys.stderr.write("LDCBG_DECLARE_REFUSED %s: params.lr is not 0 or the record has no rows (a learning "
++                             "cell's behaviour is a measurement and is never declared)\n" % path)
++            rc = 2
++            continue
++        if all(doc.get(k) == v for k, v in decl.items()):
++            sys.stderr.write("LDCBG_DECLARE_ALREADY %s\n" % path)
++            continue
++        doc.update(decl)
++        doc["declared_after_run"] = {
++            "by": "research/runners/_ldc_outcome_timing_pilot.py --declare-lr0",
++            "declaring_runner_sha256": RUNNER_SHA256,
++            "at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
++            "fields": sorted(decl)}
++        tmp = path + ".tmp"
++        with open(tmp, "w") as f:
++            json.dump(doc, f, indent=1, default=str)
++        os.replace(tmp, path)
++        sys.stderr.write("LDCBG_DECLARED %s\n" % path)
++    return rc
++
++
+ def main(argv=None):
+     global OUTCOME_MS, REWARD_ON_MS, CLEAR_MS
++    argv = sys.argv[1:] if argv is None else list(argv)
++    if argv[:1] == ["--declare-lr0"]:
++        if len(argv) < 2:
++            sys.stderr.write("usage: --declare-lr0 RECORD.json [RECORD.json ...]\n")
++            return 2
++        return declare_lr0(argv[1:])
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--schedule", choices=sorted(SCHEDULES), required=True)
+     ap.add_argument("--arms", required=True, help="comma list; shuffled_yoked must follow full")
+@@ -538,6 +602,7 @@ def main(argv=None):
+                 "schedule", "arm", "seed", "success", "response_rate", "early_share", "mem_hold_acc")}))
+     doc = {"runner_sha256": RUNNER_SHA256, "git_head": head, "git_dirty": dirty,
+            "params": p.__dict__, "schedule": a.schedule, "rows": rows}
++    doc.update(lr0_declaration(p.__dict__) or {})
+     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
+     with open(a.out, "w") as f:
+         json.dump(doc, f, indent=1, default=str)
+@@ -545,4 +610,4 @@ def main(argv=None):
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    sys.exit(main() or 0)
+diff --git a/tests/test_ldc_pilot_lr0_declaration.py b/tests/test_ldc_pilot_lr0_declaration.py
+new file mode 100644
+index 00000000..5522148c
+--- /dev/null
++++ b/tests/test_ldc_pilot_lr0_declaration.py
+@@ -0,0 +1,68 @@
++"""RULING T1-lr0 (2026-10-05): a learning-off (lr 0) cell of the Step 4a/4b pilot runner declares its behaviour
++UNDEFINED in the artifact, so tools/gates/below_chance.py reads the declaration instead of a fabricated negative; a
++learning cell never carries it. Pinned failing-first: the chance-level record shape below trips the gate without it.
++"""
++import json
++
++import pytest
++
++from tools.gates import below_chance
++
++pilot = pytest.importorskip("research.runners._ldc_outcome_timing_pilot")
++
++
++def _score(success, acc):
++    return {"success": success, "response_rate": 0.97, "acc_among_responders": acc, "chance": 0.5}
++
++
++def _record(lr):
++    # the runner's own output shape (run_condition + main), at a chance-level accuracy draw just under 0.5
++    row = {"schedule": "credit_immediate", "arm": "full", "seed": 9, "relevant": "early",
++           "test": {"early": _score(0.41, 0.4227), "terminal": _score(0.44, 0.4536)},
++           "success": 0.41, "response_rate": 0.97, "chance": 0.5, "mem_hold_acc": 1.0,
++           "instrument": {"mem_after_clear_hz": 0.0, "mem_hold_acc_probe": 1.0}}
++    doc = {"runner_sha256": "x", "params": {"lr": lr, "w_clear_fs": 60.0}, "schedule": "credit_immediate",
++           "rows": [row]}
++    doc.update(pilot.lr0_declaration(doc["params"]) or {})
++    return doc
++
++
++def _bare(doc):
++    return {k: v for k, v in doc.items() if k not in ("behavior_verdict", "behavior_undefined_reason")}
++
++
++def test_the_chance_level_shape_trips_the_gate_without_the_declaration(tmp_path):
++    p = tmp_path / "bare.json"
++    p.write_text(json.dumps(_bare(_record(0.0))))
++    hits = below_chance.check([str(p)])
++    assert len(hits) == 1 and "/rows[0]/test/early" in hits[0], "the fixture must reproduce the T1 STOP"
++
++
++def test_lr0_record_declares_and_clears_the_gate(tmp_path):
++    doc = _record(0.0)
++    assert "UNDEFINED" in doc["behavior_verdict"] and doc["behavior_undefined_reason"] == "lr0-diagnostic"
++    p = tmp_path / "cell.json"
++    p.write_text(json.dumps(doc))
++    assert below_chance.check([str(p)]) == []
++
++
++def test_learning_cell_is_never_declared():
++    assert pilot.lr0_declaration({"lr": 5.0}) is None
++    assert pilot.lr0_declaration({}) is None
++    assert "behavior_verdict" not in _record(5.0)
++
++
++def test_declare_mode_adds_the_declaration_and_refuses_a_learning_record(tmp_path):
++    old = tmp_path / "old.json"
++    old.write_text(json.dumps(_bare(_record(0.0))))
++    learn = tmp_path / "learn.json"
++    learn.write_text(json.dumps(_bare(_record(5.0))))
++    assert pilot.main(["--declare-lr0", str(old)]) == 0
++    d = json.loads(old.read_text())
++    assert d["behavior_undefined_reason"] == "lr0-diagnostic"
++    assert d["declared_after_run"]["declaring_runner_sha256"] == pilot.RUNNER_SHA256
++    assert d["rows"] == _bare(_record(0.0))["rows"], "no measured value may change"
++    assert below_chance.check([str(old)]) == []
++    assert pilot.main(["--declare-lr0", str(learn)]) == 2
++    assert "behavior_verdict" not in json.loads(learn.read_text())
++    assert pilot.main(["--declare-lr0", str(old)]) == 0  # idempotent
+-- 
+2.43.0
+

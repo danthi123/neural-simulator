@@ -62,7 +62,7 @@ _TRANSITIVE_RE = re.compile(
 # tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
 # reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one production
 # reader of BRAIN_TRANSITIVE_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
-_TRANSITIVE_CHAT_DEFAULT_ON = False
+_TRANSITIVE_CHAT_DEFAULT_ON = True
 _ON = ("1", "true", "on", "yes")
 _OFF = ("0", "false", "no", "off", "")
 

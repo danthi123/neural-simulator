@@ -42,7 +42,7 @@ EXTRA_LESIONS = {
 # OPT-IN row (2026-09-24): it measures a default-OFF capability, so it enters the registry only when BRAIN_TRANSITIVE_CHAT=1 is
 # set in both arms, i.e. in a capability battery launched with tools/lb_shard.py ... --extra-env BRAIN_TRANSITIVE_CHAT=1.
 # tools/integration_wave2_flip.py comments this line out when the packet flips (the row then joins the headline set).
-REQUIRED_ENV = {'BRAIN_TRANSITIVE_CHAT': "1"}
+# REQUIRED_ENV lifted by the iw2 flip (tools/integration_wave2_flip.py): REQUIRED_ENV = {'BRAIN_TRANSITIVE_CHAT': "1"}
 
 # (label, message, session, reset, percept, rich) -- the PROBE_TURNS shape. One session; the first turn resets it.
 # Must stay a LITERAL list (the battery reads it with ast).

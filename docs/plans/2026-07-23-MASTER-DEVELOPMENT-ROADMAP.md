@@ -1197,6 +1197,13 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-10-05 (cloud session 7):** the three integration-wave-2 chat faculties (false-belief chat, transitive chat,
+neural self-ID) are merged ON by default: steps R/B/F pass, and B's one drop is excused by the all-off arm. verify-go
+narrowed each claim: the false-belief lesion overrides the host witnessing decision; the transitive ignition gates
+only the stop; self-ID adds no new answer. All three stay PARTIAL until T18-T21. Owed: bisect the
+affect-marker-spiking-wta S2 loss on main. LDC Step 4b proceeds to the omission build (lr-0 cells declared, RULING
+T1-lr0).
+
 **2026-10-04 (cloud session 6):** Stage-1 exit attempt 1 not passed (above). C4 re-runs after the provisioning fix;
 the C1 and C3 gaps (category inheritance, lived recall needing the memory system) go to the prereg's section-8 named
 mechanisms. Host share at the Stage-1 seams is 1.000 host at C2, so the step-3 seam moves (k-select, bg-select,

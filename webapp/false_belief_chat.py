@@ -69,7 +69,7 @@ _DEFAULT_SEED = 42
 # tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
 # reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one reader of
 # BRAIN_FALSE_BELIEF_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
-_FALSE_BELIEF_CHAT_DEFAULT_ON = False
+_FALSE_BELIEF_CHAT_DEFAULT_ON = True
 _ON = ("1", "true", "on", "yes")
 _OFF = ("0", "false", "no", "off", "")
 
@@ -88,6 +88,25 @@ def false_belief_lesioned() -> bool:
     """`BRAIN_FALSE_BELIEF_LESION` truthy -> force the witnessing gate open at every write and through the
     query (the derisk's `lesion_other`): the belief store collapses onto reality (load-bearing proof)."""
     return os.environ.get("BRAIN_FALSE_BELIEF_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def false_belief_store_lesioned() -> bool:
+    """`BRAIN_FALSE_BELIEF_STORE_LESION` truthy -> build the belief store with its assembly self-recurrence set to 0
+    (world and self stores untouched). Opt-in measurement knob (session 7, 2026-10-05): unlike
+    BRAIN_FALSE_BELIEF_LESION, which overrides the HOST witnessing decision, this cuts the spiking store itself."""
+    return os.environ.get("BRAIN_FALSE_BELIEF_STORE_LESION", "0").strip().lower() in _ON
+
+
+def belief_store_read_ok(belief_rates) -> bool:
+    """True iff the store's late-window rates name ONE location: a strictly positive maximum, held by one slot.
+    The organ's read is a host argmax that returns slot 0 (the first-named location, which is the stale location
+    on the classic probe) when every rate is 0, so without this check a silent or broken store would still answer
+    the false-belief location. Rates absent (an organ that does not export them) -> True (unchanged behaviour)."""
+    if not belief_rates:
+        return True
+    vals = [float(v) for v in belief_rates.values()]
+    top = max(vals)
+    return top > 0.0 and sum(1 for v in vals if v == top) == 1
 
 
 # SPIKING WITNESS (packet fb-spiking-witness, 2026-10-01; prereg
@@ -239,6 +258,8 @@ def _new_organ(seed: int, lesion: bool):
         _SW.set_operating_point(spiking_witness_op())
         return _SW.SpikingWitnessFalseBeliefOrgan(seed=seed, lesion=bool(lesion or spiking_witness_lesioned()))
     from research.runners.tom_false_belief_chat_organ import FalseBeliefChatOrgan
+    if false_belief_store_lesioned():
+        return FalseBeliefChatOrgan(seed=seed, belief_attractor_weight=0.0)
     return FalseBeliefChatOrgan(seed=seed)
 
 
@@ -360,6 +381,13 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 info["tracked_object"] = scen.obj
                 return info
             read = scen.organ.query() if spiking else scen.organ.query(lesion=les)
+            if not belief_store_read_ok(read.get("belief_rates")):
+                # an empty or tied store holds no belief: say nothing here (the turn falls through to the ordinary,
+                # honest path) instead of letting the host argmax's slot-0 default answer
+                info["reason"] = "belief_store_silent"
+                info["belief_rates"] = {str(k): round(float(v), 6) for k, v in (read.get("belief_rates") or {}).items()}
+                info["store_lesioned"] = bool(false_belief_store_lesioned())
+                return info
             belief_name = scen.loc_name(read["belief_loc"])
             info.update({
                 "acted": True,
@@ -376,6 +404,8 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
             })
             if spiking:
                 info["presence_rate"] = round(float(read.get("presence_rate", 0.0)), 6)
+            if false_belief_store_lesioned():   # engagement record; absent by default, so default bodies are unchanged
+                info["store_lesioned"] = True
     except Exception as e:   # never let the false-belief read/write crash a turn
         info = {"acted": False, "answer": None, "events": [], "reason": f"error:{type(e).__name__}: {e}",
                 "seed": int(seed), "lesioned": bool(les)}
