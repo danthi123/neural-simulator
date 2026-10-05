@@ -110,3 +110,21 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   577 results / 58 runners; C) BRAIN_AFFECT_LEARNED_VOCAB references:
   403 results / 3 runners. Detection = prov runner field vs static source
   grep; 14,764 prov sidecars scanned since 09-01. Claude rules what is void.
+
+## 2026-10-05 11:50 EDT - s1-c3-rerun started: P2 provisioned, A1.2 dev shards queued
+
+- P2 = 7851dd220 (main HEAD at start). provision.req touched; state=ok on
+  pool40/41/42/wspool (~5 min). before_you_build 'C3 lived rerun at P2: dev
+  seed-7 shards must show lesion_lived_recall patch.calls>0 ...' rc=0, recorded
+  to corpus_checks_shared.jsonl.
+- Queued the two AMENDMENT-A1 A1.2 dev shards: seed 7, group lived, arms
+  intact_a + lesion_recall, labels t_wolf_bite,p_wolf_bite,c_dog_chase, out
+  research/findings/raw/_stage1_exit/dev_c3/s7/. Line shape cloned from the
+  c238ff325 gate lines (mem_ok 7 1, memcap 9, --prereg, #checked); added 2,
+  failed 0, depth 10. No --allow-gate-seed (dev seed).
+- Next, after both land: require lesion_recall patch.calls > 0, its p_wolf_bite
+  abstains or is not apple, and c_dog_chase still names cat; if calls == 0
+  STOP + NEEDS per A1.2. Then --emit-pool-jobs 7851dd220, keep only --group
+  lived (42 lines) with out-dir _stage1_exit/gate_c3rerun/, canary one line
+  first, queue the rest with #checked naming AMENDMENT-A1, then score and
+  RESULT + NEEDS [s1-c3-rerun].
