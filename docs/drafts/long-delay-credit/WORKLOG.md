@@ -244,3 +244,26 @@ VERDICT: {'wfs60': True, 'cms500': True, 'cpa1200': True} | chosen=wfs60
 - `--declare-lr0 clear_*_s*.json`: 27/27 lr-0 records DECLARED (behavior_verdict UNDEFINED + declaring-runner sha256). The 27 .prov.json paths matched the ruling's own glob and were REFUSED by design (no rows; rc=2 from the no-rows branch, nothing written to them) -- not an lr>0 refusal.
 - The below-chance gate now reads UNDEFINED for the lr-0 cells; this commit is the gate test. Choice `--w-clear-fs 60` (section 1) unchanged.
 - Trigger: main landing wake 2026-10-05 02:41 (24 commits, session7-iw2).
+
+## 2026-10-05 03:26 -- section 2 (Build, copies only): DONE, identity test 3/3
+
+- `research/runners/_ldc_credit_omission.py` = copy of `bg_corticostriatal_credit.py` + 10 CreditParams
+  fields (`omission_route=0`, n_lhb 20, n_lhb_inh 10, n_rmtg 20, w_outc_lhb 0, w_rus_lhbinh 9.0 = the
+  2026-08-01 REWARDUS_TO_RMTG_W, w_lhbinh_lhb 12.0 = RMTG_TO_OMIT_W, w_lhb_rmtg 0, w_rmtg_snc 0,
+  cut_rus_lhbinh 0) and the route-on block in `credit_extension`: regions lhb (RS) / lhb_inh (FS) /
+  rmtg (FS); pathways ctx_o->lhb, reward_us->lhb_inh (skipped when cut), lhb_inh->lhb (gaba_a),
+  lhb->rmtg, rmtg->snc (gaba_a), all fixed. Densities 0.6/0.5, jit 0.2/0.5 mirror the 2026-08-01 relay
+  build (STEP4B names no densities). The three seed-7 tuning knobs default 0 so route-0 stays pure.
+- `research/runners/_ldc_omission_pilot.py` = copy of the PATCHED (RULING T1-lr0) outcome-timing pilot
+  importing from `_ldc_credit_omission`: auto CLI flags for the new fields, RUNNER_SHA256 + _git_state
+  paths retargeted, declare_lr0 `by` string retargeted (declaration rides along), and the new records
+  `lhb_rate_rewarded` / `lhb_rate_unrewarded` (LHb spikes in the OUTCOME_MS window / (n_lhb x 0.1 s),
+  split by train-trial outcome; None when the LHb is absent) + `membrane_ok` /
+  `membrane_bad_regions` (membrane_bound_check strict=False on lhb, lhb_inh, rmtg, snc after training).
+- `tests/test_ldc_omission_identity.py`: route-0 at seed 7 byte-identical (region list +
+  cp_connections indptr/indices/data/nnz), route-1 adds exactly the three regions + four checked
+  pathways + reward_us->lhb_inh, cut drops only that one. 3 passed in 1.15 s.
+- Next (section 2): seed-7-only tune of w_outc_lhb / w_lhb_rmtg / w_rmtg_snc at credit_immediate,
+  --reward-on-ms 150 --outcome-ms 250 (the step-4a pairing from the on150 prov), w_outc_strio 30,
+  n-train 200, then the engagement check and the frozen-constants table before any seed 8-15 line.
+- Trigger: 03:11 continuation of the 02:41 landing wake.
