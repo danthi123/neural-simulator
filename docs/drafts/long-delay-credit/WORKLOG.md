@@ -329,3 +329,31 @@ waits on Claude's ruling; the weight tune continues meanwhile.
 - Next: on arrival pick the winner by R>=0.60 while holding U<=0.47, I, membrane_ok; freeze only after the
   bar-(a) ruling. Round-2 is the last weight-only round before the instrument question must resolve.
 - Trigger: 04:59 results wake (tune round 1 landed).
+
+## 2026-10-05 06:07 -- section 2 (tune): round-2 readout; round-3 lattice queued
+
+Round 2 landed (seed 7, same schedule; wall ~2300-2420 s each):
+
+| cell | w outc/rus/lhbinh/rmtg/snc | U (<=.47) | R (>=.60) | I | LHb U/R | mem | drop |
+|---|---|---|---|---|---|---|---|
+| r1 release_x3 | 30/27/24/20/12 | 0.3391 PASS | 0.5294 FAIL | PASS | 1.23x | True | 0.159 |
+| r2 brake_half | 30/9/12/20/6 | 0.4204 PASS | 0.5740 FAIL | PASS | 1.04x | True | 0.078 |
+| r3 relhalf | 30/27/24/20/6 | 0.4205 PASS | 0.5835 FAIL | PASS | 1.23x | True | 0.078 |
+| r4 lowrate | 15/18/18/40/12 | 0.3284 PASS | 0.5166 FAIL | PASS | 1.22x | True | 0.170 |
+
+All four: I PASS, membrane_ok True, eng(b) PASS. The delegate's mechanism holds: the release arm moved the
+LHb ratio 1.04 -> 1.23 (structural ceiling 1.25) and R +0.022 (r1 vs r1-round1), the terminal brake moved R
++0.067 (r2 vs r1-round1), and the combination r3 is best at 0.5835 -- miss 0.0165. LHb unrewarded rate
+63.4 Hz on all except r4's 37.2 Hz. void_floor_ceiling True everywhere (NEEDS [T1] open, Claude).
+
+**Round-3 lattice queued** (4 shape-checked lines at eb4730cce) -- r3 family, release 27/24 pinned, ladder the
+terminal brake with LHb->rmtg compensation so U margin and R peak decouple:
+- `tune_r5_rel_snc3_s7.json` -- 30/27/24/20/3 (terminal halved again)
+- `tune_r6_rel_snc4_s7.json` -- 30/27/24/20/4 (mid rung)
+- `tune_r7_rel_rmtg40_snc3_s7.json` -- 30/27/24/40/3 (deeper dip restored, peak still freed)
+- `tune_r8_ceiling_s7.json` -- 30/27/24/60/2 (ceiling probe: if R still <0.60 here, something other than the
+  brake caps the rewarded peak and the design goes back to the delegate)
+
+Prediction to check on arrival: r5/r7 R ~0.60-0.63 while U holds <=0.47; r8 R even higher. Winner freezes
+only after the bar-(a) ruling (NEEDS [T1], main 83efc766c).
+- Trigger: 06:02 results wake (round 2 landed).
