@@ -36,3 +36,21 @@
 - pool_queue.sh has add|list|depth only -- no hold/withdraw -- and moving/editing lines is forbidden to the driver. NEEDS ASK filed 02:52 for Claude to hold/withdraw and re-queue at a post-fix revision.
 - If they slip out before Claude acts: quarantine _load_bearing/_shards/s2p-R-tr-9ea7411/ (never gate on it) and rerun at the fixed revision.
 - The 12 word-role lines (s2p-R-wr) are NOT covered by the ruling and stay queued.
+
+## 2026-10-05 08:14 -- RULING transitive-engagement steps 2-3 executed (re-pin + corpus + dev shard)
+
+- Step O pin check: `git diff --quiet 9ea7411eb..83efc766c -- research/runners/transitive_spiking_reach_organ.py`
+  rc=0, organ UNCHANGED -> step O stands (no re-run).
+- Corpus step: `tools/before_you_build.sh` rc=0, recorded to corpus_checks_shared.jsonl.
+- Re-generation at the new pin `83efc766c` (main tip carrying the ruling; old pin 9ea7411eb): the HANDOFF's
+  own generator ran from the MAIN worktree because `agent_sync_branch research/transitive-spiking-reach`
+  REFUSED -- gates flag an uncited measurement in main's
+  `research/findings/2026-10-05-iw2-transitive-chat-default-on-flip-validated-PROVISIONAL.md` (a finding edit,
+  section-2 reserved; branch unchanged, no --no-verify). Generated `docs/drafts/transitive-spiking-reach/jobs/R_83efc76.txt`
+  = 12 lines, tag `s2p-R-tr-83efc76`, OP=0 (carried from the old selection), plus `Rdev7_83efc76.txt` = 2 dev-seed
+  lines (seed 7 capability + ctl).
+- Queue order per the ruling: corpus first (done), then ONE dev-seed R shard (the s7 capability line) queued
+  BEFORE the 12; on its result check the lesion arm shows `transitive_trace.lesioned` true with no error
+  (packet checklist item 4), then queue the 12.
+- word-role-parse lines: untouched, still queued (ruling).
+- PINS.tsv gains a `P2` row at `83efc766c` (the original `P` row stays for the old pin).
