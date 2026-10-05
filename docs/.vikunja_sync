@@ -243,3 +243,10 @@ Added 4 roadmap tasks for "prove who owns the computation" (host-decision share,
 ## 2026-10-02  cloud Claude session 3: NOT reconciled here (no Vikunja access from the cloud; the board is Hermes's). Summary docs synced for the 10-01/02 landings; Hermes reconciles the board: the iw2 chat-faculty task (step R PASS, B/F pending), sleep transitive inference (method NO-GO, next method), and new tasks for T18-T22.
 ## 2026-10-02  local-model board reconcile (marker assignment 10-02 + T5 landing): set-desc #141 (iw2 release step R PASS, B/F pending, flip waves 1-4 draining), #232 (T18 spiking false-belief witness gate landed PROVISIONAL, two refuters upheld it, confirm+merge pending), #240 (sleep transitive 6-seed UNDEFINED - the finding beats the marker's NO-GO wording; next-method call open), #237 (step-2 host-share baselines BASELINE-VALID + step-3 BG live-seam NO-GO on G4 latch threshold; NEEDS #5 and #8). T19/T20/T22 left off the board deliberately: in-flight gates with no verdict yet (runbook + GAP_CLOSURE carry them).
 ## 2026-10-04  cloud Claude session 6: NOT reconciled here (no Vikunja access from the cloud; the board is Hermes's). Summary docs synced for the session-6 landings (Stage-1 attempt 1 not passed with C4 void, C2 PASS narrowed, Stage-1 host share, fb-spiking-witness read-out PASS PARTIAL, BG seam NO-GO, ca3 UNDEFINED). Hermes reconciles the board from runbook RULING board-session6.
+## 2026-10-05  T2 section 11 board reconcile (iw2 flips validated): set-desc #232 (false-belief-chat flip
+on-by-default at F=1fb805e, provisional — R 6/6, B 1 B1 drop A-excused, F1 6/6, F2/F3 IDENTICAL; stage-1
+PARTIAL until T18; witness-gate confirm+merge still owed). transitive-chat and neural-selfid flips recorded in
+GAP_CLOSURE + their PROVISIONAL findings (runbook RULING iw2-stage1-credit: each counts FULLY only when its
+packet passes O and R and T21 keeps the path default — boards #143/#209 already carry those arcs; no new
+tasks needed). deep-research-at-wall cleared: local record (corpus check logged) + external source recorded
+(MoE gate-vs-expert error attribution; MiCRo arXiv:2506.13331).
