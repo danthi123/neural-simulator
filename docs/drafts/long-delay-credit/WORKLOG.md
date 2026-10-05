@@ -357,3 +357,28 @@ terminal brake with LHb->rmtg compensation so U margin and R peak decouple:
 Prediction to check on arrival: r5/r7 R ~0.60-0.63 while U holds <=0.47; r8 R even higher. Winner freezes
 only after the bar-(a) ruling (NEEDS [T1], main 83efc766c).
 - Trigger: 06:02 results wake (round 2 landed).
+
+## 2026-10-05 07:04 -- section 2 (tune): round-3 readout -- r5 PASSES all four bars; freeze still waits on NEEDS [T1]
+
+Round 3 landed (seed 7, same schedule):
+
+| cell | w outc/rus/lhbinh/rmtg/snc | U (<=.47) | R (>=.60) | I | LHb U/R | mem | bars | void | drop |
+|---|---|---|---|---|---|---|---|---|---|
+| r5 rel+snc3 | 30/27/24/20/3 | 0.4596 PASS | 0.6120 PASS | PASS | 1.23x | True | ALL PASS | False | 0.0386 |
+| r6 rel+snc4 | 30/27/24/20/4 | 0.4466 PASS | 0.6018 PASS | PASS | 1.23x | True | ALL PASS | True | 0.0516 |
+| r7 rel+rmtg40+snc3 | 30/27/24/40/3 | 0.4307 PASS | 0.5917 FAIL | PASS | 1.23x | True | FAIL | True | 0.0675 |
+| r8 ceiling rmtg60+snc2 | 30/27/24/60/2 | 0.4408 PASS | 0.5986 FAIL | PASS | 1.23x | True | FAIL | True | 0.0574 |
+
+**`tune_r5_rel_snc3_s7.json` (30/27/24/20/3) is the freeze candidate**: U, R, I, membrane_ok all PASS,
+engagement (b) PASS (drop 0.0386 >= 0.02), and it is the only round-1..3 cell with
+`void_floor_ceiling: False` -- the others (route-off included) saturate the D2 selector and void. r6 also
+passes the numeric bars but voids. The round-3 prediction held (r5 R 0.612 in the predicted 0.60-0.63).
+
+Ceiling-probe reading: r7/r8 (stronger LHb->rmtg compensation) LOSE R (0.5917/0.5986) despite the weaker
+terminal -- the rewarded peak is capped by the post-pulse LHb rebound acting through the rmtg coupling, so
+more compensation is strictly worse once the terminal is low; r5 sits at the balance point.
+
+FREEZE remains blocked: engagement (a) is structurally unreachable (NEEDS [T1], main `83efc766c`), so no
+12-seed grid lines are queued -- constants are not frozen. Records for rounds 1-3 stay on S until the
+freeze commit (they are dev tuning, not evidence).
+- Trigger: 07:01 results wake (round 3 landed).
