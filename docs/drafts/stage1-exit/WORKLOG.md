@@ -128,3 +128,24 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   lived (42 lines) with out-dir _stage1_exit/gate_c3rerun/, canary one line
   first, queue the rest with #checked naming AMENDMENT-A1, then score and
   RESULT + NEEDS [s1-c3-rerun].
+
+## 2026-10-05 13:05 EDT - s1-c3-rerun: A1.2 dev check PASSED, 42 gate lines emitted, canary launched
+
+- Both dev_c3/s7 shards landed (12:56). lesion_recall: patch.calls=3
+  (lesion_lived_recall engaged; calls_total=10), p_wolf_bite answers
+  "I don't know about that." abstained=True (not apple), c_dog_chase still
+  names cat. intact_a answers "the wolf bites the apple" (capability
+  present). All three A1.2 required criteria PASS; no STOP.
+- Emitted with --emit-pool-jobs 7851dd220 --seeds 42,43,44,100,101,102
+  (204 lines), kept the 42 --group lived (7 arms x 6 seeds), out-dir
+  rewritten gate/ -> gate_c3rerun/ per A1.2. Lines at
+  /opt/data/cache/scratch/s1c3_gate_lines.tsv (cmd<TAB>record).
+- First gate-line add refused: no pool canary record for
+  (research.runners.stage1_exit_gate, 7851dd220). Launched
+  bash tools/pool_canary.sh run pool40 '<seed42 lesion_recall line>'
+  --wait-s 5400 (pool40 holds the revision; verified over ssh). Known
+  launch-hang defect NEEDS [pool-canary]: if it exits 3 while the job
+  runs, poll the status file and record the verdict manually.
+- Next: on canary PASS queue the remaining 41 with #checked naming
+  AMENDMENT-A1; score gate_c3rerun after all 42 land; RESULT + NEEDS
+  [s1-c3-rerun].
