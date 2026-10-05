@@ -29,7 +29,7 @@ from __future__ import annotations
 from tools.lab import lever
 
 # tools/integration_wave2_flip.py comments this line out when the packet flips (the row then joins the headline set).
-REQUIRED_ENV = {"BRAIN_NEURAL_SELFID": "1"}
+# REQUIRED_ENV lifted by the iw2 flip (tools/integration_wave2_flip.py): REQUIRED_ENV = {"BRAIN_NEURAL_SELFID": "1"}
 
 EXTRA_TURNS = [
     ("iw2si_use", "what do you use?", "iw2si", True, None, False),

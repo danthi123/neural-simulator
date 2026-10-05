@@ -4,7 +4,7 @@
 # shard tag. Refuses if a named tag is missing (nothing landed yet).
 #   bash research/packets/integration-wave2/copy_results.sh <PIN7> <tag> [<tag> ...]
 set -euo pipefail
-P=/home/dant123/Projects/sim
+P="${RESULTS_P:-/home/dant123/Projects/sim}"   # override on other hosts: RESULTS_P=/home/dant123/Projects/neural-simulator
 W="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 PIN7="${1:?pin7}"; shift
 d=research/findings/raw/_iw2/identity/$PIN7

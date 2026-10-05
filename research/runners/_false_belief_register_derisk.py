@@ -134,7 +134,7 @@ def _gated_write_projection(pre_idx, post_idx, weight, trans_gate):
 
 # ── build the one-brain bridge (world + belief[other] + self, each a GNW single-content attractor store) ─────
 def build_tom_bridge(seed: int = 42, attractor_weight: float = DEFAULT_ATTRACTOR_WEIGHT,
-                     w_write: float = W_WRITE):
+                     w_write: float = W_WRITE, belief_attractor_weight=None):
     """One `SimulationBridge`: three belief stores of the self-schema meta-schema class -- `world` (reality),
     `belief` (agent X, witnessing-gated), `self` (system, always-witnessing). The OTHER-LESION is a RUNTIME
     manipulation (witnessing gate forced open) on this same intact bridge, so the store is genuinely intact and the
@@ -190,7 +190,8 @@ def build_tom_bridge(seed: int = 42, attractor_weight: float = DEFAULT_ATTRACTOR
     union = dict(rm.build_wiring_plan(seed=int(seed)))
     for k in range(K_LOC):
         union[f"loop_world_{k}"] = _build_assembly_loop_population(world_m[k], float(attractor_weight))
-        union[f"loop_belief_{k}"] = _build_assembly_loop_population(belief_m[k], float(attractor_weight))
+        union[f"loop_belief_{k}"] = _build_assembly_loop_population(
+            belief_m[k], float(attractor_weight if belief_attractor_weight is None else belief_attractor_weight))
         union[f"loop_self_{k}"] = _build_assembly_loop_population(self_m[k], float(attractor_weight))
         union[f"write_belief_{k}"] = _gated_write_projection(world_m[k], belief_m[k], w_write, "witness_other")
         union[f"write_self_{k}"] = _gated_write_projection(world_m[k], self_m[k], w_write, "witness_self")

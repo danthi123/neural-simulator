@@ -1,0 +1,195 @@
+From 54d84ed6030f588da01f71f046464860a56a5070 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 5 Oct 2026 06:01:56 +0000
+Subject: [PATCH] fix(iw1 scorer): R/B/A verdicts carry the Verdict
+ preconditions block (RULING iw1-R-pre)
+
+Port of tools/iw2_score.py's _earn (iw2 shared prereg Amendment 2) to
+tools/iw1_score.py: every R, B and A verdict now travels with what earned it,
+so the verdict-preconditions gate accepts the iw1 R files. Same decision logic;
+a PASS/FAIL whose precondition fails reads UNDEFINED, and a vacuous A is never
+a PASS. Pinned by tests/test_iw1_score_earn.py.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01YFsTogbFUHqkhjUeERc6a5
+---
+ tests/test_iw1_score_earn.py | 44 +++++++++++++++++++++
+ tools/iw1_score.py           | 75 +++++++++++++++++++++++++++++-------
+ 2 files changed, 106 insertions(+), 13 deletions(-)
+ create mode 100644 tests/test_iw1_score_earn.py
+
+diff --git a/tests/test_iw1_score_earn.py b/tests/test_iw1_score_earn.py
+new file mode 100644
+index 00000000..934e03c6
+--- /dev/null
++++ b/tests/test_iw1_score_earn.py
+@@ -0,0 +1,44 @@
++"""RULING iw1-R-pre (cloud Claude session 7, 2026-10-05): tools/iw1_score.py carries the tools.verdict.Verdict
++preconditions block beside every R/B/A verdict, ported from tools/iw2_score.py, so the verdict-preconditions gate
++accepts the iw1 R files Hermes staged. A PASS rests on every cell being DEFINED; a vacuous A is never a PASS."""
++import json
++import os
++import sys
++
++import pytest
++
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
++import iw1_score as S  # noqa: E402
++from tools.gates import verdict_preconditions as G  # noqa: E402
++
++
++def _cells(monkeypatch, states):
++    it = iter(states)
++    monkeypatch.setattr(S, "_cell_std", lambda *a, **k: next(it))
++
++
++def test_R_pass_carries_its_earned_block(monkeypatch, tmp_path):
++    _cells(monkeypatch, [("DEFINED", "regressed", {})] * len(S.SEEDS))
++    res, code = S.score_R("d6-hebbian-write", "t", "p")
++    assert (res["verdict"], code) == ("PASS", S.PASS)
++    assert res["preconditions"] and all(p["ok"] for p in res["preconditions"])
++    out = tmp_path / "R_d6.json"
++    out.write_text(json.dumps(res))
++    assert G.check([str(out)]) == []
++
++
++def test_R_with_an_undefined_cell_is_undefined_not_fail(monkeypatch):
++    _cells(monkeypatch, [("DEFINED", "regressed", {})] * (len(S.SEEDS) - 1) + [("UNDEFINED:x", None, {})])
++    res, code = S.score_R("d6-hebbian-write", "t", "p")
++    assert (res["verdict"], code) == ("UNDEFINED", S.UNDEF)
++
++
++def test_R_fail_rests_on_defined_cells(monkeypatch):
++    _cells(monkeypatch, [("DEFINED", "regressed", {})] * (len(S.SEEDS) - 1) + [("DEFINED", "pass", {})])
++    res, code = S.score_R("d6-hebbian-write", "t", "p")
++    assert (res["verdict"], code) == ("FAIL", S.FAIL) and all(p["ok"] for p in res["preconditions"])
++
++
++def test_A_with_nothing_to_attribute_is_never_a_pass():
++    res, code = S.score_A({"regressions": [], "undefined": []}, "t", "p")
++    assert res["verdict"] == "UNDEFINED" and res.get("verdict_unearned") == "PASS" and code == S.UNDEF
+diff --git a/tools/iw1_score.py b/tools/iw1_score.py
+index f5bc2743..73755713 100644
+--- a/tools/iw1_score.py
++++ b/tools/iw1_score.py
+@@ -33,6 +33,7 @@ import sys
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ sys.path.insert(0, HERE)
+ import b2d_score as B  # noqa: E402
++from verdict import UNDEFINED as V_UNDEFINED, Verdict  # noqa: E402
+ 
+ SEEDS = [42, 43, 44, 100, 101, 102]
+ BASE = "research/findings/raw/_load_bearing/_shards"
+@@ -50,6 +51,28 @@ PACKETS = {
+ PASS, FAIL, UNDEF = 0, 1, 3
+ 
+ 
++def _earn(res, label, checks):
++    """Attach the `preconditions` block that earned `res["verdict"]` (tools.verdict.Verdict), ported verbatim from
++    tools/iw2_score.py (shared prereg Amendment 2 there; RULING iw1-R-pre here, cloud Claude session 7). `checks` is
++    a list of (name, measured, expect) that must hold for THIS verdict: for a PASS, every condition whose failure the
++    step reads as UNDEFINED; for a FAIL, that the evidence it rests on is DEFINED. The step's own logic decides
++    PASS/FAIL/UNDEFINED as registered; the block only makes the artifact carry what earned it (gate
++    verdict-preconditions). If a check does not hold under an asserted PASS/FAIL, the verdict reads UNDEFINED.
++    Returns the exit code for the final verdict."""
++    v = Verdict(label)
++    for name, measured, expect in checks:
++        v.require(name, measured, expect=expect)
++    if not checks:
++        v.require("the step registered a precondition", None)
++    d = v.decide(go=(res["verdict"] == "PASS"), verbose=False)
++    if res["verdict"] in ("PASS", "FAIL") and d["status"] == V_UNDEFINED:
++        res["verdict_unearned"] = res["verdict"]
++        res["verdict"] = "UNDEFINED"
++    res["preconditions"] = d["preconditions"]
++    res["undefined_reasons"] = d["undefined_reasons"]
++    return {"PASS": PASS, "FAIL": FAIL}.get(res["verdict"], UNDEF)
++
++
+ def _allowing(allowed):
+     """A sidecar_fails that tolerates BRAIN_* keys inside `allowed` (and still fails on any other BRAIN_* key)."""
+     orig = B.sidecar_fails
+@@ -151,13 +174,17 @@ def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
+     n_def = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass"))
+     n_lb = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] == "regressed")
+     if n_def < len(seeds):
+-        verdict, code = "UNDEFINED", UNDEF
++        verdict = "UNDEFINED"
+     elif n_lb == len(seeds):
+-        verdict, code = "PASS", PASS
++        verdict = "PASS"
+     else:
+-        verdict, code = "FAIL", FAIL
+-    return {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
+-            "n_reply_load_bearing": n_lb, "verdict": verdict}, code
++        verdict = "FAIL"
++    res = {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
++           "n_reply_load_bearing": n_lb, "verdict": verdict}
++    # PASS and FAIL both rest on every cell being DEFINED (a not-DEFINED cell already reads UNDEFINED above)
++    checks = [("capability cells DEFINED on %d/%d seeds" % (len(seeds), len(seeds)), n_def, len(seeds))]
++    code = _earn(res, "iw1 step R %s at %s" % (packet, pin), checks)
++    return res, code
+ 
+ 
+ ALL_FLAGS = sorted({f for p in PACKETS.values() for f in p["flags"] + p["lesion_flags"]})
+@@ -250,11 +277,21 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
+     out["new_rows_s2_at_flip"] = rows_F
+     out["regressions"], out["undefined"] = regressions, undefined
+     if regressions:
+-        out["verdict"], code = "FAIL", FAIL
++        out["verdict"] = "FAIL"
+     elif undefined:
+-        out["verdict"], code = "UNDEFINED", UNDEF
++        out["verdict"] = "UNDEFINED"
+     else:
+-        out["verdict"], code = "PASS", PASS
++        out["verdict"] = "PASS"
++    checks = [("%s scorer precondition: %s" % (name, p["name"]), p["ok"], True)
++              for name, r in (("base", b), ("flip", f)) for p in r["preconditions"]]
++    if out["verdict"] == "FAIL":
++        # a regression is recorded only between two DEFINED counts; undefined criteria elsewhere stay listed and
++        # never turn the FAIL into a pass (step A reads them)
++        checks.append(("every regression compares DEFINED counts",
++                       all(isinstance(r["reference"], int) and isinstance(r["flip"], int) for r in regressions), True))
++    else:
++        checks.append(("no criterion UNDEFINED (B1 cells, B2 completeness, F1 rows)", len(undefined), 0))
++    code = _earn(out, "iw1 step B %s at %s" % (",".join(flipped), flip_pin), checks)
+     return out, code
+ 
+ 
+@@ -286,15 +323,27 @@ def score_A(b_result, tag, pin, base=BASE, seeds=SEEDS):
+         verdicts.append(v)
+     b_undefined = list(b_result.get("undefined") or [])
+     if any(v in ("flip-caused", "FAIL") for v in verdicts):
+-        verdict, code = "FAIL", FAIL
++        verdict = "FAIL"
+     elif b_undefined or any(v == "UNDEFINED" for v in verdicts):
+         # adversarial review 2026-09-29: excusing every drop says nothing about B's own not-DEFINED criteria (B2
+         # completeness, an undefined flip cell): A can never turn a B that was also UNDEFINED into a pass
+-        verdict, code = "UNDEFINED", UNDEF
++        verdict = "UNDEFINED"
++    else:
++        verdict = "PASS"
++    res = {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined, "verdict": verdict}
++    # an A with nothing to attribute is vacuous, never a PASS
++    checks = [("the B result carries a regression to attribute", len(b_result.get("regressions") or []),
++               lambda n: n > 0)]
++    if verdict == "FAIL":
++        # flip-caused needs a DEFINED off run; F1-not-excusable is B's own DEFINED regression
++        checks.append(("every failing row rests on DEFINED cells", all(
++            r["verdict"] != "UNDEFINED" for r in rows.values() if r["verdict"] in ("flip-caused", "F1-not-excusable")),
++            True))
+     else:
+-        verdict, code = "PASS", PASS
+-    return {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined,
+-            "verdict": verdict}, code
++        checks.append(("B carried no UNDEFINED criterion", len(b_undefined), 0))
++        checks.append(("every attributed row DEFINED", sum(1 for v in verdicts if v == "UNDEFINED"), 0))
++    code = _earn(res, "iw1 step A %s at %s" % (tag, pin), checks)
++    return res, code
+ 
+ 
+ def main(argv=None):
+-- 
+2.43.0
+

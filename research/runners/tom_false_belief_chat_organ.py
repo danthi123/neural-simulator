@@ -68,8 +68,12 @@ class FalseBeliefChatOrgan:
     `observe_event` writes and `query` reads, any number of times, in any order a conversation narrates them."""
 
     def __init__(self, seed: int = _DEFAULT_SEED, *, helper_pa: float = _HELPER_PA,
-                 drive_steps: Optional[int] = _DRIVE_STEPS, w_write: float = _W_WRITE):
+                 drive_steps: Optional[int] = _DRIVE_STEPS, w_write: float = _W_WRITE,
+                 belief_attractor_weight: Optional[float] = None):
         self.seed = int(seed)
+        # STORE LESION (opt-in, session 7, 2026-10-05): the belief store's own assembly self-recurrence weight; None
+        # builds the GO'd bridge unchanged. 0.0 cuts only the belief attractor (world and self stores untouched).
+        self.belief_attractor_weight = belief_attractor_weight
         self.helper_pa = float(helper_pa)
         self.drive_steps = int(drive_steps) if drive_steps is not None else int(_FB.WRITE_DRIVE_STEPS)
         self.w_write = float(w_write)
@@ -113,7 +117,8 @@ class FalseBeliefChatOrgan:
     def _ensure_bridge(self):
         if self._bridge is None:
             self._bridge, self._xp, self._idx, self._snap = self._isolated(
-                lambda: _FB.build_tom_bridge(seed=self.seed, w_write=self.w_write))
+                lambda: _FB.build_tom_bridge(seed=self.seed, w_write=self.w_write,
+                                             belief_attractor_weight=self.belief_attractor_weight))
 
     # ── WRITE: place / move the object to `loc` (0..K_LOC-1), `witnessed` decided by the CALLER (the host
     #    presence tracker). Mirrors `_false_belief_register_derisk._run_tom_trial`'s inner `_write_event`

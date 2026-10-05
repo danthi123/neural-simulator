@@ -338,3 +338,49 @@ def test_run_refuses_an_unprovisioned_revision(tmp_path):
     res = _canary(tmp_path, "run", "pool41", _run_line("ok"), **env)
     assert res.returncode == 3
     assert _records(tmp_path) == []
+
+
+# ------------------------------------------------------------------------- `run auto` (2026-10-05)
+
+AUTO_STUB_SSH = r"""#!/usr/bin/env bash
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -F|-o|-i|-p|-l) shift 2 ;;
+    -*) shift ;;
+    *) break ;;
+  esac
+done
+host="$1"; shift
+cmd="$*"
+case "$cmd" in
+  *MemAvailable*) v="MEM_$host"; [ -n "${!v:-}" ] || exit 75; echo "${!v}"; exit 0 ;;
+  *derisk-pool/revisions/*) v="NOREV_$host"; [ -z "${!v:-}" ] || exit 1 ;;
+esac
+cd "$HOME" || exit 255
+exec bash -c "$cmd"
+"""
+
+
+def _auto_node(tmp_path, **mem):
+    rev, env = _fake_node(tmp_path)
+    (tmp_path / "bin" / "ssh").write_text(AUTO_STUB_SSH)
+    env.update(mem)
+    return rev, env
+
+
+def test_run_auto_picks_the_node_with_most_free_memory_that_holds_the_revision(tmp_path):
+    rev, env = _auto_node(tmp_path, POOL_NODES="pool41 pool40 pool42 wspool", MEM_pool41="9", MEM_pool40="12",
+                          MEM_pool42="20", NOREV_pool42="1")   # pool42 has more room but not the revision; wspool gaming
+    res = _canary(tmp_path, "run", "auto", _run_line("ok"), **env)
+    assert res.returncode == 0, res.stdout + res.stderr
+    assert "auto: picked pool40" in res.stderr
+    assert "pool42:no-revision" in res.stderr and "wspool:no-answer" in res.stderr
+    assert _records(tmp_path)[-1][3:5] == ["PASS", "pool40"]
+
+
+def test_run_auto_refuses_when_no_node_has_the_lines_memory_plus_margin(tmp_path):
+    rev, env = _auto_node(tmp_path, POOL_NODES="pool41 pool42", MEM_pool41="9", MEM_pool42="9")
+    res = _canary(tmp_path, "run", "auto", _run_line("ok") + "  #checked: canary test mem_gb=8", **env)
+    assert res.returncode == 3, res.stdout + res.stderr
+    assert "no pool node holds" in res.stderr
+    assert _records(tmp_path) == []

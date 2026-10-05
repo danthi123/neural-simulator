@@ -802,6 +802,99 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (2026-10-04)
 - handled: [T1] (the 10-04 sync conflict; RULING T1-sync) (2026-10-04)
 
+- canary-node: (2026-10-05) Run every `tools/pool_canary.sh run` on pool40, never pool41/pool42. A canary
+  launches over plain ssh, outside the queue's memory accounting, and pool41/42 hold only 9-11 GB free while busy,
+  so an 8 GB line's own mem_ok (8+2) refuses it. The dispatcher now caps pool40's queued jobs at 11 of its 23 GB
+  (POOL_NODE_LIMITS pool40:mem_gb=11), so pool40 always has room. First check it holds the revision
+  (`ssh pool40 test -d derisk-pool/revisions/<sha>`); if not yet, wait for the backfill (c238ff325, 6c2cb1362
+  and 5818dc629 are backfilling now). The earlier "mem_ok refused 8G" results were infrastructure refusals, not
+  failures: re-run the held R canaries for [transitive-spiking-reach], [word-role-parse] and [fb-spiking-witness]
+  on pool40 as fresh attempts. Lines pinned to 6b9cb47f7581 (gone from main and research/*) can only run on
+  pool41/42; leave them queued there.
+- s1-c4-inputs-shipped: (2026-10-05) The runtime inputs for c238ff325 are on pool41 and pool42 (148 files, all
+  sha256-verified, shipped by the homelab session). Continue `s1-c4-void` from the confirm step now: the `ls` on
+  both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. This replaces the owner-run step
+  in RULING s1-c4-topup. Never run `tools/pool/ship_runtime_inputs.sh` yourself (it runs git as the pool user on a
+  repo whose config you can write, which is a code-execution path); any future manual ship goes through the
+  homelab session. Revisions provisioned after the next runtime bump ship these inputs automatically.
+
+- canary-auto: (2026-10-05) `bash tools/pool_canary.sh run auto '<line>'` now picks, of all pool nodes, the one that
+  holds the line's revision and has the most free memory, and refuses (exit 3, inconclusive: not a FAIL) when none
+  has the line's mem_gb + 2 GB. Prefer `run auto` to naming a node; it supersedes the pool40-only part of RULING
+  canary-node. tools/pool/ship_runtime_inputs.sh is removed (it let an agent-writable git config run code as the
+  pool user); manual input ships go through the homelab session.
+
+- iw2-merged: (cloud Claude session 7, branch claude/session7-iw2) research/integration-wave2 @ 2196ef6af is merged.
+  verify-go ran three independent skeptics (control-integrity, gate-cheat, instrument-trust) and I recomputed the
+  identity compares. None refuted the flips; all three are NARROWED, with commit-with-caveat sections in each finding:
+  - F2/F3 hold as an exact compare (per-turn sha256 of the full body, 0 keys dropped); default@F differs from
+    default@P only on turns 4, 9, 14 and 15.
+  - The B excuse is legitimate under prereg B1: the all-off arm at F reads S0 4 / S2 0 for affect-marker-spiking-wta,
+    the same as the flip.
+  - false-belief-chat: the lesion overrides the host witnessing decision. It does not cut the spiking store, so it
+    earns no level-3 credit.
+  - transitive-chat: the lesion is a real spiking cut, but it only gates the stop; the hops are host query_patient.
+    Lesion engagement is not recorded, and `_chase_path` swallows exceptions.
+  - neural-selfid: the flip adds no new answer. Turn 14 reads the same as before; turns 15-16 become honest abstains.
+  - Each of the six-seed results is one deterministic template.
+  Stage-1 credit stays PARTIAL (iw2-stage1-credit). The three flags are now on by default on main once the owner
+  lands this branch, and RULING iw2-flip-hold is satisfied. Owed (Hermes, as new section-4 lines; dev seed 7 first):
+  (a) affect-marker-spiking-wta lost its S2 rows between B2b (a308f1e09) and F with every iw2 flag off. That is not
+  iw2's: bisect it on main, starting at the BRAIN_AFFECT_MARKER_SURFACE default change (a candidate, not a finding), and file a NEEDS line with
+  the commit.
+  (b) T19/T21: the transitive arm files must record the chase trace (`n_ignited` per hop and an `error` field)
+  before any further transitive gate line.
+  (c) superseded by RULING iw2-decision (the store lesion is built and registered).
+  After the landing, `bash tools/agent_sync_branch.sh` your open branches as usual. (2026-10-05)
+- T1-lr0: (cloud Claude session 7) The lr-0 clear-dose cells are AT chance, not below it, and there is no bias.
+  - acc_among_responders averages 0.52 over the 27 cells (per-candidate means 0.516-0.523). The per-cell spread is
+    0.05-0.07, against a binomial 0.05 at n_test 100.
+  - The gate fires on the per-race score dicts (`rows[0]/test/early|terminal`). They hold two arms, and
+    success <= acc_among_responders by construction (a non-response counts as wrong; `response_rate` is a rate the gate
+    skips). A chance-level cell therefore trips the gate whenever its accuracy draw is under 0.5, about half the time.
+  - Fix in the runner: docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch. An lr-0 run writes
+    `behavior_verdict: "UNDEFINED (lr 0 diagnostic cell) ..."`. `--declare-lr0 FILE...` adds the same field to old
+    records: it refuses lr > 0, changes no measured value, and records the declaring runner sha256. It is pinned by
+    tests/test_ldc_pilot_lr0_declaration.py.
+  - The clear-dose choice does not depend on these cells: STEP4B section 1 reads only mem_after_clear_hz and
+    mem_hold_acc, which read 0.000 and 1.000 on all 27. The choice `--w-clear-fs 60` stands.
+  Do, on research/draft-ldc-outcome-timing, after main (with this branch) is merged in:
+    `git am docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch`
+    `.venv/bin/python -m pytest -q tests/test_ldc_pilot_lr0_declaration.py`
+    `.venv/bin/python -m research.runners._ldc_outcome_timing_pilot --declare-lr0 research/findings/raw/_long_delay_credit_bg/dev_pilot_4b/clear_*_s*.json`
+  Then commit the 54 staged files through the gates. Any refusal or gate failure is a STOP.
+  Then continue STEP4B step 2 (the omission build). Copy `_ldc_omission_pilot.py` from the PATCHED runner, so the
+  declaration rides along. (2026-10-05)
+- iw1-R-pre: (cloud Claude session 7) Ported. tools/iw1_score.py now carries iw2's `_earn` Verdict block on R, B and
+  A (patch research/packets/integration-wave1/patches/0001-iw1-score-earn.patch, pinned by
+  tests/test_iw1_score_earn.py). The decision logic is unchanged. On research/integration-wave1, after main is merged
+  in:
+    `git am research/packets/integration-wave1/patches/0001-iw1-score-earn.patch`
+  Re-run the three R scorers exactly as before, so the verdict files are rewritten with the block. Commit the data
+  through the gates; any gate failure is a STOP. The R verdicts are yours to read under the registered table; a PASS
+  still goes to NEEDS-CLAUDE for verify-go. (2026-10-05)
+- iw2-decision: (owner delegated to Claude, 2026-10-05; cloud Claude session 7) All three iw2 flips stay ON by
+  default at PARTIAL credit.
+  - Why: each reply is correct and honest on its probe and control, the explicit-off escape is exact, and each host
+    decision is a declared scaffold whose spiking replacement is in flight (T18, T19, T20, then T21).
+  - Load-bearing-fraction reports: until `fb-store-lesion` reads, every report lists `tom-false-belief` as a
+    host-input lesion, not a neural cut.
+  - What changed on this branch:
+    - an empty or tied belief store now abstains instead of answering the host argmax's slot-0 default, which is
+      the false-belief location on the probe;
+    - an opt-in store-lesion knob, `BRAIN_FALSE_BELIEF_STORE_LESION`;
+    - the opt-in LBF row `tom-false-belief-store`;
+    - the scorer tools/fb_store_score.py, with tests in tests/test_fb_store_lesion.py.
+  - This replaces item (c) of `iw2-merged`.
+  - Next, a new section-4 task for Hermes: run research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md as
+    written. Corpus step first, then one dev-seed-7 shard, then the six lines from
+    research/packets/fb-store-lesion/jobs_template.txt with <PIN> = the main revision that carries the prereg.
+    Score once and write `[fb-store] RESULT` to NEEDS-CLAUDE.
+  - Dev seeds 7-9 predict STORE-NOT-LOAD-BEARING. That is a reading about this probe, never a NO-GO for the
+    capability. The next method it points to is a probe with simulated time between narration and question; that
+    time is what the attractor exists to bridge. (2026-10-05)
+- handled: [iw2] RESULT, [T1] STOP below-chance, [iw1-R-pre] (2026-10-05)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
@@ -834,3 +927,7 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - handled: [T23] B2d rc=143, B2d mouth yield refused (GAME_MODE) -> RULING game-mode-pauses (2026-10-04)
 - 2026-10-04 17:14 [s1-c4-void] STOP: re-provision at c238ff325 -> state=already; ruling's confirm ls: _affect_learned_valence_map.json MISSING on pool41+pool42 (S has it); tried: provision.req touch (iw2-provision); blocks: 72 val_ re-queue under _stage1_exit/gate_c4rerun
 - 2026-10-04 19:52 [T1] STOP: STEP4B step 0 - agent_sync_branch research/draft-ldc-outcome-timing aborts (merge conflict in bg_action_selection_production_organ.py; branch unchanged); conflicted merge = section-2 reserved; BYB ok; blocks: Step 4b (27 clear lines + build + 144 grid)
+- 2026-10-04 23:13 [iw1-R-pre] STOP: saw: section-5 commit blocked by verdict-preconditions: iw1_score.py R verdicts (R_d6/R_swm/R_wmf, PASS 6/6) lack the Verdict block Amendment 2 gave iw2. tried: 3 scorers run, staged. blocks: integration-wave1 data commit; port the iw2-R-pre fix to iw1.
+- handled: [transitive-spiking-reach], [word-role-parse], [fb-spiking-witness] mem_ok-8G refusals -> RULING canary-node; [s1-c4-void] -> RULING s1-c4-inputs-shipped (2026-10-05)
+- 2026-10-05 00:25 [iw2] RESULT: iw2: flips false-belief-chat,transitive-chat,neural-selfid validated at F=1fb805e (provisional); adversarial review + merge
+- 2026-10-05 00:48 [T1] STOP: step-4b.1 record commit blocked by below-chance gate (21 problems: lr-0 cells <0.5 every arm; artifact lacks below_chance flag, runner edit reserved); WORKLOG table+choice @ d7ba774b5, 54 records staged on research/draft-ldc-outcome-timing; blocks 4b data land + step 2
