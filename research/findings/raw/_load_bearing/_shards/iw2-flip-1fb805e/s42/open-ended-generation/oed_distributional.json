@@ -1,0 +1,39 @@
+{
+  "faculty": "open-ended-generation",
+  "turn": "oe_distributional (_followon2 world, no webapp turn)",
+  "kind": "neural-lesion",
+  "flag": "ablate_likelihood(SpikingWTASampler)",
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "load_bearing": true,
+  "verdict": "regressed",
+  "change_kind": "distributional",
+  "diffs": [
+    {
+      "field": "open_ended.plausible_fraction_of_novel",
+      "on": 0.3421487603305785,
+      "off": 0.005025125628140704
+    }
+  ],
+  "treatment_diffs": 0.3371236347024378,
+  "control_diffs": 0.0,
+  "attributable_fraction": 1.0,
+  "null_control_clean": true,
+  "lesion_reproduced": true,
+  "flag_resolves": true,
+  "measurement_ruler": "distributional",
+  "note": "LB_OPEN_ENDED_DISTRIB_PROBE: scored by the _followon2 draw-many plausible-fraction-of-novel lesion (6-seed GO), NOT the single-turn field-diff -- the single-turn instrument is the wrong ruler for this faculty (finding 2026-09-21-open-ended-generation-single-turn-not-load-bearing).",
+  "distributional": {
+    "intact_a_plausible_fraction": 0.3421487603305785,
+    "intact_a_n_accepted": 30,
+    "intact_a_n_novel": 605,
+    "intact_b_plausible_fraction": 0.3421487603305785,
+    "intact_b_n_accepted": 30,
+    "intact_b_n_novel": 605,
+    "lesion_plausible_fraction": 0.005025125628140704,
+    "lesion_n_accepted": 3,
+    "lesion_n_novel": 796,
+    "n_attempts": 800,
+    "seed": 42
+  }
+}

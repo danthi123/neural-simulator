@@ -13,7 +13,35 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-04 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-05 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-05. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
+pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3 decisions into the substrate.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `iw2-merged`, `T1-lr0` and
+`iw1-R-pre`, then section 4 in order.
+
+**Landed 2026-10-05 (cloud Claude session 7, branch claude/session7-iw2):**
+- **iw2 false-belief-chat: on by default at F `1fb805e9e`.** R 6/6, control 6/6; F1 6/6; F2/F3 IDENTICAL (exact
+  per-turn sha256, seed 7); B's one drop (affect-marker-spiking-wta S2 4 -> 0) excused by the all-off arm (S2 0).
+  NARROWED: the lesion overrides the host witnessing decision, not the spiking store. PARTIAL
+  (`research/findings/2026-10-05-iw2-false-belief-chat-default-on-flip-validated-PROVISIONAL.md`).
+- **iw2 transitive-chat: on by default at F.** R 6/6, F1 6/6, F2/F3 IDENTICAL. NARROWED: the spiking ignition gates
+  only the stop; the hops are host `query_patient`, and lesion engagement is not recorded. PARTIAL
+  (`research/findings/2026-10-05-iw2-transitive-chat-default-on-flip-validated-PROVISIONAL.md`).
+- **iw2 neural-selfid: on by default at F.** R 6/6 inside the flag-ON configuration, F1 6/6, F2/F3 IDENTICAL.
+  NARROWED: no new answer; turns 15-16 become honest abstains. PARTIAL
+  (`research/findings/2026-10-05-iw2-neural-selfid-default-on-flip-validated-PROVISIONAL.md`).
+- **Owed:** bisect the affect-marker-spiking-wta S2 loss between B2b and F on main (not iw2's); record the chase
+  trace in the transitive arms (T19/T21); a store-lesion arm for false belief (T18).
+- **T1 (long-delay credit) Step 4b.1:** the lr-0 clear-dose cells sit AT chance (mean accuracy 0.52 over 27 cells),
+  not below it; the runner now declares their behaviour UNDEFINED (RULING `T1-lr0`). The clear dose `--w-clear-fs 60`
+  stands; next is STEP4B step 2, the omission build.
+- **iw1-R-pre:** the iw1 scorer now carries the Verdict preconditions block (patch; RULING `iw1-R-pre`).
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-04 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-04. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not

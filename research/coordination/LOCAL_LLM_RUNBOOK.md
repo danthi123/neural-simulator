@@ -824,6 +824,57 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   canary-node. tools/pool/ship_runtime_inputs.sh is removed (it let an agent-writable git config run code as the
   pool user); manual input ships go through the homelab session.
 
+- iw2-merged: (cloud Claude session 7, branch claude/session7-iw2) research/integration-wave2 @ 2196ef6af is merged.
+  verify-go ran three independent skeptics (control-integrity, gate-cheat, instrument-trust) and I recomputed the
+  identity compares. None refuted the flips; all three are NARROWED, with commit-with-caveat sections in each finding:
+  - F2/F3 hold as an exact compare (per-turn sha256 of the full body, 0 keys dropped); default@F differs from
+    default@P only on turns 4, 9, 14 and 15.
+  - The B excuse is legitimate under prereg B1: the all-off arm at F reads S0 4 / S2 0 for affect-marker-spiking-wta,
+    the same as the flip.
+  - false-belief-chat: the lesion overrides the host witnessing decision. It does not cut the spiking store, so it
+    earns no level-3 credit.
+  - transitive-chat: the lesion is a real spiking cut, but it only gates the stop; the hops are host query_patient.
+    Lesion engagement is not recorded, and `_chase_path` swallows exceptions.
+  - neural-selfid: the flip adds no new answer. Turn 14 reads the same as before; turns 15-16 become honest abstains.
+  - Each of the six-seed results is one deterministic template.
+  Stage-1 credit stays PARTIAL (iw2-stage1-credit). The three flags are now on by default on main once the owner
+  lands this branch, and RULING iw2-flip-hold is satisfied. Owed (Hermes, as new section-4 lines; dev seed 7 first):
+  (a) affect-marker-spiking-wta lost its S2 rows between B2b (a308f1e09) and F with every iw2 flag off. That is not
+  iw2's: bisect it on main, starting at the BRAIN_AFFECT_MARKER_SURFACE default change (a candidate, not a finding), and file a NEEDS line with
+  the commit.
+  (b) T19/T21: the transitive arm files must record the chase trace (`n_ignited` per hop and an `error` field)
+  before any further transitive gate line.
+  (c) T18: add a store-lesion arm (cut the belief store with the witnessing gate intact) beside the witness work.
+  After the landing, `bash tools/agent_sync_branch.sh` your open branches as usual. (2026-10-05)
+- T1-lr0: (cloud Claude session 7) The lr-0 clear-dose cells are AT chance, not below it, and there is no bias.
+  - acc_among_responders averages 0.52 over the 27 cells (per-candidate means 0.516-0.523). The per-cell spread is
+    0.05-0.07, against a binomial 0.05 at n_test 100.
+  - The gate fires on the per-race score dicts (`rows[0]/test/early|terminal`). They hold two arms, and
+    success <= acc_among_responders by construction (a non-response counts as wrong; `response_rate` is a rate the gate
+    skips). A chance-level cell therefore trips the gate whenever its accuracy draw is under 0.5, about half the time.
+  - Fix in the runner: docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch. An lr-0 run writes
+    `behavior_verdict: "UNDEFINED (lr 0 diagnostic cell) ..."`. `--declare-lr0 FILE...` adds the same field to old
+    records: it refuses lr > 0, changes no measured value, and records the declaring runner sha256. It is pinned by
+    tests/test_ldc_pilot_lr0_declaration.py.
+  - The clear-dose choice does not depend on these cells: STEP4B section 1 reads only mem_after_clear_hz and
+    mem_hold_acc, which read 0.000 and 1.000 on all 27. The choice `--w-clear-fs 60` stands.
+  Do, on research/draft-ldc-outcome-timing, after main (with this branch) is merged in:
+    `git am docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch`
+    `.venv/bin/python -m pytest -q tests/test_ldc_pilot_lr0_declaration.py`
+    `.venv/bin/python -m research.runners._ldc_outcome_timing_pilot --declare-lr0 research/findings/raw/_long_delay_credit_bg/dev_pilot_4b/clear_*_s*.json`
+  Then commit the 54 staged files through the gates. Any refusal or gate failure is a STOP.
+  Then continue STEP4B step 2 (the omission build). Copy `_ldc_omission_pilot.py` from the PATCHED runner, so the
+  declaration rides along. (2026-10-05)
+- iw1-R-pre: (cloud Claude session 7) Ported. tools/iw1_score.py now carries iw2's `_earn` Verdict block on R, B and
+  A (patch research/packets/integration-wave1/patches/0001-iw1-score-earn.patch, pinned by
+  tests/test_iw1_score_earn.py). The decision logic is unchanged. On research/integration-wave1, after main is merged
+  in:
+    `git am research/packets/integration-wave1/patches/0001-iw1-score-earn.patch`
+  Re-run the three R scorers exactly as before, so the verdict files are rewritten with the block. Commit the data
+  through the gates; any gate failure is a STOP. The R verdicts are yours to read under the registered table; a PASS
+  still goes to NEEDS-CLAUDE for verify-go. (2026-10-05)
+- handled: [iw2] RESULT, [T1] STOP below-chance, [iw1-R-pre] (2026-10-05)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):

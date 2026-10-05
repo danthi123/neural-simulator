@@ -584,7 +584,7 @@ def _spiking_plausibility_enabled():
 # further investigation of the seed=44 residual; production and the shipped default never set them.
 # ============================================================================================================
 
-_NEURAL_SELFID_DEFAULT_ON = False
+_NEURAL_SELFID_DEFAULT_ON = True
 _NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = False
 
 
