@@ -154,3 +154,16 @@ but the discriminating read-out is `value_discrimination`. Flagged in PREREG §8
 - Next: when the 27 records land, read mem_after_clear (A, B), hold, leak (cue ITI
   vs baseline) and behavior, write the 27-row table and the weakest-knob choice
   here, then STEP4B step 2 (omission build).
+
+## 2026-10-04 23:30 -- step 1 status: 18/27 landed, 10 in flight on pool40, nothing lost
+
+- Records at S: cpa1200 9/9, cms500 8/9, wfs60 1/9 = 18/27.
+- Probed every pool node over ssh: the 10 missing are NOT dead - wfs60 s7-s13,
+  s15 and cms500 s15 are still RUNNING on pool40 (3 procs each, correct
+  revision 50f52c23e, mem_gb=2 per line). queue depth for dev_pilot_4b = 0
+  (all 27 dispatched; the 21:04 add reported ok=27 fail=0).
+- clear_wfs60_s14.json finished on pool40 and was stranded there: rsync is
+  absent on S so pool_sync.sh --dry-run transfers nothing; pulled it by ssh
+  pipe (pull-only) with its .prov.json, JSON parses (8560 bytes).
+- No requeue: the runs are healthy and in flight. The 27-row table + weakest-
+  knob choice waits for 27/27 (next wake after the in-flight lines land).
