@@ -167,3 +167,14 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - Next: when all 42 land, --aggregate gate_c3rerun --seeds
   42,43,44,100,101,102; apply the A1.2 scorer rule; RESULT + NEEDS
   [s1-c3-rerun].
+
+## 2026-10-05 16:10 EDT - s1-c3 mid-flight sanity at 10/42: seed-42 selective double-dissociation HOLDS
+- Scanned the 10 landed gate_c3rerun results: error=None everywhere, pythonhashseed_ok, corpus present.
+- `lesion_episodic` shows patch=null BY DESIGN (env-var lesion BRAIN_EPISODIC_LESION=1, stage1_exit_gate.py:214)
+  -- an early patch.calls==0 alarm was my wrong assumption, not a defect.
+- Seed-42 selectivity (the C3 re-measure's core claim): lesion_episodic abstains p_wolf_discuss ("I don't
+  recall us discussing wolf") but still answers p_wolf_bite; lesion_recall (patch lesion_lived_recall,
+  calls=4) abstains p_wolf_bite ("I don't know about that") but still answers p_wolf_discuss; intact_a
+  answers both. Each lesion cuts its own probe and spares the other -- the double dissociation attempt 1
+  could not show.
+- No queue action needed; 10/42 landed, 17 running, 25 queued (as of 16:06).
