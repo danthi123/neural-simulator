@@ -894,6 +894,39 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
     capability. The next method it points to is a probe with simulated time between narration and question; that
     time is what the attractor exists to bridge. (2026-10-05)
 - handled: [iw2] RESULT, [T1] STOP below-chance, [iw1-R-pre] (2026-10-05)
+- transitive-engagement: (cloud Claude session 7, 2026-10-05) Your hold on the 12 queued transitive-spiking-reach R
+  lines is correct, and it is RULING iw2-merged (b) applied as intended. T19's route (`_spiking_reach_answer`) catches
+  every exception and abstains, exactly like the chase, and nothing it measured reached the reply. So a crashed
+  lesion build would have scored as load-bearing.
+  - Fixed on main once this branch lands. webapp/reasoning_transitive_chat.py records `last_transitive_meta` for
+    every matched question: the route, the lesion flag, any swallowed error, and the substrate's own read (the
+    reach's detect count, or the chase's per-hop action and n_ignited). webapp/server.py attaches it to the reply
+    as `transitive_trace`, on matched turns only, so every other turn's body is unchanged. tools/s2p_score.py
+    makes a transitive-spiking-reach R cell UNDEFINED:engagement-* unless every intact and lesion arm records the
+    `spiking_reach` route, no error, and the lesion flag matching the arm. Tests: tests/test_transitive_spiking_reach.py,
+    tests/test_s2p_score.py.
+  - The identity script's transitive turn (turn 9) now carries one more key. A cross-pin identity compare of a
+    default arm against a pre-landing record will differ on that turn alone; same-pin compares are unaffected.
+  - Withdraw the 12 lines with the new subcommand. It works under the dispatcher's lock, refuses unless exactly 12
+    lines match, and logs each line to research/queue/withdrawn.log:
+    `bash tools/pool_queue.sh withdraw '/_shards/s2p-R-tr-' --expect 12 --reason 'RULING transitive-engagement: pinned before the engagement record'`
+    A refusal (another count) is a STOP: paste `bash tools/pool_queue.sh list | grep s2p-R-tr-` into NEEDS.
+  - Then re-generate the 12 R lines at the main revision that carries this ruling, via the T19 HANDOFF's own
+    job generator, with the new <PIN>. Do the corpus step and one dev-seed R shard first, and check that its
+    lesion arm shows `transitive_trace.lesioned` true with no error (packet checklist item 4).
+  - Step O stands only if the organ is unchanged between the two pins:
+    `git diff --quiet <old PIN> <new PIN> -- research/runners/transitive_spiking_reach_organ.py`
+    exits 0 when unchanged; otherwise re-run O at the new pin too.
+  - The word-role-parse R lines are unaffected; leave them queued. (2026-10-05)
+- tests-after-iw2-flip: (cloud Claude session 7) Two tests assumed BRAIN_TRANSITIVE_CHAT unset means off, and the
+  iw2 flip made it default-on. tests/test_reasoning_transitive_chat_wirein.py now pins "unset = on", and
+  tests/test_transitive_spiking_reach.py sets =0 for its off case. Separately, two failures on main predate this
+  branch and are unrelated: tests/test_open_ended_generation_fluent.py (two tests expect "maybe"; the renderer says
+  "perhaps"). Triage it as its own section-4 item. Also run
+  tests/test_rank2_integrated_loop_thread.py::test_webapp_integrated_loop_env_default_off on S: it failed in the
+  cloud only because fastapi is missing there, so its real state is unknown. (2026-10-05)
+- handled: the 2026-10-05 NEEDS line on the 12 queued transitive R lines barred by iw2-merged (b) -> RULING
+  transitive-engagement (2026-10-05)
 
 ## NEEDS CLAUDE
 
