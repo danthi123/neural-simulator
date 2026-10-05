@@ -236,3 +236,11 @@ VERDICT: {'wfs60': True, 'cms500': True, 'cpa1200': True} | chosen=wfs60
   Per section 3: NEEDS-CLAUDE `[T1]` filed with the gate message; this
   WORKLOG commits alone (Markdown exempt); the 54 record files stay STAGED
   on research/draft-ldc-outcome-timing for Claude's data ruling.
+
+## 2026-10-05 02:51 -- step 4b.1 records land: RULING T1-lr0 applied, 54 files committed
+
+- agent_sync_branch merged main @ 6a173b635 as 350e1e0c8 (clean).
+- `git am 0001-ldc-pilot-lr0-declaration.patch` -> a8ecbe7d2; pin test 4 passed.
+- `--declare-lr0 clear_*_s*.json`: 27/27 lr-0 records DECLARED (behavior_verdict UNDEFINED + declaring-runner sha256). The 27 .prov.json paths matched the ruling's own glob and were REFUSED by design (no rows; rc=2 from the no-rows branch, nothing written to them) -- not an lr>0 refusal.
+- The below-chance gate now reads UNDEFINED for the lr-0 cells; this commit is the gate test. Choice `--w-clear-fs 60` (section 1) unchanged.
+- Trigger: main landing wake 2026-10-05 02:41 (24 commits, session7-iw2).
