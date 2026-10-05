@@ -96,6 +96,8 @@ def test_flag_off_uses_host_chase_and_never_the_organ(monkeypatch):
 
 
 def test_chat_flag_off_still_returns_none(monkeypatch):
+    # BRAIN_TRANSITIVE_CHAT is default-ON since the iw2 flip (2026-10-05), so "off" is now the explicit escape
+    monkeypatch.setenv("BRAIN_TRANSITIVE_CHAT", "0")
     monkeypatch.setenv("BRAIN_TRANSITIVE_SPIKING_REACH", "1")      # the sub-flag alone never dispatches
     assert T.resolve_transitive_query(_FakeChat(_chain_facts()), "does cat precede river?") is None
 
@@ -265,3 +267,49 @@ def test_gate_seed_guard_passes_with_flag_and_prereg():
     import research.runners.transitive_spiking_reach_organ as O
     O._refuse_gate_seeds([42, 1], True, "research/findings/x-PREREGISTRATION.md")      # no raise
     O._refuse_gate_seeds([1, 2, 3], False, None)                                        # dev seeds never refused
+
+
+# ── ENGAGEMENT RECORD (session 7, RULING iw2-merged (b)): an exception on either route must be recorded, never read
+#    as a lesion's abstain. `last_transitive_meta` is what webapp/server.py attaches as `transitive_trace`. ─────────
+def test_chase_records_route_and_hops(monkeypatch):
+    monkeypatch.setenv("BRAIN_TRANSITIVE_CHAT", "1")
+    _install_fake_chase(monkeypatch, ["cat", "ball", "worm", "river"])
+    T.resolve_transitive_query(_FakeChat(_chain_facts()), "does cat precede river?", seed=7)
+    m = T.last_transitive_meta
+    assert m["route"] == "chase" and m["error"] is None and m["lesioned"] is False
+    assert [h["action"] for h in m["chase"]] == ["ADVANCE", "ADVANCE", "ADVANCE", "COMMIT"]
+
+
+def test_chase_exception_is_recorded_not_silent(monkeypatch):
+    monkeypatch.setenv("BRAIN_TRANSITIVE_CHAT", "1")
+    monkeypatch.setenv("BRAIN_TRANSITIVE_LESION", "1")
+    mod = types.ModuleType("webapp.gnw_multistep_deliberation")
+
+    def _boom(*a, **k):
+        raise RuntimeError("lesioned build failed")
+    mod.multistep_chase = _boom
+    monkeypatch.setitem(sys.modules, "webapp.gnw_multistep_deliberation", mod)
+    ok, svo = T.resolve_transitive_query(_FakeChat(_chain_facts()), "does cat precede river?", seed=7)
+    assert ok is True and svo is None                       # the reply still abstains honestly ...
+    m = T.last_transitive_meta
+    assert m["route"] == "chase" and m["lesioned"] is True and "lesioned build failed" in m["error"]  # ... and says why
+
+
+def test_reach_exception_is_recorded_not_silent(monkeypatch):
+    monkeypatch.setenv("BRAIN_TRANSITIVE_CHAT", "1")
+    monkeypatch.setenv("BRAIN_TRANSITIVE_SPIKING_REACH", "1")
+    import research.runners.transitive_spiking_reach_organ as organ
+
+    def _boom(*a, **k):
+        raise ValueError("organ crashed")
+    monkeypatch.setattr(organ, "reach_from_composer", _boom)
+    ok, svo = T.resolve_transitive_query(_FakeChat(_chain_facts()), "does cat precede river?", seed=7)
+    assert ok is True and svo is None
+    m = T.last_transitive_meta
+    assert m["route"] == "spiking_reach" and "organ crashed" in m["error"]
+
+
+def test_direct_fact_route_is_recorded(monkeypatch):
+    monkeypatch.setenv("BRAIN_TRANSITIVE_CHAT", "1")
+    T.resolve_transitive_query(_FakeChat(_chain_facts()), "does cat precede ball?")
+    assert T.last_transitive_meta["route"] == "direct"
