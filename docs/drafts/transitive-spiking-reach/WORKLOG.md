@@ -87,3 +87,17 @@
 - The 12 R lines (jobs/R_83efc76.txt) ADDED x12 FAIL=0; queue depth 20. Packet step 4
   (queue gate seeds 42/43/44/100/101/102) complete for transitive; word-role lines
   untouched (in pool.running/queue.claims).
+
+## 2026-10-05 12:25 EDT - steps O and R scored (scorer: main s2p_score, absolute paths)
+- Assembled 83efc76/{sweep,O} from 9ea7411 (organ ODIFF 0 per RULING transitive-engagement);
+  select -> SELECTED op=0; 12 R shards (36 arms + 12 lb rows) copied from the S-side results.
+- O at its own pin 9ea7411: PASS rc=0, 6/6 all_pass (P2=83efc766c per PINS P2 row).
+- R at 83efc766c: UNDEFINED rc=3 - capability and permuted-control cells DEFINED 0/6.
+  Root cause: tools/b2d_score.py:281-283 collects any field carrying an 'error' KEY even when
+  the value is None (str(None) -> 'None'); rule7 (286-287) filters turn/organ only, never a
+  real error -> every capability + control row reads C-UNCONFIRMED.
+- Data verified clean: transitive_trace.error typed None in all arms checked; route
+  spiking_reach; lesion flags match; engagement_state OK on all 6 seeds (non_ok=0); row
+  verdict regressed, load_bearing=true, control clean, attributable_fraction=1.0.
+- Scorer fix is s2-reserved: NEEDS [transitive-spiking-reach] (RESULT + ASK) filed on main;
+  R re-scores after the fix.

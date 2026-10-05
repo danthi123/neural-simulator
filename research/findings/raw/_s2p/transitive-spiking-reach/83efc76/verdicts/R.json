@@ -1,0 +1,148 @@
+{
+ "at_default": false,
+ "control": {
+  "n_defined": 0,
+  "n_ok": 0,
+  "per_seed": {
+   "100": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv_s100.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   },
+   "101": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv_s101.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   },
+   "102": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv_s102.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   },
+   "42": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   },
+   "43": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv_s43.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   },
+   "44": {
+    "detail": {
+     "fails": [
+      "C rule7: organ error on probe turn 's2tr_rv': {'arm': 'intact_a_s2tr_rv1_s2tr_rv2_s2tr_rv3_s2tr_rv_s44.json', 'turn': 's2tr_rv', 'organ': 'transitive_trace', 'error': 'None'}"
+     ]
+    },
+    "state": "C-UNCONFIRMED",
+    "verdict": null
+   }
+  },
+  "row": "transitive-spiking-reversed-ctl"
+ },
+ "n_defined": 0,
+ "n_reply_load_bearing": 0,
+ "op": 0,
+ "packet": "transitive-spiking-reach",
+ "per_seed": {
+  "100": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe_s100.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  },
+  "101": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe_s101.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  },
+  "102": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe_s102.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  },
+  "42": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  },
+  "43": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe_s43.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  },
+  "44": {
+   "detail": {
+    "fails": [
+     "C rule7: organ error on probe turn 's2tr_probe': {'arm': 'intact_a_s2tr_teach1_s2tr_teach2_s2tr_teach3_s2tr_probe_s44.json', 'turn': 's2tr_probe', 'organ': 'transitive_trace', 'error': 'None'}"
+    ]
+   },
+   "reply_verdict": null,
+   "state": "C-UNCONFIRMED"
+  }
+ },
+ "pin": "83efc766c39b1385372c794e9ba87ac1cade442e",
+ "preconditions": [
+  {
+   "detail": "measured=0 expect=6",
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": false
+  },
+  {
+   "detail": "measured=0 expect=6",
+   "kind": "require",
+   "name": "permuted-control cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": false
+  }
+ ],
+ "step": "R",
+ "tag": "s2p-R-tr-83efc76",
+ "undefined_reasons": [
+  "unmet: capability cells DEFINED on 6/6 seeds (measured=0 expect=6)",
+  "unmet: permuted-control cells DEFINED on 6/6 seeds (measured=0 expect=6)"
+ ],
+ "verdict": "UNDEFINED"
+}

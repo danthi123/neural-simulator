@@ -1,0 +1,34 @@
+{
+ "run_id": "1791216316-select",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "select",
+  "--packet",
+  "transitive-spiking-reach",
+  "--sweep-dir",
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/sweep",
+  "--out",
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json"
+ ],
+ "git_sha": "f13a95c918ab98b0c3186f994924c7b1fc31f2ea",
+ "git_dirty": true,
+ "started": "2026-10-05T12:05",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "note": "select is a pure-stdlib aggregation of the 56 dev sweep jsons (no numpy/cupy import); emitted as the gate-sanctioned sibling because tools/s2p_score.py does not write one itself.",
+ "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json.prov.json"
+}
