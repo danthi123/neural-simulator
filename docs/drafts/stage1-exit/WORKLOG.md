@@ -101,3 +101,12 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   affect_production_organ (top: stage1_exit_gate 335, _lbf_affect_conditioned_mouth
   193, _affect_learned_vocabulary_derisk 67); NEEDS INFO filed for Claude to decide
   which are void.
+
+## 2026-10-05 11:05 EDT - audit widened (RULING runtime-inputs)
+
+- The [s1-c4-void] audit doc now has three sections, all report-only:
+  A) affect_production_organ importers: 702 results / 23 runners;
+  B) WKV mouth + e-prop head users (learned head default since 09-02):
+  577 results / 58 runners; C) BRAIN_AFFECT_LEARNED_VOCAB references:
+  403 results / 3 runners. Detection = prov runner field vs static source
+  grep; 14,764 prov sidecars scanned since 09-01. Claude rules what is void.
