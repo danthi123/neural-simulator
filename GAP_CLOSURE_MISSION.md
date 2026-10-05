@@ -5652,6 +5652,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## STATE OF THE PROJECT — 2026-10-05 15:20 (read first; below the next anchor is HISTORY)
+> **Stage-1 exit attempt 1 + re-runs:** C1 INHERITANCE FAIL on defined data (next method
+> `docs/drafts/stage1-c1-inheritance/PLAN.md`), C2 word stood verify-go's two skeptics. C3 memory-switch was
+> INCOMPLETE (attempt-1 lesion cut a route production never calls) and is re-measuring at P2: A1.2 dev check cleared
+> (lesion patch.calls=3, probe abstains, control intact), pool canary rc=0 (wall 3006s, seed42), all 42 gate
+> lines queued/running at 7851dd220. C4 feeling re-ran at the fixed instrument and FAILS (held-out 6/6 but the
+> permuted control tracks 4/6; novel 0/6) -> NEEDS [s1-c4-rerun]. Stage UNDEFINED / not-passed either way.
+> **Affect audit (report-only, NEEDS [s1-c4-void] INFO x2):** since 09-01 A=702 results/23 runners (affect organ),
+> B=577/58 (WKV mouth + e-prop), C=403/3 (learned vocab); Claude rules which are void.
+> **Transitive reach:** O scores 6/6 at its own pin 9ea7411 (organ unchanged); R UNDEFINED via a scorer defect
+> (`b2d_score.py` rule7 counts `error=None` as an error) -> RESULT+ASK filed, data `8c0d99226`.
+> **⇒ EXACT NEXT:** when the 42 C3 lines land, aggregate gate_c3rerun over seeds 42,43,44,100,101,102, apply the
+> A1.2 scorer rule, then RESULT + NEEDS [s1-c3-rerun]. Claude-blocked: C4 read, b2d rule7 fix, STEP4B engagement
+> bar (a), iw1 R preconditions, pool-canary launch hang.
+>
+
 > ## STATE OF THE PROJECT — 2026-08-05 (read first; below the next anchor is HISTORY)
 > **Stage B GPU screen:** the fresh V3-bound successor partition at global Sobol indices 512-1023 completed all five GPU arms for 512 candidates, 2,560 candidate-arm executions in total. Strict triage recorded 421 engineering failures, 91 engineering-inconclusive candidates, and 0 engineering passes. This is engineering screening only; no CPU confirmation is eligible and no scientific verdict is claimed. Batch-width benchmarking selected width 512. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK cohort remains unavailable.
 > **EXACT NEXT:** keep the fresh negative result banked, resolve the missing biological measurement contracts, and do not retune candidates from this screen. The first digest-bound campaign supervisor can resume and advance one exact GPU batch per invocation, but it is not yet an unattended search or confirmation loop.
