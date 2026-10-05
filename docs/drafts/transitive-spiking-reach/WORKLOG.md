@@ -54,3 +54,20 @@
   (packet checklist item 4), then queue the 12.
 - word-role-parse lines: untouched, still queued (ruling).
 - PINS.tsv gains a `P2` row at `83efc766c` (the original `P` row stays for the old pin).
+
+## 2026-10-05 09:35 EDT - dev7 item-4 check PASS; gate-seed canary launched before the 12
+
+- Dev-seed shard (s2p-R-tr-dev7-83efc76, seed 7 capability row) ran on the pool from pin
+  83efc766c. Packet checklist item 4 PASSED: lesion arm records transitive_trace.lesioned
+  true with route spiking_reach and no error; intact_a/intact_b record lesioned false,
+  same route, no errors (the run's lb.json row summary carries no per-turn trace by
+  design; .rep0 matches). Script: /opt/data/cache/scratch/t1_dev7_check4.py.
+- The 12 re-pinned R lines (jobs/R_83efc76.txt) passed queue_job_shape_check but
+  pool_queue.sh add REFUSED all 12: gate seed 42 needs a pool canary record for
+  (research.runners.load_bearing_fraction, 83efc766c) in pool_canaries.tsv. Per RULING
+  canary-auto, launched `pool_canary.sh run auto '<line 1>' --wait-s 1800` (pool40
+  confirmed to hold the revision); background proc_1171c64f5048.
+- Next: on the canary's PASS record, queue the 12 (record text prepared in
+  /opt/data/cache/scratch/t1_r12_queue.sh), then WORKLOG.
+- word-role lanes untouched (present in pool.running/queue.claims); the eight queued
+  6b9cb47f lines left alone per RULING canary-node.
