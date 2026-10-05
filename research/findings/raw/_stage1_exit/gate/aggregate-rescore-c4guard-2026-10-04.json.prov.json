@@ -1,0 +1,30 @@
+{
+ "run_id": "1791147292-1510",
+ "runner": "research/runners/stage1_exit_gate.py",
+ "argv": [
+  "/home/user/neural-simulator/research/runners/stage1_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_stage1_exit/gate",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_stage1_exit/gate/aggregate-rescore-c4guard-2026-10-04.json"
+ ],
+ "git_sha": "c1e59dc5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-04T20:54:52",
+ "env": {},
+ "host": "vm",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_stage1_exit/gate/aggregate-rescore-c4guard-2026-10-04.json"
+}

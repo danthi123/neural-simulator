@@ -154,3 +154,56 @@ def test_board_sync_stamp_is_append_only():
     assert policy.reason_reserved("M", "docs/.vikunja_sync", grow, staged=True, old=lambda p: "## a\n") is None
     assert policy.reason_reserved("M", "docs/.vikunja_sync", grow, old=lambda p: "## z\n") is not None
     assert policy.reason_reserved("M", "docs/.vikunja_sync", grow) is not None
+
+
+def test_failure_log_is_append_only_by_whole_rows():
+    """research/FAILURE_LOG.md (Claude ruling 2026-10-04): growth by complete rows at the end is routine, on a branch
+    merge and in a direct commit on main; every other change to it stays Claude's."""
+    log = "research/FAILURE_LOG.md"
+    old = "# Failure log\n\n| date | failure | gate |\n|---|---|---|\n| 2026-10-01 | a thing broke | `coverage` |\n"
+    row = "| 2026-10-04 | T24 queued cells with no corpus check | `corpus_check_required` (caught at commit) |\n"
+    ok = lambda new: policy.reason_reserved("M", log, lambda p: new, old=lambda p: old)
+    assert ok(old + row) is None
+    assert ok(old + row + row.replace("T24", "T25")) is None
+    assert policy.reason_reserved("M", log, lambda p: old + row, staged=True, old=lambda p: old) is None
+    # refused: an edit to an existing row, an inserted row, prose, a blank line, a heading, a partial row, a glued row
+    assert ok(old.replace("a thing broke", "nothing broke") + row) is not None
+    # a merge of an older branch inserts its rows mid-table: routine, as long as every old line survives in order
+    assert ok(old.replace("|---|---|---|\n", "|---|---|---|\n" + row)) is None
+    assert ok(old.replace("| date |", row + "| date |")) is not None                   # above the header
+    assert ok(old.replace("| 2026-10-01 | a thing broke | `coverage` |\n", "") + row) is not None   # a deletion
+    assert ok(old + "Some prose about the failure.\n") is not None
+    assert ok(old + "\n" + row) is not None
+    assert ok(old + "## New section\n") is not None
+    assert ok(old + "| 2026-10-04 | only two cells |\n") is not None
+    assert ok(old + "| 2026-10-04 | no newline at end | `coverage` |") is not None
+    assert ok(old + row + "| 2026-10-04 | trailing | `coverage` | extra\n") is not None
+    assert ok(old + "| 10/04/2026 | bad date | `coverage` |\n") is not None
+    assert ok(old) is not None                                                         # nothing appended
+    glued = old.rstrip("\n")
+    assert policy.reason_reserved("M", log, lambda p: glued + row, old=lambda p: glued) is not None
+    # unprovable growth, a new log, a deletion: reserved
+    assert policy.reason_reserved("M", log, lambda p: old + row) is not None
+    assert policy.reason_reserved("A", log, lambda p: row, old=lambda p: "") is not None
+    assert policy.reason_reserved("D", log, lambda p: "", old=lambda p: old) is not None
+
+
+def test_board_inserts_stay_reserved_until_the_owner_switches_them_on(monkeypatch):
+    """GAP_CLOSURE_MISSION.md board lines: reserved while OWNER_APPROVED_BOARD_INSERTS is False (as shipped); when the
+    owner turns it on, inserted lines that claim no PASS/GO are routine and every other change stays reserved."""
+    board = "GAP_CLOSURE_MISSION.md"
+    old = "# Board\n\n## STATE\n\n- line one\n- line two\n"
+    nogo = old.replace("- line one\n", "- line one\n- **2026-10-02:** BG live-seam gate NO-GO (G4 only).\n")
+    check = lambda new, **kw: policy.reason_reserved("M", board, lambda p: new, old=lambda p: old, **kw)
+    monkeypatch.setattr(policy, "OWNER_APPROVED_BOARD_INSERTS", False)
+    assert check(nogo) is not None
+    monkeypatch.setattr(policy, "OWNER_APPROVED_BOARD_INSERTS", True)
+    assert check(nogo) is None
+    assert check(nogo, staged=True) is None
+    assert check(old + "- T7 UNDEFINED(dev): instrument; FAIL 5/6 on cupy.\n") is None
+    assert check(old + "- stage-1 C2 PASS 6/6\n") is not None
+    assert check(old + "- the flip is a GO on six seeds\n") is not None
+    assert check(old.replace("- line two\n", "- line 2\n")) is not None                 # an edit
+    assert check(old.replace("- line two\n", "")) is not None                           # a deletion
+    assert check(old) is not None                                                       # nothing inserted
+    assert policy.reason_reserved("M", board, lambda p: nogo) is not None               # unprovable

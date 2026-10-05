@@ -151,6 +151,8 @@ def norgan_hop(bridge, xp, slots_dev, snap, candidates, decoy, d_sub,
         drives[slot_of[decoy]] += d_sub                   # the single-vote competitor (always present)
 
     rates = _ignite_and_read(bridge, xp, slots_dev, snap, drives)
+    if unique_ignition_read_enabled():                    # DEFAULT-OFF neural-seam read (lane A, 2026-09-29)
+        return unique_ignition_read(rates, order, n)
     # winner = the most-supported OCCUPIED (concept) slot; n_ignited counts ALL slots (single-content across workspace)
     occ_idx = list(range(len(order)))
     winner = int(occ_idx[int(np.argmax([rates[i] for i in occ_idx]))]) if occ_idx else 0
@@ -158,6 +160,49 @@ def norgan_hop(bridge, xp, slots_dev, snap, candidates, decoy, d_sub,
     n_ignited = int(sum(1 for i in range(n) if rates[i] >= THR))
     committed = order[winner] if ignited else None
     return committed, rates, winner, n_ignited
+
+
+# ── BEGIN neural-seam read (lane A, branch research/selection-seam-need-reversal, 2026-09-29). DEFAULT-OFF. ──────────
+# The default read above is a host ARGMAX over the occupied slots' rates plus a threshold on the winner: when two slots
+# co-ignite the host picks the larger. With `BRAIN_GNW_UNIQUE_IGNITION_READ=1` there is no argmax: the workspace has
+# committed only if EXACTLY ONE slot (occupied or not) is ignited and it is an occupied concept slot; zero or several
+# ignited slots is no commitment (abstain). The body reads the single self-sustaining assembly; it does not choose
+# among co-active ones. The threshold stays; its share is measured by re-reading the same rates at THR x0.5 / x1.5
+# (`readout_variants`). Byte-identical when the flag is off (the function above returns before reaching this code).
+UNIQUE_IGNITION_READ_FLAG = "BRAIN_GNW_UNIQUE_IGNITION_READ"
+
+
+def unique_ignition_read_enabled() -> bool:
+    return (os.environ.get(UNIQUE_IGNITION_READ_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def unique_ignition_read(rates, order, n, thr=None):
+    """(committed|None, rates, winner_slot, n_ignited) with no argmax: commit iff exactly one slot is at/above `thr`
+    and it is an occupied concept slot."""
+    thr = THR if thr is None else float(thr)
+    ign = [i for i in range(n) if rates[i] >= thr]
+    if len(ign) == 1 and ign[0] < len(order):
+        return order[ign[0]], rates, int(ign[0]), 1
+    return None, rates, (int(ign[0]) if len(ign) == 1 else -1), len(ign)
+
+
+def readout_variants(rates, order, n):
+    """The same workspace rates re-read by each host rule (neural state held fixed): the production argmax+THR, the
+    unique-ignition read, and both at THR x0.5 / x1.5. For the readout-intervention measurement."""
+    occ = list(range(len(order)))
+
+    def argmax_read(thr):
+        if not occ:
+            return None
+        w = int(occ[int(np.argmax([rates[i] for i in occ]))])
+        return order[w] if rates[w] >= thr else None
+
+    return {"argmax_thr (production)": argmax_read(THR), "argmax_thr_x0.5": argmax_read(THR * 0.5),
+            "argmax_thr_x1.5": argmax_read(THR * 1.5),
+            "unique": unique_ignition_read(rates, order, n)[0],
+            "unique_thr_x0.5": unique_ignition_read(rates, order, n, THR * 0.5)[0],
+            "unique_thr_x1.5": unique_ignition_read(rates, order, n, THR * 1.5)[0]}
+# ── END neural-seam read ──
 
 
 def norgan_chase(bridge, xp, slots_dev, snap, composer, cue, all_concepts, d_sub, organ_relations, rng,

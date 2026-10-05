@@ -104,6 +104,12 @@ SILENCE_PA = -4000.0                  # diagnostic: inhibitory clamp on presence
 BOUNDED_CONDUCTANCE = True             # the T13 exponential-Euler guard (strong inhibition overshoots without it)
 LEAVE_RECEPTOR = "gaba_a"            # receptor of leave_inh -> presence
 MODE = "relay"                        # "relay" (fully synaptic AND) | "readout" (threshold read gates the W3 write)
+RELAY_MODES = ("relay", "relay_nmda")  # relay_nmda (2026-10-04, dev only, not in GRID): world -> relay on Mg2+-gated NMDA
+NMDA_REC_TAU_MS = 100.0               # relay_nmda: slow NMDA decay (the engine's nmda_recurrent default)
+NMDA_REC_STRENGTH = 0.05              # relay_nmda: per-spike slow-NMDA increment scale (engine default)
+EVICT_RECEPTOR = "gaba_a"              # evict_k -> belief_j receptor (gaba_a = the registered GRID behavior)
+RELAY_BELIEF_RECEPTOR = "ampa"        # relay_k -> belief_k exc receptor (ampa = the registered GRID behavior)
+BELIEF_FS_RECEPTOR = "gaba_a"          # belief_fs -> belief receptor (gaba_a = the registered GRID behavior)
 PRES_READ_STEPS = 20                  # readout mode: presence read window before each write
 PRES_MIN = 0.03                       # readout mode: presence rate (spikes/neuron/step) that counts as present
 HELPER_PA = 5000.0                    # readout mode: the W3 organ's helper ignite (FalseBeliefChatOrgan._HELPER_PA)  # transmission gate on presence -> relay (only the lesion closes it)
@@ -124,7 +130,7 @@ def build_witness_bridge(seed: int = _DEFAULT_SEED, attractor_weight: float = DE
     "relay", `lesion` builds the bridge WITHOUT the presence -> relay projection (a build-time cut: every arm is its own
     process, and a runtime transmission gate on that projection did not stop its current on dev seed 7). Returns
     (bridge, xp, idx, snap)."""
-    relay_mode = MODE == "relay"
+    relay_mode = MODE in RELAY_MODES
     xp, _ = get_backend()
     n_store = STORE * K_LOC
     regions = [
@@ -154,8 +160,10 @@ def build_witness_bridge(seed: int = _DEFAULT_SEED, attractor_weight: float = DE
     for store in ("world", "belief", "self"):
         pathways.append(RegionPathway(from_region=store, to_region=f"{store}_fs", density=0.5,
                                       weight_mean=WS_TO_FS_WEIGHT, weight_jitter=0.0, plastic=False))
+        _rec = BELIEF_FS_RECEPTOR if (store == "belief" and BELIEF_FS_RECEPTOR != "gaba_a") else None
         pathways.append(RegionPathway(from_region=f"{store}_fs", to_region=store, density=0.5,
-                                      weight_mean=FS_TO_WS_WEIGHT, weight_jitter=0.0, plastic=False))
+                                      weight_mean=FS_TO_WS_WEIGHT, weight_jitter=0.0, plastic=False,
+                                      **({"receptor": _rec} if _rec else {})))
     # leave_inh -> presence uses the engine's GABA_B receptor (E_K -90 mV): under this profile the fast GABA_A
     # reversal is shunting, and a GABA_A projection RAISED the attractor's rate on dev seed 7 (2026-10-01).
     # GABA_B's slow K+ current is also the biological terminator of persistent up-states.
@@ -178,6 +186,10 @@ def build_witness_bridge(seed: int = _DEFAULT_SEED, attractor_weight: float = DE
     cfg.seed = int(seed)
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
+    if MODE == "relay_nmda" or RELAY_BELIEF_RECEPTOR == "nmda_slow":
+        cfg.enable_nmda_recurrent = True
+        cfg.nmda_recurrent_tau_decay_ms = float(NMDA_REC_TAU_MS)
+        cfg.nmda_recurrent_propagation_strength = float(NMDA_REC_STRENGTH)
     for f in ("enable_stdp", "enable_reward_modulation", "enable_hebbian_learning", "enable_homeostasis",
               "enable_short_term_plasticity", "enable_structural_plasticity", "enable_ou_process"):
         setattr(cfg, f, False)
@@ -217,14 +229,22 @@ def build_witness_bridge(seed: int = _DEFAULT_SEED, attractor_weight: float = DE
         if not relay_mode:
             continue
         union[f"world_relay_{k}"] = _dense_projection(world_m[k], relay_m[k], W_WORLD_RELAY, WS_LOOP_GATE)
+        if MODE == "relay_nmda":
+            # the dendritic AND: the world input arrives on slow, Mg2+-blocked NMDA alone (no fast AMPA onset), so
+            # it cannot fire a relay cell at rest; presence's AMPA depolarization relieves the block
+            union[f"world_relay_{k}"]["exc_receptor"] = "nmda_slow"
         if not lesion:
             union[f"presence_relay_{k}"] = _dense_projection(pres, relay_m[k], W_PRES_RELAY, WS_LOOP_GATE)
         union[f"relay_belief_{k}"] = _dense_projection(relay_m[k], belief_m[k], W_RELAY_BELIEF, WS_LOOP_GATE)
+        if RELAY_BELIEF_RECEPTOR != "ampa":
+            union[f"relay_belief_{k}"]["exc_receptor"] = RELAY_BELIEF_RECEPTOR
         # targeted eviction: relay_k excites its own inhibitory pool, which inhibits every OTHER location's belief
         # member (the old belief), never belief_k (the new one)
         union[f"relay_evict_{k}"] = _dense_projection(relay_m[k], evict_m[k], W_RELAY_EVICT, WS_LOOP_GATE)
         others = np.concatenate([belief_m[j] for j in range(K_LOC) if j != k])
         union[f"evict_belief_{k}"] = _dense_inh(evict_m[k], others, W_EVICT_BELIEF)
+        if EVICT_RECEPTOR != "gaba_a":
+            union[f"evict_belief_{k}"]["receptor"] = EVICT_RECEPTOR
     union["loop_presence"] = _build_assembly_loop_population(pres, float(attractor_weight))
     union["arrive_presence"] = _dense_projection(ev_a, pres, W_EV_PRES, WS_LOOP_GATE)
     union["leave_inh"] = _dense_projection(ev_l, linh, W_EV_INH, WS_LOOP_GATE)
@@ -310,7 +330,7 @@ class SpikingWitnessFalseBeliefOrgan:
     def _run(self, steps, drive, lesion, silence=False, count=()):
         """Step `steps` times with `drive` = [(dev_index_array, pA), ...] held on; return spike counts for `count` names."""
         b, xp, idx = self._bridge, self._xp, self._idx
-        relay = MODE == "relay"
+        relay = MODE in RELAY_MODES
         lesion = self.lesion   # the lesion is a property of the bridge (fixed at construction)
         acc = {c: 0 for c in count}
         for _ in range(steps):

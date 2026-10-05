@@ -16,14 +16,20 @@ Routine (everything else, and every deletion or rename, is reserved):
   docs/drafts/**/*.{md,txt,csv,tsv,json} draft docs and their data: add or modify, except HANDOFF.md and *PREREG*
   research/findings/raw/_provenance/*.jsonl  the run ledger: APPEND-ONLY growth of an existing ledger (2026-10-01)
   docs/.vikunja_sync                     the board-sync stamp: APPEND-ONLY (after a vikunja-skill board sync)
+  research/FAILURE_LOG.md                INSERT-ONLY: complete `| YYYY-MM-DD | failure | gate |` rows below the table
+                                         header, every old line kept in order (Claude ruling 2026-10-04;
+                                         gates/coverage still checks each row's gate)
   tests/test_*.py                        NEW test files only (editing an existing test could weaken it)
   research/findings/*.md                 NEW findings only, and only if the file says PROVISIONAL; never *PREREG*
   research/runners/_*.py                 NEW draft runner copies only (underscore-prefixed); never an edit
+  GAP_CLOSURE_MISSION.md                 INSERT-ONLY board lines that claim no PASS/GO -- ONLY once the owner sets
+                                         OWNER_APPROVED_BOARD_INSERTS = True below (shipped False, 2026-10-04)
 research/coordination/ is not merged at all: the runbook has Hermes edit those files on main, and gates read several.
 """
 from __future__ import annotations
 
 import fnmatch
+import re
 import subprocess
 import sys
 from typing import Callable, Iterable
@@ -31,6 +37,78 @@ from typing import Callable, Iterable
 
 def _is_prereg(path: str) -> bool:
     return "PREREG" in path.rsplit("/", 1)[-1].upper()
+
+
+# One complete FAILURE_LOG row: a date cell, a non-empty failure cell, a non-empty gate cell, nothing after.
+_FAILURE_ROW = re.compile(r"^\| \d{4}-\d{2}-\d{2} \| \S.*\S \| \S.*\|$")
+
+
+# OWNER DECISION (Claude session 6, 2026-10-04): when True, a merge or a direct commit on main may INSERT lines into
+# GAP_CLOSURE_MISSION.md (every old line kept in order, no edit or deletion), as long as no inserted line claims a PASS
+# or a GO (a NO-GO / UNDEFINED / FAIL / INFO line is fine). This is what made T5 (selection-seam-need-reversal)
+# non-routine: its HANDOFF had the driver add one NO-GO board line. Shipped False: it widens what the driver may merge
+# beyond bookkeeping, because that file steers every session.
+OWNER_APPROVED_BOARD_INSERTS = True    # owner approved 2026-10-04
+_CLAIMS_PASS = re.compile(r"(?<!NO-)(?<!NO )\bGO\b|\bPASS(?:ES|ED)?\b")
+
+
+def _inserted_lines(new: str, old: str) -> tuple[list[str] | None, str | None]:
+    """The lines `new` inserts into `old` with every old line kept in order, or (None, why not)."""
+    import difflib
+    o, n = old.splitlines(), new.splitlines()
+    inserted = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, o, n, autojunk=False).get_opcodes():
+        if tag == "equal":
+            continue
+        if tag != "insert":
+            return None, "existing lines changed (only inserted lines are routine)"
+        inserted += n[j1:j2]
+    return inserted, None
+
+
+def _board_inserts(new: str, old: str) -> str | None:
+    if not OWNER_APPROVED_BOARD_INSERTS:
+        return "board lines are Claude's until the owner sets OWNER_APPROVED_BOARD_INSERTS"
+    inserted, why = _inserted_lines(new, old)
+    if why:
+        return why
+    if not any(line.strip() for line in inserted):
+        return "no lines inserted"
+    for line in inserted:
+        if _CLAIMS_PASS.search(line):
+            return f"an inserted board line claims a PASS or GO (Claude confirms those): {line[:80]!r}"
+    return None
+
+
+def _appended_failure_rows(new: str, old: str) -> str | None:
+    """None if `new` is `old` with whole FAILURE_LOG rows inserted below the table header, else why not. Insertion
+    anywhere below the header is allowed because a three-way merge places an older branch's appended rows where its
+    copy of the file ended, which is mid-file once main has grown. Every old line must survive unchanged and in
+    order; a row edit, a deletion, a heading, a blank line or a half row is refused."""
+    import difflib
+    if old and not old.endswith("\n"):
+        return "the old file does not end in a newline, so an append would join its last row"
+    if not new.endswith("\n"):
+        return "the new file must end in a newline"
+    o, n = old.splitlines(), new.splitlines()
+    header = next((i for i, line in enumerate(o) if line.startswith("|---")), None)
+    if header is None:
+        return "the old file has no table header to append under"
+    inserted = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, o, n, autojunk=False).get_opcodes():
+        if tag == "equal":
+            continue
+        if tag != "insert":
+            return "existing lines changed (the failure log only takes inserted rows)"
+        if i1 <= header:
+            return "rows may only be inserted below the table header"
+        inserted += n[j1:j2]
+    if not inserted:
+        return "no rows appended"
+    for line in inserted:
+        if not _FAILURE_ROW.match(line) or line.count(" | ") < 2:
+            return f"not a complete `| date | failure | gate |` row: {line[:80]!r}"
+    return None
 
 
 def reason_reserved(status: str, path: str, content: Callable[[str], str], mode: str = "100644",
@@ -48,6 +126,15 @@ def reason_reserved(status: str, path: str, content: Callable[[str], str], mode:
         if status == "M" and old is not None and content(path).startswith(old(path)):
             return None
         return "the board-sync stamp may only grow by appended lines"
+    if path == "GAP_CLOSURE_MISSION.md":
+        if status != "M" or old is None:
+            return "the board may only take inserted lines (growth must be provable)"
+        return _board_inserts(content(path), old(path))
+    if path == "research/FAILURE_LOG.md":   # append-only rows (Claude ruling 2026-10-04, runbook agent-failure-log)
+        if status != "M" or old is None:
+            return "the failure log may only grow by appended rows (no new log; growth must be provable)"
+        why = _appended_failure_rows(content(path), old(path))
+        return None if why is None else f"failure log: {why}"
     if staged and path.startswith("research/coordination/"):
         return None
     if _is_prereg(path):

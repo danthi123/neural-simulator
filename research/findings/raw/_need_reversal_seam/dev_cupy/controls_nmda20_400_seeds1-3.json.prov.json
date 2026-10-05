@@ -1,0 +1,37 @@
+{
+ "run_id": "1790699648-1608072",
+ "runner": "research/runners/_need_reversal_selection_seam.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/selection-seam-need-reversal/research/runners/_need_reversal_selection_seam.py",
+  "--seeds",
+  "1",
+  "2",
+  "3",
+  "--trials",
+  "40",
+  "--no-ablations",
+  "--no-curve",
+  "--out",
+  "research/findings/raw/_need_reversal_seam/dev_cupy/controls_nmda20_400_seeds1-3.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T12:34:08",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1533.4,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_need_reversal_seam/dev_cupy/controls_nmda20_400_seeds1-3.json"
+}
