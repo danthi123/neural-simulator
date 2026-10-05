@@ -172,3 +172,14 @@
   6 lines, tag iw2-alloff-1fb805e, root revisions/1fb805e9, PIN.txt written.
 - Queued 6/6 with the step-B reason (ok=6 fail=0; 2 dispatched immediately,
   depth 181, T0 no-hold clean). Verdicts land in the section-7 data commit after A.
+
+## 2026-10-04 22:07 -- section 7 verdict: A PASS, flips stand
+
+- A.json (tag iw2-alloff-1fb805e, pin 1fb805e9): verdict PASS, all preconditions
+  ok, no UNDEFINED. The single B regression is "excused": affect-marker-spiking-wta
+  off-run reproduces s2 exactly (off_run s0=4 s2=0 == flip s0=4 s2=0), so the 4->0
+  drop at s2 is NOT flip-caused.
+- Decision-table row 2 outcome: B FAIL (1 B1 drop, excused) + F2 PASS + F3 PASS +
+  A PASS = the flips stand. Verdicts B/F2/F3/A in _iw2/verdicts/1fb805e/.
+- Data commit below carries the flip + alloff shards (provisional). Not pushed
+  (wake rule: sim-sync publishes main).
