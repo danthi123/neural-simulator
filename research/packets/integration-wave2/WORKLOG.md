@@ -155,3 +155,20 @@
   exits.json record (0 hits), zero rev-1fb805e procs on pool41/42; battery stood at 274/276. Moved
   both partial dirs to _attempt1_s101_<fac> (main), appended 2 reruns.tsv rows, re-queued both job
   lines unchanged from jobs/flip_1fb805e.txt (lines 209-210, step-B reason). First failure each.
+
+## 2026-10-04 20:10 -- section 7 scored; B FAIL -> attribution row; alloff queued
+
+- B.json = FAIL: one cross-faculty regression, s2 affect-marker-spiking-wta 4 -> 0
+  load-bearing seeds; all 18 f1 target cells DEFINED and regressed (intact answers
+  correct, lesion answers wrong/abstained); base side INCOMPLETE (6 comprehension-
+  monitor cells C-UNCONFIRMED, organ broadcast error on probe turn 'well').
+- F2.json = IDENTICAL, F3.json = IDENTICAL (both ok=true, preconditions all true).
+- Decision table: B FAIL + F2 PASS + F3 PASS + single s2 regression -> attribution.
+- make_jobs.sh alloff path exited rc=1 silently: line 92's $( [ step = bisect ] &&
+  printf ) substitution returns 1 for step alloff under set -e, killing the script
+  before the lb_shard pipeline (bisect unaffected; alloff path never exercised).
+  Fixed in place with || true (this commit); generates byte-identical names.
+- Alloff job file generated at the pin (detached HEAD, the table's 'run in $W at F'):
+  6 lines, tag iw2-alloff-1fb805e, root revisions/1fb805e9, PIN.txt written.
+- Queued 6/6 with the step-B reason (ok=6 fail=0; 2 dispatched immediately,
+  depth 181, T0 no-hold clean). Verdicts land in the section-7 data commit after A.
