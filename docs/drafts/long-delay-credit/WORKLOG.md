@@ -167,3 +167,72 @@ but the discriminating read-out is `value_discrimination`. Flagged in PREREG §8
   pipe (pull-only) with its .prov.json, JSON parses (8560 bytes).
 - No requeue: the runs are healthy and in flight. The 27-row table + weakest-
   knob choice waits for 27/27 (next wake after the in-flight lines land).
+
+
+## 2026-10-05 00:46 -- Step 4b.1 (clear dose): 27/27 landed, TABLE + CHOICE
+
+- Records complete: cpa1200 9/9, cms500 9/9, wfs60 9/9 (the pool40 in-flight
+  lines landed; nothing requeued). Copied into this worktree for the commit.
+- Section-1 rule (STEP4B, fixed order w-clear-fs 60 -> clear-ms 500 ->
+  clear-pA 1200; first with mem_after_clear_hz < 1.0 AND mem_hold_acc >= 0.95
+  on all nine seeds): ALL THREE candidates pass 9/9, so the fixed order picks
+  **--w-clear-fs 60** (params confirm w_clear_fs=60.0 vs 30.0 on the other
+  two rows). That flag goes on every Step 4b line.
+- Observations (marked: readings, not verdicts): after_clear reads 0.000 on
+  all 27 cells INCLUDING the two w_clear_fs=30 rows, so this run does not
+  separate the knobs on that instrument (PILOT step-3 def read 0.0493 Hz under
+  its own one-knob harness -- different harness, not comparable directly);
+  seed 7 reads identical across wfs60 and cpa1200 on every listed field
+  (other seeds differ) -- quirk noted, not investigated. hold=1.000 27/27;
+  behavior sits at chance (expected: lr 0 diagnostic cells, not the credit
+  grid); ITI cue/mem attribution 0.000 and da_iti_offset ~ +-1e-4 everywhere.
+- Table (27 rows):
+
+| candidate | seed | after_clear_hz | hold_acc | hold_probe | success | resp | pA | pB | iti cue | iti mem | da_iti_off |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| wfs60 | 7 | 0.000 | 1.000 | 1.000 | 0.53 | 0.97 | 0.43 | 0.42 | 0.000 | 0.000 | -0.000021 |
+| wfs60 | 8 | 0.000 | 1.000 | 1.000 | 0.54 | 0.95 | 0.57 | 0.50 | 0.000 | 0.000 | 0.000054 |
+| wfs60 | 9 | 0.000 | 1.000 | 1.000 | 0.42 | 0.95 | 0.59 | 0.78 | 0.000 | 0.000 | -0.000044 |
+| wfs60 | 10 | 0.000 | 1.000 | 1.000 | 0.49 | 0.97 | 0.33 | 0.59 | 0.000 | 0.000 | -0.000021 |
+| wfs60 | 11 | 0.000 | 1.000 | 1.000 | 0.62 | 0.96 | 0.68 | 0.44 | 0.000 | 0.000 | -0.000008 |
+| wfs60 | 12 | 0.000 | 1.000 | 1.000 | 0.55 | 0.99 | 0.62 | 0.31 | 0.000 | 0.000 | 0.000009 |
+| wfs60 | 13 | 0.000 | 1.000 | 1.000 | 0.48 | 0.98 | 0.52 | 0.63 | 0.000 | 0.000 | -0.000028 |
+| wfs60 | 14 | 0.000 | 1.000 | 1.000 | 0.53 | 1.00 | 1.00 | 1.00 | 0.000 | 0.000 | -0.000061 |
+| wfs60 | 15 | 0.000 | 1.000 | 1.000 | 0.39 | 0.99 | 0.58 | 0.52 | 0.000 | 0.000 | 0.000057 |
+| **wfs60** | rule | after<1.0 & hold>=0.95 on 9/9: PASS | | | | | | | | | |
+| cms500 | 7 | 0.000 | 1.000 | 1.000 | 0.50 | 0.95 | 0.53 | 0.44 | 0.000 | 0.000 | -0.000027 |
+| cms500 | 8 | 0.000 | 1.000 | 1.000 | 0.45 | 0.96 | 0.71 | 0.41 | 0.000 | 0.000 | 0.000049 |
+| cms500 | 9 | 0.000 | 1.000 | 1.000 | 0.57 | 0.99 | 0.57 | 0.56 | 0.000 | 0.000 | -0.000086 |
+| cms500 | 10 | 0.000 | 1.000 | 1.000 | 0.44 | 0.96 | 0.55 | 0.82 | 0.000 | 0.000 | -0.000018 |
+| cms500 | 11 | 0.000 | 1.000 | 1.000 | 0.57 | 0.95 | 0.73 | 0.56 | 0.000 | 0.000 | -0.000037 |
+| cms500 | 12 | 0.000 | 1.000 | 1.000 | 0.51 | 0.97 | 0.54 | 0.53 | 0.000 | 0.000 | 0.000024 |
+| cms500 | 13 | 0.000 | 1.000 | 1.000 | 0.51 | 0.97 | 0.67 | 0.68 | 0.000 | 0.000 | -0.000034 |
+| cms500 | 14 | 0.000 | 1.000 | 1.000 | 0.53 | 1.00 | 1.00 | 1.00 | 0.000 | 0.000 | -0.000065 |
+| cms500 | 15 | 0.000 | 1.000 | 1.000 | 0.49 | 0.99 | 0.67 | 0.64 | 0.000 | 0.000 | 0.000029 |
+| **cms500** | rule | after<1.0 & hold>=0.95 on 9/9: PASS | | | | | | | | | |
+| cpa1200 | 7 | 0.000 | 1.000 | 1.000 | 0.53 | 0.97 | 0.43 | 0.42 | 0.000 | 0.000 | -0.000021 |
+| cpa1200 | 8 | 0.000 | 1.000 | 1.000 | 0.52 | 0.93 | 0.60 | 0.50 | 0.000 | 0.000 | 0.000054 |
+| cpa1200 | 9 | 0.000 | 1.000 | 1.000 | 0.41 | 0.93 | 0.55 | 0.76 | 0.000 | 0.000 | -0.000042 |
+| cpa1200 | 10 | 0.000 | 1.000 | 1.000 | 0.47 | 0.96 | 0.41 | 0.59 | 0.000 | 0.000 | -0.000028 |
+| cpa1200 | 11 | 0.000 | 1.000 | 1.000 | 0.63 | 0.99 | 0.68 | 0.44 | 0.000 | 0.000 | -0.000007 |
+| cpa1200 | 12 | 0.000 | 1.000 | 1.000 | 0.55 | 0.99 | 0.65 | 0.31 | 0.000 | 0.000 | 0.000009 |
+| cpa1200 | 13 | 0.000 | 1.000 | 1.000 | 0.46 | 0.96 | 0.52 | 0.63 | 0.000 | 0.000 | -0.000028 |
+| cpa1200 | 14 | 0.000 | 1.000 | 1.000 | 0.53 | 1.00 | 1.00 | 1.00 | 0.000 | 0.000 | -0.000064 |
+| cpa1200 | 15 | 0.000 | 1.000 | 1.000 | 0.40 | 0.98 | 0.58 | 0.54 | 0.000 | 0.000 | 0.000057 |
+| **cpa1200** | rule | after<1.0 & hold>=0.95 on 9/9: PASS | | | | | | | | | |
+
+**Section-1 choice (fixed order): `wfs60` — first candidate passing after_clear<1.0 AND hold>=0.95 on all nine seeds.**
+params@wfs60: w_clear_fs=60.0 clear_ms=None clear_pA=600.0 (schedule=credit_immediate arm=full)
+params@cms500: w_clear_fs=30.0 clear_ms=None clear_pA=600.0 (schedule=credit_immediate arm=full)
+params@cpa1200: w_clear_fs=30.0 clear_ms=None clear_pA=1200.0 (schedule=credit_immediate arm=full)
+VERDICT: {'wfs60': True, 'cms500': True, 'cpa1200': True} | chosen=wfs60
+
+- Next: STEP4B step 2 (omission build: the two runner copies, seed-7-only
+  constant tuning, freeze, engagement check).
+- COMMIT STOP: the 27 records + provs staged here hit the `below-chance`
+  failure gate (21 problems: lr-0 diagnostic cells read < 0.5 on every arm;
+  expected at lr 0, but the artifact carries no below_chance/UNDEFINED
+  declaration and adding one post-hoc, or editing the runner, is reserved).
+  Per section 3: NEEDS-CLAUDE `[T1]` filed with the gate message; this
+  WORKLOG commits alone (Markdown exempt); the 54 record files stay STAGED
+  on research/draft-ldc-outcome-timing for Claude's data ruling.
