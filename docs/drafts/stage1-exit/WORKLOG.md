@@ -149,3 +149,21 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - Next: on canary PASS queue the remaining 41 with #checked naming
   AMENDMENT-A1; score gate_c3rerun after all 42 land; RESULT + NEEDS
   [s1-c3-rerun].
+
+## 2026-10-05 14:10 EDT - s1-c3-rerun: canary PASS recorded, all 42 gate lines queued
+
+- Canary stage1_exit_gate_7851dd220_pool40_20261005T130424 finished
+  rc=0 wall=3006s (10 turns, seed42 lived lesion_recall): patch.calls=4,
+  p_wolf_bite abstains, c_dog_chase names cat, error=None, pythonhashseed_ok,
+  corpus_present, provenance stamped. The launcher's rc=3 was the known
+  false-negative ssh launch (NEEDS [pool-canary]); detached job ran. Recorded
+  PASS via pool_canary.sh record ... PASS pool40 gate (row 14:05).
+- Queued all 42 AMENDMENT-A1 A1.2 C3 gate lines (7 lived arms x 6 seeds,
+  42,43,44,100,101,102) from --emit-pool-jobs, out gate_c3rerun/, record cites
+  AMENDMENT-A1: added=42 failed=0. Accounted: 5 running + 37 queued = 42.
+- The canary's own artifact lives under
+  raw/_pool_canary/stage1_exit_gate_7851dd220_pool40_20261005T130424/ and is
+  NOT one of the 42; seed42 lesion_recall re-runs from the queue.
+- Next: when all 42 land, --aggregate gate_c3rerun --seeds
+  42,43,44,100,101,102; apply the A1.2 scorer rule; RESULT + NEEDS
+  [s1-c3-rerun].
