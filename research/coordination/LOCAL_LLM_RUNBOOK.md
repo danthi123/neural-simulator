@@ -802,6 +802,22 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (2026-10-04)
 - handled: [T1] (the 10-04 sync conflict; RULING T1-sync) (2026-10-04)
 
+- canary-node: (2026-10-05) Run every `tools/pool_canary.sh run` on pool40, never pool41/pool42. A canary
+  launches over plain ssh, outside the queue's memory accounting, and pool41/42 hold only 9-11 GB free while busy,
+  so an 8 GB line's own mem_ok (8+2) refuses it. The dispatcher now caps pool40's queued jobs at 11 of its 23 GB
+  (POOL_NODE_LIMITS pool40:mem_gb=11), so pool40 always has room. First check it holds the revision
+  (`ssh pool40 test -d derisk-pool/revisions/<sha>`); if not yet, wait for the backfill (c238ff325, 6c2cb1362
+  and 5818dc629 are backfilling now). The earlier "mem_ok refused 8G" results were infrastructure refusals, not
+  failures: re-run the held R canaries for [transitive-spiking-reach], [word-role-parse] and [fb-spiking-witness]
+  on pool40 as fresh attempts. Lines pinned to 6b9cb47f7581 (gone from main and research/*) can only run on
+  pool41/42; leave them queued there.
+- s1-c4-inputs-shipped: (2026-10-05) The runtime inputs for c238ff325 are on pool41 and pool42 (148 files, all
+  sha256-verified, shipped by the homelab session). Continue `s1-c4-void` from the confirm step now: the `ls` on
+  both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. This replaces the owner-run step
+  in RULING s1-c4-topup. Never run `tools/pool/ship_runtime_inputs.sh` yourself (it runs git as the pool user on a
+  repo whose config you can write, which is a code-execution path); any future manual ship goes through the
+  homelab session. Revisions provisioned after the next runtime bump ship these inputs automatically.
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
@@ -835,3 +851,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-04 17:14 [s1-c4-void] STOP: re-provision at c238ff325 -> state=already; ruling's confirm ls: _affect_learned_valence_map.json MISSING on pool41+pool42 (S has it); tried: provision.req touch (iw2-provision); blocks: 72 val_ re-queue under _stage1_exit/gate_c4rerun
 - 2026-10-04 19:52 [T1] STOP: STEP4B step 0 - agent_sync_branch research/draft-ldc-outcome-timing aborts (merge conflict in bg_action_selection_production_organ.py; branch unchanged); conflicted merge = section-2 reserved; BYB ok; blocks: Step 4b (27 clear lines + build + 144 grid)
 - 2026-10-04 23:13 [iw1-R-pre] STOP: saw: section-5 commit blocked by verdict-preconditions: iw1_score.py R verdicts (R_d6/R_swm/R_wmf, PASS 6/6) lack the Verdict block Amendment 2 gave iw2. tried: 3 scorers run, staged. blocks: integration-wave1 data commit; port the iw2-R-pre fix to iw1.
+- handled: [transitive-spiking-reach], [word-role-parse], [fb-spiking-witness] mem_ok-8G refusals -> RULING canary-node; [s1-c4-void] -> RULING s1-c4-inputs-shipped (2026-10-05)
