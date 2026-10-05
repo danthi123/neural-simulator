@@ -286,3 +286,46 @@ VERDICT: {'wfs60': True, 'cms500': True, 'cpa1200': True} | chosen=wfs60
   (lhb_rate_unrewarded > 2x lhb_rate_rewarded AND route-on unrewarded DA min < route-off by >= 0.02),
   then freeze the tuned constants in this WORKLOG before any seed 8-15 line.
 - Trigger: 03:57 provisioning-ok wake.
+
+## 2026-10-05 05:13 -- section 2 (tune): round-1 readout + MiMo Pro verdict; NEEDS [T1] ASK filed
+
+Round 1 landed (4 cells, seed 7, credit_immediate, onset 150/outcome 250, w_outc_strio 30, clear 60,
+wall ~2000 s each; pulled to S under `research/findings/raw/_long_delay_credit_bg/dev_omission/`):
+
+| cell | w_outc_lhb/w_lhb_rmtg/w_rmtg_snc | U min (<=.47) | R max (>=.60) | I (<=.005) | LHb U/R | mem | U-drop vs off |
+|---|---|---|---|---|---|---|---|
+| off route0 | - | 0.4982 FAIL | 0.6431 PASS | 2.45e-05 PASS | n/a | True | - |
+| on v1 | 30/20/12 | 0.3395 PASS | 0.5070 FAIL | 4.11e-05 PASS | 1.04x FAIL | True | +0.1587 |
+| on v2 | 30/20/24 | 0.2990 PASS | 0.5012 FAIL | 1.87e-05 PASS | 1.04x FAIL | True | +0.1992 |
+| on v3 | 60/30/12 | 0.2963 PASS | 0.5011 FAIL | 2.01e-05 PASS | 1.02x FAIL | True | +0.2019 |
+
+Route-off reproduces the step-4a anchor exactly (U 0.498 is the PILOT table's `.498 x` cell), so the
+instrument is calibrated. Route-on: U, I, membrane_ok and engagement (b) all PASS; R fails everywhere and
+engagement (a) fails (1.04x vs >2x). Test success (n=100): off 0.38, v1 0.53, v2 0.52, v3 0.44 -- the route
+does not damage the task. void_floor_ceiling True on all four INCLUDING route-off (D2 selector weights
+85-88 vs w_max 90, D1 ~0): pre-existing saturation, flagged to Claude.
+
+**MiMo Pro delegate verdict (2026-10-05, one delegate per RULING models):** the route engages as a TONIC
+brake, not a reward-modulated omission signal; R is the binding bar. The reward-side release arm
+(`w_rus_lhbinh`/`w_lhbinh_lhb`, still 9/12 everywhere) was never varied -- the 50 ms reward_us pulse
+suppresses LHb only ~17%, so RMTg->SNc inhibition runs through the rewarded DA peak (0.643 -> 0.507).
+Rewarded max is PINNED at 0.501-0.507 across terminal brake 12 vs 24 and drives 30/20 vs 60/30 --
+strengthening the brake is a dead end; the dip stays dose-responsive. Engagement (a) as written is
+**structurally unreachable**: the only rewarded/unrewarded difference inside the 250 ms window is the 50 ms
+pulse, so even total silencing caps the mean-rate ratio at 250/200 = 1.25 (measured 1.04). Fix the
+instrument (reward sub-window / pulse-locked Hz / slow GABA_B release), cap `w_outc_lhb` for physiology
+(LHb at 61-97 Hz sustained vs ~1-10 Hz tonic in vivo), and resolve the pre-existing saturation before any
+12-seed grid, else every frozen row voids.
+
+**NEEDS [T1] ASK filed on main `83efc766c`**: bar (a) fix is section-2 reserved (bars). Freeze therefore
+waits on Claude's ruling; the weight tune continues meanwhile.
+
+**Round-2 lattice queued** (4 shape-checked lines at eb4730cce, records cite the delegate verdict):
+- `tune_r1_release_x3_s7.json` -- w 30/27/24/20/12 (release arm x3 -- the one untested R lever)
+- `tune_r2_brake_half_s7.json` -- 30/9/12/20/6 (halved terminal brake; dose-response point)
+- `tune_r3_relhalf_s7.json` -- 30/27/24/20/6 (release + half brake, the freeze candidate)
+- `tune_r4_lowrate_s7.json` -- 15/18/18/40/12 (physiological LHb rate, compensated dip)
+
+- Next: on arrival pick the winner by R>=0.60 while holding U<=0.47, I, membrane_ok; freeze only after the
+  bar-(a) ruling. Round-2 is the last weight-only round before the instrument question must resolve.
+- Trigger: 04:59 results wake (tune round 1 landed).
