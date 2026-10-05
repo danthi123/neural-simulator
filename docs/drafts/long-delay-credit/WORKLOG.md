@@ -267,3 +267,22 @@ VERDICT: {'wfs60': True, 'cms500': True, 'cpa1200': True} | chosen=wfs60
   --reward-on-ms 150 --outcome-ms 250 (the step-4a pairing from the on150 prov), w_outc_strio 30,
   n-train 200, then the engagement check and the frozen-constants table before any seed 8-15 line.
 - Trigger: 03:11 continuation of the 02:41 landing wake.
+
+## 2026-10-05 03:59 -- section 2 (tune): seed-7 lattice QUEUED on the pool
+
+- Local probe of on-v1 (30/20/12, n-train 200) did not finish within 420 s on S, so per RULING
+  compute-placement the tune runs go to the pool (step-1 precedent). Provision of this branch's build
+  commit `eb4730cce16589b704a76f49a5b6d66e11162240` came back state=ok on pool41, pool42, pool40, wspool.
+- 4 shape-checked lines queued from S at eb4730cce (each: credit_immediate, full arm, seed 7 only,
+  n-train 200, n-test 100, --reward-on-ms 150 --outcome-ms 250 (the step-4a pairing from the on150 prov
+  sidecar), w_outc_strio 30, w-clear-fs 60, mem_gb=2, max_age_h=48):
+  `tune_off_base_s7.json` (route 0), `tune_on_v1_s7.json` (route 1, w_outc_lhb/w_lhb_rmtg/w_rmtg_snc
+  30/20/12), `tune_on_v2_s7.json` (30/20/24), `tune_on_v3_s7.json` (60/30/12). Depth 125, FAIL=0.
+- Also executed RULING transitive-engagement: withdrew the 12 barred `s2p-R-tr-` lines verbatim
+  (`--expect 12` honoured, withdrawn.log, depth 137->125); word-role 12 untouched. T19 re-generation at
+  the new pin is the next wake's task.
+- Next (section 2): read the 4 tune JSONs on arrival, check U (unrewarded in-window DA min <= 0.47),
+  R (rewarded max >= 0.60), I (|ITI offset probe| <= 0.005), membrane_ok, and engagement
+  (lhb_rate_unrewarded > 2x lhb_rate_rewarded AND route-on unrewarded DA min < route-off by >= 0.02),
+  then freeze the tuned constants in this WORKLOG before any seed 8-15 line.
+- Trigger: 03:57 provisioning-ok wake.
