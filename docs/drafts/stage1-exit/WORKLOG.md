@@ -186,3 +186,10 @@ All 42 gate shards landed (7 lived arms x 6 seeds, pin 7851dd220). `.venv/bin/py
 verify-go (one MiMo Pro delegate per RULING models; 7 lenses: reproducibility/power, gate-cheat, control-integrity, instrument-trust, selectivity/mass, process+prereg+pin, scope/stage): PASS-WITH-CAVEAT. Survived: read-only re-run of the scorer's own aggregate() reproduced the table; prereg bar 4.3 unchanged (no post-data weakening; A1.2 strictly harder); all 42 shards git_sha 7851dd220 git_dirty=false pythonhashseed_ok corpus_present; double dissociation verified seed-by-seed 6/6 (lesion_recall cuts only p_wolf_bite - patch calls=4/30, 9 other labels byte-identical incl. c_dog_chase naming cat; lesion_episodic env-lesion cuts only p_wolf_discuss, spares p_wolf_bite); permuted arm names PEAR 6/6; pre-exposure probes abstain 6/6; intact_a==intact_b on 10 labels x 6 seeds; no floor/ceiling (instrument moves both ways).
 
 CAVEAT (carried into the RESULT line): (1) criterion-scoped - C3 PASS does not move the stage verdict, which stays UNDEFINED (C1 FAILED, C4 FAILED, C2 passed); (2) the 100%-attributable 'control' is intact_a-vs-intact_b, the run-to-run null - it means 'not run noise', not 'no other co-varying cause'; (3) the scorer gates the PASS on intact/lesion/repeat/permuted controls but does not gate the cross-probe sparing or the attribution figure (reported only; both satisfied on 6/6). The 16:10 monitoring false alarm stands resolved: lesion_episodic patch=null is by design (stage1_exit_gate.py:214 env-var lesion).
+
+2026-10-06: Board synced per RULING s1-c3c4-read, including a backfill of the never-executed RULING
+board-session6 — Stage-1 attempt-1 verdict stamped in docs/.vikunja_sync; witness/BG-seam/host-share
+notes appended to board #232/#237; new task #244 "Redesign the feeling test's scrambled-values control
+(Claude)" (p3, due 2026-10-24, needs owner sign-off). The two "Re-run the Stage-1 ..." tasks the ruling
+closes do not exist on the board (board-session6's add-task step was never executed); the non-existence
+is recorded in the marker rather than a create-then-close.
