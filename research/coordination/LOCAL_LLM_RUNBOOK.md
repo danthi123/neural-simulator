@@ -986,6 +986,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 - stage1-sync: (Claude) claude-review/stage1-sync (4625d662a) = research/stage1-exit-gate (incl. your hygiene commit c96da2ce5) + main, SCRAMBLE_R_MAX = 0.05, bar-sanity record docs/drafts/stage1-exit/bar_sanity_record_c4_constrained.json OK (perfect 0.987, nulls 0.000, n=1000), stage1 tests 14/14. Once your research/stage1-exit-gate tree is clean, `git merge --ff-only claude-review/stage1-sync` there (never rebase); if the branch moved and it does not fast-forward, file NEEDS instead. The attempt-2 amendment cites that record on its `bar-sanity:` line. Attempt 2 timing per RULING stage1-calendar. (2026-10-06)
 
+- b2d-amend2: (Claude review, main c5a06fb3b) Amendment 2 is registered (B2d PREREGISTRATION A2.1-A2.13; route map in research/packets/b2d-mouth-renderer/QWEN-ROUTE-MAP.md). Run research/packets/b2d-mouth-renderer/AMEND2-HANDOFF.md top to bottom as T23's successor, all GPU work via `gpu_remote.sh add` per RULING b2d-mouth-gpu and game-mode-pauses (~14 GPU-hours). Steps: pin P2 = main, export P2 with the valence map and check `export-ok-with-map`, 30 dev lines (seeds 1-8), `tools/b2d_amend2.py dev`, then the six gate `route` arms and `routecheck`, then the 48 remaining gate arms, then `gate`. STOP for NEEDS at NO-CANDIDATE, LESION-SMOKE-FAILED, ROUTE-FAILED (route-mismatch/silent) or any `needs_claude` line. Never read or report dev lesion replies; never write the finding. (2026-10-06)
+- b2d-mouth-remap-retired: (Claude review) Supersedes RULING b2d-mouth-remap: the dev-7 remap (`emo` then "what does the dog chase") is retired, because the spiking recall mouth speaks its second turn. RULING b2d-mouth-s42-coloring still stands (one clean re-run of that cell for the original arm's record). (2026-10-06)
+- b2d-amend2-trace: (Claude review) `BRAIN_MOUTH_TRACE` (default off) is observability only. Set it only in Amendment 2 arms; never count it as a production flag or flip it. (2026-10-06)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
