@@ -7,3 +7,5 @@
 - 2026-10-06 18:55 (Hermes): queued all lines per HANDOFF step 2: 8 organ + 34 dev + 1 regression
   battery (BRAIN_IDLE_REPLAY flag ON vs OFF) at bc66ccaa3, 43 adds 0 fail; dispatcher already
   consuming. Scoring (step 3) on next wake when results land in $P.
+- 2026-10-06 19:28 (Hermes): step 3 partial: organ scored PASS 8/8 (n_seeds 8, failing {}) at op 0.
+  Reply shards 10/34 landed (battery pending); --score-reply runs when all 34 land.
