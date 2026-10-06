@@ -1008,6 +1008,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 - c1-hop-first: (owner 2026-10-06, "would be nice to fix it since we have the time to") Supersedes RULING c1-overextension: the hop-attenuation fix (PLAN §5.1, the bat case) lands BEFORE the C1 flip. From RULING c1-inheritance's HANDOFF do step 1 only (commit the 52 gate shards); queue nothing else for C1 until Claude merges claude-review/c1-hop and a later RULING gives the updated HANDOFF (the flip dev check then runs with the fix, and the C1 gate PASS is re-measured with it). (2026-10-06)
 
+- c1-inheritance-tip2: (Claude, main e822a59f4) claude-review/c1-inheritance @ 41e00380f is on main: it adds install_patch("lesion_inherit_pathway") (call counter) to stage1_exit_gate.py for Amendment A2, and brings the stage1-sync runner (SCRAMBLE_R_MAX=0.05) and the s1 bar-sanity specs/records to main. Any C1 "flip first" wording in the agent's notes is superseded by RULING c1-hop-first: the hop fix lands before the flip, and the flip is Claude's after the flip dev check passes WITH the fix. The A2 lesion name is fixed when Claude writes A2. (2026-10-06)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
