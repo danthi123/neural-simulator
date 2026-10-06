@@ -424,6 +424,12 @@ class MoodConditionedRenderer:
         self.base = base
         self.name = getattr(base, "name", "renderer")
         self.manner = ""     # set per-turn by the endpoint from manner_for(level, a, v, p)
+        # MOUTH TRACE (B2d Amendment 2, Claude 2026-10-06): one record per render call -- the method, the SVO, the
+        # manner clause actually appended to the generative prompt ('' when none), whether the base is a generative
+        # faculty, and the surface it returned. Bookkeeping only: no render path reads it, so every surface is the
+        # same with or without it. The endpoint clears it at the start of each turn (webapp.server._mouth_trace_reset)
+        # and attaches it to the reply only under BRAIN_MOUTH_TRACE (default off).
+        self.mouth_calls = []
 
     def _fac(self):
         fac = getattr(self.base, "_fac", None)
@@ -431,17 +437,35 @@ class MoodConditionedRenderer:
             return fac
         return None
 
+    def _note(self, method, a, v, p, manner, out):
+        """Append one mouth-trace record. Never raises (a trace failure must not change a turn)."""
+        try:
+            surface = out[0] if isinstance(out, tuple) and out else out
+            self.mouth_calls.append({"method": method, "svo": [a, v, p], "manner": manner,
+                                     "generative": self._fac() is not None,
+                                     "base": getattr(self.base, "name", None),
+                                     "surface": surface if isinstance(surface, str) else None})
+        except Exception:
+            pass
+
     def render_svo(self, a, v, p):
         fac = self._fac()
         if self.manner and fac is not None:
             manner = self.manner.format(a=a, v=v, p=p) if "{" in self.manner else self.manner
             prompt = fac.CONSTRAIN_TEMPLATE.format(a=a, v=v, p=p) + " " + manner
             surface, _full, _s = fac._generate(prompt)
+            self._note("render_svo", a, v, p, manner, surface)
             return surface, None
-        return self.base.render_svo(a, v, p)
+        out = self.base.render_svo(a, v, p)
+        self._note("render_svo", a, v, p, "", out)
+        return out
 
     def render_svo_regen(self, a, v, p):
         # the tighter regenerate (after a VERIFY reject) forces the exact words -> NO manner (recovery, not color).
         if hasattr(self.base, "render_svo_regen"):
-            return self.base.render_svo_regen(a, v, p)
-        return self.base.render_svo(a, v, p)
+            out = self.base.render_svo_regen(a, v, p)
+            self._note("render_svo_regen", a, v, p, "", out)
+            return out
+        out = self.base.render_svo(a, v, p)
+        self._note("render_svo", a, v, p, "", out)
+        return out
