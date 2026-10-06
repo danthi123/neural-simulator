@@ -855,6 +855,13 @@ jobs, about 5 GPU-h; gate 54 jobs, about 9 GPU-h. Memory guard as A1.2 (`tools/m
 
 **A2.12 Unchanged.** A1.2 and its 18 cells, `tools/b2d_mouth_score.py`, the stub arm, S0/S1/S2, the B2d verdict rules.
 
-bar-sanity: N/A, because `tools/bar_sanity.py` is not on main at filing and this amendment has no numeric bar or
-threshold: every bar is the exact equality of greedy-decoded strings under registered null and lesion floors, and a
-counted route. Hermes runs `tools/bar_sanity.py` on this amendment once it is on main, if it applies to such bars.
+**A2.13 Bar sanity** (`tools/bar_sanity.py`, 400 draws per generator, spec
+`research/packets/b2d-mouth-renderer/bar_sanity_spec_amend2.py`, which runs the real scorer on in-memory arm files):
+the row bar MOUTH-LOAD-BEARING passes a perfect brain 1.000 and fails every null brain (lesion not reaching the mouth
+0.000, host-text-only change 0.000, Qwen silent 0.000, a lesion that changes the mouth at random per seed 0.028). Two
+reported brains show what the six-of-six bar is sensitive to: a perfect faculty whose manner render VERIFY drops 5% of
+the time passes 0.935, and one whose mood is neutral on the probe turn on 15% of seeds passes 0.395. The second is a
+property of the probe, not the faculty, which is why a NOT-ENGAGED cell is UNDEFINED and the row then reads MIXED with
+its interval rather than not load-bearing.
+
+bar-sanity: research/packets/b2d-mouth-renderer/bar_sanity_record_amend2.json

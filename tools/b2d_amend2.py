@@ -171,8 +171,8 @@ def via(a, l):
     return sorted(set(out))
 
 
-def _arm_state(base, pin, seed, arm, label, attempt1):
-    doc = load(base, seed, arm)
+def arm_state_doc(doc, pin, seed, arm, label, rerun_done=False):
+    """One arm's reading of the probe turn, from an already-loaded arm document (None = missing)."""
     bad = validity(doc, pin, seed, arm)
     t = read_turn(doc, label) if not bad else {"state": "E"}
     if bad:
@@ -180,14 +180,28 @@ def _arm_state(base, pin, seed, arm, label, attempt1):
     if t["state"] == "turn-error":
         t["state"], t["fails"] = "E", ["organ-error" if t.get("organ_error") else "turn-error"]
     if t["state"] in ("E", "M"):
-        t["rerun_done"] = bool(attempt1) and os.path.exists(os.path.join(attempt1, "s%d" % seed, "%s.json" % arm))
+        t["rerun_done"] = bool(rerun_done)
     return t
 
 
-def score_cell(base, pin, seed, row, label, attempt1=None):
+def _arm_state(base, pin, seed, arm, label, attempt1):
+    done = bool(attempt1) and os.path.exists(os.path.join(attempt1, "s%d" % seed, "%s.json" % arm))
+    return arm_state_doc(load(base, seed, arm), pin, seed, arm, label, done)
+
+
+def cell_arms(row):
     short = LESIONS[row][0]
-    names = list(INTACT) + ["les_%s" % short, "les_%s_rep0" % short]
-    st = {a: _arm_state(base, pin, seed, a, label, attempt1) for a in names}
+    return list(INTACT) + ["les_%s" % short, "les_%s_rep0" % short]
+
+
+def score_cell(base, pin, seed, row, label, attempt1=None):
+    st = {a: _arm_state(base, pin, seed, a, label, attempt1) for a in cell_arms(row)}
+    return judge_cell(row, seed, st)
+
+
+def judge_cell(row, seed, st):
+    """A2.6's rules over the five arm readings of one (seed, row) cell."""
+    short = LESIONS[row][0]
     em = {a: t for a, t in st.items() if t["state"] in ("E", "M")}
     if em:
         final = any(t.get("rerun_done") for t in em.values())
