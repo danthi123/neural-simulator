@@ -24,13 +24,19 @@ agent-floor signal (fewer than AGENT_FLOOR concurrent agents) is reported persis
 (`gates/agent_floor_persistent`, non-blocking) but NOT escalated to a hard block here — see that gate's
 docstring for why forcing a minimum agent count to commit is a judgement call left for owner review.
 """
-import json, os, re, subprocess, sys, time
+import json, os, re, shlex, subprocess, sys, time
 
 import parallel_state
 import pool_nodes  # single source of truth: tools/pool_nodes.conf
 import waiver_history
 
-ROOT = "/home/dant123/Projects/sim"
+# The shared repo root (parent of the git common dir), on whichever host holds the checkout
+# (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+ROOT = waiver_history.shared_root()
+# SIM_GPU_HOST (2026-09-30): when the checkout lives on a GPU-less host (the server) and the GPU, its queue and the
+# GAME_MODE sentinel stay on the workstation, the GPU probes run there over ssh against its checkout (~/Projects/sim).
+GPU_HOST = os.environ.get("SIM_GPU_HOST", "").strip()
+GPU_HOST_REPO = "$HOME/Projects/sim"
 POOL = pool_nodes.default_nodes()
 VIK = os.path.join(ROOT, "tools", "vikunja.sh")
 # (print label, gate NAME, waiver file, waiver max age h) -- IMPORTED from the gates themselves (fix round 3,
@@ -51,7 +57,8 @@ except Exception as _e:        # the heartbeat is exit-0-always; say so loudly i
 # A standalone Agent-tool call's transcript sits directly under subagents/; a Workflow's agent() call
 # (a .claude/workflows/*.js fan-out, or an ad-hoc workflow script) writes its transcript one level deeper,
 # under subagents/workflows/wf_<run-id>/. See active_agents() below for why this matters.
-CLAUDE_PROJECTS_DIR = "/home/dant123/.claude/projects/-home-dant123-Projects-sim"
+# Claude Code names a project dir after its path with every non-alphanumeric character replaced by "-".
+CLAUDE_PROJECTS_DIR = os.path.join(os.path.expanduser("~"), ".claude", "projects", re.sub(r"[^A-Za-z0-9]", "-", ROOT))
 
 
 def sh(cmd, timeout=10):
@@ -68,8 +75,17 @@ def local_idle():
     return nproc, load1, max(0, int(nproc - load1)), lanes
 
 
+def gpu_sh(cmd, timeout=10):
+    """Run a GPU-side probe here, or on SIM_GPU_HOST over ssh (through bash: the workstation's login shell is fish)."""
+    if not GPU_HOST:
+        return sh(cmd, timeout=timeout)
+    remote = "bash -c " + shlex.quote(cmd)
+    return sh("ssh -o BatchMode=yes -o ConnectTimeout=5 %s %s" % (shlex.quote(GPU_HOST), shlex.quote(remote)),
+              timeout=timeout)
+
+
 def gpu_state():
-    u = sh("nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1")
+    u = gpu_sh("nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1")
     try:
         return int(u)
     except Exception:
@@ -82,7 +98,7 @@ def gpu_queue_busy():
     # util%, so nvidia-smi utilization ALONE misreads it as free (the 2026-09-01 recurring false-positive: a healthy
     # queue with 13 queued + a running job read as "GPU idle(4%)" every cycle, costing a re-diagnosis each heartbeat).
     # ONE brain-loading GPU proc at a time => a running or queued job IS saturation of this lane, not waste.
-    st = sh("bash %s/tools/gpu_queue.sh status 2>/dev/null" % ROOT, timeout=10)
+    st = gpu_sh('bash "%s/tools/gpu_queue.sh" status 2>/dev/null' % (GPU_HOST_REPO if GPU_HOST else ROOT), timeout=15)
     if not st:
         return False
     up = "dispatcher: up" in st
@@ -177,7 +193,10 @@ def main():
     # GAME PAUSE (tools/game.sh on → GAME_MODE): the local GPU is the owner's game, NOT spare capacity — exclude it
     # from every idle-capacity signal so it cannot trip under-parallelization. The mini-PC POOL + build/research
     # AGENTS are separate hardware / GPU-free and stay enforced (the owner's own game-time plan keeps those busy).
-    game_paused = os.path.exists(os.path.join(ROOT, "research", "queue", "GAME_MODE"))
+    if GPU_HOST:
+        game_paused = gpu_sh('test -e "%s/research/queue/GAME_MODE" && echo yes' % GPU_HOST_REPO) == "yes"
+    else:
+        game_paused = os.path.exists(os.path.join(ROOT, "research", "queue", "GAME_MODE"))
     gpu_free = gpu_free and not game_paused
     # idle CAPACITY worth filling, for the informative message: >6 local cores, idle pool cores (>10), or a free GPU.
     cap = []

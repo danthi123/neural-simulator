@@ -1,0 +1,71 @@
+{
+ "dev_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "grid_len": 8,
+ "missing": [],
+ "op": 4,
+ "packet": "fb-spiking-witness",
+ "step": "select",
+ "sweep_dir": "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/sweep",
+ "table": {
+  "0": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "1": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "2": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "3": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "4": {
+   "1": true,
+   "2": true,
+   "3": true,
+   "4": true,
+   "5": true,
+   "6": true,
+   "7": true,
+   "8": true
+  }
+ },
+ "verdict": "SELECTED"
+}

@@ -35,8 +35,22 @@ def _run(cmd, tmp_path):
     env["POOL_QUEUE_PATH"] = str(tmp_path / "pool.queue")
     env["POOL_SSH_CONFIG"] = str(tmp_path / "no-such-pool-ssh-config")
     env["POOL_EXTRA_NODES_FILE"] = str(tmp_path / "no-such-extra-nodes")
+    # the pool-canary guard (2026-09-30, tests/test_pool_canary_guard.py) runs after this guard: point it at a
+    # tmp record file so these tests never read the real research/queue/pool_canaries.tsv
+    env["POOL_CANARIES_PATH"] = str(tmp_path / "pool_canaries.tsv")
     return subprocess.run(["bash", str(POOL_QUEUE), *cmd], cwd=ROOT, env=env,
                            capture_output=True, text=True, timeout=30)
+
+
+CANARY_MOD = "tools.fake_canary_runner"
+
+
+def _canary_pass(tmp_path):
+    """A PASS pool-canary record for (CANARY_MOD, HEAD): the pool-canary guard's own precondition, so the
+    acceptance tests below keep testing THIS guard (prereg) and not that one."""
+    (tmp_path / "pool_canaries.tsv").write_text(
+        "2026-09-30T00:00:00-04:00\t%s\t%s\tPASS\tpool41\tgate\ttest\tfixture record for the prereg-guard tests\n"
+        % (CANARY_MOD, HEAD_SHA))
 
 
 def _queue_is_empty(tmp_path):
@@ -102,8 +116,9 @@ def test_refuses_comma_separated_gate_seeds_without_prereg(tmp_path):
 # ------------------------------------------------------------------------ gate seeds accepted with a prereg
 
 def test_accepts_gate_seed_with_a_prereg_that_exists_at_the_pinned_revision(tmp_path):
+    _canary_pass(tmp_path)
     res = _run(
-        ["add", f"{_pinned(HEAD_SHA)} && true --seed 100", "--checked", f"prereg {EXISTING_PATH}"],
+        ["add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seed 100", "--checked", f"prereg {EXISTING_PATH}"],
         tmp_path,
     )
     assert res.returncode == 0, res.stderr
@@ -112,8 +127,9 @@ def test_accepts_gate_seed_with_a_prereg_that_exists_at_the_pinned_revision(tmp_
 
 
 def test_accepts_comma_separated_gate_seeds_with_a_valid_prereg(tmp_path):
+    _canary_pass(tmp_path)
     res = _run(
-        ["add", f"{_pinned(HEAD_SHA)} && true --seeds 42,43,44,100,101,102",
+        ["add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seeds 42,43,44,100,101,102",
          "--checked", f"prereg {EXISTING_PATH}"],
         tmp_path,
     )

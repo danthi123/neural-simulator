@@ -10,7 +10,8 @@
 # launches forever (swap won't drain without RAM pressure) and corroded the guard (a false alarm trains the
 # reader to ignore it — the project's own silent-failure rule 8). See memory project_baloo_indexer_memory_hog.
 # Real risk = RAM actually low, OR swap being actively churned (thrash). Idle pages parked in swap are free.
-cd /home/dant123/Projects/sim
+# The shared repo root (parent of the git common dir), on whichever host holds the checkout (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+cd "$(dirname "$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --path-format=absolute --git-common-dir)")" || exit 1
 gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader 2>/dev/null | tr '\n' '|')
 load=$(awk '{print $1}' /proc/loadavg)
 ram_avail_g=$(awk '/MemAvailable/{print int($2/1024/1024)}' /proc/meminfo)

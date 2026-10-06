@@ -1,0 +1,36 @@
+{
+ "run_id": "1791260818-R",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "R",
+  "--packet",
+  "word-role-parse",
+  "--tag",
+  "s2p-R-wr-9ea7411",
+  "--pin",
+  "9ea7411eb0f219560c83816c84bc75cae4602369",
+  "--selection",
+  "research/findings/raw/_s2p/word-role-parse/9ea7411/selection.json",
+  "--out",
+  "research/findings/raw/_s2p/word-role-parse/9ea7411/verdicts/R.json"
+ ],
+ "git_sha": "8f1bb92921eb1d93698666fc2d4bf80ec44da755",
+ "git_dirty": true,
+ "started": "2026-10-06T00:26",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "note": "R aggregation over the packet's 12 LB shards (pure stdlib); emitted as the gate-sanctioned sibling because tools/s2p_score.py does not write one itself. Verdict PASS: reply load-bearing 6/6, controls 6/6 at pin 9ea7411eb (op=0).",
+ "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/word-role-parse/research/findings/raw/_s2p/word-role-parse/9ea7411/verdicts/R.json"
+}

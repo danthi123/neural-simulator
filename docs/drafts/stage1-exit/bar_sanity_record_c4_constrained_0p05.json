@@ -1,0 +1,67 @@
+{
+ "backend": "numpy",
+ "description": "C4 val_heldout verdict PASS under the real scorer, six gate-style seeds; the scrambled arm uses stage1_exit_gate._scrambled_valence_draw with SCRAMBLE_R_MAX = 0.05 (pinned by this spec).",
+ "failures": [],
+ "kinds": {
+  "null_control_ignored": "null",
+  "null_lesion_inert": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_control_ignored": 0,
+  "null_lesion_inert": 0,
+  "perfect": 987,
+  "perfect_exact": 1000,
+  "random": 0
+ },
+ "name": "stage1-C4 constrained draw, SCRAMBLE_R_MAX pinned to 0.05",
+ "pass_rate": {
+  "null_control_ignored": 0.0,
+  "null_lesion_inert": 0.0,
+  "perfect": 0.987,
+  "perfect_exact": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "null_control_ignored": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9779,
+   0.9924
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "bc8f804b9bc8cbd6610c6ff90b8c53168f7d58c5",
+ "scorer_files": {
+  "docs/drafts/stage1-exit/bar_sanity_c4_common.py": "aab0689717c6f34fe5cf836fd424e133be2a1b14d16529913d604504c68fdf7e",
+  "research/runners/stage1_exit_gate.py": "ba47e26ce6ec455b1d81e30668f02a6707f69cd0c4a76d4cf007e5a6250e5f94"
+ },
+ "scorer_sha256": "a01c4890bd7b4d4ae5684c01bfc7c69faec3f8dea64535ad37634b88c77993b7",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-exit/bar_sanity_spec_c4_constrained_0p05.py",
+ "spec_sha256": "2162b1056eee94650cdc7034a9db924258e449184bb2f9636b76c998badee306",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 166.4
+}

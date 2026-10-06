@@ -1,0 +1,36 @@
+{
+ "run_id": "1791260818-O",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "O",
+  "--packet",
+  "word-role-parse",
+  "--dir",
+  "research/findings/raw/_s2p/word-role-parse/9ea7411/O",
+  "--selection",
+  "research/findings/raw/_s2p/word-role-parse/9ea7411/selection.json",
+  "--pin",
+  "9ea7411eb0f219560c83816c84bc75cae4602369",
+  "--out",
+  "research/findings/raw/_s2p/word-role-parse/9ea7411/verdicts/O.json"
+ ],
+ "git_sha": "8f1bb92921eb1d93698666fc2d4bf80ec44da755",
+ "git_dirty": true,
+ "started": "2026-10-06T00:26",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "note": "O aggregation over the packet's O jsons (pure stdlib); emitted as the gate-sanctioned sibling because tools/s2p_score.py does not write one itself. Verdict PASS 6/6 at pin 9ea7411eb (op=0; O_IN=6).",
+ "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/word-role-parse/research/findings/raw/_s2p/word-role-parse/9ea7411/verdicts/O.json"
+}

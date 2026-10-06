@@ -7,6 +7,67 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+**Operating setup (2026-09-30):** the project's home moved to homelab-server, driven by the Hermes Agent there
+(`/home/dant123/Projects/neural-simulator`); the workstation (`/home/dant123/Projects/sim`) is now a follower +
+compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
+`docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
+
+## 2026-10-06 — Stage 1 after the re-runs: words and lived memory pass, categories fail, the feeling test fails on a flawed control
+
+**The two re-run Stage-1 tests are read.** **Remembering a lived event** now passes on all six seeds with a working
+switch-off: cutting the memory read removes the answer, cutting the episode gate removes "we discussed the wolf",
+and each leaves the other answer alone. Host code still picks which stored fact is read, so the credit is partial.
+**The feeling test** re-ran with the brain's learned feeling values on the pool machines and fails as registered.
+Held-out feeling words track human ratings and switching off the feeling pathway silences them. The test also
+scrambles the learned values, and the brain's replies follow the scrambled values closely on every seed. But the
+registered rule asked the scrambled run to look unlike human ratings on all six seeds, and on two seeds the scramble
+happened to resemble them. A brain that follows its learned values exactly would fail that rule about half the time,
+so the next attempt needs a better-designed control, registered before it runs. **Category inheritance** still
+fails; its second measurement, with the new inheritance wiring on, is 52 of 54 runs done. **Stage 1 is not passed.**
+The audit of results run without the learned values voids only the first feeling test. Results that cut the feeling
+pathway on the pool stand, but they measured dictionary values, not learned ones.
+
+## 2026-10-05 — three chat abilities are now on by default, each with a narrower claim than first written
+
+**On by default:** tracking another person's false belief, answering "does A come before D?" across a chain of facts,
+and answering questions about itself through the brain's own parser. Switching each on changed nothing else, and the
+switch-off still restores the old behaviour exactly. An independent review narrowed what each shows:
+- **False belief:** the switch-off test overrides host code's decision about who saw the move. It does not switch off
+  the spiking memory itself, so that part is still unproven.
+- **Chaining facts:** the spiking test decides only when to stop. Host code supplies each next step.
+- **Self-questions:** the reply to "what do you use?" is the same as before. "What are you?" and "who are you?" now
+  get an honest "I don't know" instead of an off-topic answer.
+
+All three keep partial credit. A learning-off diagnostic in the reward-timing work tripped the below-chance check,
+but those runs sit at chance by design; the runner now labels them, and the chosen setting stands.
+
+## 2026-10-04 — the first Stage-1 exit attempt does not pass; word learning does, and a setup fault voids the feeling test
+
+**The first stage-exit attempt** ran the whole production brain on six seeds. **Learning a new word** passes: a word
+heard once is recalled as doer and as done-to, and switching off the part that makes room for new words removes the
+answer. **Inheriting a category** fails. **Whether remembering a lived event needs the memory system** could not be
+measured: the switch-off test cut a route the brain no longer uses, so it re-runs with a corrected switch. **The
+feeling test is void:** the pool machines never received the brain's learned feeling values, so it
+quietly used dictionary values. The setup is fixed and the test re-runs. A separate measurement shows host code still
+makes every decision on the word and memory questions, though what is recalled was learned. **Tracking who saw a
+move** passes as a spiking population, with partial credit, because host code still reads it. The basal-ganglia
+commit read is a no-go and needs a new method.
+
+## 2026-10-02 — three chat abilities pass their reply test; the moves that make them fully the brain's own are written; sleep inference needs a new method
+
+**Passed:** tracking another person's false belief, chaining "A chases B, B chases C" in chat, and answering questions
+about itself each now change the reply on all six seeds when switched on, with the right controls, independently
+re-checked. Two more checks (switching them on by default without harming anything else) are running next; they stay
+off by default until both pass. Each still has one decision made by host code (who saw the move; the chain's
+reachability test; which word plays which role), so each counts only partly toward Stage 1.
+**Written for the server agent to run:** four packages that move those three host decisions into the spiking brain
+and then switch them on, and a fifth that measures, by intervention, whether the brain or host code decides the answer
+on the Stage-1 test's word-learning and lived-memory questions. **Sleep inference** (inferring A-D after learning A-B
+and B-D on different days, then sleeping): the night does link the memories, but two registered checks failed, so
+this method is a no; the next one adds a symmetric memory-strengthening rule. **Housekeeping merged:** a mislabelled
+noise setting in nine old runners, a config-name audit, a test-suite clean-up, and a guard against unstable inhibition
+(off by default). The Stage-1 exit attempt is due 10-24.
+
 ## 2026-09-25 (afternoon) — owner rulings, a backlog of results scored, and handoff to the local model
 
 **Owner rulings:** the memory pair waits for a fix that makes the brain remember what matters (important facts and key

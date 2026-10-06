@@ -1,0 +1,416 @@
+{
+ "all_pass": false,
+ "backend": "numpy",
+ "cases": {
+  "absent_after_wait": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.04545,
+    "1": 0.03864,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": false,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      40,
+      0,
+      0
+     ],
+     "relay_spikes": 40
+    }
+   ]
+  },
+  "false_belief": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.04886,
+    "1": 0.03788,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": false,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      40,
+      0,
+      0
+     ],
+     "relay_spikes": 40
+    }
+   ]
+  },
+  "lesion_false_belief": {
+   "belief_loc": 2,
+   "belief_rates": {
+    "0": 0.01894,
+    "1": 0.0178,
+    "2": 0.02008,
+    "3": 0.01894
+   },
+   "expected_slot": 1,
+   "pass": false,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      264,
+      214,
+      201,
+      214
+     ],
+     "relay_spikes": 893
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      219,
+      256,
+      194,
+      207
+     ],
+     "relay_spikes": 876
+    }
+   ]
+  },
+  "present_after_wait": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": false,
+   "presence_rate": 0.08826,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 357,
+     "relay_by_loc": [
+      1,
+      58,
+      0,
+      0
+     ],
+     "relay_spikes": 59
+    }
+   ]
+  },
+  "return_after_wait": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": false,
+   "presence_rate": 0.08561,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 356,
+     "relay_by_loc": [
+      0,
+      59,
+      0,
+      0
+     ],
+     "relay_spikes": 59
+    }
+   ]
+  },
+  "return_then_move": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": false,
+   "presence_rate": 0.08826,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 353,
+     "relay_by_loc": [
+      0,
+      49,
+      0,
+      0
+     ],
+     "relay_spikes": 49
+    }
+   ]
+  },
+  "silence_true_belief": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": false,
+   "presence_rate": 0.09356,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      1,
+      40,
+      0,
+      0
+     ],
+     "relay_spikes": 41
+    }
+   ]
+  },
+  "true_belief": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": false,
+   "presence_rate": 0.08864,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 355,
+     "relay_by_loc": [
+      1,
+      65,
+      0,
+      0
+     ],
+     "relay_spikes": 66
+    }
+   ]
+  },
+  "two_moves_one_seen": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 2,
+   "pass": false,
+   "presence_rate": 0.08712,
+   "world_loc": 2,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      40,
+      0,
+      0
+     ],
+     "relay_spikes": 40
+    },
+    {
+     "loc": 2,
+     "presence_spikes": 354,
+     "relay_by_loc": [
+      0,
+      0,
+      52,
+      0
+     ],
+     "relay_spikes": 52
+    }
+   ]
+  },
+  "two_unseen_moves": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.04053,
+    "1": 0.04091,
+    "2": 0.03977,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": false,
+   "presence_rate": 0.0,
+   "world_loc": 2,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_spikes": 362,
+     "relay_by_loc": [
+      61,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 61
+    },
+    {
+     "loc": 1,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      40,
+      0,
+      0
+     ],
+     "relay_spikes": 40
+    },
+    {
+     "loc": 2,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      40,
+      0
+     ],
+     "relay_spikes": 40
+    }
+   ]
+  }
+ },
+ "mode": "relay",
+ "op_index": 0,
+ "organ": "tom_spiking_witness",
+ "params": {
+  "BOUNDED_CONDUCTANCE": true,
+  "LEAVE_RECEPTOR": "gaba_a",
+  "MODE": "relay",
+  "RELAY_BIAS_PA": -150.0,
+  "W_EVICT_BELIEF": 100.0,
+  "W_EV_INH": 60.0,
+  "W_EV_PRES": 60.0,
+  "W_INH_PRES": 100.0,
+  "W_PRES_RELAY": 1.5,
+  "W_RELAY_BELIEF": 48.0,
+  "W_RELAY_EVICT": 8.0,
+  "W_WORLD_RELAY": 1.5
+ },
+ "seed": 5
+}

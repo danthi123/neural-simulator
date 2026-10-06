@@ -1,0 +1,11 @@
+# Run-time INPUTS that live under research/findings/raw/ (2026-10-04, cloud Claude session 6).
+# Every provisioner excludes research/findings/raw/ as run OUTPUTS, so a production organ that READS a file there
+# silently falls back on a pool or AWS node (the affect organ to the raw Warriner norm, the WKV mouth to its native
+# head) and the run measures the wrong brain. That voided the Stage-1 exit gate's C4 arms (FAILURE_LOG 2026-10-04).
+# tools/pool_provision.sh, tools/aws_provision.sh and tools/aws_cpu_provision.sh ship every path below (a file or a
+# directory, git-tracked). tests/test_runtime_raw_inputs.py fails when a production reader's default path is not
+# covered here. One path per line; '#' starts a comment.
+research/findings/raw/_affect_learned_valence_map.json
+research/findings/raw/_affect_learned_vocab/run1
+research/findings/raw/_persist_eprop_head_scope
+research/findings/raw/_affect_tone_open_output/affect_tone_open_output_verdict.json

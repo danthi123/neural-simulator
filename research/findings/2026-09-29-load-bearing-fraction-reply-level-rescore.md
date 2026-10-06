@@ -31,6 +31,11 @@ verdict: The registered fraction measures decision fields, not replies. At reply
 
 # The load-bearing fraction measures decision fields, not replies: reply-level robust core 17 of 33 (B2b) and 15 of 25 (flip-adequate); 7 of 9 genuine trace-only rows are instrument limits, 2 are tautological, comprehension-monitor's lesion crash is now fixed
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 ## Headline
 
 Three numbers per battery: the registered TRACE headline (reproduced exactly), the REPLY-level secondary (the

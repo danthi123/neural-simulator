@@ -104,9 +104,12 @@ from sim.kernels import (
                          prepare_fused_snr_packet_conductance_update_into,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
+                         conductance_decay_and_current,
                          fused_readonly_izh_step,
                          fused_gabab_decay_and_current,
+                         gabab_decay_and_current,
                          fused_nmda_update_and_current,
+                         nmda_update_and_current,
                          fused_coincidence_plateau,
                          fused_graded_dendritic_plateau,
                          fused_stp_decay_recovery,
@@ -8094,6 +8097,12 @@ class SimulationBridge:
             return False
         if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
             return False
+        # Mutually exclusive with the bounded-conductance-integration correctness fix (2026-09-29): the
+        # megakernel's fused_readonly_izh_step has the SAME unbounded I_syn arithmetic as
+        # fused_conductance_decay_and_current and does not implement the exponential-Euler bound. Falling
+        # through here (rather than erroring) routes to the Python path below, which DOES honor the flag.
+        if getattr(cfg, "enable_bounded_conductance_integration", False):
+            return False
         if getattr(cfg, "backend_neutral_izh_arithmetic", False):
             return False
         if not getattr(cfg, "fast_spike_reset", False):
@@ -8674,6 +8683,29 @@ class SimulationBridge:
                 shape=M.shape,
             ).tocsr()
 
+    def _bounded_conductance_C(self, cfg):
+        """Resolve the membrane capacitance C used by the exponential-Euler bounded conductance
+        integration (cfg.enable_bounded_conductance_integration; sim/kernels.py
+        fused_bounded_conductance_decay_and_current et al). SCOPED to the two membrane models the
+        2026-09-29 overshoot defect was measured/fixed on (docs/drafts/conductance-overshoot-guard/
+        WORKLOG.md): NeuronModel.IZHIKEVICH (2007 -- self.cp_izh_C, per-neuron pF, already allocated
+        at build time regardless of when this is first read) and NeuronModel.ADEX (cfg.adex_C, scalar
+        pF). Hodgkin-Huxley (current in uA/cm^2 against C_m in uF/cm^2, not the pA/pF this bound's
+        formula assumes) and resonate-and-fire (a phasor state with no membrane-capacitance/synaptic-
+        conductance-current term at all) are explicitly OUT OF SCOPE: raises rather than silently
+        no-op, so a build that enables the flag on an unsupported neuron_model_type fails loudly
+        instead of running an unbounded step that looks bounded."""
+        model = cfg.neuron_model_type
+        if model == NeuronModel.IZHIKEVICH.name:
+            return self.cp_izh_C
+        if model == NeuronModel.ADEX.name:
+            return cfg.adex_C
+        raise RuntimeError(
+            "cfg.enable_bounded_conductance_integration is only implemented for "
+            f"NeuronModel.IZHIKEVICH and NeuronModel.ADEX, not neuron_model_type={model!r}. "
+            "Disable the flag or switch neuron_model_type."
+        )
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -8684,6 +8716,16 @@ class SimulationBridge:
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
             firing_state_written_in_place = False
+
+            # Explicit-step conductance overshoot fix (2026-09-29), ADDITIVE + DEFAULT-OFF: resolved ONCE
+            # per step (cheap attribute lookups only -- cp_izh_C/cfg.adex_C are already-allocated arrays/
+            # scalars, no copy) and threaded through the conductance-current call sites below (sections 2,
+            # 2.3, 2.3a, GABA_B). _bounded_ci=False (the default) => _bounded_ci_C is never computed/used
+            # and every call site below is byte-identical to before this fix (see
+            # tests/test_bounded_conductance_integration.py::test_byte_identical_when_off). See
+            # cfg.enable_bounded_conductance_integration (sim/config.py) for the full rationale.
+            _bounded_ci = getattr(cfg, "enable_bounded_conductance_integration", False)
+            _bounded_ci_C = self._bounded_conductance_C(cfg) if _bounded_ci else None
 
             # SELECTIVE (input-modulated-leak) slow SSM state (Rung 4b, 2026-07-13): a per-neuron slow graded leaky
             # integrator whose retention is set by the INPUT-DRIVEN SHUNT -- s = lam_eff*s + (1-lam_eff)*inject,
@@ -8945,9 +8987,10 @@ class SimulationBridge:
                 else cfg.syn_reversal_potential_i
             )
 
-            self.cp_conductance_g_e, self.cp_conductance_g_i, synaptic_current_I_syn_pA = fused_conductance_decay_and_current(
+            self.cp_conductance_g_e, self.cp_conductance_g_i, synaptic_current_I_syn_pA = conductance_decay_and_current(
                 self.cp_conductance_g_e, self.cp_conductance_g_i, decay_e, decay_i,
-                self.cp_membrane_potential_v, cfg.syn_reversal_potential_e, E_inh_to_use
+                self.cp_membrane_potential_v, cfg.syn_reversal_potential_e, E_inh_to_use,
+                bounded=_bounded_ci, C=_bounded_ci_C, dt=dt,
             )
 
             g_e_increase = None  # Track for NMDA input
@@ -9215,11 +9258,12 @@ class SimulationBridge:
             # --- 2.3. NMDA conductance with Mg²⁺ block (Jahr & Stevens 1990) ---
             if cfg.enable_nmda and self.cp_conductance_g_nmda is not None:
                 # Update NMDA dual-exponential conductance and compute Mg²⁺-gated current
-                self.cp_conductance_g_nmda, self.cp_conductance_g_nmda_rise, I_nmda = fused_nmda_update_and_current(
+                self.cp_conductance_g_nmda, self.cp_conductance_g_nmda_rise, I_nmda = nmda_update_and_current(
                     self.cp_conductance_g_nmda, self.cp_conductance_g_nmda_rise,
                     self._cached_decay_nmda, self._cached_decay_nmda_rise,
                     self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E_NMDA = E_AMPA = 0 mV
-                    cfg.nmda_mg_concentration
+                    cfg.nmda_mg_concentration,
+                    bounded=_bounded_ci, C=_bounded_ci_C, dt=dt,
                 )
                 # NMDA gets same excitatory input as AMPA, scaled by nmda_ratio
                 if g_e_increase is not None:
@@ -9278,12 +9322,13 @@ class SimulationBridge:
                     self.cp_conductance_g_nmda_recurrent_rise += g_nmda_rec_increase
                 (self.cp_conductance_g_nmda_recurrent,
                  self.cp_conductance_g_nmda_recurrent_rise,
-                 I_nmda_recurrent) = fused_nmda_update_and_current(
+                 I_nmda_recurrent) = nmda_update_and_current(
                     self.cp_conductance_g_nmda_recurrent,
                     self.cp_conductance_g_nmda_recurrent_rise,
                     self._cached_decay_nmda_recurrent, self._cached_decay_nmda_recurrent_rise,
                     self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E_NMDA = E_e = 0 mV
-                    cfg.nmda_mg_concentration)
+                    cfg.nmda_mg_concentration,
+                    bounded=_bounded_ci, C=_bounded_ci_C, dt=dt)
                 total_input_current_pA = total_input_current_pA + I_nmda_recurrent
 
             # --- 2.3a-bis. Dendritic-COINCIDENCE plateau (Major-Larkum-Schiller NMDA spike; Poirazi-Mel
@@ -9530,9 +9575,10 @@ class SimulationBridge:
                     if _gb_max and _gb_max > 0.0:
                         cp.minimum(self.cp_conductance_g_gabab, cp.float32(_gb_max),
                                    out=self.cp_conductance_g_gabab)
-                self.cp_conductance_g_gabab, I_gabab = fused_gabab_decay_and_current(
+                self.cp_conductance_g_gabab, I_gabab = gabab_decay_and_current(
                     self.cp_conductance_g_gabab, self._cached_decay_gabab,
-                    self.cp_membrane_potential_v, self.cp_gabab_reversal_per_neuron)
+                    self.cp_membrane_potential_v, self.cp_gabab_reversal_per_neuron,
+                    bounded=_bounded_ci, C=_bounded_ci_C, dt=dt)
                 total_input_current_pA = total_input_current_pA + I_gabab
 
                 # --- B-2: TD value-DERIVATIVE current (2026-06-10 N9 TD cue-shift design §2.2) ---

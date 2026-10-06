@@ -1,0 +1,73 @@
+{
+ "runner": "research.runners.iw2_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/research/runners/iw2_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw2/identity/573a943/default.json",
+  "research/findings/raw/_iw2/identity/573a943/on_false-belief-chat.json",
+  "--expect",
+  "differs",
+  "--packet",
+  "false-belief-chat",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/verdicts/573a943/D_false-belief-chat.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "on:false-belief-chat"
+ ],
+ "git_shas": [
+  null,
+  null
+ ],
+ "expect": "differs",
+ "packet": "false-belief-chat",
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "same_script": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true,
+  "deterministic_env_both": true
+ },
+ "differing_turns": [
+  4
+ ],
+ "reply_differing_turns": [
+  4
+ ],
+ "reply_diffs": [
+  {
+   "turn": 4,
+   "message": "Where will Sally look for the marble?",
+   "for": "false-belief-chat",
+   "a": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sally yet: what can you tell me about sally? \u2014 worth going further here.",
+   "b": "Sally will look in the basket for the marble."
+  }
+ ],
+ "own_differing_turns": [
+  4
+ ],
+ "out_of_scope_differing_turns": [],
+ "ok": true,
+ "verdict": "DIFFERS-IN-SCOPE",
+ "inputs": [
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw2/identity/573a943/default.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw2/identity/573a943/on_false-belief-chat.json"
+ ]
+}

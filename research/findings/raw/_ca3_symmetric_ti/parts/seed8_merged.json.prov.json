@@ -1,0 +1,39 @@
+{
+ "run_id": "1791079826-2",
+ "runner": "research/runners/_ca3_symmetric_ti_symrule.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/d4a533ae77186050e3e8bc6156e24bb81af3221b/research/runners/_ca3_symmetric_ti_symrule.py",
+  "--merge",
+  "research/findings/raw/_ca3_symmetric_ti/parts/seed8_a.json",
+  "research/findings/raw/_ca3_symmetric_ti/parts/seed8_b.json",
+  "--out",
+  "research/findings/raw/_ca3_symmetric_ti/parts/seed8_merged.json"
+ ],
+ "git_sha": "d4a533ae77186050e3e8bc6156e24bb81af3221b",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "13943fd2d6e2f3d35da1b71f1589e7da31b7f39a147a0826afa948a85b8bdb69",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-03T22:10:26",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1791079826517233736-3977",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "1",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "node-mxl1462drl",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ca3_symmetric_ti/parts/seed8_merged.json"
+}

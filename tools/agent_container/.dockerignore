@@ -1,3 +1,0 @@
-# Build context = tools/agent_container/. The host-side stack, firewall and systemd files are installed on the
-# server by the owner (docs/AGENT_HARNESS_SETUP.md), never baked into the image.
-server-stack/

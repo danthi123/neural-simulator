@@ -83,3 +83,7 @@ is a discrete transient, not a persistent latch — the composition [[dendritic-
 swr-sequence-replay, step 2 of the plan. Using AdEx soma recurrence alone to carry co-firing at real scale is confirmed
 insufficient. (Agent-built; parent verified the 3-seed + 24-op-point 0.000 + copy_ok + the 4-lens adversarial pass from
 the artifacts, then banked the op-point sweep + corrected the sidecar provenance.)
+
+## Correction (PROVISIONAL, local model) — 2026-09-30
+
+T15 (Ecker CA3 OU-noise field): the runner `_gap5_ecker_reactivates_REAL_d5_derisk` set `cfg.ou_noise_sigma_pa` (40 pA), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA, `sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** stated. The runner now sets `ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

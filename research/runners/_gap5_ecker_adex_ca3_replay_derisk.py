@@ -102,7 +102,7 @@ def build_store(seed, *, m_asm, asm_size, w_within, w_fwd, w_rev, within_density
     for f in ("enable_homeostasis", "enable_stdp", "enable_hebbian_learning", "enable_structural_plasticity",
               "enable_parameter_heterogeneity"):
         setattr(cfg, f, False)
-    cfg.enable_ou_process = ou_sigma > 0; cfg.ou_noise_sigma_pa = float(ou_sigma)
+    cfg.enable_ou_process = ou_sigma > 0; cfg.ou_std_current_pA = float(ou_sigma)  # T15: was ou_noise_sigma_pa (phantom field the engine never read; it reads ou_std_current_pA)
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)

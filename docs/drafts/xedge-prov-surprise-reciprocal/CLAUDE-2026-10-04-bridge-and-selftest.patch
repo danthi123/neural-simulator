@@ -1,0 +1,91 @@
+diff --git a/research/findings/raw/_provenance/runs.jsonl b/research/findings/raw/_provenance/runs.jsonl
+index 81c118aa..97cafe4d 100644
+--- a/research/findings/raw/_provenance/runs.jsonl
++++ b/research/findings/raw/_provenance/runs.jsonl
+@@ -16041,3 +16041,11 @@
+ {"run_id": "1790732334-3305575", "started": "2026-09-29T21:38:54", "argv": ["-m", "--dev", "--seed", "11", "--out", "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed11.json"], "cwd": "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference", "git_sha": "f52c6d246", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/home/dant123/Projects/sim/.venv/bin/python", "pid": 3305575, "host": "dant123-wk", "env": {"SIM_BACKEND": "cupy"}, "cpu_count": 20}
+ {"run_id": "1790733954-3446356", "started": "2026-09-29T22:05:54", "argv": ["-m", "--devcheck", "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed8.json", "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed9.json", "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed10.json", "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed11.json"], "cwd": "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference", "git_sha": "f52c6d246", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/home/dant123/Projects/sim/.venv/bin/python", "pid": 3446356, "host": "dant123-wk", "env": {}, "cpu_count": 20}
+ {"run_id": "1790733965-3446878", "started": "2026-09-29T22:06:05", "argv": ["-m", "--selftest"], "cwd": "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference", "git_sha": "f52c6d246", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/home/dant123/Projects/sim/.venv/bin/python", "pid": 3446878, "host": "dant123-wk", "env": {}, "cpu_count": 20}
++{"run_id": "1791140194-2456", "started": "2026-10-04T18:56:34", "argv": ["-m", "--selftest"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2456, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140240-2519", "started": "2026-10-04T18:57:20", "argv": ["-"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2519, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140303-2623", "started": "2026-10-04T18:58:23", "argv": ["-"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2623, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140335-2688", "started": "2026-10-04T18:58:55", "argv": ["-"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2688, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140368-2750", "started": "2026-10-04T18:59:28", "argv": ["-"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2750, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140406-2813", "started": "2026-10-04T19:00:06", "argv": ["-"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2813, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140460-2885", "started": "2026-10-04T19:01:00", "argv": ["-m", "--selftest"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2885, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
++{"run_id": "1791140491-2942", "started": "2026-10-04T19:01:31", "argv": ["-m", "--smoke", "--out", "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/xedge_smoke7.json"], "cwd": "/tmp/claude-0/-home-user-neural-simulator/cb53fd57-ec80-50a8-a902-3da7bdf20b6d/scratchpad/wt-xedge", "git_sha": "6467721e", "git_dirty": true, "source_kind": null, "source_manifest_sha256": null, "python": "/usr/bin/python3", "pid": 2942, "host": "vm", "env": {"SIM_BACKEND": "numpy"}, "cpu_count": 4}
+diff --git a/research/runners/_xedge_prov_surprise_reciprocal.py b/research/runners/_xedge_prov_surprise_reciprocal.py
+index 592a9deb..657462a8 100644
+--- a/research/runners/_xedge_prov_surprise_reciprocal.py
++++ b/research/runners/_xedge_prov_surprise_reciprocal.py
+@@ -168,6 +168,7 @@ class ProvSurprisePool:
+         self.pool = _build_pool(seed, with_edge=True)
+         self.pool.ensure_built()
+         self.b = self.pool.bridge
++        self.bridge = self.b               # onebrain_crossedge_gate.run_gate reads pool.bridge (template-1 named it b)
+         rm = self.b.region_manager
+ 
+         def idxr(nm):
+@@ -380,20 +381,55 @@ def _selftest_read_isolation(seed=7, verbose=True):
+     pool._hard_reset()
+     pool._drive(pool._contradict_pairs() + [(ix["ctx_perceived"], CTX_DRIVE_PA)], TRAIN_STEPS)
+ 
++    # Claude ruling 2026-10-04 (xedge-selftest): organic residue cannot give a READ-level probe teeth here. The
++    # strong trial drive is contractive (attempt 1 read bitwise identical with the restore off), the surprise region
++    # fires only late in the 160-step window, cp_neuron_firing_thresholds is not read by the Izhikevich step while
++    # homeostasis is off, and a refractory hold long enough to reach the late spikes overflows the kernel. So the
++    # teeth are STATE-level: residue is INJECTED into every _EXTRA_RESET_ARRAYS array on the surprise region; the
++    # pre-fix reset must leave it in place, and the fix must restore TRUE rest bitwise. The read-level half is
++    # repeat-read identity under the fix after the same injection, plus the smoke's a->b->a order-invariance check.
++    sur = np.asarray(ix["surprise"], np.int64)
++
++    def _inject():
++        b = pool.b
++        for nm, bump in (("cp_neuron_firing_thresholds", 5.0), ("cp_neuron_activity_ema", 0.5),
++                         ("cp_refractory_timers", 3), ("cp_prev_firing_states", True)):
++            arr = getattr(b, nm, None)
++            if arr is None:
++                continue
++            if arr.dtype == bool:
++                arr[sur] = bump
++            else:
++                arr[sur] = arr[sur] + bump
++
++    def _at_rest(extra):
++        for nm in _EXTRA_RESET_ARRAYS:
++            rest = extra.get(nm)
++            if rest is None:
++                continue
++            if not np.array_equal(np.asarray(to_host(getattr(pool.b, nm))), rest):
++                return False
++        return True
++
+     saved_extra = pool._rest_extra
++    assert any(v is not None for v in saved_extra.values()), "no extra array exists: the guard would be vacuous"
+     pool._rest_extra = {}                  # simulate the ORIGINAL (pre-fix) _hard_reset
+-    b1 = pool.read_verdict("generated")["surprise"]
+-    b2 = pool.read_verdict("generated")["surprise"]
+-    broken_diverges = (b1 != b2)
++    _inject()
++    pool._hard_reset()
++    broken_diverges = not _at_rest(saved_extra)   # teeth: the pre-fix reset leaves the residue
+ 
+     pool._rest_extra = saved_extra         # the actual fix
++    _inject()
++    pool._hard_reset()
++    fixed_at_rest = _at_rest(saved_extra)
+     f1 = pool.read_verdict("generated")["surprise"]
++    _inject()
+     f2 = pool.read_verdict("generated")["surprise"]
+-    fixed_identical = (f1 == f2)
+-
++    fixed_identical = fixed_at_rest and (f1 == f2)
+     if verbose:
+-        print(f"[selftest] fix-disabled diverges={broken_diverges}: {b1!r} vs {b2!r}", flush=True)
+-        print(f"[selftest] fix-enabled  identical={fixed_identical}: {f1!r} vs {f2!r}", flush=True)
++        print(f"[selftest] fix-disabled leaves injected residue={broken_diverges}", flush=True)
++        print(f"[selftest] fix-enabled  at-rest={fixed_at_rest} read identical={f1 == f2}: {f1!r} vs {f2!r}",
++              flush=True)
+     ok = broken_diverges and fixed_identical
+     if ok and verbose:
+         print("[selftest] PASS — repeat-read bitwise identity holds under the fix, and the probe has teeth",

@@ -1,0 +1,456 @@
+{
+ "all_pass": false,
+ "backend": "numpy",
+ "cases": {
+  "absent_after_wait": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.06023,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": true,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    }
+   ]
+  },
+  "false_belief": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.04583,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": true,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    }
+   ]
+  },
+  "lesion_false_belief": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.05417,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": true,
+   "presence_rate": 0.0,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "present_after_wait": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.05,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": true,
+   "presence_rate": 0.08902,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0862,
+     "presence_spikes": 138,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "return_after_wait": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.05682,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": true,
+   "presence_rate": 0.09167,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0881,
+     "presence_spikes": 141,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "return_then_move": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.05758,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": true,
+   "presence_rate": 0.09356,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0869,
+     "presence_spikes": 139,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "silence_true_belief": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.05758,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": true,
+   "presence_rate": 0.09015,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    }
+   ]
+  },
+  "true_belief": {
+   "belief_loc": 1,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.05606,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 1,
+   "pass": true,
+   "presence_rate": 0.08561,
+   "world_loc": 1,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0887,
+     "presence_spikes": 142,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "two_moves_one_seen": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 2,
+   "pass": false,
+   "presence_rate": 0.09053,
+   "world_loc": 0,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    },
+    {
+     "loc": 2,
+     "presence_rate": 0.0969,
+     "presence_spikes": 155,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    }
+   ]
+  },
+  "two_unseen_moves": {
+   "belief_loc": 0,
+   "belief_rates": {
+    "0": 0.05152,
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0
+   },
+   "expected_slot": 0,
+   "pass": true,
+   "presence_rate": 0.0,
+   "world_loc": 0,
+   "writes": [
+    {
+     "loc": 0,
+     "presence_rate": 0.0938,
+     "presence_spikes": 150,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": true
+    },
+    {
+     "loc": 1,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    },
+    {
+     "loc": 2,
+     "presence_rate": 0.0,
+     "presence_spikes": 0,
+     "relay_by_loc": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "relay_spikes": 0,
+     "witnessed": false
+    }
+   ]
+  }
+ },
+ "mode": "readout",
+ "op_index": 7,
+ "organ": "tom_spiking_witness",
+ "params": {
+  "BOUNDED_CONDUCTANCE": true,
+  "LEAVE_RECEPTOR": "gaba_b",
+  "MODE": "readout",
+  "PRES_MIN": 0.03,
+  "PRES_READ_STEPS": 20,
+  "W_EV_INH": 60.0,
+  "W_EV_PRES": 60.0,
+  "W_INH_PRES": 100.0
+ },
+ "seed": 4
+}

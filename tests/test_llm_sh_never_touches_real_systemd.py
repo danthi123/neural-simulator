@@ -63,8 +63,16 @@ def _cleanup_if_leaked(profile_hint):
 def test_llm_on_with_no_local_stub_beyond_the_global_one_never_starts_a_real_unit():
     """The exact shape of the incident: LOCAL_LLM_SYSTEMCTL says inactive/not-busy (correctly), GPU_QUEUE_DIR is
     a fresh isolated dir (so gpu_job_busy() is false, same as the real incident's "stale dispatcher" case), and
-    NOTHING local stubs systemd-run -- only the global tests/conftest.py protection may save this."""
-    leaked_before = _real_unit_is_active()
+    NOTHING local stubs systemd-run -- only the global tests/conftest.py protection may save this.
+
+    2026-09-30 INCIDENT: with the owner's REAL local-llm unit already running (the model server Hermes on
+    homelab-server drives this project through), this test took that live unit for its own leak and STOPPED it.
+    A unit that was active before the test cannot be told apart from a leak, so the test now skips instead."""
+    if _real_unit_is_active():
+        import pytest
+        pytest.skip("the real local-llm unit is live (the owner's model server): a leak cannot be told apart from "
+                    "it, and the cleanup would stop it")
+    leaked_before = False
     with tempfile.TemporaryDirectory() as tmp:
         env = dict(os.environ)   # inherits this process's PATH, which conftest.py has already prepended
         env["GPU_QUEUE_DIR"] = tmp

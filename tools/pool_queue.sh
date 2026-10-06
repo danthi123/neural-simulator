@@ -3,6 +3,7 @@
 #   bash tools/pool_queue.sh add '<remote command>'   # enqueue (run from ~/derisk-pool/sim on the node)
 #   bash tools/pool_queue.sh list                     # show depth + contents
 #   bash tools/pool_queue.sh depth                    # just the number (used by workflow_check)
+#   bash tools/pool_queue.sh withdraw '<fixed str>' --expect N --reason '<why>'   # remove queued, undispatched lines
 # The point is anticipation: workflow_check fails when this queue is EMPTY while a CPU-compatible lane is ready,
 # because "nothing staged" is the actual defect in that state. When all such lanes are banked, the bounded
 # no-ready-work waiver records why replaying old commands would be worse than leaving the queue empty.
@@ -14,7 +15,11 @@ source "$ROOT/tools/pool_revision_marker.sh"
 source "$ROOT/tools/queue_job_shape_check.sh"
 # shellcheck source=tools/pool_nodes.sh
 source "$ROOT/tools/pool_nodes.sh"
-Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+SHARED_ROOT=$ROOT; _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && SHARED_ROOT=$(dirname "$_GC")
+Q="${POOL_QUEUE_PATH:-$SHARED_ROOT/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
 # pool_provision.sh / pool_sync.sh (see pool_autodispatch.sh's header comment for the full rationale). ABSENT
@@ -231,6 +236,19 @@ case "${1:-list}" in
              echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
              exit 2
            fi
+           # POOL-CANARY GUARD (2026-09-30, tools/pool_canary.sh). ~470 gate-seed lines for eight runner families
+           # were queued on 2026-09-29 after workstation dev-seed checks only; run for real on pool41/pool42, every
+           # line of three families died in the worker's argparse (host_share, stage1_exit_gate and
+           # stage1_c1_category spawned '--worker --seed N' without --allow-gate-seed) and a fourth died at import
+           # (no httpx in the pool venv). A dev-seed check exercises neither the gate-seed code path nor the pool's
+           # venv, so a gate-seed line is refused until a canary of the SAME runner module at the SAME revision has
+           # PASSED on a pool node (the latest record for the pair in research/queue/pool_canaries.tsv).
+           if ! CANARY_WHY=$(bash "$ROOT/tools/pool_canary.sh" check-line "$2" 2>&1); then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS]: $CANARY_WHY." >&2
+             echo "   Run ONE line of this runner at this revision on a pool node first; it records the verdict:" >&2
+             echo "   bash tools/pool_canary.sh run <node> '<this line>'" >&2
+             exit 2
+           fi
          fi
          # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
          # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node
@@ -283,7 +301,15 @@ case "${1:-list}" in
          # main refused every such job ("does not even import/parse"). For pinned jobs the flag check runs below,
          # against the pinned revision's own --help on the node; unpinned jobs keep this local check.
          PINNED_REV=$(printf '%s' "$2" | grep -oE 'derisk-pool/revisions/[0-9a-f]{7,40}' | head -1)
-         FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
+         # Flags are scoped to $MOD's own invocation (2026-10-01, RULING iw1-stepB): a line may chain a guard script before
+         # `&&` (e.g. `tools/assert_iw1_defaults.py --expect-on=<packets> &&`) whose flags belong to a different argparse;
+         # scanning the whole line refused every guarded iw1 job. $MOD's flags follow its own `-m research.runners.X`.
+         FLAGS_SCOPE="$2"
+         if [ -n "$MOD" ]; then
+           FLAGS_SCOPE=$(printf '%s' "$2" | grep -oE -- "-m +$MOD.*" | head -1)
+           [ -n "$FLAGS_SCOPE" ] || FLAGS_SCOPE="$2"
+         fi
+         FLAGS=$(printf '%s' "$FLAGS_SCOPE" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
          if [ -n "$MOD" ] && [ -z "$PINNED_REV" ]; then
            HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
            # Here-strings, not `printf | grep -q` (2026-09-24): under `set -o pipefail`, grep -q exits on the first
@@ -545,11 +571,40 @@ case "${1:-list}" in
              printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
            fi ) 9>"$Q.lock" || exit 1
          echo "queued (depth now $(valid_depth))" ;;
+  withdraw)
+         # WITHDRAW (cloud Claude session 7, 2026-10-05; RULING transitive-engagement). Removes queued, NOT-yet-
+         # dispatched lines whose text contains a FIXED string, under the dispatcher's own lock (pop_job rewrites the
+         # file under "$Q.lock", so an unlocked edit can lose or resurrect lines). Guards: --expect N must equal the
+         # match count exactly (an over-broad pattern withdraws nothing), and --reason is required. Every withdrawn
+         # line is appended verbatim to research/queue/withdrawn.log with the time and reason, so it can be re-added.
+         #   bash tools/pool_queue.sh withdraw '<fixed substring>' --expect N --reason '<ruling / why>'
+         PAT="${2:-}"; EXPECT=""; REASON=""; shift 2 2>/dev/null || true
+         while [ "$#" -gt 0 ]; do
+           case "$1" in
+             --expect) EXPECT="${2:-}"; shift 2 ;;
+             --reason) REASON="${2:-}"; shift 2 ;;
+             *) echo "⛔ withdraw: unknown argument $1" >&2; exit 2 ;;
+           esac
+         done
+         if [ -z "$PAT" ] || [ -z "$REASON" ] || ! [[ "$EXPECT" =~ ^[0-9]+$ ]] || [ "${#PAT}" -lt 8 ]; then
+           echo "usage: pool_queue.sh withdraw '<fixed substring, >= 8 chars>' --expect N --reason '<why>'" >&2; exit 2
+         fi
+         WLOG="$(dirname "$Q")/withdrawn.log"
+         ( flock -w 120 9 || { echo "⛔ could not take $Q.lock in 120 s" >&2; exit 1; }
+           N=$(grep -cF -- "$PAT" "$Q" 2>/dev/null); N=${N:-0}
+           if [ "$N" != "$EXPECT" ]; then
+             echo "⛔ REFUSED: '$PAT' matches $N queued line(s), --expect $EXPECT; nothing withdrawn" >&2; exit 3
+           fi
+           TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+           grep -F -- "$PAT" "$Q" | while IFS= read -r line; do printf '%s\t%s\t%s\n' "$TS" "$REASON" "$line"; done >> "$WLOG"
+           grep -vF -- "$PAT" "$Q" > "$Q.withdraw.tmp"; mv "$Q.withdraw.tmp" "$Q"
+           echo "withdrew $N line(s) -> $WLOG (depth now $(valid_depth))" ) 9>"$Q.lock" || exit $?
+         ;;
   depth) valid_depth ;;
   malformed-depth) malformed_depth ;;
   list)  echo "depth: $(valid_depth)"
          BAD=$(malformed_depth)
          [ "$BAD" -eq 0 ] || echo "malformed: $BAD (will be quarantined by dispatcher)"
          awk -F'\t' -v now="$(date +%s)" 'NF>1 {printf "  %4.1fh old  %s\n", (now-$1)/3600, substr($2,1,110)}' "$Q" ;;
-  *)     echo "usage: pool_queue.sh {add|list|depth|malformed-depth}" >&2; exit 2 ;;
+  *)     echo "usage: pool_queue.sh {add|withdraw|list|depth|malformed-depth}" >&2; exit 2 ;;
 esac

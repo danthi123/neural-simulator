@@ -1,0 +1,4769 @@
+{
+ "instrument": "host_share",
+ "schema": "research/runners/host_share_schema.py",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "verdict": "BASELINE-VALID",
+ "panel_measured": {
+  "measured_seams": [
+   "k-select",
+   "v-choice",
+   "bg-select"
+  ],
+  "n_events_F_defined": 48,
+  "buckets": {
+   "host_decided": 21,
+   "host_causal_replaceable": 25,
+   "host_causal_s_undefined": 0,
+   "neural_decided": 2,
+   "masked": 0,
+   "undefined": 0
+  },
+  "host_decision_share": 0.9583333333333334,
+  "neural_decision_fraction": 0.041666666666666664,
+  "masked_fraction": 0.0,
+  "replaceable_share_of_host": 0.5434782608695652
+ },
+ "panel_call_graph_checks": {
+  "measured_seams": [
+   "organ-c",
+   "metacog",
+   "ignition"
+  ],
+  "n_events_F_defined": 64,
+  "buckets": {
+   "host_decided": 12,
+   "host_causal_replaceable": 24,
+   "host_causal_s_undefined": 18,
+   "neural_decided": 0,
+   "masked": 10,
+   "undefined": 0
+  },
+  "host_decision_share": 0.84375,
+  "neural_decision_fraction": 0.0,
+  "masked_fraction": 0.15625,
+  "replaceable_share_of_host": 0.4444444444444444
+ },
+ "content": {
+  "learned_content_fraction": 0.6666666666666666,
+  "python_selected_fraction": 0.3333333333333333,
+  "unattributed_fraction": 0.0,
+  "fact_word_share": 0.7954545454545454,
+  "n_turns": 30
+ },
+ "seams": {
+  "k-select": {
+   "category": "content",
+   "downstream_neural_path": true,
+   "reported_as": "MEASURED",
+   "class": "HOST-OWNED",
+   "stats": {
+    "n_live": 30,
+    "n_F": 20,
+    "n_S": 30,
+    "n_D": 29,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 1.0,
+    "NS": 0.0,
+    "MS": 0.0,
+    "SC": 0.23333333333333334,
+    "DA": 1.0,
+    "buckets": {
+     "host_decided": 5,
+     "host_causal_replaceable": 15,
+     "host_causal_s_undefined": 0,
+     "neural_decided": 0,
+     "masked": 0,
+     "undefined": 10
+    }
+   },
+   "sub_kinds": {
+    "match": {
+     "n_live": 18,
+     "n_F": 18,
+     "n_S": 18,
+     "n_D": 17,
+     "live_seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+     ],
+     "HS": 1.0,
+     "NS": 0.0,
+     "MS": 0.0,
+     "SC": 0.2222222222222222,
+     "DA": 1.0,
+     "buckets": {
+      "host_decided": 4,
+      "host_causal_replaceable": 14,
+      "host_causal_s_undefined": 0,
+      "neural_decided": 0,
+      "masked": 0,
+      "undefined": 0
+     }
+    },
+    "order": {
+     "n_live": 12,
+     "n_F": 2,
+     "n_S": 12,
+     "n_D": 12,
+     "live_seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+     ],
+     "HS": 1.0,
+     "NS": 0.0,
+     "MS": 0.0,
+     "SC": 0.25,
+     "DA": 1.0,
+     "buckets": {
+      "host_decided": 1,
+      "host_causal_replaceable": 1,
+      "host_causal_s_undefined": 0,
+      "neural_decided": 0,
+      "masked": 0,
+      "undefined": 10
+     }
+    }
+   },
+   "f_outcomes": {
+    "follows_host": 20
+   },
+   "undefined_reasons": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ]
+  },
+  "v-choice": {
+   "category": "content",
+   "downstream_neural_path": true,
+   "reported_as": "MEASURED",
+   "class": "HOST-OWNED",
+   "stats": {
+    "n_live": 12,
+    "n_F": 10,
+    "n_S": 12,
+    "n_D": 11,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 1.0,
+    "NS": 0.0,
+    "MS": 0.0,
+    "SC": 0.5,
+    "DA": 0.5454545454545454,
+    "buckets": {
+     "host_decided": 5,
+     "host_causal_replaceable": 5,
+     "host_causal_s_undefined": 0,
+     "neural_decided": 0,
+     "masked": 0,
+     "undefined": 2
+    }
+   },
+   "sub_kinds": {},
+   "f_outcomes": {
+    "follows_host": 10
+   },
+   "undefined_reasons": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ]
+  },
+  "bg-select": {
+   "category": "commitment",
+   "downstream_neural_path": true,
+   "reported_as": "MEASURED",
+   "class": "HOST-OWNED",
+   "stats": {
+    "n_live": 18,
+    "n_F": 18,
+    "n_S": 18,
+    "n_D": 18,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 0.8888888888888888,
+    "NS": 0.1111111111111111,
+    "MS": 0.0,
+    "SC": 0.6666666666666666,
+    "DA": 0.5,
+    "buckets": {
+     "host_decided": 11,
+     "host_causal_replaceable": 5,
+     "host_causal_s_undefined": 0,
+     "neural_decided": 2,
+     "masked": 0,
+     "undefined": 0
+    }
+   },
+   "sub_kinds": {},
+   "f_outcomes": {
+    "follows_host": 16,
+    "returned_to_neural": 2
+   },
+   "undefined_reasons": []
+  },
+  "organ-c": {
+   "category": "commitment",
+   "downstream_neural_path": false,
+   "reported_as": "CALL-GRAPH CHECK",
+   "class": "HOST-OWNED",
+   "stats": {
+    "n_live": 18,
+    "n_F": 18,
+    "n_S": 18,
+    "n_D": 18,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 1.0,
+    "NS": 0.0,
+    "MS": 0.0,
+    "SC": 0.6666666666666666,
+    "DA": 0.3333333333333333,
+    "buckets": {
+     "host_decided": 12,
+     "host_causal_replaceable": 6,
+     "host_causal_s_undefined": 0,
+     "neural_decided": 0,
+     "masked": 0,
+     "undefined": 0
+    }
+   },
+   "sub_kinds": {
+    "known": {
+     "n_live": 18,
+     "n_F": 18,
+     "n_S": 18,
+     "n_D": 18,
+     "live_seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+     ],
+     "HS": 1.0,
+     "NS": 0.0,
+     "MS": 0.0,
+     "SC": 0.6666666666666666,
+     "DA": 0.3333333333333333,
+     "buckets": {
+      "host_decided": 12,
+      "host_causal_replaceable": 6,
+      "host_causal_s_undefined": 0,
+      "neural_decided": 0,
+      "masked": 0,
+      "undefined": 0
+     }
+    }
+   },
+   "f_outcomes": {
+    "follows_host": 18
+   },
+   "undefined_reasons": []
+  },
+  "metacog": {
+   "category": "commitment",
+   "downstream_neural_path": false,
+   "reported_as": "CALL-GRAPH CHECK",
+   "class": "HOST-OWNED (replaceable)",
+   "stats": {
+    "n_live": 18,
+    "n_F": 18,
+    "n_S": 18,
+    "n_D": 18,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 1.0,
+    "NS": 0.0,
+    "MS": 0.0,
+    "SC": 0.0,
+    "DA": 1.0,
+    "buckets": {
+     "host_decided": 0,
+     "host_causal_replaceable": 18,
+     "host_causal_s_undefined": 0,
+     "neural_decided": 0,
+     "masked": 0,
+     "undefined": 0
+    }
+   },
+   "sub_kinds": {},
+   "f_outcomes": {
+    "follows_host": 18
+   },
+   "undefined_reasons": []
+  },
+  "ignition": {
+   "category": "commitment",
+   "downstream_neural_path": false,
+   "reported_as": "CALL-GRAPH CHECK",
+   "class": "MIXED",
+   "stats": {
+    "n_live": 30,
+    "n_F": 28,
+    "n_S": 0,
+    "n_D": 30,
+    "live_seeds": [
+     42,
+     43,
+     44,
+     100,
+     101,
+     102
+    ],
+    "HS": 0.6428571428571429,
+    "NS": 0.0,
+    "MS": 0.35714285714285715,
+    "SC": null,
+    "DA": 1.0,
+    "buckets": {
+     "host_decided": 0,
+     "host_causal_replaceable": 0,
+     "host_causal_s_undefined": 18,
+     "neural_decided": 0,
+     "masked": 10,
+     "undefined": 2
+    }
+   },
+   "sub_kinds": {},
+   "f_outcomes": {
+    "follows_host": 18,
+    "masked": 10
+   },
+   "undefined_reasons": [
+    "F: the host alternative coincides with the intact outcome (not observable)",
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ]
+  }
+ },
+ "validity": {
+  "V1_sham_clean_seeds": [
+   42,
+   43,
+   44,
+   100,
+   101,
+   102
+  ],
+  "V1_pass": true,
+  "V2_live_seeds_per_seam": {
+   "k-select": 6,
+   "v-choice": 6,
+   "bg-select": 6,
+   "organ-c": 6,
+   "metacog": 6,
+   "ignition": 6
+  },
+  "V3_interventions_applied": true,
+  "V4_both_outcomes_registrable": true,
+  "V5_state_drift_events": 0,
+  "V6_sources": [
+   "tiny-demo +LTM"
+  ],
+  "V6_pass": true,
+  "pythonhashseed_all_ok": true,
+  "seed_threading_all_ok": true,
+  "missing_shards": [],
+  "sham_noise_rate": 0.0,
+  "sham_noise_attribution": 1.0
+ },
+ "content_rows": [
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 42,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 42,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 42,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 42,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 42,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  },
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 43,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 43,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 43,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 43,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 43,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  },
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 44,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 44,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 44,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 44,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 44,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  },
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 100,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 100,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 100,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 100,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 100,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  },
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 101,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.36363636363636365,
+   "seed": 101,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 101,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 101,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 101,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  },
+  {
+   "n_facts": 2,
+   "sources": [
+    "substrate",
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 102,
+   "group": "recall",
+   "turn": "hsr_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 102,
+   "group": "recall",
+   "turn": "hsr_cat_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "substrate"
+   ],
+   "learned_content_fraction": 1.0,
+   "python_selected_fraction": 0.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 0.5,
+   "seed": 102,
+   "group": "recall",
+   "turn": "hsr_wolf_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 102,
+   "group": "compete",
+   "turn": "hsc_dog_q"
+  },
+  {
+   "n_facts": 1,
+   "sources": [
+    "host_list"
+   ],
+   "learned_content_fraction": 0.0,
+   "python_selected_fraction": 1.0,
+   "unattributed_fraction": 0.0,
+   "fact_word_share": 1.0,
+   "seed": 102,
+   "group": "compete",
+   "turn": "hsc_cat_q"
+  }
+ ],
+ "events": [
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "returned_to_neural",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__speak__",
+   "intervene_diff": [
+    "supporting_facts",
+    "n_sentences"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "neural_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 42,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 42,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "worm",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "seed": 42,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "ball",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 42,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "fish",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "fish",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 42,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.030303,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 42,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.030303,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [],
+   "seed": 42,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 43,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 43,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 1,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "worm",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "fish",
+   "seed": 43,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "ball",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 43,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "fish",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "fish",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 43,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.002652,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 43,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.002652,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [],
+   "seed": 43,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [
+    "metacog.confident"
+   ],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "supporting_facts",
+    "n_sentences"
+   ],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 44,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 44,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "worm",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "seed": 44,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "cat",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 44,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "fish",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "fish",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 44,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.033712,
+    0.036364,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 44,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.033712,
+    0.036364,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [],
+   "seed": 44,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": null,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": null,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [
+    "metacog.confident"
+   ],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 100,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 100,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "consensus_intact": null,
+   "consensus_intervene": "worm",
+   "seed": 100,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "neural_pref": "cat",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 100,
+   "group": "compete",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "seed": 100,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.018939,
+    0.017045,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 100,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)",
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.018939,
+    0.017045,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "seed": 100,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "returned_to_neural",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "supporting_facts",
+    "n_sentences"
+   ],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__speak__",
+   "intervene_diff": [
+    "supporting_facts",
+    "n_sentences"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "neural_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 101,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 101,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "fish",
+   "substitute_diff": [],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "consensus_intact": null,
+   "consensus_intervene": "worm",
+   "seed": 101,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "ball",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 101,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 1,
+   "D": null,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": null,
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "seed": 101,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.0375,
+    0.043182,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 101,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)",
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.0375,
+    0.043182,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "seed": 101,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 3,
+   "match_patients": [
+    "cat"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "cat",
+   "consensus_intervene": null,
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 4,
+   "match_patients": [
+    "fish"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "metacog.confident"
+   ],
+   "neural_pref": "fish",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "fish",
+   "consensus_intervene": null,
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "sub_kind": "match",
+   "host_idx": 5,
+   "match_patients": [
+    "apple"
+   ],
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "consensus_intact": "apple",
+   "consensus_intervene": null,
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "neural_pref": "__hold__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [
+    "supporting_facts",
+    "n_sentences"
+   ],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "bg-select",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "prefilter_host_runs_race": false,
+   "host_alt": "__hold__",
+   "intact_outcome": "__speak__",
+   "substitute_diff": [],
+   "neural_pref": "__speak__",
+   "intervene_outcome_value": "__hold__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident",
+    "hold"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.1,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 1,
+   "D": 0,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "substitute_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "neural_pref": "__abstain__",
+   "d4_margin": 0.016667,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_decided"
+  },
+  {
+   "seam": "organ-c",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_votes": true,
+   "real_vocab_known": true,
+   "sub_kind": "known",
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "substitute_diff": [],
+   "neural_pref": "apple",
+   "d4_margin": 0.3,
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "metacog",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": false,
+   "host_evidence": 1.0,
+   "host_alt": false,
+   "intact_outcome": true,
+   "substitute_diff": [],
+   "neural_pref": true,
+   "intervene_outcome_value": false,
+   "intervene_diff": [
+    "metacog.confident",
+    "hedge"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "cat",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "cat",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "fish",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "fish",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsr_wolf_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": "apple",
+   "rates": [
+    0.333333,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "__abstain__",
+   "intact_outcome": "apple",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "__abstain__",
+   "intervene_diff": [
+    "abstained",
+    "recalled_svo",
+    "supporting_facts",
+    "n_sentences",
+    "verified",
+    "metacog.confident"
+   ],
+   "seed": 102,
+   "group": "recall",
+   "bucket": "host_causal_s_undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 0,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 3,
+   "match_patients": [
+    "cat",
+    "ball"
+   ],
+   "host_alt": "ball",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "cat",
+   "seed": 102,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "k-select",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": null,
+   "f_outcome": null,
+   "S": 1,
+   "D": 1,
+   "undefined": [
+    "F: the host alternative coincides with the intact outcome (not observable)"
+   ],
+   "downstream_neural_path": true,
+   "sub_kind": "order",
+   "host_idx": 4,
+   "match_patients": [
+    "fish",
+    "worm"
+   ],
+   "host_alt": "worm",
+   "intact_outcome": "worm",
+   "substitute_diff": [
+    "metacog.confident"
+   ],
+   "neural_pref": "fish",
+   "seed": 102,
+   "group": "compete",
+   "bucket": "undefined"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "substitute_diff": [],
+   "neural_pref": "ball",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "cat",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 102,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "v-choice",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 1,
+   "f_outcome": "follows_host",
+   "S": 0,
+   "D": 1,
+   "undefined": [],
+   "downstream_neural_path": true,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "substitute_diff": [],
+   "neural_pref": "worm",
+   "candidates_decodable": [
+    true,
+    true
+   ],
+   "intervene_outcome_value": "fish",
+   "intervene_diff": [
+    "recalled_svo",
+    "supporting_facts"
+   ],
+   "seed": 102,
+   "group": "compete",
+   "bucket": "host_causal_replaceable"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_dog_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.030303,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "cat",
+   "intact_outcome": "ball",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "ball",
+   "intervene_diff": [],
+   "seed": 102,
+   "group": "compete",
+   "bucket": "masked"
+  },
+  {
+   "seam": "ignition",
+   "turn": "hsc_cat_q",
+   "live": true,
+   "F": 0,
+   "f_outcome": "masked",
+   "S": null,
+   "D": 1,
+   "undefined": [
+    "S: no neural-derived alternative exists for this seam (by design)"
+   ],
+   "downstream_neural_path": false,
+   "host_committed": null,
+   "rates": [
+    0.030303,
+    0.030303,
+    0.0,
+    0.0
+   ],
+   "thr": 0.166667,
+   "host_alt": "fish",
+   "intact_outcome": "worm",
+   "D_note": "trivial by construction: the host read-out IS the argmax of the neural rates",
+   "intervene_outcome_value": "worm",
+   "intervene_diff": [],
+   "seed": 102,
+   "group": "compete",
+   "bucket": "masked"
+  }
+ ]
+}

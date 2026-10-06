@@ -1,0 +1,331 @@
+{
+ "step": "R",
+ "packet": "neural-selfid",
+ "tag": "iw2-R-si-573a943",
+ "pin": "573a9438f075239069c8966dd62f1da4d981e158",
+ "per_seed": {
+  "42": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  },
+  "43": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  },
+  "44": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  },
+  "100": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  },
+  "101": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  },
+  "102": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw2si_use",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false,
+    "s0": [
+     "regressed",
+     true
+    ],
+    "intact_answer": "the brain uses the spikes",
+    "intact_abstained": false,
+    "lesion_answer": "I don't know about that."
+   }
+  }
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 6,
+ "control": {
+  "row": "selfid-nofact-ctl",
+  "per_seed": {
+   "42": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "control_fails": []
+    }
+   },
+   "43": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that.",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that.",
+     "control_fails": []
+    }
+   },
+   "44": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "control_fails": []
+    }
+   },
+   "100": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "control_fails": []
+    }
+   },
+   "101": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "control_fails": []
+    }
+   },
+   "102": {
+    "state": "DEFINED",
+    "verdict": "control-ok",
+    "detail": {
+     "turn": "iw2ctl_nf",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false,
+     "s0": [
+      "pass",
+      false
+     ],
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "intact_abstained": true,
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about drink yet: what can you tell me about drink?",
+     "control_fails": []
+    }
+   }
+  },
+  "n_defined": 6,
+  "n_ok": 6
+ },
+ "verdict": "PASS",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "permuted-control cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/iw2_score.py",
+ "argv": [
+  "tools/iw2_score.py",
+  "R",
+  "--packet",
+  "neural-selfid",
+  "--tag",
+  "iw2-R-si-573a943",
+  "--pin",
+  "573a9438f075239069c8966dd62f1da4d981e158",
+  "--out",
+  "research/findings/raw/_iw2/verdicts/573a943/R_si.json"
+ ],
+ "sim_backend": "numpy (the scored shards'; this scorer builds no brain)"
+}
