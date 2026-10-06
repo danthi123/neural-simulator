@@ -61,7 +61,8 @@ def hop_on():
 def test_bat_case_canary_swim_abstains(hop_on, order):
     r = hop_on[order].infer("canary", "swim")
     assert r["patient"] is None and r["reason"] == "below_floor", r
-    assert r["hop"] is True and r["query_steps"] == 30, r
+    from research.runners.category_inherit_organ import HOP_QUERY_STEPS
+    assert r["hop"] is True and r["query_steps"] == HOP_QUERY_STEPS == 35, r
 
 
 # ── (b) the inheritance survives ────────────────────────────────────────────────────────────────────────────────
@@ -151,3 +152,38 @@ def test_hop_dev_verdict():
     assert hop_dev_verdict(inert)["verdict"] == "FAIL"
     assert hop_dev_verdict(rows[:7])["verdict"] == "UNDEFINED"
     assert hop_dev_verdict(rows[:7] + [_row(8, hop=False)])["verdict"] == "UNDEFINED"
+
+
+# ── the C1 gate re-measure with the option on (stage1_c1_category --hop; prereg section 13, 2026-10-06) ────────────
+def _write_gate(td, hop_env, read_hop):
+    from research.runners import stage1_c1_category as R
+    for s in R.GATE_SEEDS:
+        for arm in R.ARMS:
+            d = R._synthetic("pass", arm)
+            d["hop_env"] = hop_env
+            rd = (d["responses"][R.DIRECT_PROBE].get("category_inherit") or {}).get("read")
+            if isinstance(rd, dict) and read_hop:
+                rd["hop"] = True
+            p = R.shard_path(td, s, arm)
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w") as f:
+                json.dump(d, f)
+
+
+@pytest.mark.parametrize("hop_env,read_hop,want", [("1", True, "PASS"), (None, True, "UNDEFINED"),
+                                                    ("1", False, "UNDEFINED")])
+def test_gate_aggregate_requires_the_hop_when_asked(tmp_path, hop_env, read_hop, want):
+    from research.runners import stage1_c1_category as R
+    _write_gate(str(tmp_path), hop_env, read_hop)
+    agg = R.aggregate(str(tmp_path), require_hop=True)
+    assert agg["verdict"].startswith(want), (agg["verdict"], agg["why"])
+    assert R.aggregate(str(tmp_path))["verdict"] == "PASS"          # without --hop the 09-30 scoring is unchanged
+
+
+def test_gate_hop_pool_lines():
+    from research.runners import stage1_c1_category as R
+    plain, hop = R.pool_job_lines("f" * 40), R.pool_job_lines("f" * 40, hop=True)
+    assert len(plain) == len(hop) == 54
+    assert not any("BRAIN_CATEGORY_INHERIT_HOP" in c for c, _w in plain)
+    assert all("BRAIN_CATEGORY_INHERIT_HOP=1 " in c and R.GATE_HOP_OUT_DIR in c and "section 13" in w
+               for c, w in hop)

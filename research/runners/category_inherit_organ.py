@@ -94,7 +94,9 @@ GATE_LAT = "category_learn_lateral"       # frame -> frame plasticity gate; open
 # Off = no transmission gate exists and the read is QUERY_STEPS: the organ is byte-identical to the 09-30 build.
 TX_LAT = "category_lateral_transmission"  # transmission gate on frame -> frame (exists only when the option is on)
 HOP_LATERAL_GAIN = 0.5         # frame -> frame current gain (1.0 = the 09-30 organ)
-HOP_QUERY_STEPS = 30           # read window with the option on (one retrieval cycle; 60 = the 09-30 organ)
+HOP_QUERY_STEPS = 35           # read window with the option on (one retrieval cycle; 60 = the 09-30 organ). Dev 1-8:
+                               # 30 left the permuted read 1.25x the floor, 40 put the bridge lake read at 0.8x it;
+                               # 35 balances them (permuted >= 1.4x floor, bridge lake <= 0.57x floor, worm >= 2.9x)
 
 
 def category_inherit_hop_enabled() -> bool:
@@ -315,8 +317,11 @@ class CategoryInheritOrgan:
         v = str(action).lower()
         rates = self.read(agent)
         if rates is None:
-            return {"patient": None, "reason": "agent_never_observed", "rates": None, "admitted": [],
-                    "lesion": self.lesion}
+            out = {"patient": None, "reason": "agent_never_observed", "rates": None, "admitted": [],
+                   "lesion": self.lesion}
+            if self.hop:
+                out.update(hop=True, hop_lateral_gain=HOP_LATERAL_GAIN, query_steps=self.query_steps)
+            return out
         admitted = sorted(((r, fr[1]) for fr, r in rates.items() if fr[0] == v), key=lambda t: (-t[0], t[1]))
         out = {"rates": {"%s %s" % fr: round(r, 4) for fr, r in rates.items()},
                "admitted": [[p, round(r, 4)] for r, p in admitted], "lesion": self.lesion,
