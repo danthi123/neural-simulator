@@ -279,3 +279,15 @@ depth 57): byte_off now compares like-for-like pure builds (locally verified PAS
 n_without 240322 byte-identical, +9216 edge slots only) and clean_zero records gen_rate alongside perc_rate.
 Hold: INTACT_FLOOR freeze + any 6-seed queue until the re-smoke lands and the PLAN clean-zero calibration
 rule is pre-declared from its gen/perc data.
+
+## 2026-10-06 07:4x — round-2 smoke: byte_off PASS end-to-end; gen_rate recorded; full 2x2 added
+
+Round-2 smoke on 00beae8a2 (pool fleet, ~2.5 min after queue): byte_off PASS (base_connectivity_byte_
+identical TRUE, n_with 249538 / n_with_base 240322 == n_without 240322 -> fix holds end-to-end), emergence
+PASS, interaction PASS; clean_zero: perc_rate 0.01, gen_rate 0.190625 (comparator separates 19x), ok still
+false under the runner's 0.005 constant -> provisional_supports false. PLAN row 7 (pre-declared) covers
+exactly this state (byte-off PASS + clean-zero FAIL -> "control is leaky (graded opponent trace)... replace
+the control exemplar") and PLAN's 0.005 exists only in the runner - no PLAN number to match yet.
+Before any row-7 vs calibration-rule verdict (the latter was the first delegate's proposal; row 7 is the
+PLAN's own), the 2x2 must be complete: run_seed now ALSO records perc/gen under the PERCEIVED condition
+(perc_rate_perceived / gen_rate_perceived). ok formula + bar untouched pending that data + judgment.

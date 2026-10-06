@@ -359,9 +359,13 @@ def run_seed(seed):
     bridge_without = _noedge_bridge(seed)
     byte_off = verify_byte_off(bridge_with, bridge_without, GATE_SPEC)
 
-    # clean-zero control (row 7): prov_perceived must sit ~0 under the genuinely-generated control exemplar
+    # clean-zero control (row 7): prov_perceived must sit ~0 under the genuinely-generated control exemplar.
+    # Full 2x2 recorded (round-3 addition): both prov pools under BOTH conditions, so the comparator
+    # (gen vs perc separation) is judgeable on data instead of one cell.
     gen_rates = pool.read_verdict("generated")
+    per_rates = pool.read_verdict("perceived")
     clean_zero = {"perc_rate": gen_rates["perc"], "gen_rate": gen_rates["gen"],
+                  "perc_rate_perceived": per_rates["perc"], "gen_rate_perceived": per_rates["gen"],
                   "ok": bool(gen_rates["perc"] < 0.005)}
 
     supports = bool(gate["emergence"]["PASS"] and gate["interaction"]["PASS"]
