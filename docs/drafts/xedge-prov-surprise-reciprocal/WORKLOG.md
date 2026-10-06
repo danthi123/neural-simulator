@@ -291,3 +291,17 @@ the control exemplar") and PLAN's 0.005 exists only in the runner - no PLAN numb
 Before any row-7 vs calibration-rule verdict (the latter was the first delegate's proposal; row 7 is the
 PLAN's own), the 2x2 must be complete: run_seed now ALSO records perc/gen under the PERCEIVED condition
 (perc_rate_perceived / gen_rate_perceived). ok formula + bar untouched pending that data + judgment.
+
+## 2026-10-06 08:2x — clean-zero VERDICT (MiMo Pro #2): path (B) rule landed; one prereg contradiction -> NEEDS
+
+Full 2x2 (round-3 smoke @1246f0161): under generated perc 0.01 / gen 0.190625; under perceived perc 0.191875
+/ gen 0.009375. Off-diagonal near-symmetric (6.3%), on-diagonal ~0.19, separation 19.2x/20.3x, discriminability
+d = 0.90 vs precedent D_FLOOR 0.50. Delegate verdict: PLAN row 7's premise (UNIDIRECTIONAL graded-trace leak)
+is falsified by the symmetry; remedy (A) "replace the control exemplar" has NO target (no overlap-free
+exemplar exists; battery builder registered = Claude's). Path (B): CLEAN_ZERO_BAR pre-declared in PLAN §6(5)
+- both off-diagonals <= 0.02 (laneC NOVEL_MAX_RATE, registered precedent) AND |asym| <= 0.25 x max (0.25
+honestly post-smoke around the observed 6.3%; keeps row 7's asymmetric-leak teeth armed). Runner ok formula
+now matches the PLAN rule (py_compile OK). provisional_supports stays false per row 1 (all 6 dev seeds) -
+the smoke is calibration-only, never evidence. Escalated to NEEDS [xedge] ASK: PLAN contradicts itself on
+the read drive (§4 read_fn "content alone, ctx silent at recall" vs §7 "verdict drive across the whole
+window"; runner drives ctx at 2500 pA) - a prereg ruling, driver must not flip it; blocks the 6-seed queue.

@@ -366,7 +366,11 @@ def run_seed(seed):
     per_rates = pool.read_verdict("perceived")
     clean_zero = {"perc_rate": gen_rates["perc"], "gen_rate": gen_rates["gen"],
                   "perc_rate_perceived": per_rates["perc"], "gen_rate_perceived": per_rates["gen"],
-                  "ok": bool(gen_rates["perc"] < 0.005)}
+                  # CLEAN_ZERO_BAR (PLAN §6(5), PRE-DECLARED 2026-10-06 post-smoke/pre-6-seed, frozen):
+                  # both off-diagonal cells <= 0.02 (laneC NOVEL_MAX_RATE) AND symmetric within 25%.
+                  "ok": bool(gen_rates["perc"] <= 0.02 and per_rates["gen"] <= 0.02
+                             and abs(gen_rates["perc"] - per_rates["gen"])
+                             <= 0.25 * max(gen_rates["perc"], per_rates["gen"]))}
 
     supports = bool(gate["emergence"]["PASS"] and gate["interaction"]["PASS"]
                     and byte_off["PASS"] and clean_zero["ok"])

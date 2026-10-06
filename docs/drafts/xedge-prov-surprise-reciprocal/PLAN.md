@@ -135,6 +135,14 @@ EXACTLY 0 at the moment of every lesion re-read (enable_hebbian_learning OFF for
 intact pool minus the declared (pre,post) slots (verify_byte_off), and the no-edge pool's perceived-generated
 delta must be ~0 (the pre-registered negative control); (5) clean-zero control — measured prov_perceived
 activity under the 'generated' control exemplar must sit near zero (the precedent's leaky-graded-trace lesson).
+CLEAN_ZERO_BAR (PRE-DECLARED 2026-10-06 AFTER the seed-7 smoke's full 2x2 — calibration-only data — and BEFORE
+the 6-seed queue; frozen verbatim into the runner docstring + WORKLOG, never revisited): the two off-diagonal
+cells must each sit ≤ 0.02 per-neuron spikes/step (the precedent's registered never-encoded silence ceiling
+NOVEL_MAX_RATE, `_laneC_source_provenance_opponent_derisk.py:142` — the only registered "near zero" number)
+AND agree symmetrically (|perc_rate − gen_rate_perceived| ≤ 0.25 × max of the two — the smoke showed 6.3%;
+25% is a ~4x margin and is what preserves row 7's teeth: a control-specific leak is asymmetric, re-triggers
+row 7 and voids rows 1-6). Number provenance: 0.02 = copied registered precedent; 0.25 = honestly post-smoke,
+chosen around the observed 6.3% as a margin.
 
 Queue sizing: 1 cell = 1 seed = 1 job (2 pool builds + train + probes), numpy CPU, ~3-6 min/cell expected;
 smoke = 1 job, batch = 6 jobs -> `tools/sweep_pool.sh` / workstation queue per RULING compute-placement (never
