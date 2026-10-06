@@ -268,7 +268,9 @@ Report the printed `probe` reading and the drives cell state to Claude in `resea
    r7i.4xlarge would take the prereg's ~20 h / <= $40 (cap $50/day). They would also serve the rest of the queue.
 2. **Review + merge** `research/b2d-mouth-renderer` once scored (the renderer mode is default-off; merging changes no
    default). Until then the jobs run at the branch pin P, which contains origin/main.
-3. **The mouth arm is expected to be vacuous; the remap that is not (Claude: an amendment).** At dev seed 7 the Qwen
+3. **ANSWERED 2026-10-06 by the prereg's Amendment 2** (`AMEND2-HANDOFF.md`, `QWEN-ROUTE-MAP.md` beside this file):
+   the remap below is superseded, because its second turn is spoken by the spiking recall mouth, not Qwen.
+   **The mouth arm is expected to be vacuous; the remap that is not (Claude: an amendment).** At dev seed 7 the Qwen
    mouth never ran on a registered mouth turn: affect-coloring's cell read MOUTH-SILENT (`emo` is an abstention
    template), affect-drives-response's intact arms made 0 Qwen calls (`well` is an assertion echo; its first lesion
    arm was killed, section 6), and affect-appraisal-interoceptive uses affect-coloring's turn and reply. At the console defaults a bounded recall is spoken by the default-on spiking recall mouth, which
