@@ -1784,10 +1784,12 @@ class ChatBrain:
     # --- OPEN-ENDED GENERATION (#3E): render a generated HYPOTHESIS as a FLUENT, clearly-FLAGGED guess ---
     def render_hypothesis(self, hyp):
         """Render a GENERATED, moat-verified HYPOTHESIS (a #3E novel proposition) as a clearly-FLAGGED guess.
-        Prefer FLUENT prose via the mouth, framed 'Maybe <fluent> -- that's a guess ...', VERIFYING that the
-        fluent sentence re-parses to the SAME (a, v, p) the hypothesis asserts (so the mouth cannot swap the
-        content). On a verify miss / no renderer / raw mode, fall back to the raw FLAGGED template 'perhaps a v
-        p'. The guess is NEVER surfaced as an asserted fact -- the honesty framing is explicit in the surface text
+        Production default: the brain-native SPIKING Broca speaks it ('perhaps the <S> <V-3sg> the <O>' + the
+        not-taught flag; this runs BEFORE the no-renderer / raw-mode check, so it needs no renderer). With the escape
+        BRAIN_SPIKING_MOUTH=0 (or content the spiking Broca can't frame) it prefers FLUENT prose via the renderer,
+        framed 'Maybe <fluent> -- that's a guess ...'. Either way it VERIFIES that the sentence re-parses to the SAME
+        (a, v, p) the hypothesis asserts (so the mouth cannot swap the content). On a verify miss / no renderer / raw
+        mode on the pre-spiking path, fall back to the raw FLAGGED template 'perhaps a v p'. The guess is NEVER surfaced as an asserted fact -- the honesty framing is explicit in the surface text
         either way."""
         return self.render_hypothesis_verified(hyp)[0]
 
