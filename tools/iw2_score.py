@@ -50,6 +50,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import answer_rate as AR  # noqa: E402
 import b2d_score as B  # noqa: E402
 from verdict import UNDEFINED as V_UNDEFINED, Verdict  # noqa: E402
 
@@ -345,7 +346,24 @@ def _counts(res, level):
     return {f: v["n_load_bearing"] for f, v in (res.get(level) or {}).get("per_faculty", {}).items()}
 
 
-def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SEEDS):
+def answer_rate_check(flipped, on_tag, off_tag, base=BASE, seeds=SEEDS):
+    """REPORTED beside the registered verdict, never part of it (Claude review 2026-10-06, tools/answer_rate.py): per
+    flipped packet and seed, does the flag-on brain answer LESS than the flag-off one on the packet's probe? The
+    flag-off cells are the shard tag `off_tag` (an iw*-alloff-<F7> run: the same faculty dir with the flips forced
+    off); without one the check is UNMEASURED, which is stated, never read as 'no harm'. Returns (report, flags)."""
+    if not off_tag or not flipped:
+        return {"status": "UNMEASURED", "reason": "no --off-tag (flag-off cells) given" if flipped else "nothing flipped",
+                "per_packet": {}}, []
+    per, flags = {}, []
+    for p in flipped:
+        rep = AR.report(AR.paired_per_seed(base, on_tag, off_tag, PACKETS[p]["shard_dir"], seeds), label=p)
+        per[p] = rep
+        flags += [AR.HURTS] if rep["flags"] else []
+    status = AR.HURTS if flags else ("UNMEASURED" if any(r["status"] == "UNMEASURED" for r in per.values()) else "OK")
+    return {"status": status, "off_tag": off_tag, "per_packet": per}, sorted(set(flags))
+
+
+def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SEEDS, off_tag=None):
     b = B.score(base, base_tag, base_pin, seeds)
     f = B.score(base, flip_tag, flip_pin, seeds)
     out = {"step": "B", "base": {"tag": base_tag, "pin": base_pin, "verdict": b["verdict"],
@@ -399,6 +417,7 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
                                 "msg": "F1 %s: reply-level load-bearing on %d/%d seeds at the production default"
                                        % (p, n, len(seeds))})
     out["new_rows_s2_at_flip"] = rows_F
+    out["answer_rate"], out["flags"] = answer_rate_check(flipped, flip_tag, off_tag, base, seeds)
     out["regressions"], out["undefined"] = regressions, undefined
     if regressions:
         out["verdict"] = "FAIL"
@@ -481,6 +500,8 @@ def main(argv=None):
     b.add_argument("--flip-tag", required=True)
     b.add_argument("--flip-pin", required=True)
     b.add_argument("--flipped", required=True, help="comma-separated packet names flipped at --flip-pin")
+    b.add_argument("--off-tag", default=None, help="flag-off cells (an iw2-alloff-<F7> shard tag) for the REPORTED "
+                   "answer-rate check; FLIP-HURTS-ANSWERS in `flags` = the flip needs a Claude ruling")
     at = sub.add_parser("A")
     at.add_argument("--b-result", required=True, help="the JSON written by `B --out`")
     at.add_argument("--tag", required=True, help="iw2-alloff-<F7> or iw2-bisect-<packet>-<F7>")
@@ -504,7 +525,7 @@ def main(argv=None):
         bad = [x for x in flipped if x not in PACKETS]
         if bad:
             ap.error("unknown packet(s) in --flipped: %s" % bad)
-        res, code = score_B(a.base_tag, a.base_pin, a.flip_tag, a.flip_pin, flipped, base=a.base)
+        res, code = score_B(a.base_tag, a.base_pin, a.flip_tag, a.flip_pin, flipped, base=a.base, off_tag=a.off_tag)
     # provenance + device for the committed verdict file (gates artifact_provenance / device_and_cost): this scorer
     # builds no brain; every cell it counts had to carry SIM_BACKEND=numpy in its sidecars (b2d_score rule 3)
     res.update(runner="tools/iw2_score.py", argv=list(sys.argv if argv is None else argv),
