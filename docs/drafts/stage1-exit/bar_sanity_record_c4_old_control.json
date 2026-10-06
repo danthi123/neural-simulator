@@ -1,0 +1,70 @@
+{
+ "backend": "numpy",
+ "description": "C4 val_heldout verdict PASS under the real scorer, six gate-style seeds; the scrambled arm uses the unconstrained derangement (research/runners/stage1_exit_gate.py at 8c56ff97b).",
+ "failures": [
+  "UNREACHABLE: perfect passes 0.461 < 0.95",
+  "UNREACHABLE: perfect_exact passes 0.413 < 0.95"
+ ],
+ "kinds": {
+  "null_control_ignored": "null",
+  "null_lesion_inert": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_control_ignored": 0,
+  "null_lesion_inert": 0,
+  "perfect": 461,
+  "perfect_exact": 413,
+  "random": 0
+ },
+ "name": "stage1-C4 old control (unconstrained derangement)",
+ "pass_rate": {
+  "null_control_ignored": 0.0,
+  "null_lesion_inert": 0.0,
+  "perfect": 0.461,
+  "perfect_exact": 0.413,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "null_control_ignored": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.4303,
+   0.492
+  ],
+  "perfect_exact": [
+   0.3829,
+   0.4438
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "864e8af337f91016e201ca978912b24c54a4c62d",
+ "scorer_files": {
+  "docs/drafts/stage1-exit/bar_sanity_c4_common.py": "aab0689717c6f34fe5cf836fd424e133be2a1b14d16529913d604504c68fdf7e",
+  "research/runners/stage1_exit_gate.py": "f8270ca9e2bc0855f2ab44f61d91e58d442871ba7ff58ce8f0920683474eee96"
+ },
+ "scorer_sha256": "d371029a45d4472197661206ecd9688980c2a88879e0bc957c1552b36d061f70",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-exit/bar_sanity_spec_c4_old_control.py",
+ "spec_sha256": "932f19bbf067b65aad8d6642643a304eb60eba5a0e209ae656f7e70d2440d379",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "UNREACHABLE",
+ "wall_s": 153.7
+}
