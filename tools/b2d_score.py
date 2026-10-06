@@ -278,7 +278,11 @@ def judge_dir(d, fac, pin, host_sha=None, primary_sha=None, fields_row=None):
                 if not isinstance(t, dict):
                     continue
                 for k, v in t.items():
-                    if isinstance(v, dict) and "error" in v:
+                    # An organ error is an `error` key whose VALUE is set. A trace that records `"error": null`
+                    # on every turn (webapp/server.py's `transitive_trace`, RULING transitive-engagement) is saying
+                    # "no error"; counting the key alone made every such cell C-UNCONFIRMED (2026-10-06). Any
+                    # non-null value, including "" or False, still counts: when unsure, invalidate, never hide.
+                    if isinstance(v, dict) and v.get("error") is not None:
                         r["organ_errors"].append({"arm": fn, "turn": turn_name, "organ": k,
                                                   "error": str(v["error"])[:200]})
     # ── rule 7: an organ error on THIS ROW'S probe turn, in an organ this row's fields actually touch ──
