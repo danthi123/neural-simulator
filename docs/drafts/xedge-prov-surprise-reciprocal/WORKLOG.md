@@ -305,3 +305,19 @@ now matches the PLAN rule (py_compile OK). provisional_supports stays false per 
 the smoke is calibration-only, never evidence. Escalated to NEEDS [xedge] ASK: PLAN contradicts itself on
 the read drive (§4 read_fn "content alone, ctx silent at recall" vs §7 "verdict drive across the whole
 window"; runner drives ctx at 2500 pA) - a prereg ruling, driver must not flip it; blocks the 6-seed queue.
+
+## 2026-10-06 10:3x - §8e verify-in-order status from the round-3 smoke (dev seed 7)
+
+Checked against smoke_seed7.json (round-3, tip 1246f0161 run) while the [xedge] ASK is open:
+- (a) edge wires: held (byte_off PASS + harness assert runs inside the gate).
+- (b) config reconciliation: frozen_weight_maxdrift = 0.0 — no hebbian_rate_window hijack. PASS.
+- (c) clean-zero: the frozen CLEAN_ZERO_BAR (PLAN §6(5)) passes on the recorded 2x2 — 0.01 <= 0.02,
+  0.0094 <= 0.02, |0.01-0.0094| = 0.0006 <= 0.25 x 0.01 = 0.0025. (ok formula would return true.)
+- (d) verdict drive across the trial window: BLOCKED — this is exactly the [xedge] ASK filed 08:37
+  (§4 read_fn "content alone, ctx silent at recall" vs §7 "drive across the whole window"; runner drives
+  ctx at 2500 pA). No drive change may be made without the prereg ruling.
+- (e) sign: per_condition/perceived/delta_intact = +0.005833, expected_sign = 1, delta_lesion = 0.0
+  (no-edge ~0, the pre-registered negative control). PASS.
+NOT freezing INTACT_FLOOR yet despite the pre-declared rule (0.5 x delta = 0.00292): floor, queue and (d)
+all sit on the disputed drive — freezing under a config the ruling may change would break the
+"never revisited" clause. Freeze + 6-seed queue proceed together the moment the [xedge] ASK is answered.
