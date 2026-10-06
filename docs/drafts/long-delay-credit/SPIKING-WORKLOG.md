@@ -246,3 +246,15 @@ measured value changed. Re-staged: `run_all` on the staged list returns `BLOCKIN
 `below_chance` on the two dev JSONs for this same gate; the runner never writes these fields.
 
 Next per RULING T1-LDC: Step 4a (outcome-timing pilot, draft build, dev seeds) exactly as the HANDOFF says.
+
+2026-10-06 - T1 round 4 (RULING T1-provision + T1-round4): runs.jsonl restored (never committed);
+FF-merged claude-review/ldc (63907ce8d), then agent_sync_branch merged main cd3f88dc3 -> f51493293
+(gates passed, warnings non-blocking). Provision touched and completed rc=0 on pool41/42/40/wspool
+(published_main cd3f88dc3). Queued 4 seed-7 lines at pin f514932939cf6c0dbc666aed336e20cef517db3c
+(depth 27 -> 30, mem_gb=2, max_age_h=48, STEP4B step-0 BYB receipt carried in each reason):
+r5 re-run 30/27/24/20/3 -> tune_r5_rel_snc3_s7_r4.json (_r4 keeps the old r5 record intact for
+the mandated field-by-field compare), r11 30/40/36/20/3 -> tune_r11_s7.json, r9 30/54/48/20/3 ->
+tune_r9_s7.json, r10 30/54/96/20/3 -> tune_r10_s7.json. Next per ruling: the r5 re-run must
+reproduce old r5 (U, R, I, whole-window LHb rates, success) else STOP; freeze the first of
+r11/r9/r10 passing U,R,I,membrane_ok,void False,amended(a)(b) (off-U min 0.4982); then T1-grid
+(144 lines + PILOT-4B.md).
