@@ -4602,6 +4602,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
         _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
         _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
+        try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
+            import research.runners.idle_replay_organ as _IR_reset
+            _IR_reset.reset_organ(cache_key)
+        except Exception:
+            pass
         _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
         _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
         try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
@@ -4924,6 +4929,21 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             swap_drives_info = {"on": True, "error": f"{type(_sde).__name__}: {_sde}", "lead": ""}
             swap_drives_lead = ""
 
+    # ── IDLE REPLAY (Stage-2 C5 build, 2026-10-06, default-OFF `BRAIN_IDLE_REPLAY`) ────────────────────────────────
+    # When ON, the idle turn below voices a fact from the brain's OWN store, chosen by a spiking reactivation race
+    # biased by how recently and how strongly each fact was encoded (research/runners/idle_replay_organ.py), instead
+    # of the self-init organ's fixed demo lexicon. `note_turn` runs on EVERY turn (it advances the turn clock and
+    # records which facts entered the store since the last turn; bookkeeping only, no reply field). OFF (unset): only
+    # the flag read happens -> every reply byte-identical. Guarded so a failure can never crash a turn.
+    _ir_on = False
+    try:
+        import research.runners.idle_replay_organ as _IR
+        _ir_on = _IR.idle_replay_enabled()
+        if _ir_on:
+            _IR.note_turn(cache_key, chat, seed=_brain_chat_seed())
+    except Exception:
+        _ir_on = False
+
     # ── SELF-INITIATED UTTERANCE — the first INTERNALLY-GENERATED turn class (2026-08-18) ────────────────────────
     # On an IDLE/EMPTY turn (an EMPTY message, or a bare "say something / what's on your mind" lead-in — a DISJOINT
     # class, nothing else matches it) the brain SELECTS a stored concept ITSELF and SPEAKS it, rather than reacting to
@@ -4948,8 +4968,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _selfinit_on and _SI.is_selfinit_trigger(req.message):
         try:
             _si_rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
-            siorg = _get_selfinit_organ(cache_key)
-            si = siorg.speak(lesion=_SI.selfinit_lesioned())
+            if _ir_on:   # IDLE REPLAY (default OFF): the brain's own store, the spiking reactivation race
+                si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
+            else:
+                siorg = _get_selfinit_organ(cache_key)
+                si = siorg.speak(lesion=_SI.selfinit_lesioned())
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
             answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
