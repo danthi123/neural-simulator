@@ -91,7 +91,9 @@ def test_R_without_selection_is_undefined(tmp_path):
 
 def test_every_packet_names_a_prereg_and_a_control():
     for k, p in S.PACKETS.items():
-        assert p["prereg"].startswith("research/findings/2026-10-01-") and "PREREGISTRATION" in p["prereg"], k
+        assert p["prereg"].startswith("research/findings/2026-10-0") and "PREREGISTRATION" in p["prereg"], k
+        assert os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                           p["prereg"])), k
         assert p["control"]["row"] and p["op_env"].startswith("BRAIN_") and p["lesion_flags"], k
 
 
@@ -182,4 +184,34 @@ def test_word_role_engagement_spec_is_registered():
 def test_word_role_engagement_states(tmp_path, lesion_trace, why):
     import s2p_score as S2
     got = S2.engagement_state(_wr_arms(tmp_path, lesion_trace), S2.PACKETS["word-role-parse"]["engagement"])
+    assert got is None if why is None else got.startswith(why)
+
+
+# ── ENGAGEMENT for word-role-commit (docs/drafts/spiking-commit/PLAN.md A1): the commit route and its own lesion
+#    record (`commit_lesioned`), so an arm that only cut the word -> role gate cannot pass as a commit-lesion arm. ─────
+def _wc_arms(tmp_path, lesion_trace):
+    import json as _j
+    intact = {"route": "word_role_commit", "lesioned": False, "commit_lesioned": False, "error": None}
+    for name, t in (("intact_a_x.json", intact), ("intact_b_x.json", intact),
+                    ("lesion_x.json", lesion_trace), ("lesion_x.json.rep0", lesion_trace)):
+        body = {"answer": "b"}
+        if t is not None:
+            body["word_role_trace"] = t
+        (tmp_path / name).write_text(_j.dumps({"s2wc_use": body}))
+    (tmp_path / "lb.json").write_text("{}")
+    return str(tmp_path)
+
+
+@pytest.mark.parametrize("lesion_trace,why", [
+    ({"route": "word_role_commit", "lesioned": False, "commit_lesioned": True, "error": None}, None),
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": False, "error": None}, "lesion-flag"),
+    ({"route": "word_role", "lesioned": False, "commit_lesioned": True, "error": None}, "route-word_role"),
+    ({"route": "word_role_commit", "lesioned": False, "commit_lesioned": True, "error": "X"}, "error"),
+    (None, "no-record"),
+])
+def test_word_role_commit_engagement_states(tmp_path, lesion_trace, why):
+    import s2p_score as S2
+    spec = S2.PACKETS["word-role-commit"]
+    assert spec["engagement"]["lesion_key"] == "commit_lesioned" and spec["grid_len"] == 6
+    got = S2.engagement_state(_wc_arms(tmp_path, lesion_trace), spec["engagement"])
     assert got is None if why is None else got.startswith(why)

@@ -4644,6 +4644,51 @@ def _word_role_trace(chat):
     return dict(m) if isinstance(m, dict) else None
 
 
+def _mouth_trace_enabled() -> bool:
+    """`BRAIN_MOUTH_TRACE` truthy -> attach the `mouth_trace` block (B2d Amendment 2). Default OFF: no key, every body
+    unchanged. The record itself is kept either way by the affect organ's MoodConditionedRenderer (bookkeeping only)."""
+    return os.environ.get("BRAIN_MOUTH_TRACE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _mouth_trace_reset(chat) -> None:
+    """Start-of-turn reset of the renderer's per-call record, so a turn's `mouth_trace` only lists calls made in THAT
+    turn. Never raises; a renderer without the record (no affect wrapper installed yet) is left alone."""
+    try:
+        r = getattr(chat, "renderer", None)
+        if isinstance(getattr(r, "mouth_calls", None), list):
+            r.mouth_calls = []
+    except Exception:
+        pass
+
+
+def _mouth_trace(chat, answer):
+    """The `mouth_trace` reply block (B2d Amendment 2, Claude 2026-10-06), or None when BRAIN_MOUTH_TRACE is off.
+
+    Which render calls the fluent renderer received this turn and with what conditioning: per call the method, the
+    SVO, the manner clause appended to the generative prompt ('' = none), whether the base is a generative faculty
+    (Qwen) or a template, the returned surface, and `in_answer` (that surface is a substring of the final answer, so
+    it was spoken). Plus the turn's `tone_level` (the level the spiking recall mouth reads) and the renderer's manner
+    template. `wrapped` is False when the affect wrapper is not installed (BRAIN_AFFECT=0, or no affect turn yet):
+    calls then go unrecorded, which a scorer must read as "not traced", never as "no calls". It attaches on the rich
+    and single-fact paths only; an earlier return (an abstention template, a host read-out) carries no block. The
+    reply text is never touched."""
+    if not _mouth_trace_enabled():
+        return None
+    try:
+        r = getattr(chat, "renderer", None)
+        calls = getattr(r, "mouth_calls", None)
+        text = answer if isinstance(answer, str) else ""
+        out = []
+        for c in (calls if isinstance(calls, list) else []):
+            s = c.get("surface")
+            out.append(dict(c, in_answer=bool(isinstance(s, str) and s and s in text)))
+        return {"wrapped": isinstance(calls, list), "renderer": getattr(r, "name", None),
+                "manner_template": getattr(r, "manner", None),
+                "tone_level": int(getattr(chat, "_mood_tone_level", 0) or 0), "calls": out}
+    except Exception as e:
+        return {"error": "trace unavailable: %s: %s" % (type(e).__name__, e)}
+
+
 def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     """THE SHARED FULL-FACULTY TURN PIPELINE — the entire faculty-DRIVE coupling sequence run on an already-built
     ChatBrain, returning the SAME JSONResponse the `/api/brain-chat` handler has always returned. Extracted
@@ -4665,6 +4710,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # a call-count retirement proof (_gnw_bus_default_flip_verify, _gnw_bus_scaffold_retire_verify). See gnw_bus_shadow.py.
     # WORD-ROLE ENGAGEMENT (RULING word-role-engagement): clear last turn's record before anything can parse.
     _word_role_trace_reset(chat)
+    _mouth_trace_reset(chat)   # MOUTH TRACE (B2d Amendment 2): this turn's render calls only
     try:
         from webapp import gnw_bus_shadow as _gnw_bus_mod
         _gnw_bus_mod.install_bus_gate(chat)
@@ -6793,6 +6839,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────
         if _oeg_on():  # OPEN-ENDED GATED TURN trace (default-OFF)
             _oeg_mod().attach(chat, resp)
+        _mt = _mouth_trace(chat, resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
+        if _mt is not None:
+            resp["mouth_trace"] = _mt
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -7167,6 +7216,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────────
     if _oeg_on():  # OPEN-ENDED GATED TURN trace (default-OFF)
         _oeg_mod().attach(chat, _resp)
+    _mt = _mouth_trace(chat, _resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
+    if _mt is not None:
+        _resp["mouth_trace"] = _mt
     return _safe_json_response(_resp, "single-fact")
 
 

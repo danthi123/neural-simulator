@@ -43,6 +43,14 @@ NAMED RESIDUALS (host code that remains, declared).
   * The frozen confidence rule (ROLE_MIN / ROLE_MARGIN over spike counts) is a host read-out of the role ensembles.
   * Assigning a word form to a word assembly (a dictionary word -> index) is the sensory front end, host.
 
+COMMIT MODE (packet word-role-commit, 2026-10-06; built only with `commit=` params, default OFF in the chat behind
+BRAIN_WORD_ROLE_COMMIT). Two spiking populations per role are appended to the same bridge: a commit gate (self-
+recurrent, mutually exclusive across roles) and a role-slot latch (bistable, carried across words). The frozen
+confidence rule and the per-role argmax are not used: a word's role is the slot latch that turned on while it was
+presented, and the first word to fill a role keeps it. See `_commit_run` / `_commit_read` and
+docs/drafts/spiking-commit/PLAN.md. Residual: the read of WHICH latch is on is a host level read of spike counts,
+registered as threshold-invariant (x0.5 and x2), and the inter-word reset keeps the latches (declared compression).
+
 Backend: process backend (numpy on the pool). No `sim/` edit. Same global-RNG isolation as the W3 organ.
 
 DEV MEASUREMENTS (dev seeds 1-8 only; gate seeds 42/43/44/100/101/102 untouched; a dev read, not a generalization
@@ -101,6 +109,10 @@ GATE_WORD_TRANSMISSION = "role_word"        # transmission gate on word -> role 
 GATE_WORD_PLASTIC = "wrp_word_plastic"      # plasticity gain of word -> role
 GATE_POS_PLASTIC = "wrp_pos_plastic"        # plasticity gain of pos -> role (lower: stays subthreshold alone)
 GATE_FIXED = "wrp_fixed"                    # frozen lateral-inhibition projections
+# Spiking commit stage (packet word-role-commit; additive, built only when the organ is given `commit=` params):
+GATE_COMMIT_IN = "role_commit"              # role ensemble -> commit gate (the commit lesion closes it)
+GATE_SLOT_LOOP = "slot_loop"                # slot-latch self-recurrence (the latch lesion closes it)
+GATE_COMMIT_EXCL = "commit_excl"            # commit-gate cross-inhibition (the exclusion lesion closes it)
 
 GATE_SEEDS = (42, 43, 44, 100, 101, 102)
 DEV_SEEDS = (1, 2, 3, 4, 5, 6, 7, 8)
@@ -124,6 +136,67 @@ GRID: List[dict] = [
     dict(_G, NI=12, W_RI=120.0, W_IR=60.0),                                # 7: larger inhibitory pools
 ]
 PARAMS: dict = dict(GRID[0])
+
+
+# ── the spiking commit stage (packet word-role-commit, docs/drafts/spiking-commit/PLAN.md) ────────────────────────────
+# Replaces the host ROLE_MIN / ROLE_MARGIN rule AND the per-role argmax over words. Per role r, two populations:
+#   G_r  commit gate: NG excitatory neurons driven by role ensemble r (W_RG), self-recurrent (W_GG: a regenerative
+#        burst once enough of it fires), with its own inhibitory pool GI_r (W_GGI) that inhibits every OTHER gate
+#        (W_GIG): at most one gate bursts per word (Lo & Wang 2006 / Stine et al. 2023 commit-burst stage).
+#   S_r  role-slot latch: NS excitatory neurons driven by G_r (W_GS), densely self-recurrent (W_SS): a bistable
+#        assembly that, once ignited, sustains itself after its input stops (the GNW rung-1 die-out-vs-ignite
+#        primitive; persistent working-memory activity). S_r is NOT cleared by the inter-word reset (only by the
+#        start-of-parse reset), so a filled role stays filled while later words are read.
+# READ (a transducer, no comparison between alternatives): after each word's drive stops, HOLD_STEPS of zero input;
+# a slot is latched iff its spike count over the last READ_STEPS of the hold reaches READ_FRAC x NS x READ_STEPS.
+# The word's role is the slot that turned ON during its presentation (exactly one; zero -> no role; two or more ->
+# co-commit, no role, counted). A role latched by an earlier word cannot turn on again, so the first word to commit
+# a role keeps it (incremental assignment) -- no argmax over counts. The read is repeated at READ_FRAC x0.5 and x2 on
+# the same spikes; the registered bar is that it does not change (threshold invariance, the bg-live-seam G4 lesson).
+# Fields: BASE_OP the count-organ GRID row used for the word/position/role layer (the commit build adds neurons, which
+# changes every per-neuron heterogeneity draw, so the role layer is re-selected with the commit stage, not inherited);
+# NG/NGI/NS gate, gate-inhibitory and slot sizes; W_* the frozen weights named above; HOLD_STEPS zero-input steps after
+# each word; READ_STEPS the read window at the end of the hold; READ_FRAC the read level (spikes per slot neuron per
+# step). All wired, none learned (declared). The order is frozen with the DEV table below (Claude, 2026-10-06, local
+# numpy on the server, dev seeds 1-8 only; gate seeds never run):
+#   row  base  change                 dev seeds all-pass   read invariant   latched min / unlatched max (slot spikes)
+#   0    7     (the reference row)    8/8                  every parse      77-84 / 0
+#   1    7     W_SS 80                8/8                  every parse      (not tabulated)
+#   2    4     word-dominant base     8/8                  every parse      73-85 / 0-1 (dual-role words mostly decline)
+#   3    0     base 0                 7/8 (seed 3 swapped) every parse      (not tabulated)
+#   4    7     W_RG 60                7/8 (seed 5 novel)   every parse      (not tabulated)
+#   5    7     W_RG 40                5/8 (swapped)        not on seed 1    (not tabulated)
+# Seed 3 at base 0: "chase" at position 0 reads action 6 / agent 3 role spikes on this build, so the host count rule
+# would decline there too: the margin is the role layer's (heard 6-34 vs unheard 0-7 role spikes), not the commit's.
+# W_RG is where that margin now lives (40 drops heard words, 60 commits an unheard one on one seed): the frozen ROLE_MIN
+# became a frozen synaptic weight, and the read on the slots is invariant from about 1 to 77 spikes.
+_C = dict(BASE_OP=7, NG=12, NGI=8, NS=20, W_RG=50.0, W_GG=20.0, W_GGI=60.0, W_GIG=60.0, W_GS=12.0, W_SS=60.0,
+          HOLD_STEPS=100, READ_STEPS=30, READ_FRAC=0.03)
+COMMIT_GRID: List[dict] = [
+    dict(_C),                        # 0: reference
+    dict(_C, W_SS=80.0),             # 1: stronger latch
+    dict(_C, BASE_OP=4),             # 2: word-dominant role layer
+    dict(_C, BASE_OP=0),             # 3: the count organ's own default role layer
+    dict(_C, W_RG=60.0),             # 4: more sensitive gate
+    dict(_C, W_RG=40.0),             # 5: less sensitive gate
+]
+COMMIT_PARAMS: dict = dict(COMMIT_GRID[0])
+
+
+def set_commit_operating_point(i: int) -> dict:
+    """Select COMMIT_GRID[i] as the module's COMMIT_PARAMS (mutated in place). Returns it."""
+    i = int(i)
+    if not (0 <= i < len(COMMIT_GRID)):
+        raise ValueError("commit operating point %d outside 0..%d" % (i, len(COMMIT_GRID) - 1))
+    COMMIT_PARAMS.clear()
+    COMMIT_PARAMS.update(COMMIT_GRID[i])
+    return COMMIT_PARAMS
+
+
+def commit_organ_params(i: int) -> Tuple[dict, dict]:
+    """(role-layer params, commit params) of COMMIT_GRID[i]: the role layer is GRID[BASE_OP]."""
+    row = dict(COMMIT_GRID[int(i)])
+    return dict(GRID[int(row["BASE_OP"])]), row
 
 
 def set_operating_point(i: int) -> dict:
@@ -179,8 +252,10 @@ class WordRoleParserOrgan:
     """A word-reading (word, position) -> role parser on one bridge. Build with the heard `facts`
     ((agent, action, patient) strings); `train()` runs the Hebbian replay; `parse()` reads roles from the words."""
 
-    def __init__(self, facts: Iterable[Tuple[str, str, str]], seed: int = 1, params: Optional[dict] = None):
+    def __init__(self, facts: Iterable[Tuple[str, str, str]], seed: int = 1, params: Optional[dict] = None,
+                 commit: Optional[dict] = None):
         self.p = dict(params if params is not None else PARAMS)
+        self.c = dict(commit) if commit else None          # None -> no commit stage, the count-rule organ unchanged
         self.seed = int(seed)
         seen, uniq = set(), []
         for f in facts:
@@ -216,6 +291,18 @@ class WordRoleParserOrgan:
         o_role = o_pos + 3 * NP
         o_inh = o_role + 3 * R
         n = o_inh + 3 * NI
+        c = self.c
+        if c is not None:                                  # commit stage appended after the count-rule organ
+            NG, NGI, NS = int(c["NG"]), int(c["NGI"]), int(c["NS"])
+            o_g = n
+            o_gi = o_g + 3 * NG
+            o_s = o_gi + 3 * NGI
+            n = o_s + 3 * NS
+            self.gate_idx = {r: np.arange(o_g + k * NG, o_g + (k + 1) * NG, dtype=np.int64) for k, r in enumerate(ROLES)}
+            self.gate_inh_idx = {r: np.arange(o_gi + k * NGI, o_gi + (k + 1) * NGI, dtype=np.int64)
+                                 for k, r in enumerate(ROLES)}
+            self.slot_idx = {r: np.arange(o_s + k * NS, o_s + (k + 1) * NS, dtype=np.int64) for k, r in enumerate(ROLES)}
+            self.all_slot = np.arange(o_s, o_s + 3 * NS, dtype=np.int64)
         self.word_idx = {w: np.arange(i * NW, (i + 1) * NW, dtype=np.int64) for i, w in enumerate(self.vocab)}
         self.spare_idx = [np.arange((V + j) * NW, (V + j + 1) * NW, dtype=np.int64) for j in range(S)]
         self.pos_idx = [np.arange(o_pos + k * NP, o_pos + (k + 1) * NP, dtype=np.int64) for k in range(3)]
@@ -259,11 +346,29 @@ class WordRoleParserOrgan:
             plan["ir_" + r] = _dense(self.inh_idx[r], others, p["W_IR"], plastic=False, conn_type="I_TO_E",
                                      plasticity_gate=GATE_FIXED, receptor=p.get("RECEPTOR"))
         inh = np.concatenate([self.inh_idx[r] for r in ROLES])
+        if c is not None:
+            for r in ROLES:
+                g, gi, s = self.gate_idx[r], self.gate_inh_idx[r], self.slot_idx[r]
+                other_g = np.concatenate([self.gate_idx[o] for o in ROLES if o != r])
+                plan["rg_" + r] = _dense(self.role_idx[r], g, c["W_RG"], plastic=False, conn_type="E_TO_E",
+                                         plasticity_gate=GATE_FIXED, transmission_gate=GATE_COMMIT_IN)
+                plan["gg_" + r] = _dense(g, g, c["W_GG"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED)
+                plan["ggi_" + r] = _dense(g, gi, c["W_GGI"], plastic=False, conn_type="E_TO_I",
+                                          plasticity_gate=GATE_FIXED)
+                plan["gig_" + r] = _dense(gi, other_g, c["W_GIG"], plastic=False, conn_type="I_TO_E",
+                                          plasticity_gate=GATE_FIXED, transmission_gate=GATE_COMMIT_EXCL)
+                plan["gs_" + r] = _dense(g, s, c["W_GS"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED)
+                plan["ss_" + r] = _dense(s, s, c["W_SS"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED,
+                                         transmission_gate=GATE_SLOT_LOOP)
+            inh = np.concatenate([inh] + [self.gate_inh_idx[r] for r in ROLES])
         bridge.inject_explicit_wiring(plan, output_inhibitory_indices=inh)
         bridge.set_plasticity_gate(GATE_FIXED, 0.0)
         bridge.set_plasticity_gate(GATE_WORD_PLASTIC, 1.0)
         bridge.set_plasticity_gate(GATE_POS_PLASTIC, float(p["POS_GAIN"]))
         bridge.set_transmission_gate(GATE_WORD_TRANSMISSION, 1.0)
+        if c is not None:
+            for gname in (GATE_COMMIT_IN, GATE_SLOT_LOOP, GATE_COMMIT_EXCL):
+                bridge.set_transmission_gate(gname, 1.0)
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(60):
             bridge._run_one_simulation_step()
@@ -384,10 +489,159 @@ class WordRoleParserOrgan:
             return order[0]
         return None
 
-    def parse(self, content_words: Sequence[str], lesion: bool = False) -> dict:
-        """Read the roles of the content words from the words. Position = order among the content words, capped at 2.
-        Returns dict(roles={word: role|None}, counts={word: {role: n}}, agent=, action=); a missing one is None."""
+    # ── the spiking commit read (only when built with `commit=`) ────────────────────────────────────────────────────
+    def _reset_keep_slots(self):
+        """The inter-word reset of the commit mode: every neuron returns to the quiescent snapshot EXCEPT the role-slot
+        latches, whose full dynamical state (v, u, firing, conductances) is carried over. Declared compression: the
+        inter-word interval is a reset for everything but working memory."""
+        b, xp = self._bridge, self._xp
+        keep = xp.asarray(self.all_slot)
+        saved = {}
+        for name in self._snap:
+            arr = getattr(b, name, None)
+            if arr is not None and arr.ndim >= 1 and arr.shape[0] == self._n:
+                saved[name] = arr[keep].copy()
+        _reset_quiescent(b, xp, self._snap)
+        for name, vals in saved.items():
+            getattr(b, name)[keep] = vals
+
+    def _commit_run(self, seq: Sequence[Tuple[Optional[str], int]], lesion: bool = False, commit_lesion: bool = False,
+                    latch_lesion: bool = False, excl_lesion: bool = False) -> List[dict]:
+        """Present (word, pos) items in order: a full reset before the first, the slot-keeping reset between items.
+        Each item: TEST_STEPS of word + position drive, then HOLD_STEPS of zero input. Returns, per item, the role
+        ensemble counts (drive window), the commit-gate counts (drive + hold) and the slot counts over the last
+        READ_STEPS of the hold. The read itself is `_commit_read` (pure, on these counts)."""
+        b, xp, p, c = self._bridge, self._xp, self.p, self.c
+        b.set_transmission_gate(GATE_WORD_TRANSMISSION, 0.0 if lesion else 1.0)
+        b.set_transmission_gate(GATE_COMMIT_IN, 0.0 if commit_lesion else 1.0)
+        b.set_transmission_gate(GATE_SLOT_LOOP, 0.0 if latch_lesion else 1.0)
+        b.set_transmission_gate(GATE_COMMIT_EXCL, 0.0 if excl_lesion else 1.0)
+        rdev = {r: xp.asarray(self.role_idx[r]) for r in ROLES}
+        gdev = {r: xp.asarray(self.gate_idx[r]) for r in ROLES}
+        sdev = {r: xp.asarray(self.slot_idx[r]) for r in ROLES}
+        hold, read = int(c["HOLD_STEPS"]), int(c["READ_STEPS"])
+        out = []
+        try:
+            for i, (word, pos) in enumerate(seq):
+                if i == 0:
+                    _reset_quiescent(b, xp, self._snap)
+                else:
+                    self._reset_keep_slots()
+                cur = xp.zeros(self._n, dtype=xp.float32)
+                if word is not None:
+                    dev = self._word_dev(word)
+                    if dev is not None:
+                        cur[dev] = xp.float32(p["DRIVE_PA"])
+                if pos is not None:
+                    cur[xp.asarray(self.pos_idx[min(max(int(pos), 0), 2)])] = xp.float32(p["DRIVE_PA"])
+                rc = {r: 0 for r in ROLES}
+                gc = {r: 0 for r in ROLES}
+                sc = {r: 0 for r in ROLES}
+                b.cp_external_input_current[:] = cur
+                for _ in range(int(c.get("WORD_STEPS", p["TEST_STEPS"]))):
+                    b._run_one_simulation_step()
+                    f = b.cp_firing_states
+                    for r in ROLES:
+                        rc[r] += int(to_host(f[rdev[r]].astype(xp.float64).sum()))
+                        gc[r] += int(to_host(f[gdev[r]].astype(xp.float64).sum()))
+                b.cp_external_input_current[:] = 0.0
+                for t in range(hold):
+                    b._run_one_simulation_step()
+                    f = b.cp_firing_states
+                    for r in ROLES:
+                        gc[r] += int(to_host(f[gdev[r]].astype(xp.float64).sum()))
+                        if t >= hold - read:
+                            sc[r] += int(to_host(f[sdev[r]].astype(xp.float64).sum()))
+                out.append({"word": word, "pos": pos, "role_counts": rc, "gate_counts": gc, "slot_counts": sc})
+        finally:
+            b.cp_external_input_current[:] = 0.0
+            for gname in (GATE_WORD_TRANSMISSION, GATE_COMMIT_IN, GATE_SLOT_LOOP, GATE_COMMIT_EXCL):
+                b.set_transmission_gate(gname, 1.0)
+        return out
+
+    def _commit_read(self, items: List[dict], scale: float = 1.0) -> dict:
+        """The transducer read on recorded slot counts: a slot is latched iff its hold-window count reaches
+        READ_FRAC x scale x NS x READ_STEPS. Item i's role = the one slot that turned on during item i (none -> None;
+        several -> None and a co-commit). A role claimed by two items (a latch that died and re-latched) -> that role
+        is unfilled and counted. No count is compared with another alternative's count."""
+        c = self.c
+        thr = float(c["READ_FRAC"]) * float(scale) * int(c["NS"]) * int(c["READ_STEPS"])
+        on_before = set()
+        per, co, claim = [], 0, {}
+        for i, it in enumerate(items):
+            on_now = {r for r in ROLES if it["slot_counts"][r] >= thr}
+            new = on_now - on_before
+            if len(new) == 1:
+                role = next(iter(new))
+                claim.setdefault(role, []).append(i)
+            else:
+                role = None
+                co += int(len(new) > 1)
+            per.append({"new": sorted(new), "role": role})
+            on_before = on_now
+        filled = {r: idx[0] for r, idx in claim.items() if len(idx) == 1}
+        relatch = sum(1 for idx in claim.values() if len(idx) > 1)
+        return {"threshold": thr, "per_item": per, "filled": filled, "co_commit": co, "relatch": relatch,
+                "latched_at_end": sorted(on_before)}
+
+    def commit_read_word(self, word: str, pos: int, lesion: bool = False) -> Tuple[Optional[str], dict]:
+        """One word at one position from a fresh parse state (diagnostics: the dual-role reads)."""
         self.train()
+        items = _isolated(lambda: self._commit_run([(word, pos)], lesion=lesion))
+        rd = self._commit_read(items)
+        return rd["per_item"][0]["role"], {"items": items, "read": rd}
+
+    def _parse_commit(self, content_words: Sequence[str], lesion: bool = False, commit_lesion: bool = False,
+                      latch_lesion: bool = False, excl_lesion: bool = False) -> dict:
+        self._spare_map = {}
+        words = list(content_words)
+        seq = [(w, min(i, 2)) for i, w in enumerate(words)]
+        items = _isolated(lambda: self._commit_run(seq, lesion=lesion, commit_lesion=commit_lesion,
+                                                   latch_lesion=latch_lesion, excl_lesion=excl_lesion))
+        return self.commit_parse_from_items(words, items)
+
+    def commit_parse_from_items(self, words: Sequence[str], items: List[dict]) -> dict:
+        """The commit parse from recorded items (pure: no network; needs only `self.c` and, for the paired
+        host-rule record, `self.p`). `_parse_commit` returns exactly this on the items it ran; the bar-sanity spec
+        calls it on synthetic items."""
+        words = list(words)
+
+        def assemble(rd):
+            roles = {}
+            for w, pi in zip(words, rd["per_item"]):
+                if w not in roles or roles[w] is None:
+                    roles[w] = pi["role"]
+            ag, ac = rd["filled"].get("agent"), rd["filled"].get("action")
+            return roles, (words[ag] if ag is not None else None), (words[ac] if ac is not None else None)
+
+        rd = self._commit_read(items)
+        roles, agent, action = assemble(rd)
+        variants = {}
+        for tag, sc in (("x0.5", 0.5), ("x2", 2.0)):
+            _, a2, v2 = assemble(self._commit_read(items, sc))
+            variants[tag] = [a2, v2]
+        counts = {w: dict(it["role_counts"]) for w, it in zip(words, items)}
+        host_rule = {w: self._rule(it["role_counts"]) for w, it in zip(words, items)}
+        return {"roles": roles, "counts": counts, "agent": agent, "action": action, "mode": "commit",
+                "commit": {"gate_counts": [it["gate_counts"] for it in items],
+                           "slot_counts": [it["slot_counts"] for it in items],
+                           "threshold": rd["threshold"], "per_item": rd["per_item"], "co_commit": rd["co_commit"],
+                           "relatch": rd["relatch"], "latched_at_end": rd["latched_at_end"],
+                           "read_variants": variants,
+                           "read_invariant": all(v == [agent, action] for v in variants.values()),
+                           "host_rule_roles": host_rule}}
+
+    def parse(self, content_words: Sequence[str], lesion: bool = False, commit_lesion: bool = False,
+              latch_lesion: bool = False, excl_lesion: bool = False) -> dict:
+        """Read the roles of the content words from the words. Position = order among the content words, capped at 2.
+        Returns dict(roles={word: role|None}, counts={word: {role: n}}, agent=, action=); a missing one is None.
+        Built with `commit=`: the spiking commit read decides (no ROLE_MIN / margin / argmax); see `_parse_commit`."""
+        self.train()
+        if self.c is not None:
+            return self._parse_commit(content_words, lesion=lesion, commit_lesion=commit_lesion,
+                                      latch_lesion=latch_lesion, excl_lesion=excl_lesion)
+        if commit_lesion or latch_lesion or excl_lesion:
+            raise ValueError("commit-stage lesions need an organ built with commit=")
         self._spare_map = {}                               # a fresh word-form -> spare-assembly dictionary per parse
         roles, counts = {}, {}
         for i, w in enumerate(content_words):
@@ -473,18 +727,32 @@ def facts_from_chat(chat) -> List[Tuple[str, str, str]]:
     return out
 
 
-def parse_from_brain(chat, content: Sequence[str], *, seed: int, lesion: bool = False) -> dict:
+def parse_from_brain(chat, content: Sequence[str], *, seed: int, lesion: bool = False,
+                     commit_op: Optional[int] = None, commit_lesion: bool = False) -> dict:
     """Parse the question's content words with an organ trained on the composer's own stored facts. The training
     stimuli are TRANSCRIBED from the composer's fact index (`chat.inner.composer.kb`): a host transcription residual.
     The self-alias -> 'brain' resolution (QuestionRouter._resolve_self) stays host (named residual). The trained organ
-    is cached per (seed, operating point, frozenset of facts). Returns parse()'s dict."""
+    is cached per (seed, operating point, frozenset of facts). Returns parse()'s dict.
+    `commit_op` (packet word-role-commit): build the organ with the spiking commit stage of COMMIT_GRID[commit_op]
+    (its role layer is GRID[BASE_OP], not PARAMS); the parse is then decided by the commit read. `commit_lesion`
+    closes the role -> commit-gate transmission (needs `commit_op`). `commit_op=None` is the count-rule organ,
+    byte-identical to before."""
     facts = facts_from_chat(chat)
-    key = (int(seed), tuple(sorted(PARAMS.items())), frozenset(facts))
+    if commit_op is None:
+        if commit_lesion:
+            raise ValueError("commit_lesion needs commit_op")
+        params, commit = dict(PARAMS), None
+        key = (int(seed), tuple(sorted(PARAMS.items())), frozenset(facts))
+    else:
+        params, commit = commit_organ_params(commit_op)
+        key = (int(seed), "commit", tuple(sorted(commit.items())), frozenset(facts))
     organ = _ORGAN_CACHE.get(key)
     if organ is None:
-        organ = WordRoleParserOrgan(sorted(facts), seed=seed, params=dict(PARAMS)).train()
+        organ = WordRoleParserOrgan(sorted(facts), seed=seed, params=params, commit=commit).train()
         _ORGAN_CACHE[key] = organ
-    return organ.parse(list(content), lesion=lesion)
+    if commit is None:
+        return organ.parse(list(content), lesion=lesion)
+    return organ.parse(list(content), lesion=lesion, commit_lesion=commit_lesion)
 
 
 # ── CLI ─────────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -33,6 +33,18 @@ Spawn N skeptics (a `Workflow` parallel stage, or concurrent `Agent`s) — each 
 
 Not every lens applies to every result — pick the ones with teeth for this claim, but a GO that flips a default earns at least reproducibility + gate-cheat + control-integrity.
 
+### Required refuter-lens block — every refuter prompt includes it VERBATIM (Claude review 2026-10-06; RULING `refuter-rulings`)
+Whatever angle a refuter is given, its prompt ends with the block below, copied unedited (do not paraphrase or shorten it), after the section-6 rulings that name the packet or its task key. Three lapses in one review earned it: refuters that skipped the engagement lens (word-role-parse), a default-on candidate that made the brain abstain on probes the default answered (wm-focus-bind, flag-on abstained 2 of 4 sessions on 6/6 seeds, yet every registered bar passed), and an audit that never asked which machine produced each result (the affect pool-vs-workstation void). A refuter that cannot answer a lens from the data in front of it reports the lens UNDEFINED and the claim does not survive on that lens.
+
+<!-- REFUTER-LENS-BEGIN -->
+REQUIRED LENSES (answer each from recorded data, never from inference):
+(a) ENGAGEMENT: did each lesion, permutation or flag actually engage, as recorded in the data (a call count, n_words, a changed field, a trace with route / lesioned / error)? An arm with no record is UNDEFINED, never a PASS or a FAIL.
+(b) ANSWER-RATE: for any default-on candidate, does flag-on lower the answer rate or raise abstentions ("I don't know about that.") against flag-off on the packet's own probes, on any seed? Run `tools/answer_rate.py` (prefixed or paired mode) or `iw2_score.py B --off-tag`; a FLIP-HURTS-ANSWERS result means the flip needs a Claude ruling (NEEDS line) before it lands.
+(c) WHERE-RAN: which host produced each cited result (run `python tools/where_ran.py <result paths>` and quote its host summary), and does validity depend on it (pool/AWS nodes and the workstation differ in what inputs they hold, for example files under research/findings/raw/ that the provisioner does not ship)?
+<!-- REFUTER-LENS-END -->
+
+`tests/test_verify_go_lens_block.py` pins this block; the same three lenses are what `tools/where_ran.py` and `tools/answer_rate.py` make mechanical.
+
 ## Synthesize + act
 - **Survives all lenses** → commit as a GO. Say which lenses were run (the verification is part of the deliverable).
 - **A lens finds a mischaracterization** → do NOT silently drop or quietly downgrade. Commit-WITH-CAVEAT: state precisely what the result IS vs what it was claimed to be (W3 was a real GO but not "structurally immune"; the affect wiring was real but not the scalar claimed). An honest narrowed result is a first-class deliverable.
