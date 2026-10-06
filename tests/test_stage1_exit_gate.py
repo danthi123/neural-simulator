@@ -205,3 +205,26 @@ def test_no_effect_env_lesion_without_engagement_record_is_undefined(tmp_path):
     r = row()
     assert not any("lesion_recall: an env-flag lesion" in u for u in r["undefined_reasons"])
     assert r["lesions"]["lesion_recall"]["applied"] is True
+
+
+def test_lesion_inherit_pathway_patch_cuts_the_organ_read_and_counts_calls(monkeypatch):
+    """RULING stage1-c1-lesion: the counted C1 lesion at attempt 2. The patch must silence the inheritance organ's
+    learned pathways on every read (the canary no longer reaches `eat worm`) and record calls > 0."""
+    import importlib
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_LESION", raising=False)
+    from research.runners import category_inherit_organ as CIO
+    from research.runners import stage1_exit_gate as SG
+    orig = CIO.CategoryInheritOrgan.infer
+    try:
+        org = CIO.CategoryInheritOrgan(seed=1)
+        for a, v, p in [("robin", "eat", "worm"), ("robin", "fly", "sky"), ("sparrow", "eat", "worm"),
+                        ("sparrow", "fly", "sky"), ("trout", "eat", "bug"), ("trout", "swim", "lake"),
+                        ("canary", "fly", "sky")]:
+            org.observe(a, v, p)
+        assert org.infer("canary", "eat")["patient"] == "worm"
+        rec = SG.install_patch("lesion_inherit_pathway", 1)
+        out = org.infer("canary", "eat")
+        assert out["patient"] is None and out["lesion"] == "all" and out["lesion_held"] is True
+        assert rec["calls"] == 1 and org.lesion is None          # the cut is per read; the organ's mode is restored
+    finally:
+        CIO.CategoryInheritOrgan.infer = orig

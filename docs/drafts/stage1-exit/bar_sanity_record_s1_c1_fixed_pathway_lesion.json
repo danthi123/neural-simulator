@@ -96,12 +96,12 @@
    0.0038
   ]
  },
- "repo_head": "4625d662ac8a9e19119dd494c872165a762c0cb4",
+ "repo_head": "6a1864a8bbcc776651a0ccdb62874ed6ae6659fb",
  "scorer_files": {
   "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "18ed0659811cfc178d4a000466e20ac4bf09aacae76ad305c85d200828708a8b",
-  "research/runners/stage1_exit_gate.py": "8f6f8cdbc0fd853cebd18f0fa7890343da804d8eff78d238cb85ef25fbbd6143"
+  "research/runners/stage1_exit_gate.py": "df627e7a769d63fa37c1491f60b93ac8d8ff85b1d405c9a54e4a9310d3541199"
  },
- "scorer_sha256": "2436acd394dfea58cd19d36a48422a77967550abe8ca39749751fc538cf37cb6",
+ "scorer_sha256": "143fde543b181a4ca5c8b0238157edd26e7aefcf662f1e341fc26e30fbf9a8d1",
  "seed": 0,
  "spec": "docs/drafts/stage1-exit/bar_sanity_spec_s1_c1_fixed_pathway_lesion.py",
  "spec_sha256": "c6fab484e75c3a23082f02d0ca40d91daa76a97b4612689798449cb7a7eaa154",
@@ -112,5 +112,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 31.5
+ "wall_s": 23.6
 }

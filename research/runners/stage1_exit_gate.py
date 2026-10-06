@@ -353,6 +353,26 @@ def install_patch(name, seed):
         AO._LEARNED_VALENCE = m
         return {"patch": name, "n_words": len(words), "perm": [int(x) for x in perm],
                 "scrambled_r": r, "within_sign_r": within_sign}
+    if name == "lesion_inherit_pathway":
+        # RULING stage1-c1-lesion (Claude 2026-10-06; Amendment A2 registers it as C1's counted lesion): cut the
+        # category-inheritance route's learned pathways (member->frame and frame->frame) for every organ read, the
+        # read-time transmission lesion `all` of research/runners/category_inherit_organ.py (encoding untouched).
+        # `calls` counts the organ reads made under the cut (applied = calls > 0); the read's own trace also records
+        # `lesion: all` and `lesion_held`.
+        from research.runners import category_inherit_organ as CIO
+        rec = {"patch": name, "calls": 0}
+        orig_infer = CIO.CategoryInheritOrgan.infer
+
+        def infer(self, agent, action):
+            rec["calls"] += 1
+            prev = self.lesion
+            self.lesion = "all"
+            try:
+                return orig_infer(self, agent, action)
+            finally:
+                self.lesion = prev
+        CIO.CategoryInheritOrgan.infer = infer
+        return rec
     raise ValueError(name)
 
 
