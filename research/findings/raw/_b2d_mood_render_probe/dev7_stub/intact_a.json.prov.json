@@ -1,0 +1,34 @@
+{
+ "run_id": "1790780802-1043455",
+ "runner": "research/runners/_b2d_mood_render_probe.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/5818dc629c5c0cd3cbb370c0c6cc16b314805b03/research/runners/_b2d_mood_render_probe.py",
+  "--arm",
+  "intact_a",
+  "--out",
+  "research/findings/raw/_b2d_mood_render_probe/dev7_stub/intact_a.json"
+ ],
+ "git_sha": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "f380fe1295a03c054832dc791d344f34cd1cb1409a27e678cb04ba2d1545c50f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-30T11:06:42",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_b2d_mood_render_probe/dev7_stub/intact_a.json"
+}

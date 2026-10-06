@@ -604,3 +604,147 @@ It reads `PIN.txt`. Stop: `provenance.status` is not `verified`.
 ```
 Stop: the scorer refuses (a blob mismatch, a PENDING field, a pin mismatch). The verdict is written as a findings doc
 with the labels "at H" and "stub renderer".
+
+## Amendment 1 (2026-09-30, before any b2d0929 or b2d0929-mouth line is queued): the mouth arm's renderer, one pin for both arms, the re-pin made mechanical, Steps 1 and 6 closed
+
+Filed on branch `research/b2d-mouth-renderer` (a Claude session that is none of the three original SD audits). At
+filing no `b2d0929` or `b2d0929-mouth` job, shard or `lb.json` exists anywhere. The dev-seed runs this amendment
+names write to their own tags (`b2d0929-mouth-dev7`, `b2d0929-stubid-dev7-<rev7>`) at dev seed 7, never a gate seed,
+and none of their output had been read when the predictions in A1.3 were written. Execution packet:
+`research/packets/b2d-mouth-renderer/HANDOFF.md`.
+
+**A1.1 The harness change (the "Mouth-channel arm" NEEDS-CLAUDE item, closed).** `_collect_worker`
+(`research/runners/onebrain_regression_battery.py`) reads `LB_ARM_RENDERER`:
+- unset, empty or `stub` (every existing caller): the pre-change code path, unchanged. The worker defaults
+  `SIM_BACKEND=numpy`, `BRAIN_CHAT_RENDERER=stub`, `SIM_DISABLE_LLM=1` and sends `renderer="stub"` on every turn.
+- `production`: the turn is rendered the way the production console renders it. The console's renderer picker
+  defaults to "auto", which sends `renderer: null` (`webapp/static/app.js`, `rendererParam`). The worker therefore
+  omits `renderer`, sets none of the three defaults, and refuses to run (exit 3, so the arm reads `arm-build-failed`)
+  if `BRAIN_CHAT_RENDERER` or `SIM_DISABLE_LLM` is already set. `brain_chat` then resolves the renderer with
+  `_default_brain_renderer()` (Qwen on a CUDA host under `SIM_BACKEND=cupy`) and builds the process-wide warm
+  `QwenRenderer` every production ChatBrain shares. Each turn's response gains a harness-owned key
+  `_arm_renderer = {"mode": "production", "qwen_generate_calls": n}`, where n counts calls into
+  `SpikingQwenFaculty._generate` / `_generate_batch` during that turn (a pass-through counter; same arguments, same
+  return value). It is not a decision field and no scorer of the stub arm reads it.
+- The variable reaches the `--worker` subprocess through `_spawn_arm`'s `env=dict(os.environ)`. `_spawn_arm`, its
+  argv and `research/runners/load_bearing_fraction.py` are untouched (its git blob is still H's).
+- Pinned by `tests/test_arm_renderer_production_path.py`: the pre-change worker, kept verbatim, writes byte-identical
+  arm files, sends identical requests and sets identical environment defaults over every probe turn; `_spawn_arm`'s
+  argv does not depend on the mode; the production mode calls the `/api/brain-chat` route's own handler with the
+  console's auto request; for that request the real handler hands `_build_chat_brain` the renderer
+  `_default_brain_renderer()` returns; the counter is transparent.
+- The prereg's acceptance check ("with `renderer` left at its default, the b2d0929 arm reproduces byte-identical to
+  a run before the change") is checked at dev seed 7 on the three mouth rows, from two exported trees: the change's
+  commit `e8a0d0cb1` and its parent on main `f5e3732fe`. Result recorded in the dev-seed record below.
+
+**A1.2 The mouth arm, as registered.** Tag `b2d0929-mouth`; rows affect-coloring, affect-appraisal-interoceptive,
+affect-drives-response; the probe turns `b2d_decision_fields.json` registers for them (`emo`, `emo`, `well`); seeds
+42 43 44 100 101 102; `--repeats 2`; the nine adequate LB_* flags; `SIM_BACKEND=cupy`; `LB_ARM_RENDERER=production`;
+18 jobs through `tools/gpu_queue.sh`, each under `tools/mem_ok.sh 10 4` and `tools/memcap.sh 16`, from the
+workstation's own isolated revision `~/derisk-pool/revisions/<P>` built by
+`research/packets/b2d-mouth-renderer/export_local_revision.sh` (same `git archive` path list, ancestry attestation,
+manifest and `.source_revision` as `tools/pool_provision.sh`). Job file: `make_jobs.py mouth`. Scorer:
+`tools/b2d_mouth_score.py` (tests `tests/test_b2d_mouth_score.py`). Cell rules, in order:
+- E: A1.2 rules 1 to 3 and 6 with `SIM_BACKEND=cupy` and `LB_ARM_RENDERER=production` required in every sidecar
+  (instead of numpy), rule 4 against the workstation's corpus row; one re-run (A1.4) after moving attempt 1 aside.
+- C: rule 7, unchanged.
+- M, not the mouth: on the probe turn of any of the four arms the response's `renderer` is not
+  `off-bridge Qwen-0.5B (spiking forward)` or `_arm_renderer.mode` is not `production` (for example, CUDA was
+  unavailable and the handler resolved the GPU-free stub). One re-run; M twice is FAIL.
+- MOUTH-SILENT: the Qwen entry points ran 0 times on the probe turn in all four arms. The reply on that turn never
+  came from the mouth, so this arm cannot measure the row on this turn. Final, never re-run, never counted as 0 or as
+  a pass; the row is named.
+- Otherwise DEFINED, and S2m is S2 exactly as defined above (null floor, lesion floor, UNDEFINED never 0).
+- There is one GPU, so "a different host" in A1.4(b) reads "a second attempt on the workstation"; FAIL is the same
+  class twice. Row readings: MOUTH-LOAD-BEARING (six DEFINED, six reply changes), MOUTH-PARTIAL,
+  MOUTH-NOT-LOAD-BEARING (six DEFINED, none), MOUTH-SILENT (six silent), MIXED, PENDING. Reported beside the stub
+  arm's S2 for the same cells, never averaged into S0, S1 or S2.
+
+**A1.3 Predictions (written before any mouth-arm output, dev or gate, was read).**
+- affect-coloring and affect-appraisal-interoceptive on `emo`: MOUTH-SILENT on 6 of 6 seeds. In every B2b arm file
+  checked the `emo` reply is the curiosity/abstention template (`abstained` true, `recalled_svo` null), which no
+  renderer call produces.
+- affect-drives-response on `well`: the mouth renders the recalled triple, and the reply is the same in the intact
+  and lesion arms, because `well` carries no affect words (tone level 0 and an empty manner template in both arms)
+  and the marker word is off the surface at H: MOUTH-NOT-LOAD-BEARING, 0 of 6. Less certain than the two above: if
+  `well`'s reply turns out not to pass through the renderer, the row reads MOUTH-SILENT instead.
+- Null floor: greedy decoding with seeded spiking ops, so intact_a equals intact_b on every DEFINED cell.
+- If these hold, the registered turns cannot show the affect rows reply-load-bearing through the mouth, because no
+  registered turn is both mood-engaged and rendered. That is a property of the probe set. The remap it points to (a
+  mood-engaged turn whose reply is rendered, checked on a dev seed first) is a separate amendment, not this one.
+
+**A1.4 One pin for both arms; the re-pin rule made mechanical.** Both arms run at one pin P: the head of the packet
+branch once origin/main is merged into it, at provisioning time. P contains origin/main, so `tools/pool_provision.sh`
+accepts it without `POOL_PROVISION_ALLOW_STALE`, and its production default path is origin/main's (the only code
+the branch adds to it is the default-off renderer mode, A1.1). This replaces "H' = the origin/main HEAD" in the
+re-pin rule; everything else in that rule stands and is applied as follows.
+- Registry: `research/packets/b2d-mouth-renderer/registry_fingerprint.py` (every registry row with kind, flag,
+  value and REQUIRED_ENV; every FACULTY_PROBES row; every turn definition; the noise fields; the world steps; the
+  row-merge report; lb_shard's adequate flags, kinds and sharded keys). At H and at `e8a0d0cb1` it is identical:
+  50 rows, 43 sharded, `registry_at_H.json`.
+- Cited files that differ between H and `e8a0d0cb1`: `research/runners/comprehension_production_organ.py` (the
+  lesion-twin crash fix `d218481dc`) and `research/runners/onebrain_regression_battery.py` (A1.1). Every other cited
+  blob is H's. Re-audit of each row citing them:
+  - comprehension-monitor: `comprehension.comprehended` moves from SD (branch-structural, the organ error) to N. At
+    H the lesion twin raised and the exception fallback dropped the field. After the fix `judge()` reads the lesion
+    twin's own spiking margin (`_lesion_comp`, the learned cue->role weights zeroed, lines 674-680; `read_margin`,
+    703-721) and computes `comprehended = margin >= threshold` by the same statement in both arms (738-756). Kept
+    fields: `comprehension.comprehended`, `comprehension.on`.
+  - comprehension-learned-animacy-cue and comprehension-learned-verb-selects: class N unchanged; the cited range
+    705-734 at H is 719-748 at P (text identical, shifted by the fix's docstring); the fix touches only the lesion
+    twin of the monitor row.
+  - affective-tom (`affective_tom.tone_level`, NX, lines 697-702) and swap-drives-response (`swap_drives.on`,
+    UNSURE, lines 143-150): the battery's lines 1 to 880 are unchanged; A1.1 adds code after them only.
+- The audited blobs are recorded in `b2d_decision_fields.json` (`cited_blobs_at_pin`, `harness_blobs_at_pin`,
+  `repin_audit`). `research/packets/b2d-mouth-renderer/repin.py check` passes only if P contains origin/main, the
+  tree is an export of P with a verifying manifest, the registry fingerprint at P equals H's, and every cited and
+  harness blob at P equals the audited one. `apply` then sets the fields file's `pin` to P and regenerates
+  `b2d_jobs.txt`, `PIN.txt` and the mouth job file. Any difference stops the run until Claude re-audits (NEEDS-CLAUDE).
+- The "identity replay at H'" of the original rule has no object: `tools/b2d_score.py` scores S1 directly from the
+  arm files (its Step 5 note), and S0 is a verbatim read of `lb.json`.
+
+**A1.5 Step 1 closed: the independent SD re-check.** This session re-read each SD call and the borderline N call
+against the definition and the code at `e8a0d0cb1`:
+- pragmatic-implicature, `pragmatic.enriched_interpretation`: N, concur. Under the lesion `interpret()` reads a
+  belief the spiking RSA recursion computes with the FS normalization weight at 0 (`_ensure_lesion`,
+  `graded_belief_sources(..., normalize=False)`); the same margin statement emits the collapse string in either arm.
+- reconsolidation `.action` (lesion-named literal), affect-drives-response `affect_drives.reason`,
+  da-mode-drives-response `da_drives.reason`, affective-tom `affective_tom.reason` (lesion-named literals),
+  noncontradiction-gate `.recalled_yn` (branch-forced constant) with `.reject` and `.stored_polarity` (derived),
+  confidence-forthcomingness `.granted` and `.reason` (branch-structural): SD, concur.
+- discourse-register `.agent` and `.abstained`: SD (derived from a forced value), concur. The lesion overwrites the
+  held slots with the identity after the spiking observe, so the decoded agent depends on the forced value only.
+- comprehension-monitor: changed at the re-pin (A1.4), not disputed.
+No call is disputed, so Step 1's stop condition does not fire.
+
+**A1.6 Step 6 closed: the wave script.** `research/coordination/b2d_queue_next_wave.sh`, derived from the B2b
+script with the differences listed in its header: the pin read from `b2d0929/PIN.txt`, B2d's files and lock, a
+corpus row for P required on every node, waves of 43 lines and a threshold of 10 on the pool-only lane (86 and 20
+with AWS), and the reason `prereg <this file> (P <P9>) AMENDMENT 1; B2d stub arm; mem_gb=8 max_age_h=168`. The pool
+queue was about 446 lines deep (three to four days) when this was filed, so every line declares `max_age_h=168`
+(the dispatcher's per-line staleness rule, `f5e3732fe`), and the script counts freshness by the same rule.
+
+**A1.7 Corpus record at P.** Step 4 is repeated at P for every node that will run a b2d0929 line, plus one row for
+the workstation (node `workstation`, its hostname, the sha256 of `~/derisk-pool/revisions/<P>/data/corpus/
+tinystories.txt`), which the mouth scorer's rule 4 reads.
+
+**A1.8 Unchanged.** The stub arm (258 lines, same command shape), S0/S1/S2, A1.2 to A1.8 of the main text, the
+drift comparison with B2b, and what a COMPLETE verdict licenses. The mouth arm licenses one more report: whether the
+three affect rows change the reply the production mouth writes on their registered turns, at P.
+
+### Amendment 1, dev-seed record (appended 2026-09-30 after the dev seed 7 runs; no rule, bar or arm changes)
+
+Dev seed 7 only; files and details in `research/packets/b2d-mouth-renderer/dev7/README.md`.
+- A1.1 acceptance check: the three mouth rows' stub-arm cells at `e8a0d0cb1` and at `f5e3732fe` are byte-identical,
+  15 of 15 files (every arm file and `lb.json`).
+- A1.2/A1.3: the mouth arm's affect-coloring cell resolved the production renderer in all four arms, passed every
+  validity rule, and read MOUTH-SILENT, as predicted. affect-drives-response's intact arms made 0 Qwen calls on
+  `well` (an assertion echo), so the first A1.3 prediction for that row (MOUTH-NOT-LOAD-BEARING) did not hold at the
+  dev seed and its stated alternative (MOUTH-SILENT) did; that cell's first lesion arm was killed by a test run
+  (SIGTERM, research/FAILURE_LOG.md 2026-09-30) and is re-run on the dev seed.
+- Job shape: after the dev run dropped three GPU lines on a refused `mem_ok`, the mouth lines' memory guard waits up
+  to 90 min before refusing, and a mouth cell that never ran is re-queued under A1.4(c) instead of spending its
+  re-run. Neither changes what is measured.
+- Pin: `repin.py apply` set P = `5818dc629c5c0cd3cbb370c0c6cc16b314805b03` (all checks passed); pool41 and pool42
+  were provisioned at P, the corpus rows at P all read `7a00272e...`, and stub-arm wave 1 (43 lines, seed 42) was
+  queued at 11:30 EDT. The mouth arm is not queued.
