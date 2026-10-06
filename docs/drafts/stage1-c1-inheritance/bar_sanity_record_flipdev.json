@@ -1,0 +1,88 @@
+{
+ "backend": "numpy",
+ "description": "C1 category-inheritance flip dev bar: 8/8 dev seeds correct + content-specific vs flag-off",
+ "failures": [],
+ "kinds": {
+  "null": "null",
+  "null_as_fact": "null",
+  "null_one_leak": "null",
+  "null_one_lost": "null",
+  "null_wrong": "null",
+  "perfect": "perfect",
+  "perfect_told": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null": 0,
+  "null_as_fact": 0,
+  "null_one_leak": 0,
+  "null_one_lost": 0,
+  "null_wrong": 0,
+  "perfect": 1000,
+  "perfect_told": 1000,
+  "random": 0
+ },
+ "name": "c1-flip-dev",
+ "pass_rate": {
+  "null": 0.0,
+  "null_as_fact": 0.0,
+  "null_one_leak": 0.0,
+  "null_one_lost": 0.0,
+  "null_wrong": 0.0,
+  "perfect": 1.0,
+  "perfect_told": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_as_fact": [
+   0.0,
+   0.0038
+  ],
+  "null_one_leak": [
+   0.0,
+   0.0038
+  ],
+  "null_one_lost": [
+   0.0,
+   0.0038
+  ],
+  "null_wrong": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_told": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "206b72aaffe3cdbaed71dd3a3f836065d52fe241",
+ "scorer_files": {
+  "research/runners/c1_flip_dev_check.py": "0195f7024cc7cd3590fb46b0f16f6dddcd9da55a5c6e931f81ce6bb2da1195af",
+  "research/runners/stage1_exit_gate.py": "f8270ca9e2bc0855f2ab44f61d91e58d442871ba7ff58ce8f0920683474eee96"
+ },
+ "scorer_sha256": "e3c206d55eb077bf75dbe7f5b1f2a14d9f25ef6715e79f329979883bf90a803e",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_flipdev.py",
+ "spec_sha256": "5562fb7bed5e15996a07f9526fc06bbcfb20d95f8b3018077285374b73ec6f46",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 157.7
+}

@@ -1,0 +1,4 @@
+PREREG	e3ef82263013fc96f70e94124c452e112a0c7821	2026-09-30T16:10:26Z	the prereg commit (alone)
+GATE	f9e9b532e66e1a79a53a24e9180ef46669816d37	2026-09-30T16:10:26Z	the gate revision: prereg byte-unchanged + runner + organ + wiring + packet
+GATE	bb6705de6259ef775ca265caa33e5799a587b97c	2026-09-30T16:13:10Z	re-pin after merging main (366d131f7; prereg unchanged)
+GATE	6c2cb1362b34d08d5be1807ce82ad333f221f84c	2026-09-30T18:33:30Z	pre-data fix: shard hands --allow-gate-seed to its worker (7762da223) + main merged (b604085a6); prereg unchanged
