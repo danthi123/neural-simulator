@@ -1,0 +1,58 @@
+{
+ "dir": "research/findings/raw/_s2p/word-role-parse/9ea7411/O",
+ "n_all_pass": 6,
+ "n_defined": 6,
+ "op": 0,
+ "packet": "word-role-parse",
+ "per_seed": {
+  "100": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "101": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "102": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "42": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "43": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "44": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  }
+ },
+ "pin": "9ea7411eb0f219560c83816c84bc75cae4602369",
+ "preconditions": [
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "organ cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  }
+ ],
+ "step": "O",
+ "undefined_reasons": [],
+ "verdict": "PASS"
+}
