@@ -79,3 +79,9 @@ reads it, writes the flip (section 6 of the PLAN) and the WORKLOG line.
 
 - 2026-10-06 Claude: built on `claude-review/s2-c5-build`; organ dev battery PASS 8/8 at row 0 (workstation numpy,
   `docs/drafts/idle-replay/dev_organ_battery.json`); bar-sanity OK (`bar_sanity_record_c5_organ.json`).
+- 2026-10-06 Claude: reply-level smoke on the workstation, dev seed 7 (`dev_s7_reply_smoke.json`; Stage-2 runner
+  @ 4b330c082, teach turns + idle turn, flag ON): intact "Something's been on my mind — beetle chase mite.", permuted
+  "... vole chase beetle.", lesion_selfinit the neutral idle line; by the gate's own scorer
+  `private_voices_stored_fact` True/True and `private_selected_by_state` True. The engram read gave encoding strengths
+  1.76 / 1.77 / 1.56 for the three taught facts (the DA gains of those turns) and 1.0 for the build facts; the newest
+  fact latched (80 spikes), the read was invariant; the idle turn took 1.0-1.2 s; peak RSS 6.2 GB.

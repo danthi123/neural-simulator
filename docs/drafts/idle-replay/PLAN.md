@@ -88,7 +88,10 @@ reports `tools/answer_rate.report` on the idle turn, on vs off. Pass: per seed b
 differ, the lesion gives the neutral idle line, the trace route is `idle_replay`; seed 7 full: only `p_private`
 differs between on and off.
 
-Workstation smoke, dev seed 7 (2026-10-06, the three arms, teach turns + idle turn): see the WORKLOG line in HANDOFF.md.
+Workstation smoke, dev seed 7 (2026-10-06, `dev_s7_reply_smoke.json`): intact voices "beetle chase mite", permuted
+"vole chase beetle", lesion_selfinit the neutral idle line; the gate's scorer reads `private_voices_stored_fact`
+True/True and `private_selected_by_state` True. Idle turn 1.0-1.2 s, peak RSS 6.2 GB. One seed, so a smoke, not a
+result; seeds 1-8 are HANDOFF section 2.
 
 ## 6. Path to default-on before 11-03
 
