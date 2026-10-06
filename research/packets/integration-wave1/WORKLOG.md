@@ -65,3 +65,42 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
   0f79b39ad; abort restored the worktree. tools/verdict.py already present in the branch (not the
   dependency); the patch file itself is the dependency.
 - STOP per contract: NEEDS [iw1-sync] filed on main; merge + finding edit are Claude's.
+
+## 2026-10-06 - NEEDS [iw1-sync] resolved by Claude review (branch claude-review/iw1)
+
+- Merge: main @ 2f256bb0a merged into this branch's tip c02658287. Only research/FAILURE_LOG.md conflicted (both
+  sides' rows kept). runs.jsonl and webapp/server.py merged cleanly in a clean worktree (every row of both sides
+  kept; disjoint server.py hunks). The sync refusal's real claim_check failure in a worktree is main's
+  2026-10-03 ca3-symmetric-ti finding, whose cited `parts/seed*_merged.json` are git-ignored and so absent from
+  worktrees; copying them in (not committed) clears it. Main's 2026-07-25 gap#5 STDP finding was also marked
+  as quoting run logs that no longer exist (claim kept, no number changed).
+- RULING iw1-R-pre applied (patch 0001, through the commit gates). The three R scorers were re-run on the landed
+  shards. R d6 PASS, R swm PASS, R wmf PASS: 6/6 DEFINED and 6/6 reply-load-bearing each, preconditions block
+  ok. The decisions match the 2026-10-04 scoring field for field.
+- verify-go (three independent skeptics: gate-cheat/instrument, control-integrity, reproducibility/seeding).
+  Nothing was refuted at the registered criterion. Checks that hold for all three:
+  - no organ error in any arm;
+  - the null is clean and the lesion reproduces;
+  - all 258 sidecars are at P, git_archive, numpy;
+  - six distinct brains (BRAIN_CHAT_SEED per seed, 154-447 fields differ across seeds).
+  - **d6-hebbian-write: PASS, survives.** Intact recalls "the wolf hunts the deer". With in-conversation writes
+    frozen, the reply abstains ("haven't learned about wolf yet") on 6/6 seeds, while the host KB record still
+    exists. The synaptic write owns whether the fact is held. The host owns the held/not-held threshold and the
+    block-to-words map (declared shortcuts in d6_hebbian_store.py).
+  - **xedge-surprise-worldmodel: PASS, NARROWED.** The reply change is value-only: the stated pool-rate margin
+    drops 70-201 Hz with the online update (intact +220..+363 Hz vs lesion +393..+466 Hz). The predicted sign and
+    the sentence are unchanged. It meets docs/TERMS.md load-bearing by the letter (the answer text differs), as
+    the prereg predicted ("PASS on the margin text"). It is not a content change.
+  - **wm-focus-bind: PASS, NARROWED.** The hold is load-bearing for which referent the reply follows. But the
+    referent that wins is a seed-fixed register preference (the prereg's declared residual: intrinsic
+    excitability) and ignores the question:
+    - on 6/6 seeds, with the flag on, 2 of the 4 order-swapped sessions abstain ("I don't know about that.");
+    - the flag-off positional route and the lesion answer all 4 with the stored fact ("The dog chases cat.").
+    On this probe, the flip lowers answerability.
+  - Instrument note: `iw1_score._allowing` strips the packet's flags from the sidecar env check, so the scorer
+    cannot see a missing or stray lesion flag. The skeptic verified the lesion flags in each arm's argv `--env`
+    instead: they are correct.
+  - D0 note: D0 is IDENTICAL by exact per-turn hash at seed 7, but the identity sidecars do not carry
+    PYTHONHASHSEED=0.
+- Section-5 table: row 1 fires for all three, so the flip list is `d6-hebbian-write,wm-focus-bind,xedge-surprise-worldmodel`
+  as registered. Each flip finding must carry its narrowing above, word for word.
