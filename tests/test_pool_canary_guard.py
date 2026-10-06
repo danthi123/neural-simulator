@@ -19,6 +19,7 @@ from __future__ import annotations
 import os
 import stat
 import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -214,7 +215,11 @@ while [ $# -gt 0 ]; do
 done
 shift   # the host
 cd "$HOME" || exit 255
-exec bash -c "$*"
+# Like sshd: the call returns only when the remote command has exited AND every process still holding its stdout has
+# closed it (the `| cat` is that wait). A launch that leaves a background process on the channel therefore blocks here
+# exactly as a real ssh does (the 2026-10-06 "launch over ssh failed" defect).
+bash -c "$*" | cat
+exit "${PIPESTATUS[0]}"
 """
 
 FAKE_RUNNER = r"""#!/usr/bin/env bash
@@ -230,6 +235,7 @@ case "$mode" in
   memref) echo "[mem_ok] REFUSE: avail=1G need=7G" >&2; exit 1 ;;
   noout)  exit 0 ;;
   slow)   sleep 5;  printf '{}' > "$out" ;;
+  slow6)  sleep 6;  printf '{}' > "$out" ;;
 esac
 """
 
@@ -384,3 +390,38 @@ def test_run_auto_refuses_when_no_node_has_the_lines_memory_plus_margin(tmp_path
     assert res.returncode == 3, res.stdout + res.stderr
     assert "no pool node holds" in res.stderr
     assert _records(tmp_path) == []
+
+
+def test_the_launch_returns_at_once_and_does_not_hold_the_ssh_channel(tmp_path):
+    # 2026-10-06: `cd X && V=1 setsid ... </dev/null >/dev/null 2>&1 & exit 0` backgrounded the whole and-list in a
+    # subshell that kept ssh's stdout open for the canary's whole life, so `timeout` killed the launch ssh and `run`
+    # printed "launch over ssh failed" (rc 3) while the canary ran on. A 6 s canary under a 3 s ssh timeout must not
+    # hit that: the launch has to return long before the job ends.
+    rev, env = _fake_node(tmp_path)
+    env["POOL_CANARY_SSH_TIMEOUT"] = "3"
+    env["POOL_CANARY_WAIT_S"] = "1"
+    line = _run_line("slow6")
+    t0 = time.time()
+    res = _canary(tmp_path, "run", "pool41", line, **env)
+    assert "launch over ssh failed" not in res.stderr, res.stdout + res.stderr
+    assert "INCONCLUSIVE: still running" in res.stdout, res.stdout + res.stderr
+    assert time.time() - t0 < 5.5
+    time.sleep(6)     # let the detached fake canary finish before tmp_path is reaped
+
+
+def test_the_autodispatch_launch_does_not_hold_the_ssh_channel(tmp_path):
+    # The same shape in tools/pool_autodispatch.sh (hidden there by `ssh -f`, which only leaves one lingering local ssh
+    # process per running job). Run the exact rendered launch command through the sshd-like `| cat` wait.
+    home = tmp_path / "home"
+    (home / "derisk-pool" / "sim").mkdir(parents=True)
+    job = f"cd ~/derisk-pool/revisions/{HEAD_SHA} && sleep 4"
+    (home / "derisk-pool" / "revisions" / HEAD_SHA).mkdir(parents=True)
+    env = {**os.environ, "HOME": str(home)}
+    # (the sandboxed render swaps only the wrapper and shares this shape: test_pool_job_sandbox pins its tokens)
+    cmd = subprocess.run(["bash", str(ROOT / "tools" / "pool_autodispatch.sh"), "--render-remote-command", job],
+                         cwd=ROOT, env=env, capture_output=True, text=True, check=True).stdout
+    t0 = time.time()
+    r = subprocess.run(["bash", "-c", 'bash -c "$0" | cat', cmd], env=env, capture_output=True, text=True, timeout=30)
+    assert r.returncode == 0, r.stderr
+    assert time.time() - t0 < 2.5, "the launch held the ssh channel until the job ended"
+    time.sleep(4.5)
