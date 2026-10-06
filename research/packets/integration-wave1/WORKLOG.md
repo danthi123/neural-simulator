@@ -65,3 +65,8 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
   0f79b39ad; abort restored the worktree. tools/verdict.py already present in the branch (not the
   dependency); the patch file itself is the dependency.
 - STOP per contract: NEEDS [iw1-sync] filed on main; merge + finding edit are Claude's.
+- 2026-10-06 16:09: RULING iw1-sync pre-FF check executed: 526/529 uncommitted files
+  byte-identical to claude-review/iw1, copy_results.sh too, but R_{d6,swm,wmf}.json differ
+  (local pre-rescore vs branch re-scored; PASS both, branch adds preconditions) => any
+  difference is a STOP: NEEDS [iw1-sync] STOP filed (main ef6402174). Fast-forward waits
+  on Claude; worktree left as-is, nothing cleared.
