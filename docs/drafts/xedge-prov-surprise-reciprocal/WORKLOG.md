@@ -240,3 +240,32 @@ the PLAN citation, and both diagnosis targets (byte_off, clean_zero); no gate se
 [xedge-provision] NEEDS line deleted on main (condition "once the branch carries main" met). Next wake: read
 smoke_seed7.json -> complete the byte_off/clean_zero diagnosis; INTACT_FLOOR freezes ONLY per PLAN rule and only
 if the guard question is settled; a second failure of either check remains a STOP (fix-round 1 restarts fresh).
+
+## 2026-10-06 07:1x — round-1 smoke DIAGNOSED (MiMo Pro verdict + empirical confirm); fix landed
+
+Round-1 smoke (pool40, 96.9 s, rc 0): emergence PASS (edge 1.6923, drift 0), interaction PASS (delta 0.005833
+> floor 0.005, frac_attributable 1.0), byte_off FAIL, clean_zero FAIL (0.01 vs 0.005) -> provisional_supports
+false (correct per PLAN table: instrument first). Round-1 JSON kept as smoke_seed7_round1.json(+.prov).
+
+Diagnosis (ONE MiMo Pro delegate, verified by code, cites checked):
+1. byte_off = PIPELINE-STAGE MISMATCH in my run_seed, not an RNG/merge leak: bridge_with was
+   ProvSurprisePool(seed).b (class init runs the sp-organ build-time Hebbian encode: episode->prov_perceived/
+   prov_generated/content_readout potentiate from W_EP_PROV_INIT=0.0, PERSISTING - read_isolation restores
+   per-neuron state, not cp_connections), bridge_without was the bare pre-encode _noedge_bridge. Inject path
+   verified verbatim (initial_weights copied unchanged, cross-edge appended last, _cross_edge_dense is a
+   deterministic W0 fill) -> EMPIRICALLY CONFIRMED this wake, local, 11 s, mem_ok 28G (memcap unavailable on
+   this host - systemd --user missing - ran under mem_ok only per skip rule):
+   A: pure-with vs pure-without -> PASS True, n_with_base 240322 == n_without 240322, byte-identical.
+   B: ProvSurprisePool(seed).b vs pure-without -> PASS False, SAME counts (240322/240322), values differ =
+   reproduces round 1 exactly. Fix = MINE (draft runner): run_seed now compares _build_pool(seed,
+   with_edge=True).bridge (like-for-like, both pre-encode).
+2. clean_zero = MIS-PREMISED bar + missing record (mine), live leak candidate (laneC graded trace):
+   read_verdict's shared drives verified NOT to reach prov_perceived (only episode->prov W plastic,
+   ctx_perceived->prov W=55, inh_generated->prov); generated[0] shares overlap_k=3 episode neurons with
+   perceived[0] potentiated during encode; 0.005 appears NOWHERE in PLAN (only runner:364); precedent's
+   silence bar = NOVEL_MAX_RATE 0.02 under a LIGHTER protocol. run_seed now records gen_rate too (was
+   perc-only -> leak-vs-tonic unmeasurable). Bar rule = PLAN gets a PRE-DECLARED calibration rule (INTACT_
+   FLOOR 0.5x style, calibrated on dev gen/perc) BEFORE the 6-seed queue, never post-hoc; if the leak is
+   then confirmed inside laneC encode machinery = registered = Claude's.
+Next: re-queue seed-7 smoke on the fixed head (byte_off should PASS end-to-end; gen_rate lands); write the
+PLAN calibration rule from that data; only then INTACT_FLOOR freeze question + any 6-seed queue.

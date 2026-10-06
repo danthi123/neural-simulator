@@ -355,13 +355,14 @@ def run_seed(seed):
     pool = ProvSurprisePool(seed)
     gate = run_gate(pool, GATE_SPEC)                       # trains + emergence + interaction (lesions)
 
-    bridge_with = ProvSurprisePool(seed).b
+    bridge_with = _build_pool(seed, with_edge=True).bridge
     bridge_without = _noedge_bridge(seed)
     byte_off = verify_byte_off(bridge_with, bridge_without, GATE_SPEC)
 
     # clean-zero control (row 7): prov_perceived must sit ~0 under the genuinely-generated control exemplar
     gen_rates = pool.read_verdict("generated")
-    clean_zero = {"perc_rate": gen_rates["perc"], "ok": bool(gen_rates["perc"] < 0.005)}
+    clean_zero = {"perc_rate": gen_rates["perc"], "gen_rate": gen_rates["gen"],
+                  "ok": bool(gen_rates["perc"] < 0.005)}
 
     supports = bool(gate["emergence"]["PASS"] and gate["interaction"]["PASS"]
                     and byte_off["PASS"] and clean_zero["ok"])
