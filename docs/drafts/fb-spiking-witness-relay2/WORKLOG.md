@@ -49,3 +49,37 @@ belief-side write spikes fall 188 -> 16 as wb rises and the query reads 0.0 at e
 therefore does not move the slot toward persistence in this organ.
 
 Next (DIAGNOSIS item 3): Claude picks the mechanism at the OP; reported via NEEDS-CLAUDE [fb-relay2].
+Landing note (Claude review 2026-10-06): the three summaries are committed as `logs/BATTERY-*.txt` (`*.log` is
+gitignored); the content is unchanged.
+
+## 2026-10-06 13:2x — Claude review of items 1-2: the slot is KILLED at query time, by an instrument defect
+
+The raw rows (`scans/out/relay_nmda_wb48_seed*_loc0.jsonl`, query phase, which the summary tables do not print)
+contradict "never reaches a self-sustaining state". On all 8 seeds the written slot fires through the hold and the
+first ~30 query steps (101-113 spikes in query steps 0-29). Then g_i on the slot jumps from ~2 to 326-395 nS at query
+step 32-37. Slot mean V falls to a minimum of -40 to -44 mV (late read window mean -24 to -30 mV), and the slot stays silent through the late read window. In the same
+window the OFF-target relays 1-3 fire 138-169 spikes each (hold: 0).
+
+Cause, in code: `_run` adds `RELAY_BIAS_PA` to every relay cell on every step ("a cell property, the same every
+step"), but `_query` zeroes the input in its own loop and never adds it. At query time the relays lose the -250 pA
+bias and fire on presence alone. Each off-target relay drives its eviction pool, and `evict_j` inhibits every
+belief slot except j, so slot 0 is evicted by relays 1-3. This explains the g_i surge with eviction itself never
+recorded. Registered relay ops 0-3 (bias -100 to -300) share the defect; readout ops 4-7 do not (no relays).
+
+Check (`scans/query_bias_check.py`, bias applied inside the query loop the way `_run` applies it; output
+`logs/query_bias_check.txt`). AS-IS, the slot reads 0.0 on 8/8 seeds. With BIAS-IN-QUERY, slot 0 reads
+0.024-0.039 with every other slot at 0 on 8/8 seeds, and the off-target relays fire 0. Battery on seed 7: 1/10
+AS-IS, 4/10 with the bias (true_belief, return_then_move, two_moves_one_seen, present_after_wait pass).
+false_belief, two_unseen_moves, absent_after_wait, return_after_wait, lesion_false_belief and silence_true_belief
+still fail.
+
+How to read it: the cases that now pass keep presence on through the query, so target relay 0 keeps firing
+(221-257 query spikes) and keeps re-driving the slot. That is a live AND, not a held memory. The cases that need the
+belief held with the relay silent (the agent gone) still fail, so defect 2 (attractor persistence without drive) is
+still open. It is now isolated from the query artifact. In item 2, write spikes fall as wb rises. Over the second half of the write (seed 7), slot
+mean V rises from -1.9 to +5.6, +11.3 and +10.6 mV, and g_e rises from 92 to 123, 180 and 333 nS, while spikes fall from 188 to 139, 54
+and 16. More drive, more depolarized, fewer spikes: that pattern is the signature of depolarization block (over-drive), not of
+a weak write. It is a reading of the traces and has not been tested.
+
+Organ change: `QUERY_RELAY_BIAS` (default False, the registered behavior) applies the bias in `_query` for relay
+modes; `tests/test_fb_relay_query_bias.py`. Item 3 waits for the re-measurement in the runbook ruling.

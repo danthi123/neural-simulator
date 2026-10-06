@@ -878,15 +878,118 @@ def faculty_list():
     return [f[0] for f in FACULTY_PROBES]
 
 
+# ── ARM RENDERER (2026-09-30, research/b2d-mouth-renderer; the B2d pre-registration's "Mouth-channel arm") ─────────
+# Which mouth the arm worker asks `brain_chat` for. Read from the environment (LB_ARM_RENDERER), so it reaches the
+# `--worker` subprocess through `_spawn_arm`'s `env=dict(os.environ)` with no change to `_spawn_arm`, to its argv, or
+# to research/runners/load_bearing_fraction.py (whose `_spawn_arm_raw` IS `_spawn_arm` below).
+#   * "stub" (the DEFAULT: unset, empty or "stub") -- the worker behaves exactly as before this block existed: it
+#     defaults BRAIN_CHAT_RENDERER=stub + SIM_DISABLE_LLM=1 + SIM_BACKEND=numpy and sends `renderer="stub"` on every
+#     turn. Every prior battery (B2a, B2b, B2d's b2d0929 arm, every flip-verify) runs here, byte-identical.
+#   * "production" -- the turn is rendered the way the production console renders it. The console's renderer picker
+#     defaults to "auto", which sends `renderer: null` (webapp/static/app.js rendererParam); `brain_chat` then resolves
+#     it with `_default_brain_renderer()` (Qwen on a CUDA host running SIM_BACKEND=cupy; stub otherwise) and builds
+#     the SAME process-wide warm QwenRenderer every production ChatBrain shares (`_get_warm_qwen_renderer`). So in this
+#     mode the worker omits `renderer` from the request and sets NONE of the three defaults above (production sets
+#     none of them); it refuses to run if BRAIN_CHAT_RENDERER or SIM_DISABLE_LLM is already in the environment,
+#     because either would make the resolution differ from the console's. The probe turns (message, session, reset,
+#     percept, rich) are unchanged: the renderer is the only variable.
+#     Two read-outs are added to each turn's response under the harness-owned key `_arm_renderer` (never a decision
+#     field; absent in stub mode): the mode, and how many times the Qwen generation entry points
+#     (SpikingQwenFaculty._generate / _generate_batch) ran during that turn. A turn whose text never came from the
+#     mouth (an abstention template, a host clause) reads 0 there, so a scorer can tell "the mouth rendered the same
+#     words" from "the mouth never spoke". The counters are transparent wrappers (same arguments, same return value).
+ARM_RENDERER_ENV = "LB_ARM_RENDERER"
+ARM_RENDERER_STUB = "stub"
+ARM_RENDERER_PRODUCTION = "production"
+ARM_RENDERERS = (ARM_RENDERER_STUB, ARM_RENDERER_PRODUCTION)
+ARM_RENDERER_KEY = "_arm_renderer"
+# production mode refuses if any of these is set: production sets none of them, and each changes the resolution.
+_PRODUCTION_FORBIDDEN_ENV = ("BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM")
+
+
+def arm_renderer_mode(environ=None):
+    """The arm worker's renderer mode from LB_ARM_RENDERER: "stub" (default) or "production". Raises on any other
+    value, so a typo never silently runs the stub arm under a mouth-arm tag."""
+    v = (os.environ if environ is None else environ).get(ARM_RENDERER_ENV, "").strip().lower()
+    if v in ("", ARM_RENDERER_STUB):
+        return ARM_RENDERER_STUB
+    if v == ARM_RENDERER_PRODUCTION:
+        return ARM_RENDERER_PRODUCTION
+    raise ValueError("%s=%r: expected one of %s" % (ARM_RENDERER_ENV, v, ARM_RENDERERS))
+
+
+def _arm_request_kwargs(mode, session, msg, reset, percept, rich):
+    """The BrainChatRequest kwargs one probe turn sends. Stub mode: the literal pre-2026-09-30 dict. Production mode:
+    the same dict with `renderer` omitted (None), which is what the console sends for its default 'auto' option."""
+    if mode == ARM_RENDERER_STUB:
+        kwargs = dict(session=session, message=msg, brain="tiny-demo",
+                      renderer="stub", rich=bool(rich), reset=reset)
+    else:
+        kwargs = dict(session=session, message=msg, brain="tiny-demo",
+                      rich=bool(rich), reset=reset)
+    if percept is not None:
+        kwargs["percept"] = percept
+    return kwargs
+
+
+def _counted(orig, counter):
+    """A pass-through wrapper of `orig` that adds 1 to `counter.calls` per call (same arguments, same return)."""
+    def _wrapped(*args, **kwargs):
+        counter.calls += 1
+        return orig(*args, **kwargs)
+    _wrapped.__name__ = getattr(orig, "__name__", "_wrapped")
+    _wrapped.__doc__ = getattr(orig, "__doc__", None)
+    _wrapped.__wrapped__ = orig
+    return _wrapped
+
+
+class _QwenGenerateCounter:
+    """Counts calls into SpikingQwenFaculty's two generation entry points, without changing what they do. Installed
+    on the class (the warm faculty is built lazily inside the first brain_chat turn), production mode only."""
+
+    METHODS = ("_generate", "_generate_batch")
+
+    def __init__(self):
+        self.calls = 0
+        self._orig = {}
+
+    def install(self, cls):
+        for name in self.METHODS:
+            orig = getattr(cls, name, None)
+            if orig is None or name in self._orig:
+                continue
+            self._orig[name] = orig
+            setattr(cls, name, _counted(orig, self))
+        return self
+
+    def uninstall(self, cls):
+        for name, orig in self._orig.items():
+            setattr(cls, name, orig)
+        self._orig = {}
+
+
 # ── worker: build ONE fresh brain with a given env, run the probe turns, dump responses ──────────────────────────
 def _collect_worker(env_json, turn_labels, out_path):
-    os.environ.setdefault("SIM_BACKEND", "numpy")
-    os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
-    os.environ.setdefault("SIM_DISABLE_LLM", "1")
+    mode = arm_renderer_mode()
+    if mode == ARM_RENDERER_STUB:
+        os.environ.setdefault("SIM_BACKEND", "numpy")
+        os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
+        os.environ.setdefault("SIM_DISABLE_LLM", "1")
+    else:
+        forced = sorted(k for k in _PRODUCTION_FORBIDDEN_ENV if k in os.environ)
+        if forced:
+            print("[battery worker] REFUSED: %s=production but %s is set; production sets neither, and either one "
+                  "changes how brain_chat resolves the renderer" % (ARM_RENDERER_ENV, ",".join(forced)),
+                  file=sys.stderr, flush=True)
+            return 3
     env = json.loads(env_json)
     for k, v in env.items():
         # OFF-ARM DISCIPLINE: an explicit value ("0"/"1"), never a pop -> the OFF arm stays OFF post-flip.
         os.environ[k] = v
+    counter = None
+    if mode == ARM_RENDERER_PRODUCTION:
+        from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
+        counter = _QwenGenerateCounter().install(SpikingQwenFaculty)
     from webapp.server import brain_chat, BrainChatRequest
     responses = {}
     for label in turn_labels:
@@ -897,15 +1000,16 @@ def _collect_worker(env_json, turn_labels, out_path):
                 responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
             continue
         _, msg, session, reset, percept, rich = _TURN_BY_LABEL[label]
+        calls_before = counter.calls if counter is not None else 0
         try:
-            kwargs = dict(session=session, message=msg, brain="tiny-demo",
-                          renderer="stub", rich=bool(rich), reset=reset)
-            if percept is not None:
-                kwargs["percept"] = percept
+            kwargs = _arm_request_kwargs(mode, session, msg, reset, percept, rich)
             r = brain_chat(BrainChatRequest(**kwargs))
             responses[label] = json.loads(r.body)
         except Exception as e:
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
+        if counter is not None and isinstance(responses.get(label), dict):
+            responses[label][ARM_RENDERER_KEY] = {"mode": mode,
+                                                  "qwen_generate_calls": counter.calls - calls_before}
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     json.dump(responses, open(out_path, "w"), indent=2, default=str)
     print("[battery worker] env=%s -> %d turns -> %s" % (env, len(responses), out_path), flush=True)

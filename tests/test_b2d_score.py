@@ -113,6 +113,45 @@ def test_rule7_ignores_an_organ_error_outside_the_rows_field_scope(tmp_path):
     assert r["organ_errors"] and not r["rule7_organ_error"]
 
 
+def test_rule7_a_null_error_field_is_not_an_organ_error(tmp_path):
+    """REGRESSION (2026-10-06, NEEDS [transitive-spiking-reach]): webapp/server.py's `transitive_trace` records
+    `"error": null` on every matched turn. A null error is "no error"; with fields_row=None (scope = every organ,
+    the way tools/iw2_score.py and tools/s2p_score.py call judge_dir) it must neither be reported nor fire rule 7."""
+    tr = {"route": "spiking_reach", "lesioned": False, "error": None, "reach": {"reached": True}}
+    ia = _turn(extra={"transitive_trace": tr})
+    le = _turn(extra={"transitive_trace": dict(tr, lesioned=True)})
+    d = _cell(tmp_path, verdict="regressed", ia=ia, ib=ia, le=le, le0=le)
+    r = bd.judge_dir(d, "row-a", PIN, HOST_SHA, PRIMARY)
+    assert r["organ_errors"] == [] and r["rule7_organ_error"] == []
+    assert r["class"] is None and bd.final_state(r, None, None, None) == "DEFINED"
+
+
+def test_rule7_still_fires_on_a_real_error_in_the_same_trace(tmp_path):
+    """The null-error fix must not hide a genuine one: a swallowed exception recorded in the same trace shape, in
+    one lesion arm only, still forces class C (scope None and an explicit field scope alike)."""
+    tr = {"route": "spiking_reach", "lesioned": True, "error": "RuntimeError: reach build failed"}
+    ok = _turn(extra={"transitive_trace": dict(tr, error=None, lesioned=False)})
+    bad = _turn(extra={"transitive_trace": tr})
+    good_le = _turn(extra={"transitive_trace": dict(tr, error=None)})
+    for frow in (None, {"fields": {"transitive_trace.lesioned": {"class": "N"}}, "kept": ["transitive_trace.lesioned"],
+                        "sd_only": False, "probe_turn": "well"}):
+        sub = tmp_path / ("scoped" if frow else "unscoped")
+        d = _cell(sub, verdict="regressed", ia=ok, ib=ok, le=good_le, le0=bad)
+        r = bd.judge_dir(d, "row-a", PIN, HOST_SHA, PRIMARY, fields_row=frow)
+        assert r["class"] == "C" and any("rule7" in x for x in r["fails"])
+        assert [h["organ"] for h in r["rule7_organ_error"]] == ["transitive_trace"]
+        assert "RuntimeError" in r["rule7_organ_error"][0]["error"]
+
+
+def test_rule7_a_falsy_but_non_null_error_still_counts(tmp_path):
+    """Only None means "no error". An empty string or False is ambiguous, so it invalidates (never hidden)."""
+    for i, val in enumerate(("", False)):
+        le = _turn(extra={"comprehension": {"error": val}})
+        d = _cell(tmp_path / ("v%d" % i), verdict="regressed", le=le, le0=le)
+        r = bd.judge_dir(d, "row-a", PIN, HOST_SHA, PRIMARY)
+        assert r["class"] == "C", val
+
+
 def test_missing_rep0_is_class_e_rule6(tmp_path):
     d = _cell(tmp_path)
     os.remove(os.path.join(d, "lesion_row_a.json.rep0"))

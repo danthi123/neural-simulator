@@ -284,8 +284,15 @@ bash -c "$job" > ~/derisk-pool/canary/"$CANARY_ID".log 2>&1
 rc=$?
 printf "%s\t%s\t%s\n" "$start" "$(date +%s)" "$rc" > ~/derisk-pool/canary/"$CANARY_ID".status'
   job_b64=$(printf '%s' "$job" | base64 -w0); wrapper_b64=$(printf '%s' "$wrapper" | base64 -w0)
-  launch=$(printf "cd ~/derisk-pool/sim && POOL_JOB_ID='canary-%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CANARY_ID='%s' JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
+  launch=$(printf "{ cd ~/derisk-pool/sim && POOL_JOB_ID='canary-%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CANARY_ID='%s' JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash'; } </dev/null >/dev/null 2>&1 & exit 0" \
     "$id" "$est" "$id" "$job_b64" "$wrapper_b64")
+  # THE LAUNCH MUST NOT HOLD THE SSH CHANNEL (2026-10-06). `cd X && V=1 setsid ... </dev/null >/dev/null 2>&1 & exit 0`
+  # backgrounds the WHOLE and-list as one subshell and the redirections bind only to the setsid command, so that
+  # subshell kept ssh's own stdout/stderr open for the entire canary: ssh did not return until the canary finished,
+  # `timeout ${POOL_CANARY_SSH_TIMEOUT:-60}` killed it, and `run` reported "launch over ssh failed" (rc 3) while the
+  # detached canary ran normally (three times on 2026-10-05, wspool and pool40). The brace group puts the redirections
+  # on the whole backgrounded list, so the channel closes at once. Timing proof on pool40/wspool/pool41:
+  # `cd ~ && sleep 8 </dev/null >/dev/null 2>&1 & exit 0` returned after 8.2 s, `cd ~; ...` and the brace form 0.2 s.
   echo "canary $id: ($mod, ${sha:0:9}, $kind seed) on $node; log ~/derisk-pool/canary/$id.log"
   [ "$exact" = 1 ] && echo "  --exact: the line runs verbatim and writes its real output paths"
   rssh "$node" "$launch" >/dev/null 2>&1 || { echo "⛔ launch over ssh failed" >&2; exit 3; }

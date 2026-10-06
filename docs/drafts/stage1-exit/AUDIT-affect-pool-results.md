@@ -1959,3 +1959,50 @@ Source mentions BRAIN_AFFECT_LEARNED_VOCAB (or argv contains it); the learned-vo
 ### research/runners/_affect_learned_vocabulary_probe_rescore.py (1)
 - research/findings/raw/_affect_learned_vocab/dev_s7/tone_probe_rescore_s7.json.prov.json (mtime 2026-09-30 17:38)
 
+
+## Claude ruling 2026-10-06 (s1-c4-void, runtime-inputs)
+
+**Rule.** A result is void for a claim when (a) it ran on a pool or AWS node whose revision lacked the runtime input
+(every pool and AWS provisioning before the 2026-10-04 fix, 91fb979a6 / c43cebd17, unless topped up and confirmed),
+and (b) the claim depends on a value that input supplies. A same-input contrast, or a scored field that never reads
+the input, stands; when the claim is about affect it carries a provenance caveat.
+
+**Method note.** The lists above select by a static grep of the runner source and do not say where a result ran. I
+re-classified every provenance sidecar since 09-01 by its argv and env (`derisk-pool/revisions` or `POOL_JOB_ID` =
+pool; `ip-172-31-*` hosts = AWS). The grep also misses transitive users: any runner that drives the production
+handler runs the affect organ, for example onebrain_regression_battery, load_bearing_fraction, stage1_host_share and
+host_share on the pool. They are covered by the rule above.
+
+**VOID.**
+- `research/findings/raw/_stage1_exit/gate/`: the C4 cells (val_heldout and val_novel, every arm including `dr2_off`
+  and `learned_vocab`), pool, c238ff325, before the top-up. The organ read the raw Warriner norm. Already corrected in
+  `research/findings/2026-10-04-stage1-exit-gate-RESULT.md` and superseded by `gate_c4rerun/`. No RETRACTED entry:
+  that finding's central claim (attempt 1 not passed) stands.
+
+**STANDS (no runtime input on the scored path, or the run was local).**
+- stage1_exit_gate: `gate/` C1 and C2 cells (scored on `recalled_svo`, `abstained` and the draw, which read no
+  valence); `gate_c3rerun/` (7851dd220, provisioned after the fix); `gate_c4rerun/` (inputs shipped and confirmed by
+  `ls` on pool41/42 before queueing); `dev/` (workstation).
+- `_affect_learned_vocabulary_derisk` (pool): it trains its own weights on the node, and its eval raises if they are
+  absent. G1, G2 and G4 read those weights; the G3 sentences and the eval lexicon hold no strong Warriner word, so
+  the DR-2 map never enters a scored read. The 09-25 NO-GO stands.
+- `_onebrain_affect_pool_verify` (pool): imports only `tone_level`, a pure function, and builds no chat brain.
+- `_affect_onsubstrate_noise_robust_convergence_derisk` (pool, `_affect_gain_sweep/`): reads WARRINER directly by
+  design and wires neither the organ nor the WKV mouth. The 09-15 and 09-16 rank-7 findings stand.
+- Section B (WKV mouth and e-prop heads): every other result ran on the workstation, where the heads are tracked. The
+  WKV mouth is imported only under `BRAIN_OPEN_ENDED` (default off); no pool or AWS result on that path was found.
+- Every other section A and C runner ran on the workstation.
+
+**STANDS WITH A PROVENANCE CAVEAT (same-input contrasts on the pool's norm-valued brain).** The load-bearing rows of
+the affect faculties measured on pool or AWS nodes before 10-05: affect-coloring, affect-drives-response,
+affect-appraisal-interoceptive, affective-tom and affect-marker-spiking-wta in `_load_bearing/_shards/b2a0924`,
+`b2b0924-base` (AWS and pool), the pool cells of `flipdefaults-thin`, `iw2-flip-1fb805e` and `iw2-alloff-1fb805e`,
+and `_affect_marker_settle/lbf_on` and `lbf_off`. Intact and lesion arms ran on the same fallback, so "the faculty
+changes the reply" stands; a reading that the DR-2 learned values drive it does not follow from these cells. The
+caveat line is owed in the findings that cite them:
+`2026-09-23-affect-marker-settle-deliberation-and-rest-oplevel-go-6seed.md` (full-brain arm),
+`2026-09-24-flip-validated-fixes-production-default-battery-GO.md`, `2026-09-25-production-default-battery-B2a-FAIL.md`,
+`2026-09-25-production-default-battery-B2a-rescored-PASS.md`, `2026-09-29-load-bearing-fraction-reply-level-rescore.md`
+and the three `2026-10-05-iw2-*-default-on-flip-validated-PROVISIONAL.md` (step B). The affect-marker-spiking-wta S2
+drop (B2b 4 seeds, F 0) is not explained by this fault: both sides ran without the map. From 10-05 every new
+revision ships the inputs, so the next battery measures the production value source.

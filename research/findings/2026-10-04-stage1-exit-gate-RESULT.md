@@ -111,3 +111,59 @@ commitment are host scaffolds, as prereg section 5 predicted. In-session words a
 Ledger wording: `Stage 1 exit attempt 1 (2026-10-04): not passed: C1 FAIL; C3 UNDEFINED (recall lesion inert on the bus
 path; re-measured at a new pin, Amendment A1); C4 UNDEFINED (learned map absent on the pool, raw norm read; re-run owed);
 C2 word PASS 6/6, reply-level, recruit pool load-bearing, decision host-owned (host share 1.000)`.
+
+## Claude review 2026-10-06 (verify-go): C3 re-measured at P2 PASS, narrowed; C4 re-run FAIL as registered
+
+**C3 (lived-fact recall), Amendment A1, pin 7851dd220, 42 shards
+(`research/findings/raw/_stage1_exit/gate_c3rerun/aggregate.json`): PASS 6/6 at reply level, NARROWED.** A skeptic
+re-ran the scorer (the `lived` block is JSON-equal to the committed aggregate), checked all 42 provenance sidecars
+(git_sha 7851dd220, git_dirty false, PYTHONHASHSEED ok) and diffed every label on every seed. `lesion_recall` (patch
+`lesion_lived_recall`, 4 of 30 `query_patient` calls cut) changes only `p_wolf_bite` (apple becomes "I don't know");
+`lesion_episodic` changes only `p_wolf_discuss`; the permuted arm names pear; intact_a equals intact_b; both
+pre-exposure probes abstain. Caveats that travel with the word PASS:
+- The recall lesion is an interface cut. It makes `OneBrainComposer.query_patient` return None for exactly the probed
+  cue, so it shows the reply depends on the composer read. It does not show that spiking dynamics carry the recall:
+  the read's block selection is the host first-match unless the K-way sequencer is on (off by default), and the
+  host-share result reads the C3 seams as host-owned (k-select).
+- `lesion_episodic` is an env lesion with no scored engagement record. The shards show `episodic.lesioned` true and
+  `in_memory` false in every lesion cell and repeat, so it engaged; the scorer gates on the effect alone.
+- The reply-level outcome is one deterministic outcome replicated on six substrates.
+- C3 is judged at P2 alone (A1.2); C1, C2 and C4 ran at c238ff325. Write it as "C3 re-measured at P2".
+
+**C4 (valence inheritance), re-run at c238ff325 with the learned map shipped
+(`research/findings/raw/_stage1_exit/gate_c4rerun/aggregate.json`): FAIL as registered. The failing clause is a
+property of the registered control, not evidence that the reply ignores the map.** The map engaged this time: the
+permuted patch deranged 24 of 24 words on every seed, and intact differs from `dr2_off` on every seed. Intact r is
+above the 0.55 bar on 6/6 and the ladder lesion makes every read neutral, 6/6, reproduced. The clause "the permuted
+map gives r < 0.20 on every seed" holds on 4 of 6 (seeds 44 and 102 exceed it). Two readers recomputed from the
+shards:
+- the permuted arm's reply follows the permuted map at r 0.93-0.96 on every seed; <!--derived-->
+- the seed-44 derangement itself correlates r 0.30 with the norm, so a reply that followed the permuted map exactly
+  would still exceed 0.20 there; <!--derived-->
+- over random derangements of these 24 learned values, P(r >= 0.20) is about 0.13 per seed, so a perfectly
+  map-driven brain passes the six-seed clause only about 44% of the time; <!--derived-->
+- the pooled partial r(reply, norm | permuted map) over the 144 permuted reads is about 0.10 (p 0.25): no route to
+  the norm beside the map was found, though a leak of 10% or less cannot be excluded at n = 24. <!--derived-->
+
+The verdict stays FAIL (bars are frozen). The aggregate's reason string "not exposure-driven" misdescribes the data.
+Further caveats: r rides mostly on the 12/12 positive/negative split (within a sign group, reply-vs-norm r is
+0.12-0.51, and 5-8 reads per seed are neutral); `BRAIN_AFFECT_LESION` gates the ladder's `affect_out` read-out, so
+it shows the output pathway is necessary, not the ladder's internal dynamics; the per-word value is a host lookup of
+the DR-2 learned map. `val_novel` (diagnostic): FAIL 0/6, as the prereg predicted. <!--derived-->
+
+**Next for C4 (no defer).** Attempt 2 needs an amended control, registered before any data, that scores what the
+permuted arm is for: the reply following the permuted map (for example r(reply, permuted map) >= 0.55 and r(reply,
+norm) no higher than r(permuted map, norm) + 0.20), or a fixed sign-balanced derangement set registered in advance.
+It must not choose derangements by their correlation with the norm using what seeds 44 and 102 showed. Report the
+within-sign r beside the pooled r. `val_novel` stays open: the learned vocabulary that would carry it is NO-GO on G3
+(`research/findings/2026-09-25-affect-learned-vocabulary-eval-NOGO.md`).
+
+**Audit ruling (s1-c4-void):** `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`, section "Claude ruling
+2026-10-06". The only void results are this attempt's `gate/` C4 cells (every val_heldout and val_novel arm),
+corrected above. C1 and C2 here stand: their scored fields (`recalled_svo`, `abstained`, the draw) read no valence.
+
+**Ledger wording (replaces the 10-04 line):** `Stage 1 exit attempt 1 (2026-10-04; C3/C4 re-measured 10-05): not
+passed. C1 FAIL; C2 word PASS 6/6 (reply level, recruit pool load-bearing, decision host-owned); C3 lived recall PASS
+6/6 re-measured at P2 (reply level, composer read load-bearing, selection host-owned); C4 feeling FAIL as registered
+(permuted-map clause 4/6; the reply follows the learned map and the control is under-powered by design; an amended
+control is owed for attempt 2).`

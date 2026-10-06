@@ -539,6 +539,11 @@ rc=$?
 printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   wrapper_b64=$(printf '%s' "$wrapper" | base64 -w0) || return 1
   fi
+  # THE BRACE GROUP (2026-10-06): `cd X && ... setsid ... </dev/null >/dev/null 2>&1 & exit 0` backgrounded the whole
+  # and-list as a subshell whose own stdout/stderr (ssh's channel) were NOT redirected -- only the setsid command's
+  # were -- so the channel stayed open for the whole job. `ssh -f` hid it (it just kept one lingering local ssh process
+  # per running job); the same shape in tools/pool_canary.sh made a plain-ssh launch hang until its timeout. The
+  # redirections now bind to the whole group, so the channel closes at once (tests/test_pool_canary_guard.py).
   # POOL_JOB_ID / POOL_JOB_MEM_GB are INHERITED by every process of the job (they survive bash's exec of the last
   # command and memcap's scope), so node_is_idle can sum the declared sizes of the jobs still running there.
   # THREADS (2026-09-24): node_is_idle fills a node to cores-1 jobs on the premise that each is single-threaded, but a
@@ -547,7 +552,7 @@ printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
   # of POOL_JOB_THREADS (1); a job that sets its own OMP_NUM_THREADS=... in its command line still wins.
   local est jid th="${POOL_JOB_THREADS:-1}"
   est=$(job_est_gb "$1"); jid="$(date +%s%N)-$RANDOM"
-  printf "cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS='%s' OPENBLAS_NUM_THREADS='%s' MKL_NUM_THREADS='%s' NUMEXPR_NUM_THREADS='%s' JOB_B64='%s' WRAPPER_B64='%s' %ssetsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
+  printf "{ cd ~/derisk-pool/sim && POOL_JOB_ID='%s' POOL_JOB_MEM_GB='%s' OMP_NUM_THREADS='%s' OPENBLAS_NUM_THREADS='%s' MKL_NUM_THREADS='%s' NUMEXPR_NUM_THREADS='%s' JOB_B64='%s' WRAPPER_B64='%s' %ssetsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash'; } </dev/null >/dev/null 2>&1 & exit 0" \
     "$jid" "$est" "$th" "$th" "$th" "$th" "$job_b64" "$wrapper_b64" "$action"
 }
 

@@ -1,0 +1,18 @@
+seed 1 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[385, 155, 147, 154]
+seed 1 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0314, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[257, 0, 0, 0]
+seed 2 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[354, 156, 153, 153]
+seed 2 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0333, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[227, 0, 0, 0]
+seed 3 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[379, 169, 168, 165]
+seed 3 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0314, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[256, 0, 0, 0]
+seed 4 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[349, 146, 148, 155]
+seed 4 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0326, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[221, 0, 0, 0]
+seed 5 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[373, 152, 138, 149]
+seed 5 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0318, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[241, 0, 0, 0]
+seed 6 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[381, 146, 142, 139]
+seed 6 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0356, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[251, 0, 0, 0]
+seed 7 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[374, 156, 154, 154]
+seed 7 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0386, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[249, 0, 0, 0]
+seed 8 AS-IS         belief_loc=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[362, 149, 159, 150]
+seed 8 BIAS-IN-QUERY belief_loc=0 rates={0: 0.0242, 1: 0.0, 2: 0.0, 3: 0.0} query relay spk by loc=[240, 0, 0, 0]
+battery seed 7 AS-IS: 1/10 pass false_belief=F true_belief=F return_then_move=F two_moves_one_seen=F two_unseen_moves=F absent_after_wait=F present_after_wait=F return_after_wait=F lesion_false_belief=P silence_true_belief=F
+battery seed 7 BIAS-IN-QUERY: 4/10 pass false_belief=F true_belief=P return_then_move=P two_moves_one_seen=P two_unseen_moves=F absent_after_wait=F present_after_wait=P return_after_wait=F lesion_false_belief=F silence_true_belief=F

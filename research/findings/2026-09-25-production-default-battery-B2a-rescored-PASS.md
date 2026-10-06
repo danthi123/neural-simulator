@@ -27,6 +27,11 @@ verdict: R1 PASS -- no faculty's n_load_bearing is lower than the flip-battery r
 
 # B2a re-scored: R1 PASS, R2 PASS after the seed-102 provenance fix
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 ## Why this document exists, and what it does not do
 
 `research/findings/2026-09-25-production-default-battery-B2a-FAIL.md` scored B2a's R2 (complete) criterion FAIL:
