@@ -1,0 +1,34 @@
+{
+  "treatment_reply_fields_changed": 1,
+  "control_reply_fields_changed": 0,
+  "attributable_fraction": 1.0,
+  "per_arm": {
+    "intact_a": {
+      "answer": "the dog chases the cat! \u2014 worth going further here.",
+      "abstained": false,
+      "tone_level": 2,
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "renderer": "template-stub (GPU-free)",
+      "arm_renderer": null
+    },
+    "intact_b": {
+      "answer": "the dog chases the cat! \u2014 worth going further here.",
+      "abstained": false,
+      "tone_level": 2,
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "renderer": "template-stub (GPU-free)",
+      "arm_renderer": null
+    },
+    "lesion": {
+      "answer": "the dog chases the cat \u2014 worth going further here.",
+      "abstained": false,
+      "tone_level": 0,
+      "manner_template": "",
+      "renderer": "template-stub (GPU-free)",
+      "arm_renderer": null
+    }
+  },
+  "reading": "reply changed under the lesion",
+  "backend": "n/a (reads arm files)",
+  "device": "n/a"
+}
