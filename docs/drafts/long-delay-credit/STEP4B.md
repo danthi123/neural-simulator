@@ -40,6 +40,9 @@ NEEDS-CLAUDE `[T1] 4b clear`.
 - Engagement check on seed 7 before freezing (all must hold, else the build is not done):
   `lhb_rate_unrewarded > 2 x lhb_rate_rewarded`, and the route-on unrewarded DA min sits below route-off by at least
   0.02.
+- AMENDED 2026-10-06 (Claude, `AMENDMENT-A0.1.md`): bar (a) above is read in the reward-time window
+  (`lhb_engagement_a_rewardwin`), not over the whole outcome window, where a 50 ms reward caps the ratio at 1.25.
+  The section 4 rows that name it read the same field. The text above is kept as first written.
 
 ## 3. Grid (pool, numpy, dev seeds 8-15, `--n-train 400`, the step-1 clear flag on every line)
 

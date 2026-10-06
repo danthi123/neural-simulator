@@ -7,6 +7,12 @@ command line automatically and the lr0 declaration (RULING T1-lr0) rides along. 
 reward_us is only driven while learning) and `membrane_ok` (tools.lab.membrane_bound_check on lhb, lhb_inh, rmtg and
 snc after training; route-off runs have no LHb regions, so those rates read None there).
 
+AMENDMENT A0.1 (2026-10-06, docs/drafts/long-delay-credit/AMENDMENT-A0.1.md): engagement bar (a) is read in the
+REWARD-TIME window [REWARD_ON_MS, REWARD_ON_MS + REWARD_MS) of the outcome period, the same steps on every trial (the
+reward period on rewarded trials, the expected reward time on unrewarded ones): `lhb_rate_rewardwin_rewarded` /
+`lhb_rate_rewardwin_unrewarded` and `lhb_engagement_a_rewardwin`. The whole-window rates above stay as recorded
+(diagnostic); with a 50 ms pulse in a 250 ms window they cannot exceed 250/200 = 1.25 whatever the LHb does.
+
 Preregistration: research/findings/2026-09-29-long-delay-credit-bg-organ-PREREG.md (schedules, arms, bars, the
 event-decomposition instrument, what may be tuned). The substrate is the production Gate-A v2 selector plus the
 default-off `BRAIN_BG_CREDIT` extension (research/runners/bg_corticostriatal_credit.py); this runner turns the flag on
@@ -136,6 +142,7 @@ class Run:
         names = {r.name for r in bridge.region_manager.regions()}
         self.lhb_idx = _indices(bridge, "lhb") if "lhb" in names else None
         self.lhb_last = 0                      # LHb spikes in the last outcome window (route-on builds only)
+        self.lhb_last_rwin = 0                 # ... of which inside the reward-time window (AMENDMENT A0.1)
         self.t = 0                              # steps since the run began (the ledger's clock)
         self.marks = []                          # (label, t, eligibility of the plastic synapses)
         pos = {int(s): i for i, s in enumerate(self.syn.plastic_idx)}
@@ -221,15 +228,19 @@ class Run:
         only while learning). Returns the DA trace; also records the LHb spike count of the window."""
         das = []
         rec = ("lhb",) if self.lhb_idx is not None else ()
-        total = 0
+        total = rwin = 0
         for k in range(OUTCOME_MS):
+            in_rwin = REWARD_ON_MS <= k < REWARD_ON_MS + REWARD_MS     # reward time, rewarded or not (A0.1)
             extra = [("ctx_o", self.p.ctx_pA)]
-            if rewarded and self.learn and REWARD_ON_MS <= k < REWARD_ON_MS + REWARD_MS:
+            if rewarded and self.learn and in_rwin:
                 extra.append(("reward_us", self.p.rus_pA))
             o, d = self.steps(1, stim=stim, arousal=arousal, extra=extra, da=True, record=rec)
-            total += int(o.get("lhb", 0))
+            n = int(o.get("lhb", 0))
+            total += n
+            rwin += n if in_rwin else 0
             das += d
         self.lhb_last = total
+        self.lhb_last_rwin = rwin
         return das
 
 
@@ -237,6 +248,7 @@ def run_trial(run: Run, tr, schedule, acfg, reward_rng, yoked_reward=None):
     sch = SCHEDULES[schedule]
     run.marks = []
     run.lhb_last = 0
+    run.lhb_last_rwin = 0
     info = {"cue": tr["cue"], "delay": tr["delay"]}
     target = sch.get("fixed_target")
 
@@ -314,6 +326,7 @@ def run_trial(run: Run, tr, schedule, acfg, reward_rng, yoked_reward=None):
     run.mark("end")
     info["rewarded"] = bool(rewarded)
     info["lhb_spikes"] = int(run.lhb_last)
+    info["lhb_spikes_rewardwin"] = int(run.lhb_last_rwin)
     info["correct_early"] = e_win is not None and correct_for(e_win)
     info["correct_terminal"] = t_win is not None and correct_for(t_win)
     info["da_outcome"] = (float(min(das)), float(max(das))) if das else None
@@ -417,9 +430,9 @@ def run_condition(schedule, arm, seed, *, n_train=N_TRAIN, n_test=N_TEST, n_prob
     # omission-route instrument (STEP4B step 2): LHb mean rate in the outcome window, split by trial outcome
     # (TRAIN trials only: reward_us is driven only while learning), and the membrane bounds after training
     names = {r.name for r in bridge.region_manager.regions()}
-    lhb_scale = p.n_lhb * (OUTCOME_MS / 1000.0)
-    rew_lhb = ([x["lhb_spikes"] / lhb_scale for x in train if x.get("rewarded")] if "lhb" in names else [])
-    unrew_lhb = ([x["lhb_spikes"] / lhb_scale for x in train if not x.get("rewarded")] if "lhb" in names else [])
+    rew_lhb, unrew_lhb = lhb_window_rates(train, "lhb_spikes", p.n_lhb, OUTCOME_MS, "lhb" in names)
+    # AMENDMENT A0.1: bar (a) reads the reward-time window, where the reward is the only difference between trials
+    rew_lhb_rw, unrew_lhb_rw = lhb_window_rates(train, "lhb_spikes_rewardwin", p.n_lhb, REWARD_MS, "lhb" in names)
     membrane_bad = []
     volt = np.asarray(to_host(bridge.cp_membrane_potential_v))
     for reg in ("lhb", "lhb_inh", "rmtg", "snc"):
@@ -499,6 +512,9 @@ def run_condition(schedule, arm, seed, *, n_train=N_TRAIN, n_test=N_TEST, n_prob
         "weights_initial": w_init, "weights_final": w_final, "floor_or_ceiling": floor_ceiling,
         "void_floor_ceiling": any(floor_ceiling.values()),
         "lhb_rate_rewarded": _mean(rew_lhb), "lhb_rate_unrewarded": _mean(unrew_lhb),
+        "lhb_rewardwin_ms": [REWARD_ON_MS, REWARD_ON_MS + REWARD_MS],
+        "lhb_rate_rewardwin_rewarded": _mean(rew_lhb_rw), "lhb_rate_rewardwin_unrewarded": _mean(unrew_lhb_rw),
+        "lhb_engagement_a_rewardwin": engagement_a(_mean(rew_lhb_rw), _mean(unrew_lhb_rw)),
         "membrane_ok": not membrane_bad, "membrane_bad_regions": membrane_bad,
         "snc_tonic_fraction": tonic, "lesions": lesions, "lesion_weight_max_at_test": held,
         "elig_tau_ms": tau, "tag_gain": float(acfg.get("gain", 1.0)),
@@ -509,6 +525,27 @@ def run_condition(schedule, arm, seed, *, n_train=N_TRAIN, n_test=N_TEST, n_prob
 
 def _mean(v):
     return float(np.mean(v)) if len(v) else None
+
+
+def lhb_window_rates(trials, key, n_lhb, window_ms, present=True):
+    """Per-trial LHb mean rate (Hz per neuron) from the spike count `key` over a `window_ms` window, split into
+    (rewarded, unrewarded) trials. Empty lists when the build has no LHb."""
+    if not present:
+        return [], []
+    scale = n_lhb * (window_ms / 1000.0)
+    rew = [x[key] / scale for x in trials if x.get("rewarded")]
+    unrew = [x[key] / scale for x in trials if not x.get("rewarded")]
+    return rew, unrew
+
+
+def engagement_a(rate_rewarded, rate_unrewarded, factor=2.0):
+    """STEP4B engagement bar (a) as amended by A0.1: the reward-time-window LHb rate on unrewarded trials exceeds
+    `factor` x the rate on rewarded trials. UNDEFINED (pass None) when either side has no trials or the LHb is silent
+    on unrewarded trials (no omission response to compare)."""
+    if rate_rewarded is None or rate_unrewarded is None or rate_unrewarded <= 0.0:
+        return {"ratio": None, "factor": factor, "pass": None}
+    ratio = (rate_unrewarded / rate_rewarded) if rate_rewarded > 0.0 else None
+    return {"ratio": ratio, "factor": factor, "pass": bool(rate_unrewarded > factor * rate_rewarded)}
 
 
 # LEARNING-OFF CELLS (RULING T1-lr0, cloud Claude session 7, 2026-10-05). With `--lr 0` the weights never move, so the
