@@ -225,3 +225,18 @@ per-region rate dump to discriminate; NOT resolvable by code reading alone.
 
 Both checks block the INTACT_FLOOR freeze and any 6-seed queue (PLAN row 7: clean-zero FAIL = leaky control;
 row 5: byte-off FAIL = CONFOUND). Next wake after the rebase: provision -> record smoke -> shape-check -> add.
+
+## 2026-10-06 06:1x — sync-branch unblocked the provision; smoke QUEUED
+
+RULING sync-branch applies verbatim here (provisioning refused for published main -> bring main in myself):
+`bash tools/agent_sync_branch.sh research/draft-xedge-prov-surprise-reciprocal` in $P -> merged main @
+2c5b8a45a as ada33408de961b8480de03c3f3c72e7e6c40b14c (every gate run, RC=0; only tool-health-fresh warn).
+Provision: touch research/queue/provision.req/ada33408d... -> running (attempt 1/3, 7095 files 112 MiB) ->
+state=ok after ~4 min: "provisioned on pool41, pool42, pool40, wspool".
+Smoke line (shape RC=0, ADD_RC=0, depth 19): cd ~/derisk-pool/revisions/ada33408d... && mem_ok 6 -> memcap 8 ->
+env SIM_BACKEND=numpy ... python -u -m research.runners._xedge_prov_surprise_reciprocal --smoke --out
+research/findings/raw/_xedge_prov_surprise_reciprocal/smoke_seed7.json; checked reason carries max_age_h=24,
+the PLAN citation, and both diagnosis targets (byte_off, clean_zero); no gate seeds (dev seed 7 CALIBRATION).
+[xedge-provision] NEEDS line deleted on main (condition "once the branch carries main" met). Next wake: read
+smoke_seed7.json -> complete the byte_off/clean_zero diagnosis; INTACT_FLOOR freezes ONLY per PLAN rule and only
+if the guard question is settled; a second failure of either check remains a STOP (fix-round 1 restarts fresh).
