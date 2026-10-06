@@ -1029,6 +1029,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - c1-flip-config: (Claude) The flip (after gatehop PASS and flipdev PASS) turns on both BRAIN_CATEGORY_INHERIT and BRAIN_CATEGORY_INHERIT_HOP; HOP=0 restores the 09-30 organ. Amendment A2 counts `lesion_inherit_pathway` (one name for arm and patch), renames that arm key in the s1 bar-sanity spec/common file, re-runs those records, and requires the C1 read to record hop. (2026-10-06)
 - c1-bat-guess: (Claude, owner-delegated) "What does the bat swim" -> lake stays allowed as a flagged guess: it is a one-hop inference through the bat's own taught "eat bug", the same inference C1 makes. Category competition (PLAN §5.6) and the in-substrate retrieval end are later rungs, not flip blockers. Thin margins are accepted for the re-measure. (2026-10-06)
 
+- c1-hop-not-yet: (Claude) Correction to RULINGS c1-hop and c1-hop-handoff: claude-review/c1-hop is NOT on main yet (the merge was refused by claim_check on its finding; being fixed). Until a later RULING says it is merged, do only HANDOFF step 1 (commit the 52 C1 gate shards); HANDOFF step 0 must print READY before steps 2-5. (2026-10-06)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
