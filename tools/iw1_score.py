@@ -33,6 +33,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import b2d_score as B  # noqa: E402
+from verdict import UNDEFINED as V_UNDEFINED, Verdict  # noqa: E402
 
 SEEDS = [42, 43, 44, 100, 101, 102]
 BASE = "research/findings/raw/_load_bearing/_shards"
@@ -48,6 +49,28 @@ PACKETS = {
                       "lesion_flags": ["BRAIN_MULTIREF_LESION"]},
 }
 PASS, FAIL, UNDEF = 0, 1, 3
+
+
+def _earn(res, label, checks):
+    """Attach the `preconditions` block that earned `res["verdict"]` (tools.verdict.Verdict), ported verbatim from
+    tools/iw2_score.py (shared prereg Amendment 2 there; RULING iw1-R-pre here, cloud Claude session 7). `checks` is
+    a list of (name, measured, expect) that must hold for THIS verdict: for a PASS, every condition whose failure the
+    step reads as UNDEFINED; for a FAIL, that the evidence it rests on is DEFINED. The step's own logic decides
+    PASS/FAIL/UNDEFINED as registered; the block only makes the artifact carry what earned it (gate
+    verdict-preconditions). If a check does not hold under an asserted PASS/FAIL, the verdict reads UNDEFINED.
+    Returns the exit code for the final verdict."""
+    v = Verdict(label)
+    for name, measured, expect in checks:
+        v.require(name, measured, expect=expect)
+    if not checks:
+        v.require("the step registered a precondition", None)
+    d = v.decide(go=(res["verdict"] == "PASS"), verbose=False)
+    if res["verdict"] in ("PASS", "FAIL") and d["status"] == V_UNDEFINED:
+        res["verdict_unearned"] = res["verdict"]
+        res["verdict"] = "UNDEFINED"
+    res["preconditions"] = d["preconditions"]
+    res["undefined_reasons"] = d["undefined_reasons"]
+    return {"PASS": PASS, "FAIL": FAIL}.get(res["verdict"], UNDEF)
 
 
 def _allowing(allowed):
@@ -151,13 +174,17 @@ def score_R(packet, tag, pin, base=BASE, seeds=SEEDS):
     n_def = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] in ("regressed", "pass"))
     n_lb = sum(1 for c in per.values() if c["state"] == "DEFINED" and c["reply_verdict"] == "regressed")
     if n_def < len(seeds):
-        verdict, code = "UNDEFINED", UNDEF
+        verdict = "UNDEFINED"
     elif n_lb == len(seeds):
-        verdict, code = "PASS", PASS
+        verdict = "PASS"
     else:
-        verdict, code = "FAIL", FAIL
-    return {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
-            "n_reply_load_bearing": n_lb, "verdict": verdict}, code
+        verdict = "FAIL"
+    res = {"step": "R", "packet": packet, "tag": tag, "pin": pin, "per_seed": per, "n_defined": n_def,
+           "n_reply_load_bearing": n_lb, "verdict": verdict}
+    # PASS and FAIL both rest on every cell being DEFINED (a not-DEFINED cell already reads UNDEFINED above)
+    checks = [("capability cells DEFINED on %d/%d seeds" % (len(seeds), len(seeds)), n_def, len(seeds))]
+    code = _earn(res, "iw1 step R %s at %s" % (packet, pin), checks)
+    return res, code
 
 
 ALL_FLAGS = sorted({f for p in PACKETS.values() for f in p["flags"] + p["lesion_flags"]})
@@ -250,11 +277,21 @@ def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SE
     out["new_rows_s2_at_flip"] = rows_F
     out["regressions"], out["undefined"] = regressions, undefined
     if regressions:
-        out["verdict"], code = "FAIL", FAIL
+        out["verdict"] = "FAIL"
     elif undefined:
-        out["verdict"], code = "UNDEFINED", UNDEF
+        out["verdict"] = "UNDEFINED"
     else:
-        out["verdict"], code = "PASS", PASS
+        out["verdict"] = "PASS"
+    checks = [("%s scorer precondition: %s" % (name, p["name"]), p["ok"], True)
+              for name, r in (("base", b), ("flip", f)) for p in r["preconditions"]]
+    if out["verdict"] == "FAIL":
+        # a regression is recorded only between two DEFINED counts; undefined criteria elsewhere stay listed and
+        # never turn the FAIL into a pass (step A reads them)
+        checks.append(("every regression compares DEFINED counts",
+                       all(isinstance(r["reference"], int) and isinstance(r["flip"], int) for r in regressions), True))
+    else:
+        checks.append(("no criterion UNDEFINED (B1 cells, B2 completeness, F1 rows)", len(undefined), 0))
+    code = _earn(out, "iw1 step B %s at %s" % (",".join(flipped), flip_pin), checks)
     return out, code
 
 
@@ -286,15 +323,27 @@ def score_A(b_result, tag, pin, base=BASE, seeds=SEEDS):
         verdicts.append(v)
     b_undefined = list(b_result.get("undefined") or [])
     if any(v in ("flip-caused", "FAIL") for v in verdicts):
-        verdict, code = "FAIL", FAIL
+        verdict = "FAIL"
     elif b_undefined or any(v == "UNDEFINED" for v in verdicts):
         # adversarial review 2026-09-29: excusing every drop says nothing about B's own not-DEFINED criteria (B2
         # completeness, an undefined flip cell): A can never turn a B that was also UNDEFINED into a pass
-        verdict, code = "UNDEFINED", UNDEF
+        verdict = "UNDEFINED"
     else:
-        verdict, code = "PASS", PASS
-    return {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined,
-            "verdict": verdict}, code
+        verdict = "PASS"
+    res = {"step": "A", "tag": tag, "pin": pin, "faculties": rows, "b_undefined": b_undefined, "verdict": verdict}
+    # an A with nothing to attribute is vacuous, never a PASS
+    checks = [("the B result carries a regression to attribute", len(b_result.get("regressions") or []),
+               lambda n: n > 0)]
+    if verdict == "FAIL":
+        # flip-caused needs a DEFINED off run; F1-not-excusable is B's own DEFINED regression
+        checks.append(("every failing row rests on DEFINED cells", all(
+            r["verdict"] != "UNDEFINED" for r in rows.values() if r["verdict"] in ("flip-caused", "F1-not-excusable")),
+            True))
+    else:
+        checks.append(("B carried no UNDEFINED criterion", len(b_undefined), 0))
+        checks.append(("every attributed row DEFINED", sum(1 for v in verdicts if v == "UNDEFINED"), 0))
+    code = _earn(res, "iw1 step A %s at %s" % (tag, pin), checks)
+    return res, code
 
 
 def main(argv=None):
