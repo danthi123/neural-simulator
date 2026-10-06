@@ -980,3 +980,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-05 23:36 [pool-hold] ASK: _stage1_c1_category/gate queued=0 running=0 at 52 of 54 cells; requeue_stage1_c1_category_6c2cb1362.tsv (54 lines) never dispatched (dispatch.log 0 ever). Not moved per T0 - run the HANDOFF requeue block or drop the key.
 - 2026-10-05 23:36 [stage2-exit] INFO: The 8 dev-smoke lines queued 09-30 (max_age_h=24) expired 10-01 without dispatch; raw/_stage2_exit/dev/s7 has 1 file (need 8). Re-queue if the stage-2 dev-smoke arm is still wanted (gate never before 11-01).
 - handled: [s1-c3-data-commit] lane gate cleared (b2d wave-2 queue served lanes); 86 files landed 0a50e3f81 (2026-10-06)
+- 2026-10-06 00:44 [word-role-parse] RESULT: 2026-10-06: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md (PROVISIONAL; verify-go 2/2 SURVIVES; data 99906f6fc).
+- 2026-10-06 00:44 [word-role-parse] ASK: O PASS + R PASS at research/word-role-parse @ d2f261271; confirm + merge; unblocks P4 (s2p-flip)
