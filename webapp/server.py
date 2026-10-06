@@ -3827,6 +3827,21 @@ def _open_ended_acquire_route(chat, msg) -> bool:
         return False
 
 
+def _category_inherit_on() -> bool:
+    """BRAIN_CATEGORY_INHERIT (default OFF; anchor `_CATEGORY_INHERIT_DEFAULT_ON` in webapp/category_inherit_chat.py):
+    category inheritance on the strict route's recall miss (Stage-1 C1). Off -> no wrapper, no trace key."""
+    from webapp.category_inherit_chat import category_inherit_enabled
+    return category_inherit_enabled()
+
+
+def _category_inherit_trace(chat):
+    try:
+        from webapp.category_inherit_chat import turn_trace
+        return turn_trace(chat)
+    except Exception as e:  # never let a trace read crash a turn
+        return {"error": f"{type(e).__name__}: {e}"}
+
+
 def _oeg_on() -> bool:
     """BRAIN_OPEN_ENDED_GATED (default OFF; webapp/open_ended_gated_turn.py, PREREG research/findings/2026-09-24-open-
     ended-gated-turn-PREREGISTRATION.md). Off -> this env read is the whole cost: the module is never imported."""
@@ -4829,6 +4844,21 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _gnw_multistep_mod.install_multistep_gate(chat)
         except Exception:
             pass
+    # ── BEGIN faculty wire-in: CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1), DEFAULT-OFF ──
+    # (BRAIN_CATEGORY_INHERIT; webapp/category_inherit_chat.py + research/runners/category_inherit_organ.py). Installed
+    # OUTSIDE every gate wrapper above (and inside the default-off open-ended-gated trace below), so it acts only on the
+    # stack's FINAL verdict: an acquired fact is observed by a rung-3c learned member->frame + frame->frame Hebbian
+    # organ, and a routable non-anaphora strict recall that the stack ABSTAINED on is re-read through that organ; a
+    # reached object comes back as a FLAGGED guess (a HypothesisSVO subclass), never as a recalled fact. Off -> nothing
+    # is wrapped (byte-identical). Lesion: BRAIN_CATEGORY_INHERIT_LESION=1. Prereg:
+    # research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md.
+    if _category_inherit_on():
+        try:
+            from webapp import category_inherit_chat as _ci_mod
+            _ci_mod.install(chat, seed=_brain_chat_seed())
+        except Exception as _ci_exc:
+            print(f"[webapp] category-inherit install failed: {type(_ci_exc).__name__}: {_ci_exc}", flush=True)
+    # ── END faculty wire-in: CATEGORY INHERITANCE ──
     if _oeg_on():  # OPEN-ENDED GATED TURN (default-OFF): outermost per-call gate-trace wrapper + a fresh per-turn record
         _oeg_mod().install(chat)
 
@@ -6842,6 +6872,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _mt = _mouth_trace(chat, resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
         if _mt is not None:
             resp["mouth_trace"] = _mt
+        if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
+            resp["category_inherit"] = _category_inherit_trace(chat)
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -7219,6 +7251,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     _mt = _mouth_trace(chat, _resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
     if _mt is not None:
         _resp["mouth_trace"] = _mt
+    if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
+        _resp["category_inherit"] = _category_inherit_trace(chat)
     return _safe_json_response(_resp, "single-fact")
 
 
