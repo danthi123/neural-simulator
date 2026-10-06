@@ -114,3 +114,24 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   lesion/informational arms no dev run has covered (`ask/lesion_graded`, `ask/lesion_curiosity`,
   `inner/lesion_workspace`, `inner/lesion_selfinit`, `conv/lesion_mouth`, `infer/lesion_chain_route`,
   `infer/transitive_chat`). They carry `max_age_h=24`; if the `mem_gb=2` backlog holds them past that they expire.
+
+## 2026-10-06 (Hermes) RULING stage2-dev-smoke: fresh dev-smoke lines at the synced tip
+
+- Local branch research/stage2-exit-gate created from gitea/research/stage2-exit-gate (eddb1a071; no fetch,
+  RULING private-repos); agent_sync_branch merged main 519f14e24 in -> f2aaabc8a, no conflict, gates passed.
+- before_you_build ran rc=0 (corpus check logged in .git/corpus_checks_shared.jsonl; receipt cites
+  2026-10-06).
+- Provisioned f2aaabc8a9272e6e2e094b9e0f5e1c15c4b7d526 on pool41/pool42/pool40/wspool: state ok, rc=0,
+  markers after=true, venv deps include httpx.
+- Withdrew the 8 expired 6b9cb47f7 lines -> research/queue/withdrawn.log (per the ruling: re-queue, but
+  not the expired lines), then queued 11 fresh seed-7 lines at the tip, each shape-checked before
+  add --checked: the 7 lesion/informational arms (ask/lesion_graded, inner/lesion_workspace,
+  conv/lesion_mouth, infer/lesion_chain_route, inner/lesion_selfinit, ask/lesion_curiosity,
+  infer/transitive_chat) plus intact_a of ask, inner, conv and infer. mem_ok 9 1 / memcap 10, out
+  research/findings/raw/_stage2_exit/dev/s7/, max_age_h=168. The dispatcher consumed 3 during the add
+  (ask/lesion_graded, conv/lesion_mouth, inner/lesion_workspace running); 8 remained queued.
+- Canary: pool_canary.sh run auto on ask/intact_a launched stage2_exit_gate_f2aaabc8a_wspool_20261006T151306
+  (alive: bridge initialized 144 neurons); the local `run` process was cut by the harness timeout while it
+  polled, so the verdict + pool_canaries.tsv record are taken manually next wake from the node's
+  ~/derisk-pool/canary/<id>.status (known: launch ssh rc=3 false negatives, NEEDS pool-canary).
+- T14 starts when 8 files land in _stage2_exit/dev/s7/; INFO NEEDS on landing (ruling).
