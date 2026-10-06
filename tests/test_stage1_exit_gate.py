@@ -112,6 +112,53 @@ def test_permuted_arm_of_val_novel_keeps_the_probe_words():
     assert intact["e_pos1"] != perm["e_pos1"]
 
 
+def _ratings_and_values():
+    """24 human ratings, 12 per sign, and a learned-map-like value vector strongly tracking them."""
+    norms = [5.4 + 0.3 * i for i in range(12)] + [4.6 - 0.3 * i for i in range(12)]
+    vals = [0.9 * n + 0.35 * ((i % 5) - 2) for i, n in enumerate(norms)]
+    return vals, norms
+
+
+def test_scrambled_draw_never_used_with_r_above_the_draw_bar():
+    """RULING s1-c4-control: the C4 scrambled-values draw is rejection sampled, so a permutation whose |r(scrambled
+    values, human ratings)| exceeds 0.10 is never used, for every gate seed."""
+    vals, norms = _ratings_and_values()
+    for seed in (42, 43, 44, 100, 101, 102):
+        perm, r, within = SG._scrambled_valence_draw(vals, norms, seed)
+        assert len(perm) == len(vals) and all(p != i for i, p in enumerate(perm)), (seed, perm)   # derangement
+        assert r is None or abs(r) <= SG.SCRAMBLE_R_MAX, (seed, r)
+        assert set(within) == {"positive", "negative"}, within                                    # report-only
+
+
+def test_scrambled_draw_is_fixed_by_the_seed_and_rejects_naive_breaching_shuffles():
+    """The RNG is fixed (seed = the brain seed): same seed, same draw. With values identical to the ratings, a naive
+    shuffle of a monotone sequence correlates far past the bar — every accepted draw must still land within it."""
+    _, norms = _ratings_and_values()
+    vals = list(norms)
+    p1, r1, _ = SG._scrambled_valence_draw(vals, norms, 42)
+    p2, r2, _ = SG._scrambled_valence_draw(vals, norms, 42)
+    assert p1 == p2 and r1 == r2
+    for seed in (42, 43, 44, 100, 101, 102):
+        _p, r, _w = SG._scrambled_valence_draw(vals, norms, seed)
+        assert r is None or abs(r) <= SG.SCRAMBLE_R_MAX, (seed, r)
+
+
+def test_permuted_map_patch_records_the_drawn_permutation_and_its_r():
+    """The run output carries the drawn permutation, its r, and the report-only within-sign-group r."""
+    from research.runners import affect_production_organ as AO
+    saved = AO._LEARNED_VALENCE
+    rec = None
+    try:
+        rec = SG.install_patch("permuted_map", 42)
+    finally:
+        AO._LEARNED_VALENCE = saved
+    assert rec is not None
+    assert rec["patch"] == "permuted_map" and rec["n_words"] >= 12
+    assert len(rec["perm"]) == rec["n_words"] and all(p != i for i, p in enumerate(rec["perm"]))
+    assert rec["scrambled_r"] is None or abs(rec["scrambled_r"]) <= SG.SCRAMBLE_R_MAX, rec["scrambled_r"]
+    assert set(rec["within_sign_r"]) == {"positive", "negative"}
+
+
 def test_val_heldout_permuted_map_must_derange_every_held_out_word(tmp_path):
     """Claude ruling s1-c4-void (2026-10-04): on the first gate attempt the learned map was absent on the pool, the
     permuted-map patch deranged 0 of 24 words, and the inert control read as "not tracked". A permuted arm that did not

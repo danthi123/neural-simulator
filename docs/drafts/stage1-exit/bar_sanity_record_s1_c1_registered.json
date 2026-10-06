@@ -1,0 +1,153 @@
+{
+ "backend": "numpy",
+ "description": "C1 `cat_disc` verdict PASS under the real stage1_exit_gate.aggregate, six gate seeds, registered lesion lesion_draw; perfect = generative-route inheritor and pathway inheritor (the planned attempt-2 build).",
+ "failures": [
+  "UNREACHABLE: perfect_pathway passes 0.000 < 0.95"
+ ],
+ "kinds": {
+  "info_gen_abstains_on_permuted": "info",
+  "info_gen_draw_lesion_uniform_k2": "info",
+  "info_gen_draw_lesion_uniform_k3": "info",
+  "info_gen_draw_lesion_uniform_k5": "info",
+  "info_perfect_both_routes": "info",
+  "null_all_abstain": "null",
+  "null_echo": "null",
+  "null_frequency_shortcut": "null",
+  "null_lesion_draw_inert": "null",
+  "null_lesion_draw_unreproduced": "null",
+  "null_never_abstains": "null",
+  "null_permuted_inert": "null",
+  "null_unclean": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "perfect_pathway": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_gen_abstains_on_permuted": 0,
+  "info_gen_draw_lesion_uniform_k2": 24,
+  "info_gen_draw_lesion_uniform_k3": 95,
+  "info_gen_draw_lesion_uniform_k5": 237,
+  "info_perfect_both_routes": 1000,
+  "null_all_abstain": 0,
+  "null_echo": 0,
+  "null_frequency_shortcut": 0,
+  "null_lesion_draw_inert": 0,
+  "null_lesion_draw_unreproduced": 0,
+  "null_never_abstains": 0,
+  "null_permuted_inert": 0,
+  "null_unclean": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "perfect_pathway": 0,
+  "random": 0
+ },
+ "name": "stage1-C1 cat_disc as registered (lesion_draw counted)",
+ "pass_rate": {
+  "info_gen_abstains_on_permuted": 0.0,
+  "info_gen_draw_lesion_uniform_k2": 0.024,
+  "info_gen_draw_lesion_uniform_k3": 0.095,
+  "info_gen_draw_lesion_uniform_k5": 0.237,
+  "info_perfect_both_routes": 1.0,
+  "null_all_abstain": 0.0,
+  "null_echo": 0.0,
+  "null_frequency_shortcut": 0.0,
+  "null_lesion_draw_inert": 0.0,
+  "null_lesion_draw_unreproduced": 0.0,
+  "null_never_abstains": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_unclean": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "perfect_pathway": 0.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_gen_abstains_on_permuted": [
+   0.0,
+   0.0038
+  ],
+  "info_gen_draw_lesion_uniform_k2": [
+   0.0162,
+   0.0355
+  ],
+  "info_gen_draw_lesion_uniform_k3": [
+   0.0783,
+   0.1148
+  ],
+  "info_gen_draw_lesion_uniform_k5": [
+   0.2117,
+   0.2643
+  ],
+  "info_perfect_both_routes": [
+   0.9962,
+   1.0
+  ],
+  "null_all_abstain": [
+   0.0,
+   0.0038
+  ],
+  "null_echo": [
+   0.0,
+   0.0038
+  ],
+  "null_frequency_shortcut": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_draw_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_draw_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_never_abstains": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_pathway": [
+   0.0,
+   0.0038
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "4625d662ac8a9e19119dd494c872165a762c0cb4",
+ "scorer_files": {
+  "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "18ed0659811cfc178d4a000466e20ac4bf09aacae76ad305c85d200828708a8b",
+  "research/runners/stage1_exit_gate.py": "8f6f8cdbc0fd853cebd18f0fa7890343da804d8eff78d238cb85ef25fbbd6143"
+ },
+ "scorer_sha256": "2436acd394dfea58cd19d36a48422a77967550abe8ca39749751fc538cf37cb6",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-exit/bar_sanity_spec_s1_c1_registered.py",
+ "spec_sha256": "7924f84ac4e207ef420cc2e60c476d8b7bc0e2cb542f69b016c9d1a1ec8b5561",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "UNREACHABLE",
+ "wall_s": 37.1
+}
