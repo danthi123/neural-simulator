@@ -25,6 +25,13 @@ the idle fact, the emotion word variant and the differential magnitudes (|d| in 
 DETERMINISTIC per (draw, seed, variant): intact_b is byte-identical to intact_a and a lesion arm to its repeat, which is
 what the dev-seed-7 nulls showed (ask and inner intact_b are byte-identical to intact_a in every field).
 
+AMENDMENT A3 (2026-10-06). C4's lesion clause now needs the NAMED category to change on every feel turn (not only the printed
+number) and C5's permuted-tracks clause needs the voiced idle fact to differ between the intact and the permuted exposure. So the
+C4 host word-lookup brain and the C5 fixed-fact brain are NULLS (they were reported-only, passing 1.000), and the perfect C5 brain
+voices a deterministic function of its taught store (the most recently taught fact), not a random stored fact. Two residuals stay
+`info_*` on purpose (a lookup gated by the ladder's sign; a host first-taught-fact FIFO): they satisfy the hardened bars, and
+who owns the category / the selection is the host-share instrument's question.
+
 WHAT NOISE THE BAR SEES. Stage 2's scorer is a conjunction of exact reply checks, not a statistic, and the real null is
 exactly zero-noise (dev 7), so there is no read noise to model; the realistic part is the surface the checkers must
 survive. `flaky` (info only) drops each scored intact probe to an abstain with probability eps, the sensitivity of the
@@ -298,16 +305,19 @@ def reply_emo(variant, rng, realistic):
 
 
 def reply_inner(variant, rng, realistic):
-    perm = variant == "permuted"
+    perm = variant == "permuted" or variant.endswith("_perm")          # "<kind>_perm" = that kind's brain on the permuted arm
+    variant = variant[:-5] if variant.endswith("_perm") else variant
     r, turns = _base("inner", variant, perm)
     ex = [("dog", "chase", "cat")]
-    stored = [tuple(x) for x in facts_for("inner", perm)[3:]] + ([("lynx", "chase", "mite")] if perm else [("lynx", "chase", "vole")])
-    if realistic:
-        a, v, p = stored[int(rng.integers(0, len(stored)))]
-    else:
-        a, v, p = "cat", "eat", "fish"
+    # PRIVATE: a brain that selects from its own state voices a fact that follows what it was taught. Amendment A3 hardens
+    # the bar (the voiced fact must differ between the intact and the permuted exposure), so the perfect brain's selection
+    # is a deterministic function of its taught store (the most recently taught fact: beetle chase mite / vole chase
+    # beetle). A random pick would be neither a state function nor null-clean (intact_a != intact_b on a real brain).
+    a, v, p = ("vole", "chase", "beetle") if perm else ("beetle", "chase", "mite")
     if variant == "constant_idle":                                              # the same stored fact every time, no selection
         a, v, p = "cat", "eat", "fish"
+    if variant == "first_taught":                                               # residual (info): a host FIFO over the store
+        a, v, p = ("lynx", "chase", "mite") if perm else ("lynx", "chase", "vole")
     if variant == "demo_lexicon":                                               # dev 7: the organ's own fixed lexicon
         a, v, p = DEMO_LEXICON[int(rng.integers(0, 4))] if realistic else DEMO_LEXICON[2]
     r["p_private"] = R("Something's been on my mind — %s %s %s. What does %s %s?" % (a, v, p, a, v))
@@ -544,11 +554,24 @@ def generators(group, extra_info=True):
         out["null_%s_unreproduced" % l] = mk(unreproduced=(l,))
     for name, v in _EXTRA.get(group, {}).items():
         out[name] = mk(over={"intact_a": v, "intact_b": v})
-    if group == "emo" and extra_info:     # host word lookup: the category word is read off the heard words, not the ladder
-        out["info_word_lookup_ladder_independent"] = mk(over={"intact_a": "lookup", "intact_b": "lookup",
+    if group == "emo" and extra_info:
+        # NULL (amendment A3): a host lookup of the heard affect words names the category; the ladder only supplies the
+        # printed numbers. The ladder lesion clamps the numbers and leaves the word, so the NAMED category does not move.
+        out["null_word_lookup_ladder_independent"] = mk(over={"intact_a": "lookup", "intact_b": "lookup",
                                                               "lesion_affect": "lookup_lesion", "permuted": "lookup_perm"})
-    if group == "inner" and extra_info:   # the same stored fact every idle turn (no selection at all)
-        out["info_constant_idle_fact"] = mk(over={"intact_a": "constant_idle", "intact_b": "constant_idle"})
+        # RESIDUAL, reported never thresholded: the same lookup, but the word is printed only while the ladder reads
+        # non-neutral. The category then depends on the ladder in the trivial sense (a gate), so the hardened bar admits
+        # it; whether the brain or a host table owns the category is the host-share instrument's question.
+        out["info_word_lookup_gated_by_ladder"] = mk(over={"intact_a": "lookup", "intact_b": "lookup",
+                                                           "permuted": "lookup_perm"})
+    if group == "inner" and extra_info:
+        # NULL (amendment A3): one fixed stored fact on every idle turn (no selection at all).
+        out["null_constant_idle_fact"] = mk(over={"intact_a": "constant_idle", "intact_b": "constant_idle",
+                                                  "permuted": "constant_idle_perm"})
+        # RESIDUAL, reported never thresholded: a host FIFO (always the first taught fact) varies with the exposure, so
+        # the hardened bar admits it; who selects is the host-share instrument's question, not this bar's.
+        out["info_first_taught_fact"] = mk(over={"intact_a": "first_taught", "intact_b": "first_taught",
+                                                 "permuted": "first_taught_perm"})
     return out
 
 

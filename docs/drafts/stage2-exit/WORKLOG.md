@@ -135,3 +135,10 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   polled, so the verdict + pool_canaries.tsv record are taken manually next wake from the node's
   ~/derisk-pool/canary/<id>.status (known: launch ssh rc=3 false negatives, NEEDS pool-canary).
 - T14 starts when 8 files land in _stage2_exit/dev/s7/; INFO NEEDS on landing (ruling).
+
+## 2026-10-06 (Claude) AMENDMENT-A3: C4/C5 shortcut hardening (branch claude-review/stage2-c4c5)
+
+- Outcome-blind (no gate data). C4 lesion clause now needs the named category to change on all four feel turns; C5
+  permuted-tracks clause now needs the idle fact to differ across intact/permuted. Scorer + tests + bar-sanity specs and
+  `_A3` records (all six OK) committed; prereg byte-identical (PREREG_SHA unchanged); GATE_SHA still unpinned and must
+  contain AMENDMENT-A3.md. No dev line is re-run; NEEDS-CLAUDE #15-#17 are untouched by this amendment.

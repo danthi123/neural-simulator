@@ -24,6 +24,11 @@ per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end an
   (section 12, instrument only, filed before any gate job), `8691e84c1` the lane memory fix (measured dev peak
   8.1 GB -> `mem_gb=9`, memcap 10), `24dac499e` prereg amendment A2 (lane), then this HANDOFF with PREREG_SHA
   re-pinned.
+- **Amendment A3 (Claude, 2026-10-06; `docs/drafts/stage2-exit/AMENDMENT-A3.md`)** hardens two scorer clauses (C4: the
+  ladder lesion must change the NAMED category on every feel turn; C5: the idle fact voiced after the permuted exposure
+  must differ from the intact one). It lives beside the prereg, which stays byte-identical, so `PREREG_SHA` does not
+  move. `GATE_SHA` must be pinned at a revision that contains the amendment, the amended runner and its tests
+  (`git cat-file -e $SHA:docs/drafts/stage2-exit/AMENDMENT-A3.md`). No dev line is re-run.
 - `docs/drafts/stage2-exit/PREREG_SHA` holds the LAST commit that touched the prereg (the original plus its dated
   pre-dispatch amendments; today `24dac499e`). `docs/drafts/stage2-exit/GATE_SHA` holds the revision the gate runs
   at; it is written by Claude only after the dev-seed-7 smoke has been read. **GATE_SHA does not exist yet.** If

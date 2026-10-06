@@ -665,6 +665,22 @@ def n_field_diffs(a, b, labels):
     return n
 
 
+def named_category_changed(intact_scored, lesion_scored):
+    """C4, amendment A3: per feel turn, did the lesion change the discrete category the reply NAMES (not merely the
+    number it prints)? A reply that names nothing under both arms did not change it: the lesion shows no dependence of
+    the category on the ladder there. Inputs are `score_emo` outputs."""
+    return {c: intact_scored["named"][c] != lesion_scored["named"][c] for c in intact_scored["named"]}
+
+
+def private_selected_by_state(intact_scored, permuted_scored):
+    """C5, amendment A3: the idle turn's voiced fact must depend on what the brain was exposed to. The two registered
+    contexts are the intact and the permuted exposure (the same `say something` turn after different teaching): the
+    voiced triples must both be present (each stored fact is already required by `private_voices_stored_fact`) and
+    DIFFER. A brain that voices one fixed stored fact on every idle turn fails this. Inputs are `score_inner` outputs."""
+    iu, pu = intact_scored.get("private_utterance"), permuted_scored.get("private_utterance")
+    return bool(iu) and bool(pu) and list(iu) != list(pu)
+
+
 # ══════════════════════════════════════════════ SCORING (pure functions over shard dicts) ══════════════════════════
 def _taught(shard_turns):
     """The facts the teacher asserted this session, as the host extractor would store a canonical active-voice
@@ -935,6 +951,12 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         labs = SCORED_LABELS[group][les]
                         d = [reply_differs(ra, L["responses"], l) for l in labs]
                         rec["differs"] = dict(zip(labs, d)); rec["effect"] = any(x is True for x in d)
+                        if group == "emo":
+                            # amendment A3: the lesion must change the NAMED category on every feel turn, not only the
+                            # printed number (a category read off the heard words survives a ladder lesion)
+                            rec["reply_effect"] = rec["effect"]
+                            rec["category_changed"] = named_category_changed(row["intact"], SCORERS[group](L))
+                            rec["effect"] = bool(rec["effect"]) and all(rec["category_changed"].values())
                         # ATTRIBUTION (tools.lab): treatment = primary-field differences intact_a-vs-lesion on the
                         # scored turns; control = the same count intact_a-vs-intact_b (the run-to-run variation).
                         rec["attributable"] = attributable_to("%s/%s seed %d (primary reply fields on %s)" % (group, les, seed, ",".join(labs)),
@@ -961,6 +983,10 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                     if group == "emo":
                         # tracking is only DEFINED when the intact arm names the categories at all
                         row["tracks"] = sp["all"] if row["correct"] else None
+                    elif group == "inner":
+                        # amendment A3: the voiced idle fact must follow the exposure too (a fixed fact does not)
+                        row["private_selected_by_state"] = private_selected_by_state(row["intact"], sp)
+                        row["tracks"] = bool(sp["all"]) and row["private_selected_by_state"]
                     else:
                         row["tracks"] = bool(sp["all"])
                 else:
@@ -985,6 +1011,8 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
         n_correct = sum(1 for s in defined if rows[s]["correct"])
         les_names = list(g["lesions"])
         n_les = {les: sum(1 for s in defined if (rows[s]["lesions"].get(les) or {}).get("effect") is True) for les in les_names}
+        # amendment A3 (emo): how many seeds the printed number moved vs the NAMED category moved under each lesion
+        n_les_num = {les: sum(1 for s in defined if (rows[s]["lesions"].get(les) or {}).get("reply_effect") is True) for les in les_names}
         n_rep = {les: sum(1 for s in defined if (rows[s]["lesions"].get(les) or {}).get("reproduced") is True) for les in les_names}
         n_tracks = sum(1 for s in defined if rows[s].get("tracks") is True)
         n_tr_def = sum(1 for s in defined if rows[s].get("tracks") is not None)
@@ -999,7 +1027,9 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
             else:
                 for l in les_names:
                     if n_les[l] < n_def:
-                        why.append("%s: reply-level effect on %d of %d seeds (not load-bearing)" % (l, n_les[l], n_def))
+                        why.append("%s: reply-level effect on %d of %d seeds (not load-bearing)%s" % (
+                            l, n_les[l], n_def, (" [the printed number moved on %d, the named category on every turn on %d]"
+                                                 % (n_les_num[l], n_les[l])) if group == "emo" else ""))
                     if n_rep[l] < n_def:
                         why.append("%s: reproduced on %d of %d seeds" % (l, n_rep[l], n_def))
                 if n_tracks < n_tr_def:
@@ -1018,6 +1048,8 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                                                  "chain_hops_internal_ge2", "yesno_derived_moth"):
                     sub.setdefault(k, 0)
                     sub[k] += 1 if v else 0
+        if group == "inner":
+            sub["private_selected_by_state"] = sum(1 for s in defined if rows[s].get("private_selected_by_state"))
         per_group[group] = {"criterion": g["criterion"], "primary": g["primary"], "verdict": verdict, "why": why,
                             "n_defined": n_def, "n_correct": n_correct, "n_lesion_effect": n_les,
                             "n_reproduced": n_rep, "n_permuted_tracks": n_tracks, "sub_clauses_n_true": sub, "seeds": rows}

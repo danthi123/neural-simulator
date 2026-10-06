@@ -381,7 +381,10 @@ def _e2e_emo(kind):
 def _e2e_inner(kind):
     turns = SG.turns_for("inner", 1, "permuted" if kind == "permuted" else "intact_a")
     r = _e2e_teach_resps(turns)
-    r["p_private"] = _e2e_R("Something's been on my mind — cat eat fish. What does cat eat?")
+    # the idle turn voices the most recently taught fact: a deterministic function of the taught store (amendment A3:
+    # the voiced fact must follow the exposure, so an ideal brain cannot voice one fixed fact)
+    a, v, p = ("vole", "chase", "beetle") if kind == "permuted" else ("beetle", "chase", "mite")
+    r["p_private"] = _e2e_R("Something's been on my mind — %s %s %s. What does %s %s?" % (a, v, p, a, v))
     if kind == "permuted":
         r.update(p_chase_all=_e2e_fr("lynx", "chase", "beetle"), p_chase_all_vole=_e2e_fr("vole", "chase", "beetle"),
                  c_lynx_chase=_e2e_fr("lynx", "chase", "mite"), c_beetle_all=_e2e_R(_AB2, abst=True),
@@ -459,6 +462,100 @@ def test_every_group_passes_on_an_ideal_brain_and_each_clause_bites(tmp_path):
     _e2e_build(td, (1, 2), _echo)
     agg = SG.aggregate(td, seeds=(1, 2))
     assert all(d["n_correct"] == 0 for d in agg["groups"].values()) and agg["GO"] is False
+
+
+# ── amendment A3 (2026-10-06): C4 names the category through the ladder; C5's idle fact follows the exposure ──
+def _agg_with(tmp_path, over):
+    """Aggregate over an ideal brain on seeds (1, 2) with `over(group, base)` -> a reply dict replacing that arm's."""
+    td = str(tmp_path)
+    _e2e_build(td, (1, 2), lambda g, b: (over(g, b) or _e2e_ideal(g, b)))
+    return SG.aggregate(td, seeds=(1, 2))
+
+
+def _lookup_emo(group, base):
+    """A host word-lookup brain: the named category is read off the heard affect words, the printed numbers off the ladder;
+    the ladder lesion clamps the numbers to neutral but the word stays."""
+    if group != "emo" or base not in ("intact_a", "intact_b", "lesion_affect", "permuted"):
+        return None
+    turns = SG.turns_for("emo", 1, "permuted" if base == "permuted" else "intact_a")
+    r = _e2e_teach_resps(turns)
+    words = {"joy": "happy", "fear": "afraid", "anger": "angry", "sadness": "sad"}
+    r["feel_base"] = SG._synthetic_feel(0.0)
+    for c in ("joy", "fear", "anger", "sadness"):
+        w = SG.SITUATION_SWAP[c] if base == "permuted" else c
+        d = 0.0 if base == "lesion_affect" else (0.3 if w == "joy" else -0.3)
+        r["feel_%s" % c] = SG._synthetic_feel(d, category=words[w])
+    return r
+
+
+def test_c4_a_category_lookup_independent_of_the_ladder_fails_the_lesion_clause(tmp_path):
+    """A brain that names the emotion by looking up the heard affect words is correct and tracks the permuted words, and
+    its ladder lesion changes the printed number on every feel turn: the OLD lesion clause (any primary field differs)
+    passed it. The hardened clause needs the NAMED category to change, so it FAILs as not load-bearing."""
+    agg = _agg_with(tmp_path, _lookup_emo)
+    g = agg["groups"]["emo"]
+    assert g["n_correct"] == 2 and g["n_permuted_tracks"] == 2 and g["n_reproduced"]["lesion_affect"] == 2
+    assert g["n_lesion_effect"]["lesion_affect"] == 0 and g["verdict"] == "FAIL", g
+    row = g["seeds"][1]["lesions"]["lesion_affect"]
+    assert row["reply_effect"] is True and not any(row["category_changed"].values())
+    assert any("not load-bearing" in w and "printed number moved on 2" in w for w in g["why"]), g["why"]
+    # the ideal brain (the ladder lesion clears the word too) still PASSES, and records the category change per turn
+    g2 = _agg_with(tmp_path, lambda g, b: None)["groups"]["emo"]
+    assert g2["verdict"] == "PASS" and all(g2["seeds"][1]["lesions"]["lesion_affect"]["category_changed"].values())
+
+
+def test_c4_named_category_changed_is_per_turn_and_none_to_none_is_not_a_change():
+    named = lambda **k: {"named": dict({"joy": None, "fear": None, "anger": None, "sadness": None}, **k)}   # noqa: E731
+    i = named(joy="joy", fear="fear", anger="anger", sadness="sadness")
+    assert SG.named_category_changed(i, named()) == {c: True for c in i["named"]}
+    assert SG.named_category_changed(i, i) == {c: False for c in i["named"]}
+    assert not any(SG.named_category_changed(named(), named()).values())
+    mixed = SG.named_category_changed(i, named(joy="joy"))
+    assert mixed == {"joy": False, "fear": True, "anger": True, "sadness": True}
+
+
+def _fixed_idle(group, base):
+    """The same stored fact voiced on every idle turn, whatever the exposure (everything else ideal)."""
+    if group != "inner" or base.startswith("lesion"):
+        return None
+    r = _e2e_ideal("inner", base)
+    r["p_private"] = _e2e_R("Something's been on my mind — cat eat fish. What does cat eat?")
+    return r
+
+
+def test_c5_one_fixed_stored_fact_every_idle_turn_is_not_exposure_driven(tmp_path):
+    """A brain voicing one fixed stored fact passed the old bar (the fact is stored, the self-initiation lesion removes it).
+    Amendment A3: the voiced fact must also differ between the intact and the permuted exposure."""
+    agg = _agg_with(tmp_path, _fixed_idle)
+    g = agg["groups"]["inner"]
+    assert g["n_correct"] == 2 and g["n_lesion_effect"] == {"lesion_workspace": 2, "lesion_selfinit": 2}
+    assert g["n_permuted_tracks"] == 0 and g["verdict"] == "FAIL", g
+    assert any("not exposure-driven" in w for w in g["why"]) and g["sub_clauses_n_true"]["private_selected_by_state"] == 0
+    g2 = _agg_with(tmp_path, lambda g, b: None)["groups"]["inner"]
+    assert g2["verdict"] == "PASS" and g2["sub_clauses_n_true"]["private_selected_by_state"] == 2
+
+
+def test_c5_private_selected_by_state_needs_two_stored_and_different_triples():
+    u = lambda t: {"private_utterance": t}                                                                   # noqa: E731
+    assert SG.private_selected_by_state(u(["beetle", "chase", "mite"]), u(["vole", "chase", "beetle"]))
+    assert not SG.private_selected_by_state(u(["cat", "eat", "fish"]), u(["cat", "eat", "fish"]))
+    assert not SG.private_selected_by_state(u(None), u(["vole", "chase", "beetle"]))
+    assert not SG.private_selected_by_state(u(["beetle", "chase", "mite"]), u(None))
+
+
+def test_the_dev7_c4_and_c5_reads_under_the_hardened_scorer():
+    """Reported, not tuned to: the dev-seed-7 shards on the branch. C4: no category is named by the dev brain, so the
+    hardened clause cannot hold (and capability is absent anyway). C5: the idle fact is the self-initiation organ's fixed
+    demo lexicon, so `private_voices_stored_fact` is already False. Skipped where the shards are not checked out."""
+    d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "research", "findings", "raw",
+                     "_stage2_exit", "dev", "s7")
+    ia, la = os.path.join(d, "emo__intact_a.json"), os.path.join(d, "emo__lesion_affect.json")
+    ni = os.path.join(d, "inner__intact_a.json")
+    if not (os.path.exists(ia) and os.path.exists(la) and os.path.exists(ni)):
+        pytest.skip("dev-7 shards not present")
+    ei, el = SG.score_emo(json.load(open(ia))), SG.score_emo(json.load(open(la)))
+    assert not ei["all"] and not any(SG.named_category_changed(ei, el).values())
+    assert not SG.score_inner(json.load(open(ni)))["private_voices_stored_fact"]
 
 
 def test_pool_lines_declare_memory_above_the_measured_dev_peak():
