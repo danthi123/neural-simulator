@@ -87,8 +87,9 @@ lenses. Re-score: this review's aggregate equals a first independent scoring fie
 Caveats that travel with the word PASS:
 1. **This is the wiring's prereg, not Stage-1's C1 as frozen.** The Stage-1 prereg counts `lesion_draw`, which does
    not engage on this route. Under Amendment A1's rule (a no-effect lesion with no engagement record is UNDEFINED),
-   Stage-1 attempt 2 would read C1 UNDEFINED unless an amendment, registered before any attempt-2 data, counts the
-   responsible faculty's lesion (`lesion_inherit`). Text: `docs/drafts/stage1-c1-inheritance/ATTEMPT2-C1-AMENDMENT-TEXT.md`.
+   Stage-1 attempt 2 would read C1 UNDEFINED unless Amendment A2, registered before any attempt-2 data, counts the
+   pathway cut (`lesion_pathway`, patch `lesion_inherit_pathway`; RULING stage1-c1-lesion). Text:
+   `docs/drafts/stage1-c1-inheritance/ATTEMPT2-C1-AMENDMENT-TEXT.md`.
 2. **One deterministic outcome replicated on six substrates.** OU noise is off and seeds vary only per-neuron
    heterogeneity; the null and the repeat can only read zero differences. The organ was tuned on dev seeds 1-8 with
    this same script.
@@ -120,4 +121,4 @@ amendment and attempt 2.
 
 Ledger wording: `Stage-1 C1 with the category-inheritance wiring ON (default off), 09-30 stack, numpy: PASS 6/6 (reply
 level; organ lesion load-bearing and reproduced; permuted exposure tracked; answer host-admitted, spiking-selected;
-standalone organ). Not yet a Stage-1 pass: attempt 2 needs the flip and a C1 lesion-arm amendment.`
+standalone organ). Not yet a Stage-1 pass: attempt 2 needs the flip and Amendment A2's C1 lesion arm (lesion_pathway).`
