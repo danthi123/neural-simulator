@@ -1001,3 +1001,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-06 16:09 [iw1-sync] STOP: iw1 pre-FF check: 526/529 uncommitted files byte-identical to claude-review/iw1 (copy_results.sh too); R_{d6,swm,wmf}.json differ - local pre-rescore vs branch re-scored (PASS both, branch adds preconditions). Clear stale verdicts then FF? blocks: T8 FF.
