@@ -189,6 +189,12 @@ preregistration; none is built before A2's step O.
   a seed with probability 0.1, the step reads PASS 0.508 (the rest UNDEFINED, by the existing null-noise rule).
   The specs call the real decision code; the reply spec replaces only the shard-validity reader (`judge_dir`).
 
+**Dev smoke of the R probe (organ level, dev seeds 1-8, no handler).** An organ trained on the tiny-demo brain's five
+build facts (`_build_tiny_demo`: brain use spikes / learn words / store memory, dog chase cat, cat eat fish) at row 0:
+[brain, usually, use] -> (brain, use) on 8/8 with an invariant read; [brain, usually, drink] -> (brain, None) on 8/8
+(declines); the commit lesion -> (None, None) on 8/8; the count organ at GRID 0 gives (brain, use) on 8/8. This
+assumes the handler's fact index at the probe is those five facts; step R measures the real one.
+
 ## 6. What A1 will not show
 
 That the stage is learned (it is wired); that the role layer is better (the commit reads it, it does not improve
