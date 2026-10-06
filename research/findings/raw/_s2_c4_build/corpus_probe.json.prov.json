@@ -1,0 +1,27 @@
+{
+ "run_id": "1791321975-2654472",
+ "runner": "research/runners/_emotion_category_corpus_probe.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt/research/runners/_emotion_category_corpus_probe.py",
+  "--out",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt/research/findings/raw/_s2_c4_build/corpus_probe.json"
+ ],
+ "git_sha": "b6711066e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-06T17:26:15",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 546092.4,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_s2_c4_build/corpus_probe.json"
+}

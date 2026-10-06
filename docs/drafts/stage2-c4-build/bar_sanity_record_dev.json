@@ -1,0 +1,87 @@
+{
+ "backend": "numpy",
+ "description": "Organ-level dev bar for the emotion-category organ: all ten cases right on dev seeds 1-8. Nulls include the host lexicon lookup and the ladder-gated lookup that the Stage-2 reply-level bar cannot separate.",
+ "failures": [],
+ "kinds": {
+  "info_one_flaky_case": "info",
+  "null_host_argmax": "null",
+  "null_host_lookup": "null",
+  "null_lesion_inert": "null",
+  "null_lookup_gated_by_ladder": "null",
+  "null_no_hold": "null",
+  "perfect": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_one_flaky_case": 710,
+  "null_host_argmax": 0,
+  "null_host_lookup": 0,
+  "null_lesion_inert": 0,
+  "null_lookup_gated_by_ladder": 0,
+  "null_no_hold": 0,
+  "perfect": 1000,
+  "random": 0
+ },
+ "name": "s2-c4-build dev battery",
+ "pass_rate": {
+  "info_one_flaky_case": 0.71,
+  "null_host_argmax": 0.0,
+  "null_host_lookup": 0.0,
+  "null_lesion_inert": 0.0,
+  "null_lookup_gated_by_ladder": 0.0,
+  "null_no_hold": 0.0,
+  "perfect": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_one_flaky_case": [
+   0.6811,
+   0.7373
+  ],
+  "null_host_argmax": [
+   0.0,
+   0.0038
+  ],
+  "null_host_lookup": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lookup_gated_by_ladder": [
+   0.0,
+   0.0038
+  ],
+  "null_no_hold": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "b6711066e70ed4da70e2b6b681c50377bd6e5e70",
+ "scorer_files": {
+  "research/runners/emotion_category_dev.py": "77a66bbeb17a1f70be50abbeffafbd75c78577f75dc8bc761db01875f819194a"
+ },
+ "scorer_sha256": "86acfbb51084746ee20ce0ffeb4a9bda2001b29c53e18383d7cc9fdc34b92e1a",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-c4-build/bar_sanity_spec_dev.py",
+ "spec_sha256": "fec4f13ceb6573064717e9eb250676909a184cf280650121a0e221bf54b03755",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 1.2
+}
