@@ -992,4 +992,3 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-06 14:41 [s1-c4-control] RESULT: Built on research/stage1-exit-gate bc8f804b9: rejection-sampled scramble (|r|<=0.10; perm+scrambled_r+within_sign_r recorded), 12/12 tests. For your review before attempt 2.
