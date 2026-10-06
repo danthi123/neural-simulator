@@ -983,3 +983,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-06 00:44 [word-role-parse] RESULT: 2026-10-06: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md (PROVISIONAL; verify-go 2/2 SURVIVES; data 99906f6fc).
 - 2026-10-06 00:44 [word-role-parse] ASK: O PASS + R PASS at research/word-role-parse @ d2f261271; confirm + merge; unblocks P4 (s2p-flip)
 - 2026-10-06 01:48 [ldc-provision] INFO: provisioning refused research/draft-ldc-outcome-timing (stale: lacks published main 290e3be3f08f; main changed >docs): needs merge/rebase - reserved, cf [T1] 10-04. main half: re-pinned, provision ok.
+- 2026-10-06 03:41 [fb-store] RESULT: score @290e3be3f: STORE-NOT-LOAD-BEARING 6/6 DEFINED, 0/6 reply change, store_lesioned True (flag-level). Probe-scoped: reply carried by host-gated write; next = simulated-time probe (T18/T21), not a NO-GO. Prereg 5 prediction matched; delegate CONFIRM.

@@ -44,3 +44,28 @@
   `python tools/fb_store_score.py --tag fbstore-290e3be --pin 290e3be3f08f0a0ebe7a364eed3410093ae9f5a0 --out
   research/findings/raw/_fb_store/verdict.json`, one re-run per not-DEFINED cell, then NEEDS-CLAUDE
   "[fb-store] RESULT".
+
+## 2026-10-06 03:27-03:4x — SCORED: STORE-NOT-LOAD-BEARING (6/6 DEFINED)
+
+- All six gate cells landed (s42 02:32, s43 02:42, s44 02:5x, s100/s101/s102 by ~03:45); no not-DEFINED cell, so
+  no re-run was due (prereg section 3). Scored once:
+  `python tools/fb_store_score.py --tag fbstore-290e3be --pin 290e3be3f08f0a0ebe7a364eed3410093ae9f5a0 --out
+  research/findings/raw/_fb_store/verdict.json` -> rc 0, {"verdict": "STORE-NOT-LOAD-BEARING", "n_defined": 6,
+  "n_reply_load_bearing": 0}; every seed DEFINED, load_bearing false, lesion_abstained false, engagement
+  "store_lesioned", intact_answer == lesion_answer ("Sally will look in the basket for the marble.");
+  precondition "cells DEFINED on 6/6 seeds" ok (measured=6 expect=6). Data + prov sidecar committed 3a48d7aa1.
+- Engagement evidence on the GATE seeds is FLAG-LEVEL: each lesion cell records
+  `false_belief_tom/store_lesioned = True` (env-flag echo at measurement); these cells carry no numeric
+  belief_rates, so the order-of-magnitude late-window rate drop was shown on dev seeds 7-9 only. Label any
+  report of gate engagement as flag-level.
+- Prereg section 4's fixed reading row (mandated reporting, verbatim): "STORE-NOT-LOAD-BEARING (0 of 6 DEFINED
+  seeds change the reply) | The store's attractor is not necessary on the immediate-question probe; the reply is
+  carried by the host-gated write. Every load-bearing-fraction report lists `tom-false-belief` as a host-input
+  lesion. Next method: a probe with simulated time between narration and question (the companion process this
+  probe replaced with zero), on T18/T21." -> accordingly: this report lists tom-false-belief as a HOST-INPUT
+  lesion (host-gated write carries the reply here).
+- One MiMo Pro delegate (RULING models) reviewed prereg + verdict: CONFIRM, with caveats now folded in: (1)
+  probe-scoped negative at REPLY level on the immediate-question probe, never "the store is not load-bearing" in
+  general (dev 7-9 show the cut does move store dynamics); a method verdict, not a NO-GO (prereg section 5); (2)
+  the two mandated items above (host-gated write; tom-false-belief host-input listing); (3) gate engagement =
+  flag-level (this WORKLOG entry). NEEDS [fb-store] RESULT filed.
