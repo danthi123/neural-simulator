@@ -12,6 +12,21 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-06 — Stage 1 after the re-runs: words and lived memory pass, categories fail, the feeling test fails on a flawed control
+
+**The two re-run Stage-1 tests are read.** **Remembering a lived event** now passes on all six seeds with a working
+switch-off: cutting the memory read removes the answer, cutting the episode gate removes "we discussed the wolf",
+and each leaves the other answer alone. Host code still picks which stored fact is read, so the credit is partial.
+**The feeling test** re-ran with the brain's learned feeling values on the pool machines and fails as registered.
+Held-out feeling words track human ratings and switching off the feeling pathway silences them. The test also
+scrambles the learned values, and the brain's replies follow the scrambled values closely on every seed. But the
+registered rule asked the scrambled run to look unlike human ratings on all six seeds, and on two seeds the scramble
+happened to resemble them. A brain that follows its learned values exactly would fail that rule about half the time,
+so the next attempt needs a better-designed control, registered before it runs. **Category inheritance** still
+fails; its second measurement, with the new inheritance wiring on, is 52 of 54 runs done. **Stage 1 is not passed.**
+The audit of results run without the learned values voids only the first feeling test. Results that cut the feeling
+pathway on the pool stand, but they measured dictionary values, not learned ones.
+
 ## 2026-10-05 — three chat abilities are now on by default, each with a narrower claim than first written
 
 **On by default:** tracking another person's false belief, answering "does A come before D?" across a chain of facts,
