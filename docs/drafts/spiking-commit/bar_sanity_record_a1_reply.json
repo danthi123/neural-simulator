@@ -1,0 +1,83 @@
+{
+ "backend": "numpy",
+ "description": "Synthetic reply arms -> the real s2p_score.score_R cell rules (S2, intact content, lesion-kept, control, engagement); shard-validity layer (judge_dir) replaced by a reader of the same files.",
+ "failures": [],
+ "kinds": {
+  "info_null_noise": "info",
+  "null_confab_control": "null",
+  "null_lesion_inert": "null",
+  "null_unengaged": "null",
+  "null_wrong_content": "null",
+  "perfect": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_null_noise": 508,
+  "null_confab_control": 0,
+  "null_lesion_inert": 0,
+  "null_unengaged": 0,
+  "null_wrong_content": 0,
+  "perfect": 1000,
+  "random": 1
+ },
+ "name": "word-role-commit step R (reply-level load-bearing + control, 6/6 gate seeds)",
+ "pass_rate": {
+  "info_null_noise": 0.508,
+  "null_confab_control": 0.0,
+  "null_lesion_inert": 0.0,
+  "null_unengaged": 0.0,
+  "null_wrong_content": 0.0,
+  "perfect": 1.0,
+  "random": 0.001
+ },
+ "pass_rate_ci95": {
+  "info_null_noise": [
+   0.477,
+   0.5389
+  ],
+  "null_confab_control": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_unengaged": [
+   0.0,
+   0.0038
+  ],
+  "null_wrong_content": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0002,
+   0.0056
+  ]
+ },
+ "repo_head": "eee74b9d7e4cda3b78ce531a3401cd4d63dc2bb1",
+ "scorer_files": {
+  "docs/drafts/spiking-commit/bar_sanity_spec_a1_reply.py": "fb7235c2f1884e7143071fc3cef06eb5c4088daff78a058382c14eda8ba6fa50",
+  "tools/b2d_score.py": "5b8234f77ae623d1be6c939be1d9ce3b759c21bdf270a54d0d9d8b4aff1ddb68",
+  "tools/iw2_score.py": "4284949d7a1ff281fb5644a394fa4d7d4d0a2c7c6b0846a7655097a093c935ed",
+  "tools/s2p_score.py": "6e16e311780d91967e7b26af2d725dc52dd433f605c86fcc78f6f3f3fd597616"
+ },
+ "scorer_sha256": "db38bdaab935d3f0212fe3ed7ff6aa55a0964f087d88db978f75f9f2880a6821",
+ "seed": 0,
+ "spec": "docs/drafts/spiking-commit/bar_sanity_spec_a1_reply.py",
+ "spec_sha256": "fb7235c2f1884e7143071fc3cef06eb5c4088daff78a058382c14eda8ba6fa50",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 48.9
+}

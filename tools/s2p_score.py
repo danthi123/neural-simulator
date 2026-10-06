@@ -5,6 +5,7 @@ Packets (each has its own prereg and HANDOFF; this file holds the registered cop
   fb-spiking-witness       research/findings/2026-10-01-fb-spiking-witness-PREREGISTRATION.md
   transitive-spiking-reach research/findings/2026-10-01-transitive-spiking-reach-PREREGISTRATION.md
   word-role-parse          research/findings/2026-10-01-word-role-parse-PREREGISTRATION.md
+  word-role-commit         research/findings/2026-10-06-word-role-commit-PREREGISTRATION.md
 
 Steps:
   select  dev-seed operating point: the FIRST index of the organ's GRID (grid order) whose battery `all_pass` is
@@ -83,6 +84,19 @@ PACKETS = {
         # before the trace existed (s2p-R-wr-9ea7411) re-scores UNDEFINED:engagement-no-record; its confirmed PASS
         # stands with the inferred-engagement caveat in research/findings/2026-10-06-word-role-parse-gate.md.
         "engagement": {"trace_key": "word_role_trace", "route": "word_role"}},
+    "word-role-commit": {
+        # Packet word-role-commit (docs/drafts/spiking-commit/PLAN.md, application A1): the word-role parse decided by
+        # the organ's spiking commit stage (COMMIT_GRID, 6 rows) instead of the host ROLE_MIN / margin / argmax read.
+        # The lesion cuts only role -> commit gate, so engagement reads `commit_lesioned`, not the word -> role flag.
+        "prereg": "research/findings/2026-10-06-word-role-commit-PREREGISTRATION.md",
+        "organ": "word_role_commit", "grid_len": 6,
+        "row": "word-role-commit-selfid", "shard_dir": "word-role-commit-selfid",
+        "flags": ["BRAIN_NEURAL_SELFID", "BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"],
+        "op_env": "BRAIN_WORD_ROLE_COMMIT_OP", "lesion_flags": ["BRAIN_WORD_ROLE_COMMIT_LESION"],
+        "probe_message": "what do you usually use?", "intact_must_contain": ["spikes"], "intact_must_not_contain": [],
+        "control": {"row": "word-role-commit-nofact-ctl", "shard_dir": "word-role-commit-nofact-ctl",
+                    "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True},
+        "engagement": {"trace_key": "word_role_trace", "route": "word_role_commit", "lesion_key": "commit_lesioned"}},
 }
 
 
@@ -210,9 +224,10 @@ def score_R(packet, tag, pin, selection, base=I.BASE, seeds=GATE_SEEDS, at_defau
 
 
 def engagement_state(d, eng):
-    """None when every arm file in shard dir `d` records engagement per `eng` ({"trace_key", "route"}): the last turn
-    body carrying `trace_key` reads that route with no error, `lesioned` True in lesion arms and False in intact
-    arms. Otherwise a short reason (the cell then reads UNDEFINED:engagement-<reason>)."""
+    """None when every arm file in shard dir `d` records engagement per `eng` ({"trace_key", "route"[, "lesion_key"]}):
+    the last turn body carrying `trace_key` reads that route with no error, and its lesion record (`lesion_key`,
+    default `lesioned`) is True in lesion arms and False in intact arms. Otherwise a short reason (the cell then reads
+    UNDEFINED:engagement-<reason>)."""
     arms = sorted(p for p in glob.glob(os.path.join(d, "*.json*"))
                   if not p.endswith(".prov.json") and os.path.basename(p) != "lb.json")
     if not arms:
@@ -231,7 +246,7 @@ def engagement_state(d, eng):
             return "error:%s" % name
         if t.get("route") != eng["route"]:
             return "route-%s:%s" % (t.get("route"), name)
-        if bool(t.get("lesioned")) != is_lesion:
+        if bool(t.get(eng.get("lesion_key", "lesioned"))) != is_lesion:
             return "lesion-flag:%s" % name
     return None
 

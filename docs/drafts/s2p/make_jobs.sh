@@ -8,7 +8,7 @@
 #   bash docs/drafts/s2p/make_jobs.sh <packet> O     <PIN> <OP>   # 6 lines: gate seeds, the selected index
 #   bash docs/drafts/s2p/make_jobs.sh <packet> R     <PIN> <OP>   # 12 lines: LB shards, capability + control row
 #
-# <packet> is fb-spiking-witness | transitive-spiking-reach | word-role-parse. Writes docs/drafts/<packet>/jobs/
+# <packet> is fb-spiking-witness | transitive-spiking-reach | word-role-parse | word-role-commit. Writes docs/drafts/<packet>/jobs/
 # <step>_<pin7>.txt (S2P_JOBS_OUTD overrides, for tests) and prints its path and line count. Memory: organ lines need
 # 2 GB (measured peak well under 1 GB on dev seeds), capped at 4; LB shards as integration wave 2 (need 8, cap 12).
 set -euo pipefail
@@ -32,6 +32,11 @@ case "$PKT" in
     ROWS="word-role-selfid word-role-nofact-ctl"
     ENV="BRAIN_NEURAL_SELFID=1 BRAIN_WORD_ROLE_PARSE=1 BRAIN_WORD_ROLE_OP=$OP"
     PREREG=research/findings/2026-10-01-word-role-parse-PREREGISTRATION.md ;;
+  word-role-commit)
+    MOD=research.runners.word_role_commit_organ; T=wc
+    ROWS="word-role-commit-selfid word-role-commit-nofact-ctl"
+    ENV="BRAIN_NEURAL_SELFID=1 BRAIN_WORD_ROLE_PARSE=1 BRAIN_WORD_ROLE_COMMIT=1 BRAIN_WORD_ROLE_COMMIT_OP=$OP"
+    PREREG=research/findings/2026-10-06-word-role-commit-PREREGISTRATION.md ;;
   *) echo "make_jobs: unknown packet $PKT" >&2; exit 2 ;;
 esac
 HEAD="$(git rev-parse HEAD)"
