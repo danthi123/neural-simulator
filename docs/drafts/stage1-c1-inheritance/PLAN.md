@@ -21,7 +21,7 @@ branch. Its build step is therefore retired; its controls survive in the 09-30 p
 **Will the registered C1 bar plausibly pass at attempt 2?** Yes for correctness, permutation and the null, if the
 flipped stack reproduces the 09-30 numbers. **No for the lesion clause as frozen**: the Stage-1 prereg counts
 `lesion_draw`, which does not engage on this route, so under Amendment A1's engagement rule C1 would read UNDEFINED.
-The 10-04 plan did not address this; it is step D below.
+The bar-sanity sweep confirmed it (`docs/drafts/stage1-exit/bar_sanity_record_s1_c1_registered.json`: UNREACHABLE for this route). It is step D below (RULING stage1-c1-lesion).
 
 ## 2. The method stays: rung-3c with integrative encoding (no new mechanism needed for the bar)
 
@@ -36,7 +36,7 @@ host category, no host fact lookup. Its residuals are named in section 5 and are
 
 **A. Land the record (this branch).** Merge of `research/stage1-c1-category` (the organ, wiring, runner, prereg,
 tests; default off), the scored aggregate, the RESULT finding, this plan, the flip dev check
-(`research/runners/c1_flip_dev_check.py`, tests, bar-sanity record). Hermes commits the 52 untracked gate shards in
+(`research/runners/c1_flip_dev_check.py`, tests, bar-sanity record), the `lesion_inherit_pathway` patch for A2 (merged with `claude-review/stage-bar-sanity-s1`, whose C1 record is refreshed here). Hermes commits the 52 untracked gate shards in
 the primary checkout (HANDOFF step 1); they are not on this branch because the merge would collide with them.
 
 **B. Flip dev check (Hermes, pool, dev seeds 1-8; HANDOFF steps 2-5).** On the merged stack, through the real
@@ -52,11 +52,15 @@ On a flip branch: `_CATEGORY_INHERIT_DEFAULT_ON = True`, the explicit `BRAIN_CAT
 byte-identical to today's default, tests updated, and the wiring's own C1 gate re-run at the flip revision is NOT
 needed (attempt 2 measures it at the gate seeds).
 
-**D. Attempt-2 C1 amendment (Claude, before any attempt-2 data).** Fold
-`ATTEMPT2-C1-AMENDMENT-TEXT.md` into the attempt-2 amendment (with the C4 control of RULING stage1-sync): for
-`cat_disc` and `cat_told` the counted lesion becomes `lesion_inherit` (`BRAIN_CATEGORY_INHERIT_LESION=1`, engaged
-only if the direct-probe read records `lesion: all` and `lesion_held: true`), `lesion_draw` becomes informational,
-and the runner (`research/runners/stage1_exit_gate.py`) gains that arm and its engagement check. The bar is unchanged.
+**D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion).** Fold
+`ATTEMPT2-C1-AMENDMENT-TEXT.md` into A2 (with the C4 control of RULING stage1-sync): for `cat_disc` and `cat_told` the
+counted lesion becomes `lesion_pathway`, the patch `lesion_inherit_pathway` (every organ read with both learned
+pathways cut; applied = calls > 0; the read trace also records `lesion: all`, `lesion_held: true`), and `lesion_draw`
+becomes informational. The bar is unchanged. The patch is already on this branch with a CPU test; A2 only swaps the
+GROUPS entry. A2's `bar-sanity:` line cites `docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json`
+(OK; re-run in A2's commit because A2 edits a scorer file). That spec's `pathway` brain is this route as measured:
+flagged worm on the direct probe, generative abstains, `lesion_pathway` abstains, `lesion_draw` changes nothing,
+permuted names bug. No different route, so no new spec.
 
 **E. Attempt 2** at the flip revision, all groups, per RULING stage1-calendar (no later than the Stage-2 window
 11-03..11-10, co-scheduled with it).
