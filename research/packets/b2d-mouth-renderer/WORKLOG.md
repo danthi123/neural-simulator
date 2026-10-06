@@ -117,3 +117,21 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   evaluable from this host: the block's env.sh paths are S-side and `gpu_remote.sh log 400` hangs over ssh here
   (guarded 15 s call returned empty twice); local gpu.queue mouth lines = 0, local gpu_queue idle. Per the handled
   [T23] row the S-side paused arm resumes per RULING game-mode-pauses; not touched from here.
+
+## 2026-10-06 09:5x EDT - T23 step 4 scored, step 6 landed (driver: Hermes)
+
+- Step 0 preconditions: uncommitted code none, prereg-ok, job file 18/18 pin refs, corpus hash matches
+  CORPUS_SHA. The "mouth lb.json > 0" STOP row fired (18 present) but its parenthetical ("nothing was ever
+  queued") is stale: this driver queued the registered 18/18 on 2026-10-04 per RULING b2d-mouth-gpu (runbook
+  06:45 line); the arm has since completed on W. JUDGMENT (marked): treated the row as consumed at that
+  queueing, and took step 4's own first trigger ("18 lb.json are in $P") as the governing state.
+- Step 4 score (`tools/b2d_mouth_score.py`, run per HANDOFF; `| head -60` caused a BrokenPipeError on the
+  scorer's final print - harmless, the JSON was already written; the printed `rc=0` is head's):
+  verdict **COMPLETE**, preconditions empty, rerun_cells empty -> step 6.
+  18 cells: 17 MOUTH-SILENT, 1 DEFINED (s*/affect-drives-response); totals n_defined 1,
+  n_reply_load_bearing 0, n_reply_exercised 1, n_mouth_silent 17, n_fail 0; qwen_calls total 4.
+  per_row: affect-coloring MOUTH-SILENT, affect-appraisal-interoceptive MOUTH-SILENT,
+  affect-drives-response MIXED. Matches A1.3's registered pre-run prediction (MOUTH-SILENT on most cells).
+- Step 6 substitutions (rsync absent on S): `cp -a` byte copy; git add done per-existing-pathspec (the
+  never-rerun `b2d_mouth_reruns.tsv` and `_b2d0929_attempt1/` do not exist, and a missing pathspec would
+  abort the whole add). Data + b2d_mouth_score.json committed on the packet branch with the Agent trailer.

@@ -1,0 +1,989 @@
+{
+ "tag": "b2d0929-mouth",
+ "pin": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "rows": [
+  "affect-coloring",
+  "affect-appraisal-interoceptive",
+  "affect-drives-response"
+ ],
+ "renderer_required": "off-bridge Qwen-0.5B (spiking forward)",
+ "backend": "cupy",
+ "cells": {
+  "s42/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s42/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "pass",
+    "load_bearing": false,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": []
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 42,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s43/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s43/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     },
+     {
+      "field": "affect.tone_token",
+      "on": "gladly",
+      "off": ""
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 43,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s44/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s44/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     },
+     {
+      "field": "affect.tone_token",
+      "on": "gladly",
+      "off": ""
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 44,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s100/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s100/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     },
+     {
+      "field": "affect.tone_token",
+      "on": "gladly",
+      "off": ""
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 100,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s101/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s101/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     },
+     {
+      "field": "affect.tone_token",
+      "on": "gladly",
+      "off": ""
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 101,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s102/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s102/affect-coloring",
+   "faculty": "affect-coloring",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "pass",
+    "load_bearing": false,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": []
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 102,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s42/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s42/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "pass",
+    "load_bearing": false,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": []
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 42,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s43/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s43/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 43,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s44/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s44/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 44,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s100/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s100/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 100,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s101/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s101/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect.valence_sign",
+      "on": "+",
+      "off": "0"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 101,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s102/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s102/affect-appraisal-interoceptive",
+   "faculty": "affect-appraisal-interoceptive",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "emo",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "pass",
+    "load_bearing": false,
+    "turn": "emo",
+    "null_control_clean": true,
+    "diffs": []
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 102,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s42/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s42/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 42,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s43/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s43/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 43,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s44/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s44/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 44,
+   "stub": {
+    "class": null,
+    "s2": "pass"
+   }
+  },
+  "s100/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s100/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "DEFINED",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 1,
+    "intact_b": 1,
+    "lesion": 1,
+    "lesion.rep0": 1
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "s2": [
+    "pass",
+    {
+     "turn": "well",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [],
+     "answer_only": false
+    }
+   ],
+   "final": "DEFINED",
+   "seed": 100,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s101/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s101/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 101,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  },
+  "s102/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929-mouth/s102/affect-drives-response",
+   "faculty": "affect-drives-response",
+   "fails": [],
+   "state": "MOUTH-SILENT",
+   "host": "dant123-wk",
+   "turn": "well",
+   "arms_present": [
+    "intact_a",
+    "intact_b",
+    "lesion",
+    "lesion.rep0"
+   ],
+   "renderer": {
+    "intact_a": "off-bridge Qwen-0.5B (spiking forward)",
+    "intact_b": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion": "off-bridge Qwen-0.5B (spiking forward)",
+    "lesion.rep0": "off-bridge Qwen-0.5B (spiking forward)"
+   },
+   "qwen_calls": {
+    "intact_a": 0,
+    "intact_b": 0,
+    "lesion": 0,
+    "lesion.rep0": 0
+   },
+   "source": {
+    "intact_a": "tiny-demo +LTM",
+    "intact_b": "tiny-demo +LTM",
+    "lesion": "tiny-demo +LTM",
+    "lesion.rep0": "tiny-demo +LTM"
+   },
+   "lb": {
+    "verdict": "regressed",
+    "load_bearing": true,
+    "turn": "well",
+    "null_control_clean": true,
+    "diffs": [
+     {
+      "field": "affect_drives.reason",
+      "on": "neutral_hold",
+      "off": "lesion_collapsed"
+     }
+    ]
+   },
+   "final": "MOUTH-SILENT",
+   "seed": 102,
+   "stub": {
+    "class": "E",
+    "s2": null
+   }
+  }
+ },
+ "per_row": {
+  "affect-coloring": {
+   "probe_turn": "emo",
+   "n_defined": 0,
+   "n_reply_load_bearing": 0,
+   "n_reply_exercised": 0,
+   "n_mouth_silent": 6,
+   "n_fail": 0,
+   "not_final": [],
+   "reading": "MOUTH-SILENT"
+  },
+  "affect-appraisal-interoceptive": {
+   "probe_turn": "emo",
+   "n_defined": 0,
+   "n_reply_load_bearing": 0,
+   "n_reply_exercised": 0,
+   "n_mouth_silent": 6,
+   "n_fail": 0,
+   "not_final": [],
+   "reading": "MOUTH-SILENT"
+  },
+  "affect-drives-response": {
+   "probe_turn": "well",
+   "n_defined": 1,
+   "n_reply_load_bearing": 0,
+   "n_reply_exercised": 1,
+   "n_mouth_silent": 5,
+   "n_fail": 0,
+   "not_final": [],
+   "reading": "MIXED"
+  }
+ },
+ "verdict": "COMPLETE",
+ "rerun_cells": [],
+ "preconditions": [
+  {
+   "name": "fields pin == --pin and code-root blobs match",
+   "ok": true,
+   "value": []
+  }
+ ]
+}
