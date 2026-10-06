@@ -1,0 +1,2250 @@
+{
+ "probe": "research/runners/_emotion_category_corpus_probe.py",
+ "categories": [
+  "joy",
+  "fear",
+  "anger",
+  "sadness"
+ ],
+ "A_loo_label_propagation": {
+  "rows": [
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.5192,
+     "fear": 0.336,
+     "anger": 0.4059,
+     "sadness": -0.0491,
+     "permuted_joy": -0.0103,
+     "permuted_fear": 0.2613,
+     "permuted_anger": 0.2736,
+     "permuted_sadness": 0.5027
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7972,
+    "margins": {
+     "joy": 0.2697,
+     "fear": 0.048,
+     "anger": 0.5993,
+     "sadness": -0.0689,
+     "permuted_joy": 0.0372,
+     "permuted_fear": 0.505,
+     "permuted_anger": -0.0463,
+     "permuted_sadness": 0.248
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.723,
+    "margins": {
+     "joy": 0.5604,
+     "fear": 0.3033,
+     "anger": 0.363,
+     "sadness": -0.0547,
+     "permuted_joy": -0.0369,
+     "permuted_fear": 0.1843,
+     "permuted_anger": 0.2563,
+     "permuted_sadness": 0.5412
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7972,
+    "margins": {
+     "joy": 0.3311,
+     "fear": 0.0417,
+     "anger": 0.5523,
+     "sadness": -0.0711,
+     "permuted_joy": 0.0213,
+     "permuted_fear": 0.4081,
+     "permuted_anger": -0.0405,
+     "permuted_sadness": 0.3041
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.5657,
+     "fear": 0.2271,
+     "anger": 0.3372,
+     "sadness": -0.068,
+     "permuted_joy": -0.0353,
+     "permuted_fear": 0.134,
+     "permuted_anger": 0.1741,
+     "permuted_sadness": 0.542
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7615,
+    "margins": {
+     "joy": 0.3444,
+     "fear": 0.0112,
+     "anger": 0.4851,
+     "sadness": -0.0765,
+     "permuted_joy": 0.0025,
+     "permuted_fear": 0.28,
+     "permuted_anger": -0.0694,
+     "permuted_sadness": 0.3155
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.5632,
+     "fear": 0.1972,
+     "anger": 0.3204,
+     "sadness": -0.0749,
+     "permuted_joy": -0.0603,
+     "permuted_fear": 0.0986,
+     "permuted_anger": 0.1571,
+     "permuted_sadness": 0.5387
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7615,
+    "margins": {
+     "joy": 0.3448,
+     "fear": -0.0148,
+     "anger": 0.4531,
+     "sadness": -0.0857,
+     "permuted_joy": -0.0132,
+     "permuted_fear": 0.2314,
+     "permuted_anger": -0.0815,
+     "permuted_sadness": 0.3122
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7587,
+    "margins": {
+     "joy": 0.4804,
+     "fear": 0.0897,
+     "anger": 0.3412,
+     "sadness": -0.0813,
+     "permuted_joy": -0.0644,
+     "permuted_fear": 0.1057,
+     "permuted_anger": 0.0628,
+     "permuted_sadness": 0.4334
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7365,
+    "margins": {
+     "joy": 0.2689,
+     "fear": -0.1202,
+     "anger": 0.4347,
+     "sadness": -0.0999,
+     "permuted_joy": -0.0303,
+     "permuted_fear": 0.2098,
+     "permuted_anger": -0.1664,
+     "permuted_sadness": 0.2302
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7726,
+    "margins": {
+     "joy": 0.4674,
+     "fear": 0.08,
+     "anger": 0.3104,
+     "sadness": -0.0877,
+     "permuted_joy": -0.0791,
+     "permuted_fear": 0.0548,
+     "permuted_anger": 0.0631,
+     "permuted_sadness": 0.4262
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7615,
+    "margins": {
+     "joy": 0.2539,
+     "fear": -0.1253,
+     "anger": 0.3902,
+     "sadness": -0.092,
+     "permuted_joy": -0.0296,
+     "permuted_fear": 0.1499,
+     "permuted_anger": -0.1625,
+     "permuted_sadness": 0.2139
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.704,
+    "margins": {
+     "joy": 0.6569,
+     "fear": 0.3175,
+     "anger": 0.4111,
+     "sadness": -0.1114,
+     "permuted_joy": -0.0937,
+     "permuted_fear": 0.2448,
+     "permuted_anger": 0.2773,
+     "permuted_sadness": 0.6348
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7258,
+    "margins": {
+     "joy": 0.5309,
+     "fear": 0.1687,
+     "anger": 0.5096,
+     "sadness": -0.0352,
+     "permuted_joy": -0.0133,
+     "permuted_fear": 0.3736,
+     "permuted_anger": 0.1148,
+     "permuted_sadness": 0.4948
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7397,
+    "margins": {
+     "joy": 0.6576,
+     "fear": 0.301,
+     "anger": 0.3884,
+     "sadness": -0.076,
+     "permuted_joy": -0.0642,
+     "permuted_fear": 0.214,
+     "permuted_anger": 0.2706,
+     "permuted_sadness": 0.6328
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7119,
+    "margins": {
+     "joy": 0.5177,
+     "fear": 0.1644,
+     "anger": 0.4814,
+     "sadness": -0.0433,
+     "permuted_joy": 0.0075,
+     "permuted_fear": 0.2991,
+     "permuted_anger": 0.1209,
+     "permuted_sadness": 0.4944
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.6748,
+     "fear": 0.2249,
+     "anger": 0.3332,
+     "sadness": -0.0029,
+     "permuted_joy": 0.015,
+     "permuted_fear": 0.1143,
+     "permuted_anger": 0.2028,
+     "permuted_sadness": 0.6275
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8222,
+    "margins": {
+     "joy": 0.511,
+     "fear": 0.0099,
+     "anger": 0.4756,
+     "sadness": 0.03,
+     "permuted_joy": 0.1139,
+     "permuted_fear": 0.2739,
+     "permuted_anger": -0.0286,
+     "permuted_sadness": 0.4423
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.6704,
+     "fear": 0.2149,
+     "anger": 0.3156,
+     "sadness": -0.0261,
+     "permuted_joy": -0.0131,
+     "permuted_fear": 0.0871,
+     "permuted_anger": 0.2003,
+     "permuted_sadness": 0.6275
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7865,
+    "margins": {
+     "joy": 0.4965,
+     "fear": 0.026,
+     "anger": 0.4441,
+     "sadness": -0.0067,
+     "permuted_joy": 0.0678,
+     "permuted_fear": 0.2096,
+     "permuted_anger": -0.0049,
+     "permuted_sadness": 0.4336
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.748,
+    "margins": {
+     "joy": 0.6289,
+     "fear": 0.1134,
+     "anger": 0.2986,
+     "sadness": -0.0388,
+     "permuted_joy": -0.0233,
+     "permuted_fear": 0.0459,
+     "permuted_anger": 0.1133,
+     "permuted_sadness": 0.5779
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7508,
+    "margins": {
+     "joy": 0.4562,
+     "fear": -0.0675,
+     "anger": 0.4182,
+     "sadness": -0.0265,
+     "permuted_joy": 0.0409,
+     "permuted_fear": 0.1541,
+     "permuted_anger": -0.0826,
+     "permuted_sadness": 0.39
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7897,
+    "margins": {
+     "joy": 0.5619,
+     "fear": 0.1049,
+     "anger": 0.279,
+     "sadness": -0.0593,
+     "permuted_joy": -0.047,
+     "permuted_fear": 0.0135,
+     "permuted_anger": 0.1113,
+     "permuted_sadness": 0.5197
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 500,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7508,
+    "margins": {
+     "joy": 0.3595,
+     "fear": -0.0605,
+     "anger": 0.3756,
+     "sadness": -0.0416,
+     "permuted_joy": 0.0185,
+     "permuted_fear": 0.1025,
+     "permuted_anger": -0.0684,
+     "permuted_sadness": 0.3003
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7397,
+    "margins": {
+     "joy": 0.6195,
+     "fear": 0.2948,
+     "anger": 0.3684,
+     "sadness": 0.0959,
+     "permuted_joy": 0.1067,
+     "permuted_fear": 0.1486,
+     "permuted_anger": 0.321,
+     "permuted_sadness": 0.5876
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7258,
+    "margins": {
+     "joy": 0.4267,
+     "fear": 0.1942,
+     "anger": 0.4269,
+     "sadness": 0.1597,
+     "permuted_joy": 0.1661,
+     "permuted_fear": 0.1729,
+     "permuted_anger": 0.2259,
+     "permuted_sadness": 0.3732
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7397,
+    "margins": {
+     "joy": 0.6105,
+     "fear": 0.2856,
+     "anger": 0.3508,
+     "sadness": 0.0897,
+     "permuted_joy": 0.0962,
+     "permuted_fear": 0.0959,
+     "permuted_anger": 0.3172,
+     "permuted_sadness": 0.5725
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7258,
+    "margins": {
+     "joy": 0.3888,
+     "fear": 0.2165,
+     "anger": 0.3953,
+     "sadness": 0.1066,
+     "permuted_joy": 0.1384,
+     "permuted_fear": 0.1198,
+     "permuted_anger": 0.2513,
+     "permuted_sadness": 0.3414
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.754,
+    "margins": {
+     "joy": 0.6457,
+     "fear": 0.2782,
+     "anger": 0.3002,
+     "sadness": 0.0416,
+     "permuted_joy": 0.0556,
+     "permuted_fear": 0.0757,
+     "permuted_anger": 0.2834,
+     "permuted_sadness": 0.5753
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7647,
+    "margins": {
+     "joy": 0.4498,
+     "fear": 0.134,
+     "anger": 0.3901,
+     "sadness": 0.1368,
+     "permuted_joy": 0.15,
+     "permuted_fear": 0.1185,
+     "permuted_anger": 0.1336,
+     "permuted_sadness": 0.3921
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.754,
+    "margins": {
+     "joy": 0.6197,
+     "fear": 0.2544,
+     "anger": 0.2928,
+     "sadness": 0.0235,
+     "permuted_joy": 0.0326,
+     "permuted_fear": 0.0454,
+     "permuted_anger": 0.2619,
+     "permuted_sadness": 0.5474
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7508,
+    "margins": {
+     "joy": 0.4079,
+     "fear": 0.1398,
+     "anger": 0.3693,
+     "sadness": 0.079,
+     "permuted_joy": 0.1126,
+     "permuted_fear": 0.0753,
+     "permuted_anger": 0.1399,
+     "permuted_sadness": 0.3567
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.754,
+    "margins": {
+     "joy": 0.5822,
+     "fear": 0.205,
+     "anger": 0.281,
+     "sadness": 0.0452,
+     "permuted_joy": 0.0583,
+     "permuted_fear": 0.0438,
+     "permuted_anger": 0.2207,
+     "permuted_sadness": 0.54
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7369,
+    "margins": {
+     "joy": 0.3816,
+     "fear": 0.0562,
+     "anger": 0.3586,
+     "sadness": 0.064,
+     "permuted_joy": 0.1213,
+     "permuted_fear": 0.0607,
+     "permuted_anger": 0.0645,
+     "permuted_sadness": 0.3276
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.729,
+    "margins": {
+     "joy": 0.5387,
+     "fear": 0.1865,
+     "anger": 0.2709,
+     "sadness": 0.0032,
+     "permuted_joy": 0.0192,
+     "permuted_fear": 0.0254,
+     "permuted_anger": 0.2028,
+     "permuted_sadness": 0.4824
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 500,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7369,
+    "margins": {
+     "joy": 0.3251,
+     "fear": 0.0599,
+     "anger": 0.3304,
+     "sadness": 0.0154,
+     "permuted_joy": 0.0682,
+     "permuted_fear": 0.0357,
+     "permuted_anger": 0.067,
+     "permuted_sadness": 0.2772
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.5477,
+     "fear": 0.4167,
+     "anger": 0.2884,
+     "sadness": -0.0334,
+     "permuted_joy": -0.0156,
+     "permuted_fear": 0.0994,
+     "permuted_anger": 0.341,
+     "permuted_sadness": 0.5339
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7615,
+    "margins": {
+     "joy": 0.2635,
+     "fear": 0.2458,
+     "anger": 0.4175,
+     "sadness": -0.0011,
+     "permuted_joy": 0.0687,
+     "permuted_fear": 0.1972,
+     "permuted_anger": 0.1355,
+     "permuted_sadness": 0.2408
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.5622,
+     "fear": 0.3376,
+     "anger": 0.2801,
+     "sadness": -0.0504,
+     "permuted_joy": -0.0377,
+     "permuted_fear": 0.0667,
+     "permuted_anger": 0.276,
+     "permuted_sadness": 0.54
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7754,
+    "margins": {
+     "joy": 0.2919,
+     "fear": 0.1532,
+     "anger": 0.3917,
+     "sadness": -0.0145,
+     "permuted_joy": 0.0482,
+     "permuted_fear": 0.1511,
+     "permuted_anger": 0.0583,
+     "permuted_sadness": 0.2576
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7536,
+    "margins": {
+     "joy": 0.5956,
+     "fear": 0.1513,
+     "anger": 0.2121,
+     "sadness": -0.032,
+     "permuted_joy": -0.0043,
+     "permuted_fear": -0.0826,
+     "permuted_anger": 0.1459,
+     "permuted_sadness": 0.5744
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7119,
+    "margins": {
+     "joy": 0.3604,
+     "fear": -0.1077,
+     "anger": 0.4023,
+     "sadness": 0.0142,
+     "permuted_joy": 0.0862,
+     "permuted_fear": 0.168,
+     "permuted_anger": -0.1401,
+     "permuted_sadness": 0.3293
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7536,
+    "margins": {
+     "joy": 0.5947,
+     "fear": 0.1474,
+     "anger": 0.2038,
+     "sadness": -0.0532,
+     "permuted_joy": -0.0314,
+     "permuted_fear": -0.0963,
+     "permuted_anger": 0.1437,
+     "permuted_sadness": 0.571
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7258,
+    "margins": {
+     "joy": 0.356,
+     "fear": -0.1002,
+     "anger": 0.3894,
+     "sadness": -0.0069,
+     "permuted_joy": 0.0559,
+     "permuted_fear": 0.1279,
+     "permuted_anger": -0.1334,
+     "permuted_sadness": 0.3194
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.569,
+     "fear": 0.1098,
+     "anger": 0.2724,
+     "sadness": -0.0568,
+     "permuted_joy": -0.0248,
+     "permuted_fear": 0.0105,
+     "permuted_anger": 0.1043,
+     "permuted_sadness": 0.5379
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.3763,
+     "fear": -0.0744,
+     "anger": 0.3982,
+     "sadness": -0.0667,
+     "permuted_joy": -0.003,
+     "permuted_fear": 0.1527,
+     "permuted_anger": -0.0979,
+     "permuted_sadness": 0.3376
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.5403,
+     "fear": 0.1037,
+     "anger": 0.2512,
+     "sadness": -0.0594,
+     "permuted_joy": -0.046,
+     "permuted_fear": -0.0247,
+     "permuted_anger": 0.1019,
+     "permuted_sadness": 0.5087
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 1000,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7397,
+    "margins": {
+     "joy": 0.3288,
+     "fear": -0.0782,
+     "anger": 0.3516,
+     "sadness": -0.0738,
+     "permuted_joy": -0.0175,
+     "permuted_fear": 0.0917,
+     "permuted_anger": -0.0987,
+     "permuted_sadness": 0.2887
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.6353,
+     "fear": 0.4102,
+     "anger": 0.3259,
+     "sadness": 0.1158,
+     "permuted_joy": 0.1276,
+     "permuted_fear": 0.116,
+     "permuted_anger": 0.3397,
+     "permuted_sadness": 0.6019
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.729,
+    "margins": {
+     "joy": 0.4769,
+     "fear": 0.3342,
+     "anger": 0.3801,
+     "sadness": 0.1938,
+     "permuted_joy": 0.2236,
+     "permuted_fear": 0.1057,
+     "permuted_anger": 0.2471,
+     "permuted_sadness": 0.4568
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.6232,
+     "fear": 0.3621,
+     "anger": 0.3064,
+     "sadness": 0.0869,
+     "permuted_joy": 0.0942,
+     "permuted_fear": 0.0618,
+     "permuted_anger": 0.3113,
+     "permuted_sadness": 0.5979
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.729,
+    "margins": {
+     "joy": 0.4445,
+     "fear": 0.2901,
+     "anger": 0.3441,
+     "sadness": 0.1266,
+     "permuted_joy": 0.1816,
+     "permuted_fear": 0.0432,
+     "permuted_anger": 0.2243,
+     "permuted_sadness": 0.4206
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.6735,
+     "fear": 0.2828,
+     "anger": 0.2768,
+     "sadness": 0.0512,
+     "permuted_joy": 0.0825,
+     "permuted_fear": 0.0569,
+     "permuted_anger": 0.2543,
+     "permuted_sadness": 0.6318
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.5053,
+     "fear": 0.1215,
+     "anger": 0.3911,
+     "sadness": 0.0675,
+     "permuted_joy": 0.142,
+     "permuted_fear": 0.1965,
+     "permuted_anger": 0.0724,
+     "permuted_sadness": 0.487
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.6438,
+     "fear": 0.2437,
+     "anger": 0.2582,
+     "sadness": 0.0311,
+     "permuted_joy": 0.0548,
+     "permuted_fear": 0.02,
+     "permuted_anger": 0.2299,
+     "permuted_sadness": 0.5911
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7865,
+    "margins": {
+     "joy": 0.4619,
+     "fear": 0.0887,
+     "anger": 0.3678,
+     "sadness": 0.0405,
+     "permuted_joy": 0.1037,
+     "permuted_fear": 0.1103,
+     "permuted_anger": 0.0546,
+     "permuted_sadness": 0.4383
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.6605,
+     "fear": 0.1755,
+     "anger": 0.2582,
+     "sadness": -0.0183,
+     "permuted_joy": 0.0311,
+     "permuted_fear": 0.0075,
+     "permuted_anger": 0.1543,
+     "permuted_sadness": 0.5958
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7258,
+    "margins": {
+     "joy": 0.5054,
+     "fear": 0.0164,
+     "anger": 0.3677,
+     "sadness": -0.009,
+     "permuted_joy": 0.0549,
+     "permuted_fear": 0.1147,
+     "permuted_anger": -0.021,
+     "permuted_sadness": 0.462
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.5965,
+     "fear": 0.1482,
+     "anger": 0.2466,
+     "sadness": -0.0224,
+     "permuted_joy": 0.0068,
+     "permuted_fear": -0.0186,
+     "permuted_anger": 0.1396,
+     "permuted_sadness": 0.5397
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7508,
+    "margins": {
+     "joy": 0.3997,
+     "fear": 0.0018,
+     "anger": 0.3494,
+     "sadness": -0.0133,
+     "permuted_joy": 0.0426,
+     "permuted_fear": 0.058,
+     "permuted_anger": -0.0226,
+     "permuted_sadness": 0.3678
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8393,
+    "margins": {
+     "joy": 0.6459,
+     "fear": 0.5788,
+     "anger": 0.3811,
+     "sadness": 0.0824,
+     "permuted_joy": 0.1466,
+     "permuted_fear": 0.151,
+     "permuted_anger": 0.5332,
+     "permuted_sadness": 0.5834
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.4509,
+     "fear": 0.4981,
+     "anger": 0.44,
+     "sadness": 0.0693,
+     "permuted_joy": 0.1397,
+     "permuted_fear": 0.2051,
+     "permuted_anger": 0.429,
+     "permuted_sadness": 0.4279
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.6336,
+     "fear": 0.4726,
+     "anger": 0.3276,
+     "sadness": 0.0539,
+     "permuted_joy": 0.11,
+     "permuted_fear": 0.0818,
+     "permuted_anger": 0.4812,
+     "permuted_sadness": 0.5785
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.4299,
+     "fear": 0.4572,
+     "anger": 0.3833,
+     "sadness": 0.0332,
+     "permuted_joy": 0.0946,
+     "permuted_fear": 0.1292,
+     "permuted_anger": 0.4053,
+     "permuted_sadness": 0.408
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.6753,
+     "fear": 0.4714,
+     "anger": 0.314,
+     "sadness": 0.0922,
+     "permuted_joy": 0.1208,
+     "permuted_fear": 0.1059,
+     "permuted_anger": 0.4299,
+     "permuted_sadness": 0.6156
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7865,
+    "margins": {
+     "joy": 0.4857,
+     "fear": 0.3094,
+     "anger": 0.4267,
+     "sadness": 0.0621,
+     "permuted_joy": 0.1326,
+     "permuted_fear": 0.181,
+     "permuted_anger": 0.2495,
+     "permuted_sadness": 0.4652
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7429,
+    "margins": {
+     "joy": 0.6429,
+     "fear": 0.3826,
+     "anger": 0.2859,
+     "sadness": 0.0593,
+     "permuted_joy": 0.1091,
+     "permuted_fear": 0.0387,
+     "permuted_anger": 0.3708,
+     "permuted_sadness": 0.5826
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7865,
+    "margins": {
+     "joy": 0.4362,
+     "fear": 0.2665,
+     "anger": 0.3766,
+     "sadness": 0.0215,
+     "permuted_joy": 0.0818,
+     "permuted_fear": 0.1032,
+     "permuted_anger": 0.2277,
+     "permuted_sadness": 0.4138
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8393,
+    "margins": {
+     "joy": 0.6482,
+     "fear": 0.2952,
+     "anger": 0.259,
+     "sadness": -0.0047,
+     "permuted_joy": 0.0498,
+     "permuted_fear": 0.0404,
+     "permuted_anger": 0.2739,
+     "permuted_sadness": 0.5838
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.4478,
+     "fear": 0.1475,
+     "anger": 0.3621,
+     "sadness": -0.0246,
+     "permuted_joy": 0.0346,
+     "permuted_fear": 0.0944,
+     "permuted_anger": 0.1094,
+     "permuted_sadness": 0.3956
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8393,
+    "margins": {
+     "joy": 0.5798,
+     "fear": 0.2401,
+     "anger": 0.2523,
+     "sadness": -0.0133,
+     "permuted_joy": 0.0328,
+     "permuted_fear": 0.0155,
+     "permuted_anger": 0.2341,
+     "permuted_sadness": 0.5139
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 1000,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8004,
+    "margins": {
+     "joy": 0.3583,
+     "fear": 0.1162,
+     "anger": 0.3371,
+     "sadness": -0.035,
+     "permuted_joy": 0.0189,
+     "permuted_fear": 0.0575,
+     "permuted_anger": 0.0934,
+     "permuted_sadness": 0.3117
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8254,
+    "margins": {
+     "joy": 0.5778,
+     "fear": 0.3172,
+     "anger": 0.2845,
+     "sadness": -0.0904,
+     "permuted_joy": -0.0719,
+     "permuted_fear": 0.0643,
+     "permuted_anger": 0.2927,
+     "permuted_sadness": 0.5564
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8083,
+    "margins": {
+     "joy": 0.3658,
+     "fear": 0.0831,
+     "anger": 0.4682,
+     "sadness": -0.0663,
+     "permuted_joy": 0.0119,
+     "permuted_fear": 0.2932,
+     "permuted_anger": 0.0225,
+     "permuted_sadness": 0.3362
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.5855,
+     "fear": 0.2301,
+     "anger": 0.2687,
+     "sadness": -0.0983,
+     "permuted_joy": -0.0846,
+     "permuted_fear": 0.0257,
+     "permuted_anger": 0.2424,
+     "permuted_sadness": 0.5597
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8222,
+    "margins": {
+     "joy": 0.3797,
+     "fear": 0.0429,
+     "anger": 0.4381,
+     "sadness": -0.0742,
+     "permuted_joy": -0.0041,
+     "permuted_fear": 0.232,
+     "permuted_anger": -0.013,
+     "permuted_sadness": 0.3435
+    },
+    "n_situations_right": 5
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.5941,
+     "fear": 0.2746,
+     "anger": 0.2819,
+     "sadness": -0.0944,
+     "permuted_joy": -0.0389,
+     "permuted_fear": 0.0717,
+     "permuted_anger": 0.2216,
+     "permuted_sadness": 0.5683
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7508,
+    "margins": {
+     "joy": 0.3724,
+     "fear": 0.1134,
+     "anger": 0.3665,
+     "sadness": -0.1208,
+     "permuted_joy": -0.0622,
+     "permuted_fear": 0.1381,
+     "permuted_anger": 0.037,
+     "permuted_sadness": 0.3341
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.5746,
+     "fear": 0.215,
+     "anger": 0.2653,
+     "sadness": -0.0777,
+     "permuted_joy": -0.0406,
+     "permuted_fear": 0.0301,
+     "permuted_anger": 0.1871,
+     "permuted_sadness": 0.5502
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.3593,
+     "fear": 0.0605,
+     "anger": 0.3245,
+     "sadness": -0.1016,
+     "permuted_joy": -0.0497,
+     "permuted_fear": 0.0781,
+     "permuted_anger": 0.0141,
+     "permuted_sadness": 0.3191
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.875,
+    "margins": {
+     "joy": 0.558,
+     "fear": 0.1374,
+     "anger": 0.286,
+     "sadness": -0.1207,
+     "permuted_joy": -0.0806,
+     "permuted_fear": 0.0396,
+     "permuted_anger": 0.1338,
+     "permuted_sadness": 0.5389
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.85,
+    "margins": {
+     "joy": 0.3453,
+     "fear": -0.0237,
+     "anger": 0.3726,
+     "sadness": -0.1633,
+     "permuted_joy": -0.1036,
+     "permuted_fear": 0.1294,
+     "permuted_anger": -0.0406,
+     "permuted_sadness": 0.3128
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8393,
+    "margins": {
+     "joy": 0.5165,
+     "fear": 0.1203,
+     "anger": 0.2687,
+     "sadness": -0.1068,
+     "permuted_joy": -0.0816,
+     "permuted_fear": 0.0079,
+     "permuted_anger": 0.1165,
+     "permuted_sadness": 0.4977
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 2,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.85,
+    "margins": {
+     "joy": 0.2994,
+     "fear": -0.0369,
+     "anger": 0.3366,
+     "sadness": -0.1468,
+     "permuted_joy": -0.093,
+     "permuted_fear": 0.0786,
+     "permuted_anger": -0.0537,
+     "permuted_sadness": 0.2651
+    },
+    "n_situations_right": 4
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7262,
+    "margins": {
+     "joy": 0.6491,
+     "fear": 0.4045,
+     "anger": 0.3407,
+     "sadness": 0.0763,
+     "permuted_joy": 0.089,
+     "permuted_fear": 0.1528,
+     "permuted_anger": 0.3667,
+     "permuted_sadness": 0.6346
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7012,
+    "margins": {
+     "joy": 0.4642,
+     "fear": 0.2502,
+     "anger": 0.4415,
+     "sadness": 0.1081,
+     "permuted_joy": 0.1817,
+     "permuted_fear": 0.1991,
+     "permuted_anger": 0.2,
+     "permuted_sadness": 0.4448
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7012,
+    "margins": {
+     "joy": 0.6359,
+     "fear": 0.3434,
+     "anger": 0.303,
+     "sadness": 0.0518,
+     "permuted_joy": 0.0615,
+     "permuted_fear": 0.078,
+     "permuted_anger": 0.3172,
+     "permuted_sadness": 0.6215
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7012,
+    "margins": {
+     "joy": 0.4361,
+     "fear": 0.1941,
+     "anger": 0.3989,
+     "sadness": 0.0659,
+     "permuted_joy": 0.1297,
+     "permuted_fear": 0.1208,
+     "permuted_anger": 0.1516,
+     "permuted_sadness": 0.4139
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.6771,
+     "fear": 0.3314,
+     "anger": 0.3127,
+     "sadness": 0.0471,
+     "permuted_joy": 0.0634,
+     "permuted_fear": 0.1177,
+     "permuted_anger": 0.2883,
+     "permuted_sadness": 0.6619
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.5092,
+     "fear": 0.19,
+     "anger": 0.4072,
+     "sadness": 0.0717,
+     "permuted_joy": 0.142,
+     "permuted_fear": 0.1762,
+     "permuted_anger": 0.1309,
+     "permuted_sadness": 0.489
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.6535,
+     "fear": 0.278,
+     "anger": 0.2871,
+     "sadness": 0.0238,
+     "permuted_joy": 0.0359,
+     "permuted_fear": 0.066,
+     "permuted_anger": 0.2479,
+     "permuted_sadness": 0.6382
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.4682,
+     "fear": 0.14,
+     "anger": 0.3824,
+     "sadness": 0.0526,
+     "permuted_joy": 0.1142,
+     "permuted_fear": 0.1059,
+     "permuted_anger": 0.0935,
+     "permuted_sadness": 0.4437
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.6358,
+     "fear": 0.2215,
+     "anger": 0.2481,
+     "sadness": -0.0211,
+     "permuted_joy": 0.0266,
+     "permuted_fear": 0.0043,
+     "permuted_anger": 0.2064,
+     "permuted_sadness": 0.6017
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.448,
+     "fear": 0.0445,
+     "anger": 0.3514,
+     "sadness": -0.0183,
+     "permuted_joy": 0.0379,
+     "permuted_fear": 0.0649,
+     "permuted_anger": 0.0119,
+     "permuted_sadness": 0.4183
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8036,
+    "margins": {
+     "joy": 0.5963,
+     "fear": 0.1904,
+     "anger": 0.2382,
+     "sadness": -0.025,
+     "permuted_joy": 0.002,
+     "permuted_fear": -0.0206,
+     "permuted_anger": 0.1826,
+     "permuted_sadness": 0.5602
+    },
+    "n_situations_right": 6
+   },
+   {
+    "n_hub": 2000,
+    "window": 4,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.3875,
+     "fear": 0.0257,
+     "anger": 0.3174,
+     "sadness": -0.0231,
+     "permuted_joy": 0.0277,
+     "permuted_fear": 0.0251,
+     "permuted_anger": 0.0005,
+     "permuted_sadness": 0.3553
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.7143,
+     "fear": 0.511,
+     "anger": 0.313,
+     "sadness": 0.0633,
+     "permuted_joy": 0.1134,
+     "permuted_fear": 0.0131,
+     "permuted_anger": 0.4355,
+     "permuted_sadness": 0.6581
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 8,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.5809,
+     "fear": 0.3849,
+     "anger": 0.3452,
+     "sadness": 0.0338,
+     "permuted_joy": 0.089,
+     "permuted_fear": 0.0557,
+     "permuted_anger": 0.2954,
+     "permuted_sadness": 0.5561
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.6755,
+     "fear": 0.4237,
+     "anger": 0.2828,
+     "sadness": 0.0243,
+     "permuted_joy": 0.0696,
+     "permuted_fear": -0.0235,
+     "permuted_anger": 0.3901,
+     "permuted_sadness": 0.6288
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 8,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8143,
+    "margins": {
+     "joy": 0.5146,
+     "fear": 0.3316,
+     "anger": 0.3135,
+     "sadness": -0.0089,
+     "permuted_joy": 0.0413,
+     "permuted_fear": 0.0185,
+     "permuted_anger": 0.2711,
+     "permuted_sadness": 0.4905
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7679,
+    "margins": {
+     "joy": 0.6862,
+     "fear": 0.4219,
+     "anger": 0.3412,
+     "sadness": 0.0406,
+     "permuted_joy": 0.0955,
+     "permuted_fear": 0.0535,
+     "permuted_anger": 0.3924,
+     "permuted_sadness": 0.6524
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 12,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7647,
+    "margins": {
+     "joy": 0.5115,
+     "fear": 0.2831,
+     "anger": 0.3683,
+     "sadness": 0.0273,
+     "permuted_joy": 0.0862,
+     "permuted_fear": 0.0813,
+     "permuted_anger": 0.2434,
+     "permuted_sadness": 0.4892
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.622,
+     "fear": 0.3484,
+     "anger": 0.3089,
+     "sadness": 0.0251,
+     "permuted_joy": 0.0745,
+     "permuted_fear": 0.0092,
+     "permuted_anger": 0.3344,
+     "permuted_sadness": 0.5853
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 12,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.7647,
+    "margins": {
+     "joy": 0.417,
+     "fear": 0.2432,
+     "anger": 0.3301,
+     "sadness": 0.0109,
+     "permuted_joy": 0.0637,
+     "permuted_fear": 0.0341,
+     "permuted_anger": 0.2128,
+     "permuted_sadness": 0.3953
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7786,
+    "margins": {
+     "joy": 0.6582,
+     "fear": 0.285,
+     "anger": 0.2845,
+     "sadness": 0.01,
+     "permuted_joy": 0.0647,
+     "permuted_fear": 0.0532,
+     "permuted_anger": 0.2632,
+     "permuted_sadness": 0.6316
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 20,
+    "hops": 1,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8063,
+    "margins": {
+     "joy": 0.4401,
+     "fear": 0.1371,
+     "anger": 0.3519,
+     "sadness": 0.0191,
+     "permuted_joy": 0.0754,
+     "permuted_fear": 0.0577,
+     "permuted_anger": 0.1019,
+     "permuted_sadness": 0.4135
+    },
+    "n_situations_right": 8
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "raw",
+    "macro_loo_nonstage2": 0.7536,
+    "margins": {
+     "joy": 0.5893,
+     "fear": 0.2361,
+     "anger": 0.2734,
+     "sadness": -0.0008,
+     "permuted_joy": 0.0492,
+     "permuted_fear": 0.0199,
+     "permuted_anger": 0.2239,
+     "permuted_sadness": 0.5492
+    },
+    "n_situations_right": 7
+   },
+   {
+    "n_hub": 2000,
+    "window": 8,
+    "knn": 20,
+    "hops": 2,
+    "norm": "gain",
+    "macro_loo_nonstage2": 0.8063,
+    "margins": {
+     "joy": 0.3492,
+     "fear": 0.1144,
+     "anger": 0.3181,
+     "sadness": 0.0077,
+     "permuted_joy": 0.0586,
+     "permuted_fear": 0.0209,
+     "permuted_anger": 0.0879,
+     "permuted_sadness": 0.3216
+    },
+    "n_situations_right": 8
+   }
+  ],
+  "selected_by_rule": {
+   "n_hub": 2000,
+   "window": 2,
+   "knn": 20,
+   "hops": 1,
+   "norm": "raw",
+   "macro_loo_nonstage2": 0.875,
+   "margins": {
+    "joy": 0.558,
+    "fear": 0.1374,
+    "anger": 0.286,
+    "sadness": -0.1207,
+    "permuted_joy": -0.0806,
+    "permuted_fear": 0.0396,
+    "permuted_anger": 0.1338,
+    "permuted_sadness": 0.5389
+   },
+   "n_situations_right": 6
+  },
+  "n_configs_all_8_right": 45,
+  "max_min_margin": 0.1597
+ },
+ "B_trigger_conditioning": [
+  {
+   "radius": 0,
+   "margins": {
+    "joy": 0.0285,
+    "fear": 0.2433,
+    "anger": 0.1205,
+    "sadness": -0.0107,
+    "permuted_joy": -0.0232,
+    "permuted_fear": -0.1489,
+    "permuted_anger": 0.2278,
+    "permuted_sadness": -0.1214
+   },
+   "situation_word_vectors": {
+    "happy": [
+     0.333,
+     0.339,
+     0.09,
+     0.238
+    ],
+    "glad": [
+     0.222,
+     0.236,
+     0.222,
+     0.319
+    ],
+    "delighted": [
+     0.255,
+     0.0,
+     0.218,
+     0.527
+    ],
+    "scared": [
+     0.037,
+     0.518,
+     0.037,
+     0.408
+    ],
+    "afraid": [
+     0.052,
+     0.704,
+     0.03,
+     0.215
+    ],
+    "angry": [
+     0.033,
+     0.594,
+     0.206,
+     0.167
+    ],
+    "mad": [
+     0.068,
+     0.276,
+     0.376,
+     0.28
+    ],
+    "furious": [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "lonely": [
+     0.134,
+     0.627,
+     0.026,
+     0.213
+    ],
+    "sad": [
+     0.153,
+     0.199,
+     0.084,
+     0.563
+    ],
+    "cry": [
+     0.074,
+     0.29,
+     0.243,
+     0.393
+    ]
+   }
+  },
+  {
+   "radius": 1,
+   "margins": {
+    "joy": 0.023,
+    "fear": 0.2583,
+    "anger": 0.1112,
+    "sadness": 0.095,
+    "permuted_joy": 0.0301,
+    "permuted_fear": 0.0064,
+    "permuted_anger": 0.2266,
+    "permuted_sadness": -0.1126
+   },
+   "situation_word_vectors": {
+    "happy": [
+     0.282,
+     0.227,
+     0.24,
+     0.251
+    ],
+    "glad": [
+     0.23,
+     0.253,
+     0.184,
+     0.334
+    ],
+    "delighted": [
+     0.177,
+     0.063,
+     0.373,
+     0.387
+    ],
+    "scared": [
+     0.054,
+     0.516,
+     0.129,
+     0.301
+    ],
+    "afraid": [
+     0.067,
+     0.624,
+     0.105,
+     0.204
+    ],
+    "angry": [
+     0.073,
+     0.326,
+     0.291,
+     0.31
+    ],
+    "mad": [
+     0.116,
+     0.159,
+     0.392,
+     0.333
+    ],
+    "furious": [
+     0.0,
+     0.0,
+     0.712,
+     0.288
+    ],
+    "lonely": [
+     0.214,
+     0.42,
+     0.081,
+     0.284
+    ],
+    "sad": [
+     0.137,
+     0.135,
+     0.248,
+     0.481
+    ],
+    "cry": [
+     0.084,
+     0.259,
+     0.317,
+     0.34
+    ]
+   }
+  }
+ ]
+}
