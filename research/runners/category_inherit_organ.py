@@ -94,9 +94,9 @@ GATE_LAT = "category_learn_lateral"       # frame -> frame plasticity gate; open
 # Off = no transmission gate exists and the read is QUERY_STEPS: the organ is byte-identical to the 09-30 build.
 TX_LAT = "category_lateral_transmission"  # transmission gate on frame -> frame (exists only when the option is on)
 HOP_LATERAL_GAIN = 0.5         # frame -> frame current gain (1.0 = the 09-30 organ)
-HOP_QUERY_STEPS = 35           # read window with the option on (one retrieval cycle; 60 = the 09-30 organ). Dev 1-8:
-                               # 30 left the permuted read 1.25x the floor, 40 put the bridge lake read at 0.8x it;
-                               # 35 balances them (permuted >= 1.4x floor, bridge lake <= 0.57x floor, worm >= 2.9x)
+HOP_QUERY_STEPS = 30           # read window with the option on (one retrieval cycle; 60 = the 09-30 organ). Chosen on
+                               # dev seeds 1-16 (verify-go 2026-10-06): 30 passes the hop dev bar 16/16; 35 and 40
+                               # let the bridge lake read back above the floor on seeds 9, 13, 14; 25 loses permuted.
 
 
 def category_inherit_hop_enabled() -> bool:

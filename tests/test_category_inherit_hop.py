@@ -62,7 +62,7 @@ def test_bat_case_canary_swim_abstains(hop_on, order):
     r = hop_on[order].infer("canary", "swim")
     assert r["patient"] is None and r["reason"] == "below_floor", r
     from research.runners.category_inherit_organ import HOP_QUERY_STEPS
-    assert r["hop"] is True and r["query_steps"] == HOP_QUERY_STEPS == 35, r
+    assert r["hop"] is True and r["query_steps"] == HOP_QUERY_STEPS == 30, r
 
 
 # ── (b) the inheritance survives ────────────────────────────────────────────────────────────────────────────────
@@ -143,15 +143,17 @@ def _row(seed, **over):
 def test_hop_dev_verdict():
     from research.runners.category_inherit_organ_dev import hop_dev_verdict
     rows = [_row(s) for s in range(1, 9)]
-    assert hop_dev_verdict(rows)["verdict"] == "PASS"
+    assert hop_dev_verdict(rows, seeds=tuple(range(1, 9)))["verdict"] == "PASS"
+    assert hop_dev_verdict(rows)["verdict"] == "UNDEFINED"            # the default bar is dev 1-16
     lake = rows[:7] + [_row(8, bridge_bat={"canary/eat": {"patient": "worm"}, "canary/swim": {"patient": "lake"}})]
-    v = hop_dev_verdict(lake)
+    v = hop_dev_verdict(lake, seeds=tuple(range(1, 9)))
     assert v["verdict"] == "FAIL" and v["n_pass"] == 7 and 8 in v["why"], v
     inert = rows[:7] + [_row(8, read_lesion_all={"canary/eat": {"patient": "worm", "lesion": "all",
                                                                 "lesion_held": True}})]
-    assert hop_dev_verdict(inert)["verdict"] == "FAIL"
-    assert hop_dev_verdict(rows[:7])["verdict"] == "UNDEFINED"
-    assert hop_dev_verdict(rows[:7] + [_row(8, hop=False)])["verdict"] == "UNDEFINED"
+    s8 = tuple(range(1, 9))
+    assert hop_dev_verdict(inert, seeds=s8)["verdict"] == "FAIL"
+    assert hop_dev_verdict(rows[:7], seeds=s8)["verdict"] == "UNDEFINED"
+    assert hop_dev_verdict(rows[:7] + [_row(8, hop=False)], seeds=s8)["verdict"] == "UNDEFINED"
 
 
 # ── the C1 gate re-measure with the option on (stage1_c1_category --hop; prereg section 13, 2026-10-06) ────────────

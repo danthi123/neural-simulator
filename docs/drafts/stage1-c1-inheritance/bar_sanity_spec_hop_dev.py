@@ -4,7 +4,7 @@ THE BAR. research/runners/category_inherit_organ_dev.py --hop, decided by its `h
 iff, with BRAIN_CATEGORY_INHERIT_HOP=1, the C1 canary (`the canary flies in the sky`) still reaches worm on `eat`, the
 permuted canary reaches bug, the read lesion abstains with the cut held, the C2/C3 moat shapes abstain, and in BOTH
 bridge orders (bat heard before / after the canary) the canary's `swim` abstains AND its `eat` still reaches worm.
-PASS iff 8/8 seeds; UNDEFINED if a seed is missing or a row ran without the option.
+PASS iff all 16 dev seeds (1-16) pass; UNDEFINED if a seed is missing or a row ran without the option.
 
 THE DECISION IS THE REAL ONE: `decide` hands synthetic rows in run_seed's format to `hop_dev_verdict`.
 
@@ -32,9 +32,9 @@ if _ROOT not in sys.path:
 from research.runners import category_inherit_organ_dev as D  # noqa: E402
 
 NAME = "c1-hop-dev"
-DESCRIPTION = "C1 hop attenuation (organ, dev 1-8): bridge canary swim abstains, canary eat keeps worm, controls hold"
+DESCRIPTION = "C1 hop attenuation (organ, dev 1-16): bridge canary swim abstains, canary eat keeps worm, controls hold"
 SCORER_FILES = ["research/runners/category_inherit_organ_dev.py"]
-SEEDS = (1, 2, 3, 4, 5, 6, 7, 8)
+SEEDS = D.HOP_DEV_SEEDS
 _KINDS = ("perfect", "trout_sky", "no_attenuation", "inert_lesion", "one_lake", "overattenuated", "lost_worm",
           "moat_leak")
 

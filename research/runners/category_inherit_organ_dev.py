@@ -14,10 +14,11 @@ HOP ATTENUATION DEV BAR (`--hop`: every organ built with BRAIN_CATEGORY_INHERIT_
 the bridge with the canary heard BEFORE the bat (`bridge_bat_canary_first`), and `hop_dev_verdict` scores it: a dev
 seed passes iff the C1 canary still guesses worm, the permuted canary guesses bug, the read lesion abstains with the
 cut held, the C2/C3 shapes abstain, and in BOTH bridge orders the canary's `swim` abstains and its `eat` guesses worm.
-PASS iff 8/8 (bar-sanity: docs/drafts/stage1-c1-inheritance/bar_sanity_record_hop_dev.json).
+PASS iff every seed of HOP_DEV_SEEDS (dev 1-16) passes (bar-sanity:
+docs/drafts/stage1-c1-inheritance/bar_sanity_record_hop_dev.json).
 
-  .venv/bin/python -m research.runners.category_inherit_organ_dev --hop --seeds 1,2,3,4,5,6,7,8 \
-      --out research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-8.json
+  .venv/bin/python -m research.runners.category_inherit_organ_dev --hop --seeds 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 \
+      --out research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-16.json
 """
 from __future__ import annotations
 
@@ -53,6 +54,8 @@ def _q(o, pairs):
         out["%s/%s" % (a, v)] = {"patient": r["patient"], "reason": r["reason"], "admitted": r["admitted"],
                                  "lesion": r.get("lesion"), "lesion_held": r.get("lesion_held"),
                                  "attribution": r.get("attribution")}
+        if "hop" in r:                                  # recorded only with the option on (off rows: the 09-30 format)
+            out["%s/%s" % (a, v)].update(hop=r["hop"], query_steps=r.get("query_steps"))
     return out
 
 
@@ -151,7 +154,10 @@ def hop_seed_problems(r):
     return bad
 
 
-def hop_dev_verdict(rows, seeds=(1, 2, 3, 4, 5, 6, 7, 8)):
+HOP_DEV_SEEDS = tuple(range(1, 17))      # the hop dev bar's seeds (dev only; 1-8 first, 9-16 added by verify-go)
+
+
+def hop_dev_verdict(rows, seeds=HOP_DEV_SEEDS):
     """The hop dev bar: PASS iff every dev seed passes `hop_seed_problems`; UNDEFINED if a seed is missing or any
     row did not run with hop attenuation on (`hop` true in the row)."""
     by = {int(r.get("seed", -1)): r for r in rows}
@@ -167,7 +173,7 @@ def hop_dev_verdict(rows, seeds=(1, 2, 3, 4, 5, 6, 7, 8)):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--seeds", default="1,2,3,4,5,6,7,8", help="comma-separated DEV seeds (1-12)")
+    ap.add_argument("--seeds", default="1,2,3,4,5,6,7,8", help="comma-separated DEV seeds (never a gate seed)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--hop", action="store_true", help="build every organ with BRAIN_CATEGORY_INHERIT_HOP=1 and "
                     "score the hop dev bar (hop_dev_verdict)")

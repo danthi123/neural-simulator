@@ -5,7 +5,8 @@ Stage-1 groups cat_disc, cat_told, word, lived, val_novel and (since the hop fix
 cat_bridge, every cell with BRAIN_CATEGORY_INHERIT_HOP=1. A seed passes iff cat_disc flag-on names `worm` on the
 direct probe AND reply content (abstained / recalled_svo / hypothesis_svo) is equal on every other turn, with the only
 allowed changes being a FLAGGED guess where flag-off abstained: `worm` on cat_disc / cat_told / cat_bridge
-`p_canary_eat`, `lake` on cat_bridge `c_bat_swim`. Dev bar PASS iff 8/8 seeds pass (UNDEFINED if any seed is invalid,
+`p_canary_eat`, `lake` on cat_bridge `c_bat_swim`; and cat_bridge flag-on `p_canary_eat` must BE the worm guess.
+Dev bar PASS iff 8/8 seeds pass (UNDEFINED if any seed is invalid,
 the flag did not engage, or a cell ran without the hop).
 
 THE DECISION IS THE REAL ONE. Each synthetic brain is written as shard files in the runner's own output format to a
@@ -19,6 +20,7 @@ preamble of later turns depends on what earlier turns said).
   null_bridge_lake   perfect on 7 seeds; on one random seed the canary's swim guesses lake (two hops through the bat).
   null_robin_lake    perfect on 7 seeds; on one random seed the robin's swim guesses lake (two hops).
   null_no_hop        every seed perfect in content, but the cells ran without the hop env (UNDEFINED, not PASS).
+  null_bridge_tie    perfect on 7 seeds; on one random seed the bridge session's canary eat ties (abstains).
   null               no inheritance on any seed (flag-on equals flag-off).
   null_one_leak      perfect on 7 seeds; on one random seed flag-on also guesses on a random moat (word / lived).
   null_one_lost      perfect on 7 seeds; on one random seed flag-on abstains where flag-off answered (lived recall).
@@ -43,7 +45,7 @@ DESCRIPTION = "C1 category-inheritance flip dev bar: 8/8 dev seeds correct + con
 SCORER_FILES = ["research/runners/c1_flip_dev_check.py", "research/runners/stage1_exit_gate.py"]
 
 _KINDS = ("perfect", "perfect_told", "null", "leak_moat", "answer_lost", "as_fact", "wrong_category",
-          "perfect_bat_lake", "bridge_lake", "bridge_robin_lake", "hop_off")
+          "perfect_bat_lake", "bridge_lake", "bridge_robin_lake", "hop_off", "bridge_tie")
 
 
 def _text_noise(cells, rng):
@@ -127,3 +129,7 @@ def null_robin_lake(rng):
 
 def null_no_hop(rng):
     return _brain({s: "hop_off" for s in F.DEV_SEEDS}, rng)
+
+
+def null_bridge_tie(rng):
+    return _brain(_one_bad(rng, "bridge_tie"), rng)
