@@ -48,3 +48,12 @@ were measured with single (or few) reads, so they are partly under-sampled instr
 mechanisms do nothing. The corrected protocol for the LTU lane: AVERAGE ~18 reads/arm (or coarsen the bar) before
 re-adjudicating any weight lever. This is a measurement re-scope (the instrument is part of the emulation), not a new
 weight mechanism — and it explains months of ambiguous single-read LTU results.
+
+## Correction (PROVISIONAL, local model) — 2026-10-01
+
+T15 follow-up (Ecker CA3 OU-noise field, per the `ecker-ou` ruling): the runner `_gap5_read_noise_floor_ltu_derisk` builds its store via
+`build_store`, imported from `_gap5_ecker_adex_ca3_stdp_band_derisk`, which set `cfg.ou_noise_sigma_pa` (40 pA, the
+run's `--ou-sigma`), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA,
+`sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** intended. The builder now sets
+`ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run
+values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.

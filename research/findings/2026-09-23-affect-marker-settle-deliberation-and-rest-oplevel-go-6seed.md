@@ -8,6 +8,11 @@ verdict: GO (circuit-level de-risk, 6-seed); the full-brain ON-vs-OFF contrast v
 
 # Affect-marker: two truncated companion processes (deliberation time, inter-turn rest) caused the dead-zone; restoring them makes the WTA commit on 6/6 seeds at circuit level (2026-09-23)
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 D1 lane ("grow the robust core past 23"). This is a circuit-level de-risk GO. It does NOT move the robust core.
 
 **What a full-brain GO would and would not mean (fix round, docs/TERMS.md).** `BRAIN_AFFECT_MARKER_SETTLE` is

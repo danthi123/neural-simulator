@@ -58,18 +58,26 @@ def _fresh_rich(chat):
     return RichAnswerComposer(chat, max_sentences=4, neural_planner=False, planner_seed=42)
 
 
+_NOT_TAUGHT = "[a guess from what i've learned -- not something i was taught]"
+
+
 def test_render_hypothesis_fluent_flagged_guess_stub(chat):
-    """A generated HYPOTHESIS renders as a FLUENT sentence framed as a guess, VERIFIED to carry the SAME (a,v,p).
-    On the stub the fluent surface is deterministic + SVO-verified, so `fluent` is True and it is NOT the raw
-    template. `render()` dispatches HypothesisSVO here."""
+    """DEFAULT (brain-native SPIKING Broca mouth, ON unless BRAIN_SPIKING_MOUTH=0): a generated HYPOTHESIS renders
+    as a grammatical sentence produced on spikes ('perhaps the <S> <V-3sg> the <O>'), flagged as a guess, VERIFIED to
+    carry the SAME (a,v,p). The spiking Broca carries its own epistemic hedge 'perhaps' (its CONN slot) and the shared
+    not-taught disclaimer, so it is NOT the raw template ('perhaps dog like fish') and `fluent` is True.
+    `render()` dispatches HypothesisSVO here. (This test originally pinned the host 'Maybe ...' frame; that is now
+    the BRAIN_SPIKING_MOUTH=0 escape, pinned in the next test.)"""
     from research.runners.brain_chat_tui import HypothesisSVO
     hyp = HypothesisSVO(["dog", "like", "fish"])   # each word known; the TRIPLE is novel (not stored)
     surface, fluent = chat.render_hypothesis_verified(hyp)
     assert fluent is True
-    assert surface.lower().startswith("maybe ")
-    assert "guess" in surface.lower()
-    assert "not something i was taught" in surface.lower()
-    assert not surface.lower().startswith("perhaps ")     # the fluent path, not the raw template
+    low = surface.lower()
+    assert low.startswith("perhaps the dog likes the fish")   # spiking Broca: determiners + 3sg verb = fluent, not raw
+    assert "guess" in low
+    assert "not something i was taught" in low
+    assert not low.startswith("perhaps dog like fish")        # not the raw template (no determiners / 3sg verb)
+    assert not low.startswith("maybe ")                       # not the pre-spiking host frame
     # content-swap guard: `fluent is True` means the internal VERIFY re-parse confirmed the surface carries the
     # hypothesis's exact (a,v,p); sanity-check the subject + object appear in the fluent prose.
     assert "dog" in surface and "fish" in surface
@@ -77,13 +85,26 @@ def test_render_hypothesis_fluent_flagged_guess_stub(chat):
     assert chat.render(hyp) == surface
 
 
-def test_render_hypothesis_template_fallback_without_mouth():
-    """With NO fluent renderer (raw mode / --no-renderer) the guess falls back to the raw FLAGGED template
-    (byte-identical to the pre-fluent surface), NEVER an asserted fact."""
+def test_render_hypothesis_prespiking_mouth_escape_maybe_frame(chat, monkeypatch):
+    """ESCAPE (BRAIN_SPIKING_MOUTH=0): the pre-spiking mouth renders the guess FLUENTLY via the renderer (template-stub
+    here), framed 'Maybe ... -- that's a guess ...', SVO-verified, `fluent` True, and NOT the raw template. This is the
+    original (pre-spiking) contract of this test, kept alive behind the documented escape flag."""
+    from research.runners.brain_chat_tui import HypothesisSVO
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH", "0")
+    hyp = HypothesisSVO(["dog", "like", "fish"])
+    surface, fluent = chat.render_hypothesis_verified(hyp)
+    assert fluent is True
+    assert surface.lower().startswith("maybe ")
+    assert "guess" in surface.lower()
+    assert "not something i was taught" in surface.lower()
+    assert not surface.lower().startswith("perhaps ")     # the fluent path, not the raw template
+    assert "dog" in surface and "fish" in surface
+
+
+def _raw_chat():
+    """A ChatBrain with NO fluent renderer (raw mode / --no-renderer) over the same small graph."""
     _imports()
-    from research.runners.brain_chat_tui import (
-        ChatBrain, DEFAULT_SELF_ALIASES, HypothesisSVO,
-    )
+    from research.runners.brain_chat_tui import ChatBrain, DEFAULT_SELF_ALIASES
     from research.runners.multi_turn_agent import MultiTurnAgent
     vocab = sorted({w for f in _FACTS for w in f})
     actions = {v for _a, v, _p in _FACTS}
@@ -94,11 +115,36 @@ def test_render_hypothesis_template_fallback_without_mouth():
     inner = getattr(agent, "agent", agent)
     for a, v, p in _FACTS:
         inner.hear(f"{a} {v} {p}", polarity="AFFIRM")
-    c = ChatBrain(agent, self_aliases=DEFAULT_SELF_ALIASES, renderer=None)   # raw: no mouth
+    return ChatBrain(agent, self_aliases=DEFAULT_SELF_ALIASES, renderer=None)   # raw: no mouth
+
+
+def test_render_hypothesis_template_fallback_without_mouth(monkeypatch):
+    """With NO fluent renderer (raw mode / --no-renderer) AND the pre-spiking path (BRAIN_SPIKING_MOUTH=0) the guess
+    falls back to the raw FLAGGED template (byte-identical to the pre-fluent surface), NEVER an asserted fact."""
+    from research.runners.brain_chat_tui import HypothesisSVO
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH", "0")
+    c = _raw_chat()
     hyp = HypothesisSVO(["dog", "like", "fish"])
     surface, fluent = c.render_hypothesis_verified(hyp)
     assert fluent is False
     assert surface == "perhaps dog like fish  [a guess from what I've learned -- not something I was taught]"
+
+
+def test_render_hypothesis_spiking_mouth_needs_no_renderer():
+    """DEFAULT: the spiking Broca is transformer-FREE and runs BEFORE the renderer-None / raw-mode check, so a
+    renderer-less ChatBrain still speaks a grammatical, verified, flagged guess ON SPIKES (fluent True) rather than the
+    raw template. The raw template is reached only via BRAIN_SPIKING_MOUTH=0 (above) or un-frameable content
+    (multi-word roles), pinned below."""
+    from research.runners.brain_chat_tui import HypothesisSVO
+    c = _raw_chat()
+    surface, fluent = c.render_hypothesis_verified(HypothesisSVO(["dog", "like", "fish"]))
+    assert fluent is True
+    assert surface.lower().startswith("perhaps the dog likes the fish")
+    assert surface.lower().endswith(_NOT_TAUGHT)
+    # content the spiking Broca cannot frame (multi-word role) falls through to the raw flagged template, no leak
+    surface2, fluent2 = c.render_hypothesis_verified(["dog", "like", "big fish"])
+    assert fluent2 is False
+    assert surface2 == "perhaps dog like big fish  [a guess from what I've learned -- not something I was taught]"
 
 
 def test_rich_open_ended_flagged_guess_no_leak(chat):

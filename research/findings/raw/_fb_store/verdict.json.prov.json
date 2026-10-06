@@ -1,0 +1,31 @@
+{
+ "run_id": "1791272442-fbstore",
+ "runner": "tools/fb_store_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/fb_store_score.py",
+  "--tag",
+  "fbstore-290e3be",
+  "--pin",
+  "290e3be3f08f0a0ebe7a364eed3410093ae9f5a0",
+  "--out",
+  "research/findings/raw/_fb_store/verdict.json"
+ ],
+ "git_sha": "8982628099af4f8ba8672effc9c9f10418bb2ae1",
+ "git_dirty": false,
+ "started": "2026-10-06T03:40",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "note": "fb-store gate scoring over the six fbstore-290e3be cell lb.jsons (pure stdlib); emitted as the gate-sanctioned sibling because tools/fb_store_score.py does not write one itself. Verdict STORE-NOT-LOAD-BEARING: n_defined=6 n_reply_load_bearing=0, engagement store_lesioned on every seed, intact==lesion answer on every seed, precondition 'cells DEFINED on 6/6 seeds' ok.",
+ "artifact": "/home/dant123/Projects/neural-simulator/research/findings/raw/_fb_store/verdict.json"
+}

@@ -32,8 +32,10 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
   FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer.
 - Cross-session continuation is MANUAL by owner choice ("continue" + the roadmap + the board): no watchdog/daemon.
   One exception (owner 2026-09-29): after the local-model driver yields the GPU (`llm yield`), its session
-  auto-resumes when the GPU window ends. **Transition to local-model-first operation (Claude inspects rarely):**
-  `docs/plans/2026-09-29-local-model-transition-PLAN.md`.
+  auto-resumes when the GPU window ends. **Where things run (owner 2026-09-30): home = homelab-server**
+  (`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
+  (`/home/dant123/Projects/sim`) is a follower + compute node (GPU queue, local model serving); Claude Code
+  inspects occasionally and runs  at session start there. `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
 
 ## Non-negotiables
 
@@ -66,8 +68,10 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
     GPU sweeps/long runs → `tools/gpu_queue.sh`, multi-seed → the controller's `--seeds`); agents only for genuine
     builds. Maximize parallelism AND minimize tokens. Tier every agent (haiku = mechanical · sonnet = moderate ·
     opus = hard judgment), never inherit Opus: `gates/workflow_cost_tiering`, `tools/cost_audit.py`, `cost-routing` skill.
-12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands or
-    Hermes, `docs/OPENHANDS_TAKEOVER.md`). Hand the current one back before starting another.
+12. **One driver at a time:** Claude, or one local-model driver (`tools/local_llm/llm.sh claude`; older: OpenHands,
+    `docs/OPENHANDS_TAKEOVER.md`; the workstation-Hermes driver was retired 2026-09-30 — the owner's Hermes Agent now
+    runs on homelab-server via its own SSH backend, not through this repo's driver switches). Hand the current one
+    back before starting another.
 
 ## Workflow essentials
 

@@ -19,7 +19,11 @@
 # to <queue>.running, then to <queue>.done on completion, so state survives a restart and nothing is lost
 # or double-run.
 set -uo pipefail
-ROOT=/home/dant123/Projects/sim
+# Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
+# worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
+# 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+_GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && ROOT=$(dirname "$_GC")
 LANE="${1:?usage: lane_dispatch.sh <gpu|pool> <slots>}"
 SLOTS="${2:?need slot count}"
 Q="$ROOT/research/queue/${LANE}.queue"

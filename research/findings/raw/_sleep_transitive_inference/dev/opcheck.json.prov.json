@@ -1,0 +1,30 @@
+{
+ "run_id": "1790733954-3446356",
+ "runner": "research/runners/sleep_transitive_inference_grade.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference/research/runners/sleep_transitive_inference_grade.py",
+  "--devcheck",
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed8.json",
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed9.json",
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed10.json",
+  "research/findings/raw/_sleep_transitive_inference/dev/cupy_seed11.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T22:05:54",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4195.0,
+ "corpus_check_query": "integration packets: flip de-risked GO 6/6 default-off chat faculties to on-by-default with reply-level load-bearing",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_transitive_inference/dev/opcheck.json"
+}

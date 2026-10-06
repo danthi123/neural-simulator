@@ -50,6 +50,15 @@ bash tools/stock_research_queue.sh   # re-stage; skips every cell already run (s
 
 If a pool node is unreachable after a reboot, re-provision it once: `bash tools/pool_provision.sh` (then top up).
 
+**Gate-seed lines need a pool canary first (2026-09-30).** `pool_queue.sh add` refuses a line with a gate seed
+(42/43/44/100/101/102) until one gate-seed line of the same runner at the same revision has passed on a pool node.
+Run one line (it writes to `_pool_canary/`, not the gate path, and records the verdict), then queue the rest:
+
+```bash
+bash tools/pool_canary.sh run pool41 '<one of the lines>'   # PASS / FAIL -> research/queue/pool_canaries.tsv
+bash tools/pool_canary.sh list                              # every recorded verdict
+```
+
 ## Durability (safe to leave unattended for days)
 
 Nothing here depends on a Claude session being open. All three pieces are systemd services that keep running on

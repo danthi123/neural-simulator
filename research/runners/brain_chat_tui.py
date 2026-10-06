@@ -181,6 +181,60 @@ def _substrate_parse_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# WORD-READING ROLE MAP (packet word-role-parse, session 2; default OFF, byte-identical when off). The on-brain
+# BridgeParser read in `_neural_question_parse` maps (position, voice) -> role and never sees a word (content[0] is
+# the agent, content[1] the action, whatever they are). BRAIN_WORD_ROLE_PARSE=1 swaps that read for the spiking
+# word-role organ (research/runners/word_role_parser_organ.py): word and position assemblies project onto
+# agent/action/patient ensembles through Hebbian-trained synapses, so the role comes from the WORD ("usually", never
+# heard, gets no role and is skipped). BRAIN_WORD_ROLE_LESION=1 closes the word -> role transmission gate (position
+# alone is subthreshold, so the parse declines); BRAIN_WORD_ROLE_OP picks the organ's frozen GRID index (default 0).
+# Named residuals: the organ is trained on the composer's fact index (a host transcription), the self-alias ->
+# 'brain' resolution stays host. See the organ's docstring.
+_WORD_ROLE_PARSE_DEFAULT_ON = False
+_WORD_ROLE_DEFAULT_OP = 0   # the operating point used when BRAIN_WORD_ROLE_OP is unset (T21 sets it)
+
+
+def _word_role_parse_enabled() -> bool:
+    """BRAIN_WORD_ROLE_PARSE=1 -> `_neural_question_parse` reads the roles from the words (spiking word-role organ).
+    Default OFF (`_WORD_ROLE_PARSE_DEFAULT_ON`) -> today's positional BridgeParser read, byte-identical."""
+    v = os.environ.get("BRAIN_WORD_ROLE_PARSE")
+    if v is None:
+        return _WORD_ROLE_PARSE_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+def _word_role_lesioned() -> bool:
+    """BRAIN_WORD_ROLE_LESION in {1,true,yes,on} (default OFF) -> the organ's word -> role gate is closed."""
+    v = os.environ.get("BRAIN_WORD_ROLE_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _word_role_op() -> int:
+    """BRAIN_WORD_ROLE_OP -> the organ's GRID index (default 0; an unreadable value reads 0)."""
+    try:
+        return int(os.environ.get("BRAIN_WORD_ROLE_OP", str(_WORD_ROLE_DEFAULT_OP)))
+    except (TypeError, ValueError):
+        return _WORD_ROLE_DEFAULT_OP
+
+
+def _json_safe_roles(roles):
+    """{word: role or None} as plain strings (the `word_role_trace` record; never raises)."""
+    try:
+        return {str(w): (None if r is None else str(r)) for w, r in dict(roles or {}).items()}
+    except Exception:
+        return None
+
+
+def _json_safe_counts(counts):
+    """{word: {role: spike count}} as plain ints (the `word_role_trace` record; never raises)."""
+    try:
+        return {str(w): {str(r): int(n) for r, n in dict(c or {}).items()} for w, c in dict(counts or {}).items()}
+    except Exception:
+        return None
+
+
 def _substrate_recall_lesioned() -> bool:
     """`BRAIN_SUBSTRATE_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `ChatBrain.
     _substrate_recall` returns None unconditionally, below. See that method's docstring."""
@@ -546,7 +600,7 @@ def _spiking_plausibility_enabled():
 # further investigation of the seed=44 residual; production and the shipped default never set them.
 # ============================================================================================================
 
-_NEURAL_SELFID_DEFAULT_ON = False
+_NEURAL_SELFID_DEFAULT_ON = True
 _NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = False
 
 
@@ -1250,6 +1304,32 @@ class ChatBrain:
         if _substrate_parse_lesioned():
             return None            # BRAIN_SUBSTRATE_PARSE_LESION=1: the role-conjunction read is CUT (never
                                     # sampled) -- see _substrate_parse_lesioned()'s docstring.
+        if _word_role_parse_enabled():
+            # WORD-READING role map (BRAIN_WORD_ROLE_PARSE, default OFF): the roles come from the words on the
+            # spiking organ, not from content position. A decline (None) falls to the caller's abstain, as below.
+            # ENGAGEMENT RECORD (RULING word-role-engagement, Claude 2026-10-06): the organ call is guarded, so a
+            # crash would read exactly like the lesion's decline. `last_word_role_meta` records that this route ran,
+            # the lesion flag, any swallowed error and the per-word roles/counts; webapp/server.py attaches it to the
+            # reply as `word_role_trace`. A record only: it never changes the parse or the reply text.
+            meta = {"route": "word_role", "lesioned": None, "op": None, "error": None, "agent": None,
+                    "action": None, "roles": None, "counts": None}
+            self.last_word_role_meta = meta
+            try:
+                from research.runners import word_role_parser_organ as _WR
+                meta["op"] = _word_role_op()
+                meta["lesioned"] = bool(_word_role_lesioned())
+                _WR.set_operating_point(meta["op"])
+                seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
+                res = _WR.parse_from_brain(self, content, seed=seed, lesion=meta["lesioned"])
+                a, v = res.get("agent"), res.get("action")
+                meta.update(agent=a, action=v, roles=_json_safe_roles(res.get("roles")),
+                            counts=_json_safe_counts(res.get("counts")))
+            except Exception as e:
+                meta["error"] = ("%s: %s" % (type(e).__name__, e))[:300]
+                return None
+            if not (a and v) or a == v:
+                return None
+            return a, v
         padded = [content[0], content[1], "__q__"]           # SVO with the queried patient a placeholder
         try:
             role_map = {}
@@ -1732,10 +1812,12 @@ class ChatBrain:
     # --- OPEN-ENDED GENERATION (#3E): render a generated HYPOTHESIS as a FLUENT, clearly-FLAGGED guess ---
     def render_hypothesis(self, hyp):
         """Render a GENERATED, moat-verified HYPOTHESIS (a #3E novel proposition) as a clearly-FLAGGED guess.
-        Prefer FLUENT prose via the mouth, framed 'Maybe <fluent> -- that's a guess ...', VERIFYING that the
-        fluent sentence re-parses to the SAME (a, v, p) the hypothesis asserts (so the mouth cannot swap the
-        content). On a verify miss / no renderer / raw mode, fall back to the raw FLAGGED template 'perhaps a v
-        p'. The guess is NEVER surfaced as an asserted fact -- the honesty framing is explicit in the surface text
+        Production default: the brain-native SPIKING Broca speaks it ('perhaps the <S> <V-3sg> the <O>' + the
+        not-taught flag; this runs BEFORE the no-renderer / raw-mode check, so it needs no renderer). With the escape
+        BRAIN_SPIKING_MOUTH=0 (or content the spiking Broca can't frame) it prefers FLUENT prose via the renderer,
+        framed 'Maybe <fluent> -- that's a guess ...'. Either way it VERIFIES that the sentence re-parses to the SAME
+        (a, v, p) the hypothesis asserts (so the mouth cannot swap the content). On a verify miss / no renderer / raw
+        mode on the pre-spiking path, fall back to the raw FLAGGED template 'perhaps a v p'. The guess is NEVER surfaced as an asserted fact -- the honesty framing is explicit in the surface text
         either way."""
         return self.render_hypothesis_verified(hyp)[0]
 

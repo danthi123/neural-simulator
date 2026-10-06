@@ -24,10 +24,10 @@ import time
 
 import tools.gates.corpus_check_required as cc_gate
 
-REAL_GAP4_ARTIFACT = ("/home/dant123/Projects/sim/research/findings/raw/gap4/transport_ceiling_readout/"
-                      "companion_revfeaca2f/C25/ckpt/s7_r2_transport_ceiling.json")
 REAL_GAP4_REL = ("research/findings/raw/gap4/transport_ceiling_readout/companion_revfeaca2f/C25/ckpt/"
                  "s7_r2_transport_ceiling.json")
+# A tracked file, read from THIS checkout (it was a workstation-absolute path before the 2026-09-30 home move).
+REAL_GAP4_ARTIFACT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), REAL_GAP4_REL)
 # The REAL sibling run_id for this exact artifact (C25_s7_r2_transport_ceiling.json.prov.json), confirmed --
 # not fabricated -- by cross-checking mtimes during this fix's development: run_id 1790334960 == epoch for
 # 2026-09-25T07:16:00 local (EDT), and the ckpt file's own real mtime (08:20) sits at

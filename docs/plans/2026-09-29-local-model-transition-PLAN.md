@@ -100,6 +100,11 @@ pool/GPU utilization. Target: under 15K tokens, so one Pro session can inspect.
 
 ## 9. The harness on the server (owner 2026-09-29: containerized on 192.168.0.10, everything THIS week)
 
+**2026-09-30: RETIRED.** The owner decided against a custom harness; the sim-agent container described below was
+torn down. The owner runs the off-the-shelf Hermes Agent on homelab-server (`~/apps/hermes`) as a general
+harness instead, and the sim project's own local-model driver stays `tools/local_llm/llm.sh claude` on the
+workstation. The design below is kept as a record of the work done, not as current state.
+
 The server (`homelab-server`: 16 threads, 61 GB, no GPU, Docker 29, hosts gitea and many other services) runs the
 harness; the workstation keeps the 3090 for serving the model and for brain GPU runs, and keeps the pool dispatcher.
 
@@ -130,6 +135,15 @@ neither gaming nor GPU windows need to pause the harness.
 **Credentials (created by the owner, never by an agent).** A gitea key or token for the agent that may push only
 `research/draft-*` (branch protection on `main`); pushes to GitHub stay with the workstation/Claude. Optional: a
 Vikunja token. Optional egress limits for the container's subnet (a DOCKER-USER firewall snippet the owner applies).
+
+**2026-09-30 refit to srv-host-0's own conventions** (branch `research/harness-server-fit`; procedure
+`docs/AGENT_HARNESS_SETUP.md`). The design above assumed a generic Docker host. On the real box the harness is now an
+`~/apps` stack fragment (one compose project, secrets as `SIM_AGENT_*` in the one `~/apps/.env`), its repo and home are
+bind mounts on a refquota-capped, sanoid-snapshotted ZFS dataset (`data/appdata/sim-agent`, skipped by the nightly
+cold-stop backup), limits are 8 CPUs / 12 GB (the box has ~23 GB free), and the egress firewall is MANDATORY: an
+nftables table of its own (`sim-agent.nft`, loaded before Docker) replacing the DOCKER-USER snippet, which on this box
+matched no bridge, blocked the fallback resolver and let the container hairpin into the server's own HTTPS services.
+The container refuses to start unless that table is dropping its traffic.
 
 **Serving simplification (workstation).** Bake-off with the existing `tools/local_llm/bakeoff.py`: Ollama and Unsloth
 Studio (both serve the Anthropic Messages API) against today's llama-server profile, same model file where possible.

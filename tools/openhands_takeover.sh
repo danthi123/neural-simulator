@@ -46,8 +46,8 @@ case "${1:-status}" in
       exit 1
     fi
     if [ -f "$STATE/HERMES_ACTIVE" ]; then
-      echo "[takeover] ⛔ HERMES_ACTIVE is set — Hermes is (or was) the active driver. Hand it back first:"
-      echo "      bash tools/hermes_takeover.sh off"
+      echo "[takeover] ⛔ HERMES_ACTIVE is set — likely a stale sentinel from the retired (2026-09-30) workstation-Hermes driver. Clear it first:"
+      echo "      rm -f $STATE/HERMES_ACTIVE"
       echo "    then re-run: bash tools/openhands_takeover.sh on"
       exit 1
     fi

@@ -1,0 +1,152 @@
+===== seed 1 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=1 wb=48.0 loc=0 steps=175 secs=0.7 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[191, 0, 0, 0] relay_spk=[102, 0, 0, 0] evict_spk=None pres_spk=382 | slot0 v first -60.0 -> max 22.15 -> last 19.4 mV
+  hold      n= 25 belief_spk=[55, 0, 0, 0] relay_spk=[82, 0, 0, 0] evict_spk=None pres_spk=191 | slot0 v first 15.2 -> max 21.84 -> last 15.64 mV
+  hold slot0: spikes first-quarter 0, last-quarter 30, per-10-step [0, 30, 25]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed1_loc0.jsonl
+===== seed 1 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=1 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=147 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1903, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=368 | slot0 v first -10.17 -> max 56.03 -> last -31.01 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=178 | slot0 v first 16.49 -> max 16.49 -> last 1.44 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0587, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed1_loc0.jsonl
+===== seed 2 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=2 wb=48.0 loc=0 steps=175 secs=0.8 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[187, 0, 0, 0] relay_spk=[96, 0, 0, 0] evict_spk=None pres_spk=396 | slot0 v first -60.0 -> max 21.45 -> last 17.44 mV
+  hold      n= 25 belief_spk=[61, 0, 0, 0] relay_spk=[79, 0, 0, 0] evict_spk=None pres_spk=201 | slot0 v first 13.13 -> max 20.77 -> last 20.36 mV
+  hold slot0: spikes first-quarter 0, last-quarter 30, per-10-step [1, 32, 28]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed2_loc0.jsonl
+===== seed 2 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=2 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=160 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1864, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=388 | slot0 v first -9.0 -> max 63.15 -> last -35.61 mV
+  hold      n= 25 belief_spk=[1, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=174 | slot0 v first 17.22 -> max 17.22 -> last 5.83 mV
+  hold slot0: spikes first-quarter 0, last-quarter 1, per-10-step [0, 0, 1]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0614, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed2_loc0.jsonl
+===== seed 3 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=3 wb=48.0 loc=0 steps=175 secs=0.8 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[196, 0, 0, 0] relay_spk=[97, 0, 0, 0] evict_spk=None pres_spk=403 | slot0 v first -60.0 -> max 23.88 -> last 15.32 mV
+  hold      n= 25 belief_spk=[67, 0, 0, 0] relay_spk=[85, 0, 0, 0] evict_spk=None pres_spk=201 | slot0 v first 12.63 -> max 20.82 -> last 16.86 mV
+  hold slot0: spikes first-quarter 1, last-quarter 35, per-10-step [2, 32, 33]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed3_loc0.jsonl
+===== seed 3 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=3 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=166 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1989, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=384 | slot0 v first -6.36 -> max 59.06 -> last -34.2 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=182 | slot0 v first 18.13 -> max 18.13 -> last -3.19 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0689, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed3_loc0.jsonl
+===== seed 4 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=4 wb=48.0 loc=0 steps=175 secs=0.7 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[184, 0, 0, 0] relay_spk=[86, 0, 0, 0] evict_spk=None pres_spk=352 | slot0 v first -60.0 -> max 23.27 -> last 20.48 mV
+  hold      n= 25 belief_spk=[49, 0, 0, 0] relay_spk=[74, 0, 0, 0] evict_spk=None pres_spk=176 | slot0 v first 17.52 -> max 21.49 -> last 21.49 mV
+  hold slot0: spikes first-quarter 1, last-quarter 28, per-10-step [1, 26, 22]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed4_loc0.jsonl
+===== seed 4 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=4 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=150 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1877, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=359 | slot0 v first -8.18 -> max 54.8 -> last -29.48 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=180 | slot0 v first 15.92 -> max 15.92 -> last -0.54 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0519, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed4_loc0.jsonl
+===== seed 5 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=5 wb=48.0 loc=0 steps=175 secs=0.7 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[184, 0, 0, 0] relay_spk=[92, 0, 0, 0] evict_spk=None pres_spk=362 | slot0 v first -60.0 -> max 22.48 -> last 21.43 mV
+  hold      n= 25 belief_spk=[48, 0, 0, 0] relay_spk=[84, 0, 0, 0] evict_spk=None pres_spk=178 | slot0 v first 18.44 -> max 21.25 -> last 18.76 mV
+  hold slot0: spikes first-quarter 1, last-quarter 30, per-10-step [1, 22, 25]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed5_loc0.jsonl
+===== seed 5 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=5 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=143 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1906, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=358 | slot0 v first -7.03 -> max 61.81 -> last -36.81 mV
+  hold      n= 25 belief_spk=[1, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=184 | slot0 v first 17.37 -> max 17.37 -> last -1.4 mV
+  hold slot0: spikes first-quarter 0, last-quarter 1, per-10-step [0, 0, 1]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.058, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed5_loc0.jsonl
+===== seed 6 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=6 wb=48.0 loc=0 steps=175 secs=0.7 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[183, 0, 0, 0] relay_spk=[95, 0, 0, 0] evict_spk=None pres_spk=372 | slot0 v first -60.0 -> max 25.58 -> last 20.34 mV
+  hold      n= 25 belief_spk=[49, 0, 0, 0] relay_spk=[79, 0, 0, 0] evict_spk=None pres_spk=170 | slot0 v first 21.23 -> max 21.23 -> last 16.19 mV
+  hold slot0: spikes first-quarter 1, last-quarter 31, per-10-step [1, 19, 29]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed6_loc0.jsonl
+===== seed 6 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=6 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=143 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1867, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=370 | slot0 v first -8.47 -> max 53.69 -> last -26.75 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=191 | slot0 v first 15.11 -> max 15.11 -> last 1.39 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0674, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed6_loc0.jsonl
+===== seed 7 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=7 wb=48.0 loc=0 steps=175 secs=0.8 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[188, 0, 0, 0] relay_spk=[94, 0, 0, 0] evict_spk=None pres_spk=383 | slot0 v first -60.0 -> max 23.07 -> last 20.68 mV
+  hold      n= 25 belief_spk=[44, 0, 0, 0] relay_spk=[78, 0, 0, 0] evict_spk=None pres_spk=180 | slot0 v first 19.13 -> max 20.51 -> last 20.1 mV
+  hold slot0: spikes first-quarter 1, last-quarter 21, per-10-step [1, 22, 21]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed7_loc0.jsonl
+===== seed 7 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=7 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=152 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1887, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=368 | slot0 v first -9.97 -> max 56.23 -> last -29.92 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=169 | slot0 v first 15.51 -> max 15.51 -> last -0.78 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.058, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed7_loc0.jsonl
+===== seed 8 relay_nmda =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=relay_nmda seed=8 wb=48.0 loc=0 steps=175 secs=0.8 HOLD_STEPS=25 WRITE_STEPS=50
+  write     n= 50 belief_spk=[189, 0, 0, 0] relay_spk=[88, 0, 0, 0] evict_spk=None pres_spk=356 | slot0 v first -60.0 -> max 22.08 -> last 22.08 mV
+  hold      n= 25 belief_spk=[42, 0, 0, 0] relay_spk=[72, 0, 0, 0] evict_spk=None pres_spk=175 | slot0 v first 21.77 -> max 21.77 -> last 16.82 mV
+  hold slot0: spikes first-quarter 1, last-quarter 29, per-10-step [1, 17, 24]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/relay_nmda_wb48_seed8_loc0.jsonl
+===== seed 8 readout =====
+NOTE idx keys (no evict key): ['belief_all', 'belief_dev', 'ev_arrive', 'ev_leave', 'presence', 'relay_all', 'relay_dev', 'self_all', 'self_dev', 'world_all', 'world_dev']
+mode=readout seed=8 wb=48.0 loc=0 steps=195 secs=0.5 HOLD_STEPS=25 WRITE_STEPS=50
+  pres_read n= 20 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=177 | slot0 v first -60.0 -> max -60.0 -> last -60.0 mV
+  write     n= 50 belief_spk=[1930, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=375 | slot0 v first -9.05 -> max 51.05 -> last -27.78 mV
+  hold      n= 25 belief_spk=[0, 0, 0, 0] relay_spk=None evict_spk=None pres_spk=190 | slot0 v first 15.97 -> max 15.97 -> last -1.22 mV
+  hold slot0: spikes first-quarter 0, last-quarter 0, per-10-step [0, 0, 0]
+  write ignited slots: [0]
+  final query: belief_loc=0 want=0 rates={0: 0.0621, 1: 0.0, 2: 0.0, 3: 0.0}
+rows -> /home/dant123/Projects/neural-simulator/docs/drafts/fb-spiking-witness-relay2/scans/out/readout_wb48_seed8_loc0.jsonl

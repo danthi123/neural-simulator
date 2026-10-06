@@ -199,6 +199,9 @@ research/queue/.waiver_history.jsonl
 research/queue/.brain_build_reference.json
 research/queue/.aws_spend_ledger.jsonl
 research/queue/.pool_reservations
+# The live pool dispatcher's published POOL_SANDBOX mode (2026-09-30); machine-local.
+research/queue/.pool_sandbox_state
+research/queue/.pool_sandbox_state.tmp.*
 
 # AWS-as-extra-pool-node plumbing (2026-09-23): a repo-LOCAL ssh config (never ~/.ssh/config -- see
 # tools/aws_pool_node.sh) plus the dynamic node-name file tools/pool_autodispatch.sh re-reads every cycle and
@@ -224,6 +227,8 @@ research/queue/.pool_stale_refresh/
 # own cycle) detects a pause whose owning process died before it could resume the node itself. Transient/local,
 # never meant to be committed.
 research/queue/.pool_paused/
+# Server-side pool provisioning requests (sim-provision reads these; empty files named by sha)
+research/queue/provision.req/
 # Per-node AWS-pool-node state files (tools/aws_pool_node.sh: research/queue/.aws_<node-name>, e.g. .aws_pool1,
 # .aws_worker1 -- `up` accepts ANY [a-zA-Z0-9_-] node-name, not just names starting with "pool"). Holds an
 # instance id, security-group id and a LOCAL key PATH (never key material) -- not secret, but a broad
@@ -233,10 +238,35 @@ research/queue/.pool_paused/
 # TRACKED on purpose.
 research/queue/.aws_*
 # Live queue / lock state (2026-09-24): untracked so no checkout, merge, restore or stash can rewrite it mid-run
-research/queue/pool.queue research/queue/pool.queue.claims research/queue/pool.queue.running research/queue/pool.queue.done research/queue/pool.queue.lock research/queue/pool.queue.malformed research/queue/pool.running research/queue/gpu.queue research/queue/gpu.queue.running research/queue/gpu.queue.done research/queue/gpu_queue.dpid research/queue/.gpu.queue.lock research/queue/.gpu_daemon.lock research/queue/.gpu_queue.lock research/queue/.opsweep_keepalive.lock research/queue/.last_cpu_dispatch research/queue/.qwen_llm_active research/queue/.autofill_cycle research/queue/.agent_waiver
+research/queue/pool.queue
+research/queue/pool.queue.claims
+research/queue/pool.queue.running
+research/queue/pool.queue.done
+research/queue/pool.queue.lock
+research/queue/pool.queue.malformed
+research/queue/pool.running
+research/queue/gpu.queue
+research/queue/gpu.queue.running
+research/queue/gpu.queue.done
+research/queue/gpu_queue.dpid
+research/queue/.gpu.queue.lock
+research/queue/.gpu_daemon.lock
+research/queue/.gpu_queue.lock
+research/queue/.opsweep_keepalive.lock
+research/queue/.last_cpu_dispatch
+research/queue/.qwen_llm_active
+research/queue/.autofill_cycle
+research/queue/.agent_waiver
 # Per-job GPU/pool sandbox output (2026-09-29 security re-review, M1): tools/agent_gateway_submit.py's
 # per-job output confinement (see its own header) -- a sandboxed job's ONLY writable output location.
 # Never committed: (a) it is scratch/output data, not source, matching every other research/findings/raw/
 # subtree's own untracked convention; (b) a planted file here (e.g. a conftest.py) must never become part of
 # the tracked tree via an accidental `git add -A`.
 research/findings/raw/_agent_jobs/
+# Pool canary records (2026-09-30, tools/pool_canary.sh): live state the tool appends on this workstation and
+# `pool_queue.sh add` reads, untracked like pool.queue so no checkout, merge, restore or stash rewrites it.
+research/queue/pool_canaries.tsv
+research/queue/pool_canaries.tsv.lock
+# Pool canary outputs pulled back by pool-sync (canary result JSON; the 2026-09-30 sandbox tester's captured logs
+# are 150-300 MB each): instrument checks, never gate data, never committed.
+research/findings/raw/_pool_canary/

@@ -1,0 +1,301 @@
+{
+ "seed": 1,
+ "op_index": 2,
+ "grid_index": 2,
+ "params": {
+  "NW": 8,
+  "NP": 8,
+  "R": 12,
+  "NI": 8,
+  "DRIVE_PA": 1500.0,
+  "TEACH_PA": 1500.0,
+  "LR": 0.1,
+  "W_MAX": 20.0,
+  "POS_GAIN": 0.03,
+  "EPOCHS": 8,
+  "TRAIN_STEPS": 40,
+  "TEST_STEPS": 60,
+  "W_INIT": 0.05,
+  "W_RI": 200.0,
+  "W_IR": 80.0,
+  "ROLE_MIN": 9,
+  "ROLE_MARGIN": 2.0,
+  "N_SPARE": 4
+ },
+ "cases": {
+  "svo": {
+   "content": [
+    "dog",
+    "chase"
+   ],
+   "want": [
+    "dog",
+    "chase"
+   ],
+   "got": [
+    "dog",
+    "chase"
+   ],
+   "roles": {
+    "dog": "agent",
+    "chase": "action"
+   },
+   "counts": {
+    "dog": {
+     "agent": 22,
+     "action": 0,
+     "patient": 0
+    },
+    "chase": {
+     "agent": 0,
+     "action": 24,
+     "patient": 0
+    }
+   },
+   "pass": true
+  },
+  "self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": [
+    "brain",
+    "use"
+   ],
+   "got": [
+    "brain",
+    "use"
+   ],
+   "roles": {
+    "brain": "agent",
+    "use": "action"
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 21,
+     "patient": 0
+    }
+   },
+   "pass": true
+  },
+  "adverb": {
+   "content": [
+    "brain",
+    "usually",
+    "use"
+   ],
+   "want": [
+    "brain",
+    "use"
+   ],
+   "got": [
+    "brain",
+    "use"
+   ],
+   "roles": {
+    "brain": "agent",
+    "usually": null,
+    "use": "action"
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "usually": {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 16,
+     "patient": 0
+    }
+   },
+   "pass": true
+  },
+  "swapped": {
+   "content": [
+    "chase",
+    "dog"
+   ],
+   "want": [
+    "dog",
+    "chase"
+   ],
+   "got": [
+    "dog",
+    "chase"
+   ],
+   "roles": {
+    "chase": "action",
+    "dog": "agent"
+   },
+   "counts": {
+    "chase": {
+     "agent": 0,
+     "action": 17,
+     "patient": 0
+    },
+    "dog": {
+     "agent": 9,
+     "action": 0,
+     "patient": 0
+    }
+   },
+   "pass": true
+  },
+  "novel": {
+   "content": [
+    "zorp",
+    "glim"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "zorp": null,
+    "glim": null
+   },
+   "counts": {
+    "zorp": {
+     "agent": 5,
+     "action": 0,
+     "patient": 0
+    },
+    "glim": {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   },
+   "pass": true
+  },
+  "lesion_self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "brain": null,
+    "use": null
+   },
+   "counts": {
+    "brain": {
+     "agent": 5,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   },
+   "pass": true
+  }
+ },
+ "all_pass": true,
+ "backend": "numpy",
+ "weights": {
+  "word_taught": 10.919,
+  "word_untaught": 0.05,
+  "pos_matched": 3.79,
+  "pos_other": 0.05
+ },
+ "diagnostics": {
+  "pos_alone": {
+   "pos0": {
+    "agent": 5,
+    "action": 0,
+    "patient": 0
+   },
+   "pos1": {
+    "agent": 0,
+    "action": 0,
+    "patient": 0
+   },
+   "pos2": {
+    "agent": 0,
+    "action": 0,
+    "patient": 0
+   }
+  },
+  "word_alone": {
+   "dog": {
+    "agent": 9,
+    "action": 0,
+    "patient": 0
+   },
+   "chase": {
+    "agent": 0,
+    "action": 16,
+    "patient": 0
+   },
+   "brain": {
+    "agent": 20,
+    "action": 0,
+    "patient": 0
+   },
+   "use": {
+    "agent": 0,
+    "action": 16,
+    "patient": 0
+   }
+  },
+  "dual_role": {
+   "cat@0": {
+    "want": "agent",
+    "got": "agent",
+    "counts": {
+     "agent": 24,
+     "action": 0,
+     "patient": 1
+    },
+    "ok": true
+   },
+   "cat@2": {
+    "want": "patient",
+    "got": null,
+    "counts": {
+     "agent": 7,
+     "action": 0,
+     "patient": 12
+    },
+    "ok": false
+   },
+   "fish@0": {
+    "want": "agent",
+    "got": "agent",
+    "counts": {
+     "agent": 12,
+     "action": 0,
+     "patient": 4
+    },
+    "ok": true
+   },
+   "fish@2": {
+    "want": "patient",
+    "got": null,
+    "counts": {
+     "agent": 7,
+     "action": 0,
+     "patient": 10
+    },
+    "ok": false
+   }
+  },
+  "dual_role_ok": 2
+ },
+ "lesion_moved_parse": true
+}

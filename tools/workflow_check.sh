@@ -15,18 +15,21 @@
 #   bash tools/workflow_check.sh            # full report + exit 1 if any rule is violated
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 # AWS-AS-EXTRA-POOL-NODE (fix round #2, 2026-09-23): this file's cluster/crash checks were hardcoded to
 # `pool40 pool41 pool42` and a bare `ssh` (no -F), so a crash on an AWS pool node (tools/aws_pool_node.sh) was
-# NEVER surfaced here -- it is registered the SAME way pool40/41/42 are (.pool_extra_nodes,
+# NEVER surfaced here -- it is registered the SAME way the default nodes are (.pool_extra_nodes,
 # .pool_ssh_config), so this file must read them too, or the loss stays silent. ABSENT by default, so behaviour
-# for anyone who has not run `aws_pool_node.sh up` is byte-identical to before.
+# for anyone who has not run `aws_pool_node.sh up` is byte-identical to before. Default node list: see
+# tools/pool_nodes.conf (this comment predates pool40's 2026-09-30 retirement).
 POOL_SSH_CONFIG="${POOL_SSH_CONFIG:-$ROOT/research/queue/.pool_ssh_config}"
 POOL_CHECK_SSH_F=(); [ -f "$POOL_SSH_CONFIG" ] && POOL_CHECK_SSH_F=(-F "$POOL_SSH_CONFIG")
 POOL_EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"
 _pool_check_extra_nodes() {
   [ -f "$POOL_EXTRA_NODES_FILE" ] && grep -vE '^[[:space:]]*(#|$)' "$POOL_EXTRA_NODES_FILE" 2>/dev/null | tr -s '[:space:]' ' '
 }
-POOL_CHECK_NODES="pool40 pool41 pool42 $(_pool_check_extra_nodes)"
+POOL_CHECK_NODES="$POOL_NODES_DEFAULT $(_pool_check_extra_nodes)"
 
 queue_health() {
   local queue="$1" now="$2" max_age="$3"
@@ -426,8 +429,8 @@ if [ "$POOL_IDLE" -gt 0 ]; then
     echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
     echo "     The pool copy is an rsync'd tree, NOT a git repo: 'git pull' fails there and it silently predates"
     echo "     any new runner. scp the runner first, then dispatch:"
-    echo "       scp research/runners/<runner>.py pool40:~/derisk-pool/sim/research/runners/"
-    echo "       ssh -f -n pool40 \"cd ~/derisk-pool/sim && setsid bash <script>.sh </dev/null >out 2>&1 & exit 0\""
+    echo "       scp research/runners/<runner>.py pool41:~/derisk-pool/sim/research/runners/"
+    echo "       ssh -f -n pool41 \"cd ~/derisk-pool/sim && setsid bash <script>.sh </dev/null >out 2>&1 & exit 0\""
     FAIL=1
   fi
 elif [ "$POOL_UP" -eq 0 ]; then
