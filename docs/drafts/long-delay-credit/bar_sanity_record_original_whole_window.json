@@ -1,0 +1,71 @@
+{
+ "backend": "numpy",
+ "description": "lhb_window_rates(lhb_spikes, OUTCOME_MS) + engagement_a(factor 2), research/runners/_ldc_omission_pilot.py",
+ "failures": [
+  "UNREACHABLE: perfect passes 0.000 < 0.95",
+  "UNREACHABLE: perfect_pulse_only passes 0.000 < 0.95",
+  "UNREACHABLE: perfect_registered_timing_pulse passes 0.493 < 0.95"
+ ],
+ "kinds": {
+  "info_registered_timing_silent_from_onset": "info",
+  "null": "null",
+  "perfect": "perfect",
+  "perfect_pulse_only": "perfect",
+  "perfect_registered_timing_pulse": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_registered_timing_silent_from_onset": 1000,
+  "null": 0,
+  "perfect": 0,
+  "perfect_pulse_only": 0,
+  "perfect_registered_timing_pulse": 493
+ },
+ "name": "T1 engagement bar (a), whole outcome window (as registered)",
+ "pass_rate": {
+  "info_registered_timing_silent_from_onset": 1.0,
+  "null": 0.0,
+  "perfect": 0.0,
+  "perfect_pulse_only": 0.0,
+  "perfect_registered_timing_pulse": 0.493
+ },
+ "pass_rate_ci95": {
+  "info_registered_timing_silent_from_onset": [
+   0.9962,
+   1.0
+  ],
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.0,
+   0.0038
+  ],
+  "perfect_pulse_only": [
+   0.0,
+   0.0038
+  ],
+  "perfect_registered_timing_pulse": [
+   0.4621,
+   0.524
+  ]
+ },
+ "repo_head": "f514932939cf6c0dbc666aed336e20cef517db3c",
+ "scorer_files": {
+  "docs/drafts/long-delay-credit/bar_sanity_t1_common.py": "daf7ba2acfc31d5134856a12aa9a8c5d0300322730a28041c8b78a05c962dfc4",
+  "research/runners/_ldc_omission_pilot.py": "87f1d3e98cac17dfa2ba9e8875d6a86f5d3eba12ed903a6c34a4ace3fb621344"
+ },
+ "scorer_sha256": "a1d6e0fda0d5b644ef834d3fd73deee0e8ac626043552dd6b5abd3b0785d63f2",
+ "seed": 0,
+ "spec": "docs/drafts/long-delay-credit/bar_sanity_spec_original.py",
+ "spec_sha256": "355459560d6cbb75d365566dee7fe90c144b1fd009e4780df2bf0661bead4df2",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "UNREACHABLE",
+ "wall_s": 2.7
+}
