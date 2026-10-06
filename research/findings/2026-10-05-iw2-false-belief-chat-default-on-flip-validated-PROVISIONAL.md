@@ -23,6 +23,11 @@ artifacts:
 
 # iw2 false-belief-chat: default-on flip validated (PROVISIONAL, 2026-10-05)
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 P7 = 573a9438f075239069c8966dd62f1da4d981e158, F7 = 1fb805e9e0bedcce684a47388d95848daf1008a2. Six
 seeds (42/43/44/100/101/102). Every number below is read from the cited verdict JSONs. Status: merged with caveats by cloud Claude session 7 (see the review section at the end).
 

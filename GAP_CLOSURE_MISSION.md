@@ -13,7 +13,33 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-05 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-06 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-06. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 attempt 1 is fully
+read and not passed (C1 FAIL, C4 FAIL as registered); C1's wiring-on gate needs its last 2 cells; C4 needs an amended
+permuted control before attempt 2. Move the host-owned C2/C3 decisions into the substrate.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-c3c4-read`,
+`s1-c4-audit`, `pool-hold-c1` and `stage2-dev-smoke`, then section 4 in order.
+
+**Landed 2026-10-06 (Claude review, branch claude-review/stage1-status):**
+- **Stage-1 C3 lived recall, re-measured at P2 7851dd220 (Amendment A1): PASS 6/6, reply level, NARROWED.** The
+  recall lesion is an interface cut of the composer read for the probed cue; selection stays host-owned (k-select);
+  the episodic lesion's engagement is in the data but unscored. Not pooled with the c238ff325 arms.
+- **Stage-1 C4 feeling, re-run with the learned map shipped: FAIL as registered** (permuted-map clause 4/6). The map
+  engaged (24/24 deranged; intact differs from dr2_off), intact r clears 0.55 on 6/6, the ladder lesion silences
+  every read, and the permuted reply follows the permuted map on every seed. The clause fails because two seeds'
+  derangements correlate with the norm; a perfectly map-driven brain passes it about 44% of the time. Attempt 2 needs
+  an amended control registered first. `val_novel` FAIL 0/6, as predicted.
+- **Affect audit ruled** (`docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`): void = only attempt 1's `gate/`
+  C4 cells (already corrected). Pool/AWS LBF affect rows before 10-05 stand with a provenance caveat (norm values,
+  same-input contrast). Finding: `research/findings/2026-10-04-stage1-exit-gate-RESULT.md` (review 2026-10-06).
+- **Owed:** C1 wiring-on gate (T7): re-queue the 2 missing s42 cells; amended C4 control (Claude, before attempt 2);
+  Stage-2 dev smoke re-queued at a synced revision (RULING `stage2-dev-smoke`).
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-05 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-05. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
