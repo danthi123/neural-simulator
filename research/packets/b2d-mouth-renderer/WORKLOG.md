@@ -110,3 +110,10 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - (b) mouth check: 0 `b2d0929-mouth` lines in research/queue/gpu.queue and the
   local model is down (game.sh status) -> table row `arm waits for Claude`
   (NEEDS #6); nothing queued, no yield attempted.
+
+- 2026-10-06 01:2x session duty: `b2d_queue_next_wave.sh` ran (dry + live) -> 29 fresh b2d0929 lines still
+  queued (>= 10): nothing queued (wave 2 draining, 12 lines ran since 23:11); ledger unchanged (no new wave);
+  stub-cell arrivals tracked by wakes (18 + 28 new load_bearing files 00:13/01:14). Mouth-arm section-5 table not
+  evaluable from this host: the block's env.sh paths are S-side and `gpu_remote.sh log 400` hangs over ssh here
+  (guarded 15 s call returned empty twice); local gpu.queue mouth lines = 0, local gpu_queue idle. Per the handled
+  [T23] row the S-side paused arm resumes per RULING game-mode-pauses; not touched from here.
