@@ -32,34 +32,7 @@
   PINS.tsv+verdicts+shards match; prereg section 6 verbatim; TERMS.md reply-level usage; default-OFF confirmed
   `_WORD_ROLE_PARSE_DEFAULT_ON = False`). Verdict: GO under PROVISIONAL banner (Claude confirm+merge pending).
 
-## 2026-10-06 00:5x — section 5 scored
+## 2026-10-06 — Claude review
 
-2026-10-06 word-role-parse: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md.
-
-- Data: commit 99906f6fc (O jsons, 12 LB shards, verdicts + gate-sanctioned .prov siblings; the scorer does not
-  emit verdict sidecars — sibling shape follows the transitive-spiking-reach precedent).
-- Scoring: `tools/s2p_score.py O ... --pin 9ea7411eb... --out .../verdicts/O.json` -> PASS op=0 rc=0;
-  `tools/s2p_score.py R --tag s2p-R-wr-9ea7411 ... --out .../verdicts/R.json` -> PASS op=0 rc=0.
-  O: n_all_pass=6, n_defined=6. R: n_reply_load_bearing=6/6 (regressed on all six seeds), control
-  word-role-nofact-ctl 6/6 control-ok, both preconditions ok, at_default=false.
-- verify-go (RULING verify-go, two MiMo Pro refuters): lens 1 control-integrity/gate-cheat -> SURVIVES
-  (independent re-score byte-identical; control holds; selection op=0 first passing index). Lens 2
-  reproducibility/instrument-trust/claim-precision -> SURVIVES (sha256-identical re-score; pin audit
-  PINS.tsv+verdicts+shards match; prereg section 6 verbatim; TERMS.md reply-level usage; default-OFF confirmed
-  `_WORD_ROLE_PARSE_DEFAULT_ON = False`). Verdict: GO under PROVISIONAL banner (Claude confirm+merge pending).
-
-## 2026-10-06 00:5x — section 5 scored
-
-2026-10-06 word-role-parse: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md.
-
-- Data: commit 99906f6fc (O jsons, 12 LB shards, verdicts + gate-sanctioned .prov siblings; the scorer does not
-  emit verdict sidecars — sibling shape follows the transitive-spiking-reach precedent).
-- Scoring: `tools/s2p_score.py O ... --pin 9ea7411eb... --out .../verdicts/O.json` -> PASS op=0 rc=0;
-  `tools/s2p_score.py R --tag s2p-R-wr-9ea7411 ... --out .../verdicts/R.json` -> PASS op=0 rc=0.
-  O: n_all_pass=6, n_defined=6. R: n_reply_load_bearing=6/6 (regressed on all six seeds), control
-  word-role-nofact-ctl 6/6 control-ok, both preconditions ok, at_default=false.
-- verify-go (RULING verify-go, two MiMo Pro refuters): lens 1 control-integrity/gate-cheat -> SURVIVES
-  (independent re-score byte-identical; control holds; selection op=0 first passing index). Lens 2
-  reproducibility/instrument-trust/claim-precision -> SURVIVES (sha256-identical re-score; pin audit
-  PINS.tsv+verdicts+shards match; prereg section 6 verbatim; TERMS.md reply-level usage; default-OFF confirmed
-  `_WORD_ROLE_PARSE_DEFAULT_ON = False`). Verdict: GO under PROVISIONAL banner (Claude confirm+merge pending).
+Claude verify-go: O + R PASS confirmed, narrowed (read-out mode, PARTIAL credit; four host residuals; lesion
+engagement inferred, not recorded). Caveats in the finding; merged via claude-review/word-role-parse.
