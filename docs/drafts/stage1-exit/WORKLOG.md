@@ -82,3 +82,9 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   stress with identity values; record wiring through install_patch). 12/12 pass.
   `.venv/bin/python -m pytest tests/test_stage1_exit_gate.py -q` (in the worktree, SIM_NO_PROVENANCE=1).
 - Claude reviews before attempt 2 (NEEDS-CLAUDE RESULT filed on main after this commit).
+- 2026-10-06: RULING s1-branch-hygiene executed: committed the gpu_lived_cupy result data
+  (aggregate.json + .prov.json + report.md) and moved research/queue/stage1_exit_report{,2}.md
+  out of the repo to /opt/data/cache/scratch/stage1_reports/; tree is clean after this commit.
+  main (427 ahead) merges into the branch when Claude approves the C4 draw (s1-c4-control under
+  review — NEEDS [s1-c4-control] RESULT bc8f804b9); per the ruling Claude makes that merge on
+  claude-review/stage1-sync and a later RULING gates the fast-forward.

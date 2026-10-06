@@ -1,0 +1,31 @@
+{
+ "run_id": "1791097988-3555",
+ "runner": "research/runners/stage1_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/stage1-exit/research/runners/stage1_exit_gate.py",
+  "--aggregate",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_stage1_exit/gpu_lived_cupy/aggregate.json"
+ ],
+ "git_sha": "8c56ff97b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-04T03:13:08",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 96246.9,
+ "corpus_check_query": "sleep transitive inference prior method NO-GO (STI7 fails 4/4): build the ruled successor, the symmetric CA3-CA3 associator rule (Mishra 2016) with a within-class weight-permutation control, as a dev-",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_stage1_exit/gpu_lived_cupy/aggregate.json"
+}
