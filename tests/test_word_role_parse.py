@@ -163,6 +163,93 @@ def test_parse_lesion_check_still_comes_first(monkeypatch):
     assert _stub_chat()._neural_question_parse(["dog", "chase"]) is None
 
 
+# ── ENGAGEMENT RECORD (RULING word-role-engagement, Claude 2026-10-06): `_neural_question_parse` catches every organ
+#    exception and declines, so a crashed lesion arm would read as the lesion's abstain. `last_word_role_meta` records
+#    that the word-role route ran, the lesion flag, any swallowed error and the per-word roles; webapp/server.py
+#    attaches it to the reply as `word_role_trace` (only on a turn where the route ran). ─────────────────────────────
+def _fake_parse(roles, counts, agent, action):
+    def fake(chat, content, *, seed, lesion=False):
+        return {"agent": agent, "action": action, "roles": dict(roles), "counts": dict(counts)}
+    return fake
+
+
+def test_trace_records_route_lesion_flag_and_roles(monkeypatch):
+    monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    monkeypatch.delenv("BRAIN_WORD_ROLE_LESION", raising=False)
+    monkeypatch.setenv("BRAIN_WORD_ROLE_OP", "0")
+    import research.runners.word_role_parser_organ as W
+    roles = {"brain": "agent", "usually": None, "use": "action"}
+    counts = {"brain": {"agent": 30, "action": 0, "patient": 0}, "usually": {"agent": 0, "action": 2, "patient": 0},
+              "use": {"agent": 0, "action": 22, "patient": 0}}
+    monkeypatch.setattr(W, "parse_from_brain", _fake_parse(roles, counts, "brain", "use"))
+    chat = _stub_chat()
+    assert chat._neural_question_parse(["brain", "usually", "use"]) == ("brain", "use")
+    m = chat.last_word_role_meta
+    assert m["route"] == "word_role" and m["lesioned"] is False and m["error"] is None and m["op"] == 0
+    assert m["roles"] == roles and m["counts"] == counts
+    assert (m["agent"], m["action"]) == ("brain", "use")
+    json.dumps(m)                                            # the reply body must serialize it
+    monkeypatch.setenv("BRAIN_WORD_ROLE_LESION", "1")
+    monkeypatch.setattr(W, "parse_from_brain", _fake_parse({"brain": None, "use": None}, {}, None, None))
+    assert chat._neural_question_parse(["brain", "use"]) is None
+    m = chat.last_word_role_meta
+    assert m["route"] == "word_role" and m["lesioned"] is True and m["error"] is None
+    assert m["roles"] == {"brain": None, "use": None} and m["agent"] is None
+
+
+def test_trace_records_a_swallowed_error(monkeypatch):
+    monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
+    monkeypatch.setenv("BRAIN_WORD_ROLE_LESION", "1")
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    import research.runners.word_role_parser_organ as W
+
+    def raises(*a, **k):
+        raise RuntimeError("organ down")
+    monkeypatch.setattr(W, "parse_from_brain", raises)
+    chat = _stub_chat()
+    assert chat._neural_question_parse(["brain", "use"]) is None      # the reply still declines ...
+    m = chat.last_word_role_meta
+    assert m["route"] == "word_role" and m["lesioned"] is True and "organ down" in m["error"]   # ... and says why
+
+
+def test_no_trace_when_the_route_does_not_run(monkeypatch):
+    import research.runners.word_role_parser_organ as W
+    monkeypatch.setattr(W, "parse_from_brain", lambda *a, **k: (_ for _ in ()).throw(AssertionError("reached")))
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "0")                   # flag off: the positional read
+    chat = _stub_chat()
+    chat._neural_question_parse(["dog", "chase"])
+    assert getattr(chat, "last_word_role_meta", None) is None
+    monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
+    monkeypatch.setenv("BRAIN_SUBSTRATE_PARSE_LESION", "1")            # the parse lesion still comes first
+    chat._neural_question_parse(["dog", "chase"])
+    assert getattr(chat, "last_word_role_meta", None) is None
+
+
+def test_server_attaches_the_trace_only_when_the_route_ran():
+    import webapp.server as S
+    chat = _stub_chat()
+    S._word_role_trace_reset(chat)
+    assert S._word_role_trace(chat) is None                  # no key -> the body is unchanged
+    chat.last_word_role_meta = {"route": "word_role", "lesioned": True, "error": None, "roles": {"a": None}}
+    tr = S._word_role_trace(chat)
+    assert tr == chat.last_word_role_meta and tr is not chat.last_word_role_meta
+    S._word_role_trace_reset(chat)
+    assert getattr(chat, "last_word_role_meta", "unset") is None
+    S._word_role_trace_reset(object())                       # never raises on a chat without the attribute
+
+
+def test_brain_reply_resets_then_attaches_the_trace():
+    """Source-level wiring check: brain_reply resets the record at the start of the turn and attaches it to the main
+    reply body under `word_role_trace` (the transitive_trace pattern)."""
+    import inspect
+    import webapp.server as S
+    src = inspect.getsource(S.brain_reply)
+    i_reset, i_attach = src.find("_word_role_trace_reset(chat)"), src.find('_resp["word_role_trace"]')
+    assert 0 <= i_reset < i_attach
+
+
 # ── the LBF row module ─────────────────────────────────────────────────────────────────────────────────────────────
 def test_row_module_selftest_and_shape():
     from research.runners.lbf_rows import word_role_parse as R

@@ -48,6 +48,10 @@ mechanism: BRAIN_WORD_ROLE_PARSE=1 at BRAIN_WORD_ROLE_OP=0 (read-out mode; a hos
 > at the same seed, and O's `lesion_self` case (6/6) shows the closed-gate path runs without error. On that basis a
 > crash-only abstain is implausible, but nothing records it. A `word_role_trace` (route ran, lesion flag, swallowed
 > error, per-word roles) is owed before P4's F1 lines for this packet.
+> **Update (Claude, 2026-10-06, branch claude-review/word-role-trace):** the trace now exists. The reply carries
+> `word_role_trace` on every turn where the word-role parse ran, and `tools/s2p_score.py` makes a word-role-parse R
+> cell UNDEFINED:engagement-* unless every intact and lesion arm records it. A re-score of the 9ea7411 R data
+> therefore now reads UNDEFINED:engagement-no-record, by design; the PASS above stands on this caveat.
 
 **Status: confirmed by Claude (2026-10-06), narrowed as above.** Hermes's own verify-go ran two MiMo Pro refuters
 (lens 1 control-integrity/gate-cheat, lens 2 reproducibility/instrument-trust/claim-precision; 2/2 SURVIVES).
