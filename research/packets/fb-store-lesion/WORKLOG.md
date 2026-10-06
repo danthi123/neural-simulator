@@ -21,3 +21,16 @@
   research/findings/raw/_fb_store/verdict.json` and NEEDS-CLAUDE "[fb-store] RESULT".
 - One re-run per not-DEFINED cell, logged (prereg section 3); reading table fixed in prereg section 4; prediction
   STORE-NOT-LOAD-BEARING (section 5, an expectation not a bar).
+
+## 2026-10-06 01:54-02:1x wake — dev shard CONFIRMED, gate canary launched
+
+- Dev shard landed (dispatched 01:47:00 to wspool, ~3.5 min): verdict=pass, n_exercised=1, n_not_exercised=0,
+  lesion_reproduced=true, flag_resolves=true, deterministic=true, null_control_clean=true, n_null_controls_checked=1,
+  and the row note records "Engagement: false_belief_tom.store_lesioned is True on the lesion arm" -> prereg
+  checklist items 1-5 all satisfied (item 4 explicitly confirmed).
+- Gate lines: pool_queue.sh add needs, in order, (a) a committed prereg path cited as 'prereg <path>' in --checked
+  (now: research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md, verified present at pin), and (b) a pool
+  canary record for (load_bearing_fraction, 290e3be3f) - gate seeds require a pool-node canary first.
+- Canary launched: `pool_canary.sh run auto '<seed-42 line>' --wait-s 1500` (tracked session proc_9dfdafd5235a).
+  Canary output is redirected to raw/_pool_canary/, so it does not write gate data; all six gate lines queue after
+  a PASS record. Known defect: launch ssh may report rc=3 while the detached job runs (NEEDS pool-canary).
