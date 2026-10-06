@@ -928,6 +928,16 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - handled: the 2026-10-05 NEEDS line on the 12 queued transitive R lines barred by iw2-merged (b) -> RULING
   transitive-engagement (2026-10-05)
 
+- pool-canary: (2026-10-06) The "launch over ssh failed" hang was the launch command's own shape, not a node or
+  wrapper problem: `cd X && ... setsid ... </dev/null >/dev/null 2>&1 & exit 0` backgrounds the whole and-list and
+  the redirections bind only to setsid, so ssh's output stayed open until the canary ended (8.2 s vs 0.2 s on pool40,
+  wspool, pool41). Fixed in pool_canary.sh and pool_autodispatch.sh (main d8d14dc59). A canary now returns from
+  launch in under a second; do not hand-record a PASS for this cause any more.
+- ssh-launch-shape: (2026-10-06) Any ssh launch of a detached job puts the redirections on the whole backgrounded
+  group: `{ cd X && V=1 setsid ... ; } </dev/null >/dev/null 2>&1 & exit 0`, never `cd X && ... >/dev/null 2>&1 &`.
+  sweep_pool.sh, pool_lineattractor_dispatch.sh, pool_opsweep_dispatch.sh and workflow_check.sh:433 still use the
+  old shape (harmless lingering ssh under ssh -f); fix them when you next touch them.
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
@@ -938,7 +948,6 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-05 02:52 [transitive-spiking-reach] ASK: RULING iw2-merged(b) bars the 12 queued s2p-R-tr-9ea7411 R lines (rev predates the n_ignited/error chase trace); none started; no queue-withdraw tool - hold/withdraw before dispatch, re-queue post-fix (detail: packet WORKLOG); blocks T19 s4-5
 - 2026-10-05 05:12 [T1] ASK: STEP4B 4b.2 engagement bar (a) unreachable: the 50ms reward pulse caps the 250ms-window LHb rate ratio at 1.25 (need 2, got 1.04) - fix the instrument (reward sub-window / pulse-locked / slow release); void=True on route-off too; detail: WORKLOG; blocks freeze + grid
 - 2026-10-05 08:16 [transitive-spiking-reach] ASK: agent_sync_branch refused on an uncited-measurement claim in research/findings/2026-10-05-iw2-transitive-chat-default-on-flip-validated-PROVISIONAL.md (edit reserved); branch not synced; R lines generated from main; blocks: packet step 5
-- 2026-10-05 10:00 [pool-canary] ASK: launch ssh hangs past 60s -> 'launch over ssh failed' rc=3 while the detached canary RUNS normally (3 launches today, wspool+pool40); I recorded PASS via record. Decide: fix the rssh launch wait or advise; blind retries duplicate jobs
 - 2026-10-05 10:42 [s1-c4-rerun] RESULT: guarded scorer on 72 rerun lines: val_heldout FAIL (6/6 correct, lesion 6/6 reproduced, permuted tracked 4/6), val_novel FAIL 0/6 capability absent; stage UNDEFINED(INCOMPLETE, C4-only dir); aggregate + data landed; blocks: Claude reads C4
 - 2026-10-05 10:42 [s1-c4-void] INFO: affect_production_organ audit: 702 pool results since 09-01 across 23 runners; list in docs/drafts/stage1-exit/AUDIT-affect-pool-results.md (top: stage1_exit_gate 335, lbf_conditioned_mouth 193, learned_vocab 67); Claude decides which are void
 - 2026-10-05 10:45 [s1-c4-void] INFO: audit WIDENED per RULING runtime-inputs: A affect_production_organ 702 results/23 runners; B WKV mouth+eprop 577/58; C learned_vocab 403/3; docs/drafts/stage1-exit/AUDIT-affect-pool-results.md; report only, Claude rules
