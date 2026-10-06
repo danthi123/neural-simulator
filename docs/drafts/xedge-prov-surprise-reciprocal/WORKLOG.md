@@ -192,3 +192,36 @@ attempts produced NO smoke_seed7.json; INTACT_FLOOR remains unfrozen.
   (§2: never `git add research/findings/raw/_provenance/runs.jsonl` — left modified-uncommitted, as before).
 - Next per the ruling: diagnose byte_off False (equal synapse counts 240322, values differ) and clean_zero False
   (prov_perceived 0.01 under "generated", threshold <0.005 at runner line 364) BEFORE any 6-seed queue.
+
+## 2026-10-06 05:5x — provision for the patched tip REFUSED stale; diagnosis progress (code-side)
+
+Provision: touch research/queue/provision.req/0add7f3cb82ebbbae1a55623b006a29e17bbfa1f -> landed 75s,
+state="refused", reason verbatim: "stale: does not contain published main 871bc551498b or a main published in
+the 60 min before this request, and main changed more than docs since"; hint "Merge or rebase onto main, commit,
+and name the new sha right away." reachable_via= research/draft-xedge-prov-surprise-reciprocal (the sha IS on
+the branch). Merge/rebase = SECTION-2 RESERVED (same class as [ldc-provision]) -> NEEDS-CLAUDE line filed on
+main; smoke line NOT queued (no reachable revision; the 10-04 pattern: add only after the status lands ok).
+
+Diagnosis in progress (the ruling: diagnose BOTH before the 6-seed queue) — code-side, run pending on the
+smoke seed-7 JSON:
+
+byte_off (observed False; equal synapse counts 240322, values differ): verify_byte_off
+(onebrain_crossedge_gate.py:191-208) excludes the declared (pre,post) slots from the WITH side only and requires
+k_with_base == k_without as exact {key: value} maps. The descriptors in this draft have NO explicit_wiring_fn
+(grep: only CROSS_EDGES at :114), so the slots' presence in the no-edge pool must come from the merge's base
+wiring plan (onebrain_merge_framework.py:433 rm.build_wiring_plan, per_region_seed=True) carrying the
+prov_perceived->surprise anatomical pair at base values — cross_edges only OVERWRITES/annotates the same
+support (union[ce.key] at :444-445). That fits ALL THREE observations: n_with == n_without (240322), slot
+values differ (W0/plastic vs base), and PASS=False (k_without retains the excluded slot keys). HYPOTHESIS,
+pending the smoke's n_with/n_without/n_with_base triple to confirm; if confirmed, the fix question (make the
+no-edge build drop the anatomical pair, or make verify_byte_off exclude slots from BOTH sides) is Claude's.
+
+clean_zero (observed perc_rate 0.01 >= 0.005, runner :364): read_verdict("generated") drives
+patterns["generated"][0] + ctx_generated (:312-313) and reads prov_perceived, and run_seed calls it AFTER
+run_gate (:355-359) — i.e. on the trained + interaction-lesioned pool, not a resting one. Candidates: (a)
+prov_perceived baseline/spontaneous rate above the 0.005 bar under any drive; (b) content/ctx leakage from the
+generated exemplar's drive into prov_perceived; (c) post-lesion state shift. Needs the smoke JSON plus a
+per-region rate dump to discriminate; NOT resolvable by code reading alone.
+
+Both checks block the INTACT_FLOOR freeze and any 6-seed queue (PLAN row 7: clean-zero FAIL = leaky control;
+row 5: byte-off FAIL = CONFOUND). Next wake after the rebase: provision -> record smoke -> shape-check -> add.
