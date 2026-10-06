@@ -269,3 +269,13 @@ Diagnosis (ONE MiMo Pro delegate, verified by code, cites checked):
    then confirmed inside laneC encode machinery = registered = Claude's.
 Next: re-queue seed-7 smoke on the fixed head (byte_off should PASS end-to-end; gen_rate lands); write the
 PLAN calibration rule from that data; only then INTACT_FLOOR freeze question + any 6-seed queue.
+
+## 2026-10-06 07:2x — fixed head provisioned (00beae8a2) + smoke RE-QUEUED
+
+Provision touch research/queue/provision.req/00beae8a2c67822b9e46264e3c3c33a0dcdd8d06 -> running ~11 min
+(busier than ada33408d's 4 min; wave-3 fleet load) -> state=ok, published_main df182050a, "provisioned on
+pool41, pool42, pool40, wspool". Requeued the seed-7 smoke line at the fixed tip (shape RC=0, ADD_RC=0,
+depth 57): byte_off now compares like-for-like pure builds (locally verified PASS: n_with_base 240322 ==
+n_without 240322 byte-identical, +9216 edge slots only) and clean_zero records gen_rate alongside perc_rate.
+Hold: INTACT_FLOOR freeze + any 6-seed queue until the re-smoke lands and the PLAN clean-zero calibration
+rule is pre-declared from its gen/perc data.
