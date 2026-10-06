@@ -1,0 +1,307 @@
+{
+ "at_default": false,
+ "control": {
+  "n_defined": 6,
+  "n_ok": 6,
+  "per_seed": {
+   "100": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "101": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "102": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "42": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "43": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "44": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": false,
+     "intact_answer": "Sally will look in the box for the marble.",
+     "lesion_answer": "Sally will look in the box for the marble.",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2fb_tb"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   }
+  },
+  "row": "fb-spiking-true-belief-ctl"
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 6,
+ "op": 4,
+ "packet": "fb-spiking-witness",
+ "per_seed": {
+  "100": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "101": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "102": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "42": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "43": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "44": {
+   "detail": {
+    "answer_only": true,
+    "changed_fields": [
+     "answer"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the box for the marble.",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2fb_fb"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  }
+ },
+ "pin": "40c43d520cbee67210b85ad767e88bdd176f88c1",
+ "preconditions": [
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  },
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "permuted-control cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  }
+ ],
+ "step": "R",
+ "tag": "s2p-R-fb-40c43d5",
+ "undefined_reasons": [],
+ "verdict": "PASS"
+}

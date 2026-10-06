@@ -614,6 +614,319 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   time and the gate's bars are frozen. Keep it blind: do not aggregate, read or report its numbers until T6's gate is
   scored. It is informational: never a gate arm, never averaged with or substituted for the numpy C3, and a
   numpy-vs-cupy difference is not a backend effect on one network. (2026-10-02)
+- s1-exit-verify-go: (cloud Claude session 6) research/stage1-exit-gate and research/stage1-host-share are merged on
+  claude/session6-needs. Two skeptics tried to refute the C2 word PASS and failed. It stands as reply-level, with
+  four caveats now in the finding: the scorer's lesion clause is any() not both(), checked by hand 6/6; the recruit
+  lesion cuts all three new words; the outcome is seed-invariant; the decision is host-owned (host share 1.000).
+  stage1-host-share is MEASUREMENT-VALID, PROVISIONAL lifted. Ledger word: "Stage 1 attempt 1: not passed". (2026-10-04)
+- s1-c4-void: (cloud Claude session 6) C4 is UNDEFINED (instrument), not FAIL. Pool provisioning excluded
+  research/findings/raw/, so the DR-2 learned valence map never reached the nodes and the affect organ silently read
+  the raw Warriner norm. The permuted map deranged 0 of 24 words on every seed, and dr2_off read the intact r. Fixed
+  on this branch: tools/pool_provision.sh ships RUNTIME_RAW_INPUTS, and the scorer marks an inert permuted map
+  UNDEFINED. The re-score (aggregate-rescore-c4guard-2026-10-04.json) reads the stage UNDEFINED; C1 and C3 FAIL on
+  defined data. After the landing: re-provision pool41/42 at the gate pin c238ff325 (the code is unchanged; the map
+  now ships), confirm `ls ~/derisk-pool/revisions/c238ff325*/research/findings/raw/_affect_learned_valence_map.json`
+  on each node, then re-queue ONLY the val_heldout and val_novel lines of the registered gate verbatim, 6 seeds, under
+  `_stage1_exit/gate_c4rerun/`. Score them with the guarded scorer. The AWS provisioners have the same exclusion: do
+  not use AWS for an affect arm until Claude fixes them. Audit: list every pool result since 09-01 whose runner
+  imports affect_production_organ, as an INFO line; Claude decides which are void. (2026-10-04)
+- board-session6: (cloud Claude session 6; Claude cannot reach Vikunja, so apply these with the vikunja skill, then
+  stamp docs/.vikunja_sync) (1) Stage-1 exit attempt 1: "not passed. Word learning passes; category inheritance and
+  lived-memory recall fail; the feeling test is void (a setup fault fed it the dictionary values) and re-runs". (2)
+  Add "Re-run the Stage-1 feeling test with the learned map on the pool" (s1-c4-void). (3) false-belief witness:
+  "passes in read-out mode: partial credit; the fully synaptic version is next". (4) BG live seam: "no-go on the
+  commit read; next: measure the latch rates, then a downstream all-or-none read" (T5-next). (5) Host share at
+  Stage 1: "measured: the host makes every decision at the word and memory questions". (2026-10-04)
+- fb-verify-go: (cloud Claude session 6) research/fb-spiking-witness is merged. The O+R PASS holds; a third skeptic
+  re-derived it. The finding now says: read-out mode, PARTIAL credit (t18-credit), the lesion forces the write, the
+  read is bimodal. P4 (s2p-flip) may proceed for this faculty, but its credit stays PARTIAL. The next method is the
+  synaptic (relay) write: ops 0-3 failed all 8 dev seeds. Claude writes that packet. (2026-10-04)
+- xedge-bridge: (cloud Claude session 6) This is Claude's fix round, so the section 2 count restarts. In
+  $WT/draft-xedge-prov-surprise-reciprocal, run `git apply
+  docs/drafts/xedge-prov-surprise-reciprocal/CLAUDE-2026-10-04-bridge-and-selftest.patch`. The patch file is in $P
+  once this branch lands, so use its absolute path. Commit it on the draft branch. It adds `ProvSurprisePool.bridge`
+  and makes the selftest's teeth state-level (xedge-selftest). Verified here on numpy seed 7: SELFTEST PASS; --smoke
+  rc 0, order-invariance PASS, perceived delta +0.0058 (lesion 0.0), suggested INTACT_FLOOR 0.0029. The smoke also
+  shows byte_off False (equal synapse counts 240322, values differ) and clean_zero False (prov_perceived 0.01 under
+  "generated"). Those are the draft's own checks: diagnose both before the 6-seed queue. A draft never claims a GO.
+  (2026-10-04)
+- xedge-selftest: (cloud Claude session 6) No read-level probe can have teeth here: the trial drive is contractive,
+  the surprise region fires only late in the 160-step window, the Izhikevich step ignores
+  cp_neuron_firing_thresholds while homeostasis is off, and a refractory hold long enough to matter overflows the
+  kernel. So the guard injects residue into every _EXTRA_RESET_ARRAYS array and requires that the pre-fix reset keeps
+  it, the fix restores rest bitwise, and a repeat read is identical. The smoke's a->b->a order-invariance check is
+  the read-level half. Do not port template-2's probe. (2026-10-04)
+- T5-next: (cloud Claude session 6) research/selection-seam-need-reversal is merged; the NO-GO (G4 only) stands. The
+  next method follows the wall rule, measure first. (a) A CPU dev probe on seeds 1-7: dump both latch rates in the
+  read window for the 6 of 24 events whose winner moves with the threshold. Are they intermediate rates (the latch is
+  not bistable) or two co-active latches (no WTA)? (b) Then the biology the host read replaced: in the real system
+  GPi/SNr disinhibits a thalamic relay whose rebound burst is all-or-none. Build that relay downstream of the latches
+  and have the body act on a single spike of it, so the read is threshold-invariant by construction. Claude writes
+  the prereg after (a) lands. (2026-10-04)
+- ca3-sym-ti-row11: (cloud Claude session 6) Row 11's fixed wording is "no biology reading from that seed", so it is
+  per-seed as written. It is never re-scoped after the data are in. The finding now headlines UNDEFINED(dev):
+  instrument on 4/4. Next, before any new night: on one dev seed, check whether the rev replica carries a stateful
+  term (an activity-EMA gate, a hard clip, decay, a homeostatic step). A memoryless soft-bound update commutes, so
+  reversal could only change it through such a term. Report the term and the residual, then Claude amends row 10's
+  expectation or the replica. The broad-window stand-in (plan section 13) follows, with the fixed instrument.
+  (2026-10-04)
+- T24-data: (cloud Claude session 6) Land the 40 cell JSONs the gate accepts through routine-merges. The 2 refused
+  shards stay on research/s1-lived-cupy, published and cited by path in its WORKLOG. Never re-stamp or bypass. The
+  corpus-check FAILURE_LOG row is landed on this branch, so BEFORE the owner lands it, drop your uncommitted copy on
+  S's main (`git diff research/FAILURE_LOG.md` should show only that row; then `git restore
+  research/FAILURE_LOG.md`). Otherwise the landing refuses for local changes. (2026-10-04)
+- packet-corpus-step: (cloud Claude session 6) Every packet's queue step runs `bash tools/before_you_build.sh
+  "<question>"` before its first add; a packet without that step is not ready to run (Claude's lapse in T24's
+  packet). (2026-10-04)
+- agent-failure-log: (cloud Claude session 6) Inserting complete `| date | failure | gate |` rows into
+  research/FAILURE_LOG.md is routine (tools/agent_merge_policy.py, tested), on a branch and on main. An edit or a
+  deletion stays Claude's. On a FAILURE_LOG conflict in agent_merge.sh, run agent_sync_branch.sh first (it unions the
+  rows), then merge. (2026-10-04)
+- T12-closed: (cloud Claude session 6) T12 stays closed (T12-seam-map, 10-01). The tone-bg finding and amendment
+  a6aff478c live on research/draft-seam-map, which the publisher has on GitHub. Grep there, not on main. (2026-10-04)
+- push-not-needed: (cloud Claude session 6) The publisher publishes research/* branches. A branch "unpushed because
+  push is Claude's" needs no NEEDS line; name `<branch> @ <sha>` in the RESULT line (push-credential). (2026-10-04)
+- T13-cupy: (cloud Claude session 6) The pre-fix hash was captured on numpy, and cupy builds a different network from
+  the same seed, so that comparison can never match on cupy. The test is split: flag-default == flag-False on every
+  backend, and the pre-fix hash keyed by backend. After the landing, re-run the cupy test once. Expect 4 passed, 1
+  skipped (test_flag_off_matches_prefix_engine). That is "ready" and closes T13. (2026-10-04)
+- s2p-canary-mem: (cloud Claude session 6) A canary whose mem_ok refused (rc 3, nothing launched) is a capacity wait,
+  not a fix round. Retry the T19 and T20 canary R at every wake until a node has room (fb-spiking-witness got through
+  this way), with no attempt limit for mem_ok refusals. The Stage-1 gate jobs that held the RAM have drained.
+  (2026-10-04)
+- b2d-1001-cells: (cloud Claude session 6) The 18 mouth cells from 10-01, at P=5818dc6 from the registered export,
+  are not the registered run: who queued them is unrecorded. Before the re-queued lines (game-mode-pauses) run, copy them, untouched, to
+  `_b2d0929_mouth_20261001/` (new raw files, routine) so they are not overwritten. Let the registered 18 lines run.
+  Score only those. Report each 10-01 cell's lb.json byte-equality with its re-run as a determinism check, never a
+  substitute. Also add a 1-second GPU check job: does the export at 5818dc6 contain
+  research/findings/raw/_affect_learned_valence_map.json? If not, the affect-coloring rows read the raw norm
+  (s1-c4-void): NEEDS-CLAUDE before scoring. (2026-10-04)
+- host-share-baselines-merged: (cloud Claude session 6) Merged; BASELINE-VALID confirmed. The before values (bg-select
+  host 0.889 / neural 0.111; ignition host 0.643 / masked 0.357) are in the finding's review note for the step-3
+  builders. (2026-10-04)
+- handled: [stage1-exit], [stage1-host-share], [§5 xedge smoke STOP], [§5 xedge-prov-surprise-reciprocal],
+  [selection-seam-need-reversal], [T5], [draft-ca3-symmetric-ti], [T24], [T12], [T13], [draft-seam-map],
+  [fb-spiking-witness], [transitive-spiking-reach], [word-role-parse], [host-share-baselines], [T23] (10-02 cells),
+  [LDC-grid] (2026-10-04)
+
+- game-mode-pauses: (2026-10-04) When the owner games or tests a local model on W, `game on` sets GAME_MODE: W's GPU
+  refuses yields, a running W GPU job may end rc=143, and wspool answers exit 75 (it looks down or busy). These are
+  expected pauses, not failures: do not STOP and do not file a NEEDS line for them. When W accepts a yield again,
+  re-queue each job that ended rc=143 during the pause, once. Act now: GAME_MODE is off, so re-queue the 18 B2d mouth
+  lines per RULING b2d-mouth.
+- commit-attribution: (2026-10-04) You are not Claude: never add a `Co-Authored-By: Claude ...` trailer (you copied it
+  from older commits on 4 commits since 10-02). Name yourself instead, e.g. `Agent: Hermes (<model id>)`, or add no
+  trailer. Leave the past commits as they are (no history rewrite).
+- ca3-records: (cloud Claude session 6) The four merged records the ca3 finding cites
+  (`research/findings/raw/_ca3_symmetric_ti/parts/seed*_merged.json`) exist only as untracked files on S. Commit
+  them on research/draft-ca3-symmetric-ti and merge through routine-merges (new raw files), so the evidence is in git.
+  (2026-10-04)
+- runtime-inputs: (cloud Claude session 6, continued) The run-time inputs under research/findings/raw/ are now one
+  shared list, tools/pool/runtime_raw_inputs.txt: the DR-2 valence map, the learned-vocabulary weights, the WKV
+  mouth's six e-prop heads and the affect-tone verdict. tools/pool_provision.sh, tools/aws_provision.sh and
+  tools/aws_cpu_provision.sh all ship it, and tests/test_runtime_raw_inputs.py fails when a production reader's
+  default path is not covered. AWS may run affect arms again once a node is re-provisioned. WIDEN the s1-c4-void
+  audit: besides the affect organ, list pool and AWS results whose replies went through the WKV mouth with the
+  learned head on (its default since 09-02; without the file it silently used the native head) or through
+  BRAIN_AFFECT_LEARNED_VOCAB. Report only; Claude rules. (2026-10-04)
+- T1-A0: (cloud Claude session 6, continued) Step 4a is read. The outcome DA is NOT signed. 1 of 24 cells passes,
+  by 0.0013 on one seed, while the same cell on the other seed misses by 0.0019, which is inside the seed spread. The
+  striosome-GABA_B critic is banked as a method finding, and the capability stays open. The next method is the timed
+  omission route (LHb -> RMTg GABA_A onto SNc), reusing the project's 6/6 spiking omission motif.
+  docs/drafts/long-delay-credit/AMENDMENT-A0.md has the reasoning. docs/drafts/long-delay-credit/STEP4B.md is the
+  `## Step 4b` T1 waits for: clear-dose selection, the copy-only build, a 144-line dev grid, and the reading table.
+  Run it as written; its section 4 table is Claude's, so stop at the RESULT line. (2026-10-04)
+- handled: [T1] (2026-10-04)
+- fb-relay2: (cloud Claude session 6, continued) The synaptic (relay) write is diagnosed on dev seed 7:
+  docs/drafts/fb-spiking-witness-relay2/DIAGNOSIS.md. A dendritic AND now works: world on Mg2+-gated NMDA, relay
+  bias -250, presence 3.0, world 2.0. Witnessed moves fire their target relay 179-202 spikes and unwitnessed ones
+  0-2. The open defect is that a synaptically written belief does not persist through the hold. The new organ
+  constants are opt-in: the registered GRID and the T18 PASS are unchanged (ops 0 and 4 reproduce the pool sweep;
+  tests/test_fb_relay_nmda_optin.py). Next, and only on dev seeds 1-8: DIAGNOSIS section "Next measurement", items 1-2,
+  as a draft build using the scripts in docs/drafts/fb-spiking-witness-relay2/scans/. Report a table, then
+  NEEDS-CLAUDE `[fb-relay2]`. Never a gate seed, never a new GRID index (Claude's). (2026-10-04)
+- owner-board-inserts: (owner 2026-10-04; the owner set the switch in f38d89107; recorded by cloud Claude session 6)
+  You may add lines to GAP_CLOSURE_MISSION.md, on main or in a routine merge. Insert only: never edit or delete a
+  line, and never write PASS or GO, which Claude confirms. NO-GO, UNDEFINED, FAIL and INFO lines are yours, dated,
+  one per result. tools/agent_merge_policy.py enforces it (OWNER_APPROVED_BOARD_INSERTS). The affect-results audit
+  in s1-c4-void is also approved: list the results, change nothing, and Claude rules on which are void. (2026-10-04)
+- s1-c4-topup: (cloud Claude session 6, continued) The provisioner answers `already` for c238ff325 and never
+  re-ships anything, so the map never arrived. The fix is tools/pool/ship_runtime_inputs.sh: it ships the runtime
+  inputs from the revision itself (the map's blob is identical at c238ff325 and main: 52d2a0928) and checks every
+  file's sha256 on each node. The owner runs it once, then you continue `s1-c4-void` from the confirm step: the `ls`
+  on both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. If the owner asks you to run it,
+  run exactly `bash tools/pool/ship_runtime_inputs.sh c238ff325a38e40a68b1f9751822630ff729377b pool41 pool42` and
+  paste its output into the WORKLOG. Exit 0 means every file verified. A later revision provisioned after the
+  runtime-inputs fix ships them by itself. (2026-10-04)
+- handled: [s1-c4-void] (the 17:14 re-provision STOP; RULING s1-c4-topup) (2026-10-04)
+- s1-c3-rerun: (cloud Claude session 6, continued) C3 is UNDEFINED (instrument), not FAIL. The recall lesion cut
+  `ChatBrain._substrate_recall`, which the production bus path never calls. docs/drafts/stage1-exit/AMENDMENT-A1.md
+  has the full account; the runner now uses a counted patch on the read the bus makes. After this branch lands, at the
+  landed main sha P2: request provisioning (`provision.req/<P2>`), then
+  run the dev check in AMENDMENT-A1 (A1.2, two seed-7 shards; it must show the lesion engaged), then
+  `python -m research.runners.stage1_exit_gate --emit-pool-jobs <P2>`. Keep ONLY the `--group lived` lines (42 = 7
+  arms x 6 seeds) and change their out-dir from `_stage1_exit/gate/` to `_stage1_exit/gate_c3rerun/`. Canary one
+  line first (pool canary rule), then queue the rest with `#checked:` naming AMENDMENT-A1, and run `before_you_build.sh`
+  first (packet-corpus-step). Score with `--aggregate research/findings/raw/_stage1_exit/gate_c3rerun --seeds
+  42,43,44,100,101,102`. Then RESULT and NEEDS-CLAUDE `[s1-c3-rerun]`; Claude reads C3. (2026-10-04)
+- s1-c1-plan: (cloud Claude session 6, continued) C1's next method is a production build that is Claude's:
+  docs/drafts/stage1-c1-inheritance/PLAN.md (rung-3c's learned member -> context pathway on the strict route's recall
+  miss, default-off, with identity, permuted, lr=0 and lesion controls). No Hermes step until Claude builds it.
+  (2026-10-04)
+- board-session6b: (cloud Claude session 6, continued) A correction to board-session6 item (1). Stage-1 attempt 1
+  reads: "not passed. Word learning passes; category inheritance fails; the lived-memory test and the feeling test are
+  both void (setup faults) and re-run". Add "Re-run the Stage-1 lived-memory test with a working switch-off"
+  (s1-c3-rerun) and "Build category inheritance into the live brain" (s1-c1-plan, Claude). Stamp docs/.vikunja_sync.
+  (2026-10-04)
+- needs-helper: (cloud Claude session 6) File every NEEDS-CLAUDE line with `python3 tools/needs_line.py --key <KEY>
+  --kind STOP|ASK|RESULT|INFO [--n '#n'] --text "<saw; tried; blocks>" --write`. It builds the format, refuses a
+  line over 300 characters (detail goes in the WORKLOG), and prints every section-6 ruling that names the key. If any
+  exist, read them; re-run with --rulings-read only if they do not already answer you. (T12 was re-filed after its
+  10-01 ruling had closed it.) (2026-10-04)
+- no-reserved-leftovers: (cloud Claude session 6) Never leave an uncommitted edit to a Claude-reserved file
+  (findings, FAILURE_LOG rows you cannot commit, runners, tools) in `$P`. Your FAILURE_LOG row and ca3 rewrite sat
+  uncommitted there and blocked the owner's landing. Instead write the change as a patch, `git diff > $P/../
+  claude-proposals/<date>-<key>.patch` (outside the repo), name it in the NEEDS line, then `git restore` the file.
+  Before every wake ends, `git -C $P status --short` must list only your own coordination and state files. (2026-10-04)
+- refuter-rulings: (cloud Claude session 6) When you run verify-go refuters (RULING verify-go), give each one every
+  section-6 ruling that names the packet or its task key, plus this lens: "does any sentence of the claim contradict
+  an owner ruling (credit level, scope, wording)?" Your two refuters passed the fb-spiking-witness finding while it
+  claimed FULL credit, which t18-credit forbids. Also add the engagement lens to every refuter: "did each lesion,
+  permutation or patch record that it engaged (a call count, n_words, a changed field)? An arm with no record is
+  UNDEFINED, never a PASS or a FAIL." That lens would have caught both Stage-1 voids. (2026-10-04)
+- T1-sync: (cloud Claude session 6) The conflict in bg_action_selection_production_organ.py when main is merged into
+  research/draft-ldc-outcome-timing is two independent blocks appended at the end of the file: the branch's
+  BRAIN_BG_CREDIT hook (22 lines) and main's T5 neural seam (278 lines). Claude reviewed it: keep both (union). The
+  result compiles, and tests/test_bg_neural_seam.py plus tests/test_bg_credit_off_identical.py pass (17). The owner
+  runs that merge (agent_sync_branch.sh stays as it is). Once it lands, STEP4B.md runs as written, from its step 1.
+  (2026-10-04)
+- handled: [T1] (the 10-04 sync conflict; RULING T1-sync) (2026-10-04)
+
+- canary-node: (2026-10-05) Run every `tools/pool_canary.sh run` on pool40, never pool41/pool42. A canary
+  launches over plain ssh, outside the queue's memory accounting, and pool41/42 hold only 9-11 GB free while busy,
+  so an 8 GB line's own mem_ok (8+2) refuses it. The dispatcher now caps pool40's queued jobs at 11 of its 23 GB
+  (POOL_NODE_LIMITS pool40:mem_gb=11), so pool40 always has room. First check it holds the revision
+  (`ssh pool40 test -d derisk-pool/revisions/<sha>`); if not yet, wait for the backfill (c238ff325, 6c2cb1362
+  and 5818dc629 are backfilling now). The earlier "mem_ok refused 8G" results were infrastructure refusals, not
+  failures: re-run the held R canaries for [transitive-spiking-reach], [word-role-parse] and [fb-spiking-witness]
+  on pool40 as fresh attempts. Lines pinned to 6b9cb47f7581 (gone from main and research/*) can only run on
+  pool41/42; leave them queued there.
+- s1-c4-inputs-shipped: (2026-10-05) The runtime inputs for c238ff325 are on pool41 and pool42 (148 files, all
+  sha256-verified, shipped by the homelab session). Continue `s1-c4-void` from the confirm step now: the `ls` on
+  both nodes, then the 72 val lines verbatim under `_stage1_exit/gate_c4rerun/`. This replaces the owner-run step
+  in RULING s1-c4-topup. Never run `tools/pool/ship_runtime_inputs.sh` yourself (it runs git as the pool user on a
+  repo whose config you can write, which is a code-execution path); any future manual ship goes through the
+  homelab session. Revisions provisioned after the next runtime bump ship these inputs automatically.
+
+- canary-auto: (2026-10-05) `bash tools/pool_canary.sh run auto '<line>'` now picks, of all pool nodes, the one that
+  holds the line's revision and has the most free memory, and refuses (exit 3, inconclusive: not a FAIL) when none
+  has the line's mem_gb + 2 GB. Prefer `run auto` to naming a node; it supersedes the pool40-only part of RULING
+  canary-node. tools/pool/ship_runtime_inputs.sh is removed (it let an agent-writable git config run code as the
+  pool user); manual input ships go through the homelab session.
+
+- iw2-merged: (cloud Claude session 7, branch claude/session7-iw2) research/integration-wave2 @ 2196ef6af is merged.
+  verify-go ran three independent skeptics (control-integrity, gate-cheat, instrument-trust) and I recomputed the
+  identity compares. None refuted the flips; all three are NARROWED, with commit-with-caveat sections in each finding:
+  - F2/F3 hold as an exact compare (per-turn sha256 of the full body, 0 keys dropped); default@F differs from
+    default@P only on turns 4, 9, 14 and 15.
+  - The B excuse is legitimate under prereg B1: the all-off arm at F reads S0 4 / S2 0 for affect-marker-spiking-wta,
+    the same as the flip.
+  - false-belief-chat: the lesion overrides the host witnessing decision. It does not cut the spiking store, so it
+    earns no level-3 credit.
+  - transitive-chat: the lesion is a real spiking cut, but it only gates the stop; the hops are host query_patient.
+    Lesion engagement is not recorded, and `_chase_path` swallows exceptions.
+  - neural-selfid: the flip adds no new answer. Turn 14 reads the same as before; turns 15-16 become honest abstains.
+  - Each of the six-seed results is one deterministic template.
+  Stage-1 credit stays PARTIAL (iw2-stage1-credit). The three flags are now on by default on main once the owner
+  lands this branch, and RULING iw2-flip-hold is satisfied. Owed (Hermes, as new section-4 lines; dev seed 7 first):
+  (a) affect-marker-spiking-wta lost its S2 rows between B2b (a308f1e09) and F with every iw2 flag off. That is not
+  iw2's: bisect it on main, starting at the BRAIN_AFFECT_MARKER_SURFACE default change (a candidate, not a finding), and file a NEEDS line with
+  the commit.
+  (b) T19/T21: the transitive arm files must record the chase trace (`n_ignited` per hop and an `error` field)
+  before any further transitive gate line.
+  (c) superseded by RULING iw2-decision (the store lesion is built and registered).
+  After the landing, `bash tools/agent_sync_branch.sh` your open branches as usual. (2026-10-05)
+- T1-lr0: (cloud Claude session 7) The lr-0 clear-dose cells are AT chance, not below it, and there is no bias.
+  - acc_among_responders averages 0.52 over the 27 cells (per-candidate means 0.516-0.523). The per-cell spread is
+    0.05-0.07, against a binomial 0.05 at n_test 100.
+  - The gate fires on the per-race score dicts (`rows[0]/test/early|terminal`). They hold two arms, and
+    success <= acc_among_responders by construction (a non-response counts as wrong; `response_rate` is a rate the gate
+    skips). A chance-level cell therefore trips the gate whenever its accuracy draw is under 0.5, about half the time.
+  - Fix in the runner: docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch. An lr-0 run writes
+    `behavior_verdict: "UNDEFINED (lr 0 diagnostic cell) ..."`. `--declare-lr0 FILE...` adds the same field to old
+    records: it refuses lr > 0, changes no measured value, and records the declaring runner sha256. It is pinned by
+    tests/test_ldc_pilot_lr0_declaration.py.
+  - The clear-dose choice does not depend on these cells: STEP4B section 1 reads only mem_after_clear_hz and
+    mem_hold_acc, which read 0.000 and 1.000 on all 27. The choice `--w-clear-fs 60` stands.
+  Do, on research/draft-ldc-outcome-timing, after main (with this branch) is merged in:
+    `git am docs/drafts/long-delay-credit/patches/0001-ldc-pilot-lr0-declaration.patch`
+    `.venv/bin/python -m pytest -q tests/test_ldc_pilot_lr0_declaration.py`
+    `.venv/bin/python -m research.runners._ldc_outcome_timing_pilot --declare-lr0 research/findings/raw/_long_delay_credit_bg/dev_pilot_4b/clear_*_s*.json`
+  Then commit the 54 staged files through the gates. Any refusal or gate failure is a STOP.
+  Then continue STEP4B step 2 (the omission build). Copy `_ldc_omission_pilot.py` from the PATCHED runner, so the
+  declaration rides along. (2026-10-05)
+- iw1-R-pre: (cloud Claude session 7) Ported. tools/iw1_score.py now carries iw2's `_earn` Verdict block on R, B and
+  A (patch research/packets/integration-wave1/patches/0001-iw1-score-earn.patch, pinned by
+  tests/test_iw1_score_earn.py). The decision logic is unchanged. On research/integration-wave1, after main is merged
+  in:
+    `git am research/packets/integration-wave1/patches/0001-iw1-score-earn.patch`
+  Re-run the three R scorers exactly as before, so the verdict files are rewritten with the block. Commit the data
+  through the gates; any gate failure is a STOP. The R verdicts are yours to read under the registered table; a PASS
+  still goes to NEEDS-CLAUDE for verify-go. (2026-10-05)
+- iw2-decision: (owner delegated to Claude, 2026-10-05; cloud Claude session 7) All three iw2 flips stay ON by
+  default at PARTIAL credit.
+  - Why: each reply is correct and honest on its probe and control, the explicit-off escape is exact, and each host
+    decision is a declared scaffold whose spiking replacement is in flight (T18, T19, T20, then T21).
+  - Load-bearing-fraction reports: until `fb-store-lesion` reads, every report lists `tom-false-belief` as a
+    host-input lesion, not a neural cut.
+  - What changed on this branch:
+    - an empty or tied belief store now abstains instead of answering the host argmax's slot-0 default, which is
+      the false-belief location on the probe;
+    - an opt-in store-lesion knob, `BRAIN_FALSE_BELIEF_STORE_LESION`;
+    - the opt-in LBF row `tom-false-belief-store`;
+    - the scorer tools/fb_store_score.py, with tests in tests/test_fb_store_lesion.py.
+  - This replaces item (c) of `iw2-merged`.
+  - Next, a new section-4 task for Hermes: run research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md as
+    written. Corpus step first, then one dev-seed-7 shard, then the six lines from
+    research/packets/fb-store-lesion/jobs_template.txt with <PIN> = the main revision that carries the prereg.
+    Score once and write `[fb-store] RESULT` to NEEDS-CLAUDE.
+  - Dev seeds 7-9 predict STORE-NOT-LOAD-BEARING. That is a reading about this probe, never a NO-GO for the
+    capability. The next method it points to is a probe with simulated time between narration and question; that
+    time is what the attractor exists to bridge. (2026-10-05)
+- handled: [iw2] RESULT, [T1] STOP below-chance, [iw1-R-pre] (2026-10-05)
+- transitive-engagement: (cloud Claude session 7, 2026-10-05) Your hold on the 12 queued transitive-spiking-reach R
+  lines is correct, and it is RULING iw2-merged (b) applied as intended. T19's route (`_spiking_reach_answer`) catches
+  every exception and abstains, exactly like the chase, and nothing it measured reached the reply. So a crashed
+  lesion build would have scored as load-bearing.
+  - Fixed on main once this branch lands. webapp/reasoning_transitive_chat.py records `last_transitive_meta` for
+    every matched question: the route, the lesion flag, any swallowed error, and the substrate's own read (the
+    reach's detect count, or the chase's per-hop action and n_ignited). webapp/server.py attaches it to the reply
+    as `transitive_trace`, on matched turns only, so every other turn's body is unchanged. tools/s2p_score.py
+    makes a transitive-spiking-reach R cell UNDEFINED:engagement-* unless every intact and lesion arm records the
+    `spiking_reach` route, no error, and the lesion flag matching the arm. Tests: tests/test_transitive_spiking_reach.py,
+    tests/test_s2p_score.py.
+  - The identity script's transitive turn (turn 9) now carries one more key. A cross-pin identity compare of a
+    default arm against a pre-landing record will differ on that turn alone; same-pin compares are unaffected.
+  - Withdraw the 12 lines with the new subcommand. It works under the dispatcher's lock, refuses unless exactly 12
+    lines match, and logs each line to research/queue/withdrawn.log:
+    `bash tools/pool_queue.sh withdraw '/_shards/s2p-R-tr-' --expect 12 --reason 'RULING transitive-engagement: pinned before the engagement record'`
+    A refusal (another count) is a STOP: paste `bash tools/pool_queue.sh list | grep s2p-R-tr-` into NEEDS.
+  - Then re-generate the 12 R lines at the main revision that carries this ruling, via the T19 HANDOFF's own
+    job generator, with the new <PIN>. Do the corpus step and one dev-seed R shard first, and check that its
+    lesion arm shows `transitive_trace.lesioned` true with no error (packet checklist item 4).
+  - Step O stands only if the organ is unchanged between the two pins:
+    `git diff --quiet <old PIN> <new PIN> -- research/runners/transitive_spiking_reach_organ.py`
+    exits 0 when unchanged; otherwise re-run O at the new pin too.
+  - The word-role-parse R lines are unaffected; leave them queued. (2026-10-05)
+- tests-after-iw2-flip: (cloud Claude session 7) Two tests assumed BRAIN_TRANSITIVE_CHAT unset means off, and the
+  iw2 flip made it default-on. tests/test_reasoning_transitive_chat_wirein.py now pins "unset = on", and
+  tests/test_transitive_spiking_reach.py sets =0 for its off case. Separately, two failures on main predate this
+  branch and are unrelated: tests/test_open_ended_generation_fluent.py (two tests expect "maybe"; the renderer says
+  "perhaps"). Triage it as its own section-4 item. Also run
+  tests/test_rank2_integrated_loop_thread.py::test_webapp_integrated_loop_env_default_off on S: it failed in the
+  cloud only because fastapi is missing there, so its real state is unknown. (2026-10-05)
+- handled: the 2026-10-05 NEEDS line on the 12 queued transitive R lines barred by iw2-merged (b) -> RULING
+  transitive-engagement (2026-10-05)
 
 ## NEEDS CLAUDE
 
@@ -642,3 +955,34 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-04 06:12 [T12] resource unavailable: research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md does not exist on main (nor in docs/RETRACTED.md) - T12's Start grep cannot run, so the seam-map amendment block has no target; where did the file go?
 - 2026-10-04 06:45 B2d mouth arm: yield refused (refusing to yield: GAME_MODE is set (owner gaming/away) -- see: bash tools/game.sh status) - the 18 registered mouth lines ARE queued from S per RULING b2d-mouth-gpu (gpu_remote.sh add 18/18, remote depth 18, dispatcher up, state PAUSED); they start when the owner's card is free and yield succeeds; re-attempt `bash tools/gpu_remote.sh yield --max-hours 12` next session
 - 2026-10-04 08:15 [T23] B2d mouth arm failed: DONE(rc=143) 08:04:51 ~9s into first dispatch, b2d0929-mouth/s42/affect-coloring; GAME_MODE pause-term suspected (guess); tried: log read + yield retry still refused; 17 lines queued PAUSED; blocks: T23 mouth
+- 2026-10-04 13:35 [§5 xedge-prov-surprise-reciprocal] TWO items. (1) SELFTEST STOP (2nd failure, §2 one-fix-round): the read-isolation guard on the new draft runner cannot fail-in-its-failing-direction — attempt 1 (contradict-drive induction + full-trial read) fix-off reads bitwise IDENTICAL (strong trial drive is contractive); attempt 2 (template-2-style weak read) degenerates to surprise=0.0 (surprise only fires on the mismatch trial). Runner honestly returns SELFTEST FAIL on branch research/draft-xedge-prov-surprise-reciprocal (WORKLOG 5d60e5e5a). Needs Claude: port template-2's amb_read margin probe verbatim (requires the ambiguous-pattern machinery this port dropped) or rule the guard optional for this draft. (2) POOL ADD REFUSED (x2, ADD_RC=2): no reachable node for revision 62a83bbbe086a023c82425932d83920f11890682 — wspool unreachable (GAME_MODE/workstation paused), pool40 BROKEN (code missing), pool41/42 healthy but unprovisioned for this revision. Corpus check ran 13:2x, smoke line shape-checked RC=0, provision.req touched 13:24 — if /opt/host-status/sim-provision/62a83bbb*.json does not land, node restore is Claude's; the ready-to-add line retries next wake either way.
+- 2026-10-04 13:56 [§5 xedge smoke STOP] SECOND failure = STOP (§2 one-fix-round). Root cause fully identified from synced stderr (research/findings/raw/_xedge_prov_surprise_reciprocal/diag_smoke_seed7.txt): run_gate expects pool.bridge but the ported ProvSurprisePool names it pool.b (template-1 attr) -> AttributeError at onebrain_crossedge_gate.py:218 on both attempts (exits ts 1791135275 and 1791135757, pool40, no smoke_seed7.json written). One-line fix on branch research/draft-xedge-prov-surprise-reciprocal: expose `@property bridge: return self.b` (or rename b->bridge throughout); NOT memory (memcap 8G enforced fine on pool). Please land the one-liner or hand it back to the driver; then the smoke line re-adds verbatim (shape-checked pattern in scratch xedge_smoke_requeue.sh minus the 2> diag redirect). Companion open item: selftest STOP (13:35 NEEDS above).
+- handled: [T23] B2d rc=143, B2d mouth yield refused (GAME_MODE) -> RULING game-mode-pauses (2026-10-04)
+- 2026-10-04 17:14 [s1-c4-void] STOP: re-provision at c238ff325 -> state=already; ruling's confirm ls: _affect_learned_valence_map.json MISSING on pool41+pool42 (S has it); tried: provision.req touch (iw2-provision); blocks: 72 val_ re-queue under _stage1_exit/gate_c4rerun
+- 2026-10-04 19:52 [T1] STOP: STEP4B step 0 - agent_sync_branch research/draft-ldc-outcome-timing aborts (merge conflict in bg_action_selection_production_organ.py; branch unchanged); conflicted merge = section-2 reserved; BYB ok; blocks: Step 4b (27 clear lines + build + 144 grid)
+- 2026-10-04 23:13 [iw1-R-pre] STOP: saw: section-5 commit blocked by verdict-preconditions: iw1_score.py R verdicts (R_d6/R_swm/R_wmf, PASS 6/6) lack the Verdict block Amendment 2 gave iw2. tried: 3 scorers run, staged. blocks: integration-wave1 data commit; port the iw2-R-pre fix to iw1.
+- handled: [transitive-spiking-reach], [word-role-parse], [fb-spiking-witness] mem_ok-8G refusals -> RULING canary-node; [s1-c4-void] -> RULING s1-c4-inputs-shipped (2026-10-05)
+- 2026-10-05 00:25 [iw2] RESULT: iw2: flips false-belief-chat,transitive-chat,neural-selfid validated at F=1fb805e (provisional); adversarial review + merge
+- 2026-10-05 00:48 [T1] STOP: step-4b.1 record commit blocked by below-chance gate (21 problems: lr-0 cells <0.5 every arm; artifact lacks below_chance flag, runner edit reserved); WORKLOG table+choice @ d7ba774b5, 54 records staged on research/draft-ldc-outcome-timing; blocks 4b data land + step 2
+- 2026-10-05 02:52 [transitive-spiking-reach] ASK: RULING iw2-merged(b) bars the 12 queued s2p-R-tr-9ea7411 R lines (rev predates the n_ignited/error chase trace); none started; no queue-withdraw tool - hold/withdraw before dispatch, re-queue post-fix (detail: packet WORKLOG); blocks T19 s4-5
+- 2026-10-05 05:12 [T1] ASK: STEP4B 4b.2 engagement bar (a) unreachable: the 50ms reward pulse caps the 250ms-window LHb rate ratio at 1.25 (need 2, got 1.04) - fix the instrument (reward sub-window / pulse-locked / slow release); void=True on route-off too; detail: WORKLOG; blocks freeze + grid
+- 2026-10-05 08:16 [transitive-spiking-reach] ASK: agent_sync_branch refused on an uncited-measurement claim in research/findings/2026-10-05-iw2-transitive-chat-default-on-flip-validated-PROVISIONAL.md (edit reserved); branch not synced; R lines generated from main; blocks: packet step 5
+- 2026-10-05 08:27 [stage1-exit] RESULT: RULING s1-exit-verify-go ran: 2 skeptics did not refute the C2 PASS; 4 caveats in the RESULT finding; stands reply-level; blocks: cleared (board wording per board-session6)
+- 2026-10-05 10:00 [pool-canary] ASK: launch ssh hangs past 60s -> 'launch over ssh failed' rc=3 while the detached canary RUNS normally (3 launches today, wspool+pool40); I recorded PASS via record. Decide: fix the rssh launch wait or advise; blind retries duplicate jobs
+- 2026-10-05 10:42 [s1-c4-rerun] RESULT: guarded scorer on 72 rerun lines: val_heldout FAIL (6/6 correct, lesion 6/6 reproduced, permuted tracked 4/6), val_novel FAIL 0/6 capability absent; stage UNDEFINED(INCOMPLETE, C4-only dir); aggregate + data landed; blocks: Claude reads C4
+- 2026-10-05 10:42 [s1-c4-void] INFO: affect_production_organ audit: 702 pool results since 09-01 across 23 runners; list in docs/drafts/stage1-exit/AUDIT-affect-pool-results.md (top: stage1_exit_gate 335, lbf_conditioned_mouth 193, learned_vocab 67); Claude decides which are void
+- 2026-10-05 10:45 [s1-c4-void] INFO: audit WIDENED per RULING runtime-inputs: A affect_production_organ 702 results/23 runners; B WKV mouth+eprop 577/58; C learned_vocab 403/3; docs/drafts/stage1-exit/AUDIT-affect-pool-results.md; report only, Claude rules
+- 2026-10-05 12:38 [transitive-spiking-reach] RESULT: O PASS 6/6 at its own pin 9ea7411 (organ ODIFF 0, RULING transitive-engagement); R UNDEFINED at 83efc766c, cells 0/6 — cause in ASK below; data clean (engagement OK x6). Branch commit 8c0d99226.
+- 2026-10-05 12:38 [transitive-spiking-reach] ASK: tools/b2d_score.py:281-283 counts transitive_trace.error=None (str 'None') as an organ error; rule7 (286-287) never filters it -> every capability+control row C-UNCONFIRMED. Please fix the scorer; R re-scores after.
+- 2026-10-05 15:17 [status-sync-10-05] ASK: ROADMAP/AUTONOMOUS_STATE 10-05 sync is reserved; GAP anchor landed 799f78392. Please mirror into ROADMAP: C4 feeling FAIL (fixed instrument), C3 corrected-lesion rerun 42 lines in flight, transitive O 6/6 R blocked by b2d rule7.
+- 2026-10-05 21:47 [s1-c3-rerun] RESULT: 42/42 gate shards + aggregate landed; C3 PASS-WITH-CAVEAT 6/6 (verify-go 7 lenses): both lesion effects 6/6, reproduced 6/6, permuted 6/6; attribution control = intact null; stage stays UNDEFINED (C1/C4 FAILED, C2 passed); caveat: WORKLOG c5af7f1b6.
+- 2026-10-05 21:47 [s1-c3-data-commit] ASK: 86 gate_c3rerun data files UNCOMMITTED (WORKLOG c5af7f1b6): lane-starvation blocks non-md - A/D/E unserved, no ready job, NO-READY-WORK budget exhausted (6/6h/24h, refreshes ~10-06 12:35). Needs a lane job queued, budget freed, or Claude lands data.
+- 2026-10-05 23:36 [pool-hold] ASK: _stage1_c1_category/gate queued=0 running=0 at 52 of 54 cells; requeue_stage1_c1_category_6c2cb1362.tsv (54 lines) never dispatched (dispatch.log 0 ever). Not moved per T0 - run the HANDOFF requeue block or drop the key.
+- 2026-10-05 23:36 [stage2-exit] INFO: The 8 dev-smoke lines queued 09-30 (max_age_h=24) expired 10-01 without dispatch; raw/_stage2_exit/dev/s7 has 1 file (need 8). Re-queue if the stage-2 dev-smoke arm is still wanted (gate never before 11-01).
+- handled: [s1-c3-data-commit] lane gate cleared (b2d wave-2 queue served lanes); 86 files landed 0a50e3f81 (2026-10-06)
+- 2026-10-06 00:44 [word-role-parse] RESULT: 2026-10-06: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md (PROVISIONAL; verify-go 2/2 SURVIVES; data 99906f6fc).
+- 2026-10-06 00:44 [word-role-parse] ASK: O PASS + R PASS at research/word-role-parse @ d2f261271; confirm + merge; unblocks P4 (s2p-flip)
+- 2026-10-06 01:48 [ldc-provision] INFO: provisioning refused research/draft-ldc-outcome-timing (stale: lacks published main 290e3be3f08f; main changed >docs): needs merge/rebase - reserved, cf [T1] 10-04. main half: re-pinned, provision ok.
+- 2026-10-06 03:41 [fb-store] RESULT: score @290e3be3f: STORE-NOT-LOAD-BEARING 6/6 DEFINED, 0/6 reply change, store_lesioned True (flag-level). Probe-scoped: reply carried by host-gated write; next = simulated-time probe (T18/T21), not a NO-GO. Prereg 5 prediction matched; delegate CONFIRM.
+- 2026-10-06 04:40 [tests-after-iw2-flip] ASK: triage done, detail in research/packets/tests-after-iw2-flip/WORKLOG.md: one root = spiking Broca default; rank2 env-default-off PASS on S. Fix=judgment: tests+docstring to spiking contract, or gate spiking on renderer=None.
+- 2026-10-06 06:01 [xedge-provision] INFO: draft-xedge tip 0add7f3cb provision refused STALE vs published main 871bc5514 (hint: merge/rebase onto main = reserved). byte_off/clean_zero diagnosis in the draft WORKLOG; smoke requeues once the branch carries main.

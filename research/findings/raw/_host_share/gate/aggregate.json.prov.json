@@ -1,0 +1,31 @@
+{
+ "run_id": "1790973837-812245",
+ "runner": "research/runners/host_share.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/host-share-baselines/research/runners/host_share.py",
+  "--aggregate",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/host-share-baselines/research/findings/raw/_host_share/gate",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/host-share-baselines/research/findings/raw/_host_share/gate/aggregate.json"
+ ],
+ "git_sha": "f18f7ca4b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-02T16:43:57",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 22189.4,
+ "corpus_check_query": "stage1 host share: which part of the stage-1 reply is attributable to host decisions vs the neural substrate (s1_lived dev cells)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_host_share/gate/aggregate.json"
+}

@@ -13,7 +13,64 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-02 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-05 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-05. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
+pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3 decisions into the substrate.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `iw2-merged`, `iw2-decision`,
+`T1-lr0` and `iw1-R-pre`, then section 4 in order.
+
+**Landed 2026-10-05 (cloud Claude session 7, branch claude/session7-iw2):**
+- **iw2 false-belief-chat: on by default at F `1fb805e9e`.** R 6/6, control 6/6; F1 6/6; F2/F3 IDENTICAL (exact
+  per-turn sha256, seed 7); B's one drop (affect-marker-spiking-wta S2 4 -> 0) excused by the all-off arm (S2 0).
+  NARROWED: the lesion overrides the host witnessing decision, not the spiking store. PARTIAL
+  (`research/findings/2026-10-05-iw2-false-belief-chat-default-on-flip-validated-PROVISIONAL.md`).
+- **iw2 transitive-chat: on by default at F.** R 6/6, F1 6/6, F2/F3 IDENTICAL. NARROWED: the spiking ignition gates
+  only the stop; the hops are host `query_patient`, and lesion engagement is not recorded. PARTIAL
+  (`research/findings/2026-10-05-iw2-transitive-chat-default-on-flip-validated-PROVISIONAL.md`).
+- **iw2 neural-selfid: on by default at F.** R 6/6 inside the flag-ON configuration, F1 6/6, F2/F3 IDENTICAL.
+  NARROWED: no new answer; turns 15-16 become honest abstains. PARTIAL
+  (`research/findings/2026-10-05-iw2-neural-selfid-default-on-flip-validated-PROVISIONAL.md`).
+- **Owner-delegated decision (RULING `iw2-decision`):** all three flips stay on at PARTIAL. An empty belief store now
+  abstains, and a store lesion is registered (`research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md`; dev
+  seeds predict the store is not necessary on the immediate-question probe, which points to a delayed-question probe).
+- **Owed:** bisect the affect-marker-spiking-wta S2 loss between B2b and F on main (not iw2's); record the chase
+  trace in the transitive arms (T19/T21); run fb-store-lesion on six gate seeds.
+- **T1 (long-delay credit) Step 4b.1:** the lr-0 clear-dose cells sit AT chance (mean accuracy 0.52 over 27 cells),
+  not below it; the runner now declares their behaviour UNDEFINED (RULING `T1-lr0`). The clear dose `--w-clear-fs 60`
+  stands; next is STEP4B step 2, the omission build.
+- **iw1-R-pre:** the iw1 scorer now carries the Verdict preconditions block (patch; RULING `iw1-R-pre`).
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-04 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-04. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
+load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 exit attempt 1 did not
+pass, and its C4 arms re-run after a provisioning fix. Move the host-owned C2/C3 decisions into the substrate.
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-c4-void` (re-provision,
+C4 re-run) and `board-session6`, then section 4 in order.
+
+**Landed 2026-10-04 (cloud Claude session 6, branch claude/session6-needs):**
+- **Stage-1 exit attempt 1: not passed** (`research/findings/2026-10-04-stage1-exit-gate-RESULT.md`). C2 word->concept
+  **PASS 6/6** survives verify-go, at reply level: the recruit pool is load-bearing and the decision is host-owned.
+  C1 (category inheritance) FAILS on defined data. **C3 is UNDEFINED (instrument):** its recall lesion cut a path the
+  production bus never calls (Amendment A1; re-measured at the next pin, RULING `s1-c3-rerun`). **C4 is UNDEFINED
+  (instrument):** pool provisioning never shipped the DR-2 learned valence map, so the organ read the raw Warriner
+  norm and both C4 controls were inert. Fixed in `tools/pool_provision.sh` plus a scorer guard; re-run owed (RULING
+  `s1-c4-void`).
+- **Host share at the Stage-1 C2/C3 seams: MEASUREMENT-VALID**: every decision seam is host-owned (C2 host 1.000, C3
+  0.967), while the content is learned. The baseline (bg-select 0.889, ignition 0.643) is merged as the step-3 "before".
+- **fb-spiking-witness O+R PASS** holds at read-out mode, with **PARTIAL** credit (t18-credit). The synaptic write is
+  next. **BG live seam: NO-GO (G4 latch read)**; next, measure the latch rates, then a downstream all-or-none relay.
+  **CA3 symmetric-TI: UNDEFINED(dev): instrument** (row 11, per-seed).
+- **Driver policy:** FAILURE_LOG rows are now routine for Hermes (insert-only). Board-line inserts are implemented
+  behind an owner switch, shipped off.
+
+*Entries below are history.*
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-02 (history) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-02. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** the Stage-1 exit attempt (due
@@ -75,6 +132,8 @@ GPU pause/game cycle (not a code failure); re-queued, all 4 completed clean, Ste
 `all_pass: true`, so its 30 gate jobs (6 seeds x 5 arm parts) were queued too. Both waivers cleared once the pool
 went busy (`tools/waiver_history.py clear --compute --lane`). NOT queued: B2d (needs a harness change first,
 NEEDS-CLAUDE per its own prereg).
+
+**2026-10-02 (local model):** plan step 3 - BG live-seam retirement - gate NO-GO: all five other gates hold (production host owns the reply; neural seam correct on empty/content; value lesion moves it; bus argmax clean) but G4 latch read threshold-invariance FAILS (latch_thr_change 0.25), so the host read still owns part of the commit; nothing retired, NEEDS-CLAUDE #5 (next method). Finding research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md (branch research/selection-seam-need-reversal 0466e8c24). Also landed today: step-2 host-share baselines BASELINE-VALID (NEEDS #8: summary docs + board sync + before-values for the step-3 redo).
 
 *Older entries below (09-19 arc onward) are history; the 🌅 TUESDAY list further down is the list these agents work.*
 
@@ -5592,6 +5651,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 2026-06-16 doc is a DISGUISED boundary under THE LAW — it does not self-organize, so the capability stays OPEN.)
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
+
+> ## STATE OF THE PROJECT — 2026-10-05 15:20 (read first; below the next anchor is HISTORY)
+> **Stage-1 exit attempt 1 + re-runs:** C1 INHERITANCE FAIL on defined data (next method
+> `docs/drafts/stage1-c1-inheritance/PLAN.md`), C2 word stood verify-go's two skeptics. C3 memory-switch was
+> INCOMPLETE (attempt-1 lesion cut a route production never calls) and is re-measuring at P2: A1.2 dev check cleared
+> (lesion patch.calls=3, probe abstains, control intact), pool canary rc=0 (wall 3006s, seed42), all 42 gate
+> lines queued/running at 7851dd220. C4 feeling re-ran at the fixed instrument and FAILS (held-out 6/6 but the
+> permuted control tracks 4/6; novel 0/6) -> NEEDS [s1-c4-rerun]. Stage UNDEFINED / not-passed either way.
+> **Affect audit (report-only, NEEDS [s1-c4-void] INFO x2):** since 09-01 A=702 results/23 runners (affect organ),
+> B=577/58 (WKV mouth + e-prop), C=403/3 (learned vocab); Claude rules which are void.
+> **Transitive reach:** O scores 6/6 at its own pin 9ea7411 (organ unchanged); R UNDEFINED via a scorer defect
+> (`b2d_score.py` rule7 counts `error=None` as an error) -> RESULT+ASK filed, data `8c0d99226`.
+> **⇒ EXACT NEXT:** when the 42 C3 lines land, aggregate gate_c3rerun over seeds 42,43,44,100,101,102, apply the
+> A1.2 scorer rule, then RESULT + NEEDS [s1-c3-rerun]. Claude-blocked: C4 read, b2d rule7 fix, STEP4B engagement
+> bar (a), iw1 R preconditions, pool-canary launch hang.
+>
 
 > ## STATE OF THE PROJECT — 2026-08-05 (read first; below the next anchor is HISTORY)
 > **Stage B GPU screen:** the fresh V3-bound successor partition at global Sobol indices 512-1023 completed all five GPU arms for 512 candidates, 2,560 candidate-arm executions in total. Strict triage recorded 421 engineering failures, 91 engineering-inconclusive candidates, and 0 engineering passes. This is engineering screening only; no CPU confirmation is eligible and no scientific verdict is claimed. Batch-width benchmarking selected width 512. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK cohort remains unavailable.

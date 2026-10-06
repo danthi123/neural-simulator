@@ -3,6 +3,7 @@
 #   bash tools/pool_queue.sh add '<remote command>'   # enqueue (run from ~/derisk-pool/sim on the node)
 #   bash tools/pool_queue.sh list                     # show depth + contents
 #   bash tools/pool_queue.sh depth                    # just the number (used by workflow_check)
+#   bash tools/pool_queue.sh withdraw '<fixed str>' --expect N --reason '<why>'   # remove queued, undispatched lines
 # The point is anticipation: workflow_check fails when this queue is EMPTY while a CPU-compatible lane is ready,
 # because "nothing staged" is the actual defect in that state. When all such lanes are banked, the bounded
 # no-ready-work waiver records why replaying old commands would be worse than leaving the queue empty.
@@ -570,11 +571,40 @@ case "${1:-list}" in
              printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
            fi ) 9>"$Q.lock" || exit 1
          echo "queued (depth now $(valid_depth))" ;;
+  withdraw)
+         # WITHDRAW (cloud Claude session 7, 2026-10-05; RULING transitive-engagement). Removes queued, NOT-yet-
+         # dispatched lines whose text contains a FIXED string, under the dispatcher's own lock (pop_job rewrites the
+         # file under "$Q.lock", so an unlocked edit can lose or resurrect lines). Guards: --expect N must equal the
+         # match count exactly (an over-broad pattern withdraws nothing), and --reason is required. Every withdrawn
+         # line is appended verbatim to research/queue/withdrawn.log with the time and reason, so it can be re-added.
+         #   bash tools/pool_queue.sh withdraw '<fixed substring>' --expect N --reason '<ruling / why>'
+         PAT="${2:-}"; EXPECT=""; REASON=""; shift 2 2>/dev/null || true
+         while [ "$#" -gt 0 ]; do
+           case "$1" in
+             --expect) EXPECT="${2:-}"; shift 2 ;;
+             --reason) REASON="${2:-}"; shift 2 ;;
+             *) echo "⛔ withdraw: unknown argument $1" >&2; exit 2 ;;
+           esac
+         done
+         if [ -z "$PAT" ] || [ -z "$REASON" ] || ! [[ "$EXPECT" =~ ^[0-9]+$ ]] || [ "${#PAT}" -lt 8 ]; then
+           echo "usage: pool_queue.sh withdraw '<fixed substring, >= 8 chars>' --expect N --reason '<why>'" >&2; exit 2
+         fi
+         WLOG="$(dirname "$Q")/withdrawn.log"
+         ( flock -w 120 9 || { echo "⛔ could not take $Q.lock in 120 s" >&2; exit 1; }
+           N=$(grep -cF -- "$PAT" "$Q" 2>/dev/null); N=${N:-0}
+           if [ "$N" != "$EXPECT" ]; then
+             echo "⛔ REFUSED: '$PAT' matches $N queued line(s), --expect $EXPECT; nothing withdrawn" >&2; exit 3
+           fi
+           TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+           grep -F -- "$PAT" "$Q" | while IFS= read -r line; do printf '%s\t%s\t%s\n' "$TS" "$REASON" "$line"; done >> "$WLOG"
+           grep -vF -- "$PAT" "$Q" > "$Q.withdraw.tmp"; mv "$Q.withdraw.tmp" "$Q"
+           echo "withdrew $N line(s) -> $WLOG (depth now $(valid_depth))" ) 9>"$Q.lock" || exit $?
+         ;;
   depth) valid_depth ;;
   malformed-depth) malformed_depth ;;
   list)  echo "depth: $(valid_depth)"
          BAD=$(malformed_depth)
          [ "$BAD" -eq 0 ] || echo "malformed: $BAD (will be quarantined by dispatcher)"
          awk -F'\t' -v now="$(date +%s)" 'NF>1 {printf "  %4.1fh old  %s\n", (now-$1)/3600, substr($2,1,110)}' "$Q" ;;
-  *)     echo "usage: pool_queue.sh {add|list|depth|malformed-depth}" >&2; exit 2 ;;
+  *)     echo "usage: pool_queue.sh {add|withdraw|list|depth|malformed-depth}" >&2; exit 2 ;;
 esac

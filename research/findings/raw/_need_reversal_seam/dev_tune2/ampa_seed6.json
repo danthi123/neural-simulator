@@ -1,0 +1,118 @@
+{
+ "probe": "need_reversal_selection_seam",
+ "backend": "numpy",
+ "seeds": [
+  6
+ ],
+ "label": "DEV, not a verdict",
+ "tune": [
+  {
+   "seed": 6,
+   "need_weight": 50.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.85,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.5,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.65,
+   "spikes_h1": {
+    "intero_hunger": 167.5,
+    "intero_satiety": 0.0,
+    "str_d1_0": 7.3,
+    "str_d1_1": 36.5
+   }
+  },
+  {
+   "seed": 6,
+   "need_weight": 50.0,
+   "intero_max_pA": 350.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.85,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.4,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.65,
+   "spikes_h1": {
+    "intero_hunger": 187.6,
+    "intero_satiety": 0.0,
+    "str_d1_0": 9.5,
+    "str_d1_1": 34.0
+   }
+  },
+  {
+   "seed": 6,
+   "need_weight": 60.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.95,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.6316,
+   "commit_h1_no_arousal": 0.05,
+   "reversal": 0.75,
+   "spikes_h1": {
+    "intero_hunger": 153.2,
+    "intero_satiety": 0.0,
+    "str_d1_0": 4.1,
+    "str_d1_1": 41.8
+   }
+  },
+  {
+   "seed": 6,
+   "need_weight": 60.0,
+   "intero_max_pA": 350.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.95,
+   "p_forage_h0": 0.0,
+   "p_forage_h05": 0.45,
+   "commit_h1_no_arousal": 0.1,
+   "reversal": 0.95,
+   "spikes_h1": {
+    "intero_hunger": 163.2,
+    "intero_satiety": 0.0,
+    "str_d1_0": 5.4,
+    "str_d1_1": 35.2
+   }
+  },
+  {
+   "seed": 6,
+   "need_weight": 70.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 0.95,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.9474,
+   "p_forage_h0": 0.15,
+   "p_forage_h05": 0.65,
+   "commit_h1_no_arousal": 0.1,
+   "reversal": 0.7974,
+   "spikes_h1": {
+    "intero_hunger": 134.7,
+    "intero_satiety": 0.0,
+    "str_d1_0": 9.5,
+    "str_d1_1": 33.0
+   }
+  },
+  {
+   "seed": 6,
+   "need_weight": 70.0,
+   "intero_max_pA": 350.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 1.0,
+   "p_forage_h0": 0.1,
+   "p_forage_h05": 0.35,
+   "commit_h1_no_arousal": 0.1,
+   "reversal": 0.9,
+   "spikes_h1": {
+    "intero_hunger": 153.3,
+    "intero_satiety": 0.0,
+    "str_d1_0": 7.8,
+    "str_d1_1": 47.4
+   }
+  }
+ ]
+}

@@ -12,6 +12,32 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-05 — three chat abilities are now on by default, each with a narrower claim than first written
+
+**On by default:** tracking another person's false belief, answering "does A come before D?" across a chain of facts,
+and answering questions about itself through the brain's own parser. Switching each on changed nothing else, and the
+switch-off still restores the old behaviour exactly. An independent review narrowed what each shows:
+- **False belief:** the switch-off test overrides host code's decision about who saw the move. It does not switch off
+  the spiking memory itself, so that part is still unproven.
+- **Chaining facts:** the spiking test decides only when to stop. Host code supplies each next step.
+- **Self-questions:** the reply to "what do you use?" is the same as before. "What are you?" and "who are you?" now
+  get an honest "I don't know" instead of an off-topic answer.
+
+All three keep partial credit. A learning-off diagnostic in the reward-timing work tripped the below-chance check,
+but those runs sit at chance by design; the runner now labels them, and the chosen setting stands.
+
+## 2026-10-04 — the first Stage-1 exit attempt does not pass; word learning does, and a setup fault voids the feeling test
+
+**The first stage-exit attempt** ran the whole production brain on six seeds. **Learning a new word** passes: a word
+heard once is recalled as doer and as done-to, and switching off the part that makes room for new words removes the
+answer. **Inheriting a category** fails. **Whether remembering a lived event needs the memory system** could not be
+measured: the switch-off test cut a route the brain no longer uses, so it re-runs with a corrected switch. **The
+feeling test is void:** the pool machines never received the brain's learned feeling values, so it
+quietly used dictionary values. The setup is fixed and the test re-runs. A separate measurement shows host code still
+makes every decision on the word and memory questions, though what is recalled was learned. **Tracking who saw a
+move** passes as a spiking population, with partial credit, because host code still reads it. The basal-ganglia
+commit read is a no-go and needs a new method.
+
 ## 2026-10-02 — three chat abilities pass their reply test; the moves that make them fully the brain's own are written; sleep inference needs a new method
 
 **Passed:** tracking another person's false belief, chaining "A chases B, B chases C" in chat, and answering questions

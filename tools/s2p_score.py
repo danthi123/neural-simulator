@@ -63,7 +63,11 @@ PACKETS = {
         "probe_message": "does cat precede river?", "intact_must_contain": ["river", "reasoned"],
         "intact_must_not_contain": [],
         "control": {"row": "transitive-spiking-reversed-ctl", "shard_dir": "transitive-spiking-reversed-ctl",
-                    "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True}},
+                    "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True},
+        # ENGAGEMENT (RULING iw2-merged (b), session 7): the route catches every exception and abstains, so a cell
+        # counts only if the reply's own `transitive_trace` shows the route ran, the lesion was on in the lesion arms
+        # (off in the intact arms) and no error was swallowed.
+        "engagement": {"trace_key": "transitive_trace", "route": "spiking_reach"}},
     "word-role-parse": {
         "prereg": "research/findings/2026-10-01-word-role-parse-PREREGISTRATION.md",
         "organ": "word_role_parser", "grid_len": 8,
@@ -199,6 +203,33 @@ def score_R(packet, tag, pin, selection, base=I.BASE, seeds=GATE_SEEDS, at_defau
     return _score_R_cells(packet, spec, tag, pin, op, base, seeds, allowed, spec["flags"], op)
 
 
+def engagement_state(d, eng):
+    """None when every arm file in shard dir `d` records engagement per `eng` ({"trace_key", "route"}): the last turn
+    body carrying `trace_key` reads that route with no error, `lesioned` True in lesion arms and False in intact
+    arms. Otherwise a short reason (the cell then reads UNDEFINED:engagement-<reason>)."""
+    arms = sorted(p for p in glob.glob(os.path.join(d, "*.json*"))
+                  if not p.endswith(".prov.json") and os.path.basename(p) != "lb.json")
+    if not arms:
+        return "no-arm-files"
+    for path in arms:
+        name = os.path.basename(path)
+        is_lesion = name.startswith("lesion_")
+        if not (is_lesion or name.startswith("intact_")):
+            continue
+        doc = _load(path) or {}
+        bodies = [b for b in (doc.values() if isinstance(doc, dict) else []) if isinstance(b, dict) and eng["trace_key"] in b]
+        if not bodies:
+            return "no-record:%s" % name
+        t = bodies[-1][eng["trace_key"]] or {}
+        if t.get("error"):
+            return "error:%s" % name
+        if t.get("route") != eng["route"]:
+            return "route-%s:%s" % (t.get("route"), name)
+        if bool(t.get("lesioned")) != is_lesion:
+            return "lesion-flag:%s" % name
+    return None
+
+
 def _score_R_cells(packet, spec, tag, pin, op, base, seeds, allowed, require_on, op_required):
     saved = I._allowing
     # every cell read below goes through _cell_std/control_cell, which install I._allowing(...): swap in the
@@ -210,6 +241,10 @@ def _score_R_cells(packet, spec, tag, pin, op, base, seeds, allowed, require_on,
         for s in seeds:
             dd = os.path.join(base, tag, "s%d" % s, spec["shard_dir"])
             st, v, det = I._cell_std(dd, spec["row"], pin, allowed, spec=spec, guard=True, require_on=require_on)
+            if st == "DEFINED" and spec.get("engagement"):
+                why = engagement_state(dd, spec["engagement"])
+                if why:
+                    st, v = "UNDEFINED:engagement-%s" % why, None
             per[str(s)] = {"state": st, "reply_verdict": v, "detail": det}
             ctl = spec["control"]
             dc = os.path.join(base, tag, "s%d" % s, ctl["shard_dir"])

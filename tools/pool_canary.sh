@@ -2,7 +2,7 @@
 # tools/pool_canary.sh -- the POOL CANARY: run ONE queue line on ONE pool node, judge it, and record the verdict
 # for its (runner module, revision sha) in research/queue/pool_canaries.tsv (2026-09-30).
 #
-#   bash tools/pool_canary.sh run <node> '<line>' [--exact] [--wait-s N]   # run it, judge it, record PASS/FAIL
+#   bash tools/pool_canary.sh run <node>|auto '<line>' [--exact] [--wait-s N]   # run it, judge it, record PASS/FAIL
 #   bash tools/pool_canary.sh record <module> <sha> PASS|FAIL <node> gate|dev '<evidence>'   # a canary run elsewhere
 #   bash tools/pool_canary.sh has <module> <sha>        # exit 0 iff the pair may take gate-seed lines (below)
 #   bash tools/pool_canary.sh check-line '<line>'       # the same, keyed from a queue line (pool_queue.sh add uses it)
@@ -48,6 +48,8 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck source=tools/pool_revision_marker.sh
 source "$ROOT/tools/pool_revision_marker.sh"
+# shellcheck source=tools/pool_nodes.sh
+source "$ROOT/tools/pool_nodes.sh"
 # Shared repo root = the parent of the ONE git common dir (the resolution tools/gpu_queue.sh uses), so every
 # worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
 # 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
@@ -199,6 +201,29 @@ for r in roots:
 print(json.dumps({"files": len(files), "bad": bad[:20], "n_bad": len(bad), "unreadable": unreadable[:20]}))
 PY
 
+# pick_node <rev> <need_gb> -- `run auto`: of the pool nodes (POOL_NODES, else tools/pool_nodes.conf), the one that
+# holds <rev> and has the most MemAvailable right now. A canary launches over plain ssh, outside the queue's memory
+# accounting, so a busy node can refuse it at the line's own mem_ok; refuse here instead (rc 3, inconclusive) when no
+# node has <need_gb> + 2 GB (mem_ok's margin) free. wspool answers exit 75 while the owner games and simply drops out.
+pick_node() {
+  local rev="$1" need="$2" n gb best="" best_gb=-1 seen=""
+  for n in ${POOL_NODES:-$POOL_NODES_DEFAULT}; do
+    if ! rssh "$n" "$(revision_marker_probe_cmd "derisk-pool/revisions/$rev")" >/dev/null 2>&1; then
+      seen+=" $n:no-revision"; continue
+    fi
+    gb=$(rssh "$n" "awk '/^MemAvailable:/{print int(\$2/1048576)}' /proc/meminfo" 2>/dev/null) || gb=""
+    if ! [[ $gb =~ ^[0-9]+$ ]]; then seen+=" $n:no-answer"; continue; fi
+    seen+=" $n:${gb}G"
+    if [ "$gb" -gt "$best_gb" ]; then best=$n; best_gb=$gb; fi
+  done
+  if [ -z "$best" ] || [ "$best_gb" -lt $((need + 2)) ]; then
+    echo "⛔ auto: no pool node holds $rev with ${need}+2 GB free (${seen# })" >&2
+    return 1
+  fi
+  echo "auto: picked $best (${seen# })" >&2
+  printf '%s' "$best"
+}
+
 cmd_run() {
   local node="${1:-}" raw="${2:-}"; shift 2 2>/dev/null || usage
   [ -n "$node" ] && [ -n "$raw" ] || usage
@@ -218,6 +243,12 @@ cmd_run() {
   [ -n "$rev" ] || { echo "⛔ the line is not pinned (cd ~/derisk-pool/revisions/<sha>): nothing to key a canary on" >&2; exit 2; }
   sha=$(full_sha "$rev")
   valid_field "$line" || { echo "⛔ the line contains a control character" >&2; exit 2; }
+  if [ "$node" = auto ]; then
+    local need
+    need=$(printf '%s' "$raw" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
+    [ -n "$need" ] || need=$(printf '%s' "$line" | grep -oE 'memcap\.sh [0-9]+' | head -1 | awk '{print $2}')
+    node=$(pick_node "$rev" "${need:-2}") || exit 3
+  fi
   if ! rssh "$node" "$(revision_marker_probe_cmd "derisk-pool/revisions/$rev")" >/dev/null 2>&1; then
     echo "⛔ $node is unreachable or not provisioned with $rev (bash tools/pool_provision.sh --isolated --revision $sha $node)" >&2
     exit 3

@@ -61,6 +61,13 @@ from sim.regions import BrainRegion, RegionPathway  # noqa: E402
 _REFERENCE_HASH_FROM_MAIN = (
     "c14523058fe9ba091f033be2c68a4600683fce94bee798d96e87c72419790462"
 )
+# The hash above was captured on the NUMPY backend. CuPy builds a different network from the same seed (cp.random
+# draws the per-neuron thresholds) and fuses different float kernels, so no cupy run can reproduce it (T13 STOP #1,
+# 2026-10-01: cupy 3 passed / 1 failed). The pre-fix comparison is therefore keyed by backend; a backend with no
+# captured reference skips ONLY that comparison, by name, while the flag-default == flag-False identity below still
+# runs on every backend. Capture a cupy reference by running _build_reference_network_bridge(seed=42,
+# set_flag_explicitly=None) + _run_and_hash(.., 60) against sim/ at 3c2907b85 on the GPU (Claude ruling T13-cupy).
+_REFERENCE_HASHES_FROM_MAIN = {"numpy": _REFERENCE_HASH_FROM_MAIN, "cupy": None}
 
 _RS = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL
 _FS = NeuronType.IZH2007_FS_CORTICAL_INTERNEURON
@@ -214,11 +221,14 @@ def _run_and_hash(bridge, n_steps):
 
 # --- (a) BYTE-IDENTICAL OFF ------------------------------------------------------------
 
+def _backend_name():
+    _, name = get_backend()
+    return str(name).lower()
+
+
 def test_byte_identical_when_off():
-    """Flag absent (default) and flag explicitly False must produce IDENTICAL spike rasters
-    + final membrane arrays, both to each other and to _REFERENCE_HASH_FROM_MAIN (captured
-    from `main`, pre-fix -- see that constant's docstring for provenance). This is the
-    contract that DEFAULT-OFF means byte-identical to the engine before this change."""
+    """Flag absent (default) and flag explicitly False must produce IDENTICAL spike rasters + final membrane arrays on
+    whatever backend runs the test. This is the DEFAULT-OFF contract within one backend."""
     digest_default, raster_default, v_default = _run_and_hash(
         _build_reference_network_bridge(seed=42, set_flag_explicitly=None), 60)
     digest_false, raster_false, v_false = _run_and_hash(
@@ -227,13 +237,26 @@ def test_byte_identical_when_off():
     assert digest_default == digest_false
     np.testing.assert_array_equal(raster_default, raster_false)
     np.testing.assert_array_equal(v_default, v_false)
-    assert digest_default == _REFERENCE_HASH_FROM_MAIN, (
-        "byte-identical-off contract broken: the unbounded (flag-off) path no longer "
-        "matches the pre-fix engine captured on main at 3c2907b85"
-    )
     # Sanity: the network is not degenerately silent (a trivial all-zero raster would make
     # the hash comparison meaningless).
     assert int(raster_default.sum()) > 0
+
+
+def test_flag_off_matches_prefix_engine():
+    """The flag-off path reproduces the pre-fix engine captured on `main` at 3c2907b85 (see
+    _REFERENCE_HASH_FROM_MAIN's provenance), compared on the backend the reference was captured on."""
+    backend = _backend_name()
+    ref = _REFERENCE_HASHES_FROM_MAIN.get(backend)
+    if ref is None:
+        pytest.skip("no pre-fix reference hash captured on backend %r (only numpy has one); the within-backend "
+                    "identity is still asserted by test_byte_identical_when_off" % backend)
+    digest_default, raster_default, _ = _run_and_hash(
+        _build_reference_network_bridge(seed=42, set_flag_explicitly=None), 60)
+    assert int(raster_default.sum()) > 0
+    assert digest_default == ref, (
+        "byte-identical-off contract broken: the unbounded (flag-off) path no longer "
+        "matches the pre-fix engine captured on main at 3c2907b85 (backend %s)" % backend
+    )
 
 
 # --- (b) OVERSHOOT REPRODUCED (flag off) -----------------------------------------------

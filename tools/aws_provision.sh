@@ -66,6 +66,12 @@ fi
 # without data/corpus/ -> false "not load-bearing" (load_bearing_fraction now refuses to run without it).
 # Ship the small files only (~200MB), never the multi-GB training corpora.
 $SSH "mkdir -p ~/sim/data/corpus"
+# RUNTIME INPUTS under research/findings/raw (2026-10-04): the rsync above excludes raw/ as outputs, but production
+# organs read these files at run time and fall back silently without them (the Stage-1 C4 void). Shared list:
+# tools/pool/runtime_raw_inputs.txt (also read by tools/pool_provision.sh).
+mapfile -t _RRI < <(sed 's/#.*//; s/[[:space:]]*$//' "$ROOT/tools/pool/runtime_raw_inputs.txt" | grep -v '^$')
+( cd "$ROOT" && rsync -azR -e "ssh -i $KEY -o StrictHostKeyChecking=no" "${_RRI[@]}" "ubuntu@$IP:sim/" ) \
+  || { echo "⛔ runtime inputs (tools/pool/runtime_raw_inputs.txt) failed to sync" >&2; exit 1; }
 ( cd "$ROOT/data/corpus" && rsync -aL -e "ssh -i $KEY -o StrictHostKeyChecking=no" tinystories.txt wikitext.txt simplewiki.txt websters1913.json run3_ra_grounded_frames.txt "ubuntu@$IP:sim/data/corpus/" ) || \
   echo "[aws] (warning: corpus sync failed -- corpus-learned faculties will be refused by the battery)" >&2
 $SSH "cd ~/sim && python3 -m venv .venv && .venv/bin/pip -q install --upgrade pip && \
