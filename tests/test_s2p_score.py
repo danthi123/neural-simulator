@@ -151,3 +151,35 @@ def test_engagement_missing_record_is_undefined(tmp_path):
     for name in ("intact_a_x.json", "lesion_x.json"):
         (tmp_path / name).write_text(_j.dumps({"probe": {"answer": "b"}}))
     assert S2.engagement_state(str(tmp_path), eng).startswith("no-record")
+
+
+# ── ENGAGEMENT for word-role-parse (RULING word-role-engagement, Claude 2026-10-06): webapp/server.py's
+#    `word_role_trace` must show the route ran, the lesion flag matched the arm and no exception was swallowed. ────────
+def _wr_arms(tmp_path, lesion_trace):
+    import json as _j
+    intact = {"route": "word_role", "lesioned": False, "error": None, "roles": {"brain": "agent", "use": "action"}}
+    for name, t in (("intact_a_x.json", intact), ("intact_b_x.json", intact),
+                    ("lesion_x.json", lesion_trace), ("lesion_x.json.rep0", lesion_trace)):
+        body = {"answer": "b"}
+        if t is not None:
+            body["word_role_trace"] = t
+        (tmp_path / name).write_text(_j.dumps({"s2wr_use": body}))
+    (tmp_path / "lb.json").write_text("{}")
+    return str(tmp_path)
+
+
+def test_word_role_engagement_spec_is_registered():
+    import s2p_score as S2
+    assert S2.PACKETS["word-role-parse"]["engagement"] == {"trace_key": "word_role_trace", "route": "word_role"}
+
+
+@pytest.mark.parametrize("lesion_trace,why", [
+    ({"route": "word_role", "lesioned": True, "error": None}, None),
+    ({"route": "word_role", "lesioned": True, "error": "RuntimeError('organ down')"}, "error"),
+    ({"route": "word_role", "lesioned": False, "error": None}, "lesion-flag"),
+    (None, "no-record"),
+])
+def test_word_role_engagement_states(tmp_path, lesion_trace, why):
+    import s2p_score as S2
+    got = S2.engagement_state(_wr_arms(tmp_path, lesion_trace), S2.PACKETS["word-role-parse"]["engagement"])
+    assert got is None if why is None else got.startswith(why)

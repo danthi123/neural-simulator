@@ -219,6 +219,22 @@ def _word_role_op() -> int:
         return _WORD_ROLE_DEFAULT_OP
 
 
+def _json_safe_roles(roles):
+    """{word: role or None} as plain strings (the `word_role_trace` record; never raises)."""
+    try:
+        return {str(w): (None if r is None else str(r)) for w, r in dict(roles or {}).items()}
+    except Exception:
+        return None
+
+
+def _json_safe_counts(counts):
+    """{word: {role: spike count}} as plain ints (the `word_role_trace` record; never raises)."""
+    try:
+        return {str(w): {str(r): int(n) for r, n in dict(c or {}).items()} for w, c in dict(counts or {}).items()}
+    except Exception:
+        return None
+
+
 def _substrate_recall_lesioned() -> bool:
     """`BRAIN_SUBSTRATE_RECALL_LESION` in {1,true,yes,on} (default OFF, byte-identical when unset) -> `ChatBrain.
     _substrate_recall` returns None unconditionally, below. See that method's docstring."""
@@ -1291,13 +1307,25 @@ class ChatBrain:
         if _word_role_parse_enabled():
             # WORD-READING role map (BRAIN_WORD_ROLE_PARSE, default OFF): the roles come from the words on the
             # spiking organ, not from content position. A decline (None) falls to the caller's abstain, as below.
+            # ENGAGEMENT RECORD (RULING word-role-engagement, Claude 2026-10-06): the organ call is guarded, so a
+            # crash would read exactly like the lesion's decline. `last_word_role_meta` records that this route ran,
+            # the lesion flag, any swallowed error and the per-word roles/counts; webapp/server.py attaches it to the
+            # reply as `word_role_trace`. A record only: it never changes the parse or the reply text.
+            meta = {"route": "word_role", "lesioned": None, "op": None, "error": None, "agent": None,
+                    "action": None, "roles": None, "counts": None}
+            self.last_word_role_meta = meta
             try:
                 from research.runners import word_role_parser_organ as _WR
-                _WR.set_operating_point(_word_role_op())
+                meta["op"] = _word_role_op()
+                meta["lesioned"] = bool(_word_role_lesioned())
+                _WR.set_operating_point(meta["op"])
                 seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
-                res = _WR.parse_from_brain(self, content, seed=seed, lesion=_word_role_lesioned())
+                res = _WR.parse_from_brain(self, content, seed=seed, lesion=meta["lesioned"])
                 a, v = res.get("agent"), res.get("action")
-            except Exception:
+                meta.update(agent=a, action=v, roles=_json_safe_roles(res.get("roles")),
+                            counts=_json_safe_counts(res.get("counts")))
+            except Exception as e:
+                meta["error"] = ("%s: %s" % (type(e).__name__, e))[:300]
                 return None
             if not (a and v) or a == v:
                 return None

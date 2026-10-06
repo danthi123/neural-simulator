@@ -76,7 +76,13 @@ PACKETS = {
         "op_env": "BRAIN_WORD_ROLE_OP", "lesion_flags": ["BRAIN_WORD_ROLE_LESION"],
         "probe_message": "what do you usually use?", "intact_must_contain": ["spikes"], "intact_must_not_contain": [],
         "control": {"row": "word-role-nofact-ctl", "shard_dir": "word-role-nofact-ctl",
-                    "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True}},
+                    "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True},
+        # ENGAGEMENT (RULING word-role-engagement, Claude 2026-10-06): `_neural_question_parse` catches every organ
+        # exception and declines, so a cell counts only if the reply's own `word_role_trace` shows the route ran,
+        # the lesion was on in the lesion arms (off in the intact arms) and no error was swallowed. R data pinned
+        # before the trace existed (s2p-R-wr-9ea7411) re-scores UNDEFINED:engagement-no-record; its confirmed PASS
+        # stands with the inferred-engagement caveat in research/findings/2026-10-06-word-role-parse-gate.md.
+        "engagement": {"trace_key": "word_role_trace", "route": "word_role"}},
 }
 
 

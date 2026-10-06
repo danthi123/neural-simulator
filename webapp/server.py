@@ -4628,6 +4628,22 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     return brain_reply(chat, req, source, cache_key)
 
 
+def _word_role_trace_reset(chat) -> None:
+    """Start-of-turn reset of the word-role engagement record (RULING word-role-engagement, Claude 2026-10-06), so a
+    turn's `word_role_trace` only ever describes a parse made in THAT turn. Never raises."""
+    try:
+        chat.last_word_role_meta = None
+    except Exception:
+        pass
+
+
+def _word_role_trace(chat):
+    """The `word_role_trace` reply block: a copy of `ChatBrain.last_word_role_meta` (route, lesion flag, swallowed
+    error, per-word roles/counts) when the word-role parse ran this turn, else None (no key, body unchanged)."""
+    m = getattr(chat, "last_word_role_meta", None)
+    return dict(m) if isinstance(m, dict) else None
+
+
 def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     """THE SHARED FULL-FACULTY TURN PIPELINE — the entire faculty-DRIVE coupling sequence run on an already-built
     ChatBrain, returning the SAME JSONResponse the `/api/brain-chat` handler has always returned. Extracted
@@ -4647,6 +4663,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # Honest-negative lever: `BRAIN_GNW_BUS_LESION=1` collapses the answer to abstain (ignition load-bearing). Guarded
     # so a wiring failure can never crash a turn (degrades to host gate()). Earned on a broad byte-identical panel +
     # a call-count retirement proof (_gnw_bus_default_flip_verify, _gnw_bus_scaffold_retire_verify). See gnw_bus_shadow.py.
+    # WORD-ROLE ENGAGEMENT (RULING word-role-engagement): clear last turn's record before anything can parse.
+    _word_role_trace_reset(chat)
     try:
         from webapp import gnw_bus_shadow as _gnw_bus_mod
         _gnw_bus_mod.install_bus_gate(chat)
@@ -7012,6 +7030,12 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # every other turn's body is unchanged. Route, lesion flag, any swallowed error, and the substrate's own read.
     if _transitive_matched:
         _resp["transitive_trace"] = _t_meta
+    # WORD-ROLE ENGAGEMENT (RULING word-role-engagement, Claude 2026-10-06): attached ONLY when the word-role parse
+    # (BRAIN_WORD_ROLE_PARSE) ran this turn, so with the flag off every body is unchanged. Route, lesion flag, any
+    # swallowed organ error, and the per-word roles/counts. The reply text is never touched.
+    _wr_trace = _word_role_trace(chat)
+    if _wr_trace is not None:
+        _resp["word_role_trace"] = _wr_trace
     # PROSPECTIVE MEMORY (Gate-B): the held-intention cue-monitor read, attached ONLY when the organ was active this
     # turn (an intention held). No held intention / BRAIN_PMEM=0 -> no key -> byte-identical. Reminder prepended above.
     if prospective_info is not None:
