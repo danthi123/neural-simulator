@@ -1,0 +1,2269 @@
+{
+ "backend": "numpy",
+ "device": "cpu (workstation, SIM_BACKEND=numpy)",
+ "rows": {
+  "0": {
+   "params": {
+    "BASE": 0.8,
+    "BIAS_PA": 42.0,
+    "HOLD_STEPS": 100,
+    "K_MAX": 32,
+    "NE": 16,
+    "NG": 12,
+    "NGI": 8,
+    "NI": 6,
+    "NO": 8,
+    "NOISE_SD": 25.0,
+    "NOISE_TAU": 5.0,
+    "NS": 20,
+    "OP": 0,
+    "READ_FRAC": 0.03,
+    "READ_STEPS": 30,
+    "REST_STEPS": 500,
+    "SAL_MAX": 2.0,
+    "SAL_MIN": 0.5,
+    "TAU_TURNS": 1.5,
+    "W_EE": 40.0,
+    "W_EI": 40.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_IE": 40.0,
+    "W_OE": 40.0,
+    "W_OG": 80.0,
+    "W_SO": 20.0,
+    "W_SS": 60.0,
+    "W_XG": 30.0
+   },
+   "per_seed": {
+    "1": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       149,
+       118,
+       146,
+       139,
+       129,
+       158,
+       122,
+       142,
+       98,
+       135
+      ],
+      "near_tie": {
+       "beetle chase mite": 1,
+       "vole chase beetle": 9
+      },
+      "tag_lesion_winners": [
+       "cat eat fish",
+       "brain store memory",
+       "vole chase beetle",
+       "beetle chase mite",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "cat eat fish",
+       "brain store memory",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 4.3
+    },
+    "2": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 8,
+       "recent_permuted": 8,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       113,
+       136,
+       128,
+       127,
+       132,
+       115,
+       154,
+       136,
+       135,
+       127
+      ],
+      "near_tie": {
+       "vole chase beetle": 10
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "brain learn words",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain use spikes",
+       "brain use spikes",
+       "dog chase cat"
+      ]
+     },
+     "wall_s": 4.2
+    },
+    "3": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       146,
+       131,
+       96,
+       118,
+       166,
+       137,
+       119,
+       130,
+       109,
+       105
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "brain learn words",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "cat eat fish",
+       "cat eat fish",
+       "brain use spikes",
+       "cat eat fish",
+       "brain use spikes",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 4.2
+    },
+    "4": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       109,
+       123,
+       139,
+       125,
+       142,
+       125,
+       107,
+       142,
+       135,
+       131
+      ],
+      "near_tie": {
+       "beetle chase mite": 5,
+       "vole chase beetle": 5
+      },
+      "tag_lesion_winners": [
+       "beetle chase mite",
+       "brain learn words",
+       "brain use spikes",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "lynx chase vole",
+       "brain use spikes",
+       "lynx chase vole",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 4.4
+    },
+    "5": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       120,
+       107,
+       121,
+       150,
+       137,
+       158,
+       104,
+       144,
+       139,
+       147
+      ],
+      "near_tie": {
+       "beetle chase mite": 2,
+       "vole chase beetle": 8
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain use spikes",
+       "vole chase beetle",
+       "brain use spikes",
+       "dog chase cat",
+       "brain store memory",
+       "brain use spikes",
+       "brain use spikes",
+       "lynx chase vole",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 4.6
+    },
+    "6": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       137,
+       114,
+       139,
+       133,
+       141,
+       96,
+       122,
+       113,
+       124,
+       119
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "cat eat fish",
+       "vole chase beetle",
+       "cat eat fish",
+       "brain store memory",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "dog chase cat",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 4.4
+    },
+    "7": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       160,
+       131,
+       143,
+       108,
+       137,
+       110,
+       113,
+       135,
+       129,
+       114
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "beetle chase mite",
+       "beetle chase mite",
+       "brain store memory",
+       "cat eat fish",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 4.5
+    },
+    "8": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 4
+      },
+      "first_ignition_ms": [
+       116,
+       148,
+       135,
+       129,
+       125,
+       107,
+       125,
+       112,
+       142,
+       123
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "dog chase cat",
+       "beetle chase mite",
+       "brain store memory",
+       "brain store memory",
+       "lynx chase vole",
+       "beetle chase mite",
+       "beetle chase mite",
+       "vole chase beetle",
+       "vole chase beetle",
+       "beetle chase mite"
+      ]
+     },
+     "wall_s": 4.5
+    }
+   },
+   "summary": {
+    "all_pass_seeds": 8,
+    "differ": 80,
+    "draws": 80,
+    "newest_intact": 78,
+    "newest_permuted": 78,
+    "tag_newest": 11
+   }
+  },
+  "1": {
+   "params": {
+    "BASE": 0.8,
+    "BIAS_PA": 50.0,
+    "HOLD_STEPS": 100,
+    "K_MAX": 32,
+    "NE": 16,
+    "NG": 12,
+    "NGI": 8,
+    "NI": 6,
+    "NO": 8,
+    "NOISE_SD": 25.0,
+    "NOISE_TAU": 5.0,
+    "NS": 20,
+    "OP": 1,
+    "READ_FRAC": 0.03,
+    "READ_STEPS": 30,
+    "REST_STEPS": 300,
+    "SAL_MAX": 2.0,
+    "SAL_MIN": 0.5,
+    "TAU_TURNS": 1.5,
+    "W_EE": 40.0,
+    "W_EI": 40.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_IE": 40.0,
+    "W_OE": 40.0,
+    "W_OG": 80.0,
+    "W_SO": 20.0,
+    "W_SS": 60.0,
+    "W_XG": 30.0
+   },
+   "per_seed": {
+    "1": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 8,
+       "recent_permuted": 8,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       101,
+       98,
+       105,
+       105,
+       86,
+       108,
+       94,
+       114,
+       81,
+       93
+      ],
+      "near_tie": {
+       "vole chase beetle": 10
+      },
+      "tag_lesion_winners": [
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain store memory",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain store memory",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "2": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 8,
+       "recent_permuted": 8,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       95,
+       105,
+       99,
+       95,
+       103,
+       90,
+       120,
+       97,
+       88,
+       97
+      ],
+      "near_tie": {
+       "beetle chase mite": 1,
+       "vole chase beetle": 9
+      },
+      "tag_lesion_winners": [
+       "beetle chase mite",
+       "brain learn words",
+       "vole chase beetle",
+       "vole chase beetle",
+       "dog chase cat",
+       "brain learn words",
+       "-",
+       "brain store memory",
+       "brain use spikes",
+       "brain store memory"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "3": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       107,
+       107,
+       82,
+       90,
+       127,
+       91,
+       92,
+       102,
+       84,
+       82
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "dog chase cat",
+       "lynx chase vole",
+       "beetle chase mite",
+       "brain use spikes",
+       "cat eat fish",
+       "brain use spikes",
+       "brain use spikes",
+       "brain learn words",
+       "cat eat fish",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "4": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       86,
+       86,
+       107,
+       100,
+       99,
+       96,
+       83,
+       91,
+       89,
+       102
+      ],
+      "near_tie": {
+       "beetle chase mite": 5,
+       "vole chase beetle": 5
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "cat eat fish",
+       "-",
+       "beetle chase mite",
+       "brain use spikes",
+       "vole chase beetle",
+       "beetle chase mite",
+       "-",
+       "lynx chase vole",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "5": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       94,
+       87,
+       98,
+       104,
+       98,
+       103,
+       83,
+       101,
+       89,
+       103
+      ],
+      "near_tie": {
+       "beetle chase mite": 3,
+       "vole chase beetle": 7
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain use spikes",
+       "brain learn words",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "6": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       103,
+       92,
+       97,
+       98,
+       92,
+       80,
+       94,
+       82,
+       94,
+       91
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "cat eat fish",
+       "cat eat fish",
+       "brain use spikes",
+       "-",
+       "vole chase beetle",
+       "beetle chase mite",
+       "brain store memory",
+       "brain store memory",
+       "brain use spikes",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 3.1
+    },
+    "7": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       101,
+       93,
+       96,
+       84,
+       99,
+       92,
+       84,
+       90,
+       91,
+       85
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "vole chase beetle",
+       "brain store memory",
+       "brain use spikes",
+       "cat eat fish",
+       "brain use spikes",
+       "vole chase beetle",
+       "brain store memory",
+       "lynx chase vole",
+       "-"
+      ]
+     },
+     "wall_s": 3.0
+    },
+    "8": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       89,
+       94,
+       104,
+       88,
+       86,
+       84,
+       94,
+       88,
+       100,
+       82
+      ],
+      "near_tie": {
+       "beetle chase mite": 9,
+       "vole chase beetle": 1
+      },
+      "tag_lesion_winners": [
+       "cat eat fish",
+       "-",
+       "brain store memory",
+       "brain store memory",
+       "dog chase cat",
+       "lynx chase vole",
+       "beetle chase mite",
+       "vole chase beetle",
+       "brain learn words",
+       "beetle chase mite"
+      ]
+     },
+     "wall_s": 3.3
+    }
+   },
+   "summary": {
+    "all_pass_seeds": 8,
+    "differ": 80,
+    "draws": 80,
+    "newest_intact": 76,
+    "newest_permuted": 76,
+    "tag_newest": 7
+   }
+  },
+  "2": {
+   "params": {
+    "BASE": 0.8,
+    "BIAS_PA": 42.0,
+    "HOLD_STEPS": 100,
+    "K_MAX": 32,
+    "NE": 16,
+    "NG": 12,
+    "NGI": 8,
+    "NI": 6,
+    "NO": 8,
+    "NOISE_SD": 25.0,
+    "NOISE_TAU": 5.0,
+    "NS": 20,
+    "OP": 2,
+    "READ_FRAC": 0.03,
+    "READ_STEPS": 30,
+    "REST_STEPS": 500,
+    "SAL_MAX": 2.0,
+    "SAL_MIN": 0.5,
+    "TAU_TURNS": 1.0,
+    "W_EE": 40.0,
+    "W_EI": 40.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_IE": 40.0,
+    "W_OE": 40.0,
+    "W_OG": 80.0,
+    "W_SO": 20.0,
+    "W_SS": 60.0,
+    "W_XG": 30.0
+   },
+   "per_seed": {
+    "1": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 9,
+       "recent_permuted": 9,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       223,
+       146,
+       175,
+       173,
+       187,
+       215,
+       149,
+       173,
+       115,
+       177
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "brain store memory",
+       "vole chase beetle",
+       "beetle chase mite",
+       "vole chase beetle",
+       "brain store memory",
+       "brain store memory",
+       "brain use spikes",
+       "brain store memory",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 4.8
+    },
+    "2": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 9,
+       "recent_permuted": 9,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       130,
+       172,
+       150,
+       163,
+       178,
+       166,
+       185,
+       186,
+       176,
+       199
+      ],
+      "near_tie": {
+       "beetle chase mite": 6,
+       "vole chase beetle": 4
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "-",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain store memory",
+       "brain use spikes",
+       "dog chase cat"
+      ]
+     },
+     "wall_s": 4.5
+    },
+    "3": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       202,
+       154,
+       114,
+       162,
+       193,
+       180,
+       152,
+       162,
+       180,
+       127
+      ],
+      "near_tie": {
+       "beetle chase mite": 10
+      },
+      "tag_lesion_winners": [
+       "-",
+       "dog chase cat",
+       "brain use spikes",
+       "brain use spikes",
+       "brain learn words",
+       "cat eat fish",
+       "dog chase cat",
+       "vole chase beetle",
+       "brain use spikes",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 4.4
+    },
+    "4": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 3
+      },
+      "first_ignition_ms": [
+       145,
+       198,
+       187,
+       148,
+       193,
+       169,
+       139,
+       191,
+       195,
+       170
+      ],
+      "near_tie": {
+       "beetle chase mite": 9,
+       "vole chase beetle": 1
+      },
+      "tag_lesion_winners": [
+       "beetle chase mite",
+       "brain learn words",
+       "brain use spikes",
+       "beetle chase mite",
+       "lynx chase vole",
+       "-",
+       "lynx chase vole",
+       "dog chase cat",
+       "beetle chase mite",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 4.2
+    },
+    "5": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       149,
+       138,
+       143,
+       193,
+       186,
+       210,
+       145,
+       184,
+       179,
+       210
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain use spikes",
+       "vole chase beetle",
+       "brain use spikes",
+       "dog chase cat",
+       "brain store memory",
+       "vole chase beetle",
+       "dog chase cat",
+       "lynx chase vole",
+       "dog chase cat"
+      ]
+     },
+     "wall_s": 4.8
+    },
+    "6": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 5
+      },
+      "first_ignition_ms": [
+       171,
+       150,
+       178,
+       194,
+       182,
+       108,
+       148,
+       147,
+       161,
+       179
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "beetle chase mite",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "beetle chase mite",
+       "beetle chase mite",
+       "cat eat fish",
+       "beetle chase mite",
+       "dog chase cat",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 5.4
+    },
+    "7": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 3
+      },
+      "first_ignition_ms": [
+       223,
+       158,
+       169,
+       134,
+       193,
+       139,
+       150,
+       162,
+       174,
+       162
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "beetle chase mite",
+       "beetle chase mite",
+       "brain store memory",
+       "beetle chase mite",
+       "dog chase cat",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "cat eat fish"
+      ]
+     },
+     "wall_s": 5.7
+    },
+    "8": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 3
+      },
+      "first_ignition_ms": [
+       151,
+       199,
+       186,
+       163,
+       165,
+       166,
+       144,
+       151,
+       170,
+       152
+      ],
+      "near_tie": {
+       "beetle chase mite": 9,
+       "vole chase beetle": 1
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "beetle chase mite",
+       "vole chase beetle",
+       "brain store memory",
+       "lynx chase vole",
+       "brain use spikes",
+       "beetle chase mite",
+       "vole chase beetle",
+       "vole chase beetle",
+       "beetle chase mite"
+      ]
+     },
+     "wall_s": 5.6
+    }
+   },
+   "summary": {
+    "all_pass_seeds": 8,
+    "differ": 80,
+    "draws": 80,
+    "newest_intact": 78,
+    "newest_permuted": 78,
+    "tag_newest": 15
+   }
+  },
+  "3": {
+   "params": {
+    "BASE": 0.8,
+    "BIAS_PA": 46.0,
+    "HOLD_STEPS": 100,
+    "K_MAX": 32,
+    "NE": 16,
+    "NG": 12,
+    "NGI": 8,
+    "NI": 6,
+    "NO": 8,
+    "NOISE_SD": 25.0,
+    "NOISE_TAU": 5.0,
+    "NS": 20,
+    "OP": 3,
+    "READ_FRAC": 0.03,
+    "READ_STEPS": 30,
+    "REST_STEPS": 500,
+    "SAL_MAX": 2.0,
+    "SAL_MIN": 0.5,
+    "TAU_TURNS": 1.0,
+    "W_EE": 40.0,
+    "W_EI": 40.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_IE": 40.0,
+    "W_OE": 40.0,
+    "W_OG": 80.0,
+    "W_SO": 20.0,
+    "W_SS": 60.0,
+    "W_XG": 30.0
+   },
+   "per_seed": {
+    "1": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       159,
+       122,
+       155,
+       147,
+       138,
+       175,
+       128,
+       145,
+       101,
+       144
+      ],
+      "near_tie": {
+       "beetle chase mite": 2,
+       "vole chase beetle": 8
+      },
+      "tag_lesion_winners": [
+       "cat eat fish",
+       "brain store memory",
+       "vole chase beetle",
+       "beetle chase mite",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "cat eat fish",
+       "brain store memory",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 5.8
+    },
+    "2": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 9,
+       "recent_permuted": 9,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       117,
+       143,
+       136,
+       137,
+       139,
+       121,
+       160,
+       146,
+       144,
+       135
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "brain learn words",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory"
+      ]
+     },
+     "wall_s": 5.7
+    },
+    "3": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       155,
+       136,
+       98,
+       124,
+       174,
+       148,
+       124,
+       138,
+       114,
+       109
+      ],
+      "near_tie": {
+       "beetle chase mite": 10
+      },
+      "tag_lesion_winners": [
+       "brain learn words",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "cat eat fish",
+       "cat eat fish",
+       "brain use spikes",
+       "cat eat fish",
+       "brain use spikes",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 5.6
+    },
+    "4": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       114,
+       134,
+       146,
+       130,
+       148,
+       131,
+       112,
+       158,
+       145,
+       137
+      ],
+      "near_tie": {
+       "beetle chase mite": 10
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain learn words",
+       "brain use spikes",
+       "beetle chase mite",
+       "brain use spikes",
+       "lynx chase vole",
+       "lynx chase vole",
+       "brain use spikes",
+       "lynx chase vole",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 5.6
+    },
+    "5": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       126,
+       111,
+       125,
+       157,
+       148,
+       166,
+       109,
+       155,
+       145,
+       161
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain use spikes",
+       "vole chase beetle",
+       "brain use spikes",
+       "dog chase cat",
+       "brain store memory",
+       "brain store memory",
+       "brain use spikes",
+       "lynx chase vole",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 5.7
+    },
+    "6": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       144,
+       118,
+       145,
+       141,
+       149,
+       98,
+       127,
+       119,
+       131,
+       124
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "cat eat fish",
+       "cat eat fish",
+       "vole chase beetle",
+       "cat eat fish",
+       "brain store memory",
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "dog chase cat",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 5.7
+    },
+    "7": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       177,
+       138,
+       149,
+       113,
+       146,
+       114,
+       119,
+       143,
+       138,
+       120
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "beetle chase mite",
+       "beetle chase mite",
+       "brain store memory",
+       "cat eat fish",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 5.9
+    },
+    "8": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 3
+      },
+      "first_ignition_ms": [
+       123,
+       160,
+       147,
+       135,
+       130,
+       115,
+       130,
+       117,
+       148,
+       131
+      ],
+      "near_tie": {
+       "beetle chase mite": 9,
+       "vole chase beetle": 1
+      },
+      "tag_lesion_winners": [
+       "dog chase cat",
+       "beetle chase mite",
+       "brain store memory",
+       "brain store memory",
+       "lynx chase vole",
+       "beetle chase mite",
+       "beetle chase mite",
+       "vole chase beetle",
+       "vole chase beetle",
+       "-"
+      ]
+     },
+     "wall_s": 5.5
+    }
+   },
+   "summary": {
+    "all_pass_seeds": 8,
+    "differ": 80,
+    "draws": 80,
+    "newest_intact": 79,
+    "newest_permuted": 79,
+    "tag_newest": 9
+   }
+  },
+  "4": {
+   "params": {
+    "BASE": 0.8,
+    "BIAS_PA": 42.0,
+    "HOLD_STEPS": 100,
+    "K_MAX": 32,
+    "NE": 16,
+    "NG": 12,
+    "NGI": 8,
+    "NI": 6,
+    "NO": 8,
+    "NOISE_SD": 20.0,
+    "NOISE_TAU": 5.0,
+    "NS": 20,
+    "OP": 4,
+    "READ_FRAC": 0.03,
+    "READ_STEPS": 30,
+    "REST_STEPS": 500,
+    "SAL_MAX": 2.0,
+    "SAL_MIN": 0.5,
+    "TAU_TURNS": 1.5,
+    "W_EE": 40.0,
+    "W_EI": 40.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_IE": 40.0,
+    "W_OE": 40.0,
+    "W_OG": 80.0,
+    "W_SO": 20.0,
+    "W_SS": 60.0,
+    "W_XG": 30.0
+   },
+   "per_seed": {
+    "1": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 9,
+       "recent_permuted": 9,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       159,
+       127,
+       156,
+       149,
+       147,
+       178,
+       130,
+       150,
+       113,
+       147
+      ],
+      "near_tie": {
+       "beetle chase mite": 1,
+       "vole chase beetle": 9
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "vole chase beetle",
+       "brain store memory",
+       "beetle chase mite",
+       "vole chase beetle",
+       "brain store memory",
+       "brain store memory",
+       "brain use spikes",
+       "brain store memory",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 5.7
+    },
+    "2": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 9,
+       "recent_permuted": 9,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       123,
+       151,
+       144,
+       145,
+       150,
+       140,
+       162,
+       147,
+       154,
+       149
+      ],
+      "near_tie": {
+       "vole chase beetle": 10
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "dog chase cat",
+       "vole chase beetle",
+       "vole chase beetle",
+       "vole chase beetle",
+       "brain store memory",
+       "vole chase beetle",
+       "brain store memory",
+       "vole chase beetle",
+       "dog chase cat"
+      ]
+     },
+     "wall_s": 5.6
+    },
+    "3": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       162,
+       141,
+       108,
+       134,
+       179,
+       156,
+       135,
+       144,
+       135,
+       116
+      ],
+      "near_tie": {
+       "beetle chase mite": 8,
+       "vole chase beetle": 2
+      },
+      "tag_lesion_winners": [
+       "dog chase cat",
+       "dog chase cat",
+       "brain use spikes",
+       "dog chase cat",
+       "brain learn words",
+       "cat eat fish",
+       "brain learn words",
+       "dog chase cat",
+       "brain use spikes",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 5.8
+    },
+    "4": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 1
+      },
+      "first_ignition_ms": [
+       126,
+       148,
+       151,
+       135,
+       152,
+       136,
+       125,
+       161,
+       155,
+       143
+      ],
+      "near_tie": {
+       "beetle chase mite": 4,
+       "vole chase beetle": 6
+      },
+      "tag_lesion_winners": [
+       "brain store memory",
+       "brain learn words",
+       "-",
+       "beetle chase mite",
+       "cat eat fish",
+       "cat eat fish",
+       "lynx chase vole",
+       "dog chase cat",
+       "brain learn words",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 4.6
+    },
+    "5": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 0
+      },
+      "first_ignition_ms": [
+       132,
+       125,
+       130,
+       165,
+       159,
+       171,
+       125,
+       157,
+       155,
+       166
+      ],
+      "near_tie": {
+       "beetle chase mite": 2,
+       "vole chase beetle": 8
+      },
+      "tag_lesion_winners": [
+       "lynx chase vole",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "brain store memory",
+       "brain use spikes",
+       "brain use spikes",
+       "vole chase beetle",
+       "brain use spikes"
+      ]
+     },
+     "wall_s": 4.4
+    },
+    "6": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 3
+      },
+      "first_ignition_ms": [
+       146,
+       127,
+       148,
+       150,
+       151,
+       103,
+       129,
+       125,
+       136,
+       136
+      ],
+      "near_tie": {
+       "beetle chase mite": 5,
+       "vole chase beetle": 5
+      },
+      "tag_lesion_winners": [
+       "beetle chase mite",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "-",
+       "beetle chase mite",
+       "cat eat fish",
+       "beetle chase mite",
+       "-",
+       "vole chase beetle"
+      ]
+     },
+     "wall_s": 4.5
+    },
+    "7": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       177,
+       145,
+       151,
+       120,
+       158,
+       124,
+       126,
+       147,
+       149,
+       133
+      ],
+      "near_tie": {
+       "beetle chase mite": 2,
+       "vole chase beetle": 8
+      },
+      "tag_lesion_winners": [
+       "brain use spikes",
+       "brain store memory",
+       "beetle chase mite",
+       "brain store memory",
+       "brain use spikes",
+       "dog chase cat",
+       "brain use spikes",
+       "brain use spikes",
+       "brain use spikes",
+       "beetle chase mite"
+      ]
+     },
+     "wall_s": 4.5
+    },
+    "8": {
+     "backend": "numpy",
+     "verdict": {
+      "all_pass": true,
+      "cases": {
+       "commit_lesion": true,
+       "differ": true,
+       "no_encode": true,
+       "read_invariant": true,
+       "recent_intact": true,
+       "recent_permuted": true,
+       "tag_lesion_moves": true
+      },
+      "counts": {
+       "differ": 10,
+       "n_draws": 10,
+       "recent_intact": 10,
+       "recent_permuted": 10,
+       "tag_newest": 2
+      },
+      "first_ignition_ms": [
+       133,
+       167,
+       154,
+       140,
+       138,
+       135,
+       132,
+       128,
+       152,
+       137
+      ],
+      "near_tie": {
+       "beetle chase mite": 7,
+       "vole chase beetle": 3
+      },
+      "tag_lesion_winners": [
+       "dog chase cat",
+       "beetle chase mite",
+       "vole chase beetle",
+       "brain store memory",
+       "lynx chase vole",
+       "brain use spikes",
+       "beetle chase mite",
+       "dog chase cat",
+       "vole chase beetle",
+       "lynx chase vole"
+      ]
+     },
+     "wall_s": 4.5
+    }
+   },
+   "summary": {
+    "all_pass_seeds": 8,
+    "differ": 80,
+    "draws": 80,
+    "newest_intact": 78,
+    "newest_permuted": 78,
+    "tag_newest": 9
+   }
+  }
+ },
+ "selected_row": 0,
+ "selection_rule": "first row in grid order with all_pass on 8/8 dev seeds",
+ "what": "idle-replay organ dev battery (research/runners/idle_replay_battery.py), dev seeds 1-8, REPLAY_GRID rows 0-4",
+ "where": "workstation numpy, 2026-10-06, git archive of main b6711066e + this branch's files (no gate seed run)"
+}

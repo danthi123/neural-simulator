@@ -1,0 +1,96 @@
+{
+ "backend": "numpy",
+ "description": "Synthetic latch counts per noise draw -> the organ's latch read and the battery's case rules (idle_replay_battery.dev_verdict); PASS iff all_pass on dev seeds 1-8.",
+ "failures": [],
+ "kinds": {
+  "info_fifo_mimics_lesions": "info",
+  "info_weak_latch": "info",
+  "null_fixed_fact": "null",
+  "null_graded": "null",
+  "null_host_fifo": "null",
+  "null_host_fifo_lesion_aware": "null",
+  "perfect": "perfect",
+  "perfect_noisy": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_fifo_mimics_lesions": 998,
+  "info_weak_latch": 0,
+  "null_fixed_fact": 0,
+  "null_graded": 0,
+  "null_host_fifo": 0,
+  "null_host_fifo_lesion_aware": 0,
+  "perfect": 995,
+  "perfect_noisy": 974,
+  "random": 0
+ },
+ "name": "idle-replay organ dev bar (dev seeds 1-8, REPLAY_GRID row 0)",
+ "pass_rate": {
+  "info_fifo_mimics_lesions": 0.998,
+  "info_weak_latch": 0.0,
+  "null_fixed_fact": 0.0,
+  "null_graded": 0.0,
+  "null_host_fifo": 0.0,
+  "null_host_fifo_lesion_aware": 0.0,
+  "perfect": 0.995,
+  "perfect_noisy": 0.974,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_fifo_mimics_lesions": [
+   0.9927,
+   0.9995
+  ],
+  "info_weak_latch": [
+   0.0,
+   0.0038
+  ],
+  "null_fixed_fact": [
+   0.0,
+   0.0038
+  ],
+  "null_graded": [
+   0.0,
+   0.0038
+  ],
+  "null_host_fifo": [
+   0.0,
+   0.0038
+  ],
+  "null_host_fifo_lesion_aware": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9883,
+   0.9979
+  ],
+  "perfect_noisy": [
+   0.9622,
+   0.9822
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": null,
+ "scorer_files": {
+  "docs/drafts/idle-replay/bar_sanity_spec_c5_organ.py": "a573654032ee4340b1a43764accaf26df9d7c104c22d3c870497a3d59e118679",
+  "research/runners/idle_replay_battery.py": "a8f0dd1b7ea7ffa8dea8341a61ae6da13ddf1c6b5f6a7fbb76a8d8de8ce2554d",
+  "research/runners/spiking_commit.py": "ed4cd09aee8aadf5fb54ea4ac081dded0e70429e1c7f055407dae772e878715c"
+ },
+ "scorer_sha256": "67188a8557001467a2806361629c0daaa6228358c286ff20ff348e2ffa30b851",
+ "seed": 0,
+ "spec": "docs/drafts/idle-replay/bar_sanity_spec_c5_organ.py",
+ "spec_sha256": "a573654032ee4340b1a43764accaf26df9d7c104c22d3c870497a3d59e118679",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 32.4
+}
