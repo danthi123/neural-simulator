@@ -99,6 +99,9 @@ W_RELAY_EVICT = 8.0                   # relay_k -> evict_k (dense)
 EVICT_N = 20                          # per-location eviction pool (inhibitory)
 W_EVICT_BELIEF = 100.0                 # evict_k -> belief_j, j != k (dense, inhibitory by trait)
 RELAY_BIAS_PA = -150.0                   # constant bias on relay cells (negative = hyperpolarizing)
+QUERY_RELAY_BIAS = False              # opt-in (Claude 2026-10-06, relay2 review): also apply RELAY_BIAS_PA in
+                                      # `_query`, which zeroes the input and steps outside `_run`. False =
+                                      # the registered GRID behavior (the bias vanishes at query time).
 TONIC_RELAY_PA = 900.0                # lesion: the tonic drive that replaces presence's input to every relay
 SILENCE_PA = -4000.0                  # diagnostic: inhibitory clamp on presence during a write
 BOUNDED_CONDUCTANCE = True             # the T13 exponential-Euler guard (strong inhibition overshoots without it)
@@ -437,8 +440,13 @@ class SpikingWitnessFalseBeliefOrgan:
         late = free - max(1, free // 3)
         acc = {s: {k: 0 for k in range(K_LOC)} for s in ("world", "belief", "self")}
         pres = 0
+        query_bias = QUERY_RELAY_BIAS and MODE in RELAY_MODES
         for t in range(free):
             b.cp_external_input_current[:] = 0.0
+            if query_bias:
+                # the relay's bias is a cell property (see `_run`); without it the relays fire on presence alone
+                # during the query and the off-target eviction pools silence the written slot (relay2 review)
+                b.cp_external_input_current[idx["relay_all"]] += self._xp.float32(RELAY_BIAS_PA)
             b._run_one_simulation_step()
             if t >= late:
                 for s in acc:
