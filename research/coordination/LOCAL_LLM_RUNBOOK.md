@@ -967,6 +967,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-04 19:52 [T1] STOP: STEP4B step 0 - agent_sync_branch research/draft-ldc-outcome-timing aborts (merge conflict in bg_action_selection_production_organ.py; branch unchanged); conflicted merge = section-2 reserved; BYB ok; blocks: Step 4b (27 clear lines + build + 144 grid)
 - 2026-10-05 05:12 [T1] ASK: STEP4B 4b.2 engagement bar (a) unreachable: the 50ms reward pulse caps the 250ms-window LHb rate ratio at 1.25 (need 2, got 1.04) - fix the instrument (reward sub-window / pulse-locked / slow release); void=True on route-off too; detail: WORKLOG; blocks freeze + grid
 - 2026-10-06 01:48 [ldc-provision] INFO: provisioning refused research/draft-ldc-outcome-timing (stale: lacks published main 290e3be3f08f; main changed >docs): needs merge/rebase - reserved, cf [T1] 10-04. main half: re-pinned, provision ok.
