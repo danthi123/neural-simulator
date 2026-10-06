@@ -135,6 +135,12 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   polled, so the verdict + pool_canaries.tsv record are taken manually next wake from the node's
   ~/derisk-pool/canary/<id>.status (known: launch ssh rc=3 false negatives, NEEDS pool-canary).
 - T14 starts when 8 files land in _stage2_exit/dev/s7/; INFO NEEDS on landing (ruling).
+- 2026-10-06 16:35: RULING stage2-bar-sanity executed: `git merge --ff-only
+  claude-review/stage-bar-sanity-s2` e125827f2 -> b7f8c1b41 (clean tree, was a true FF; adds
+  C1-C5 + stage bar-sanity specs/records, all OK n=1000), then `agent_sync_branch.sh
+  research/stage2-exit-gate` merged main @ f4b23f93f as b913e0c78 (rc=0, gates passed).
+  GATE_SHA, PREREG_SHA and the 11-03..11-10 window unchanged. All 11 seed-7 dev shards have
+  landed (11 results in _stage2_exit/dev/s7/).
 
 ## 2026-10-06 (Claude) AMENDMENT-A3: C4/C5 shortcut hardening (branch claude-review/stage2-c4c5)
 
