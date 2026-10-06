@@ -47,6 +47,10 @@ and one ENCODING-side ablation (a plasticity blockade, AP5-style):
   * `lateral_learn`: the frame->frame gate is never opened, so no frame-frame association forms (is the learned
     lateral association NECESSARY for inheritance at all?).
 
+HOP ATTENUATION (`BRAIN_CATEGORY_INHERIT_HOP=1`, default off; the constants block below says what and why): the
+frame -> frame pathway transmits at HOP_LATERAL_GAIN and the read lasts HOP_QUERY_STEPS, so a bridging member no
+longer carries a property two category hops away. Off builds no transmission gate: byte-identical to the 09-30 organ.
+
 Parameters were set on dev seeds 1-8 only (no gate seed), recorded in the prereg section 11. Deterministic per seed
 (per-neuron heterogeneity seeded by cfg.seed; no OU noise: 300 pA OU made every link grow at encoding, dev seeds 1-3).
 No `sim/` edit.
@@ -76,6 +80,27 @@ TIE_MARGIN = 1.25              # the winner must exceed the runner-up by this fa
 HETEROGENEITY = True           # per-neuron parameter heterogeneity, seeded by cfg.seed (identical neurons mode-lock)
 GATE_MF = "category_learn_member_frame"   # member -> frame plasticity gate; open only while observing
 GATE_LAT = "category_learn_lateral"       # frame -> frame plasticity gate; open only while observing
+# ── hop attenuation (BRAIN_CATEGORY_INHERIT_HOP; default OFF; set on dev seeds 1-8 only, 2026-10-06) ─────────────
+# The bridging-member defect (a bat that eats the bug and flies in the sky made "what does the canary swim" reach
+# lake, dev 8/8) has two parts, both measured (research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md):
+# (1) at ENCODING, a frame two lateral hops from the heard one was reactivated (0.05-0.06 vs 0.09 for a first-order
+# associate) and the LTP-only rule wrote a direct link between frames that no member carried together (fly sky ->
+# swim lake 5.7-9.9 after the bat); (2) at the READ, the 60-step window lets the activity wave walk the merged graph
+# (each lateral hop arrives ~10 steps later; the 2-hop frame fills the second half of the window).
+# The option: the intrinsic frame -> frame pathway transmits at HOP_LATERAL_GAIN of its weight, at encoding and at
+# the read (a recurrent associative synapse carries less current than the afferent one, so the drive decays with each
+# hop: a first-order associate is still reactivated and integrative encoding still writes the canary -> eat worm
+# link, a second-order one stays subthreshold), and the read lasts one retrieval cycle of HOP_QUERY_STEPS.
+# Off = no transmission gate exists and the read is QUERY_STEPS: the organ is byte-identical to the 09-30 build.
+TX_LAT = "category_lateral_transmission"  # transmission gate on frame -> frame (exists only when the option is on)
+HOP_LATERAL_GAIN = 0.5         # frame -> frame current gain (1.0 = the 09-30 organ)
+HOP_QUERY_STEPS = 30           # read window with the option on (one retrieval cycle; 60 = the 09-30 organ)
+
+
+def category_inherit_hop_enabled() -> bool:
+    """`BRAIN_CATEGORY_INHERIT_HOP`: truthy (1/true/yes/on) -> hop attenuation on (the frame -> frame pathway at
+    HOP_LATERAL_GAIN, a HOP_QUERY_STEPS read). Unset or anything else -> off (the 09-30 organ)."""
+    return os.environ.get("BRAIN_CATEGORY_INHERIT_HOP", "").strip().lower() in ("1", "true", "yes", "on")
 
 
 def category_inherit_lesion_mode() -> str | None:
@@ -91,8 +116,10 @@ class CategoryInheritOrgan:
     """member -> frame + frame -> frame Hebbian organ. `observe(a, v, p)` learns; `infer(a, v)` reads or abstains."""
 
     def __init__(self, seed: int = 42, lesion: str | None = "env", n_member_slots: int = N_MEMBER_SLOTS,
-                 n_context_slots: int = N_CONTEXT_SLOTS, assembly: int = ASSEMBLY):
+                 n_context_slots: int = N_CONTEXT_SLOTS, assembly: int = ASSEMBLY, hop="env"):
         self.seed = int(seed)
+        self.hop = category_inherit_hop_enabled() if hop == "env" else bool(hop)
+        self.query_steps = HOP_QUERY_STEPS if self.hop else QUERY_STEPS
         self.lesion = category_inherit_lesion_mode() if lesion == "env" else lesion
         if self.lesion not in (None, "all", "lateral", "lateral_learn"):
             raise ValueError("lesion must be None, 'all', 'lateral' or 'lateral_learn': %r" % (self.lesion,))
@@ -162,9 +189,13 @@ class CategoryInheritOrgan:
             "pre_indices": pre[keep].astype(np.int64), "post_indices": post[keep].astype(np.int64),
             "initial_weights": np.full(int(keep.sum()), float(FLOOR_W), dtype=np.float32),
             "plastic": True, "plasticity_gate": GATE_LAT, "conn_type": "E_TO_E", "count": int(keep.sum())}
+        if self.hop:
+            union["category_frame_lateral"]["transmission_gate"] = TX_LAT
         self.bridge.inject_explicit_wiring(union, output_inhibitory_indices=None)
         self.bridge.set_plasticity_gate(GATE_MF, 0.0)             # both closed except while observing
         self.bridge.set_plasticity_gate(GATE_LAT, 0.0)
+        if self.hop:
+            self.bridge.set_transmission_gate(TX_LAT, float(HOP_LATERAL_GAIN))   # fixed: encoding and read
         # positions (in the CSR data array) of each learned pathway, for the read-time lesions and the audit
         coo = self.bridge.cp_connections.tocoo()
         rows, cols = np.asarray(to_host(coo.row)), np.asarray(to_host(coo.col))
@@ -258,7 +289,7 @@ class CategoryInheritOrgan:
             self._restore()
             ctx_dev = xp.asarray(self._ctx_idx)
             acc = xp.zeros(len(self._ctx_idx), dtype=xp.float64)
-            for _ in range(QUERY_STEPS):
+            for _ in range(self.query_steps):
                 self.bridge.cp_external_input_current[:] = 0.0
                 self.bridge.cp_external_input_current[m_dev] = xp.float32(QUERY_DRIVE_PA)
                 self.bridge._run_one_simulation_step()
@@ -274,7 +305,7 @@ class CategoryInheritOrgan:
                 self.bridge.mark_weights_edited()
             self._restore()
         self.n_reads += 1
-        denom = float(QUERY_STEPS * self.assembly)
+        denom = float(self.query_steps * self.assembly)
         return {frame: float(acc_h[s * self.assembly:(s + 1) * self.assembly].sum()) / denom
                 for frame, s in self.context_slot.items()}
 
@@ -291,6 +322,8 @@ class CategoryInheritOrgan:
                "admitted": [[p, round(r, 4)] for r, p in admitted], "lesion": self.lesion,
                "lesion_held": self.last_lesion_held,
                "floor_rate": FLOOR_RATE, "tie_margin": TIE_MARGIN}
+        if self.hop:                                       # recorded only when on (off: the 09-30 trace, unchanged)
+            out.update(hop=True, hop_lateral_gain=HOP_LATERAL_GAIN, query_steps=self.query_steps)
         if not admitted or admitted[0][0] < FLOOR_RATE:
             out.update(patient=None, reason="below_floor")
         elif len(admitted) > 1 and admitted[1][0] >= FLOOR_RATE and admitted[0][0] < TIE_MARGIN * admitted[1][0]:

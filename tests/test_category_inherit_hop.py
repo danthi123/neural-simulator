@@ -1,0 +1,153 @@
+"""Hop attenuation in the category-inheritance organ (BRAIN_CATEGORY_INHERIT_HOP; default off; 2026-10-06).
+
+The defect: a bridging member (`bat` eats the bug and flies in the sky) made `what does the canary swim` reach `lake`
+on 8/8 dev seeds (research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md). The option attenuates the
+frame -> frame pathway (HOP_LATERAL_GAIN, at encoding and at the read) and reads one retrieval cycle (HOP_QUERY_STEPS).
+
+CPU (numpy), one DEV seed. (a) the bat case: the canary's swim abstains in both fact orders; (b) the canary's eat still
+reaches worm (the handler flags it as a guess: tests/test_category_inherit_organ.py covers the flag); (c) the organ's
+controls still behave with the option on (permuted, read lesion, learning lesion, moat, determinism); (d) option off
+reproduces the recorded 09-30 organ reads exactly and builds no transmission gate."""
+import json
+import os
+
+import pytest
+
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
+os.environ.setdefault("SIM_BACKEND", "numpy")
+
+C1_FACTS = [("robin", "eat", "worm"), ("trout", "eat", "bug"), ("robin", "fly", "sky"), ("trout", "swim", "lake"),
+            ("sparrow", "eat", "worm"), ("salmon", "eat", "bug"), ("sparrow", "fly", "sky"),
+            ("salmon", "swim", "lake"), ("finch", "eat", "worm"), ("finch", "fly", "sky")]
+BAT = [("bat", "eat", "bug"), ("bat", "fly", "sky")]
+CANARY = [("canary", "fly", "sky")]
+DEV_SEED = 3
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEV_0930 = os.path.join(_ROOT, "research/findings/raw/_stage1_c1_category/dev/organ_dev_seeds1-8.json")
+
+
+def _organ(facts, hop, lesion=None, seed=DEV_SEED):
+    from research.runners.category_inherit_organ import CategoryInheritOrgan
+    o = CategoryInheritOrgan(seed=seed, lesion=lesion, hop=hop)
+    for f in facts:
+        assert o.observe(*f)["observed"]
+    return o
+
+
+def test_env_parse(monkeypatch):
+    from research.runners.category_inherit_organ import category_inherit_hop_enabled
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    assert category_inherit_hop_enabled() is False
+    for v in ("0", "false", "off", "", "no"):
+        monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", v)
+        assert category_inherit_hop_enabled() is False, v
+    for v in ("1", "true", "on", "YES"):
+        monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", v)
+        assert category_inherit_hop_enabled() is True, v
+
+
+@pytest.fixture(scope="module")
+def hop_on():
+    return {"c1": _organ(C1_FACTS + CANARY, True), "c1_again": _organ(C1_FACTS + CANARY, True),
+            "permuted": _organ(C1_FACTS + [("canary", "swim", "lake")], True),
+            "lateral_learn": _organ(C1_FACTS + CANARY, True, lesion="lateral_learn"),
+            "bat_first": _organ(C1_FACTS + BAT + CANARY, True),
+            "canary_first": _organ(C1_FACTS + CANARY + BAT, True),
+            "moat": _organ([("otter", "eat", "clam"), ("bear", "chase", "otter"), ("wolf", "bite", "apple")], True)}
+
+
+# ── (a) the bat case ────────────────────────────────────────────────────────────────────────────────────────────
+@pytest.mark.parametrize("order", ["bat_first", "canary_first"])
+def test_bat_case_canary_swim_abstains(hop_on, order):
+    r = hop_on[order].infer("canary", "swim")
+    assert r["patient"] is None and r["reason"] == "below_floor", r
+    assert r["hop"] is True and r["query_steps"] == 30, r
+
+
+# ── (b) the inheritance survives ────────────────────────────────────────────────────────────────────────────────
+@pytest.mark.parametrize("order", ["c1", "bat_first", "canary_first"])
+def test_canary_eat_still_reaches_worm(hop_on, order):
+    r = hop_on[order].infer("canary", "eat")
+    assert r["patient"] == "worm" and r["reason"] == "reached", r
+    assert r["attribution"]["learned_pathways"] == 1.0, r["attribution"]
+
+
+# ── (c) the controls with the option on ─────────────────────────────────────────────────────────────────────────
+def test_permuted_exposure_is_followed(hop_on):
+    assert hop_on["permuted"].infer("canary", "eat")["patient"] == "bug"
+
+
+def test_read_lesion_abstains_and_restores(hop_on):
+    o = hop_on["c1"]
+    o.lesion = "all"
+    try:
+        r = o.infer("canary", "eat")
+        assert r["patient"] is None and r["lesion"] == "all" and r["lesion_held"] is True, r
+        assert all(v == 0.0 for _p, v in r["admitted"]), r
+    finally:
+        o.lesion = None
+    assert o.infer("canary", "eat")["patient"] == "worm"
+
+
+def test_learning_lesion_abstains(hop_on):
+    assert hop_on["lateral_learn"].infer("canary", "eat")["patient"] is None
+
+
+def test_moat_shapes_abstain(hop_on):
+    o = hop_on["moat"]
+    for a, v in (("otter", "chase"), ("clam", "eat"), ("wolf", "chase"), ("bear", "eat")):
+        assert o.infer(a, v)["patient"] is None, (a, v)
+
+
+def test_deterministic(hop_on):
+    assert hop_on["c1"].read("canary") == hop_on["c1_again"].read("canary")
+
+
+def test_the_transmission_gate_holds_the_gain(hop_on):
+    from research.runners.category_inherit_organ import TX_LAT, HOP_LATERAL_GAIN
+    b = hop_on["c1"].bridge
+    assert b._transmission_gate_values[TX_LAT] == HOP_LATERAL_GAIN
+    n_lat = hop_on["c1"].n_learn_synapses["lateral"]
+    assert len(b._transmission_gate_to_synapses[TX_LAT]) == n_lat     # exactly the frame -> frame synapses
+
+
+# ── (d) option off = the 09-30 organ ────────────────────────────────────────────────────────────────────────────
+def test_off_builds_no_gate_and_reproduces_the_recorded_0930_reads(monkeypatch):
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    rec = {r["seed"]: r for r in json.load(open(DEV_0930))["rows"]}[DEV_SEED]
+    o = _organ(C1_FACTS + CANARY, "env")
+    assert o.hop is False and o.query_steps == 60
+    assert not getattr(o.bridge, "_transmission_gate_to_synapses", {})
+    r = o.infer("canary", "eat")
+    assert "hop" not in r and r["admitted"] == rec["intact"]["canary/eat"]["admitted"], (r, rec["intact"])
+    b = _organ(C1_FACTS + BAT + CANARY, False)
+    for q in ("canary/eat", "canary/swim", "trout/fly"):
+        a, v = q.split("/")
+        assert b.infer(a, v)["admitted"] == rec["bridge_bat"][q]["admitted"], q
+
+
+# ── the dev bar's decision (research/runners/category_inherit_organ_dev.hop_dev_verdict) ────────────────────────
+def _row(seed, **over):
+    def q(p):
+        return {"patient": p}
+    row = {"seed": seed, "hop": True, "intact": {"canary/eat": q("worm")}, "permuted": {"canary/eat": q("bug")},
+           "read_lesion_all": {"canary/eat": {"patient": None, "lesion": "all", "lesion_held": True}},
+           "stage1_c2_c3_shapes": {"otter/chase": q(None)},
+           "bridge_bat": {"canary/eat": q("worm"), "canary/swim": q(None)},
+           "bridge_bat_canary_first": {"canary/eat": q("worm"), "canary/swim": q(None)}}
+    row.update(over)
+    return row
+
+
+def test_hop_dev_verdict():
+    from research.runners.category_inherit_organ_dev import hop_dev_verdict
+    rows = [_row(s) for s in range(1, 9)]
+    assert hop_dev_verdict(rows)["verdict"] == "PASS"
+    lake = rows[:7] + [_row(8, bridge_bat={"canary/eat": {"patient": "worm"}, "canary/swim": {"patient": "lake"}})]
+    v = hop_dev_verdict(lake)
+    assert v["verdict"] == "FAIL" and v["n_pass"] == 7 and 8 in v["why"], v
+    inert = rows[:7] + [_row(8, read_lesion_all={"canary/eat": {"patient": "worm", "lesion": "all",
+                                                                "lesion_held": True}})]
+    assert hop_dev_verdict(inert)["verdict"] == "FAIL"
+    assert hop_dev_verdict(rows[:7])["verdict"] == "UNDEFINED"
+    assert hop_dev_verdict(rows[:7] + [_row(8, hop=False)])["verdict"] == "UNDEFINED"
