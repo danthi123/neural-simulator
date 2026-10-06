@@ -95,3 +95,18 @@ per the "each job that ended rc=143 ... once" wording; (b) gpu_remote add queues
 the line still gates); (c) no yield attempted this round — the arm is healthy and dispatching, and yield
 would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-line dispatch/rc history in a
 6000-line window (stdout dominates), so outcome accounting is via arrivals (results) + queued depth.
+
+## 2026-10-05 23:30 session duty (section 4 every-later-session line + section 5)
+
+- (d) wave 2 queued: `dry run: 43 line(s) would be queued as wave 2`, then `rc=0`
+  and `queued b2d0929 lines well-formed: 41` — the count is 41 (not 43) only
+  because s43/one-brain-substrate and s43/comprehension-monitor were dispatched
+  to pool41/pool42 at 23:23 within the same minute; all 43 lines are accounted
+  for (41 fresh in pool.queue + 2 dispatched). Wave state at start:
+  fresh-queued=0, dispatched-ever=43, lb.json-landed=43 of 258.
+  First run of `b2d_queue_next_wave.sh` hit a 180 s turn limit mid-wave (21
+  lines in); the resume path completed the remaining 22. Ledger commit
+  `1d3d25432` (no push, wake rule: sim-sync publishes main).
+- (b) mouth check: 0 `b2d0929-mouth` lines in research/queue/gpu.queue and the
+  local model is down (game.sh status) -> table row `arm waits for Claude`
+  (NEEDS #6); nothing queued, no yield attempted.
