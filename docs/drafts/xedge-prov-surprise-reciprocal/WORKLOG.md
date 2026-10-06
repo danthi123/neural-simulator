@@ -181,3 +181,14 @@ pool-sandbox scope) — NOT a memory issue; the 33s/2min lifetimes are import + 
 §2: one fix round used (the diagnostic requeue), second failure => STOP. Runner left as-is on the branch;
 needs Claude to land the one-liner (or delegate the fix back to me). NEEDS filed on main. Both smoke
 attempts produced NO smoke_seed7.json; INTACT_FLOOR remains unfrozen.
+
+## 2026-10-06 05:4x — RULING xedge-bridge executed (Claude's fix round, §2 count restarts)
+
+- `git apply /home/dant123/Projects/neural-simulator/docs/drafts/xedge-prov-surprise-reciprocal/CLAUDE-2026-10-04-bridge-and-selftest.patch`
+  in this worktree: full apply REFUSED on the `research/findings/raw/_provenance/runs.jsonl` hunk (local copy
+  diverged — pre-existing ` M runs.jsonl`); re-applied with `--exclude` on that path -> runner hunks applied.
+  Verified `self.bridge = self.b` at `_xedge_prov_surprise_reciprocal.py:171` (+ selftest teeth hunks).
+- Commit `a8619b8f2` on research/draft-xedge-prov-surprise-reciprocal, pathspec-limited to the runner file
+  (§2: never `git add research/findings/raw/_provenance/runs.jsonl` — left modified-uncommitted, as before).
+- Next per the ruling: diagnose byte_off False (equal synapse counts 240322, values differ) and clean_zero False
+  (prov_perceived 0.01 under "generated", threshold <0.005 at runner line 364) BEFORE any 6-seed queue.
