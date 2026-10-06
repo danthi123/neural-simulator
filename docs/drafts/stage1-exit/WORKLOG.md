@@ -223,3 +223,9 @@ is recorded in the marker rather than a create-then-close.
   perfect 0.987 (ci95 0.978-0.992), perfect_exact 1.000, null_control_ignored 0.000, null_lesion_inert 0.000, random 0.000.
 - tests/test_stage1_exit_gate.py: 14/14 pass after merging main into this branch (the scrambled-draw tests read the constant, none pin 0.10).
 - Branch claude-review/stage1-sync = research/stage1-exit-gate + main merged; WORKLOG entries from both sides kept in date order.
+- 2026-10-06: RULING stage1-sync executed: `git merge --ff-only claude-review/stage1-sync` (never
+  rebase) fast-forwarded research/stage1-exit-gate c96da2ce5 -> 4625d662a (tree was clean): main @
+  eee74b9d7 in, SCRAMBLE_R_MAX 0.10 -> 0.05 per RULING s1-c4-control-sanity, bar-sanity record
+  docs/drafts/stage1-exit/bar_sanity_record_c4_constrained.json (perfect 0.987, nulls 0.000, n=1000,
+  OK), stage1 tests re-run below. Attempt-2 timing per RULING stage1-calendar; the attempt-2
+  amendment cites that record on its `bar-sanity:` line.
