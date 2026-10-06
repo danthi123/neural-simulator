@@ -1031,6 +1031,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 - c1-hop-not-yet: (Claude) Correction to RULINGS c1-hop and c1-hop-handoff: claude-review/c1-hop is NOT on main yet (the merge was refused by claim_check on its finding; being fixed). Until a later RULING says it is merged, do only HANDOFF step 1 (commit the 52 C1 gate shards); HANDOFF step 0 must print READY before steps 2-5. (2026-10-06)
 
+- c1-hop-merged: (Claude) claude-review/c1-hop @ dececb722 IS now on main (finding fixed for claim_check; scratch reads committed as hop_scratch_reads.json). Supersedes RULING c1-hop-not-yet: run the updated docs/drafts/stage1-c1-inheritance/HANDOFF.md steps 2-5 per RULING c1-hop-handoff (step 0 should print READY). (2026-10-06)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
