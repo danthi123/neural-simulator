@@ -127,6 +127,42 @@ def bound_check(rule, bound, weight, strict=True):
     return True
 
 
+MEMBRANE_FLOOR_MV = -150.0   # below every reversal the engine uses (K+ ~ -90 mV): anything lower is an integration overshoot
+MEMBRANE_CEIL_MV = 100.0     # above any spike peak the engine resets from
+
+
+def membrane_bound_check(label, v, floor_mv=MEMBRANE_FLOOR_MV, ceil_mv=MEMBRANE_CEIL_MV, strict=True):
+    """Assert every membrane potential sits in a physical range. Raises by default.
+
+    EARNED 2026-09-29 (research/FAILURE_LOG.md): the local model's N=5 basal-ganglia build summed four GABA-A
+    projections onto each commit pool; the explicit step I_syn = g_i*(E_i - v) overshot to v = -377 mV and the pools
+    then "fired" at the refractory ceiling with their only excitatory input silent. Three days of probes read that as
+    a biological "tonic-firing wall". A spike count cannot tell overshoot firing from real firing; the voltage can.
+    Call it on `bridge.cp_membrane_potential_v` (any array-like) after the steps you measure.
+
+        membrane_bound_check("commit pools", bridge.cp_membrane_potential_v)
+    """
+    try:
+        import numpy as _np
+        a = _np.asarray(v.get() if hasattr(v, "get") else v, dtype=float)
+    except Exception:
+        print("  ⚠️  membrane_bound_check(%s): could not read the voltage array — NOT checked" % label)
+        return None
+    if a.size == 0:
+        return True
+    lo, hi = float(_np.nanmin(a)), float(_np.nanmax(a))
+    n_bad = int(_np.sum((a < floor_mv) | (a > ceil_mv) | ~_np.isfinite(a)))
+    if n_bad:
+        msg = ("MEMBRANE OUT OF RANGE (%s): %d neuron(s) outside [%g, %g] mV (min %.1f, max %.1f). This is an "
+               "integration overshoot, not physiology; spikes it produces are artifacts. Normalize the summed "
+               "conductance onto the target or shorten the step." % (label, n_bad, floor_mv, ceil_mv, lo, hi))
+        if strict:
+            raise LeverError(msg)
+        print("  ⛔ %s" % msg)
+        return False
+    return True
+
+
 def sign_budget(label, dW):
     """Report what FRACTION of a weight change is positive, before any rectifying metric hides it.
 

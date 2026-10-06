@@ -5,6 +5,9 @@ when the 3x/day report says "Claude check-in DUE" (a waiting item is 72 h old), 
 `~/Projects/sim` on the workstation (W) and say "do a Claude check-in". Work down this list in order and stop when the
 budget runs low; the items are ranked by what they unblock.
 
+
+A cloud Claude session can do this review (credits until 2026-11-05): `docs/CLOUD_CLAUDE_SESSIONS.md`.
+
 1. **Pause Hermes** so two drivers never edit main at once:
    `ssh homelab-server 'docker exec -u 99 -e HOME=/opt/data/home hermes hermes cron pause sim-driver'`.
 2. **Read the waiting list** on S (newest last):
@@ -13,10 +16,8 @@ budget runs low; the items are ranked by what they unblock.
    evidence. Merge what is Claude's (anything `tools/agent_merge.sh` refuses). If a branch's gates are stale, merge
    main into it first. Write rulings as `- <KEY>: <ruling> (<date>)` in runbook section 6, and delete handled lines.
 4. **Any PASS or GO:** run the verify-go skill before it touches main or the board.
-5. **Draft results (runbook section 5):** promote a good one to a preregistered gate-seed packet, or rule it closed.
-6. **Pool provisioning Hermes asked for**, until the server provisions by itself. `gpu_remote.sh provision` fails
-   unattended, so on W run `bash tools/pool_provision.sh --isolated --revision <sha> pool41 pool42` from a worktree
-   at that sha.
+5. **PROVISIONAL findings Hermes merged** (RULINGs `routine-merges`, `results-without-pass`): confirm or retract each one, and check the next method Hermes chose. **Draft results (runbook section 5):** promote a good one to a preregistered gate-seed packet, or rule it closed.
+6. **Pool provisioning:** the server provisions by itself (`sim-provision`, results in `/opt/host-status/sim-provision/`). Act only on Hermes's NEEDS-CLAUDE: a branch `tools/agent_sync_branch.sh` refused (Hermes brings main into its own branches itself), or re-pin the runtime when a change touches `tools/pool/provisioning/` or the pool provisioning helpers (OWNERSHIP-MAP section 11).
 7. **Spend:** OpenRouter `usage_daily` against the $6.66/day cap, and the key's $100 total limit.
 8. **Resume Hermes** (`hermes cron resume sim-driver`), then bring W's main level with S (below).
 

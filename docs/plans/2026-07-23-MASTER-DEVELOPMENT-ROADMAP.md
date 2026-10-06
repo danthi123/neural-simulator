@@ -828,6 +828,9 @@ Compute-lane legend: **[3090]** local GPU · **[CPU]** local CPU (default for nu
 - **B1 on-bridge V1 self-org** (retinal-wave rate-Hebbian). *GO:* on-bridge OSI/RSA-to-host ≥ B1 numpy (0.988). *Anti-cheats:* per-frame scramble collapses; no-learning frozen flat. **[3090]**
 - **Emergent DG assembly selection** (mossy-detonator per-pathway STP + basket FF-inhibition + BDSP). *GO:* sparse (<5% active) + reproducible (within-scene cos>0.8) + separated (between-similar<0.3), 6-seed. *Anti-cheats:* permuted-scene collapses; no-BDSP lesion→no assembly; permuted-cue specificity. **[3090]**
 **Stage-exit GO:** category held-out inheritance; word→concept recall; lived-fact recall; valence-inheritance r≥0.55.
+**Exit attempt 1 (2026-10-04): not passed.** C2 word→concept PASS 6/6 (reply level; recruit pool load-bearing;
+decision host-owned); C1 FAIL; C3 UNDEFINED (the recall lesion was inert on the bus path; Amendment A1 re-measures it); C4 UNDEFINED (the learned valence map was
+absent on the pool, so the raw norm was read; re-run owed). `research/findings/2026-10-04-stage1-exit-gate-RESULT.md`.
 
 ### STAGE 2 — CHILD (2–7, preoperational→concrete)
 **Comes online:** **grammar self-organizes**; fluent bounded **production** (spiking Broca) + **comprehension**; genuine **inference** (inheritance, taxonomy, transitive, induction); **curiosity→ask** (crave, don't refuse); **differentiated emotion** read-out; **private→inner speech** (Vygotsky, self-cued chain); **common ground**; **affect biases cognition**.
@@ -908,6 +911,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
+
+> **⭐ 2026-10-02 — sleep transitive inference (plan step 5): method NO-GO, capability open.** The six-seed run
+> (`research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md`) shows the night integrates (STI0-6
+> on the 4 defined seeds) but fails its registered STI7 4/4 and STI3b 3/4. Method banked; next method: the symmetric
+> CA3-CA3 plasticity rule (Mishra 2016) as a new arm, with a within-class weight-permutation STI3 control; sleep
+> downscaling is the second companion (runbook RULING `T3-sleep-ti`).
 
 > **⭐ 2026-09-03 (board #135 continuation) — the satdiv divisive-normalization readout lever (named 2026-09-01)
 > is characterized BORDERLINE, not exhausted and not GO.** A full decisive 6-seed sweep of satdiv's (sigma,
@@ -1187,6 +1196,25 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-10-05 (cloud session 7):** the three integration-wave-2 chat faculties (false-belief chat, transitive chat,
+neural self-ID) are merged ON by default: steps R/B/F pass, and B's one drop is excused by the all-off arm. verify-go
+narrowed each claim: the false-belief lesion overrides the host witnessing decision; the transitive ignition gates
+only the stop; self-ID adds no new answer. All three stay PARTIAL until T18-T21. Owed: bisect the
+affect-marker-spiking-wta S2 loss on main. LDC Step 4b proceeds to the omission build (lr-0 cells declared, RULING
+T1-lr0).
+
+**2026-10-04 (cloud session 6):** Stage-1 exit attempt 1 not passed (above). C4 re-runs after the provisioning fix;
+the C1 and C3 gaps (category inheritance, lived recall needing the memory system) go to the prereg's section-8 named
+mechanisms. Host share at the Stage-1 seams is 1.000 host at C2, so the step-3 seam moves (k-select, bg-select,
+ignition) are the ownership work. fb-spiking-witness: read-out PASS with PARTIAL credit; the synaptic write is next.
+
+**2026-10-02 (cloud sessions 1-3):** integration wave 2 step R PASS for false-belief chat, transitive chat and neural
+self-ID (6/6 capability and control each, re-derived; verify-go held), steps B/F next at flip F `1fb805e9e`, the flip
+off main until both pass. Packets T18-T21 (move each faculty's remaining host decision into the substrate, then flip)
+and T22 (host share by intervention at the Stage-1 C2/C3 seams: `research/findings/2026-10-02-stage1-host-share-PREREGISTRATION.md`)
+are written for Hermes. Sleep transitive inference: method NO-GO; next method the symmetric CA3-CA3 rule. Stage-1 exit
+attempt due 10-24 (runbook T6, 204 pool jobs).
 
 **2026-09-24 (night, provenance-fix scoring):** **CA3 superposed-fact-attractor capacity law: GO 6/6 RE-CONFIRMED,
 this time with valid provenance for every registered cell** (`research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md`).

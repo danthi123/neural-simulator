@@ -1,0 +1,36 @@
+{
+ "run_id": "1790785651-2099571",
+ "runner": "research/runners/iw2_default_identity.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave2/research/runners/iw2_default_identity.py",
+  "--arm",
+  "on:false-belief-chat",
+  "--seed",
+  "7",
+  "--out",
+  "research/findings/raw/_iw2/dev_s7/identity/on_false-belief-chat.json"
+ ],
+ "git_sha": "badabc703",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-30T12:27:31",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2",
+  "MKL_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 9769.0,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_iw2/dev_s7/identity/on_false-belief-chat.json"
+}

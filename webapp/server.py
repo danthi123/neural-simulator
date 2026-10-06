@@ -4941,7 +4941,12 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _bg_select_flag_on():
         try:
             import research.runners.bg_action_selection_production_organ as _BG
-            _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
+            if _BG.neural_seam_enabled():
+                # DEFAULT-OFF neural seam (BRAIN_BG_NEURAL_SEAM=1): no host admission pre-filter, no host salience,
+                # neural latch commitment; the race runs on EVERY turn (see the organ's `neural-seam` region).
+                _bg = _BG.decide_action_neural(msg)
+            else:
+                _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
             if _bg is not None:
                 return JSONResponse({
                     "answer": _BG.HOLD_TEXT, "abstained": True, "recalled_svo": None,
@@ -6805,6 +6810,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _t_result = None
         if _t_result is not None:
             _transitive_matched, gate_svo = _t_result
+            try:   # the engagement record for this matched question (attached to the reply below)
+                from webapp import reasoning_transitive_chat as _RTC
+                _t_meta = dict(_RTC.last_transitive_meta)
+            except Exception as _e:
+                _t_meta = {"error": "trace unavailable: %s" % _e}
             _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
         if not _transitive_matched:
             try:
@@ -7000,6 +7010,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # no extra key). Carries the substrate's committed decision + host-vs-bus agreement for this turn.
     if gnw_bus_info is not None:
         _resp["gnw_bus"] = gnw_bus_info
+    # TRANSITIVE ENGAGEMENT (session 7, RULING iw2-merged (b)): attached ONLY on a matched transitive question, so
+    # every other turn's body is unchanged. Route, lesion flag, any swallowed error, and the substrate's own read.
+    if _transitive_matched:
+        _resp["transitive_trace"] = _t_meta
     # PROSPECTIVE MEMORY (Gate-B): the held-intention cue-monitor read, attached ONLY when the organ was active this
     # turn (an intention held). No held intention / BRAIN_PMEM=0 -> no key -> byte-identical. Reminder prepended above.
     if prospective_info is not None:

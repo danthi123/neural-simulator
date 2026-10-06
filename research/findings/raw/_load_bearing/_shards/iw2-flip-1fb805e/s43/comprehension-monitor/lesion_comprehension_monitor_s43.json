@@ -1,0 +1,62 @@
+{
+  "well": {
+    "answer": "My role-binding didn't resolve on that \u2014 I couldn't tell which word plays which role, so I didn't follow it. Could you rephrase?",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": true,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "bite",
+        "apple"
+      ],
+      "margin": 0.0,
+      "threshold": 0.19999999999999998,
+      "comprehended": false,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false,
+      "abstained": true
+    },
+    "not_understood": true,
+    "pragmatic": null,
+    "repair": {
+      "on": true,
+      "repaired": false,
+      "target": null
+    }
+  }
+}

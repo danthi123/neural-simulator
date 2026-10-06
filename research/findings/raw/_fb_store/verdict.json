@@ -1,0 +1,82 @@
+{
+ "step": "fb-store",
+ "tag": "fbstore-290e3be",
+ "pin": "290e3be3f08f0a0ebe7a364eed3410093ae9f5a0",
+ "row": "tom-false-belief-store",
+ "per_seed": {
+  "42": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  },
+  "43": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  },
+  "44": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  },
+  "100": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  },
+  "101": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  },
+  "102": {
+   "state": "DEFINED",
+   "load_bearing": false,
+   "detail": {
+    "intact_answer": "Sally will look in the basket for the marble.",
+    "lesion_answer": "Sally will look in the basket for the marble.",
+    "lesion_abstained": false,
+    "engagement": "store_lesioned"
+   }
+  }
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 0,
+ "verdict": "STORE-NOT-LOAD-BEARING",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/fb_store_score.py"
+}

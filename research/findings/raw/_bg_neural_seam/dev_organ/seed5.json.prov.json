@@ -1,0 +1,33 @@
+{
+ "run_id": "1790705337-1812269",
+ "runner": "research/runners/_bg_neural_seam_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/selection-seam-need-reversal/research/runners/_bg_neural_seam_derisk.py",
+  "--seeds",
+  "5",
+  "--trials",
+  "20",
+  "--out",
+  "research/findings/raw/_bg_neural_seam/dev_organ/seed5.json"
+ ],
+ "git_sha": "f52c6d246",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T14:08:57",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7222.4,
+ "corpus_check_query": "long-delay temporal credit assignment spiking eligibility trace distal reward dopamine",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_bg_neural_seam/dev_organ/seed5.json"
+}

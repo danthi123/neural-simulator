@@ -1,0 +1,32 @@
+{
+ "run_id": "1790841699-1698172",
+ "runner": "research/runners/sleep_transitive_inference_grade.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/sleep-transitive-inference/research/runners/sleep_transitive_inference_grade.py",
+  "--merge",
+  "research/findings/raw/_sleep_transitive_inference/seed100.json",
+  "research/findings/raw/_sleep_transitive_inference/parts/seed100_a.json",
+  "research/findings/raw/_sleep_transitive_inference/parts/seed100_b.json",
+  "research/findings/raw/_sleep_transitive_inference/parts/seed100_c.json",
+  "research/findings/raw/_sleep_transitive_inference/parts/seed100_x.json",
+  "research/findings/raw/_sleep_transitive_inference/parts/seed100_n.json"
+ ],
+ "git_sha": "b60157318",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-01T04:01:39",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 65816.6,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_sleep_transitive_inference/seed100.json"
+}

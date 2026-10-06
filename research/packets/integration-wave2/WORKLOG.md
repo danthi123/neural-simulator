@@ -1,0 +1,195 @@
+# T2 Integration wave 2 WORKLOG
+
+## 2026-10-01 16:55 (Hermes, local model): section 5 scored; commit blocked by stale branch gate
+
+- Worktree created from LOCAL `research/integration-wave2` @ 758519b3f (RULING iw2-R9: never from origin).
+  R precheck done: `grep -c lesion-kept tools/iw2_score.py` = 4 >= 1, so R scoring was valid.
+- Packet status: identity 5/5, iw2-R shards 36/36 -> Start holds. Section 1.2 T0 check: no pool-hold.
+- Section 5 scoring run (S paths; env.sh/copy_results.sh workstation paths overridden per runbook, no code edits):
+  - D0: ok=true, verdict IDENTICAL (expect same) -> D0 PASS.
+  - D_false-belief-chat / D_transitive-chat / D_neural-selfid: all DIFFERS-IN-SCOPE (D_p + S_p both pass).
+  - R_fb / R_tr / R_si: all PASS, n_defined=6, n_reply_load_bearing=6 each.
+  - Section-5 table row 1 -> all three packets flip-eligible; iw2-selfid extra condition MET (on-arm turns
+    14 "what are you?" and 15 "who are you?": abstained=true, recalled_svo=null) -> FLIP =
+    false-belief-chat,transitive-chat,neural-selfid.
+- copy_results done (identity + 3 shard tags, P corrected to the S checkout); verdicts + landed results
+  STAGED in the worktree, uncommitted.
+- BLOCKED: section-5 commit stopped by the biology-binding gate (101 x "SOURCE PATH DOES NOT RESOLVE"
+  ~/Projects/sim-catalog/...). Root cause: the branch's `tools/biology_check.py` predates main's 2026-09-30
+  container-HOME fix (`_projects_dir`/`_expand` absent); HOME=/opt/data/home in this container. The fix exists
+  only on main; merging is reserved -> NEEDS-CLAUDE "[iw2-gate]" written to the runbook. Per HANDOFF stop
+  conditions: STOP (never --no-verify, never a waiver, never editing a gate file).
+- NOT done (waiting on the merge): section-5 commit, section-6 flip apply/tests/guard/commit, PIN_F append,
+  provision F (compute-placement: provision key is workstation-interactive), section 7 job files + queue waves.
+- Note for the finding's Deviations (HANDOFF NEEDS-CLAUDE #3): neural-selfid's "what/who are you" turns now
+  abstain (verified in on_neural-selfid.json @ 573a943).
+## 2026-10-01 17:52 (Hermes, local model): merge landed; section-5 commit now blocked by verdict-preconditions (scorer-side fix reserved)
+
+- Claude merged main into the branch (dacf6cb00; my 377 staged files kept staged, biology gate now passes).
+- Re-ran section 5: copy + add OK; commit BLOCKED by `verdict-preconditions`: R_fb/R_si/R_tr assert PASS with
+  no `preconditions` block (3 problems; D0/D_* pass — `iw2_default_identity.py` emits one; dev_s7 has no R
+  precedent). Root cause: branch `tools/iw2_score.py::score_R` (lines 251-282) never calls `tools/verdict.Verdict`
+  — the gate requires runtime-emitted preconditions in the artifact. Fixing it = editing a scorer = section-2
+  reserved -> NEEDS-CLAUDE "[iw2-R-pre]" written, STOP per HANDOFF stop conditions (never --no-verify).
+- Flip NOT run (section 6 follows the section-5 commit). Provision F not attempted. This WORKLOG line and the
+  verdicts stay staged until the scorer emits preconditions and the R verdicts are regenerated.
+## 2026-10-01 19:29 EDT  section 6: flip commit F (PROVISIONAL, branch only)
+- Synced main into the branch (agent_sync_branch, 994e5dd74): brought the fixed
+  score_R + the PASS R verdicts WITH preconditions + R shards; my stale local R
+  copies were deleted (superseded by main's committed ones).
+- Section 5 verdicts (from main): D0 PASS, D_p DIFFERS-IN-SCOPE, R_fb/R_tr/R_si
+  all PASS with preconditions -> FLIP list = all three packets.
+- Created $W/.venv + $W/data symlinks per HANDOFF line 28 (missing -> anchors
+  test failed on a relative .venv path).
+- anchors pytest: 123 passed, 3 skipped; guard-ok; flip status all three ON.
+- Board synced BEFORE the commit (board_sync gate): append-desc on #232
+  (false-belief), #141 (transitive reasoning), #209 (self-identity rank-13) -
+  provisional note only, NOT marked done by the flip (validation pending).
+- F commit through gates, no push (standing rule: sim-sync publishes main),
+  then PINS row F + pool_provision isolated pool41 pool42.
+
+## 2026-10-01 20:43 EDT - section 7 step B/F start (provision ok, jobs committed, wave 1 held for canary)
+- RULING iw2-provision: provision request for F=1fb805e9e REFUSED (stale vs published main
+  8df14a06d) -> agent_sync_branch main into the branch @ 94e0760a7 (contains main + the flip);
+  PINS re-pinned F = 94e0760a7 (append-only row, env.sh takes the last F); provision requested
+  for 94e0760a7 -> state ok, "provisioned on pool41, pool42" (6998 files, 111 MiB + 278 MiB data).
+- make_jobs flip @ F = 276 lines (240 LB + 36 guard), identity = 3 lines; all 276 carry the
+  required assert_iw2_node + assert_iw2_defaults <FLIP> prefix (0 violations); committed
+  3f9d77449 (jobs + PINS row + shard PIN.txt; no push - standing rule).
+- wave 1 queue REFUSED by pool_queue: no pool canary record for (load_bearing_fraction,
+  94e0760a7). Canary launched on pool41 (line 1 of flip_94e0760, background, wait<=14400s).
+  NEXT WAKE: on PASS -> queue wave 1 (sed 1,43) + step F identity (3 lines) + waves.tsv, then
+  waves 2-7 while fewer than 10 iw2-flip lines remain.
+
+## 2026-10-01 20:59 EDT - CORRECTION: F back to 1fb805e9e (RULING iw2-provision UPDATE 00:40Z)
+- Ruling: "flip F 1fb805e9e IS provisioned (owner-approved one-off). Do NOT sync or re-pin flip F:
+  run steps B and F at 1fb805e9e as the HANDOFF says." The 94e0760a7 re-pin (my response to the
+  stale-refusal) is superseded; its PINS row stays as audit trail - append-only, env.sh takes the
+  LAST F row = 1fb805e9e.
+- make_jobs needs HEAD==PIN when the branch head differs beyond the packet dir (94e0760a7 has
+  runbook + session2-packets code) -> built the battery in a detached worktree at 1fb805e9e
+  (git worktree add; .venv + data symlinks per HANDOFF line 28): flip_1fb805e.txt 276 lines
+  (240 LB + 36 guard, 0 prefix violations), identity_1fb805e.txt 3 lines; copied into the branch;
+  superseded 94e0760 job files removed (they were never queued - pool_queue refused, 0 landed).
+- Canary (load_bearing_fraction, 1fb805e9e) NOT yet run: both pool nodes still refuse mem_ok 8 2
+  (LDC grid's memcap scopes hold 5-6G committed-unused). NEXT: canary when mem_ok passes -> wave 1
+  (sed 1,43) + step F identity + waves 2-7 while fewer than 10 iw2-flip lines remain.
+
+## 2026-10-01 22:12 EDT - canary PASS; wave 1 (43 lines) + step F identity (3 lines) QUEUED
+- Canary (load_bearing_fraction, 1fb805e9e, gate seed) PASS on pool41 at 22:09 (rc=0, json=1,
+  errors=0; recorded in pool_canaries.tsv) after the LDC grid's last cells freed the memory window
+  (mem_ok 8 2 passed: avail 10G - 4G committed). The canary's own outcome is n/a 0/0 by design -
+  the redirected _pool_canary dir carries no interaction data; the rule reads only rc/json/errors.
+- Queued through pool_queue: wave 1 = 43 lines (sed 1,43 of flip_1fb805e.txt, reason "iw2 step B:
+  prereg ...wave-battery-PREREGISTRATION.md ; mem_gb=8 ; max_age_h=216") + step F = 3 identity
+  lines (mem_gb=11). iw2-flip lines in pool.queue: 0 -> 43. waves.tsv rows written (epoch
+  1790907126 = 1-43, epoch 1790907133 = F-identity-3).
+- Pacing: waves 2-7 only when fewer than 10 iw2-flip lines remain (HANDOFF section 7). After every
+  line has landed: score B, F2, F3 (section 7 decision table).
+
+## 2026-10-02 03:55 EDT - wave 2 (T11)
+- Queued flip lines 44-86 (43 lines, failures=0) at F=1fb805e; start condition iw2-flip<10 held (q=4). Prefix rule verified (cd revisions/1fb805e9e + assert_iw2_node + assert_iw2_defaults). waves.tsv row appended. Next: wave 3 (87-129) when q<10 again.
+
+## 2026-10-02 11:34 EDT - wave 3 (T11)
+- Queued flip lines 87-129 (43 lines, failures=0) at F=1fb805e; start condition flip-in-queue<10 held (q=0). Prefix rule verified (assert_iw2_node). waves.tsv row appended. Next: wave 4 when q<10 again.
+
+## 2026-10-02 15:40 EDT - wave 4 (T11)
+- Queued flip lines 130-172 (43 lines, failures=0) at F=1fb805e; start condition flip-in-queue<10 held (q=5). Prefix rule verified (assert_iw2_node). waves.tsv row appended. Next: wave 5 when q<10 again.
+
+## 2026-10-03 13:41 EDT - wave 5 (T11)
+- Queued flip lines 173-215 (43 lines, failures=0, depths 181-219) at F=1fb805e; start condition
+  flip-in-queue<10 held (q=0, with 4 still running). Prefix rule verified 43/43 (cd revisions/1fb805e9e… &&
+  assert_iw2_node.py && assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid); R reason string
+  and `add … --checked` shape verbatim from section 7. After: iw2-flip q=40 (3 dispatched mid-loop). waves.tsv
+  row appended (epoch 1791049235). Host note: env.sh hardcodes P=/home/dant123/Projects/sim, which does not exist
+  on this host — used the S-equivalent primary
+  (/home/dant123/Projects/neural-simulator) + worktree paths directly. Next: wave 6 (216-258 of 276) when q<10
+  again.
+
+## 2026-10-03 18:20 EDT - wave 6 (T11)
+- Queued flip lines 216-258 (43 lines, failures=0, depths 168-210) at F=1fb805e; start condition
+  flip-in-queue<10 held (q=5; 7 at the 18:14 wake, 2 dispatched mid-wake). Prefix rule verified 43/43 (same
+  `cd revisions/1fb805e9e… && assert_iw2_node.py && assert_iw2_defaults.py false-belief-chat,transitive-chat,
+  neural-selfid && ` rule as waves 4-5); R reason string + `add … --checked` shape verbatim from section 7.
+  After: iw2-flip q=48 (0 dispatched mid-loop). waves.tsv row appended (epoch 1791066018). Informational:
+  later adds reported `skipping unreachable node(s): wspool` (dispatcher health-checks + skips it too — same as
+  t0's wspool ssh-fail this wake; pool40/41/42 unaffected). Next: wave 7 (259-276, the last 18 lines) when q<10
+  again.
+
+## 2026-10-03 18:35 EDT - section 8 re-run: 2 rc=137 OOM kills on wspool
+- Event: flip lines 206–207 (`s101/episodic-memory`, `s101/discourse-register`) killed **rc=137 on wspool at
+  18:16:58 EDT** (exits.json, both in the same second = node-level memory kill); partial intact_a/intact_b
+  outputs (17:46–17:56) but no `lb.json`. **First failure for any iw2-flip cell** — the 9 prior rc=143 rows are
+  d6/c1/canary/iw1 cells — so §8 applies once; a repeat kill = STOP, NEEDS-CLAUDE (HANDOFF stop conditions).
+- §8 executed: partial attempt-1 dirs moved aside (`_attempt1_s101_episodic-memory` 2 files,
+  `_attempt1_s101_discourse-register` 4 files); **`reruns.tsv` created** with 2 rows (`utc tag seed faculty
+  reason` — rc evidence; scorer-fails-text deferred: battery incomplete, `iw2_score.py B` runs once at §7);
+  flip lines 206–207 re-queued **unchanged** with the wave's `--checked` reason → depths 210–211, iw2-flip q=50.
+- Duplicate-claim guard first refused (wspool unreachable → fails closed); used **FORCE_DUP=1 on evidence**: the
+  exits.json rc=137 rows are positive proof the old claims ended, not mere unverifiability (both adds printed
+  the FORCE_DUP warning). wspool stays skipped by the dispatcher (down since ~18:17) — pool40/41/42 take the
+  reruns. If either fails again: stays UNDEFINED, STOP, NEEDS-CLAUDE.
+- 2026-10-04 04:3x (local model) — **section 5 scored (table read; scorers not re-run).** Start held at 04:07:
+  identity 5/5 + `iw2-R-*-573a943` lb 36/36. Verdicts `research/findings/raw/_iw2/verdicts/573a943/` = landed
+  authoritative set: `b242a0870` (Claude's R re-derivation) is an ancestor of HEAD and my three R files are
+  byte-identical to it, so nothing superseded needed the `_scratch/iw2_R_unamended` move; D/S came from `83a963caf`.
+  Per RULING `iw2-R-pre` the R scorers were NOT re-run (re-running risked overwriting Claude's authoritative
+  output); `env.sh` hardcodes the workstation `P` so `copy_results.sh` now takes `RESULTS_P` override (its own
+  §4 write item) — no data move was needed, the branch status was clean. Table: D0 `IDENTICAL` (PASS);
+  D_false-belief-chat / D_transitive-chat / D_neural-selfid all `DIFFERS-IN-SCOPE` (D_p pass, S_p pass);
+  R_fb / R_tr / R_si all `PASS` at PIN_P `573a9438f075239069c8966dd62f1da4d981e158` (preconditions block +
+  `sim_backend` stamped). Shared-table row 1 → **all three packets in the FLIP list**, consistent with the
+  already-executed section-6 F rows (PINS.tsv, FLIP=false-belief-chat,transitive-chat,neural-selfid) and RULING
+  `iw2-selfid` (D0 PASS admits neural-selfid). No NO-GO draft named, no section-8 re-run, no NEEDS line —
+  nothing stopped. Section 5 DONE; next: section 7 remainder = T11 wave 7 (iw2-flip q=12, needs <10),
+  section 8 re-run rule if any §7 cell reads UNDEFINED, section 11 finding only after §7 PASS.
+- Queued wave 7 (FINAL): flip lines 259-276 of 276 (18/18, failures=0) at F=1fb805e; start condition held
+  (iw2-flip q=8 < 10 at start; 18/18 lines passed the mandatory prefix check); q now 26. waves.tsv logged.
+  The full B battery (lines 1-276) is queued across 7 waves - the balance resolves as they land; iw1-flip q=0
+  (iw1's wave follows when its HANDOFF section 7 jobs are ready). T5 bookkeeping this wake: step-6 re-run
+  reproduced NO-GO exactly (branch WORKLOG ca5ac43ae); NEEDS merge line on main 3343f2ef0 (policy-proven
+  refusal: tools/lab.py, webapp/server.py, GAP_CLOSURE outside routine classes).
+
+- 1791152800 iw2 section 8 (re-run ONCE, wake 18:23 2026-10-04): flip cells s101/self-initiated-utterance
+  and s101/vision-identity-spiking-hmax wrote intact_a/intact_b at 00:49-00:52 then vanished - no
+  exits.json record (0 hits), zero rev-1fb805e procs on pool41/42; battery stood at 274/276. Moved
+  both partial dirs to _attempt1_s101_<fac> (main), appended 2 reruns.tsv rows, re-queued both job
+  lines unchanged from jobs/flip_1fb805e.txt (lines 209-210, step-B reason). First failure each.
+
+## 2026-10-04 20:10 -- section 7 scored; B FAIL -> attribution row; alloff queued
+
+- B.json = FAIL: one cross-faculty regression, s2 affect-marker-spiking-wta 4 -> 0
+  load-bearing seeds; all 18 f1 target cells DEFINED and regressed (intact answers
+  correct, lesion answers wrong/abstained); base side INCOMPLETE (6 comprehension-
+  monitor cells C-UNCONFIRMED, organ broadcast error on probe turn 'well').
+- F2.json = IDENTICAL, F3.json = IDENTICAL (both ok=true, preconditions all true).
+- Decision table: B FAIL + F2 PASS + F3 PASS + single s2 regression -> attribution.
+- make_jobs.sh alloff path exited rc=1 silently: line 92's $( [ step = bisect ] &&
+  printf ) substitution returns 1 for step alloff under set -e, killing the script
+  before the lb_shard pipeline (bisect unaffected; alloff path never exercised).
+  Fixed in place with || true (this commit); generates byte-identical names.
+- Alloff job file generated at the pin (detached HEAD, the table's 'run in $W at F'):
+  6 lines, tag iw2-alloff-1fb805e, root revisions/1fb805e9, PIN.txt written.
+- Queued 6/6 with the step-B reason (ok=6 fail=0; 2 dispatched immediately,
+  depth 181, T0 no-hold clean). Verdicts land in the section-7 data commit after A.
+
+## 2026-10-04 22:07 -- section 7 verdict: A PASS, flips stand
+
+- A.json (tag iw2-alloff-1fb805e, pin 1fb805e9): verdict PASS, all preconditions
+  ok, no UNDEFINED. The single B regression is "excused": affect-marker-spiking-wta
+  off-run reproduces s2 exactly (off_run s0=4 s2=0 == flip s0=4 s2=0), so the 4->0
+  drop at s2 is NOT flip-caused.
+- Decision-table row 2 outcome: B FAIL (1 B1 drop, excused) + F2 PASS + F3 PASS +
+  A PASS = the flips stand. Verdicts B/F2/F3/A in _iw2/verdicts/1fb805e/.
+- Data commit below carries the flip + alloff shards (provisional). Not pushed
+  (wake rule: sim-sync publishes main).
+
+## 2026-10-05 00:30 — section 11: three PROVISIONAL findings + GAP sync
+- Findings written (templates + required iw2-verify-go sentences, PARTIAL per
+  iw2-stage1-credit): research/findings/2026-10-05-iw2-{false-belief-chat,
+  transitive-chat,neural-selfid}-default-on-flip-validated-PROVISIONAL.md.
+- Numbers only from verdict JSONs (573a943 D0/D_*/R_*, 1fb805e B/A/F2/F3);
+  claim_check + doc_type pass on all three.
+- GAP_CLOSURE_MISSION.md: one dated line per packet (numbers only).
+- NEEDS-CLAUDE [iw2] RESULT filed for adversarial review + merge. No push
+  (wake rule: sim-sync publishes main).

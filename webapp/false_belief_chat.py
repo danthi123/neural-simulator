@@ -63,16 +63,81 @@ from typing import Optional
 
 _DEFAULT_SEED = 42
 
+# PRODUCTION-DEFAULT ANCHOR (integration wave 2, 2026-09-30; packet research/packets/integration-wave2/
+# false-belief-chat/, prereg research/findings/2026-09-30-iw2-false-belief-chat-flip-PREREGISTRATION.md). While
+# False the reader below is EXACTLY the pre-anchor expression (byte-identical for every env value; pinned by
+# tests/test_integration_wave2_anchors.py). tools/integration_wave2_flip.py sets it True only after the packet's
+# reply-level gate passes: then unset -> ON and only an explicit 0/false/no/off/"" turns it off. The one reader of
+# BRAIN_FALSE_BELIEF_CHAT; docs/PRODUCTION_INTEGRATION_LEDGER.yaml pins this literal once flipped.
+_FALSE_BELIEF_CHAT_DEFAULT_ON = True
+_ON = ("1", "true", "on", "yes")
+_OFF = ("0", "false", "no", "off", "")
+
 
 def false_belief_chat_enabled() -> bool:
-    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled)."""
-    return os.environ.get("BRAIN_FALSE_BELIEF_CHAT", "0").strip().lower() in ("1", "true", "on", "yes")
+    """`BRAIN_FALSE_BELIEF_CHAT` truthy (1/true/on/yes) enables. Default-OFF (unset -> disabled) while the anchor
+    `_FALSE_BELIEF_CHAT_DEFAULT_ON` is False; after the wave-2 flip, unset -> enabled and an explicit
+    0/false/no/off/"" disables."""
+    v = os.environ.get("BRAIN_FALSE_BELIEF_CHAT")
+    if _FALSE_BELIEF_CHAT_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "0").strip().lower() in _ON
 
 
 def false_belief_lesioned() -> bool:
     """`BRAIN_FALSE_BELIEF_LESION` truthy -> force the witnessing gate open at every write and through the
     query (the derisk's `lesion_other`): the belief store collapses onto reality (load-bearing proof)."""
     return os.environ.get("BRAIN_FALSE_BELIEF_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def false_belief_store_lesioned() -> bool:
+    """`BRAIN_FALSE_BELIEF_STORE_LESION` truthy -> build the belief store with its assembly self-recurrence set to 0
+    (world and self stores untouched). Opt-in measurement knob (session 7, 2026-10-05): unlike
+    BRAIN_FALSE_BELIEF_LESION, which overrides the HOST witnessing decision, this cuts the spiking store itself."""
+    return os.environ.get("BRAIN_FALSE_BELIEF_STORE_LESION", "0").strip().lower() in _ON
+
+
+def belief_store_read_ok(belief_rates) -> bool:
+    """True iff the store's late-window rates name ONE location: a strictly positive maximum, held by one slot.
+    The organ's read is a host argmax that returns slot 0 (the first-named location, which is the stale location
+    on the classic probe) when every rate is 0, so without this check a silent or broken store would still answer
+    the false-belief location. Rates absent (an organ that does not export them) -> True (unchanged behaviour)."""
+    if not belief_rates:
+        return True
+    vals = [float(v) for v in belief_rates.values()]
+    top = max(vals)
+    return top > 0.0 and sum(1 for v in vals if v == top) == 1
+
+
+# SPIKING WITNESS (packet fb-spiking-witness, 2026-10-01; prereg
+# research/findings/2026-10-01-fb-spiking-witness-PREREGISTRATION.md). DEFAULT OFF: while the anchor is False and
+# BRAIN_FALSE_BELIEF_SPIKING_WITNESS is unset, nothing below changes (no import, no build): byte-identical. ON: the
+# scenario's organ is research/runners/tom_spiking_witness_organ.SpikingWitnessFalseBeliefOrgan; LEAVE/RETURN
+# sentences about the tracked agent become perceptual events on its spiking `presence` population, and whether a
+# move is written to the belief store is decided by that population, never by `_Scenario.present`.
+# BRAIN_FALSE_BELIEF_WITNESS_OP picks the organ's frozen operating point (GRID index, default 0);
+# BRAIN_FALSE_BELIEF_WITNESS_LESION (or the older BRAIN_FALSE_BELIEF_LESION) removes presence's influence: every move
+# is written, so the belief store tracks reality.
+_FALSE_BELIEF_SPIKING_WITNESS_DEFAULT_ON = False
+_FALSE_BELIEF_WITNESS_DEFAULT_OP = 0   # the operating point used when BRAIN_FALSE_BELIEF_WITNESS_OP is unset (T21 sets it)
+
+
+def spiking_witness_enabled() -> bool:
+    v = os.environ.get("BRAIN_FALSE_BELIEF_SPIKING_WITNESS")
+    if _FALSE_BELIEF_SPIKING_WITNESS_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return (v if v is not None else "0").strip().lower() in _ON
+
+
+def spiking_witness_lesioned() -> bool:
+    return os.environ.get("BRAIN_FALSE_BELIEF_WITNESS_LESION", "0").strip().lower() in _ON
+
+
+def spiking_witness_op() -> int:
+    try:
+        return int(os.environ.get("BRAIN_FALSE_BELIEF_WITNESS_OP", str(_FALSE_BELIEF_WITNESS_DEFAULT_OP)))
+    except ValueError:
+        return _FALSE_BELIEF_WITNESS_DEFAULT_OP
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -187,17 +252,31 @@ def reset_session(cache_key) -> None:
     _SESSIONS.pop(cache_key, None)
 
 
-def _get_or_start_scenario(cache_key, agent: str, seed: int) -> _Scenario:
+def _new_organ(seed: int, lesion: bool):
+    if spiking_witness_enabled():
+        from research.runners import tom_spiking_witness_organ as _SW
+        _SW.set_operating_point(spiking_witness_op())
+        return _SW.SpikingWitnessFalseBeliefOrgan(seed=seed, lesion=bool(lesion or spiking_witness_lesioned()))
     from research.runners.tom_false_belief_chat_organ import FalseBeliefChatOrgan
+    if false_belief_store_lesioned():
+        return FalseBeliefChatOrgan(seed=seed, belief_attractor_weight=0.0)
+    return FalseBeliefChatOrgan(seed=seed)
+
+
+def _get_or_start_scenario(cache_key, agent: str, seed: int, lesion: bool = False) -> _Scenario:
     with _SESSIONS_LOCK:
         scen = _SESSIONS.get(cache_key)
         if scen is None or scen.tracked_agent != agent:
             # a fresh scenario: either none yet, or a NEW tracked agent supersedes the old one (declared scope
             # limit -- one concurrent (agent, object) scenario per conversation).
-            scen = _Scenario(FalseBeliefChatOrgan(seed=seed))
+            scen = _Scenario(_new_organ(seed, lesion))
             scen.tracked_agent = agent
             _SESSIONS[cache_key] = scen
         return scen
+
+
+def _is_tracked(scen: _Scenario, agent: str) -> bool:
+    return bool(scen.tracked_agent) and agent.lower() == scen.tracked_agent.lower()
 
 
 def _get_active_scenario(cache_key) -> Optional[_Scenario]:
@@ -225,6 +304,9 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
         if not events:
             return info
         info["reason"] = None
+        spiking = spiking_witness_enabled()
+        if spiking:
+            info["spiking_witness"] = {"op": spiking_witness_op(), "lesioned": bool(les or spiking_witness_lesioned())}
         last_query = None
         for _sent, ev in events:
             kind = ev["kind"]
@@ -233,28 +315,45 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 continue   # a query does not itself mutate state; answered after folding every prior sentence
             agent = ev["agent"]
             if kind == "place":
-                scen = _get_or_start_scenario(cache_key, agent, seed)
+                scen = (_get_or_start_scenario(cache_key, agent, seed, lesion=les) if spiking
+                        else _get_or_start_scenario(cache_key, agent, seed))
                 scen.obj = ev["object"]
                 scen.present.setdefault(agent, True)
                 loc = scen.loc_index(ev["location"])
-                scen.organ.observe_event(loc, witnessed=True, lesion=les)   # a placement is always witnessed
+                if spiking:
+                    scen.organ.perceive_arrive()           # the placing agent is perceived in the room
+                    scen.organ.observe_event(loc)
+                else:
+                    scen.organ.observe_event(loc, witnessed=True, lesion=les)   # a placement is always witnessed
                 info["events"].append({"kind": "place", "agent": agent, "location": ev["location"]})
             elif kind == "leave":
                 scen = _get_active_scenario(cache_key)
                 if scen is not None:
                     scen.present[agent] = False
+                    if spiking and _is_tracked(scen, agent):
+                        scen.organ.perceive_leave()
                     info["events"].append({"kind": "leave", "agent": agent})
             elif kind == "return":
                 scen = _get_active_scenario(cache_key)
                 if scen is not None:
                     scen.present[agent] = True
+                    if spiking and _is_tracked(scen, agent):
+                        scen.organ.perceive_arrive()
                     info["events"].append({"kind": "return", "agent": agent})
             elif kind == "move":
                 scen = _get_active_scenario(cache_key)
                 if scen is None:
                     continue   # a move with no active scenario -> nothing to track; ignored (byte-identical)
-                witnessed = scen.is_present(scen.tracked_agent) if scen.tracked_agent else True
                 loc = scen.loc_index(ev["location"])
+                if spiking:
+                    # no host boolean: the organ's presence population decides whether this move is written
+                    scen.organ.observe_event(loc)
+                    witnessed = (scen.organ.last_write or {}).get("witnessed")
+                    info["events"].append({"kind": "move", "agent": agent, "location": ev["location"],
+                                           "spiking_write": dict(scen.organ.last_write or {}),
+                                           "witnessed_by_tracked": witnessed})
+                    continue
+                witnessed = scen.is_present(scen.tracked_agent) if scen.tracked_agent else True
                 scen.organ.observe_event(loc, witnessed=witnessed, lesion=les)
                 info["events"].append({"kind": "move", "agent": agent, "location": ev["location"],
                                        "witnessed_by_tracked": bool(witnessed)})
@@ -281,7 +380,14 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 info["query_object"] = q_obj
                 info["tracked_object"] = scen.obj
                 return info
-            read = scen.organ.query(lesion=les)
+            read = scen.organ.query() if spiking else scen.organ.query(lesion=les)
+            if not belief_store_read_ok(read.get("belief_rates")):
+                # an empty or tied store holds no belief: say nothing here (the turn falls through to the ordinary,
+                # honest path) instead of letting the host argmax's slot-0 default answer
+                info["reason"] = "belief_store_silent"
+                info["belief_rates"] = {str(k): round(float(v), 6) for k, v in (read.get("belief_rates") or {}).items()}
+                info["store_lesioned"] = bool(false_belief_store_lesioned())
+                return info
             belief_name = scen.loc_name(read["belief_loc"])
             info.update({
                 "acted": True,
@@ -290,7 +396,16 @@ def observe_turn(cache_key, message: str, *, seed: int = _DEFAULT_SEED, lesion: 
                 "belief_location": belief_name, "reality_location": scen.loc_name(read["world_loc"]),
                 "belief_loc_idx": read["belief_loc"], "world_loc_idx": read["world_loc"],
                 "n_events": read["n_events"], "reason": "queried",
+                # the late-window store rates behind the argmax (trace only; the reply is unchanged). Locations take
+                # slots in order of mention and an all-zero read returns slot 0, so a silent store "answers" the
+                # first-named location: tools/iw2_score.py reads these to tell a store read from that default.
+                "belief_rates": {str(k): round(float(v), 6) for k, v in (read.get("belief_rates") or {}).items()},
+                "world_rates": {str(k): round(float(v), 6) for k, v in (read.get("world_rates") or {}).items()},
             })
+            if spiking:
+                info["presence_rate"] = round(float(read.get("presence_rate", 0.0)), 6)
+            if false_belief_store_lesioned():   # engagement record; absent by default, so default bodies are unchanged
+                info["store_lesioned"] = True
     except Exception as e:   # never let the false-belief read/write crash a turn
         info = {"acted": False, "answer": None, "events": [], "reason": f"error:{type(e).__name__}: {e}",
                 "seed": int(seed), "lesioned": bool(les)}

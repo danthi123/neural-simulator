@@ -1,0 +1,58 @@
+{
+ "step": "A",
+ "tag": "iw2-alloff-1fb805e",
+ "pin": "1fb805e9e0bedcce684a47388d95848daf1008a2",
+ "faculties": {
+  "affect-marker-spiking-wta": {
+   "verdict": "excused",
+   "off_run": {
+    "s0": 4,
+    "s2": 0
+   },
+   "flip": {
+    "s0": 4,
+    "s2": 0
+   }
+  }
+ },
+ "b_undefined": [],
+ "verdict": "PASS",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "the B result carries a regression to attribute",
+   "ok": true,
+   "detail": "measured=1 expect=<function score_A.<locals>.<lambda> at 0x7239bed47e20>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "B carried no UNDEFINED criterion",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every attributed row DEFINED",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/iw2_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/tools/iw2_score.py",
+  "A",
+  "--b-result",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/verdicts/1fb805e/B.json",
+  "--tag",
+  "iw2-alloff-1fb805e",
+  "--pin",
+  "1fb805e9e0bedcce684a47388d95848daf1008a2",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/verdicts/1fb805e/A.json"
+ ],
+ "sim_backend": "numpy (the scored shards'; this scorer builds no brain)"
+}

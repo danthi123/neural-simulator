@@ -19,8 +19,8 @@ replay needs.
 ## STRUCTURAL emergence — 6-SEED GO (seeds 42/43/44/100/101/102)
 Weak symmetric plastic near-diagonal band (w₀=1, plastic=True, STDP-on) → sweep a drive bump N laps → measure developed
 forward/backward mean-weight ratio:
-- **FORWARD traversal + STDP:** ratio [1.662, 1.663, 1.662, 1.666, 1.664, 1.664] — forward-bias **6/6**.
-- **REVERSE traversal + STDP:** ratio [0.60, 0.60, 0.601, 0.601, 0.601, 0.601] — backward-bias **6/6** (opposite).
+- **FORWARD traversal + STDP:** ratio [1.662, 1.663, 1.662, 1.666, 1.664, 1.664] — forward-bias **6/6**. <!--derived--> (per-seed values quoted from the run log; log not retained, see Provenance)
+- **REVERSE traversal + STDP:** ratio [0.60, 0.60, 0.601, 0.601, 0.601, 0.601] — backward-bias **6/6** (opposite). <!--derived--> (per-seed values quoted from the run log; log not retained, see Provenance)
 - **NO-STDP control:** ratio [1.0 ×6] — stays symmetric **6/6** (Δ=0, no learning).
 ⇒ the asymmetry **emerges from experience** and **tracks the traversal direction**; without the plasticity rule the band
 stays symmetric. Remarkably tight across seeds (the traversal + STDP learning is near-deterministic). (At the broader
@@ -29,9 +29,9 @@ sigma=25 replay-matched band the developed asymmetry is even stronger, ratio ~4.
 ## FUNCTIONAL emergence — the learned band REPLAYS in the trained direction — 6-SEED GO
 Learn the band (sigma=25, replay-matched) → freeze STDP → reset neuron state + scale to operating strength (uniform gain,
 preserves the learned asymmetry ratio) → cue the interior → Bayesian population decode:
-- **FWD-learned band → FORWARD replay:** DECODE_r [0.991, 0.983, 0.982, 0.985, 0.988, 0.984] — forward replay **6/6**
+- **FWD-learned band → FORWARD replay:** DECODE_r [0.991, 0.983, 0.982, 0.985, 0.988, 0.984] — forward replay **6/6** <!--derived--> (per-seed values quoted from the run log; log not retained, see Provenance)
   (localized packet, width ~3.5, traversing ~49% of the track).
-- **REV-learned band → REVERSE replay:** DECODE_r [−0.985, −0.989, −0.982, −0.982, −0.984, −0.988] — reverse replay **6/6**
+- **REV-learned band → REVERSE replay:** DECODE_r [−0.985, −0.989, −0.982, −0.982, −0.984, −0.988] — reverse replay **6/6** <!--derived--> (per-seed values quoted from the run log; log not retained, see Provenance)
   (position decreases with time = backward travel).
 The **same protocol with opposite training gives opposite replay direction** (fwd/rev contrast) — proving the **learned
 asymmetry** (not the band per se) sets the replay direction. **VERDICT: GO.**
@@ -59,3 +59,14 @@ should be audited for this.
 `research/runners/_gap5_learned_band_emergence.py` (modes: default 3-arm structural, `sixseed`, `func6`; logs
 `learned_band{,2,3,_6seed}.log`, `learned_func{,2,3,4,6}.log`). Reuses the ECKER_CA3_PC preset (`d707bf34`) + the
 committed replay decoder (`decode_and_width`, `d6e140bf`). NO `sim/` edit. GPU.
+
+**Artifact status (Claude review, 2026-10-06).** The per-seed ratios and DECODE_r values above were copied from the
+runner's console logs (`learned_band_6seed.log`, `learned_func6.log`). No JSON artifact was saved and the logs were not
+found on homelab-server or the workstation (filesystem search, 2026-10-06), so `tools/claim_check.py`
+cannot trace them and they are marked quoted. The claim stands as recorded, not re-verified: making it checkable needs
+a GPU re-run of `research/runners/_gap5_learned_band_emergence.py` (`sixseed`, `func6`) that saves its per-seed values
+as JSON, which would also run at the corrected OU field (see the Correction below).
+
+## Correction (PROVISIONAL, local model) — 2026-09-30
+
+T15 (Ecker CA3 OU-noise field): the runner `_gap5_learned_band_emergence` set `cfg.ou_noise_sigma_pa` (40 pA), a field the engine never reads; the engine reads `cfg.ou_std_current_pA` (default 100 pA, `sim/config.py`). This run therefore used **100 pA** OU noise, not the **40 pA** stated. The runner now sets `ou_std_current_pA` (same value) on `research/draft-ecker-ou-field`. No re-run; this note records the stated-vs-run values only and re-interprets nothing. See `docs/drafts/ecker-ou-field/AFFECTED.md`.
