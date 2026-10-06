@@ -64,6 +64,7 @@ GATE_OUT_DIR = "research/findings/raw/_stage1_exit/gate"
 PREREG = "research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md"
 VALENCE_R_BAR = 0.55          # the roadmap's own Stage-1 bar (DR-2, every seed)
 CONTROL_R_CEILING = 0.20      # a lesion / permuted arm must read below this (or UNDEFINED) for the effect to vanish
+SCRAMBLE_R_MAX = 0.10         # RULING s1-c4-control: the scrambled-values draw keeps |r(scrambled, human ratings)|
 MIN_WORDS_FOR_R = 12          # fewer parsed feel read-outs than this -> r UNDEFINED for that seed
 MOOD_TOL = 0.03               # the ladder's neutral tolerance (LADDER_NEUTRAL_TOL): |differential| below = neutral
 
@@ -274,11 +275,34 @@ def arm_spec(group, arm):
 
 
 # ══════════════════════════════════════════════ WORKER (inside the arm subprocess) ═════════════════════════════════
-def _derangement(n, rng):
-    while True:
+def _scrambled_valence_draw(vals, norms, seed, max_tries=100000):
+    """RULING s1-c4-control: rejection-sample the C4 scrambled-values control's permutation. The RNG is fixed (seed
+    derived from the brain seed); each trial must be a derangement whose assignment correlates with the human
+    ratings by |r| <= SCRAMBLE_R_MAX, else it is discarded. Returns (perm, r, within_sign_r): r rounded to report
+    precision (None only when the values have no variance, so no permutation can correlate), and the report-only
+    within-sign-group r (positive / negative human-rating groups), never gated."""
+    import numpy as np
+    rng = np.random.default_rng(int(seed) + 7)          # fixed: the same brain-seed derivation as before
+    n = len(vals)
+    pos = [i for i, v in enumerate(norms) if v >= 5]     # HELDOUT: 12 words per human-rating sign group
+    neg = [i for i, v in enumerate(norms) if v < 5]
+
+    def _sub(idx):
+        if len(idx) < 2:
+            return None
+        sr = _pearson([vals[p[i]] for i in idx], [norms[i] for i in idx])
+        return None if sr is None else round(sr, 3)
+
+    for _ in range(max_tries):
         p = list(rng.permutation(n))
-        if all(p[i] != i for i in range(n)):
-            return p
+        if not all(p[i] != i for i in range(n)):
+            continue
+        assigned = [vals[p[i]] for i in range(n)]
+        r = _pearson(assigned, norms)
+        if r is None or abs(r) <= SCRAMBLE_R_MAX:
+            return p, (None if r is None else round(r, 3)), {"positive": _sub(pos), "negative": _sub(neg)}
+    raise RuntimeError("scrambled-values draw: no derangement with |r| <= %.2f in %d tries (n=%d)"
+                       % (SCRAMBLE_R_MAX, max_tries, n))
 
 
 def install_patch(name, seed):
@@ -295,16 +319,18 @@ def install_patch(name, seed):
         OBC.OneBrainComposer._recruit_word = _recruit_word
         return rec
     if name == "permuted_map":
-        import numpy as np
         from research.runners import affect_production_organ as AO
         m = dict(AO._get_learned_valence())
         words = [w for w, _v in HELDOUT_WORDS if w in m]
-        perm = _derangement(len(words), np.random.default_rng(int(seed) + 7))
-        vals = [m[w] for w in words]
+        norm = dict(HELDOUT_WORDS)
+        full = [m[w] for w in words]                                    # the map stores (valence, weight) tuples
+        vals = [v[0] if isinstance(v, (tuple, list)) else v for v in full]
+        perm, r, within_sign = _scrambled_valence_draw(vals, [norm[w] for w in words], seed)
         for i, w in enumerate(words):
-            m[w] = vals[perm[i]]
+            m[w] = full[perm[i]]
         AO._LEARNED_VALENCE = m
-        return {"patch": name, "n_words": len(words), "perm": [int(x) for x in perm]}
+        return {"patch": name, "n_words": len(words), "perm": [int(x) for x in perm],
+                "scrambled_r": r, "within_sign_r": within_sign}
     raise ValueError(name)
 
 

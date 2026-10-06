@@ -67,3 +67,18 @@ Append-only. One line per step, newest last. The local model appends here; Claud
 - C2 PASS triggers section 10 #7 → NEEDS-CLAUDE filed on main (verify-go before any board/ledger word for the
   PASS; stage FAIL itself needs no NEEDS). `bash tools/push_both.sh` skipped (push reserved for Claude); commit
   is local on `research/stage1-exit-gate`.
+
+## 2026-10-06 (Hermes) RULING s1-c4-control: rejection-sampled scrambled-values draw (before attempt 2)
+- The C4 scrambled-values control's permutation is now drawn by rejection sampling from a fixed RNG (seed + 7, the
+  brain-seed derivation): each trial must be a derangement whose |r(scrambled values, human ratings)| <=
+  SCRAMBLE_R_MAX = 0.10, else it is redrawn (loud RuntimeError after 100000 tries, never a silent wrong draw).
+  The map stores (valence, weight) tuples — the draw correlates the valence scalar; the patch still moves whole
+  tuples. The shard record now carries `scrambled_r` and `within_sign_r` (positive / negative human-rating groups,
+  REPORT-ONLY, never gated) alongside the drawn `perm`.
+- Empirical (real learned map, 6 gate seeds): the naive first-derangement r breached 0.10 on 5/6 seeds
+  (43 -0.264, 44 +0.303, 100 -0.159, 101 -0.118, 102 +0.154); every accepted draw lands within the bar, and the
+  within-sign-group r genuinely runs high (e.g. +0.514 on seed 42) — exactly why the ruling reports it ungated.
+- Tests: tests/test_stage1_exit_gate.py +3 (never over the bar across all 6 seeds; seed determinism + rejection
+  stress with identity values; record wiring through install_patch). 12/12 pass.
+  `.venv/bin/python -m pytest tests/test_stage1_exit_gate.py -q` (in the worktree, SIM_NO_PROVENANCE=1).
+- Claude reviews before attempt 2 (NEEDS-CLAUDE RESULT filed on main after this commit).
