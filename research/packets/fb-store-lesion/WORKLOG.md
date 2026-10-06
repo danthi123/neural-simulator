@@ -34,3 +34,13 @@
 - Canary launched: `pool_canary.sh run auto '<seed-42 line>' --wait-s 1500` (tracked session proc_9dfdafd5235a).
   Canary output is redirected to raw/_pool_canary/, so it does not write gate data; all six gate lines queue after
   a PASS record. Known defect: launch ssh may report rc=3 while the detached job runs (NEEDS pool-canary).
+- Gate canary: launch over ssh reported rc=3 (known NEEDS pool-canary false failure) but the detached job ran on
+  wspool: id load_bearing_fraction_290e3be3f_wspool_20261006T020848, status rc=0 wall=529s, 0 Tracebacks,
+  lb.json verdict=pass lb=0.0 exercised=1 deterministic=true store_lesioned=True error=None (seed 42 gate path).
+  Recorded PASS (module, 290e3be3f, gate) in research/queue/pool_canaries.tsv -> pool_canary.sh has = rc 0.
+- Six gate lines QUEUED 6/6 (pool_queue add --checked 'prereg research/findings/2026-10-05-fb-store-lesion-
+  PREREGISTRATION.md at 290e3be3f ...'); within minutes 5 sat in pool.queue and 1 had dispatched. Next wake: when
+  all six fbstore-290e3be/s{42,43,44,100,101,102} lb.json land, score once per prereg section 3:
+  `python tools/fb_store_score.py --tag fbstore-290e3be --pin 290e3be3f08f0a0ebe7a364eed3410093ae9f5a0 --out
+  research/findings/raw/_fb_store/verdict.json`, one re-run per not-DEFINED cell, then NEEDS-CLAUDE
+  "[fb-store] RESULT".
