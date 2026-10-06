@@ -135,3 +135,7 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - Step 6 substitutions (rsync absent on S): `cp -a` byte copy; git add done per-existing-pathspec (the
   never-rerun `b2d_mouth_reruns.tsv` and `_b2d0929_attempt1/` do not exist, and a missing pathspec would
   abort the whole add). Data + b2d_mouth_score.json committed on the packet branch with the Agent trailer.
+- 2026-10-06 17:35: step 0 ran: worktree research/b2d-amend2 created, amend2-ok, tests 21 pass,
+  PIN_P2 = fc0de0215 committed as e5bc97eb8 (gates passed). push_both NOT verified: user hermes
+  has no ~/.ssh config so aliases github-sim/gitea-sim do not resolve from this server.
+  NEEDS [A2] STOP filed; step 1 (export) not started, GPU queue untouched (0 queued, idle).
