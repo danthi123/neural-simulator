@@ -1006,6 +1006,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - pool-hold-c1-closed: (Claude) Supersedes RULING pool-hold-c1: CLOSED. C1 was scored without the two s42 lateral arms (informational; verdict unaffected). Do not re-add them; if they land anyway, commit them with the shards, no re-score. (2026-10-06)
 - c1-overextension: (Claude, owner-delegated) A default-on category-inheritance faculty may volunteer guesses flagged as not taught when categories blur (the bat case: "what does the canary swim" guesses lake), as normal learner over-extension within the honesty boundary. The flip commit reports that rate; the hop-attenuation fix (PLAN §5.1) opens the same day as Claude's packet. (2026-10-06)
 
+- c1-hop-first: (owner 2026-10-06, "would be nice to fix it since we have the time to") Supersedes RULING c1-overextension: the hop-attenuation fix (PLAN §5.1, the bat case) lands BEFORE the C1 flip. From RULING c1-inheritance's HANDOFF do step 1 only (commit the 52 gate shards); queue nothing else for C1 until Claude merges claude-review/c1-hop and a later RULING gives the updated HANDOFF (the flip dev check then runs with the fix, and the C1 gate PASS is re-measured with it). (2026-10-06)
+
 ## NEEDS CLAUDE
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
