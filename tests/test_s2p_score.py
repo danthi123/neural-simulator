@@ -3,6 +3,8 @@ import json
 import os
 import sys
 
+import pytest
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "tools"))
 import s2p_score as S  # noqa: E402
@@ -110,3 +112,42 @@ def test_flip_tool_apply_then_revert_round_trips(tmp_path, monkeypatch):
     assert FL.main(["apply", "fb-spiking-witness=4"]) == 2          # already on: refuses, writes nothing
     assert FL.main(["revert", "fb-spiking-witness", "transitive-spiking-reach"]) == 0
     assert {r: open(str(tmp_path / r)).read() for r in before} == before
+
+
+# ── ENGAGEMENT (RULING iw2-merged (b), session 7): a transitive-spiking-reach R cell counts only when its arms record
+#    that the route ran, the lesion flag matched the arm, and no exception was swallowed. ───────────────────────────
+def _eng_arms(tmp_path, lesion_trace, intact_trace=None):
+    import json as _j
+    intact_trace = intact_trace or {"route": "spiking_reach", "lesioned": False, "error": None}
+    for name, t in (("intact_a_x.json", intact_trace), ("intact_b_x.json", intact_trace),
+                    ("lesion_x.json", lesion_trace), ("lesion_x.json.rep0", lesion_trace)):
+        (tmp_path / name).write_text(_j.dumps({"t1": {"answer": "a"}, "probe": {"answer": "b", "transitive_trace": t}}))
+    (tmp_path / "lb.json").write_text("{}")
+    return str(tmp_path)
+
+
+def test_engagement_recorded_passes(tmp_path):
+    import s2p_score as S2
+    eng = S2.PACKETS["transitive-spiking-reach"]["engagement"]
+    d = _eng_arms(tmp_path, {"route": "spiking_reach", "lesioned": True, "error": None})
+    assert S2.engagement_state(d, eng) is None
+
+
+@pytest.mark.parametrize("lesion_trace,why", [
+    ({"route": "spiking_reach", "lesioned": True, "error": "ValueError: organ crashed"}, "error"),
+    ({"route": "chase", "lesioned": True, "error": None}, "route"),
+    ({"route": "spiking_reach", "lesioned": False, "error": None}, "lesion-flag"),
+])
+def test_engagement_failures_are_undefined(tmp_path, lesion_trace, why):
+    import s2p_score as S2
+    eng = S2.PACKETS["transitive-spiking-reach"]["engagement"]
+    assert S2.engagement_state(_eng_arms(tmp_path, lesion_trace), eng).startswith(why)
+
+
+def test_engagement_missing_record_is_undefined(tmp_path):
+    import json as _j
+    import s2p_score as S2
+    eng = S2.PACKETS["transitive-spiking-reach"]["engagement"]
+    for name in ("intact_a_x.json", "lesion_x.json"):
+        (tmp_path / name).write_text(_j.dumps({"probe": {"answer": "b"}}))
+    assert S2.engagement_state(str(tmp_path), eng).startswith("no-record")

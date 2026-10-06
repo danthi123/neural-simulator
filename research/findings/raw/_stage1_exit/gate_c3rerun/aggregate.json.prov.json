@@ -1,0 +1,29 @@
+{
+ "run_id": "1791249082-143912",
+ "runner": "research/runners/stage1_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/stage1_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_stage1_exit/gate_c3rerun",
+  "--seeds",
+  "42,43,44,100,101,102"
+ ],
+ "git_sha": "c5eb14668",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-05T21:11:22",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 34231.9,
+ "corpus_check_query": "C3 lived rerun at P2: dev seed-7 shards must show lesion_lived_recall patch.calls>0, p_wolf_bite abstains or non-apple, c_dog_chase still cat (AMENDMENT-A1 A1.2)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_exit/gate_c3rerun/aggregate.json"
+}
