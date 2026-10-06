@@ -1,6 +1,6 @@
 {
  "backend": "numpy",
- "description": "C1 hop attenuation (organ, dev 1-8): bridge canary swim abstains, canary eat keeps worm, controls hold",
+ "description": "C1 hop attenuation (organ, dev 1-16): bridge canary swim abstains, canary eat keeps worm, controls hold",
  "failures": [],
  "kinds": {
   "null_inert_lesion": "null",
@@ -75,14 +75,14 @@
    0.0038
   ]
  },
- "repo_head": "260bc1e591c6b20740be7c86136d541a57e1f15b",
+ "repo_head": "5040178c0c0e4b56a29ede5991be3cfc46222a20",
  "scorer_files": {
-  "research/runners/category_inherit_organ_dev.py": "80d54deb5cb350a5489078058457df31bd3a124d13bac2201a014553cf506880"
+  "research/runners/category_inherit_organ_dev.py": "58ef5f5bfd87e52fad8e2155c5dcb6015264d8ad50e6dc04bf07e382173d6b54"
  },
- "scorer_sha256": "0d9dd0b6482262b823474b822817621208490a9623f19d836cf1a7156cb8deb1",
+ "scorer_sha256": "59fadde842c37ed31d6cae736efccbe2b2b843f5947ee5e15ee5d48e3da23149",
  "seed": 0,
  "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_hop_dev.py",
- "spec_sha256": "be1475d5bb16fd17b7967223728c54580fa40f699e27763d24af77342a47f914",
+ "spec_sha256": "bd198b91bdcf2c9ce7ba609cd036df4957e8e25f6f5b05e26e8e486b462ae05a",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -90,5 +90,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 1.9
+ "wall_s": 3.6
 }

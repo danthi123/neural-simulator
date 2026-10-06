@@ -3,19 +3,20 @@ type: finding
 status: live
 date: 2026-10-06
 lane: integration-first (Stage-1 exit criterion C1; RULING c1-hop-first, owner 2026-10-06)
-mechanism: hop attenuation in the category-inheritance organ (BRAIN_CATEGORY_INHERIT_HOP, default off): the learned frame->frame pathway transmits at 0.5 of its weight at encoding and at the read, and the read lasts one 35-step retrieval cycle, so a bridging member no longer carries a property two category hops away
-seeds: [1, 2, 3, 4, 5, 6, 7, 8]
+mechanism: hop attenuation in the category-inheritance organ (BRAIN_CATEGORY_INHERIT_HOP, default off): the learned frame->frame pathway transmits at 0.5 of its weight at encoding and at the read, and the read lasts one 30-step retrieval cycle, so a bridging member no longer carries a property two category hops away
+seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 runner: research/runners/category_inherit_organ_dev.py
 artifacts:
+  - research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-16.json
   - research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-8.json
   - research/findings/raw/_stage1_c1_category/dev/organ_dev_nohop_baseline_seeds1-8.json
   - docs/drafts/stage1-c1-inheritance/bar_sanity_record_hop_dev.json
 ---
 
-# C1 over-extension through a bridging member: diagnosed, and fixed at organ level by hop attenuation (dev 8/8)
+# C1 over-extension through a bridging member: diagnosed, and fixed at organ level by hop attenuation (dev 16/16)
 
 **Scope.** Organ level only (the `CategoryInheritOrgan` fed the Stage-1 C1 facts directly, numpy, CPU), dev seeds
-1-8 only, no gate seed. This is a dev result and a design record, not a generalization claim: the gate seeds and the
+1-16 only, no gate seed. Both parameters were chosen on these same dev seeds, so this is in-sample. This is a dev result and a design record, not a generalization claim: the gate seeds and the
 real handler are measured next (prereg 2026-09-30 section 13 amendment; `docs/drafts/stage1-c1-inheritance/HANDOFF.md`).
 
 ## The defect
@@ -59,65 +60,104 @@ retrieval is chunked into short cycles (one theta half-cycle) rather than run un
 whole graph.
 
 Built, behind `BRAIN_CATEGORY_INHERIT_HOP=1` (default off): the frame->frame pathway transmits at 0.5 of its weight (a
-transmission gate on exactly those synapses, at encoding and at the read), and the read lasts 35 steps. Each lateral
-hop then multiplies the drive by about one half: one hop still reactivates (so integrative encoding still writes
-`canary -> eat worm`, 2.9-7.0 vs 7.2-9.4 before), two hops stay subthreshold, so no shortcut link is written and the
-read ends before the second hop. Off builds no gate and reads 60 steps.
+transmission gate on exactly those synapses, at encoding and at the read), and the read lasts 30 steps. Each lateral
+hop multiplies the drive by about one half. One hop still reactivates, so integrative encoding still writes
+`canary -> eat worm` (2.2-7.0, was 7.2-9.4). A second hop is attenuated again: the bat-built shortcut link is
+attenuated, not removed (a verify-go skeptic re-read `fly sky -> swim lake` at 0.27-3.27 on 6 of 8 seeds with the
+option, against 5.7-9.9 without), and the read ends before the second hop arrives in full. Off builds no gate and
+reads 60 steps. <!--derived-->
 
-Levers tried on dev seeds before this one (each recorded, none kept): a divisive feedback inhibitory pool on the frame
-layer (40 interneurons; it scaled every frame alike: lake 0.035 vs worm 0.042 on seed 1, still above the 0.02 floor), <!--derived-->
-and encoding-only suppression at 0.7 / 0.5 / 0.35 with the 60-step read (lake fell from 0.072 to 0.040, never below <!--derived-->
-the floor). The read window was then chosen on dev seeds 1-8 among 30 / 35 / 40 steps: 30 left the permuted read at
-1.25x the floor, 40 put the bridge lake read at 0.8x it, 35 balances the two. <!--derived-->
+How the parameters were chosen (all on dev seeds; recorded so the selection is not mistaken for held-out evidence).
+Levers tried first, none kept: a divisive feedback inhibitory pool on the frame layer (40 interneurons) scaled every
+frame alike (lake 0.035 vs worm 0.042 on seed 1, still above the 0.02 floor), and encoding-only suppression at 0.7 /
+0.5 / 0.35 with the 60-step read lowered lake from 0.072 to 0.040, never below the floor. With gain 0.5 at encoding
+and read, a 35-step read passed seeds 1-8 (`organ_dev_hop_seeds1-8.json`, at 260bc1e59), but two verify-go skeptics
+ran it on fresh dev seeds 9-12 and seed 9 failed (bridge canary swim lake 0.0229, bat first). A 16-seed scratch grid
+(gain 0.4 / 0.45 / 0.5 x read 25 / 30 / 35 / 40) then found one setting that passes every dev seed 1-16: gain 0.5 with
+a 30-step read (35 and 40 fail seeds 9, 13 and 14 on lake; 25 loses the permuted read on seed 5; lower gains lose the
+permuted read). No dev seed is left that the choice did not see: the gate seeds (prereg section 13 re-measure) are
+the held-out test. <!--derived-->
 
-## Result (organ, dev seeds 1-8, `--hop`; hop dev bar PASS 8/8)
+## Result (organ, dev seeds 1-16, `--hop`, at 5040178c0 on the workstation; hop dev bar PASS 16/16)
 
-Rates are spikes per neuron per step over the read (floor 0.02, margin 1.25x); `off` is the same runner with the <!--derived-->
-option off (`organ_dev_nohop_baseline_seeds1-8.json`; tie = the organ abstains on a worm/bug tie).
+Rates are spikes per neuron per step over the read (floor 0.02, margin 1.25x). For the option off on seeds 1-8 see
+`organ_dev_nohop_baseline_seeds1-8.json`: lake on every bridge read (0.064-0.096), trout fly sky on every read, and the
+canary's eat tied on 4 (bat first) and 6 (canary first) of 8 seeds. <!--derived-->
 
-| seed | C1 canary eat (worm / bug) | permuted (bug / worm) | read lesion | bat first: canary eat / swim | canary first: canary eat / swim | trout fly (bat first) |
+| seed | C1 canary eat (worm / bug) | permuted (bug / worm) | read lesion | bat first: canary eat / swim | canary first: canary eat / swim | trout fly (bat first / canary first) |
 |---|---|---|---|---|---|---|
-| 1 | worm (0.0771 / 0.0000) | bug (0.0600 / 0.0000) | abstain, held | worm 0.0743 / abstain 0.0100 (off: worm / lake 0.0725) | worm 0.0771 / abstain 0.0029 (off: tie / lake 0.0817) | sky 0.0286 (off: sky 0.1075) | <!--derived-->
-| 2 | worm (0.0714 / 0.0000) | bug (0.0571 / 0.0000) | abstain, held | worm 0.0729 / abstain 0.0043 (off: worm / lake 0.0775) | worm 0.0714 / abstain 0.0014 (off: tie / lake 0.0842) | abstain 0.0171 (off: sky 0.1108) | <!--derived-->
-| 3 | worm (0.0586 / 0.0000) | bug (0.0529 / 0.0000) | abstain, held | worm 0.0657 / abstain 0.0000 (off: tie / lake 0.0725) | worm 0.0600 / abstain 0.0014 (off: tie / lake 0.0858) | sky 0.0229 (off: sky 0.1067) | <!--derived-->
-| 4 | worm (0.0771 / 0.0000) | bug (0.0529 / 0.0000) | abstain, held | worm 0.0786 / abstain 0.0043 (off: tie / lake 0.0842) | worm 0.0771 / abstain 0.0000 (off: tie / lake 0.0833) | sky 0.0271 (off: sky 0.1033) | <!--derived-->
-| 5 | worm (0.0586 / 0.0000) | bug (0.0286 / 0.0000) | abstain, held | worm 0.0729 / abstain 0.0000 (off: tie / lake 0.0800) | worm 0.0586 / abstain 0.0000 (off: worm / lake 0.0758) | abstain 0.0014 (off: sky 0.1025) | <!--derived-->
-| 6 | worm (0.0771 / 0.0000) | bug (0.0614 / 0.0000) | abstain, held | worm 0.0871 / abstain 0.0114 (off: worm / lake 0.0808) | worm 0.0786 / abstain 0.0000 (off: tie / lake 0.0833) | sky 0.0271 (off: sky 0.1000) | <!--derived-->
-| 7 | worm (0.0814 / 0.0000) | bug (0.0486 / 0.0000) | abstain, held | worm 0.0829 / abstain 0.0014 (off: worm / lake 0.0700) | worm 0.0814 / abstain 0.0100 (off: worm / lake 0.0958) | abstain 0.0086 (off: sky 0.0933) | <!--derived-->
-| 8 | worm (0.0629 / 0.0000) | bug (0.0543 / 0.0000) | abstain, held | worm 0.0671 / abstain 0.0000 (off: tie / lake 0.0642) | worm 0.0657 / abstain 0.0014 (off: tie / lake 0.0800) | abstain 0.0157 (off: sky 0.1042) | <!--derived-->
+| 1 | worm (0.0733 / 0.0000) | bug (0.0617 / 0.0000) | abstain, held | worm 0.0567 / abstain 0.0050 | worm 0.0733 / abstain 0.0033 | abstain 0.0150 / abstain 0.0100 | <!--derived-->
+| 2 | worm (0.0617 / 0.0000) | bug (0.0533 / 0.0000) | abstain, held | worm 0.0667 / abstain 0.0033 | worm 0.0633 / abstain 0.0017 | abstain 0.0133 / abstain 0.0167 | <!--derived-->
+| 3 | worm (0.0367 / 0.0000) | bug (0.0383 / 0.0000) | abstain, held | worm 0.0683 / abstain 0.0000 | worm 0.0367 / abstain 0.0000 | abstain 0.0133 / abstain 0.0117 | <!--derived-->
+| 4 | worm (0.0633 / 0.0000) | bug (0.0467 / 0.0000) | abstain, held | worm 0.0617 / abstain 0.0033 | worm 0.0633 / abstain 0.0000 | abstain 0.0167 / abstain 0.0000 | <!--derived-->
+| 5 | worm (0.0450 / 0.0000) | bug (0.0250 / 0.0000) | abstain, held | worm 0.0600 / abstain 0.0000 | worm 0.0450 / abstain 0.0000 | abstain 0.0000 / abstain 0.0017 | <!--derived-->
+| 6 | worm (0.0750 / 0.0000) | bug (0.0533 / 0.0000) | abstain, held | worm 0.0833 / abstain 0.0000 | worm 0.0767 / abstain 0.0000 | abstain 0.0133 / abstain 0.0150 | <!--derived-->
+| 7 | worm (0.0667 / 0.0000) | bug (0.0350 / 0.0000) | abstain, held | worm 0.0850 / abstain 0.0000 | worm 0.0700 / abstain 0.0033 | abstain 0.0000 / abstain 0.0033 | <!--derived-->
+| 8 | worm (0.0483 / 0.0000) | bug (0.0517 / 0.0000) | abstain, held | worm 0.0550 / abstain 0.0000 | worm 0.0500 / abstain 0.0000 | abstain 0.0083 / abstain 0.0183 | <!--derived-->
+| 9 | worm (0.0650 / 0.0000) | bug (0.0583 / 0.0000) | abstain, held | worm 0.0700 / abstain 0.0133 | worm 0.0683 / abstain 0.0033 | abstain 0.0183 / abstain 0.0150 | <!--derived-->
+| 10 | worm (0.0317 / 0.0000) | bug (0.0433 / 0.0000) | abstain, held | worm 0.0583 / abstain 0.0067 | worm 0.0317 / abstain 0.0017 | abstain 0.0100 / abstain 0.0150 | <!--derived-->
+| 11 | worm (0.0767 / 0.0000) | bug (0.0683 / 0.0000) | abstain, held | worm 0.0667 / abstain 0.0050 | worm 0.0767 / abstain 0.0017 | abstain 0.0167 / abstain 0.0183 | <!--derived-->
+| 12 | worm (0.0450 / 0.0000) | bug (0.0417 / 0.0000) | abstain, held | worm 0.0483 / abstain 0.0017 | worm 0.0483 / abstain 0.0017 | abstain 0.0117 / abstain 0.0117 | <!--derived-->
+| 13 | worm (0.0700 / 0.0000) | bug (0.0750 / 0.0000) | abstain, held | worm 0.0667 / abstain 0.0017 | worm 0.0700 / abstain 0.0000 | abstain 0.0183 / abstain 0.0100 | <!--derived-->
+| 14 | worm (0.0700 / 0.0000) | bug (0.0650 / 0.0000) | abstain, held | worm 0.0517 / abstain 0.0083 | worm 0.0700 / abstain 0.0017 | sky 0.0267 / abstain 0.0050 | <!--derived-->
+| 15 | worm (0.0617 / 0.0000) | bug (0.0500 / 0.0000) | abstain, held | worm 0.0767 / abstain 0.0083 | worm 0.0650 / abstain 0.0000 | abstain 0.0133 / abstain 0.0133 | <!--derived-->
+| 16 | worm (0.0683 / 0.0000) | bug (0.0367 / 0.0000) | abstain, held | worm 0.0500 / abstain 0.0067 | worm 0.0700 / abstain 0.0000 | abstain 0.0183 / abstain 0.0017 | <!--derived-->
 
-Also with the option on, 8/8: the learning lesion (`lateral_learn`) abstains, same-seed reads are identical, the
-C2/C3 moat shapes abstain, and every winning worm spike belongs to the learned pathways (attribution 1.0); the
-canary's inherited `eat worm` link is still written at encoding (2.9-7.0) and a read-only lateral cut leaves worm at
-0.020-0.054, so 0.30-0.66 of the winning rate rides the lateral read (0.22-0.34 before). The bridge's lake read fell <!--derived-->
-from 0.064-0.096 to at most 0.0114 (below 0.57x the floor) while the canary's eat read in the bridge sessions is worm <!--derived-->
-at 0.059-0.087 in both orders, where the 09-30 organ tied on 4 (bat first) and 6 (canary first) of 8 seeds. <!--derived-->
+Also with the option on, 16/16: the learning lesion (`lateral_learn`) abstains, same-seed reads are identical, the
+C2/C3 moat shapes abstain, every winning worm spike belongs to the learned pathways (attribution 1.0), and every read
+records `hop: true`, `query_steps: 30`. The canary's inherited `eat worm` link is still written at encoding (2.2-7.0);
+a read-only lateral cut leaves worm at 0.013-0.050, so 0.31-0.62 of the winning rate rides the lateral read (0.22-0.34
+before). The bridge's lake read is at most 0.0133 (0.67x the floor) while the canary's eat read in the bridge sessions
+is worm at 0.032-0.085 in both orders. Scratch reads at the same revision, seeds 1-16 (not saved): `what does the robin
+swim` abstains 16/16 (lake 16/16 off), `what does the bat swim` reaches lake 16/16 (0.025-0.093; off 16/16), and the
+robin's and bat's own `eat` reads now follow their told facts (robin worm 16/16, bat bug 14/16; off: bug and worm
+16/16, inverted). <!--derived-->
 
 The bar (`hop_dev_verdict`; bar-sanity OK, n 1000, every null 0.000, both perfect brains 1.000, <!--derived-->
 `docs/drafts/stage1-c1-inheritance/bar_sanity_record_hop_dev.json`): per seed, the C1 canary reaches worm, the
 permuted canary reaches bug, the read lesion abstains with the cut held, the C2/C3 moat shapes abstain, and in both
-bridge orders the canary's swim abstains and its eat reaches worm. PASS iff 8/8.
+bridge orders the canary's swim abstains and its eat reaches worm. PASS iff 16/16 (HOP_DEV_SEEDS).
 
 **Off is unchanged, in the data.** The same runner with the option off (`organ_dev_nohop_baseline_seeds1-8.json`)
 equals the recorded 09-30 dev file (`organ_dev_seeds1-8.json`) on all 80 shared row fields (exact compare), and
 `tests/test_category_inherit_hop.py` reproduces the recorded seed-3 reads exactly.
+
+## Verify-go (2026-10-06): two independent skeptics; NARROWED, and the configuration was changed
+
+- **Held-out seeds (both skeptics).** The first configuration (35-step read) passed seeds 1-8 and failed fresh dev
+  seed 9 (bridge lake 0.0229). It was replaced by the 30-step read chosen on seeds 1-16 (above); the claim is now
+  "16/16 in-sample", and the gate seeds are the held-out test.
+- **Not a mass artifact.** The fix lowers every read, but not equally: on seeds 9-12 the bridge lake/worm ratio fell
+  from 0.59-0.64 to 0.05-0.30, and a structurally new two-hop chain (a gull that eats the worm and swims in the lake;
+  a heron that only flies; `what does the heron swim`) abstained on 4/4 fresh seeds (lake 0.074-0.085 off). One-hop
+  reads with a single supporter sit just above the floor (sparrow swim via the gull 0.020-0.024). <!--derived-->
+- **Diagnosis narrowed.** The shortcut link is attenuated, not prevented (wording fixed above).
+- **Instrument gaps closed.** The battery now records each read's `hop` and `query_steps`; the flip dev check now
+  fails a bridge session whose canary eat ties and requires the canary probe's organ read to carry `hop` in the
+  cat_disc and cat_bridge cells (a cell with no organ read no longer passes the hop check).
+- **Required lenses.** Engagement: every hop row records `hop: true` and the read lesion `lesion_held: true`.
+  Answer rate (organ level only; no handler shards yet): the option removes answers only on over-extensions (lake,
+  the trout's sky) and turns the bridge's canary-eat ties into worm. Where ran: every cited battery on the workstation
+  (dant123-wk), numpy; the organ reads no file under research/findings/raw/, so validity does not depend on the host.
 
 ## What this does not show, and what is left
 
 - **Gate seeds and the real handler are unmeasured with the fix.** The 09-30 C1 PASS 6/6 was measured without it; the
   re-measure is registered (prereg section 13, amendment 2026-10-06) and the flip dev check now runs with the fix and
   the bridge in its bar. Both are Hermes pool steps.
-- **Thinner margins.** With the fix the C1 worm read is 0.059-0.081 (was 0.104-0.119) and the permuted bug read <!--derived-->
-  0.029-0.061 (seed 5 at 1.43x the 0.02 floor); a gate seed could fall nearer the floor than any dev seed did, and <!--derived-->
-  the re-measure's permuted clause is the one most at risk. <!--derived-->
-- **One shared feature is still enough.** `what does the bat swim` reaches lake on 8/8 with the fix (0.036-0.077, <!--derived-->
-  scratch read at 260bc1e59): the
-  bat's own told `eat bug` is shared with the fish, so this is one hop, the C1 inference itself. `what does the robin
-  swim` (two hops) went from lake 8/8 to abstain 8/8. A member that already carries another category's frames could
-  hold the inheritance back (category competition; the 07-08 cancellation finding); an owner item.
-- **One-member support.** `what does the trout fly` (one hop over the bat-built `eat bug -> fly sky` link) went from
-  sky 8/8 to abstain on 4 of 8 seeds at 35 steps (8/8 at 30). Not barred: it is a one-hop inference with one
-  supporting member.
-- **Host seams unchanged, one added.** The read length is a host timing constant (as the 60 steps were); an
+- **Thin margins, in-sample.** With the option the C1 worm read is 0.032-0.077 (was 0.104-0.119; seed 10 at 1.6x the
+  0.02 floor) and the permuted bug read 0.025-0.075 (seed 5 at 1.25x). The lake refusal sits at most 0.67x the floor.
+  Every clause has a dev seed within a factor of two of the floor, the parameters were chosen on all 16 dev seeds, and
+  one earlier choice (35 steps) failed a fresh seed. The gate re-measure can fail on correctness or on the permuted
+  clause, and the flip dev check on the bridge. <!--derived-->
+- **One shared feature is still enough.** `what does the bat swim` reaches lake 16/16 with the option (0.025-0.093,
+  scratch read): the bat's own told `eat bug` is shared with the fish, so this is one hop, the C1 inference itself.
+  `what does the robin swim` (two hops) went from lake 16/16 to abstain 16/16. A member that already carries another
+  category's frames could hold the inheritance back (category competition; the 07-08 cancellation finding); an owner
+  item. <!--derived-->
+- **One-member support.** `what does the trout fly` (one hop over the bat-built `eat bug -> fly sky` link) abstains on
+  31 of 32 reads (sky on seed 14, bat first, 0.0267); off it is sky on every read. These lost answers are
+  over-extensions (the trout was never said to fly), not lost correct answers. <!--derived-->
+- **Host seams unchanged.** The read length is a host timing constant (as the 60 steps were); an
   in-substrate end of the retrieval cycle (theta-paced or slow GABA_B feedback inhibition) is the next rung. Admission
   by the asked verb, the floor and the margin stay host. The organ is still a standalone bridge.

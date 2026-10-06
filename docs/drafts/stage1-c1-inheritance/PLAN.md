@@ -1,7 +1,7 @@
 # Stage-1 C1 (category held-out inheritance): the path to exit attempt 2 (revised, Claude review 2026-10-06)
 
 **Update 2026-10-06 (RULING c1-hop-first, owner):** the hop-attenuation fix (section 5.1) lands BEFORE the flip.
-It is built on `claude-review/c1-hop` (`BRAIN_CATEGORY_INHERIT_HOP`, default off; organ dev 8/8;
+It is built on `claude-review/c1-hop` (`BRAIN_CATEGORY_INHERIT_HOP`, default off; organ dev 16/16 on dev seeds 1-16;
 `research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md`). Steps A2-A3 below are new; B now runs with
 the fix on and the bridge in its bar; the C1 gate PASS is re-measured with the fix (A3) before the flip.
 
@@ -46,7 +46,7 @@ the primary checkout (HANDOFF step 1); they are not on this branch because the m
 
 **A2. The hop fix (`claude-review/c1-hop`, Claude).** Hop attenuation in the organ behind
 `BRAIN_CATEGORY_INHERIT_HOP` (default off; off is byte-identical): the frame -> frame pathway transmits at 0.5 of its
-weight (encoding and read) and the read lasts one 35-step retrieval cycle. Organ dev 8/8 on its own bar
+weight (encoding and read) and the read lasts one 30-step retrieval cycle. Organ dev 16/16 on its own bar
 (`bar_sanity_record_hop_dev.json`): the bat case's canary swim abstains in both fact orders, the canary's eat keeps
 worm, the controls hold. Section 5.1 has the diagnosis.
 
@@ -64,7 +64,8 @@ each). Dev bar (bar-sanity OK, n 1000; `bar_sanity_record_flipdev.json`, re-run 
 flag-on names worm, and reply content is equal on every other turn of every group, with the only allowed changes a
 flagged guess `worm` on the canary probes (cat_disc, cat_told, cat_bridge) and a flagged guess `lake` on the bat's
 swim (one hop through its own told `eat bug`; reported); `what does the canary swim` and `what does the robin swim`
-in the bridge session must not change. PASS iff 8/8. A cell without the hop env, or an organ read without `hop:
+in the bridge session must not change, and the bridge session's `what does the canary eat` must be the flagged worm
+guess. PASS iff 8/8. A cell without the hop env, or an organ read without `hop:
 true`, is UNDEFINED. This measures the merged stack, flip specificity outside the C1 script, and the fix through the
 handler.
 
@@ -93,7 +94,7 @@ Attempt 2 runs with the hop option on (the flipped default). No different route,
 - **Specificity** (B): any content change outside the canary probes is a STOP, not a judgment call.
 - **The bridging member** (B, now in the bar): with the fix, `what does the canary swim` and `what does the robin
   swim` (two category hops through the bat) must stay abstentions. The one-hop case stays: `what does the bat swim`
-  becomes a flagged guess `lake` at organ level (8/8), because the bat's own told `eat bug` is shared with the fish;
+  becomes a flagged guess `lake` at organ level (dev seeds 1-8: 8/8), because the bat's own told `eat bug` is shared with the fish;
   that is the C1 inference itself, not a hop. Reported in the flip commit; whether one shared feature should be
   enough is an owner item (a category-competition / cancellation rung, section 5.6, would refine it).
 - **Capacity:** 24 member and 24 frame slots; past that the organ stops encoding and inheritance degrades to
@@ -109,8 +110,9 @@ Attempt 2 runs with the hop option on (the flipped default). No different route,
    read, activity walks one lateral hop per ~10 steps, so the 60-step window reaches two hops. A divisive feedback
    pool on the frame layer was tried first and scaled every frame alike (lake 0.035 vs worm 0.042, seed 1). The
    built option: the frame -> frame pathway transmits at 0.5 (recurrent associative synapses carry less current than
-   the afferent ones: one attenuated hop still reactivates, two do not) and the read lasts one 35-step retrieval
-   cycle. Residuals: the 35-step cycle is a host timing constant (as the 60 was); an in-substrate cycle terminator
+   the afferent ones: one attenuated hop still reactivates, a second is attenuated again) and the read lasts one
+   30-step retrieval cycle. Both were chosen on dev seeds 1-16 (verify-go: a 35-step read passed seeds 1-8 and failed
+   fresh seed 9), so the gate seeds of A3 are the held-out test. Residuals: the 30-step cycle is a host timing constant (as the 60 was); an in-substrate cycle terminator
    (theta-paced or GABA_B feedback inhibition) is the next rung.
 2. **The host pick inside the read.** The floor plus 1.25x margin is a host comparison of spike counts. The spiking
    commit stage (`docs/drafts/spiking-commit/PLAN.md`: exclusive gate + self-holding latch on the same bridge, read
@@ -124,6 +126,6 @@ Attempt 2 runs with the hop option on (the flipped default). No different route,
 5. **The generative route.** `what might the canary eat` never proposes; the plausibility gate could read the organ's
    frame rates as its likelihood. Optional for the bar (either route counts).
 6. **One shared feature is enough to inherit (the bat swims).** With the hop fix, a member that shares one told frame
-   with a category still inherits that category's other frames (`bat swim -> lake`, organ 8/8), the same inference
+   with a category still inherits that category's other frames (`bat swim -> lake`, organ 8/8 at dev seeds 1-8), the same inference
    as C1. A member already carrying frames of a second category could hold the inheritance back (category
    competition, the 07-08 cancellation finding's per-member override). Owner item before building.

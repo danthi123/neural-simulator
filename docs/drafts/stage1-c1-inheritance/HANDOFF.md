@@ -72,7 +72,7 @@ EOF
 ```
 
 Expect 16 turns, `flag_value` "1" and `hop` "1" in flip_dev, sources `['tiny-demo +LTM']`, corpus True, trace on
-every turn True, and the canary `False None ['canary', 'eat', 'worm'] | read hop True 35`. Then step 3b, then add the
+every turn True, and the canary `False None ['canary', 'eat', 'worm'] | read hop True 30`. Then step 3b, then add the
 other 95 flip-dev lines (skip the canary's):
 
 ```bash
@@ -124,7 +124,7 @@ scored verdict.
 
 - Step 0 not READY; a step-2 test or selftest fails; a node lacks LTM, CORPUS or RUNNER after one re-provision.
 - The flip-dev canary: rc != 0, a missing trace, an errored turn, `hop` not "1" in flip_dev, the read without
-  `hop: True` / `query_steps: 35`, or the canary not a flagged worm guess (the merged stack with the fix does not
+  `hop: True` / `query_steps: 30`, or the canary not a flagged worm guess (the merged stack with the fix does not
   reproduce the organ: that is the result, report it; queue neither the 95 flip-dev lines nor the 54 gate lines).
 - The gate re-measure reads anything but PASS after one re-run of its missing cells (FAIL, or UNDEFINED with a
   `hop attenuation not applied` reason, or a lesion / permuted clause short of 6/6): report; no fixes, no flip.

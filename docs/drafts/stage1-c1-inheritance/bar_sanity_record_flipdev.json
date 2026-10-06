@@ -6,6 +6,7 @@
   "null": "null",
   "null_as_fact": "null",
   "null_bridge_lake": "null",
+  "null_bridge_tie": "null",
   "null_no_hop": "null",
   "null_one_leak": "null",
   "null_one_lost": "null",
@@ -21,6 +22,7 @@
   "null": 0,
   "null_as_fact": 0,
   "null_bridge_lake": 0,
+  "null_bridge_tie": 0,
   "null_no_hop": 0,
   "null_one_leak": 0,
   "null_one_lost": 0,
@@ -36,6 +38,7 @@
   "null": 0.0,
   "null_as_fact": 0.0,
   "null_bridge_lake": 0.0,
+  "null_bridge_tie": 0.0,
   "null_no_hop": 0.0,
   "null_one_leak": 0.0,
   "null_one_lost": 0.0,
@@ -56,6 +59,10 @@
    0.0038
   ],
   "null_bridge_lake": [
+   0.0,
+   0.0038
+  ],
+  "null_bridge_tie": [
    0.0,
    0.0038
   ],
@@ -96,15 +103,15 @@
    0.0038
   ]
  },
- "repo_head": "260bc1e591c6b20740be7c86136d541a57e1f15b",
+ "repo_head": "5040178c0c0e4b56a29ede5991be3cfc46222a20",
  "scorer_files": {
-  "research/runners/c1_flip_dev_check.py": "7ced467693891cff8e7cacfaae64f13c44aec783d7b4e1ebd50b438cc9bbe265",
+  "research/runners/c1_flip_dev_check.py": "25c998e58ba5539efbba1f4cbbc0da1d28fa84d8de7d97edc2208c8d1f33e09c",
   "research/runners/stage1_exit_gate.py": "df627e7a769d63fa37c1491f60b93ac8d8ff85b1d405c9a54e4a9310d3541199"
  },
- "scorer_sha256": "fd41f2105f99d0f4c6bf117a978cc746bd759c6a9314ff1260386be5363e04c5",
+ "scorer_sha256": "cc5008da84f1a7caa1f06a4f3db62b7837aea8f47094f5bb8de8726addbe70ae",
  "seed": 0,
  "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_flipdev.py",
- "spec_sha256": "d2ebacc9665902373f4db55ccb568f88d41ff910b55cba82e1367f7c68522d9a",
+ "spec_sha256": "7d430d1218c5b17a8bb7ff4a1c8af2125632040b4f3619ccb1e3b1b6dc4c7948",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -112,5 +119,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 197.1
+ "wall_s": 189.7
 }
