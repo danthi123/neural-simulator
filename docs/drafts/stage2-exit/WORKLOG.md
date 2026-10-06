@@ -148,3 +148,7 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   permuted-tracks clause now needs the idle fact to differ across intact/permuted. Scorer + tests + bar-sanity specs and
   `_A3` records (all six OK) committed; prereg byte-identical (PREREG_SHA unchanged); GATE_SHA still unpinned and must
   contain AMENDMENT-A3.md. No dev line is re-run; NEEDS-CLAUDE #15-#17 are untouched by this amendment.
+- 2026-10-06 16:52: RULING stage2-c4c5-ff executed: FF claude-review/stage2-c4c5 -> bd5c95bb4+
+  then agent_sync_branch merged main (tip `43763e637`); pytest test_stage2_exit_gate + runner
+  selftest run above; GATE_SHA pinned at `43763e637` (revision contains AMENDMENT-A3.md;
+  checked). PREREG_SHA stays 24dac499e. Only _A3 bar-sanity records are cited for Stage 2.
