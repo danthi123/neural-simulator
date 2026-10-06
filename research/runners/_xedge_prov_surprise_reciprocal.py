@@ -168,6 +168,7 @@ class ProvSurprisePool:
         self.pool = _build_pool(seed, with_edge=True)
         self.pool.ensure_built()
         self.b = self.pool.bridge
+        self.bridge = self.b               # onebrain_crossedge_gate.run_gate reads pool.bridge (template-1 named it b)
         rm = self.b.region_manager
 
         def idxr(nm):
@@ -380,20 +381,55 @@ def _selftest_read_isolation(seed=7, verbose=True):
     pool._hard_reset()
     pool._drive(pool._contradict_pairs() + [(ix["ctx_perceived"], CTX_DRIVE_PA)], TRAIN_STEPS)
 
+    # Claude ruling 2026-10-04 (xedge-selftest): organic residue cannot give a READ-level probe teeth here. The
+    # strong trial drive is contractive (attempt 1 read bitwise identical with the restore off), the surprise region
+    # fires only late in the 160-step window, cp_neuron_firing_thresholds is not read by the Izhikevich step while
+    # homeostasis is off, and a refractory hold long enough to reach the late spikes overflows the kernel. So the
+    # teeth are STATE-level: residue is INJECTED into every _EXTRA_RESET_ARRAYS array on the surprise region; the
+    # pre-fix reset must leave it in place, and the fix must restore TRUE rest bitwise. The read-level half is
+    # repeat-read identity under the fix after the same injection, plus the smoke's a->b->a order-invariance check.
+    sur = np.asarray(ix["surprise"], np.int64)
+
+    def _inject():
+        b = pool.b
+        for nm, bump in (("cp_neuron_firing_thresholds", 5.0), ("cp_neuron_activity_ema", 0.5),
+                         ("cp_refractory_timers", 3), ("cp_prev_firing_states", True)):
+            arr = getattr(b, nm, None)
+            if arr is None:
+                continue
+            if arr.dtype == bool:
+                arr[sur] = bump
+            else:
+                arr[sur] = arr[sur] + bump
+
+    def _at_rest(extra):
+        for nm in _EXTRA_RESET_ARRAYS:
+            rest = extra.get(nm)
+            if rest is None:
+                continue
+            if not np.array_equal(np.asarray(to_host(getattr(pool.b, nm))), rest):
+                return False
+        return True
+
     saved_extra = pool._rest_extra
+    assert any(v is not None for v in saved_extra.values()), "no extra array exists: the guard would be vacuous"
     pool._rest_extra = {}                  # simulate the ORIGINAL (pre-fix) _hard_reset
-    b1 = pool.read_verdict("generated")["surprise"]
-    b2 = pool.read_verdict("generated")["surprise"]
-    broken_diverges = (b1 != b2)
+    _inject()
+    pool._hard_reset()
+    broken_diverges = not _at_rest(saved_extra)   # teeth: the pre-fix reset leaves the residue
 
     pool._rest_extra = saved_extra         # the actual fix
+    _inject()
+    pool._hard_reset()
+    fixed_at_rest = _at_rest(saved_extra)
     f1 = pool.read_verdict("generated")["surprise"]
+    _inject()
     f2 = pool.read_verdict("generated")["surprise"]
-    fixed_identical = (f1 == f2)
-
+    fixed_identical = fixed_at_rest and (f1 == f2)
     if verbose:
-        print(f"[selftest] fix-disabled diverges={broken_diverges}: {b1!r} vs {b2!r}", flush=True)
-        print(f"[selftest] fix-enabled  identical={fixed_identical}: {f1!r} vs {f2!r}", flush=True)
+        print(f"[selftest] fix-disabled leaves injected residue={broken_diverges}", flush=True)
+        print(f"[selftest] fix-enabled  at-rest={fixed_at_rest} read identical={f1 == f2}: {f1!r} vs {f2!r}",
+              flush=True)
     ok = broken_diverges and fixed_identical
     if ok and verbose:
         print("[selftest] PASS — repeat-read bitwise identity holds under the fix, and the probe has teeth",
