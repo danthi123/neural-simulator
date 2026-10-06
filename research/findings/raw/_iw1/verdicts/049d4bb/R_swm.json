@@ -1,0 +1,155 @@
+{
+ "step": "R",
+ "packet": "xedge-surprise-worldmodel",
+ "tag": "iw1-R-swm-049d4bb",
+ "pin": "049d4bb0beac083bfdc364c8ffd8ac5b86ca9b49",
+ "per_seed": {
+  "42": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  },
+  "43": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  },
+  "44": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  },
+  "100": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  },
+  "101": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  },
+  "102": {
+   "state": "DEFINED",
+   "reply_verdict": "regressed",
+   "detail": {
+    "turn": "iw1swm_ask",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true,
+    "s0": [
+     "regressed",
+     true
+    ]
+   }
+  }
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 6,
+ "verdict": "PASS",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "ok": true,
+   "detail": "measured=6 expect=6",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/iw1_score.py",
+ "argv": [
+  "tools/iw1_score.py",
+  "R",
+  "--packet",
+  "xedge-surprise-worldmodel",
+  "--tag",
+  "iw1-R-swm-049d4bb",
+  "--pin",
+  "049d4bb0beac083bfdc364c8ffd8ac5b86ca9b49",
+  "--out",
+  "research/findings/raw/_iw1/verdicts/049d4bb/R_swm.json"
+ ],
+ "sim_backend": "numpy (the scored shards'; this scorer builds no brain)"
+}
