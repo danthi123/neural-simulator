@@ -982,3 +982,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - handled: [s1-c3-data-commit] lane gate cleared (b2d wave-2 queue served lanes); 86 files landed 0a50e3f81 (2026-10-06)
 - 2026-10-06 00:44 [word-role-parse] RESULT: 2026-10-06: O PASS, R PASS at op 0 (real handler). Finding: research/findings/2026-10-06-word-role-parse-gate.md (PROVISIONAL; verify-go 2/2 SURVIVES; data 99906f6fc).
 - 2026-10-06 00:44 [word-role-parse] ASK: O PASS + R PASS at research/word-role-parse @ d2f261271; confirm + merge; unblocks P4 (s2p-flip)
+- 2026-10-06 01:48 [ldc-provision] INFO: provisioning refused research/draft-ldc-outcome-timing (stale: lacks published main 290e3be3f08f; main changed >docs): needs merge/rebase - reserved, cf [T1] 10-04. main half: re-pinned, provision ok.
