@@ -1,5 +1,10 @@
 # Stage-1 C1 (category held-out inheritance): the path to exit attempt 2 (revised, Claude review 2026-10-06)
 
+**Update 2026-10-06 (RULING c1-hop-first, owner):** the hop-attenuation fix (section 5.1) lands BEFORE the flip.
+It is built on `claude-review/c1-hop` (`BRAIN_CATEGORY_INHERIT_HOP`, default off; organ dev 8/8;
+`research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md`). Steps A2-A3 below are new; B now runs with
+the fix on and the bridge in its bar; the C1 gate PASS is re-measured with the fix (A3) before the flip.
+
 **This replaces the 2026-10-04 version of this file** (commit c10a74767, a cloud Claude session). That version
 proposed building a rung-3c member -> context pathway on the strict route's recall miss. The same build already
 existed on `research/stage1-c1-category` (2026-09-30: organ, default-off wiring, prereg, 54-line gate), and its gate
@@ -39,28 +44,46 @@ tests; default off), the scored aggregate, the RESULT finding, this plan, the fl
 (`research/runners/c1_flip_dev_check.py`, tests, bar-sanity record), the `lesion_inherit_pathway` patch for A2 (merged with `claude-review/stage-bar-sanity-s1`, whose C1 record is refreshed here). Hermes commits the 52 untracked gate shards in
 the primary checkout (HANDOFF step 1); they are not on this branch because the merge would collide with them.
 
-**B. Flip dev check (Hermes, pool, dev seeds 1-8; HANDOFF steps 2-5).** On the merged stack, through the real
-handler: every Stage-1 group whose turns can reach the wiring (cat_disc, cat_told, word, lived, val_novel) with
-`BRAIN_CATEGORY_INHERIT=1` vs `0`, plus a REPORTED bridging probe (`cat_bridge`: the C1 context plus a bat that eats
-the bug and flies in the sky). 96 jobs (~30 min each). Dev bar (bar-sanity OK: perfect 1.000, every null 0.000, n
-1000; `bar_sanity_record_flipdev.json`): per seed, cat_disc flag-on names worm, and reply content is equal on every
-other turn of every group, with the only allowed change a flagged worm guess on the canary probes; PASS iff 8/8.
-This measures the two things the gate did not: the merged stack, and flip specificity outside the C1 script.
+**A2. The hop fix (`claude-review/c1-hop`, Claude).** Hop attenuation in the organ behind
+`BRAIN_CATEGORY_INHERIT_HOP` (default off; off is byte-identical): the frame -> frame pathway transmits at 0.5 of its
+weight (encoding and read) and the read lasts one 35-step retrieval cycle. Organ dev 8/8 on its own bar
+(`bar_sanity_record_hop_dev.json`): the bat case's canary swim abstains in both fact orders, the canary's eat keeps
+worm, the controls hold. Section 5.1 has the diagnosis.
 
-**C. Flip (Claude, after B PASS).** Claude reads B's score and the bridging report and decides the flip (section 4).
-On a flip branch: `_CATEGORY_INHERIT_DEFAULT_ON = True`, the explicit `BRAIN_CATEGORY_INHERIT=0` path stays
-byte-identical to today's default, tests updated, and the wiring's own C1 gate re-run at the flip revision is NOT
-needed (attempt 2 measures it at the gate seeds).
+**A3. C1 gate re-measure with the fix (Hermes, pool, gate seeds; HANDOFF step 3b).** The 09-30 C1 PASS 6/6 was
+measured without the fix, so it does not cover the configuration the flip ships. Prereg section 13, amendment
+2026-10-06: the same 54 lines (9 arms x 6 gate seeds) with `BRAIN_CATEGORY_INHERIT_HOP=1`, into `gate_hop/`, scored
+by `stage1_c1_category --aggregate ... --hop` (same bars, plus every arm must record the hop). The C1 PASS that the
+flip and attempt 2 rely on is the gate_hop verdict; if it is not PASS, the flip is off and the fix is reworked.
+
+**B. Flip dev check (Hermes, pool, dev seeds 1-8; HANDOFF steps 2-5), WITH the fix.** On the merged stack, through the
+real handler: every Stage-1 group whose turns can reach the wiring (cat_disc, cat_told, word, lived, val_novel) and
+the bridge group `cat_bridge` (the C1 context plus a bat that eats the bug and flies in the sky), with
+`BRAIN_CATEGORY_INHERIT=1` vs `0`, and `BRAIN_CATEGORY_INHERIT_HOP=1` on every cell, both sides. 96 jobs (~30 min
+each). Dev bar (bar-sanity OK, n 1000; `bar_sanity_record_flipdev.json`, re-run for this change): per seed, cat_disc
+flag-on names worm, and reply content is equal on every other turn of every group, with the only allowed changes a
+flagged guess `worm` on the canary probes (cat_disc, cat_told, cat_bridge) and a flagged guess `lake` on the bat's
+swim (one hop through its own told `eat bug`; reported); `what does the canary swim` and `what does the robin swim`
+in the bridge session must not change. PASS iff 8/8. A cell without the hop env, or an organ read without `hop:
+true`, is UNDEFINED. This measures the merged stack, flip specificity outside the C1 script, and the fix through the
+handler.
+
+**C. Flip (Claude, after A3 PASS and B PASS).** Claude reads both scores and the bridge report and decides the flip
+(section 4). On a flip branch: `_CATEGORY_INHERIT_DEFAULT_ON = True` AND the hop option on by default (unset
+`BRAIN_CATEGORY_INHERIT_HOP` -> on; `=0` restores the 09-30 organ), the explicit `BRAIN_CATEGORY_INHERIT=0` path stays
+byte-identical to today's default, tests updated. No further C1 gate run at the flip revision (A3 measured the
+configuration; attempt 2 measures it again at the gate seeds).
 
 **D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion).** Fold
 `ATTEMPT2-C1-AMENDMENT-TEXT.md` into A2 (with the C4 control of RULING stage1-sync): for `cat_disc` and `cat_told` the
-counted lesion becomes `lesion_pathway`, the patch `lesion_inherit_pathway` (every organ read with both learned
-pathways cut; applied = calls > 0; the read trace also records `lesion: all`, `lesion_held: true`), and `lesion_draw`
-becomes informational. The bar is unchanged. The patch is already on this branch with a CPU test; A2 only swaps the
-GROUPS entry. A2's `bar-sanity:` line cites `docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json`
-(OK; re-run in A2's commit because A2 edits a scorer file). That spec's `pathway` brain is this route as measured:
-flagged worm on the direct probe, generative abstains, `lesion_pathway` abstains, `lesion_draw` changes nothing,
-permuted names bug. No different route, so no new spec.
+counted lesion becomes `lesion_inherit_pathway` (one name for the arm and the patch it installs: every organ read with
+both learned pathways cut; applied = calls > 0; the read trace also records `lesion: all`, `lesion_held: true`), and
+`lesion_draw` becomes informational. The bar is unchanged. The patch is already on main with a CPU test; A2 only swaps
+the GROUPS entry. A2's `bar-sanity:` line cites `docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json`
+(OK; re-run in A2's commit because A2 edits a scorer file; that commit also renames the spec's arm key from
+`lesion_pathway` to `lesion_inherit_pathway`). That spec's `pathway` brain is this route as measured: flagged worm on
+the direct probe, generative abstains, the pathway lesion abstains, `lesion_draw` changes nothing, permuted names bug.
+Attempt 2 runs with the hop option on (the flipped default). No different route, so no new spec.
 
 **E. Attempt 2** at the flip revision, all groups, per RULING stage1-calendar (no later than the Stage-2 window
 11-03..11-10, co-scheduled with it).
@@ -68,22 +91,27 @@ permuted names bug. No different route, so no new spec.
 ## 4. The flip decision (what C weighs)
 
 - **Specificity** (B): any content change outside the canary probes is a STOP, not a judgment call.
-- **The bridging member** (B, reported): the expected result, from organ dev, is that `what does the canary swim`
-  becomes a flagged guess `lake` in the bridge session. That is a wrong guess through a chain (canary -> fly sky ->
-  bat -> eat bug -> trout -> swim lake). It is flagged as a guess, never a fact, and over-extension is normal in an
-  infant learner, but a default-on faculty that volunteers it in richer sessions trades abstentions for confident-
-  sounding errors. Claude's default ruling: flip with the guess flagged and the over-generalization rate reported in
-  the flip commit, and open the hop-attenuation rung (section 5) the same day; the owner can override (see the
-  report's owner items).
+- **The bridging member** (B, now in the bar): with the fix, `what does the canary swim` and `what does the robin
+  swim` (two category hops through the bat) must stay abstentions. The one-hop case stays: `what does the bat swim`
+  becomes a flagged guess `lake` at organ level (8/8), because the bat's own told `eat bug` is shared with the fish;
+  that is the C1 inference itself, not a hop. Reported in the flip commit; whether one shared feature should be
+  enough is an owner item (a category-competition / cancellation rung, section 5.6, would refine it).
 - **Capacity:** 24 member and 24 frame slots; past that the organ stops encoding and inheritance degrades to
   abstaining. Safe (no false answers); reported.
 
 ## 5. Strengthening, in parallel and off the attempt-2 path (no defer: each is a capability, not a footnote)
 
-1. **Hop attenuation (the bridging member).** Ask first what the real system runs alongside the read: feedforward
-   inhibition scaled by the cue's own drive, so activity two lateral hops away stays subthreshold. Build it as a
-   divisive-inhibition pool on the organ's frame layer, default off, dev seeds 1-8 at organ level with the `bat`
-   case: the bar is canary swim abstains 8/8 while the C1 inheritance still reads worm 8/8.
+1. **Hop attenuation (the bridging member): BUILT, `claude-review/c1-hop`.** Diagnosis (dev seeds 1-8): the bridge is
+   written at ENCODING, not only spread at the read. While the bat's `fly sky` is rehearsed, `swim lake` is
+   reactivated two hops away (0.05-0.06 vs 0.09 for a first-order frame) and the LTP-only rule writes a direct
+   `fly sky -> swim lake` link (5.7-9.9) that no member carried; if the canary comes after the bat, its own rehearsal
+   also writes `canary -> swim lake` (3.7-6.9), and 54-99% of the lake read survives a read-only lateral cut. At the
+   read, activity walks one lateral hop per ~10 steps, so the 60-step window reaches two hops. A divisive feedback
+   pool on the frame layer was tried first and scaled every frame alike (lake 0.035 vs worm 0.042, seed 1). The
+   built option: the frame -> frame pathway transmits at 0.5 (recurrent associative synapses carry less current than
+   the afferent ones: one attenuated hop still reactivates, two do not) and the read lasts one 35-step retrieval
+   cycle. Residuals: the 35-step cycle is a host timing constant (as the 60 was); an in-substrate cycle terminator
+   (theta-paced or GABA_B feedback inhibition) is the next rung.
 2. **The host pick inside the read.** The floor plus 1.25x margin is a host comparison of spike counts. The spiking
    commit stage (`docs/drafts/spiking-commit/PLAN.md`: exclusive gate + self-holding latch on the same bridge, read
    by persistence with a threshold-invariance bar) is the replacement. Order per RULING spiking-commit-design: after
@@ -95,3 +123,7 @@ permuted names bug. No different route, so no new spec.
    composition of `isa` with the class property (EMERGE-26/EMERGE-30 are the record). Diagnostic only for Stage 1.
 5. **The generative route.** `what might the canary eat` never proposes; the plausibility gate could read the organ's
    frame rates as its likelihood. Optional for the bar (either route counts).
+6. **One shared feature is enough to inherit (the bat swims).** With the hop fix, a member that shares one told frame
+   with a category still inherits that category's other frames (`bat swim -> lake`, organ 8/8), the same inference
+   as C1. A member already carrying frames of a second category could hold the inheritance back (category
+   competition, the 07-08 cancellation finding's per-member override). Owner item before building.
