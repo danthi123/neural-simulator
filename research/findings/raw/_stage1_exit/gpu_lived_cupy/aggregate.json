@@ -1,0 +1,870 @@
+{
+ "stage": "STAGE-1 (INFANT) exit",
+ "verdict": "UNDEFINED (INCOMPLETE): unmet: no primary shard missing (measured=90 expect=0); unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=18 expect=0); unmet: six seeds defined for every primary criterion (measured=3 expect=0)",
+ "GO": false,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": false,
+   "detail": "measured=90 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": false,
+   "detail": "measured=18 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": false,
+   "detail": "measured=3 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [
+  "unmet: no primary shard missing (measured=90 expect=0)",
+  "unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=18 expect=0)",
+  "unmet: six seeds defined for every primary criterion (measured=3 expect=0)"
+ ],
+ "criteria": {
+  "C1": "INCOMPLETE",
+  "C2": "INCOMPLETE",
+  "C3": "FAIL",
+  "C4": "INCOMPLETE"
+ },
+ "groups": {
+  "cat_disc": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 6 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_draw": 0
+   },
+   "n_reproduced": {
+    "lesion_draw": 0
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "cat_told": {
+   "criterion": "C1",
+   "primary": false,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 6 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_draw": 0
+   },
+   "n_reproduced": {
+    "lesion_draw": 0
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "word": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 6 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_recruit": 0
+   },
+   "n_reproduced": {
+    "lesion_recruit": 0
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "lived": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 1 of 6 seeds"
+   ],
+   "n_defined": 6,
+   "n_correct": 5,
+   "n_lesion_effect": {
+    "lesion_recall": 0,
+    "lesion_episodic": 5
+   },
+   "n_reproduced": {
+    "lesion_recall": 6,
+    "lesion_episodic": 6
+   },
+   "n_permuted_tracks": 5,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": false,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": false,
+      "all": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": false,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": false,
+      "all": false
+     },
+     "tracks": false,
+     "informational": {}
+    }
+   }
+  },
+  "val_heldout": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 6 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_affect": 0
+   },
+   "n_reproduced": {
+    "lesion_affect": 0
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "val_novel": {
+   "criterion": "C4",
+   "primary": false,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 6 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_affect": 0
+   },
+   "n_reproduced": {
+    "lesion_affect": 0
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  }
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "missing_shards": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_disc__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_disc__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_disc__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_disc__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_disc__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_told__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_told__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_told__lesion_draw.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_told__lesion_draw.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/cat_told__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/word__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/word__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/word__lesion_recruit.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/word__lesion_recruit.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/word__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_heldout__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_heldout__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_heldout__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_heldout__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_heldout__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/val_novel__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s43/val_novel__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s44/val_novel__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s100/val_novel__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s101/val_novel__permuted.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_novel__intact_a.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_novel__intact_b.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_novel__lesion_affect.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_novel__lesion_affect.rep0.json",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/s1-lived-cupy/research/findings/raw/_stage1_exit/gpu_lived_cupy/s102/val_novel__permuted.json"
+ ],
+ "bars": {
+  "valence_r": 0.55,
+  "control_r_ceiling": 0.2,
+  "min_words_for_r": 12,
+  "seeds_required": 6
+ },
+ "runner": "research/runners/stage1_exit_gate.py",
+ "prereg": "research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}

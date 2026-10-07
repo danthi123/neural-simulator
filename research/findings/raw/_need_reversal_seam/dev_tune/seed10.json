@@ -1,0 +1,280 @@
+{
+ "probe": "need_reversal_selection_seam",
+ "backend": "numpy",
+ "seeds": [
+  10
+ ],
+ "label": "DEV, not a verdict",
+ "tune": [
+  {
+   "seed": 10,
+   "need_weight": 20.0,
+   "intero_max_pA": 200.0,
+   "commit_h1": 1.0,
+   "commit_h0": 0.95,
+   "p_forage_h1": 0.55,
+   "p_forage_h0": 0.2632,
+   "p_forage_h05": 0.5,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.2868,
+   "spikes_h1": {
+    "intero_hunger": 146.6,
+    "intero_satiety": 0.0,
+    "str_d1_0": 20.5,
+    "str_d1_1": 24.6
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 20.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.6,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.4,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.4,
+   "spikes_h1": {
+    "intero_hunger": 201.8,
+    "intero_satiety": 0.0,
+    "str_d1_0": 19.5,
+    "str_d1_1": 29.4
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 20.0,
+   "intero_max_pA": 400.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.6,
+   "p_forage_h0": 0.25,
+   "p_forage_h05": 0.25,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.35,
+   "spikes_h1": {
+    "intero_hunger": 233.9,
+    "intero_satiety": 0.0,
+    "str_d1_0": 19.1,
+    "str_d1_1": 24.6
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 40.0,
+   "intero_max_pA": 200.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.65,
+   "p_forage_h0": 0.1,
+   "p_forage_h05": 0.3,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.55,
+   "spikes_h1": {
+    "intero_hunger": 137.6,
+    "intero_satiety": 0.0,
+    "str_d1_0": 17.6,
+    "str_d1_1": 35.4
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 40.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.75,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.45,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.55,
+   "spikes_h1": {
+    "intero_hunger": 184.3,
+    "intero_satiety": 0.0,
+    "str_d1_0": 10.8,
+    "str_d1_1": 39.5
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 40.0,
+   "intero_max_pA": 400.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.85,
+   "p_forage_h0": 0.15,
+   "p_forage_h05": 0.4211,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.7,
+   "spikes_h1": {
+    "intero_hunger": 226.9,
+    "intero_satiety": 0.0,
+    "str_d1_0": 11.9,
+    "str_d1_1": 52.9
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 60.0,
+   "intero_max_pA": 200.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.8,
+   "p_forage_h0": 0.2,
+   "p_forage_h05": 0.25,
+   "commit_h1_no_arousal": 0.0,
+   "reversal": 0.6,
+   "spikes_h1": {
+    "intero_hunger": 122.2,
+    "intero_satiety": 0.0,
+    "str_d1_0": 12.9,
+    "str_d1_1": 43.0
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 60.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.8,
+   "p_forage_h0": 0.1,
+   "p_forage_h05": 0.4,
+   "commit_h1_no_arousal": 0.15,
+   "reversal": 0.7,
+   "spikes_h1": {
+    "intero_hunger": 157.8,
+    "intero_satiety": 0.0,
+    "str_d1_0": 8.7,
+    "str_d1_1": 54.0
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 60.0,
+   "intero_max_pA": 400.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.9,
+   "p_forage_h0": 0.1,
+   "p_forage_h05": 0.4737,
+   "commit_h1_no_arousal": 0.2,
+   "reversal": 0.8,
+   "spikes_h1": {
+    "intero_hunger": 178.7,
+    "intero_satiety": 0.0,
+    "str_d1_0": 3.5,
+    "str_d1_1": 65.8
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 80.0,
+   "intero_max_pA": 200.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 0.85,
+   "p_forage_h0": 0.05,
+   "p_forage_h05": 0.45,
+   "commit_h1_no_arousal": 0.1,
+   "reversal": 0.8,
+   "spikes_h1": {
+    "intero_hunger": 108.6,
+    "intero_satiety": 0.0,
+    "str_d1_0": 12.4,
+    "str_d1_1": 48.4
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 80.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 0.95,
+   "p_forage_h1": 0.95,
+   "p_forage_h0": 0.0526,
+   "p_forage_h05": 0.5789,
+   "commit_h1_no_arousal": 0.75,
+   "reversal": 0.8974,
+   "spikes_h1": {
+    "intero_hunger": 135.1,
+    "intero_satiety": 0.0,
+    "str_d1_0": 6.5,
+    "str_d1_1": 61.2
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 80.0,
+   "intero_max_pA": 400.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 1.0,
+   "p_forage_h0": 0.0,
+   "p_forage_h05": 0.4737,
+   "commit_h1_no_arousal": 1.0,
+   "reversal": 1.0,
+   "spikes_h1": {
+    "intero_hunger": 3.8,
+    "intero_satiety": 0.0,
+    "str_d1_0": 0.0,
+    "str_d1_1": 1.9
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 120.0,
+   "intero_max_pA": 200.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 1.0,
+   "p_forage_h0": 0.0,
+   "p_forage_h05": 0.65,
+   "commit_h1_no_arousal": 1.0,
+   "reversal": 1.0,
+   "spikes_h1": {
+    "intero_hunger": 12.9,
+    "intero_satiety": 0.0,
+    "str_d1_0": 0.0,
+    "str_d1_1": 6.4
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 120.0,
+   "intero_max_pA": 300.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 1.0,
+   "p_forage_h0": 0.0,
+   "p_forage_h05": 0.6,
+   "commit_h1_no_arousal": 1.0,
+   "reversal": 1.0,
+   "spikes_h1": {
+    "intero_hunger": 3.3,
+    "intero_satiety": 0.0,
+    "str_d1_0": 0.0,
+    "str_d1_1": 2.6
+   }
+  },
+  {
+   "seed": 10,
+   "need_weight": 120.0,
+   "intero_max_pA": 400.0,
+   "commit_h1": 1.0,
+   "commit_h0": 1.0,
+   "p_forage_h1": 1.0,
+   "p_forage_h0": 0.0,
+   "p_forage_h05": 0.8947,
+   "commit_h1_no_arousal": 1.0,
+   "reversal": 1.0,
+   "spikes_h1": {
+    "intero_hunger": 6.7,
+    "intero_satiety": 0.0,
+    "str_d1_0": 0.0,
+    "str_d1_1": 8.0
+   }
+  }
+ ]
+}

@@ -98,10 +98,11 @@ def test_parse_rejects_other_shapes():
 
 
 # ── byte-identity off (the flag's first-line short-circuit) ────────────────────────────────────────────────────────
-def test_flag_off_is_a_pure_noop(monkeypatch):
+def test_flag_unset_is_default_on(monkeypatch):
+    # iw2 flip (2026-10-05): unset now means ON, so a matching question is claimed by this route (a bare `object()`
+    # has no composer, which is an honest abstain). The pure no-op is the explicit escape, pinned just below.
     monkeypatch.delenv("BRAIN_TRANSITIVE_CHAT", raising=False)
-    # a bare `object()` (no .inner/.composer at all) proves the composer is NEVER touched when the flag is off.
-    assert T.resolve_transitive_query(object(), "does e0 precede e3?") is None
+    assert T.resolve_transitive_query(object(), "does e0 precede e3?") == (True, None)
 
 
 def test_flag_explicit_zero_is_a_pure_noop(monkeypatch):

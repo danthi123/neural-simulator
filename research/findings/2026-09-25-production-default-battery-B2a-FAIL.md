@@ -24,6 +24,11 @@ verdict: FAIL -- R2 (complete) fails. 23 of 28 coverable faculties have an INVAL
 
 # B2a scoring: R2 FAILS on a dirty, off-registration seed-102 shard; R1 UNDEFINED where it does
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 ## Setup
 
 Copied the pool-produced shard tree `research/findings/raw/_load_bearing/_shards/b2a0924/` (186 `lb.json` +

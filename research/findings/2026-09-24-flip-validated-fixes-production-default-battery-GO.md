@@ -19,6 +19,11 @@ verdict: GO -- every pre-registered criterion passes (A1, A2, A3 on the adequate
 
 # The three validated fixes hold at the production default: GO on both batteries
 
+> **Provenance caveat (Claude, 2026-10-06, RULING s1-c4-audit):** affect-faculty rows here that ran on pool or AWS
+> nodes before 2026-10-05 read the raw Warriner norm, not the DR-2 learned valence map (the runtime input was not
+> shipped; `docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`). Intact and lesion arms shared that fallback, so a
+> row's load-bearing reading stands; it says nothing about the learned values.
+
 ## Result
 
 Two sharded batteries, 31 faculties x 6 seeds each (186 shards per battery), numpy backend, no fix flag set (each mechanism runs at

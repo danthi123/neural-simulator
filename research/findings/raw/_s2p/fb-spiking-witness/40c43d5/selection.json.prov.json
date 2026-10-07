@@ -1,0 +1,25 @@
+{
+ "run_id": "1790915600-select",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "select",
+  "--packet",
+  "fb-spiking-witness",
+  "--sweep-dir",
+  "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/sweep",
+  "--out",
+  "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/selection.json"
+ ],
+ "git_sha": "7150d05077b4b4c13966cd4a6abe9ac59c7c7166",
+ "git_dirty": false,
+ "started": "2026-10-02T00:50",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [1, 2, 3, 4, 5, 6, 7, 8],
+ "note": "select is a pure-stdlib aggregation of the 64 dev sweep jsons (no numpy/cupy import); emitted as the gate-sanctioned sibling .cmd.json because tools/s2p_score.py does not write one itself.",
+ "artifact": "research/findings/raw/_s2p/fb-spiking-witness/40c43d5/selection.json"
+}

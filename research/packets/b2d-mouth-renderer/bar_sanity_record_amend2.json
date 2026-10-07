@@ -1,0 +1,81 @@
+{
+ "backend": "numpy",
+ "description": "bar-sanity spec for B2d Amendment 2's row bar (A2.7): a row reads MOUTH-LOAD-BEARING only when all six gate-seed",
+ "failures": [],
+ "kinds": {
+  "info_unengaged": "info",
+  "info_verifydrop": "info",
+  "null": "null",
+  "null_hostonly": "null",
+  "null_silent": "null",
+  "perfect": "perfect",
+  "random": "null"
+ },
+ "n": 400,
+ "n_pass": {
+  "info_unengaged": 158,
+  "info_verifydrop": 374,
+  "null": 0,
+  "null_hostonly": 0,
+  "null_silent": 0,
+  "perfect": 400,
+  "random": 11
+ },
+ "name": "B2d Amendment 2 row bar (MOUTH-LOAD-BEARING, six of six)",
+ "pass_rate": {
+  "info_unengaged": 0.395,
+  "info_verifydrop": 0.935,
+  "null": 0.0,
+  "null_hostonly": 0.0,
+  "null_silent": 0.0,
+  "perfect": 1.0,
+  "random": 0.0275
+ },
+ "pass_rate_ci95": {
+  "info_unengaged": [
+   0.3483,
+   0.4437
+  ],
+  "info_verifydrop": [
+   0.9065,
+   0.9553
+  ],
+  "null": [
+   0.0,
+   0.0095
+  ],
+  "null_hostonly": [
+   0.0,
+   0.0095
+  ],
+  "null_silent": [
+   0.0,
+   0.0095
+  ],
+  "perfect": [
+   0.9905,
+   1.0
+  ],
+  "random": [
+   0.0154,
+   0.0486
+  ]
+ },
+ "repo_head": "b17e42ac620c1b59fcf277d2996ba31fc432bc8b",
+ "scorer_files": {
+  "research/runners/b2d_amend2_probe.py": "eb14cc5fa0939e9e2dd583f3b3b070600c8f609758acad47e20fb8e98dd7dbcb",
+  "tools/b2d_amend2.py": "3c0b1a3226d87ee2032cd1904dbb19fe3b4ed4b6f5b08c25ccef3f519ba9e893"
+ },
+ "scorer_sha256": "5ba68d56ae3f084d8893c054eac815cdfdf7a53225256904cdb0a39caff9edc9",
+ "seed": 0,
+ "spec": "research/packets/b2d-mouth-renderer/bar_sanity_spec_amend2.py",
+ "spec_sha256": "beae3391ba392a03ee69e33c9055e15b8be8f881ed4f799e42b306e52d5127a4",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 1.5
+}

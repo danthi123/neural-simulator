@@ -1,0 +1,29 @@
+{
+ "run_id": "1791211056-114939",
+ "runner": "research/runners/stage1_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/stage1_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_stage1_exit/gate_c4rerun",
+  "--seeds",
+  "42,43,44,100,101,102"
+ ],
+ "git_sha": "dbd338771",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-05T10:37:36",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 8783.4,
+ "corpus_check_query": "transitive R shard at new pin: lesion arm must show transitive_trace.lesioned true with no error (engagement trace gate)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_exit/gate_c4rerun/aggregate.json"
+}

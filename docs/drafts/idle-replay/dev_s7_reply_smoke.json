@@ -1,0 +1,747 @@
+{
+ "arms": {
+  "intact_a": {
+   "builtin_facts": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "lynx",
+     "chase",
+     "vole"
+    ]
+   ],
+   "idle_replay": {
+    "candidates": [
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      "kb_idx": 0,
+      "s": 1.0,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512228016
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "learn",
+       "words"
+      ],
+      "kb_idx": 1,
+      "s": 0.9999999953893007,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834509024343
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "store",
+       "memory"
+      ],
+      "kb_idx": 2,
+      "s": 0.9999999836256369,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834500850543
+     },
+     {
+      "age": 4,
+      "fact": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "kb_idx": 3,
+      "s": 1.0000000073243815,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834517317249
+     },
+     {
+      "age": 4,
+      "fact": [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      "kb_idx": 4,
+      "s": 1.000000000524991,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512592797
+     },
+     {
+      "age": 3,
+      "fact": [
+       "lynx",
+       "chase",
+       "vole"
+      ],
+      "kb_idx": 5,
+      "s": 1.7617167150301791,
+      "s_source": "engram_readout",
+      "t_enc": 1,
+      "x": 1.0384224306112841
+     },
+     {
+      "age": 2,
+      "fact": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "kb_idx": 6,
+      "s": 1.767637694352827,
+      "s_source": "engram_readout",
+      "t_enc": 2,
+      "x": 1.265944237456887
+     },
+     {
+      "age": 1,
+      "fact": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "kb_idx": 7,
+      "s": 1.560434214716971,
+      "s_source": "engram_readout",
+      "t_enc": 3,
+      "x": 1.6011536389598724
+     }
+    ],
+    "decode_matches_winner": true,
+    "decode_route": "read_one_block",
+    "decoded": [
+     "beetle",
+     "chase",
+     "mite"
+    ],
+    "lesions": {
+     "commit": false,
+     "no_encode": false,
+     "tag": false
+    },
+    "op": 0,
+    "route": "idle_replay",
+    "selection": {
+     "K": 8,
+     "engram_counts": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      100
+     ],
+     "first_gate_step": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      80
+     ],
+     "gate_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      58
+     ],
+     "read": {
+      "co_commit": false,
+      "on": [
+       7
+      ],
+      "read_invariant": true,
+      "threshold": 18.0,
+      "variants": {
+       "x0.5": 7,
+       "x2": 7
+      },
+      "winner": 7
+     },
+     "slot_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      80
+     ],
+     "x_applied": [
+      0.8694834512228016,
+      0.8694834509024343,
+      0.8694834500850543,
+      0.8694834517317249,
+      0.8694834512592797,
+      1.0384224306112841,
+      1.265944237456887,
+      1.6011536389598724
+     ]
+    },
+    "turn": 4,
+    "winner": 7,
+    "winner_fact": [
+     "beetle",
+     "chase",
+     "mite"
+    ],
+    "winner_is_most_excitable": true
+   },
+   "peak_rss_mb": 6178.7,
+   "replies": {
+    "p_private": "Something's been on my mind \u2014 beetle chase mite.",
+    "t_beetle": "Setting the held thread aside \u2014 On beetle, then \u2014 the beetle chases the mite",
+    "t_lynx": "the lynx chases the vole the dog chases the cat the cat eats the fish",
+    "t_vole": "the vole chases the beetle"
+   },
+   "timings_s": {
+    "p_private": 1.2,
+    "t_beetle": 27.1,
+    "t_lynx": 740.3,
+    "t_vole": 27.0
+   },
+   "wall_s": 796.0
+  },
+  "lesion_selfinit": {
+   "builtin_facts": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "lynx",
+     "chase",
+     "vole"
+    ]
+   ],
+   "idle_replay": {
+    "candidates": [
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      "kb_idx": 0,
+      "s": 1.0,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512228016
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "learn",
+       "words"
+      ],
+      "kb_idx": 1,
+      "s": 0.9999999953893007,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834509024343
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "store",
+       "memory"
+      ],
+      "kb_idx": 2,
+      "s": 0.9999999836256369,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834500850543
+     },
+     {
+      "age": 4,
+      "fact": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "kb_idx": 3,
+      "s": 1.0000000073243815,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834517317249
+     },
+     {
+      "age": 4,
+      "fact": [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      "kb_idx": 4,
+      "s": 1.000000000524991,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512592797
+     },
+     {
+      "age": 3,
+      "fact": [
+       "lynx",
+       "chase",
+       "vole"
+      ],
+      "kb_idx": 5,
+      "s": 1.7617167150301791,
+      "s_source": "engram_readout",
+      "t_enc": 1,
+      "x": 1.0384224306112841
+     },
+     {
+      "age": 2,
+      "fact": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "kb_idx": 6,
+      "s": 1.767637694352827,
+      "s_source": "engram_readout",
+      "t_enc": 2,
+      "x": 1.265944237456887
+     },
+     {
+      "age": 1,
+      "fact": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "kb_idx": 7,
+      "s": 1.560434214716971,
+      "s_source": "engram_readout",
+      "t_enc": 3,
+      "x": 1.6011536389598724
+     }
+    ],
+    "decode_matches_winner": null,
+    "decode_route": null,
+    "decoded": null,
+    "lesions": {
+     "commit": false,
+     "no_encode": true,
+     "tag": false
+    },
+    "op": 0,
+    "route": "idle_replay",
+    "selection": {
+     "K": 8,
+     "engram_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "first_gate_step": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ],
+     "gate_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "read": {
+      "co_commit": false,
+      "on": [],
+      "read_invariant": true,
+      "threshold": 18.0,
+      "variants": {
+       "x0.5": null,
+       "x2": null
+      },
+      "winner": null
+     },
+     "slot_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "x_applied": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "turn": 4,
+    "winner": null,
+    "winner_fact": null,
+    "winner_is_most_excitable": null
+   },
+   "peak_rss_mb": 6163.8,
+   "replies": {
+    "p_private": "Nothing in particular is surfacing for me to bring up right now.",
+    "t_beetle": "Setting the held thread aside \u2014 On beetle, then \u2014 the beetle chases the mite",
+    "t_lynx": "the lynx chases the vole the dog chases the cat the cat eats the fish",
+    "t_vole": "the vole chases the beetle"
+   },
+   "timings_s": {
+    "p_private": 1.0,
+    "t_beetle": 29.8,
+    "t_lynx": 395.7,
+    "t_vole": 28.1
+   },
+   "wall_s": 454.8
+  },
+  "permuted": {
+   "builtin_facts": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "lynx",
+     "chase",
+     "mite"
+    ]
+   ],
+   "idle_replay": {
+    "candidates": [
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      "kb_idx": 0,
+      "s": 1.0,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512228016
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "learn",
+       "words"
+      ],
+      "kb_idx": 1,
+      "s": 0.9999999953893007,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834509024343
+     },
+     {
+      "age": 4,
+      "fact": [
+       "brain",
+       "store",
+       "memory"
+      ],
+      "kb_idx": 2,
+      "s": 0.9999999836256369,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834500850543
+     },
+     {
+      "age": 4,
+      "fact": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "kb_idx": 3,
+      "s": 1.0000000073243815,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834517317249
+     },
+     {
+      "age": 4,
+      "fact": [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      "kb_idx": 4,
+      "s": 1.000000000524991,
+      "s_source": "engram_readout",
+      "t_enc": 0,
+      "x": 0.8694834512592797
+     },
+     {
+      "age": 3,
+      "fact": [
+       "lynx",
+       "chase",
+       "mite"
+      ],
+      "kb_idx": 5,
+      "s": 1.7617167150301791,
+      "s_source": "engram_readout",
+      "t_enc": 1,
+      "x": 1.0384224306112841
+     },
+     {
+      "age": 2,
+      "fact": [
+       "mite",
+       "chase",
+       "vole"
+      ],
+      "kb_idx": 6,
+      "s": 1.767637694352827,
+      "s_source": "engram_readout",
+      "t_enc": 2,
+      "x": 1.265944237456887
+     },
+     {
+      "age": 1,
+      "fact": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "kb_idx": 7,
+      "s": 1.560434214716971,
+      "s_source": "engram_readout",
+      "t_enc": 3,
+      "x": 1.6011536389598724
+     }
+    ],
+    "decode_matches_winner": true,
+    "decode_route": "read_one_block",
+    "decoded": [
+     "vole",
+     "chase",
+     "beetle"
+    ],
+    "lesions": {
+     "commit": false,
+     "no_encode": false,
+     "tag": false
+    },
+    "op": 0,
+    "route": "idle_replay",
+    "selection": {
+     "K": 8,
+     "engram_counts": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      100
+     ],
+     "first_gate_step": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      80
+     ],
+     "gate_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      58
+     ],
+     "read": {
+      "co_commit": false,
+      "on": [
+       7
+      ],
+      "read_invariant": true,
+      "threshold": 18.0,
+      "variants": {
+       "x0.5": 7,
+       "x2": 7
+      },
+      "winner": 7
+     },
+     "slot_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      80
+     ],
+     "x_applied": [
+      0.8694834512228016,
+      0.8694834509024343,
+      0.8694834500850543,
+      0.8694834517317249,
+      0.8694834512592797,
+      1.0384224306112841,
+      1.265944237456887,
+      1.6011536389598724
+     ]
+    },
+    "turn": 4,
+    "winner": 7,
+    "winner_fact": [
+     "vole",
+     "chase",
+     "beetle"
+    ],
+    "winner_is_most_excitable": true
+   },
+   "peak_rss_mb": 6162.9,
+   "replies": {
+    "p_private": "Something's been on my mind \u2014 vole chase beetle.",
+    "t_beetle": "Setting the held thread aside \u2014 On vole, then \u2014 the vole chases the beetle",
+    "t_lynx": "the lynx chases the mite the dog chases the cat the cat eats the fish",
+    "t_vole": "the mite chases the vole"
+   },
+   "timings_s": {
+    "p_private": 1.2,
+    "t_beetle": 30.7,
+    "t_lynx": 393.4,
+    "t_vole": 28.5
+   },
+   "wall_s": 454.0
+  }
+ },
+ "backend": "numpy",
+ "device": "cpu",
+ "result": {
+  "intact_private_voices_stored_fact": true,
+  "intact_utterance": [
+   "beetle",
+   "chase",
+   "mite"
+  ],
+  "lesion_selfinit_neutral_line": true,
+  "permuted_private_voices_stored_fact": true,
+  "permuted_utterance": [
+   "vole",
+   "chase",
+   "beetle"
+  ],
+  "private_selected_by_state": true
+ },
+ "scored_by": "stage2_exit_gate.score_inner / private_selected_by_state (amendment A3)",
+ "what": "idle-replay reply-level smoke, dev seed 7, Stage-2 runner group inner, turns t_lynx,t_vole,t_beetle,p_private, BRAIN_IDLE_REPLAY=1",
+ "where": "workstation, 2026-10-06, git archive of main b6711066e + claude-review/s2-c5-build files + research/runners/stage2_exit_gate.py @ 4b330c082; SIM_BACKEND=numpy, memcap 10"
+}

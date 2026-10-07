@@ -32,6 +32,7 @@ import glob
 import json
 import os
 import re
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,6 +99,31 @@ def load_artifacts(paths):
     return nums, verdicts, loaded, missing
 
 
+def local_only(loaded):
+    """Cited run records under research/findings/raw/ that exist on THIS disk only: git-ignored AND not in the index.
+
+    WHY (2026-10-06). The root .gitignore's Python-template `parts/` line silently ignored
+    research/findings/raw/_ca3_symmetric_ti/parts/, so the four records the ca3 finding cites were never committed.
+    The finding passed this checker in the one checkout holding the untracked files and failed it in every other
+    worktree, which made agent_sync_branch refuse every branch sync for a day with the blame landing on another
+    finding. A record a finding rests on must travel with it: `git add -f` it in the same commit as the finding.
+    Outside a git checkout (a pool `git archive` copy) git cannot answer, so nothing is reported."""
+    raw = [h for h in loaded if os.path.relpath(h, ROOT).replace(os.sep, "/").startswith("research/findings/raw/")]
+    if not raw:
+        return []
+    rel = [os.path.relpath(h, ROOT) for h in raw]
+    try:
+        ign = subprocess.run(["git", "-C", ROOT, "check-ignore", "--no-index", "--stdin"], input="\n".join(rel),
+                             capture_output=True, text=True, timeout=30)
+        trk = subprocess.run(["git", "-C", ROOT, "ls-files", "--"] + rel, capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return []
+    if ign.returncode not in (0, 1) or trk.returncode != 0:
+        return []
+    tracked = set(trk.stdout.split("\n"))
+    return [r for r in ign.stdout.split("\n") if r and r not in tracked]
+
+
 SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
 
 
@@ -115,6 +141,8 @@ def check(doc_path, tol=None, verbose=True):
     synthesis = text.startswith("---") and bool(SYNTH_RE.search(text.split("\n---", 1)[0]))
     cited = sorted(set(PATH_RE.findall(text)))
     nums, verdicts, loaded, missing = load_artifacts(cited)
+    missing += ["%s (git-ignored and untracked: exists in this checkout only; `git add -f` it with the finding)" % r
+                for r in local_only(loaded)]
 
     unsupported, checked = [], 0
     in_derived = False

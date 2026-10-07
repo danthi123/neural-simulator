@@ -1,0 +1,782 @@
+{
+ "step": "B",
+ "base": {
+  "tag": "b2b0924-base",
+  "pin": "a308f1e09babcc9ed096c3c8046d00040391368c",
+  "verdict": "INCOMPLETE",
+  "not_defined": {
+   "s42/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   },
+   "s43/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor_s43.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   },
+   "s44/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor_s44.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   },
+   "s100/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor_s100.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   },
+   "s101/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor_s101.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   },
+   "s102/comprehension-monitor": {
+    "state": "C-UNCONFIRMED",
+    "fails": [
+     "C rule7: organ error on probe turn 'well': {'arm': 'lesion_comprehension_monitor_s102.json', 'turn': 'well', 'organ': 'comprehension', 'error': 'ValueError: could not broadcast input array from shape (7002,) into shape (1032,)'}"
+    ]
+   }
+  },
+  "preconditions": [
+   {
+    "name": "code-root blobs match the fields file's cited blobs at --pin",
+    "ok": true,
+    "value": []
+   },
+   {
+    "name": "every checked sidecar host matches its dispatch or re-run node",
+    "ok": true,
+    "value": {}
+   }
+  ]
+ },
+ "flip": {
+  "tag": "iw2-flip-1fb805e",
+  "pin": "1fb805e9e0bedcce684a47388d95848daf1008a2",
+  "verdict": "COMPLETE",
+  "not_defined": {},
+  "preconditions": [
+   {
+    "name": "code-root blobs match the fields file's cited blobs at --pin",
+    "ok": true,
+    "value": []
+   },
+   {
+    "name": "every checked sidecar host matches its dispatch or re-run node",
+    "ok": true,
+    "value": {}
+   }
+  ]
+ },
+ "flipped": [
+  "false-belief-chat",
+  "transitive-chat",
+  "neural-selfid"
+ ],
+ "reference_undefined_faculties": [
+  "s0 comprehension-monitor: [0, 6]",
+  "s0 swap-drives-response: [0, 6]",
+  "s0 wm-binding-advanced: [0, 6]",
+  "s2 comprehension-monitor: [0, 6]",
+  "s2 open-ended-generation: [0, 6]"
+ ],
+ "s0_base": {
+  "affect-appraisal-interoceptive": 6,
+  "affect-coloring": 6,
+  "affect-drives-response": 6,
+  "affect-marker-spiking-wta": 4,
+  "affective-tom": 6,
+  "bg-action-selection": 6,
+  "causal-whatif": 6,
+  "common-ground-drives": 6,
+  "comprehension-learned-animacy-cue": 6,
+  "comprehension-learned-verb-selects": 6,
+  "comprehension-monitor": [
+   0,
+   6
+  ],
+  "confidence-forthcomingness": 6,
+  "curiosity-followup": 6,
+  "d5-consolidate": 0,
+  "da-gated-encoding": 0,
+  "da-mode-drives-response": 6,
+  "discourse-register": 6,
+  "episodic-memory": 6,
+  "gnw-bus": 0,
+  "gnw-multistep-deliberation": 6,
+  "metacog-monitor": 6,
+  "multiref-competition": 6,
+  "noncontradiction-gate": 6,
+  "open-ended-generation": 6,
+  "pragmatic-implicature": 6,
+  "prospective-memory": 6,
+  "reconsolidation": 6,
+  "self-initiated-utterance": 6,
+  "sleep-replay": 0,
+  "source-provenance-honesty": 6,
+  "spiking-anaphor": 0,
+  "surprise-monitor": 6,
+  "swap-drives-response": [
+   0,
+   6
+  ],
+  "vision-identity-spiking-hmax": 6,
+  "wm-binding-advanced": [
+   0,
+   6
+  ],
+  "worldmodel-forward": 6
+ },
+ "s0_flip": {
+  "affect-appraisal-interoceptive": 6,
+  "affect-coloring": 6,
+  "affect-drives-response": 6,
+  "affect-marker-spiking-wta": 4,
+  "affective-tom": 6,
+  "bg-action-selection": 6,
+  "causal-whatif": 6,
+  "common-ground-drives": 6,
+  "comprehension-learned-animacy-cue": 6,
+  "comprehension-learned-verb-selects": 6,
+  "comprehension-monitor": 6,
+  "confidence-forthcomingness": 6,
+  "curiosity-followup": 6,
+  "d5-consolidate": 0,
+  "da-gated-encoding": 0,
+  "da-mode-drives-response": 6,
+  "discourse-register": 6,
+  "episodic-memory": 6,
+  "gnw-bus": 0,
+  "gnw-multistep-deliberation": 6,
+  "metacog-monitor": 6,
+  "multiref-competition": 6,
+  "neural-selfid": 6,
+  "noncontradiction-gate": 6,
+  "open-ended-generation": 6,
+  "pragmatic-implicature": 6,
+  "prospective-memory": 6,
+  "reasoning-transitive-chat": 6,
+  "reconsolidation": 6,
+  "self-initiated-utterance": 6,
+  "sleep-replay": 0,
+  "source-provenance-honesty": 6,
+  "spiking-anaphor": 0,
+  "surprise-monitor": 6,
+  "swap-drives-response": [
+   0,
+   6
+  ],
+  "tom-false-belief": 6,
+  "vision-identity-spiking-hmax": 6,
+  "wm-binding-advanced": [
+   0,
+   6
+  ],
+  "worldmodel-forward": 6
+ },
+ "s2_base": {
+  "affect-appraisal-interoceptive": 0,
+  "affect-coloring": 0,
+  "affect-drives-response": 0,
+  "affect-marker-spiking-wta": 4,
+  "affective-tom": 6,
+  "bg-action-selection": 6,
+  "causal-whatif": 6,
+  "common-ground-drives": 6,
+  "comprehension-learned-animacy-cue": 0,
+  "comprehension-learned-verb-selects": 0,
+  "comprehension-monitor": [
+   0,
+   6
+  ],
+  "confidence-forthcomingness": 0,
+  "curiosity-followup": 6,
+  "d5-consolidate": 0,
+  "da-gated-encoding": 0,
+  "da-mode-drives-response": 0,
+  "discourse-register": 6,
+  "episodic-memory": 6,
+  "gnw-bus": 0,
+  "gnw-multistep-deliberation": 6,
+  "metacog-monitor": 6,
+  "multiref-competition": 0,
+  "noncontradiction-gate": 6,
+  "open-ended-generation": [
+   0,
+   6
+  ],
+  "pragmatic-implicature": 6,
+  "prospective-memory": 6,
+  "reconsolidation": 6,
+  "self-initiated-utterance": 6,
+  "sleep-replay": 0,
+  "source-provenance-honesty": 0,
+  "spiking-anaphor": 0,
+  "surprise-monitor": 6,
+  "swap-drives-response": 0,
+  "vision-identity-spiking-hmax": 6,
+  "wm-binding-advanced": 0,
+  "worldmodel-forward": 6
+ },
+ "s2_flip": {
+  "affect-appraisal-interoceptive": 0,
+  "affect-coloring": 0,
+  "affect-drives-response": 0,
+  "affect-marker-spiking-wta": 0,
+  "affective-tom": 6,
+  "bg-action-selection": 6,
+  "causal-whatif": 6,
+  "common-ground-drives": 6,
+  "comprehension-learned-animacy-cue": 0,
+  "comprehension-learned-verb-selects": 0,
+  "comprehension-monitor": 6,
+  "confidence-forthcomingness": 0,
+  "curiosity-followup": 6,
+  "d5-consolidate": 0,
+  "da-gated-encoding": 0,
+  "da-mode-drives-response": 0,
+  "discourse-register": 6,
+  "episodic-memory": 6,
+  "gnw-bus": 0,
+  "gnw-multistep-deliberation": 6,
+  "metacog-monitor": 6,
+  "multiref-competition": 0,
+  "neural-selfid": 6,
+  "noncontradiction-gate": 6,
+  "open-ended-generation": [
+   0,
+   6
+  ],
+  "pragmatic-implicature": 6,
+  "prospective-memory": 6,
+  "reasoning-transitive-chat": 6,
+  "reconsolidation": 6,
+  "self-initiated-utterance": 6,
+  "sleep-replay": 0,
+  "source-provenance-honesty": 0,
+  "spiking-anaphor": 0,
+  "surprise-monitor": 6,
+  "swap-drives-response": 0,
+  "tom-false-belief": 6,
+  "vision-identity-spiking-hmax": 6,
+  "wm-binding-advanced": 0,
+  "worldmodel-forward": 6
+ },
+ "f1_cells": {
+  "false-belief-chat": {
+   "42": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   },
+   "43": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   },
+   "44": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   },
+   "100": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   },
+   "101": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   },
+   "102": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "tom_fb",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "answer"
+     ],
+     "answer_only": true,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Sally will look in the basket for the marble.",
+     "intact_abstained": false,
+     "lesion_answer": "Sally will look in the box for the marble."
+    }
+   }
+  },
+  "transitive-chat": {
+   "42": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   },
+   "43": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   },
+   "44": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   },
+   "100": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   },
+   "101": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   },
+   "102": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "transitive_nonadjacent",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I believe the cat precedes the river, but I reasoned that myself rather than being told it directly.",
+     "intact_abstained": false,
+     "lesion_answer": "Setting the held thread aside \u2014 As for it \u2014 On cat, then \u2014 I don't know about that."
+    }
+   }
+  },
+  "neural-selfid": {
+   "42": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   },
+   "43": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   },
+   "44": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   },
+   "100": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   },
+   "101": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   },
+   "102": {
+    "state": "DEFINED",
+    "reply_verdict": "regressed",
+    "detail": {
+     "turn": "iw2si_use",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "changed_fields": [
+      "abstained",
+      "answer",
+      "recalled_svo"
+     ],
+     "answer_only": false,
+     "s0": [
+      "regressed",
+      true
+     ],
+     "intact_answer": "the brain uses the spikes",
+     "intact_abstained": false,
+     "lesion_answer": "I don't know about that."
+    }
+   }
+  }
+ },
+ "new_rows_s2_at_flip": {
+  "false-belief-chat": 6,
+  "transitive-chat": 6,
+  "neural-selfid": 6
+ },
+ "regressions": [
+  {
+   "level": "s2",
+   "faculty": "affect-marker-spiking-wta",
+   "reference": 4,
+   "flip": 0,
+   "msg": "s2 affect-marker-spiking-wta: 4 -> 0 load-bearing seeds"
+  }
+ ],
+ "undefined": [],
+ "verdict": "FAIL",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "base scorer precondition: code-root blobs match the fields file's cited blobs at --pin",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "base scorer precondition: every checked sidecar host matches its dispatch or re-run node",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flip scorer precondition: code-root blobs match the fields file's cited blobs at --pin",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flip scorer precondition: every checked sidecar host matches its dispatch or re-run node",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every regression compares DEFINED counts",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "runner": "tools/iw2_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/tools/iw2_score.py",
+  "B",
+  "--base-tag",
+  "b2b0924-base",
+  "--base-pin",
+  "a308f1e09babcc9ed096c3c8046d00040391368c",
+  "--flip-tag",
+  "iw2-flip-1fb805e",
+  "--flip-pin",
+  "1fb805e9e0bedcce684a47388d95848daf1008a2",
+  "--flipped",
+  "false-belief-chat,transitive-chat,neural-selfid",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave2/research/findings/raw/_iw2/verdicts/1fb805e/B.json"
+ ],
+ "sim_backend": "numpy (the scored shards'; this scorer builds no brain)"
+}

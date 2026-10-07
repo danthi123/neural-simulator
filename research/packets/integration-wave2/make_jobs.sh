@@ -89,7 +89,7 @@ case "$STEP" in
     OFF=""
     for PKT in ${PKTS//,/ }; do OFF="$OFF$(off_env "$PKT")"; done
     if [ "$STEP" = alloff ]; then TAG="iw2-alloff-$P7"; else TAG="iw2-bisect-$PKTS-$P7"; fi
-    OUT="$OUTD/${STEP}_${P7}_${FAC}$( [ "$STEP" = bisect ] && printf '_%s' "$PKTS" ).txt"
+    OUT="$OUTD/${STEP}_${P7}_${FAC}$( [ "$STEP" = bisect ] && printf '_%s' "$PKTS" || true ).txt"  # `|| true`: for step alloff the guarded printf is skipped and the substitution returned 1, which (set -e) exited the script before the lb_shard pipeline, silently (rc=1, 2026-10-04)
     $PY tools/lb_shard.py jobs --seeds $SEEDS --tag "$TAG" --no-fixes --faculties "$FAC" \
       --extra-env $OFF --root "$ROOT" --pin "$PIN" | nodeguard | capwrap $LB_NEED $LB_CAP > "$OUT" ;;
   identity)

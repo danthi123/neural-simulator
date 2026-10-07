@@ -1,0 +1,94 @@
+{
+ "backend": "numpy",
+ "description": "C1 hop attenuation (organ, dev 1-16): bridge canary swim abstains, canary eat keeps worm, controls hold",
+ "failures": [],
+ "kinds": {
+  "null_inert_lesion": "null",
+  "null_moat_leak": "null",
+  "null_no_attenuation": "null",
+  "null_one_lake": "null",
+  "null_one_lost_worm": "null",
+  "null_overattenuated": "null",
+  "perfect": "perfect",
+  "perfect_trout_sky": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_inert_lesion": 0,
+  "null_moat_leak": 0,
+  "null_no_attenuation": 0,
+  "null_one_lake": 0,
+  "null_one_lost_worm": 0,
+  "null_overattenuated": 0,
+  "perfect": 1000,
+  "perfect_trout_sky": 1000,
+  "random": 0
+ },
+ "name": "c1-hop-dev",
+ "pass_rate": {
+  "null_inert_lesion": 0.0,
+  "null_moat_leak": 0.0,
+  "null_no_attenuation": 0.0,
+  "null_one_lake": 0.0,
+  "null_one_lost_worm": 0.0,
+  "null_overattenuated": 0.0,
+  "perfect": 1.0,
+  "perfect_trout_sky": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "null_inert_lesion": [
+   0.0,
+   0.0038
+  ],
+  "null_moat_leak": [
+   0.0,
+   0.0038
+  ],
+  "null_no_attenuation": [
+   0.0,
+   0.0038
+  ],
+  "null_one_lake": [
+   0.0,
+   0.0038
+  ],
+  "null_one_lost_worm": [
+   0.0,
+   0.0038
+  ],
+  "null_overattenuated": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_trout_sky": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "5040178c0c0e4b56a29ede5991be3cfc46222a20",
+ "scorer_files": {
+  "research/runners/category_inherit_organ_dev.py": "58ef5f5bfd87e52fad8e2155c5dcb6015264d8ad50e6dc04bf07e382173d6b54"
+ },
+ "scorer_sha256": "59fadde842c37ed31d6cae736efccbe2b2b843f5947ee5e15ee5d48e3da23149",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_hop_dev.py",
+ "spec_sha256": "bd198b91bdcf2c9ce7ba609cd036df4957e8e25f6f5b05e26e8e486b462ae05a",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 3.6
+}

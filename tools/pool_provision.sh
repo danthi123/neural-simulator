@@ -92,6 +92,20 @@ git archive "$SOURCE_SHA" sim webapp research/__init__.py research/runners resea
   research/findings ':(exclude)research/findings/raw' experiment tools tests \
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   "${POOL_REQ_PATHSPEC[@]}" | tar -x -C "$STAGE"
+# RUNTIME INPUTS under research/findings/raw (2026-10-04, Claude session 6). The archive above excludes raw/ (run
+# OUTPUTS), but some files there are INPUTS production organs read at run time; missing, they fall back silently (the
+# affect organ to the raw Warriner norm: the Stage-1 C4 void, FAILURE_LOG 2026-10-04). The list is shared with the AWS
+# provisioners: tools/pool/runtime_raw_inputs.txt. Each path ships from the revision itself (file or directory).
+mapfile -t RUNTIME_RAW_INPUTS < <(git show "$SOURCE_SHA:tools/pool/runtime_raw_inputs.txt" 2>/dev/null \
+  || cat "$ROOT/tools/pool/runtime_raw_inputs.txt")
+RUNTIME_RAW_INPUTS=($(printf '%s\n' "${RUNTIME_RAW_INPUTS[@]}" | sed 's/#.*//; s/[[:space:]]*$//' | grep -v '^$'))
+for _rf in "${RUNTIME_RAW_INPUTS[@]}"; do
+  if [ -n "$(git ls-tree -r --name-only "$SOURCE_SHA" -- "$_rf")" ]; then
+    git archive "$SOURCE_SHA" -- "$_rf" | tar -x -C "$STAGE"
+  else
+    echo "  ⛔ WARNING: runtime input $_rf is not in $SOURCE_SHA -- organs that read it fall back on the pool" >&2
+  fi
+done
 # The pool venv's package set: the revision's own requirements-pool.txt, else (a revision that predates the file)
 # this checkout's. Before 2026-09-30 the set was a pip list hard-coded below and httpx was missing from it.
 POOL_REQ="$STAGE/requirements-pool.txt"
@@ -168,6 +182,11 @@ for h in "${NODES[@]}"; do
     "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
   rsync -az -e "$SSH_CMD" "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
+  # the runtime inputs staged above (raw/ is excluded everywhere else); no --delete: the node's own outputs stay
+  if [ -d "$STAGE/research/findings/raw" ]; then
+    rsync -az -e "$SSH_CMD" "$STAGE/research/findings/raw/" "$h:~/$REMOTE_ROOT/research/findings/raw/" \
+      || { echo "  ⛔ runtime inputs failed to sync to $h" >&2; FAILED_NODES+=("$h:runtime-input"); }
+  fi
   # CORPUS (2026-09-23): the small corpus files corpus-LEARNED organs read (see load_bearing_fraction CORPUS GUARD).
   $SSH_CMD "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus"
   # data/corpus is git-excluded, so a git WORKTREE (every isolated agent) has none: fall back to the PRIMARY

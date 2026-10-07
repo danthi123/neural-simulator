@@ -309,3 +309,281 @@ def decide_action(msg: str, seed: int = 42, lesion: str | None = None) -> dict |
         "loser_ratio": r["loser_ratio"],
         "lesion": les,
     }
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# BEGIN neural-seam (lane A, branch research/selection-seam-need-reversal, 2026-09-29). DEFAULT-OFF.
+# Owner of this region: the selection-seam lane (value INPUT path + neural COMMITMENT). Corticostriatal PLASTICITY on
+# the value-afferent pathways below belongs to the long-delay-credit lane: it may make `VALUE_AFFERENT_PLASTICITY_GATE`
+# plastic in its own functions; this region keeps them frozen. Nothing above this line is changed by this region.
+#
+# WHAT IT RETIRES (plan docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md step 3). With the flag OFF the
+# production seam has three host decisions: (1) the ADMISSION pre-filter in `decide_action` (`if not (silent_sal >
+# speak_sal): return None`: the race is consulted only when the host's own scores already favor STAY-SILENT); (2) the
+# host SCORING `salience(msg)` (a content-token count mapped to two scalars) injected as `salience * 600 pA` into the
+# D1 pools; (3) the host COMMIT read in `_run_biased_trial` (the first motor pool to reach 12 spikes, then `break`,
+# then a 0.25 loser ratio) -- the trial stops before the commit circuit acts, so the host timing rule is the commitment.
+# With `BRAIN_BG_NEURAL_SEAM=1`:
+#   (1) no pre-filter: the race runs on EVERY turn;
+#   (2) no host score: the message is rendered as a SENSORY stimulus (each word -> a fixed group of `heard` neurons,
+#       the body/senses boundary) and value reaches the D1 pools only through synapses: heard -> str_d1_SPEAK, and a
+#       tonically driven `hold` population (the default when nothing is heard) -> str_d1_STAY_SILENT, with heard ->
+#       hold_inh -| hold (words suppress the default). The host computes no count, no comparison, no threshold;
+#   (3) neural commitment: per channel an action LATCH (recurrent NMDA, bistable) driven by that channel's motor pool,
+#       with mutual FS inhibition between latches. The race runs a FIXED window (no break at a crossing); arousal and
+#       the stimulus are withdrawn on a fixed schedule; the body reads which latch is still active in the final read
+#       window. The latch that ignites first suppresses the other, and it holds after the drive is gone.
+# RESIDUAL HOST STEPS (declared): the word rendering (which character runs are words; the same regex as
+# `_CONTENT_TOKEN_RE`), the trial schedule, and the body's read of the latch (a rate threshold on two populations;
+# its share is measured by re-reading the same trials with other rules, `readouts` in the trial record).
+# LEARNED-CONTENT FRACTION: 0. The heard->SPEAK and hold->SILENT routes are wired, not learned.
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+import zlib as _zlib
+
+NEURAL_SEAM_FLAG = "BRAIN_BG_NEURAL_SEAM"
+NEURAL_SEAM_LESION_FLAG = "BRAIN_BG_NEURAL_SEAM_LESION"
+VALUE_AFFERENT_GATE = "bg_value_afferent"                  # transmission gate on heard->D1 and hold->D1 (lesion)
+VALUE_AFFERENT_PLASTICITY_GATE = "bg_value_afferent_plasticity"   # frozen here; the credit lane's handle
+LATCH_INPUT_GATE = "bg_action_latch_input"                 # transmission gate on motor->latch (lesion)
+
+N_HEARD = 60
+HEARD_GROUP = 12              # neurons per rendered word (a fixed crc32-addressed group)
+HEARD_PA = 500.0              # sensory drive onto a rendered word's group during the stimulus window
+N_HOLD = 24
+HOLD_TONIC_PA = 350.0         # the default-mode drive onto `hold`, identical on every turn
+N_HOLD_INH = 16
+VALUE_DENSITY = 0.5
+VALUE_WEIGHT = 20.0           # heard/hold -> str_d1, slow NMDA (voltage-gated: biases MSNs the barrage depolarizes)
+HEARD_TO_HOLD_INH_W = 30.0
+HOLD_INH_TO_HOLD_W = 20.0
+N_LATCH = 30
+LATCH_DENSITY = 0.5
+LATCH_INTERNAL_W = 64.0       # DEV (seeds 1-7): 48 latches unreliably; 64 self-sustains after the drive is withdrawn
+MOTOR_TO_LATCH_W = 40.0        # DEV (seeds 1, 5, 7): 80 drove latch neurons to +68..+145 mV during refractory; 40 <= +47
+LATCH_TO_FS_W = 30.0
+LATCH_CROSS_W = 10.0          # DEV (seeds 1, 2, 7): 20-40 overshot the losing latch to -121..-141 mV
+N_LATCH_FS = 16
+T_DRIVE = 300                 # arousal + stimulus window (ms)
+T_HOLD = 200                  # drive withdrawn; the latch must hold
+READ_WINDOW = 100             # the body reads the last READ_WINDOW ms
+LATCH_READ_RATE = 0.02        # spikes/neuron/ms that count a latch as active (~20 Hz); readout variants re-read it
+
+_WORD_RE = _CONTENT_TOKEN_RE  # the sensory word segmentation (declared residual host transduction)
+
+
+def neural_seam_enabled() -> bool:
+    """DEFAULT-OFF. `BRAIN_BG_NEURAL_SEAM` in {1,true,yes,on} -> the neural seam replaces decide_action's host
+    admission, scoring and commit read. Unset / anything else -> byte-identical to today's production path."""
+    return (os.environ.get(NEURAL_SEAM_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def neural_seam_lesion() -> str | None:
+    """`BRAIN_BG_NEURAL_SEAM_LESION` in {value, latch, arousal, direct_path}. value: close heard/hold -> D1;
+    latch: close motor -> latch; arousal / direct_path: the selector's own anti-cheats."""
+    v = (os.environ.get(NEURAL_SEAM_LESION_FLAG) or "").strip().lower()
+    return v if v in ("value", "latch", "arousal", "direct_path") else None
+
+
+def render_utterance(msg: str) -> list:
+    """The body's auditory rendering: each word of `msg` -> the start index of a fixed HEARD_GROUP-neuron group in
+    `heard` (crc32 of the lower-cased word, so the address is stable across processes; repeated words re-address the
+    same group). No count, weight or comparison is computed here."""
+    starts = []
+    for w in _WORD_RE.findall(msg or ""):
+        starts.append(int(_zlib.crc32(w.lower().encode("utf-8")) % (N_HEARD - HEARD_GROUP + 1)))
+    return starts
+
+
+def neural_seam_parts():
+    """(extra_regions, extra_pathways, core_config_updates) added to the Gate-A v2 selector by the neural seam."""
+    from sim.enums import NeuronType
+    from sim.regions import RegionPathway
+    from research.runners._vocal_action_selector_gate import _region
+    rs = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL
+    fs = NeuronType.IZH2007_FS_CORTICAL_INTERNEURON
+    regions = [
+        _region("heard", N_HEARD, exc_fraction=1.0, neuron_type=rs),
+        _region("hold", N_HOLD, exc_fraction=1.0, neuron_type=rs),
+        _region("hold_inh", N_HOLD_INH, exc_fraction=0.0, neuron_type=fs),
+    ]
+    P = []
+    for src, ch in (("heard", SPEAK), ("hold", STAY_SILENT)):
+        P.append(RegionPathway(from_region=src, to_region=f"str_d1_{ch}", density=VALUE_DENSITY,
+                               weight_mean=VALUE_WEIGHT, weight_jitter=0.05, plastic=False,
+                               plasticity_gate=VALUE_AFFERENT_PLASTICITY_GATE,
+                               transmission_gate=VALUE_AFFERENT_GATE, exc_receptor="nmda_slow"))
+    P.append(RegionPathway(from_region="heard", to_region="hold_inh", density=1.0, weight_mean=HEARD_TO_HOLD_INH_W,
+                           weight_jitter=0.0, plastic=False))
+    P.append(RegionPathway(from_region="hold_inh", to_region="hold", density=1.0, weight_mean=HOLD_INH_TO_HOLD_W,
+                           weight_jitter=0.0, plastic=False, receptor="gaba_a"))
+    for ch in CHANNELS:
+        other = 1 - ch
+        regions += [_region(f"latch_{ch}", N_LATCH, exc_fraction=1.0, neuron_type=rs, internal_density=LATCH_DENSITY,
+                            internal_weight=LATCH_INTERNAL_W, enable_nmda=True),
+                    _region(f"latch_fs_{ch}", N_LATCH_FS, exc_fraction=0.0, neuron_type=fs)]
+        P += [RegionPathway(from_region=f"motor_{ch}", to_region=f"latch_{ch}", density=1.0,
+                            weight_mean=MOTOR_TO_LATCH_W, weight_jitter=0.05, plastic=False,
+                            transmission_gate=LATCH_INPUT_GATE),
+              RegionPathway(from_region=f"latch_{ch}", to_region=f"latch_fs_{ch}", density=1.0,
+                            weight_mean=LATCH_TO_FS_W, weight_jitter=0.0, plastic=False),
+              RegionPathway(from_region=f"latch_fs_{ch}", to_region=f"latch_{other}", density=1.0,
+                            weight_mean=LATCH_CROSS_W, weight_jitter=0.0, plastic=False, receptor="gaba_a")]
+    for tgt in ("heard", "hold", "latch_0", "latch_1"):
+        P.append(RegionPathway(from_region="selector_reset", to_region=tgt, density=0.70, weight_mean=16.0,
+                               weight_jitter=0.0, plastic=False, receptor="gaba_a"))
+    return regions, P, {"enable_nmda_recurrent": True}
+
+
+def _neural_baseline(bridge, config):
+    """Candidate-agnostic currents present between trials: the selector's equal tonic currents only."""
+    _set_equal_tonic_current(bridge, config)
+
+
+def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_check=True):
+    """ONE neural-seam race on a fixed schedule. The host adds only candidate-agnostic drive (equal tonic, shared
+    arousal, the default-mode `hold` drive) and the rendered stimulus. Returns the latch read (the committed action)
+    plus the same trial re-read under alternative host readout rules (`readouts`), the membrane range over EVERY
+    step, and the latch rates."""
+    xp, _ = get_backend()
+    names = [f"motor_{c}" for c in CHANNELS] + [f"latch_{c}" for c in CHANNELS]
+    idx = {n: _indices(bridge, n) for n in names}
+    heard_idx = _indices(bridge, "heard")
+    hold_idx = xp.asarray(_indices(bridge, "hold"))
+    stim = np.zeros(len(heard_idx), dtype=np.float32)
+    for s in heard_starts:
+        stim[s:s + HEARD_GROUP] = HEARD_PA
+    stim_dev = xp.asarray(stim)
+    heard_dev = xp.asarray(heard_idx)
+
+    def drive_on():
+        _neural_baseline(bridge, config)
+        if arousal:
+            bridge.cp_external_input_current[xp.asarray(_indices(bridge, "practice_arousal"))] = \
+                xp.float32(config.practice_pA)
+        bridge.cp_external_input_current[hold_idx] = xp.float32(HOLD_TONIC_PA)
+        bridge.cp_external_input_current[heard_dev] = stim_dev
+
+    T = T_DRIVE + T_HOLD
+    motor_t = np.zeros((T, 2), dtype=np.int32)
+    latch_t = np.zeros((T, 2), dtype=np.int32)
+    v_lo, v_hi = np.inf, -np.inf
+    drive_on()
+    for t in range(T):
+        if t == T_DRIVE:
+            _neural_baseline(bridge, config)          # fixed schedule: arousal, hold drive and stimulus withdrawn
+        _step(bridge)
+        f = np.asarray(to_host(bridge.cp_firing_states), dtype=bool)
+        for c in CHANNELS:
+            motor_t[t, c] = int(f[idx[f"motor_{c}"]].sum())
+            latch_t[t, c] = int(f[idx[f"latch_{c}"]].sum())
+        if v_check:
+            v = to_host(bridge.cp_membrane_potential_v)
+            v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+    # between-trial reset + washout (the selector's own, candidate-agnostic), membrane checked there too
+    _neural_baseline(bridge, config)
+    bridge.cp_external_input_current[xp.asarray(_indices(bridge, "selector_reset"))] = xp.float32(config.reset_pA)
+    for _ in range(int(config.reset_steps)):
+        _step(bridge)
+        if v_check:
+            v = to_host(bridge.cp_membrane_potential_v)
+            v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+    _neural_baseline(bridge, config)
+    for _ in range(int(config.washout_steps)):
+        _step(bridge)
+        if v_check:
+            v = to_host(bridge.cp_membrane_potential_v)
+            v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+
+    def latch_read(rate_thr):
+        rates = latch_t[T - READ_WINDOW:].sum(axis=0) / float(READ_WINDOW * N_LATCH)
+        act = [c for c in CHANNELS if rates[c] >= rate_thr]
+        return (act[0] if len(act) == 1 else None), [round(float(r), 4) for r in rates]
+
+    def first_crossing(thr, loser_ratio=config.clean_loser_ratio):
+        cum = np.cumsum(motor_t[:T_DRIVE], axis=0)
+        for t in range(T_DRIVE):
+            crossed = [c for c in CHANNELS if cum[t, c] >= thr and (t == 0 or cum[t - 1, c] < thr)]
+            if len(crossed) > 1:
+                return None
+            if len(crossed) == 1:
+                w = crossed[0]
+                return w if cum[t, 1 - w] / max(1, cum[t, w]) <= loser_ratio else None
+        return None
+
+    def majority():
+        tot = motor_t[:T_DRIVE].sum(axis=0)
+        return None if tot[0] == tot[1] else int(np.argmax(tot))
+
+    winner, latch_rates = latch_read(LATCH_READ_RATE)
+    readouts = {
+        "latch_rate_x0.5": latch_read(LATCH_READ_RATE * 0.5)[0],
+        "latch_rate_x2": latch_read(LATCH_READ_RATE * 2.0)[0],
+        "first_to_12_motor (production rule)": first_crossing(config.commit_threshold_spikes),
+        "first_to_6_motor": first_crossing(6),
+        "first_to_24_motor": first_crossing(24),
+        "motor_majority_drive_window": majority(),
+    }
+    return {"winner": winner, "committed": winner is not None, "latch_rates": latch_rates, "readouts": readouts,
+            "motor_total": motor_t.sum(axis=0).tolist(), "v_min": v_lo, "v_max": v_hi,
+            "latch_onset_ms": [int(np.argmax(latch_t[:, c] > 0)) if latch_t[:, c].any() else None for c in CHANNELS]}
+
+
+class NeuralSeamSelector:
+    """The Gate-A v2 selector + the neural seam, built once per (seed, lesion) on a real SimulationBridge."""
+
+    def __init__(self, seed: int = 42, lesion: str | None = None):
+        self.seed = int(seed)
+        self.config = selector_config("v2")
+        self.lesion = lesion
+        self._bridge = None
+
+    def ensure_built(self):
+        if self._bridge is not None:
+            return
+        regions, pathways, updates = neural_seam_parts()
+        b = build_selector_bridge(self.seed, self.config, extra_regions=regions, extra_pathways=pathways,
+                                  core_config_updates=updates)
+        b.set_transmission_gate(DIRECT_PATH_GATE, 0.0 if self.lesion == "direct_path" else 1.0)
+        b.set_transmission_gate(VALUE_AFFERENT_GATE, 0.0 if self.lesion == "value" else 1.0)
+        b.set_transmission_gate(LATCH_INPUT_GATE, 0.0 if self.lesion == "latch" else 1.0)
+        _neural_baseline(b, self.config)
+        _step(b, self.config.warmup_steps)
+        self._bridge = b
+
+    def select_once(self, msg: str) -> dict:
+        self.ensure_built()
+        r = _run_neural_seam_trial(self._bridge, self.config, render_utterance(msg),
+                                   arousal=self.lesion != "arousal")
+        r["heard_groups"] = len(render_utterance(msg))
+        return r
+
+
+_NEURAL_ORGANS: dict = {}
+
+
+def get_neural_organ(seed: int = 42, lesion: str | None = None) -> NeuralSeamSelector:
+    key = (int(seed), lesion)
+    org = _NEURAL_ORGANS.get(key)
+    if org is None:
+        org = NeuralSeamSelector(seed=seed, lesion=lesion)
+        _NEURAL_ORGANS[key] = org
+    return org
+
+
+def decide_action_neural(msg: str, seed: int = 42, lesion: str | None = None) -> dict | None:
+    """The neural seam's replacement for `decide_action`. Same return contract: None -> the turn falls through to the
+    normal path; a dict only when the neural commit is STAY-SILENT. Differences: the race runs on EVERY turn (no host
+    admission), the host injects no candidate score, and the committed action is the latched one. A non-commit (no
+    latch or both) falls through, as in production. The full trial record is attached as `trial` for tracing."""
+    les = neural_seam_lesion() if lesion is None else lesion
+    r = get_neural_organ(seed=seed, lesion=les).select_once(msg)
+    decide_action_neural.last = r
+    if not r["committed"] or r["winner"] != STAY_SILENT:
+        return None
+    return {"action": ACTION_NAME[STAY_SILENT], "winner": int(r["winner"]), "speak_salience": None,
+            "silent_salience": None, "decision_step": r["latch_onset_ms"][STAY_SILENT], "loser_ratio": None,
+            "lesion": les, "neural_seam": True, "trial": r}
+
+
+decide_action_neural.last = None
+# END neural-seam

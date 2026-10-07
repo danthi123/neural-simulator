@@ -828,6 +828,11 @@ Compute-lane legend: **[3090]** local GPU · **[CPU]** local CPU (default for nu
 - **B1 on-bridge V1 self-org** (retinal-wave rate-Hebbian). *GO:* on-bridge OSI/RSA-to-host ≥ B1 numpy (0.988). *Anti-cheats:* per-frame scramble collapses; no-learning frozen flat. **[3090]**
 - **Emergent DG assembly selection** (mossy-detonator per-pathway STP + basket FF-inhibition + BDSP). *GO:* sparse (<5% active) + reproducible (within-scene cos>0.8) + separated (between-similar<0.3), 6-seed. *Anti-cheats:* permuted-scene collapses; no-BDSP lesion→no assembly; permuted-cue specificity. **[3090]**
 **Stage-exit GO:** category held-out inheritance; word→concept recall; lived-fact recall; valence-inheritance r≥0.55.
+**Exit attempt 1 (2026-10-04; C3/C4 re-measured 10-05; read 10-06): not passed.** C1 FAIL; C2 word→concept PASS 6/6
+(reply level; recruit pool load-bearing; decision host-owned); C3 lived recall PASS 6/6 re-measured at P2 7851dd220
+(Amendment A1; composer read load-bearing; selection host-owned); C4 valence FAIL as registered (permuted-map clause
+4/6: the reply follows the learned map, and the control fails a perfectly map-driven brain about half the time, so an
+amended control is owed before attempt 2). `research/findings/2026-10-04-stage1-exit-gate-RESULT.md` (review 2026-10-06).
 
 ### STAGE 2 — CHILD (2–7, preoperational→concrete)
 **Comes online:** **grammar self-organizes**; fluent bounded **production** (spiking Broca) + **comprehension**; genuine **inference** (inheritance, taxonomy, transitive, induction); **curiosity→ask** (crave, don't refuse); **differentiated emotion** read-out; **private→inner speech** (Vygotsky, self-cued chain); **common ground**; **affect biases cognition**.
@@ -908,6 +913,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
+
+> **⭐ 2026-10-06 — Stage-1 exit attempt 1 fully read: not passed.** C1 category inheritance is the open wall
+> (its wiring-on gate, T7, needs 2 more cells). C4 is not a capability wall: the reply follows the learned valence map
+> on every seed, and the FAIL is the registered permuted-map clause (two seeds' derangements correlate with the norm).
+> Next method for C4: an amended permuted control registered before attempt 2. `val_novel` stays open behind the
+> learned-vocabulary G3 NO-GO. C2/C3 pass at reply level with host-owned decisions (the ownership work).
 
 > **⭐ 2026-10-02 — sleep transitive inference (plan step 5): method NO-GO, capability open.** The six-seed run
 > (`research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md`) shows the night integrates (STI0-6
@@ -1193,6 +1204,24 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-10-06 (Claude review of Stage 1):** C3 PASS 6/6 at P2 (narrowed: interface lesion, host-owned selection);
+C4 FAIL as registered on a control-design clause (amended control owed before attempt 2); the affect audit voids only
+attempt 1's C4 cells, and pool/AWS LBF affect rows before 10-05 carry a norm-values caveat. Next: the 2 missing T7
+C1 cells; the amended C4 control (Claude); the Stage-2 dev smoke re-queued at a synced revision; a Stage-1 attempt 2
+before 10-24 only if C1 has a candidate that passes T7.
+
+**2026-10-05 (cloud session 7):** the three integration-wave-2 chat faculties (false-belief chat, transitive chat,
+neural self-ID) are merged ON by default: steps R/B/F pass, and B's one drop is excused by the all-off arm. verify-go
+narrowed each claim: the false-belief lesion overrides the host witnessing decision; the transitive ignition gates
+only the stop; self-ID adds no new answer. All three stay PARTIAL until T18-T21. Owed: bisect the
+affect-marker-spiking-wta S2 loss on main. LDC Step 4b proceeds to the omission build (lr-0 cells declared, RULING
+T1-lr0).
+
+**2026-10-04 (cloud session 6):** Stage-1 exit attempt 1 not passed (above). C4 re-runs after the provisioning fix;
+the C1 and C3 gaps (category inheritance, lived recall needing the memory system) go to the prereg's section-8 named
+mechanisms. Host share at the Stage-1 seams is 1.000 host at C2, so the step-3 seam moves (k-select, bg-select,
+ignition) are the ownership work. fb-spiking-witness: read-out PASS with PARTIAL credit; the synaptic write is next.
 
 **2026-10-02 (cloud sessions 1-3):** integration wave 2 step R PASS for false-belief chat, transitive chat and neural
 self-ID (6/6 capability and control each, re-derived; verify-go held), steps B/F next at flip F `1fb805e9e`, the flip

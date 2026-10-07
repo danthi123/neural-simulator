@@ -35,7 +35,7 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
   auto-resumes when the GPU window ends. **Where things run (owner 2026-09-30): home = homelab-server**
   (`/home/dant123/Projects/neural-simulator`), driven by the Hermes Agent there; the workstation
   (`/home/dant123/Projects/sim`) is a follower + compute node (GPU queue, local model serving); Claude Code
-  inspects occasionally. `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
+  inspects occasionally and runs  at session start there. `docs/plans/2026-09-30-home-to-server-MIGRATION.md`.
 
 ## Non-negotiables
 
