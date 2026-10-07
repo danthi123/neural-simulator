@@ -101,3 +101,24 @@
   verdict regressed, load_bearing=true, control clean, attributable_fraction=1.0.
 - Scorer fix is s2-reserved: NEEDS [transitive-spiking-reach] (RESULT + ASK) filed on main;
   R re-scores after the fix.
+
+## 2026-10-07 09:49 EDT - R rescored per RULING transitive-R-rescore (PASS op=0, NARROWED)
+- Synced main into the branch (agent_sync_branch.sh): merged main @ 2405f9134 as 246db7fbd.
+- Re-scored with the same recorded data (NO new runs): `$PY tools/s2p_score.py R --packet
+  transitive-spiking-reach --tag s2p-R-tr-83efc76 --pin 83efc766c39b1385372c794e9ba87ac1cade442e
+  --selection research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json --out
+  research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json` -> rc=0,
+  "s2p R transitive-spiking-reach: PASS op=0". The b2d rule7 fix (a15010cba) counts only
+  non-null error; the data was always clean (rule7 entry above).
+- verify-go (RULING): TWO independent adversarial refuters (reproducibility+instrument-trust;
+  gate-cheat+control-integrity) -> nothing refuted, verdict NARROWED, commit-with-caveat:
+  (1) op=0 is the selected operating-point GRID row (DETECT_MIN=10 host readout) - NOT "zero
+  host steps"; (2) replies are byte-identical across the six seeds (only detect_spikes 40/41
+  varies) - 6/6 shows determinism, not seed robustness; say so wherever 6/6 is written;
+  (3) answer-rate lens UNMEASURED - no flag-off cells exist for these probes (on-tag answers
+  2/2 per seed); (4) engagement SURVIVES - all 48 arm files carry transitive_trace (route
+  spiking_reach, error null, lesion flags matching, intact reached=True detect 40/41 vs
+  lesion reached=False detect 0); where-ran: pool=24, workstation=24, verdict server, all at
+  pin 83efc766c; scorer re-run byte-identical; tests test_s2p_score + test_b2d_score 49 pass.
+- verdicts/R.json.prov.json refreshed to describe this rescore (s2p_score writes no sidecar
+  itself; the 10-05 sibling still described the UNDEFINED run).

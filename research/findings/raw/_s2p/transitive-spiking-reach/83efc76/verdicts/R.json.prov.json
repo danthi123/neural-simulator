@@ -1,5 +1,5 @@
 {
- "run_id": "1791217170-R",
+ "run_id": "1791380943-R-rescore",
  "runner": "tools/s2p_score.py",
  "argv": [
   "/home/dant123/Projects/neural-simulator/.venv/bin/python",
@@ -12,13 +12,13 @@
   "--pin",
   "83efc766c39b1385372c794e9ba87ac1cade442e",
   "--selection",
-  "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json",
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json",
   "--out",
-  "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json"
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json"
  ],
- "git_sha": "322c3c8ec2855648fefcceb36cee7f73908436b9",
- "git_dirty": true,
- "started": "2026-10-05T12:19",
+ "git_sha": "246db7fbde5272734bf1ddf17111e5fb556e9453",
+ "git_dirty": false,
+ "started": "2026-10-07T13:49",
  "host": "83db10ba1ddb",
  "sim_backend": "python-stdlib",
  "backend": "python-stdlib",
@@ -31,6 +31,6 @@
   101,
   102
  ],
- "note": "R aggregation over the packet's LB shards (pure stdlib); emitted as the gate-sanctioned sibling because tools/s2p_score.py does not write one itself. Verdict UNDEFINED (b2d rule7 defect filed as NEEDS [transitive-spiking-reach]).",
+ "note": "Rescore per RULING transitive-R-rescore: same recorded data (no new runs), re-read after the b2d rule7 fix (a15010cba counts only non-null error). Observed stdout: 's2p R transitive-spiking-reach: PASS op=0' rc=0, byte-identical on re-run. NARROWED by verify-go 2x refuters (2026-10-07): op=0 is the selected operating-point GRID row (DETECT_MIN=10 host readout, not zero host steps); replies byte-identical across the six seeds (determinism, not seed robustness; only detect_spikes 40/41 varies); answer-rate lens UNMEASURED (no flag-off cells for these probes). Engagement recorded in all 48 arm files; within-seed arms same-host (pool=24, workstation=24, verdict server).",
  "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json.prov.json"
 }
