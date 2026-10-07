@@ -1050,3 +1050,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-07 10:32 [transitive-spiking-reach] RESULT: R rescore PASS op=0 rc0 at 83efc766c (same data, rule7 fix). verify-go 2x refuters NARROWED: determinism not seed-robustness (replies byte-identical across 6 seeds); op=0 = grid row DETECT_MIN=10; answer-rate UNMEASURED. Branch @ c0c093194.
+- 2026-10-07 11:30 [transitive-engagement] STOP: withdraw refused: pool_queue.sh list | grep s2p-R-tr- = 0 queued (expect 12, rc3). The 12 re-pinned lines already ran 10-05 09:59-10:42 (dev7 item-4 PASS, shards committed, R rescored PASS). Withdraw/regen look superseded - confirm? blocks: T19
