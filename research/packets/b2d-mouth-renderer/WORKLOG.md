@@ -139,3 +139,7 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   PIN_P2 = fc0de0215 committed as e5bc97eb8 (gates passed). push_both NOT verified: user hermes
   has no ~/.ssh config so aliases github-sim/gitea-sim do not resolve from this server.
   NEEDS [A2] STOP filed; step 1 (export) not started, GPU queue untouched (0 queued, idle).
+- 2026-10-06 21:10: step 1 per RULING a2-no-push (no push_both): gpu_remote add queued the export
+  job for P2 fc0de02 and the verify job (export-ok-with-map check) at queue depth 2, revision
+  f631fb90d (contains P2). yield --max-hours 1 refused: local-llm not loaded, nothing to yield
+  (GPU window already open). Log check next session per HANDOFF table.
