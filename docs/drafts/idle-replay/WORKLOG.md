@@ -9,3 +9,7 @@
   consuming. Scoring (step 3) on next wake when results land in $P.
 - 2026-10-06 19:28 (Hermes): step 3 partial: organ scored PASS 8/8 (n_seeds 8, failing {}) at op 0.
   Reply shards 10/34 landed (battery pending); --score-reply runs when all 34 land.
+- 2026-10-06 20:32 (Hermes): step 3 partial: --score-reply verdict PASS n_pass 8; answer_rate all
+  8 seeds status ok, flags []; s7_flag_on_vs_off differs ["p_private"], only_idle_turn_differs true;
+  all routes idle_replay; 0 error fields across 42 shards. Battery line running on wspool since
+  19:59; data commit + INFO wait on it.
