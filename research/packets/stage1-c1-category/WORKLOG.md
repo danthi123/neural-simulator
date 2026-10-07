@@ -90,3 +90,11 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   (research/findings/raw/_stage1_c1_flipdev/on/s1/cat_disc__intact_a.json); c1_in_queue=1, pool depth 101 at
   add time. Waiting for the canary to dispatch, run and arrive via sim-sync before the step-3 landing check;
   3b's 54 gate_hop + the other 95 flip-dev lines stay unqueued until it passes (HANDOFF order).
+- 2026-10-07 03:0x Hermes: while the canary waits (queued at pool.queue line 101/101; last dispatch 02:07, all
+  three nodes running T1 grid lines, no ordering control in pool_queue.sh), prepped the landing check at
+  _scratch/c1_canary_check.py (verbatim step-3 heredoc; runners byte-identical between 2c2d55952 and main so it
+  runs from $P without a worktree checkout) and pre-emitted research/queue/c1_gatehop_2c2d55952.tsv (NO adds):
+  54 lines, 54 hop-flagged, 54 gate seeds, 54 named with prereg
+  research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md (verified EXISTS at the pin via
+  git cat-file), all carry mem_gb+max_age_h. pool_canaries.tsv has no stage1_c1_category@2c2d55952 record, so
+  the 3b adds WILL hit the pool-canary guard -> §3 STOP + NEEDS [c1-gatehop] at the actual refusal.
