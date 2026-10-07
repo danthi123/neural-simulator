@@ -488,3 +488,7 @@ grid add (STEP4B preamble).
 - All 144 cells landed (re-queued six finished); generator ran clean (rc=0) over 144/144.
 - PILOT-4B.md (this branch): per-cell U/R/I + marks, success, `lhb_engagement_a_rewardwin` (A), membrane_ok (m), void_floor_ceiling (v) for all 18 schedule x onset x arm rows x seeds 8-15, plus the per-arm rollup. Mechanical counts: A pass on arms 7-8/8 (the single fail per schedule = s14 @onset150), A undefined off arms 8/8, A fail cut arms 8/8; membrane false = 0 everywhere; void flags 2-8 per row (raw, for the route-off read).
 - Outputs (grid_*.json + .prov, 288 files) committed to main; RESULT line points Claude at section-4 readings. No verdict asserted here (§4 = Claude; verdicts follow verify-go + CLAUDE_CHECK on the PILOT-4B gate when ruled).
+
+## 2026-10-07 18:52 EDT - correction: grid outputs were NOT committed to main
+- The commit attempt was BLOCKED by the `below-chance` failure-class gate: 31 grid cells record `pass: False` at success < 0.5, and the gate's remedy (declare `below_chance` / an UNDECLARED verdict in the artifacts, or fix the task/label wiring) is reserved (post-hoc verdict declaration + runner/scorer edits). Filed `[step4b-outputs] STOP` in the runbook NEEDS.
+- The 288 files were unstaged (index clean); PILOT-4B.md itself is committed (branch `d9913121a`) and carries the per-cell record. Lane gate satisfied meanwhile via `.lane_waiver` (NO-READY-WORK, checked evidence in file).
