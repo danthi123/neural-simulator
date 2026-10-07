@@ -1,0 +1,90 @@
+{
+ "backend": "numpy",
+ "cells": [
+  {
+   "control": "old",
+   "n": 1000,
+   "n_pass": 399,
+   "pass_rate": 0.399,
+   "rho": "0.85",
+   "seed": 1
+  },
+  {
+   "control": "0.10",
+   "n": 1000,
+   "n_pass": 757,
+   "pass_rate": 0.757,
+   "rho": "0.85",
+   "seed": 1
+  },
+  {
+   "control": "0.07",
+   "n": 1000,
+   "n_pass": 788,
+   "pass_rate": 0.788,
+   "rho": "0.85",
+   "seed": 1
+  },
+  {
+   "control": "0.05",
+   "n": 1000,
+   "n_pass": 789,
+   "pass_rate": 0.789,
+   "rho": "0.85",
+   "seed": 1
+  },
+  {
+   "control": "0.03",
+   "n": 1000,
+   "n_pass": 808,
+   "pass_rate": 0.808,
+   "rho": "0.85",
+   "seed": 1
+  },
+  {
+   "control": "old",
+   "n": 1000,
+   "n_pass": 454,
+   "pass_rate": 0.454,
+   "rho": "realistic",
+   "seed": 1
+  },
+  {
+   "control": "0.10",
+   "n": 1000,
+   "n_pass": 945,
+   "pass_rate": 0.945,
+   "rho": "realistic",
+   "seed": 1
+  },
+  {
+   "control": "0.07",
+   "n": 1000,
+   "n_pass": 973,
+   "pass_rate": 0.973,
+   "rho": "realistic",
+   "seed": 1
+  },
+  {
+   "control": "0.05",
+   "n": 1000,
+   "n_pass": 981,
+   "pass_rate": 0.981,
+   "rho": "realistic",
+   "seed": 1
+  },
+  {
+   "control": "0.03",
+   "n": 1000,
+   "n_pass": 984,
+   "pass_rate": 0.984,
+   "rho": "realistic",
+   "seed": 1
+  }
+ ],
+ "control": "old = first derangement (pre-RULING s1-c4-control); a number = SCRAMBLE_R_MAX of the constrained draw (module ships 0.10)",
+ "rho": "r(read, held value): realistic = U(0.93, 0.96) per arm (attempt 1 scrambled arms); 0.85 = a noisier brain (stress, not a bar)",
+ "scorer": "research/runners/stage1_exit_gate.py at bc8f804b9",
+ "tool": "docs/drafts/stage1-exit/bar_sanity_c4_sweep.py",
+ "what": "pass rate of the REAL stage1_exit_gate.aggregate C4 (val_heldout) verdict for a perfect map-following brain, six gate-style seeds per draw, by scrambled-control draw and read fidelity"
+}

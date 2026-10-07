@@ -219,6 +219,63 @@ def _word_role_op() -> int:
         return _WORD_ROLE_DEFAULT_OP
 
 
+# SPIKING COMMIT for the word-role parse (packet word-role-commit, 2026-10-06; default OFF, byte-identical when off;
+# plan docs/drafts/spiking-commit/PLAN.md, application A1). Only read when BRAIN_WORD_ROLE_PARSE is on.
+# BRAIN_WORD_ROLE_COMMIT=1 builds the word-role organ with its spiking commit stage (per role a mutually exclusive
+# commit gate and a bistable role-slot latch): a word's role is the latch that turned on while it was presented, so
+# the host ROLE_MIN / ROLE_MARGIN rule and the per-role argmax are not called. BRAIN_WORD_ROLE_COMMIT_OP picks the
+# COMMIT_GRID row (default 0); BRAIN_WORD_ROLE_COMMIT_LESION=1 closes the role -> commit-gate transmission (the role
+# ensembles still fire, nothing commits, the parse declines).
+_WORD_ROLE_COMMIT_DEFAULT_ON = False
+_WORD_ROLE_COMMIT_DEFAULT_OP = 0
+
+
+def _word_role_commit_enabled() -> bool:
+    """BRAIN_WORD_ROLE_COMMIT=1 -> the word-role parse is decided by the spiking commit stage. Default OFF."""
+    v = os.environ.get("BRAIN_WORD_ROLE_COMMIT")
+    if v is None:
+        return _WORD_ROLE_COMMIT_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+def _word_role_commit_lesioned() -> bool:
+    """BRAIN_WORD_ROLE_COMMIT_LESION in {1,true,yes,on} (default OFF) -> role -> commit-gate transmission closed."""
+    v = os.environ.get("BRAIN_WORD_ROLE_COMMIT_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _word_role_commit_op() -> int:
+    """BRAIN_WORD_ROLE_COMMIT_OP -> the COMMIT_GRID row (default 0; an unreadable value reads 0)."""
+    try:
+        return int(os.environ.get("BRAIN_WORD_ROLE_COMMIT_OP", str(_WORD_ROLE_COMMIT_DEFAULT_OP)))
+    except (TypeError, ValueError):
+        return _WORD_ROLE_COMMIT_DEFAULT_OP
+
+
+def _json_safe_commit(res):
+    """The commit read's record for `word_role_trace` (per-word new latches, read variants, co-commit / re-latch
+    counts, the paired host-rule roles); None when the parse ran without the commit stage. Never raises."""
+    try:
+        cm = (res or {}).get("commit")
+        if not isinstance(cm, dict):
+            return None
+        return {"per_item": [{"new": [str(x) for x in pi.get("new", [])],
+                              "role": (None if pi.get("role") is None else str(pi.get("role")))}
+                             for pi in cm.get("per_item", [])],
+                "slot_counts": [{str(r): int(n) for r, n in dict(sc).items()} for sc in cm.get("slot_counts", [])],
+                "threshold": float(cm.get("threshold", 0.0)),
+                "read_variants": {str(k): [None if x is None else str(x) for x in v]
+                                  for k, v in dict(cm.get("read_variants", {})).items()},
+                "read_invariant": bool(cm.get("read_invariant")), "co_commit": int(cm.get("co_commit", 0)),
+                "relatch": int(cm.get("relatch", 0)),
+                "host_rule_roles": {str(w): (None if r is None else str(r))
+                                    for w, r in dict(cm.get("host_rule_roles", {})).items()}}
+    except Exception:
+        return None
+
+
 def _json_safe_roles(roles):
     """{word: role or None} as plain strings (the `word_role_trace` record; never raises)."""
     try:
@@ -1313,6 +1370,11 @@ class ChatBrain:
             # reply as `word_role_trace`. A record only: it never changes the parse or the reply text.
             meta = {"route": "word_role", "lesioned": None, "op": None, "error": None, "agent": None,
                     "action": None, "roles": None, "counts": None}
+            _commit = _word_role_commit_enabled()
+            if _commit:
+                # COMMIT MODE (BRAIN_WORD_ROLE_COMMIT, default OFF): its own route name and lesion record, so the
+                # word-role-commit packet's engagement check reads the commit lesion, not the word -> role one.
+                meta.update(route="word_role_commit", commit_op=None, commit_lesioned=None, commit=None)
             self.last_word_role_meta = meta
             try:
                 from research.runners import word_role_parser_organ as _WR
@@ -1320,7 +1382,14 @@ class ChatBrain:
                 meta["lesioned"] = bool(_word_role_lesioned())
                 _WR.set_operating_point(meta["op"])
                 seed = int(getattr(self.agent, "seed", getattr(self.inner, "seed", 42)))
-                res = _WR.parse_from_brain(self, content, seed=seed, lesion=meta["lesioned"])
+                if _commit:
+                    meta["commit_op"] = _word_role_commit_op()
+                    meta["commit_lesioned"] = bool(_word_role_commit_lesioned())
+                    res = _WR.parse_from_brain(self, content, seed=seed, lesion=meta["lesioned"],
+                                               commit_op=meta["commit_op"], commit_lesion=meta["commit_lesioned"])
+                    meta["commit"] = _json_safe_commit(res)
+                else:
+                    res = _WR.parse_from_brain(self, content, seed=seed, lesion=meta["lesioned"])
                 a, v = res.get("agent"), res.get("action")
                 meta.update(agent=a, action=v, roles=_json_safe_roles(res.get("roles")),
                             counts=_json_safe_counts(res.get("counts")))

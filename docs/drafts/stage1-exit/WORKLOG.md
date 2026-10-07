@@ -186,3 +186,40 @@ All 42 gate shards landed (7 lived arms x 6 seeds, pin 7851dd220). `.venv/bin/py
 verify-go (one MiMo Pro delegate per RULING models; 7 lenses: reproducibility/power, gate-cheat, control-integrity, instrument-trust, selectivity/mass, process+prereg+pin, scope/stage): PASS-WITH-CAVEAT. Survived: read-only re-run of the scorer's own aggregate() reproduced the table; prereg bar 4.3 unchanged (no post-data weakening; A1.2 strictly harder); all 42 shards git_sha 7851dd220 git_dirty=false pythonhashseed_ok corpus_present; double dissociation verified seed-by-seed 6/6 (lesion_recall cuts only p_wolf_bite - patch calls=4/30, 9 other labels byte-identical incl. c_dog_chase naming cat; lesion_episodic env-lesion cuts only p_wolf_discuss, spares p_wolf_bite); permuted arm names PEAR 6/6; pre-exposure probes abstain 6/6; intact_a==intact_b on 10 labels x 6 seeds; no floor/ceiling (instrument moves both ways).
 
 CAVEAT (carried into the RESULT line): (1) criterion-scoped - C3 PASS does not move the stage verdict, which stays UNDEFINED (C1 FAILED, C4 FAILED, C2 passed); (2) the 100%-attributable 'control' is intact_a-vs-intact_b, the run-to-run null - it means 'not run noise', not 'no other co-varying cause'; (3) the scorer gates the PASS on intact/lesion/repeat/permuted controls but does not gate the cross-probe sparing or the attribution figure (reported only; both satisfied on 6/6). The 16:10 monitoring false alarm stands resolved: lesion_episodic patch=null is by design (stage1_exit_gate.py:214 env-var lesion).
+
+2026-10-06: Board synced per RULING s1-c3c4-read, including a backfill of the never-executed RULING
+board-session6 — Stage-1 attempt-1 verdict stamped in docs/.vikunja_sync; witness/BG-seam/host-share
+notes appended to board #232/#237; new task #244 "Redesign the feeling test's scrambled-values control
+(Claude)" (p3, due 2026-10-24, needs owner sign-off). The two "Re-run the Stage-1 ..." tasks the ruling
+closes do not exist on the board (board-session6's add-task step was never executed); the non-existence
+is recorded in the marker rather than a create-then-close.
+
+## 2026-10-06 (Hermes) RULING s1-c4-control: rejection-sampled scrambled-values draw (before attempt 2)
+- The C4 scrambled-values control's permutation is now drawn by rejection sampling from a fixed RNG (seed + 7, the
+  brain-seed derivation): each trial must be a derangement whose |r(scrambled values, human ratings)| <=
+  SCRAMBLE_R_MAX = 0.10, else it is redrawn (loud RuntimeError after 100000 tries, never a silent wrong draw).
+  The map stores (valence, weight) tuples — the draw correlates the valence scalar; the patch still moves whole
+  tuples. The shard record now carries `scrambled_r` and `within_sign_r` (positive / negative human-rating groups,
+  REPORT-ONLY, never gated) alongside the drawn `perm`.
+- Empirical (real learned map, 6 gate seeds): the naive first-derangement r breached 0.10 on 5/6 seeds
+  (43 -0.264, 44 +0.303, 100 -0.159, 101 -0.118, 102 +0.154); every accepted draw lands within the bar, and the
+  within-sign-group r genuinely runs high (e.g. +0.514 on seed 42) — exactly why the ruling reports it ungated.
+- Tests: tests/test_stage1_exit_gate.py +3 (never over the bar across all 6 seeds; seed determinism + rejection
+  stress with identity values; record wiring through install_patch). 12/12 pass.
+  `.venv/bin/python -m pytest tests/test_stage1_exit_gate.py -q` (in the worktree, SIM_NO_PROVENANCE=1).
+- Claude reviews before attempt 2 (NEEDS-CLAUDE RESULT filed on main after this commit).
+- 2026-10-06: RULING s1-branch-hygiene executed: committed the gpu_lived_cupy result data
+  (aggregate.json + .prov.json + report.md) and moved research/queue/stage1_exit_report{,2}.md
+  out of the repo to /opt/data/cache/scratch/stage1_reports/; tree is clean after this commit.
+  main (427 ahead) merges into the branch when Claude approves the C4 draw (s1-c4-control under
+  review — NEEDS [s1-c4-control] RESULT bc8f804b9); per the ruling Claude makes that merge on
+  claude-review/stage1-sync and a later RULING gates the fast-forward.
+
+## 2026-10-06 (Claude) RULING s1-c4-control-sanity: SCRAMBLE_R_MAX tightened 0.10 -> 0.05 per bar-sanity
+- research/runners/stage1_exit_gate.py: `SCRAMBLE_R_MAX = 0.05` (was 0.10); nothing else in the runner changed. Basis: the bar-sanity
+  sweep `docs/drafts/stage1-exit/bar_sanity_c4_sweep.json` (a realistic perfect brain passed 0.943 of draws at 0.10, about 0.98 at 0.05).
+- Bar-sanity record at the new constant: `docs/drafts/stage1-exit/bar_sanity_record_c4_constrained.json` (spec
+  `bar_sanity_spec_c4_constrained.py`, n=1000, numpy). Verdict: **bar-sanity OK** (perfect >= 0.95, null <= 0.05). Pass rates:
+  perfect 0.987 (ci95 0.978-0.992), perfect_exact 1.000, null_control_ignored 0.000, null_lesion_inert 0.000, random 0.000.
+- tests/test_stage1_exit_gate.py: 14/14 pass after merging main into this branch (the scrambled-draw tests read the constant, none pin 0.10).
+- Branch claude-review/stage1-sync = research/stage1-exit-gate + main merged; WORKLOG entries from both sides kept in date order.

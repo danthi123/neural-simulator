@@ -31,6 +31,13 @@ wall-clock; catching these in round one is the cheapest parallelism there is.
 - **Pre-register in its own commit BEFORE any run it governs;** amendments get an AMENDMENT LOG naming what had been seen.
 - **Do not stage a run whose pre-registration already predicts failure** — fix the design first.
 
+## Bar-sanity (before a bar is registered)
+- **Run `python tools/bar_sanity.py docs/drafts/<packet>/bar_sanity_spec.py --out <record.json>` BEFORE registering a bar** (a prereg or an amendment).
+- The spec's `decide(data)` calls the packet's real scorer; `perfect(rng)` / `null(rng)` (optionally `random`, `perfect_*`, `null_*`) make synthetic data in its input format, with realistic noise.
+- A perfect brain must pass >= 95% of draws and a null brain <= 5%. UNREACHABLE (perfect fails) or TOOTHLESS (null passes) means the bar is wrong, not the run: change the bar or the instrument first.
+- Commit the record and add `bar-sanity: <record path>` to the prereg / amendment (or `bar-sanity: N/A <reason, >= 20 chars>` when it registers no bar); `gates/bar_sanity_line` blocks the commit without it.
+- A record goes stale when its scorer file changes (sha256), so re-run it after any scorer edit. Cases: `docs/drafts/stage1-exit/bar_sanity_spec_c4_*.py`, `docs/drafts/long-delay-credit/bar_sanity_spec*.py`.
+
 ## Identity and honesty
 - **Byte-identical off is ASSERTED IN DATA** by exact compare (== / sha256) against a PINNED pre-change SHA — not
   `allclose`, not "the code path looks unchanged", not a moving ref like `origin/main` (tautological after merge).

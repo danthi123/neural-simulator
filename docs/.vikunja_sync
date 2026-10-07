@@ -257,3 +257,18 @@ tasks needed). deep-research-at-wall cleared: local record (corpus check logged)
   test branch only, validation pending; no task closed by the provisional flip.
 ## 2026-10-05  cloud Claude session 7: NOT reconciled here (no Vikunja access from the cloud). Hermes: on #232, #141 and #209 record "merged ON by default (session 7), claim NARROWED, PARTIAL" per RULING iw2-merged; add a task for the affect-marker-spiking-wta S2 bisect.
 ## 2026-10-05  cloud Claude session 7 (decision): NOT reconciled here. Hermes: on #232 note "stays ON at PARTIAL (RULING iw2-decision); empty belief store now abstains; fb-store-lesion registered, six gate seeds owed"; add a task for running research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md.
+
+## 2026-10-06  stage-1 attempt-1 verdict + board-session6 backfill (Hermes)
+- Stage-1 attempt 1: "not passed. Word learning and lived memory pass (host code still decides); category
+  inheritance fails; the feeling test fails on a badly designed control that is being redesigned"
+  (RULING s1-c3c4-read; supersedes RULING board-session6's 10-04 wording, which had lived-memory recall
+  failing and the feeling test void).
+- RULING board-session6 (10-04) had never been applied to the board: its items (3)-(5) appended now —
+  #232 witness "passes in read-out mode: partial credit; fully synaptic next"; #237 BG live-seam no-go on
+  the commit read (next: latch rates, downstream all-or-none read) + Stage-1 host share ("the host makes
+  every decision at the word and memory questions"). Item (1) verdict text superseded above; item (2)
+  "Re-run the Stage-1 feeling test" superseded by the new task below — so the two "Re-run the Stage-1 ..."
+  closes asked by s1-c3c4-read had no board rows to close (they were never created); recorded here
+  instead of a create-then-close.
+- ADDED #244 "Redesign the feeling test's scrambled-values control (Claude)" (Emotion & self-awareness,
+  p3, due 2026-10-24): the C4 amended control owed before attempt 2, owner sign-off required.

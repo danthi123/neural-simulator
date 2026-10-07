@@ -1,0 +1,83 @@
+{
+ "backend": "numpy",
+ "description": "Synthetic slot-latch spike counts per word -> the real commit read, case pass, battery all_pass and s2p_score.score_O; PASS iff 6/6 seeds all_pass at COMMIT_GRID row 0.",
+ "failures": [],
+ "kinds": {
+  "info_weak_latch": "info",
+  "null_graded": "null",
+  "null_lesion_inert": "null",
+  "null_positional": "null",
+  "perfect": "perfect",
+  "perfect_noisy": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_weak_latch": 643,
+  "null_graded": 0,
+  "null_lesion_inert": 0,
+  "null_positional": 0,
+  "perfect": 1000,
+  "perfect_noisy": 1000,
+  "random": 0
+ },
+ "name": "word-role-commit step O (organ battery, 6/6 gate seeds)",
+ "pass_rate": {
+  "info_weak_latch": 0.643,
+  "null_graded": 0.0,
+  "null_lesion_inert": 0.0,
+  "null_positional": 0.0,
+  "perfect": 1.0,
+  "perfect_noisy": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_weak_latch": [
+   0.6128,
+   0.6721
+  ],
+  "null_graded": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_positional": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_noisy": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "eee74b9d7e4cda3b78ce531a3401cd4d63dc2bb1",
+ "scorer_files": {
+  "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py": "9b48d0163d831551d870b6d363422c9721a66583d08c219bc90cf1baeb3c0a5c",
+  "research/runners/word_role_commit_organ.py": "87a21bf6e212a3cee67b5cfead192e8480f449724d5bc3c25904a88c007a7b44",
+  "research/runners/word_role_parser_organ.py": "7586088ec6ff827fe389c8f88ec1e7cf6f502a17199e46c28b41942502949d28",
+  "tools/s2p_score.py": "6e16e311780d91967e7b26af2d725dc52dd433f605c86fcc78f6f3f3fd597616"
+ },
+ "scorer_sha256": "c635d470f6aecac6c8b464aacdac4b331c520ed9c4a47403c506fb668f395839",
+ "seed": 0,
+ "spec": "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py",
+ "spec_sha256": "9b48d0163d831551d870b6d363422c9721a66583d08c219bc90cf1baeb3c0a5c",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 23.8
+}
