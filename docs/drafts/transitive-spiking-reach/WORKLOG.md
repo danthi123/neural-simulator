@@ -122,3 +122,18 @@
   pin 83efc766c; scorer re-run byte-identical; tests test_s2p_score + test_b2d_score 49 pass.
 - verdicts/R.json.prov.json refreshed to describe this rescore (s2p_score writes no sidecar
   itself; the 10-05 sibling still described the UNDEFINED run).
+
+## 2026-10-07 11:35 EDT - transitive-engagement withdraw step REFUSED (STOP -> NEEDS)
+- Ran the ruling's exact command: `bash tools/pool_queue.sh withdraw '/_shards/s2p-R-tr-'
+  --expect 12 --reason 'RULING transitive-engagement: pinned before the engagement record'`
+  -> `REFUSED: matches 0 queued line(s), --expect 12; nothing withdrawn` (rc=3), and
+  `pool_queue.sh list | grep s2p-R-tr-` = no matching queue lines.
+- Why: the 12 re-pinned lines already DISPATCHED and ran 2026-10-05 09:59-10:42 on
+  pool40/41/42/wspool (running log, POOL_CHECKED_REASON "...R gate re-pinned per RULING
+  transitive-engagement at 83efc766c; record: dev7 shard item-4 check passed (lesion
+  lesioned=true route=spiking_reach no error, intact=false)"), after the dev-seed-7
+  capability shard first (09:02, item-4 rc=0). Results landed in _shards/s2p-R-tr-83efc76/
+  (committed) and are the data yesterday's R rescore scored PASS op=0.
+- Per that ruling's own STOP clause, NEEDS [transitive-engagement] STOP filed with the
+  evidence (0 queued != expect 12): the withdraw/regenerate steps look superseded - Claude
+  to confirm; nothing withdrawn, nothing re-queued.
