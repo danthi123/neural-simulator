@@ -463,3 +463,17 @@ run 2026-10-04 21:08-21:53, lr 0, credit_immediate, dev seeds 7-15. Both bars on
 Choice per the fixed order: the FIRST candidate passing on all nine seeds is `--w-clear-fs 60` — that flag is on
 every Step 4b line (consistent with all round-1-4 argvs). Corpus consult `before_you_build` run before the first
 grid add (STEP4B preamble).
+
+## 2026-10-07 (Hermes driver): STEP4B §3 grid queued — 144 lines @ pin 9f625fd1c
+
+- Pre-add steps per STEP4B preamble: `before_you_build` corpus consult logged (covers the `--checked`
+  sentences); the 2026-08-01 `curiosity-reward-omission-veto-spiking-circuit-6seed` finding read.
+- Grid: 3 schedules (credit_immediate, late_immediate, sanity_early_ch0) x onsets (30, 150 ms) x 3 arms x
+  seeds 8-15 = **144 lines**, `--n-train 400 --n-test 100 --w-outc-strio 30 --w-clear-fs 60` (§1 choice),
+  mem_gb 2, out `dev_pilot_4b/grid_<sch>_on<ms>_<arm>_s<seed>.json`. Arms: on = `--omission-route 1` +
+  frozen r9 constants (30/54/48/20/3); off = `--omission-route 0` (organ defaults, the lesion arm); cut =
+  on + `--cut-rus-lhbinh 1`.
+- Every line's `#checked:` names `STEP4B.md section 3` + `AMENDMENT-A0.1.md`; pin `9f625fd1c`
+  (provision `state=ok` pool41/42/40/wspool). At enqueue close: 123 waiting in `pool.queue`, 21 dispatched
+  (pool40/pool41), 0 missing (dup-guard refused re-adds of the dispatched 21 — not FORCE_DUP cases).
+- Next wake(s): as cells land, write `PILOT-4B.md` with `lhb_engagement_a_rewardwin` per cell + `[T1] RESULT`.
