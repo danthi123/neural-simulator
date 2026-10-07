@@ -441,3 +441,25 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   omission-route 1, reward-on 150 / outcome 250, w_outc_strio 30, w_clear_fs 60. Next: T1-grid — STEP4B §3
   (144 lines) at pin 9f625fd1c with `#checked:` naming STEP4B.md + AMENDMENT-A0.1.md, then PILOT-4B.md and
   `[T1] RESULT`.
+
+## 2026-10-07 (Hermes driver): STEP4B §1 clear dose — choice `--w-clear-fs 60` (27-row table, records 10-04)
+
+Records: `research/findings/raw/_long_delay_credit_bg/dev_pilot_4b/clear_{wfs60,cms500,cpa1200}_s{7..15}.json`,
+run 2026-10-04 21:08-21:53, lr 0, credit_immediate, dev seeds 7-15. Both bars on every cell:
+`mem_after_clear_hz` < 1.0 and `mem_hold_acc` ≥ 0.95. Cell format: hz / hold.
+
+| seed | `--w-clear-fs 60` | `--clear-ms 500` | `--clear-pA 1200` |
+|---|---|---|---|
+| 7 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 8 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 9 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 10 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 11 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 12 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 13 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 14 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+| 15 | 0.0 / 1.0 | 0.0 / 1.0 | 0.0 / 1.0 |
+
+Choice per the fixed order: the FIRST candidate passing on all nine seeds is `--w-clear-fs 60` — that flag is on
+every Step 4b line (consistent with all round-1-4 argvs). Corpus consult `before_you_build` run before the first
+grid add (STEP4B preamble).
