@@ -483,3 +483,8 @@ grid add (STEP4B preamble).
 - Re-queued the 6 lines VERBATIM (same cmd, pin 9f625fd1c1f201a871ea1c5c0a2d475e7a3fbe88, same `#checked:` reason). `pool_queue.sh add` confirmed: "a previous identical claim exists (wspool, ...) but is no longer alive -- queueing" (depth 163 -> 169).
 - PILOT-4B generator ready (`/opt/data/cache/scratch/gen_pilot4b.py`): exits 2 naming any missing cell; emits per-cell U/R/I + marks, success, `lhb_engagement_a_rewardwin` (A), membrane_ok (m), void_floor_ceiling (v) + a per-arm rollup for 144/144.
 - Waiting on the 6 re-queued cells to land; then: generate tables -> PILOT-4B.md -> commit outputs -> `[T1] RESULT: Step 4b @ 9f625fd1c`.
+
+## 2026-10-07 18:50 EDT - Step 4b complete: 144/144, PILOT-4B.md written, [T1] RESULT filed
+- All 144 cells landed (re-queued six finished); generator ran clean (rc=0) over 144/144.
+- PILOT-4B.md (this branch): per-cell U/R/I + marks, success, `lhb_engagement_a_rewardwin` (A), membrane_ok (m), void_floor_ceiling (v) for all 18 schedule x onset x arm rows x seeds 8-15, plus the per-arm rollup. Mechanical counts: A pass on arms 7-8/8 (the single fail per schedule = s14 @onset150), A undefined off arms 8/8, A fail cut arms 8/8; membrane false = 0 everywhere; void flags 2-8 per row (raw, for the route-off read).
+- Outputs (grid_*.json + .prov, 288 files) committed to main; RESULT line points Claude at section-4 readings. No verdict asserted here (§4 = Claude; verdicts follow verify-go + CLAUDE_CHECK on the PILOT-4B gate when ruled).
