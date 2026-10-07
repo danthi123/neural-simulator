@@ -135,3 +135,8 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - Step 6 substitutions (rsync absent on S): `cp -a` byte copy; git add done per-existing-pathspec (the
   never-rerun `b2d_mouth_reruns.tsv` and `_b2d0929_attempt1/` do not exist, and a missing pathspec would
   abort the whole add). Data + b2d_mouth_score.json committed on the packet branch with the Agent trailer.
+
+## 2026-10-07 07:41 EDT — wave 4 (every-session line)
+
+- `b2d_queue_next_wave.sh --dry-run`: 43 line(s) would be queued as wave 4; queued for real: 43 attempted, 43 well-formed, rc=0 (lines 130-172 of 258; fresh-queued was 0 < threshold 10).
+- lb.json-landed 129/258. Ledger b2d_waves.tsv updated; push skipped (RULING a2-no-push).
