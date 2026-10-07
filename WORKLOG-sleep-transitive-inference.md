@@ -47,3 +47,9 @@ Build agent log for this branch (worktree `.claude/worktrees/sleep-transitive-in
   parts), 0 failures. Awaiting the pool; score with `sleep_transitive_inference_grade` per prereg section 8 once all
   30 parts land.
 - 2026-10-01 03:50 (local model, Hermes): T3 steps 7-8. All 30 parts present (seed102_b landed 02:53 via sim-sync). Ran the registered scorer (blob 90dd3c5957, byte-identical to gate commit bfde9a195; it is not in S's main tree, so ran the copy at /opt/data/cache/scratch/sleep_ti_grade.py with PYTHONPATH=$P; --selftest PASS). Merged the 6 gate seeds + family -> research/findings/raw/_sleep_transitive_inference/{seed{42,43,44,100,101,102}.json, aggregate.json}. Family verdict UNDEFINED: 4 NO-GO (STI7_premises_survive false on all 4; STI3b_order_necessary also false on 43/44/102) + 2 UNDEFINED via U6 (seeds 42, 101: weight-permutation control lost the premises / flooded the foils -> STI3 has no valid control). pm_verdict UNDEFINED. Necessity computed over the 4 defined seeds. Finding: research/findings/2026-10-01-sleep-transitive-inference-6seed-UNDEFINED.md (PROVISIONAL). U6 -> prereg section 10 "U6 fires" bullet (next control: permute within classes of synapses of equal pre-night weight). Hands back per #8.
+- 2026-10-07 20:05 (Hermes): wake re-check of T3. The runbook Start/WORKLOG read mis-fired (the worktree was
+  absent, so `tail` on the WORKLOG path printed ABSENT while the packet sat on the branch); worktree created
+  (`56da4a4e0`), then found steps 7-8 already landed 2026-10-01 (commit `f18da9f8f`, entry above). Re-ran the
+  registered scorer on the same 30/30 parts as an idempotency check: family verdict UNDEFINED, same per-seed
+  U6 x2 / NO-GO x4 (only the provenance run_id differs); duplicate 2026-10-07 finding removed, branch data
+  restored via `git checkout --`, main's re-stamped prov sidecars restored too. Nothing committed but this line.
