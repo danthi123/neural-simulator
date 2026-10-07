@@ -20,3 +20,6 @@
 - 2026-10-07 14:05: gate-seed canary PASS recorded: (stage1_c1_category, 2c2d55952) PASS pool40 gate,
   rc=0 wall=1297s json=1 errors=0 (pool_canaries.tsv). 14:32: starting the 54 gate_hop adds against
   the satisfied guard.
+- 2026-10-07 14:35: all 54 gate_hop lines queued (added 54, loop rc=0, no ADD-FAILED, queue depth 181).
+  Both waves now out: 54 gate_hop + 95 flip-dev (92 waiting, 3 dispatched/landed by 14:32). Step 4
+  scores when cells land (or 120 h after queueing); step 5 writes [c1-gatehop] and [c1-flipdev].
