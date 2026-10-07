@@ -36,6 +36,11 @@ LTM tier, PYTHONHASHSEED=0, `rich` omitted), `BRAIN_CHAT_SEED=<seed>`, one fresh
       --out research/findings/raw/_stage1_c1_category/dev/s7/cat_disc__intact_a.json
   .venv/bin/python -m research.runners.stage1_c1_category --aggregate research/findings/raw/_stage1_c1_category/gate \
       --seeds 42,43,44,100,101,102
+
+HOP RE-MEASURE (prereg section 13, amendment 2026-10-06; RULING c1-hop-first): `--hop` emits the same 54 lines with
+BRAIN_CATEGORY_INHERIT_HOP=1 in every arm's environment, into research/findings/raw/_stage1_c1_category/gate_hop/, and
+`--aggregate <gate_hop> --hop` scores them with the same bars plus one precondition: every arm records the hop env
+(`hop_env` "1") and every flag-on arm's direct-probe organ read records `hop: true`, else the seed is UNDEFINED.
 """
 from __future__ import annotations
 
@@ -65,6 +70,8 @@ FLAG = "BRAIN_CATEGORY_INHERIT"
 LESION = "BRAIN_CATEGORY_INHERIT_LESION"
 PROBES = ["p_canary_eat", "p_canary_might"]                  # the Stage-1 C1 scored labels (SG._scored_labels)
 DIRECT_PROBE = "p_canary_eat"
+HOP_FLAG = "BRAIN_CATEGORY_INHERIT_HOP"                      # the hop re-measure (prereg section 13, 2026-10-06)
+GATE_HOP_OUT_DIR = "research/findings/raw/_stage1_c1_category/gate_hop"
 POOL_MAX_AGE_H = 120                                         # the queue was ~440 deep (3-4 days) at packet time
 
 # (env, turns key, kind). The flag is set EXPLICITLY in every arm, including the OFF arm ("0", never unset).
@@ -118,7 +125,8 @@ def run_worker(seed, arm, out_path):
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
         timings[label] = round(time.time() - t1, 1)
     out = {"runner": "research/runners/stage1_c1_category.py", "prereg": PREREG, "stage1_group": GROUP,
-           "seed": int(seed), "arm": arm, "kind": kind, "env": dict(env), "pythonhashseed_ok": hash_ok,
+           "seed": int(seed), "arm": arm, "kind": kind, "env": dict(env), "hop_env": os.environ.get(HOP_FLAG),
+           "pythonhashseed_ok": hash_ok,
            "corpus_present": corpus_present, "session": session,
            "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns],
            "responses": responses, "timings_s": timings, "import_s": round(import_s, 1),
@@ -195,6 +203,17 @@ def organ_errors(shard):
     return out
 
 
+def hop_applied(shard, arm):
+    """The hop re-measure's precondition: the arm ran with BRAIN_CATEGORY_INHERIT_HOP=1 and, when the wiring is on,
+    the direct probe's organ read records `hop: true`."""
+    if shard.get("hop_env") != "1":
+        return False
+    if ARMS[arm][0].get(FLAG) != "1":
+        return True
+    rd = (_trace((shard.get("responses") or {}).get(DIRECT_PROBE)) or {}).get("read") or {}
+    return rd.get("hop") is True
+
+
 def wiring_applied(shard, arm):
     """The flag reached the handler: every flag-ON arm carries the `category_inherit` trace on every turn, with no
     swallowed organ exception on any turn (prereg section 4: no errored turn), and the direct probe's organ read
@@ -249,7 +268,7 @@ def _load(root, seeds):
     return out
 
 
-def aggregate(root, seeds=GATE_SEEDS):
+def aggregate(root, seeds=GATE_SEEDS, require_hop=False):
     shards = _load(root, seeds)
     seeds = [int(s) for s in seeds]
     labs = labels()
@@ -282,6 +301,8 @@ def aggregate(root, seeds=GATE_SEEDS):
                 row["undefined_reasons"].append("%s: corpus absent (corpus-learned organs degraded)" % a)
             if any("_error" in (v or {}) for v in (sh.get("responses") or {}).values()):
                 row["undefined_reasons"].append("%s: an errored turn" % a)
+            if require_hop and not hop_applied(sh, a):
+                row["undefined_reasons"].append("%s: hop attenuation not applied (hop_env / read hop)" % a)
             if not wiring_applied(sh, a):
                 errs = organ_errors(sh)
                 row["undefined_reasons"].append("%s: wiring/lesion not applied (category_inherit trace%s)" % (
@@ -334,6 +355,8 @@ def aggregate(root, seeds=GATE_SEEDS):
                            "differs_from_intact_on": [l for l in labs if SG.reply_differs(ra, ri, l)],
                            "content_differs_on": [l for l in labs if content_differs(ra, ri, l)],
                            "wiring_applied": wiring_applied(have[a], a)}
+                if require_hop:
+                    info[a]["hop_applied"] = hop_applied(have[a], a)
         row["informational"] = info
         off = info.get("off")
         # SPECIFICITY: flag ON vs OFF changes the reply CONTENT of no turn except the C1 direct probe
@@ -383,6 +406,9 @@ def aggregate(root, seeds=GATE_SEEDS):
                   if ("source" in r or "PYTHONHASHSEED" in r or "corpus" in r)), expect=0)
     v.require("the wiring and the lesion applied in every counted arm (category_inherit trace)",
               sum(1 for s in seeds for r in rows[s]["undefined_reasons"] if "not applied" in r), expect=0)
+    if require_hop:
+        v.require("hop attenuation applied in every counted arm (hop_env and the read's hop)",
+                  sum(1 for s in seeds for r in rows[s]["undefined_reasons"] if "hop attenuation" in r), expect=0)
     v.require("six seeds defined", len(seeds) - n_def, expect=0)
     earned = v.decide(go=(verdict == "PASS"), verbose=False)
     if earned["status"] == "UNDEFINED":
@@ -397,7 +423,8 @@ def aggregate(root, seeds=GATE_SEEDS):
             "flip_readiness": {"ready": flip_ready, "n_safety": n_safe, "n_specificity": n_spec,
                                "n_specificity_defined": n_spec_def},
             "informational": info_counts, "seeds": seeds, "rows": rows, "missing_shards": missing,
-            "runner": "research/runners/stage1_c1_category.py", "prereg": PREREG, "expected_source": EXPECTED_SOURCE}
+            "runner": "research/runners/stage1_c1_category.py", "prereg": PREREG, "expected_source": EXPECTED_SOURCE,
+            "require_hop": bool(require_hop)}
 
 
 def report(agg):
@@ -429,20 +456,30 @@ def report(agg):
 
 
 # ══════════════════════════════════════════════ POOL JOBS ═══════════════════════════════════════════════════════════
-def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=GATE_OUT_DIR, max_age_h=POOL_MAX_AGE_H):
-    """One pool job per (seed, arm). A tiny-demo+LTM build is ~6.3-7.7 GB RSS -> mem_gb=7, cap 9 GB (Stage-1 figure)."""
+def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=None, max_age_h=POOL_MAX_AGE_H, hop=False):
+    """One pool job per (seed, arm). A tiny-demo+LTM build is ~6.3-7.7 GB RSS -> mem_gb=7, cap 9 GB (Stage-1 figure).
+    hop=True: the section-13 hop re-measure (BRAIN_CATEGORY_INHERIT_HOP=1 in every line, out dir gate_hop)."""
+    out_dir = out_dir or (GATE_HOP_OUT_DIR if hop else GATE_OUT_DIR)
+    hop_env = ("%s=1 " % HOP_FLAG) if hop else ""
     out = []
     for seed in seeds:
         for arm in ARMS:
             p = shard_path(out_dir, seed, arm)
             cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh 7 1 && mkdir -p %s && "
                    "bash tools/memcap.sh 9 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
-                   "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
+                   "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= %s.venv/bin/python -u -m "
                    "research.runners.stage1_c1_category --shard --seed %d --arm %s --allow-gate-seed "
-                   "--prereg %s --out %s" % (sha, os.path.dirname(p), seed, arm, PREREG, p))
-            why = ("prereg %s (%s); Stage-1 C1 with the category-inheritance wiring ON, seed %d arm %s; record: "
-                   "Stage-1 gate dev seed 7 read both C1 routes empty, rung-3c learned member->context pathway "
-                   "chosen (prereg section 2); mem_gb=7; max_age_h=%d" % (PREREG, sha[:9], seed, arm, int(max_age_h)))
+                   "--prereg %s --out %s" % (sha, os.path.dirname(p), hop_env, seed, arm, PREREG, p))
+            if hop:
+                why = ("prereg %s section 13 amendment 2026-10-06 (hop re-measure, %s); Stage-1 C1 with the wiring "
+                       "ON and %s=1, seed %d arm %s; record: C1 PASS 6/6 measured without the hop fix, hop fix "
+                       "organ dev 8/8 (RULING c1-hop-first); mem_gb=7; max_age_h=%d"
+                       % (PREREG, sha[:9], HOP_FLAG, seed, arm, int(max_age_h)))
+            else:
+                why = ("prereg %s (%s); Stage-1 C1 with the category-inheritance wiring ON, seed %d arm %s; record: "
+                       "Stage-1 gate dev seed 7 read both C1 routes empty, rung-3c learned member->context pathway "
+                       "chosen (prereg section 2); mem_gb=7; max_age_h=%d"
+                       % (PREREG, sha[:9], seed, arm, int(max_age_h)))
             out.append((cmd, why))
     return out
 
@@ -567,6 +604,8 @@ def main():
     ap.add_argument("--backend", default="numpy", choices=("numpy", "cupy"))
     ap.add_argument("--max-age-h", type=int, default=POOL_MAX_AGE_H, help="pool line max_age_h (cap 240)")
     ap.add_argument("--prereg", default=None, help="the committed preregistration a GATE-seed run is governed by")
+    ap.add_argument("--hop", action="store_true", help="the section-13 hop re-measure: --emit-pool-jobs puts "
+                    "BRAIN_CATEGORY_INHERIT_HOP=1 in every line (out dir gate_hop); --aggregate requires it applied")
     ap.add_argument("--allow-gate-seed", action="store_true",
                     help="required to run a GATE seed (42/43/44/100/101/102); dev seeds need nothing")
     a = ap.parse_args()
@@ -575,13 +614,13 @@ def main():
         sys.exit(0 if ok else 1)
     if a.emit_pool_jobs:
         seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else GATE_SEEDS
-        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, max_age_h=min(240, a.max_age_h)):
+        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, max_age_h=min(240, a.max_age_h), hop=a.hop):
             print("%s\t%s" % (cmd, why))
         return
     if a.aggregate:
         seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else GATE_SEEDS
         with contextlib.redirect_stdout(sys.stderr):
-            agg = aggregate(a.aggregate, seeds=seeds)
+            agg = aggregate(a.aggregate, seeds=seeds, require_hop=a.hop)
         out = a.out or os.path.join(a.aggregate, "aggregate.json")
         os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
         with open(out, "w") as f:

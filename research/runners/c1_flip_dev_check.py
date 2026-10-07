@@ -8,8 +8,13 @@ the real handler, (1) that on the other Stage-1 groups (C2 `word`, C3 `lived`, t
 diagnostic `cat_told`) flag-on changes no reply CONTENT (abstained / recalled_svo / hypothesis_svo) except the C1
 inheritance probe, so it never turns an answer into an abstention and never volunteers a guess on a moat; and (2) how
 it behaves when a member BRIDGES two categories (organ dev, prereg 2026-09-30 section 12: a bat that eats the bug and
-flies in the sky made `what does the canary swim` reach `lake` on 8 of 8 dev seeds at organ level). (2) is REPORTED,
-never part of the bar: it is the measurement a flip ruling weighs.
+flies in the sky made `what does the canary swim` reach `lake` on 8 of 8 dev seeds at organ level).
+
+WITH THE HOP FIX (RULING c1-hop-first, Claude 2026-10-06): every cell, both sides, runs with
+BRAIN_CATEGORY_INHERIT_HOP=1 (the organ's hop attenuation; inert when the wiring is off), and the bridge group
+`cat_bridge` is part of the bar: `what does the canary swim` and `what does the robin swim` (two category hops through
+the bat) must not change, while `what does the bat swim` may become a FLAGGED guess `lake` (one hop: the bat's own
+told `eat bug` is shared with the fish, the same inference C1 measures; reported in `bridge`, decided by the owner).
 
 THE DEV BAR (bar-sanity record: docs/drafts/stage1-c1-inheritance/bar_sanity_record_flipdev.json). Per dev seed, both
 sides (flag on / flag off) of every bar group are present and valid (no errored turn, source `tiny-demo +LTM`,
@@ -17,8 +22,12 @@ PYTHONHASHSEED=0, corpus present), the flag engaged (every flag-on turn carries 
 swallowed organ error; no flag-off turn carries it). The seed PASSES iff
   (a) correct: cat_disc flag-on names `worm` on the direct probe (stage1_exit_gate.score_cat),
   (b) specific: on every turn of every bar group, flag-on and flag-off reply CONTENT are equal, except the ALLOWED
-      turns (cat_disc / cat_told `p_canary_eat`), where flag-on may only add a FLAGGED guess (hypothesis_svo, never
-      recalled_svo) naming `worm`, never turn an answer into an abstention.
+      turns (cat_disc / cat_told / cat_bridge `p_canary_eat` -> `worm`; cat_bridge `c_bat_swim` -> `lake`), where
+      flag-on may only add a FLAGGED guess (hypothesis_svo, never recalled_svo) naming that patient, never turn an
+      answer into an abstention;
+  (c) the fix keeps the inheritance: cat_bridge flag-on `p_canary_eat` IS the flagged worm guess (a tie fails).
+Every cell must record the hop env (`flip_dev.hop` == "1"), every flag-on organ read must carry `hop: true`, and the
+flag-on cat_disc / cat_bridge cells must hold that read on the canary probe.
 Dev bar PASS iff all 8 dev seeds (1-8) are defined and pass; any undefined seed -> UNDEFINED (re-run that cell once);
 otherwise FAIL naming each violation. Deterministic per seed (OU noise off), so one violating seed is a defect.
 
@@ -50,14 +59,18 @@ GATE_SEEDS = SG.GATE_SEEDS
 OUT_DIR = "research/findings/raw/_stage1_c1_flipdev"
 FLAG = "BRAIN_CATEGORY_INHERIT"
 SIDES = {"on": "1", "off": "0"}
-BAR_GROUPS = ("cat_disc", "cat_told", "word", "lived", "val_novel")
-REPORT_GROUPS = ("cat_bridge",)
-ALLOWED = {("cat_disc", "p_canary_eat"), ("cat_told", "p_canary_eat")}
-ALLOWED_PATIENTS = {"worm"}
+HOP_FLAG = "BRAIN_CATEGORY_INHERIT_HOP"            # the hop fix (RULING c1-hop-first): "1" on BOTH sides of every cell
+HOP_VALUE = "1"
+HOP_READ_GROUPS = ("cat_disc", "cat_bridge")       # flag-on cells whose canary probe must record an organ read with hop
+BAR_GROUPS = ("cat_disc", "cat_told", "word", "lived", "val_novel", "cat_bridge")
+REPORT_GROUPS = ()
+# (group, label) -> the patients a flagged flag-on guess may name there (flag-off must abstain)
+ALLOWED = {("cat_disc", "p_canary_eat"): {"worm"}, ("cat_told", "p_canary_eat"): {"worm"},
+           ("cat_bridge", "p_canary_eat"): {"worm"}, ("cat_bridge", "c_bat_swim"): {"lake"}}
 CONTENT_FIELDS = ("abstained", "recalled_svo", "hypothesis_svo")
 POOL_MAX_AGE_H = 120
 
-# The bridging-member probe (REPORTED only). The C1 context plus a bat that eats the bug and flies in the sky: the
+# The bridging-member probe (in the bar since the hop fix; also reported in `bridge`). The C1 context plus a bat that eats the bug and flies in the sky: the
 # canary's only context (`fly sky`) is now shared by three birds and one bug-eater. Over-generalization reads:
 # `what does the canary swim` / `what does the bat swim` / `what does the robin swim` should abstain (never taught;
 # reaching `lake` needs a chain through the bat and a fish), and `what does the canary eat` is the ambiguity read.
@@ -74,7 +87,7 @@ BRIDGE_MOATS = ("c_canary_swim", "c_bat_swim", "c_robin_swim")
 
 
 def _register_bridge_group():
-    """Adds the REPORTED bridge group to the gate runner's table. Called only inside a worker process (never at import,
+    """Adds the bridge group to the gate runner's table. Called only inside a worker process (never at import,
     never in tests), so the Stage-1 runner's own group table is unchanged everywhere else."""
     if "cat_bridge" not in SG.GROUPS:
         SG.GROUPS["cat_bridge"] = {"criterion": "C1-report", "primary": False, "env": {},
@@ -96,11 +109,13 @@ def run_worker(seed, side, group, out_path):
     _refuse_gate_seed(seed)
     _register_bridge_group()
     os.environ[FLAG] = SIDES[side]
+    os.environ[HOP_FLAG] = HOP_VALUE
     rc = SG.run_worker(seed, group, "intact_a", out_path)
     with open(out_path) as f:
         d = json.load(f)
     d["runner"] = "research/runners/c1_flip_dev_check.py"
-    d["flip_dev"] = {"side": side, "flag": FLAG, "flag_value": os.environ.get(FLAG), "group": group}
+    d["flip_dev"] = {"side": side, "flag": FLAG, "flag_value": os.environ.get(FLAG), "group": group,
+                     "hop": os.environ.get(HOP_FLAG)}
     with open(out_path, "w") as f:
         json.dump(d, f, indent=1, default=str)
     return rc
@@ -111,6 +126,7 @@ def run_shard(seed, side, group, out_path):
     env = dict(os.environ)
     env.update(SG.BASE_ENV)
     env[FLAG] = SIDES[side]
+    env[HOP_FLAG] = HOP_VALUE
     part = out_path + ".part.json"
     cmd = [sys.executable, "-u", "-m", "research.runners.c1_flip_dev_check", "--worker", "--seed", str(int(seed)),
            "--side", side, "--group", group, "--out", part]
@@ -127,7 +143,7 @@ def run_shard(seed, side, group, out_path):
     return 0
 
 
-def pool_job_lines(sha, seeds=DEV_SEEDS, out_dir=OUT_DIR, groups=BAR_GROUPS + REPORT_GROUPS):
+def pool_job_lines(sha, seeds=DEV_SEEDS, out_dir=OUT_DIR, groups=BAR_GROUPS):
     out = []
     for seed in seeds:
         _refuse_gate_seed(seed)
@@ -139,10 +155,10 @@ def pool_job_lines(sha, seeds=DEV_SEEDS, out_dir=OUT_DIR, groups=BAR_GROUPS + RE
                        "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
                        "research.runners.c1_flip_dev_check --shard --seed %d --side %s --group %s --out %s"
                        % (sha, os.path.dirname(p), seed, side, group, p))
-                why = ("C1 flip dev check (%s), DEV seed %d, %s flag %s, group %s; record: C1 wiring gate PASS "
-                       "2026-10-06 (2026-10-06-stage1-c1-category-inheritance-RESULT.md), flip specificity across the "
-                       "Stage-1 groups unmeasured; mem_gb=7; max_age_h=%d"
-                       % (sha[:9], seed, FLAG, side, group, POOL_MAX_AGE_H))
+                why = ("C1 flip dev check WITH the hop fix (%s), DEV seed %d, %s flag %s, %s=1, group %s; record: C1 "
+                       "wiring gate PASS 2026-10-06, hop fix organ dev 8/8 (RULING c1-hop-first), flip specificity "
+                       "across the Stage-1 groups unmeasured; mem_gb=7; max_age_h=%d"
+                       % (sha[:9], seed, FLAG, side, HOP_FLAG, group, POOL_MAX_AGE_H))
                 out.append((cmd, why))
     return out
 
@@ -191,12 +207,21 @@ def _cell_problems(shard, side):
         probs.append("pythonhashseed")
     if shard.get("corpus_present") is not True:
         probs.append("corpus_absent")
+    if (shard.get("flip_dev") or {}).get("hop") != HOP_VALUE:
+        probs.append("hop_not_set")
     has = [isinstance(_trace(r), dict) for r in resp.values()]
     if side == "on":
         if not (has and all(has)):
             probs.append("flag_on_not_engaged")
         if _organ_errors(shard):
             probs.append("organ_error")
+        reads = [(_trace(r) or {}).get("read") for r in resp.values()]
+        if any(isinstance(rd, dict) and "lesion" in rd and rd.get("hop") is not True for rd in reads):
+            probs.append("hop_not_engaged")             # an organ read ran without the hop attenuation
+        elif (shard.get("flip_dev") or {}).get("group") in HOP_READ_GROUPS:
+            rd = (_trace(resp.get("p_canary_eat")) or {}).get("read")
+            if not (isinstance(rd, dict) and rd.get("hop") is True):
+                probs.append("hop_not_engaged")         # the canary probe must leave an organ read that records hop
     elif any(has):
         probs.append("flag_off_carries_trace")
     return probs
@@ -224,7 +249,7 @@ def seed_verdict(on, off, groups=BAR_GROUPS):
             if (g, label) in ALLOWED:
                 hyp = ca.get("hypothesis_svo")
                 ok = (cb.get("abstained") is True and ca.get("abstained") is False and ca.get("recalled_svo") is None
-                      and isinstance(hyp, list) and len(hyp) == 3 and str(hyp[2]).lower() in ALLOWED_PATIENTS)
+                      and isinstance(hyp, list) and len(hyp) == 3 and str(hyp[2]).lower() in ALLOWED[(g, label)])
                 (allowed_changes if ok else violations).append(rec)
             else:
                 rec["why"] = "answer_lost" if (ca.get("abstained") and not cb.get("abstained")) else "content_changed"
@@ -232,13 +257,20 @@ def seed_verdict(on, off, groups=BAR_GROUPS):
     sc = SG.score_cat(on["cat_disc"]["responses"])
     sc_off = SG.score_cat(off["cat_disc"]["responses"])
     correct = bool(sc["direct_correct"])
-    return {"defined": True, "pass": bool(correct and not violations), "correct": correct,
+    bridge_correct = None
+    if "cat_bridge" in groups:                      # the fix keeps the inheritance in the bridge session too
+        pb = SG._primary(on["cat_bridge"]["responses"].get("p_canary_eat")) or {}
+        hyp = pb.get("hypothesis_svo")
+        bridge_correct = bool(pb.get("abstained") is False and pb.get("recalled_svo") is None and isinstance(hyp, list)
+                              and len(hyp) == 3 and str(hyp[2]).lower() == "worm")
+    ok = correct and bridge_correct is not False and not violations
+    return {"defined": True, "pass": bool(ok), "correct": correct, "bridge_correct": bridge_correct,
             "off_inherits": bool(sc_off["inherits"]), "violations": violations, "allowed_changes": allowed_changes,
             "cat_disc_on": sc}
 
 
 def bridge_report(on_shard, off_shard):
-    """REPORTED only: what the bridging member does (None when the cell is missing or invalid)."""
+    """REPORTED (the bar reads the same cells through seed_verdict): what the bridging member does."""
     if _cell_problems(on_shard, "on") or _cell_problems(off_shard, "off"):
         return {"defined": False, "on_problems": _cell_problems(on_shard, "on"),
                 "off_problems": _cell_problems(off_shard, "off")}
@@ -268,6 +300,8 @@ def decide_dev(per_seed, seeds=DEV_SEEDS):
     for s, r in zip(seeds, recs):
         if not r["correct"]:
             why.append("seed %d: canary does not inherit worm" % int(s))
+        if r.get("bridge_correct") is False:
+            why.append("seed %d: cat_bridge canary eat is not the flagged worm guess" % int(s))
         for x in r["violations"]:
             why.append("seed %d: %s/%s %s" % (int(s), x["group"], x["label"], x.get("why", "allowed_turn_bad")))
     return {"verdict": v, "n_pass": n_pass, "n_seeds": len(recs), "why": why}
@@ -332,16 +366,43 @@ def synthetic_cell(group, side, overrides=None):
         else:
             r.pop("category_inherit", None)
         resp[l] = r
-    return {"responses": resp, "sources": [SG.EXPECTED_SOURCE], "pythonhashseed_ok": True, "corpus_present": True}
+    if side == "on" and group in HOP_READ_GROUPS and "p_canary_eat" in resp:
+        tr = resp["p_canary_eat"].setdefault("category_inherit", {"observe": None, "read": None})
+        if tr.get("read") is None:                  # the organ was consulted on the canary probe (abstained)
+            tr["read"] = {"patient": None, "reason": "below_floor", "lesion": None, "hop": True}
+    return {"responses": resp, "sources": [SG.EXPECTED_SOURCE], "pythonhashseed_ok": True, "corpus_present": True,
+            "flip_dev": {"side": side, "group": group, "hop": HOP_VALUE}}
 
 
 def synthetic_seed(kind="perfect"):
     """(on, off) cells for one seed of a brain of the given kind (used by the selftest and the bar-sanity spec)."""
-    inherit = {"p_canary_eat": _fake(abstained=False, hyp=["canary", "eat", "worm"])}
+    inherit = {"p_canary_eat": dict(_fake(abstained=False, hyp=["canary", "eat", "worm"]), category_inherit={
+        "observe": None, "read": {"patient": "worm", "reason": "reached", "lesion": None, "hop": True}})}
     off = {g: synthetic_cell(g, "off") for g in BAR_GROUPS}
     on = {g: synthetic_cell(g, "on") for g in BAR_GROUPS}
-    if kind in ("perfect", "perfect_told", "leak_moat", "answer_lost", "as_fact", "generative_too"):
+    if kind in ("perfect", "perfect_told", "leak_moat", "answer_lost", "as_fact", "generative_too", "perfect_bat_lake",
+                "bridge_lake", "bridge_robin_lake", "hop_off", "hop_not_engaged", "bridge_tie"):
         on["cat_disc"] = synthetic_cell("cat_disc", "on", inherit)
+        on["cat_bridge"] = synthetic_cell("cat_bridge", "on", inherit)
+    if kind == "perfect_bat_lake":
+        on["cat_bridge"] = synthetic_cell("cat_bridge", "on", dict(inherit, c_bat_swim=_fake(
+            abstained=False, hyp=["bat", "swim", "lake"])))
+    if kind == "bridge_lake":
+        on["cat_bridge"] = synthetic_cell("cat_bridge", "on", dict(inherit, c_canary_swim=_fake(
+            abstained=False, hyp=["canary", "swim", "lake"])))
+    if kind == "bridge_robin_lake":
+        on["cat_bridge"] = synthetic_cell("cat_bridge", "on", dict(inherit, c_robin_swim=_fake(
+            abstained=False, hyp=["robin", "swim", "lake"])))
+    if kind == "hop_off":
+        for cells in (on, off):
+            for c in cells.values():
+                c["flip_dev"]["hop"] = None
+    if kind == "hop_not_engaged":
+        on["cat_disc"]["responses"]["p_canary_eat"]["category_inherit"]["read"]["hop"] = None
+    if kind == "bridge_tie":                        # the bridge session's canary eat abstains (tie), as flag-off
+        on["cat_bridge"] = synthetic_cell("cat_bridge", "on")
+        on["cat_bridge"]["responses"]["p_canary_eat"]["category_inherit"]["read"] = {
+            "patient": None, "reason": "tie", "lesion": None, "hop": True}
     if kind == "perfect_told":
         on["cat_told"] = synthetic_cell("cat_told", "on", inherit)
     if kind == "wrong_category":
@@ -373,7 +434,8 @@ def selftest(verbose=True):
             print("  [%s] %s" % ("ok" if cond else "FAIL", name))
 
     v = seed_verdict(*synthetic_seed("perfect"))
-    chk("perfect seed passes", v["defined"] and v["pass"] and len(v["allowed_changes"]) == 1)
+    chk("perfect seed passes (canary guess on cat_disc and cat_bridge)",
+        v["defined"] and v["pass"] and len(v["allowed_changes"]) == 2)
     chk("a flagged worm guess on cat_told is allowed", seed_verdict(*synthetic_seed("perfect_told"))["pass"])
     chk("no inheritance fails (correctness)", seed_verdict(*synthetic_seed("null"))["pass"] is False)
     chk("bug for the canary fails", seed_verdict(*synthetic_seed("wrong_category"))["pass"] is False)
@@ -382,6 +444,12 @@ def selftest(verbose=True):
     chk("worm stated as a recalled FACT fails", seed_verdict(*synthetic_seed("as_fact"))["pass"] is False)
     chk("a changed generative probe fails", seed_verdict(*synthetic_seed("generative_too"))["pass"] is False)
     chk("flag-on with no trace is UNDEFINED", seed_verdict(*synthetic_seed("not_engaged"))["defined"] is False)
+    chk("a flagged lake guess for the bat (one hop) is allowed", seed_verdict(*synthetic_seed("perfect_bat_lake"))["pass"])
+    chk("lake for the canary through the bat fails", seed_verdict(*synthetic_seed("bridge_lake"))["pass"] is False)
+    chk("lake for the robin through the bat fails", seed_verdict(*synthetic_seed("bridge_robin_lake"))["pass"] is False)
+    chk("a cell without the hop env is UNDEFINED", seed_verdict(*synthetic_seed("hop_off"))["defined"] is False)
+    chk("an organ read without hop is UNDEFINED", seed_verdict(*synthetic_seed("hop_not_engaged"))["defined"] is False)
+    chk("a bridge-session canary eat that ties fails", seed_verdict(*synthetic_seed("bridge_tie"))["pass"] is False)
     on, off = synthetic_seed("perfect")
     on["word"] = None
     chk("a missing cell is UNDEFINED", seed_verdict(on, off)["defined"] is False)
@@ -397,7 +465,7 @@ def selftest(verbose=True):
     except SystemExit:
         chk("gate seeds refused", True)
     lines = pool_job_lines("a" * 40)
-    chk("80 + 16 dev lines (5 bar groups + bridge, 2 sides, 8 seeds)", len(lines) == 96)
+    chk("96 dev lines (6 bar groups incl. the bridge, 2 sides, 8 seeds)", len(lines) == 96)
     chk("every line names its side's flag value via --side", all("--side on" in c or "--side off" in c
                                                                  for c, _w in lines))
     ok = all(c for _n, c in checks)

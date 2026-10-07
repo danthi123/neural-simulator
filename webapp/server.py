@@ -3525,6 +3525,20 @@ def _brain_vocab(chat) -> set:
         return set()
 
 
+# EMOTION-CATEGORY channels of the affect ladder (Stage-2 C4, packet s2-c4-build, docs/drafts/stage2-c4-build/PLAN.md):
+# the feel read-out names the channel the spiking commit latched (research/runners/emotion_category_organ.py).
+# DEFAULT OFF until the dev battery, the handler dev check and the FLIP-HURTS-ANSWERS check have passed.
+# `BRAIN_EMOTION_CATEGORY` set and non-empty overrides the default either way.
+_EMOTION_CATEGORY_DEFAULT_ON = False
+
+
+def _emotion_category_on() -> bool:
+    v = os.environ.get("BRAIN_EMOTION_CATEGORY")
+    if v is None or not v.strip():
+        return _EMOTION_CATEGORY_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _update_session_mood(cache_key: tuple, appr: dict) -> dict:
     """EMA-update this session's mood from the message appraisal. A message with NO strongly-affective words
     (n_hits==0) HOLDS the prior mood (cross-turn persistence); an affective message moves it."""
@@ -4196,6 +4210,8 @@ def _prewarm_discard_scratch_session(cache_key: tuple) -> None:
     except Exception:
         pass
     _SESSION_MOOD.pop(cache_key, None)
+    if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
+        sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
     _SESSION_WORLDVIEW.pop(cache_key, None)
     _SESSION_MULTIREF.pop(cache_key, None)
     _SESSION_SILENT_WM.pop(cache_key, None)
@@ -4598,10 +4614,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception:
             pass
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+        if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
+            sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
         _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
         _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
+        try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
+            import research.runners.idle_replay_organ as _IR_reset
+            _IR_reset.reset_organ(cache_key)
+        except Exception:
+            pass
         _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
         _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
         try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
@@ -4924,6 +4947,21 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             swap_drives_info = {"on": True, "error": f"{type(_sde).__name__}: {_sde}", "lead": ""}
             swap_drives_lead = ""
 
+    # ── IDLE REPLAY (Stage-2 C5 build, 2026-10-06, default-OFF `BRAIN_IDLE_REPLAY`) ────────────────────────────────
+    # When ON, the idle turn below voices a fact from the brain's OWN store, chosen by a spiking reactivation race
+    # biased by how recently and how strongly each fact was encoded (research/runners/idle_replay_organ.py), instead
+    # of the self-init organ's fixed demo lexicon. `note_turn` runs on EVERY turn (it advances the turn clock and
+    # records which facts entered the store since the last turn; bookkeeping only, no reply field). OFF (unset): only
+    # the flag read happens -> every reply byte-identical. Guarded so a failure can never crash a turn.
+    _ir_on = False
+    try:
+        import research.runners.idle_replay_organ as _IR
+        _ir_on = _IR.idle_replay_enabled()
+        if _ir_on:
+            _IR.note_turn(cache_key, chat, seed=_brain_chat_seed())
+    except Exception:
+        _ir_on = False
+
     # ── SELF-INITIATED UTTERANCE — the first INTERNALLY-GENERATED turn class (2026-08-18) ────────────────────────
     # On an IDLE/EMPTY turn (an EMPTY message, or a bare "say something / what's on your mind" lead-in — a DISJOINT
     # class, nothing else matches it) the brain SELECTS a stored concept ITSELF and SPEAKS it, rather than reacting to
@@ -4948,8 +4986,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _selfinit_on and _SI.is_selfinit_trigger(req.message):
         try:
             _si_rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
-            siorg = _get_selfinit_organ(cache_key)
-            si = siorg.speak(lesion=_SI.selfinit_lesioned())
+            if _ir_on:   # IDLE REPLAY (default OFF): the brain's own store, the spiking reactivation race
+                si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
+            else:
+                siorg = _get_selfinit_organ(cache_key)
+                si = siorg.speak(lesion=_SI.selfinit_lesioned())
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
             answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
@@ -5083,6 +5124,15 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             mood = _update_session_mood(cache_key, appr)
             lesion = _AO.affect_lesioned()
             read = organ.read_differential(mood["valence"], lesion=lesion)
+            # EMOTION-CATEGORY channels of the affect ladder (Stage-2 C4, packet s2-c4-build; DEFAULT OFF). Unset ->
+            # nothing imported or run (byte-identical). On -> this message's known words fold into the session's held
+            # emotion-channel ladder (research/runners/emotion_category_organ.py); a feel query reads it below.
+            if _emotion_category_on():
+                try:
+                    from research.runners import emotion_category_organ as _ECO
+                    _ECO.observe_turn(cache_key, msg, affect_lesion=lesion)
+                except Exception:
+                    pass  # never let the category organ crash a turn; the feel read then reports its error
             diff = float(read["differential"])
             level = _AO.tone_level(diff)
             affect_plan = _AO.content_plan(level)
@@ -5120,12 +5170,21 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # functional read, never a phenomenal claim). Gated on an explicit feel-query so it never hijacks a recall turn.
     if _affect_on and affect_info is not None and "error" not in affect_info and _AO.is_feel_query(msg):
         _m = _SESSION_MOOD.get(cache_key) or {"valence": 0.0, "arousal": 0.0}
-        return JSONResponse({
+        _feel = {
             "answer": _AO.feel_readout(affect_info["differential"], _m["valence"], _m["arousal"]),
             "abstained": False, "recalled_svo": None, "verified": True,
             "renderer": rname, "brain": req.brain, "source": source,
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
-        })
+        }
+        # EMOTION-CATEGORY read (Stage-2 C4, DEFAULT OFF; see the affect block above): the spiking commit over the held
+        # emotion-channel ladder names the latched channel, or says none latched. Unset -> `_feel` is returned as before.
+        if _emotion_category_on():
+            try:
+                from research.runners import emotion_category_organ as _ECO
+                _feel = _ECO.apply_to_feel(_feel, cache_key, affect_lesion=bool(affect_info.get("lesioned")))
+            except Exception as _e:
+                _feel["emotion_category"] = {"route": "emotion_category", "error": f"{type(_e).__name__}: {_e}"}
+        return JSONResponse(_feel)
 
     # ── OPEN-ENDED STATE-DRIVEN GENERATION + VERIFY POST-FILTER (default-OFF: BRAIN_OPEN_ENDED, 2026-08-21) ────────
     # The owner reframe (2026-08-19): Qwen = a FORM scaffold, honesty = STATE-FIDELITY. Two de-risks are GO on main:
@@ -7361,6 +7420,8 @@ def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
     _BRAIN_CHATS.pop(cache_key, None)
     _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
     _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+    if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
+        sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
     _SESSION_PMEM.pop(cache_key, None)  # clear the held prospective intention + its latch bridge (Gate-B pmem)
     return JSONResponse({"reset": existed, "session": req.session,
                          "brain": req.brain, "renderer": renderer})

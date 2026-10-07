@@ -1,0 +1,34 @@
+{
+ "run_id": "1791323182-2725594",
+ "runner": "research/runners/category_inherit_organ_dev.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt.rlIN/sim/research/runners/category_inherit_organ_dev.py",
+  "--hop",
+  "--seeds",
+  "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+  "--out",
+  "research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-16.json"
+ ],
+ "git_sha": "5040178c0",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-06T17:46:22",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 547300.0,
+ "corpus_check_query": "load-bearing battery harness hardcodes renderer=stub; mouth-channel arm needs the production Qwen renderer path in _collect_worker",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_stage1_c1_category/dev/organ_dev_hop_seeds1-16.json"
+}
