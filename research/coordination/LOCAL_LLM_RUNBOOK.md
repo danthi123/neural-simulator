@@ -1048,3 +1048,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-07 07:11 [iw1-make-jobs] STOP: make_jobs.sh alloff exits rc=1 (line 76: $( [ bisect ] && printf ) fails the assignment under set -e; bisect OK). Off-cell files generated with an output-identical temp patch at R pin, uncommitted. Fix on research/integration-wave1; section 7 row 2 needs it.
+- 2026-10-07 07:11 [lane-waiver] INFO: Standing lane-builds permission used: .lane_waiver written CLASS NO-READY-WORK for lanes B/C/E (lane_check rc=0 07:15; B blocked NEEDS xedge, C gated on queued c1 canary, E blocked NEEDS T9). Same wake as [iw1-make-jobs].
