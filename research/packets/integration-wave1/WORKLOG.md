@@ -134,3 +134,14 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
   decision-table row 2 calls alloff at F). Provision 049d4bb = state "already" (pool41/42);
   queued 12 flag-off lines (6 d6 + 6 xedge, ok=12 fail=0). Workaround-vs-NEEDS judgment
   delegated to MiMo Pro (verdict B). Flip list unchanged: d6, xedge (wm-focus-bind held).
+
+## 2026-10-07 10:45 EDT - make_jobs.sh:76 fixed per RULING iw1-make-jobs; off-cell files confirmed byte-identical
+- One line, exactly as ruled: `OUT="$OUTD/${STEP}_${P7}_${FAC}$( [ "$STEP" = bisect ] && printf '_%s' "$PKTS" || true ).txt"`
+  (under set -e the false test failed the assignment; output is identical).
+- Regenerated NOTHING in the packet dir. The confirmation diff the ruling asks for: the fixed
+  script run at the R pin 049d4bb0b (detached temp checkout, IW1_JOBS_OUTD to a scratch dir)
+  emitted 2 files / 12 lines that are BYTE-IDENTICAL to the committed jobs/alloff_049d4bb_*.txt
+  (`ALL BYTE-IDENTICAL`, diff -q on both).
+- Note: the fixed script cannot run from this worktree HEAD (2c609face) - the pin-descendant
+  guard fires ("HEAD differs from pin outside the packet dir and raw results"; claude-review
+  work sits between them), so generation stays at the pin, as section 7 already requires.

@@ -73,7 +73,7 @@ case "$STEP" in
       esac
     done
     if [ "$STEP" = alloff ]; then TAG="iw1-alloff-$P7"; else TAG="iw1-bisect-$PKTS-$P7"; fi
-    OUT="$OUTD/${STEP}_${P7}_${FAC}$( [ "$STEP" = bisect ] && printf '_%s' "$PKTS" ).txt"
+    OUT="$OUTD/${STEP}_${P7}_${FAC}$( [ "$STEP" = bisect ] && printf '_%s' "$PKTS" || true ).txt"
     $PY tools/lb_shard.py jobs --seeds $SEEDS --tag "$TAG" --no-fixes --faculties "$FAC" \
       --extra-env $OFF --root "$ROOT" --pin "$PIN" | capwrap $LB_NEED $LB_CAP > "$OUT" ;;
   identity)
