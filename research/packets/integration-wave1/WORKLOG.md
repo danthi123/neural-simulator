@@ -118,3 +118,19 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
   (1 vs 289 commits). iw1-ff-go: anything but a fast-forward is a STOP for NEEDS => NEEDS
   [iw1-ff] filed on main. Cleanup deliberately NOT executed (deleting the 526 copies without
   the FF would destroy data for nothing); worktree untouched, 22 untracked + 1 modified.
+- 2026-10-07 07:05: RULING iw1-ff + iw1-ff-go executed. FF to fef5bf63a (ancestor pre-checked
+  by Claude; HEAD verified, tree clean). Cleanup: 3 stale pre-rescore R_*.json moved to
+  /opt/data/cache/aside/iw1-pre-rescore/ (the tracked re-scored copies now stand); 526
+  untracked copies verified byte-identical vs fef5bf63a blobs (526 match / 0 mismatch) and
+  deleted; copy_results.sh restored. answer_rate (paired, on=iw1-R-{d6,swm}-049d4bb,
+  off=iw1-alloff-049d4bb): BOTH UNMEASURED — off cells did not exist; on side answered 100%
+  on every measured seed. Reports: verdicts/049d4bb/answer_rate_{d6,swm}.json. Per RULING
+  flip-hurits-answers (UNMEASURED => queue flag-off cells first), the section-6 flip commit
+  is DEFERRED until they land and answer_rate re-runs. DEFECT: make_jobs.sh alloff exits
+  rc=1 silently at line 76 ($( [ bisect ] && printf ) fails the assignment under
+  set -euo pipefail; bisect unaffected) — job files were generated with an output-identical
+  one-line if/else patch in a DETACHED TEMP worktree at the R pin 049d4bb0b (never
+  committed anywhere); NEEDS [iw1-make-jobs] filed on main for the branch fix (section 7
+  decision-table row 2 calls alloff at F). Provision 049d4bb = state "already" (pool41/42);
+  queued 12 flag-off lines (6 d6 + 6 xedge, ok=12 fail=0). Workaround-vs-NEEDS judgment
+  delegated to MiMo Pro (verdict B). Flip list unchanged: d6, xedge (wm-focus-bind held).
