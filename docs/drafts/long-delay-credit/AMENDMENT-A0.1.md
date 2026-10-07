@@ -94,3 +94,12 @@ strengths. With the release arm doubled the rewarded rate floors at 27 Hz, which
 whole-window ratio stays under 1.25 in every row, as the cap says. The DA bars did not move in these smokes
 (rewarded max about 0.613, unrewarded min about 0.460), since the release arm acts only on rewarded trials, but
 12-trial values are not readings.
+
+## Bar-sanity record (added 2026-10-06, Claude; `tools/bar_sanity.py`)
+
+A bar is registered only when a perfect brain can pass it and a null brain cannot. The records below ran the pilot's own `lhb_window_rates` and `engagement_a` over 1000 synthetic runs of 200 train trials each (LHb at 63 Hz per neuron, Poisson counts; spec modules and shared builder in this directory).
+The amended bar reads OK: a brain whose reward silences the LHb for the 50 ms pulse passes 1.000 of draws at both the Step 4a and the registered timing; a brain with no reward-time change passes 0.000, and so does a noisy-drive random brain. The round-1 release arm (about 17% suppression, reported not thresholded) passes 0.000, so the bar still separates release strengths.
+The registered whole-window bar reads UNREACHABLE: at the Step 4a timing a brain silenced for the pulse passes 0.000, and so does one silenced from reward onset to the end of the window (the strongest the circuit allows; its ratio is 250/150 = 1.67); at the registered default timing a pulse-only brain sits on the strict ">2" boundary and passes 0.493. (Reported, not thresholded: at that default timing a silencing that outlasts the pulse reaches 100/30 and passes 1.000, so the cap argument above holds for a pulse-confined response, and for the Step 4a timing under any response.)
+
+bar-sanity: docs/drafts/long-delay-credit/bar_sanity_record_amended_reward_window.json
+bar-sanity-before: docs/drafts/long-delay-credit/bar_sanity_record_original_whole_window.json

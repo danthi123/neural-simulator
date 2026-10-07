@@ -1,0 +1,74 @@
+{
+ "backend": "numpy",
+ "description": "lhb_window_rates(lhb_spikes_rewardwin, REWARD_MS) + engagement_a(factor 2), research/runners/_ldc_omission_pilot.py",
+ "failures": [],
+ "kinds": {
+  "info_weak_suppression": "info",
+  "null": "null",
+  "null_registered_timing": "null",
+  "perfect": "perfect",
+  "perfect_registered_timing": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_weak_suppression": 0,
+  "null": 0,
+  "null_registered_timing": 0,
+  "perfect": 1000,
+  "perfect_registered_timing": 1000,
+  "random": 0
+ },
+ "name": "T1 engagement bar (a), reward-time window (A0.1)",
+ "pass_rate": {
+  "info_weak_suppression": 0.0,
+  "null": 0.0,
+  "null_registered_timing": 0.0,
+  "perfect": 1.0,
+  "perfect_registered_timing": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_weak_suppression": [
+   0.0,
+   0.0038
+  ],
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_registered_timing": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_registered_timing": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "f514932939cf6c0dbc666aed336e20cef517db3c",
+ "scorer_files": {
+  "docs/drafts/long-delay-credit/bar_sanity_t1_common.py": "daf7ba2acfc31d5134856a12aa9a8c5d0300322730a28041c8b78a05c962dfc4",
+  "research/runners/_ldc_omission_pilot.py": "87f1d3e98cac17dfa2ba9e8875d6a86f5d3eba12ed903a6c34a4ace3fb621344"
+ },
+ "scorer_sha256": "a1d6e0fda0d5b644ef834d3fd73deee0e8ac626043552dd6b5abd3b0785d63f2",
+ "seed": 0,
+ "spec": "docs/drafts/long-delay-credit/bar_sanity_spec.py",
+ "spec_sha256": "a43cb67aa6179738b3594df2f65bc38457876d8361ee4051f8006c7e875565a9",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 3.9
+}
