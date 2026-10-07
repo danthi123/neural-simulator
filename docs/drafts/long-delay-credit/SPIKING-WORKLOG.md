@@ -412,3 +412,32 @@ provenance sidecars stamp. No bars/GO claimed yet; the grid's bars are evaluated
   action-specificity (branch 1 contradicted: one onset does sign); marginal-signature caveat flagged for
   Claude. `PILOT.md` written; `[T1] RESULT` filed to NEEDS-CLAUDE. **T1 stops: Claude writes prereg
   Amendment A0 and Step 4b.**
+
+## 2026-10-06 (Hermes driver): t1-bar-sanity + round-4 verdict — r9 FREEZES at 30/54/48/20/3
+
+- t1-bar-sanity executed: `agent_sync_branch` merged main @ 2c2d55952 as b37d07829; ff-only refused (diverged),
+  clean `--no-edit` merge of `claude-review/bar-sanity-t1` (0a328b762) succeeded; bar-sanity specs/records +
+  `bar-sanity:` line on AMENDMENT-A0.1.md:104 present. Branch tip 9f625fd1c; provision OK rc=0 on
+  pool41/pool42/pool40/wspool at that pin.
+- Round 4 ran 13:57 pool at pin f51493293 (the four ruling-specified lines; r5 re-run reproduces the old r5
+  bit-for-bit: M_early 15.045371325868727, DA 0.45956286421163406 / 0.6119679583970958, LHb 63.4/51.4 — the
+  reproduction condition PASSES). Records committed with rounds 1-3 in dev_omission/.
+
+| arm (outc/rus/lhbinh/rmtg/snc) | U ≤0.47 | R ≥0.60 | I ≤0.005 (da_iti_offset_probe) | membrane_ok | void False | (a) LHb rewardwin unrew/rew, ratio ≥2 | (b) gap ≥0.02 vs off U 0.4982 | freeze |
+|---|---|---|---|---|---|---|---|---|
+| r5 re-run 30/27/24/20/3 | 0.4596 ✓ | 0.6120 ✓ | 6.3e-06 ✓ | ✓ | ✓ | 66/39 = 1.692 ✗ | 0.0386 ✓ | no |
+| r11 30/40/36/20/3 | 0.4596 ✓ | 0.6125 ✓ | 6.3e-06 ✓ | ✓ | ✗ True | 66/32 = 2.063 ✓ | 0.0386 ✓ | no (void) |
+| r9 30/54/48/20/3 | 0.4597 ✓ | 0.6129 ✓ | 6.3e-06 ✓ | ✓ | ✓ | 66/27 = 2.444 ✓ (in-record pass=True) | 0.0385 ✓ | FREEZE |
+| r10 30/54/96/20/3 | 0.4599 ✓ | 0.6127 ✓ | 6.3e-06 ✓ | ✓ | ✓ | 66/27 = 2.444 ✓ | 0.0383 ✓ | no (r9 first) |
+| off control 9/12 route off | 0.4982 ✗ (floor) | 0.6431 | — | ✓ | ✗ True | — | — | control |
+
+- Verdict per ONE MiMo Pro delegate (RULING models), confidence high, quoting the runbook: "Freeze the FIRST of
+  r11, r9, r10 that passes — r11 fails void_floor_ceiling, so r9 freezes and r10 does not; T1-grid then runs its
+  single constant set 30/54/48/20/3." Bar (a) reads the in-record factor 2.0 (`lhb_engagement_a_rewardwin` =
+  {ratio 2.444, factor 2.0, pass True} for r9); `I` reads `instrument.da_iti_offset_probe` in-record (all four
+  rounds |−6.3e-06| ≤ 0.005); success (r9 0.39) is not in the freeze list — behavior rows are scored later per
+  STEP4B §4.
+- Frozen constants: **w_outc_lhb 30 / w_rus_lhbinh 54 / w_lhbinh_lhb 48 / w_lhb_rmtg 20 / w_rmtg_snc 3**,
+  omission-route 1, reward-on 150 / outcome 250, w_outc_strio 30, w_clear_fs 60. Next: T1-grid — STEP4B §3
+  (144 lines) at pin 9f625fd1c with `#checked:` naming STEP4B.md + AMENDMENT-A0.1.md, then PILOT-4B.md and
+  `[T1] RESULT`.
