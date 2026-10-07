@@ -104,3 +104,17 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
     PYTHONHASHSEED=0.
 - Section-5 table: row 1 fires for all three, so the flip list is `d6-hebbian-write,wm-focus-bind,xedge-surprise-worldmodel`
   as registered. Each flip finding must carry its narrowing above, word for word.
+- 2026-10-06 16:09: RULING iw1-sync pre-FF check executed: 526/529 uncommitted files
+  byte-identical to claude-review/iw1, copy_results.sh too, but R_{d6,swm,wmf}.json differ
+  (local pre-rescore vs branch re-scored; PASS both, branch adds preconditions) => any
+  difference is a STOP: NEEDS [iw1-sync] STOP filed (main ef6402174). Fast-forward waits
+  on Claude; worktree left as-is, nothing cleared.
+- 2026-10-07 04:52: RULING iw1-ff-go pre-checked: copy_results.sh re-verified byte-identical
+  to claude-review/iw1 this arc; untracked still 22 entries (18 shard seed-dirs + identity/ +
+  the 3 superseded R_*.json DIFF copies the ruling moves to aside), file-level identity as
+  recorded 16:09 above (526/529). FF PRE-CHECK FAILED before any merge ran:
+  `merge-base --is-ancestor HEAD claude-review/iw1` = false; branch-only = this packet's own
+  STOP marker 0d029d553, target 3c06a1c8f branched from the pre-marker parent c02658287
+  (1 vs 289 commits). iw1-ff-go: anything but a fast-forward is a STOP for NEEDS => NEEDS
+  [iw1-ff] filed on main. Cleanup deliberately NOT executed (deleting the 526 copies without
+  the FF would destroy data for nothing); worktree untouched, 22 untracked + 1 modified.
