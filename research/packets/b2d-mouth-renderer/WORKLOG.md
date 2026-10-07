@@ -143,3 +143,8 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   job for P2 fc0de02 and the verify job (export-ok-with-map check) at queue depth 2, revision
   f631fb90d (contains P2). yield --max-hours 1 refused: local-llm not loaded, nothing to yield
   (GPU window already open). Log check next session per HANDOFF table.
+- 2026-10-06 21:12: export REFUSED (P2 fc0de0215 lacks origin/main 60039500f) -> table recovery,
+  FIRST occurrence: git merge --no-edit main rc=0 (no conflicts, 156 files); new P2 8a969e7a3
+  pinned in 2c4475239 (no push_both per RULING a2-no-push); export+verify jobs re-queued at
+  revision 2c4475239 (depth 2, queue state running, VRAM free 15.5G). yield refused again:
+  local-llm not loaded. Step-2 log check next session.
