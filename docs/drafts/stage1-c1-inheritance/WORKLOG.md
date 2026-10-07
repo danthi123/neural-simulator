@@ -17,3 +17,6 @@
   this case, FAILURE_LOG 2026-09-30). Per the refusal's own remedy and RULING canary-node, launched
   `pool_canary.sh run pool40 '<gatehop line 1>' --wait-s 5400` (seed 42 gate line, output redirected
   to _pool_canary/, verdict recorded to pool_canaries.tsv). The 54 adds follow the PASS.
+- 2026-10-07 14:05: gate-seed canary PASS recorded: (stage1_c1_category, 2c2d55952) PASS pool40 gate,
+  rc=0 wall=1297s json=1 errors=0 (pool_canaries.tsv). 14:32: starting the 54 gate_hop adds against
+  the satisfied guard.
