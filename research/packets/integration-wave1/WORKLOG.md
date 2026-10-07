@@ -145,3 +145,16 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
 - Note: the fixed script cannot run from this worktree HEAD (2c609face) - the pin-descendant
   guard fires ("HEAD differs from pin outside the packet dir and raw results"; claude-review
   work sits between them), so generation stays at the pin, as section 7 already requires.
+
+## 2026-10-07 15:48 EDT - answer_rate paired: off-side UNMEASURED by design (NEEDS answer-rate-off)
+- 12/12 iw1-alloff cells landed (6 seeds x d6-hebbian-write + xedge-surprise-worldmodel). Paired mode:
+  on 2/2 answered on all 6 seeds; off 0/6 -> `off - UNMEASURED` (the tool never reads as no-harm).
+- Off shards hold ONLY lb.json (verdict `unmapped-in-battery`, load_bearing null); no intact arms to
+  glob. The ON and OFF job lines differ ONLY in the flag values (1 vs 0) and --out.
+- Cause: at the R pin the lbf_rows modules gate registration on REQUIRED_ENV (d6: all three
+  BRAIN_D6_* flags =1; xedge: BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL=1). alloff zeroes them, so the
+  rows never register, _faculty_row returns None, and the runner early-returns before spawning arms.
+  The module docstring states it is by design: "OPT-IN until the flip ... the flip script deletes the
+  REQUIRED_ENV line in the same commit that flips the anchor."
+- 049d4bb is NOT an ancestor of main (integration-wave1 lineage). The off-side answer-rate awaits the
+  T5 flip or a new off-probe design: filed NEEDS [answer-rate-off] ASK (runbook 1e652853b on main).
