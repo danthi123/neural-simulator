@@ -477,3 +477,9 @@ grid add (STEP4B preamble).
   (provision `state=ok` pool41/42/40/wspool). At enqueue close: 123 waiting in `pool.queue`, 21 dispatched
   (pool40/pool41), 0 missing (dup-guard refused re-adds of the dispatched 21 — not FORCE_DUP cases).
 - Next wake(s): as cells land, write `PILOT-4B.md` with `lhb_engagement_a_rewardwin` per cell + `[T1] RESULT`.
+
+## 2026-10-07 17:30 EDT - Step 4b grid: 138/144; re-queued the 6 reboot-killed cells
+- Investigated the 6 missing cells (credit_immediate on150_on s8/s9/s10, on30_cut s10/s11/s15): dispatched to wspool 00:08-00:54, never exited - absent from exits.json (all 138 landed siblings rc=0) and from the node's job_status.log; no live `_ldc_omission` process. Root cause: the workstation REBOOTED at 05:27:22 today (uptime -s).
+- Re-queued the 6 lines VERBATIM (same cmd, pin 9f625fd1c1f201a871ea1c5c0a2d475e7a3fbe88, same `#checked:` reason). `pool_queue.sh add` confirmed: "a previous identical claim exists (wspool, ...) but is no longer alive -- queueing" (depth 163 -> 169).
+- PILOT-4B generator ready (`/opt/data/cache/scratch/gen_pilot4b.py`): exits 2 naming any missing cell; emits per-cell U/R/I + marks, success, `lhb_engagement_a_rewardwin` (A), membrane_ok (m), void_floor_ceiling (v) + a per-arm rollup for 144/144.
+- Waiting on the 6 re-queued cells to land; then: generate tables -> PILOT-4B.md -> commit outputs -> `[T1] RESULT: Step 4b @ 9f625fd1c`.
