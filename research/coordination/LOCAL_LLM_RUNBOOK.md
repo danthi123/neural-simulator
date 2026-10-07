@@ -1043,3 +1043,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-06 21:53 [s2-c5-build] STOP: battery KILLED on wspool at memcap 10 after ~85 min, no JSON; delegate verdict: numpy battery is a measured ~27-28 GB job (RAM-WALL), above every pool node, no lawful re-queue can land it; gpu_queue/r7i route is section-2; organ+reply PASS 8/8, INFO waits
+- 2026-10-06 22:03 [driver-venv] INFO: driver container .venv lost declared dearpygui (requirements.txt:11): tool_health auto-tune probe reads ROTTED (warning tier, commits pass); uv pip install is BLOCKED in single-query (threat-intel timeouts) so venv repair needs owner/Claude
