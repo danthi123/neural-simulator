@@ -85,3 +85,8 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   provision ok -> queue canary -> verify landing per the step-3 check (16 turns, flag "1", hop "1", trace on every
   turn, read hop True 30, flagged-worm guess) -> 3b emit 54 gate_hop + queue other 95 -> step 4 score -> step 5
   [c1-gatehop]/[c1-flipdev] RESULT lines. Unsure: none (no verdict written).
+- 2026-10-07 02:17 Hermes: provision 2c2d55952 -> state ok (pool41/42/40; wspool optional, backfilled later;
+  RULING compute-placement server path, no pool_provision.sh). Canary line queued via pool_queue.sh add
+  (research/findings/raw/_stage1_c1_flipdev/on/s1/cat_disc__intact_a.json); c1_in_queue=1, pool depth 101 at
+  add time. Waiting for the canary to dispatch, run and arrive via sim-sync before the step-3 landing check;
+  3b's 54 gate_hop + the other 95 flip-dev lines stay unqueued until it passes (HANDOFF order).
