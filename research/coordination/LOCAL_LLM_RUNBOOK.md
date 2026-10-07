@@ -1049,3 +1049,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-07 10:32 [transitive-spiking-reach] RESULT: R rescore PASS op=0 rc0 at 83efc766c (same data, rule7 fix). verify-go 2x refuters NARROWED: determinism not seed-robustness (replies byte-identical across 6 seeds); op=0 = grid row DETECT_MIN=10; answer-rate UNMEASURED. Branch @ c0c093194.
