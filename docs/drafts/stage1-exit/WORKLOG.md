@@ -229,3 +229,10 @@ is recorded in the marker rather than a create-then-close.
   docs/drafts/stage1-exit/bar_sanity_record_c4_constrained.json (perfect 0.987, nulls 0.000, n=1000,
   OK), stage1 tests re-run below. Attempt-2 timing per RULING stage1-calendar; the attempt-2
   amendment cites that record on its `bar-sanity:` line.
+- 2026-10-07 05:45: RULING stage1-ff executed (replaces f491ba99d in stage1-sync-ff-target):
+  `git merge --ff-only 7a785f68f` fast-forwarded research/stage1-exit-gate 4e78bc0ff ->
+  7a785f68f (tree clean, is-ancestor pre-checked, HEAD verified equal after). In: the stage-1
+  C1/C2/C3 bar-sanity specs + records + bar_sanity_s1_c123_common.py (C2, C3 OK; C1 as
+  registered UNREACHABLE for the planned build), on top of my marker 4e78bc0ff (Claude
+  re-targeted after NEEDS [stage1-ff]: when a FF target lacks only driver marker commits,
+  STOP is correct and Claude re-targets). Attempt-2 remains Claude's, calendar 11-21.
