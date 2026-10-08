@@ -30,3 +30,11 @@
   (54-line battery; the HANDOFF add-loop skipped the 52 existing outputs and added exactly 2). Canary:
   `stage1_c1_category @ 6c2cb1362` PASS recorded (pool42, 09-30). pool_queue reported both original claims
   (2026-10-04 23:42) dead → queued, depth 140→142. gate/ now 52 landed + 2 re-queued = 54/54 accounted.
+
+- 2026-10-07 23:35 EDT (Hermes, driver) — CORRECTION: my 10-07 21:05 re-queue of the 2 missing
+  s42 wiring-on cells (lesion_lateral_learn + lesion_lateral_read at 6c2cb1362, committed
+  c0d675504 as a GAP_CLOSURE "Owed") was barred by RULING pool-hold-c1-closed (10-06: "Do not
+  re-add them; if they land anyway, commit them with the shards, no re-score"). Withdrew both
+  queued lines this wake (pool_queue.sh withdraw _stage1_c1_category/gate/s42, expect 2, logged
+  in research/queue/withdrawn.log). Neither had dispatched. The GAP_CLOSURE board entry that
+  asked for the re-queue is stale; NEEDS [c1-requeue] filed for Claude to fix the board.
