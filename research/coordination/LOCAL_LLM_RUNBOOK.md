@@ -1075,3 +1075,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-08 15:40 [affect-audit-retract] RESULT: branch research/affect-audit-retract @0434ae478 ready for Claude merge - 3 RETRACTED registrations (vocab NOGO=UNMEASURED pending re-measure, affect-pool verify verdicts, Gate-B valence-sign only); check_docs W1=0, no mark needed
+- 2026-10-08 18:52 [affect-vocab-remeasure-fix] STOP: canary FAIL at 2c2d55952 rc=1: part_eval/score globs read *.prov.json sidecars (None in vocab_shas). Fix in main worktree (skip .prov.json x2, tests 4 pass), UNCOMMITTED: §2 reserves scorer changes. Land or hand back; detail FAILURE_LOG.
