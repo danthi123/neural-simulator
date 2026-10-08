@@ -148,3 +148,12 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - Section-5 every-session check: gpu.queue holds 0 mouth lines (dispatcher down, card idle); the mouth arm already
   completed on W and its step-4 score is COMPLETE (17 MOUTH-SILENT, 1 DEFINED; step 6 committed 10-07), so no GPU
   action is owed — the arm waits only on NEEDS-CLAUDE #6 (registered arm schedule).
+
+## 2026-10-08 12:44 EDT — every-session line
+
+- Stub arm: lb.json-landed 184/258 (+12 since 07:26). fresh-queued=29 stale=0 >= threshold 10 -> wave script
+  correctly queued nothing (wave 6 comes when < 10 fresh remain).
+- Mouth arm: all 18/18 lb.json present on the shared tree; step-4 score unchanged (COMPLETE, 17 MOUTH-SILENT +
+  1 DEFINED, committed 10-07); still awaiting NEEDS-CLAUDE #6. gpu.queue: 0 lines, card idle, dispatcher down
+  (start is denied to the local model; nothing registered waits on it).
+- No ledger change this session (no wave queued).
