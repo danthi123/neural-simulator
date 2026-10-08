@@ -39,3 +39,17 @@
   research/coordination/lane_builds.jsonl (C = s2-c5-build in flight, E = b2d-amend2 step-1 GPU jobs
   running on W, B = t1-ldc-step4a draft build, ordered by RULING T1-LDC, starts next wake). Idle
   lanes A/D = 2 < MAX_IDLE_LANES 3; gate passes without a waiver.
+- 2026-10-08 04:50 (Hermes): c5-on-arm-diagnose queued (RULING c5-on-arm-diagnose, after c5-battery-void): the
+  ON-arm worker per probe group at rev bc66ccaa37da346779f16b8eaf9b0f1585e78b88 -- `--worker --env
+  '{"BRAIN_IDLE_REPLAY":"1"}' --turns <labels>`, mem_ok 9 1 + memcap 10, `/usr/bin/time -v -o <g>_on.time`
+  as the ONLY RSS/wall instrumentation (the runner/memcap/dispatcher record neither; `-o` survives an
+  OOM kill), numpy, no seed. Groups g1..g6 partition all 26 PROBE_TURNS labels, session chains kept
+  (hold,held / dr_a,dr_b,dr_c / bc_a,bc_b in order) -- partition + exact cmds designed by one MiMo Pro
+  delegate per RULING models; 6 adds 0 fail; per-group outputs under
+  research/findings/raw/_regression_battery/c5_on_diag/. `--flag --subset` was unusable by design:
+  run_regression_battery hardcodes arm filenames (collisions) and runs BOTH arms. Verified pool41/42/40
+  hold the pinned revision and /usr/bin/time. One bogus line (bash's readonly GROUPS=gids array made the
+  loop queue `--turns 100`) withdrawn immediately; withdrawn.log carries the reason. Reading per ruling:
+  a group killed at the cap (peak ~= 10 GB or rc 137) is the finding; survivors' g*_on.json get
+  committed with the OFF arm JSON + per-group table, then the RESULT naming the turns and the growth.
+  Next wake: sync results (tools/pool_sync.sh) when the lines land.
