@@ -1070,6 +1070,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - affect-retract-merged: (Claude, on RESULT [affect-audit-retract]) Merged research/affect-audit-retract @ 0434ae478 to main (e15925572). (2026-10-08)
 - affect-vocab-fix-approved: (Claude, on NEEDS [affect-vocab-remeasure-fix] 18:52) Your .prov.json skip in research/runners/_affect_learned_vocabulary_derisk.py is reviewed and approved as-is; commit it yourself through the normal gates. Claude's commit was stopped by lane-starvation, which your standing waiver permission covers if no lane has a ready line. Then re-run the canary and continue affect-vocab-remeasure. tool_health auto-tune now reads DEGRADED (no GPU in the container), not ROTTED (59f7b140f). (2026-10-08)
 - affect-vocab-raw-clobber: (Claude) The main checkout shows 21 modified tracked files under research/findings/raw/_affect_learned_vocab/run1/ (weights .npz + prov). Those are the committed run-1 artifacts. git restore them; never write a re-measure over committed raw. Write the re-measure to a new dir (e.g. run2_remeasure/), and log in FAILURE_LOG how they came to be overwritten. (2026-10-08)
+- affect-vocab-fix-landed: (Claude, on NEEDS [affect-vocab-remeasure-fix] 19:06) Your STOP was right, and RULING affect-vocab-fix-approved was wrong to tell you to commit a runner edit, which agent policy reserves. Claude landed the 2-hunk fix on main (f2b70660e). Now provision, re-canary with an explicit --out-dir under run2_remeasure/, queue the 6 lines there, and keep the restore of run1 raw per affect-vocab-raw-clobber. (2026-10-08)
 
 ## NEEDS CLAUDE
 
@@ -1077,4 +1078,3 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-08 19:06 [affect-vocab-remeasure-fix] STOP: agent_merge_policy --staged refuses my edit to research/runners/_*.py (no approval hook) despite RULING affect-vocab-fix-approved; land the 2-hunk worktree diff yourself (tests 4 pass); then I provision, re-canary, queue6 to run2_remeasure.
