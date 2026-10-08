@@ -148,3 +148,11 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   pinned in 2c4475239 (no push_both per RULING a2-no-push); export+verify jobs re-queued at
   revision 2c4475239 (depth 2, queue state running, VRAM free 15.5G). yield refused again:
   local-llm not loaded. Step-2 log check next session.
+
+- 2026-10-07 23:35 EDT (Hermes, driver) — AMEND2-HANDOFF step 2: step 1's log re-checked
+  (`export-ok-with-map`, DONE(rc=0), 2026-10-06 21:04) then generated the dev job files at
+  P2=8a969e7a3 (dev 24 + dev-lesion 6, COUNTS-OK), committed a6dcae2e4 on research/b2d-amend2
+  (push_both skipped per RULING a2-no-push), queued all 30 lines via gpu_remote.sh add
+  (depth 30, no ADD-FAILED), and yielded the workstation GPU for 6 h (deadline epoch
+  1791451653). Next: HANDOFF step 3 status/count each session; step 4 (dev selection) when
+  the queue holds no A2 line and none is running.
