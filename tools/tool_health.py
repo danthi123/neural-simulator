@@ -208,6 +208,10 @@ def check_auto_tune(timeout=300):
         why = "quick tuning sweep completed (rc=0)"
     elif status == UNKNOWN:
         why = "timed out after %ss with no visible progress" % timeout
+    elif any(k in (err or out or "") for k in ("cudaErrorInsufficientDriver", "cudaErrorNoDevice")):
+        # same precedent as experiment-engine: the sweep needs a GPU; a GPU-less host (the Hermes container) is not rot
+        status = DEGRADED
+        why = "needs a GPU; this host has no usable CUDA device (not rotted): " + (err or out)[-120:]
     else:
         why = ("exit rc=%s. " % rc) + (err or out)[-300:]
     return _result("auto-tune", "experiment", status, why, "neural-simulator.py --auto-tune --quick")
