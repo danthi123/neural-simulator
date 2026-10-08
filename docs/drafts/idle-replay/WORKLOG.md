@@ -65,3 +65,16 @@
   instrumentation (rc-137-at-cap stays detectable via exits.json + missing json; memcap and the
   runner json remain). W should `apt install time` before future W lines use it -- NEEDS
   [c5-on-arm-diagnose] INFO filed; FAILURE_LOG row added.
+- 2026-10-08 09:12 (Hermes): c5-on-arm-diagnose attempt 2 failed differently from attempt 1:
+  the 08:55 requeue was typed out anew instead of copied, which added a layer of backslashes to
+  the `--env` JSON, so the worker parsed the env as a STRING and crashed
+  `AttributeError: 'str' object has no attribute 'items'` at onebrain_regression_battery.py:986
+  (rc=1 on wspool 08:58 for g2/g3/g4; g6's line consumed without an exit row yet). Pinned to
+  the queue-time CMD, not the node: g1/g5 from the ORIGINAL queue still run clean (their [memcap]
+  line shows `--env {"BRAIN_IDLE_REPLAY":"1"}` while attempt 2's shows the escaped quoted
+  form, and both source scripts differ at that byte range). Attempt 3 queued 09:12, ok=4
+  fail=0: the CMD rebuilt PROGRAMMATICALLY from c5_queue2.sh (make_c5_fix.py copies the CMD
+  line byte-for-byte and removes only the /usr/bin/time segment), groups g2/g3/g4/g6, same rev
+  bc66ccaa37da346779f16b8eaf9b0f1585e78b88/memcap 10/turns. Rule taken: any requeued CMD is
+  copied by a transformer from the source script, never retyped (shell quoting does not survive
+  transcription). g1 (pool40) and g5 (pool41) workers continue.
