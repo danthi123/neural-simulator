@@ -152,3 +152,17 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   then agent_sync_branch merged main (tip `43763e637`); pytest test_stage2_exit_gate + runner
   selftest run above; GATE_SHA pinned at `43763e637` (revision contains AMENDMENT-A3.md;
   checked). PREREG_SHA stays 24dac499e. Only _A3 bar-sanity records are cited for Stage 2.
+
+- 2026-10-07 (Hermes, driver) — RULING stage2-c4c5-dev re-score DONE at the synced tip
+  (f87b8c1ab = branch + main @ c0d675504; A3 code; GATE_SHA 43763e637 untouched): the 15
+  existing seed-7 dev shards (8 committed + the 7 pool-only cells copied in from main's
+  untracked f2aaabc8a landing, 14 files cp -a) re-scored under the amended aggregate ->
+  research/findings/raw/_stage2_exit/dev/s7/aggregate.json. Verdict: UNDEFINED (INCOMPLETE) —
+  29 primary shards missing (dev battery = subset), intact_b absent for conv/infer/emo, so
+  C1-C5 all INCOMPLETE with n_defined=0 and the stage-level reads None; preconditions
+  unmet = honest scorer output on a partial battery, no dev line re-run (per ruling).
+  Integrity check before scoring: the 4 cells existing in both workstation (committed) and
+  pool f2aaabc8a (main untracked) runs — ask/conv/infer/inner intact_a — are LOGIC-IDENTICAL
+  after excluding timing keys; only <=1-ULP curiosity-novelty float noise (0.0 vs +-1.1e-16,
+  0.9532050931328421 vs ...422) and elapsed/RSS differences. Committed workstation copies
+  govern those 4 names; main's 11 untracked files stay put for the future merge.

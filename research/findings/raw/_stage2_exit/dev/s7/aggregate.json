@@ -1,0 +1,263 @@
+{
+ "stage": "STAGE-2 (CHILD) exit",
+ "verdict": "UNDEFINED (INCOMPLETE): unmet: no primary shard missing (measured=29 expect=0); unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=5 expect=0); unmet: six seeds defined for every primary criterion (measured=5 expect=0)",
+ "GO": false,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": false,
+   "detail": "measured=29 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": false,
+   "detail": "measured=5 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM in every counted arm"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no errored turn and no organ error in any counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "an errored reply or a caught organ exception is an instrument failure, never an effect or a FAIL"
+  },
+  {
+   "kind": "require",
+   "name": "the grounding set (builtin_facts) recorded in every conv/inner counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": false,
+   "detail": "measured=5 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [
+  "unmet: no primary shard missing (measured=29 expect=0)",
+  "unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=5 expect=0)",
+  "unmet: six seeds defined for every primary criterion (measured=5 expect=0)"
+ ],
+ "criteria": {
+  "C1": "INCOMPLETE",
+  "C2": "INCOMPLETE",
+  "C3": "INCOMPLETE",
+  "C4": "INCOMPLETE",
+  "C5": "INCOMPLETE"
+ },
+ "groups": {
+  "conv": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 1 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_mouth": 0
+   },
+   "n_reproduced": {
+    "lesion_mouth": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "infer": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 1 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_chain_route": 0
+   },
+   "n_reproduced": {
+    "lesion_chain_route": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "ask": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 1 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_reproduced": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "emo": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 1 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_affect": 0
+   },
+   "n_reproduced": {
+    "lesion_affect": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "inner": {
+   "criterion": "C5",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 1 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_reproduced": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "private_selected_by_state": 0
+   },
+   "seeds": {
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  }
+ },
+ "seeds": [
+  7
+ ],
+ "missing_shards": [
+  "research/findings/raw/_stage2_exit/dev/s7/s7/conv__intact_a.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/conv__intact_b.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/conv__permuted.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/infer__intact_a.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/infer__intact_b.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/infer__permuted.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__intact_a.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__intact_b.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/ask__permuted.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/emo__intact_a.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/emo__intact_b.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/emo__permuted.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__intact_a.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__intact_b.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_exit/dev/s7/s7/inner__permuted.json"
+ ],
+ "bars": {
+  "ask_ratio": 2.0,
+  "ask_gap_floor": 0.6666666666666666,
+  "seeds_required": 1,
+  "emotion_categories": 4
+ },
+ "runner": "research/runners/stage2_exit_gate.py",
+ "prereg": "research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}
