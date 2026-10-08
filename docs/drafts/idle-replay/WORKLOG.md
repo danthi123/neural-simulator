@@ -78,3 +78,16 @@
   bc66ccaa37da346779f16b8eaf9b0f1585e78b88/memcap 10/turns. Rule taken: any requeued CMD is
   copied by a transformer from the source script, never retyped (shell quoting does not survive
   transcription). g1 (pool40) and g5 (pool41) workers continue.
+- 2026-10-08 11:15 (Hermes): c5-on-arm-diagnose status + OFF-arm deliverable: copied
+  arm_off_BRAIN_IDLE_REPLAY.json + .prov + PROVENANCE.txt from /opt/data/cache/c5-battery/
+  (AWS r7i.4xlarge, rev bc66ccaa3, rc=0; RULING c5-battery-void: OFF arm valid, the ON arm's 34
+  regressed = missing-arm artifact) into research/findings/raw/_regression_battery/ and committed
+  them. First finding row per RULING c5-on-arm-diagnose ("groups that exceed the cap are the
+  finding"): g1 (labels well,question,unknown) exceeded memcap 10G on pool40 at 10:02 (rc=137; log
+  stops mid-case re-init) — peak = the cap by definition; no GNU-time .time files for any group
+  (the W requeue ran without /usr/bin/time, and the systemd scope dies with the worker, so no
+  peak-RSS line was written either — the cap value is the bound). g2/g3/g4/g5 logs still growing at
+  11:01 (~140MB each), g6 = the one queued c5 line. The per-group table + the
+  [c5-on-arm-diagnose] RESULT (named turns + growth) is owed when the remaining groups land; the
+  [s2-c5-build] battery score per HANDOFF §3-§5 stays a separate pending duty (its regression
+  numbers stay VOID-ridden until the ON arm produces output).
