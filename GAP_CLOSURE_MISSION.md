@@ -34,8 +34,10 @@ permuted control before attempt 2. Move the host-owned C2/C3 decisions into the 
 - **Affect audit ruled** (`docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`): void = only attempt 1's `gate/`
   C4 cells (already corrected). Pool/AWS LBF affect rows before 10-05 stand with a provenance caveat (norm values,
   same-input contrast). Finding: `research/findings/2026-10-04-stage1-exit-gate-RESULT.md` (review 2026-10-06).
-- **Owed:** C1 wiring-on gate (T7): re-queue the 2 missing s42 cells; amended C4 control (Claude, before attempt 2);
+- **Owed:** C1 wiring-on gate (T7): amended C4 control (Claude, before attempt 2);
   Stage-2 dev smoke re-queued at a synced revision (RULING `stage2-dev-smoke`).
+  The 2 missing s42 lateral cells are no longer owed: withdrawn and never re-queued per RULING
+  `pool-hold-c1-closed` (board item retracted 2026-10-08 per `c1-requeue-board`).
 
 *Entries below are history.*
 
