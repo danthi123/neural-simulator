@@ -100,3 +100,12 @@
   (BRAIN_IDLE_REPLAY=1, rev bc66ccaa3, memcap 10, per-group --turns). No .time files for any group
   (attempt-2/3 lines dropped GNU time; the memcap scope dies with the worker), so for the exceeded
   groups peak RSS = the 10G cap by construction. RESULT still owed once g2/g3/g5/g6 resolve.
+- 2026-10-08 13:12 (Hermes): c5-on-arm-diagnose table, row 3: g6 (emo,bc_a,bc_b,rich_well,rich_open)
+  hit the 10G cap on pool40 at 13:01 (rc=137; attempt-3 dispatched 11:35, wall ~1h26m) — third
+  cap-exceed after g1 (49m to kill) and g4 (2h21m). g2 (hold,held,scalar,open): log crawled +90
+  bytes to 141,596,826 by 12:34, no exit record — effectively stalled, not dead. g3
+  (confirm,contra,expect_q,episodic) and g5 (chase,selfinit,animacy,verbsel,pmem_form) still
+  writing slowly (g3 last write 13:01 ~120KB/h since dispatch; g5 last 13:00 ~733KB/h). Queue empty
+  (all six dispatched), no ON-arm JSON yet. Pattern: every group that has ENDED ended at the cap
+  (3/3 rc=137, all on pool40), one stalled, two running — the memory blow-up is not
+  turn-group-specific so far. RESULT still owed when g2/g3/g5 resolve.
