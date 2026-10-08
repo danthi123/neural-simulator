@@ -492,3 +492,38 @@ grid add (STEP4B preamble).
 ## 2026-10-07 18:52 EDT - correction: grid outputs were NOT committed to main
 - The commit attempt was BLOCKED by the `below-chance` failure-class gate: 31 grid cells record `pass: False` at success < 0.5, and the gate's remedy (declare `below_chance` / an UNDECLARED verdict in the artifacts, or fix the task/label wiring) is reserved (post-hoc verdict declaration + runner/scorer edits). Filed `[step4b-outputs] STOP` in the runbook NEEDS.
 - The 288 files were unstaged (index clean); PILOT-4B.md itself is committed (branch `d9913121a`) and carries the per-cell record. Lane gate satisfied meanwhile via `.lane_waiver` (NO-READY-WORK, checked evidence in file).
+
+- 2026-10-07 23:55 EDT (Hermes, driver) — RULING step4b-below-chance (Claude 23:34) executed:
+  declared `"below_chance": true` + `below_chance_reason: "pilot control arm, failure expected by
+  design"` on all 96 off/cut cells of research/findings/raw/_long_delay_credit_bg/dev_pilot_4b (on
+  main; text-level insert, no measured value touched), staged 192 files (96 cells + 96 prov sidecars).
+  below_chance gate check(staged) = 0 problems; off/cut scan hits = 0 after the declaration.
+  NOT declared and NOT committed: the 27 ON-arm cells the gate still hits — left UNDECLARED per the
+  ruling's second clause (NEEDS [step4b-on-cells] filed). ON list:
+    - grid_credit_immediate_on150_on_s10.json
+    - grid_credit_immediate_on150_on_s11.json
+    - grid_credit_immediate_on150_on_s12.json
+    - grid_credit_immediate_on150_on_s13.json
+    - grid_credit_immediate_on150_on_s9.json
+    - grid_credit_immediate_on30_on_s10.json
+    - grid_credit_immediate_on30_on_s12.json
+    - grid_credit_immediate_on30_on_s13.json
+    - grid_credit_immediate_on30_on_s15.json
+    - grid_credit_immediate_on30_on_s9.json
+    - grid_late_immediate_on150_on_s10.json
+    - grid_late_immediate_on150_on_s12.json
+    - grid_late_immediate_on150_on_s13.json
+    - grid_late_immediate_on150_on_s8.json
+    - grid_late_immediate_on150_on_s9.json
+    - grid_late_immediate_on30_on_s10.json
+    - grid_late_immediate_on30_on_s12.json
+    - grid_late_immediate_on30_on_s13.json
+    - grid_late_immediate_on30_on_s9.json
+    - grid_sanity_early_ch0_on150_on_s10.json
+    - grid_sanity_early_ch0_on150_on_s13.json
+    - grid_sanity_early_ch0_on150_on_s9.json
+    - grid_sanity_early_ch0_on30_on_s10.json
+    - grid_sanity_early_ch0_on30_on_s11.json
+    - grid_sanity_early_ch0_on30_on_s13.json
+    - grid_sanity_early_ch0_on30_on_s8.json
+  The full grid lands in two commits: this one (designed controls) + whatever Claude rules on the ON list.
