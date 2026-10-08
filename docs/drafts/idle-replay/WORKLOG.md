@@ -53,3 +53,15 @@
   a group killed at the cap (peak ~= 10 GB or rc 137) is the finding; survivors' g*_on.json get
   committed with the OFF arm JSON + per-group table, then the RESULT naming the turns and the growth.
   Next wake: sync results (tools/pool_sync.sh) when the lines land.
+- 2026-10-08 08:55 (Hermes): c5-on-arm-diagnose first attempt: 4 of 6 lines died rc=127 on
+  wspool within minutes -- the pool sandbox executes the line's own `/usr/bin/time`, and that
+  node does not have it (`/opt/host-status/sim-pool-jobs/exits.json`: g2 08:37, g3 08:38, g4
+  08:43, g6 08:47, all rev bc66ccaa3; g2_on.log = "/opt/pool-sandbox/bin/systemd-run: line 26:
+  /usr/bin/time: No such file or directory"). The 04:50 entry verified the pin on pool41/42/40
+  only; W took 4 of the 6 lines. g1 (pool40, live 140 MB log) and g5 (pool41) continue unwrapped
+  of this failure. Requeued g2/g3/g4/g6 -- identical worker at rev bc66ccaa37da346779f16b8eaf9b0f1585e78b88,
+  same turns, mem_ok 9 1 + memcap 10, SIM_BACKEND=numpy -- with GNU time dropped so any node runs
+  them; those four groups lose the .time peak-RSS/wall stat the 04:50 entry called the only such
+  instrumentation (rc-137-at-cap stays detectable via exits.json + missing json; memcap and the
+  runner json remain). W should `apt install time` before future W lines use it -- NEEDS
+  [c5-on-arm-diagnose] INFO filed; FAILURE_LOG row added.
