@@ -6750,3 +6750,120 @@ the closure reaches `affect_production_organ`. Limitation: dynamic imports (`imp
 - research/findings/raw/_open_ended_gated/smoke/s7/affect_lesion.json | 2026-09-24T16:50:02+00:00 | unknown
 - research/findings/raw/_open_ended_gated/smoke/s7/gate_lesion.json | 2026-09-24T16:50:02+00:00 | unknown
 - research/findings/raw/_open_ended_gated/smoke/s7/intact_b.json | 2026-09-24T16:50:02+00:00 | unknown
+
+## Void per RULING affect-audit-rule
+
+Claude ruled 2026-10-08 (RULING affect-audit-rule): a result is VOID only
+if BOTH (a) it ran on a node whose revision dir lacked
+research/findings/raw/_affect_learned_valence_map.json (provisioned before
+the RUNTIME_RAW_INPUTS fix shipped) AND (b) its claim reads affect valence
+(affect-*, appraisal, b2d mood, onebrain-affect verify, stage1 C4 already
+handled, LBF/host-share affect-faculty rows only); NOT void: non-affect
+regression-battery ON-vs-OFF, non-affect LBF/host-share rows, long-delay-
+credit runs (RULING affect-audit-not-void). Narrowed list below; Claude
+confirms it and registers affected findings in docs/RETRACTED.md.
+
+Axis (a) operationalization: fix = c43cebd17 at 2026-10-04T21:14:03Z;
+per-SHA provision records /opt/host-status/sim-provision/<sha>.json
+(first_seen_utc): no record = provisioned before the record system (all
+records are 10-02+) = pre-fix = LACKED; provision time < fix = LACKED;
+result started before that SHA's provision = LACKED; else HAD the map.
+Of 6680 flagged rows: 5538 LACKED / 1142 HAD (per-runner split in
+aa_narrow facts, reproduced as `lacked/total` below).
+
+Axis (b) claim judgment delegated to one MiMo Pro delegate per RULING
+models over this doc's runner table, the axis-(a) facts and the citation
+map; it also content-scanned lb.json/rows paths for the LBF, battery and
+smoke subsets (each lb.json = one faculty). Judgment notes: reward-value
+afferent falls back to the affect-appraisal valence ladder (VOID); the 5
+`unknown`-runner rows are superseded conditioning-smoke arms of the open-
+ended seed-7 experiment (VOID); stage1 C4 rows are excluded as already
+handled by s1-c4-void; 6 xedge-sw LBF rows quote valence in reply text but
+sit on a non-affect faculty (not void).
+
+Totals: 671 of 6680 rows VOID (104 full-VOID-runner rows + 567 subset rows
+across 4 MIXED runners); 39 runners NOT_VOID.
+
+| runner | verdict | void rows (axis-a lacked/total) | void date range |
+|---|---|---|---|
+| `_affect_marker_settle_multiturn_derisk.py` | VOID | **43** | 2026-09-24..2026-09-24 |
+| `_affect_marker_settle_congruence.py` | VOID | **19** | 2026-09-25..2026-09-25 |
+| `_onebrain_affect_pool_verify.py` | VOID | **15** | 2026-09-23..2026-09-23 |
+| `_affect_learned_vocabulary_derisk.py` | VOID | **10** | 2026-09-24..2026-09-24 |
+| `_b2d_mood_render_probe.py` | VOID | **6** | 2026-09-30..2026-09-30 |
+| `_reward_value_afferent_derisk.py` | VOID | **6** | 2026-09-24..2026-09-25 |
+| `unknown` | VOID | **5** | 2026-09-24..2026-09-24 |
+| `onebrain_regression_battery.py` | MIXED | **425** | 2026-09-23..2026-10-04 |
+| `load_bearing_fraction.py` | MIXED | **133** | 2026-09-23..2026-10-04 |
+| `_open_ended_gated_turn_smoke.py` | MIXED | **5** | 2026-09-24..2026-09-24 |
+| `_lbf_rows_live_organs_smoke.py` | MIXED | **4** | 2026-09-24..2026-09-24 |
+| `a9_diag_eread.py` | NOT_VOID | - | - |
+| `a9_diag_fullsize_transmit.py` | NOT_VOID | - | - |
+| `a9_diag_lr.py` | NOT_VOID | - | - |
+| `a9_diag_onestep.py` | NOT_VOID | - | - |
+| `a9_diag_oracle_budget.py` | NOT_VOID | - | - |
+| `a9_diag_transmit.py` | NOT_VOID | - | - |
+| `identity_arm.py` | NOT_VOID | - | - |
+| `_ca3_symmetric_ti_symrule.py` | NOT_VOID | - | - |
+| `_curiosity_commitment_veto_v5_derisk.py` | NOT_VOID | - | - |
+| `_curiosity_metacog_conflict_xedge_derisk.py` | NOT_VOID | - | - |
+| `_curiosity_metacog_lowconfidence_coupling_derisk.py` | NOT_VOID | - | - |
+| `_curiosity_metacog_neuromod_gain_derisk.py` | NOT_VOID | - | - |
+| `_d6_learned_referent_env_flag_derisk.py` | NOT_VOID | - | - |
+| `_ldc_omission_pilot.py` | NOT_VOID | - | - |
+| `_ldc_outcome_timing_pilot.py` | NOT_VOID | - | - |
+| `_learned_referent_bias_flip_soak.py` | NOT_VOID | - | - |
+| `_lexicon_learned_referent_derisk.py` | NOT_VOID | - | - |
+| `_lexicon_spiking_referent_derisk.py` | NOT_VOID | - | - |
+| `_metacog_spiking_margin_prodflip_verify.py` | NOT_VOID | - | - |
+| `_open_ended_gated_turn_gate.py` | NOT_VOID | - | - |
+| `_pmem_live_cliff_detector_derisk.py` | NOT_VOID | - | - |
+| `_tom_false_belief_chat_offcheck.py` | NOT_VOID | - | - |
+| `_touchpoint_a_fact_clause_derisk.py` | NOT_VOID | - | - |
+| `_xedge_in_wave3_verify.py` | NOT_VOID | - | - |
+| `_xedge_prov_surprise_reciprocal.py` | NOT_VOID | - | - |
+| `_xedge_wave3_identity_probe.py` | NOT_VOID | - | - |
+| `ai_teacher_experiment.py` | NOT_VOID | - | - |
+| `content_provenance_probe.py` | NOT_VOID | - | - |
+| `d6_learn_through_use_lb.py` | NOT_VOID | - | - |
+| `d6_offpath_parity.py` | NOT_VOID | - | - |
+| `host_share.py` | NOT_VOID | - | - |
+| `host_share_bg_seam.py` | NOT_VOID | - | - |
+| `iw1_default_identity.py` | NOT_VOID | - | - |
+| `long_delay_credit_bg.py` | NOT_VOID | - | - |
+| `onebrain_xedge_curiosity_d6_production.py` | NOT_VOID | - | - |
+| `stage1_c1_category.py` | NOT_VOID | - | - |
+| `stage1_exit_gate.py` | NOT_VOID | - | - |
+| `stage1_host_share.py` | NOT_VOID | - | - |
+| `stage2_exit_gate.py` | NOT_VOID | - | - |
+
+Citing findings and reasons (VOID and MIXED runners; NOT_VOID reasons are
+in the delegate record and the runner citations above in this file):
+
+- `_affect_marker_settle_multiturn_derisk.py` (VOID, 43 rows): affect-marker-settle multiturn claim reads valence;43/43 lacked the map
+  - citing: research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md (PREREG)
+- `_affect_marker_settle_congruence.py` (VOID, 19 rows): affect-marker-settle congruence claim reads valence;19/19 lacked the map
+  - citing: research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md (PREREG)
+- `_onebrain_affect_pool_verify.py` (VOID, 15 rows): onebrain-affect verify category per rule (b);15/15 lacked the map
+  - citing: research/findings/2026-09-23-onebrain-affect-ladder-onto-cortical-pool-plus-arousal-surprise-synapse-BUILT-6seed-scored-NOT-ALL-GO.md (RESULT); docs/drafts/stage1-exit/AUDIT-affect-pool-results.md (draft)
+- `_affect_learned_vocabulary_derisk.py` (VOID, 10 rows): affect-* vocab derisk claim reads learned valence; all10 lacked the map
+  - citing: research/findings/2026-09-24-affect-learned-vocabulary-PREREG.md (PREREG); research/findings/2026-09-25-affect-learned-vocabulary-eval-NOGO.md (NOGO); docs/drafts/stage1-exit/AUDIT-affect-pool-results.md (draft)
+- `_b2d_mood_render_probe.py` (VOID, 6 rows): b2d mood render is the ruling's b2d-mood category;6/6 lacked the map
+- `_reward_value_afferent_derisk.py` (VOID, 6 rows): afferent falls back to the affect-appraisal valence ladder => claim reads appraisal valence;6/6 lacked map
+  - citing: research/findings/2026-09-24-reward-value-spiking-afferent-PREREGISTRATION.md (PREREG); research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-1.md (PREREG); research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-2.md (PREREG); research/findings/2026-09-24-reward-value-spiking-afferent-PREREG-AMENDMENT-3.md (PREREG)
+- `unknown` (VOID, 5 rows): same conditioning-smoke arms (affect_lesion etc.); the smoke claim reads Gate-B valence sign;5/5 lacked map
+  - citing: research/findings/2026-09-24-open-ended-gated-turn-seed7-smoke-and-flag-off-identity.md (RESULT; same experiment, pre-amendment smoke/s7 arms)
+- `onebrain_regression_battery.py` (MIXED, 425 rows): subset=rows lesioning affect-*|affective-tom, _affect_marker_settle arms, +38 reward-value-flag arms (valence-ladder fallback); both axes
+  - citing: research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md (PREREG); research/findings/2026-09-02-onebrain-wave1-comprehension-provenance-merge-SMOKE-GO.md (RESULT); research/findings/2026-09-20-hollow-discourse-register-drive.md (finding); research/findings/2026-09-20-hollow-noncontradiction-gate-drive-diagnosis-and-probe-fix.md (finding); research/findings/2026-09-24-learning-rows-d5-consolidate-sleep-replay-lbf-PREREGISTRATION.md (PREREG); research/findings/2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md (RESULT)
+- `load_bearing_fraction.py` (MIXED, 133 rows): subset=rows lesioning affect-*|affective-tom faculties or _affect_marker_settle flag; each lb.json=1 faculty (verified), both axes
+  - citing: research/findings/2026-09-24-affect-marker-settle-flip-criteria-AMENDMENT-PREREG.md (PREREG, affect-flag LBF); research/findings/2026-09-24-tom-false-belief-chat-wire-PREREGISTRATION.md (PREREG); research/findings/2026-09-23-wm-binding-holdquery-adequate-probe-PREREGISTRATION.md (PREREG); research/findings/2026-09-20-hollow-discourse-register-drive.md (finding); research/findings/2026-09-20-hollow-noncontradiction-gate-drive-diagnosis-and-probe-fix.md (finding); research/findings/2026-09-24-learning-rows-d5-consolidate-sleep-replay-lbf-PREREGISTRATION.md (PREREG)
+- `_open_ended_gated_turn_smoke.py` (MIXED, 5 rows): subset=smoke_amend1/s7 arms (5): finding's Gate-B valence-sign claim reads them; smoke_gnwturn rows are GNW-route, not void
+  - citing: research/findings/2026-09-24-open-ended-gated-turn-seed7-smoke-and-flag-off-identity.md (RESULT)
+- `_lbf_rows_live_organs_smoke.py` (MIXED, 4 rows): subset=4 rows for affect faculties (affective_tom, affect_appraisal_interoceptive) intact/lesion; other 7 organs non-affect
+  - citing: research/findings/2026-09-24-lbf-rows-live-organs-PREREGISTRATION.md (PREREG)
+
+Confirmations Claude owes per the ruling: reward-value = appraisal
+fallback (VOID) and the +38 reward-value battery arms; the
+superseded-smoke `unknown` attribution; the path-based faculty subsets for
+load_bearing_fraction (133), onebrain_regression_battery (425),
+_lbf_rows_live_organs_smoke (4) and _open_ended_gated_turn_smoke (5).
