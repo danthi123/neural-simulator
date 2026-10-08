@@ -23,3 +23,10 @@
 - 2026-10-07 14:35: all 54 gate_hop lines queued (added 54, loop rc=0, no ADD-FAILED, queue depth 181).
   Both waves now out: 54 gate_hop + 95 flip-dev (92 waiting, 3 dispatched/landed by 14:32). Step 4
   scores when cells land (or 120 h after queueing); step 5 writes [c1-gatehop] and [c1-flipdev].
+
+- 2026-10-07 21:05 (Hermes) — GAP_CLOSURE Owed item done: the 2 missing s42 wiring-on gate cells
+  (`gate/s42/cat_disc__lesion_lateral_learn.json`, `gate/s42/cat_disc__lesion_lateral_read.json`) re-queued at pin
+  `6c2cb1362b34d08d5be1807ce82ad333f221f84c` from `research/queue/requeue_stage1_c1_category_6c2cb1362.tsv`
+  (54-line battery; the HANDOFF add-loop skipped the 52 existing outputs and added exactly 2). Canary:
+  `stage1_c1_category @ 6c2cb1362` PASS recorded (pool42, 09-30). pool_queue reported both original claims
+  (2026-10-04 23:42) dead → queued, depth 140→142. gate/ now 52 landed + 2 re-queued = 54/54 accounted.
