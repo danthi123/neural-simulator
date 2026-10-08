@@ -1,0 +1,29 @@
+{
+ "run_id": "1791468545-73407",
+ "runner": "research/runners/c1_flip_dev_check.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/c1_flip_dev_check.py",
+  "--score",
+  "research/findings/raw/_stage1_c1_flipdev",
+  "--out",
+  "research/findings/raw/_stage1_c1_flipdev/flipdev_score.json"
+ ],
+ "git_sha": "2fa5ef460",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-08T10:09:05",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 44160.1,
+ "corpus_check_query": "stage2 dev smoke re-queue 11 lines seed 7 at synced tip (RULING stage2-dev-smoke)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_flipdev/flipdev_score.json"
+}

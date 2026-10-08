@@ -57,3 +57,18 @@
   incl. off-side pairs) moved to raw/_stage1_c1_flipdev__invalid_attempt1/ and re-queued -> 48
   flipdev lines queued (no /usr/bin/time in this tsv). Rescore + [c1-flipdev] RESULT next wake when
   the re-runs land; if flag-on still does not engage, that is a defect verdict (no further re-run).
+
+- 2026-10-08 10:30 (Hermes) STEP 4/5 (flipdev rescore after the one permitted re-run): the 46 invalid
+  cells re-ran and landed (attempt-1 originals kept on disk at raw/_stage1_c1_flipdev__invalid_attempt1/,
+  deliberately NOT committed: their .prov sidecars were replaced by the re-runs, so the sidecar-less
+  copies fail device-and-cost + corpus-check honestly — the committed re-run outputs carry the same
+  violation set; only s4's off/word + on/lived remain queued — they cannot change the verdict). Rescore = engagement
+  STILL broken, identical violation set: on-side reply fields missing the category_inherit stamp —
+  cat_told `t_bird_eat` (8/8 seeds), lived `p_wolf_discuss` (7/8), val_novel `feel_*` (6 fields x
+  8 seeds = 48); off-side 0 wrongly stamped (control clean); bridge = worm guess on 8/8 dev seeds
+  (canary_eat_on). Engine intent is to stamp every flag-on reply (webapp/server.py:6934/7313,
+  "per-turn trace … absent when off"), so cat_told/lived = real reply-path bypasses; val_novel's
+  feel_* fields may be non-turn meter readouts — whether they count as turns is bar/check
+  interpretation (Claude's). Per the scorer docstring ("re-run that cell once; otherwise FAIL naming
+  each violation"): [c1-flipdev] RESULT FAIL filed with DEV_SHA 2c2d55952. The gate_hop PASS stands;
+  the flip stays blocked on this dev-bar failure (next method = Claude's call, RULING c1-gatehop).
