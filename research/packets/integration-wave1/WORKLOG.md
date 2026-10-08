@@ -158,3 +158,29 @@ No push (wake rule: sim-sync publishes main; branch push left to the HANDOFF's n
   REQUIRED_ENV line in the same commit that flips the anchor."
 - 049d4bb is NOT an ancestor of main (integration-wave1 lineage). The off-side answer-rate awaits the
   T5 flip or a new off-probe design: filed NEEDS [answer-rate-off] ASK (runbook 1e652853b on main).
+
+## 2026-10-08 02:50 -- answer-rate off-side MEASURED (off = lesion arm): d6 OK, xedge OK
+
+Woken by 8 stage1_c1_flipdev results; re-read §1/§2/§6 + NEEDS (no new commits since 13d5ca525). RULING
+answer-rate-off executed. answer_rate.py was absent on this branch and a full branch sync is refused by gate
+lane-starvation (5/5 CPU lanes unserved; waiver budget 6.00h/6h charged, frees ~18:48), so the three infra
+files came from main one by one -- 097989c89 (answer_rate.py + test), 1c5c76ef9 (iw2_score.py, whose
+answer-rate wiring the imported test expects; the branch copy predated it) -- all tools/ + tests/ paths, i.e.
+infra-exempt per gate -- then --off-arm landed as 4214cb8e9. `paired --off-arm <stem>` reads the LESION arm
+beside the intact arms as the off side (off tag cells abstain by design via REQUIRED_ENV); exactly one of
+--off-tag/--off-arm is required (both/neither -> exit 2); the label carries `off = lesion arm`.
+tests/test_answer_rate.py 10/10 pass, incl. the new fixture test (lesion arm read, lb.json excluded,
+render carries the label).
+
+The read (6 seeds, base = research/findings/raw/_load_bearing/_shards), label `off = lesion arm`:
+
+- d6-hebbian-write -- on iw1-R-d6-049d4bb vs off-arm lesion_d6_hebbian_write: OK, measured 6/6. Every seed:
+  on 2/2 answered (abstained 0, empty 0); off 0/1, abstained 1 (the lesion abstains -- the d6 "haven't
+  learned about X yet" phrase). No seed has on < off, so no FLIP-HURTS-ANSWERS.
+- xedge-surprise-worldmodel -- on iw1-R-swm-049d4bb vs off-arm lesion_xedge_surprise_worldmodel: OK,
+  measured 6/6. Every seed: on 2/2 answered; off 1/1 answered. No FLIP-HURTS-ANSWERS.
+
+Verdict: neither flip hurts the answer rate with the default off -- criterion CLEAR for d6 and xedge. The d6
+lesion abstaining 6/6 while intact answers 2/2 is the load-bearing shape (off answers LESS than on: the
+opposite of the harm the check guards). The flips themselves are §2 (flipping a default): NEEDS
+[answer-rate-off] RESULT filed on main with these numbers.
