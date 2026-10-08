@@ -87,3 +87,9 @@ GATE `c238ff325a38e40a68b1f9751822630ff729377b` reachable (guard-at-pin verified
   (4) seed 102 is a real miss, record complete (all 7 shards present, undefined_reasons=[], null_clean=true);
   (5) backend provenance: shards record `backend='cupy'` from the request; only 2/42 `.prov.json` carry a
   resolved-cupy child stamp, the rest show the parent-process numpy stamp.
+
+- 2026-10-08 00:05 EDT (Hermes, driver) — RULING t24-finding-fix (Claude 10-07 23:34) executed: replaced the
+  C3 sentence in research/findings/2026-10-04-stage1-lived-cupy-replication-INFORMATIONAL.md (numpy C3 failed
+  only on the void lesion_recall clause, corrected to UNDEFINED; re-measured PASS 6/6 @7851dd220) and added the
+  dated "Corrected 2026-10-07" line, as the ruling worded it. Committed on research/s1-lived-cupy and merged to
+  main through agent_merge.sh (the ruling's named path); untracked s42 withheld shards untouched.
