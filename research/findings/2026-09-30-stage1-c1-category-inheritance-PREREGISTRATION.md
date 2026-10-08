@@ -264,3 +264,27 @@ before any gate seed.
 ## 13. Amendments
 
 (Appended dated entries only. The bars, arms and turns above are frozen at the commit that adds this file.)
+
+### Amendment 1 (2026-10-06, Claude; RULING c1-hop-first): the C1 gate re-measured with the hop fix
+
+bar-sanity: N/A the bars of section 4 are unchanged; this entry registers a second run of the same 54 lines under one added environment variable and one added engagement precondition
+
+**Why.** The gate above read PASS 6/6 (scored 2026-10-06, `research/findings/2026-10-06-stage1-c1-category-inheritance-RESULT.md`)
+WITHOUT hop attenuation. The owner ruled that the hop fix (`BRAIN_CATEGORY_INHERIT_HOP`, built on `claude-review/c1-hop`,
+`research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md`) lands before the flip, so the configuration the
+flip ships is the organ WITH the fix, which the 09-30 run did not measure. This entry is committed before any of its
+data and changes no earlier verdict: the 09-30 PASS stands as the no-hop measurement.
+
+**What runs.** The same 54 lines (section 3: nine arms x seeds 42, 43, 44, 100, 101, 102, the same turns, harness and
+flags) with `BRAIN_CATEGORY_INHERIT_HOP=1` added to every line's environment, at the revision Hermes pins after
+`claude-review/c1-hop` is merged, emitted by `python -m research.runners.stage1_c1_category --emit-pool-jobs <SHA> --hop`
+into `research/findings/raw/_stage1_c1_category/gate_hop/`.
+
+**How it is scored.** `python -m research.runners.stage1_c1_category --aggregate research/findings/raw/_stage1_c1_category/gate_hop --hop --seeds 42,43,44,100,101,102`.
+Section 4 verbatim, plus one validity precondition: every arm records `hop_env` "1", and every flag-on arm's
+direct-probe organ read records `hop: true`; a seed failing it is UNDEFINED for C1 ("hop attenuation not applied").
+
+**What it decides.** The C1 PASS that the flip (PLAN step C) and Stage-1 attempt 2 rely on is this re-measure's
+verdict. PASS: the C1 PASS holds for the hop configuration. FAIL or UNDEFINED after one re-run of missing cells: the
+flip is off and the fix is reworked on dev seeds (never retuned on these gate seeds); the 09-30 PASS stays the record
+of the no-hop organ only.

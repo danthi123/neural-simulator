@@ -1,0 +1,3089 @@
+{
+ "runner": "research/runners/category_inherit_organ_dev.py",
+ "backend": "numpy",
+ "note": "dev seeds only; organ fed the Stage-1 C1 facts directly; not a verdict",
+ "hop": false,
+ "summary": {
+  "n_seeds": 8,
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "intact_worm_rate": [
+   0.1125,
+   0.1042,
+   0.1133,
+   0.1067,
+   0.1125,
+   0.1158,
+   0.1192,
+   0.1058
+  ],
+  "intact_bug_rate": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "intact_patient": [
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm"
+  ],
+  "permuted_bug_rate": [
+   0.1275,
+   0.1192,
+   0.1067,
+   0.1125,
+   0.0908,
+   0.1108,
+   0.1042,
+   0.0933
+  ],
+  "permuted_worm_rate": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "permuted_patient": [
+   "bug",
+   "bug",
+   "bug",
+   "bug",
+   "bug",
+   "bug",
+   "bug",
+   "bug"
+  ],
+  "read_lesion_all_patient": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "read_lesion_lateral_worm_rate": [
+   0.085,
+   0.0692,
+   0.0858,
+   0.0817,
+   0.0867,
+   0.0867,
+   0.0875,
+   0.0825
+  ],
+  "lateral_learn_patient": [
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "determinism": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "bridge_canary_eat": [
+   "reached:worm",
+   "reached:worm",
+   "tie:None",
+   "tie:None",
+   "tie:None",
+   "reached:worm",
+   "reached:worm",
+   "tie:None"
+  ],
+  "bridge_canary_swim": [
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake"
+  ],
+  "bridge_trout_fly": [
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky"
+  ],
+  "bridge_canary_first_canary_eat": [
+   "tie:None",
+   "tie:None",
+   "tie:None",
+   "tie:None",
+   "reached:worm",
+   "tie:None",
+   "reached:worm",
+   "tie:None"
+  ],
+  "bridge_canary_first_canary_swim": [
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake",
+   "lake"
+  ],
+  "bridge_canary_first_trout_fly": [
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky",
+   "sky"
+  ],
+  "c2_c3_shapes_all_abstain": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "canary_member_frame_eat_worm_w": [
+   9.247,
+   7.247,
+   9.191,
+   8.556,
+   9.402,
+   9.254,
+   8.576,
+   8.762
+  ],
+  "canary_member_frame_fly_sky_w": [
+   22.558,
+   20.566,
+   22.271,
+   25.394,
+   21.413,
+   20.095,
+   21.335,
+   20.805
+  ],
+  "lateral_fly_sky_eat_worm_w": [
+   32.936,
+   31.961,
+   31.371,
+   33.087,
+   33.183,
+   33.238,
+   33.362,
+   32.257
+  ],
+  "attribution_lateral_at_read": [
+   0.2444444444444444,
+   0.336,
+   0.24264705882352938,
+   0.23437500000000006,
+   0.22962962962962963,
+   0.25179856115107907,
+   0.2657342657342658,
+   0.22047244094488186
+  ],
+  "attributable_worm_rate_vs_read_lesion_all": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "attributable_worm_rate_vs_lateral_learn": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "attributable_worm_rate_vs_permuted_exposure": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ "rows": [
+  {
+   "seed": 1,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1125
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1125,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.085,
+      "lateral_at_read": 0.2444444444444444
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0458
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0458,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0808,
+      "lateral_at_read": -0.7636363636363636
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 9.247,
+     "eat bug": 0.05,
+     "fly sky": 22.558,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 25.307,
+     "eat bug": 0.05,
+     "fly sky": 21.4,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 32.936,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 33.322,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.085
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1275
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1275,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.1025,
+      "lateral_at_read": 0.19607843137254907
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.115
+      ],
+      [
+       "bug",
+       0.0892
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.115,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0725,
+      "lateral_at_read": 0.36956521739130443
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0725
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0725,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0583,
+      "lateral_at_read": 0.19540229885057464
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1075
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1075,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1042
+      ],
+      [
+       "bug",
+       0.0975
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0817
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0817,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 61.6
+  },
+  {
+   "seed": 2,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1042
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1042,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0692,
+      "lateral_at_read": 0.336
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0333
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0333,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0767,
+      "lateral_at_read": -1.2999999999999998
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 7.247,
+     "eat bug": 0.05,
+     "fly sky": 20.566,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 27.309,
+     "eat bug": 0.05,
+     "fly sky": 20.014,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 31.961,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 32.397,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0692
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1192
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1192,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0942,
+      "lateral_at_read": 0.20979020979020985
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1017
+      ],
+      [
+       "bug",
+       0.0767
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1017,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0633,
+      "lateral_at_read": 0.3770491803278688
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0775
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0775,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.06,
+      "lateral_at_read": 0.22580645161290325
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1108
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1108,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1
+      ],
+      [
+       "bug",
+       0.0933
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0842
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0842,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1017
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1017,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 61.9
+  },
+  {
+   "seed": 3,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1133
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1133,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0858,
+      "lateral_at_read": 0.24264705882352938
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0683
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0683,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0975,
+      "lateral_at_read": -0.4268292682926831
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 9.191,
+     "eat bug": 0.05,
+     "fly sky": 22.271,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 20.564,
+     "eat bug": 0.05,
+     "fly sky": 18.705,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 31.371,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 32.963,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0858
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1067
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1067,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.075,
+      "lateral_at_read": 0.29687500000000006
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1058
+      ],
+      [
+       "bug",
+       0.09
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0725
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0725,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.065,
+      "lateral_at_read": 0.10344827586206887
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1067
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1067,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1108
+      ],
+      [
+       "bug",
+       0.0925
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0858
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0858,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0983
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0983,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 59.7
+  },
+  {
+   "seed": 4,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1067
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1067,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0817,
+      "lateral_at_read": 0.23437500000000006
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.055
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.055,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.1075,
+      "lateral_at_read": -0.9545454545454545
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 8.556,
+     "eat bug": 0.05,
+     "fly sky": 25.394,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 22.869,
+     "eat bug": 0.05,
+     "fly sky": 20.518,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 33.087,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 33.341,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0817
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1125
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1125,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0908,
+      "lateral_at_read": 0.1925925925925926
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1025
+      ],
+      [
+       "bug",
+       0.09
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0842
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0842,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0483,
+      "lateral_at_read": 0.42574257425742573
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1033
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1033,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.105
+      ],
+      [
+       "bug",
+       0.09
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0833
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0833,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0933
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0933,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 61.3
+  },
+  {
+   "seed": 5,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1125
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1125,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0867,
+      "lateral_at_read": 0.22962962962962963
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0425
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0425,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0792,
+      "lateral_at_read": -0.8627450980392155
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 9.402,
+     "eat bug": 0.05,
+     "fly sky": 21.413,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 27.012,
+     "eat bug": 0.05,
+     "fly sky": 22.912,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 33.183,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 32.836,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0867
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.0908
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0908,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0492,
+      "lateral_at_read": 0.45871559633027525
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1042
+      ],
+      [
+       "bug",
+       0.0867
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.08
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.08,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0433,
+      "lateral_at_read": 0.4583333333333333
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1025
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1025,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1108
+      ],
+      [
+       "bug",
+       0.0825
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1108,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0867,
+      "lateral_at_read": 0.2180451127819549
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0758
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0758,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0933
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0933,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 60.1
+  },
+  {
+   "seed": 6,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1158
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1158,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0867,
+      "lateral_at_read": 0.25179856115107907
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.045
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.045,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0717,
+      "lateral_at_read": -0.5925925925925928
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 9.254,
+     "eat bug": 0.05,
+     "fly sky": 20.095,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 27.07,
+     "eat bug": 0.05,
+     "fly sky": 22.208,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 33.238,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 32.86,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0867
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1108
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1108,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0908,
+      "lateral_at_read": 0.1804511278195489
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.11
+      ],
+      [
+       "bug",
+       0.0725
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.11,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0717,
+      "lateral_at_read": 0.34848484848484845
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0808
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0808,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.07,
+      "lateral_at_read": 0.1340206185567009
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1142
+      ],
+      [
+       "bug",
+       0.0917
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0833
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0833,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0967
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0967,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 61.4
+  },
+  {
+   "seed": 7,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1192
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1192,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0875,
+      "lateral_at_read": 0.2657342657342658
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0425
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0425,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0892,
+      "lateral_at_read": -1.0980392156862744
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 8.576,
+     "eat bug": 0.05,
+     "fly sky": 21.335,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 25.877,
+     "eat bug": 0.05,
+     "fly sky": 21.843,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 33.362,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 32.731,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0875
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.1042
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1042,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0742,
+      "lateral_at_read": 0.288
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1217
+      ],
+      [
+       "bug",
+       0.0725
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1217,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0792,
+      "lateral_at_read": 0.34931506849315075
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.07
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.07,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0692,
+      "lateral_at_read": 0.01190476190476198
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0933
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0933,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1175
+      ],
+      [
+       "bug",
+       0.0917
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1175,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0875,
+      "lateral_at_read": 0.2553191489361702
+     }
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0958
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0958,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.095
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.095,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 61.5
+  },
+  {
+   "seed": 8,
+   "hop": false,
+   "intact": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.1058
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1058,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0825,
+      "lateral_at_read": 0.22047244094488186
+     }
+    },
+    "canary/swim": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "lake",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "robin/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0442
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0442,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0892,
+      "lateral_at_read": -1.018867924528302
+     }
+    },
+    "trout/fly": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "sky",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "weight_audit": {
+    "canary": {
+     "eat worm": 8.762,
+     "eat bug": 0.05,
+     "fly sky": 20.805,
+     "swim lake": 0.05
+    },
+    "robin": {
+     "eat worm": 22.863,
+     "eat bug": 0.05,
+     "fly sky": 19.386,
+     "swim lake": 0.05
+    },
+    "lateral_fly_sky": {
+     "eat worm": 32.257,
+     "eat bug": 0.05,
+     "swim lake": 0.05
+    },
+    "lateral_eat_worm": {
+     "eat bug": 0.05,
+     "fly sky": 31.582,
+     "swim lake": 0.05
+    }
+   },
+   "read_lesion_all": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "read_lesion_lateral": {
+    "canary/eat": {
+     "patient": "worm",
+     "reason": "reached",
+     "admitted": [
+      [
+       "worm",
+       0.0825
+      ],
+      [
+       "bug",
+       0.0
+      ]
+     ],
+     "lesion": "lateral",
+     "lesion_held": true,
+     "attribution": null
+    }
+   },
+   "determinism_same_seed_read_equal": true,
+   "permuted": {
+    "canary/eat": {
+     "patient": "bug",
+     "reason": "reached",
+     "admitted": [
+      [
+       "bug",
+       0.0933
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0933,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0567,
+      "lateral_at_read": 0.3928571428571429
+     }
+    }
+   },
+   "lateral_learn": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "lateral_learn",
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "bridge_bat": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1075
+      ],
+      [
+       "bug",
+       0.0958
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.0642
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0642,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.05,
+      "lateral_at_read": 0.2207792207792207
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.1042
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.1042,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "bridge_bat_canary_first": {
+    "canary/eat": {
+     "patient": null,
+     "reason": "tie",
+     "admitted": [
+      [
+       "worm",
+       0.1017
+      ],
+      [
+       "bug",
+       0.0833
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "canary/swim": {
+     "patient": "lake",
+     "reason": "reached",
+     "admitted": [
+      [
+       "lake",
+       0.08
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.08,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    },
+    "trout/fly": {
+     "patient": "sky",
+     "reason": "reached",
+     "admitted": [
+      [
+       "sky",
+       0.0967
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": {
+      "rate_intact": 0.0967,
+      "rate_learned_pathways_cut": 0.0,
+      "learned_pathways": 1.0,
+      "rate_lateral_at_read_cut": 0.0,
+      "lateral_at_read": 1.0
+     }
+    }
+   },
+   "stage1_c2_c3_shapes": {
+    "otter/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "clam/eat": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "admitted": [],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "wolf/chase": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "otter",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    },
+    "bear/eat": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "clam",
+       0.0
+      ]
+     ],
+     "lesion": null,
+     "lesion_held": null,
+     "attribution": null
+    }
+   },
+   "wall_s": 60.4
+  }
+ ]
+}

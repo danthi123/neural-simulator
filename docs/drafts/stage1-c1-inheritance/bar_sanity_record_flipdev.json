@@ -5,10 +5,15 @@
  "kinds": {
   "null": "null",
   "null_as_fact": "null",
+  "null_bridge_lake": "null",
+  "null_bridge_tie": "null",
+  "null_no_hop": "null",
   "null_one_leak": "null",
   "null_one_lost": "null",
+  "null_robin_lake": "null",
   "null_wrong": "null",
   "perfect": "perfect",
+  "perfect_bat_lake": "perfect",
   "perfect_told": "perfect",
   "random": "null"
  },
@@ -16,10 +21,15 @@
  "n_pass": {
   "null": 0,
   "null_as_fact": 0,
+  "null_bridge_lake": 0,
+  "null_bridge_tie": 0,
+  "null_no_hop": 0,
   "null_one_leak": 0,
   "null_one_lost": 0,
+  "null_robin_lake": 0,
   "null_wrong": 0,
   "perfect": 1000,
+  "perfect_bat_lake": 1000,
   "perfect_told": 1000,
   "random": 0
  },
@@ -27,10 +37,15 @@
  "pass_rate": {
   "null": 0.0,
   "null_as_fact": 0.0,
+  "null_bridge_lake": 0.0,
+  "null_bridge_tie": 0.0,
+  "null_no_hop": 0.0,
   "null_one_leak": 0.0,
   "null_one_lost": 0.0,
+  "null_robin_lake": 0.0,
   "null_wrong": 0.0,
   "perfect": 1.0,
+  "perfect_bat_lake": 1.0,
   "perfect_told": 1.0,
   "random": 0.0
  },
@@ -43,6 +58,18 @@
    0.0,
    0.0038
   ],
+  "null_bridge_lake": [
+   0.0,
+   0.0038
+  ],
+  "null_bridge_tie": [
+   0.0,
+   0.0038
+  ],
+  "null_no_hop": [
+   0.0,
+   0.0038
+  ],
   "null_one_leak": [
    0.0,
    0.0038
@@ -51,11 +78,19 @@
    0.0,
    0.0038
   ],
+  "null_robin_lake": [
+   0.0,
+   0.0038
+  ],
   "null_wrong": [
    0.0,
    0.0038
   ],
   "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_bat_lake": [
    0.9962,
    1.0
   ],
@@ -68,15 +103,15 @@
    0.0038
   ]
  },
- "repo_head": "6a1864a8bbcc776651a0ccdb62874ed6ae6659fb",
+ "repo_head": "5040178c0c0e4b56a29ede5991be3cfc46222a20",
  "scorer_files": {
-  "research/runners/c1_flip_dev_check.py": "0195f7024cc7cd3590fb46b0f16f6dddcd9da55a5c6e931f81ce6bb2da1195af",
+  "research/runners/c1_flip_dev_check.py": "25c998e58ba5539efbba1f4cbbc0da1d28fa84d8de7d97edc2208c8d1f33e09c",
   "research/runners/stage1_exit_gate.py": "df627e7a769d63fa37c1491f60b93ac8d8ff85b1d405c9a54e4a9310d3541199"
  },
- "scorer_sha256": "56b7d7a4100675f7cadfbc709aaa3387df80f0f06e5a9549851afa9109ef361d",
+ "scorer_sha256": "cc5008da84f1a7caa1f06a4f3db62b7837aea8f47094f5bb8de8726addbe70ae",
  "seed": 0,
  "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_flipdev.py",
- "spec_sha256": "5562fb7bed5e15996a07f9526fc06bbcfb20d95f8b3018077285374b73ec6f46",
+ "spec_sha256": "7d430d1218c5b17a8bb7ff4a1c8af2125632040b4f3619ccb1e3b1b6dc4c7948",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -84,5 +119,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 148.0
+ "wall_s": 189.7
 }

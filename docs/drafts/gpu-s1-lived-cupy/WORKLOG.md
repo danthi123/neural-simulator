@@ -55,3 +55,35 @@ GATE `c238ff325a38e40a68b1f9751822630ff729377b` reachable (guard-at-pin verified
 - Next: commit branch (finding + `$O` + this WORKLOG), merge per RULING `routine-merges` (informational,
   RULING `results-without-pass`), RESULT `[T24] RESULT: cupy lived FAIL (5/6); numpy gate C3 FAIL;
   research/s1-lived-cupy @ <sha>`. Never push (sim-sync publishes main).
+
+- 2026-10-07 20:30 (Hermes) — **T24 data landing, per RULING `T24-data` (2026-10-04).** Staged `$O` + this
+  WORKLOG on the branch; `corpus-check-required` refused exactly the recorded paths — cited here by path,
+  these stay UNCOMMITTED on `research/s1-lived-cupy`, never re-stamped or bypassed:
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_episodic.json` (1.1 h),
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_episodic.json.part.json` (stale debris),
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_recall.rep0.json` (1.4 h) — the ruling's
+  "2 refused shards" plus the `.part` debris. The other 40 cells + dev + aggregate + sidecars commit now
+  (42 - 2 = 40; the two cells the gate refuses are s42 `lesion_episodic` + s42 `lesion_recall.rep0`).
+  Next: two MiMo Pro reviewers (RULING `routine-merges`), `tools/agent_merge.sh research/s1-lived-cupy`,
+  then RESULT `[T24] RESULT: cupy lived FAIL (5/6); numpy gate C3 FAIL; research/s1-lived-cupy @ <sha>`.
+
+- 2026-10-07 20:55 (Hermes) — **T24 data landing, RULING `T24-data` executed.** Branch `research/s1-lived-cupy`
+  @ `15d012909` = 40 gate-accepted cells + dev + aggregate + sidecars (86 files) + this WORKLOG; the 2
+  corpus-check-refused s42 shards + `.part` debris stay UNCOMMITTED on this branch (paths cited in the entry
+  above), never re-stamped or bypassed; main's pre-merge untracked copies of the 86 incoming files verified
+  `cmp`-identical and removed so the merge can write the tracked versions (content unchanged). Two MiMo Pro
+  reviewers (RULING `routine-merges`): adversarial verify-go **SURVIVES-WITH-CAVEAT**; merge approval
+  **APPROVE-MERGE** (`agent_merge_policy` pre-screen "OK, 87 routine change(s)"; aggregate/finding/WORKLOG
+  numbers verified identical). Caveats carried into the RESULT:
+  (1) `lesion_recall` is **UNDEFINED at pin `c238ff325`** (the env-flag never engages on the production bus
+  path — `2026-10-04-stage1-exit-gate-RESULT.md` Claude correction 2), so 0/6 and 6/6-reproduced must NOT read
+  as "recall not load-bearing";
+  (2) the landed finding's sentence "The numpy gate C3 FAILs at the same seeds" is **mischaracterized**: that
+  as-scored FAIL rested solely on the void lesion_recall clause, was corrected to UNDEFINED (instrument) and
+  re-measured PASS 6/6 at pin `7851dd220` (Amendment A1) — not a cross-backend FAIL corroboration; the
+  finding edit is §2-reserved, so a NEEDS line asks Claude;
+  (3) 2 of the 42 cells behind the counts are the uncommitted refused shards (s42 `lesion_episodic`,
+  s42 `lesion_recall.rep0`);
+  (4) seed 102 is a real miss, record complete (all 7 shards present, undefined_reasons=[], null_clean=true);
+  (5) backend provenance: shards record `backend='cupy'` from the request; only 2/42 `.prov.json` carry a
+  resolved-cupy child stamp, the rest show the parent-process numpy stamp.
