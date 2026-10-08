@@ -91,3 +91,12 @@
   [c5-on-arm-diagnose] RESULT (named turns + growth) is owed when the remaining groups land; the
   [s2-c5-build] battery score per HANDOFF §3-§5 stays a separate pending duty (its regression
   numbers stay VOID-ridden until the ON arm produces output).
+- 2026-10-08 11:41 (Hermes): c5-on-arm-diagnose table, row 2: g4 (turns vision,bgdots,dr_a,dr_b,dr_c)
+  exceeded memcap 10G on pool40 at 11:34 (rc=137) — second cap-exceed after g1 (well,question,unknown,
+  10:02). g2 (hold,held,scalar,open): log frozen since 11:00, no exit record yet — unconfirmed, next
+  wake resolves. g3 (confirm,contra,expect_q,episodic, log 11:31) and g5 (chase,selfinit,animacy,
+  verbsel,pmem_form, log 11:30) still writing; g6 (emo,bc_a,bc_b,rich_well,rich_open) dispatched —
+  its queue line is gone and its attempt-3 log has not started. All workers are the ON arm
+  (BRAIN_IDLE_REPLAY=1, rev bc66ccaa3, memcap 10, per-group --turns). No .time files for any group
+  (attempt-2/3 lines dropped GNU time; the memcap scope dies with the worker), so for the exceeded
+  groups peak RSS = the 10G cap by construction. RESULT still owed once g2/g3/g5/g6 resolve.
