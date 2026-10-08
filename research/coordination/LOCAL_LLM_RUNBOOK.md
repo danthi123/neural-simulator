@@ -1074,3 +1074,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-08 15:40 [affect-audit-retract] RESULT: branch research/affect-audit-retract @0434ae478 ready for Claude merge - 3 RETRACTED registrations (vocab NOGO=UNMEASURED pending re-measure, affect-pool verify verdicts, Gate-B valence-sign only); check_docs W1=0, no mark needed
