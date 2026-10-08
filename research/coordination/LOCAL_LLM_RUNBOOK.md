@@ -1057,3 +1057,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-07 18:46 [T1] RESULT: step4b grid 144/144 @9f625fd1c; PILOT-4B.md per-cell U/R/I + A/m/v tables + per-arm rollup committed on research/draft-ldc-outcome-timing (d9913121a). A: on pass 7-8/8, off undefined 8/8, cut fail 8/8; membrane 0 bad. Readings = 4b, yours
 - 2026-10-07 22:25 [affect-results-audit] INFO: filled (s1-c4-void): 6680/7410 pool results since 09-01 use runners importing affect_production_organ; list+method docs/drafts/affect-results-audit/RESULTS.md. Claude rules which are void.
+- 2026-10-07 23:43 [step4b-on-cells] ASK: per RULING step4b-below-chance: declared+staged the 96 off/cut cells (gate check=0 problems), but 27 ON-arm cells also hit the gate - left UNDECLARED/uncommitted; list in SPIKING-WORKLOG 10-07 23:55; blocks: full raw grid commit
