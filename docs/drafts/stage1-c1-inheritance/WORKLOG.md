@@ -38,3 +38,22 @@
   queued lines this wake (pool_queue.sh withdraw _stage1_c1_category/gate/s42, expect 2, logged
   in research/queue/withdrawn.log). Neither had dispatched. The GAP_CLOSURE board entry that
   asked for the re-queue is stale; NEEDS [c1-requeue] filed for Claude to fix the board.
+
+- 2026-10-08 10:05 (Hermes) STEP 4 (gate_hop scored): all 54 gate_hop cells landed (workstation 26 +
+  pool dl4g243/dl5d243/mxl1462drl 11/9/10; the aggregate row = this server). Score from $P (runners
+  byte-identical 2c2d55952<->main): `stage1_c1_category --aggregate .../gate_hop --hop --seeds
+  42,43,44,100,101,102` -> **C1 gate_hop PASS** (correct 6/6, lesion effect 6/6, reproduced 6/6,
+  permuted 6/6; flip-readiness READY: safety 6/6, specificity 6/6; informational arms: off inherits
+  0/6, changes a C1 probe 6/6, lesion_lateral_learn 0/6, lesion_lateral_read 5/6, lesion_draw 6/6).
+  aggregate.json + provenance at raw/_stage1_c1_category/gate_hop/. Validity is host-class
+  independent (same pinned revision's runner; provisioned LTM/corpus on every node; where_ran NOTE
+  honoured: cited counts span workstation+pool shards, no provisioner-absent input).
+  [c1-gatehop] RESULT filed with DEV_SHA 2c2d55952.
+  STEP 4 (flipdev): `c1_flip_dev_check --score raw/_stage1_c1_flipdev` -> UNDEFINED (0/8 defined):
+  every dev seed's on/cat_told, on/lived, on/val_novel report flag_on_not_engaged (flag-on turns
+  missing the category_inherit trace), seed 4 additionally off/word + on/lived missing. Remedy
+  (HANDOFF 4 + scorer docstring), run ONCE: the 2 missing cells re-queued from
+  c1_flipdev_2c2d55952.tsv (both had died on wspool 00:17), and the invalid groups' cells (46 files
+  incl. off-side pairs) moved to raw/_stage1_c1_flipdev__invalid_attempt1/ and re-queued -> 48
+  flipdev lines queued (no /usr/bin/time in this tsv). Rescore + [c1-flipdev] RESULT next wake when
+  the re-runs land; if flag-on still does not engage, that is a defect verdict (no further re-run).
