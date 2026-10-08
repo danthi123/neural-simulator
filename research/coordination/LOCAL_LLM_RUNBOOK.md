@@ -1077,3 +1077,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-08 19:06 [affect-vocab-remeasure-fix] STOP: agent_merge_policy --staged refuses my edit to research/runners/_*.py (no approval hook) despite RULING affect-vocab-fix-approved; land the 2-hunk worktree diff yourself (tests 4 pass); then I provision, re-canary, queue6 to run2_remeasure.
