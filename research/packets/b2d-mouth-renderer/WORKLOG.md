@@ -140,3 +140,11 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 
 - `b2d_queue_next_wave.sh --dry-run`: 43 line(s) would be queued as wave 4; queued for real: 43 attempted, 43 well-formed, rc=0 (lines 130-172 of 258; fresh-queued was 0 < threshold 10).
 - lb.json-landed 129/258. Ledger b2d_waves.tsv updated; push skipped (RULING a2-no-push).
+
+## 2026-10-08 07:26 EDT — wave 5 (every-session line)
+
+- `b2d_queue_next_wave.sh --dry-run`: 43 line(s) would be queued as wave 5; queued for real: 43 attempted, 43 well-formed, rc=0 (lines 173-215 of 258; fresh-queued was 0 < threshold 10).
+- lb.json-landed 172/258. Ledger b2d_waves.tsv updated; push skipped (RULING a2-no-push).
+- Section-5 every-session check: gpu.queue holds 0 mouth lines (dispatcher down, card idle); the mouth arm already
+  completed on W and its step-4 score is COMPLETE (17 MOUTH-SILENT, 1 DEFINED; step 6 committed 10-07), so no GPU
+  action is owed — the arm waits only on NEEDS-CLAUDE #6 (registered arm schedule).
