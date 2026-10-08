@@ -55,3 +55,14 @@ GATE `c238ff325a38e40a68b1f9751822630ff729377b` reachable (guard-at-pin verified
 - Next: commit branch (finding + `$O` + this WORKLOG), merge per RULING `routine-merges` (informational,
   RULING `results-without-pass`), RESULT `[T24] RESULT: cupy lived FAIL (5/6); numpy gate C3 FAIL;
   research/s1-lived-cupy @ <sha>`. Never push (sim-sync publishes main).
+
+- 2026-10-07 20:30 (Hermes) — **T24 data landing, per RULING `T24-data` (2026-10-04).** Staged `$O` + this
+  WORKLOG on the branch; `corpus-check-required` refused exactly the recorded paths — cited here by path,
+  these stay UNCOMMITTED on `research/s1-lived-cupy`, never re-stamped or bypassed:
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_episodic.json` (1.1 h),
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_episodic.json.part.json` (stale debris),
+  `research/findings/raw/_stage1_exit/gpu_lived_cupy/s42/lived__lesion_recall.rep0.json` (1.4 h) — the ruling's
+  "2 refused shards" plus the `.part` debris. The other 40 cells + dev + aggregate + sidecars commit now
+  (42 - 2 = 40; the two cells the gate refuses are s42 `lesion_episodic` + s42 `lesion_recall.rep0`).
+  Next: two MiMo Pro reviewers (RULING `routine-merges`), `tools/agent_merge.sh research/s1-lived-cupy`,
+  then RESULT `[T24] RESULT: cupy lived FAIL (5/6); numpy gate C3 FAIL; research/s1-lived-cupy @ <sha>`.
