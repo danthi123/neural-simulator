@@ -72,3 +72,22 @@
   interpretation (Claude's). Per the scorer docstring ("re-run that cell once; otherwise FAIL naming
   each violation"): [c1-flipdev] RESULT FAIL filed with DEV_SHA 2c2d55952. The gate_hop PASS stands;
   the flip stays blocked on this dev-bar failure (next method = Claude's call, RULING c1-gatehop).
+- 2026-10-08 14:06 (Hermes) DIAGNOSE (RULING c1-flipdev-diagnose): one dev seed (s1), the failing
+  cell (cat_told), flag-ON, run with the live per-turn category_inherit trace read straight from
+  the chat object (server `_BRAIN_CHATS` + `category_inherit_chat.turn_trace`) — script + log kept
+  at scratch/fx1_run.py, fx1_run_seed1_cat_told_on.json (the landed cell's own wall was 990s;
+  this run reproduced it). Three answers: (1) the inherit pathway did NOT fire for t_bird_eat —
+  its observe row still carries the PREVIOUS turn's tuple (svo salmon/isa/fish, member_slot 3 =
+  t_salmon_isa's row) while t_fish_eat afterwards got member_slot 4, i.e. nothing was ever
+  observed/stored for bird/eat/worm, and read = null (teach turn). All other turns' traces are
+  correct: robin→canary observe rows slots 0-5, c_bird_eat read reason=agent_never_observed
+  (downstream of the same gap), probes read with rates. (2) The flag changed nothing for this
+  turn: t_bird_eat's flag-ON reply is byte-identical to its flag-OFF reply (same 14 keys incl.
+  not_understood/repair/abstained, same body) — the abstain answer is identical either side.
+  (3) The stamp belongs at webapp/server.py:6265: the comprehension-repair payload (built
+  6239-6252, returned 6265, its own comment says "RETURNS here, before the main assembly sites")
+  exits before both stamp sites (6934-6935 rich, 7313-7314 single-fact), so an abstaining turn
+  carries no category_inherit key. Trigger note: role-binding failed on "the bird eats the worm"
+  (patient unresolved) while the structurally identical "the fish eats the bug" bound fine.
+  Reading: a missing reply stamp + missing observe record on the ABSTAIN path, not a missing
+  flip behaviour — the pathway behaves on every parsed turn. No flip, no scorer change (RULING).

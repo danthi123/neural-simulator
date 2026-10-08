@@ -1070,3 +1070,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-08 14:07 [c1-flipdev-diagnose] RESULT: t_bird_eat flag-on w/ live trace: its observe row is still salmon/slot3 (fish took slot4) = pathway never fired; reply byte-identical ON/OFF; stamp missing at repair early-return server.py:6265 (before 6934/7313); detail: c1 WORKLOG 14:06.
