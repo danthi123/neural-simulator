@@ -1078,3 +1078,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-08 19:22 [affect-vocab-remeasure-provision] STOP: needs revisions/cc7091bbe provisioned on pool40/41/42: pool_provision.sh line 164 rsync: command not found (Hermes image has no rsync, MIGRATION 36/118 - run from W or Claude on S); then I re-canary (--out-dir run2_remeasure) + queue6.
