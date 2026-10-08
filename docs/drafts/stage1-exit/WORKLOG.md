@@ -223,3 +223,16 @@ is recorded in the marker rather than a create-then-close.
   perfect 0.987 (ci95 0.978-0.992), perfect_exact 1.000, null_control_ignored 0.000, null_lesion_inert 0.000, random 0.000.
 - tests/test_stage1_exit_gate.py: 14/14 pass after merging main into this branch (the scrambled-draw tests read the constant, none pin 0.10).
 - Branch claude-review/stage1-sync = research/stage1-exit-gate + main merged; WORKLOG entries from both sides kept in date order.
+
+- 2026-10-07 22:25 (Hermes, driver) — Affect-results audit filled (approved in s1-c4-void + the
+  10-04 board-inserts ruling: "list the results, change nothing, and Claude rules on which are
+  void"). Scan: every `*.json.prov.json` under research/findings/raw/ with started >= 2026-09-01
+  and a pool marker (argv[0] under /derisk-pool/ or env POOL_JOB_ID) = 7410 results, 84 distinct
+  runners; static import-closure BFS (ast, within-repo, cap 400 files) for affect_production_organ:
+  6680 results flagged across 50 runners (730 not flagged). 18 runner names had no file in this
+  checkout (deleted/other-ref scripts + literal "unknown") and are counted flagged, conservative,
+  and listed as such. Method + full path list: docs/drafts/affect-results-audit/RESULTS.md.
+  NEEDS [affect-results-audit] INFO filed (2026-10-07 22:25) for Claude's void ruling.
+  Also this wake: c4rerun duty confirmed complete (72/72 landed 10-05, scored, recorded as
+  "FAIL as registered" in research/findings/2026-10-04-stage1-exit-gate-RESULT.md line 134);
+  provision.ok for research/stage2-exit-gate (pool41/42/40/wspool) recorded from the wake event.
