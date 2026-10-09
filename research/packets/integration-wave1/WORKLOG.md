@@ -193,5 +193,18 @@ opposite of the harm the check guards). The flips themselves are §2 (flipping a
   `tests/test_integration_wave1_anchors.py` 146 passed, 3 skipped (1.90s). Status prints
   d6 on / wm off / xedge on.
 - Why it waited: the 2026-10-08 03:42 commit attempt was lane-starvation BLOCKED (5/5 CPU lanes
-  UNSERVED; a `.lane_waiver` file is §2-denied, and `_shared_queue_root()` always evaluates main's
-  queue), budget freed ~18:47. Validation pending shared prereg steps B, F (PROVISIONAL, branch only).
+  UNSERVED; at the time I mis-read the `.lane_waiver` route as §2-denied — corrected in the landing
+  note below; `_shared_queue_root()` evaluates main's queue), budget freed ~18:47.
+  Validation pending shared prereg steps B, F (PROVISIONAL, branch only).
+- CORRECTION 2026-10-09: writing `.lane_waiver` is NOT §2-denied — RULING `lane-builds` (2026-10-07)
+  grants the driver standing permission (CLASS NO-READY-WORK + lane_check evidence as the reason +
+  a same-wake `[lane-waiver] INFO` NEEDS; never for a lane with a ready line). Used exactly that at
+  00:57 in main's queue root (lane_check: B/C/E queued=0; gate idle B/C/D/E, 0 keyed lines;
+  D's rows = stale register + CLASS L keepalives the gate discounts); `[lane-waiver] INFO` filed
+  (main 12c14c11e).
+- LANDED 2026-10-09 01:05 EDT: commit `cfce97fe1` — 8 files (5 flip files + this WORKLOG +
+  `board_sync.json` + `.vikunja_sync`) through the full pre-commit suite, never --no-verify.
+  `board-sync-on-status-change` cleared by the real Vikunja receipt: next-rung task #245 created +
+  Learning-labelled (wire + run the shared-prereg validations before any merge); no task closed by the
+  provisional flip (#228, #202 stay open). Branch clean afterwards; never pushed; RESULT filed on main
+  under `[flip-commit-blocked]`.
