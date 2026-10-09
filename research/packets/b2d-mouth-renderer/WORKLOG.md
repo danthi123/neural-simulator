@@ -205,3 +205,11 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   reads as 42/43 done (todo=1) -> the next real run resumes wave 6, finds nothing unhandled,
   prints "no unqueued line left", and exits 0. **No wave-7/unregistered-line risk** once
   fresh-queued drops under 10; the prereg set cannot grow past 258.
+
+## 2026-10-09 19:40 — §6 status + FIRST live below-threshold queue run (Hermes, driver session)
+
+- stub arm: **249/258** lb.json (9 outstanding: 7 queued + 2 running, stale=0); mouth 18/18.
+- fresh-queued=7 dropped under THRESHOLD 10, so ran the real `b2d_queue_next_wave.sh` (not
+  --status) as the HANDOFF's every-session line prescribes: "no unqueued b2d0929 line left
+  in b2d_jobs.txt", **wave 7: 0 line(s) attempted**, rc=0, ledger unchanged at 258 rows.
+  The registry cap verified live — the prereg battery stays at 258; no NEEDS.
