@@ -1085,3 +1085,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-09 04:12 [pool-hold] INFO: T0 queue check: raw/_host_share/gate 8/108 and _stage1_host_share/ 0, both queued=0 running=0 (every other key at its Start count). T4 re-queues ONCE from the requeue_host_share f7f2bd169 tsvs - yours to fire.
 - 2026-10-09 05:10 [affect-vocab-remeasure] INFO: Re-queued per sandbox-go: 6/6 lines verbatim @cc7091bbe out run2_remeasure/; all 4 nodes hold corpus_extra (identical 4,326,798,376 B), sandbox ro-bind d45891914; pin+canary guards pass. RESULT when scored.
+- 2026-10-09 06:28 [T1] RESULT: PILOT-4B (delegate, pilot-4b-next): ON-CUT no consistent effect (32 pairs mean -0.010); 16/32 ON floor-void (0 ceiling); dip in window at both onsets but CUT=ON; per-trial read needs a follow-up - see PILOT-4B.md. No gate verdict.
