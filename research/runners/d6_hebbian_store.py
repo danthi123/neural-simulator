@@ -100,7 +100,7 @@ _OFF = ("0", "false", "no", "off", "")
 # reader is byte-identical to its old `os.environ.get(FLAG, "").strip().lower() in _ON` (tests/
 # test_integration_wave1_anchors.py pins the truth table). Flipping it to True makes each flag ON unless explicitly set
 # off (0/false/no/off/empty). The lesion BRAIN_D6_HEBBIAN_FREEZE and BRAIN_D6_ENGRAM_PRUNE are NOT governed by it.
-_D6_LEARN_DEFAULT_ON = False
+_D6_LEARN_DEFAULT_ON = True
 D6_ANCHORED_FLAGS = ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME")
 
 

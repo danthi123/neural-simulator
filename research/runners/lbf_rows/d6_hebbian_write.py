@@ -27,7 +27,7 @@ EXTRA_TURNS are read by onebrain_regression_battery with ast (never imported), s
 """
 from __future__ import annotations
 
-REQUIRED_ENV = {"BRAIN_D6_HEBBIAN_STORE": "1", "BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}
+# REQUIRED_ENV lifted by the iw1 flip (tools/integration_wave1_flip.py): REQUIRED_ENV = {"BRAIN_D6_HEBBIAN_STORE": "1", "BRAIN_D6_ENGRAM_VOCAB": "1", "BRAIN_D6_ENGRAM_READTIME": "1"}
 
 EXTRA_TURNS = [
     ("iw1d6_teach", "the wolf hunts the deer", "iw1d6", True, None, False),

@@ -257,3 +257,10 @@ tasks needed). deep-research-at-wall cleared: local record (corpus check logged)
   test branch only, validation pending; no task closed by the provisional flip.
 ## 2026-10-05  cloud Claude session 7: NOT reconciled here (no Vikunja access from the cloud). Hermes: on #232, #141 and #209 record "merged ON by default (session 7), claim NARROWED, PARTIAL" per RULING iw2-merged; add a task for the affect-marker-spiking-wta S2 bisect.
 ## 2026-10-05  cloud Claude session 7 (decision): NOT reconciled here. Hermes: on #232 note "stays ON at PARTIAL (RULING iw2-decision); empty belief store now abstains; fb-store-lesion registered, six gate seeds owed"; add a task for running research/findings/2026-10-05-fb-store-lesion-PREREGISTRATION.md.
+## 2026-10-09  integration-wave1 provisional flip (board_sync gate)
+- next-rung task #245 added (Learning label): wire + run the pre-registered
+  validations and acceptance bars for the d6-hebbian-write +
+  xedge-surprise-worldmodel default-ON flip (branch research/integration-wave1,
+  PROVISIONAL ledger rows). No task closed by the provisional flip: #228
+  (learn-through-use) and #202 (surprise world-model) stay open — not merged
+  to main yet.

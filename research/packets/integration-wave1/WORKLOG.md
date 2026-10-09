@@ -184,3 +184,14 @@ Verdict: neither flip hurts the answer rate with the default off -- criterion CL
 lesion abstaining 6/6 while intact answers 2/2 is the load-bearing shape (off answers LESS than on: the
 opposite of the harm the check guards). The flips themselves are §2 (flipping a default): NEEDS
 [answer-rate-off] RESULT filed on main with these numbers.
+
+## 2026-10-08 23:59 EDT - iw1 flip RE-APPLIED after the waiver budget freed (driver: Hermes)
+
+- Re-applied per ack-1008 (`tools/integration_wave1_flip.py apply d6-hebbian-write
+  xedge-surprise-worldmodel --date 2026-10-08`; wm-focus-bind HELD OFF, `iw1-wmf-hold`). Guard
+  `tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel"` exit 0;
+  `tests/test_integration_wave1_anchors.py` 146 passed, 3 skipped (1.90s). Status prints
+  d6 on / wm off / xedge on.
+- Why it waited: the 2026-10-08 03:42 commit attempt was lane-starvation BLOCKED (5/5 CPU lanes
+  UNSERVED; a `.lane_waiver` file is §2-denied, and `_shared_queue_root()` always evaluates main's
+  queue), budget freed ~18:47. Validation pending shared prereg steps B, F (PROVISIONAL, branch only).

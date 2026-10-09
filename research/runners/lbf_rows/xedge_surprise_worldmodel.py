@@ -25,7 +25,7 @@ EXTRA_TURNS are read by onebrain_regression_battery with ast (never imported), s
 """
 from __future__ import annotations
 
-REQUIRED_ENV = {"BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": "1"}
+# REQUIRED_ENV lifted by the iw1 flip (tools/integration_wave1_flip.py): REQUIRED_ENV = {"BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": "1"}
 
 EXTRA_TURNS = [
     ("iw1swm_p0", "that was wonderful, I am so happy", "iw1swm", True, None, False),
