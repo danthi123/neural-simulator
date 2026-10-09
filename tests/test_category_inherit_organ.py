@@ -123,9 +123,27 @@ def test_server_installs_only_behind_the_flag():
     src = open(os.path.join(os.path.dirname(__file__), "..", "webapp", "server.py")).read()
     i = src.find("_ci_mod.install(chat")
     assert i > 0 and "if _category_inherit_on():" in src[i - 400:i]
+    # RULING c1-stamp-fix: ONE write of the stamp (in the helper), called before EVERY return path.
     import re
-    assert len(re.findall(r'(?<![_\w])resp\["category_inherit"\]', src)) == 1      # the rich path
-    assert src.count('_resp["category_inherit"]') == 1                                 # the single-fact path
+    assert src.count('resp["category_inherit"] =') == 1                     # the helper's single write
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(payload, chat\)", src)) == 1  # abstain early return
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(resp, chat\)", src)) == 1     # the rich path
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(_resp, chat\)", src)) == 1    # single-fact path
+
+
+def test_category_inherit_stamp_both_paths():
+    """RULING c1-stamp-fix: the stamp is present exactly when the organ fired this turn (an observe
+    or read record exists) and absent otherwise — the invariant that lets a missing stamp be read
+    as 'the pathway never fired'. The three server call sites are pinned in the test above."""
+    from types import SimpleNamespace
+
+    chat = SimpleNamespace()
+    assert CI.turn_stamp(chat) is None                       # nothing fired this turn -> nothing to stamp
+    chat._last_category_inherit = {"patient": "worm", "reason": "reached"}
+    st = CI.turn_stamp(chat)                                 # the read fired -> the stamp carries the decision
+    assert st is not None and (st.get("read") or {}).get("patient") == "worm", st
+    chat2 = SimpleNamespace(_ci_last_observe={"observed": True})   # a teach turn fired the observe leg
+    assert (CI.turn_stamp(chat2) or {}).get("observe") == {"observed": True}
 
 
 # ── (2) the spiking organ at a dev seed ──────────────────────────────────────────────────────────────────────────

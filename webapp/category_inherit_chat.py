@@ -150,3 +150,13 @@ def turn_trace(chat):
     """The per-turn trace attached to the response as `category_inherit` (flag on only)."""
     return {"observe": getattr(chat, "_ci_last_observe", None),
             "read": getattr(chat, "_last_category_inherit", None)}
+
+
+def turn_stamp(chat):
+    """RULING c1-stamp-fix: the trace only when the organ engaged this turn (an observe or read
+    record exists), None otherwise — the server attaches `category_inherit` exactly when the
+    pathway fired, so a MISSING stamp always means it never fired."""
+    tr = turn_trace(chat)
+    if tr.get("observe") is not None or tr.get("read") is not None:
+        return tr
+    return None
