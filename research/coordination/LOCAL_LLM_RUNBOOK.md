@@ -1079,3 +1079,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-08 22:55 [affect-vocab-sandbox-corpus] STOP: 6 re-measure lines (cc7091bbe) died rc=1: sandbox hides prereg corpus corpus_extra/fineweb_edu.txt (ENOENT; file on nodes; canary passed). section2: expose corpus_extra ro or move corpus+prereg path. see FAILURE_LOG ad2262312. i requeue 6.
