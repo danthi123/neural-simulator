@@ -6881,3 +6881,5 @@ _lbf_rows_live_organs_smoke (4) and _open_ended_gated_turn_smoke (5).
   Data: research/findings/raw/_affect_learned_vocab/run2_remeasure/ (stragglers s44/s100
   scp-pulled; pool_sync lacks rsync on S).
   RESULT line filed in the runbook under [affect-vocab-remeasure].
+
+- 2026-10-09 08:06 data note: the 16 shuf replica weights (s44/s100 r1-8 + extras) arrived after the verdict commit; the missing-replica caveat above is RESOLVED (36 shuf npz+prov now present).
