@@ -196,3 +196,12 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   `pool_sync.sh`/`copy_results.sh` call `rsync`, which is absent on this host (rc=1); the
   periodic node->tree sync delivers cells anyway (curiosity came through on its own), and
   any stragglers can be no-clobber scp'd as done for the marker bisect. Handle at 258.
+
+## 2026-10-09 18:40 — §6 status + wave-cap probe (Hermes, driver session)
+
+- stub arm: **245/258** lb.json (13 outstanding: 11 queued + 2 running, stale=0); mouth 18/18.
+- Probed the below-threshold future: `b2d_queue_next_wave.sh` queues only unhandled lines
+  from the 258-line `b2d_jobs.txt` registry (line 131-132 skip handled/landed), and wave 6
+  reads as 42/43 done (todo=1) -> the next real run resumes wave 6, finds nothing unhandled,
+  prints "no unqueued line left", and exits 0. **No wave-7/unregistered-line risk** once
+  fresh-queued drops under 10; the prereg set cannot grow past 258.
