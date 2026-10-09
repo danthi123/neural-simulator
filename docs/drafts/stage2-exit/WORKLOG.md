@@ -166,3 +166,5 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   after excluding timing keys; only <=1-ULP curiosity-novelty float noise (0.0 vs +-1.1e-16,
   0.9532050931328421 vs ...422) and elapsed/RSS differences. Committed workstation copies
   govern those 4 names; main's 11 untracked files stay put for the future merge.
+
+- 2026-10-09 09:05 EDT — T14 Start met (11 files in dev/s7, landed Oct 6); [stage2-dev] INFO filed on main.
