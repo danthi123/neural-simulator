@@ -173,3 +173,16 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - stub arm: **232/258** lb.json (26 outstanding, all queued, stale=0); mouth 18/18.
 - fresh-queued=25 >= threshold 10 and waves 1-6 cover the full set -> **no wave queued,
   no ledger change**. Progress steady (~1 cell/10 min); no ended-badly wake since 11:35.
+
+## 2026-10-09 15:35 — pool41 kill (rc=137) diagnosed: auto-retried, nothing to do (Hermes)
+
+- Woke to "1 pool job ended badly on pool41: killed (memory?)". Traced to the b2d stub line
+  `b2d0929/s102/curiosity-followup` (mem_gb=8): attempt 1 got rc=137 at 15:20:33, and the
+  dispatcher **re-dispatched the same cell at 15:21:29** — it was live and writing intact
+  arms at 15:30. Per HANDOFF 6 no hand re-queue; the pool did it.
+- Health sweep (read-only ssh): pool41 has exactly one lb-less dir (curiosity, running);
+  pool42's lb-less dir `s102/reconsolidation` is its 15:28:04 fresh start (files=0, not dead);
+  pool40/wspool carry no b2d0929 dirs (its 3 historical rc=137 rows are Oct-8 other work).
+  Accounting closes: 258 - 233 landed = 22 queued + 2 running + 1 retry-running.
+- If attempt 2 also dies, step 8's INCOMPLETE list takes it via step 9's `rerun_stub_cell`
+  row (once per cell). No NEEDS, no ledger change.
