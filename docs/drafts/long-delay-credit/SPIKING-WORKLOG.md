@@ -563,3 +563,13 @@ grid add (STEP4B preamble).
   void_floor_ceiling = 1, flagged in the draft. Delivered: docs/drafts/long-delay-credit/PILOT-4B.md on
   main e39a3d67e + [T1] RESULT (262 chars). No gate verdict, no six-seed claim; T1 stops here (Claude
   reads the RESULT; per T1-grid Claude checks void_floor_ceiling on the route-off cells).
+- 2026-10-09 08:06 EDT — ruling pilot-4b-next (a)+(b), MiMo Pro delegate (41 calls), driver
+  spot-checks: ON void rows 16/32 exact, s8 credit on30 ON 0.49/CUT 0.52 exact, trace
+  e^(-t/1000) = 0.970/0.924/0.861/0.820 exact. (a) Per-seed paired tables (4 blocks x 8 seeds):
+  aggregate mean -0.0103 (defined-28 -0.0121), sign 15+/4=/13-. ON void 16/32 = ALL floor
+  (62/62 flagged synapses floor, 0 ceiling; 46/62 str_d2) -> what saturates: the corticostriatal
+  weight floor. (b) The omission dip sits INSIDE the eligibility window at both onsets on every
+  dip trial (80<=250, 200<=250; trace survival 0.92-0.97 on30 / 0.82-0.86 on150); depth
+  ON=CUT=0.029; per-trial depth/latency fields ABSENT from cells (only last-100 means).
+  Diagnosis: timing is not the failure - missing observability + no behavioural credit.
+  RESULT [T1] filed on main. Sources: p4bn_analysis.py / p4bn_addendum.py (scratch).
