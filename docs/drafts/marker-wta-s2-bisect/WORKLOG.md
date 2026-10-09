@@ -56,3 +56,23 @@ Re-queued all four (same tags/seeds/env, mem_gb=8, max_age_h=48) at 11:26; dispa
 11:27:57-11:28:18 (pool40 x2 = s7 pair, wspool x2 = s44 pair); pool depth 34 at add.
 Node stderr (~/derisk-pool/sim/autodispatch.out) is not readable from this host (no pool
 ssh config here; dispatcher runs remotely as user sim) - diagnosis is from path evidence.
+
+## 2026-10-09 11:50 EDT — attempt 2 rc cause found; attempt 3 dev pair running; gate-seed canary launched
+
+- **Attempt 2 (11:27) died at argparse, not at corpus.** Node stderr on pool40/wspool:
+  `--seed: invalid int value: 's7'` (rc=2 = the fast-fail classifier's "bad command").
+  The tag name (`s7`) was passed where the runner wants an int. The corpus `ln -s` also
+  failed (`Read-only file system`: the pool sandbox mounts the revision read-only,
+  writable only `research/findings/raw`) — but that was harmless noise: marker cells read
+  `data/corpus/*` (simplewiki.txt + run3 frames, both provisioned in the revision's data/,
+  same files the reference cells ran with); `corpus_extra/fineweb_edu.txt` belongs to the
+  affect-vocab runner only and is not needed here (today's sandbox bind covers that one).
+- **Attempt 3 = numeric seeds, no ln.** Both dev-seed-7 lines queued and dispatched:
+  11:42:16 pool40 (control), 11:42:24 wspool (marker-surface=1); pool40 stderr shows
+  `RNG initialized with seed: 7` + brain build → the line runs past the gate that killed 1-2.
+- **Gate-seed pair (s44) blocked by the pool canary rule** (`pool_queue.sh add` refuses a
+  42/43/44/100/101/102 line until a canary of the same runner+revision passed ON A POOL
+  NODE). Launched `pool_canary.sh run auto '<s44 control line>' --wait-s 1500`
+  (job `proc_eb33c86f20d7`); canary output is redirected to `_pool_canary/` by design.
+  The s44 lines cite the covering prereg `2026-09-24-production-default-battery-B2b-PREREGISTRATION.md`
+  — the same prereg historical marker-cell lines cite (provenance check: claims ledger).
