@@ -6867,3 +6867,17 @@ fallback (VOID) and the +38 reward-value battery arms; the
 superseded-smoke `unknown` attribution; the path-based faculty subsets for
 load_bearing_fraction (133), onebrain_regression_battery (425),
 _lbf_rows_live_organs_smoke (4) and _open_ended_gated_turn_smoke (5).
+
+## Re-measure RESULT (2026-10-09) — run2_remeasure, RULING affect-vocab-remeasure / affect-vocab-sandbox-go
+
+- 2026-10-09 verdict via ONE MiMo Pro delegate (RULING models), spot-checked by the driver
+  (credit/void-rate values recomputed from the eval jsons, exact match). **MEASURED, NO-GO.**
+  Prereg GO iff gates G1-G4 pass + all preconditions; ALL preconditions hold (valence map present
+  at git_sha cc7091bbec79d45c763f5775ab92f20baa5b865c, provenance byte-identical to the run1
+  attempt). G1 6/6; G4 6/6; G2 4/6 (s43/s102 shuffled mean D .058/.070 exceed the .05 bar);
+  G3 0/6 (frac_within .675-.875 below the .95 bar). Not void: the audit's defect (map missing)
+  is repaired in this run, so the capability now has a measured verdict where before it was
+  UNMEASURED. Six seeds 42/43/44/100/101/102, pin cc7091bbe, corpus ro-bound (sandbox-go).
+  Data: research/findings/raw/_affect_learned_vocab/run2_remeasure/ (stragglers s44/s100
+  scp-pulled; pool_sync lacks rsync on S).
+  RESULT line filed in the runbook under [affect-vocab-remeasure].
