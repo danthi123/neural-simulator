@@ -536,3 +536,11 @@ grid add (STEP4B preamble).
   insert, no measured value touched. The 144-cell dev_pilot_4b grid is now fully in git (96 controls
   301851198 + 48 ON 34e482673). NOT in this commit: the separate clear_* family (27 cells + sidecars,
   still untracked, several gate-flagged) — no ruling covers it yet. RESULT filed on main 613edd284.
+- 2026-10-09 04:25 EDT (Hermes, driver) — T1 Step 4a bank: the Step 4 instrument sweep is committed
+  on main as e77f31e0b (243 cells + 243 .prov sidecars, 2.6 MB, exact HANDOFF message "rc=2
+  chosen=null (not evidence)"; never re-run Step 4). The below_chance gate blocked the bank on 155
+  of 243 cells (every test arm under declared chance 0.5); per the gate's own remedy (authoritative,
+  same text-level splice as step4b-on-cells) each carries "below_chance": true + a reason saying the
+  credit gate never ran (signed-DA precondition, prereg 7.3) so the row measures the instrument, not
+  the hypothesis — no measured value touched, gate re-check 0 problems, 486 files through the full
+  gates. Remaining T1 work: PILOT-4B.md + [T1] RESULT per RULING pilot-4b-next.
