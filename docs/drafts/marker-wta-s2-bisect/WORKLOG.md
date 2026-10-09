@@ -43,3 +43,15 @@ byte-identically), dev seed 7 first then LB-known seed 44. Four pool lines dispa
 bisect-head-surface1. Static rule-out holds: the other three in-range path commits are
 5ce76fdfd (provenance only), 5b5ea1b74 (congruence gate, default off),
 42ba63177 (gated answer, default off).
+
+## 2026-10-09 11:34 EDT — attempt 1 died: absolute cd; four lines re-queued
+All four pool jobs ended rc!=0 within minutes. Cause: mkline expanded `~` under the
+driver shell, embedding /opt/data/home/derisk-pool/revisions/<sha>; node homes are
+/home/node (pool40/41/42) and /srv/simpool (wspool), so the cd failed instantly.
+All 3030 historical pool lines use the literal `cd ~/derisk-pool/...` form; mine were
+the only 4 absolute ones ever. Guard passes locally (rc=0). Corpus lives at
+~/derisk-pool/corpus_extra/fineweb_edu.txt (4,326,798,376 B) on all 4 nodes, outside
+revision dirs, so each line now also creates corpus_extra symlink if absent.
+Re-queued all four (same tags/seeds/env, mem_gb=8, max_age_h=48) at 11:33; pool depth 34.
+Node stderr (~/derisk-pool/sim/autodispatch.out) is not readable from this host (no pool
+ssh config here; dispatcher runs remotely as user sim) - diagnosis is from path evidence.
