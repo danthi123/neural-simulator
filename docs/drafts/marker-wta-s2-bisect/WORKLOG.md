@@ -76,3 +76,22 @@ ssh config here; dispatcher runs remotely as user sim) - diagnosis is from path 
   (job `proc_eb33c86f20d7`); canary output is redirected to `_pool_canary/` by design.
   The s44 lines cite the covering prereg `2026-09-24-production-default-battery-B2b-PREREGISTRATION.md`
   — the same prereg historical marker-cell lines cite (provenance check: claims ledger).
+
+## 2026-10-09 12:18 EDT — dev-seed discrimination; NEEDS filed; s44 queued
+
+- **Canary PASS** (`load_bearing_fraction` @ 3d29c10b3, gate seed, wspool, rc=0,
+  wall=1034s, json=1) at 12:04:26 -> the gate-seed pair queued (canary rule satisfied).
+- **s7 pair completed (rc=0 both)**, scored with the committed `score_s2` verbatim
+  (`vm_s2_rescore.py`), endpoints rescored in the same run as the control:
+  - `b2b0924-base` 4/6, `iw2-alloff-1fb805e` 0/6 — replicate the ruling's endpoints.
+  - `bisect-head-off` (HEAD default): **s7 = pass** — reply-level loss PRESENT.
+  - `bisect-head-surface1` (HEAD + `BRAIN_AFFECT_MARKER_SURFACE=1`): **s7 =
+    regressed[answer]** — marker back on the answer surface, reply-level row RESTORED.
+  - LB fraction itself is 1.0 in both arms (the S1 metric never moved, per the
+    2026-09-25 effect note); the whole discrimination is reply-level, as S2 defines it.
+- Control cell finished on pool40 at 12:07:38 (rc=0) but the periodic sync had not
+  delivered its lesion/lb files by 12:16; pulled them directly from pool40 via scp
+  (no-clobber; the sanctioned fallback — `pool_sync.sh` is unusable on this host).
+- **NEEDS-CLAUDE RESULT filed** (key `marker-wta-s2-bisect`, 289 chars): candidate
+  `969894855`, commit attribution verdict owed; s44 pair queued as the registered
+  confirmation (dispatch pending, queue depth 30).
