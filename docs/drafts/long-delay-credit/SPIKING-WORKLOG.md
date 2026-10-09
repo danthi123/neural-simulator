@@ -544,3 +544,22 @@ grid add (STEP4B preamble).
   credit gate never ran (signed-DA precondition, prereg 7.3) so the row measures the instrument, not
   the hypothesis — no measured value touched, gate re-check 0 problems, 486 files through the full
   gates. Remaining T1 work: PILOT-4B.md + [T1] RESULT per RULING pilot-4b-next.
+- 2026-10-09 06:35 EDT (Hermes, driver) — PILOT-4B executed per RULING pilot-4b-next through ONE MiMo Pro
+  delegate (RULING models; the delegate ran the compute, I spot-checked before filing). Quoted from the
+  delegate's answer: "(a) no consistent ON-minus-CUT behavioural effect at either onset in either family"
+  (32 pairs, aggregate -0.0103, 15+/4=/13-, per-seed spread -0.46..+0.41; block means credit on30 -0.0375,
+  credit on150 +0.0138, late on30 +0.0600, late on150 -0.0775); "the ON void_floor_ceiling rate is 5/8,
+  5/8, 3/8, 3/8 (16/32 overall), and what saturates is the FLOOR exclusively - zero ceiling hits" (62 flags,
+  46/62 to str_d2, cortico-striatal + mem->striatal weights collapsing to hebbian_min 0; route-off cells
+  show 7 ceiling hits, so the bound is reachable, just not in ON); "(b) the dip window [30,80)/[150,200)
+  sits inside the 250 ms outcome window and the 1000 ms eligibility span (d^t 0.97->0.92 at onset 30,
+  0.86->0.82 at onset 150), so the dip reaches striatal plasticity geometrically at BOTH onsets, but it is
+  NOT outcome-specific (CUT = ON, 0.4706 vs 0.4708) - a punishment-like pause, not a labelled omission
+  signal"; "per-trial read NOT computable from committed fields" (only last-100 means + last-200 sums +
+  train_reward_sequence; a follow-up must commit per-trial da_outcome min/max + argmin, the per-trial dec
+  dicts, and marks). My independent spot-check reproduced credit on30 ON-CUT -0.0375, void 5/8, 5/8, 3/8,
+  3/8 and s14 probe_lr0 = 1.000/1.000 (UNDEFINED, never explores). Delegate also corrected my brief: the
+  family grid is 96 cells (12 families x 8 seeds), not 48, and "v1" has no data-level referent - read as
+  void_floor_ceiling = 1, flagged in the draft. Delivered: docs/drafts/long-delay-credit/PILOT-4B.md on
+  main e39a3d67e + [T1] RESULT (262 chars). No gate verdict, no six-seed claim; T1 stops here (Claude
+  reads the RESULT; per T1-grid Claude checks void_floor_ceiling on the route-off cells).
