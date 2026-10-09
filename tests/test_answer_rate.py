@@ -104,6 +104,30 @@ def test_paired_tags_per_seed_and_missing_flag_off_cell(tmp_path):
                     "--strict"]) == 3
 
 
+def test_paired_off_arm_reads_the_lesion_arm_beside_the_intact_arms(tmp_path):
+    """RULING answer-rate-off: the off side = the LESION arm in the ON-tag dir (alloff abstains by design via
+    REQUIRED_ENV), the label carries `off = lesion arm`, and exactly one of --off-tag/--off-arm is required."""
+    for s in AR.SEEDS:
+        d = tmp_path / "R" / ("s%d" % s) / "d6-hebbian-write"
+        _arm(d, "intact_a_q.json", ANS if s != 42 else ABS)                       # on abstains only on seed 42
+        _arm(d, "intact_b_q.json", ANS)
+        _arm(d, "lesion_d6_hebbian_write.json", ANS)                              # the lesion arm answers everywhere
+        _arm(d, "lb.json", ABS)                                                   # lb.json is never read as an arm
+    base = str(tmp_path)
+    rep = AR.report(AR.paired_per_seed(base, "R", None, "d6-hebbian-write",
+                                       off_arm="lesion_d6_hebbian_write"),
+                    label="d6-hebbian-write: R vs off-arm lesion_d6_hebbian_write (off = lesion arm)")
+    assert rep["n_measured"] == 6 and rep["hurt_seeds"] == ["42"]                 # off n=1 (the lesion arm only)
+    assert rep["per_seed"]["43"]["off"]["n"] == 1 and rep["per_seed"]["43"]["off"]["answer_rate"] == 1.0
+    assert "off = lesion arm" in AR.render(rep)
+    cmd = ["paired", "--base", base, "--on-tag", "R", "--off-arm", "lesion_d6_hebbian_write", "--faculty",
+           "d6-hebbian-write"]
+    assert AR.main(cmd) == 0                                                      # reported, exit 0
+    assert AR.main(cmd + ["--strict"]) == 4                                       # FLIP-HURTS-ANSWERS on seed 42
+    assert AR.main(["paired", "--base", base, "--on-tag", "R", "--faculty", "d6-hebbian-write"]) == 2   # neither
+    assert AR.main(cmd + ["--off-tag", "R"]) == 2                                            # both -> rejected
+
+
 # ── wired into the registered flip scorer, reported beside the verdict ──────────────────────────────────────────
 def _iw2_fixture(tmp_path):
     t = importlib.import_module("test_integration_wave2_anchors")

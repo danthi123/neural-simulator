@@ -1,0 +1,1862 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 100,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": null,
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "wm-binding-referent-focus",
+      "turn": "wmf_a1_ask",
+      "kind": "neural-lesion-opt-in",
+      "flag": "BRAIN_MULTIREF_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": null,
+      "diffs": [
+        {
+          "pair": "A",
+          "fields": [
+            "recalled_svo",
+            "abstained"
+          ],
+          "session_1": [
+            null,
+            true
+          ],
+          "session_2": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            false
+          ],
+          "answer_1": "I don't know about that.",
+          "answer_2": "The dog chases cat."
+        },
+        {
+          "pair": "B",
+          "fields": [
+            "recalled_svo",
+            "abstained"
+          ],
+          "session_1": [
+            null,
+            true
+          ],
+          "session_2": [
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            false
+          ],
+          "answer_1": "I don't know about that.",
+          "answer_2": "The cat eats fish."
+        }
+      ],
+      "treatment_diffs": 2,
+      "control_diffs": 0,
+      "attributable_fraction": null,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "mechanism_flag": "BRAIN_MULTIREF_FOCUS_BIND",
+      "mechanism_flag_resolves": true,
+      "env": {
+        "on": {
+          "BRAIN_MULTIREF_FOCUS_BIND": "1",
+          "BRAIN_MULTIREF_LESION_SCOPE": "recur"
+        },
+        "off": {
+          "BRAIN_MULTIREF_FOCUS_BIND": "0",
+          "BRAIN_MULTIREF_LESION_SCOPE": "recur"
+        }
+      },
+      "lesion_env": {
+        "BRAIN_MULTIREF_LESION": "1"
+      },
+      "counted_faculty_key": "wm-binding-referent-focus",
+      "source_faculty_lesion_key": "wm-binding-advanced",
+      "note": "LB_WMB_FOCUS_PROBE: two order-swapped sessions per pair (dog/cat -> 'what does it chase'; cat/bird -> 'what does it eat'); the ordinary reply must follow the HELD referent (T) and the confined hold lesion must remove the difference (X). OFF arms = the positional route, must read not load-bearing. kind neural-lesion-opt-in: a default-OFF mechanism, excluded from the production fraction.",
+      "wmf_gate_on": {
+        "load_bearing": true,
+        "verdict": "regressed",
+        "report": {
+          "A": {
+            "R1_intros_in_scope_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "R2_asks_ordinary_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "RES_intact_resolved_to_held": true,
+            "RES_resolved": [
+              "cat",
+              "dog"
+            ],
+            "RES_pair_differs": true,
+            "L_lesion_hold_dead": true,
+            "L_lesion_holds_at_ask": true,
+            "N_null_clean": true,
+            "C_reply_follows_resolution": true,
+            "R_lesion_reproduced": true,
+            "T_intact_pair_differs": true,
+            "X_lesion_pair_same": true,
+            "T_answer_surface_differs": true,
+            "X_answer_surface_same": false
+          },
+          "B": {
+            "R1_intros_in_scope_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "R2_asks_ordinary_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "RES_intact_resolved_to_held": true,
+            "RES_resolved": [
+              "bird",
+              "cat"
+            ],
+            "RES_pair_differs": true,
+            "L_lesion_hold_dead": true,
+            "L_lesion_holds_at_ask": true,
+            "N_null_clean": true,
+            "C_reply_follows_resolution": true,
+            "R_lesion_reproduced": true,
+            "T_intact_pair_differs": true,
+            "X_lesion_pair_same": true,
+            "T_answer_surface_differs": true,
+            "X_answer_surface_same": false
+          }
+        }
+      },
+      "wmf_gate_off": {
+        "load_bearing": false,
+        "verdict": "pass",
+        "report": {
+          "A": {
+            "R1_intros_in_scope_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "R2_asks_ordinary_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "L_lesion_hold_dead": true,
+            "N_null_clean": true,
+            "R_lesion_reproduced": true,
+            "T_intact_pair_differs": false,
+            "X_lesion_pair_same": true,
+            "T_answer_surface_differs": true,
+            "X_answer_surface_same": false
+          },
+          "B": {
+            "R1_intros_in_scope_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "R2_asks_ordinary_every_arm": {
+              "intact_a": true,
+              "intact_b": true,
+              "lesion": true,
+              "lesion_rep": true
+            },
+            "L_lesion_hold_dead": true,
+            "N_null_clean": true,
+            "R_lesion_reproduced": true,
+            "T_intact_pair_differs": false,
+            "X_lesion_pair_same": true,
+            "T_answer_surface_differs": true,
+            "X_answer_surface_same": false
+          }
+        }
+      },
+      "failing_direction_ok": true,
+      "wmf_mechanism": {
+        "on": {
+          "intact_a": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "dog",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "cat",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": null,
+              "abstained": true,
+              "inner_state_readout": null,
+              "answer": "I don't know about that."
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "dog"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "dog",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "bird"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "bird",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": null,
+              "abstained": true,
+              "inner_state_readout": null,
+              "answer": "I don't know about that."
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "bird",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "cat",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "intact_b": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "dog",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "cat",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": null,
+              "abstained": true,
+              "inner_state_readout": null,
+              "answer": "I don't know about that."
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "dog"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "dog",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "bird"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "bird",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": null,
+              "abstained": true,
+              "inner_state_readout": null,
+              "answer": "I don't know about that."
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "bird",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": "cat",
+              "multiref.resolved_register": 1,
+              "multiref.resolved_pool": "w7",
+              "multiref.margin": 0.066111,
+              "multiref.register_rates": [
+                0.06125,
+                0.065,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.029444,
+                0.095556,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "lesion": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "lesion_rep": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": "resolve",
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": 0.000556,
+              "multiref.register_rates": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "multiref.wta_rates": [
+                0.005556,
+                0.005278,
+                0.006389,
+                0.005833,
+                0.004444
+              ],
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          }
+        },
+        "off": {
+          "intact_a": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "dog",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "dog"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "bird"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "bird",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "intact_b": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "dog",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "dog"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "cat",
+                "1": "bird"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": "bird",
+                "1": "cat"
+              },
+              "multiref.hold_alive_min": 0.058333333333333334,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "lesion": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          },
+          "lesion_rep": {
+            "wmf_a1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog cats the walked"
+            },
+            "wmf_a1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the dog chases the cat"
+            },
+            "wmf_a2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "dog",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat dogs the walked"
+            },
+            "wmf_a2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The dog chases cat."
+            },
+            "wmf_b1_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "bird",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat birds the walked"
+            },
+            "wmf_b1_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the cat eats the fish"
+            },
+            "wmf_b2_intro": {
+              "multiref.kind": "maintain",
+              "multiref.n_referents": 2,
+              "multiref.recovered": {
+                "0": null,
+                "1": null
+              },
+              "multiref.hold_alive_min": 0.0,
+              "multiref.lesion_scope": "recur",
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "bird",
+                "cat",
+                "walked"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "the bird cats the walked"
+            },
+            "wmf_b2_ask": {
+              "multiref.kind": null,
+              "multiref.n_referents": null,
+              "multiref.recovered": null,
+              "multiref.hold_alive_min": null,
+              "multiref.lesion_scope": null,
+              "multiref.resolved": null,
+              "multiref.resolved_register": null,
+              "multiref.resolved_pool": null,
+              "multiref.margin": null,
+              "multiref.register_rates": null,
+              "multiref.wta_rates": null,
+              "recalled_svo": [
+                "cat",
+                "eat",
+                "fish"
+              ],
+              "abstained": false,
+              "inner_state_readout": null,
+              "answer": "The cat eats fish."
+            }
+          }
+        }
+      }
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 0,
+    "n_exercised": 0,
+    "n_load_bearing": 0,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": null,
+  "load_bearing_faculties": [],
+  "not_load_bearing_faculties": []
+}

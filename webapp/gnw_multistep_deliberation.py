@@ -135,7 +135,8 @@ def _all_concepts(composer) -> list:
     (read straight off `composer.kb`, no substrate retrieval). Order-preserving-ish (sorted) for determinism."""
     seen = set()
     kb = getattr(composer, "kb", [])
-    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+    from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+    if _d6_readtime_on():
         # D6 (default-OFF): the concepts are those whose engram reactivates NOW, not every host kb record.
         from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
         kb = _d6_visible_kb(composer) or []

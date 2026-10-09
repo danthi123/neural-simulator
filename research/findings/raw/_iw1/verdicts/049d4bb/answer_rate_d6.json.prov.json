@@ -1,0 +1,11 @@
+{
+  "run_id": "answer_rate_d6_20261007",
+  "runner": "tools/answer_rate.py",
+  "args": ["paired", "--on-tag", "iw1-R-d6-049d4bb", "--off-tag", "iw1-alloff-049d4bb", "--faculty", "d6-hebbian-write", "--json"],
+  "cwd": "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave1",
+  "sim_backend": "numpy",
+  "backend": "numpy",
+  "device": "cpu",
+  "analysis_only": true,
+  "note": "report tool: reads existing arm files only, no simulation executed; SIM_BACKEND unset (numpy default)"
+}

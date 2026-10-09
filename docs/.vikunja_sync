@@ -272,3 +272,10 @@ tasks needed). deep-research-at-wall cleared: local record (corpus check logged)
   instead of a create-then-close.
 - ADDED #244 "Redesign the feeling test's scrambled-values control (Claude)" (Emotion & self-awareness,
   p3, due 2026-10-24): the C4 amended control owed before attempt 2, owner sign-off required.
+## 2026-10-09  integration-wave1 provisional flip (board_sync gate)
+- next-rung task #245 added (Learning label): wire + run the pre-registered
+  validations and acceptance bars for the d6-hebbian-write +
+  xedge-surprise-worldmodel default-ON flip (branch research/integration-wave1,
+  PROVISIONAL ledger rows). No task closed by the provisional flip: #228
+  (learn-through-use) and #202 (surprise world-model) stay open — not merged
+  to main yet.

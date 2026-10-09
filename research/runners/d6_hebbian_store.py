@@ -89,6 +89,30 @@ import numpy as np
 from sim.backend import to_host
 
 _ON = ("1", "true", "yes", "on")
+_OFF = ("0", "false", "no", "off", "")
+
+# PRODUCTION-DEFAULT ANCHOR (integration wave 1, 2026-09-29; packet research/packets/integration-wave1/d6-hebbian-write/).
+# ONE constant sets the default of the three flags the D6 capability gate v3 ran TOGETHER (BRAIN_D6_HEBBIAN_STORE,
+# BRAIN_D6_ENGRAM_VOCAB, BRAIN_D6_ENGRAM_READTIME), and every reader of those flags in the repo routes through
+# `d6_flag` below (webapp/server.py, webapp/d6_hebbian_chat.py, webapp/gnw_multistep_deliberation.py,
+# webapp/gnw_thought_swap.py, research/runners/one_brain_composer.py), so a flip cannot switch one reader on and leave
+# another off (research/FAILURE_LOG.md 2026-08-27, the inner-gate-defaults-off class). While the anchor is False every
+# reader is byte-identical to its old `os.environ.get(FLAG, "").strip().lower() in _ON` (tests/
+# test_integration_wave1_anchors.py pins the truth table). Flipping it to True makes each flag ON unless explicitly set
+# off (0/false/no/off/empty). The lesion BRAIN_D6_HEBBIAN_FREEZE and BRAIN_D6_ENGRAM_PRUNE are NOT governed by it.
+_D6_LEARN_DEFAULT_ON = True
+D6_ANCHORED_FLAGS = ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME")
+
+
+def d6_flag(name: str) -> bool:
+    """The anchored reader for the three D6 flags in D6_ANCHORED_FLAGS (see the anchor comment above)."""
+    if name not in D6_ANCHORED_FLAGS:
+        raise KeyError("d6_flag governs only %s, not %r" % (", ".join(D6_ANCHORED_FLAGS), name))
+    v = os.environ.get(name)
+    if _D6_LEARN_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in _OFF)
+    return v is not None and v.strip().lower() in _ON
+
 
 # The encoding window (resonate steps) and learning rate. The window matches the composer's own per-op resonate
 # window (period + 8); eta is large enough that every synapse whose instructive drive is non-degenerate saturates at
@@ -100,7 +124,7 @@ W_MAX = 1.0
 def hebbian_store_enabled() -> bool:
     """`BRAIN_D6_HEBBIAN_STORE` in {1,true,yes,on} -> fact blocks are written by the local Hebbian rule. Default OFF
     (unset) -> the direct composite copy, byte-identical to before this module existed."""
-    return os.environ.get("BRAIN_D6_HEBBIAN_STORE", "").strip().lower() in _ON
+    return d6_flag("BRAIN_D6_HEBBIAN_STORE")
 
 
 def hebbian_freeze_lesioned() -> bool:
@@ -199,7 +223,7 @@ def engram_vocab_enabled() -> bool:
     the heard fact to the host `kb` list whether or not any synapse changed, and `ChatBrain._refresh_facts` builds
     `agents_set`/`actions_set`/`patients_set` (read by curiosity novelty, common ground, the thread swap) from that
     list. That is a host record doing the brain's remembering. With this flag the sets come from the substrate."""
-    return os.environ.get("BRAIN_D6_ENGRAM_VOCAB", "").strip().lower() in _ON
+    return d6_flag("BRAIN_D6_ENGRAM_VOCAB")
 
 
 def engram_held(comp, block_idx) -> dict:
@@ -274,7 +298,7 @@ def engram_readtime_enabled() -> bool:
     DECLARED SHORTCUT: the held/not-held decision is a HOST THRESHOLD (`readout > floor`) on a genuine neural read
     (the readout activity after kicking the block's context cell) -- the same class as an argmax over spike rates.
     The kb list still maps block index -> words (host bookkeeping); what it no longer decides is membership."""
-    return os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in _ON
+    return d6_flag("BRAIN_D6_ENGRAM_READTIME")
 
 
 def _store_digest(comp):
