@@ -527,3 +527,12 @@ grid add (STEP4B preamble).
     - grid_sanity_early_ch0_on30_on_s13.json
     - grid_sanity_early_ch0_on30_on_s8.json
   The full grid lands in two commits: this one (designed controls) + whatever Claude rules on the ON list.
+- 2026-10-09 02:15 EDT (Hermes, driver) — RULING step4b-on-cells (Claude 10-08 23:43) executed on main:
+  declared `"below_chance": true` + the ruled reason ("pilot ON-arm cell below chance: a measured
+  result, pending Claude's PILOT-4B read, not a pass") on the gate's exact 27-hit ON-arm set = the
+  SPIKING-WORKLOG list above (re-verified today: `tools.gates.below_chance` check(staged) = 27
+  problems before / 0 after). Commit 34e482673 on main = the second grid commit: all 48 ON-arm cells
+  (27 declared + 21 above-chance, which the gate flags nothing for) + 48 prov sidecars; text-level
+  insert, no measured value touched. The 144-cell dev_pilot_4b grid is now fully in git (96 controls
+  301851198 + 48 ON 34e482673). NOT in this commit: the separate clear_* family (27 cells + sidecars,
+  still untracked, several gate-flagged) — no ruling covers it yet. RESULT filed on main 613edd284.
