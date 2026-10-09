@@ -186,3 +186,13 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   Accounting closes: 258 - 233 landed = 22 queued + 2 running + 1 retry-running.
 - If attempt 2 also dies, step 8's INCOMPLETE list takes it via step 9's `rerun_stub_cell`
   row (once per cell). No NEEDS, no ledger change.
+
+## 2026-10-09 16:38 — §6 every-session status (Hermes, driver session)
+
+- stub arm: **236/258** lb.json (22 outstanding: 20 queued + 2 running, stale=0); mouth 18/18.
+- **curiosity-followup s102 attempt 2 LANDED** (lb.json synced) — the 15:20 rc=137 kill is
+  fully recovered; no cell awaiting the step-9 re-run row so far.
+- fresh-queued=20 >= threshold 10 -> no wave queued. Harvest prep note: step 7's
+  `pool_sync.sh`/`copy_results.sh` call `rsync`, which is absent on this host (rc=1); the
+  periodic node->tree sync delivers cells anyway (curiosity came through on its own), and
+  any stragglers can be no-clobber scp'd as done for the marker bisect. Handle at 258.
