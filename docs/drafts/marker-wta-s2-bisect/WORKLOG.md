@@ -31,3 +31,15 @@ bisecting.
   (both pins have pool_provision.sh) then `tools/pool_queue.sh` with the registered line shape
   `<epoch>\tcd ~/derisk-pool/revisions/<sha> && ...` (dev seed 7 first, then seed 44, dev-first honored).
 - Scratch probe: /opt/data/cache/scratch/vm_s2_rescore.py (read-only; imports the committed scorer).
+
+## 2026-10-09 11:17 EDT — four controlled cells dispatched (queue)
+Old pins 969894855/0c86f45b refused as stale (provision.json, 15:06Z) so a literal
+per-commit bisect needs an owner-approved one-off (flip-F precedent) = not driver-callable.
+Intervention instead, all on one provisionable revision (research/marker-s2-bisect =
+3d29c10b3, state=ok on pool40/41/42/wspool): control (marker default OFF) vs
+BRAIN_AFFECT_MARKER_SURFACE=1 (code's own docstring: restores pre-2026-09-25 behavior
+byte-identically), dev seed 7 first then LB-known seed 44. Four pool lines dispatched
+11:11 to pool40 (s7 x2) and wspool (s44 x2); shards bisect-head-off /
+bisect-head-surface1. Static rule-out holds: the other three in-range path commits are
+5ce76fdfd (provenance only), 5b5ea1b74 (congruence gate, default off),
+42ba63177 (gated answer, default off).
