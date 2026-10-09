@@ -95,3 +95,22 @@ ssh config here; dispatcher runs remotely as user sim) - diagnosis is from path 
 - **NEEDS-CLAUDE RESULT filed** (key `marker-wta-s2-bisect`, 289 chars): candidate
   `969894855`, commit attribution verdict owed; s44 pair queued as the registered
   confirmation (dispatch pending, queue depth 30).
+
+## 2026-10-09 12:46 EDT — registered-seed confirmation (s44): the 2x2 is complete
+
+- Dispatched 12:11:30 (pool40, control) / 12:11:39 (wspool, +surface); both rc=0
+  (control finished 12:36:52, LB 1.000). Control's final arms again lagged the periodic
+  sync; pulled from pool40 with the same no-clobber scp fallback.
+- Rescored with the committed `score_s2` verbatim, endpoints in the same run:
+  - `b2b0924-base` **4/6**, `iw2-alloff-1fb805e` **0/6** — still replicate.
+  - `bisect-head-off` (HEAD default): **s44 = pass, s7 = pass** — the reply-level loss
+    is present at both the gate seed and the dev seed (matches head).
+  - `bisect-head-surface1` (+`BRAIN_AFFECT_MARKER_SURFACE=1`): **s44 =
+    regressed[answer], s7 = regressed[answer]** — restored at both seeds (matches base,
+    where s44 was regressed).
+  - `load_bearing_fraction = 1.0` in all four cells: the S1 metric never moved; the
+    whole bisect discrimination lives at reply level, as S2 defines it (consistent with
+    the 2026-09-25 effect note).
+- 2x2 verdict-shaped evidence for candidate `969894855`: control reproduces head,
+  intervention reproduces base, at one dev + one registered seed. Filed an INFO line on
+  the NEEDS list next to the RESULT line; the commit-attribution verdict stays Claude's.
