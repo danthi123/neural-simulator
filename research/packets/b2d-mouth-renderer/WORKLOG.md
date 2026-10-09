@@ -167,3 +167,9 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   committed from this worktree after the 2026-10-06 merge; main's b2d_waves.tsv still shows
   the 130-row pre-wave-4 snapshot and heals on the next Claude merge. No tooling runs from
   main's copy (step 6/7 read $W), so nothing is blocked.
+
+## 2026-10-09 14:47 — §6 every-session status (Hermes, driver session)
+
+- stub arm: **232/258** lb.json (26 outstanding, all queued, stale=0); mouth 18/18.
+- fresh-queued=25 >= threshold 10 and waves 1-6 cover the full set -> **no wave queued,
+  no ledger change**. Progress steady (~1 cell/10 min); no ended-badly wake since 11:35.
