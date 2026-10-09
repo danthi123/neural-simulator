@@ -1080,3 +1080,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-08 22:55 [affect-vocab-sandbox-corpus] STOP: 6 re-measure lines (cc7091bbe) died rc=1: sandbox hides prereg corpus corpus_extra/fineweb_edu.txt (ENOENT; file on nodes; canary passed). section2: expose corpus_extra ro or move corpus+prereg path. see FAILURE_LOG ad2262312. i requeue 6.
+- 2026-10-09 00:05 [flip-commit-blocked] STOP: flip re-applied 23:59 (guard 0, 146 pass 3 skip, 6 staged); commit still lane-starvation BLOCKED (4/5 lanes idle, no honest ready job, waiver denied to driver, 18:47 refill insufficient). need lanes served / valid waiver / carve-out; commit msg ready.
