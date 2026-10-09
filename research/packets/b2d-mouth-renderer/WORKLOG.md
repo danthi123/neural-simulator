@@ -157,3 +157,13 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   1 DEFINED, committed 10-07); still awaiting NEEDS-CLAUDE #6. gpu.queue: 0 lines, card idle, dispatcher down
   (start is denied to the local model; nothing registered waits on it).
 - No ledger change this session (no wave queued).
+
+## 2026-10-09 13:50 — §6 while-running status (Hermes, driver session)
+
+- stub arm: **231/258** lb.json landed (27 outstanding, all queued); mouth arm **18/18**.
+- `b2d_queue_next_wave.sh --status` from $W: fresh-queued=26 stale-queued=0 — at/above the
+  threshold 10 and waves 1-6 cover all 258 registered lines, so **no wave queued**.
+- ledger note: waves 4-6 (commits 898a03fa1, bc8aa27db, b922d6142) live on this branch,
+  committed from this worktree after the 2026-10-06 merge; main's b2d_waves.tsv still shows
+  the 130-row pre-wave-4 snapshot and heals on the next Claude merge. No tooling runs from
+  main's copy (step 6/7 read $W), so nothing is blocked.
