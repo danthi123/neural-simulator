@@ -35,6 +35,7 @@ import numpy as np
 from research.runners._vocal_action_selector_gate import (
     CHANNELS,
     DIRECT_PATH_GATE,
+    INDIRECT_PATH_GATE,
     _indices,
     _region,
     _set_equal_tonic_current,
@@ -103,6 +104,11 @@ class CreditParams:
     soft_bounds: int = 0
     soft_bound_n_up: float = 1.0
     soft_bound_n_down: float = 1.0
+    # A2 inverted-call (RULING a2-inverted-call 2026-10-10): dev lesion of the indirect
+    # pathway OUTPUT. 1 => build_credit_selector closes INDIRECT_PATH_GATE so
+    # str_d2_{channel} -> gpe_{channel} carries no current (weights untouched). 0 = OFF =
+    # gate stays at its 1.0 default = byte-identical behaviour.
+    lesion_d2_gpe: int = 0
     # dopamine production from SNc firing
     da_sensitivity: float = 80.0
     da_window_ms: float = 30.0
@@ -228,6 +234,9 @@ def build_credit_selector(seed, params: CreditParams = CreditParams(), *, elig_t
     bridge = build_selector_bridge(int(seed), config, commit_enable_nmda=True, extra_regions=regions,
                                    extra_pathways=paths, core_config_updates=updates)
     bridge.set_transmission_gate(DIRECT_PATH_GATE, 1.0)
+    # RULING a2-inverted-call dev lesion: str_d2_{channel} -> gpe_{channel} closed when the
+    # driver's params carry lesion_d2_gpe=1 (CreditParams field, default 0 = open = inert).
+    bridge.set_transmission_gate(INDIRECT_PATH_GATE, 0.0 if getattr(params, "lesion_d2_gpe", 0) else 1.0)
     restrict_clip_to_plastic(bridge)
     return bridge, config
 

@@ -860,3 +860,38 @@ RULING a2-test2-diagnose.
 
 RESULT filed in NEEDS [T1]; the sign-bug / homeostat-contingency / rethink CALL is
 Claude's (RULING a2-test2-diagnose).
+
+### 2026-10-10 17:18 — a2-inverted-call (RULING): channel-map + eligibility audit (2)(3), lesion switch (1) built, dev cells next.
+RULING a2-inverted-call (Claude 2026-10-10): the sign is right and choice is INVERTED;
+dev-only probes (1) D2-output lesion (2) channel-map audit (3) eligibility-tag audit, one RESULT.
+2. **Channel map (`_vocal_action_selector_gate.py` lines ~268-300).** proposal_k →
+   str_d1_k and str_d2_k (the plastic credit pathways); str_d1_k → gpi_k (GABA, the
+   gated DIRECT_PATH_GATE, weight 15) = Go-k. str_d2_k → gpe_k (GABA, density 0.60,
+   weight 2.5) is str_d2's ONLY output; gpe_k → selector_stn (GABA 0.3), selector_stn
+   → gpi_k (exc 0.4, shared single STN region — the indirect suppression is therefore
+   partly non-specific across channels), gpi_k → thal_k (GABA 12). Net: **NoGo-k
+   suppresses the SAME action k** (canonical), NOT the other one; the cross-channel
+   suppression is FSI-level (proposal_k → str_fsi_k → GABA onto str_d1/2_other) plus
+   the shared selector_reset input (GABA onto every channel region, reset targets list
+   lines ~336-345 — the str_d2_→thal grep hit is that list, not a pathway).
+3. **Eligibility tagging (`_ldc_credit_omission.py`/`bg_corticostriatal_credit.py`
+   core_config + `sim/bridge.py`).** Both configs set `reward_eligibility_from_coactivity
+   = True`; neither installs the optional `cp_reward_eligibility_synapse_indices` scope
+   nor any `BrainRegion.action_index` tag. So the trace at outcome = pre×post coactivity
+   (20 ms pre trace, 1 s tau) times the GLOBAL snc-signed DA on ALL plastic synapses:
+   the chosen channel's str_d1_k AND str_d2_k input synapses are both tagged, with
+   `cp_d1_d2_sign` (+1 D1-targeting / −1 D2-targeting, Cluster B.1) mirroring D2's
+   sign — exactly what the sign unit test measured (D1 +, D2 − under positive DA).
+   There is no action-specific scoping in the credit runner's wiring.
+1. **Lesion switch (default OFF, byte-inert).** `INDIRECT_PATH_GATE =
+   "vocal_selector_indirect_path"` on the str_d2_k → gpe_k pathway (defaults to 1.0 =
+   open, same machinery as DIRECT_PATH_GATE); `CreditParams.lesion_d2_gpe = 0`
+   (`_ldc_credit_omission.py`, auto-CLI free via `fields()`); both
+   `build_credit_selector` copies call `set_transmission_gate(INDIRECT_PATH_GATE,
+   0.0 if lesion_d2_gpe else 1.0)`. Smoke (S, numpy, 938 neurons/46,594 synapses):
+   lesion=0 → DIRECT 1.0 / INDIRECT 1.0; lesion=1 → DIRECT 1.0 / INDIRECT 0.0
+   (690 indirect-path synapses gated). Sign unit test re-run at tip: 1 passed (58.5 s).
+   `tests/test_ldc_soft_bounds_identity.py` launched at tip (bg, verdict pending).
+Next: sync branch with main, provision the new tip, queue dev cells on_s7_sb1 +
+on_s8_sb1 at `--soft-bounds 1 --lesion-d2-gpe 1` (matched to the test-2 sb1 ON cells;
+readout = does accuracy return toward the sb0 reference 0.59/0.51?). One RESULT at readout.

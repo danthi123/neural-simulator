@@ -28,6 +28,11 @@ from sim.regions import BrainRegion, RegionPathway
 CHANNELS = (0, 1)
 DEVELOPMENT_SEEDS = (42, 43, 44, 100)
 DIRECT_PATH_GATE = "vocal_selector_direct_path"
+# A2 inverted-call (RULING a2-inverted-call 2026-10-10): the str_d2_{channel} -> gpe_{channel}
+# indirect-pathway output gets its own transmission gate so a dev cell can lesion D2's output
+# (set_transmission_gate(INDIRECT_PATH_GATE, 0.0)) without touching any weight. Default value
+# is 1.0 (open, byte-identical behaviour) exactly like DIRECT_PATH_GATE.
+INDIRECT_PATH_GATE = "vocal_selector_indirect_path"
 
 
 @dataclass(frozen=True)
@@ -271,6 +276,7 @@ def build_selector_bridge(
                 weight_mean=2.5,
                 weight_jitter=0.05,
                 plastic=False,
+                transmission_gate=INDIRECT_PATH_GATE,
             ),
             RegionPathway(
                 from_region=f"gpe_{channel}",
