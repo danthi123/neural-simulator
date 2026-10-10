@@ -258,3 +258,18 @@ tune_r9_s7.json, r10 30/54/96/20/3 -> tune_r10_s7.json. Next per ruling: the r5 
 reproduce old r5 (U, R, I, whole-window LHb rates, success) else STOP; freeze the first of
 r11/r9/r10 passing U,R,I,membrane_ok,void False,amended(a)(b) (off-U min 0.4982); then T1-grid
 (144 lines + PILOT-4B.md).
+
+- 2026-10-10 02:05 EDT — T1 per RULING ldc-d2-floor, wake part 1 (Hermes). (c) ran
+  `bash tools/before_you_build.sh "D2 weight floor saturation"` rc=0, recorded to
+  .git/corpus_checks_shared.jsonl; top hits: 2026-07-07-deep-credit-real-task-scoping (0.247)
+  and 2026-06-24-learned-cortex-dendrite-phase3-scoping (the D2 dendritic stack is ALREADY
+  BUILT - read file:line before drafting the soft-bounds amendment). (a)+(b) recon: the
+  10-09 pilot-4b-next RESULT already showed per-trial depth/latency fields are ABSENT from
+  cells (only last-100 means; diagnosis "missing observability"), so ruling (a) which-afferent
+  drives the cut-arm dip and (b) the D2 weight trajectory per trial both need an instrumented
+  copy of _ldc_omission_pilot.py (copies only; registered runner untouched). Base cmd taken
+  from cell sidecar clear_cms500_s10 (git 50f52c23, SIM_BACKEND=numpy, mem_gb=2). Row loop
+  is lines ~397-416 (per-trial info) with w_init/w_final only at ~386/~470 -> per-trial weight
+  hook goes in that loop; DA sampler at ~179. T0 side duty on main: NEEDS [pool-hold]
+  _stage1_c1_category 52/54 (commit 33830f8da). UNSURE: exact per-pathway current API for the
+  SNc attribution (engine current/conductance access) - to check in ENGINE_REFERENCE next.
