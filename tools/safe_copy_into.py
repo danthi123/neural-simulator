@@ -17,6 +17,10 @@ pulls into a staging directory only `sim` can write, and this script moves the f
     symlink is REFUSED rather than replaced, and reported, because nothing legitimate puts one in raw/;
   * rsync -u semantics: a file is copied when the target is absent, or older (whole seconds), or the same second with
     a different size; the source mtime is kept. Regular files only (the staging tree came from rsync --safe-links).
+  * SETTLED RESULTS ARE NEVER CLOBBERED (2026-10-10): a target older than KEEP_AGE_H hours whose content differs is
+    KEPT and reported, not replaced. A re-run of an already-landed cell had overwritten committed results twice
+    (affect-vocab run1 10-08, host-share gate 10-10). Files still being refreshed (a running job's log or partial
+    JSON, minutes to hours old) keep newer-wins. To replace a settled result on purpose, delete it first.
 
 Stdlib only, so it runs under the system python3 with -I and needs no venv.
 
@@ -24,11 +28,12 @@ Stdlib only, so it runs under the system python3 with -I and needs no venv.
           --dest neural-simulator/research/findings/raw  <stage-dir> [<stage-dir> ...]
 
 Prints one line per copied file (except *.prov.json, first 30), then
-`safe_copy: copied N, unchanged U, refused R`. Exit 0, or 2 when the anchor or the destination cannot be opened.
+`safe_copy: copied N, unchanged U, refused R, kept K` (K = settled targets not clobbered). Exit 0, or 2 when the anchor or the destination cannot be opened.
 """
 from __future__ import annotations
 
 import argparse
+import time
 import errno
 import os
 import stat
@@ -38,10 +43,36 @@ DIR_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 SHOW_MAX = 30
 
 
+KEEP_AGE_H = float(os.environ.get("SAFE_COPY_KEEP_AGE_H", "12"))
+
+
+def _same_content(src_path: str, dir_fd: int, name: str) -> bool:
+    try:
+        a = os.open(src_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    except OSError:
+        return False
+    try:
+        try:
+            b = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=dir_fd)
+        except OSError:
+            return False
+        try:
+            while True:
+                x, y = os.read(a, 1 << 20), os.read(b, 1 << 20)
+                if x != y:
+                    return False
+                if not x:
+                    return True
+        finally:
+            os.close(b)
+    finally:
+        os.close(a)
+
+
 class Copier:
     def __init__(self, dest_fd: int) -> None:
         self.dest_fd = dest_fd
-        self.copied = self.unchanged = self.refused = 0
+        self.copied = self.unchanged = self.refused = self.kept = 0
         self.shown = 0
         self.seq = 0
 
@@ -85,6 +116,13 @@ class Copier:
             s_sec, d_sec = int(src_st.st_mtime), int(dst_st.st_mtime)
             if s_sec < d_sec or (s_sec == d_sec and src_st.st_size == dst_st.st_size):
                 self.unchanged += 1
+                return
+            if time.time() - dst_st.st_mtime > KEEP_AGE_H * 3600:
+                if _same_content(src_path, dir_fd, name):
+                    self.unchanged += 1
+                else:
+                    self.kept += 1
+                    print(f"  KEPT settled {rel!r}: a newer, different copy was not allowed to replace it", file=sys.stderr)
                 return
         self.seq += 1
         tmp = f".{name[:120]}.simsync.{os.getpid()}.{self.seq}"
@@ -183,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
                 c.walk(src, dest_fd, "")
     finally:
         os.close(dest_fd)
-    print(f"safe_copy: copied {c.copied}, unchanged {c.unchanged}, refused {c.refused}")
+    print(f"safe_copy: copied {c.copied}, unchanged {c.unchanged}, refused {c.refused}, kept {c.kept}")
     return 0
 
 
