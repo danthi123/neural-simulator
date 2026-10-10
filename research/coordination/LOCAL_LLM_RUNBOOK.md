@@ -1097,3 +1097,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 14:20 [T1] STOP: a2-test2-record not landable by driver: below_chance+reason written into all 4 test-2 cells (worktree, unstaged) but editing existing results is reserved; needs Claude to land the declaration; blocks record + test-2 closure
