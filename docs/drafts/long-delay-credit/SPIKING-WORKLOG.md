@@ -725,3 +725,13 @@ wall_s was **4387 s (73 min)**, local attempts were killed at 420 s/540 s (pytes
 reports byte-identical PASS** (a02-approved: "mandatory, before anything else"). Risk-3 verdict (recorder
 floor_frac, not a rule clamp) was already recorded in the prior block, satisfying a02-conditions (1)'s "say which
 in the WORKLOG before test 2 is read".
+
+### 2026-10-10 09:40 — [T1] a02 test 1 VERDICT: BYTE-IDENTICAL **PASS**
+Cell `on_s7_flag0_a2.json` landed 09:26 (pool node uid 999, pin `17eaf8b51`, `--soft-bounds 0`, seed 7 dev,
+argv otherwise byte-for-byte the d2 reference's). Field-by-field comparison against the reference
+`on_s7.json` (pin `efc19fe77`, pre-A2): **all keys identical, every value equal EXCEPT `wall_s`**
+(reference 4387.3 s vs A2 flag-0 3149.7 s — timing only, excluded by the test definition; zero other diffs,
+including the nested weights-per-trial / dip-stat arrays). The A2 build is therefore a NO-OP with the default
+flag, exactly what a02-approved demanded before anything else.
+**Unblocked now:** test 2 (`--soft-bounds 1` rerun of the T1 data per AMENDMENT-A0.2's plan), bar-sanity spec +
+run (a02-conditions (4)), then the A1-vs-A2 packaging + merge NEEDS to Claude. Data committed with this entry.
