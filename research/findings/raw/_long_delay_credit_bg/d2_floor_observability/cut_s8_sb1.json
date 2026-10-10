@@ -1,4 +1,6 @@
 {
+ "below_chance": true,
+ "below_chance_reason": "A0.2 soft-bounds dev cell: measured behavioural regression vs soft_bounds 0 reference, pending Claude's read, not a pass",
  "runner_sha256": "df0cdec790961410082923153bd2a2fff5b99d427cc8c3db794badc013fb15ee",
  "git_head": null,
  "git_dirty": null,
