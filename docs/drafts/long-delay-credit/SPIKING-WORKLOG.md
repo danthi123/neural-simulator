@@ -660,3 +660,11 @@ spike attribution comes after the 4 cells land.
 - HOLD (a02-approved: identity passes "before anything else"): test-2 dev reruns, bar-sanity RUN + OK record,
   and the merge NEEDS all wait on that verdict. The bar-sanity SPEC file (a02-conditions (4)) is next after the
   provision request. Homeostat contingency: NAMED, NOT built (condition (5)).
+
+### 2026-10-10 07:35 detail for NEEDS [T1] STOP (sync refusal)
+provision refused `c9107bb8c` (stale: does not contain published main a6d261024, i.e. the sim-sync-published
+A0.2 risk-3 commit). `agent_sync_branch.sh research/draft-ldc-outcome-timing` then refused (rc=2) because main
+into this branch conflicts in THIS FILE: main's copy carries T1 entry + risk-3 block (6247e9947, a6d261024),
+this branch carries the mirrored copies PLUS the A2-build entry (2531808c6); the mirror blocks are textually
+identical, so the expected resolution is the union (keep this branch's file). Every other path auto-merged
+cleanly (lane_starvation gate takes main, runbook takes main by tool rule). Branch left unchanged at 2531808c6.
