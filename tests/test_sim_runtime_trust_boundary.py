@@ -234,6 +234,29 @@ def test_safe_copy_is_newer_wins_keeps_mtime_strips_x_and_replaces_hard_links(tm
     assert "copied 3, unchanged 1, refused 0" in res.stdout
 
 
+def test_safe_copy_never_clobbers_a_settled_result(tmp_path: Path) -> None:
+    """2026-10-10: a target older than KEEP_AGE_H with different content is kept (a re-run of a landed cell twice
+    overwrote committed results); an identical one is unchanged; a fresh, still-refreshing one stays newer-wins."""
+    anchor = tmp_path / "projects"
+    raw = anchor / "ws" / "raw"
+    raw.mkdir(parents=True)
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    t = time.time()
+    for name, ws_text, st_text, ws_age in (("settled.json", "committed\n", "rerun\n", 2 * 86400),
+                                           ("same.json", "same\n", "same\n", 2 * 86400),
+                                           ("fresh.json", "partial\n", "final\n", 600)):
+        (raw / name).write_text(ws_text)
+        os.utime(raw / name, (t - ws_age, t - ws_age))
+        (stage / name).write_text(st_text)
+    res = _copy(anchor, "ws/raw", stage)
+    assert res.returncode == 0, res.stderr
+    assert (raw / "settled.json").read_text() == "committed\n"
+    assert (raw / "fresh.json").read_text() == "final\n"
+    assert "KEPT settled 'settled.json'" in res.stderr
+    assert "copied 1, unchanged 1, refused 0, kept 1" in res.stdout
+
+
 # ------------------------------------------------------------------ pool_sync.sh against a local fake node
 
 def _fake_node(tmp_path: Path) -> tuple[Path, Path]:
