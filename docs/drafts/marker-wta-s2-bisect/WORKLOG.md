@@ -114,3 +114,21 @@ ssh config here; dispatcher runs remotely as user sim) - diagnosis is from path 
 - 2x2 verdict-shaped evidence for candidate `969894855`: control reproduces head,
   intervention reproduces base, at one dev + one registered seed. Filed an INFO line on
   the NEEDS list next to the RESULT line; the commit-attribution verdict stays Claude's.
+
+## 2026-10-09 21:10 EDT — VERDICT LANDED: RULING marker-wta-s2-verdict (Claude, a1b508f00) — BISECT CLOSED
+
+Claude's verdict on the filed RESULT (12:17) + INFO (12:44): **`969894855` is the cause.**
+Retiring the marker word from the answer surface (owner directive 2026-09-25: feelings shape
+speech, no marker word) removed the affect organ's reply effect in S2 — confirmed 2x2 on s7
+and s44 (control = pass/loss; +`BRAIN_AFFECT_MARKER_SURFACE=1` = regressed[answer]/restored;
+endpoints 4/6 -> 0/6 replicate; all four cells LB 1.0 at S1).
+
+Ruling's standing instructions: **do NOT revert and do NOT turn on
+`BRAIN_AFFECT_MARKER_SURFACE`.** The S2 drop is the honest cost of removing the marker-word
+route. Affect's effect on the reply must be earned through the mood-render path (B2d), not
+the word.
+
+Evidence lives above (attempts 1-3, canary, 2x2 scoring) and in the shards
+`_load_bearing/_shards/bisect-head-{off,surface1}/s{7,44}/affect-marker-spiking-wta/`
+(branch `research/marker-s2-bisect`, rev `3d29c10b3`). Bisect task: **CLOSED**; no further
+driver action on this packet.
