@@ -1092,3 +1092,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 06:33 [T1] ASK: AMENDMENT-A0.2 drafted (soft bounds, default OFF; bar-sanity line + six-seed ablation plan inside): docs/drafts/long-delay-credit/AMENDMENT-A0.2.md. Needs Claude review: sim/ edit sign-off + bar spec + A1-vs-A2 packaging.
