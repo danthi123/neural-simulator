@@ -22,7 +22,9 @@ Informational cupy replication of Stage-1 criterion C3 (lived-fact recall), the 
 
 On cupy the `lived` group reads FAIL (5 of 6 seeds pass; per seed: 42 PASS, 43 PASS, 44 PASS, 100 PASS, 101 PASS, 102 FAIL — correct=False on seed 102; aggregate why: "capability absent on 1 of 6 seeds").
 
-The numpy gate's C3 reads FAIL (T6 finding). The two are different networks at the same seeds (docs/ENGINE_REFERENCE.md, cross-backend seed trap): a difference is not a backend effect on one network.
+The numpy gate's C3 failed only on the void `lesion_recall` clause, which is corrected to UNDEFINED, and C3 re-measured PASS 6/6 @7851dd220. The two are different networks at the same seeds (docs/ENGINE_REFERENCE.md, cross-backend seed trap): a difference is not a backend effect on one network.
+
+**Corrected 2026-10-07:** the C3 sentence above previously read "The numpy gate's C3 reads FAIL (T6 finding)" — that FAIL was the void `lesion_recall` clause alone (verdict corrected to UNDEFINED); C3 re-measured PASS 6/6 @7851dd220 (RULING t24-finding-fix).
 
 What this does not show: any gate verdict; C1, C2 or C4; that numpy and cupy agree cell by cell.
 

@@ -1,0 +1,867 @@
+{
+ "criterion": "C1 (Stage-1 cat_disc) with BRAIN_CATEGORY_INHERIT=1",
+ "verdict": "PASS",
+ "group_verdict": "PASS",
+ "why": [],
+ "GO": true,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no counted shard missing",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every seed",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every counted arm from the expected brain with the corpus and PYTHONHASHSEED=0",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the wiring and the lesion applied in every counted arm (category_inherit trace)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "hop attenuation applied in every counted arm (hop_env and the read's hop)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "n_defined": 6,
+ "n_correct": 6,
+ "n_lesion_effect": 6,
+ "n_reproduced": 6,
+ "n_permuted_tracks": 6,
+ "n_permuted_defined": 6,
+ "flip_readiness": {
+  "ready": true,
+  "n_safety": 6,
+  "n_specificity": 6,
+  "n_specificity_defined": 6
+ },
+ "informational": {
+  "off": {
+   "inherits": 0,
+   "differs_on_a_probe": 6,
+   "present": 6
+  },
+  "lesion_lateral_learn": {
+   "inherits": 0,
+   "differs_on_a_probe": 6,
+   "present": 6
+  },
+  "lesion_lateral_read": {
+   "inherits": 5,
+   "differs_on_a_probe": 1,
+   "present": 6
+  },
+  "lesion_draw": {
+   "inherits": 6,
+   "differs_on_a_probe": 0,
+   "present": 6
+  }
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "rows": {
+  "42": {
+   "seed": 42,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0883
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  },
+  "43": {
+   "seed": 43,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0583
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  },
+  "44": {
+   "seed": 44,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0467
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  },
+  "100": {
+   "seed": 100,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0583
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  },
+  "101": {
+   "seed": 101,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0667
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  },
+  "102": {
+   "seed": 102,
+   "undefined_reasons": [],
+   "null_clean": true,
+   "null_diffs": [],
+   "intact": {
+    "direct_patient": "worm",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true
+   },
+   "correct": true,
+   "safety": {
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": true,
+    "all": true
+   },
+   "organ_read_intact": {
+    "patient": "worm",
+    "reason": "reached",
+    "admitted": [
+     [
+      "worm",
+      0.0567
+     ],
+     [
+      "bug",
+      0.0
+     ]
+    ]
+   },
+   "lesion_inherit": {
+    "present": true,
+    "repeat_present": true,
+    "differs": {
+     "p_canary_eat": true,
+     "p_canary_might": false
+    },
+    "effect": true,
+    "attributable": 1.0,
+    "reproduced": true,
+    "organ_read": {
+     "patient": null,
+     "reason": "below_floor",
+     "admitted": [
+      [
+       "bug",
+       0.0
+      ],
+      [
+       "worm",
+       0.0
+      ]
+     ],
+     "lesion": "all"
+    }
+   },
+   "permuted": {
+    "direct_patient": "bug",
+    "direct_abstained": false,
+    "generative_patient": null,
+    "generative_abstained": true,
+    "direct_correct": true,
+    "generative_correct": false,
+    "inherits": true,
+    "names_other_category": false,
+    "identity_robin": true,
+    "identity_trout": true,
+    "moat_canary_swim": false
+   },
+   "tracks": true,
+   "informational": {
+    "off": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_learn": {
+     "inherits": false,
+     "direct_patient": null,
+     "generative_patient": null,
+     "differs_from_intact_on": [
+      "p_canary_eat"
+     ],
+     "content_differs_on": [
+      "p_canary_eat"
+     ],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_lateral_read": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    },
+    "lesion_draw": {
+     "inherits": true,
+     "direct_patient": "worm",
+     "generative_patient": null,
+     "differs_from_intact_on": [],
+     "content_differs_on": [],
+     "wiring_applied": true,
+     "hop_applied": true
+    }
+   },
+   "specificity": true
+  }
+ },
+ "missing_shards": [],
+ "runner": "research/runners/stage1_c1_category.py",
+ "prereg": "research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM",
+ "require_hop": true
+}

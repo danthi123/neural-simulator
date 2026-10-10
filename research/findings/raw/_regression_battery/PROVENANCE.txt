@@ -1,0 +1,1 @@
+ran on AWS r7i.4xlarge, rev bc66ccaa3, the two arms run concurrently via par_battery.py (runner's own compare + output); rc=0

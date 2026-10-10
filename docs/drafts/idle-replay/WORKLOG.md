@@ -39,3 +39,73 @@
   research/coordination/lane_builds.jsonl (C = s2-c5-build in flight, E = b2d-amend2 step-1 GPU jobs
   running on W, B = t1-ldc-step4a draft build, ordered by RULING T1-LDC, starts next wake). Idle
   lanes A/D = 2 < MAX_IDLE_LANES 3; gate passes without a waiver.
+- 2026-10-08 04:50 (Hermes): c5-on-arm-diagnose queued (RULING c5-on-arm-diagnose, after c5-battery-void): the
+  ON-arm worker per probe group at rev bc66ccaa37da346779f16b8eaf9b0f1585e78b88 -- `--worker --env
+  '{"BRAIN_IDLE_REPLAY":"1"}' --turns <labels>`, mem_ok 9 1 + memcap 10, `/usr/bin/time -v -o <g>_on.time`
+  as the ONLY RSS/wall instrumentation (the runner/memcap/dispatcher record neither; `-o` survives an
+  OOM kill), numpy, no seed. Groups g1..g6 partition all 26 PROBE_TURNS labels, session chains kept
+  (hold,held / dr_a,dr_b,dr_c / bc_a,bc_b in order) -- partition + exact cmds designed by one MiMo Pro
+  delegate per RULING models; 6 adds 0 fail; per-group outputs under
+  research/findings/raw/_regression_battery/c5_on_diag/. `--flag --subset` was unusable by design:
+  run_regression_battery hardcodes arm filenames (collisions) and runs BOTH arms. Verified pool41/42/40
+  hold the pinned revision and /usr/bin/time. One bogus line (bash's readonly GROUPS=gids array made the
+  loop queue `--turns 100`) withdrawn immediately; withdrawn.log carries the reason. Reading per ruling:
+  a group killed at the cap (peak ~= 10 GB or rc 137) is the finding; survivors' g*_on.json get
+  committed with the OFF arm JSON + per-group table, then the RESULT naming the turns and the growth.
+  Next wake: sync results (tools/pool_sync.sh) when the lines land.
+- 2026-10-08 08:55 (Hermes): c5-on-arm-diagnose first attempt: 4 of 6 lines died rc=127 on
+  wspool within minutes -- the pool sandbox executes the line's own `/usr/bin/time`, and that
+  node does not have it (`/opt/host-status/sim-pool-jobs/exits.json`: g2 08:37, g3 08:38, g4
+  08:43, g6 08:47, all rev bc66ccaa3; g2_on.log = "/opt/pool-sandbox/bin/systemd-run: line 26:
+  /usr/bin/time: No such file or directory"). The 04:50 entry verified the pin on pool41/42/40
+  only; W took 4 of the 6 lines. g1 (pool40, live 140 MB log) and g5 (pool41) continue unwrapped
+  of this failure. Requeued g2/g3/g4/g6 -- identical worker at rev bc66ccaa37da346779f16b8eaf9b0f1585e78b88,
+  same turns, mem_ok 9 1 + memcap 10, SIM_BACKEND=numpy -- with GNU time dropped so any node runs
+  them; those four groups lose the .time peak-RSS/wall stat the 04:50 entry called the only such
+  instrumentation (rc-137-at-cap stays detectable via exits.json + missing json; memcap and the
+  runner json remain). W should `apt install time` before future W lines use it -- NEEDS
+  [c5-on-arm-diagnose] INFO filed; FAILURE_LOG row added.
+- 2026-10-08 09:12 (Hermes): c5-on-arm-diagnose attempt 2 failed differently from attempt 1:
+  the 08:55 requeue was typed out anew instead of copied, which added a layer of backslashes to
+  the `--env` JSON, so the worker parsed the env as a STRING and crashed
+  `AttributeError: 'str' object has no attribute 'items'` at onebrain_regression_battery.py:986
+  (rc=1 on wspool 08:58 for g2/g3/g4; g6's line consumed without an exit row yet). Pinned to
+  the queue-time CMD, not the node: g1/g5 from the ORIGINAL queue still run clean (their [memcap]
+  line shows `--env {"BRAIN_IDLE_REPLAY":"1"}` while attempt 2's shows the escaped quoted
+  form, and both source scripts differ at that byte range). Attempt 3 queued 09:12, ok=4
+  fail=0: the CMD rebuilt PROGRAMMATICALLY from c5_queue2.sh (make_c5_fix.py copies the CMD
+  line byte-for-byte and removes only the /usr/bin/time segment), groups g2/g3/g4/g6, same rev
+  bc66ccaa37da346779f16b8eaf9b0f1585e78b88/memcap 10/turns. Rule taken: any requeued CMD is
+  copied by a transformer from the source script, never retyped (shell quoting does not survive
+  transcription). g1 (pool40) and g5 (pool41) workers continue.
+- 2026-10-08 11:15 (Hermes): c5-on-arm-diagnose status + OFF-arm deliverable: copied
+  arm_off_BRAIN_IDLE_REPLAY.json + .prov + PROVENANCE.txt from /opt/data/cache/c5-battery/
+  (AWS r7i.4xlarge, rev bc66ccaa3, rc=0; RULING c5-battery-void: OFF arm valid, the ON arm's 34
+  regressed = missing-arm artifact) into research/findings/raw/_regression_battery/ and committed
+  them. First finding row per RULING c5-on-arm-diagnose ("groups that exceed the cap are the
+  finding"): g1 (labels well,question,unknown) exceeded memcap 10G on pool40 at 10:02 (rc=137; log
+  stops mid-case re-init) — peak = the cap by definition; no GNU-time .time files for any group
+  (the W requeue ran without /usr/bin/time, and the systemd scope dies with the worker, so no
+  peak-RSS line was written either — the cap value is the bound). g2/g3/g4/g5 logs still growing at
+  11:01 (~140MB each), g6 = the one queued c5 line. The per-group table + the
+  [c5-on-arm-diagnose] RESULT (named turns + growth) is owed when the remaining groups land; the
+  [s2-c5-build] battery score per HANDOFF §3-§5 stays a separate pending duty (its regression
+  numbers stay VOID-ridden until the ON arm produces output).
+- 2026-10-08 11:41 (Hermes): c5-on-arm-diagnose table, row 2: g4 (turns vision,bgdots,dr_a,dr_b,dr_c)
+  exceeded memcap 10G on pool40 at 11:34 (rc=137) — second cap-exceed after g1 (well,question,unknown,
+  10:02). g2 (hold,held,scalar,open): log frozen since 11:00, no exit record yet — unconfirmed, next
+  wake resolves. g3 (confirm,contra,expect_q,episodic, log 11:31) and g5 (chase,selfinit,animacy,
+  verbsel,pmem_form, log 11:30) still writing; g6 (emo,bc_a,bc_b,rich_well,rich_open) dispatched —
+  its queue line is gone and its attempt-3 log has not started. All workers are the ON arm
+  (BRAIN_IDLE_REPLAY=1, rev bc66ccaa3, memcap 10, per-group --turns). No .time files for any group
+  (attempt-2/3 lines dropped GNU time; the memcap scope dies with the worker), so for the exceeded
+  groups peak RSS = the 10G cap by construction. RESULT still owed once g2/g3/g5/g6 resolve.
+- 2026-10-08 13:12 (Hermes): c5-on-arm-diagnose table, row 3: g6 (emo,bc_a,bc_b,rich_well,rich_open)
+  hit the 10G cap on pool40 at 13:01 (rc=137; attempt-3 dispatched 11:35, wall ~1h26m) — third
+  cap-exceed after g1 (49m to kill) and g4 (2h21m). g2 (hold,held,scalar,open): log crawled +90
+  bytes to 141,596,826 by 12:34, no exit record — effectively stalled, not dead. g3
+  (confirm,contra,expect_q,episodic) and g5 (chase,selfinit,animacy,verbsel,pmem_form) still
+  writing slowly (g3 last write 13:01 ~120KB/h since dispatch; g5 last 13:00 ~733KB/h). Queue empty
+  (all six dispatched), no ON-arm JSON yet. Pattern: every group that has ENDED ended at the cap
+  (3/3 rc=137, all on pool40), one stalled, two running — the memory blow-up is not
+  turn-group-specific so far. RESULT still owed when g2/g3/g5 resolve.

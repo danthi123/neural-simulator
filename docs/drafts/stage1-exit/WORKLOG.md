@@ -223,3 +223,31 @@ is recorded in the marker rather than a create-then-close.
   perfect 0.987 (ci95 0.978-0.992), perfect_exact 1.000, null_control_ignored 0.000, null_lesion_inert 0.000, random 0.000.
 - tests/test_stage1_exit_gate.py: 14/14 pass after merging main into this branch (the scrambled-draw tests read the constant, none pin 0.10).
 - Branch claude-review/stage1-sync = research/stage1-exit-gate + main merged; WORKLOG entries from both sides kept in date order.
+
+- 2026-10-07 22:25 (Hermes, driver) — Affect-results audit filled (approved in s1-c4-void + the
+  10-04 board-inserts ruling: "list the results, change nothing, and Claude rules on which are
+  void"). Scan: every `*.json.prov.json` under research/findings/raw/ with started >= 2026-09-01
+  and a pool marker (argv[0] under /derisk-pool/ or env POOL_JOB_ID) = 7410 results, 84 distinct
+  runners; static import-closure BFS (ast, within-repo, cap 400 files) for affect_production_organ:
+  6680 results flagged across 50 runners (730 not flagged). 18 runner names had no file in this
+  checkout (deleted/other-ref scripts + literal "unknown") and are counted flagged, conservative,
+  and listed as such. Method + full path list: docs/drafts/affect-results-audit/RESULTS.md.
+  NEEDS [affect-results-audit] INFO filed (2026-10-07 22:25) for Claude's void ruling.
+  Also this wake: c4rerun duty confirmed complete (72/72 landed 10-05, scored, recorded as
+  "FAIL as registered" in research/findings/2026-10-04-stage1-exit-gate-RESULT.md line 134);
+  provision.ok for research/stage2-exit-gate (pool41/42/40/wspool) recorded from the wake event.
+
+## 2026-10-08 08:27 EDT - s1-c3-rerun: gate_c3rerun scored, C3 PASS, RESULT filed
+
+- The 10-05 21:11 aggregate (prov: argv exactly the ruling's `--aggregate
+  research/findings/raw/_stage1_exit/gate_c3rerun --seeds 42,43,44,100,101,102`, run sha
+  c5eb14668 dirty-tree, A1.2 engagement rule present since c10a74767 10-04) reads: C1
+  INCOMPLETE, C2 INCOMPLETE, **C3 PASS**, C4 INCOMPLETE; stage verdict UNDEFINED
+  (INCOMPLETE) with 90 primary shards "missing" because gate_c3rerun holds only the 42
+  lived shards by A1.2 design (other groups stay in gate/ from attempt 1).
+- C3's own data is clean: 42/42 (7 arms x 6 seeds), intact_a vs intact_b distinct on all 6
+  seeds (the 18 null-clean failures are absent-group pairs, not lived's), lesion engaged at
+  dev check (patch.calls=3). C3 was judged at P2 alone, never pooled with c238ff325 arms
+  (AMENDMENT-A1 A1.2). Stage still not passed: C1 FAIL on attempt-1 defined data, C4 FAIL as
+  registered (finding line 134).
+- NEEDS-CLAUDE [s1-c3-rerun] RESULT filed 08:27 for Claude to read C3.

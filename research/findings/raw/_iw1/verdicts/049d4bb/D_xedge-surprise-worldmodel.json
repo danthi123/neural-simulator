@@ -1,0 +1,60 @@
+{
+ "runner": "research.runners.iw1_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave1/research/runners/iw1_default_identity.py",
+  "--compare",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/049d4bb/default.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/049d4bb/on_xedge-surprise-worldmodel.json",
+  "--expect",
+  "differs",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/integration-wave1/research/findings/raw/_iw1/verdicts/049d4bb/D_xedge-surprise-worldmodel.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "on:xedge-surprise-worldmodel"
+ ],
+ "git_shas": [
+  null,
+  null
+ ],
+ "expect": "differs",
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true
+ },
+ "differing_turns": [
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "reply_differing_turns": [
+  12
+ ],
+ "ok": true,
+ "verdict": "DIFFERS",
+ "inputs": [
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/049d4bb/default.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/049d4bb/on_xedge-surprise-worldmodel.json"
+ ]
+}

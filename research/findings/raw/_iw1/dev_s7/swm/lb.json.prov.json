@@ -1,0 +1,38 @@
+{
+ "run_id": "1790731668-3242791",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/runners/load_bearing_fraction.py",
+  "--only",
+  "xedge-surprise-worldmodel",
+  "--seed",
+  "7",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_iw1/dev_s7/swm/lb.json"
+ ],
+ "git_sha": "fac3f699c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T21:27:48",
+ "env": {
+  "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": "1",
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1908.7,
+ "corpus_check_query": "integration packets: flip de-risked GO 6/6 default-off chat faculties to on-by-default with reply-level load-bearing",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_iw1/dev_s7/swm/lb.json"
+}

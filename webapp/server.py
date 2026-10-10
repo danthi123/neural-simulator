@@ -3856,6 +3856,22 @@ def _category_inherit_trace(chat):
         return {"error": f"{type(e).__name__}: {e}"}
 
 
+def _attach_category_inherit(resp, chat):
+    """RULING c1-stamp-fix: the ONE `category_inherit` stamp site, called before EVERY return path
+    (rich, single-fact, and the comprehension-repair abstain early return). The key is present
+    exactly when the organ engaged this turn (turn_stamp) and absent otherwise, so a missing
+    stamp always means the pathway never fired. Flag off or nothing to say -> nothing attached."""
+    if not _category_inherit_on():
+        return
+    try:
+        from webapp.category_inherit_chat import turn_stamp
+        tr = turn_stamp(chat)
+    except Exception as e:  # never let a stamp read crash a turn
+        tr = {"error": f"{type(e).__name__}: {e}"}
+    if tr is not None:
+        resp["category_inherit"] = tr
+
+
 def _oeg_on() -> bool:
     """BRAIN_OPEN_ENDED_GATED (default OFF; webapp/open_ended_gated_turn.py, PREREG research/findings/2026-09-24-open-
     ended-gated-turn-PREREGISTRATION.md). Off -> this env read is the whole cost: the module is never imported."""
@@ -4759,7 +4775,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # which facts the brain holds off the engrams as they are NOW (research/runners/d6_hebbian_store.readtime_refresh),
     # so a later loss of an engram (a lesion, decay) is reflected in the known-word sets. Off -> only this env read.
     # Not wrapped in try/except: with the flag on, a failure must surface, not silently fall back to the host list.
-    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+    from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+    if _d6_readtime_on():
         from research.runners.d6_hebbian_store import readtime_refresh as _d6_readtime_refresh
         _d6_readtime_refresh(chat)
 
@@ -5687,7 +5704,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     try:
                         _comp = getattr(getattr(chat, "inner", None), "composer", None)
                         _kb_iter = getattr(_comp, "kb", []) or []
-                        if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+                        from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+                        if _d6_readtime_on():
                             from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
                             _kb_iter = _d6_visible_kb(_comp) or []   # D6 (default-OFF): engram-held facts only
                         for _f, _h in _kb_iter:
@@ -6262,6 +6280,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     if tom_info is not None and tom_info.get("acted"):
                         payload["affective_tom"] = tom_info
                     # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────
+                    _attach_category_inherit(payload, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix:
+                    # this abstain return path carries it too: present exactly when the organ fired this turn)
                     return JSONResponse(payload)
         except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
             comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
@@ -6931,8 +6951,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _mt = _mouth_trace(chat, resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
         if _mt is not None:
             resp["mouth_trace"] = _mt
-        if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
-            resp["category_inherit"] = _category_inherit_trace(chat)
+        _attach_category_inherit(resp, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix: fired-only)
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -7310,8 +7329,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     _mt = _mouth_trace(chat, _resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
     if _mt is not None:
         _resp["mouth_trace"] = _mt
-    if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
-        _resp["category_inherit"] = _category_inherit_trace(chat)
+    _attach_category_inherit(_resp, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix: fired-only)
     return _safe_json_response(_resp, "single-fact")
 
 

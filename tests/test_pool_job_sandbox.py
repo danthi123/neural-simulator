@@ -461,3 +461,26 @@ def test_real_sandbox_agent_line_can_write_only_its_own_dir(tmp_path: Path) -> N
     r = json.loads((rev / out_rel).read_text())
     assert r == {"sibling": False, "own": True}
     assert not (rev / "research" / "findings" / "raw" / "other.json").exists()
+
+def test_corpus_extra_is_bound_read_only_and_never_through_a_symlink(tmp_path: Path) -> None:
+    """Owner 2026-10-09: ~/derisk-pool/corpus_extra (prereg'd corpora outside any revision) is visible read-only;
+    a symlinked corpus_extra is not bound at all, and the writable set is unchanged."""
+    home, rev = _node(tmp_path)
+    corpus = home / "derisk-pool" / "corpus_extra"
+    corpus.mkdir()
+    bin_dir, rec = _fakes(tmp_path)
+    job = f"cd ~/derisk-pool/revisions/{SHA} && .venv/bin/python -c 1"
+    res, cwd = _run_wrapper(home, job, bin_dir, bwrap=str(bin_dir / "bwrap"))
+    assert _status(cwd) == ("0", job), res.stderr
+    argv = (rec / "bwrap.argv").read_text().splitlines()
+    assert (str(corpus), str(corpus)) in _pairs(argv, "--ro-bind")
+    assert _pairs(argv, "--bind") == [(str(rev / "research/findings/raw"),) * 2]
+    # a symlinked corpus_extra is skipped, not followed
+    corpus.rmdir()
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    corpus.symlink_to(elsewhere)
+    (rec / "bwrap.argv").unlink()
+    res, cwd = _run_wrapper(home, job, bin_dir, bwrap=str(bin_dir / "bwrap"))
+    argv = (rec / "bwrap.argv").read_text().splitlines()
+    assert not any(str(corpus) in a or str(elsewhere) in a for a in argv), argv

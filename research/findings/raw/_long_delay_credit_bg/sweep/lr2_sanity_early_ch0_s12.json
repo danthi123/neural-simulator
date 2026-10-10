@@ -423,6 +423,5 @@
   }
  ],
  "below_chance": true,
- "instrument_failed": true,
- "below_chance_note": "Flagged by tools/gates/below_chance: in this artifact every arm of at least one scored scope reads below its own declared chance (0.5) -- an instrument/task-wiring reading, per gates/below_chance; the reading is UNDEFINED, never a capability NO-GO. Per RULING T1-LDC (LOCAL_LLM_RUNBOOK section 6, 2026-10-01) the whole Step 4 sweep is an instrument failure: the outcome DA never signed (prereg 7.3), so no credit gate ran; the Step 4 tag selection exited rc=2 (no tag passes every criterion) and the sweep instrument report records chosen=null. Measured values in this file are unmodified."
+ "below_chance_reason": "step-4 instrument sweep cell below chance: the credit gate never ran (signed-DA precondition, prereg 7.3), so this row measures the instrument, not the hypothesis - rc=2 chosen=null, not evidence"
 }
