@@ -641,3 +641,22 @@ spike attribution comes after the 4 cells land.
   Checked reason cites STEP4B section 3 + RULING ldc-d2-floor; mem_gb=2, max_age_h=168.
 - After the cells land: the (a) analysis script (lagged DA vs per-region spike attribution) and the (b)
   weight-trajectory/floor-hitting read, then the soft-bounds AMENDMENT draft for Claude's review.
+
+## 2026-10-10 07:35 — A2 soft-bounds BUILT (c9107bb8c); byte-identity -> POOL (73-min cell); verdict HELD (Hermes)
+
+- Rulings a02-approved / a02-conditions in force. Build committed on research/draft-ldc-outcome-timing `c9107bb8c`
+  (rc=0 through the normal gates): sim/config.py three fields (exponents FROZEN 1.0), sim/bridge.py 4c C2 gated
+  factor (executes nothing when flag absent/0), CreditParams + credit_extension passthrough in BOTH runners;
+  probe picks up --soft-bounds via its auto-generated CLI. Separate A2 = this commit series + AMENDMENT-A0.2.md
+  (main); NOT inside A1.
+- Fast test PASS (0.83s): flag lands on bridge.core_config (returns (bridge, SelectorConfig) - cfg check must use
+  core_config), defaults 0, and flag 1 changes NO build-time weight.
+- Byte-identical full test: the reference cell on_s7.json wall_s=4387 (73 min) - a LOCAL run CANNOT satisfy it
+  (two local attempts died at 420/540s, rc=124) and RULING compute-placement sends >10-min jobs to the pool.
+  Verbatim pool argv recovered from pool.queue.done (epoch 1791615770, --arms full --reward-on-ms 150
+  --outcome-ms 250 --omission-route 1 + the r9-freeze constants). provision.req filed for `c9107bb8c`; the
+  rebuild line queues at that pin with --out .../on_s7_flag0_a2.json once provision lands, then a local
+  comparator reads row-minus-wall_s vs the reference.
+- HOLD (a02-approved: identity passes "before anything else"): test-2 dev reruns, bar-sanity RUN + OK record,
+  and the merge NEEDS all wait on that verdict. The bar-sanity SPEC file (a02-conditions (4)) is next after the
+  provision request. Homeostat contingency: NAMED, NOT built (condition (5)).
