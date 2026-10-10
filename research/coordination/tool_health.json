@@ -1,18 +1,72 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-10-10T06:33:27Z",
- "any_rotted": false,
+ "generated_at": "2026-10-10T19:55:09Z",
+ "any_rotted": true,
  "results": [
+  {
+   "tool": "experiment-engine",
+   "lane": "experiment",
+   "status": "ROTTED",
+   "why": "core.pyx\", line 176, in cupy._core.core.ndarray.__new__\n  File \"cupy/_core/core.pyx\", line 282, in cupy._core.core._ndarray_base._init\n  File \"cupy/cuda/memory.pyx\", line 904, in cupy.cuda.memory.alloc\n  File \"cupy/cuda/memory.pyx\", line 1614, in cupy.cuda.memory.MemoryPool.malloc\n  File \"cupy/cuda/memory.pyx\", line 1634, in cupy.cuda.memory.MemoryPool.malloc\n  File \"cupy/cuda/memory.pxd\", line 86, in cupy.cuda.memory.MemoryPool.device_pool\n  File \"cupy/cuda/memory.pyx\", line 1601, in cupy.cuda.",
+   "checked": "build 4 presets + step basic_stimulus_response",
+   "at": "2026-10-10T19:55:05Z"
+  },
   {
    "tool": "auto-tune",
    "lane": "experiment",
    "status": "degraded",
    "why": "needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-10-10T06:33:27Z"
+   "at": "2026-10-10T19:55:06Z"
+  },
+  {
+   "tool": "gpu-queue",
+   "lane": "gpu",
+   "status": "ready",
+   "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
+   "checked": "gpu_queue.sh status + singleton",
+   "at": "2026-10-10T19:55:06Z"
+  },
+  {
+   "tool": "pool",
+   "lane": "pool",
+   "status": "ready",
+   "why": "2/4 nodes healthy",
+   "checked": "tools.pool_health --json + a trivial dispatch check",
+   "at": "2026-10-10T19:55:08Z"
+  },
+  {
+   "tool": "pool-checkout",
+   "lane": "pool",
+   "status": "ready",
+   "why": "2 nodes: code present + venv imports numpy/scipy",
+   "checked": "code present + venv import",
+   "at": "2026-10-10T19:55:09Z"
+  },
+  {
+   "tool": "cloud-aws",
+   "lane": "cloud",
+   "status": "unknown",
+   "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
+   "checked": "aws_gpu.sh status",
+   "at": "2026-10-10T19:55:09Z"
   }
  ],
- "backlog_items": [],
+ "backlog_items": [
+  {
+   "id": "toolrot-experiment-engine",
+   "what": "Repair rotted tool 'experiment-engine' \u2014 core.pyx\", line 176, in cupy._core.core.ndarray.__new__\n  File \"cupy/_core/core.pyx\", line 282, in cupy._core.core._ndarray_base._init\n  File \"cupy/cuda/memory.",
+   "source": "tools/tool_health.py",
+   "anchor": "experiment-engine",
+   "files": "experiment/",
+   "verify_cmd": "python tools/tool_health.py --only experiment-engine",
+   "dependencies": [],
+   "lane": "agent",
+   "priority": 3,
+   "rough_start": "2026-10-10",
+   "rough_target": "2026-10-10"
+  }
+ ],
  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }
