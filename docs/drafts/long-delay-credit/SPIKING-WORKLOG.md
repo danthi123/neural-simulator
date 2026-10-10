@@ -823,3 +823,14 @@ in the scratch holding dir; NEEDS [T1] 13:54 asks Claude to declare them (preced
 says Claude re-landed the Step-4 sweep "with the gate-declared below_chance_reason") and to judge the
 regression. The measured numbers above stand unchanged; no scorer, label wiring or artifact field was edited
 by the driver (all Claude's).
+
+### 2026-10-10 14:20 — [T1] ruling a2-test2-record: declaration written, landing needs Claude
+Per RULING `a2-test2-record` (5b5365d96): restored the four test-2 cells from the scratch holding dir and
+inserted `"below_chance": true` + `"below_chance_reason": "A0.2 soft-bounds dev cell: measured behavioural
+regression vs soft_bounds 0 reference, pending Claude's read, not a pass"` (Claude's verbatim reason) as
+top-level fields via a byte-preserving line insert; all four re-parse and key-check clean. Landing is
+BLOCKED for the driver: these files are committed at `669c58b19`, and "editing an existing results file would
+rewrite evidence" is a reserved path — same for delete. Worktree now holds the declared copies UNSTAGED (so
+the below-chance gate's worktree scan passes: main commit `f9bf3704b` went through), NEEDS [T1] 14:20 asks
+Claude to land the declaration. Ruling `a2-test2-diagnose` (unit test of sign/size at floor/middle/ceiling,
+choice distributions + D1/D2 trajectories sb1-vs-sb0, byte-identity confirmation, one RESULT) is the next task.
