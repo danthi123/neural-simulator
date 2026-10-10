@@ -1095,3 +1095,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 13:54 [T1] STOP: below-chance gate blocks commit of 4 soft-bounds test-2 cells: terminal test success 0.00/0.05/0.17/0.48 vs ref 0.59/0.51/0.52/0.31 - weights fixed but behavior regressed; UNDEFINED declaration = scorer/harness (Claude); blocks test-2 data + A2 package
