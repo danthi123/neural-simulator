@@ -91,3 +91,19 @@ def test_a_staged_rename_and_deletion_stay_staged(tmp_path):
     assert r.returncode == 0, r.stderr
     assert git("diff", "--cached", "--name-status", "--no-renames", cwd=wt).stdout == before
     assert git("diff", "--name-only", cwd=wt).stdout == ""                    # nothing left unstaged
+
+
+def test_worklog_conflicts_keep_both_sides(tmp_path):
+    """Claude 2026-10-10: *WORKLOG.md files are append-only packet logs; a conflict keeps both sides' lines."""
+    git = _repo(tmp_path)
+    wl = tmp_path / "docs" / "drafts" / "pkt" / "SPIKING-WORKLOG.md"
+    wl.parent.mkdir(parents=True); wl.write_text("# log\n- base\n"); git("add", "-A"); git("commit", "-q", "-m", "wl")
+    git("checkout", "-q", "-b", "research/wl")
+    wl.write_text("# log\n- base\n- branch entry\n"); git("commit", "-q", "-am", "branch log")
+    git("checkout", "-q", "main")
+    wl.write_text("# log\n- base\n- main entry\n"); git("commit", "-q", "-am", "main log")
+
+    r = _run(tmp_path, "research/wl")
+    assert r.returncode == 0, r.stderr
+    out = git("show", "research/wl:docs/drafts/pkt/SPIKING-WORKLOG.md").stdout
+    assert "branch entry" in out and "main entry" in out and "<<<" not in out

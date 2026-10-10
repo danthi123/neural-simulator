@@ -255,11 +255,23 @@ def check(paths=None):
     # research artifact, so idle lanes are not its fault; blocking it is what pushed agents to queue filler.
     if _is_infra_only(staged):
         return []
+    # RESULT-DATA-ONLY EXEMPTION (2026-10-10): a commit staging ONLY research/findings/raw/** lands the output of
+    # jobs that ALREADY RAN; it queues nothing and stops nothing, so idle lanes are not its fault. With the Hermes
+    # driver, lanes sit idle while their next work waits on a Claude ruling, and blocking result landings only
+    # delayed the record and burned the 6h waiver budget meant for genuine idle stretches (3 blocks on 10-09/10).
+    # A commit that also touches code, runners, findings prose or queues still faces the full gate.
+    if _is_result_data_only(staged):
+        return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
         return []
     verdict = wh.evaluate(NAME, _waiver_file(), LANE_WAIVER_MAX_H, now_ts=time.time())
     return _idle_message(idle, verdict)
+
+
+def _is_result_data_only(staged):
+    """A non-empty staged set that is ALL under research/findings/raw/ (result data + provenance sidecars)."""
+    return bool(staged) and all(p.startswith("research/findings/raw/") for p in staged)
 
 
 def _is_infra_only(staged):
@@ -329,6 +341,12 @@ def selftest():
         bad.append("a doc-only (.md) staged set was NOT recognised as exempt")
     if _is_doc_only(["GAP_CLOSURE_MISSION.md", "research/runners/x.py"]):
         bad.append("BROKEN GUARD: a mixed doc+code set was treated as doc-only")
+    if not _is_result_data_only(["research/findings/raw/_x/a.json", "research/findings/raw/_x/a.json.prov.json"]):
+        bad.append("a result-data-only staged set was NOT recognised as exempt")
+    if (_is_result_data_only(["research/findings/raw/_x/a.json", "research/runners/x.py"])
+            or _is_result_data_only(["research/findings/raw/_x/a.json", "research/queue/pool.queue"])
+            or _is_result_data_only([])):
+        bad.append("BROKEN GUARD: a mixed or empty set was treated as result-data-only")
     if _is_doc_only([]):
         bad.append("BROKEN GUARD: an EMPTY staged set was treated as doc-only (would exempt every commit)")
     return bad

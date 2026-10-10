@@ -195,3 +195,35 @@ opposite of the harm the check guards). The flips themselves are §2 (flipping a
 - Why it waited: the 2026-10-08 03:42 commit attempt was lane-starvation BLOCKED (5/5 CPU lanes
   UNSERVED; a `.lane_waiver` file is §2-denied, and `_shared_queue_root()` always evaluates main's
   queue), budget freed ~18:47. Validation pending shared prereg steps B, F (PROVISIONAL, branch only).
+
+## 2026-10-10 05:25 EDT - pin F recorded + step B/F job files built (driver: Hermes)
+
+- F pin (RULING t8-pin): `957c2752c7ba0b2f03378edfb33b125e5a907d40` (main tip; provision result
+  `state=already` on all four nodes — every node already has this revision). Main contains the
+  d6/xedge flip plus the C1 stamp fix `434fa6d38` and the sandbox change.
+- Built on main checkout (worktree HEAD is NOT a descendant of 957c, so `make_jobs` ran where
+  HEAD == pin): `make_jobs.sh flip` → `jobs/flip_957c275.txt` 288 lines, all 288 start with the
+  required `assert_iw1_defaults.py --expect-on=d6-hebbian-write,xedge-surprise-worldmodel` guard;
+  `make_jobs.sh identity ... default off on:d6-hebbian-write+xedge-surprise-worldmodel` → 3 lines;
+  F row appended to `PINS.tsv`; PIN.txt at `_shards/iw1-flip-957c275/`. Guard on main rc=0.
+- Queueing: identity (3, dev seed 7) queued; flip (gate seeds) waits on a canary verdict for
+  `research.runners.load_bearing_fraction` @ 957c (c1-gate-missing-2) — canary launched on pool41,
+  wave 1 (43 lines) queues on PASS. No push (driver rule).
+
+## 2026-10-10 05:40 EDT - stock-the-pool executed: all five queue items live; stage1 aggregate landed (driver: Hermes)
+
+- (1) ldc-d2-floor: 4 cells landed (`_long_delay_credit_bg/d2_floor_observability/`). (2) c1
+  lesion_lateral s42 pair requeued at `6c2cb1362` (rows 7/8) — verify `gate/s42/cat_disc__lesion_lateral_{learn,read}.json`.
+- (3) T8 step B/F at F=`957c2752c`: built on main (HEAD==pin), 288 flip lines all guard-prefixed +
+  3 identity lines; canary `research.runners.load_bearing_fraction@957c` PASS 05:14 pool41
+  (recorded wall=2s, json=1 — pool_canary's own instrument, plain-ssh path); wave 1 (lines 1-43)
+  queued + logged in waves.tsv. Job files committed to this branch as `69122f37b` (reserved on
+  main); PINS/jobs artifacts restored clean on the main checkout afterwards.
+- (4) T4 host-share requeue fired per ruling: 108/108 queued (104 + 4 failed-retry). NOTE: the
+  same TSV already shows claims from Sep 30-Oct 2 (an earlier fire); this re-fire is safe because
+  gate cells are git-tracked (220 files) and seeds are fixed — logged honestly as a second physical fire.
+- (5) c1-flipdev re-pinned to `957c2752c` (contains stamp fix `434fa6d38` + hop fix): 96/96 queued
+  (dev seeds, no canary needed). Identity step-F 3 lines queued.
+- Data commits through the normal gate (no waiver): stage2 seed-7 dev cells + WORKLOG → main
+  `0bf18a607`; stage1-exit gate aggregate.json → `a2941fb1d` on research/stage1-exit-gate (T6's
+  last remainder closed). Lane gate rc=0 with A/B/C/E served by the queued flip wave + host-share.
