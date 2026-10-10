@@ -834,3 +834,29 @@ rewrite evidence" is a reserved path — same for delete. Worktree now holds the
 the below-chance gate's worktree scan passes: main commit `f9bf3704b` went through), NEEDS [T1] 14:20 asks
 Claude to land the declaration. Ruling `a2-test2-diagnose` (unit test of sign/size at floor/middle/ceiling,
 choice distributions + D1/D2 trajectories sb1-vs-sb0, byte-identity confirmation, one RESULT) is the next task.
+
+### 2026-10-10 15:16 — a2-test2-diagnose COMPLETE: three parts, one RESULT (facts only).
+RULING a2-test2-diagnose.
+1. **Sign+size unit test `tests/test_ldc_soft_bounds_sign.py`: PASS (1 passed, 58.9 s).**
+   Two identical seed-7 bridges (soft_bounds 0 vs 1), DA primed with lr off, weights +
+   eligibility set directly, ONE measured step each — ratios cancel lr/DA/eligibility
+   and every shared multiplier. Build sign array +1 on ctx_a->str_d1_0 and −1 on
+   ctx_a->str_d2_0; positive DA ⇒ D1 moves with reward, D2 against; sb1/sb0 ratios =
+   soft factors 0.5 (mid) and 1.0 (free endpoints) within 1e-3; exact zeros: D2 at
+   floor and D1 at ceiling fully braked while the unbounded rule moves there.
+   ⇒ **no sign slip; up/down branches in the amendment's order.**
+2. **Choice + trajectories (4 pairs sb0 vs sb1).** `probe_lr0` (p_ch0|A/B etc.) is
+   byte-identical across arms ⇒ pre-training instrument, not terminal choice; per-trial
+   choices are NOT recorded in the probe artifacts (obs holds da/spk/rewarded only).
+   Terminal test: response_rate 0.97–1.0 with success 0.00/0.05/0.17 on the ON cells
+   (0.48 cut_s8) ⇒ a **systematically INVERTED choice, not stuck-on-one-action** (stuck
+   ⇒ ≈chance 0.5). D1/D2 trajectories: sb1 D2 never leaves its init band and ends high
+   (final 32–39) where sb0 D2 ends 0.67–7.6 (s0 saturating low); sb1 D1 ends 35–41
+   vs sb0 46–47. Label-wiring vs motor inversion cannot be separated from artifacts
+   (no per-trial choice field).
+3. **Byte-identical-off holds at tip:** `git diff 17eaf8b51..HEAD -- sim/
+   research/runners/ tools/ tests/` EMPTY (only .md moved); `on_s7_flag0_a2.json`
+   present (wall_s 3149.7).
+
+RESULT filed in NEEDS [T1]; the sign-bug / homeostat-contingency / rethink CALL is
+Claude's (RULING a2-test2-diagnose).
