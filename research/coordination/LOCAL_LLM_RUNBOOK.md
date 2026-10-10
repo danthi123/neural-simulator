@@ -1103,3 +1103,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-10 19:10 [a2-inverted-call] RESULT: lesion cells: accuracy stays INVERTED 0.05/0.00 vs ref 0.51/0.59; cells differ from sb1 only in wall_s (gate zeroes verified at build, dynamic no-effect pending A/B). Audits 2/3 in branch WORKLOG a0ede143a.
+- 2026-10-10 19:56 [a2-inverted-call] INFO: flag0 identity at lesion tip PASS (pool bitwise, only wall_s). Pool gate build closed (717 zeros on pool41) but pool cells show NO runtime effect; local A/B gate works. Cells = no-rescue, cut may not have executed. Branch WORKLOG 35fc60f58.
