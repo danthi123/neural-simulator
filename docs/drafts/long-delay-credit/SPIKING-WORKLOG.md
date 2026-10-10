@@ -761,3 +761,25 @@ and auto-derives one CLI flag per `fields(CreditParams)` (line ~636), so it inhe
 only; main has no `_ldc_*` runners). Readout per amendment §tests 3: `void_floor_ceiling` rate (ref 10/16 credit
 ON cells, 46/62 flags `str_d2_*` → 0) and paired ON-minus-CUT success as in PILOT-4B; method diagnosis only, no
 bar tuning. Hold chain after tests 2+3: bar-sanity spec + run, then A1-vs-A2 packaging merge NEEDS.
+
+### 2026-10-10 12:50 — [T1] a02 test 2 PARTIAL VERDICT (3/4 cells landed; cut_s7_sb1 pending)
+Landed: `on_s7_sb1` `on_s8_sb1` `cut_s8_sb1` (11:41-11:48). **Validity first:** `weights_initial` is
+float-identical between each reference and its flag-1 rerun for EVERY pathway (0 of 32 keys differ, delta
+0.000000000) — seeding intact; the small trial-0 differences are one trial of different learning (trial 0 is
+recorded post-update), not divergent starts. Criterion readout vs AMENDMENT-A0.2 §tests 2:
+- **on_s8 (saturating) — ALL MET.** ctx `n(mean<=1.0)` 224/400 -> **0** (expect <25); ctx min 0.000 -> 22.589
+  (never exact 0, was at ~329); mem 256/400 -> 0. `floor_frac==1.000` 32 (ctx) / 50 (mem) -> **0**; nonzero
+  floor_frac 346/304 -> **0** (soft bounds brake the approach entirely). `void_floor_ceiling` True -> **False**
+  both pathways; final ctx 0.670 -> 32.432, mem 2.168 -> 37.411.
+- **cut_s8 — MET** (arm-independent): ctx n<=1 111 -> 0, mem 193 -> 0, nonzero floor_frac 317/297 -> 0, min
+  never below 22.6/13.8.
+- **on_s7 (control): no floor flags either way (expected) BUT the trajectory shift is LARGE, not "slightly"**
+  (honest deviation from the amendment's wording): ref 19.31 -> min 2.18 -> final 7.62; sb1 19.89 -> min 19.88
+  -> final 34.68 (mem: ref final 10.93 vs sb1 37.61). With linear soft bounds the d2 loop settles net-potentiating
+  in a mid band instead of net-depressing — recorded as-is, dev seeds, method diagnosis only.
+- **Rebound (risk 2): NOT DEMONSTRATED on this data** — no flag-1 cell ever came near the floor
+  (n near-floor steps = 0 everywhere), so g_up~1 could not be exercised. Old-rule refs do rebound near floor
+  (max positive near-floor step 1.06-1.45) but carry no g factor. Record as untested, not failed.
+- Behavior (dev noise, not a claim): on_s8 success 0.55->0.49, cut_s8 0.59->0.42; the paired ON-CUT readout is
+  test 3's job.
+`cut_s7_sb1` still queued; final test-2 verdict + test 3 (20 cells, first dispatched) follow on their results.
