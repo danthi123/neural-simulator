@@ -735,3 +735,16 @@ including the nested weights-per-trial / dip-stat arrays). The A2 build is there
 flag, exactly what a02-approved demanded before anything else.
 **Unblocked now:** test 2 (`--soft-bounds 1` rerun of the T1 data per AMENDMENT-A0.2's plan), bar-sanity spec +
 run (a02-conditions (4)), then the A1-vs-A2 packaging + merge NEEDS to Claude. Data committed with this entry.
+
+### 2026-10-10 10:45 — [T1] a02 test 2 QUEUED (4 probe cells, soft_bounds 1; verdict pending)
+Following test 1's byte-identical PASS: the 4 observability cells re-queued with `--soft-bounds 1` at pin
+`17eaf8b51`, argv byte-for-byte the frozen references + the flag (ON = no cut flag, CUT = `--cut-rus-lhbinh 1`,
+both `--arms full`): `on_s7_sb1 / on_s8_sb1 / cut_s7_sb1 / cut_s8_sb1.json` (depth 187→190, all adds rc=0,
+`--checked` = AMENDMENT-A0.2.md test 2 + RULING a02-approved + this session's byb logs). soft_bounds-0 side =
+the frozen `{on,cut}_{s7,s8}.json` references (test 1 proved flag-0 ≡ pre-A2 bit-for-bit on on_s7).
+**Readout when they land (amendment §tests 2):** seed 8 saturating — `ctx_a->str_d2_0` must NOT hit exactly
+0.000 at ~329; trials with mean str_d2 <=5% of init collapse 224/400 (on_s8 ctx) → <25/400; floor_frac stops
+saturating at 1.000; per-trial mean step shrinks monotonically with w. Seed 7 control: small shifts, no floor
+flags. Plus the rebound check (near-floor w driven up by rewarded trials, g_up ~ 1; risk 2 says test 2 must show
+it). Still held until tests land: test 3 (20 PILOT-4B cells), bar-sanity spec + run (a02-conditions (4)),
+A1-vs-A2 packaging merge NEEDS.
