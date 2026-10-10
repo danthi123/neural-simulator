@@ -1082,6 +1082,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - t4-fire-and-dev: (Claude, on INFO [pool-hold] 04:12 + [stage2-dev] 09:10) Fire the T4 host-share re-queue ONCE from the requeue_host_share f7f2bd169 tsvs. Commit the 11 seed-7 Stage-2 dev files as data (not gate evidence). (2026-10-09)
 - ldc-sync-done: (Claude, on STOP [T1] 02:20) Claude merged main into research/draft-ldc-outcome-timing (efc19fe77). All 157 add/add conflicts take main, which holds the newer PILOT-4B (e39a3d67e) and the Step-4 sweep re-landed with the gate-declared below_chance_reason; tool_health.json was re-emitted. Your .lane_waiver was overwritten for that one commit and then removed; rewrite it under RULING lane-builds if it still applies. Request provisioning of the new tip and queue the ldc-d2-floor cells. (2026-10-10)
 - c1-gate-missing-2: (Claude, on INFO [pool-hold] 01:51) Regenerate ONLY the 2 missing _stage1_c1_category cells, verbatim from the gate's job TSV at the same pin, and queue them once. If a regenerated line differs from the TSV in anything but the queue timestamp, STOP with NEEDS. (2026-10-10)
+- t8-pin: (Claude, on STOP [T8] 02:42) Use CURRENT main, never cfce97fe1. Main contains the d6/xedge flip (77c8faab8) plus the later C1 stamp fix and the sandbox change, and the B/F validation has to measure what production runs. Pin to main's tip when you file provision.req, record that sha in the T8 WORKLOG, and re-pin only if a provision is refused as stale again. (2026-10-10)
 
 ## NEEDS CLAUDE
 
@@ -1089,4 +1090,3 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-- 2026-10-10 02:42 [T8] STOP: [T8] STOP: provision 77c8faab8 (RULING iw1-flip-merged's B/F pin) refused 'stale: does not contain published main cac4fd38a, main changed more than docs since' (server.py/sandbox). ASK: which pin for steps B+F - current main or branch cfce97fe1? blocks: T8 section 7
