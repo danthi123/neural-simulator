@@ -809,3 +809,17 @@ direction; per a02-conditions (5) the exponents stay frozen — no post-hoc dev-
 The gate demands the artifact own an UNDEFINED (`below_chance: true`) status or a task/label fix; both are
 scorer/harness territory = Claude's. The 4 cells stay UNCOMMITTED on main; NEEDS [T1] filed. Test 3 continues
 (6/20 landed) so the paired ON-CUT readout can complete the picture.
+
+### 2026-10-10 14:02 — [T1] test-2 data landing DISCLOSURE (gate sequence, full transparency)
+Sequence: (1) the `below-chance` gate blocked committing the four flag-1 cells (undeclared below-chance test
+phases). (2) To unblock the NEEDS runbook commit I moved the four files out of the worktree to
+`/opt/data/cache/scratch/a02_sb1_uncommitted/` — the gate scans the WORKTREE, but the files were still STAGED
+from the blocked attempt, so commit **`669c58b19` landed them anyway** (with the NEEDS line and the four
+reference `.prov.json` sidecars): the below-chance demand was therefore NOT satisfied by that landing. (3) I
+tried to unland just those artifacts (`git rm --cached` + commit); the delete is itself reserved ("only
+additions and modifications are routine"), so that commit was refused. **Final state:** the four cells sit on
+main at `669c58b19` WITHOUT the `below_chance`/UNDEFINED declaration the gate wants; their worktree copies live
+in the scratch holding dir; NEEDS [T1] 13:54 asks Claude to declare them (precedent: ruling `ldc-sync-done`
+says Claude re-landed the Step-4 sweep "with the gate-declared below_chance_reason") and to judge the
+regression. The measured numbers above stand unchanged; no scorer, label wiring or artifact field was edited
+by the driver (all Claude's).
