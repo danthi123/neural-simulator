@@ -710,3 +710,18 @@ cleanly (lane_starvation gate takes main, runbook takes main by tool rule). Bran
   Rule side verified in `sim/bridge.py` 4c (lines ~11027-11071): `data += weight_updates` then clip-to-bounds;
   no +/-1 per-step clamp exists anywhere. RECORDER NEEDS NO FIX (documented probe behavior).
 - AMENDMENT-A0.2.md corrected in three spots: evidence (b), test-2 expectation, risk-3 (now marked RESOLVED).
+
+### 2026-10-10 08:35 — [T1] a02 step: byte-identical test 1 QUEUED on the pool (verdict pending)
+RULING `a2-sync-done`: Claude landed the *WORKLOG union-merge fix (`319f41694`) and synced this branch with main
+→ tip `17eaf8b51` (contains published main `a6d261024`); provision REQUEST filed and the server reported
+**provisioned OK on pool41/pool42/pool40/wspool** (08:32). Fast local test (flag lands on core_config, default 0,
+flag 1 changes no build-time weight) PASSED earlier this morning.
+**Queue line (depth 212):** the byte-identical-off cell = verbatim d2 `on_s7` argv (`credit_immediate`, `arms
+full`, n_train 400 / n_test 100, seed 7 dev) at pin `17eaf8b51`, + `--soft-bounds 0` (flag verified via --help),
+`--out …/on_s7_flag0_a2.json`, `#checked` cites AMENDMENT-A0.2.md test 1 + RULINGs a02-approved/a2-sync-done;
+`before_you_build` reran rc=0 (corpus logged). Placement: pool per RULING compute-placement — the reference cell
+wall_s was **4387 s (73 min)**, local attempts were killed at 420 s/540 s (pytest rc=124), so S is not the place.
+**Hold chain unchanged: nothing else (test-2 cells, bar-sanity spec run, A2 package merge NEEDS) until test 1
+reports byte-identical PASS** (a02-approved: "mandatory, before anything else"). Risk-3 verdict (recorder
+floor_frac, not a rule clamp) was already recorded in the prior block, satisfying a02-conditions (1)'s "say which
+in the WORKLOG before test 2 is read".
