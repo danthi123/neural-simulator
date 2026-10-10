@@ -1094,3 +1094,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 07:30 [T1] STOP: A2 built c9107bb8c; provision refused (branch lacks published main a6d261024); agent_sync rc=2: conflict in docs/drafts/long-delay-credit/SPIKING-WORKLOG.md; blocks byte-identity pool run + A2 merge NEEDS
