@@ -1,6 +1,6 @@
 {
  "stage": "STAGE-1 (INFANT) exit",
- "verdict": "FAIL",
+ "verdict": "UNDEFINED (INCOMPLETE): unmet: six seeds defined for every primary criterion (measured=2 expect=0)",
  "GO": false,
  "preconditions": [
   {
@@ -48,17 +48,19 @@
   {
    "kind": "require",
    "name": "six seeds defined for every primary criterion",
-   "ok": true,
-   "detail": "measured=0 expect=0",
+   "ok": false,
+   "detail": "measured=2 expect=0",
    "note": ""
   }
  ],
- "undefined_reasons": [],
+ "undefined_reasons": [
+  "unmet: six seeds defined for every primary criterion (measured=2 expect=0)"
+ ],
  "criteria": {
   "C1": "FAIL",
   "C2": "PASS",
-  "C3": "FAIL",
-  "C4": "FAIL"
+  "C3": "INCOMPLETE",
+  "C4": "INCOMPLETE"
  },
  "groups": {
   "cat_disc": {
@@ -111,7 +113,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -163,7 +165,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -215,7 +217,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -267,7 +269,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -319,7 +321,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -371,7 +373,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -442,7 +444,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -494,7 +496,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -546,7 +548,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -598,7 +600,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -650,7 +652,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -702,7 +704,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1037,25 +1039,27 @@
   "lived": {
    "criterion": "C3",
    "primary": true,
-   "verdict": "FAIL",
+   "verdict": "INCOMPLETE",
    "why": [
-    "lesion_recall: reply-level effect on 0 of 6 seeds (not load-bearing)"
+    "0 of 6 seeds defined"
    ],
-   "n_defined": 6,
-   "n_correct": 6,
+   "n_defined": 0,
+   "n_correct": 0,
    "n_lesion_effect": {
     "lesion_recall": 0,
-    "lesion_episodic": 6
+    "lesion_episodic": 0
    },
    "n_reproduced": {
-    "lesion_recall": 6,
-    "lesion_episodic": 6
+    "lesion_recall": 0,
+    "lesion_episodic": 0
    },
-   "n_permuted_tracks": 6,
+   "n_permuted_tracks": 0,
    "seeds": {
     "42": {
      "seed": 42,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1082,7 +1086,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1093,7 +1097,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1111,7 +1115,9 @@
     },
     "43": {
      "seed": 43,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1138,7 +1144,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1149,7 +1155,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1167,7 +1173,9 @@
     },
     "44": {
      "seed": 44,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1194,7 +1202,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1205,7 +1213,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1223,7 +1231,9 @@
     },
     "100": {
      "seed": 100,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1250,7 +1260,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1261,7 +1271,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1279,7 +1289,9 @@
     },
     "101": {
      "seed": 101,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1306,7 +1318,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1317,7 +1329,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1335,7 +1347,9 @@
     },
     "102": {
      "seed": 102,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "lesion_recall: an env-flag lesion with no reply change and no engagement record (inert lesion and non-load-bearing path are indistinguishable)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1362,7 +1376,7 @@
        "effect": false,
        "attributable": null,
        "reproduced": true,
-       "applied": true
+       "applied": null
       },
       "lesion_episodic": {
        "present": true,
@@ -1373,7 +1387,7 @@
        "effect": true,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1394,23 +1408,25 @@
   "val_heldout": {
    "criterion": "C4",
    "primary": true,
-   "verdict": "FAIL",
+   "verdict": "INCOMPLETE",
    "why": [
-    "permuted exposure tracked on 0 of 6 seeds (not exposure-driven)"
+    "0 of 6 seeds defined"
    ],
-   "n_defined": 6,
-   "n_correct": 6,
+   "n_defined": 0,
+   "n_correct": 0,
    "n_lesion_effect": {
-    "lesion_affect": 6
+    "lesion_affect": 0
    },
    "n_reproduced": {
-    "lesion_affect": 6
+    "lesion_affect": 0
    },
    "n_permuted_tracks": 0,
    "seeds": {
     "42": {
      "seed": 42,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1579,7 +1595,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1595,7 +1611,9 @@
     },
     "43": {
      "seed": 43,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1764,7 +1782,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1780,7 +1798,9 @@
     },
     "44": {
      "seed": 44,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -1949,7 +1969,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -1965,7 +1985,9 @@
     },
     "100": {
      "seed": 100,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -2134,7 +2156,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2150,7 +2172,9 @@
     },
     "101": {
      "seed": 101,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -2319,7 +2343,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2335,7 +2359,9 @@
     },
     "102": {
      "seed": 102,
-     "undefined_reasons": [],
+     "undefined_reasons": [
+      "permuted map deranged 0 of 24 held-out words (the learned map was not loaded)"
+     ],
      "null_clean": true,
      "null_diffs": [],
      "sources": [
@@ -2504,7 +2530,7 @@
        "reason": "no variance in the reply differentials (every read neutral)",
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2562,7 +2588,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2605,7 +2631,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2648,7 +2674,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2691,7 +2717,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2734,7 +2760,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
@@ -2777,7 +2803,7 @@
        "effect": null,
        "attributable": 1.0,
        "reproduced": true,
-       "applied": true
+       "applied": null
       }
      },
      "permuted": {
