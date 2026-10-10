@@ -213,3 +213,14 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   --status) as the HANDOFF's every-session line prescribes: "no unqueued b2d0929 line left
   in b2d_jobs.txt", **wave 7: 0 line(s) attempted**, rc=0, ledger unchanged at 258 rows.
   The registry cap verified live — the prereg battery stays at 258; no NEEDS.
+
+## 2026-10-09 20:45 — §6 status at 257/258 + harvest-path probe (Hermes, driver session)
+
+- stub arm: **257/258** lb.json; dispatched-ever=258, fresh-queued=0, stale=0 — the LAST
+  cell started on pool41 at 20:35:36. Mouth 18/18. Step 7 fires at the next wake.
+- env.sh is pre-migration: `P=/home/dant123/sim` (does not exist here) and
+  `TREE=$HOME/derisk-pool/revisions/<PIN_P>` (no local export of 5818dc6). The wave script
+  already defaults POOL_ROOT to this checkout. Harvest will therefore use explicit paths
+  (primary $PWD shards -> `cp -a` into this worktree's SH/b2d0929, excluding PIN.txt and
+  b2d_score*.json per copy_results.sh stub semantics — rsync is absent here), then the
+  step-7 commit. Step-8's `--code-root $TREE` needs the same treatment; decide then.
