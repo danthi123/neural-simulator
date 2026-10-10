@@ -1088,3 +1088,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-10 01:51 [pool-hold] INFO: _stage1_c1_category gate count 52/54 but pool.queue=0 and held=0 (2 cells' lines gone before Start); tried: grep queue+held; blocks: T7
+- 2026-10-10 02:20 [T1] STOP: [T1] agent_sync research/draft-ldc-outcome-timing @523ea8ba5 refused (exit 2): main 33830f8da conflicts in sweep data + PILOT-4B + tool_health; provision 'stale: does not contain published main'. blocks: ldc-d2-floor cells cannot queue; detail in SPIKING-WORKLOG
