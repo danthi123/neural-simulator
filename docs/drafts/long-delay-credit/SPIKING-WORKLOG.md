@@ -783,3 +783,16 @@ recorded post-update), not divergent starts. Criterion readout vs AMENDMENT-A0.2
 - Behavior (dev noise, not a claim): on_s8 success 0.55->0.49, cut_s8 0.59->0.42; the paired ON-CUT readout is
   test 3's job.
 `cut_s7_sb1` still queued; final test-2 verdict + test 3 (20 cells, first dispatched) follow on their results.
+
+### 2026-10-10 13:50 — [T1] a02 test 2 FINAL VERDICT: PASS (4/4 cells)
+`cut_s7_sb1` landed 13:48 and matches the control pattern: no floor flags either way, `floor_frac` nonzero on
+205/157 trials (max 0.065/0.135) under the old rule vs **exactly 0.0 everywhere** under soft bounds; final
+24.23 -> 36.69 (ctx) / 23.34 -> 39.18 (mem). **All four cells meet every AMENDMENT-A0.2 §tests-2 weight
+criterion:** saturating seed 8 (on + cut) no longer reaches the floor at all (224/400 and 111/400 near-floor
+trials -> 0; floor_frac==1.000 32/50/18 -> 0; `void_floor_ceiling` True -> False on both on_s8 pathways),
+non-saturating seed 7 shifts without floor flags (seeding float-identical in all pairs). Honest notes stand:
+control trajectories shift LARGE (net-potentiating settle; the amendment's "slightly" was optimistic) and the
+rebound/g_up check (risk 2) remains unexercised because no flag-1 trajectory ever approaches the floor.
+Test 3 is the remaining test: 6/20 pilot cells landed (on30 s9/s10/s12 x on+cut); its paired ON-CUT readout and
+the final `void_floor_ceiling` rate (vs reference 10/16) follow when all 20 arrive. Bar-sanity spec + run and
+the A1-vs-A2 packaging merge NEEDS stay held until test 3 closes (a02-approved ordering).
