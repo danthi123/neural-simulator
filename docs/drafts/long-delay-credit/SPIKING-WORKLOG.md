@@ -748,3 +748,16 @@ saturating at 1.000; per-trial mean step shrinks monotonically with w. Seed 7 co
 flags. Plus the rebound check (near-floor w driven up by rewarded trials, g_up ~ 1; risk 2 says test 2 must show
 it). Still held until tests land: test 3 (20 PILOT-4B cells), bar-sanity spec + run (a02-conditions (4)),
 A1-vs-A2 packaging merge NEEDS.
+
+### 2026-10-10 11:50 — [T1] a02 test 3 QUEUED (20 PILOT-4B cells, soft_bounds 1; verdict pending)
+All 20 cells from AMENDMENT-A0.2 §tests 3 queued at pin `17eaf8b51` (20/20 adds rc=0, depth →191): credit_on30
+ON seeds 9/10/12/14/15 + CUT pairs, credit_on150 ON seeds 8/9/11/12/14 + CUT pairs — argv byte-for-byte the
+frozen PILOT-4B references (provenance sidecars `dev_pilot_4b/grid_credit_immediate_on{30,150}_{on|cut}_s*.json`:
+`--schedule credit_immediate --arms full --n-train 400 --n-test 100`, STEP4B constants, CUT = `--cut-rus-lhbinh 1`)
++ `--soft-bounds 1`, outputs to the NEW dir `dev_pilot_4b_a2/` (references untouched for the paired comparison).
+**No pilot-runner edit was needed:** `_ldc_omission_pilot.py` imports `CreditParams` from `_ldc_credit_omission`
+and auto-derives one CLI flag per `fields(CreditParams)` (line ~636), so it inherits the A2 fields + the
+`credit_extension` updates dict passthrough for free — verified by grep before queueing (it lives on this branch
+only; main has no `_ldc_*` runners). Readout per amendment §tests 3: `void_floor_ceiling` rate (ref 10/16 credit
+ON cells, 46/62 flags `str_d2_*` → 0) and paired ON-minus-CUT success as in PILOT-4B; method diagnosis only, no
+bar tuning. Hold chain after tests 2+3: bar-sanity spec + run, then A1-vs-A2 packaging merge NEEDS.
