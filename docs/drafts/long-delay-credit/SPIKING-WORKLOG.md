@@ -604,3 +604,21 @@ schedules' explicit outcome block (the other Run.outcome call site) fires for cr
 schedule outcome runs inside race() and last_out was captured; the harvest point sits before run.mark("end")
 so every schedule's trial picks up whatever outcome produced. Analysis script for (a) lagged DA-vs-region
 spike attribution comes after the 4 cells land.
+
+## 2026-10-10 02:26 - instrument committed (523ea8ba5); provision refused stale; NEEDS filed
+
+- Committed the instrument runner + this arc's first WORKLOG entry as 523ea8ba5 (gates: only
+  tool-health-fresh warning).
+- agent_sync_branch research/draft-ldc-outcome-timing REFUSED (exit 2) merging main 33830f8da: git merge
+  would conflict in ~180 files - research/findings/raw/_long_delay_credit_bg/sweep/*.json (~175, both
+  sides changed since merge-base), docs/drafts/long-delay-credit/PILOT-4B.md, research/coordination/
+  tool_health.json. Per RULING sync-branch that exit 2 is a NEEDS-CLAUDE, not something to resolve by hand.
+- Server provision requested for 523ea8ba5b2361072f4f2b36ff85a5242a9d9b6f: state=refused, reason
+  "stale: does not contain" published main 33830f8da29eb41952eea09777a937e9bc3437bc, hint "Merge or rebase
+  onto main, commit, and name the new sha right away". So the 4 ldc-d2-floor observability cells ({on, cut}
+  x dev seeds, credit_immediate on150, n-train 400, mem_gb=2, checked cites STEP4B section 3) CANNOT be
+  queued: no revision carries _ldc_dip_observability.py, and only a synced branch can be provisioned.
+- NEEDS-CLAUDE [T1] filed on main (short line cites this entry). Unblocks: Claude resolves the sweep-file
+  drift (which side's copies are canonical), then agent_sync + re-request provision + queue the 4 cells.
+- Smoke data stays in scratch; nothing uncommitted on the branch except runs.jsonl (never add) and the
+  stash of the earlier smoke provenance (git stash list on this worktree, "smoke provenance (ephemeral)").
