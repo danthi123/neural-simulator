@@ -236,3 +236,53 @@ is recorded in the marker rather than a create-then-close.
   registered UNREACHABLE for the planned build), on top of my marker 4e78bc0ff (Claude
   re-targeted after NEEDS [stage1-ff]: when a FF target lacks only driver marker commits,
   STOP is correct and Claude re-targets). Attempt-2 remains Claude's, calendar 11-21.
+
+## 2026-10-10 03:40 EDT - section 7 scored, verdict UNDEFINED (INCOMPLETE), section-9 STOP (T6)
+
+- Start recount per section 6: 205 gate cells in $P (>= 204; rising stopped long ago, no missing_shards in the
+  aggregate), so section 7 ran: cp -a the gate into this worktree (rsync absent on S), then
+  `SIM_NO_PROVENANCE=1 python -m research.runners.stage1_exit_gate --aggregate ... --seeds 42,43,44,100,101,102`
+  rc=0. Report written to /opt/data/cache/scratch/stage1_exit_report.md (the HANDOFF's
+  /home/dant123/Projects/sim/... path does not exist on this host; same content, deviation noted).
+- Verdict: UNDEFINED (INCOMPLETE) -- unmet precondition "six seeds defined for every primary criterion"
+  (measured=2 expect=0). C1 cat_disc FAIL (capability absent 6/6, null clean, brain/corpus/hash ok), C2 word
+  PASS 6/6, C3 lived 0/6 defined, C4 val_heldout 0/6 defined; diagnostics cat_told FAIL 0/6, val_novel FAIL 0/6.
+  Per-seed valence r intact 0.938-0.951 (n=24) as in the finding.
+- Both undefined reasons are non-missing-shard, so section 9 fires -> STOP this line of work, NEEDS-CLAUDE:
+  (1) C3: `lesion_recall` is an env-flag lesion with no reply change and no engagement record on all six seeds
+  (inert lesion vs non-load-bearing path indistinguishable) while `lesion_episodic` DID fire (attributable 1.0,
+  reproduced 6/6) -- judgment: wrong lesion set for C3's bar, or recall genuinely not load-bearing, or an
+  engagement gate the scorer needs; (2) C4: the permuted control never engaged -- learned map not loaded,
+  0 of 24 held-out words deranged, permuted r == intact r on every seed (and lesion_affect reads all neutral,
+  r_lesion None) -- judgment: map-load path broken at production defaults vs control-design issue. Editing
+  the scorer or arms is reserved (section 10 "do not attempt").
+- C2 PASS on a criterion triggers section-10 #7: verify-go adversarial skeptics before any board/ledger word
+  changes; the board line below stays in this WORKLOG for Claude to move after that.
+- Board line: 2026-10-10 Stage-1 exit gate (first integrated stage-exit attempt): UNDEFINED (INCOMPLETE);
+  C1 FAIL, C2 PASS, C3 UNDEFINED, C4 UNDEFINED (val_heldout r per seed: 42 .938, 43 .946, 44 .951, 100 .947,
+  101 .946, 102 .944; 0/24 permuted deranged -- learned map not loaded). Finding:
+  research/findings/2026-10-10-stage1-exit-gate-RESULT.md.
+- Report-path deviation + verdict in the commit message; push skipped per the driver brief (sim-sync publishes main).
+
+## 2026-10-10 04:05 EDT - commit BLOCKED by lane-starvation (retry loop started)
+
+- Commit attempt 1 (03:3x): lane-starvation 4/5 idle; waiver rejected (promise word). Attempt 2: waiver
+  budget EXHAUSTED (6.59h of 6h charged in 24h) - no further waiver possible until ~10-11 03:52.
+- Fixed the T7 source while waiting: stage1_c1_category_jobs.tsv is pin bb6705de6, whose run_shard DROPS
+  --allow-gate-seed (every gate seed rc=2 - that is why the original canary failed at 03:22). The gate's
+  own TSV is requeue_stage1_c1_category_6c2cb1362.tsv (6c2cb1362 forwards the flag). Canary on pool41 PASS
+  (rc=0 wall=1217s), rows 7+8 queued and dispatched 03:56:58 pool42 / 03:57:05 wspool (cells ~20 min).
+- Commit attempt 3+ (03:58): 5/5 lanes idle - the gate matches lane keywords in queue/dispatch text, and no
+  queue file in research/queue/ holds any A/C/D/E-keyed line (only c1, stage1-exit, host-share TSVs; host-share
+  gate is complete at 108/108 so re-queuing it would be pointless work). Lane B's window expired (ldc rows
+  >RECENT_DISPATCH_MIN). This is the documented waiver-budget deadlock -> T6 section 7's escape: STOP +
+  NEEDS-CLAUDE #6 (filed on main). The staged finding+aggregate+WORKLOG retry every wake; the real pool work
+  (2 ldc-d2-floor + 2 c1 cells) keeps running.
+
+## 2026-10-10 04:20 EDT - commit split: verdict lands doc-only, aggregate follows
+
+- lane_starvation exempts all-Markdown staged sets (doc-only). The finding + WORKLOG (the verdict and the
+  section-9 STOP record) commit first; research/findings/raw/_stage1_exit/gate/aggregate.json stays STAGED
+  until a commit with lanes served or the waiver budget renews (~10-11 03:52) - it is byte-regenerable with
+  the documented --aggregate command. Tree therefore not clean for stage1-sync's ff merge until that lands.
+- NEEDS-CLAUDE #6 landed on main as 23047f23c (runbook line; main's commit was doc-only too).
