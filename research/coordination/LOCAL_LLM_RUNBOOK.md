@@ -1099,3 +1099,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 15:14 [a2-test2-diagnose] RESULT: T1 sign unit test PASS (D1 +, D2 -, factors 0.5/1.0, endpoints exact); terminal acc 0.00-0.17 at resp 1.0 = inverted not stuck; byte-identity holds. Facts; Claude calls sign bug/homeostat/rethink. END
