@@ -244,3 +244,20 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   worktree. Auto-expires 6h; next commits may need a fresh one or lane jobs.
 - **Step 8 next wake**: aggregate + `b2d_score.py` (scoring = registered scorer; decide the
   `--code-root $TREE` adaptation — no local export of 5818dc6 on S).
+
+## 2026-10-09 23:50 — stall wake "pool has work, no result 3.0h": FALSE ALARM (Hermes, driver session)
+
+- Checked all 3 nodes: **no runner processes anywhere** (pool40/41/42), queue files empty
+  (pool.queue=0, gpu.queue=0, pool.queue.running=0) — no jobs exist to be dead.
+- The 4 `sleep_transitive_inference` seed-44 lines in dispatch.log were **NOT dispatched
+  tonight**: dispatch.log mtime = 2026-09-30 20:23:28, zero B2d lines in it, time-only
+  stamps — they are Sep-30 dispatches of the sleep battery, whose results exist locally
+  (seed44_b/c/n/x.json, Sep 30 22:06-23:03; seed101/102 parts claimed Oct 1 00:20-00:35).
+- Tonight's "work" was the B2d stub arm: every claim has an rc=0 job_status row; last
+  result = 20:35 (final cell). 23:47 − 20:35 = 3.1h — the "3.0h" gap exactly matches the
+  battery having legitimately drained, not a death.
+- Bookkeeping quirks noted (not touched): pool.queue.done = 0 lines despite 4357 claims
+  (no tool in tools/ writes it — legacy), pool.queue.unchecked holds 1 ancient unrunnable
+  stub (`1788569058 SIM_BACKEND=numpy`, Sep 2) + 2 Jul/Aug malformed lines — both
+  quarantined-by-design, never dispatched. The external stall detector's "has work" source
+  is not in this repo; expect repeat wakes until new results land.
