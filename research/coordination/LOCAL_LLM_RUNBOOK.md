@@ -1089,3 +1089,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 02:42 [T8] STOP: [T8] STOP: provision 77c8faab8 (RULING iw1-flip-merged's B/F pin) refused 'stale: does not contain published main cac4fd38a, main changed more than docs since' (server.py/sandbox). ASK: which pin for steps B+F - current main or branch cfce97fe1? blocks: T8 section 7
