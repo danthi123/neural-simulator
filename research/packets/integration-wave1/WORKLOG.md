@@ -208,3 +208,21 @@ opposite of the harm the check guards). The flips themselves are §2 (flipping a
   Learning-labelled (wire + run the shared-prereg validations before any merge); no task closed by the
   provisional flip (#228, #202 stay open). Branch clean afterwards; never pushed; RESULT filed on main
   under `[flip-commit-blocked]`.
+
+## 2026-10-10 02:45 EDT - T8 section 7 STOPPED at provisioning (pin 77c8faab8 refused)
+
+- RULING iw1-flip-merged (10-09) ordered the pending prereg B/F validation against main 77c8faab8. Start
+  re-verified this wake: identity 049d4bb = 5 files, R shards = 18, iw1-flip queued = 0. FLIP =
+  d6-hebbian-write,xedge-surprise-worldmodel; `tools/assert_iw1_defaults.py --expect-on=<that>` passes on main.
+  Prereg research/findings/2026-09-29-iw1-wave-battery-PREREGISTRATION.md is committed.
+- `touch research/queue/provision.req/77c8faab82b76a4817545686c92a888f7ccd5256` ->
+  /opt/host-status/sim-provision/77c8faab8...json state=refused 06:41:02Z: "stale: does not contain published
+  main cac4fd38a9d8 or a main published in the 60 min before this request, and main changed more than docs
+  since". reachable_via lists main (ancestry is fine); the staleness rule is what blocks it. main..77c8faab8
+  adds real code: webapp/server.py, webapp/category_inherit_chat.py, tools/pool_job_sandbox.sh,
+  tests/test_category_inherit_organ.py, tests/test_pool_job_sandbox.py (+ docs/raw), so a later main pin is
+  NOT equivalent to the ruling's pin.
+- Per section 6's table (provisioner refuses -> STOP, NEEDS-CLAUDE with its message): no job files generated
+  (make_jobs.sh requires HEAD == pin; no checkout sits at 77c8faab8), no F row appended to PINS.tsv, no lines
+  queued. Filed NEEDS [T8] STOP + ASK: which pin runs steps B+F (77c8faab8 by a sanctioned route, current
+  main with its code lead, or the branch flip commit cfce97fe1).
