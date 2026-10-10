@@ -1090,3 +1090,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 04:01 [stage1-exit] STOP: NEEDS-CLAUDE #6: T6 stage1-exit finding staged; commit blocked only by lane-starvation (5/5 idle, waiver budget to ~10-11 03:52, no A/C/D/E keyed ready lines). Verdict UNDEFINED: C1 FAIL, C2 PASS, C3/C4 0-defined. Detail: packet WORKLOG 04:05.
