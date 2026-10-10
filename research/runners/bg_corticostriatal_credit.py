@@ -91,6 +91,11 @@ class CreditParams:
     coact_pre_tau_ms: float = 20.0
     elig_tau_ms: float = 1000.0
     w_max: float = 90.0              # plastic-only clip (see `restrict_clip_to_plastic`)
+    # A2 soft bounds (RULING a02-approved): flows into cfg.reward_soft_bounds via
+    # credit_extension. 0 = OFF = byte-identical; exponents frozen at 1.0.
+    soft_bounds: int = 0
+    soft_bound_n_up: float = 1.0
+    soft_bound_n_down: float = 1.0
     # dopamine production from SNc firing
     da_sensitivity: float = 80.0
     da_window_ms: float = 30.0
@@ -144,6 +149,9 @@ def credit_extension(p: CreditParams, *, elig_tau_ms=None, tag_gain=1.0):
         "reward_coactivity_scale": float(p.coact_scale) * float(tag_gain),
         "reward_eligibility_tau_ms": tau,
         "reward_learning_rate": float(p.lr),
+        "reward_soft_bounds": int(getattr(p, "soft_bounds", 0)),
+        "reward_soft_bound_n_up": float(getattr(p, "soft_bound_n_up", 1.0)),
+        "reward_soft_bound_n_down": float(getattr(p, "soft_bound_n_down", 1.0)),
         "reward_baseline": 0.0,
         "current_reward_signal": 0.0,
         "hebbian_min_weight": 0.0,

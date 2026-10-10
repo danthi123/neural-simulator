@@ -11049,6 +11049,16 @@ class SimulationBridge:
                         tan_gate = self.neuromodulator_manager.compute_plasticity_window_gate_multiplier()
                         if tan_gate != 1.0:
                             weight_updates = weight_updates * tan_gate
+                    # A2 soft bounds (RULING a02-approved): trafficking-slot gating of the signed
+                    # three-factor update (docs/drafts/long-delay-credit/AMENDMENT-A0.2.md).
+                    # Default 0 / field absent => this block does not execute anything, so the
+                    # default path is byte-identical to the pre-A2 rule.
+                    if int(getattr(cfg, "reward_soft_bounds", 0)) == 1:
+                        _soft_R = max(cfg.hebbian_max_weight - cfg.hebbian_min_weight, 1e-6)
+                        _soft_w = self.cp_connections.data[:actual_nnz]
+                        _soft_up = cp.clip((cfg.hebbian_max_weight - _soft_w) / _soft_R, 0.0, 1.0) ** cfg.reward_soft_bound_n_up
+                        _soft_dn = cp.clip((_soft_w - cfg.hebbian_min_weight) / _soft_R, 0.0, 1.0) ** cfg.reward_soft_bound_n_down
+                        weight_updates = weight_updates * cp.where(weight_updates >= 0.0, _soft_up, _soft_dn)
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds).

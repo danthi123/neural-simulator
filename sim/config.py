@@ -692,6 +692,16 @@ class CoreSimConfig:
     # removes net drive (measured: firing fell 3.7x, decode halved, rsa fell out of its gate).
     # 0.0 => OFF => the (w_max - w) form is used unchanged => byte-identical.
     hebbian_oja: float = 0.0
+    # A2 (2026-10-10, RULING a02-approved): trafficking-slot soft bounds on the reward-modulated
+    # (three-factor) weight update — receptor-slot occupancy (Lisman & Raghavachari 2006; Huganir &
+    # Nicoll 2013; the soft-bound form of van Rossum et al. 2000): potentiation scales with FREE slots
+    # (w_max - w), depression with OCCUPIED slots (w - w_min); exponents FROZEN at 1.0 (a02-conditions
+    # (2): no dev sweep). Applied to ALL plastic synapses in 4c C2 (sim/bridge.py) as a per-synapse
+    # factor on the SIGNED update, after the D1/D2 sign and TAN gates. 0 => OFF => byte-identical:
+    # when the flag is absent or 0 the block executes nothing.
+    reward_soft_bounds: int = 0
+    reward_soft_bound_n_up: float = 1.0
+    reward_soft_bound_n_down: float = 1.0
     # LANE B1-V1 (2026-08-26): BCM sliding metaplastic threshold (Bienenstock-Cooper-Munro 1982; Cooper-Intrator
     # 2004). The rate-window rule above is POTENTIATION-ONLY above a FIXED coactivity threshold, so on ON/OFF-split
     # full-field gratings ON and OFF potentiate to identical values and the signed RF cancels (the measured
