@@ -195,3 +195,17 @@ opposite of the harm the check guards). The flips themselves are §2 (flipping a
 - Why it waited: the 2026-10-08 03:42 commit attempt was lane-starvation BLOCKED (5/5 CPU lanes
   UNSERVED; a `.lane_waiver` file is §2-denied, and `_shared_queue_root()` always evaluates main's
   queue), budget freed ~18:47. Validation pending shared prereg steps B, F (PROVISIONAL, branch only).
+
+## 2026-10-10 05:25 EDT - pin F recorded + step B/F job files built (driver: Hermes)
+
+- F pin (RULING t8-pin): `957c2752c7ba0b2f03378edfb33b125e5a907d40` (main tip; provision result
+  `state=already` on all four nodes — every node already has this revision). Main contains the
+  d6/xedge flip plus the C1 stamp fix `434fa6d38` and the sandbox change.
+- Built on main checkout (worktree HEAD is NOT a descendant of 957c, so `make_jobs` ran where
+  HEAD == pin): `make_jobs.sh flip` → `jobs/flip_957c275.txt` 288 lines, all 288 start with the
+  required `assert_iw1_defaults.py --expect-on=d6-hebbian-write,xedge-surprise-worldmodel` guard;
+  `make_jobs.sh identity ... default off on:d6-hebbian-write+xedge-surprise-worldmodel` → 3 lines;
+  F row appended to `PINS.tsv`; PIN.txt at `_shards/iw1-flip-957c275/`. Guard on main rc=0.
+- Queueing: identity (3, dev seed 7) queued; flip (gate seeds) waits on a canary verdict for
+  `research.runners.load_bearing_fraction` @ 957c (c1-gate-missing-2) — canary launched on pool41,
+  wave 1 (43 lines) queues on PASS. No push (driver rule).
