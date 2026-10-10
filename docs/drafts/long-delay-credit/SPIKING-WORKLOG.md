@@ -28,3 +28,15 @@
   SURE? No — the bar-sanity line in the draft names `bar_sanity_spec_softbounds.py`, a spec that does NOT exist
   yet: writing it is part of the build after Claude approves (bars are §2-reserved).
 - NEEDS-CLAUDE ASK filed for Claude's review (sim/ edit sign-off, bar spec, A1-vs-A2 packaging). No push (RULING push-credential).
+
+## 2026-10-10 07:10 — a02-conditions (1) risk-3 RESOLVED: RECORDER floor_frac, not a rule clamp (Hermes)
+
+- Rulings a02-approved + a02-conditions landed (a94c68ad3): A0.2 approved; sim/ edit signed off; byte-identical-off
+  test mandatory first; exponents frozen 1.0; package as separate A2; bar-sanity spec now; homeostat named, not built.
+- Verdict stated BEFORE any test-2 read (condition 1): the |delta|=1.000 pin is the RECORDER's `floor_frac` —
+  the second element of `info["wt"] = {pathway: [mean, floor_frac]}` = fraction of the pathway's synapses at the
+  bound — NOT a weight delta. Proof: on_s8 `ctx_a->str_d2_0`: n(floor_frac==1.0)=32/400, n(floor_frac>0)=346/400
+  = exactly the count earlier misread as "nonzero delta"; mean moves freely (|d mean| max 3.452).
+  Rule side verified in `sim/bridge.py` 4c (lines ~11027-11071): `data += weight_updates` then clip-to-bounds;
+  no +/-1 per-step clamp exists anywhere. RECORDER NEEDS NO FIX (documented probe behavior).
+- AMENDMENT-A0.2.md corrected in three spots: evidence (b), test-2 expectation, risk-3 (now marked RESOLVED).
