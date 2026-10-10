@@ -919,3 +919,30 @@ regression (the pool-vs-pool flag0 identity remains the record: PASS at 09:40; t
 extension cell `on_s7_flag0_a2ext.json` at pin `afffc32e2e` is queued to re-prove it at
 the lesion tip). Placement note: those two on-S pytest runs were ~29 min each, over the
 ~10 min server rule — disclosed; no further S-side long runs.
+
+### 2026-10-10 20:05 — a2-inverted-call follow-up: flag0 identity at the lesion tip PASSES bitwise; pool gate closed at build but no runtime effect (anomaly open).
+- **Identity (test-1 extension):** `on_s7_flag0_a2ext.json` (pool, pin `afffc32e2e`) vs
+  `on_s7_flag0_a2.json` (pool, pin `17eaf8b51`): row differs ONLY in `wall_s` (3149.7 ->
+  3262.7); params differ only by the new `lesion_d2_gpe` field (absent vs 0). Default-OFF
+  tip = byte-inert, pool-vs-pool, full 400-trial run. This also proves pool determinism
+  across pins, so byte-identity between cells = real.
+- **Gate build is closed correctly ON POOL too:** probe run directly on pool41 in the
+  provisioned revision: 717 gain zeros (idx max 23578 < nnz 46764), values indirect 0.0,
+  direct 1.0 — identical to the local probe. Tree check: `lesion_d2_gpe`/`INDIRECT_PATH_GATE`
+  both present in the pool revision (grep 3/3).
+- **Gate IS runtime-effective locally:** short A/B (seed 7, pool-cell w-* config, 30 train
+  + 10 test, caps on): lesion 0 vs 1 differ in `obs` (16 of 30 trials) and `wall_s`,
+  coarse metrics equal at this horizon; trial-0 obs byte-equal, divergence enters via
+  learning — the expected signature of a real cut. Default-config A/B same signature.
+- **ANOMALY (the open half):** the full-length pool cells `on_s7/on8_sb1_lesion` vs the
+  test-2 `*_sb1` cells differ ONLY in `wall_s` across all fields (nrows=1 each, verified
+  twice incl. row checks) — on pool the gate apparently never multiplies into the current,
+  despite a closed build in the same tree. Local-vs-pool runtime difference unexplained;
+  candidate sites: `sim/bridge.py:8124` megakernel gate-not-None guard and the
+  `sim/bridge.py:8919` `data * gain[:nnz]` application in `_run_one_simulation_step`
+  (env-dependent path). NOT re-running the 52-min lesion cell (r2) this turn; next lever =
+  a ~6-min multi-trial gate A/B executed ON a pool node (same env as the cells), then
+  either fix the apply path (Claude: sim/bridge edit = §2-reserved?) or re-read the cells.
+  Interpretation rule until then: the a2 lesion RESULT stands as "no rescue", but the
+  pool lesion cells are NOT evidence that a working D2-output cut fails — they are evidence
+  the cut may not have executed; the local A/B shows it executes when applied.
