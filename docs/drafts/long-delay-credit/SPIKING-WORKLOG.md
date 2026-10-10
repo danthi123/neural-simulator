@@ -895,3 +895,27 @@ dev-only probes (1) D2-output lesion (2) channel-map audit (3) eligibility-tag a
 Next: sync branch with main, provision the new tip, queue dev cells on_s7_sb1 +
 on_s8_sb1 at `--soft-bounds 1 --lesion-d2-gpe 1` (matched to the test-2 sb1 ON cells;
 readout = does accuracy return toward the sb0 reference 0.59/0.51?). One RESULT at readout.
+
+### 2026-10-10 19:05 — a2-inverted-call RESULT: lesion cells landed, D2-output lesion does NOT rescue accuracy (and changes no trajectory).
+Cells on_s7_sb1_lesion / on_s8_sb1_lesion landed 18:44/18:45 (pool, pin `afffc32e2e`,
+argv carries `--lesion-d2-gpe 1`, params block confirms `lesion_d2_gpe: 1`). Verdict:
+terminal success 0.05 / 0.00 — identical to the sb1 non-lesion cells (0.05 / 0.00), far
+below the sb0 reference (0.51 / 0.59): **the lesion stays INVERTED; D2's output to GPe
+does not explain the inversion.** Caution, measured: field-by-field the lesion cells
+differ from the non-lesion sb1 cells ONLY in `wall_s` (400 trials, weights_per_trial and
+every metric byte-equal) — a real current cut would diverge this net, so the gate had no
+dynamic effect. Build side verified on S: `set_transmission_gate(INDIRECT, 0.0)` zeroes
+717 gain entries (indices max 23578 < nnz 46764, grow-only capacity preserves zeros,
+direct gate correctly stays 1.0), and the flag-0 BUILD hash at the lesion tip equals the
+17eaf8b51 files' bitwise (`fba39382…`, nnz 46764 both). So either str_d2 fires too little
+to carry effective current in this task (silent indirect pathway) or the runtime
+application step needs audit — the short lesion-on/off A/B run that would settle it was
+cut by the session's time budget (resume = rerun `vm_short_ab.py`, ~7 min).
+**Also this session:** probes (2) channel-map and (3) eligibility audits are recorded in
+the 17:18 entry above; the identity pytest (`test_ldc_soft_bounds_identity.py`) FAILED on
+S twice (uncapped + capped, `M_carry` differs) — that pytest rebuilds on this host while
+the reference cell was pool-generated, so on-S bitwise rebuilds are host-drift, not a code
+regression (the pool-vs-pool flag0 identity remains the record: PASS at 09:40; the
+extension cell `on_s7_flag0_a2ext.json` at pin `afffc32e2e` is queued to re-prove it at
+the lesion tip). Placement note: those two on-S pytest runs were ~29 min each, over the
+~10 min server rule — disclosed; no further S-side long runs.
