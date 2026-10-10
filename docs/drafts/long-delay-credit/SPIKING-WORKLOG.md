@@ -573,3 +573,34 @@ grid add (STEP4B preamble).
   ON=CUT=0.029; per-trial depth/latency fields ABSENT from cells (only last-100 means).
   Diagnosis: timing is not the failure - missing observability + no behavioural credit.
   RESULT [T1] filed on main. Sources: p4bn_analysis.py / p4bn_addendum.py (scratch).
+
+## 2026-10-10 02:20 - T1 ldc-d2-floor instrument build (a/b enabler)
+
+RULING ldc-d2-floor (2026-10-09, T1): (a) trace which afferent still drives the omission dip in the cut arm;
+(b) the D2 weight trajectory per trial on 2 dev seeds to see when it hits the floor; (c) already done this
+wake (bash tools/before_you_build.sh "D2 weight floor saturation" rc=0, recorded to corpus_checks_shared;
+hit: finding 2026-06-24 - the D2 dendritic stack + resonator are ALREADY BUILT, read before building the
+soft-bounds amendment). The 10-09 pilot-4b-next RESULT had already diagnosed per-trial depth/latency fields
+ABSENT from cells (only last-100 means) = missing observability, so (a)+(b) need a runner copy.
+
+Built research/runners/_ldc_dip_observability.py = _ldc_omission_pilot.py plus read-only instrumentation:
+- Run.outcome now accumulates per-ms spike counts of every candidate dip driver the organ has (lhb, lhb_inh,
+  rmtg, snc, str_d1_0/1, str_d2_0/1 - presence-guarded) beside the per-ms DA trace, stashed on
+  Run.last_out; run_trial attaches info["_obs"] (full da_full+spk+rwin for the first 40 omission trials,
+  compact min/argmin/max + per-region totals after).
+- block() attaches info["wt"] = {pathway: [mean, floor_frac]} per TRAIN trial (floor_frac = fraction of
+  synapses at <= 0.05 x the pathway's initial mean = the runner's own floor_ceiling test, per synapse).
+- run_condition carries both into the cell record as weights_per_trial + obs (the per-trial info dicts are
+  otherwise score-only and discarded).
+
+Smoke (local, 10-trial, mem_ok 2 OK, memcap unavailable in this env so plain timeout 420): rc=0, wall 69s,
+38 regions/988 neurons/47525 synapses; weights_per_trial 4/4 x 32 paths; obs 4/4 (3 full-trace omission
+trials, 8 regions x 250 ms); score line IDENTICAL to the pre-record smoke (treatment +0.341648) = the
+instrumentation draws no RNG and changes no dynamics. Smoke data stayed in scratch (not committed).
+
+Next: commit + agent_sync + provision the draft branch, queue the 2-dev-seed cells for {on, cut}
+(RULING names 2 dev seeds; cut is the question's arm, on is the reference). Unsure: whether the delayed
+schedules' explicit outcome block (the other Run.outcome call site) fires for credit_immediate - for this
+schedule outcome runs inside race() and last_out was captured; the harvest point sits before run.mark("end")
+so every schedule's trial picks up whatever outcome produced. Analysis script for (a) lagged DA-vs-region
+spike attribution comes after the 4 cells land.
