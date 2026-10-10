@@ -622,3 +622,22 @@ spike attribution comes after the 4 cells land.
   drift (which side's copies are canonical), then agent_sync + re-request provision + queue the 4 cells.
 - Smoke data stays in scratch; nothing uncommitted on the branch except runs.jsonl (never add) and the
   stash of the earlier smoke provenance (git stash list on this worktree, "smoke provenance (ephemeral)").
+
+## 2026-10-10 03:12 - ldc-d2-floor cells provisioned and QUEUED (4 cells)
+
+- RULING ldc-sync-done (Claude, on STOP [T1]) merged main into this branch as efc19fe77 (157 add/add
+  conflicts took main; the worktree advanced in place), so the branch contains published main and the
+  staleness rule no longer applies. Lane waiver untouched (none present; queue now non-empty so the
+  lane-starvation gate has real ready work).
+- Provision requested for efc19fe77045bf3b6c623624103eae0ae93e8fd8: first "queued (seen; waiting for its
+  turn)", then state=ok "provisioned on pool41" after 330 s.
+- Queued the 4 observability cells with `tools/pool_queue.sh add` (depth 0 -> 4): arms {on, cut} x dev
+  seeds {7, 8} (the ruling says 2 dev seeds without naming them; 7/8 are the pilot's first dev seeds and
+  both are outside the gate-seed list, so no canary/prereg line is required), schedule credit_immediate,
+  reward-on 150 / outcome 250, n-train 400 / n-test 100, r9-frozen constants (outc 30, rus-lhbinh 54,
+  lhbinh-lhb 48, lhb-rmtg 20, rmtg-snc 3), omission-route 1, cut arm adds --cut-rus-lhbinh 1. Runner =
+  research.runners._ldc_dip_observability (the instrumented copy), outputs
+  research/findings/raw/_long_delay_credit_bg/d2_floor_observability/{on,cut}_s{7,8}.json.
+  Checked reason cites STEP4B section 3 + RULING ldc-d2-floor; mem_gb=2, max_age_h=168.
+- After the cells land: the (a) analysis script (lagged DA vs per-region spike attribution) and the (b)
+  weight-trajectory/floor-hitting read, then the soft-bounds AMENDMENT draft for Claude's review.
