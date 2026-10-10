@@ -1101,3 +1101,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-10 15:14 [a2-test2-diagnose] RESULT: T1 sign unit test PASS (D1 +, D2 -, factors 0.5/1.0, endpoints exact); terminal acc 0.00-0.17 at resp 1.0 = inverted not stuck; byte-identity holds. Facts; Claude calls sign bug/homeostat/rethink. END
+- 2026-10-10 15:56 [b2d-scored] RESULT: B2d scored: stub COMPLETE S1 0.733 SD 0.019 core 21 (S0 0.843/S2 0.514); mouth COMPLETE matches A1.3. Finding research/findings/2026-10-10-B2d-battery-at-P5818dc6-PROVISIONAL.md on branch research/b2d-mouth-renderer @3489e1d0d. NEEDS #2. END
