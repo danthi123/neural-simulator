@@ -224,3 +224,23 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   (primary $PWD shards -> `cp -a` into this worktree's SH/b2d0929, excluding PIN.txt and
   b2d_score*.json per copy_results.sh stub semantics — rsync is absent here), then the
   step-7 commit. Step-8's `--code-root $TREE` needs the same treatment; decide then.
+
+## 2026-10-09 23:20 — step 7 HARVEST complete (Hermes, driver session)
+
+- **258/258 stub lb.json landed** (21:07); last cell = curiosity-followup s102 retry (pool41
+  15:21, the 15:20 rc=137 auto-retry) + reconsolidation s102. Harvested all 258 dirs into
+  this worktree with `cp -a` (rsync absent on S; env.sh's P=/home/dant123/sim + TREE export
+  are pre-migration — bypassed with explicit paths) and committed as data:
+  **`21b684827` "data(B2d): stub-arm shards at P=5818dc6 (raw arm files + sidecars; not yet
+  scored)" — 2208 files, 334,162 insertions.**
+- Shape check: 216 fat cells (intact_a/b + lesion[.rep0] + lb.json, all with .prov sidecars);
+  42 thin cells carry lb.json only with per-faculty `verdict: "not-covered:thin"` = the 7
+  uncovered faculties (gnw-deliberation, learned-referent, one-brain-substrate, onebrain-xedge,
+  spiking-qroute, surprise-salience-snc-afferent, value-driven-choice) x 6 seeds — registered
+  shape, not data loss (identical thin shape on the nodes).
+- lane-starvation ⛔ tripped on commit (lanes A-E empty since the battery drained): waived with
+  CLASS NO-READY-WORK + checked (lane_check 0/0; §4 Start-blocked inventory) at the SHARED
+  queue root — note `research/queue/.lane_waiver` resolves under the git common dir, NOT the
+  worktree. Auto-expires 6h; next commits may need a fresh one or lane jobs.
+- **Step 8 next wake**: aggregate + `b2d_score.py` (scoring = registered scorer; decide the
+  `--code-root $TREE` adaptation — no local export of 5818dc6 on S).
