@@ -261,3 +261,18 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   stub (`1788569058 SIM_BACKEND=numpy`, Sep 2) + 2 Jul/Aug malformed lines — both
   quarantined-by-design, never dispatched. The external stall detector's "has work" source
   is not in this repo; expect repeat wakes until new results land.
+
+## 2026-10-10 15:55 EDT — steps 8-10: aggregate, both scores, PROVISIONAL finding (S)
+
+- Every-session line: fresh-queued=0, lb.json 258/258, ledger unchanged (no wave needed).
+- Step 8: code-root = provisioned export of P copied from pool41 to scratch, manifest verified (True, 6970
+  files); aggregate mean 0.843137, robust core 28, union 29, provenance 216/216 valid, rc=0.
+- Stub score `b2d_score.json`: verdict **COMPLETE**, 216/216 defined, no fail cells, no preconditions
+  failed, no reruns; S1 headline mean 0.733 SD 0.019 robust core 21; S0 0.843/28; S2 0.514/18.
+- Mouth score `b2d_mouth_score.json` (re-run): **COMPLETE**; coloring + appraisal MOUTH-SILENT 6/6 as
+  A1.3 predicted; drives-response 0 of 6 reply-load-bearing (1 defined, 5 silent -> MIXED); null floor held.
+- Step 9: both verdicts COMPLETE -> step 10, no re-run rows, no precondition failures.
+- Step 10: finding `research/findings/2026-10-10-B2d-battery-at-P5818dc6-PROVISIONAL.md` (draft_finding.py,
+  numbers untouched; Operational notes appended) + the four registered artifacts committed on this branch.
+  NEEDS-CLAUDE #2 (review + merge) filed as a RESULT on the runbook; push skipped per §3 / RULING a2-no-push
+  (branch @ sha named in the RESULT instead); board card sync = Claude via that RESULT line.

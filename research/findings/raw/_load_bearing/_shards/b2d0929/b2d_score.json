@@ -1,0 +1,8100 @@
+{
+ "tag": "b2d0929",
+ "pin": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "identity_only": false,
+ "fields_pin": "5818dc629c5c0cd3cbb370c0c6cc16b314805b03",
+ "backend": "numpy",
+ "device": "cpu",
+ "counts": {
+  "n_coverable_faculties": 36,
+  "n_coverable_cells": 216,
+  "n_defined": 216
+ },
+ "not_defined": {},
+ "organ_error_cells": {},
+ "s0": {
+  "per_seed": {
+   "42": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 28,
+    "fraction": 0.8235294117647058
+   },
+   "43": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 28,
+    "fraction": 0.8235294117647058
+   },
+   "44": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 29,
+    "fraction": 0.8529411764705882
+   },
+   "100": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 29,
+    "fraction": 0.8529411764705882
+   },
+   "101": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 29,
+    "fraction": 0.8529411764705882
+   },
+   "102": {
+    "n_defined": 36,
+    "n_exercised": 34,
+    "n_load_bearing": 29,
+    "fraction": 0.8529411764705882
+   }
+  },
+  "per_faculty": {
+   "affect-appraisal-interoceptive": {
+    "n_load_bearing": 6
+   },
+   "affect-coloring": {
+    "n_load_bearing": 6
+   },
+   "affect-drives-response": {
+    "n_load_bearing": 6
+   },
+   "affect-marker-spiking-wta": {
+    "n_load_bearing": 4
+   },
+   "affective-tom": {
+    "n_load_bearing": 6
+   },
+   "bg-action-selection": {
+    "n_load_bearing": 6
+   },
+   "causal-whatif": {
+    "n_load_bearing": 6
+   },
+   "common-ground-drives": {
+    "n_load_bearing": 6
+   },
+   "comprehension-learned-animacy-cue": {
+    "n_load_bearing": 6
+   },
+   "comprehension-learned-verb-selects": {
+    "n_load_bearing": 6
+   },
+   "comprehension-monitor": {
+    "n_load_bearing": 6
+   },
+   "confidence-forthcomingness": {
+    "n_load_bearing": 6
+   },
+   "curiosity-followup": {
+    "n_load_bearing": 6
+   },
+   "d5-consolidate": {
+    "n_load_bearing": 0
+   },
+   "da-gated-encoding": {
+    "n_load_bearing": 0
+   },
+   "da-mode-drives-response": {
+    "n_load_bearing": 6
+   },
+   "discourse-register": {
+    "n_load_bearing": 6
+   },
+   "episodic-memory": {
+    "n_load_bearing": 6
+   },
+   "gnw-bus": {
+    "n_load_bearing": 0
+   },
+   "gnw-multistep-deliberation": {
+    "n_load_bearing": 6
+   },
+   "metacog-monitor": {
+    "n_load_bearing": 6
+   },
+   "multiref-competition": {
+    "n_load_bearing": 6
+   },
+   "noncontradiction-gate": {
+    "n_load_bearing": 6
+   },
+   "open-ended-generation": {
+    "n_load_bearing": 6
+   },
+   "pragmatic-implicature": {
+    "n_load_bearing": 6
+   },
+   "prospective-memory": {
+    "n_load_bearing": 6
+   },
+   "reconsolidation": {
+    "n_load_bearing": 6
+   },
+   "self-initiated-utterance": {
+    "n_load_bearing": 6
+   },
+   "sleep-replay": {
+    "n_load_bearing": 0
+   },
+   "source-provenance-honesty": {
+    "n_load_bearing": 6
+   },
+   "spiking-anaphor": {
+    "n_load_bearing": 0
+   },
+   "surprise-monitor": {
+    "n_load_bearing": 6
+   },
+   "swap-drives-response": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "vision-identity-spiking-hmax": {
+    "n_load_bearing": 6
+   },
+   "wm-binding-advanced": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "worldmodel-forward": {
+    "n_load_bearing": 6
+   }
+  },
+  "robust_core": [
+   "affect-appraisal-interoceptive",
+   "affect-coloring",
+   "affect-drives-response",
+   "affective-tom",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-learned-animacy-cue",
+   "comprehension-learned-verb-selects",
+   "comprehension-monitor",
+   "confidence-forthcomingness",
+   "curiosity-followup",
+   "da-mode-drives-response",
+   "discourse-register",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "multiref-competition",
+   "noncontradiction-gate",
+   "open-ended-generation",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "reconsolidation",
+   "self-initiated-utterance",
+   "source-provenance-honesty",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "robust_core_n": 28,
+  "union": [
+   "affect-appraisal-interoceptive",
+   "affect-coloring",
+   "affect-drives-response",
+   "affect-marker-spiking-wta",
+   "affective-tom",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-learned-animacy-cue",
+   "comprehension-learned-verb-selects",
+   "comprehension-monitor",
+   "confidence-forthcomingness",
+   "curiosity-followup",
+   "da-mode-drives-response",
+   "discourse-register",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "multiref-competition",
+   "noncontradiction-gate",
+   "open-ended-generation",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "reconsolidation",
+   "self-initiated-utterance",
+   "source-provenance-honesty",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "union_n": 29,
+  "mean_fraction": 0.8431372549019608,
+  "sd_fraction_pop": 0.013864838846795053
+ },
+ "s1": {
+  "per_seed": {
+   "42": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 22,
+    "fraction": 0.7333333333333333
+   },
+   "43": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 21,
+    "fraction": 0.7
+   },
+   "44": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 22,
+    "fraction": 0.7333333333333333
+   },
+   "100": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 22,
+    "fraction": 0.7333333333333333
+   },
+   "101": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 23,
+    "fraction": 0.7666666666666667
+   },
+   "102": {
+    "n_defined": 36,
+    "n_exercised": 30,
+    "n_load_bearing": 22,
+    "fraction": 0.7333333333333333
+   }
+  },
+  "per_faculty": {
+   "affect-appraisal-interoceptive": {
+    "n_load_bearing": 6
+   },
+   "affect-coloring": {
+    "n_load_bearing": 6
+   },
+   "affect-drives-response": {
+    "n_load_bearing": 0
+   },
+   "affect-marker-spiking-wta": {
+    "n_load_bearing": 4
+   },
+   "affective-tom": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "bg-action-selection": {
+    "n_load_bearing": 6
+   },
+   "causal-whatif": {
+    "n_load_bearing": 6
+   },
+   "common-ground-drives": {
+    "n_load_bearing": 6
+   },
+   "comprehension-learned-animacy-cue": {
+    "n_load_bearing": 6
+   },
+   "comprehension-learned-verb-selects": {
+    "n_load_bearing": 6
+   },
+   "comprehension-monitor": {
+    "n_load_bearing": 6
+   },
+   "confidence-forthcomingness": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "curiosity-followup": {
+    "n_load_bearing": 6
+   },
+   "d5-consolidate": {
+    "n_load_bearing": 0
+   },
+   "da-gated-encoding": {
+    "n_load_bearing": 0
+   },
+   "da-mode-drives-response": {
+    "n_load_bearing": 2
+   },
+   "discourse-register": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "episodic-memory": {
+    "n_load_bearing": 6
+   },
+   "gnw-bus": {
+    "n_load_bearing": 0
+   },
+   "gnw-multistep-deliberation": {
+    "n_load_bearing": 6
+   },
+   "metacog-monitor": {
+    "n_load_bearing": 6
+   },
+   "multiref-competition": {
+    "n_load_bearing": 6
+   },
+   "noncontradiction-gate": {
+    "n_load_bearing": 0
+   },
+   "open-ended-generation": {
+    "n_load_bearing": 6
+   },
+   "pragmatic-implicature": {
+    "n_load_bearing": 6
+   },
+   "prospective-memory": {
+    "n_load_bearing": 6
+   },
+   "reconsolidation": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "self-initiated-utterance": {
+    "n_load_bearing": 6
+   },
+   "sleep-replay": {
+    "n_load_bearing": 0
+   },
+   "source-provenance-honesty": {
+    "n_load_bearing": 6
+   },
+   "spiking-anaphor": {
+    "n_load_bearing": 0
+   },
+   "surprise-monitor": {
+    "n_load_bearing": 6
+   },
+   "swap-drives-response": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "vision-identity-spiking-hmax": {
+    "n_load_bearing": 6
+   },
+   "wm-binding-advanced": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "worldmodel-forward": {
+    "n_load_bearing": 6
+   }
+  },
+  "robust_core": [
+   "affect-appraisal-interoceptive",
+   "affect-coloring",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-learned-animacy-cue",
+   "comprehension-learned-verb-selects",
+   "comprehension-monitor",
+   "curiosity-followup",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "multiref-competition",
+   "open-ended-generation",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "self-initiated-utterance",
+   "source-provenance-honesty",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "robust_core_n": 21,
+  "union": [
+   "affect-appraisal-interoceptive",
+   "affect-coloring",
+   "affect-marker-spiking-wta",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-learned-animacy-cue",
+   "comprehension-learned-verb-selects",
+   "comprehension-monitor",
+   "curiosity-followup",
+   "da-mode-drives-response",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "multiref-competition",
+   "open-ended-generation",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "self-initiated-utterance",
+   "source-provenance-honesty",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "union_n": 23,
+  "mean_fraction": 0.7333333333333333,
+  "sd_fraction_pop": 0.019245008972987553
+ },
+ "s2": {
+  "per_seed": {
+   "42": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   },
+   "43": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   },
+   "44": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   },
+   "100": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   },
+   "101": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   },
+   "102": {
+    "n_defined": 36,
+    "n_exercised": 35,
+    "n_load_bearing": 18,
+    "fraction": 0.5142857142857142
+   }
+  },
+  "per_faculty": {
+   "affect-appraisal-interoceptive": {
+    "n_load_bearing": 0
+   },
+   "affect-coloring": {
+    "n_load_bearing": 0
+   },
+   "affect-drives-response": {
+    "n_load_bearing": 0
+   },
+   "affect-marker-spiking-wta": {
+    "n_load_bearing": 0
+   },
+   "affective-tom": {
+    "n_load_bearing": 6
+   },
+   "bg-action-selection": {
+    "n_load_bearing": 6
+   },
+   "causal-whatif": {
+    "n_load_bearing": 6
+   },
+   "common-ground-drives": {
+    "n_load_bearing": 6
+   },
+   "comprehension-learned-animacy-cue": {
+    "n_load_bearing": 0
+   },
+   "comprehension-learned-verb-selects": {
+    "n_load_bearing": 0
+   },
+   "comprehension-monitor": {
+    "n_load_bearing": 6
+   },
+   "confidence-forthcomingness": {
+    "n_load_bearing": 0
+   },
+   "curiosity-followup": {
+    "n_load_bearing": 6
+   },
+   "d5-consolidate": {
+    "n_load_bearing": 0
+   },
+   "da-gated-encoding": {
+    "n_load_bearing": 0
+   },
+   "da-mode-drives-response": {
+    "n_load_bearing": 0
+   },
+   "discourse-register": {
+    "n_load_bearing": 6
+   },
+   "episodic-memory": {
+    "n_load_bearing": 6
+   },
+   "gnw-bus": {
+    "n_load_bearing": 0
+   },
+   "gnw-multistep-deliberation": {
+    "n_load_bearing": 6
+   },
+   "metacog-monitor": {
+    "n_load_bearing": 6
+   },
+   "multiref-competition": {
+    "n_load_bearing": 0
+   },
+   "noncontradiction-gate": {
+    "n_load_bearing": 6
+   },
+   "open-ended-generation": {
+    "n_load_bearing": [
+     0,
+     6
+    ]
+   },
+   "pragmatic-implicature": {
+    "n_load_bearing": 6
+   },
+   "prospective-memory": {
+    "n_load_bearing": 6
+   },
+   "reconsolidation": {
+    "n_load_bearing": 6
+   },
+   "self-initiated-utterance": {
+    "n_load_bearing": 6
+   },
+   "sleep-replay": {
+    "n_load_bearing": 0
+   },
+   "source-provenance-honesty": {
+    "n_load_bearing": 0
+   },
+   "spiking-anaphor": {
+    "n_load_bearing": 0
+   },
+   "surprise-monitor": {
+    "n_load_bearing": 6
+   },
+   "swap-drives-response": {
+    "n_load_bearing": 0
+   },
+   "vision-identity-spiking-hmax": {
+    "n_load_bearing": 6
+   },
+   "wm-binding-advanced": {
+    "n_load_bearing": 0
+   },
+   "worldmodel-forward": {
+    "n_load_bearing": 6
+   }
+  },
+  "robust_core": [
+   "affective-tom",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-monitor",
+   "curiosity-followup",
+   "discourse-register",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "noncontradiction-gate",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "reconsolidation",
+   "self-initiated-utterance",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "robust_core_n": 18,
+  "union": [
+   "affective-tom",
+   "bg-action-selection",
+   "causal-whatif",
+   "common-ground-drives",
+   "comprehension-monitor",
+   "curiosity-followup",
+   "discourse-register",
+   "episodic-memory",
+   "gnw-multistep-deliberation",
+   "metacog-monitor",
+   "noncontradiction-gate",
+   "pragmatic-implicature",
+   "prospective-memory",
+   "reconsolidation",
+   "self-initiated-utterance",
+   "surprise-monitor",
+   "vision-identity-spiking-hmax",
+   "worldmodel-forward"
+  ],
+  "union_n": 18,
+  "mean_fraction": 0.5142857142857142,
+  "sd_fraction_pop": 0.0
+ },
+ "sd_only_rows": [
+  "affective-tom",
+  "confidence-forthcomingness",
+  "discourse-register",
+  "reconsolidation"
+ ],
+ "manifest": {
+  "s42/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "load-bearing",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "da_drives.mode"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s42/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s42/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s42/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s42/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s42/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "no-diff",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s43/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s43/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s43/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s43/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s43/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect_drives.lead"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "no-diff",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s44/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s44/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s44/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s44/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s44/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect_drives.lead"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "no-diff",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s100/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s100/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s100/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s100/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s100/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect_drives.lead"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "load-bearing",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "da_drives.mode"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s101/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s101/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s101/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s101/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s101/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/affect-appraisal-interoceptive": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/affect-appraisal-interoceptive",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/affect-coloring": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/affect-coloring",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect.on",
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "field_status": {
+     "affect.on": "no-diff",
+     "affect.tone_token": "load-bearing",
+     "affect.valence_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect.tone_token",
+     "affect.valence_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/affect-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/affect-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "affect_drives.acted",
+     "affect_drives.high_arousal",
+     "affect_drives.on"
+    ],
+    "field_status": {
+     "affect_drives.acted": "no-diff",
+     "affect_drives.high_arousal": "no-diff",
+     "affect_drives.on": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/affect-marker-spiking-wta": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/affect-marker-spiking-wta",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "emo",
+    "kept": [
+     "affect_drives.lead"
+    ],
+    "field_status": {
+     "affect_drives.lead": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "affect_drives.lead"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "emo",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/affective-tom": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/affective-tom",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "lbf_tom1",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/bg-action-selection": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/bg-action-selection",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "bgdots",
+    "kept": [
+     "bg_select.on"
+    ],
+    "field_status": {
+     "bg_select.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "bg_select.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bgdots",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/causal-whatif": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/causal-whatif",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "lbf_cau_whatif",
+    "kept": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "field_status": {
+     "abstained": "load-bearing",
+     "causal.confirmed": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained",
+     "causal.confirmed"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "lbf_cau_whatif",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/common-ground-drives": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/common-ground-drives",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "cg_mention2",
+    "kept": [
+     "common_ground_drives.decision"
+    ],
+    "field_status": {
+     "common_ground_drives.decision": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "common_ground_drives.decision"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "cg_mention2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/comprehension-learned-animacy-cue": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/comprehension-learned-animacy-cue",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "animacy",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "animacy",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/comprehension-learned-verb-selects": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/comprehension-learned-verb-selects",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "verbsel",
+    "kept": [
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.on": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "comprehension.on"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "verbsel",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/comprehension-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/comprehension-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "comprehension.comprehended",
+     "comprehension.on"
+    ],
+    "field_status": {
+     "comprehension.comprehended": "load-bearing",
+     "comprehension.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "comprehension.comprehended"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/confidence-forthcomingness": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/confidence-forthcomingness",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "pass",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "rich_well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/curiosity-followup": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/curiosity-followup",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "unknown",
+    "kept": [
+     "curiosity.curious",
+     "curiosity.on"
+    ],
+    "field_status": {
+     "curiosity.curious": "load-bearing",
+     "curiosity.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "curiosity.curious"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "unknown",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/d5-consolidate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/d5-consolidate",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "d5c_recall2",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "d5c_recall2",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/da-gated-encoding": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/da-gated-encoding",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_encoding.on"
+    ],
+    "field_status": {
+     "da_encoding.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/da-mode-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/da-mode-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "da_drives.acted",
+     "da_drives.mode",
+     "da_drives.on"
+    ],
+    "field_status": {
+     "da_drives.acted": "no-diff",
+     "da_drives.mode": "no-diff",
+     "da_drives.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/discourse-register": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/discourse-register",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "dr2_c",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/episodic-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/episodic-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "epi_recall",
+    "kept": [
+     "episodic.in_memory"
+    ],
+    "field_status": {
+     "episodic.in_memory": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "episodic.in_memory"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "epi_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/gnw-bus": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/gnw-bus",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "question",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "question",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/gnw-multistep-deliberation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/gnw-multistep-deliberation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "chase",
+    "kept": [
+     "recalled_svo"
+    ],
+    "field_status": {
+     "recalled_svo": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "recalled_svo"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "chase",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/metacog-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/metacog-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "metacog.confident",
+     "metacog.on"
+    ],
+    "field_status": {
+     "metacog.confident": "load-bearing",
+     "metacog.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "metacog.confident"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/multiref-competition": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/multiref-competition",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "hold",
+    "kept": [
+     "multiref.all_recovered"
+    ],
+    "field_status": {
+     "multiref.all_recovered": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "multiref.all_recovered"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "hold",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/noncontradiction-gate": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/noncontradiction-gate",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "pass",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "noncontra_neg",
+    "kept": [
+     "noncontradiction.asserted_polarity",
+     "noncontradiction.on"
+    ],
+    "field_status": {
+     "noncontradiction.asserted_polarity": "no-diff",
+     "noncontradiction.on": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "noncontra_neg",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/open-ended-generation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/open-ended-generation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "UNDEFINED:missing-arm-or-turn",
+   "s1_detail": {
+    "note": "not_replayed row (distributional ruler (load_bearing_fraction.py:1531); S1 = S0; outside S2): S1 == S0"
+   },
+   "s2_detail": {
+    "turn": "oe_distributional (_followon2 world, no webapp turn)",
+    "have_arms": []
+   }
+  },
+  "s102/pragmatic-implicature": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/pragmatic-implicature",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "scalar",
+    "kept": [
+     "pragmatic.enriched_interpretation",
+     "pragmatic.on"
+    ],
+    "field_status": {
+     "pragmatic.enriched_interpretation": "load-bearing",
+     "pragmatic.on": "no-diff"
+    },
+    "load_bearing_fields": [
+     "pragmatic.enriched_interpretation"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "scalar",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/prospective-memory": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/prospective-memory",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "pmem_cue",
+    "kept": [
+     "prospective.fired"
+    ],
+    "field_status": {
+     "prospective.fired": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "prospective.fired"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "pmem_cue",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/reconsolidation": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/reconsolidation",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "UNDEFINED:sd-only",
+   "s2": "regressed",
+   "s1_detail": {
+    "kept": []
+   },
+   "s2_detail": {
+    "turn": "contra",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/self-initiated-utterance": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/self-initiated-utterance",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "selfinit",
+    "kept": [
+     "abstained"
+    ],
+    "field_status": {
+     "abstained": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "abstained"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "selfinit",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/sleep-replay": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/sleep-replay",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "slp_recall",
+    "kept": [
+     "answer",
+     "episodic.graded_cue.depth_hold"
+    ],
+    "field_status": {
+     "answer": "no-diff",
+     "episodic.graded_cue.depth_hold": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "slp_recall",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/source-provenance-honesty": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/source-provenance-honesty",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "well",
+    "kept": [
+     "provenance.agrees_with_encoded",
+     "provenance.encoded_as",
+     "provenance.known",
+     "provenance.label"
+    ],
+    "field_status": {
+     "provenance.agrees_with_encoded": "load-bearing",
+     "provenance.encoded_as": "no-diff",
+     "provenance.known": "no-diff",
+     "provenance.label": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "provenance.agrees_with_encoded",
+     "provenance.label"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "well",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/spiking-anaphor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/spiking-anaphor",
+   "state": "DEFINED",
+   "s0": [
+    "pass",
+    false
+   ],
+   "s1": "pass",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "bc_b",
+    "kept": [
+     "abstained",
+     "recalled_svo"
+    ],
+    "field_status": {
+     "abstained": "no-diff",
+     "recalled_svo": "no-diff"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "bc_b",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/surprise-monitor": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/surprise-monitor",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "confirm",
+    "kept": [
+     "surprise.surprised"
+    ],
+    "field_status": {
+     "surprise.surprised": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "surprise.surprised"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "confirm",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  },
+  "s102/swap-drives-response": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/swap-drives-response",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "swap_drives.acted",
+     "swap_drives.on",
+     "swap_drives.reason",
+     "swap_drives.swapped"
+    ],
+    "field_status": {
+     "swap_drives.acted": "not-applicable",
+     "swap_drives.on": "not-applicable",
+     "swap_drives.reason": "not-applicable",
+     "swap_drives.swapped": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/vision-identity-spiking-hmax": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/vision-identity-spiking-hmax",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "vision",
+    "kept": [
+     "vision_identity.recognized_category"
+    ],
+    "field_status": {
+     "vision_identity.recognized_category": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "vision_identity.recognized_category"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "vision",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "abstained",
+     "answer"
+    ],
+    "answer_only": false
+   }
+  },
+  "s102/wm-binding-advanced": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/wm-binding-advanced",
+   "state": "DEFINED",
+   "s0": [
+    "not-exercised",
+    null
+   ],
+   "s1": "UNDEFINED:no-kept-field-resolved",
+   "s2": "pass",
+   "s1_detail": {
+    "turn": "held",
+    "kept": [
+     "multiref.n_referents"
+    ],
+    "field_status": {
+     "multiref.n_referents": "not-applicable"
+    },
+    "load_bearing_fields": [],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "held",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [],
+    "answer_only": false
+   }
+  },
+  "s102/worldmodel-forward": {
+   "dir": "/home/dant123/Projects/neural-simulator/research/findings/raw/_load_bearing/_shards/b2d0929/s102/worldmodel-forward",
+   "state": "DEFINED",
+   "s0": [
+    "regressed",
+    true
+   ],
+   "s1": "regressed",
+   "s2": "regressed",
+   "s1_detail": {
+    "turn": "expect_q",
+    "kept": [
+     "worldmodel.on",
+     "worldmodel.pred_sign"
+    ],
+    "field_status": {
+     "worldmodel.on": "no-diff",
+     "worldmodel.pred_sign": "load-bearing"
+    },
+    "load_bearing_fields": [
+     "worldmodel.pred_sign"
+    ],
+    "noisy_fields": []
+   },
+   "s2_detail": {
+    "turn": "expect_q",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "changed_fields": [
+     "answer"
+    ],
+    "answer_only": true
+   }
+  }
+ },
+ "host_check_failures": {},
+ "fail_cells": [],
+ "verdict": "COMPLETE",
+ "preconditions": [
+  {
+   "name": "code-root blobs match the fields file's cited blobs at --pin",
+   "ok": true,
+   "value": []
+  },
+  {
+   "name": "every checked sidecar host matches its dispatch or re-run node",
+   "ok": true,
+   "value": {}
+  }
+ ],
+ "drift": {
+  "tag": "b2d0929",
+  "compare_tag": "b2b0924-base",
+  "n_common_defined_cells": 216,
+  "n_differing": 10,
+  "differences": [
+   {
+    "cell": "s100/affect-marker-spiking-wta",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "pass"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    }
+   },
+   {
+    "cell": "s100/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   },
+   {
+    "cell": "s101/affect-marker-spiking-wta",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "pass"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    }
+   },
+   {
+    "cell": "s101/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   },
+   {
+    "cell": "s102/affect-marker-spiking-wta",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "pass"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    }
+   },
+   {
+    "cell": "s102/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   },
+   {
+    "cell": "s42/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   },
+   {
+    "cell": "s43/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   },
+   {
+    "cell": "s44/affect-marker-spiking-wta",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "pass"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    }
+   },
+   {
+    "cell": "s44/comprehension-monitor",
+    "b2d0929": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": "regressed",
+     "s2": "regressed"
+    },
+    "b2b0924-base": {
+     "s0": [
+      "regressed",
+      true
+     ],
+     "s1": null,
+     "s2": null
+    }
+   }
+  ]
+ }
+}
