@@ -796,3 +796,16 @@ rebound/g_up check (risk 2) remains unexercised because no flag-1 trajectory eve
 Test 3 is the remaining test: 6/20 pilot cells landed (on30 s9/s10/s12 x on+cut); its paired ON-CUT readout and
 the final `void_floor_ceiling` rate (vs reference 10/16) follow when all 20 arrive. Bar-sanity spec + run and
 the A1-vs-A2 packaging merge NEEDS stay held until test 3 closes (a02-approved ordering).
+
+### 2026-10-10 13:55 — [T1] a02 test-2 addendum: weight PASS stands, BUT test-phase behavior REGRESSES below chance
+The data commit of the four flag-1 cells was BLOCKED by the `below-chance` gate — correctly. Reference vs
+flag-1 `test` dicts (early -> terminal success): on_s7 0.57->0.51 vs 0.53->**0.05**; on_s8 0.55->0.59 vs
+0.49->**0.00**; cut_s7 0.49->0.52 vs 0.41->**0.17**; cut_s8 0.59->0.31 vs 0.42->0.48. **Terminal-test accuracy
+under soft bounds is systematically below chance (anti-correlated) on the ON cells**, while the weight criteria
+(§tests 2) are fully met and seeding is float-identical. READ: linear soft bounds (n=1) move the D2 equilibrium
+UPWARD (final bands 30-39 vs the old 0-24) — the failure moved from "D2 dead at the floor" to "D2 over-weighted,
+behavior inverted at terminal test". This is risk-1's "asymptote is not a setpoint" seen in the opposite
+direction; per a02-conditions (5) the exponents stay frozen — no post-hoc dev-seed sweep to fit anything.
+The gate demands the artifact own an UNDEFINED (`below_chance: true`) status or a task/label fix; both are
+scorer/harness territory = Claude's. The 4 cells stay UNCOMMITTED on main; NEEDS [T1] filed. Test 3 continues
+(6/20 landed) so the paired ON-CUT readout can complete the picture.
