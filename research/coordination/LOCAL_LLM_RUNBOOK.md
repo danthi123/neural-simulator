@@ -1115,3 +1115,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-11 05:52 [pool-stall-cause] INFO: RULING pool-stall-cause executed: max_age_h=72 stamped on all 15 queued iw1 lines (token inside each --checked comment; pool.queue is untracked), session dispatcher (pids 3261/3265) stopped so only sim-pool-dispatch.service dispatches, queue drained 15->13 within 2 min after the stop. FAILURE_LOG correction committed 51d890284. Note: systemctl/journalctl are absent in the driver sandbox.
+- 2026-10-11 07:07 [c1-direct-consult-gates] ASK: branch (a) wire (DIRECT_CONSULT default-OFF) built, 32/32 tests, STAGED research/c1-direct-consult; commit blocked: run_all flags corpus-check selftest ghost + consumer-hardware info line + lane-starvation 4/5. Gates Claude-only: fix/land.
