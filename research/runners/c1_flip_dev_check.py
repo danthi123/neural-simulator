@@ -16,10 +16,21 @@ BRAIN_CATEGORY_INHERIT_HOP=1 (the organ's hop attenuation; inert when the wiring
 the bat) must not change, while `what does the bat swim` may become a FLAGGED guess `lake` (one hop: the bat's own
 told `eat bug` is shared with the fish, the same inference C1 measures; reported in `bridge`, decided by the owner).
 
+AMENDMENT B-1 (registered in PLAN.md 2026-10-11, RULING tree-c1-rescore): the DEFINED precondition is the wiring
+APPLIED, not every turn traced. A flag-on cell must record the envs (`flip_dev.flag_value` == "1", `flip_dev.hop`
+== "1"), carry at least ONE `category_inherit` trace (zero traces = flag-on, wiring never consulted =
+UNDEFINED), swallow no organ error, and keep every organ read `hop: true`. A flag-on turn WITHOUT the trace is a
+bypass turn: the seed stays DEFINED (the direct route answered without consulting the organ), the scorer REPORTS
+those turns per group (count and labels, never silently passed), and the turn is still compared flag-on vs
+flag-off: a content change there FAILS the seed (why `untraced_turn_changed`). A QUERY record (carries
+`lesion`) must record `hop: true`; the `organ_not_built` DECLINE record never queried the organ and is not
+a read to check. Flag-off is unchanged: no turn carries the trace. The bar below ((a), (b), (c), the hop clauses, PASS / UNDEFINED / FAIL) is unchanged.
+
 THE DEV BAR (bar-sanity record: docs/drafts/stage1-c1-inheritance/bar_sanity_record_flipdev.json). Per dev seed, both
 sides (flag on / flag off) of every bar group are present and valid (no errored turn, source `tiny-demo +LTM`,
-PYTHONHASHSEED=0, corpus present), the flag engaged (every flag-on turn carries the `category_inherit` trace with no
-swallowed organ error; no flag-off turn carries it). The seed PASSES iff
+PYTHONHASHSEED=0, corpus present), the flag engaged per Amendment B-1 (>= 1 flag-on turn carries the
+`category_inherit` trace -- untraced bypass turns are reported -- with no swallowed organ error; no flag-off turn
+carries it). The seed PASSES iff
   (a) correct: cat_disc flag-on names `worm` on the direct probe (stage1_exit_gate.score_cat),
   (b) specific: on every turn of every bar group, flag-on and flag-off reply CONTENT are equal, except the ALLOWED
       turns (cat_disc / cat_told / cat_bridge `p_canary_eat` -> `worm`; cat_bridge `c_bat_swim` -> `lake`), where
@@ -211,13 +222,17 @@ def _cell_problems(shard, side):
         probs.append("hop_not_set")
     has = [isinstance(_trace(r), dict) for r in resp.values()]
     if side == "on":
-        if not (has and all(has)):
+        if not any(has):                                # B-1: >= 1 traced turn; zero traces = never consulted
             probs.append("flag_on_not_engaged")
+        if (shard.get("flip_dev") or {}).get("flag_value") != SIDES["on"]:   # B-1 precondition (1): flag recorded
+            probs.append("flag_not_recorded")
         if _organ_errors(shard):
             probs.append("organ_error")
         reads = [(_trace(r) or {}).get("read") for r in resp.values()]
+        # a QUERY record carries `lesion` and must record hop; the `organ_not_built` DECLINE record
+        # (no lesion) never queried the organ, so it is not a read to check.
         if any(isinstance(rd, dict) and "lesion" in rd and rd.get("hop") is not True for rd in reads):
-            probs.append("hop_not_engaged")             # an organ read ran without the hop attenuation
+            probs.append("hop_not_engaged")             # B-1: every organ read must record the hop
         elif (shard.get("flip_dev") or {}).get("group") in HOP_READ_GROUPS:
             rd = (_trace(resp.get("p_canary_eat")) or {}).get("read")
             if not (isinstance(rd, dict) and rd.get("hop") is True):
@@ -234,19 +249,31 @@ def seed_verdict(on, off, groups=BAR_GROUPS):
         for side, cells in (("on", on), ("off", off)):
             for pr in _cell_problems((cells or {}).get(g), side):
                 undefined.append("%s/%s:%s" % (side, g, pr))
+    # B-1: report the flag-on bypass turns per group (count and labels) -- never silently passed.
+    untraced = {}
+    for g in groups:
+        labs = [l for l, r in (((on.get(g) or {}).get("responses")) or {}).items()
+                if not isinstance(_trace(r), dict)]
+        if labs:
+            untraced[g] = labs
     if undefined:
-        return {"defined": False, "pass": None, "undefined": undefined}
+        return {"defined": False, "pass": None, "undefined": undefined, "untraced": untraced}
     violations, allowed_changes = [], []
     for g in groups:
         ra, rb = on[g]["responses"], off[g]["responses"]
         if list(ra) != list(rb):
-            return {"defined": False, "pass": None, "undefined": ["%s:turn_labels_differ" % g]}
+            return {"defined": False, "pass": None, "undefined": ["%s:turn_labels_differ" % g],
+                    "untraced": untraced}
         for label in ra:
             ca, cb = _content(ra[label]), _content(rb[label])
             if ca == cb:
                 continue
-            rec = {"group": g, "label": label, "on": ca, "off": cb}
-            if (g, label) in ALLOWED:
+            traced = isinstance(_trace(ra[label]), dict)
+            rec = {"group": g, "label": label, "on": ca, "off": cb, "traced": traced}
+            if not traced:                              # B-1: a bypass turn's reply must not change at all
+                rec["why"] = "untraced_turn_changed"
+                violations.append(rec)
+            elif (g, label) in ALLOWED:
                 hyp = ca.get("hypothesis_svo")
                 ok = (cb.get("abstained") is True and ca.get("abstained") is False and ca.get("recalled_svo") is None
                       and isinstance(hyp, list) and len(hyp) == 3 and str(hyp[2]).lower() in ALLOWED[(g, label)])
@@ -264,7 +291,8 @@ def seed_verdict(on, off, groups=BAR_GROUPS):
         bridge_correct = bool(pb.get("abstained") is False and pb.get("recalled_svo") is None and isinstance(hyp, list)
                               and len(hyp) == 3 and str(hyp[2]).lower() == "worm")
     ok = correct and bridge_correct is not False and not violations
-    return {"defined": True, "pass": bool(ok), "correct": correct, "bridge_correct": bridge_correct,
+    return {"defined": True, "pass": bool(ok), "untraced": untraced, "correct": correct,
+            "bridge_correct": bridge_correct,
             "off_inherits": bool(sc_off["inherits"]), "violations": violations, "allowed_changes": allowed_changes,
             "cat_disc_on": sc}
 
@@ -371,7 +399,8 @@ def synthetic_cell(group, side, overrides=None):
         if tr.get("read") is None:                  # the organ was consulted on the canary probe (abstained)
             tr["read"] = {"patient": None, "reason": "below_floor", "lesion": None, "hop": True}
     return {"responses": resp, "sources": [SG.EXPECTED_SOURCE], "pythonhashseed_ok": True, "corpus_present": True,
-            "flip_dev": {"side": side, "group": group, "hop": HOP_VALUE}}
+            "flip_dev": {"side": side, "flag": FLAG, "flag_value": SIDES[side], "group": group,
+                         "hop": HOP_VALUE}}
 
 
 def synthetic_seed(kind="perfect"):
@@ -381,7 +410,8 @@ def synthetic_seed(kind="perfect"):
     off = {g: synthetic_cell(g, "off") for g in BAR_GROUPS}
     on = {g: synthetic_cell(g, "on") for g in BAR_GROUPS}
     if kind in ("perfect", "perfect_told", "leak_moat", "answer_lost", "as_fact", "generative_too", "perfect_bat_lake",
-                "bridge_lake", "bridge_robin_lake", "hop_off", "hop_not_engaged", "bridge_tie"):
+                "bridge_lake", "bridge_robin_lake", "hop_off", "hop_not_engaged", "bridge_tie",
+                "bypass_untraced", "bypass_changed"):
         on["cat_disc"] = synthetic_cell("cat_disc", "on", inherit)
         on["cat_bridge"] = synthetic_cell("cat_bridge", "on", inherit)
     if kind == "perfect_bat_lake":
@@ -403,6 +433,16 @@ def synthetic_seed(kind="perfect"):
         on["cat_bridge"] = synthetic_cell("cat_bridge", "on")
         on["cat_bridge"]["responses"]["p_canary_eat"]["category_inherit"]["read"] = {
             "patient": None, "reason": "tie", "lesion": None, "hop": True}
+    if kind in ("bypass_untraced", "bypass_changed"):   # B-1: the direct route answers bypass turns untraced
+        for g in ("word", "lived", "val_novel"):
+            resp = on[g]["responses"]
+            labs = list(resp)
+            for l in labs[1:]:
+                resp[l].pop("category_inherit", None)   # every turn but the first loses the trace (>= 1 stays)
+    if kind == "bypass_changed":                        # B-1: an untraced turn whose reply changes
+        resp = on["word"]["responses"]
+        labs = [l for l in resp if "category_inherit" not in resp[l]]
+        resp[labs[0]] = _fake(abstained=False, hyp=["otter", "chase", "clam"], trace=False)
     if kind == "perfect_told":
         on["cat_told"] = synthetic_cell("cat_told", "on", inherit)
     if kind == "wrong_category":
@@ -450,6 +490,22 @@ def selftest(verbose=True):
     chk("a cell without the hop env is UNDEFINED", seed_verdict(*synthetic_seed("hop_off"))["defined"] is False)
     chk("an organ read without hop is UNDEFINED", seed_verdict(*synthetic_seed("hop_not_engaged"))["defined"] is False)
     chk("a bridge-session canary eat that ties fails", seed_verdict(*synthetic_seed("bridge_tie"))["pass"] is False)
+    v = seed_verdict(*synthetic_seed("bypass_untraced"))
+    chk("B-1: untraced bypass turns with >=1 trace are DEFINED", v["defined"])
+    chk("B-1: the untraced turns are reported per group (count and labels)",
+        set(v.get("untraced") or {}) == {"word", "lived", "val_novel"}
+        and all(v["untraced"].values()))
+    v = seed_verdict(*synthetic_seed("bypass_changed"))
+    chk("B-1: an untraced turn whose reply changes FAILS the seed",
+        v["defined"] and v["pass"] is False
+        and any(x.get("why") == "untraced_turn_changed" for x in v["violations"]))
+    on, off = synthetic_seed("perfect")
+    on["word"]["responses"]["p_bear_chase"]["category_inherit"]["read"] = {"patient": None,
+        "reason": "bypass", "lesion": None, "admitted": []}   # query-shaped, no hop key
+    chk("B-1: an organ read without hop is UNDEFINED", seed_verdict(on, off)["defined"] is False)
+    on, off = synthetic_seed("perfect")
+    on["word"]["flip_dev"]["flag_value"] = "0"
+    chk("B-1: a cell without the recorded flag value is UNDEFINED", seed_verdict(on, off)["defined"] is False)
     on, off = synthetic_seed("perfect")
     on["word"] = None
     chk("a missing cell is UNDEFINED", seed_verdict(on, off)["defined"] is False)
