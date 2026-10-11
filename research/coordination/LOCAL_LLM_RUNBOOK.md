@@ -1122,3 +1122,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-11 09:48 [c1-teachobs] INFO: the cancelled smoke pair cells landed as committed data (on/off s1 cat_disc__intact_a from 220c1213c, both jobs rc=0 pre-cancel); the teach-observe lane stays PARKED per tree-c1-rescore (section-5 strengthening item; no use in any bar).
+- 2026-10-11 11:59 [pool-stall-cause2] INFO: stall alarm FALSE (queue empty, 0 procs, all claims rc-done); 2 result-less claims = my flag bugs: curiosity --probe never writes --out, emerge62c --demo has no --out. Curiosity re-queued clean; no --probe/--demo lane-stock.
