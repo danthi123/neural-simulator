@@ -81,3 +81,13 @@ copied from the primary checkout's uncommitted `research/coordination/lane_build
 - 108/108 gate cells (gate f7f2bd169) scored by the registered scorer -> **BASELINE-VALID** (V1 sham-clean 6/6, V3 applied, V4 registrable, V5 drift 0, V6 tiny-demo +LTM, PYTHONHASHSEED ok, seed threading ok, missing shards 0). Finding: research/findings/2026-10-02-host-share-baselines-RESULT.md.
 - Board line (Claude moves to the board): 2026-10-02 host-share baseline (plan step 2): BASELINE-VALID; measured panel host_decision_share 0.958, neural_decision_fraction 0.042; classes k-select HOST-OWNED, v-choice HOST-OWNED, bg-select HOST-OWNED; content learned 0.667, python-selected 0.333. Finding: research/findings/2026-10-02-host-share-baselines-RESULT.md.
 - NEEDS-CLAUDE #8 recorded in the runbook (sync summary docs + board; hand the bg-select and ignition numbers to the step-3 builder as its "before" values).
+
+## 2026-10-11 05:14 EDT - re-queue cells re-scored (T4 line re-tripped)
+
+- Start condition (section 7 count = 108) re-met after the t4-fire-and-dev re-queue + clobber restore; re-aggregated
+  with the registered scorer at the same gate f7f2bd169 -> **BASELINE-VALID again, identical numbers** (host_decision_share
+  0.9583333333333334, neural_decision_fraction 0.041666666666666664, learned 0.6666666666666666, python-selected
+  0.3333333333333333, missing_shards 0, sham noise 0.0, V1-V6 all pass) = reproduces the 2026-10-02 verdict (merge
+  c0679d474). Per RULING host-share-clobber the re-run cells are already-committed duplicates: duplicate RESULT file
+  removed, provenance re-stamps reverted, tree clean, nothing committed from this pass. Runbook T4 entry marked DONE
+  so later wakes do not re-score.
