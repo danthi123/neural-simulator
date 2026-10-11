@@ -1121,3 +1121,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-11 09:48 [c1-teachobs] INFO: the cancelled smoke pair cells landed as committed data (on/off s1 cat_disc__intact_a from 220c1213c, both jobs rc=0 pre-cancel); the teach-observe lane stays PARKED per tree-c1-rescore (section-5 strengthening item; no use in any bar).
