@@ -1,0 +1,29 @@
+{
+ "run_id": "1791723982-104742",
+ "runner": "research/runners/c1_flip_dev_check.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/c1_flip_dev_check.py",
+  "--score",
+  "research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952",
+  "--out",
+  "research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json"
+ ],
+ "git_sha": "ca179f6b8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-11T09:06:22",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4420.7,
+ "corpus_check_query": "emerge60 Broca producer console demo re-queue: what does the existing record say",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json"
+}

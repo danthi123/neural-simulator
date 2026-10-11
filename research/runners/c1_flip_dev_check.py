@@ -64,6 +64,7 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 from research.runners import stage1_exit_gate as SG  # noqa: E402
+from tools.verdict import Verdict  # noqa: E402 -- earned preconditions carried into the artifact
 
 DEV_SEEDS = tuple(range(1, 9))
 GATE_SEEDS = SG.GATE_SEEDS
@@ -345,6 +346,43 @@ def _load(path):
         return {"_load_error": repr(e)}
 
 
+def _earn(res):
+    """Attach the `preconditions` block that earned `res["verdict"]` (tools.verdict.Verdict; gate
+    verdict-preconditions, ported from tools/iw2_score.py's `_earn`). The step's own logic decides
+    PASS/FAIL/UNDEFINED as registered; the block only makes the artifact carry what earned it. A check that
+    fails under an asserted PASS/FAIL downgrades the verdict to UNDEFINED - a verdict is never asserted over
+    a failed precondition (the affect-eviction case)."""
+    per = res.get("per_seed") or {}
+    reasons = [str(u) for r in per.values() for u in (r.get("undefined") or [])]
+
+    def _none_of(*subs):
+        return not any(s in x for x in reasons for s in subs)
+
+    defined = [bool(r.get("defined")) for r in per.values()]
+    bs = res.get("bridge_summary") or {}
+    checks = [
+        ("every seed defined (both sides valid, no errored turn, sources/pythonhashseed/corpus)",
+         bool(defined) and all(defined), True),
+        ("flag recorded and engaged on every ON cell (flag_value=1, >=1 traced turn)",
+         _none_of("flag_not_recorded", "flag_on_not_engaged"), True),
+        ("every organ query read records hop:true", _none_of("hop_not_engaged", "hop_not_set"), True),
+        ("flag-off cells carry no trace", _none_of("flag_off_carries_trace"), True),
+        ("no organ errors and no errored turns", _none_of("organ_error", "errored_turn"), True),
+        ("bridge suppresses moat guesses on every defined seed",
+         bool(bs.get("n_defined")) and bs.get("n_seeds_with_moat_guess_on") == bs.get("n_defined"), True),
+    ]
+    v = Verdict("c1 flip-dev dev bar (Amendment B-1)")
+    for name, measured, expect in checks:
+        v.require(name, measured, expect=expect)
+    d = v.decide(go=(res.get("verdict") == "PASS"), verbose=False)
+    if res.get("verdict") in ("PASS", "FAIL") and d["status"] == "UNDEFINED":
+        res["verdict_unearned"] = res["verdict"]
+        res["verdict"] = "UNDEFINED"
+    res["preconditions"] = d["preconditions"]
+    res["undefined_reasons"] = d["undefined_reasons"]
+    return res
+
+
 def score(root, seeds=DEV_SEEDS):
     per_seed, bridge = {}, {}
     for s in seeds:
@@ -360,6 +398,7 @@ def score(root, seeds=DEV_SEEDS):
                              "canary_eat_on": [b["canary_eat_on"] for b in nb]}
     out.update({"runner": "research/runners/c1_flip_dev_check.py", "root": root, "seeds": [int(s) for s in seeds],
                 "per_seed": per_seed, "bridge": bridge, "scored_at": time.strftime("%Y-%m-%dT%H:%M:%S")})
+    _earn(out)
     return out
 
 

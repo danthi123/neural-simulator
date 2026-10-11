@@ -1121,3 +1121,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-11 09:06 [c1-rescore] RESULT: outcome (a): B-1 rescore = PASS 8/8 defined+pass, violations 0, bridge moat 8/8; selftest 27/27; bar-sanity OK same commit. Artifacts: research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json. Read for the flip (PLAN step C).
+- 2026-10-11 09:09 [c1-rescore] RESULT: outcome (a): PASS 8/8, violations 0, bridge moat 8/8; selftest 27/27; bar-sanity OK same commit. Artifacts: research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json. Scorer on research/c1-b1-rescore (reserved on main): Claude merges.
