@@ -177,3 +177,9 @@
 - The 19:11 wake: E7's 1s fast-fail was the runner's own 'NOT-RUNNABLE: need >=3 seeds' guard (same class as emerge33) -- single --seeds 7 is below both runners' floor. Direct node probe confirmed it. Requeued as --seeds 7 8 9.
 - Landed: laneA_affect_attr_s300b.json 19:00 rc0, laneB_lp_smoke_s7c.json 19:04:34 rc0, laneA_affect_attr_s301.json 19:04:48 rc0. C (s8) dispatched 19:10:51. The guard lesson is now in every lane-stock line: emerge-family runners need >=3 seeds, pool/attractor lanes take single seeds.
 - Queue reloaded E/A/B/D around running C so the lane gate sees all five lanes at commit time. g6_leak untouched and still running on wspool.
+
+## 2026-10-11 19:26 -- lane cycle verdict: all 5 lanes landed artifacts (E first emerge7 success); g6_leak sidecar shows turn-1 RSS 5.3->11.0 GiB (driver)
+- The 19:20 wake's single 'error' end = laneC rc1 WITH its artifact (laneC_metacog_smoke_s8.json 19:15) -- C exits rc1 on its verdict path by design; the watcher misreads it. Same pattern as the 18:25 C run. Not a failure.
+- Landed this cycle with prov sidecars: laneE_nextsymbol_s789.json 19:15 rc0 (FIRST lane-E success, via emerge7 at the >=3-seeds minimum), laneB s7c+s7d rc0, laneA s300b+s301+s302 rc0, laneC s7c+s8. D (emerge33 s789c) still queued at depth 1 awaiting capacity. Six lane_stock results + one regression_battery sidecar update arrived.
+- g6_leak at 40 min (alive, bwrap etime 40:16, live SIM_BRIDGE circuit build logged 19:22): sidecar rows -- turn 1 rss 5,524,280 KB (5.27 GiB) at 18:44, turn 1 again 11,520,932 KB (11.0 GiB, hwm 11.01 GiB) at 18:48:46 (DOUBLED inside turn 1 in 4m46s), turn 2 11,574,980 KB (hwm 11.21 GiB) at 18:49:43. Growth then slowed; select-path events still zero (rebuilds observed in the log do not pass through the select probe -- next-iteration note). Ceiling 14G, untouched.
+- Queue reloaded A/B/C around waiting D for the lane gate. No new NEEDS.
