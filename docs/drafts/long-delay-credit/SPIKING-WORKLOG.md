@@ -1022,3 +1022,18 @@ clip/factor path, or (b) the alive-D2 pathway's effect on selection dynamics, wh
 gate lesion was meant to isolate but is blocked by the 400-trial cell-identity paradox.
 Audit 3 = DONE; a2-inverted-next ruling (A/B #2, soft-bound, audit 3) fully executed.
 Script: vm_audit3_read.py (scratch). One RESULT filed to runbook.
+
+### 2026-10-10 22:50 - next-lever proposal via MiMo Pro delegate (a2 thread, pending Claude ruling).
+Delegate (RULING models) recommends: **native syn-zero D2-output lesion** - one additive ARMS
+entry `d2_output_lesioned` using the runner's OWN lesion mechanism (line 424 acfg "lesion" ->
+syn.zero(str_d2_k, gpe_k)) with the line-473 `lesion_weight_max_at_test` held assertion, so the
+cut is SELF-PROVING in the artifact and immune to the gate/400-trial cell-identity paradox.
+Ladder: S build smoke (<10 min, assert ~690 indirect synapses) -> cell-exact pool A/B (20
+trials, obs must diverge by trial 1) -> two 400-trial cells (test-2 argv, --arms
+d2_output_lesioned, seeds 7/8). Readout vs sb1 (0.05/0.00) + sb0 (0.51/0.59): rescue >=0.45
+both seeds => alive-D2 output necessary for the inversion; <=0.20 both => D2 output excluded
+with a proven cut; byte-identical pair after a diverging A/B => paradox generalized, STOP +
+candidate #3 (400-trial gate forensics) + FAILURE_LOG line. Ranked alternates: #2
+credited-vs-realized dw ledger (zero-compute pass on committed cells first), #3 paradox
+forensics (lesion-0 double-run identity + length-matched A/B). NOTHING IMPLEMENTED - proposal
+only; a new lever past the a2-inverted-next ruling needs Claude's ruling. ASK filed to runbook.
