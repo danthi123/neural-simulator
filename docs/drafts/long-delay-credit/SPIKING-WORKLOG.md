@@ -984,3 +984,24 @@ visible) - A/B #2 with cell-exact env launched, pending; (b) length: 20 vs 400 t
 Runner import check this turn: BOTH builder files carry the INDIRECT gate-set
 (`bg_corticostriatal_credit.py:204`, `_ldc_credit_omission.py:239`) and the runner uses
 the latter - single wired path.
+
+### 2026-10-10 21:25 - a2-inverted-next steps 1-2 done: A/B #2 (cell-exact env) + soft-bound factor audit.
+**A/B #2** (pool41, detached, output /tmp/pab2.out): cell-exact env (`CUDA_VISIBLE_DEVICES=`
++ NUMEXPR caps): lesion 0/1 both success 0.4 resp 1.0, **POOL-NODE DIFFERING KEYS ['obs',
+'wall_s'], obs differing 10/20, first differing index 1** - IDENTICAL to A/B #1 (GPU
+visible). => env delta REFUTED: the cut fires in the exact cell environment; the
+byte-identical 400-trial cells remain unreconciled with this (only remaining delta =
+run length 20 vs 400; code audit found NO reopen path: no gate couplings registered by
+these runners, checkpoint routing load only under checkpoint load, DIRECT set is the
+only other gate write). Note: the runner ALSO has a native synapse-level lesion
+(`syn.zero(pre,post)` via acfg 'lesion', lines 424/96-98, test-time hold verified at
+line 473) - a gate-independent D2 test if Claude wants one; not run (ruling order).
+**Soft-bound factor audit (RULING a2-inverted-next step 2)**: hypothesis REFUTED twice
+over. (a) Code: the only implementation is sim/bridge.py:11059-11061 - both factors
+`clip((wmax-w)/R,0,1)`, `clip((w-wmin)/R,0,1)` are CLIPPED to [0,1] BEFORE the exponent,
+so a negative factor is structurally impossible. (b) Data (32 cells x 64 pathway
+records, init/mid/end where stored): all weights inside [0,90] (worst out-of-range
+fraction 0.000); min raw up-factor 0.267, min raw down-factor 0.007, min post-clip
+factor 0.007 - no negative, none near it. Scripts: vm_pool_ab.py (pool /tmp),
+vm_factor_audit.py (scratch). => per ruling, NEXT = audit 3 (the trace tags the
+CHOSEN action); RESULT for that to follow separately.
