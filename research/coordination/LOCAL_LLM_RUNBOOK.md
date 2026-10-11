@@ -1129,3 +1129,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 (288 characters, limit 300)
+- 2026-10-11 19:04 [lane-e-emerge60-revision] INFO: emerge60 lane-E dies from the pinned revision with ValueError composer D=128 != 256 (morning sim/ run was clean). emerge7 queued to serve lane E; emerge60 needs a revision-content decision (fix the pin or accept sim/-only runs).
+(280 characters, limit 300)
