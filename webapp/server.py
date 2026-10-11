@@ -3842,8 +3842,9 @@ def _open_ended_acquire_route(chat, msg) -> bool:
 
 
 def _category_inherit_on() -> bool:
-    """BRAIN_CATEGORY_INHERIT (default OFF; anchor `_CATEGORY_INHERIT_DEFAULT_ON` in webapp/category_inherit_chat.py):
-    category inheritance on the strict route's recall miss (Stage-1 C1). Off -> no wrapper, no trace key."""
+    """BRAIN_CATEGORY_INHERIT (default ON since the flip, 2026-10-11 RULING c1-flip-go; anchor
+    `_CATEGORY_INHERIT_DEFAULT_ON` in webapp/category_inherit_chat.py): category inheritance on the strict route's
+    recall miss (Stage-1 C1). Explicit =0 (the byte-identical pre-flip escape) -> no wrapper, no trace key."""
     from webapp.category_inherit_chat import category_inherit_enabled
     return category_inherit_enabled()
 
@@ -4884,7 +4885,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _gnw_multistep_mod.install_multistep_gate(chat)
         except Exception:
             pass
-    # ── BEGIN faculty wire-in: CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1), DEFAULT-OFF ──
+    # ── BEGIN faculty wire-in: CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1), DEFAULT-ON ─────
+    # since the flip (2026-10-11 RULING c1-flip-go; explicit BRAIN_CATEGORY_INHERIT=0 is the byte-identical escape).
     # (BRAIN_CATEGORY_INHERIT; webapp/category_inherit_chat.py + research/runners/category_inherit_organ.py). Installed
     # OUTSIDE every gate wrapper above (and inside the default-off open-ended-gated trace below), so it acts only on the
     # stack's FINAL verdict: an acquired fact is observed by a rung-3c learned member->frame + frame->frame Hebbian

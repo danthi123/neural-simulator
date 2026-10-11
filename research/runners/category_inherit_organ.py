@@ -47,7 +47,7 @@ and one ENCODING-side ablation (a plasticity blockade, AP5-style):
   * `lateral_learn`: the frame->frame gate is never opened, so no frame-frame association forms (is the learned
     lateral association NECESSARY for inheritance at all?).
 
-HOP ATTENUATION (`BRAIN_CATEGORY_INHERIT_HOP=1`, default off; the constants block below says what and why): the
+HOP ATTENUATION (`BRAIN_CATEGORY_INHERIT_HOP`, default ON since the flip 2026-10-11; =0 restores the 09-30 organ; the constants block below says what and why): the
 frame -> frame pathway transmits at HOP_LATERAL_GAIN and the read lasts HOP_QUERY_STEPS, so a bridging member no
 longer carries a property two category hops away. Off builds no transmission gate: byte-identical to the 09-30 organ.
 
@@ -80,7 +80,7 @@ TIE_MARGIN = 1.25              # the winner must exceed the runner-up by this fa
 HETEROGENEITY = True           # per-neuron parameter heterogeneity, seeded by cfg.seed (identical neurons mode-lock)
 GATE_MF = "category_learn_member_frame"   # member -> frame plasticity gate; open only while observing
 GATE_LAT = "category_learn_lateral"       # frame -> frame plasticity gate; open only while observing
-# ── hop attenuation (BRAIN_CATEGORY_INHERIT_HOP; default OFF; set on dev seeds 1-8 only, 2026-10-06) ─────────────
+# ── hop attenuation (BRAIN_CATEGORY_INHERIT_HOP; default ON since the flip 2026-10-11, RULING c1-flip-go; ─────────
 # The bridging-member defect (a bat that eats the bug and flies in the sky made "what does the canary swim" reach
 # lake, dev 8/8) has two parts, both measured (research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md):
 # (1) at ENCODING, a frame two lateral hops from the heard one was reactivated (0.05-0.06 vs 0.09 for a first-order
@@ -100,9 +100,13 @@ HOP_QUERY_STEPS = 30           # read window with the option on (one retrieval c
 
 
 def category_inherit_hop_enabled() -> bool:
-    """`BRAIN_CATEGORY_INHERIT_HOP`: truthy (1/true/yes/on) -> hop attenuation on (the frame -> frame pathway at
-    HOP_LATERAL_GAIN, a HOP_QUERY_STEPS read). Unset or anything else -> off (the 09-30 organ)."""
-    return os.environ.get("BRAIN_CATEGORY_INHERIT_HOP", "").strip().lower() in ("1", "true", "yes", "on")
+    """`BRAIN_CATEGORY_INHERIT_HOP`: unset -> ON (the flipped default, 2026-10-11 RULING c1-flip-go). Any explicit
+    value keeps the pre-flip semantics byte-identically: truthy (1/true/yes/on) -> on (the frame -> frame pathway at
+    HOP_LATERAL_GAIN, a HOP_QUERY_STEPS read), everything else -> off (the 09-30 organ; `=0` is that escape)."""
+    raw = os.environ.get("BRAIN_CATEGORY_INHERIT_HOP")
+    if raw is None:
+        return True
+    return raw.strip().lower() in ("1", "true", "yes", "on")
 
 
 def category_inherit_lesion_mode() -> str | None:
