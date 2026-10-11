@@ -1259,6 +1259,31 @@ class ChatBrain:
             pass
         return " ".join(p.rstrip(".") + "." for p in parts), False
 
+    def _ci_teach_observe(self, a, v, p, polarity):
+        """RULING tree-c1-observe (a): an acquired AFFIRM fact ALSO teaches the category-inherit organ, at the
+        point where the store write happens (both ACQUISITION paths of `_maybe_acquire`), so a teach turn reaches
+        the organ even when no `gate_extract` combiner ran for the turn. Default OFF —
+        `BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE=1` to enable; with the flag unset this is a no-op and the
+        production path is byte-identical. Requires the faculty (`BRAIN_CATEGORY_INHERIT`) as well, observes
+        AFFIRM facts only (the organ's declared input class), and skips when `gate_extract` already observed this
+        turn (`_ci_last_observe` set), so each teach turn observes exactly once — in the gate-extract triple form
+        `[a, v, p]` with the `_ci_last_observe` record the turn stamp reads."""
+        flag = os.environ.get("BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE", "")
+        if str(flag).strip().lower() not in ("1", "true", "yes", "on"):
+            return
+        if str(polarity).upper() != "AFFIRM":
+            return                                   # a NEGATE store must not teach the organ (organ docstring)
+        if getattr(self, "_ci_last_observe", None) is not None:
+            return                                   # gate_extract already observed this turn: exactly once
+        try:
+            from webapp.category_inherit_chat import category_inherit_enabled, get_organ
+            if not category_inherit_enabled():
+                return
+            tr = get_organ(self, int(os.environ.get("BRAIN_CHAT_SEED", "42"))).observe(a, v, p)
+            self._ci_last_observe = dict(tr, svo=[a, v, p])
+        except Exception as e:                       # never let the organ crash a turn (mirrors _ci_gate_extract)
+            self._ci_last_observe = {"error": "%s: %s" % (type(e).__name__, e)}
+
     def _maybe_acquire(self, question):
         """IN-LOOP LEARNING acquisition: if the input is a declarative 3-word SVO ASSERTION (not a question), TEACH it to
         the spiking substrate (`inner.hear` -> composer.store with runtime code allocation for any new word) and refresh
@@ -1307,6 +1332,7 @@ class ChatBrain:
             except Exception:
                 return None
             self._refresh_facts()
+            self._ci_teach_observe(a, v, p, pol)   # RULING tree-c1-observe (a): default-OFF teach->organ wire
             return [a, v, p]
         # (B3 unavailable / disabled) — the EXACT legacy path (byte-identical acquisition) + the SAME lemma canonicalization
         toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
@@ -1320,6 +1346,7 @@ class ChatBrain:
         except Exception:
             return None
         self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it
+        self._ci_teach_observe(a, v, p, "AFFIRM")  # RULING tree-c1-observe (a): default-OFF teach->organ wire
         return [a, v, p]                         # the acquired SVO; gate() returns it so the endpoint renders a confirm
 
     def _is_acquisition_candidate(self, question):

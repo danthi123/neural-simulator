@@ -104,7 +104,8 @@ def install(chat, *, seed: int = 42) -> bool:
             if (category_inherit_enabled() and isinstance(res, tuple) and res and res[0] == "done"
                     and res[1] is not None and not isinstance(res[1], HypothesisSVO)
                     and len(res[1]) == 3 and all(isinstance(x, str) for x in res[1])
-                    and _affirm_polarity(question)):
+                    and _affirm_polarity(question)
+                    and getattr(chat, "_ci_last_observe", None) is None):   # the teach-observe wire (default OFF) may already have observed this turn
                 a, v, p = res[1]
                 tr = get_organ(chat, seed).observe(a, v, p)
                 chat._ci_last_observe = dict(tr, svo=[a, v, p])

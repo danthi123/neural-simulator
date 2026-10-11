@@ -297,3 +297,85 @@ def test_gate_seed_shard_hands_the_gate_flag_to_its_worker(monkeypatch, tmp_path
     with pytest.raises(SystemExit) as dev:
         R.main()
     assert dev.value.code == 0 and "--allow-gate-seed" not in seen["cmd"]
+
+
+# ── (8) RULING tree-c1-observe (a): a teach turn observes the organ at the STORE WRITE (default OFF) ──────────
+_TEACH_VOCAB = ["robin", "wolf", "dog", "bird", "isa", "flies", "sky", "bites", "apple",
+                "does", "not", "eat", "grass", "glorp", "makes", "everyone", "wonderful", "happy"]
+_TEACH_ACTIONS = {"isa", "flies", "bites", "eat", "does", "makes"}
+
+
+def _teach_chat(monkeypatch, observe_flag=True):
+    """A real ChatBrain, faculty ON, teach-observe flag per argument, NO bus installed — so the teach turn
+    exercises the `_maybe_acquire` store-write wire directly (the path where no gate_extract combiner runs)."""
+    from research.runners.brain_chat_tui import ChatBrain, StubRenderer, DEFAULT_SELF_ALIASES
+    from research.runners.multi_turn_agent import MultiTurnAgent
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT", "1")
+    if observe_flag:
+        monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE", "1")
+    else:
+        monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE", raising=False)
+    referents = [w for w in _TEACH_VOCAB if w not in _TEACH_ACTIONS]
+    agent = MultiTurnAgent(referent_concepts=referents,
+                           concepts={w: None for w in _TEACH_VOCAB}, seed=42,
+                           enable_neural_render=False, composer_kind="rf",
+                           enable_biased_competition=False, defer_planner=True, event_register=None)
+    chat = ChatBrain(agent, self_aliases=DEFAULT_SELF_ALIASES, renderer=StubRenderer())
+    CI.install(chat, seed=7)
+    return chat
+
+
+def test_teach_observe_told_teaches_the_organ(monkeypatch):
+    """RULING tree-c1-observe (a): after ONE told teach turn the organ exists and has observed that agent."""
+    chat = _teach_chat(monkeypatch)
+    svo = chat.gate("the robin isa bird")
+    assert svo is not None                        # the store write happened (acquired)
+    org = getattr(chat, "_category_inherit_organ", None)
+    assert org is not None, "the told teach turn must build the organ via the store-write observe wire"
+    assert "robin" in org.member_slot             # ...and has observed THAT agent
+    assert (getattr(chat, "_ci_last_observe", None) or {}).get("svo") == ["robin", "isa", "bird"]
+
+
+def test_teach_observe_lived_teaches_the_organ(monkeypatch):
+    """RULING tree-c1-observe (a): after ONE lived teach turn the organ exists and has observed that agent."""
+    chat = _teach_chat(monkeypatch)
+    svo = chat.gate("the wolf bites the apple")
+    assert svo is not None
+    org = getattr(chat, "_category_inherit_organ", None)
+    assert org is not None and "wolf" in org.member_slot
+
+
+def test_teach_observe_default_off_is_inert(monkeypatch):
+    """Default OFF: the same teach turn stores the fact but never builds an organ — production unchanged."""
+    chat = _teach_chat(monkeypatch, observe_flag=False)
+    assert chat.gate("the robin isa bird") is not None
+    assert getattr(chat, "_category_inherit_organ", None) is None
+    assert getattr(chat, "_ci_last_observe", None) is None
+
+
+def test_teach_observe_exactly_once_when_gate_extract_runs(monkeypatch):
+    """The teach wire and `_ci_gate_extract` must not double-observe one turn: exactly once."""
+    chat = _teach_chat(monkeypatch)
+    res = chat.gate_extract("the robin isa bird")   # orig_extract runs _maybe_acquire -> the wire fires first
+    assert res[0] == "done"
+    org = getattr(chat, "_category_inherit_organ", None)
+    assert org is not None and org.n_observed == 1  # the wire observed; the wrapper's new guard then skipped
+
+
+def test_teach_observe_skips_negation(monkeypatch):
+    """AFFIRM-only: a NEGATE store never teaches the organ (the organ's declared input class)."""
+    chat = _teach_chat(monkeypatch)
+    chat._ci_teach_observe("dog", "eat", "grass", "NEGATE")
+    assert getattr(chat, "_category_inherit_organ", None) is None
+    assert getattr(chat, "_ci_last_observe", None) is None
+
+
+def test_val_novel_exposure_writes_no_store(monkeypatch):
+    """RULING tree-c1-observe (a) RESIDUAL — reported to Claude (NEEDS), not silently passed: the val_novel
+    expose sentence is 5 content words, the B3 extractor declines it, so NO store write exists to hook and no
+    store-write observe wire can build the organ from an exposure (0/8 flipdev cells ever observed; kb 5 -> 5
+    across 12 exposures). The exposure->observe site is a design question for Claude."""
+    chat = _teach_chat(monkeypatch)
+    svo = chat.gate("the glorp makes everyone wonderful and happy")
+    assert svo is None                            # declined: never acquired -> no store write happens
+    assert getattr(chat, "_category_inherit_organ", None) is None
