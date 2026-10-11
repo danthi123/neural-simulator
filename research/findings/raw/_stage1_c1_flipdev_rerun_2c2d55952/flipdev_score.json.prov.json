@@ -1,0 +1,27 @@
+{
+ "run_id": "1791690327-381729",
+ "runner": "research/runners/c1_flip_dev_check.py",
+ "argv": [
+  "research/runners/c1_flip_dev_check.py",
+  "--score",
+  "research/findings/raw/_stage1_c1_flipdev"
+ ],
+ "git_sha": "bf84cfc05",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-10T23:45:27",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 23911.5,
+ "corpus_check_query": "D2 output inversion: str_d2_k channel map to GPe/STN/GPi, eligibility trace tagging chosen action, d2 lesion dev cell",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_flipdev/flipdev_score.json"
+}
