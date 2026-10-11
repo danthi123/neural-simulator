@@ -968,3 +968,19 @@ test x lesion 0/1, pool w-* config) to pin why pool cells show no runtime gate e
 output pending (bg ssh) - will be recorded when it lands. Note for next time: polling
 pool41 with `pgrep -f vm_pool_ab` self-matched the ssh wrapper (false RUNNING x4); use
 `pgrep -af "python.*vm_pool_ab"` and expect the wrapper to match itself too.
+
+### 2026-10-10 21:05 - pool gate A/B #1 (pool41, interactive): gate IS runtime-effective on pool - narrows the cell anomaly.
+20 train + 5 test x lesion 0/1, pool w-* config, caps on (GPU VISIBLE, no
+CUDA_VISIBLE_DEVICES=): **POOL-NODE DIFFERING KEYS: ['obs', 'wall_s'], obs entries
+differing 10 of 20, first differing index 1** (trial 0 identical, trial 1 already
+diverges - immediate, not learning-mediated). Coarse metrics equal (success 0.4/0.4,
+resp 1.0/1.0) at this horizon; attributable_to identical short-horizon (both runs print
+the same NEGATIVE decomposition - short-horizon artifact, ignore). => "pool runtime
+ignores the gate" is REFUTED: same node, same tree, same build function
+(`_ldc_credit_omission.build_credit_selector`, the one `_ldc_dip_observability` imports
+at line 56), gate applies. Remaining deltas vs the byte-identical full cells:
+(a) env: cells ran with `CUDA_VISIBLE_DEVICES=` (empty); A/B #1 had it unset (GPU
+visible) - A/B #2 with cell-exact env launched, pending; (b) length: 20 vs 400 trials.
+Runner import check this turn: BOTH builder files carry the INDIRECT gate-set
+(`bg_corticostriatal_credit.py:204`, `_ldc_credit_omission.py:239`) and the runner uses
+the latter - single wired path.
