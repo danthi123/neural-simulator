@@ -112,3 +112,21 @@ files all present; no re-queue). Scored with the UNCHANGED scorer: `flipdev_scor
 STOP honored: report only, no fixes, no scorer change, no re-run (this was the one re-run).
 NEEDS [c1-flipdev] RESULT filed to the runbook. Next call (C1 method question: why the
 engagement precondition rarely fires) = Claude.
+
+## 2026-10-11 06:12 EDT - tree-c1-engage step 1: trigger-vs-threshold audit (zero-compute, rerun cells)
+
+- Audited all 48 ON cells of `research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/` per turn: whether
+  `category_inherit` is stamped, and the read's `reason` / rates. Dominant cause = **branch (a): the signal never
+  reaches the organ**, not a threshold miss:
+  - val_novel: 72 reads `organ_not_built` (no organ existed: nothing was ever observed in-session), 62 responses have
+    no trace at all.
+  - lived: 16 `organ_not_built`, 16 `agent_never_observed`, 8 `below_floor`; 23 responses untraced.
+  - cat_told: 8 `agent_never_observed`, 16 `below_floor` (rates present), 16 untraced.
+  - word: 8 `organ_not_built`, 8 `agent_never_observed`, 8 `below_floor`.
+  - Engaging categories are clean: cat_bridge 136/136 traced (16 reached / 16 below_floor with rates), cat_disc
+    reached 8 / below_floor 8.
+- Route traced: the observe path is `webapp/category_inherit_chat.py::_ci_gate_extract` (affirmative gate-extract
+  triples only, line 109); `_ci_gate` returns `organ_not_built` when no organ was ever fed (line 127-129). Told /
+  lived / val_novel signals arrive by channels that never pass through that observe path.
+- Per RULING tree-c1-engage branch (a): next = wire the gap (default-OFF path), unit test, rerun flipdev on dev
+  seeds, then RESULT. Branch (b) margins recorded above for the below_floor turns.
