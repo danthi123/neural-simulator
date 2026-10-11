@@ -67,9 +67,11 @@ beyond the flag read, so every reply is byte-identical. `BRAIN_IDLE_REPLAY_OP` s
 """
 from __future__ import annotations
 
+import json
 import math
 import os
 import threading
+import time
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -341,6 +343,36 @@ def kb_triples(chat) -> List[Optional[Tuple[str, str, str]]]:
     return out
 
 
+def _leak_log(org, event: str, k=None) -> None:
+    """tree-c5-leak probe (RULING 2026-10-11): per-turn RSS/circuit-build sidecar, flushed EVERY logged event so a
+    killed run still leaves the growth curve. Env-gated by BRAIN_IDLE_REPLAY_LEAKLOG (path to a .jsonl sidecar):
+    unset -> one environ lookup and return, byte-identical behavior, no file. Never raises (the probe cannot break
+    the brain's turn). Each record: wall ts, pid, the organ's turn clock, event ("turn" = every conversation turn,
+    "select" = an idle-turn competition), K for select events, the running count of ReplayCircuit builds (steps up
+    exactly when _ensure_circuit rebuilds), the circuit's K, and VmRSS/VmHWM in kB."""
+    path = os.environ.get("BRAIN_IDLE_REPLAY_LEAKLOG") or ""
+    if not path:
+        return
+    try:
+        rss = hwm = 0
+        with open("/proc/self/status") as fh:
+            for line in fh:
+                if line.startswith("VmRSS:"):
+                    rss = int(line.split()[1])
+                elif line.startswith("VmHWM:"):
+                    hwm = int(line.split()[1])
+        circ_k = org._circuit.K if getattr(org, "_circuit", None) is not None else None
+        rec = {"ts": round(time.time(), 3), "pid": os.getpid(), "turn": int(org.turn), "event": event,
+               "k": (None if k is None else int(k)), "circuits_built": int(getattr(org, "_circuits_built", 0)),
+               "circ_k": (None if circ_k is None else int(circ_k)), "rss_kb": rss, "hwm_kb": hwm}
+        with open(path, "a") as fh:
+            fh.write(json.dumps(rec, sort_keys=True) + "\n")
+            fh.flush()
+            os.fsync(fh.fileno())
+    except Exception:  # noqa: BLE001 -- a probe must never break the brain's turn
+        pass
+
+
 class IdleReplayOrgan:
     """Per-conversation: the encoding record (turn of (re)encoding per fact), the circuit, the voice."""
 
@@ -352,6 +384,7 @@ class IdleReplayOrgan:
         self.enc: Dict[Tuple[str, str, str], dict] = {}
         self._sal: Dict[Tuple[int, Tuple[str, str, str]], float] = {}
         self._circuit: Optional[ReplayCircuit] = None
+        self._circuits_built = 0
         self._lock = threading.Lock()
 
     # ---- encoding events (called once per turn, before the turn's reply) ----
@@ -368,6 +401,7 @@ class IdleReplayOrgan:
                 if first or i >= len(self._seen) or self._seen[i] != tr:
                     self.enc[tr] = {"t": 0 if first else self.turn - 1, "idx": i}
             self._seen = kb
+        _leak_log(self, "turn")
 
     def note_encoding(self, triple, idx: int, turn: int) -> None:
         """Direct encoding record (tests, synthetic batteries)."""
@@ -420,6 +454,7 @@ class IdleReplayOrgan:
     def _ensure_circuit(self, K: int) -> ReplayCircuit:
         if self._circuit is None or self._circuit.K != K:
             self._circuit = ReplayCircuit(K, self.seed, self.p)
+            self._circuits_built += 1
         return self._circuit
 
     def noise_seed(self, K: int) -> int:
@@ -439,6 +474,7 @@ class IdleReplayOrgan:
             m = float(np.mean(x))
             x = [m] * K
         circ = self._ensure_circuit(K)
+        _leak_log(self, "select", k=K)
         rec = circ.run(x, self.noise_seed(K), encoded=encoded, commit=commit)
         rec.update(K=K, x_applied=[float(v) for v in x], winner=rec["read"]["winner"])
         return rec
