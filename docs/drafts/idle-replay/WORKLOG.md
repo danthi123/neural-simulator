@@ -118,3 +118,9 @@
 - g6's queued line likewise replaced by the wrapper form (same command otherwise, cap 13/14 for its rc137-at-10G history); its first queued copy withdrawn as a duplicate. Queue now depth 2, both wrapped; running: g2 pool40, g3 pool41, g5 pool42, g4 wspool.
 - Housekeeping: $P back on main (research/c1-flip holds the flip build + RESULT, awaiting Claude), mainwt scratch worktree removed (git worktree remove, clean).
 - Not yet due: the full battery smoke still waits on the C1 flip merge (queue-now); lane-stock lines after the C5 lines.
+
+## 2026-10-11 16:15 -- g2 died rc137 at the 10G cap -> requeued cap 13/14 + wrapper (driver)
+- Wake event: c5-on-arm-diagnose on pool40 killed (memory). exits.json confirms g2_on.json rc=137 at 16:06 -- the 10G memcap killed it before any artifact, 1h37m in. g2's 10-08 record was read as 'stalled, not OOM'd', which is now refuted: at cap 10 it OOMs exactly like g1/g4/g6 did.
+- Requeued g2 attempt 2 (turns hold,held,scalar,open): cap RAISED 9/10 -> 13/14 and wrapped with RULING smoke-rss-portable's portable peak-RSS one-liner (PEAK_RSS_KB on stderr), same rev bc66ccaa3 + env JSON, max_age_h=72. Queue depth 3, all three queued lines wrapped (g1c, g6c, g2c).
+- Untouched per rulings: g4 on wspool still running (RULING smoke-rss-portable: it IS the diagnosis, keep it running); g3 (pool41) and g5 (pool42) still running at their original cap 9/10 -- if either dies rc137 the same requeue applies, else let them finish for the ON-vs-OFF comparison. g2's rc137 at 16:06 is itself the first ON-arm data point: peak reached the 10G ceiling.
+- pool40 is free (g2's slot); the dispatcher will take the next wrapped line. No NEEDS: nothing is §2-reserved here.
