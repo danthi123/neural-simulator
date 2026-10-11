@@ -91,3 +91,24 @@
   (patient unresolved) while the structurally identical "the fish eats the bug" bound fine.
   Reading: a missing reply stamp + missing observe record on the ABSTAIN path, not a missing
   flip behaviour — the pathway behaves on every parsed turn. No flip, no scorer change (RULING).
+
+## 2026-10-10 23:47 - flipdev rerun (c1-flipdev-rerun) scored: UNDEFINED, bridge bar clean
+Both arms complete (48/48 cells each; 3 stale `.part.json` leftovers from retried lines, final
+files all present; no re-queue). Scored with the UNCHANGED scorer: `flipdev_score.json`
+(provenance stamped). **Verdict UNDEFINED, n_pass=None/8 (0 of 8 seeds defined).**
+- Two numbers the ruling asked for: pathway FIRED in **16/48 ON cells** (bridge group 8/8 +
+  cat_disc and word on seeds 5-8); NOT ENGAGED in **32/48 ON cells** (`flag_on_not_engaged`:
+  all cat_told/lived/val_novel across all 8 seeds; cat_disc/word on seeds 1-4).
+- **Pass count: UNDEFINED** - every seed has >=3 not-engaged groups, so no seed is defined
+  and the bar cannot PASS or FAIL.
+- **Miss pattern: systemic non-engagement, NOT the t_bird_eat slot-collision cluster.** The
+  engagement precondition (a strict recall miss on that turn) simply does not trigger in
+  cat_told/lived/val_novel (any seed) and rarely in cat_disc/word (fires seeds 5-8 only).
+- Bridge group (the part that IS defined): prereg behavior is exact - `bat swim` -> flagged
+  guess `lake` on **8/8 ON seeds**, `canary swim`/`robin swim` (two hops) unchanged on all
+  seeds, OFF side silent on all three; canary-eat C1 probe fired (worm) 8/8 ON, null 8/8 OFF.
+- Where: workstation 34 + pool (dl4g243 11, dl5d243 11, mxl1462drl 43) + server 1 (canary);
+  validity does not depend on host class (scorer reads recorded replies only).
+STOP honored: report only, no fixes, no scorer change, no re-run (this was the one re-run).
+NEEDS [c1-flipdev] RESULT filed to the runbook. Next call (C1 method question: why the
+engagement precondition rarely fires) = Claude.
