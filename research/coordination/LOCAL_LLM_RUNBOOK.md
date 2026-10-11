@@ -1127,3 +1127,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-11 17:58 - 2026-10-11 17:56 [tool-health-probe-gap] ASK: experiment-engine smoke false-ROTTED when cupy imports but the CUDA driver is dead; no-cupy degrades fine. Same insufficient-driver->degraded precedent as tool_health.py:211 (auto-tune) belongs in _EXP_SMOKE too (gates-adjacent, your call).
+(288 characters, limit 300)
