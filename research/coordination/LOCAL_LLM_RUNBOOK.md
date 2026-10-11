@@ -1103,3 +1103,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-10 21:29 [a2-inverted-next] RESULT: A/B #2 cell-exact env: cut FIRES on pool41 (obs 10/20 from trial 1, same as GPU-visible) - env delta refuted. Soft-bound hypothesis refuted: factors clipped [0,1] at sole site (bridge 11059), 2048 weight records all in [0,90], min post-clip 0.007. 400-trial cell identity unreconciled (no reopen path found). Next per ruling: audit 3. Branch b880e6ff6.
