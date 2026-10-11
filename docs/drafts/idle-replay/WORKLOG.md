@@ -172,3 +172,8 @@
 - D landed rc0: emerge33_pooler_s789b.json (18:52, runner-minimum 7 8 9, -m form after the path-form ModuleNotFoundError). Its banked verdict: load-bearing PERMUTED-FEATURES control collapses to 0.56, dAP-LESION 0.00, random-codes 0.50, disjoint code ABSTAINS 1.00, 6-seed -- cortex learns a shared category representation, NO sim/ edit.
 - E (emerge60) got past the staged fixture then died on ValueError composer D=128 != D=256 -- a revision-content gap (the morning sim/-working-copy run was clean). Filed [lane-e-emerge60-revision] INFO; queued emerge7 (E keyword, --out after validator caught --json) as the lane-E line.
 - g6_leak still running on wspool (19:00): g6_leak.log 168 MB, sidecar recorded turn 1 rss=5.52 GiB / circuits_built=0. The 18:55 wake's 2 regression_battery results = the g6_leak sidecar files. Queue reloaded A/B/C for the lane gate.
+
+## 2026-10-11 19:16 -- emerge7 carried the same >=3-seeds guard as emerge33; A/B landed rc0; lanes reloaded (driver)
+- The 19:11 wake: E7's 1s fast-fail was the runner's own 'NOT-RUNNABLE: need >=3 seeds' guard (same class as emerge33) -- single --seeds 7 is below both runners' floor. Direct node probe confirmed it. Requeued as --seeds 7 8 9.
+- Landed: laneA_affect_attr_s300b.json 19:00 rc0, laneB_lp_smoke_s7c.json 19:04:34 rc0, laneA_affect_attr_s301.json 19:04:48 rc0. C (s8) dispatched 19:10:51. The guard lesson is now in every lane-stock line: emerge-family runners need >=3 seeds, pool/attractor lanes take single seeds.
+- Queue reloaded E/A/B/D around running C so the lane gate sees all five lanes at commit time. g6_leak untouched and still running on wspool.
