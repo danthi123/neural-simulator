@@ -1005,3 +1005,20 @@ fraction 0.000); min raw up-factor 0.267, min raw down-factor 0.007, min post-cl
 factor 0.007 - no negative, none near it. Scripts: vm_pool_ab.py (pool /tmp),
 vm_factor_audit.py (scratch). => per ruling, NEXT = audit 3 (the trace tags the
 CHOSEN action); RESULT for that to follow separately.
+
+### 2026-10-10 21:55 - a2-inverted-next audit 3: the trace DOES tag the chosen action (32/32 cells).
+Read the runner's OWN credit decomposition (`decomposition_last200` / `M_early`, instrument
+commit 523ea8ba5; `mapping_credit` = [correct D1 - wrong D1] - [correct D2 - wrong D2],
+cue family, D2 sign carried) from every cell on disk. **M_early > 0 in ALL 32 cells**
+(range +0.22 to +64.8): sb1 ref +25.56/+25.69, lesion pair IDENTICAL (+25.56/+25.69,
+consistent with the byte-identical cells), cut pairs +18.2..+24.9, test-3 on30
++2.6..+64.8, on150 +0.2..+26.2. early_share 0.07-0.60. => **The eligibility trace at
+outcome is mapping-POSITIVE: credit lands on the CORRECT/chosen action's D1 relative to
+D2 in every condition** - the credit mapping is exonerated at the decomposition level.
+The contradiction stands sharpened: mapping-positive credited dw (+) yet sb1 accuracy
+inverted (0.00-0.17) and test-3 at chance - so the inversion is NOT in the tag/mapping;
+candidates narrow to (a) credited-dw vs realized-dw divergence in the weight-update
+clip/factor path, or (b) the alive-D2 pathway's effect on selection dynamics, which the
+gate lesion was meant to isolate but is blocked by the 400-trial cell-identity paradox.
+Audit 3 = DONE; a2-inverted-next ruling (A/B #2, soft-bound, audit 3) fully executed.
+Script: vm_audit3_read.py (scratch). One RESULT filed to runbook.
