@@ -1037,3 +1037,28 @@ candidate #3 (400-trial gate forensics) + FAILURE_LOG line. Ranked alternates: #
 credited-vs-realized dw ledger (zero-compute pass on committed cells first), #3 paradox
 forensics (lesion-0 double-run identity + length-matched A/B). NOTHING IMPLEMENTED - proposal
 only; a new lever past the a2-inverted-next ruling needs Claude's ruling. ASK filed to runbook.
+
+### 2026-10-11 02:55 - H1 ledger (zero-compute pass on committed cells): credit is eaten, but the
+### inversion is not carried by the mapping-signed weight drift.
+Realized cue-family mapping drift (weights_per_trial[399]-[200], ctx_a->d1_0/ctx_b->d1_1 minus
+wrong D1, same for D2 with sign carried) vs the runner's OWN credited mapping sum
+(decomposition_last200 windows x cue):
+- sb1 (soft-bounds, terminal INVERTED 0.05/0.00): credited +22.8/+26.8, realized only
+  **+3.9/+5.2** -> residual **-18.9/-21.6** (realizes 17-20% of credited).
+- sb0 refs (healthy terminal 0.51/0.59): credited +28.4/+22.8, realized +14.3/+17.2 ->
+  residual -14.1/-5.6 (realizes 50-76%).
+- D2 net drift (correct-wrong): sb1 -1.64/-1.80; sb0 -1.46/-4.99 (both D2-mapping-positive
+  contribution, i.e. wrong-channel D2 grows more).
+- Soft-factor asymmetry at the D2 correct-channel weights: sb1 mean up 0.812 / dn 0.188
+  (4.3:1); sb0 up 0.96-0.98 / dn 0.02-0.04 (25:1, floored). **sb0 has the STRONGER asymmetry
+  yet is healthy** -> the up/down ratchet asymmetry alone is not the inversion source.
+Bottom line: (1) soft bounds cut the realized mapping capture ~3-4x (the delegate's residual
+is real: outside-window + factor-path effects eat most of the credited mapping); (2) realized
+mapping drift stays POSITIVE in all 4 cells while only sb1 inverts -> the inversion is NOT
+carried by the mapping-signed weight drift; it tracks the D2 pathway being ALIVE at mid
+weights at selection time - favors H2 (selection dynamics), the family the syn-zero lesion
+lever (ASK 23:05) tests causally. Rechecked in passing: sb1 `success` field = EARLY window
+(0.53/0.49); terminal 0.05/0.00; sb1-vs-lesion rows differ only wall_s, params only
+lesion_d2_gpe - the byte-identity claim stands. Test-3 grid cells skipped (short runs, no
+400-trial weights_per_trial). Script: vm_ledger.py, vm_lesion_recheck.py (scratch).
+One RESULT filed to runbook.
