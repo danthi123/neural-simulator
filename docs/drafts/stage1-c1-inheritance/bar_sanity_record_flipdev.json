@@ -1,11 +1,7 @@
 {
  "backend": "numpy",
  "description": "C1 category-inheritance flip dev bar: 8/8 dev seeds correct + content-specific vs flag-off",
- "failures": [
-  "UNREACHABLE: perfect passes 0.000 < 0.95",
-  "UNREACHABLE: perfect_bat_lake passes 0.003 < 0.95",
-  "UNREACHABLE: perfect_told passes 0.000 < 0.95"
- ],
+ "failures": [],
  "kinds": {
   "null": "null",
   "null_as_fact": "null",
@@ -32,9 +28,9 @@
   "null_one_lost": 0,
   "null_robin_lake": 0,
   "null_wrong": 0,
-  "perfect": 0,
-  "perfect_bat_lake": 3,
-  "perfect_told": 0,
+  "perfect": 1000,
+  "perfect_bat_lake": 1000,
+  "perfect_told": 1000,
   "random": 0
  },
  "name": "c1-flip-dev",
@@ -48,9 +44,9 @@
   "null_one_lost": 0.0,
   "null_robin_lake": 0.0,
   "null_wrong": 0.0,
-  "perfect": 0.0,
-  "perfect_bat_lake": 0.003,
-  "perfect_told": 0.0,
+  "perfect": 1.0,
+  "perfect_bat_lake": 1.0,
+  "perfect_told": 1.0,
   "random": 0.0
  },
  "pass_rate_ci95": {
@@ -91,28 +87,28 @@
    0.0038
   ],
   "perfect": [
-   0.0,
-   0.0038
+   0.9962,
+   1.0
   ],
   "perfect_bat_lake": [
-   0.001,
-   0.0088
+   0.9962,
+   1.0
   ],
   "perfect_told": [
-   0.0,
-   0.0038
+   0.9962,
+   1.0
   ],
   "random": [
    0.0,
    0.0038
   ]
  },
- "repo_head": "55a5770aeeac2ebe3ba094980bdd0b612ed5d3ef",
+ "repo_head": "21d08da6fac3d45d44669995e202724ef04da58c",
  "scorer_files": {
-  "research/runners/c1_flip_dev_check.py": "b329b7171d3aaa99bf2bdc38846ade55401a73f790c8aa46ec8e78fdc9653822",
+  "research/runners/c1_flip_dev_check.py": "ffb162b64d823875b283583867002aeca37c953e1fa1a3a8dc62b98ecff44957",
   "research/runners/stage1_exit_gate.py": "df627e7a769d63fa37c1491f60b93ac8d8ff85b1d405c9a54e4a9310d3541199"
  },
- "scorer_sha256": "84491271dad11a9b4eb60f10cd657fd471c6ca1735e024c15b849dfcdeadff8a",
+ "scorer_sha256": "09b6df68080250ead041d35c090a8c009510b4bee238bf9b6d021a9029c2555b",
  "seed": 0,
  "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_flipdev.py",
  "spec_sha256": "7d430d1218c5b17a8bb7ff4a1c8af2125632040b4f3619ccb1e3b1b6dc4c7948",
@@ -122,6 +118,6 @@
   "perfect_min": 0.95
  },
  "tool": "tools/bar_sanity.py",
- "verdict": "UNREACHABLE",
- "wall_s": 277.3
+ "verdict": "OK",
+ "wall_s": 280.3
 }

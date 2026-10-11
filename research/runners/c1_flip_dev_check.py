@@ -359,7 +359,6 @@ def _earn(res):
         return not any(s in x for x in reasons for s in subs)
 
     defined = [bool(r.get("defined")) for r in per.values()]
-    bs = res.get("bridge_summary") or {}
     checks = [
         ("every seed defined (both sides valid, no errored turn, sources/pythonhashseed/corpus)",
          bool(defined) and all(defined), True),
@@ -368,8 +367,8 @@ def _earn(res):
         ("every organ query read records hop:true", _none_of("hop_not_engaged", "hop_not_set"), True),
         ("flag-off cells carry no trace", _none_of("flag_off_carries_trace"), True),
         ("no organ errors and no errored turns", _none_of("organ_error", "errored_turn"), True),
-        ("bridge suppresses moat guesses on every defined seed",
-         bool(bs.get("n_defined")) and bs.get("n_seeds_with_moat_guess_on") == bs.get("n_defined"), True),
+        ("every defined seed passes the bar (canary inherits worm, bridge canary answered, no reply violations)",
+         bool(defined) and all(defined) and all(r.get("pass") is True for r in per.values()), True),
     ]
     v = Verdict("c1 flip-dev dev bar (Amendment B-1)")
     for name, measured, expect in checks:

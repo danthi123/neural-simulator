@@ -1042,5 +1042,50 @@
    "n_moat_guesses_on": 1
   }
  },
- "scored_at": "2026-10-11T09:06:23"
+ "scored_at": "2026-10-11T09:54:54",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every seed defined (both sides valid, no errored turn, sources/pythonhashseed/corpus)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flag recorded and engaged on every ON cell (flag_value=1, >=1 traced turn)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every organ query read records hop:true",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flag-off cells carry no trace",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no organ errors and no errored turns",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every defined seed passes the bar (canary inherits worm, bridge canary answered, no reply violations)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": []
 }
