@@ -130,3 +130,20 @@ engagement precondition rarely fires) = Claude.
   lived / val_novel signals arrive by channels that never pass through that observe path.
 - Per RULING tree-c1-engage branch (a): next = wire the gap (default-OFF path), unit test, rerun flipdev on dev
   seeds, then RESULT. Branch (b) margins recorded above for the below_floor turns.
+
+## 2026-10-11 07:10 EDT - tree-c1-engage branch (a) wire: built + tested, commit gate-blocked (ASK filed)
+The branch-(a) wire is implemented as the default-OFF path `BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT` (webapp/
+category_inherit_chat.py::_ci_gate): when "1", the inherit organ is consulted on EVERY strict-recall route,
+including turns the production bus answers directly (the short-circuit the audit showed kept told/lived probes
+from ever reaching the organ). Production behaviour is untouched: the env defaults off and an organ abstain
+keeps the direct answer. 5 new unit tests in tests/test_category_inherit_organ.py (default-off, engage-on-
+committed + anaphora-direct, off = production short-circuit kept, abstain keeps the direct answer); 32/32 pass
+in 38.89s (tests/test_category_inherit_organ.py + tests/test_c1_flip_dev_check.py).
+NOT YET ON MAIN OR ON THE BRANCH COMMIT: the code commit is deterministically blocked by the pre-commit
+registry - run_all reports corpus-check-required's own selftest ghost (raw/g.json, 'selftest fallback probe'),
+consumer-hardware-reference's informational VRAM line and lane-starvation 4/5 as blocking, although every one
+of those gates exits rc=0 when run standalone on the same worktree. The two files are STAGED, uncommitted, in
+.claude/worktrees/c1-direct-consult (branch research/c1-direct-consult, from main 8b300d109). Gates are
+Claude-reserved; NEEDS-CLAUDE `[c1-direct-consult-gates]` ASK filed. Next (after Claude lands the commit):
+touch research/queue/provision.req/<branch-tip-sha> for the pool revision, then queue the flipdev rerun on dev
+seeds with BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT=1 on the ON-side lines and score it per the tree.
