@@ -1117,3 +1117,6 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-11 07:57 [c1-teach-observe] INFO: tree-c1-observe (a) BUILT+TESTED+COMMITTED 220c1213c: store-write teach-observe wire default OFF, told/lived unit tests PASS, 25+54 green, provision.req filed (smoke pair on provision). Detail+val_novel residual in C1 WORKLOG, see c1-probe-bar.
+- 2026-10-11 07:57 [c1-probe-bar] ASK: tree-c1-observe (b)/(c) in C1 WORKLOG: direct-hit no-trace counts per group; scorer counts organ_not_built/agent_never reads as engaged. ASK: do direct-hit probes count as inheritance-consulted, and where should val_novel exposure observe? Tree in WORKLOG.
+- 2026-10-11 07:56 [lane-stock] INFO: lane-stock DONE: 4 lines queued on afffc32e2e (B laneB --smoke, C metacog dev7 --smoke, D emerge33 dev7 4ep, E emerge60 --demo), mem_gb=6 max_age_h=72; lane_check OK 5 lanes; before_you_build run x4.

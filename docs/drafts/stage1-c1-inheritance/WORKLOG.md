@@ -147,3 +147,14 @@ of those gates exits rc=0 when run standalone on the same worktree. The two file
 Claude-reserved; NEEDS-CLAUDE `[c1-direct-consult-gates]` ASK filed. Next (after Claude lands the commit):
 touch research/queue/provision.req/<branch-tip-sha> for the pool revision, then queue the flipdev rerun on dev
 seeds with BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT=1 on the ON-side lines and score it per the tree.
+2026-10-11 07:07 EDT - tree-c1-engage step 2: branch (a) wire built (BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT, default OFF) + 5 unit tests, 32/32 pass, STAGED on research/c1-direct-consult; run_all gate-blocked (corpus-check ghost, consumer-hardware info line, lane-starvation) -> [c1-direct-consult-gates] ASK. RULING c1-direct-consult-hold: do NOT land; files kept unstaged on the branch as the record; branch synced with main (1f3215580).
+
+2026-10-11 08:00 EDT - tree-c1-observe (a): teach-observe wire at the store write (ChatBrain._ci_teach_observe on both _maybe_acquire hear paths), BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE default OFF, AFFIRM-only, exactly-once vs gate_extract (wrapper guard added, byte-identical when off); 25 tests in test_category_inherit_organ.py + 54 in the 4 touching files all green; committed 220c1213c on research/c1-teach-observe; provision.req filed (smoke pair queue refused until provisioned -> queues next wake). Unit tests carry the ruling's spec: told + lived one teach turn -> organ exists AND observed that agent: PASS.
+
+RESIDUAL val_novel (reported, NOT silently passed): the expose sentence is 5 content words, the B3 extractor declines it, so NO store write exists to hook; kb stays 5/5 across all 12 exposures; 0/8 ON cells ever observed; pinned by test_val_novel_exposure_writes_no_store. The exposure->observe site is a design call -> [c1-probe-bar] ASK.
+
+(b) direct-hit counts (turns with NO category_inherit trace = organ never consulted), ON side, 8 seeds: val_novel feel 48/48 and probes 14/16; lived probes 15/18; word probes 12/24 and controls 4/24; cat_told probes 9/18 and controls 9/18; cat_disc probes 4/16 and controls 8/24; cat_bridge 0/32 (fully consulted). Teach-role turns traced 100% everywhere.
+
+(c) scorer verdict, REPORTED not changed: flag_on_not_engaged fires only when SOME turn carries NO trace; organ_not_built/agent_never_observed reads DO carry a trace and are therefore counted as ENGAGED. The 32/48 failures are the NO-trace bypass turns (chain-route, open-ended, episodic, feel, and bare-word endpoints answering before chat.gate).
+
+PROPOSED TREE for [c1-probe-bar]: if direct hits must consult the organ -> wire organ consult on the bypass endpoints behind the same default-OFF flag, then rerun flipdev; if a direct-knowledge answer may count as inheritance -> the scorer stands and the UNDEFINED verdict is honest. val_novel: if an exposure must build the organ -> approve an exposure->observe hook (new design); else organ_not_built reads there stay by construction.
