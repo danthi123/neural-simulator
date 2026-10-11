@@ -157,11 +157,10 @@ the tables name, RESULT. Waves: T11.
 `mkdir -p $WT/sleep-transitive-inference/research/findings/raw/_sleep_transitive_inference && cp -a $P/research/findings/raw/_sleep_transitive_inference/. $WT/sleep-transitive-inference/research/findings/raw/_sleep_transitive_inference/`,
 the step-8 finding on the branch, commit, push. Predicted STI NO-GO (STI7). Every outcome hands back (#8; U1/U2/U3/U7: #7).
 
-**T4. Host-share baselines.** `$WT/host-share-baselines/docs/drafts/host-share-baselines/HANDOFF.md` sections 7-11
-(GATE `f7f2bd169`); WORKLOG `docs/drafts/host-share-baselines/WORKLOG.md`. Start: section 7's count = 108; stalled
-12 h below it: re-queue ONCE (section 3 block, run for `F=research/queue/requeue_host_share_f7f2bd169.tsv` and for
-`F=research/queue/requeue_host_share_f7f2bd169_dispatched_failed.tsv`; never `/tmp` or `59edf3255` lines). First: section 8. Write: finding + section-9
-sentences, RESULT; BASELINE-VALID also #8.
+**T4. Host-share baselines. DONE 2026-10-02** — BASELINE-VALID finding merged `c0679d474` (gate `f7f2bd169`); the
+t4-fire-and-dev re-queue re-run re-scored 2026-10-11 reproduced it exactly (WORKLOG `6651c5ac1`), re-run cells not
+committed per RULING host-share-clobber. The count=108 Start re-trips on restored data: do NOT re-score, sections 7-11
+are closed (BASELINE-VALID #8 was filed 10-02).
 
 **T5. BG live-seam retirement.** `$WT/selection-seam-need-reversal/docs/drafts/selection-seam/HANDOFF.md` steps 6-8
 (gate `0bc62cc31`); WORKLOG `docs/drafts/selection-seam/WORKLOG.md`. Start:
