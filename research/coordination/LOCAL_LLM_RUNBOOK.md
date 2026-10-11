@@ -1126,3 +1126,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-11 17:03 [tree-c5-memory] ASK: c5 g4 rc143 at the 14G outer scope ceiling (peak>=14.0GiB per node scopes.tsv; no JSON artifact). Delegate verdict: bank 'ON-arm exceeds ceiling'; do NOT requeue as-is; you decide raise outer MemoryMax vs memory fix before any g4 requeue.
+- 2026-10-11 17:15 [tree-c5-memory] INFO: g6 (emo,bc_*,rich_*) died rc143 at the same 14G ceiling in 33 min (g4: 2h18m) -- second banked ON-arm ceiling point; per-group growth rates differ (branch-c material). Standing delegate verdict applied, not requeued.
