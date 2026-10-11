@@ -946,3 +946,25 @@ the lesion tip). Placement note: those two on-S pytest runs were ~29 min each, o
   Interpretation rule until then: the a2 lesion RESULT stands as "no rescue", but the
   pool lesion cells are NOT evidence that a working D2-output cut fails — they are evidence
   the cut may not have executed; the local A/B shows it executes when applied.
+
+### 2026-10-10 20:50 — A0.2 test 3 harvest (20/20 cells): paired ON-CUT does NOT separate terminal success at either credit window.
+Grid `dev_pilot_4b_a2/`: credit on30 (seeds 9,10,12,14,15) x on150 (seeds 8,9,11,12,14),
+arms ON/CUT each, `--soft-bounds 1`, pin `17eaf8b51`, all responses defined
+(resp 0.97-1.00, chance 0.5, zero resp<0.5 cells). Terminal success, paired ON-CUT:
+- **on150**: diffs by seed -0.48 / +0.16 / 0.00 / 0.00 / 0.00 -> mean **-0.064**, signs 1+
+  1- 3zero, median 0.00.
+- **on30**: diffs -0.03 / +0.07 / 0.00 / 0.00 / +0.16 -> mean **+0.040**, signs 2+ 1- 2zero,
+  median 0.00.
+Most cells sit at chance (0.43-0.52) in BOTH arms; arm-invariant individuals dominate
+(s9: 0.91/0.94 on30, 0.72/0.56 on150 = high regardless of arm; s15 = the only large on30
++0.16; s8-on150-on = 0.00 outlier). Train-last-100 = 0.34-0.56. Readout script:
+`vm_t3_readout.py` (scratch). **Readout verdict: at dev-cell grain the outcome-timing arm
+manipulation does not move accuracy at either window (means straddle zero, 3-5/5 seeds
+exactly equal) - consistent with test-2's arm-insensitive inversion family, NOT with an
+arm-driven rescue.** The sign-bug/homeostat/rethink CALL and any bar remain Claude's
+(a2 + A0.2 rulings); dev cells only, no six-seed claim.
+Also this turn: pool-node gate A/B launched on pool41 (interactive, short: 20 train + 5
+test x lesion 0/1, pool w-* config) to pin why pool cells show no runtime gate effect;
+output pending (bg ssh) - will be recorded when it lands. Note for next time: polling
+pool41 with `pgrep -f vm_pool_ab` self-matched the ssh wrapper (false RUNNING x4); use
+`pgrep -af "python.*vm_pool_ab"` and expect the wrapper to match itself too.
