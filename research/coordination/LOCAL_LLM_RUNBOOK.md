@@ -1119,3 +1119,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-11 08:28 [lane-stock] INFO: wspool rc=1 = laneC metacog smoke COMPLETED, rc=1 is its own VERDICT NEGATIVE (0/1 GO) exit, artifact written (sync pending), not a crash. emerge33/emerge62c/curiosity rc=0; smoke pair running pool40/41.
+- 2026-10-11 08:28 [c1-batch-a1] STOP: 96-cell dev batch HELD: c1-bar-A1 requires AMENDMENT C1-A1 registered in the C1 prereg BEFORE the batch (prereg = section-2 reserved, Claude). Smoke pair in flight (pool40 on, pool41 off). On A1 + smoke clean, driver queues batch TEACH_OBSERVE=1.
