@@ -1137,3 +1137,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-12 08:51 [off-turn-growth] INFO: OFF arm grows 5.3 GB (turn 1) -> 17.2 GB (turn 4) per battery_turn sidecar; a 17 GB whole-brain battery is its own efficiency question, not a C5 blocker (your c5-off-baseline reading); cap-30 sequential pair queued, ONE RESULT follows
