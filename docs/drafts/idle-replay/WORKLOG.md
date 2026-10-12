@@ -730,3 +730,14 @@
   research/findings/2026-10-12-c5-g6b-replay-fired-pair.md (PROVISIONAL) + ON data committed.
   Caveats: seed 42 only, tiny-demo brain, retention arm-independent (cancels in the delta),
   one sequential pair, count-driven select.
+
+- 2026-10-12 19:20 EDT (heartbeat 19:12): T0 queue check (the every-session task). §1.1 status:
+  pool depth 0, all four nodes running=0 (fail24h: p40=3 p41=1 p42=3 wspool=4 - yesterday's
+  smoke/c5 attempts); GPU idle, dispatcher DOWN (normal). All §1.2 packet keys queued=0 held=0
+  (no current pool.queue.held; only the dated archive). Start counts: T1 sweep=243 HOLD (also
+  queue=0), T2 identity=5 lb=36 HOLD, T3 parts=60 (floor 30 met), T5=42 HOLD, T8=5+18 HOLD,
+  T10 gate=0/150 no, T6=8/204 no, T7=7/54 no, T12 start-file missing, T13 DONE=0. T0 FIRED:
+  _stage1_exit/gate (204 lines) and _stage1_c1_category/gate (54 lines) sat in
+  pool.queue.held-2026-09-30 (queued at writing) but now show queued=0 running=0, never in
+  pool.queue.done, Start counts unmet -> filed [pool-hold] NEEDS once (T6's sanctioned requeue
+  TSV exists but the ONCE re-queue belongs to T6). T1 is the next task (Start holds).
