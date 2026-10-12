@@ -526,3 +526,26 @@
   dispatcher stays up (covers fill + the workflow_check heartbeat; queue depth 0). NEXT if no host fix:
   misc-1012b items that need no pool (T1-a2 step from cec7a5206; pool_health provision-marker check + test)
   are the fallback tasks; [c30-off-terminated] still awaits the requeue-or-not answer.
+
+- 2026-10-12 11:05 EDT (wake 10:41 continued; diagnosis REVISION): Reading the c30 sidecars demolished the
+  ~16-min reaper theory. FACTS: BOTH cap-30 arms completed turns 1-4 in a deterministic 13.4 min (sidecars:
+  OFF emo 6,239,572 / bc_a 11,696,036 / bc_b 11,695,104 / rich_well 17,082,444 KiB, records 10:14-10:23; ON
+  emo 6,230,940 / bc_a 11,685,392 / bc_b 11,684,436 / rich_well 17,075,332, 10:16-10:40) and BOTH were
+  SIGTERMed ~2.5 min into turn 5 (rich_open): OFF 10:26:17 (15:56 age), ON 10:43:19 (15:57 age) -- the near-
+  equal ages = turns 1-4 being deterministic, so age was the red herring; the trigger = turn 5's memory
+  surge (17.1 -> 27+ GB, MemoryHigh=27G = 90% of the cap, mem_ok had started the job with only 8G free).
+  Ruled out IN REPO this wake: runner onebrain_regression_battery (NO signal/kill/timeout code at all),
+  pool_job_sandbox.sh (its wall-clock timeout applies only to AGENT lines, SB_AGENT_TIMEOUT=12h),
+  pool_canary.sh (only its own 60s ssh timeout), pool_autodispatch.sh (clean tree, no age timer, and my
+  dispatch ran POOL_NODE_LIMITS=none), gate/report scripts (grep pkill/kill/SIGTERM = only prose in my own
+  report texts), withdrawals (none), memcap/revision (identical e3ac0da4c for the 18G runs). And the
+  16-min timer is IMPOSSIBLE: ON-18 lived 93 min on the same node. Explains all four arm deaths: the 18G
+  pair died to their OWN cgroup (OFF rc137 at ~18G in turn 5; ON wedged above MemoryHigh=16G until my kill)
+  and could never threaten the node floor; the cap-30 pair's rich_open surge crosses it -> host/node-level
+  SIGTERM of the scope ("stopped", rc=143). Best fit = a memory-floor enforcement (POOL_NODE_LIMITS-style /
+  canary / user-oom policy) I cannot see from this container (no systemctl/journal/crontab here) -- filed
+  [g6-turn5-floor-term], corrected the wrong reaper claim inside [host-dispatch-half-dead] (it was also 304
+  chars, over the 300 cap), kept [c30-off-terminated] (its requeue question stands). HEADLINE FOR THE ONE
+  RESULT: the per-turn ON-OFF diff is already 4/5 answered at BOTH caps: c30 = -8,632 / -10,644 / -10,668 /
+  -7,112 KiB (emo/bc_a/bc_b/rich_well), i.e. -0.007 to -0.010 GB = the organ adds ZERO memory (the <=2 GB
+  target met with room to spare); missing = rich_open's peak + the 5th turn, blocked on the floor question.
