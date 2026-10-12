@@ -1131,3 +1131,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (288 characters, limit 300)
 - 2026-10-11 19:04 [lane-e-emerge60-revision] INFO: emerge60 lane-E dies from the pinned revision with ValueError composer D=128 != 256 (morning sim/ run was clean). emerge7 queued to serve lane E; emerge60 needs a revision-content decision (fix the pin or accept sim/-only runs).
 (280 characters, limit 300)
+- 2026-10-11 20:32 [wspool-down-g6leak] INFO: wspool unreachable since ~19:45; g6_leak + D in flight there (claims stuck unverifiable). Sidecar banked: turn1 5.27->11.0 GiB, turn2 hwm 11.21; select rows zero (rebuilds bypass probe). A/B/C requeued; pool nodes healthy.
+(268 characters, limit 300)
