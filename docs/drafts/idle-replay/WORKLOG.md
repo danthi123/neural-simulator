@@ -549,3 +549,23 @@
   RESULT: the per-turn ON-OFF diff is already 4/5 answered at BOTH caps: c30 = -8,632 / -10,644 / -10,668 /
   -7,112 KiB (emo/bc_a/bc_b/rich_well), i.e. -0.007 to -0.010 GB = the organ adds ZERO memory (the <=2 GB
   target met with room to spare); missing = rich_open's peak + the 5th turn, blocked on the floor question.
+
+- 2026-10-12 11:12 EDT (wake 11:06): RULING `wspool-ram-1012` landed (11:05, Claude/owner) and closes the
+  whole 10:26/10:43 mystery: the server dispatcher budget for wspool WAS mem_gb=18 until ~/apps 7b5cbee +
+  the unit redeploy, so the cap-30 pair's SIGTERM at turn5+2.5min = the budget enforcement firing when the
+  job's ACTUAL rss crossed 18 GB (rich_well had it at 17.1 GB; rich_open's growth reached 18 ~2.5 min in).
+  That fits all four arms: the 18G-cgroup jobs never passed ~17.2 (their own OOM/thrash stopped them first,
+  never the budget), the cap-30 jobs had headroom so the BUDGET caught them (rc=143 "stopped", host unit =
+  invisible from this container). My [host-dispatch-half-dead] line is answered (unit redeployed), as are
+  [c30-off-terminated] (not a Claude stop: a budget kill; sanctioned path = requeue) and [g6-turn5-floor-term]
+  (the floor = mem_gb=18, now 28) -- Claude deletes handled lines, so I left all three untouched. NEW WORLD
+  per the ruling: slice MemoryMax=30G, pool jobs OOMScoreAdjust=1000, dispatcher budget mem_gb=28, a
+  C5-scale job queues `pool_node=wspool mem_gb=26` ONE AT A TIME (bigger = AWS, game mode frees the node).
+  ACTIONS this wake: (1) STOPPED my in-session pool_autodispatch instance (10:06 restart) -- the host unit
+  is redeployed and two fillers = the double-dispatch defect this morning's 16-min drain hid; (2) built
+  vm_g6_off_c26.cmd from the original 18G cmd via 4 seds (mem_gb 18->26, mem_ok 17->25, memcap 18->26,
+  sidecar -> g6_off_c26_rss.jsonl; guard greps = 1/1/1/1 and 0 leftovers) and queued ONLY the OFF arm
+  (depth 1, checked "RULING c5-off-baseline requeue per wspool-ram-1012: mem_gb=26 pool_node=wspool
+  max_age_h=24") -- the ON arm follows only after OFF lands, per one-at-a-time. If OFF-26 completes all 5
+  turns, the pair's ONE RESULT needs only the ON-26 arm; the c30 sidecars already banked the 4-turn ON-OFF
+  diff (-7..-11 MB) at the old budget.
