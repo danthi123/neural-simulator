@@ -24,7 +24,9 @@ the judgement half, and it stays with the human and with me.
 """
 from __future__ import annotations
 
+import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -101,6 +103,87 @@ def _served(text_blobs):
     return served
 
 
+# POOL SATURATED / REPEAT BUSYWORK (owner-approved 2026-10-12). The gate's premise is unused capacity. Two ways it
+# misfired: (1) it fired while every pool node was already running stage-critical work, so obeying it meant
+# queueing behind that work or waiving; (2) it was "served" by the same smoke re-queued with only a new output name
+# (laneB --smoke x4 on 10-11/12), which is busywork, not research. So: when every default pool node has a job
+# RUNNING (dispatched in pool.running, no exit since in sim-jobstatus's exits.json), idle lanes are not unused
+# capacity and the gate stands down; and a job identical to one dispatched in the last day, apart from its
+# output path, does not serve a lane. With no exits.json (a host without the publisher) nothing changes.
+EXITS_JSON = os.environ.get("SIM_POOL_EXITS_JSON", "/opt/host-status/sim-pool-jobs/exits.json")
+RUNNING_MAX_H = 24
+_OUT_RE = re.compile(r"--(?:out|json)[ =](\S+)")
+_REASON_RE = re.compile(r"POOL_CHECKED_REASON=(?:\\.|\S)*\s*")
+
+
+def _norm_cmd(job):
+    """A job's command with its checked reason and output path removed (two runs of one config compare equal)."""
+    j = _REASON_RE.sub("", job.split("#checked:")[0])
+    return " ".join(_OUT_RE.sub("--out _", j).split())
+
+
+def _dispatches(now_ts, running_path=None):
+    """(ts, node, job) from pool.running within RUNNING_MAX_H."""
+    path = running_path or os.path.join(_queue_dir(), "pool.running")
+    out = []
+    try:
+        rows = open(path, errors="ignore").read().split("\n")[-600:]
+    except OSError:
+        return out
+    for l in rows:
+        parts = l.split("\t", 2)
+        if len(parts) != 3:
+            continue
+        try:
+            ts = time.mktime(time.strptime(parts[0], "%Y-%m-%d %H:%M:%S"))
+        except ValueError:
+            continue
+        if ts >= now_ts - RUNNING_MAX_H * 3600:
+            out.append((ts, parts[1], parts[2]))
+    return out
+
+
+def _pool_saturated(now_ts, running_path=None, exits_path=None, nodes=None):
+    """True iff every default pool node has a dispatched job with no published exit since its dispatch."""
+    try:
+        exits = json.load(open(exits_path or EXITS_JSON)).get("exits") or []
+    except (OSError, ValueError, AttributeError):
+        return False
+    if nodes is None:
+        import pool_nodes
+        nodes = pool_nodes.default_nodes()
+    if not nodes:
+        return False
+    done = {}
+    for e in exits:
+        if isinstance(e, dict) and e.get("out"):
+            k = (e.get("node"), e["out"])
+            done[k] = max(done.get(k, 0), float(e.get("ts") or 0))
+    busy = set()
+    for ts, node, job in _dispatches(now_ts, running_path):
+        m = _OUT_RE.search(job)
+        if m and done.get((node, m.group(1)), 0) < ts:
+            busy.add(node)
+        elif not m and ts >= now_ts - RECENT_DISPATCH_MIN * 60:
+            busy.add(node)
+    return all(n in busy for n in nodes)
+
+
+def _drop_repeats(lines, now_ts, running_path=None):
+    """Drop work lines whose normalized command was already dispatched (another time) within RUNNING_MAX_H."""
+    seen = {}
+    for ts, _node, job in _dispatches(now_ts, running_path):
+        seen.setdefault(_norm_cmd(job), []).append(job)
+    keep = []
+    for l in lines:
+        prior = seen.get(_norm_cmd(l), [])
+        if any(_OUT_RE.search(j) and _OUT_RE.search(l) and _OUT_RE.search(j).group(1) != _OUT_RE.search(l).group(1)
+               for j in prior):
+            continue        # the same config re-run under a new output name: not new research
+        keep.append(l)
+    return keep
+
+
 def _work_lines():
     lines = []
     queue_dir = _queue_dir()
@@ -149,7 +232,7 @@ def _work_lines():
                         lines.append(parts[2].split("#checked:")[0])
         except OSError:
             pass
-    return lines
+    return _drop_repeats(lines, time.time())
 
 
 LANE_BUILD_MAX_H = 6
@@ -265,6 +348,8 @@ def check(paths=None):
     idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
         return []
+    if _pool_saturated(time.time()):
+        return []           # every pool node is running work: idle lanes are not unused capacity
     verdict = wh.evaluate(NAME, _waiver_file(), LANE_WAIVER_MAX_H, now_ts=time.time())
     return _idle_message(idle, verdict)
 
@@ -349,4 +434,28 @@ def selftest():
         bad.append("BROKEN GUARD: a mixed or empty set was treated as result-data-only")
     if _is_doc_only([]):
         bad.append("BROKEN GUARD: an EMPTY staged set was treated as doc-only (would exempt every commit)")
+    # 2026-10-12: pool saturation + repeat busywork
+    import tempfile as _tf
+    now = time.time()
+    stamp = lambda dt: time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now - dt))  # noqa: E731
+    with _tf.TemporaryDirectory() as d:
+        run = os.path.join(d, "pool.running"); ex = os.path.join(d, "exits.json")
+        jA = "POOL_CHECKED_REASON=x\\ y python -m research.runners._affect_a --seeds 1 --out r/a1.json"
+        jB = "POOL_CHECKED_REASON=x python -m research.runners._curiosity_b --out r/b1.json"
+        open(run, "w").write("%s\tn1\t%s\n%s\tn2\t%s\n" % (stamp(7200), jA, stamp(3600), jB))
+        json.dump({"exits": [{"node": "n1", "ts": now - 9000, "out": "r/a1.json"}]}, open(ex, "w"))
+        if not _pool_saturated(now, run, ex, nodes=["n1", "n2"]):
+            bad.append("did NOT read two nodes each running an un-exited job as saturated")
+        json.dump({"exits": [{"node": "n1", "ts": now - 60, "out": "r/a1.json"}]}, open(ex, "w"))
+        if _pool_saturated(now, run, ex, nodes=["n1", "n2"]):
+            bad.append("FALSE POSITIVE: a node whose job already exited still read as busy")
+        if _pool_saturated(now, run, ex, nodes=["n1", "n2", "n3"]):
+            bad.append("FALSE POSITIVE: a node with no job at all still read as saturated")
+        if _pool_saturated(now, run, os.path.join(d, "missing.json"), nodes=["n1", "n2"]):
+            bad.append("BROKEN GUARD: no exits.json must never exempt (old behaviour)")
+        rerun = jA.replace("r/a1.json", "r/a1b.json")
+        if _drop_repeats([rerun], now, run):
+            bad.append("FALSE NEGATIVE-PROOF: the same config under a new output name still served a lane")
+        if not _drop_repeats([jA.replace("--seeds 1", "--seeds 2").replace("a1", "a2")], now, run):
+            bad.append("a genuinely different config (new seeds) was dropped as a repeat")
     return bad
