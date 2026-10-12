@@ -367,8 +367,10 @@ def _earn(res):
         ("every organ query read records hop:true", _none_of("hop_not_engaged", "hop_not_set"), True),
         ("flag-off cells carry no trace", _none_of("flag_off_carries_trace"), True),
         ("no organ errors and no errored turns", _none_of("organ_error", "errored_turn"), True),
-        ("every defined seed passes the bar (canary inherits worm, bridge canary answered, no reply violations)",
-         bool(defined) and all(defined) and all(r.get("pass") is True for r in per.values()), True),
+        # NB (2026-10-11, driver fix on research/c1-flip): the bar OUTCOME is deliberately NOT a precondition --
+        # a defined seed failing the bar is a FAIL (B-1 registered), and making "every seed passes" a require()
+        # check was circular: it downgraded FAIL to UNDEFINED (broke test_one_moat_leak_on_one_seed_fails, which
+        # already failed on main at 32db95f88). Preconditions are data-quality only; decide_dev owns PASS/FAIL.
     ]
     v = Verdict("c1 flip-dev dev bar (Amendment B-1)")
     for name, measured, expect in checks:

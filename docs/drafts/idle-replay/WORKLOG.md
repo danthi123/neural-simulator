@@ -223,3 +223,10 @@
   keeps mtime fresh, and lane C's rc=1 never advanced last_result, so no-clean-result (>=3 h) AND
   'has work' both held with nothing running. NEEDS [stall-gate-false-positive] filed; same mechanism
   likely explains the 10-11 03:01/11:50/16:34/22:53 stall wakes. No job touched.
+## 2026-10-11 14:45 -- smoke PASSED; 6-group ON-arm diagnosis requeued (driver)
+- Smoke landed 13:27 (g2smoke_on.json + prov, rev bc66ccaa3, BRAIN_IDLE_REPLAY=1, turns hold,held): both turns completed -- hold answered with abstained=False, multiref recovered both referents (fox/wolf), comprehension True; held produced the honest role-binding repair abstain. Structurally healthy = the smoke-first gate of RULING tree-c5-memory is satisfied.
+- Requeued all 6 ON-arm groups g1..g6 (RULING tree-c5-memory step 1 + queue-now): commands copied programmatically from pool.running (attempt-3 corrected form for g2/g3/g4/g6, attempt-1 for g1/g5), same rev bc66ccaa3, same env JSON, max_age_h=72. Dispatch began immediately (g5->pool42, g1->wspool, g4->wspool at 14:28-14:29).
+- Cap RAISED 10->14 (mem_ok 13, memcap 14) for g1/g4/g6 -- the three rc137-at-10G groups of 10-08: a capped-out run leaves no artifact for the RSS comparison the ruling needs (target: ON peak <= OFF + 2 GB). g2/g3/g5 keep the original cap 9/10 (they were stalled/lost, not OOM).
+- g1 attempt 1 died rc127 within seconds on wspool: the pool sandbox invokes /usr/bin/time and wspool does not have it (identical to the 10-08 rc127s; log tail in g1_on.log). Requeued as g1 attempt 2 with the /usr/bin/time -v segment stripped, matching the corrected form the other five already use (no other change, cap 13/14 kept). Depth 2 at 14:45.
+- Not yet due (per queue-now): the FULL battery smoke waits for the C1 flip merge (research/c1-flip awaits Claude, RESULT [c1-flip] af8a9b584); lane-stock lines go after the C5 lines.
+- Next wake: check g1..g6 exits + ON-arm JSONs, then the tree's RSS comparison step (needs OFF-arm reference peaks).

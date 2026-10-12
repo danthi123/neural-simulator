@@ -107,7 +107,9 @@ headline:
   # facilitation variable on an existing projection, and an abstain branch on the counted opponent read). Evidence:
   # _lbf_fix_episodic_store/verdict.json, _pmem_facilitation.json, finding
   # 2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6.md, and the allfixes2 aggregate.
-  total_faculties: 69   # == the number of `rows` below (64->66 2026-09-05, THIS landing: +2 rows for the rank-16
+  total_faculties: 70   # == the number of `rows` below (69->70 2026-10-11: +1 for the Stage-1 C1 category-inherit
+  # flip (RULING c1-flip-go): the recall-miss organ joins the headline registry as `category-inherit`, default-ON,
+  # numpy Hebbian organ so no default_on_spiking bump; see its row's flip markers). 64->66 2026-09-05: +2 rows for the rank-16
   # da-write-gain-spiking and rank-10 curiosity-graded-novelty production-flips, neither of which had a ledger
   # row before this landing — see docs/PRODUCTION_INTEGRATION_LEDGER.yaml's own two new rows + default_on_spiking_
   # faculties note above for why only the first bumps that count). Prior: 59->62 then 62->64 2026-09-02: the 62->64 step adds the A1/A2 flip-reconcile rows — d6-wm-competitive-slot-allocation (board #196, on_by_default:YES, REUSES the counted D6 substrate so no default_on_spiking bump) + wkv-mouth-learned-head (board #191, on_by_default:PARTIAL — flag default-ON but gated behind still-off BRAIN_OPEN_ENDED, ZERO production execution today, so no default_on_spiking bump). The 59->62 step (PI-ledger coverage audit, THIS
@@ -173,6 +175,38 @@ headline:
   note: "most of the live chat's load-bearing cognition is still host/numpy/off-bridge; the spiking set now includes the affect ladder (Gate-B colors WHAT+HOW), the comprehension monitor (Gate-B/D4, honest 'I didn't follow that' abstain), the expectation-violation/surprise unit (Gate-B/D2, honest 'that surprises me' notice), the balance-of-evidence metacog monitor (Gate-B/E1, honest 'low-confidence' hedge), the affective world-model (Gate-B/E2, queryable 'what do you expect' + honest 'that shifts the mood unexpectedly' notice), the curiosity ASK-pool crave drive (Gate-B/D3, honest follow-up QUESTION on a novel-topic abstain — crave, don't refuse), the multi-referent WM buffer (Gate-B/D6, HOLD >=2 discourse referents + honest 'I'm holding 2: dog and cat' read-out), and the hippocampal dAP episodic recall gate (Gate-B/D5, honest 'I recall / I don't recall discussing X' on a referential turn) — all lesion-load-bearing co-resident reads. The non-contradiction ASSERTION-gate (Gate-B/B3, REJECT a contradiction of a held belief) + reconsolidation (Gate-B/B4, PE-gated IN-PLACE belief revision) reuse the existing spiking recall composer / D2 window. Other-repair (Gate-B/T1-6, a targeted clarification NAMING the unresolved role/token instead of the bare D4 abstain) reuses the D4 comprehension per-noun sel-pool read. Appraisal-injection + the Qwen manner-mouth + the comprehension cue-lexicon + the surprise operating-point proxy + the metacog evidence-derivation + the world-model generic-valence pools/persistence-selection + the curiosity SELECTOR/VETO + the D6 host referent-parse/write-marker/argmax-read + the D5 host content/recency + the B3 host negation-detection/morphology remain declared scaffolds; the D5 BTSP WRITE is deferred on numpy (cupy-gated)."
 
 rows:
+  #2026-10-11: category-inherit joins the headline registry (RULING c1-flip-go: Stage-1 C1 flip -- the
+  # recall-miss organ answers a FLAGGED guess; A3 PASS + B PASS + B-1 rescore PASS 8/8 preceded it).
+  - key: category-inherit
+    faculty: "CATEGORY INHERITANCE on a strict-route recall miss: learned member->frame + frame->frame
+      (Hebbian) reads re-answer the stack's ABSTAIN with a FLAGGED guess (never a recalled fact). One-hop
+      bat->lake on 8/8 dev seeds; two-hop canary/robin-swim moat unchanged (B-1 bar)."
+    de_risked: YES
+    wired: YES
+    on_by_default: YES
+    retire_status: "BLOCKED:neural-render"   # the direct-answer short-circuit (host) still owns the routable
+    # HIT ahead of the organ -- same frontier convention as the other 49 live wired rows.
+    # >>> flip:c1-flip-go
+    subflag_flip_category_inherit: "default ON since 2026-10-11 (RULING c1-flip-go, branch research/c1-flip)
+      -- BRAIN_CATEGORY_INHERIT unset reads the anchor default ON, and BRAIN_CATEGORY_INHERIT_HOP unset
+      (the hop attenuation) likewise defaults ON; every EXPLICIT value keeps the pre-flip semantics, so
+      =0 on either is the byte-identical escape to the pre-flip behaviour (tests pin both)."
+    default_anchor:
+      - file: webapp/category_inherit_chat.py
+        assign: _CATEGORY_INHERIT_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
+    # <<< flip:c1-flip-go
+    scaffold_retired: NO
+    host_scaffold_in_default: "the direct-answer short-circuit still owns the routable HIT (flagged-guess
+      content, SAME moat as the wire, redundant with the organ -- find-2026-09-30-noon); the organ answers
+      only the MISS the stack abstained on. Declared host is not retired by the flip."
+    lesion_note: "BRAIN_CATEGORY_INHERIT_LESION=1 (read-time transmission lesion inside the organ; also the
+      LBF row's knob, research/runners/lbf_rows/category_inherit.py)."
+    evidence: "research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json (dev bar
+      PASS 8/8 under Amendment B-1), research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md,
+      finding 2026-09-30-c1-route-mid-turn-map.md."
   - key: content-selection
     faculty: "Content selection — direct factual questions decided by the substrate; host keyword-confab retired"
     de_risked: YES
