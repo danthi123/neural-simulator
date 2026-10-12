@@ -230,3 +230,19 @@
 - g1 attempt 1 died rc127 within seconds on wspool: the pool sandbox invokes /usr/bin/time and wspool does not have it (identical to the 10-08 rc127s; log tail in g1_on.log). Requeued as g1 attempt 2 with the /usr/bin/time -v segment stripped, matching the corrected form the other five already use (no other change, cap 13/14 kept). Depth 2 at 14:45.
 - Not yet due (per queue-now): the FULL battery smoke waits for the C1 flip merge (research/c1-flip awaits Claude, RESULT [c1-flip] af8a9b584); lane-stock lines go after the C5 lines.
 - Next wake: check g1..g6 exits + ON-arm JSONs, then the tree's RSS comparison step (needs OFF-arm reference peaks).
+- 2026-10-12 05:59 EDT (wake: main moved 6 commits + dev6 results): read rulings c1-flip-merged /
+  tree-c5-offcurve / misc-1012 (all Claude 10-12). Executed misc-1012's stall-gate fix:
+  pool_has_work in /opt/data/scripts/sim-driver-gate.py now counts live queue lines plus claims with no
+  matching exit row (was pool.running mtime, the cause of six false stall wakes); verified 1822/1824 claims
+  match an exit row or landed result file, the 1 unmatched = laneC_dev6 6-seed replication RUNNING on pool42
+  (correct True), pre-schema claims ignored, path-less claims count only while fresh (<6 h). FAILURE_LOG row
+  added (NOT-GATEABLE: owner cron script outside the repo). Other wake state: memcap D-state fix landed
+  b5f7fe962 (MEMCAP_HIGH_PCT opt-in); c1-flip merged 600eedd5f (category inheritance + hop default-ON, =0
+  byte-identical escape); T12 marked DONE in the walk per misc-1012 (target on research/draft-seam-map, so
+  [t12-target-missing] is resolved); lane-e keeps emerge7 (emerge60 set aside); dev6 batch: laneA/B/D/E rc0
+  with rows + files in, laneC in flight; wspool BACK UP since ~05:44 (dev6 E+D ran on it, ping + node ok) so
+  tree-c5-offcurve g6 OFF/ON at 18G on wspool is unblocked = next task, plus misc-1012's restock of lanes
+  with real work (never repeated identical smokes); landed during this wake: lane-starvation gate
+  0b82a2e17 + RULING lane-gate-v2 936fbca21 (gate stands down while every default pool node runs an
+  unexited job; an identical re-run under a new output path no longer serves a lane). No NEEDS added
+  this wake.
