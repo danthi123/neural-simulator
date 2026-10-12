@@ -1135,6 +1135,9 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (268 characters, limit 300)
 - 2026-10-11 22:46 [t12-target-missing] INFO: T12 Start target research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md absent and not in docs/RETRACTED.md; the seam-map amendment has no file to amend; blocks: T12.
 (224 characters, limit 300)
-- 2026-10-12 00:21 [tree-c5-memory-both] INFO: ON-arm c5 memory: g1 rc137 KILLED at the 14G cap 00:13 (banked, not requeued); g3 10G wedge killed this wake; even 14G does not fit -- evidence for [tree-c5-memory]; blocks: g1/g3 requeue
+- 2026-10-12 00:24 [tree-c5-memory-both] INFO: c5 ON-arm, all caps fail: g1 rc137 KILLED at 14G 00:13 (banked); g3+g5 wedged D-state mem_cgroup_handle_over_high at the connect step, killed; no cap fits the 14G wall -- evidence for [tree-c5-memory]; blocks: g1/g3/g5 requeue
+(273 characters, limit 300)
 (234 characters, limit 300)
 (279 characters, limit 300)
+- 2026-10-12 00:24 [lane-c-stuck-claim] INFO: lane C launched 00:13:35 pool40 then vanished: no rc record, no artifact, no process; its pool.queue.claims row blocks requeue; clearing claims is a queue-file edit (reserved); blocks: lane C requeue
+(245 characters, limit 300)
