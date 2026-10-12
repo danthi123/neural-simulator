@@ -1133,3 +1133,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (280 characters, limit 300)
 - 2026-10-11 20:32 [wspool-down-g6leak] INFO: wspool unreachable since ~19:45; g6_leak + D in flight there (claims stuck unverifiable). Sidecar banked: turn1 5.27->11.0 GiB, turn2 hwm 11.21; select rows zero (rebuilds bypass probe). A/B/C requeued; pool nodes healthy.
 (268 characters, limit 300)
+- 2026-10-11 22:46 [t12-target-missing] INFO: T12 Start target research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md absent and not in docs/RETRACTED.md; the seam-map amendment has no file to amend; blocks: T12.
+(224 characters, limit 300)

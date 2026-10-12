@@ -189,3 +189,17 @@
 - wspool 192.168.0.68 unreachable (ping 100% loss, ssh timeout) as of 20:29. g6_leak (dispatched 18:42, alive with live circuit builds at 19:22) and D (dispatched ~19:2x -- its <- line is the one lost in the 19:27 dispatcher-restart log truncation, no exit record) were BOTH in flight when the host went away. Claims remain on wspool and the queue's duplicate-claim gate now REFUSES requeues of either ('could not be reached to verify liveness; failing closed, FORCE_DUP=1'). NOT forcing: if the host is only network-partitioned the originals may still run; when it answers, liveness resolves and the requeue path opens cleanly.
 - Sidecar data banked on S: turn1 5,524,280 KB -> 11,520,932 KB inside turn 1 (4m46s), turn2 11,574,980 KB hwm 11,748,200 -- steep early growth then slowing. select-path rows all zero: rebuilds observed in the log do not pass through the select probe (next-iteration note).
 - pool40/41/42 healthy: onebrain batteries alive (5/4/5 pids), g1/g3/g5 ON-arm diagnosis unaffected. A/B/C requeued for lane coverage. Filed [wspool-down-g6leak] INFO.
+
+## 2026-10-11 22:27 EDT - heartbeat: runbook section 4 walk T0-T12 (order check, no launches)
+
+- T0 satisfied (prior [pool-hold] line consumed). T1 stays Claude-stopped (step-4 rc=2, item #4).
+- Verified done / awaiting-Claude, no action: T2 (waves A/C/D/E, [iw2] RESULT), T3 (landed 10-01, re-verified
+  10-07), T5 (bg-live-seam NO-GO G4, merge non-routine NEEDS), T6 (UNDEFINED finding + section-9 STOP,
+  NEEDS #6 23047f23c), T9 (B2d 258/258 + scoring PROVISIONAL 3489e1d0d; every-session checks this wake:
+  b2d_queue_next_wave = no unqueued line, ledger clean, GPU queue idle, mouth arm complete per RULING
+  b2d-mouth-result 17/18 MOUTH-SILENT), T11 (iw2 flip 276/276 lines waved through 10-04, verdicts + alloff
+  landed, section-11 findings written).
+- Still blocked: T7 below Start (52/54), T8 provision-stale pin STOP, T10 gate 0 files, T13 gpu_remote log
+  needs the workstation (wspool down since ~19:45), T23 STOP, T24 workstation-bound.
+- T12 cannot start: its Start target file does not exist -> NEEDS [t12-target-missing] INFO filed this wake.
+- Next wake: T14 (its s7 dev-arm lines expired 10-06 -> INFO due), then T15 if no pool work frees.
