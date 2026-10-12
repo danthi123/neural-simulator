@@ -718,3 +718,15 @@
   = 22 GB per speedup-smoke-first, pool_node=wspool, sequential (wspool idle since 15:17).
   Precondition when it lands: ON sidecar circuits_built>0 (replay fired) + ON-OFF <= 2 GB per
   turn; then ONE RESULT on main for c5-next-1012(a) (verdict via one MiMo Pro delegate).
+
+- 2026-10-12 17:20 EDT (wake 17:13): the 4 arrivals = g6b ON arm artifacts (landed ~16:30, rc=0
+  on wspool, cap 22). PAIR COMPLETE + both c5-next-1012(a) preconditions MET: replay fired in ON
+  (select k=5 circ_k=5 circuits_built=1 at selfinit; OFF has zero selects) and max ON-OFF =
+  +6324 KiB rss (0.0060 GB) vs the 2 GB bar (+7580 KiB hwm). Active turns emo/bc_a/bc_b are
+  byte-identical across arms (diff confines all changes to selfinit); ON selfinit reply is
+  organ-authored (brain_store / idle-replay / winner cat-eat-fish, decode_matches_winner=true)
+  vs OFF's renderer wander+question. One MiMo Pro delegate (RULING models) re-read all four
+  artifacts and confirmed every number before issuing "C5 g6b pair: PASS". RESULT filed as
+  research/findings/2026-10-12-c5-g6b-replay-fired-pair.md (PROVISIONAL) + ON data committed.
+  Caveats: seed 42 only, tiny-demo brain, retention arm-independent (cancels in the delta),
+  one sequential pair, count-driven select.
