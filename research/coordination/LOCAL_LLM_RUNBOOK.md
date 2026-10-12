@@ -1139,3 +1139,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (273 characters, limit 300)
 - 2026-10-12 00:32 [stage2-dev-arms] INFO: Stage-2 dev arms (T14): the s7 dev-arm max_age_h=24 lines expired 10-07 (11 cell files landed 10-06); gate stays queued 11-03..11-10, never before 11-01 (stage2-exit-gate HANDOFF section 1)
 (232 characters, limit 300)
+- 2026-10-12 03:49 [rank2-env-default] INFO: RULING tests-after-iw2-flip owed check: tests/test_rank2_integrated_loop_thread.py::test_webapp_integrated_loop_env_default_off PASSES on S (fastapi 0.139.1, 1 passed 1.22s); the cloud failure was missing fastapi only; blocks: none (unknown resolved)
