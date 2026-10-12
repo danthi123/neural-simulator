@@ -246,3 +246,16 @@
   0b82a2e17 + RULING lane-gate-v2 936fbca21 (gate stands down while every default pool node runs an
   unexited job; an identical re-run under a new output path no longer serves a lane). No NEEDS added
   this wake.
+- 2026-10-12 06:45 EDT (wake: laneC dev6 rc1 + 2 dev6 results): laneC dev6 (Claude's 6-seed metacog
+  replication) finished 06:33 = PARTIAL, n_go 2/6 dev seeds GO; rc1 = the designed non-pass exit (stock
+  laneC was 0/1 NEGATIVE); JSON on pool42 at research/findings/raw/_lane_dev6/laneC_metacog_dev6.json,
+  syncing; laneA/B/D/E dev6 files already landed on S. Runbook integrity: c57a61f6a deleted 7 NEEDS lines
+  (4 correctly ruled by the 10-12 rulings + [stall-gate-false-positive] handled by misc-1012) but also
+  [rank2-env-default] + [stage2-dev-arms] as collateral, while 6 bare needs_line '(N characters, limit 300)'
+  printouts sat mid-file instead of response lines: restored my 2 verbatim from their adding commits,
+  deleted the printouts, filed NEEDS [needs-response-lines-lost] so Claude refills its own 6. Task (RULING
+  tree-c5-offcurve step 1): touched research/queue/provision.req/
+  c7c915eeb17055fb59440efbc537a274aeae115c (main >= b5f7fe962 memcap fix); wspool free = 46G total so the
+  18G cap fits. NEXT: when /opt/host-status/sim-provision/<sha>.json reads ok/already, queue g6 OFF + g6 ON
+  at memcap 18 on wspool with the per-turn RSS sidecar (decision tree (a)-(c)), then misc-1012 lane restock
+  with real work (never repeated identical smokes).

@@ -1132,11 +1132,7 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
-(288 characters, limit 300)
-(280 characters, limit 300)
-(268 characters, limit 300)
-(224 characters, limit 300)
-(273 characters, limit 300)
-(232 characters, limit 300)
 - 2026-10-11 09:06 [c1-rescore] RESULT: outcome (a): B-1 rescore = PASS 8/8 defined+pass, violations 0, bridge moat 8/8; selftest 27/27; bar-sanity OK same commit. Artifacts: research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json. Read for the flip (PLAN step C).
 - 2026-10-11 14:21 [c1-flip] RESULT: research/c1-flip @680a313e8 flips category-inherit + hop default-ON (=0 byte-identical); ledger 69->70, LBF row, board #246; bar PASS 8/8; tests + detail: packet WORKLOG. [dirty-ok: ambient auto-generated runtime records - not part of this change]
+- 2026-10-12 00:32 [stage2-dev-arms] INFO: Stage-2 dev arms (T14): the s7 dev-arm max_age_h=24 lines expired 10-07 (11 cell files landed 10-06); gate stays queued 11-03..11-10, never before 11-01 (stage2-exit-gate HANDOFF section 1)
+- 2026-10-12 03:49 [rank2-env-default] INFO: RULING tests-after-iw2-flip owed check: tests/test_rank2_integrated_loop_thread.py::test_webapp_integrated_loop_env_default_off PASSES on S (fastapi 0.139.1, 1 passed 1.22s); the cloud failure was missing fastapi only; blocks: none (unknown resolved)
