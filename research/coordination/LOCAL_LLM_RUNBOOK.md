@@ -1140,3 +1140,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 - 2026-10-12 08:51 [off-turn-growth] INFO: OFF arm grows 5.3 GB (turn 1) -> 17.2 GB (turn 4) per battery_turn sidecar; a 17 GB whole-brain battery is its own efficiency question, not a C5 blocker (your c5-off-baseline reading); cap-30 sequential pair queued, ONE RESULT follows
 - 2026-10-12 10:35 [c30-off-terminated] ASK: cap-30 OFF rerun TERMed rc=143 at 10:26:17 (16 min in, no artifact); no kill/withdraw line, so a Claude stop and an ssh drop look identical here. ON-30 runs since 10:27:22. Not relaunching OFF (never relaunch a stopped job): answer requeue if not yours
 (297 characters, limit 300)
+- 2026-10-12 10:54 [host-dispatch-half-dead] ASK: host sim-pool-dispatch half-dead: fill died after 08:19 (my in-session restart covers fill) but an ~16-min reaper TERMed both cap-30 spawns rc=143 (15:56/15:57; no kill code in my reach) -- host-side, no systemctl here: please restart the host dispatcher
+(304 characters, limit 300)

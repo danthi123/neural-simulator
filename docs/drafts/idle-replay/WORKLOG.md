@@ -506,3 +506,23 @@
   and had also counted its own shell; workflow_check now reads dispatcher=LIVE via the stamp my instance
   writes. NEXT: ON-30's completion -> both peaks + per-turn ON-OFF diff as ONE RESULT via one MiMo Pro
   delegate, IF the OFF arm's requeue question resolves (NEEDS [c30-off-terminated]).
+
+- 2026-10-12 10:55 EDT (wake 10:41): The 4 result files = the c30 partials (g6_off_c30.log 288 MB, sidecar
+  461 B/1 record at 10:23 = cap-30 turn-1 DID land before the kill; g6_on_c30.log 77 MB, sidecar 260 B at
+  10:31; both logs stopped mid-brain-load; no json). ON-30's own exit row landed 10:43:19 rc=143, so BOTH
+  cap-30 arms died by SIGTERM at 15:56 and 15:57 of age -- a per-job ~960 s reaper, not a one-off. Ruled out
+  (all read this wake): tools/pool_autodispatch.sh working tree clean + no kill/timeout/age timer in it (its
+  only timers = AWS refresh rate, ssh ConnectTimeout, max_age_h in HOURS); the node's .sandbox-jobs wrapper
+  dirs (no kill text); /opt/data/scripts gate+report (grep pkill/kill/SIGTERM = only prose in MY OWN report
+  texts); withdrawn.log (no c30 entries); my pkill (09:53 only); memcap/revision (SAME e3ac0da4c and same
+  wrapper code for the 18G runs that lived 45/93 min -- so the script-era is not the difference). The only
+  ~16-min-grace actor left is HOST-SIDE: best-fit theory = sim-pool-dispatch.service is HALF-DEAD today --
+  its fill stopped after the 08:19 ON-18 dispatch (the 16-min drain silence 09:54->10:10 that my in-session
+  restart papered over) while its reaper/monitor keeps cycling and TERMs ~16-min-old jobs it does not own
+  (my instance's spawns: it never saw their claims). I cannot systemctl/journal from this container (10-11
+  lesson) so this stays a best-fit diagnosis, filed as ASK [host-dispatch-half-dead]. IMPLICATION: until the
+  host dispatcher is repaired, ANY driver-spawned pool job is reaped at ~16 min = the pool is effectively
+  unusable for lane/C5 work -- so the cap-30 pair (and the ONE RESULT) stays blocked, and my in-session
+  dispatcher stays up (covers fill + the workflow_check heartbeat; queue depth 0). NEXT if no host fix:
+  misc-1012b items that need no pool (T1-a2 step from cec7a5206; pool_health provision-marker check + test)
+  are the fallback tasks; [c30-off-terminated] still awaits the requeue-or-not answer.
