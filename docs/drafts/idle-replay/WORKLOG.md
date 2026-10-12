@@ -708,3 +708,13 @@
   branch, Claude merges) the finished work lands on research/pool-health-marker instead, with a
   NEEDS-CLAUDE merge line. The WORKLOG/tests themselves stand: selftest PASS, pytest 11 passed,
   live 4/4 nodes healthy at revision cc2f4e626.
+
+- 2026-10-12 16:16 EDT (wake 16:13): the 3 arrivals = the g6b record-pair OFF artifacts (landed
+  ~15:20). g6b_off rc=0 at 15:17:21 (wspool, cap 19): all 4 turns, per-turn battery_turn RSS
+  emo 6,231,220 / bc_a 11,685,200 / bc_b 11,684,336 / selfinit 16,914,020 KiB. Reconfirms the
+  +5.3 GB-per-new-turn-KIND retention (bc_a->bc_b same kind = +0) and gives the OFF baseline
+  for C5's ON-OFF measure (peak 16.9 GB < cap 19). Queued the ON arm: same turns, outer-env
+  BRAIN_IDLE_REPLAY=1 (quoting-proof form), leaklog g6b_on_rss.jsonl, cap = ceil(1.3 x 16.9)
+  = 22 GB per speedup-smoke-first, pool_node=wspool, sequential (wspool idle since 15:17).
+  Precondition when it lands: ON sidecar circuits_built>0 (replay fired) + ON-OFF <= 2 GB per
+  turn; then ONE RESULT on main for c5-next-1012(a) (verdict via one MiMo Pro delegate).
