@@ -487,3 +487,22 @@
   -> ON-30 auto-dispatches -> both peaks + per-turn ON-OFF diff as ONE RESULT through one MiMo Pro delegate
   (the 18G four-turn diff for context: -1,492/+1,480/+2,508/+624 KiB, max 0.0024 GB); then T1-a2 (approved,
   below C5) and the pool_health provision-marker fix (misc-1012b).
+
+- 2026-10-12 10:34 EDT (wake 10:28): The cap-30 OFF rerun (dispatched by my restarted dispatcher 10:10:21)
+  exited rc=143 (SIGTERM) at 10:26:17 -- 16 minutes in, during the brain-load phase, log last written 10:16:48
+  (world init, 80-neuron sim bridge), NO g6_off_c30.json, NO c30 sidecar (zero battery_turn records = not one
+  turn ran). Source of the TERM is UNRESOLVED: my dispatcher's /tmp/pool_dispatch.log has no kill/stop line
+  (only its two dispatch lines + sandbox launches), withdrawn.log has no c30 entry, no repo commit touched
+  anything, memcap/sandbox faults read as rc137/OOM not 143, and the node journal is unreadable from this
+  container (systemctl/journalctl absent). So an owner/Claude stop and an ssh-session drop (bwrap
+  --die-with-parent chain) look IDENTICAL from here -- per the standing rule never relaunch a job Claude
+  stopped, I did NOT requeue the OFF arm; filed ASK [c30-off-terminated] asking whether the stop was theirs
+  and for 'requeue' otherwise. Meanwhile: the dispatcher's one-per-node gate then dispatched ON-30 at
+  10:27:22 (claim 1791815242; depth 0), and ON-30 is ALIVE (bwrap+wrapper procs, etime 5:37 at 10:33,
+  MemoryMax=30G/MemoryHigh=27G stanza) -- if the same TERM source hits it at a similar ~16 min offset the
+  next wake will report it as a second 'ended badly'. Also corrected for the record: the earlier 'dispatcher
+  dead' read was diagnosis-by-drain (16-min silence 09:54->10:10 with a free node, which the 60s poll fills
+  in 60s) and stands on that evidence only -- pgrep from this container cannot see host units (10-11 lesson)
+  and had also counted its own shell; workflow_check now reads dispatcher=LIVE via the stamp my instance
+  writes. NEXT: ON-30's completion -> both peaks + per-turn ON-OFF diff as ONE RESULT via one MiMo Pro
+  delegate, IF the OFF arm's requeue question resolves (NEEDS [c30-off-terminated]).

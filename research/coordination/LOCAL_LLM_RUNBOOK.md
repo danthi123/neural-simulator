@@ -1138,3 +1138,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-12 08:51 [off-turn-growth] INFO: OFF arm grows 5.3 GB (turn 1) -> 17.2 GB (turn 4) per battery_turn sidecar; a 17 GB whole-brain battery is its own efficiency question, not a C5 blocker (your c5-off-baseline reading); cap-30 sequential pair queued, ONE RESULT follows
+- 2026-10-12 10:35 [c30-off-terminated] ASK: cap-30 OFF rerun TERMed rc=143 at 10:26:17 (16 min in, no artifact); no kill/withdraw line, so a Claude stop and an ssh drop look identical here. ON-30 runs since 10:27:22. Not relaunching OFF (never relaunch a stopped job): answer requeue if not yours
+(297 characters, limit 300)
