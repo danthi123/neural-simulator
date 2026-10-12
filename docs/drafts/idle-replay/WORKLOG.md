@@ -259,3 +259,20 @@
   18G cap fits. NEXT: when /opt/host-status/sim-provision/<sha>.json reads ok/already, queue g6 OFF + g6 ON
   at memcap 18 on wspool with the per-turn RSS sidecar (decision tree (a)-(c)), then misc-1012 lane restock
   with real work (never repeated identical smokes).
+- 2026-10-12 06:55 EDT (wake: provision ok on all 4 nodes + laneC dev6 synced): record
+  /opt/host-status/sim-provision/c7c915eeb...json finished 10:45:36Z ok (pool41/42/40/wspool);
+  revision present on wspool, 30G free (46G total) so cap 18 fits. Task attempt = RULING
+  tree-c5-offcurve step 2 (queue g6 OFF+ON on wspool): recovered the exact prior g6 command from
+  pool.queue.claims (portable resource wrapper + mem_ok 13 1 && memcap 14 + env BRAIN_IDLE_REPLAY_LEAKLOG
+  sidecar + onebrain_regression_battery --worker --env replay=1 --turns emo,bc_a,bc_b,rich_well,rich_open
+  --out .../c5_on_diag/g6_leak.json) and the pool_node= pin syntax (lives in the command or the --checked
+  reason; pop_job honors either and silently skips non-matching nodes). BLOCKER: the sidecar is NOT on
+  main - git grep HEAD finds it only in this WORKLOG's prose; the code is research/runners/idle_replay_organ.py
+  on research/c5-leak-probe @199711b56, which PREDATES memcap fix b5f7fe962 (ancestor check: PREDATES).
+  Probe revision lacks the fixed memcap; main lacks the sidecar - the two ingredients sit in different
+  revisions and merging is section-2, so filed ASK [tree-c5-sidecar-not-on-main] and stopped the task.
+  NEXT: when the probe merges (or Claude rules a sidecar cherry-pick), queue both arms at the then-current
+  main revision: recovered command, mem_ok 17 1 && memcap 18, distinct --out g6_off.json/g6_on.json +
+  sidecar paths g6_off_rss.jsonl/g6_on_rss.jsonl, ON = --env BRAIN_IDLE_REPLAY 1, OFF = --env {} (confirm
+  the OFF convention in the runner), --checked '... pool_node=wspool; mem_gb=18'. Then misc-1012 restock
+  with real work on the idle CPU lanes.
