@@ -623,3 +623,26 @@
   pool-health fix (pool_health.py still checks the retired ~/derisk-pool/sim checkout; switch it to the
   revisions/<sha> provision marker + a test) = STILL MINE and = next wake's task; T1-a2 stays approved
   below it in priority.
+
+- 2026-10-12 12:40 EDT (wake 12:28; 3 result files arrived): NO new commits/rulings since
+  a62e36185; the 3 arrivals = the workstation cap-26 OFF run's synced trio (g6_off.json 31 KB +
+  prov + g6_off_c26_rss.jsonl, mtime 11:25) plus its 308 MB g6_off.log which I deliberately did
+  NOT commit (size; noted in the finding's Provenance). Re-read runbook section 1. ONE TASK =
+  RULING c5-next-1012 (b): find what onebrain_regression_battery --worker keeps per turn kind
+  (~5.3 GB each; the big-battery OOM root cause); its (a) (replay-firing turns + dev smoke + the
+  3-turn-kind pair rerun) = the next arc, needs the turn design + a smoke, deferred. HUNT RESULT:
+  the retention is NOT in the worker (its responses{} = reply texts, out-file 31 KB). It is
+  webapp/server.py's warm cache: line 4619 cache_key=(session, brain, renderer); lines 4663-4675
+  build a full ChatBrain per key into _BRAIN_CHATS with NO bound/eviction; the ONLY teardown is
+  the req.reset block (4625-4661) which pops _BRAIN_CHATS + ~20 per-session registries. The
+  arithmetic closes exactly on the committed AWS OFF sidecar: emo 6,234,688 + bc_a +5,455,512 +
+  bc_b -784 (same key!) + rich_well +5,386,120 + rich_open +5,340,964 KiB = 22,416,700. One MiMo
+  Pro delegate (RULING models) re-verified both code sites by direct read and returned the verdict
+  + the fix design: extract _evict_session from the reset block + cap _BRAIN_CHATS recency (env
+  BRAIN_CHAT_CACHE_MAX default 2) evicting through the full teardown; rejected per-turn LRU (kills
+  the mid-session fixture) and a battery-side reset call (reserved path, papers over the site).
+  NOT IMPLEMENTED (follow-up; webapp/server.py is not a reserved path so it is mine next wake).
+  Filed: research/findings/2026-10-12-battery-worker-per-kind-retention.md (PROVISIONAL,
+  preconditions-equivalent scope, repo-relative artifacts) + this entry. Lane waiver from 11:45
+  still fresh (6h expiry). Claim-gate lessons applied: PROVISIONAL frontmatter, no globs, all
+  artifact paths repo-relative, every computed number marked derived or cited.
