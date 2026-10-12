@@ -276,3 +276,24 @@
   sidecar paths g6_off_rss.jsonl/g6_on_rss.jsonl, ON = --env BRAIN_IDLE_REPLAY 1, OFF = --env {} (confirm
   the OFF convention in the runner), --checked '... pool_node=wspool; mem_gb=18'. Then misc-1012 restock
   with real work on the idle CPU lanes.
+
+- 2026-10-12 07:17 EDT (wake: main moved 4 commits -- probe MERGED as bcfe50d7f + RULING c5-probe-merged):
+  the LEAKLOG blocker cleared; the ruling ordered the fix directly: add a flag-independent per-turn record to
+  onebrain_regression_battery's worker turn loop (gated only on BRAIN_IDLE_REPLAY_LEAKLOG), unit-test it,
+  then run g6 OFF and ON at cap 18 on wspool. DONE: _battery_turn_record helper (reads VmRSS+VmHWM from
+  /proc/self/status, appends {ts,pid,turn,event=battery_turn,rss_kb,hwm_kb} with flush+fsync, never raises;
+  unset = one environ lookup, byte-identical) called after each brain_chat turn;
+  tests/test_battery_turn_leaklog.py = 4 cases (unset writes no file, set appends, unwritable path silent,
+  OFF-arm independent of the replay flag); full battery suite 19 passed. COMMIT BLOCKED on main by the verdict
+  gate (onebrain_regression_battery.py outside the routine classes) -> took the sanctioned reserved-path route:
+  research/battery-turn-rss @ e3ac0da4c (all gates green), back on main. Provisioned revision e3ac0da4c ->
+  ok rc 0 (branch contains published main; ~4 min). Queued the g6 PAIR from that revision (depth 2):
+  g6_off (--env "{}") and g6_on (--env BRAIN_IDLE_REPLAY 1) into c5_offcurve_diag/g6_{off,on}.json + .log,
+  sidecars g6_{off,on}_rss.jsonl, portable resource wrapper (RULING smoke-rss-portable), mem_ok 17 1 &&
+  memcap 18, --checked carries mem_gb=18; pool_node=wspool; max_age_h=24. NEEDS [battery-turn-rss] ASK =
+  merge the branch to main. CONTEXT ALSO SEEN: Claude restocked all 5 CPU lanes itself at 07:01 (A pool40,
+  B pool41, C pool42, D+E wspool -- 6-seed replication wave), so lane-starvation passed the branch commit;
+  the NEEDS list was trimmed again by the 07:03 landing (stage2-dev-arms, rank2-env-default and
+  needs-response-lines-lost are gone for the 2nd time; their facts remain in commits be4b5d624/4eecdd002 --
+  recorded here rather than re-filing, to avoid another wipe loop). NEXT wake: check g6 pair dispatch and
+  outcome on wspool; if research/battery-turn-rss merges, subsequent work returns to main revisions.

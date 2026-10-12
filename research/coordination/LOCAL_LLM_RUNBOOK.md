@@ -1133,3 +1133,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-12 07:17 [battery-turn-rss] ASK: battery_turn sidecar + test committed on research/battery-turn-rss e3ac0da4c (gates green, revision provisioned, g6 OFF+ON queued cap 18 wspool); verdict gate reserves the runner for you - MERGE the branch to main
