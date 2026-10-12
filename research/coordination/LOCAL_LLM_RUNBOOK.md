@@ -1135,5 +1135,6 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (268 characters, limit 300)
 - 2026-10-11 22:46 [t12-target-missing] INFO: T12 Start target research/findings/2026-09-27-tone-bg-nchannel-tonic-firing-wall.md absent and not in docs/RETRACTED.md; the seam-map amendment has no file to amend; blocks: T12.
 (224 characters, limit 300)
-- 2026-10-11 23:01 [tree-c5-memory-g3] INFO: g3 (c5 ON-arm, 10G cap) stuck in memory-cgroup reclaim D-state since 19:03 (3.9h silent log) while g1 at 14G progresses; evidence for [tree-c5-memory]; not killed (preserve the 10G config's natural outcome); blocks: dispatch on pool41
+- 2026-10-12 00:21 [tree-c5-memory-both] INFO: ON-arm c5 memory: g1 rc137 KILLED at the 14G cap 00:13 (banked, not requeued); g3 10G wedge killed this wake; even 14G does not fit -- evidence for [tree-c5-memory]; blocks: g1/g3 requeue
+(234 characters, limit 300)
 (279 characters, limit 300)
