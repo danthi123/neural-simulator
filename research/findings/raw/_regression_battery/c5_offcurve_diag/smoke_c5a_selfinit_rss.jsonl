@@ -1,0 +1,3 @@
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 5511672, "k": null, "pid": 16, "rss_kb": 5511672, "ts": 1791831407.229, "turn": 1}
+{"circ_k": 5, "circuits_built": 1, "event": "select", "hwm_kb": 5514388, "k": 5, "pid": 16, "rss_kb": 5514388, "ts": 1791831408.191, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 5521252, "pid": 16, "rss_kb": 5517360, "ts": 1791831408.796, "turn": "selfinit"}
