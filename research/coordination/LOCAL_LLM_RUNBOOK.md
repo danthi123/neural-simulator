@@ -1137,7 +1137,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (224 characters, limit 300)
 - 2026-10-12 00:24 [tree-c5-memory-both] INFO: c5 ON-arm, all caps fail: g1 rc137 KILLED at 14G 00:13 (banked); g3+g5 wedged D-state mem_cgroup_handle_over_high at the connect step, killed; no cap fits the 14G wall -- evidence for [tree-c5-memory]; blocks: g1/g3/g5 requeue
 (273 characters, limit 300)
-(234 characters, limit 300)
-(279 characters, limit 300)
-- 2026-10-12 00:24 [lane-c-stuck-claim] INFO: lane C launched 00:13:35 pool40 then vanished: no rc record, no artifact, no process; its pool.queue.claims row blocks requeue; clearing claims is a queue-file edit (reserved); blocks: lane C requeue
-(245 characters, limit 300)
+- 2026-10-12 00:32 [stage2-dev-arms] INFO: Stage-2 dev arms (T14): the s7 dev-arm max_age_h=24 lines expired 10-07 (11 cell files landed 10-06); gate stays queued 11-03..11-10, never before 11-01 (stage2-exit-gate HANDOFF section 1)
+(232 characters, limit 300)
