@@ -681,3 +681,30 @@
   wake after OFF lands (sequential: dispatcher checks mem per job, not summed — two 19s could
   co-run and trip the 30 GB slice, so one at a time). When both land: per-turn ON-OFF RSS diff
   (bar <= 2 GB) + replay-fired precondition in the ON sidecar -> RESULT on main (PROVISIONAL).
+
+- 2026-10-12 15:26 EDT (wake 15:11): the "ended badly" event = the ALREADY-HANDLED smoke attempt 1
+  (rc=1, 14:39, over-escaped --env); attempt 2 rc=0 at 14:56:55 (exit log). 3 arrivals = the smoke
+  artifacts, committed at 15:05. No new commits. ONE TASK = RULING misc-1012b: pool_health still
+  checks the retired ~/derisk-pool/sim checkout -> update it to the revisions/<sha> provision
+  marker + test (tools/ is mine). DONE: tools/pool_health.py now asks the dispatcher's own
+  question -- newest-first `ls ~/derisk-pool/revisions`, `.provisioned_ok` probed through the
+  revision's OWN tools/pool_revision_marker.sh (the ONE shared predicate, fallback literal), then
+  venv numpy/scipy + runner presence inside the newest MARKERED dir; a newer unmarked dir prints
+  as provisioning-in-progress (+N partial), not broken. FIX hint switched to the sanctioned
+  server-side provision.req path (pool_provision.sh is banned here). Selftest now exercises the
+  REAL parser (parse_remote, shared with check_node) -- the old selftest tested a reimplementation
+  that could not fail the real code. Added tests/test_pool_health_revision_marker.py (11 tests:
+  parser matrix, tool_health JSON key contract, retired-path/banned-fix guards). Verified:
+  selftest PASSED, pytest 11 passed, LIVE run 4/4 nodes HEALTHY (revision
+  cc2f4e6268bb95e3abfc1289006821ea519ad844, venv, 2182 runners, rc=0). One self-inflicted round:
+  my first guard needles matched their own source text (a check that trips itself) -> concatenated
+  needles; caught by the very tests. In flight: g6b record-pair OFF arm running on wspool (build
+  logged 15:11:38); ON arm queues when it lands.
+
+- 2026-10-12 15:32 EDT (correction to the 15:26 entry): the commit of pool_health.py + test on main
+  was REFUSED by the reserved-paths gate ("tools/pool_health.py: outside the routine classes"),
+  although RULING misc-1012b assigns "Update it (tools/, yours)". The gate is authoritative over
+  the remembered assignment, so per the reserved-path precedent (scorers/verdict: research/*
+  branch, Claude merges) the finished work lands on research/pool-health-marker instead, with a
+  NEEDS-CLAUDE merge line. The WORKLOG/tests themselves stand: selftest PASS, pytest 11 passed,
+  live 4/4 nodes healthy at revision cc2f4e626.
