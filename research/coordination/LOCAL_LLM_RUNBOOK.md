@@ -1142,5 +1142,5 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 (297 characters, limit 300)
 - 2026-10-12 10:54 [host-dispatch-half-dead] ASK: host sim-pool-dispatch fill died after 08:19 (my in-session restart covers fill + heartbeat; the ~16-min reaper I first wrote here was WRONG -- both deaths track turn 5, not age): restart/verify the host unit; detail: WORKLOG 11:05
 (304 characters, limit 300)
-- 2026-10-12 10:59 [g6-turn5-floor-term] ASK: cap-30 arms: 4/5 turns in 13.4 min then SIGTERM 2.5 min into rich_open's surge to 27+ GB; no kill code in dispatcher/sandbox/canary/runner; best fit = host memory-floor enforcement (8G free at start), invisible here: confirm/raise it, then I requeue both arms
+- 2026-10-12 10:59 [g6-turn5-floor-term] ASK: cap-30 arms: 4/5 turns in 13.4 min then SIGTERM 2.5 min into rich_open's surge to 27+ GB; no kill code in dispatcher/sandbox/canary/runner; best fit = host memory-floor enforcement, invisible here: confirm/raise it, then I requeue both arms
 (305 characters, limit 300)
