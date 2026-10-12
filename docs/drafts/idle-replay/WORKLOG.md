@@ -364,3 +364,29 @@
   nothing; queue add routes via pool41/42. Also at 07:46 the queue depth fell 3 -> 1 within a minute of
   queueing, consistent with the dispatcher popping laneD + laneE to pool41/42 (g6 ON stays for wspool
   capacity behind the OFF arm) -- confirmed next check.
+
+- 2026-10-12 07:55 EDT (wake: 1 pool job "ended badly" (lane, pool42), provision ok for main, 2
+  regression_battery files): (i) the pool42 "error" is the DESIGNED non-pass exit, not a crash: node-side
+  laneC_metacog_dev7to12.json + .prov.json were written at 07:48 (elapsed 2805.8s, ran 07:01->07:48 at
+  bc66ccaa) and the log reads "VERDICT: PARTIAL (2/6 seeds GO)", mean self_type2_auc=0.826 self_meta_d=2.55
+  self~meta=+0.74, anti-cheats meta-lesion=True self-read-lesion=True permuted=False domain=True; rc 1 =
+  the runner's PARTIAL exit (same shape as the 06:33 dev6 run, also 2/6) -- a stable PARTIAL replication for
+  laneC, file still syncing back (not local at 07:54). (ii) the "provision ok for main" event carried no new
+  commits (c068f2ba6..HEAD empty) = re-provision of current main, nothing to act on. (iii) g6 OFF progress
+  and an AMENDMENT to my 07:46 note: 4/5 turns logged and turn 4 (rich_well) jumped to rss 17,080,332 KiB /
+  hwm 17,228,620 KiB = 16.43 GiB, far above the bc plateau that held 11.7M KiB -- turns are class-dependent:
+  emo 6.0 GiB -> bc plateau 11.7 GiB -> first rich turn +4.7 GiB to 16.4 GiB. Turn 5 (rich_open) has run
+  since ts 1791805002 (~07:50), still alive at 07:54:25. PROVISIONAL RISK: at cap 18 the OFF arm sits at
+  ~91% of an 18-GiB cap (or ~98% if memcap means 18 GB decimal = 16.76 GiB), so if rich_open allocates like
+  rich_well it breaches the cap and memcap kills it mid-turn (4/5 turns, no g6_off.json); if rich_open reuses
+  rich_well's allocations the way bc_b reused bc_a's, it fits and the json lands. Also note: this run puts
+  16.4 GiB live on wspool, i.e. >14 GiB, which bears on the [tree-c5-memory-both] "14 GB node wall" claim --
+  that wall looks node-specific (46G wspool vs the 14G pool nodes); recording for Claude's read, no NEEDS
+  filed yet because the pair is incomplete. (iv) queue depth 1: g6 ON still waits behind the OFF arm on
+  wspool; laneD + laneE re-runs still running on pool40/pool41 (8 min so far vs 1-3 min for the original
+  bc66ccaa wave -- worth a look next wake if they lag further). [pool-health-mismatch] INFO from 07:47 still
+  open. NEXT: turn-5 outcome (g6_off.json vs a memcap kill -- a confirmed kill gets a FAILURE_LOG line with
+  its gate/NOT-GATEABLE, then the cap-18 verdict for tree-c5-offcurve's branch (a)); ON dispatch + the ON
+  curve for branches (b)/(c); laneC_dev7to12 local arrival -> land it (its verdict format did NOT trip
+  verdict-preconditions when staged earlier, unlike laneD/laneE); laneD/laneE re-run outputs -> land with the
+  runners' new preconditions blocks.
