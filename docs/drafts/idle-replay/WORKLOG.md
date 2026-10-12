@@ -390,3 +390,43 @@
   curve for branches (b)/(c); laneC_dev7to12 local arrival -> land it (its verdict format did NOT trip
   verdict-preconditions when staged earlier, unlike laneD/laneE); laneD/laneE re-run outputs -> land with the
   runners' new preconditions blocks.
+
+- 2026-10-12 08:27 EDT (wake: g6 OFF killed (memory?), 5 results): (i) g6 OFF DIED rc137 at 08:19:41
+  (exits: out=g6_off.json, reason RULING, rev e3ac0da4c) -- it ran out the ruled cap 18 inside turn 5
+  rich_open, which started 07:36:42 and ran 43 minutes to the SIGKILL. The battery_turn sidecar did exactly
+  its job (per-turn fsync): 4/5 turns preserved, no g6_off.json. Curve: emo rss 6,240,396 KiB (07:22:16) ->
+  bc_a 11,697,032 (07:25:00) -> bc_b 11,696,096 (07:28:21) -> rich_well 17,080,332 rss / 17,228,620 hwm
+  (07:36:42, 16.43 GiB). CONCLUSION for tree-c5-offcurve branch (a): the OFF arm alone exceeds 18G on the
+  rich turns; cap 18 (Claude's ruled value) is insufficient; wspool has 46G. Filed ASK [g6-off-cap18] -- a
+  cap change amends a ruling, so the requeue parameter is Claude's; I did not requeue. FAILURE_LOG check: no
+  row added -- the log's convention is process/tooling defects (the 10-12 D-state wedge row) and prior
+  experiment OOM-at-cap kills (the g2/g4/g6 14G rc137/143s) have no rows; this kill is experiment data tracked
+  in the ASK + here (amending my 07:55 NEXT which proposed a row). (ii) g6 ON dispatched 08:19:56 on the
+  OFF death and is RUNNING; its node-side sidecar already holds the turn-1 comparison: organ event turn=1
+  rss=hwm 5,522,996 KiB with circuits_built=0 (08:21:53), then battery_turn emo rss 6,238,904 / hwm 6,396,068
+  (08:24:09) -- vs OFF emo 6,240,396 / 6,398,180 => ON-OFF at turn 1 = -1,492 KiB rss / -2,112 KiB hwm, i.e.
+  THE REPLAY ORGAN ADDS ~ZERO MEMORY AT TURN 1 (branch (c): no turn-1 jump between arms; the brain build
+  dominates). Provisional read only; branches (b)/(c) need ON's remaining turns, and ON should meet the same
+  ~16-18G wall at the rich turns since the brain-side growth is identical. (iii) LANDED per RULING
+  lane-dev6-wave-call "re-run... then land them": laneC_metacog_dev7to12 (PARTIAL 2/6, preconditions present),
+  laneD re-run (GO, preconditions=True, rc 0 at 07:56:12 pool40), laneE re-run (UNDEFINED -- the ruling's
+  "TASK-MISDESIGNED now reads UNDEFINED" is honored in the artifact, preconditions=True, rc 0 at 07:56:03
+  pool41) -- 3 jsons + 3 provs in this commit; both re-runs ran ~10 min (07:46->07:56) at cc2f4e626.
+  (iv) Queue depth 0; [pool-health-mismatch] INFO still open. NEXT: ON's completion or its kill -> then the
+  tree-c5-offcurve RESULT as ONE MiMo Pro delegate call (a verdict on results per RULING models) fed by both
+  sidecars (turn-aligned OFF 4/5 vs ON n/5 + the turn-1 ~0 organ delta); the cap-18 requeue waits on
+  [g6-off-cap18].
+
+- 2026-10-12 08:36 EDT (gate note on the 08:27 landing): lane_starvation BLOCKED the mixed commit
+  (runbook+WORKLOG .md alongside the 6 lane result jsons = neither the DOC-ONLY nor the RESULT-DATA-ONLY
+  exemption applies, and idle lanes were 4 >= 3 with depth 0). Read the gate: it also exempts ALL-Markdown and
+  ALL-research/findings/raw sets (both owner-approved: 2026-08-06 and 2026-10-10), so the fix is to SPLIT, not
+  to waive or --no-verify: commit A stages only the 6 lane json/prov files (jobs that already ran), commit B the
+  runbook + WORKLOG. No waiver written, no filler queued. Lane-stock audit for the record (why 4 lanes are idle
+  and stay idle): A -- T5 bg_live_seam Start=42 complete, no next line ready; B -- T1's sweep is banked and
+  NEVER re-run (step 4a note), its 243 instrument files are back (Start holds) and the remaining queue stock is
+  the step-4a pilot grid; C -- T22 ready (runner landed f14213e0e, 22 dev lines behind step 0's worktree+pin)
+  but its pin commit hits this same gate, so deferred; D -- T2's flip/D lines sit behind the packet's
+  push_both step (push is forbidden for me, T11 same); E -- replacement language job not yet designed (per
+  RULING lane-dev6-wave-call). Per runbook section 4 the first task whose Start holds is T1, whose next real
+  action is step 4a (the outcome-timing pilot on research/draft-ldc-outcome-timing): starting it now.

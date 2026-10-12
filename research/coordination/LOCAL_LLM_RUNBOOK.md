@@ -1136,3 +1136,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-12 07:46 [pool-health-mismatch] INFO: pool_health calls pool40+wspool BROKEN code missing (its fix pool_provision.sh is banned on S) after provision cc2f4e626 ok all-4 markers; queue add passed via 41/42. Which tree health checks needs your read
+- 2026-10-12 08:27 [g6-off-cap18] ASK: ruled cap 18 killed g6 OFF rc137 in turn 5 (rich_open, 43 min) after turn 4 hwm 17,228,620 KiB; 4/5 turns + sidecar survive, no g6_off.json; OFF alone needs >18G (wspool has 46G), ON at 18 now likely dies too; cap for re-run is your call
