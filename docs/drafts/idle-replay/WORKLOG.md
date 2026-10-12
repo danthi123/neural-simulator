@@ -569,3 +569,57 @@
   max_age_h=24") -- the ON arm follows only after OFF lands, per one-at-a-time. If OFF-26 completes all 5
   turns, the pair's ONE RESULT needs only the ON-26 arm; the c30 sidecars already banked the 4-turn ON-OFF
   diff (-7..-11 MB) at the old budget.
+
+- 2026-10-12 11:40 EDT (wake 11:28): RULINGS wspool-kills-1012 + c5-wspool-26-1012 landed (11:22) and
+  deleted my three handled NEEDS lines. wspool-kills closes the mystery with the kernel log: the
+  10:26/10:43 cap-30 deaths = memory cgroup OOM in user-948.slice (anon-rss 20.9 GB both times, slice
+  MemoryMax was 20G until 11:02); the 08:19 kill = systemd-oomd's pressure kill (now off for the pool
+  slice only); host dispatcher restarted 11:03 healthy -- my in-session fill STAYS OFF (its 11:09 stop
+  = already correct). c5-wspool-26-1012: the memcap-26 g6_off may still die in rich_open -- if so do not
+  requeue; the AWS pair is the measurement of record, lands in /opt/data/cache/c5-pair/, analyze
+  ON-OFF per turn (target <= 2 GB) and FILE A RESULT ON MAIN = this wake's ONE TASK. IT LANDED 11:29:
+  AWS r7i.4xlarge (128 GB), rev 18ec1f86d, OFF+ON concurrent, both 5/5 turns, pair.done, 121 GB free at
+  end. THE RESULT: max ON-OFF = +1332 KiB rss (emo) / -908 KiB (rich_open); hwm max 812 KiB; all five
+  turns <= 1332 KiB vs the 2097152 KiB target = MET with >1500x headroom -- verdicted by one MiMo Pro
+  delegate (RULING models) with the honest caveat: the organ was QUIESCENT (circuits_built=0 in all 5
+  organ turn records), so this bounds RESIDENT/LOADED cost only, active replay cost unmeasured, single
+  seed 42. Filed: research/findings/2026-10-12-c5-g6-off-on-memory-pair.md (preconditions block + exact
+  integers + artifacts in /opt/data/cache/c5-pair/). SIDE: the memcap-26 g6_off on wspool COMPLETED 5/5
+  rc=0 at 11:25:41 (rich_open peak 22,459,292 KiB < 26G -- the first workstation run to survive turn 5,
+  now that the slice is 30G); its g6_off.json was still syncing to the repo share at 11:31 (local
+  path absent) -- not requeued anything, no ON-26 queued (the AWS pair = the record). misc-1012b's
+  pool-health fix (pool_health.py still checks the retired ~/derisk-pool/sim checkout; switch it to the
+  revisions/<sha> provision marker + a test) = STILL MINE and = next wake's task; T1-a2 stays approved
+  below it in priority.
+
+- 2026-10-12 11:40 EDT (wake 11:28): RULINGS wspool-kills-1012 + c5-wspool-26-1012 landed (11:22) and
+  deleted my three handled NEEDS lines. wspool-kills closes the mystery with the kernel log: the
+  10:26/10:43 cap-30 deaths = memory cgroup OOM in user-948.slice (anon-rss 20.9 GB both times, slice
+  MemoryMax was 20G until 11:02); the 08:19 kill = systemd-oomd's pressure kill (now off for the pool
+  slice only); host dispatcher restarted 11:03 healthy -- my in-session fill STAYS OFF (its 11:09 stop
+  = already correct). c5-wspool-26-1012: the memcap-26 g6_off may still die in rich_open -- if so do not
+  requeue; the AWS pair is the measurement of record, lands in /opt/data/cache/c5-pair/, analyze
+  ON-OFF per turn (target <= 2 GB) and FILE A RESULT ON MAIN = this wake's ONE TASK. IT LANDED 11:29:
+  AWS r7i.4xlarge (128 GB), rev 18ec1f86d, OFF+ON concurrent, both 5/5 turns, pair.done, 121 GB free at
+  end. THE RESULT: max ON-OFF = +1332 KiB rss (emo) / -908 KiB (rich_open); hwm max 812 KiB; all five
+  turns <= 1332 KiB vs the 2097152 KiB target = MET with >1500x headroom -- verdicted by one MiMo Pro
+  delegate (RULING models) with the honest caveat: the organ was QUIESCENT (circuits_built=0 in all 5
+  organ turn records), so this bounds RESIDENT/LOADED cost only, active replay cost unmeasured, single
+  seed 42. Filed: research/findings/2026-10-12-c5-g6-off-on-memory-pair.md (preconditions block + exact
+  integers + artifacts). UPDATED 11:50: Claude's c5-pair-read-1012 landed MID-COMMIT and flips the C5
+  status to UNDEFINED (idle replay never fired -- circuits_built=0 throughout, OFF/ON replies
+  byte-identical -- so the replay-fired precondition fails; NOT a C5 memory pass; the 1332 KiB
+  resident-cost reading stands within its own scope) and c5-next-1012 assigns the next two tasks:
+  (a) design turns where idle replay FIRES, prove circuits_built>0 in a dev smoke, then rerun the
+  pair on wspool (mem_gb=26, 3 turn kinds fit) with preconditions replay-fired-in-ON + ON-OFF <=2 GB;
+  (b) in parallel find what onebrain_regression_battery --worker keeps per turn kind (~5.3 GB/turn
+  kind; bc_a->bc_b adds 0) = the big-battery OOM root cause -- both file a RESULT on main. Also:
+  claim_check resolves artifact paths REPO-RELATIVE, so the 6 small c5-pair files (sidecars, jsons,
+  provenance) were COPIED into c5_offcurve_diag/*c5pair* (the 304 MB logs stay in the landing
+  folder); three gate passes were needed (PROVISIONAL marker, then per-number citations). SIDE: the memcap-26 g6_off on wspool COMPLETED 5/5
+  rc=0 at 11:25:41 (rich_open peak 22,459,292 KiB < 26G -- the first workstation run to survive turn 5,
+  now that the slice is 30G); its g6_off.json was still syncing to the repo share at 11:31 (local
+  path absent) -- not requeued anything, no ON-26 queued (the AWS pair = the record). misc-1012b's
+  pool-health fix (pool_health.py still checks the retired ~/derisk-pool/sim checkout; switch it to the
+  revisions/<sha> provision marker + a test) = STILL MINE and = next wake's task; T1-a2 stays approved
+  below it in priority.

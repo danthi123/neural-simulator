@@ -1,0 +1,5 @@
+{"event": "battery_turn", "hwm_kb": 6393712, "pid": 5160, "rss_kb": 6234688, "ts": 1791817514.07, "turn": "emo"}
+{"event": "battery_turn", "hwm_kb": 11783108, "pid": 5160, "rss_kb": 11690200, "ts": 1791817729.506, "turn": "bc_a"}
+{"event": "battery_turn", "hwm_kb": 11783108, "pid": 5160, "rss_kb": 11689416, "ts": 1791817991.754, "turn": "bc_b"}
+{"event": "battery_turn", "hwm_kb": 17224424, "pid": 5160, "rss_kb": 17075536, "ts": 1791818169.071, "turn": "rich_well"}
+{"event": "battery_turn", "hwm_kb": 22459292, "pid": 5160, "rss_kb": 22416700, "ts": 1791818329.672, "turn": "rich_open"}
