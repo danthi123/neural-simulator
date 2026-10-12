@@ -345,6 +345,11 @@ def check(paths=None):
     # A commit that also touches code, runners, findings prose or queues still faces the full gate.
     if _is_result_data_only(staged):
         return []
+    # MERGE EXEMPTION (2026-10-12, owner-approved gate revision): a merge commit lands work already done and
+    # reviewed on its branch (whose own commits faced this gate); it queues nothing and stops nothing. Blocking it
+    # only delayed stage-critical landings (the C1 flip and the C5 leak probe on 10-12) while lanes waited.
+    if _merge_in_progress():
+        return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()) - _build_served(time.time()))
     if len(idle) < MAX_IDLE_LANES:
         return []
@@ -352,6 +357,18 @@ def check(paths=None):
         return []           # every pool node is running work: idle lanes are not unused capacity
     verdict = wh.evaluate(NAME, _waiver_file(), LANE_WAIVER_MAX_H, now_ts=time.time())
     return _idle_message(idle, verdict)
+
+
+def _merge_in_progress(git_path=None):
+    """True while committing a merge (MERGE_HEAD exists in this worktree's git dir)."""
+    try:
+        if git_path is None:
+            git_path = subprocess.run(["git", "rev-parse", "--git-path", "MERGE_HEAD"], capture_output=True,
+                                      text=True, timeout=10, cwd=_ROOT).stdout.strip()
+        return bool(git_path) and os.path.exists(os.path.join(_ROOT, git_path) if not os.path.isabs(git_path)
+                                                  else git_path)
+    except Exception:
+        return False
 
 
 def _is_result_data_only(staged):
@@ -434,6 +451,13 @@ def selftest():
         bad.append("BROKEN GUARD: a mixed or empty set was treated as result-data-only")
     if _is_doc_only([]):
         bad.append("BROKEN GUARD: an EMPTY staged set was treated as doc-only (would exempt every commit)")
+    with tempfile.NamedTemporaryFile(delete=False) as fh:
+        mh = fh.name
+    if not _merge_in_progress(mh):
+        bad.append("a present MERGE_HEAD was not read as a merge in progress")
+    os.unlink(mh)
+    if _merge_in_progress(mh):
+        bad.append("FALSE POSITIVE: an absent MERGE_HEAD read as a merge in progress")
     # 2026-10-12: pool saturation + repeat busywork
     import tempfile as _tf
     now = time.time()
