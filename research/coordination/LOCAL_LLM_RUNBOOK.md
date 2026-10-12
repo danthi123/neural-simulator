@@ -1134,3 +1134,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
 - 2026-10-12 07:17 [battery-turn-rss] ASK: battery_turn sidecar + test committed on research/battery-turn-rss e3ac0da4c (gates green, revision provisioned, g6 OFF+ON queued cap 18 wspool); verdict gate reserves the runner for you - MERGE the branch to main
+- 2026-10-12 07:26 [lane-dev6-wave] RESULT: dev7to12: laneA affect GO 6-seed (valence r +0.97, 6/6), laneD emerge33 GO, laneE TASK-MISDESIGNED (oracle 0.000 ~ chance 0.250), laneB raw only; laneD/laneE UNLANDED - verdict-preconditions needs a preconditions block (4 files) - yours to add

@@ -297,3 +297,36 @@
   needs-response-lines-lost are gone for the 2nd time; their facts remain in commits be4b5d624/4eecdd002 --
   recorded here rather than re-filing, to avoid another wipe loop). NEXT wake: check g6 pair dispatch and
   outcome on wspool; if research/battery-turn-rss merges, subsequent work returns to main revisions.
+
+- 2026-10-12 07:26 EDT (wake: provision ok for research/battery-turn-rss on all 4 nodes + 4 lane_dev6
+  results): decoded the dev7to12 replication wave by reading each file's OWN verdict field (mechanical read,
+  no independent judgment applied): laneA_affect_attr_dev7to12 = GO (6-seed): graded bistable-LADDER affect
+  reads interoception as smooth valence x arousal, not a switch; valence Pearson(h,mood) +0.97 with 6/6 seeds
+  >=0.8 and 7 pooled resolvable levels (range 0.155). laneD_emerge33_dev7to12 = GO (6-seed): competitive HTM
+  spatial pooler self-organizes a shared column block for same-category members (per-seed htm held_out 1.0 vs
+  permuted 0.5 / nopooler 0.5 / dAP-lesion 0.0 on seed 7). laneE_emerge7_dev7to12 = TASK-MISDESIGNED, NOT a
+  mechanism verdict: the held-out (p,m)->g split is not gradient-learnable even by a factor-access backprop
+  MLP (grad-oracle held 0.000 ~ chance 0.250, train 1.000), so every held-div number is uninterpretable; the
+  lane needs a task redesign (banked as the runner's own finding). laneB_lp_slope_dev7to12 = raw results only
+  (6 seeds; real corr_gap_mod 0.9954 on seed 7) -- the file carries NO verdict field, so no verdict is claimed
+  here; reading it is below C1/C5/battery per speedup-priority. laneC's 07:01 wave result has not arrived yet
+  (pool42 still running). Filed RESULT [lane-dev6-wave] NEEDS. g6 PAIR status: OFF arm ALIVE on wspool since
+  07:17:40 (process age ~8 min at check); ON arm queued, depth 1, waiting the no-stacking gate behind OFF plus
+  the wspool lane jobs. HONESTY NOTE on last wake's branch: §2 denies git checkout (rule predates -- it traces
+  to e80251f6d, not today's commits) and routes own builds to $WT/draft-<topic> worktrees; I created
+  research/battery-turn-rss with git checkout -b and returned with git checkout main inside $P. $P is back on
+  main, the commit e3ac0da4c and the merge ASK stand, but the METHOD was off-ruling: future branch work goes
+  through git worktree add, never switching $P. NEXT: g6 OFF/ON completion -> tree-c5-offcurve RESULT per its
+  tree branch (a: OFF baseline size / b: ON-OFF growth / c: turn-1 jump); recheck laneC result arrival.
+
+- 2026-10-12 07:29 EDT (addendum to the 07:26 entry -- first commit attempt BLOCKED): the
+  verdict-preconditions gate rejected staging research/findings/raw/_lane_dev6/laneD_emerge33_{dev6,dev7to12}
+  and laneE_emerge7_{dev6,dev7to12} (4 problems): each asserts a verdict but carries no `preconditions` block
+  (tools.verdict.Verdict.to_dict emits one), and the gate's own suggestion of a --no-verify override was NOT
+  taken (never --no-verify). Adding preconditions to result files is Claude-reserved, so laneD/laneE (both
+  waves, 4 files) stay UNLANDED here and the gate's complaint is filed as the RESULT [lane-dev6-wave] line
+  instead. Also fixed: my first RESULT text was 385 > 300 and needs_line refused it; refiled at ~275.
+  Committing instead: laneA (GO, DOES carry a preconditions block -- its keys include it) + laneB (raw, no
+  verdict field to guard) + their .prov sidecars + this WORKLOG + the runbook RESULT line. The laneD GO and
+  laneE TASK-MISDESIGNED verdicts are recorded in the 07:26 entry and in the RESULT line above; their JSONs
+  land only once preconditions are added (Claude's call: fix the runner's output format or annotate).

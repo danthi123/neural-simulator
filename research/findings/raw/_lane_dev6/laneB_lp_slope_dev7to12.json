@@ -1,0 +1,2361 @@
+{
+  "results": [
+    {
+      "seed": 7,
+      "real": {
+        "mode": "real",
+        "seed": 7,
+        "corr_gap_mod": 0.9954177826808753,
+        "rate_unknown": 0.0334375,
+        "rate_known": 0.0,
+        "ratio_b": 33437500.0,
+        "total_asks": 107,
+        "slow_mastered": 5,
+        "slow_conf_mean": 0.5352172322375666,
+        "conf_rise": 0.5335541385225347,
+        "abstain_floor": 0.1294190380210939,
+        "noisy_conf_mean": 0.1294190380210939,
+        "noisy_gap_final": 0.8983243806874914,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 75,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.10494466150805898,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.029419596240064027,
+        "mean_slope_noisy_final": 0.007828064243135072,
+        "slope_sep_final": 0.021591531996928953,
+        "mean_omission_veto_slow": 13.442712945201993,
+        "mean_omission_veto_noisy": 2.1316344214868916,
+        "mean_lp_slow": 0.03418441404498125,
+        "mean_lp_noisy": -0.0016570411255038473,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.5191588770691442,
+            "tonic": 0.48610869078084484,
+            "slope": 0.033050186288299366
+          },
+          "1": {
+            "fast": 0.5148080503380833,
+            "tonic": 0.487764463363487,
+            "slope": 0.0270435869745963
+          },
+          "2": {
+            "fast": 0.5255455209496012,
+            "tonic": 0.49506123934787477,
+            "slope": 0.030484281601726393
+          },
+          "3": {
+            "fast": 0.5261695589306741,
+            "tonic": 0.5022148222898751,
+            "slope": 0.023954736640798946
+          },
+          "4": {
+            "fast": 0.512101562542524,
+            "tonic": 0.4795363728476249,
+            "slope": 0.03256518969489913
+          },
+          "5": {
+            "fast": 0.017939548480873327,
+            "tonic": 0.004508194665574646,
+            "slope": 0.013431353815298681
+          },
+          "6": {
+            "fast": 0.0026697480535904997,
+            "tonic": 0.0007465762170154711,
+            "slope": 0.0019231718365750284
+          },
+          "7": {
+            "fast": 0.01183071721003748,
+            "tonic": 0.0037010501325059736,
+            "slope": 0.008129667077531506
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 7,
+        "corr_gap_mod": 0.9946816594910163,
+        "rate_unknown": 0.01,
+        "rate_known": 0.0,
+        "ratio_b": 10000000.0,
+        "total_asks": 32,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.43595717332331707,
+        "conf_rise": 0.43429407960828526,
+        "abstain_floor": 0.03922803255233461,
+        "noisy_conf_mean": 0.03922803255233461,
+        "noisy_gap_final": 0.9699906582459873,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.20358441492093085,
+        "mean_slope_noisy_final": 0.007828064243135072,
+        "slope_sep_final": 0.1957563506777958,
+        "mean_omission_veto_slow": 2.2050280931823454,
+        "mean_omission_veto_noisy": 2.1316344214868916,
+        "mean_lp_slow": 0.08143661922929418,
+        "mean_lp_noisy": -0.0016570411255038473,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.40483703262641557,
+            "tonic": 0.21223157060194606,
+            "slope": 0.19260546202446951
+          },
+          "1": {
+            "fast": 0.40436648921790685,
+            "tonic": 0.21419225243402365,
+            "slope": 0.1901742367838832
+          },
+          "2": {
+            "fast": 0.42306560498278184,
+            "tonic": 0.21473318016118498,
+            "slope": 0.20833242482159686
+          },
+          "3": {
+            "fast": 0.42930237881917377,
+            "tonic": 0.21531304336404525,
+            "slope": 0.21398933545512852
+          },
+          "4": {
+            "fast": 0.4423410751680197,
+            "tonic": 0.2295204596484436,
+            "slope": 0.2128206155195761
+          },
+          "5": {
+            "fast": 0.017939548480873327,
+            "tonic": 0.004508194665574646,
+            "slope": 0.013431353815298681
+          },
+          "6": {
+            "fast": 0.0026697480535904997,
+            "tonic": 0.0007465762170154711,
+            "slope": 0.0019231718365750284
+          },
+          "7": {
+            "fast": 0.01183071721003748,
+            "tonic": 0.0037010501325059736,
+            "slope": 0.008129667077531506
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 7,
+        "corr_gap_mod": 0.9946816594910163,
+        "rate_unknown": 0.01,
+        "rate_known": 0.0,
+        "ratio_b": 10000000.0,
+        "total_asks": 32,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.43595717332331707,
+        "conf_rise": 0.43429407960828526,
+        "abstain_floor": 0.03922803255233461,
+        "noisy_conf_mean": 0.03922803255233461,
+        "noisy_gap_final": 0.9699906582459873,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.2050280931823454,
+        "mean_omission_veto_noisy": 2.1316344214868916,
+        "mean_lp_slow": 0.08143661922929418,
+        "mean_lp_noisy": -0.0016570411255038473,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 7,
+        "corr_gap_mod": 0.9902129466505164,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4194537506564239,
+        "conf_rise": 0.41779065694139206,
+        "abstain_floor": 0.12166821479991963,
+        "noisy_conf_mean": 0.12166821479991963,
+        "noisy_gap_final": 0.8889367567192469,
+        "noisy_asks_total": 108,
+        "noisy_early_rate": 0.3,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 101,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.19613434504566066,
+        "mean_slope_slow_final": 0.2434503203926039,
+        "mean_slope_noisy_final": 0.01559013331548792,
+        "slope_sep_final": 0.22786018707711597,
+        "mean_omission_veto_slow": 0.4930038741597153,
+        "mean_omission_veto_noisy": 30.140468271622797,
+        "mean_lp_slow": 0.13767937528903382,
+        "mean_lp_noisy": 0.007671249695107785,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.4363731705144197,
+            "tonic": 0.18939798104819122,
+            "slope": 0.24697518946622848
+          },
+          "1": {
+            "fast": 0.3216259130676492,
+            "tonic": 0.09029112955792147,
+            "slope": 0.23133478350972775
+          },
+          "2": {
+            "fast": 0.3138589583166508,
+            "tonic": 0.08667456156791262,
+            "slope": 0.22718439674873817
+          },
+          "3": {
+            "fast": 0.3539453784676338,
+            "tonic": 0.09830803344506214,
+            "slope": 0.2556373450225716
+          },
+          "4": {
+            "fast": 0.35809053228129806,
+            "tonic": 0.10197064506554446,
+            "slope": 0.2561198872157536
+          },
+          "5": {
+            "fast": 0.11156354251476357,
+            "tonic": 0.1010298528196762,
+            "slope": 0.010533689695087362
+          },
+          "6": {
+            "fast": 0.1197768980779928,
+            "tonic": 0.09457846911097127,
+            "slope": 0.025198428967021527
+          },
+          "7": {
+            "fast": 0.11451637604805633,
+            "tonic": 0.10347809476370146,
+            "slope": 0.01103828128435487
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 7,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 2.0001111877832047e-12,
+        "conf_rise": 2.0001111877832047e-12,
+        "abstain_floor": 1.999918749125603e-12,
+        "noisy_conf_mean": 1.999918749125603e-12,
+        "noisy_gap_final": 0.9999999999979999,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": true,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": true
+    },
+    {
+      "seed": 8,
+      "real": {
+        "mode": "real",
+        "seed": 8,
+        "corr_gap_mod": 0.9956403801087823,
+        "rate_unknown": 0.033125,
+        "rate_known": 0.0,
+        "ratio_b": 33125000.0,
+        "total_asks": 106,
+        "slow_mastered": 5,
+        "slow_conf_mean": 0.5432598056255246,
+        "conf_rise": 0.5416407313587673,
+        "abstain_floor": 0.10688054369916422,
+        "noisy_conf_mean": 0.10688054369916422,
+        "noisy_gap_final": 0.8905389035768789,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 71,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.10212135584007766,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.02618330561323149,
+        "mean_slope_noisy_final": 0.007066090515690418,
+        "slope_sep_final": 0.019117215097541072,
+        "mean_omission_veto_slow": 13.465989514589463,
+        "mean_omission_veto_noisy": 2.377661032283718,
+        "mean_lp_slow": 0.03321374701996429,
+        "mean_lp_noisy": 0.001023869353662915,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.5256156905952691,
+            "tonic": 0.49540355769683037,
+            "slope": 0.03021213289843877
+          },
+          "1": {
+            "fast": 0.4902188603590437,
+            "tonic": 0.4610908037548439,
+            "slope": 0.029128056604199815
+          },
+          "2": {
+            "fast": 0.5032370302190725,
+            "tonic": 0.47925675821524344,
+            "slope": 0.023980272003829073
+          },
+          "3": {
+            "fast": 0.512779652165019,
+            "tonic": 0.4972018909407756,
+            "slope": 0.01557776122424337
+          },
+          "4": {
+            "fast": 0.5276473032682908,
+            "tonic": 0.4956289979328444,
+            "slope": 0.03201830533544642
+          },
+          "5": {
+            "fast": 0.013304698949635534,
+            "tonic": 0.004085127476906903,
+            "slope": 0.00921957147272863
+          },
+          "6": {
+            "fast": 0.0080807143866337,
+            "tonic": 0.0031113190077223163,
+            "slope": 0.004969395378911384
+          },
+          "7": {
+            "fast": 0.009128793236931783,
+            "tonic": 0.0021194885415005394,
+            "slope": 0.007009304695431243
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 8,
+        "corr_gap_mod": 0.9951393190037885,
+        "rate_unknown": 0.0109375,
+        "rate_known": 0.0,
+        "ratio_b": 10937499.999999998,
+        "total_asks": 35,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4529336590897935,
+        "conf_rise": 0.45131458482303627,
+        "abstain_floor": 0.04038254881739334,
+        "noisy_conf_mean": 0.04038254881739334,
+        "noisy_gap_final": 0.9697709815453939,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.1982319416104208,
+        "mean_slope_noisy_final": 0.007066090515690418,
+        "slope_sep_final": 0.1911658510947304,
+        "mean_omission_veto_slow": 2.208038911765332,
+        "mean_omission_veto_noisy": 2.377661032283718,
+        "mean_lp_slow": 0.08610392258082802,
+        "mean_lp_noisy": 0.001023869353662915,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.43154106068994513,
+            "tonic": 0.22117264476621443,
+            "slope": 0.2103684159237307
+          },
+          "1": {
+            "fast": 0.4433717758930993,
+            "tonic": 0.2614302308656942,
+            "slope": 0.18194154502740506
+          },
+          "2": {
+            "fast": 0.4082869852324086,
+            "tonic": 0.21620386856633306,
+            "slope": 0.19208311666607553
+          },
+          "3": {
+            "fast": 0.43338157788941434,
+            "tonic": 0.22012393886006598,
+            "slope": 0.21325763902934836
+          },
+          "4": {
+            "fast": 0.4593854924300581,
+            "tonic": 0.2658765010245138,
+            "slope": 0.19350899140554428
+          },
+          "5": {
+            "fast": 0.013304698949635534,
+            "tonic": 0.004085127476906903,
+            "slope": 0.00921957147272863
+          },
+          "6": {
+            "fast": 0.0080807143866337,
+            "tonic": 0.0031113190077223163,
+            "slope": 0.004969395378911384
+          },
+          "7": {
+            "fast": 0.009128793236931783,
+            "tonic": 0.0021194885415005394,
+            "slope": 0.007009304695431243
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 8,
+        "corr_gap_mod": 0.9951393190037885,
+        "rate_unknown": 0.0109375,
+        "rate_known": 0.0,
+        "ratio_b": 10937499.999999998,
+        "total_asks": 35,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4529336590897935,
+        "conf_rise": 0.45131458482303627,
+        "abstain_floor": 0.04038254881739334,
+        "noisy_conf_mean": 0.04038254881739334,
+        "noisy_gap_final": 0.9697709815453939,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.208038911765332,
+        "mean_omission_veto_noisy": 2.377661032283718,
+        "mean_lp_slow": 0.08610392258082802,
+        "mean_lp_noisy": 0.001023869353662915,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 8,
+        "corr_gap_mod": 0.9906377320887231,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.3842614982514605,
+        "conf_rise": 0.3826424239847033,
+        "abstain_floor": 0.11087574538108898,
+        "noisy_conf_mean": 0.11087574538108898,
+        "noisy_gap_final": 0.8896308294884664,
+        "noisy_asks_total": 110,
+        "noisy_early_rate": 0.3055555555555556,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 102,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.18007308613467193,
+        "mean_slope_slow_final": 0.20235258807473397,
+        "mean_slope_noisy_final": 0.014920663445256855,
+        "slope_sep_final": 0.1874319246294771,
+        "mean_omission_veto_slow": 0.3832443248047311,
+        "mean_omission_veto_noisy": 31.038020328883004,
+        "mean_lp_slow": 0.15292925400217067,
+        "mean_lp_noisy": 0.006539932237056661,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.18944380637918065,
+            "tonic": 0.04041467869422521,
+            "slope": 0.14902912768495544
+          },
+          "1": {
+            "fast": 0.18476011458986014,
+            "tonic": 0.039415491112503497,
+            "slope": 0.14534462347735663
+          },
+          "2": {
+            "fast": 0.3357540141763516,
+            "tonic": 0.09499924156301712,
+            "slope": 0.24075477261333447
+          },
+          "3": {
+            "fast": 0.3325487834632658,
+            "tonic": 0.09323526804042984,
+            "slope": 0.23931351542283594
+          },
+          "4": {
+            "fast": 0.43067325405138746,
+            "tonic": 0.19335235287620006,
+            "slope": 0.2373209011751874
+          },
+          "5": {
+            "fast": 0.12542452215639432,
+            "tonic": 0.11106309728963776,
+            "slope": 0.014361424866756567
+          },
+          "6": {
+            "fast": 0.1089978148006559,
+            "tonic": 0.09316305133648878,
+            "slope": 0.015834763464167123
+          },
+          "7": {
+            "fast": 0.12478403067560095,
+            "tonic": 0.11021822867075408,
+            "slope": 0.014565802004846876
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 8,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 2.0000667788622195e-12,
+        "conf_rise": 2.0000667788622195e-12,
+        "abstain_floor": 2.0000667788622195e-12,
+        "noisy_conf_mean": 2.0000667788622195e-12,
+        "noisy_gap_final": 0.9999999999980002,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": true,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": true
+    },
+    {
+      "seed": 9,
+      "real": {
+        "mode": "real",
+        "seed": 9,
+        "corr_gap_mod": 0.9953046927356641,
+        "rate_unknown": 0.03375,
+        "rate_known": 0.0,
+        "ratio_b": 33750000.0,
+        "total_asks": 108,
+        "slow_mastered": 5,
+        "slow_conf_mean": 0.524129654610551,
+        "conf_rise": 0.5213834336865184,
+        "abstain_floor": 0.09160653165556014,
+        "noisy_conf_mean": 0.09160653165556014,
+        "noisy_gap_final": 0.89504758201147,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 75,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.10063992331829086,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0300266222882661,
+        "mean_slope_noisy_final": 0.003984285524805706,
+        "slope_sep_final": 0.026042336763460395,
+        "mean_omission_veto_slow": 13.995027846755496,
+        "mean_omission_veto_noisy": 2.122914503700708,
+        "mean_lp_slow": 0.032223246306631065,
+        "mean_lp_noisy": -0.0012002835271799509,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.5087078954838978,
+            "tonic": 0.4888892421198114,
+            "slope": 0.019818653364086447
+          },
+          "1": {
+            "fast": 0.5021533162946404,
+            "tonic": 0.4707450414890554,
+            "slope": 0.03140827480558506
+          },
+          "2": {
+            "fast": 0.526498203743595,
+            "tonic": 0.4958433008316299,
+            "slope": 0.0306549029119651
+          },
+          "3": {
+            "fast": 0.5392950226657138,
+            "tonic": 0.5050946189476261,
+            "slope": 0.034200403718087746
+          },
+          "4": {
+            "fast": 0.5214354815738327,
+            "tonic": 0.4873846049322265,
+            "slope": 0.034050876641606165
+          },
+          "5": {
+            "fast": 0.011230519251886778,
+            "tonic": 0.00499760875716266,
+            "slope": 0.006232910494724118
+          },
+          "6": {
+            "fast": 0.005178981253944656,
+            "tonic": 0.001617070101102334,
+            "slope": 0.003561911152842322
+          },
+          "7": {
+            "fast": 0.0028961449456764987,
+            "tonic": 0.000738110018825823,
+            "slope": 0.0021580349268506757
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 9,
+        "corr_gap_mod": 0.9946319370822664,
+        "rate_unknown": 0.0103125,
+        "rate_known": 0.0,
+        "ratio_b": 10312500.0,
+        "total_asks": 33,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4380370828710567,
+        "conf_rise": 0.43529086194702404,
+        "abstain_floor": 0.026367349477790625,
+        "noisy_conf_mean": 0.026367349477790625,
+        "noisy_gap_final": 0.9702530570874709,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.20046977110155967,
+        "mean_slope_noisy_final": 0.003984285524805706,
+        "slope_sep_final": 0.19648548557675397,
+        "mean_omission_veto_slow": 2.030773792280235,
+        "mean_omission_veto_noisy": 2.122914503700708,
+        "mean_lp_slow": 0.08907832560829736,
+        "mean_lp_noisy": -0.0012002835271799509,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.4208678784703397,
+            "tonic": 0.21947597009509967,
+            "slope": 0.20139190837524001
+          },
+          "1": {
+            "fast": 0.447916578645594,
+            "tonic": 0.25979493239364404,
+            "slope": 0.18812164625194994
+          },
+          "2": {
+            "fast": 0.4308217633723661,
+            "tonic": 0.22408190591234706,
+            "slope": 0.20673985746001905
+          },
+          "3": {
+            "fast": 0.416223821592664,
+            "tonic": 0.2197041533404438,
+            "slope": 0.19651966825222023
+          },
+          "4": {
+            "fast": 0.4303997051133146,
+            "tonic": 0.22082392994494526,
+            "slope": 0.20957577516836934
+          },
+          "5": {
+            "fast": 0.011230519251886778,
+            "tonic": 0.00499760875716266,
+            "slope": 0.006232910494724118
+          },
+          "6": {
+            "fast": 0.005178981253944656,
+            "tonic": 0.001617070101102334,
+            "slope": 0.003561911152842322
+          },
+          "7": {
+            "fast": 0.0028961449456764987,
+            "tonic": 0.000738110018825823,
+            "slope": 0.0021580349268506757
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 9,
+        "corr_gap_mod": 0.9946319370822664,
+        "rate_unknown": 0.0103125,
+        "rate_known": 0.0,
+        "ratio_b": 10312500.0,
+        "total_asks": 33,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4380370828710567,
+        "conf_rise": 0.43529086194702404,
+        "abstain_floor": 0.026367349477790625,
+        "noisy_conf_mean": 0.026367349477790625,
+        "noisy_gap_final": 0.9702530570874709,
+        "noisy_asks_total": 7,
+        "noisy_early_rate": 0.017543859649122806,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.030773792280235,
+        "mean_omission_veto_noisy": 2.122914503700708,
+        "mean_lp_slow": 0.08907832560829736,
+        "mean_lp_noisy": -0.0012002835271799509,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 9,
+        "corr_gap_mod": 0.9904206857792819,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.4149697691547187,
+        "conf_rise": 0.4122235482306861,
+        "abstain_floor": 0.12344134396974338,
+        "noisy_conf_mean": 0.12344134396974338,
+        "noisy_gap_final": 0.8830179210860116,
+        "noisy_asks_total": 109,
+        "noisy_early_rate": 0.30277777777777776,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 102,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.19515206759879902,
+        "mean_slope_slow_final": 0.22758213407147948,
+        "mean_slope_noisy_final": 0.004376766910022992,
+        "slope_sep_final": 0.2232053671614565,
+        "mean_omission_veto_slow": 0.4259126100117294,
+        "mean_omission_veto_noisy": 31.403200703533418,
+        "mean_lp_slow": 0.14958150871227005,
+        "mean_lp_noisy": 0.004362321792395229,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.4133724495647483,
+            "tonic": 0.14519276705091394,
+            "slope": 0.26817968251383434
+          },
+          "1": {
+            "fast": 0.19310986063174768,
+            "tonic": 0.04119677026810617,
+            "slope": 0.1519130903636415
+          },
+          "2": {
+            "fast": 0.38067124481985104,
+            "tonic": 0.14093582227491125,
+            "slope": 0.2397354225449398
+          },
+          "3": {
+            "fast": 0.32056843286078973,
+            "tonic": 0.09468681169420558,
+            "slope": 0.22588162116658417
+          },
+          "4": {
+            "fast": 0.3480438437641667,
+            "tonic": 0.09584298999576929,
+            "slope": 0.2522008537683974
+          },
+          "5": {
+            "fast": 0.10651513460418345,
+            "tonic": 0.09407095209240461,
+            "slope": 0.01244418251177884
+          },
+          "6": {
+            "fast": 0.09792552535787954,
+            "tonic": 0.10150915793610332,
+            "slope": -0.0035836325782237777
+          },
+          "7": {
+            "fast": 0.11032555268706795,
+            "tonic": 0.10605580189055404,
+            "slope": 0.004269750796513913
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 9,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 2.0000223699412343e-12,
+        "conf_rise": 2.0000223699412343e-12,
+        "abstain_floor": 2.000140793730528e-12,
+        "noisy_conf_mean": 2.000140793730528e-12,
+        "noisy_gap_final": 0.9999999999979999,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": true,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": true
+    },
+    {
+      "seed": 10,
+      "real": {
+        "mode": "real",
+        "seed": 10,
+        "corr_gap_mod": 0.9955932363575659,
+        "rate_unknown": 0.0334375,
+        "rate_known": 0.0,
+        "ratio_b": 33437500.0,
+        "total_asks": 107,
+        "slow_mastered": 5,
+        "slow_conf_mean": 0.5272202792919412,
+        "conf_rise": 0.5246916654834817,
+        "abstain_floor": 0.09027657322693376,
+        "noisy_conf_mean": 0.09027657322693376,
+        "noisy_gap_final": 0.8949897656671751,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 73,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.10346770763768393,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.02864801776827248,
+        "mean_slope_noisy_final": 0.0074423231014001355,
+        "slope_sep_final": 0.021205694666872346,
+        "mean_omission_veto_slow": 13.583894350808174,
+        "mean_omission_veto_noisy": 2.3353958035602607,
+        "mean_lp_slow": 0.032930967635220236,
+        "mean_lp_noisy": 0.0029610256701547294,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.5289106703937789,
+            "tonic": 0.49467135137978424,
+            "slope": 0.034239319013994685
+          },
+          "1": {
+            "fast": 0.5152520557156363,
+            "tonic": 0.488026196034535,
+            "slope": 0.02722585968110125
+          },
+          "2": {
+            "fast": 0.5250989537318657,
+            "tonic": 0.49665122835515646,
+            "slope": 0.0284477253767092
+          },
+          "3": {
+            "fast": 0.4933826612538008,
+            "tonic": 0.4652953956077908,
+            "slope": 0.028087265646009996
+          },
+          "4": {
+            "fast": 0.5238501315636224,
+            "tonic": 0.4986102124400751,
+            "slope": 0.025239919123547283
+          },
+          "5": {
+            "fast": 0.010799930372136939,
+            "tonic": 0.0030898153184174683,
+            "slope": 0.00771011505371947
+          },
+          "6": {
+            "fast": 0.014931066665078782,
+            "tonic": 0.0045028378772620555,
+            "slope": 0.010428228787816726
+          },
+          "7": {
+            "fast": 0.005972942069065762,
+            "tonic": 0.0017843166064015507,
+            "slope": 0.004188625462664211
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 10,
+        "corr_gap_mod": 0.9949079822395637,
+        "rate_unknown": 0.010625,
+        "rate_known": 0.0,
+        "ratio_b": 10625000.0,
+        "total_asks": 34,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.44340534168007817,
+        "conf_rise": 0.44087672787161875,
+        "abstain_floor": 0.031558824545577235,
+        "noisy_conf_mean": 0.031558824545577235,
+        "noisy_gap_final": 0.9632629162422227,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.20523373228537517,
+        "mean_slope_noisy_final": 0.0074423231014001355,
+        "slope_sep_final": 0.19779140918397503,
+        "mean_omission_veto_slow": 2.249883209380652,
+        "mean_omission_veto_noisy": 2.3353958035602607,
+        "mean_lp_slow": 0.08294253607193419,
+        "mean_lp_noisy": 0.0029610256701547294,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.43119544807818305,
+            "tonic": 0.2225716872048142,
+            "slope": 0.20862376087336884
+          },
+          "1": {
+            "fast": 0.41979366396237794,
+            "tonic": 0.2168888811399615,
+            "slope": 0.20290478282241645
+          },
+          "2": {
+            "fast": 0.4318412546294359,
+            "tonic": 0.223074531923048,
+            "slope": 0.2087667227063879
+          },
+          "3": {
+            "fast": 0.4569774796475167,
+            "tonic": 0.2586399980766529,
+            "slope": 0.19833748157086384
+          },
+          "4": {
+            "fast": 0.4328210509734346,
+            "tonic": 0.22528513751959572,
+            "slope": 0.20753591345383887
+          },
+          "5": {
+            "fast": 0.010799930372136939,
+            "tonic": 0.0030898153184174683,
+            "slope": 0.00771011505371947
+          },
+          "6": {
+            "fast": 0.014931066665078782,
+            "tonic": 0.0045028378772620555,
+            "slope": 0.010428228787816726
+          },
+          "7": {
+            "fast": 0.005972942069065762,
+            "tonic": 0.0017843166064015507,
+            "slope": 0.004188625462664211
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 10,
+        "corr_gap_mod": 0.9949079822395637,
+        "rate_unknown": 0.010625,
+        "rate_known": 0.0,
+        "ratio_b": 10625000.0,
+        "total_asks": 34,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.44340534168007817,
+        "conf_rise": 0.44087672787161875,
+        "abstain_floor": 0.031558824545577235,
+        "noisy_conf_mean": 0.031558824545577235,
+        "noisy_gap_final": 0.9632629162422227,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.249883209380652,
+        "mean_omission_veto_noisy": 2.3353958035602607,
+        "mean_lp_slow": 0.08294253607193419,
+        "mean_lp_noisy": 0.0029610256701547294,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 10,
+        "corr_gap_mod": 0.9909494971280544,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.3989217395368545,
+        "conf_rise": 0.3963931257283951,
+        "abstain_floor": 0.10998325727851728,
+        "noisy_conf_mean": 0.10998325727851728,
+        "noisy_gap_final": 0.8879033859720317,
+        "noisy_asks_total": 109,
+        "noisy_early_rate": 0.30277777777777776,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 100,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.16829948013438803,
+        "mean_slope_slow_final": 0.19879454408830483,
+        "mean_slope_noisy_final": 0.020729479908606213,
+        "slope_sep_final": 0.1780650641796986,
+        "mean_omission_veto_slow": 0.5308347683060318,
+        "mean_omission_veto_noisy": 31.2311298533333,
+        "mean_lp_slow": 0.14124160749899656,
+        "mean_lp_noisy": 0.004941153398572997,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.40256506216849697,
+            "tonic": 0.14719827933841892,
+            "slope": 0.2553667828300781
+          },
+          "1": {
+            "fast": 0.17316735000313194,
+            "tonic": 0.03694236800066815,
+            "slope": 0.1362249820024638
+          },
+          "2": {
+            "fast": 0.16099218576917484,
+            "tonic": 0.0343449996307573,
+            "slope": 0.12664718613841755
+          },
+          "3": {
+            "fast": 0.43617955665501046,
+            "tonic": 0.18665800202063282,
+            "slope": 0.24952155463437764
+          },
+          "4": {
+            "fast": 0.3203413236501479,
+            "tonic": 0.09412910881396072,
+            "slope": 0.22621221483618717
+          },
+          "5": {
+            "fast": 0.11473801880434104,
+            "tonic": 0.09892689436795003,
+            "slope": 0.015811124436391003
+          },
+          "6": {
+            "fast": 0.12128559622944693,
+            "tonic": 0.0917869212858484,
+            "slope": 0.029498674943598535
+          },
+          "7": {
+            "fast": 0.11928223664748008,
+            "tonic": 0.10240359630165098,
+            "slope": 0.016878640345829102
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 10,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 1.9998891431782796e-12,
+        "conf_rise": 1.9998891431782796e-12,
+        "abstain_floor": 2.0000667788622195e-12,
+        "noisy_conf_mean": 2.0000667788622195e-12,
+        "noisy_gap_final": 0.9999999999979998,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": true,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": true
+    },
+    {
+      "seed": 11,
+      "real": {
+        "mode": "real",
+        "seed": 11,
+        "corr_gap_mod": 0.9953897729672161,
+        "rate_unknown": 0.0353125,
+        "rate_known": 0.0,
+        "ratio_b": 35312499.99999999,
+        "total_asks": 113,
+        "slow_mastered": 4,
+        "slow_conf_mean": 0.5306779448399943,
+        "conf_rise": 0.5223108887467944,
+        "abstain_floor": 0.11389697533332677,
+        "noisy_conf_mean": 0.11389697533332677,
+        "noisy_gap_final": 0.8952340717740275,
+        "noisy_asks_total": 9,
+        "noisy_early_rate": 0.022556390977443608,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 1,
+        "slow_protected_asks": 78,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.09800430033158705,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.030758286975935478,
+        "mean_slope_noisy_final": 0.005275304945891952,
+        "slope_sep_final": 0.025482982030043524,
+        "mean_omission_veto_slow": 14.699898566733257,
+        "mean_omission_veto_noisy": 2.660223553338725,
+        "mean_lp_slow": 0.030384432589954328,
+        "mean_lp_noisy": 0.0016205219010149029,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.5156023869777205,
+            "tonic": 0.4868452476771376,
+            "slope": 0.028757139300582935
+          },
+          "1": {
+            "fast": 0.5276023076116707,
+            "tonic": 0.4927273263959466,
+            "slope": 0.03487498121572413
+          },
+          "2": {
+            "fast": 0.5329593686654279,
+            "tonic": 0.5025957690330498,
+            "slope": 0.030363599632378113
+          },
+          "3": {
+            "fast": 0.5309408170428672,
+            "tonic": 0.49776522611861823,
+            "slope": 0.03317559092424899
+          },
+          "4": {
+            "fast": 0.5119453026911432,
+            "tonic": 0.4853251788844,
+            "slope": 0.026620123806743223
+          },
+          "5": {
+            "fast": 0.00980600576257756,
+            "tonic": 0.004224214825772653,
+            "slope": 0.005581790936804907
+          },
+          "6": {
+            "fast": 0.0114739724942872,
+            "tonic": 0.004280151392065663,
+            "slope": 0.007193821102221537
+          },
+          "7": {
+            "fast": 0.004362239021451435,
+            "tonic": 0.0013119362228020248,
+            "slope": 0.00305030279864941
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 11,
+        "corr_gap_mod": 0.9947722635955331,
+        "rate_unknown": 0.01125,
+        "rate_known": 0.0,
+        "ratio_b": 11249999.999999998,
+        "total_asks": 36,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.43939711120663016,
+        "conf_rise": 0.43103005511343034,
+        "abstain_floor": 0.03472104525869132,
+        "noisy_conf_mean": 0.03472104525869132,
+        "noisy_gap_final": 0.9610764944070874,
+        "noisy_asks_total": 9,
+        "noisy_early_rate": 0.022556390977443608,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.1991049083046235,
+        "mean_slope_noisy_final": 0.005275304945891952,
+        "slope_sep_final": 0.19382960335873153,
+        "mean_omission_veto_slow": 2.1489249520930964,
+        "mean_omission_veto_noisy": 2.660223553338725,
+        "mean_lp_slow": 0.08740816372311987,
+        "mean_lp_noisy": 0.0016205219010149029,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.45243063297146846,
+            "tonic": 0.22461272725473047,
+            "slope": 0.227817905716738
+          },
+          "1": {
+            "fast": 0.4169995294574603,
+            "tonic": 0.21636651031174814,
+            "slope": 0.2006330191457122
+          },
+          "2": {
+            "fast": 0.4108862185187421,
+            "tonic": 0.21620851994849463,
+            "slope": 0.19467769857024744
+          },
+          "3": {
+            "fast": 0.4465628997321511,
+            "tonic": 0.262818526652565,
+            "slope": 0.18374437307958608
+          },
+          "4": {
+            "fast": 0.4502254635687878,
+            "tonic": 0.261573918557954,
+            "slope": 0.1886515450108338
+          },
+          "5": {
+            "fast": 0.00980600576257756,
+            "tonic": 0.004224214825772653,
+            "slope": 0.005581790936804907
+          },
+          "6": {
+            "fast": 0.0114739724942872,
+            "tonic": 0.004280151392065663,
+            "slope": 0.007193821102221537
+          },
+          "7": {
+            "fast": 0.004362239021451435,
+            "tonic": 0.0013119362228020248,
+            "slope": 0.00305030279864941
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 11,
+        "corr_gap_mod": 0.9947722635955331,
+        "rate_unknown": 0.01125,
+        "rate_known": 0.0,
+        "ratio_b": 11249999.999999998,
+        "total_asks": 36,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.43939711120663016,
+        "conf_rise": 0.43103005511343034,
+        "abstain_floor": 0.03472104525869132,
+        "noisy_conf_mean": 0.03472104525869132,
+        "noisy_gap_final": 0.9610764944070874,
+        "noisy_asks_total": 9,
+        "noisy_early_rate": 0.022556390977443608,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.1489249520930964,
+        "mean_omission_veto_noisy": 2.660223553338725,
+        "mean_lp_slow": 0.08740816372311987,
+        "mean_lp_noisy": 0.0016205219010149029,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 11,
+        "corr_gap_mod": 0.9918770332565523,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.42300379891653106,
+        "conf_rise": 0.41459423627876546,
+        "abstain_floor": 0.12487650519822606,
+        "noisy_conf_mean": 0.12487650519822606,
+        "noisy_gap_final": 0.8876028433628568,
+        "noisy_asks_total": 107,
+        "noisy_early_rate": 0.2972222222222222,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 1,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 98,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.186381442886801,
+        "mean_slope_slow_final": 0.22644251774934315,
+        "mean_slope_noisy_final": 0.014659337480761153,
+        "slope_sep_final": 0.211783180268582,
+        "mean_omission_veto_slow": 0.6692303087247133,
+        "mean_omission_veto_noisy": 30.59335211179476,
+        "mean_lp_slow": 0.13107324958328845,
+        "mean_lp_noisy": 0.005162967841201757,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.32373506160042786,
+            "tonic": 0.0933675432316951,
+            "slope": 0.23036751836873276
+          },
+          "1": {
+            "fast": 0.19591097421984094,
+            "tonic": 0.0417943411668994,
+            "slope": 0.15411663305294154
+          },
+          "2": {
+            "fast": 0.4367626107432529,
+            "tonic": 0.1552052542630767,
+            "slope": 0.2815573564801762
+          },
+          "3": {
+            "fast": 0.4257896731930851,
+            "tonic": 0.19150254917315743,
+            "slope": 0.23428712401992766
+          },
+          "4": {
+            "fast": 0.3701446821241084,
+            "tonic": 0.1382607252991706,
+            "slope": 0.2318839568249378
+          },
+          "5": {
+            "fast": 0.11955164100522885,
+            "tonic": 0.09343645362604953,
+            "slope": 0.02611518737917931
+          },
+          "6": {
+            "fast": 0.10530588288905071,
+            "tonic": 0.10301059159262002,
+            "slope": 0.0022952912964306904
+          },
+          "7": {
+            "fast": 0.12688045997130587,
+            "tonic": 0.11131292620463241,
+            "slope": 0.015567533766673455
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 11,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 2.000088983322712e-12,
+        "conf_rise": 2.000088983322712e-12,
+        "abstain_floor": 1.999992763993911e-12,
+        "noisy_conf_mean": 1.999992763993911e-12,
+        "noisy_gap_final": 0.9999999999980002,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": false,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": false
+    },
+    {
+      "seed": 12,
+      "real": {
+        "mode": "real",
+        "seed": 12,
+        "corr_gap_mod": 0.9956267362428654,
+        "rate_unknown": 0.0309375,
+        "rate_known": 0.0,
+        "ratio_b": 30937499.999999996,
+        "total_asks": 99,
+        "slow_mastered": 5,
+        "slow_conf_mean": 0.5329748959984741,
+        "conf_rise": 0.526624100501786,
+        "abstain_floor": 0.10084733089356528,
+        "noisy_conf_mean": 0.10084733089356528,
+        "noisy_gap_final": 0.8982913830856419,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 64,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.10864594872667321,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.02944414239629616,
+        "mean_slope_noisy_final": 0.002645912585200902,
+        "slope_sep_final": 0.026798229811095257,
+        "mean_omission_veto_slow": 12.00626951608174,
+        "mean_omission_veto_noisy": 2.380688221446516,
+        "mean_lp_slow": 0.03689963056177248,
+        "mean_lp_noisy": 0.0008851231837013612,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.510128462379325,
+            "tonic": 0.48175249522176605,
+            "slope": 0.028375967157558912
+          },
+          "1": {
+            "fast": 0.503303528672224,
+            "tonic": 0.4683249682001589,
+            "slope": 0.03497856047206516
+          },
+          "2": {
+            "fast": 0.5071680533080035,
+            "tonic": 0.4757469537598828,
+            "slope": 0.03142109954812072
+          },
+          "3": {
+            "fast": 0.5076235270570499,
+            "tonic": 0.4770067640557911,
+            "slope": 0.030616763001258818
+          },
+          "4": {
+            "fast": 0.4896191182262298,
+            "tonic": 0.4677907964237526,
+            "slope": 0.02182832180247718
+          },
+          "5": {
+            "fast": 0.007318652366340994,
+            "tonic": 0.002291423069929726,
+            "slope": 0.005027229296411268
+          },
+          "6": {
+            "fast": 0.004845494384653731,
+            "tonic": 0.0026054112746663025,
+            "slope": 0.002240083109987429
+          },
+          "7": {
+            "fast": 0.0016606492146281956,
+            "tonic": 0.0009902238654241865,
+            "slope": 0.0006704253492040091
+          }
+        }
+      },
+      "omission_only": {
+        "mode": "omission_only",
+        "seed": 12,
+        "corr_gap_mod": 0.9950419494212622,
+        "rate_unknown": 0.0109375,
+        "rate_known": 0.0,
+        "ratio_b": 10937499.999999998,
+        "total_asks": 35,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.42972348952235706,
+        "conf_rise": 0.4233726940256689,
+        "abstain_floor": 0.03760669878919065,
+        "noisy_conf_mean": 0.03760669878919065,
+        "noisy_gap_final": 0.9600677488311673,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.19039345481256506,
+        "mean_slope_noisy_final": 0.002645912585200902,
+        "slope_sep_final": 0.18774754222736417,
+        "mean_omission_veto_slow": 2.059678866578012,
+        "mean_omission_veto_noisy": 2.380688221446516,
+        "mean_lp_slow": 0.08875327572988549,
+        "mean_lp_noisy": 0.0008851231837013612,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.40538120853308635,
+            "tonic": 0.21869231675477202,
+            "slope": 0.18668889177831433
+          },
+          "1": {
+            "fast": 0.4316953657111236,
+            "tonic": 0.22125589216068775,
+            "slope": 0.21043947355043585
+          },
+          "2": {
+            "fast": 0.4318208552654063,
+            "tonic": 0.25530982321964346,
+            "slope": 0.17651103204576285
+          },
+          "3": {
+            "fast": 0.42308354649598623,
+            "tonic": 0.21866141878535547,
+            "slope": 0.20442212771063076
+          },
+          "4": {
+            "fast": 0.43460584133241326,
+            "tonic": 0.2607000923547318,
+            "slope": 0.17390574897768146
+          },
+          "5": {
+            "fast": 0.007318652366340994,
+            "tonic": 0.002291423069929726,
+            "slope": 0.005027229296411268
+          },
+          "6": {
+            "fast": 0.004845494384653731,
+            "tonic": 0.0026054112746663025,
+            "slope": 0.002240083109987429
+          },
+          "7": {
+            "fast": 0.0016606492146281956,
+            "tonic": 0.0009902238654241865,
+            "slope": 0.0006704253492040091
+          }
+        }
+      },
+      "slope_lesion": {
+        "mode": "slope_lesion",
+        "seed": 12,
+        "corr_gap_mod": 0.9950419494212622,
+        "rate_unknown": 0.0109375,
+        "rate_known": 0.0,
+        "ratio_b": 10937499.999999998,
+        "total_asks": 35,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.42972348952235706,
+        "conf_rise": 0.4233726940256689,
+        "abstain_floor": 0.03760669878919065,
+        "noisy_conf_mean": 0.03760669878919065,
+        "noisy_gap_final": 0.9600677488311673,
+        "noisy_asks_total": 8,
+        "noisy_early_rate": 0.020050125313283207,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 5,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 2.059678866578012,
+        "mean_omission_veto_noisy": 2.380688221446516,
+        "mean_lp_slow": 0.08875327572988549,
+        "mean_lp_noisy": 0.0008851231837013612,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "permuted_history": {
+        "mode": "permuted_history",
+        "seed": 12,
+        "corr_gap_mod": 0.9910480931913187,
+        "rate_unknown": 0.125,
+        "rate_known": 0.0,
+        "ratio_b": 124999999.99999999,
+        "total_asks": 120,
+        "slow_mastered": 0,
+        "slow_conf_mean": 0.39238063654037897,
+        "conf_rise": 0.3847666594024539,
+        "abstain_floor": 0.11981304519905751,
+        "noisy_conf_mean": 0.11981304519905751,
+        "noisy_gap_final": 0.8847389091975705,
+        "noisy_asks_total": 111,
+        "noisy_early_rate": 0.30833333333333335,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 1.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 103,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.162022405530177,
+        "mean_slope_slow_final": 0.19921753154703362,
+        "mean_slope_noisy_final": 0.01245403145913239,
+        "slope_sep_final": 0.1867635000879012,
+        "mean_omission_veto_slow": 0.24853128097241606,
+        "mean_omission_veto_noisy": 32.0865716848519,
+        "mean_lp_slow": 0.16255305017093258,
+        "mean_lp_noisy": 0.00400832176175049,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.19156068040560664,
+            "tonic": 0.04086627848652942,
+            "slope": 0.15069440191907724
+          },
+          "1": {
+            "fast": 0.18113856590594288,
+            "tonic": 0.03864289405993448,
+            "slope": 0.1424956718460084
+          },
+          "2": {
+            "fast": 0.3230462500505082,
+            "tonic": 0.09093959298186029,
+            "slope": 0.23210665706864791
+          },
+          "3": {
+            "fast": 0.30774464869933665,
+            "tonic": 0.08840020074495672,
+            "slope": 0.21934444795437993
+          },
+          "4": {
+            "fast": 0.39262019124234576,
+            "tonic": 0.14117371229529108,
+            "slope": 0.2514464789470547
+          },
+          "5": {
+            "fast": 0.1063495714160308,
+            "tonic": 0.09148968541794332,
+            "slope": 0.014859885998087477
+          },
+          "6": {
+            "fast": 0.10339871349425742,
+            "tonic": 0.097946254982615,
+            "slope": 0.005452458511642416
+          },
+          "7": {
+            "fast": 0.12364829540321737,
+            "tonic": 0.1065985455355501,
+            "slope": 0.017049749867667274
+          }
+        }
+      },
+      "curiosity_lesion": {
+        "mode": "curiosity_lesion",
+        "seed": 12,
+        "corr_gap_mod": 0.0,
+        "rate_unknown": 0.0,
+        "rate_known": 0.0,
+        "ratio_b": 0.0,
+        "total_asks": 0,
+        "slow_mastered": 0,
+        "slow_conf_mean": 1.9999335520992644e-12,
+        "conf_rise": 1.9999335520992644e-12,
+        "abstain_floor": 2.0001037862963735e-12,
+        "noisy_conf_mean": 2.0001037862963735e-12,
+        "noisy_gap_final": 0.9999999999980002,
+        "noisy_asks_total": 0,
+        "noisy_early_rate": 0.0,
+        "noisy_late_rate": 0.0,
+        "noisy_vetoed_frac": 0.0,
+        "slow_false_vetoed": 0,
+        "slow_protected_asks": 0,
+        "noisy_protected_asks": 0,
+        "mean_slope_at_slow_protect": 0.0,
+        "mean_slope_at_noisy_protect": 0.0,
+        "mean_slope_slow_final": 0.0,
+        "mean_slope_noisy_final": 0.0,
+        "slope_sep_final": 0.0,
+        "mean_omission_veto_slow": 0.0,
+        "mean_omission_veto_noisy": 0.0,
+        "mean_lp_slow": 0.0,
+        "mean_lp_noisy": 0.0,
+        "late_slow_frac": 1.0,
+        "moat_ok": true,
+        "trace_final": {
+          "0": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "1": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "2": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "3": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "4": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "5": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "6": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          },
+          "7": {
+            "fast": 0.0,
+            "tonic": 0.0,
+            "slope": 0.0
+          }
+        }
+      },
+      "gate_a_corr": true,
+      "gate_b_askratio": true,
+      "gate_c_conf_rise": true,
+      "slow_protected": true,
+      "noisy_still_vetoed": true,
+      "omission_fails_slow": true,
+      "slope_lesion_collapses": true,
+      "permuted_history_collapses": true,
+      "curiosity_lesion_collapses": true,
+      "moat_ok": true,
+      "GO": true
+    }
+  ],
+  "config": {
+    "d": 1024,
+    "n_slow": 5,
+    "n_noisy": 3,
+    "n_turns": 400,
+    "ask_budget": 120,
+    "novel_thresh": 0.35,
+    "eps": 0.08,
+    "obs_noise": 1.0,
+    "mod_sensor_noise": 0.02,
+    "omission_lp_floor": 0.11,
+    "omission_gain": 0.9,
+    "omission_decay_on_progress": 0.18,
+    "veto_floor": 1.8,
+    "fast_alpha": 0.75,
+    "slow_alpha": 0.16,
+    "slope_protect_floor": 0.035,
+    "confidence_mastery_floor": 0.5,
+    "min_conf_rise": 0.15,
+    "min_conf_vs_noise_margin": 0.3,
+    "min_slope_sep_at_protect": 0.03
+  },
+  "smoke": false
+}
