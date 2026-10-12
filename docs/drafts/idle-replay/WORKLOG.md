@@ -646,3 +646,26 @@
   preconditions-equivalent scope, repo-relative artifacts) + this entry. Lane waiver from 11:45
   still fresh (6h expiry). Claim-gate lessons applied: PROVISIONAL frontmatter, no globs, all
   artifact paths repo-relative, every computed number marked derived or cited.
+
+- 2026-10-12 14:52 EDT (heartbeat wake 14:30): NO new commits since 12d9ea067. ONE TASK = RULING
+  c5-next-1012 (a): choose turns where idle replay fires + prove circuits_built>0 in a dev smoke.
+  ROOT CAUSE of "idle replay never fired in g6" found by static read (no run needed): the g6 turn
+  set (emo,bc_a,bc_b,rich_well,rich_open) contains NO idle/empty turn, so the organ's speak path
+  never ran. Chain: webapp/server.py:4975-4982 note_turn runs every turn (bookkeeping only, does
+  NOT touch circuits_built); server.py:5005-5009 _IR.speak runs ONLY when
+  _SI.is_selfinit_trigger(req.message) (empty message or "say something" lead-in); organ
+  select() early-returns at K==0 WITHOUT building (idle_replay_organ.py:467-469); otherwise
+  _ensure_circuit -> circuits_built+=1 (organ.py:454-457). PROBE_TURNS row "selfinit" (battery
+  line 80, text "") IS the idle-trigger turn; build-time KB facts are recorded at the first
+  note_turn (organ.py:397-402) so even a lone selfinit turn has K>=1 on the real bundle. Smoke
+  design: --turns selfinit, BRAIN_IDLE_REPLAY=1, leaklog on, one session (~7 GB) -> pool40
+  mem_gb=9. ATTEMPT 1 (14:36) rc=1: my --env JSON was double-escaped for the OLD in-session
+  dispatcher wrap; the 11:02 host-unit path (printf '%s' no backslash interpretation) delivered
+  a JSON string literal -> json.loads returned str -> 'str' has no attribute items' at battery
+  line 1017. DIAGNOSIS: dispatch-wrap semantics changed with the host redeploy; escaping in a
+  queued cmd is wrap-dependent. FIX (requeue 14:52): flag rides the OUTER env (plain token,
+  quoting-proof) + --env {} (no quotes at all). Also this wake: removed 3 NEEDS-list debris
+  lines "(N characters, limit 300)" at runbook 1146-1148 (needs_line.py over-cap warnings my
+  earlier edits swept into the committed list; not real NEEDS entries). Next: read the smoke
+  sidecar; circuits_built>0 -> queue the record PAIR on wspool mem_gb=26 with 3 sessions
+  (emo,bc_a,bc_b,selfinit = ~16.8 GB peak <= 26, selfinit last so encoding precedes replay).
