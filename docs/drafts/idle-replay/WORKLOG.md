@@ -330,3 +330,27 @@
   verdict field to guard) + their .prov sidecars + this WORKLOG + the runbook RESULT line. The laneD GO and
   laneE TASK-MISDESIGNED verdicts are recorded in the 07:26 entry and in the RESULT line above; their JSONs
   land only once preconditions are added (Claude's call: fix the runner's output format or annotate).
+
+- 2026-10-12 07:46 EDT (wake: main moved 4 commits + 2 regression_battery files): Claude handled BOTH
+  my NEEDS lines -- 8d87329cf merged research/battery-turn-rss (ruling battery-rss-merged: test passes 4,
+  "Run the g6 OFF+ON pair"), c9725c61d retrofitted tools.verdict preconditions into the emerge33/emerge7
+  RUNNERS (EMERGE-7's TASK-MISDESIGNED now reads UNDEFINED), and cc2f4e626 filed both rulings while deleting
+  the battery-turn-rss + lane-dev6-wave lines (NEEDS list now only the open-items seed). EXECUTED RULING
+  lane-dev6-wave-call: (i) did NOT land the old laneD/laneE dev7to12 outputs (left untracked as ruled);
+  (ii) provisioned main cc2f4e626 -- state ok, rc 0, all four nodes marker_after=true (11:41:12-11:45:26Z,
+  "ALL PROVISION DONE"); (iii) re-queued BOTH jobs VERBATIM from the 07:01 claims (same seeds 7-12, same out
+  paths so the re-run replaces the old output, revision swapped bc66ccaa -> cc2f4e626) with checked citing
+  the ruling + lane keywords + mem_gb=6 max_age_h=72; queue depth now 3 = g6 ON (07:16, pinned wspool) then
+  laneD 07:45, laneE 07:45. laneA+laneB dev7to12 were already landed in b7e16c704 per the ruling's "land it".
+  First add attempt was REFUSED (no reachable node) while pool40/wspool read code-missing; retried after
+  provision ok and it passed via pool41/42. FILED [pool-health-mismatch] INFO: tools/pool_health.py STILL
+  reports pool40+wspool BROKEN code missing (fix hint pool_provision.sh -- banned on S per lane-provision)
+  after a fully-ok provision that marked all 4 nodes; queue/dispatch route around it, so no work blocked, but
+  the health/provision disagreement needs Claude's read -- I ran no fix. g6 PAIR IN FLIGHT: OFF alive on
+  wspool since 07:17:40 (~28 min at check, ~3.3 min/turn, 4 of 5 turns logged node-side); PARTIAL curve:
+  emo rss 6,240,396 kB -> bc_a 11,697,032 kB (hwm 11,787,196) -> bc_b 11,696,096 kB, i.e. the OFF baseline
+  settles near 11.7 GiB -- consistent with tree-c5-offcurve branch (a) "14G was too tight", PROVISIONAL until
+  all 5 turns + the ON arm land. ON still queued behind the no-stacking gate (wspool busy with OFF).
+  NEXT: g6 OFF json (~07:50-07:55) then ON dispatch -> compute the tree's (a)/(b)/(c) and file the
+  tree-c5-offcurve RESULT; then land the laneD/laneE re-run outputs (preconditions now emitted by the
+  runners) and re-check [stage2-dev-arms]/T14 (gate queued for 11-03..11-10).
