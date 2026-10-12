@@ -1135,3 +1135,4 @@ Format (one line, at most 300 characters, newest last; commit at once; Claude de
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
 
 - 2026-09-30 16:50 [open-items] INFO (seeded): other judgment items stay in each HANDOFF's NEEDS-CLAUDE list
+- 2026-10-12 07:46 [pool-health-mismatch] INFO: pool_health calls pool40+wspool BROKEN code missing (its fix pool_provision.sh is banned on S) after provision cc2f4e626 ok all-4 markers; queue add passed via 41/42. Which tree health checks needs your read

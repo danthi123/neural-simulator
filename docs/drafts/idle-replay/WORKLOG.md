@@ -354,3 +354,13 @@
   NEXT: g6 OFF json (~07:50-07:55) then ON dispatch -> compute the tree's (a)/(b)/(c) and file the
   tree-c5-offcurve RESULT; then land the laneD/laneE re-run outputs (preconditions now emitted by the
   runners) and re-check [stage2-dev-arms]/T14 (gate queued for 11-03..11-10).
+
+- 2026-10-12 07:47 EDT (correction to the 07:46 entry): the [pool-health-mismatch] INFO was NOT
+  actually filed on the first try -- needs_line refused it at 326 > 300 chars, so both commit 443245f4e's
+  message and the 07:46 entry's word "FILED" overstated the state (the runbook gained only this WORKLOG
+  text). Refiled now at ~255 chars and committed honestly. Substance unchanged: pool_health reports
+  pool40+wspool BROKEN code missing while provision cc2f4e626 finished ok with all 4 marker_after=true; the
+  health tool's own fix suggestion (pool_provision.sh on S) stays banned per RULING lane-provision, so I ran
+  nothing; queue add routes via pool41/42. Also at 07:46 the queue depth fell 3 -> 1 within a minute of
+  queueing, consistent with the dispatcher popping laneD + laneE to pool41/42 (g6 ON stays for wspool
+  capacity behind the OFF arm) -- confirmed next check.
