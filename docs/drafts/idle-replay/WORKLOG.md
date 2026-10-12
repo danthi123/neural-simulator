@@ -430,3 +430,20 @@
   push_both step (push is forbidden for me, T11 same); E -- replacement language job not yet designed (per
   RULING lane-dev6-wave-call). Per runbook section 4 the first task whose Start holds is T1, whose next real
   action is step 4a (the outcome-timing pilot on research/draft-ldc-outcome-timing): starting it now.
+
+- 2026-10-12 08:40 EDT (correction to the 08:36 entry): T1's step 4a/4b are long past -- the pilot
+  worktree already holds PILOT.md, PILOT-4B.md, STEP4B.md, AMENDMENT-A0.md/.1/.2 and the bar-sanity spec;
+  per runbook rulings T1-grid (10-06), step4b-below-chance (10-07) and step4b-on-cells (10-08) the 144-line
+  step-4b grid ran and its cells were committed. The worktree HEAD cec7a5206 is the a2 next-lever proposal
+  (native syn-zero D2-output lesion, self-proving cut) whose message says "awaiting Claude ruling", and NO
+  NEEDS line for it exists on the list -- so T1's next action is Claude's a2 ruling, not a driver step; filed
+  [t1-a2-ruling]. No step-4a work was started (the 08:36 line said "starting it now" before this state check).
+  Also filed [push-needed] per section 1: T2 (iw2 D0/D_p), T11 (the 43 flip lines) and T3 (sleep-TI) each have
+  packet steps that run tools/push_both.sh, which the driver's never-push rule forbids; T2's D0/D_p job files
+  do not exist locally (the jobs dir has only R_*, alloff and flip_1fb805e), so its queue stock cannot be
+  generated without those steps. Lane stock stays at depth 0 with pool40/41/42 idle -- next wake's stocking
+  must come from a non-push packet step or Claude's own restock. Commit hygiene note: my two landing commits
+  this wake used the owner-approved doc-only / result-data-only split instead of a waiver; Claude's existing
+  research/queue/.lane_waiver (written 05:42) carries promise language ("Claude issuing those rulings this
+  session so the driver restocks") that was rejected at my 08:27 read, so it did not excuse the mixed set; I
+  left his waiver file untouched (it is shared state).
