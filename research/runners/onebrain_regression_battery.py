@@ -969,6 +969,37 @@ class _QwenGenerateCounter:
 
 
 # ── worker: build ONE fresh brain with a given env, run the probe turns, dump responses ──────────────────────────
+def _battery_turn_record(label) -> None:
+    """tree-c5-offcurve (RULING c5-probe-merged 2026-10-12): flag-independent per-turn RSS record.
+
+    The organ's sidecar (_leak_log) only fires when BRAIN_IDLE_REPLAY=1, so the OFF arm of the g6 pair would
+    log nothing; this hook runs from the battery worker's turn loop regardless of that flag. When
+    BRAIN_IDLE_REPLAY_LEAKLOG names a .jsonl sidecar, append {ts, pid, turn label, rss_kb, hwm_kb} read from
+    /proc/self/status after each brain_chat turn, event "battery_turn" -- same file the organ writes, so one
+    jsonl holds both arms' curves. Unset -> one environ lookup and return, byte-identical behavior, no file.
+    Never raises (a probe cannot break the battery)."""
+    path = os.environ.get("BRAIN_IDLE_REPLAY_LEAKLOG") or ""
+    if not path:
+        return
+    try:
+        import time as _time
+        rss = hwm = 0
+        with open("/proc/self/status") as fh:
+            for line in fh:
+                if line.startswith("VmRSS:"):
+                    rss = int(line.split()[1])
+                elif line.startswith("VmHWM:"):
+                    hwm = int(line.split()[1])
+        rec = {"ts": round(_time.time(), 3), "pid": os.getpid(), "turn": label, "event": "battery_turn",
+               "rss_kb": rss, "hwm_kb": hwm}
+        with open(path, "a") as fh:
+            fh.write(json.dumps(rec, sort_keys=True) + "\n")
+            fh.flush()
+            os.fsync(fh.fileno())
+    except Exception:  # noqa: BLE001 -- a probe must never break the battery
+        pass
+
+
 def _collect_worker(env_json, turn_labels, out_path):
     mode = arm_renderer_mode()
     if mode == ARM_RENDERER_STUB:
@@ -1010,6 +1041,7 @@ def _collect_worker(env_json, turn_labels, out_path):
         if counter is not None and isinstance(responses.get(label), dict):
             responses[label][ARM_RENDERER_KEY] = {"mode": mode,
                                                   "qwen_generate_calls": counter.calls - calls_before}
+        _battery_turn_record(label)      # RULING c5-probe-merged: flag-independent per-turn RSS, env-gated inside
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     json.dump(responses, open(out_path, "w"), indent=2, default=str)
     print("[battery worker] env=%s -> %d turns -> %s" % (env, len(responses), out_path), flush=True)
