@@ -216,3 +216,10 @@
   (2aac93d43); fluent-test triage = stale tests (f28c4dbc8). Ran the last open owed check: the rank2
   env-default test PASSES on S (fastapi 0.139.1) -- NEEDS [rank2-env-default] INFO filed. gpu_remote
   to workstation times out (wspool still down). Pool depth 0, all nodes idle/healthy. §5 next wake.
+- 2026-10-12 03:58 EDT (wake: stall 3.4 h -- FALSE POSITIVE, root-caused): pool depth 0, no runner on
+  pool40/41/42 (free 14/9/9 G), dispatcher idle since 00:13, all three 00:13 lane jobs have exit records
+  (A s304 rc0, B s7f rc0, C rc=1 designed-negative). Detector /opt/data/scripts/sim-driver-gate.py:
+  pool_has_work() returns True while pool.running mtime <6 h (line 161) -- the append-only dispatch LOG
+  keeps mtime fresh, and lane C's rc=1 never advanced last_result, so no-clean-result (>=3 h) AND
+  'has work' both held with nothing running. NEEDS [stall-gate-false-positive] filed; same mechanism
+  likely explains the 10-11 03:01/11:50/16:34/22:53 stall wakes. No job touched.
