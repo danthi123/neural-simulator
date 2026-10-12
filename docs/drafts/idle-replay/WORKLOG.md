@@ -669,3 +669,15 @@
   earlier edits swept into the committed list; not real NEEDS entries). Next: read the smoke
   sidecar; circuits_built>0 -> queue the record PAIR on wspool mem_gb=26 with 3 sessions
   (emo,bc_a,bc_b,selfinit = ~16.8 GB peak <= 26, selfinit last so encoding precedes replay).
+
+- 2026-10-12 15:05 EDT (addendum, same wake): SMOKE PASSED at ~15:02 (pool40, rc=0).
+  smoke_c5a_selfinit_rss.jsonl: turn event then {"event":"select","circ_k":5,"circuits_built":1}
+  -> REPLAY FIRED (the g6 ON arm had circuits_built=0 throughout). The selfinit turn's reply:
+  path=idle-replay, n_utt=1, utterance="cat eat fish" (concept cat, decoded from the brain's own
+  store, idle_replay trace has K=5 candidates). Tiny-demo base RSS 5,511,672 KiB (~5.3 GB),
+  well under the 9 GB cap. c5-next-1012(a) smoke gate MET. Queued the record PAIR's OFF arm
+  (g6b_off): turns emo,bc_a,bc_b,selfinit (sessions emo/bc/si = 3 keys, ~16.8 GB peak under the
+  26 cap), mem_gb=19, pin wspool; selfinit LAST so encoding precedes replay. ON arm queued next
+  wake after OFF lands (sequential: dispatcher checks mem per job, not summed — two 19s could
+  co-run and trip the 30 GB slice, so one at a time). When both land: per-turn ON-OFF RSS diff
+  (bar <= 2 GB) + replay-fired precondition in the ON sidecar -> RESULT on main (PROVISIONAL).
