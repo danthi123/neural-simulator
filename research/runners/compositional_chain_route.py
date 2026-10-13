@@ -111,12 +111,17 @@ class ChainedSVO(list):
     PERCEIVED, keep it out of episodic/discourse-WM writes that assume a directly-recalled fact, and report a
     distinct API shape (`recalled_svo=None`, `derived=True`, `derived_from=[...]`) rather than one
     indistinguishable from a real recall (moat-hardening audit findings #4/#5). `derived_from`: the ordered list
-    of `[a, v, p]` hop-facts the derivation actually confirmed (each independently a stored fact)."""
-    __slots__ = ("derived_from",)
+    of `[a, v, p]` hop-facts the derivation actually confirmed (each independently a stored fact).
+    `conclusion_is_hop` (2026-10-13): True ONLY when the producer guarantees the triple is its own stored last hop
+    (this module's possessive-chain route); every other producer leaves it False, so a consumer never infers
+    "stored" from list membership (the transitive spiking-reach fallback puts the conclusion itself in
+    `derived_from`)."""
+    __slots__ = ("derived_from", "conclusion_is_hop")
 
-    def __init__(self, svo, derived_from=None):
+    def __init__(self, svo, derived_from=None, conclusion_is_hop=False):
         super().__init__(svo)
         self.derived_from = list(derived_from) if derived_from else []
+        self.conclusion_is_hop = bool(conclusion_is_hop)
 
 
 def frame_derived_answer(surface: str, derived_from) -> str:
@@ -282,5 +287,6 @@ def resolve_compositional_chain(composer, question: str):
         if ambiguous2:
             return None
         if hop2 is not None:
-            return ChainedSVO([hop1, v2, hop2], derived_from=[[x, v1, hop1], [hop1, v2, hop2]])
+            return ChainedSVO([hop1, v2, hop2], derived_from=[[x, v1, hop1], [hop1, v2, hop2]],
+                              conclusion_is_hop=True)       # the conclusion IS the stored hop-2 fact
     return None                                  # no candidate hop-pair confirmed -> honest abstain

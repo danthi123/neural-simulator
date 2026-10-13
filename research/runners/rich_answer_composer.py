@@ -228,22 +228,29 @@ def _is_followup(question):
     return bool(content) and len(content) <= 3 and all(t in _FOLLOWUP_CUES for t in content)
 
 
-def derived_reply_fields(facts, derived, derived_from):
+def derived_reply_fields(facts, derived, derived_from, direct_svo=None, conclusion_is_hop=False):
     """The reply-level `supporting_facts` + `derived_svo` for one rich turn (2026-10-13, Stage-2 HANDOFF item 18b).
-    `facts` is the turn's kept fact list (after any confidence cap); facts[0] is the DIRECT answer. When the turn
-    is DERIVED and facts[0] is NOT one of its `derived_from` hops (a multistep-chase / transitive conclusion that was
-    never told), facts[0] must not be reported as a supporting fact: the supporting facts are the hops, then the
-    remaining kept facts not already among them. A possessive-chain (C2) conclusion IS `derived_from[-1]`, a stored
-    fact, so its `supporting_facts` stay `facts` unchanged. `derived_svo` is facts[0] on a derived turn (the
-    conclusion the reply states), else None. Returns (supporting_facts, derived_svo); `facts` is not modified (the
-    caller keeps it for `n_sentences`)."""
+    `facts` is the turn's KEPT fact list (after VERIFY and any confidence cap); `direct_svo` is the turn's GATED
+    direct fact (`r['direct_svo']`, the conclusion of a derived turn); `conclusion_is_hop` is the producer's own
+    mark (`ChainedSVO.conclusion_is_hop`, True only for the C2 possessive chain, whose conclusion is its stored last
+    hop). Rules, on a DERIVED turn only:
+      * `derived_svo` = `direct_svo` iff it is among the kept facts (the reply states it), else None (VERIFY dropped
+        the conclusion sentence, so the reply does not state it). Without `direct_svo` (a legacy caller) facts[0].
+      * C2 (`conclusion_is_hop`): `supporting_facts` = `facts`, unchanged.
+      * otherwise the conclusion was never told: `supporting_facts` = the hops, then the other kept facts, with the
+        conclusion itself excluded wherever it appears (the transitive fallback even lists it in `derived_from`).
+    A non-derived turn returns (`facts`, None). `facts` is not modified (the caller keeps it for `n_sentences`)."""
     facts = [list(f) for f in (facts or [])]
     if not (derived and facts):
         return facts, None
+    conclusion = list(direct_svo) if direct_svo is not None else facts[0]
+    derived_svo = conclusion if conclusion in facts else None
+    if conclusion_is_hop:
+        return facts, derived_svo
     hops = [list(h) for h in (derived_from or []) if isinstance(h, (list, tuple)) and len(h) == 3]
-    if facts[0] in hops:
-        return facts, list(facts[0])
-    return hops + [f for f in facts[1:] if f not in hops], list(facts[0])
+    supporting = [h for h in hops if h != conclusion]
+    supporting += [f for f in facts if f not in supporting and f not in hops and f != conclusion]
+    return supporting, derived_svo
 
 
 class NeuralDiscoursePlanner:
@@ -365,6 +372,8 @@ class RichAnswerComposer:
         # Reset at the top of EVERY `gather()` call so it never leaks from a prior turn onto an unrelated one.
         self._last_direct_derived = False
         self._last_direct_derived_from = []
+        self._last_direct_svo = None                 # the gated direct fact of this turn (r['direct_svo'])
+        self._last_direct_conclusion_is_hop = False  # ChainedSVO.conclusion_is_hop of that fact
 
     # ------------------------------------------------------------------------------------------------
     # GATHER: assemble a small GROUNDED fact-set (a) direct + (b) chain + (c) elaboration.
@@ -652,6 +661,8 @@ class RichAnswerComposer:
         # ChainedSVO flag never leaks onto this one.
         self._last_direct_derived = False
         self._last_direct_derived_from = []
+        self._last_direct_svo = None                 # the gated direct fact of this turn (r['direct_svo'])
+        self._last_direct_conclusion_is_hop = False  # ChainedSVO.conclusion_is_hop of that fact
         # the conversation-wide exclude: the chain + elaboration never restate a fact said anywhere in the
         # conversation, so 'tell me more' always brings genuinely NEW content.
         convo_exclude = [list(f) for f in self._conversation_said]
@@ -673,6 +684,7 @@ class RichAnswerComposer:
             # the caller must not list it as a supporting fact (see `derived_reply_fields`).
             self._last_direct_derived = True
             self._last_direct_derived_from = list(getattr(direct, "derived_from", []))
+            self._last_direct_conclusion_is_hop = bool(getattr(direct, "conclusion_is_hop", False))
         # OPEN-ENDED GENERATION (#3E): an open-ended prompt makes chat.gate VOLUNTEER a generated HYPOTHESIS (a
         # HypothesisSVO). It is a single, clearly-FLAGGED guess -- it MUST NOT be chained/elaborated with stored
         # recall (mixing a guess with asserted facts blurs the honesty boundary, and its own novel (a,v,p) is not
@@ -682,6 +694,7 @@ class RichAnswerComposer:
         if isinstance(direct, HypothesisSVO):
             return None, [direct]
         a, v, p = direct
+        self._last_direct_svo = [a, v, p]
         # the discourse TOPIC for the chain + elaboration: the answer's PATIENT if the brain can say more about
         # it (it is itself an agent of some fact), else the question's subject `a`.
         agents_set = {f[0] for f in self._stored_facts()}
@@ -1073,7 +1086,11 @@ class RichAnswerComposer:
                 # every ordinary turn (byte-identical addition -- existing callers that ignore these keys are
                 # unaffected).
                 "derived": bool(self._last_direct_derived),
-                "derived_from": list(self._last_direct_derived_from)}
+                "derived_from": list(self._last_direct_derived_from),
+                # the GATED direct fact (the conclusion of a derived turn) even if VERIFY dropped its sentence,
+                # and whether the producer guarantees it is a stored hop (C2); see `derived_reply_fields`.
+                "direct_svo": (list(self._last_direct_svo) if self._last_direct_svo is not None else None),
+                "conclusion_is_hop": bool(self._last_direct_conclusion_is_hop)}
 
 
 # ====================================================================================================

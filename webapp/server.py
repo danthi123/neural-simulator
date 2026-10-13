@@ -6737,7 +6737,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # supporting fact: supporting_facts become the hops (+ the other kept facts) and the conclusion is reported
         # as `derived_svo` (2026-10-13, Stage-2 HANDOFF item 18b). `facts` itself is unchanged (n_sentences etc.).
         from research.runners.rich_answer_composer import derived_reply_fields as _derived_reply_fields
-        _rich_supporting, _rich_derived_svo = _derived_reply_fields(facts, _rich_derived, r.get("derived_from"))
+        _rich_supporting, _rich_derived_svo = _derived_reply_fields(
+            facts, _rich_derived, r.get("derived_from"), r.get("direct_svo"), r.get("conclusion_is_hop", False))
         # EPISODIC STORE (Gate-B, D5, Hook B): a normal answered turn with a VERIFIED SVO BTSP-forms the answered
         # topic's (subject/agent) CA3 assembly (write-only; changes NO reply text). The spiking BTSP write is
         # ~seconds on cupy but ~510s/topic on numpy@2000, so it is GATED behind cupy (`_episodic_store_ok`) — on a
@@ -6772,7 +6773,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # one; derived_from names the verified hop-facts it was reasoned from. False/None otherwise.
             "derived": _rich_derived,
             "derived_from": (list(r.get("derived_from") or []) if _rich_derived else None),
-            # the conclusion a derived reply states (facts[0]); null on every non-derived turn.
+            # the conclusion a derived reply states (the gated direct fact, only if VERIFY kept its sentence);
+            # null on every non-derived turn.
             "derived_svo": _rich_derived_svo,
             # every kept sentence is gate-sourced + verify-checked, so the
             # multi-sentence reply is verified-by-construction (unless it

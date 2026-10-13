@@ -108,6 +108,20 @@ def test_conclusion_that_is_itself_stored_stays_plain():
     assert info["derived"] is False and info.get("conclusion_stored") is True
 
 
+def test_a_negated_stored_conclusion_stays_derived():
+    # "the lynx does not chase the mite" is stored as the same triple with polarity NEGATE: the store CONTRADICTS
+    # the chased conclusion, so it must never read as a plain stored recall
+    chat = _chat()
+    chat.inner.composer.kb.append(({"agent": "lynx", "action": "chase", "patient": "mite", "polarity": "NEGATE"},
+                                   None))
+    out, info = G.deliberate_multistep(chat, ["lynx", "chase", "vole"], "what does the lynx chase?")
+    assert isinstance(out, ChainedSVO) and out.derived_from == HOPS3
+    assert info["derived"] is True and not info.get("conclusion_stored")
+    chat.inner.composer.kb[-1][0]["polarity"] = "AFFIRM"            # the same triple affirmed IS a stored recall
+    out, info = G.deliberate_multistep(chat, ["lynx", "chase", "vole"], "what does the lynx chase?")
+    assert type(out) is list and info.get("conclusion_stored") is True
+
+
 def test_conclusion_stored_only_in_the_ltm_shard_stays_plain():
     chat = _chat()
     shard = types.SimpleNamespace(kb=[({"agent": "lynx", "action": "chase", "patient": "mite"}, None)])
@@ -232,9 +246,27 @@ def test_rich_turn_reports_hops_not_the_conclusion_and_keeps_the_lead_after_capp
     capped, trace = apply_cap(rich, r, 2, False)                 # low confidence: truncate to the 2-fact floor
     assert trace["reason"] == "low_confidence_capped" and len(capped["facts"]) == 2
     assert capped["answer"].startswith(LEAD3)                    # the inference lead survives the re-render
-    supporting, derived_svo = derived_reply_fields(capped["facts"], capped["derived"], capped["derived_from"])
+    assert capped["direct_svo"] == ["lynx", "chase", "mite"] and capped["conclusion_is_hop"] is False
+    supporting, derived_svo = derived_reply_fields(capped["facts"], capped["derived"], capped["derived_from"],
+                                                   capped["direct_svo"], capped["conclusion_is_hop"])
     assert derived_svo == ["lynx", "chase", "mite"]
     assert ["lynx", "chase", "mite"] not in supporting           # the never-told conclusion is not a supporting fact
+    assert supporting == HOPS3
+
+
+def test_rich_turn_whose_conclusion_sentence_is_dropped_names_no_derived_svo():
+    from research.runners.rich_answer_composer import RichAnswerComposer, derived_reply_fields
+    chat = _rich_chat()
+    chat._raw = lambda svo: None if list(svo) == ["lynx", "chase", "mite"] else _render(svo)   # VERIFY drops it
+    rich = RichAnswerComposer(chat, max_sentences=4)
+    rich._render_one_verified = lambda svo, gated=None: ((chat._raw(svo), True) if chat._raw(svo) else (None, False))
+    r = rich.answer("what does the lynx chase all the way?")
+    assert r["derived"] is True and ["lynx", "chase", "mite"] not in r["facts"]
+    assert r["facts"][0] == ["lynx", "chase", "vole"]           # facts[0] is now a HOP, not the conclusion
+    assert r["direct_svo"] == ["lynx", "chase", "mite"]
+    supporting, derived_svo = derived_reply_fields(r["facts"], r["derived"], r["derived_from"], r["direct_svo"],
+                                                   r["conclusion_is_hop"])
+    assert derived_svo is None                                   # the reply never states the conclusion
     assert supporting == HOPS3
 
 
@@ -242,10 +274,29 @@ def test_reply_fields_keep_c2_and_plain_turns_unchanged():
     from research.runners.rich_answer_composer import derived_reply_fields
     c2_hops = [["heron", "hunt", "frog"], ["frog", "eat", "gnat"]]
     c2_facts = [["frog", "eat", "gnat"], ["gnat", "use", "wings"]]
-    assert derived_reply_fields(c2_facts, True, c2_hops) == (c2_facts, ["frog", "eat", "gnat"])
+    assert derived_reply_fields(c2_facts, True, c2_hops, ["frog", "eat", "gnat"], True) == (
+        c2_facts, ["frog", "eat", "gnat"])
     plain = [["dog", "chase", "cat"]]
     assert derived_reply_fields(plain, False, None) == (plain, None)
     assert derived_reply_fields([], True, c2_hops) == ([], None)
+
+
+def test_route_mark_not_membership_decides_stored():
+    # the transitive spiking-reach fallback lists the never-told conclusion itself as its only "hop"
+    from research.runners.rich_answer_composer import derived_reply_fields
+    from research.runners.compositional_chain_route import resolve_compositional_chain
+    c2 = types.SimpleNamespace(kb=[({"agent": "heron", "action": "hunt", "patient": "frog"}, None),
+                                   ({"agent": "frog", "action": "eat", "patient": "gnat"}, None)])
+    c2.query_patient = lambda a, v: {("heron", "hunt"): "frog", ("frog", "eat"): "gnat"}.get((a, v))
+    svo = resolve_compositional_chain(c2, "what does the heron's prey eat?")
+    assert list(svo) == ["frog", "eat", "gnat"] and svo.conclusion_is_hop is True   # C2 marks its stored hop
+    concl = ["e0", "precede", "e3"]
+    fallback = ChainedSVO(concl, derived_from=[concl])
+    assert fallback.conclusion_is_hop is False
+    supporting, derived_svo = derived_reply_fields([concl], True, fallback.derived_from, list(fallback),
+                                                   fallback.conclusion_is_hop)
+    assert concl not in supporting and derived_svo == concl
+    assert ChainedSVO(["frog", "eat", "gnat"], [["frog", "eat", "gnat"]], conclusion_is_hop=True).conclusion_is_hop
 
 
 def test_confidence_cap_truncation_keeps_the_derived_lead():

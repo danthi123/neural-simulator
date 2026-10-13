@@ -148,7 +148,8 @@ def committed_hops(agent, action, meta) -> Tuple[list, bool]:
 
 
 def conclusion_is_stored(composer, agent, action, patient) -> bool:
-    """Is `[agent, action, patient]` itself a stored fact? A declared HOST read used only to LABEL the answer's
+    """Is `[agent, action, patient]` itself a stored AFFIRMED fact (polarity None/AFFIRM; a stored NEGATE triple
+    does not count)? A declared HOST read used only to LABEL the answer's
     provenance (a told conclusion stays a plain recall), never to choose the answer: an exact match over the
     composer's fact list (the D6 read-time view when that flag is on, like `_all_concepts`) and, when the composer
     has a routed LTM tier, the agent's one shard (`ltm.shard_for(agent).kb`, the same routing the store's own reads
@@ -158,8 +159,8 @@ def conclusion_is_stored(composer, agent, action, patient) -> bool:
         for item in kb or []:
             fact = item[0] if isinstance(item, (list, tuple)) else item
             if (isinstance(fact, dict) and fact.get("agent") == agent and fact.get("action") == action
-                    and fact.get("patient") == patient):
-                return True
+                    and fact.get("patient") == patient and fact.get("polarity") in (None, "AFFIRM")):
+                return True          # a NEGATE triple (a heard negation) contradicts the conclusion: never "stored"
         return False
     try:
         kb = getattr(composer, "kb", [])
