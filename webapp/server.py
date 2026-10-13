@@ -4099,7 +4099,8 @@ _SHARED_LTM_COMPOSER_ENV = ("BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_
 # load and every lazy LTM bridge build leave those streams untouched (research/runners/global_rng_guard.py), so a
 # recall no longer resets the chat's global noise to the seed-42 stream, and a shared store cannot carry one
 # conversation's history into another's noise. FORCED ON whenever the shared store is on (sharing is only byte-safe
-# with it); otherwise DEFAULT OFF = byte-identical to before (BRAIN_LTM_RNG_ISOLATE=1 opts in).
+# with it); otherwise DEFAULT OFF (BRAIN_LTM_RNG_ISOLATE=1 opts in). Both flags off: the replies are byte-identical to
+# base 6a3bfe247 on the seed-7 three-session turnset (18/18 sha256, docs/drafts/shared-ltm/WORKLOG.md step 6); other paths expected unchanged.
 _LTM_RNG_ISOLATE_DEFAULT_ON = False
 
 

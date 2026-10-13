@@ -413,7 +413,8 @@ class RFPhasorComposer:
         self._dlpfc = None       # dialogue-planning Control (lazy; rebuilt only when the association graph changes)
         self._dlpfc_key = None
         self._bridge_cache = {}  # (c-opt) reuse RF bridges by neuron count -> avoid _initialize_simulation_data per op
-        # (global-RNG hygiene, DEFAULT False = byte-identical) building a bridge runs `_initialize_rng(self.seed)`, which
+        # (global-RNG hygiene, DEFAULT False: expected unchanged; the server default replies were byte-identical to base
+        # 6a3bfe247 on the seed-7 three-session turnset, docs/drafts/shared-ltm/WORKLOG.md step 6) building a bridge runs `_initialize_rng(self.seed)`, which
         # reseeds the process-global np.random / random / cp.random streams. True -> every bridge this composer builds
         # (lazily, on first use of an op size; one per fact in the substrate store) leaves those streams exactly as they
         # were (research/runners/global_rng_guard.py). The webapp sets it on the cortical-LTM shards under
@@ -422,7 +423,7 @@ class RFPhasorComposer:
 
     # --- RF complex-synapse ops (each op a per-op RF bridge; reuse-by-import the substrate) ---
     def _global_rng_guard(self):
-        """`preserved_global_rng()` when `_isolate_global_rng`, else a no-op context (the byte-identical default)."""
+        """`preserved_global_rng()` when `_isolate_global_rng`, else a no-op context (the default)."""
         if getattr(self, "_isolate_global_rng", False):
             from research.runners.global_rng_guard import preserved_global_rng
             return preserved_global_rng()

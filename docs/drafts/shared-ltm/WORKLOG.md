@@ -191,7 +191,8 @@ ones, independent of this change.)
      so the guard swaps a temporary RandomState into the device slot for the block and puts the original object
      back, untouched. Checked on the cupy backend: same object back, next draw equal to the no-build draw, while
      the unguarded control differs.
-   - `RFPhasorComposer._isolate_global_rng` (default False = byte-identical). When set, every bridge the composer
+   - `RFPhasorComposer._isolate_global_rng` (default False; the default replies are byte-identical to base 6a3bfe247
+     on one turnset, step 6). When set, every bridge the composer
      builds goes through the guard (`_new_rf_bridge`, `_izh_bank`).
    - `webapp/server.py`: `BRAIN_LTM_RNG_ISOLATE` (`_ltm_rng_isolate_on()`). Forced on whenever the shared store is
      on; otherwise default off (`_LTM_RNG_ISOLATE_DEFAULT_ON = False`), so plain OFF is unchanged. When on,
@@ -283,6 +284,30 @@ RSS (VmRSS after each session's build turn; KiB, GiB = KiB / 1048576):
 
 The private-copy arms peak at 18.77 GiB under a 20 GiB cap: three private copies plus six turns leave about 1.2 GiB
 of headroom.
+
+## Step 6: re-review fixes (merge verdict MERGE as s/main 683c181b3; fixes before the flip)
+
+1. RNG guard thread safety: `global_rng_guard._GUARD_LOCK`, a module RLock held across every guarded block (a leaf
+   lock). Tests: restore on raise + lock released, nesting on one thread, two overlapping threads end on the original
+   stream, and the cupy branch (same RandomState object back, next draw equal; skipped without cupy or a device).
+2. The mutation-guard fingerprint reads the RF weights through `sim.backend.to_host` (it failed on cupy).
+3. The env scan covers the whole of rf_phasor_composer.py and sharded_phasor_store.py and fails on a non-literal name.
+4. "byte-identical" (docs/TERMS.md: in the data). The tip's three-session driver run against a code-only export of
+   base 6a3bfe247 (`git archive`, data symlinked; `run_base.sh`), seed 7, v2, under the brain lock:
+
+       flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock docs/drafts/shared-ltm/run_base.sh <base_export> 7 v2
+       python docs/drafts/shared-ltm/compare.py runs/base6a3bfe247_s7_v2.json runs/off_s7_v2.json
+
+   18/18 identical (sha256 of each reply body): the base equals plain OFF, so with step 5 base == off == offiso == on
+   at seed 7 on this turnset. The base JSON has no git SHA (the export is not a checkout) and both flag fields None
+   (its server has neither flag), which shows the base server was the one imported. The comments in server.py,
+   rf_phasor_composer.py and developed_brain_io.py cite this run for the replies and say "expected unchanged"
+   elsewhere.
+5. The developed branch passes `ltm_store=` only when a store was built; the default call has no such kwarg.
+
+Tests at the tip: `tests/test_shared_ltm.py` SIM_BACKEND=numpy (CUDA hidden) 35 passed, 1 skipped (the cupy guard
+test); SIM_BACKEND=cupy 36 passed. The composer / LTM / server suites listed under Review fixes: numpy 154 passed,
+5 skipped; cupy below.
 
 ## Open risks
 
