@@ -523,7 +523,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                          ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128,
                          ltm_composer_kwargs=None, enable_codebook_cache=False,
                          enable_decode_escalation=False, decode_escalate_margin=None,
-                         integrated_loop=False, onebrain_k_max=None):
+                         integrated_loop=False, onebrain_k_max=None, ltm_store=None):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -701,7 +701,14 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     # buffer, then the routed LTM shard (sub-second at any K). No LTM -> the plain flat composer, byte-for-byte. The
     # tiers self-consistently encode by WORD, so a separate LTM codebook is correct (a fact is read from the tier it
     # was stored in). See tiered_fact_store.py + the sharded-fact-store finding (2026-08-20).
-    if ltm_bundle is not None:
+    # `ltm_store` (one brain, many conversations, step 1; default None = byte-identical): an already-loaded LTM (the
+    # webapp's process-shared read-only `SharedLTMView`, research/runners/shared_ltm.py) installed INSTEAD of loading
+    # `ltm_bundle`, so many conversations wrap one store rather than one copy each.
+    if ltm_store is not None:
+        from research.runners.tiered_fact_store import TieredFactStore
+        inner = _inner_agent(agent)
+        inner.composer = TieredFactStore(inner.composer, ltm_store)
+    elif ltm_bundle is not None:
         from research.runners.tiered_fact_store import (TieredFactStore, build_ltm_from_facts, auto_n_shards)
         from research.runners.sharded_phasor_store import ShardedPhasorStore
         ltm = None
