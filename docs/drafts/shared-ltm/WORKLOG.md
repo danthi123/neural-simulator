@@ -222,6 +222,68 @@ test_decode_escalation_seed44_hole, test_sharded_phasor_store, test_tiered_fact_
 test_arm_renderer_production_path, test_battery_session_release, test_rank2_integrated_loop_thread,
 test_brain_prewarm_scratch_session, test_communicable_turn_wirein): 149 passed, 5 skipped.
 
+## Step 5: review evidence, seeds 7 and 8, three arms (numpy CPU)
+
+Driver `three_sessions.py <out> v2` through the real `brain_chat` handler (tiny-demo, stub renderer,
+`SIM_DISABLE_LLM=1`). Sessions s1, s2, s3 are built back to back on turn 0; every later turn interleaves s1, s2, s3.
+Turns (v2): t0 "what does the dog chase" (buffer); t1 "what country is chelsea fc from?" (LTM);
+t2 "what does the cat eat" (buffer, after an LTM recall); t3 "what sport is chelsea fc in?" (LTM);
+t4 "what does the brain use" (buffer, after an LTM recall); t5 "what does the dragon do" (both tiers abstain).
+Arms: `on` = BRAIN_SHARED_LTM=1 (isolation forced); `offiso` = BRAIN_SHARED_LTM=0 BRAIN_LTM_RNG_ISOLATE=1; `off` =
+BRAIN_SHARED_LTM=0 BRAIN_LTM_RNG_ISOLATE=0 (today's default). Commands, each under the brain lock, chained by
+`run_all.sh`:
+
+    flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock docs/drafts/shared-ltm/run_arm.sh <on|offiso|off> 20 <7|8> v2
+    # run_arm.sh: mem_ok.sh 14, then memcap.sh 20 -- env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1
+    #   BRAIN_CHAT_SEED=<seed> <arm flags> python -u docs/drafts/shared-ltm/three_sessions.py runs/<arm>_s<seed>_v2.json v2
+    python docs/drafts/shared-ltm/compare.py runs/offiso_s7_v2.json runs/on_s7_v2.json    # and the other pairs
+
+All six exited 0. The code was identical across the runs: the recorded SHAs 58053c4c2, 5a97bae78, f287aac58 and
+9d1a528a5 differ only by committed run JSONs. `git_dirty` true on the seed-7 runs is the tracked provenance log
+`research/findings/raw/_provenance/runs.jsonl`, which runs append to (reverted, not committed).
+
+Result: ON vs OFF+isolate is 18/18 identical at seed 7 and 18/18 at seed 8 (whole reply body, sha256 per (session,
+turn)). OFF+isolate vs plain OFF is also 18/18 at both seeds. So the hygiene fix changed no reply on these turns;
+the global stream the LTM reseeded is not read by these reply paths in a way that changes a reply. That is not
+proof for other paths: the unit tests show the leak itself and that isolation removes it. The hashes are the same
+in all three arms, so one table per seed (first 16 hex digits):
+
+Seed 7:
+
+| turn | s1 | s2 | s3 |
+| --- | --- | --- | --- |
+| t0 dog chase | 00e5253cc912b9b8 | e7095a6f4c343036 | e7095a6f4c343036 |
+| t1 chelsea country (LTM) | 9063a984bb29b739 | 9063a984bb29b739 | 9063a984bb29b739 |
+| t2 cat eat | d9c8917cc1a050ad | d9c8917cc1a050ad | d9c8917cc1a050ad |
+| t3 chelsea sport (LTM) | 3705e909126473e9 | 3705e909126473e9 | 3705e909126473e9 |
+| t4 brain use | 0b9655ade8807a33 | 0b9655ade8807a33 | 0b9655ade8807a33 |
+| t5 dragon (abstain) | 2870f3efc2c170b9 | 2870f3efc2c170b9 | 2870f3efc2c170b9 |
+
+Seed 8:
+
+| turn | s1 | s2 | s3 |
+| --- | --- | --- | --- |
+| t0 dog chase | 2e71d2a5480ee265 | ddea2ea8eb24ea1a | ddea2ea8eb24ea1a |
+| t1 chelsea country (LTM) | 4278bb69bf72a52a | 4278bb69bf72a52a | 4278bb69bf72a52a |
+| t2 cat eat | bf476a16873d9fd8 | bf476a16873d9fd8 | bf476a16873d9fd8 |
+| t3 chelsea sport (LTM) | 28b19518773a1986 | 28b19518773a1986 | 28b19518773a1986 |
+| t4 brain use | 0e6b5bcaf12abed2 | 0e6b5bcaf12abed2 | 0e6b5bcaf12abed2 |
+| t5 dragon (abstain) | ebc3350e7b336164 | ebc3350e7b336164 | ebc3350e7b336164 |
+
+RSS (VmRSS after each session's build turn; KiB, GiB = KiB / 1048576):
+
+| arm | seed | s1 | s2 | s3 | added by s2 / s3 | VmHWM |
+| --- | --- | --- | --- | --- | --- | --- |
+| on | 7 | 6,195,388 | 6,485,684 | 6,662,660 | +290,296 / +176,976 (0.28 / 0.17 GiB) | 7,403,744 (7.06 GiB) |
+| offiso | 7 | 6,196,292 | 11,733,712 | 17,327,368 | +5,537,420 / +5,593,656 (5.28 / 5.33 GiB) | 19,682,444 (18.77 GiB) |
+| off | 7 | 6,190,720 | 11,732,652 | 17,325,172 | +5,541,932 / +5,592,520 (5.29 / 5.33 GiB) | 19,681,240 (18.77 GiB) |
+| on | 8 | 6,148,808 | 6,480,528 | 6,661,232 | +331,720 / +180,704 (0.32 / 0.17 GiB) | 7,401,540 (7.06 GiB) |
+| offiso | 8 | 6,205,368 | 11,730,260 | 17,327,760 | +5,524,892 / +5,597,500 (5.27 / 5.34 GiB) | 19,680,776 (18.77 GiB) |
+| off | 8 | 6,114,108 | 11,732,452 | 17,325,816 | +5,618,344 / +5,593,364 (5.36 / 5.33 GiB) | 19,680,676 (18.77 GiB) |
+
+The private-copy arms peak at 18.77 GiB under a 20 GiB cap: three private copies plus six turns leave about 1.2 GiB
+of headroom.
+
 ## Open risks
 
 - LTM reads now serialize across conversations (one lock per store). Under concurrent chat, a conversation's LTM
@@ -234,8 +296,12 @@ test_brain_prewarm_scratch_session, test_communicable_turn_wirein): 149 passed, 
   the mutation-guard test covers the read API).
 - The Izhikevich-bank read paths (spiking cleanup, `BRAIN_METACOG_SPIKING_MARGIN=1`) and read noise are refused
   for sharing, not proven safe: with any of them on, each conversation still gets its own copy.
-- The developed-bundle branch is covered by the brain-free test only (stubbed `load_developed_brain`); the real
-  run covered the tiny-demo path, the production default.
+- The developed-bundle branch is covered by brain-free tests: the server branch with `load_developed_brain`
+  stubbed, plus the real `ltm_store=` branch on a small saved bundle. No real-handler run on a developed bundle;
+  the runs covered the tiny-demo path, the production default.
+- The RNG guard covers bridge BUILDS. Per-call global draws inside an LTM query would not be covered. None exist on
+  the default read path (`rf_kick` / `rf_resonate_steps` draw nothing); the Izhikevich-bank paths that step the
+  full simulation are refused for sharing.
 - `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md` (landed on s/main 79ba4b0a1, after this branch point)
   names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. This branch ran
   the three-session real-handler check above, not the battery §9.1 pair; that pair is still to run before the merge.
