@@ -509,6 +509,37 @@ def test_a_selfinit_turn_does_not_wait_out_a_running_wander(tick_env, monkeypatc
     assert not CE.selfinit_lock(key).locked()
 
 
+def test_a_reset_during_the_wander_leaves_nothing_in_the_fresh_session(tick_env, monkeypatch):
+    """Re-review item 4: a reset (here the /api/brain-chat/reset shape: forget_session, no mark_request) while the
+    wander runs outside the lock. The wander's writes (IOR adaptation, ideation counter) must not re-appear in the
+    fresh session and nothing is recorded; a mull the FRESH session armed meanwhile is kept. Control: the same tick
+    without a reset does leave its IOR adaptation (the instrument sees the write)."""
+    CE = tick_env
+    monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
+    log, entered = [], threading.Event()
+    key = ("s0", "tiny-demo", "stub")
+    mood = _mood()
+    CE._WANDER_BUDGET[key] = 1
+    org = _SelfInit(key, log, wander_s=0.5, entered=entered)
+    th = threading.Thread(target=lambda: CE.tick_idle_sessions(mood, lambda: _Affect(log),
+                                                               selfinit_getter=lambda k: org))
+    th.start()
+    assert entered.wait(2.0)
+    with L.brain_turn("reset"):
+        CE.forget_session(key)
+        CE.mark_mull(key, "otter")                                   # the fresh session's own state
+    th.join(5.0)
+    assert ("wander", False, True) in log                            # the wander did run, outside the turn lock
+    assert key not in CE._WANDER_ADAPT and key not in CE._IDEATE_TICK
+    assert key not in CE._INNER_LIFE
+    assert CE._MULLED_TOPIC.get(key) == "otter"
+    # control: no reset -> the wander's IOR write stays
+    CE._MULLED_TOPIC.pop(key, None)
+    CE._WANDER_BUDGET[key] = 1
+    assert CE.tick_idle_sessions(mood, lambda: _Affect(log), selfinit_getter=lambda k: org) == 1
+    assert key in CE._WANDER_ADAPT and CE._INNER_LIFE[key][-1]["wandered"] == "dog"
+
+
 def test_mid_thought_readout_without_a_prior_thought(tick_env):
     si = tick_env.mid_thought_readout(("nobody", "tiny-demo", "stub"))
     assert si["last_wandered"] is None and si["text"].endswith("going yet.")

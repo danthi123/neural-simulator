@@ -62,9 +62,12 @@ _WANDER_BUDGET: dict = {}
 # waited behind a turn never ticks that session the moment the turn releases. _REQ_SEQ: a per-session sequence stamp
 # from mark_request, NOT dropped by forget_session, so a tick can tell that a turn (even a reset turn) arrived while
 # it worked on that session outside the lock. _SELFINIT_LOCKS: one lock per session's self-init organ, held by the
-# tick's wander (which runs OUTSIDE the turn lock) and by a turn that speaks through the same organ.
+# tick's wander (which runs OUTSIDE the turn lock) and by a turn that speaks through the same organ. _RESET_SEQ: a
+# per-session stamp bumped by forget_session (never dropped), so a tick can tell the session was RESET while it worked
+# on it outside the lock (a reset through /api/brain-chat/reset sends no mark_request).
 _LAST_TURN_END: dict = {}
 _REQ_SEQ: dict = {}
+_RESET_SEQ: dict = {}
 _REQ_COUNTER = itertools.count(1)
 _SELFINIT_LOCKS: dict = {}
 # per-session topic the last live turn RECALLED (set by the handler on an in_memory referential recall); the next
@@ -188,7 +191,9 @@ def _idle_ref(cache_key, real_time: bool):
 
 
 def forget_session(cache_key) -> None:
-    """On a session reset, drop its continuous state (mirrors _SESSION_MOOD/_SESSION_SELFINIT cleanup)."""
+    """On a session reset, drop its continuous state (mirrors _SESSION_MOOD/_SESSION_SELFINIT cleanup). Also stamps
+    `_RESET_SEQ`, so a wander still running on the old session drops what it wrote (`_drop_wander_state`)."""
+    _RESET_SEQ[cache_key] = next(_REQ_COUNTER)
     _LAST_REQUEST.pop(cache_key, None)
     _LAST_TURN_END.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
@@ -1190,9 +1195,20 @@ def _tick_feel(cache_key, session_mood: dict, affect_organ):
     return {"v1": v1, "a1": a1, "diff": diff, "note": note}
 
 
+def _drop_wander_state(cache_key) -> None:
+    """Undo what a wander WROTE for a session that was reset while it ran: the IOR adaptation (`_post_wander_ior`),
+    the ideation counter and the ideation store. Without this they re-appear in the fresh session after
+    `forget_session` cleared them (re-review 2026-10-13, item 4). The mulled topic is not cleared here: the wander only
+    consumes it (a pop), so a value present now was armed by a turn of the FRESH session."""
+    _WANDER_ADAPT.pop(cache_key, None)
+    _IDEATE_TICK.pop(cache_key, None)
+    _SPIKING_IDEATE_STORE.pop(cache_key, None)
+
+
 def _tick_think(cache_key, selfinit_organ, note):
     """(b) THOUGHT: the curiosity-biased spiking wander (or, occasionally, ideation) on THIS session's self-init organ.
-    Touches only that organ and tick-owned state (IOR adaptation, the ideation counter, the mulled topic).
+    Touches that organ and this session's wander state: it writes the IOR adaptation, the ideation counter and the
+    ideation store, and it consumes the mulled topic (armed by a live turn's `mark_mull`, not by the tick).
     `tick_idle_sessions` runs it OUTSIDE the turn lock (a ~55 s cupy wander must never hold a turn), under
     `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.)"""
     wandered = None
@@ -1309,6 +1325,7 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
             if last is not None and (t - last) < IDLE_SEC:
                 continue  # still active -> don't tick mid-turn
             seq0 = _REQ_SEQ.get(cache_key)
+            reset0 = _RESET_SEQ.get(cache_key)
             try:
                 organ = affect_organ_getter()
                 siorg = None
@@ -1327,8 +1344,11 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 think = _tick_think(cache_key, siorg, feel["note"])
         # (3) TURN LOCK: record, or drop a wander a turn preempted.
         with _brain_turn("idle_tick"):
-            preempted = _REQ_SEQ.get(cache_key) != seq0
-            if feel is not None and not (preempted and cache_key not in session_mood):   # a reset: record nothing
+            reset = _RESET_SEQ.get(cache_key) != reset0
+            if reset:
+                _drop_wander_state(cache_key)   # the session was reset mid-wander: nothing of it reaches the new one
+            preempted = reset or _REQ_SEQ.get(cache_key) != seq0
+            if feel is not None and not reset and not (preempted and cache_key not in session_mood):
                 wandered, ideation, mull, note = think
                 dropped = None
                 if preempted and (wandered or ideation is not None):
@@ -1505,8 +1525,8 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
 
         for _step in (_s_d5, _s_sleep_replay, _s_persist, _s_homeostasis, _s_tag_capture, _s_relax91, _s_relax92):
             with _brain_turn("idle_tick"):
-                if _REQ_SEQ.get(cache_key) != seq0:
-                    break   # a turn arrived: leave this session for the next idle period
+                if _REQ_SEQ.get(cache_key) != seq0 or _RESET_SEQ.get(cache_key) != reset0:
+                    break   # a turn (or a reset) arrived: leave this session for the next idle period
                 try:
                     _step()
                 except Exception:
