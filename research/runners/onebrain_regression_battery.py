@@ -630,6 +630,23 @@ C5B_SESSIONS = {name: {"labels": [t[0] for t in _c5b_session(name)], "idle_label
                 for name in ("stagger", "rotated")}
 _EXTRA_TURNS += _c5b_session("stagger") + _c5b_session("rotated")
 
+# RE-TELL session (Amendment B review, 2026-10-13). The idle organ lists candidates in store-slot order and builds its
+# circuit from (K, seed), so in STAGGERED and ROTATED the newest fact always sits in the LAST slot and both sessions
+# run the same race: a host that voices the last slot is indistinguishable from recency. This session teaches F1..F4,
+# then re-tells two EARLY facts late: t5 re-tells F2 verbatim, t6 re-tells F1 with a new patient (the brain's own
+# reconsolidation path rewrites a contradicted fact in its slot). Whichever re-tell re-tags a fact WITHOUT a new slot
+# makes the newest-tagged fact sit in an early slot: recency voices it, a last-slot host does not. Which of the two
+# does so is read from the idle turn's candidate record (kb_idx, t_enc); the scorer never assumes it.
+C5B_RETELL = [("c5re_t%d" % (i + 1), C5B_FACTS[i][0]) for i in range(4)] + [
+    ("c5re_t5", "the heron hunts the frog"),      # F2 again, verbatim
+    ("c5re_t6", "the lynx chases the frog")]      # F1 re-told with a new patient (lynx chase vole -> lynx chase frog)
+C5B_SESSIONS["retell"] = {
+    "labels": [t[0] for t in C5B_RETELL] + ["c5re_idle"], "idle_label": "c5re_idle",
+    "taught": [list(C5B_FACTS[k][1]) for k in range(4)],
+    "retold": [["heron", "hunt", "frog"], ["lynx", "chase", "frog"]]}
+_EXTRA_TURNS += ([(lab, txt, "c5re", i == 0, None, False) for i, (lab, txt) in enumerate(C5B_RETELL)]
+                 + [("c5re_idle", "", "c5re", False, None, False)])
+
 
 def _lbf_rows_extra_turns():
     """Turns that research/runners/lbf_rows/<module>.py declares as a LITERAL `EXTRA_TURNS` list (same 6-tuple shape as
