@@ -172,3 +172,29 @@ flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock bash -c 'bash tools/mem_
 - Integration (not this packet): the slices would sit on the shared cortical pool as afferents of the organ's own ASK
   slice, and the global DA crave gain would stop being the only brake. Whether the DA gain should keep scaling the
   want on top of the per-topic trace is a separate question for the handler battery.
+
+## Result: dev battery, seeds 1-8 (2026-10-13; recorded by Claude after the builder was cut off)
+
+Verdict **NO-GO**, at the frozen weight 80 and tau_hab 12000 ms. File: `research/findings/raw/_curiosity_lp/battery_dev1-8.json`.
+
+Bars that failed:
+- B1 (asks on the first novel probe): 1/8.
+- B1b (asks on every first gap): 0/8.
+- B6 (perm_order): 0/8.
+- B7 (perm_exposure): 1/8.
+
+Bars that held:
+- B2 (stops by the 4th probe): 8/8.
+- B3 (an answered gap is not re-asked): 8/8.
+- B4 (moats silent): 8/8.
+- B5 (habituation lesion asks on the 4th probe; attributable fraction 1.0): 8/8.
+- B8 (null): 8/8.
+- B9 (drive lesion): 8/8.
+
+Informational: `asks_before_stop` is 0 on every seed. The intact brain never asked at all. B2, B3 and B4 hold only because nothing was ever asked; they are not evidence of a brake.
+
+This is the failure predicted in the pre-battery note. Background noise fires the topic slice during the silent inter-turn gaps, so the synapses are already depressed before the first probe. The brake runs on a clock, not on unanswered asks.
+
+Next method (no-defer; a new design, registered before data): topic input neurons with background noise OFF, as the habituation organ already runs. Keep every bar and arm.
+
+What this verdict covers: the METHOD "noise-driven slice depression", not the capability.
