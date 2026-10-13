@@ -119,3 +119,13 @@ turn on numpy with `OMP_NUM_THREADS=1` takes ~120-135 s; the first teach turn ~3
 - Peak RSS: phase 0 6.25 GB (one session), phase 1 11.86 GB (two sessions). The after-restart A turn took 469 s
   (session build + reload + recall on numpy).
 
+### Identity rerun after the review changes (review item 6)
+
+`research/runners/turn_lock_identity_check.py --seed 7` at code e455d548f (FIFO lock, bounded wait, turn-end stamp,
+restructured tick), `research/findings/raw/_one_brain_probe/turn_lock_identity_review_s7.json`. Scope: the real
+handler called directly (no uvicorn, no idle tick running), stub renderer, numpy, production LTM default, one
+session, five turns, three fresh processes. sha256 per body, first 12 hex: 954f3ae0a5b4, 31c4e0423a79,
+e7f59c2f83ac, 3e3245f4b65a, 4a54b989b84b; equal for lock ON, OFF and ON again (the null) on 5/5 turns, and equal to
+the first run's hashes (`turn_lock_identity_s7.json`, code 5ceec4bc4). Verdict byte_identical = true, readable.
+Peak RSS 6.5 GB per process; ~600 s per arm.
+
