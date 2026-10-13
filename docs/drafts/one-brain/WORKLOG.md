@@ -45,10 +45,16 @@ overlap (max 2); single-caller bodies equal ON vs OFF; a failed build releases t
 affect organ under the lock, waits for a turn in flight, skips a session marked while it waited, and takes no lock
 under the escape. Neighbouring suites green (battery release, sleep replay, persistence, prewarm: 59 passed).
 
+Single-caller byte identity, real brain (`research/runners/turn_lock_identity_check.py`, dev seed 7, numpy, stub
+renderer, production LTM default, one session, 5 turns: teach, ask, build-KB ask, LTM ask, re-ask; three fresh
+processes): sha256 of every response body equal for `BRAIN_TURN_LOCK=1` vs `=0` on 5/5 turns, and the null
+(lock ON vs ON again, a second process) equal on 5/5, so the compare is readable. Verdict byte_identical = true.
+`research/findings/raw/_one_brain_probe/turn_lock_identity_s7.json`. Peak RSS 6.5 GB per process; ~570 s per arm.
+
 ### Probe: `research/runners/one_brain_probe.py`, dev seed 7
 
 Command (brain lock, memcap 14 GB, numpy, stub renderer, production LTM default = wikidata_100k):
-`research/findings/raw/_one_brain_probe/m0_s7.json` (code 5ceec4bc4; trimmed log `m0_s7.log`).
+`research/findings/raw/_one_brain_probe/m0_s7.json` (code 5ceec4bc4; the trimmed log `m0_s7.log` is gitignored, local only).
 
 | arm | A_ask | B_ask | A_ask_again | B_ltm | B_build | matches prediction |
 |---|---|---|---|---|---|---|
