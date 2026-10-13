@@ -5185,13 +5185,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
             else:
                 # M0: the idle tick wanders on this organ OUTSIDE the turn lock, so the turn takes the organ's own
-                # lock (it waits only if a wander on THIS session's organ is mid-flight).
+                # lock, waiting at most a short bound: this turn holds the TURN lock, so it must not wait out a
+                # wander there. A wander still running -> the honest "mid-thought" read-out instead.
                 from webapp import continuous_engine as _CE_si
-                with _CE_si.selfinit_lock(cache_key):
-                    siorg = _get_selfinit_organ(cache_key)
-                    si = siorg.speak(lesion=_SI.selfinit_lesioned())
+                si = _CE_si.selfinit_speak_or_mid_thought(
+                    cache_key, lambda: _get_selfinit_organ(cache_key).speak(lesion=_SI.selfinit_lesioned()))
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
-            answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
+            if si.get("mid_thought"):
+                answer = si["text"]
+            else:
+                answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
                 "answer": answer,
                 "abstained": (not spoke), "recalled_svo": None, "verified": bool(spoke),

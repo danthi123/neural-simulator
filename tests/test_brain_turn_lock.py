@@ -372,8 +372,11 @@ def tick_env(monkeypatch):
     monkeypatch.delenv("BRAIN_PERSIST_LEARNING", raising=False)
     monkeypatch.delenv("BRAIN_CONTINUOUS_IDEATE", raising=False)
     monkeypatch.setenv("BRAIN_CONTINUOUS_WANDER_MULL", "0")
+    # every per-session dict the tick reads (the ideation counter decides wander vs ideation, so a leak from an
+    # earlier test changes which branch a later test's tick takes)
     for name in ("_LAST_REQUEST", "_LAST_TURN_END", "_REQ_SEQ", "_WANDER_BUDGET", "_INNER_LIFE", "_WANDER_ADAPT",
-                 "_SELFINIT_LOCKS"):
+                 "_SELFINIT_LOCKS", "_IDEATE_TICK", "_MULLED_TOPIC", "_RECALLED_TOPIC", "_SPIKING_IDEATE_STORE",
+                 "_CONSOLIDATED_TOPICS", "_LAST_HOMEO_KB", "_SLEEP_REPLAYED", "_LAST_SLEEP_KB"):
         monkeypatch.setattr(CE, name, {})
     assert CE.continuous_enabled()
     return CE
@@ -474,6 +477,51 @@ def test_wander_runs_outside_the_turn_lock_and_a_turn_gets_in(tick_env, monkeypa
     rec = CE._INNER_LIFE[key][-1]
     assert rec["wandered"] == "dog" and "wander_dropped" not in rec
     assert CE._WANDER_BUDGET[key] == 0                               # the wander was spent
+
+
+def test_a_selfinit_turn_does_not_wait_out_a_running_wander(tick_env, monkeypatch):
+    """Re-review item 2: a "what are you thinking about" turn holds the TURN lock, so it must not wait for its own
+    session's wander (~55 s on the real organ). Within the short bound it answers with the honest mid-thought
+    read-out (naming the last thought on record, without consuming it), and never drives the busy organ."""
+    CE = tick_env
+    monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
+    log, entered, spoke = [], threading.Event(), []
+    key = ("s0", "tiny-demo", "stub")
+    CE._INNER_LIFE[key] = [{"wandered": "cat"}]                     # an earlier wander's thought, not yet consumed
+    CE._WANDER_BUDGET[key] = 1
+    org = _SelfInit(key, log, wander_s=1.5, entered=entered)
+    th = threading.Thread(target=lambda: CE.tick_idle_sessions(_mood(), lambda: _Affect(log),
+                                                               selfinit_getter=lambda k: org))
+    th.start()
+    assert entered.wait(2.0)
+    t0 = time.perf_counter()
+    with L.brain_turn("turn"):
+        si = CE.selfinit_speak_or_mid_thought(key, lambda: spoke.append(1) or {"n_utt": 1, "utterance": "u"})
+    took = time.perf_counter() - t0
+    th.join(5.0)
+    assert took < CE.SELFINIT_TURN_WAIT_S + 0.25 and spoke == []
+    assert si["mid_thought"] is True and si["n_utt"] == 0 and si["utterance"] is None
+    assert si["last_wandered"] == "cat" and "cat" in si["text"] and "middle of a thought" in si["text"]
+    assert CE._INNER_LIFE[key][0]["wandered"] == "cat"               # read, not consumed
+    # the wander is over: the same call now drives the organ under its lock
+    si2 = CE.selfinit_speak_or_mid_thought(key, lambda: {"held": CE.selfinit_lock(key).locked(), "n_utt": 1})
+    assert si2 == {"held": True, "n_utt": 1}
+    assert not CE.selfinit_lock(key).locked()
+
+
+def test_mid_thought_readout_without_a_prior_thought(tick_env):
+    si = tick_env.mid_thought_readout(("nobody", "tiny-demo", "stub"))
+    assert si["last_wandered"] is None and si["text"].endswith("going yet.")
+
+
+def test_brain_reply_selfinit_path_uses_the_bounded_organ_wait():
+    """The handler drives the self-init organ through `selfinit_speak_or_mid_thought` (bounded), never through an
+    unbounded `with selfinit_lock(...)` while it holds the turn lock."""
+    import inspect
+    from webapp import server as S
+    src = inspect.getsource(S.brain_reply)
+    assert "selfinit_speak_or_mid_thought(" in src
+    assert "selfinit_lock(" not in src
 
 
 def test_a_same_session_turn_preempts_the_wander(tick_env, monkeypatch):

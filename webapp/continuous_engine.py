@@ -136,6 +136,44 @@ def selfinit_lock(cache_key):
     return _SELFINIT_LOCKS.setdefault(cache_key, threading.Lock())
 
 
+SELFINIT_TURN_WAIT_S = 0.25   # how long a "what are you thinking about" turn waits for its own session's wander
+
+
+def last_wandered(cache_key) -> str | None:
+    """The most recent concept an idle wander surfaced for this session, WITHOUT consuming it (`recent_wander` does
+    consume). None when no unconsumed wander record exists."""
+    for rec in reversed(_INNER_LIFE.get(cache_key) or []):
+        if rec.get("wandered"):
+            return rec["wandered"]
+    return None
+
+
+def mid_thought_readout(cache_key) -> dict:
+    """The honest reply shape for a self-init turn that arrives while this session's wander is still running: a
+    functional read-out of that state (the wander has not finished, so there is no new thought to report), plus the
+    last thought an earlier wander surfaced if one is on record. `n_utt` 0: nothing was produced this turn."""
+    last = last_wandered(cache_key)
+    text = ("I'm in the middle of a thought right now (my idle wandering is still running), "
+            "so I can't say where it is going yet.")
+    if last:
+        text += " The last thing my mind drifted to was %s." % last
+    return {"n_utt": 0, "utterance": None, "mid_thought": True, "last_wandered": last, "text": text}
+
+
+def selfinit_speak_or_mid_thought(cache_key, speak, wait_s=None) -> dict:
+    """Run `speak()` (the turn's drive of this session's self-init organ) under the organ lock, waiting at most
+    `wait_s` (default SELFINIT_TURN_WAIT_S) for it. The caller holds the TURN lock, so it must not wait out a wander
+    (~55 s on the real organ) there: every other session and the tick would queue behind it. If the wander still
+    holds the organ, return `mid_thought_readout` instead (re-review 2026-10-13, item 2)."""
+    lock = selfinit_lock(cache_key)
+    if not lock.acquire(timeout=SELFINIT_TURN_WAIT_S if wait_s is None else float(wait_s)):
+        return mid_thought_readout(cache_key)
+    try:
+        return speak()
+    finally:
+        lock.release()
+
+
 def _idle_ref(cache_key, real_time: bool):
     """The time idleness is measured from. Real time (the server loop): the later of the turn's start and end stamps.
     A caller-supplied clock (`now` passed, the battery's world steps): the turn-start stamp alone, as before M0, because

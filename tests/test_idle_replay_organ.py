@@ -41,12 +41,14 @@ def test_no_encode_lesion_is_the_selfinit_lesion(monkeypatch):
 
 
 def test_server_off_path_unchanged():
-    """Static: with the flag off the idle block calls the self-init organ exactly as before, and the per-turn hook is
-    behind the flag read."""
+    """Static: with the flag off the idle block calls the self-init organ as before (one-brain M0: through the
+    session's organ lock with a short bound, `continuous_engine.selfinit_speak_or_mid_thought`, because the idle
+    tick now wanders on that organ outside the turn lock), and the per-turn hook is behind the flag read."""
     src = open(os.path.join(_ROOT, "webapp", "server.py"), encoding="utf-8").read()
     assert "_ir_on = _IR.idle_replay_enabled()\n        if _ir_on:\n            _IR.note_turn(" in src
-    assert ("            else:\n                siorg = _get_selfinit_organ(cache_key)\n"
-            "                si = siorg.speak(lesion=_SI.selfinit_lesioned())\n") in src
+    assert ("                si = _CE_si.selfinit_speak_or_mid_thought(\n"
+            "                    cache_key, lambda: _get_selfinit_organ(cache_key).speak(lesion=_SI.selfinit_lesioned()))\n"
+            ) in src
     assert "_IR_reset.reset_organ(cache_key)" in src
 
 
