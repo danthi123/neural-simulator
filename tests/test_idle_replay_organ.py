@@ -21,10 +21,12 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # ── flags ───────────────────────────────────────────────────────────────────────────────────────────────────────
-def test_default_off(monkeypatch):
+def test_default_on(monkeypatch):
+    # research/c5-flip: the default flipped True (PROVISIONAL, validation = battery-prereg 2026-10-12);
+    # explicit "0" remains the byte-identical pre-flip escape (asserted at the end of this test).
     monkeypatch.delenv("BRAIN_IDLE_REPLAY", raising=False)
-    assert IR._IDLE_REPLAY_DEFAULT_ON is False
-    assert IR.idle_replay_enabled() is False
+    assert IR._IDLE_REPLAY_DEFAULT_ON is True
+    assert IR.idle_replay_enabled() is True
     monkeypatch.setenv("BRAIN_IDLE_REPLAY", "1")
     assert IR.idle_replay_enabled() is True
     monkeypatch.setenv("BRAIN_IDLE_REPLAY", "0")
