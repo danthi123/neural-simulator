@@ -51,7 +51,7 @@ Per-call state ON the store, and whether it is per-conversation:
 | store `_trace`, shard `trace` | the trace recording gate; the server sets `composer.trace = True` every turn and `TieredFactStore.__setattr__` forwards it to `ltm.trace` | YES (wrapped) |
 | store `last_trace` | the answering shard's trace; the server never resets it on the LTM (`composer.last_trace = None` reaches the buffer only); `TieredFactStore._propagate_ltm_trace` copies it to the buffer after an LTM answer | YES (wrapped). Example: `chain_of_thought` dead-ends before any hop and leaves it unchanged, so it would show another conversation's trace. |
 | shard `last_trace` | each shard's own last trace; `render_fact` and the per-fact `query_agent` loop never reset it, and `_note_trace` copies it up | YES (wrapped). Example: a `render_fact` falls through to a shard another conversation queried and reports that conversation's trace. |
-| shard `_last_resonate_n` + the `_bridge_cache` bridges | the reused per-op RF bridge and the gauge pointer `_rf_gauge` reads | Safe to share. `rf_set_complex_weights` replaces all weights, `rf_kick` resets v, u, prev_im, fired, spike_step and the counter, so every op is a pure function of (weights, kick, period, lam, floor). `_rf_gauge` reads the bridge only inside `_trace_scan`, after that same call's resonates. |
+| shard `_last_resonate_n` + the `_bridge_cache` bridges | the reused per-op RF bridge and the gauge pointer `_rf_gauge` reads | Safe to share. `rf_set_complex_weights` replaces all weights, `rf_kick` resets v, u, prev_im, fired, spike_step and the counter, so every op is a pure function of (weights, kick, period, lam, floor). `_rf_gauge` reads the bridge only inside `_trace_scan`, after that same call's resonates. MISSED here, found in review: a COLD build of such a bridge reseeds the process-global RNGs (see Review fixes). |
 | shard `_substrate_scan_bridge` / `_substrate_scan_key` | the consolidated block-diagonal retrieve bridge, keyed on handle identities | Safe: rebuilt only when kb changes (it does not), re-kicked per query. |
 | shard `_scan_comps_cache` | the last batched retrieve, reused for the matched winner | Safe: written by `_scan_comps` and read by `_matched_comp` in the same call. |
 | per-fact substrate bridges (`kb` handles) | `_retrieve_substrate` kicks the fact's own bridge (`render_fact`, per-fact fallback) | Safe: the kick resets state; the batched path only reads their weights. |
@@ -81,9 +81,10 @@ construction env read inside `RFPhasorComposer` is `BRAIN_BATCHED_SUBSTRATE_SCAN
 
 Build it. The knowledge is read-only on every chat path; the only per-conversation state is the trace
 instrumentation, which a per-conversation view keeps; the per-call scratch is shown pure; one lock per shared
-store serializes LTM calls.
+store serializes LTM calls. (Review correction: one side effect was missed. Building a bridge reseeds the
+process-global RNGs, so a cold lazy build is not side-effect free; see Review fixes.)
 
-## Step 2: the mechanism
+## Step 2: the mechanism (as first built, bf91d5747; the review changes are in Review fixes below)
 
 - `research/runners/shared_ltm.py`: `view_for(cache, key, loader)` loads the store once per key (under a guard, so
   two conversations building at once do not load two copies) and returns a new `SharedLTMView` for each
@@ -93,8 +94,8 @@ store serializes LTM calls.
   through. Writes (`store`, `update_on_mismatch`, setting any other attribute) raise `SharedLTMWriteError`.
   Copies of a view share the store. `unshareable_reason` refuses a store with spiking cleanup, the spiking recall
   margin or read noise on (the stateful read paths of step 1); such a store is returned uncached, a private copy.
-- `webapp/server.py`: `_SHARED_LTM` (the process cache), `_shared_ltm_on()` (`BRAIN_SHARED_LTM`, default on via
-  `_SHARED_LTM_DEFAULT_ON`), `_shared_ltm_key(...)` = (realpath of the bundle, seed, D, n_shards, codebook cache,
+- `webapp/server.py`: `_SHARED_LTM` (the process cache), `_shared_ltm_on()` (`BRAIN_SHARED_LTM`; default on at
+  bf91d5747, OFF since the review), `_shared_ltm_key(...)` = (realpath of the bundle, seed, D, n_shards, codebook cache,
   decode escalation, substrate store, batched substrate scan, the three composer-construction env values), and
   `_ltm_store_for_conversation(...)`. The tiny-demo branch of `_build_chat_brain` calls it where it called
   `_load_or_build_ltm_store`. With the flag off it makes exactly that call, argument for argument.
@@ -129,6 +130,9 @@ store serializes LTM calls.
   1 skipped with test_shared_ltm), test_communicable_turn_wirein (8 passed).
 
 ## Step 4: one real run, three conversations, both arms (numpy CPU, dev seed 7)
+
+Ran at the first build (sharing default on, no RNG isolation; driver 62161b040). The review's evidence run with RNG
+isolation, seeds 7 and 8 and a longer turn list is Step 5.
 
 Driver `docs/drafts/shared-ltm/three_sessions.py` calls the real `brain_chat` handler (tiny-demo, stub renderer,
 `SIM_DISABLE_LLM=1`, `BRAIN_CHAT_SEED=7`) for sessions s1, s2, s3. Turn 1 builds each session back to back; turns 2
@@ -170,6 +174,53 @@ Byte identity: 9/9 turns have the same sha256 in both arms (whole reply body, pe
 
 (s1's first reply differs from s2/s3's in both arms alike: the first session in a fresh process differs from later
 ones, independent of this change.)
+
+## Review fixes (review of bf91d5747: FIX_FIRST, 2026-10-13)
+
+1. DEFAULT OFF. `_SHARED_LTM_DEFAULT_ON = False` (design section 5: default-off, then flip). Unset env makes the
+   pre-change call. `BRAIN_SHARED_LTM=1` opts in; the coordinator flips it after validation.
+2. GLOBAL RNG LEAK (major). `SimulationBridge._initialize_simulation_data` runs `_initialize_rng(cfg.seed)`
+   (sim/bridge.py), which calls `cp.random.seed`, `np.random.seed` and `random.seed`. The LTM builds bridges at
+   seed 42: one per fact at load, and lazily on a shard's first recall (`_resonate`, `_retrieve_all_substrate`,
+   `_spiking_cleanup`, `_izh_bank`). So a cold recall resets every global stream to seed 42, whatever
+   BRAIN_CHAT_SEED is, and with a shared store a warm shard skips the reseed, so ON and OFF diverge on later global
+   draws (e.g. a chat-path bridge's OU noise). The developed path at bf91d5747 also loaded the shared store BEFORE
+   `load_developed_brain`, so its reseed landed before the brain build instead of after it.
+   - `research/runners/global_rng_guard.py` `preserved_global_rng()`. numpy: `get_state` / `set_state`. python
+     `random`: `getstate` / `setstate`. cupy: `cupy.random.seed` reseeds the CURRENT RandomState object in place,
+     so the guard swaps a temporary RandomState into the device slot for the block and puts the original object
+     back, untouched. Checked on the cupy backend: same object back, next draw equal to the no-build draw, while
+     the unguarded control differs.
+   - `RFPhasorComposer._isolate_global_rng` (default False = byte-identical). When set, every bridge the composer
+     builds goes through the guard (`_new_rf_bridge`, `_izh_bank`).
+   - `webapp/server.py`: `BRAIN_LTM_RNG_ISOLATE` (`_ltm_rng_isolate_on()`). Forced on whenever the shared store is
+     on; otherwise default off (`_LTM_RNG_ISOLATE_DEFAULT_ON = False`), so plain OFF is unchanged. When on,
+     `_load_ltm_isolated` runs the whole load under the guard and sets every shard's flag. This holds both for the
+     shared store and for a private copy (OFF + isolate). The developed path with either flag on loads through the
+     same function and passes `ltm_store=`. Plain OFF passes `ltm_bundle=` as before.
+   - research/FAILURE_LOG.md row (the reseed defect, named tests).
+3. Evidence: Step 5.
+4. Minors.
+   - A test of the REAL `load_developed_brain(ltm_store=...)` branch on a small saved developed bundle:
+     TieredFactStore installed over the given view; an LTM-only fact is recalled; the buffer fact and the moat hold.
+   - Cache key for a persisted bundle (manifest with n_shards) = (realpath, the (mtime_ns, size) of manifest.json,
+     facts.json and composites.npz), not seed / D / n_shards. `ShardedPhasorStore.load` takes those from the
+     manifest, so tiny-demo (BRAIN_CHAT_SEED) and a developed bundle (its own seed) share one copy, and a rebuilt
+     bundle is a new key. A facts-only bundle keys on seed, D, n_shards and the facts.json stamp. Both keys also
+     carry the four LTM flags and the constructor env.
+   - Per-key load locks (`shared_ltm._LOAD_LOCKS`). `_KEYS_GUARD` is held only for dict lookups, never across a
+     load, so a cached key never waits behind another key's load. Two conversations on one cold key still load
+     once.
+   - `test_cache_key_covers_every_constructor_env_read` scans the source of `RFPhasorComposer.__init__`,
+     `ShardedPhasorStore.__init__` and `ShardedPhasorStore.load` for env reads and fails on any name missing from
+     `_SHARED_LTM_COMPOSER_ENV`.
+   - `research/runners/_knowledge_scale_100k_production_verify.py`: the "EXACT call" docstrings now say that call is
+     the default-flags path, and that with either flag on the server passes `ltm_store=`.
+
+Tests after the fixes: `tests/test_shared_ltm.py` 31 passed. Composer / LTM / server suites (test_rf_phasor_composer,
+test_decode_escalation_seed44_hole, test_sharded_phasor_store, test_tiered_fact_store, test_shared_ltm,
+test_arm_renderer_production_path, test_battery_session_release, test_rank2_integrated_loop_thread,
+test_brain_prewarm_scratch_session, test_communicable_turn_wirein): 149 passed, 5 skipped.
 
 ## Open risks
 
