@@ -1,0 +1,36 @@
+{
+ "run_id": "1791380943-R-rescore",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "R",
+  "--packet",
+  "transitive-spiking-reach",
+  "--tag",
+  "s2p-R-tr-83efc76",
+  "--pin",
+  "83efc766c39b1385372c794e9ba87ac1cade442e",
+  "--selection",
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/selection.json",
+  "--out",
+  "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json"
+ ],
+ "git_sha": "246db7fbde5272734bf1ddf17111e5fb556e9453",
+ "git_dirty": false,
+ "started": "2026-10-07T13:49",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "note": "Rescore per RULING transitive-R-rescore: same recorded data (no new runs), re-read after the b2d rule7 fix (a15010cba counts only non-null error). Observed stdout: 's2p R transitive-spiking-reach: PASS op=0' rc=0, byte-identical on re-run. NARROWED by verify-go 2x refuters (2026-10-07): op=0 is the selected operating-point GRID row (DETECT_MIN=10 host readout, not zero host steps); replies byte-identical across the six seeds (determinism, not seed robustness; only detect_spikes 40/41 varies); answer-rate lens UNMEASURED (no flag-off cells for these probes). Engagement recorded in all 48 arm files; within-seed arms same-host (pool=24, workstation=24, verdict server).",
+ "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/83efc76/verdicts/R.json.prov.json"
+}

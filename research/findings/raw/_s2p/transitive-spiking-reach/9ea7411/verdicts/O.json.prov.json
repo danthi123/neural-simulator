@@ -1,0 +1,36 @@
+{
+ "run_id": "1791217170-O",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.venv/bin/python",
+  "tools/s2p_score.py",
+  "O",
+  "--packet",
+  "transitive-spiking-reach",
+  "--dir",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/9ea7411/O",
+  "--selection",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/9ea7411/selection.json",
+  "--pin",
+  "9ea7411eb0f219560c83816c84bc75cae4602369",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/9ea7411/verdicts/O.json"
+ ],
+ "git_sha": "322c3c8ec2855648fefcceb36cee7f73908436b9",
+ "git_dirty": true,
+ "started": "2026-10-05T12:19",
+ "host": "83db10ba1ddb",
+ "sim_backend": "python-stdlib",
+ "backend": "python-stdlib",
+ "device": "cpu",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "note": "O aggregation over the packet's O jsons (pure stdlib); emitted as the gate-sanctioned sibling because tools/s2p_score.py does not write one itself. Verdict PASS 6/6 at pin 9ea7411eb (organ unchanged ODIFF 0 per RULING transitive-engagement).",
+ "artifact": "/home/dant123/Projects/neural-simulator/.claude/worktrees/transitive-spiking-reach/research/findings/raw/_s2p/transitive-spiking-reach/9ea7411/verdicts/O.json.prov.json"
+}
