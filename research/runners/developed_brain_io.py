@@ -63,12 +63,40 @@ def extract_grounded_codes(agent) -> dict[str, list]:
     codes and are reproduced from the seed on reload, so they are excluded."""
     comp = _inner_agent(agent).composer
     pol = set(getattr(comp, "pol_words", []))
+    concepts = concept_codebook(comp)
+    if concepts is None:
+        raise AttributeError("%s has no concept codebook (.concepts or .comp.concepts)" % type(comp).__name__)
     codes = {}
-    for w, ph in comp.concepts.items():
-        if w in pol:
+    for w, ph in concepts.items():
+        if w in pol or _is_reserve_slot(w):
             continue
         codes[w] = np.asarray(ph, dtype=float).tolist()
     return codes
+
+
+def extract_recruited_slots(agent) -> dict:
+    """{word: reserve slot index} for every word the onebrain composer recruited at runtime (empty for composers
+    without reserve slots). Saved beside the codes so a reload restores each word into its own slot."""
+    f = getattr(_inner_agent(agent).composer, "recruited_slots", None)
+    return {str(w): int(s) for w, s in f().items()} if callable(f) else {}
+
+
+def concept_codebook(comp):
+    """The {word: phase code} dict a composer binds with. `comp.concepts` on the RF/rate composers; on the default
+    OneBrainComposer (`Pool1BoundOneBrainComposer`, usually behind a `TieredFactStore`, which delegates attributes to
+    its buffer) the codes live on its inner RF composer, `comp.comp.concepts` (a recruited word's code is written
+    there by `_recruit_word`). None when neither exists. (FAILURE_LOG 2026-10-13: reading only `comp.concepts` made
+    every facts save on the production default brain raise and save nothing.)"""
+    c = getattr(comp, "concepts", None)
+    if c is not None:
+        return c
+    return getattr(getattr(comp, "comp", None), "concepts", None)
+
+
+def _is_reserve_slot(w) -> bool:
+    """An UNRECRUITED reserve cleanup slot of the onebrain composer (`__free<k>__`): rebuilt from the seed at every
+    build, so it is not a learned code and is never persisted."""
+    return isinstance(w, str) and w.startswith("__free") and w.endswith("__")
 
 
 def extract_facts(agent) -> list[dict]:

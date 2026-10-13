@@ -466,30 +466,38 @@ def save_session_facts(cache_key, chat, base=None, checkpoint: str | None = None
     already round-trips), as a NEW versioned checkpoint (accumulates; never overwrites a prior save). `checkpoint`
     lets a caller pin the checkpoint id (e.g. `save_session_learning` mints one id shared with the D5 store of the
     same save call); default mints a fresh monotonic id. Returns the path, or None (disabled / no chat / no facts).
-    Prunes old checkpoints down to `persist_keep_n()` afterwards. Best-effort."""
-    if not persist_learning_enabled() or chat is None:
-        return None
+    Prunes old checkpoints down to `persist_keep_n()` afterwards. Best-effort: a failure is logged at ERROR (with
+    the traceback) and returns None; `save_session_learning` uses the raising `_write_session_facts` so it can count
+    and report the failure."""
     try:
-        from research.runners.developed_brain_io import extract_facts, extract_grounded_codes
-        agent = getattr(chat, "agent", chat)
-        facts = extract_facts(agent)
-        if not facts:
-            return None
-        codes = extract_grounded_codes(agent)
-        identity_dir = _facts_identity_dir(cache_key, base)
-        cp_id = checkpoint or _new_checkpoint_id()
-        path = _facts_checkpoint_path(identity_dir, cp_id)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {"schema_version": SCHEMA_VERSION, "checkpoint": cp_id, "facts": facts,
-                   "codes": {w: list(map(float, ph)) for w, ph in codes.items()}}
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump(payload, fh, indent=2, ensure_ascii=False, default=str)
-        _prune_checkpoints(identity_dir, persist_keep_n())
-        return path
+        return _write_session_facts(cache_key, chat, base, checkpoint)
     except Exception:
         import logging
-        logging.getLogger(__name__).warning("session-facts persistence save failed for %s", cache_key, exc_info=True)
+        logging.getLogger(__name__).error("session-facts persistence save FAILED for %s", cache_key, exc_info=True)
         return None
+
+
+def _write_session_facts(cache_key, chat, base=None, checkpoint: str | None = None) -> Path | None:
+    """`save_session_facts` without the catch: returns the path, None for nothing to save, and RAISES on a failure."""
+    if not persist_learning_enabled() or chat is None:
+        return None
+    from research.runners.developed_brain_io import extract_facts, extract_grounded_codes, extract_recruited_slots
+    agent = getattr(chat, "agent", chat)
+    facts = extract_facts(agent)
+    if not facts:
+        return None
+    codes = extract_grounded_codes(agent)
+    slots = extract_recruited_slots(agent)
+    identity_dir = _facts_identity_dir(cache_key, base)
+    cp_id = checkpoint or _new_checkpoint_id()
+    path = _facts_checkpoint_path(identity_dir, cp_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"schema_version": SCHEMA_VERSION, "checkpoint": cp_id, "facts": facts,
+               "codes": {w: list(map(float, ph)) for w, ph in codes.items()}, "slots": slots}
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, indent=2, ensure_ascii=False, default=str)
+    _prune_checkpoints(identity_dir, persist_keep_n())
+    return path
 
 
 def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = None) -> int:
@@ -514,14 +522,24 @@ def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
         saved_facts = payload.get("facts", [])
         if not saved_facts:
             return 0
-        from research.runners.developed_brain_io import _inner_agent, _restore_facts, extract_facts
+        from research.runners.developed_brain_io import _inner_agent, _restore_facts, concept_codebook, extract_facts
         agent = getattr(chat, "agent", chat)
         inner = _inner_agent(agent)
         comp = inner.composer
-        # inject persisted runtime-grounded codes for any word not already known (so re-store can encode it).
+        # inject persisted runtime-grounded codes for any word not already known (so re-store can encode it). On the
+        # default onebrain composer the codebook is `comp.comp.concepts` (concept_codebook); a word injected there
+        # is then recruited into a free cleanup slot by the re-store with that SAME code (OneBrainComposer._recruit_word
+        # reuses an existing inner code). That fallback is only for a word with no saved slot (a checkpoint written
+        # before "slots" was saved): it can land in another word's slot, the defect `restore_recruit` closes.
         codes = payload.get("codes", {}) or {}
+        # onebrain: put each recruited word back into the SAME reserve slot it held (with its saved code) BEFORE the
+        # re-store, so re-store order can never hand a word another word's slot (`OneBrainComposer.restore_recruit`).
+        restore = getattr(comp, "restore_recruit", None)
+        if callable(restore):
+            for w, s in sorted((payload.get("slots") or {}).items(), key=lambda kv: int(kv[1])):
+                restore(w, int(s), codes.get(w))
         try:
-            concepts = getattr(comp, "concepts", None)
+            concepts = concept_codebook(comp)
             if concepts is not None:
                 for w, ph in codes.items():
                     if w not in concepts or concepts.get(w) is None:
@@ -554,26 +572,37 @@ def save_session_learning(cache_key, chat, episodic_organ, base=None) -> dict:
     snapshot; xedge (process-global, shared across sessions) gets its own independent checkpoint id. Called on the
     sleep-depth idle tick and at shutdown. No-op (byte-identical) when the flag is off. Best-effort: each store is
     guarded independently, so one failing store never blocks the others. Returns a small record (includes the
-    checkpoint id, so a caller can log/inspect which version was just written)."""
+    checkpoint id, so a caller can log/inspect which version was just written).
+
+    `saved` is True only when the D5 store or the facts were actually WRITTEN (the xedge is process-global and is not
+    this session's learning); `errors` names each store whose save raised, and each failure is logged at ERROR with
+    its traceback (FAILURE_LOG 2026-10-13: a swallowed facts-save error was reported as a flushed session)."""
     if not persist_learning_enabled():
         return {}
+    import logging
+    log = logging.getLogger(__name__)
     cp_id = _new_checkpoint_id()
-    rec: dict[str, Any] = {"checkpoint": cp_id}
+    rec: dict[str, Any] = {"checkpoint": cp_id, "errors": {}}
     try:
         p = save_d5_organ(cache_key, episodic_organ, base, checkpoint=cp_id)
         rec["d5"] = str(p) if p else None
-    except Exception:
+    except Exception as e:
         rec["d5"] = None
+        rec["errors"]["d5"] = "%s: %s" % (type(e).__name__, e)
+        log.error("D5 persistence save FAILED for %s", cache_key, exc_info=True)
     try:
-        p = save_session_facts(cache_key, chat, base, checkpoint=cp_id)
+        p = _write_session_facts(cache_key, chat, base, checkpoint=cp_id)
         rec["facts"] = str(p) if p else None
-    except Exception:
+    except Exception as e:
         rec["facts"] = None
+        rec["errors"]["facts"] = "%s: %s" % (type(e).__name__, e)
+        log.error("session-facts persistence save FAILED for %s", cache_key, exc_info=True)
     try:
         p = save_xedge(base)
         rec["xedge"] = str(p) if p else None
     except Exception:
         rec["xedge"] = None
+    rec["saved"] = bool(rec.get("d5") or rec.get("facts"))
     return rec
 
 

@@ -1,0 +1,607 @@
+{
+ "backend": "none (stub organs, pure-Python tick; no substrate)",
+ "source": "webapp/continuous_engine.py @ 2e7392f12",
+ "trace": {
+  "budget": {
+   "s0": 0,
+   "s1": 0,
+   "s2": 0
+  },
+  "d5_budget": {
+   "s0": 0,
+   "s1": 0,
+   "s2": 0
+  },
+  "ideate_tick": {
+   "s0": 4,
+   "s1": 5,
+   "s2": 4
+  },
+  "inner": {
+   "s0": [
+    {
+     "arousal": 0.255,
+     "differential": 0.2125,
+     "note": "idle: felt state relaxing toward neutral (was +0.50, now +0.42); a thought wandered to \u2018cat\u2019",
+     "t": 1030.0,
+     "valence": 0.425,
+     "wandered": "cat"
+    },
+    {
+     "arousal": 0.21675,
+     "differential": 0.18062499999999998,
+     "note": "idle: felt state relaxing toward neutral (was +0.42, now +0.36); a thought wandered to \u2018dog\u2019",
+     "t": 1400.0,
+     "valence": 0.36124999999999996,
+     "wandered": "dog"
+    },
+    {
+     "arousal": 0.1842375,
+     "differential": 0.15353124999999998,
+     "ideation": {
+      "blend_balance": 0.719,
+      "blend_vs_other": 0.06,
+      "fixed_point": true,
+      "is_fact": false,
+      "kind": "novel-association",
+      "novelty_max_overlap": 0.719,
+      "sources": [
+       "dog",
+       "bird"
+      ]
+     },
+     "note": "idle: felt state relaxing toward neutral (was +0.36, now +0.31); an idea occurred \u2014 a novel association linked \u2018dog\u2019 and \u2018bird\u2019 (a thought, not a recalled fact)",
+     "t": 1500.0,
+     "valence": 0.30706249999999996,
+     "wandered": null
+    },
+    {
+     "arousal": 0.156601875,
+     "differential": 0.13050156249999997,
+     "note": "idle: felt state relaxing toward neutral (was +0.31, now +0.26); a thought wandered to \u2018bird\u2019",
+     "t": 1600.0,
+     "valence": 0.26100312499999995,
+     "wandered": "bird"
+    },
+    {
+     "arousal": 0.13311159375,
+     "differential": 0.11092632812499997,
+     "note": "idle: felt state relaxing toward neutral (was +0.26, now +0.22)",
+     "t": 1700.0,
+     "valence": 0.22185265624999995,
+     "wandered": null
+    }
+   ],
+   "s1": [
+    {
+     "arousal": 0.255,
+     "differential": 0.1275,
+     "note": "idle: felt state relaxing toward neutral (was +0.30, now +0.26)",
+     "t": 1030.0,
+     "valence": 0.255,
+     "wandered": null
+    },
+    {
+     "arousal": 0.21675,
+     "differential": 0.108375,
+     "note": "idle: felt state relaxing toward neutral (was +0.26, now +0.22); a thought wandered to \u2018cat\u2019",
+     "t": 1400.0,
+     "valence": 0.21675,
+     "wandered": "cat"
+    },
+    {
+     "arousal": 0.1842375,
+     "differential": 0.09211875,
+     "ideation": {
+      "blend_balance": 0.719,
+      "blend_vs_other": 0.06,
+      "fixed_point": true,
+      "is_fact": false,
+      "kind": "novel-association",
+      "novelty_max_overlap": 0.719,
+      "sources": [
+       "bird",
+       "dog"
+      ]
+     },
+     "note": "idle: felt state relaxing toward neutral (was +0.22, now +0.18); an idea occurred \u2014 a novel association linked \u2018bird\u2019 and \u2018dog\u2019 (a thought, not a recalled fact)",
+     "t": 1500.0,
+     "valence": 0.1842375,
+     "wandered": null
+    },
+    {
+     "arousal": 0.156601875,
+     "differential": 0.0783009375,
+     "note": "idle: felt state relaxing toward neutral (was +0.18, now +0.16); a thought wandered to \u2018dog\u2019",
+     "t": 1600.0,
+     "valence": 0.156601875,
+     "wandered": "dog"
+    },
+    {
+     "arousal": 0.13311159375,
+     "differential": 0.066555796875,
+     "note": "idle: felt state relaxing toward neutral (was +0.16, now +0.13); a thought wandered to \u2018bird\u2019",
+     "t": 1700.0,
+     "valence": 0.13311159375,
+     "wandered": "bird"
+    }
+   ],
+   "s2": [
+    {
+     "arousal": 0.255,
+     "differential": 0.04249999999999999,
+     "note": "idle: felt state relaxing toward neutral (was +0.10, now +0.08); a thought wandered to \u2018cat\u2019",
+     "t": 1030.0,
+     "valence": 0.08499999999999998,
+     "wandered": "cat"
+    },
+    {
+     "arousal": 0.21675,
+     "differential": 0.03612499999999999,
+     "note": "idle: felt state relaxing toward neutral (was +0.08, now +0.07); a thought wandered to \u2018dog\u2019",
+     "t": 1400.0,
+     "valence": 0.07224999999999998,
+     "wandered": "dog"
+    },
+    {
+     "arousal": 0.1842375,
+     "differential": 0.03070624999999999,
+     "ideation": {
+      "blend_balance": 0.719,
+      "blend_vs_other": 0.06,
+      "fixed_point": true,
+      "is_fact": false,
+      "kind": "novel-association",
+      "novelty_max_overlap": 0.719,
+      "sources": [
+       "dog",
+       "bird"
+      ]
+     },
+     "note": "idle: felt state relaxing toward neutral (was +0.07, now +0.06); an idea occurred \u2014 a novel association linked \u2018dog\u2019 and \u2018bird\u2019 (a thought, not a recalled fact)",
+     "t": 1500.0,
+     "valence": 0.06141249999999998,
+     "wandered": null
+    },
+    {
+     "arousal": 0.156601875,
+     "differential": 0.02610031249999999,
+     "note": "idle: felt state relaxing toward neutral (was +0.06, now +0.05); a thought wandered to \u2018bird\u2019",
+     "t": 1600.0,
+     "valence": 0.05220062499999998,
+     "wandered": "bird"
+    },
+    {
+     "arousal": 0.13311159375,
+     "differential": 0.022185265624999992,
+     "note": "idle: felt state relaxing toward neutral (was +0.05, now +0.04)",
+     "t": 1700.0,
+     "valence": 0.044370531249999984,
+     "wandered": null
+    }
+   ]
+  },
+  "ior": {
+   "s0": {
+    "adapt": [
+     0.70845,
+     0.5835,
+     0.405
+    ],
+    "base": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "s1": {
+    "adapt": [
+     0.70845,
+     0.5835,
+     0.405
+    ],
+    "base": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "s2": {
+    "adapt": [
+     0.70845,
+     0.5835,
+     0.405
+    ],
+    "base": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   }
+  },
+  "log": [
+   [
+    "affect",
+    0.425
+   ],
+   [
+    "mouth",
+    "s0"
+   ],
+   [
+    "speak",
+    "s0",
+    "cat",
+    [
+     1.0,
+     1.1,
+     1.2
+    ]
+   ],
+   [
+    "d5",
+    "s0"
+   ],
+   [
+    "homeo",
+    "s0",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.255
+   ],
+   [
+    "mouth",
+    "s1"
+   ],
+   [
+    "d5",
+    "s1"
+   ],
+   [
+    "homeo",
+    "s1",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.085
+   ],
+   [
+    "mouth",
+    "s2"
+   ],
+   [
+    "speak",
+    "s2",
+    "cat",
+    [
+     1.0,
+     1.1,
+     1.2
+    ]
+   ],
+   [
+    "d5",
+    "s2"
+   ],
+   [
+    "homeo",
+    "s2",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.36125
+   ],
+   [
+    "mouth",
+    "s0"
+   ],
+   [
+    "speak",
+    "s0",
+    "dog",
+    [
+     0.648,
+     1.6,
+     1.6
+    ]
+   ],
+   [
+    "d5",
+    "s0"
+   ],
+   [
+    "sleep",
+    "s0"
+   ],
+   [
+    "homeo",
+    "s0",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.21675
+   ],
+   [
+    "mouth",
+    "s1"
+   ],
+   [
+    "speak",
+    "s1",
+    "cat",
+    [
+     1.0,
+     1.1,
+     1.2
+    ]
+   ],
+   [
+    "d5",
+    "s1"
+   ],
+   [
+    "sleep",
+    "s1"
+   ],
+   [
+    "homeo",
+    "s1",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.07225
+   ],
+   [
+    "mouth",
+    "s2"
+   ],
+   [
+    "speak",
+    "s2",
+    "dog",
+    [
+     0.648,
+     1.6,
+     1.6
+    ]
+   ],
+   [
+    "d5",
+    "s2"
+   ],
+   [
+    "sleep",
+    "s2"
+   ],
+   [
+    "homeo",
+    "s2",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.307062
+   ],
+   [
+    "mouth",
+    "s0"
+   ],
+   [
+    "d5",
+    "s0"
+   ],
+   [
+    "sleep",
+    "s0"
+   ],
+   [
+    "homeo",
+    "s0",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.184237
+   ],
+   [
+    "mouth",
+    "s1"
+   ],
+   [
+    "d5",
+    "s1"
+   ],
+   [
+    "sleep",
+    "s1"
+   ],
+   [
+    "homeo",
+    "s1",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.061412
+   ],
+   [
+    "mouth",
+    "s2"
+   ],
+   [
+    "d5",
+    "s2"
+   ],
+   [
+    "sleep",
+    "s2"
+   ],
+   [
+    "homeo",
+    "s2",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.261003
+   ],
+   [
+    "mouth",
+    "s0"
+   ],
+   [
+    "speak",
+    "s0",
+    "bird",
+    [
+     0.9336,
+     0.648,
+     1.6
+    ]
+   ],
+   [
+    "sleep",
+    "s0"
+   ],
+   [
+    "homeo",
+    "s0",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.156602
+   ],
+   [
+    "mouth",
+    "s1"
+   ],
+   [
+    "speak",
+    "s1",
+    "dog",
+    [
+     0.648,
+     1.6,
+     1.6
+    ]
+   ],
+   [
+    "sleep",
+    "s1"
+   ],
+   [
+    "homeo",
+    "s1",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.052201
+   ],
+   [
+    "mouth",
+    "s2"
+   ],
+   [
+    "speak",
+    "s2",
+    "bird",
+    [
+     0.9336,
+     0.648,
+     1.6
+    ]
+   ],
+   [
+    "sleep",
+    "s2"
+   ],
+   [
+    "homeo",
+    "s2",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.221853
+   ],
+   [
+    "sleep",
+    "s0"
+   ],
+   [
+    "homeo",
+    "s0",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.133112
+   ],
+   [
+    "mouth",
+    "s1"
+   ],
+   [
+    "speak",
+    "s1",
+    "bird",
+    [
+     0.9336,
+     0.648,
+     1.6
+    ]
+   ],
+   [
+    "sleep",
+    "s1"
+   ],
+   [
+    "homeo",
+    "s1",
+    "idle_tick"
+   ],
+   [
+    "affect",
+    0.044371
+   ],
+   [
+    "sleep",
+    "s2"
+   ],
+   [
+    "homeo",
+    "s2",
+    "idle_tick"
+   ]
+  ],
+  "mood": {
+   "s0": {
+    "arousal": 0.13311159375,
+    "valence": 0.22185265624999995
+   },
+   "s1": {
+    "arousal": 0.13311159375,
+    "valence": 0.13311159375
+   },
+   "s2": {
+    "arousal": 0.13311159375,
+    "valence": 0.044370531249999984
+   }
+  },
+  "n": [
+   3,
+   3,
+   3,
+   3,
+   3
+  ]
+ }
+}

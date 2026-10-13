@@ -1994,25 +1994,38 @@ async def _persist_learning_on_shutdown() -> None:
             _organs = dict(_EP_sd._ORGANS)
         except Exception:
             _organs = {}
-        saved = 0
-        for cache_key, chat in list(_BRAIN_CHATS.items()):
+        # A session counts as FLUSHED only when its D5 store or its facts were actually written (FAILURE_LOG
+        # 2026-10-13: a swallowed facts-save error used to be counted here as a flushed session).
+        saved, empty, failed = 0, 0, []
+
+        def _flush(cache_key, chat, organ):
+            nonlocal saved, empty
             try:
-                save_session_learning(cache_key, chat, _organs.get(cache_key))
+                rec = save_session_learning(cache_key, chat, organ)
+            except Exception as e:
+                failed.append((cache_key, {"save_session_learning": "%s: %s" % (type(e).__name__, e)}))
+                return
+            if rec.get("errors"):
+                failed.append((cache_key, rec["errors"]))
+            if rec.get("saved"):
                 saved += 1
-            except Exception:
-                continue
+            elif not rec.get("errors"):
+                empty += 1
+
+        for cache_key, chat in list(_BRAIN_CHATS.items()):
+            _flush(cache_key, chat, _organs.get(cache_key))
         # any D5 session whose chat is not in _BRAIN_CHATS (e.g. a stub-renderer session) still gets its store saved
         for cache_key, organ in _organs.items():
             if cache_key not in _BRAIN_CHATS:
-                try:
-                    save_session_learning(cache_key, None, organ)
-                except Exception:
-                    continue
+                _flush(cache_key, None, organ)
         try:
             save_xedge()
         except Exception:
             pass
-        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s)", flush=True)
+        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s); {empty} had nothing to "
+              f"save; {len(failed)} FAILED", flush=True)
+        for cache_key, errs in failed:
+            print(f"[webapp] shutdown: PERSISTENCE SAVE FAILED for {cache_key!r}: {errs}", flush=True)
     except Exception as e:
         print(f"[webapp] shutdown: cross-session persistence flush skipped ({type(e).__name__}: {e})", flush=True)
 
@@ -4842,16 +4855,43 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # naming a session to release (the regression-battery worker) can never drift from the key cached here.
     cache_key = brain_chat_cache_key(req)
     renderer = cache_key[2]
+    _CE0 = None
+    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation.
+        # Before the turn lock (M0): a turn WAITING for the lock already reads as active, so the tick skips it.
+        from webapp import continuous_engine as _CE0
+        _CE0.mark_request(cache_key)
+    except Exception:
+        pass
+    # ONE-BRAIN TURN LOCK (M0, docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md section 2): one turn at a time
+    # against the process-shared organs, FIFO; the idle tick takes the same lock one cheap step at a time. Covers the
+    # backend pin, reset, build and the whole `brain_reply` pipeline (the Qwen render is called from inside
+    # `brain_reply`, so it is inside the lock too). A turn not admitted within BRAIN_TURN_WAIT_TIMEOUT_S (default 300)
+    # gets a `busy` reply in the normal shape. Escape: BRAIN_TURN_LOCK=0. Wait time: webapp.brain_turn_lock.stats().
+    from webapp.brain_turn_lock import TurnBusy, brain_turn, busy_payload, turn_wait_timeout_s
+    try:
+        with brain_turn("brain_chat", timeout=turn_wait_timeout_s()):
+            try:
+                return _brain_chat_turn(req, cache_key, renderer)
+            finally:
+                # end-of-turn stamp, written while the lock is still held (so a tick admitted next always sees it):
+                # the idle tick measures idleness from here (it does NOT refill the wander budget)
+                try:
+                    if _CE0 is not None:
+                        _CE0.mark_turn_end(cache_key)
+                except Exception:
+                    pass
+    except TurnBusy as busy:
+        return JSONResponse(busy_payload(req, renderer, busy))
+
+
+def _brain_chat_turn(req, cache_key, renderer) -> JSONResponse:
+    """The locked part of one `brain_chat` turn (moved VERBATIM out of `brain_chat`, M0): backend pin, reset, cache
+    lookup / build / persisted-learning reload, then `brain_reply`. Only ever called with the turn lock held."""
     # A numpy-CPU code path elsewhere in this long-running server can have flipped
     # the global backend cache away from the bridge's cupy arrays between turns;
     # re-assert it here so gate()/render()/the rich path run consistently (the
     # cupy/numpy-flip bug, 2026-06-24).
     _pin_bridge_backend()
-    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation
-        from webapp import continuous_engine as _CE0
-        _CE0.mark_request(cache_key)
-    except Exception:
-        pass
     if req.reset:
         _evict_brain_chat_session(cache_key)
 
@@ -5285,10 +5325,17 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             if _ir_on:   # IDLE REPLAY (default OFF): the brain's own store, the spiking reactivation race
                 si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
             else:
-                siorg = _get_selfinit_organ(cache_key)
-                si = siorg.speak(lesion=_SI.selfinit_lesioned())
+                # M0: the idle tick wanders on this organ OUTSIDE the turn lock, so the turn takes the organ's own
+                # lock, waiting at most a short bound: this turn holds the TURN lock, so it must not wait out a
+                # wander there. A wander still running -> the honest "mid-thought" read-out instead.
+                from webapp import continuous_engine as _CE_si
+                si = _CE_si.selfinit_speak_or_mid_thought(
+                    cache_key, lambda: _get_selfinit_organ(cache_key).speak(lesion=_SI.selfinit_lesioned()))
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
-            answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
+            if si.get("mid_thought"):
+                answer = si["text"]
+            else:
+                answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
                 "answer": answer,
                 "abstained": (not spoke), "recalled_svo": None, "verified": bool(spoke),
