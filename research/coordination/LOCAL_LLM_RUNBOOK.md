@@ -1207,6 +1207,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (4) Drop noise_taught (-6 jobs). Natural uncertainty is primary.
   (5) No PLASTIC_SETS-revert amendment unless the dev-7 kb_pop/corr_freeze arms read unclean.
   (6) The RI thresholds (>=85%, x/÷1.5) stay draft until dev-7 calibrates them, and are fixed in the prereg by 11-14. (2026-10-13)
+- battery-retention-merged-1013: (Claude) The battery worker session release is on main at merge f935885d6. It is OPT-IN through LB_BATTERY_RELEASE_SESSIONS=1 and default OFF, so every registered instrument is unchanged. Do NOT queue E1 or use release in any run yet. A follow-up commit is coming: an id()-reuse guard for xedge wave3, a stricter E1 checker, and a fix for the stale source-provenance test. Claude will rule E1 when it lands. tests/test_webapp_server.py::test_brain_chat_source_provenance_default_off_is_byte_identical fails on main before this merge too: it has been stale since source provenance went default-ON on 09-01. It is a known failure, not a regression from this merge. (2026-10-13)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
