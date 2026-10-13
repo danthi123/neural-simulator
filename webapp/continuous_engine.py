@@ -26,6 +26,8 @@ from __future__ import annotations
 import os
 import time
 
+from webapp.brain_turn_lock import brain_turn as _brain_turn
+
 IDLE_SEC = 20.0            # a session with no request for this long is "idle" -> the tick may run on it
 RELAX = 0.85              # per-tick appraisal relaxation toward the neutral setpoint (felt state decays with no input)
 NEUTRAL = 0.0            # the appraisal setpoint the mood relaxes toward
@@ -1186,163 +1188,168 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
     n = 0
     _d5_on = d5_consolidate_enabled()
     for cache_key in list(session_mood.keys()):
-        last = _LAST_REQUEST.get(cache_key)
-        if last is not None and (now - last) < IDLE_SEC:
-            continue  # still active -> don't tick mid-turn
-        try:
-            organ = affect_organ_getter()
-            # The cheap mood-relax runs every tick; the EXPENSIVE self-init wander only while this session has
-            # budget left for this idle period (refilled by mark_request each turn). Once drained, the mind keeps
-            # relaxing but stops wandering -> a truly idle server does not peg the GPU with endless ~55s wanders.
-            siorg = None
-            if selfinit_getter is not None and _WANDER_BUDGET.get(cache_key, 0) > 0:
-                try:
-                    siorg = selfinit_getter(cache_key)
-                except Exception:
-                    siorg = None
-            rec = tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg)
-            if rec is not None:
-                n += 1
-                if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
-                    _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
-            # D5 LEARN-THROUGH-USE: consolidate the memory this session USED, bounded by the per-recall budget.
-            # Runs independently of the mood tick (a recalled-but-mood-less session still consolidates), and only
-            # while a genuine recall has armed the budget for this idle period -> a truly idle server does not
-            # re-consolidate forever. Never builds an organ (episodic_getter returns None if none exists yet).
-            if _d5_on and episodic_getter is not None and _D5_BUDGET.get(cache_key, 0) > 0 \
-                    and _RECALLED_TOPIC.get(cache_key):
-                try:
-                    eorg = episodic_getter(cache_key)
-                    if eorg is not None and consolidate_used_memory(cache_key, eorg) is not None:
-                        _D5_BUDGET[cache_key] = max(0, _D5_BUDGET.get(cache_key, 0) - 1)
-                except Exception:
-                    # consolidate_used_memory already rolled the store back + drained the topic on failure; LOG so a
-                    # mid-consolidation crash is VISIBLE (never silently swallowed), then move on to the next session.
-                    import logging as _lg
-                    _lg.getLogger(__name__).warning(
-                        "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
-            # OFFLINE SLEEP-REPLAY (#64): on a genuine SLEEP-DEPTH idle only (>= SLEEP_IDLE_SEC, the same NREM window the
-            # Turrigiano pass uses), replay the BATCH of episodes this session stored since its last sleep so the whole
-            # recent batch recalls STRONGER + its store-order is reinforced. Gated by BRAIN_SLEEP_REPLAY (default-OFF ->
-            # the branch is never entered -> byte-identical to HEAD) AND _is_sleep_tick (an offline sleep event, not a
-            # light between-turn pause). Reuses the SAME already-built episodic organ getter as D5 (never builds one just
-            # to replay); consolidate_sleep_replay self-gates + rolls the store back on any failure.
-            if sleep_replay_enabled() and episodic_getter is not None and _is_sleep_tick(cache_key, now):
-                try:
-                    seorg = episodic_getter(cache_key)
-                    if seorg is not None:
-                        consolidate_sleep_replay(cache_key, seorg)
-                except Exception:
-                    import logging as _lg
-                    _lg.getLogger(__name__).warning(
-                        "sleep-replay consolidation failed for %s (persistent store rolled back)", cache_key,
-                        exc_info=True)
-            # CROSS-SESSION PERSISTENCE (#B8): on a genuine sleep-depth idle, FLUSH this session's conversation-driven
-            # learning to disk (D5 within-assembly weights + the _maybe_acquire runtime facts) + the process-global
-            # xedge cross-edge, so a server restart RELOADS it at boot instead of reverting to the build-time state.
-            # Gated by BRAIN_PERSIST_LEARNING (DEFAULT-OFF -> the import returns a flag that is False -> the branch is
-            # never entered -> no file I/O, no substrate read -> byte-identical to HEAD) AND _is_sleep_tick (a genuine
-            # offline sleep event, not a light between-turn pause). Best-effort; never raises into the tick.
+        # ONE-BRAIN TURN LOCK (M0, webapp/brain_turn_lock.py): this tick reads the process-shared affect organ and
+        # writes the session's organs (D5 store, composer, ledgers), so it takes the SAME lock a brain_chat turn holds,
+        # once per session (a waiting turn gets in between sessions). The idleness check runs inside the lock: a
+        # turn that marked its session while this tick waited is skipped. BRAIN_TURN_LOCK=0 -> no lock (pre-M0).
+        with _brain_turn("idle_tick"):
+            last = _LAST_REQUEST.get(cache_key)
+            if last is not None and (now - last) < IDLE_SEC:
+                continue  # still active -> don't tick mid-turn
             try:
-                from research.runners.cross_session_persistence import (persist_learning_enabled as _pl_on,
-                                                                         save_session_learning as _pl_save)
-                if _pl_on() and _is_sleep_tick(cache_key, now):
-                    _porg = episodic_getter(cache_key) if episodic_getter is not None else None
-                    _pchat = chat_getter(cache_key) if chat_getter is not None else None
-                    _pl_save(cache_key, _pchat, _porg)
+                organ = affect_organ_getter()
+                # The cheap mood-relax runs every tick; the EXPENSIVE self-init wander only while this session has
+                # budget left for this idle period (refilled by mark_request each turn). Once drained, the mind keeps
+                # relaxing but stops wandering -> a truly idle server does not peg the GPU with endless ~55s wanders.
+                siorg = None
+                if selfinit_getter is not None and _WANDER_BUDGET.get(cache_key, 0) > 0:
+                    try:
+                        siorg = selfinit_getter(cache_key)
+                    except Exception:
+                        siorg = None
+                rec = tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg)
+                if rec is not None:
+                    n += 1
+                    if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
+                        _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
+                # D5 LEARN-THROUGH-USE: consolidate the memory this session USED, bounded by the per-recall budget.
+                # Runs independently of the mood tick (a recalled-but-mood-less session still consolidates), and only
+                # while a genuine recall has armed the budget for this idle period -> a truly idle server does not
+                # re-consolidate forever. Never builds an organ (episodic_getter returns None if none exists yet).
+                if _d5_on and episodic_getter is not None and _D5_BUDGET.get(cache_key, 0) > 0 \
+                        and _RECALLED_TOPIC.get(cache_key):
+                    try:
+                        eorg = episodic_getter(cache_key)
+                        if eorg is not None and consolidate_used_memory(cache_key, eorg) is not None:
+                            _D5_BUDGET[cache_key] = max(0, _D5_BUDGET.get(cache_key, 0) - 1)
+                    except Exception:
+                        # consolidate_used_memory already rolled the store back + drained the topic on failure; LOG so a
+                        # mid-consolidation crash is VISIBLE (never silently swallowed), then move on to the next session.
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
+                # OFFLINE SLEEP-REPLAY (#64): on a genuine SLEEP-DEPTH idle only (>= SLEEP_IDLE_SEC, the same NREM window the
+                # Turrigiano pass uses), replay the BATCH of episodes this session stored since its last sleep so the whole
+                # recent batch recalls STRONGER + its store-order is reinforced. Gated by BRAIN_SLEEP_REPLAY (default-OFF ->
+                # the branch is never entered -> byte-identical to HEAD) AND _is_sleep_tick (an offline sleep event, not a
+                # light between-turn pause). Reuses the SAME already-built episodic organ getter as D5 (never builds one just
+                # to replay); consolidate_sleep_replay self-gates + rolls the store back on any failure.
+                if sleep_replay_enabled() and episodic_getter is not None and _is_sleep_tick(cache_key, now):
+                    try:
+                        seorg = episodic_getter(cache_key)
+                        if seorg is not None:
+                            consolidate_sleep_replay(cache_key, seorg)
+                    except Exception:
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "sleep-replay consolidation failed for %s (persistent store rolled back)", cache_key,
+                            exc_info=True)
+                # CROSS-SESSION PERSISTENCE (#B8): on a genuine sleep-depth idle, FLUSH this session's conversation-driven
+                # learning to disk (D5 within-assembly weights + the _maybe_acquire runtime facts) + the process-global
+                # xedge cross-edge, so a server restart RELOADS it at boot instead of reverting to the build-time state.
+                # Gated by BRAIN_PERSIST_LEARNING (DEFAULT-OFF -> the import returns a flag that is False -> the branch is
+                # never entered -> no file I/O, no substrate read -> byte-identical to HEAD) AND _is_sleep_tick (a genuine
+                # offline sleep event, not a light between-turn pause). Best-effort; never raises into the tick.
+                try:
+                    from research.runners.cross_session_persistence import (persist_learning_enabled as _pl_on,
+                                                                             save_session_learning as _pl_save)
+                    if _pl_on() and _is_sleep_tick(cache_key, now):
+                        _porg = episodic_getter(cache_key) if episodic_getter is not None else None
+                        _pchat = chat_getter(cache_key) if chat_getter is not None else None
+                        _pl_save(cache_key, _pchat, _porg)
+                except Exception:
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning(
+                        "cross-session persistence save failed for %s", cache_key, exc_info=True)
+                # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
+                # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
+                # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
+                # consolidates a batch of freshly-encoded facts, offline — the between-turn cadence Turrigiano scaling wants.
+                if chat_getter is not None:
+                    try:
+                        _chat = chat_getter(cache_key)
+                        if _chat is not None:
+                            # #138 (additive/default-off): BRAIN_DA_ENCODING_SLEEP_TRIGGER retargets the trigger from
+                            # "every idle tick" to "genuine sleep-depth idle only" (see
+                            # substrate_homeostasis_sleep_trigger_enabled). The two branches are an if/else on the SAME
+                            # call site (not an addition beside it) -> MUTUALLY EXCLUSIVE, so the pass can never
+                            # double-fire for one activation: OFF -> only the original unconditional call runs
+                            # (byte-identical to HEAD); ON -> ONLY the sleep-depth-gated call runs (the original call is
+                            # skipped entirely for this session, every tick, while the flag is armed).
+                            if substrate_homeostasis_sleep_trigger_enabled():
+                                if _is_sleep_tick(cache_key, now):
+                                    consolidate_substrate_homeostasis(cache_key, _chat, trigger="nrem_sleep")
+                            else:
+                                consolidate_substrate_homeostasis(cache_key, _chat, trigger="idle_tick")
+                    except Exception:
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
+                    # DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py): run the
+                    # session's synaptic tag / PRP / late-phase ledger up to world-now on the idle (and so the sleep-depth)
+                    # tick, AFTER the Turrigiano pass above (the ledger reads that rescale back off the store). Unset flag
+                    # -> tick_chat returns None before touching anything -> byte-identical.
+                    try:
+                        from webapp import da_tag_capture_chat as _DTC
+                        if _DTC.tag_capture_enabled():
+                            _chat_tc = chat_getter(cache_key)
+                            if _chat_tc is not None:
+                                _DTC.tick_chat(_chat_tc)
+                    except Exception:
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "DA tag-and-capture tick failed for %s", cache_key, exc_info=True)
+                    # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
+                    # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
+                    # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.
+                    # relax_idle() itself no-ops (returns None) for a session that never had an #84 turn.
+                    if _affect_relax_drive_enabled():
+                        try:
+                            _chat2 = chat_getter(cache_key)
+                            if _chat2 is not None:
+                                from webapp import affect_drives_chat as _ADC
+                                rec91 = _ADC.relax_idle(_chat2, relax=RELAX, neutral=NEUTRAL)
+                                if rec91 is not None and rec91.get("relaxed"):
+                                    lst91 = _INNER_LIFE.setdefault(cache_key, [])
+                                    lst91.append({
+                                        "t": now, "affect_drives_relax": True,
+                                        "level": rec91.get("level", 0), "lead": rec91.get("lead", ""),
+                                        "mood": rec91.get("mood", 0.0),
+                                        "note": "idle: my felt warmth (the #84 lead) is fading toward neutral "
+                                                "(level now %s)" % rec91.get("level", 0),
+                                    })
+                                    if len(lst91) > _INNER_LIFE_MAX:
+                                        del lst91[:-_INNER_LIFE_MAX]
+                        except Exception:
+                            import logging as _lg
+                            _lg.getLogger(__name__).warning(
+                                "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
+                    # #92: extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship DA-mode
+                    # engagement->forthcomingness coupling's OWN persistent EMA (see _da_relax_drive_enabled's header
+                    # note) -- a second, independent axis (energy/engagement) alongside #91's (valence/warmth).
+                    # Self-gates on BRAIN_CONTINUOUS_DA_RELAX (default-ON) -> the byte-identical escape when set to 0.
+                    # relax_idle() itself no-ops (returns None) for a session that never had a DA-drives turn.
+                    if _da_relax_drive_enabled():
+                        try:
+                            _chat3 = chat_getter(cache_key)
+                            if _chat3 is not None:
+                                from webapp import da_mode_drives_chat as _DMD
+                                rec92 = _DMD.relax_idle(_chat3, relax=RELAX, neutral=NEUTRAL)
+                                if rec92 is not None and rec92.get("relaxed"):
+                                    lst92 = _INNER_LIFE.setdefault(cache_key, [])
+                                    lst92.append({
+                                        "t": now, "da_drives_relax": True,
+                                        "mode": rec92.get("mode", "rest"), "lead": rec92.get("lead", ""),
+                                        "da_level": rec92.get("da_level", 0.0),
+                                        "note": "idle: my energy/engagement (the DA-mode lead) is settling toward "
+                                                "rest (mode now %s)" % rec92.get("mode", "rest"),
+                                    })
+                                    if len(lst92) > _INNER_LIFE_MAX:
+                                        del lst92[:-_INNER_LIFE_MAX]
+                        except Exception:
+                            import logging as _lg
+                            _lg.getLogger(__name__).warning(
+                                "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
             except Exception:
-                import logging as _lg
-                _lg.getLogger(__name__).warning(
-                    "cross-session persistence save failed for %s", cache_key, exc_info=True)
-            # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
-            # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
-            # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
-            # consolidates a batch of freshly-encoded facts, offline — the between-turn cadence Turrigiano scaling wants.
-            if chat_getter is not None:
-                try:
-                    _chat = chat_getter(cache_key)
-                    if _chat is not None:
-                        # #138 (additive/default-off): BRAIN_DA_ENCODING_SLEEP_TRIGGER retargets the trigger from
-                        # "every idle tick" to "genuine sleep-depth idle only" (see
-                        # substrate_homeostasis_sleep_trigger_enabled). The two branches are an if/else on the SAME
-                        # call site (not an addition beside it) -> MUTUALLY EXCLUSIVE, so the pass can never
-                        # double-fire for one activation: OFF -> only the original unconditional call runs
-                        # (byte-identical to HEAD); ON -> ONLY the sleep-depth-gated call runs (the original call is
-                        # skipped entirely for this session, every tick, while the flag is armed).
-                        if substrate_homeostasis_sleep_trigger_enabled():
-                            if _is_sleep_tick(cache_key, now):
-                                consolidate_substrate_homeostasis(cache_key, _chat, trigger="nrem_sleep")
-                        else:
-                            consolidate_substrate_homeostasis(cache_key, _chat, trigger="idle_tick")
-                except Exception:
-                    import logging as _lg
-                    _lg.getLogger(__name__).warning(
-                        "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
-                # DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py): run the
-                # session's synaptic tag / PRP / late-phase ledger up to world-now on the idle (and so the sleep-depth)
-                # tick, AFTER the Turrigiano pass above (the ledger reads that rescale back off the store). Unset flag
-                # -> tick_chat returns None before touching anything -> byte-identical.
-                try:
-                    from webapp import da_tag_capture_chat as _DTC
-                    if _DTC.tag_capture_enabled():
-                        _chat_tc = chat_getter(cache_key)
-                        if _chat_tc is not None:
-                            _DTC.tick_chat(_chat_tc)
-                except Exception:
-                    import logging as _lg
-                    _lg.getLogger(__name__).warning(
-                        "DA tag-and-capture tick failed for %s", cache_key, exc_info=True)
-                # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
-                # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
-                # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.
-                # relax_idle() itself no-ops (returns None) for a session that never had an #84 turn.
-                if _affect_relax_drive_enabled():
-                    try:
-                        _chat2 = chat_getter(cache_key)
-                        if _chat2 is not None:
-                            from webapp import affect_drives_chat as _ADC
-                            rec91 = _ADC.relax_idle(_chat2, relax=RELAX, neutral=NEUTRAL)
-                            if rec91 is not None and rec91.get("relaxed"):
-                                lst91 = _INNER_LIFE.setdefault(cache_key, [])
-                                lst91.append({
-                                    "t": now, "affect_drives_relax": True,
-                                    "level": rec91.get("level", 0), "lead": rec91.get("lead", ""),
-                                    "mood": rec91.get("mood", 0.0),
-                                    "note": "idle: my felt warmth (the #84 lead) is fading toward neutral "
-                                            "(level now %s)" % rec91.get("level", 0),
-                                })
-                                if len(lst91) > _INNER_LIFE_MAX:
-                                    del lst91[:-_INNER_LIFE_MAX]
-                    except Exception:
-                        import logging as _lg
-                        _lg.getLogger(__name__).warning(
-                            "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
-                # #92: extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship DA-mode
-                # engagement->forthcomingness coupling's OWN persistent EMA (see _da_relax_drive_enabled's header
-                # note) -- a second, independent axis (energy/engagement) alongside #91's (valence/warmth).
-                # Self-gates on BRAIN_CONTINUOUS_DA_RELAX (default-ON) -> the byte-identical escape when set to 0.
-                # relax_idle() itself no-ops (returns None) for a session that never had a DA-drives turn.
-                if _da_relax_drive_enabled():
-                    try:
-                        _chat3 = chat_getter(cache_key)
-                        if _chat3 is not None:
-                            from webapp import da_mode_drives_chat as _DMD
-                            rec92 = _DMD.relax_idle(_chat3, relax=RELAX, neutral=NEUTRAL)
-                            if rec92 is not None and rec92.get("relaxed"):
-                                lst92 = _INNER_LIFE.setdefault(cache_key, [])
-                                lst92.append({
-                                    "t": now, "da_drives_relax": True,
-                                    "mode": rec92.get("mode", "rest"), "lead": rec92.get("lead", ""),
-                                    "da_level": rec92.get("da_level", 0.0),
-                                    "note": "idle: my energy/engagement (the DA-mode lead) is settling toward "
-                                            "rest (mode now %s)" % rec92.get("mode", "rest"),
-                                })
-                                if len(lst92) > _INNER_LIFE_MAX:
-                                    del lst92[:-_INNER_LIFE_MAX]
-                    except Exception:
-                        import logging as _lg
-                        _lg.getLogger(__name__).warning(
-                            "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
-        except Exception:
-            continue
+                continue
     return n

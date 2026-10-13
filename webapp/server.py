@@ -4701,40 +4701,47 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # naming a session to release (the regression-battery worker) can never drift from the key cached here.
     cache_key = brain_chat_cache_key(req)
     renderer = cache_key[2]
-    # A numpy-CPU code path elsewhere in this long-running server can have flipped
-    # the global backend cache away from the bridge's cupy arrays between turns;
-    # re-assert it here so gate()/render()/the rich path run consistently (the
-    # cupy/numpy-flip bug, 2026-06-24).
-    _pin_bridge_backend()
-    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation
+    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation.
+        # Before the turn lock (M0): a turn WAITING for the lock already reads as active, so the tick skips it.
         from webapp import continuous_engine as _CE0
         _CE0.mark_request(cache_key)
     except Exception:
         pass
-    if req.reset:
-        _evict_brain_chat_session(cache_key)
+    # ONE-BRAIN TURN LOCK (M0, docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md section 2): one turn at a time
+    # against the process-shared organs; the idle tick takes the same lock. Covers the backend pin, reset, build and
+    # the whole `brain_reply` pipeline. The mouth (Qwen render) is called from inside `brain_reply`, so it is inside
+    # the lock too. Escape: BRAIN_TURN_LOCK=0. Wait time: webapp.brain_turn_lock.stats() (no reply field changes).
+    from webapp.brain_turn_lock import brain_turn
+    with brain_turn("brain_chat"):
+        # A numpy-CPU code path elsewhere in this long-running server can have flipped
+        # the global backend cache away from the bridge's cupy arrays between turns;
+        # re-assert it here so gate()/render()/the rich path run consistently (the
+        # cupy/numpy-flip bug, 2026-06-24).
+        _pin_bridge_backend()
+        if req.reset:
+            _evict_brain_chat_session(cache_key)
 
-    chat = _BRAIN_CHATS.get(cache_key)
-    source = None
-    if chat is None:
-        try:
-            chat, source = _build_chat_brain(req.brain, renderer)
-        except HTTPException:
-            raise
-        except Exception as e:  # a missing model / bad bundle -> a clean 400
-            raise HTTPException(
-                400, f"failed to load brain {req.brain!r} with renderer "
-                     f"{renderer!r}: {type(e).__name__}: {e}")
-        chat._brain_chat_source = source  # type: ignore[attr-defined]
-        _BRAIN_CHATS[cache_key] = chat
-        _reload_persisted_learning(cache_key, chat)
-    source = getattr(chat, "_brain_chat_source", source)
+        chat = _BRAIN_CHATS.get(cache_key)
+        source = None
+        if chat is None:
+            try:
+                chat, source = _build_chat_brain(req.brain, renderer)
+            except HTTPException:
+                raise
+            except Exception as e:  # a missing model / bad bundle -> a clean 400
+                raise HTTPException(
+                    400, f"failed to load brain {req.brain!r} with renderer "
+                         f"{renderer!r}: {type(e).__name__}: {e}")
+            chat._brain_chat_source = source  # type: ignore[attr-defined]
+            _BRAIN_CHATS[cache_key] = chat
+            _reload_persisted_learning(cache_key, chat)
+        source = getattr(chat, "_brain_chat_source", source)
 
-    # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +
-    # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
-    # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
-    # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
-    return brain_reply(chat, req, source, cache_key)
+        # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +
+        # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
+        # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
+        # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
+        return brain_reply(chat, req, source, cache_key)
 
 
 def _word_role_trace_reset(chat) -> None:
