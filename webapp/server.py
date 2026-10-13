@@ -4585,7 +4585,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                                     # "I don't know about that." on abstain
           "abstained": bool,        # the no-confab MOAT fired (the brain
                                     # was never taught this) — shown distinctly
-          "recalled_svo": [a, v, p] | null,   # the stored fact the gate hit
+          "recalled_svo": [a, v, p] | null,   # the stored fact the gate hit (null on a derived answer)
+          "derived": bool,          # the answer is the brain's own multi-hop inference, not a recall
+          "derived_from": [[a, v, p], ...] | null,  # the hop facts it was reasoned from (derived only)
+          "derived_svo": [a, v, p] | null,    # the conclusion a derived answer states (derived only;
+                                    # for a multistep/transitive answer it was never told)
           "verified": bool,         # the render re-parsed back to the fact
           "renderer": str,          # which renderer produced the surface form
           "brain": str, "source": str,
@@ -4606,7 +4610,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
           # rich=True only (the multi-sentence grounded path):
           "rich": bool,             # whether the rich path produced this turn
           "n_sentences": int,       # number of brain-sourced sentences
-          "supporting_facts": [[a, v, p], ...],   # the verified SVOs behind it
+          "supporting_facts": [[a, v, p], ...],   # the verified SVOs behind it; on a derived answer whose
+                                    # conclusion was never told, the hops + other kept facts (the
+                                    # conclusion itself is in derived_svo, not here)
           "followup": bool,         # the turn was a 'tell me more'/'why?'
         }
     """
@@ -4742,6 +4748,88 @@ def _mouth_trace(chat, answer):
                 "tone_level": int(getattr(chat, "_mood_tone_level", 0) or 0), "calls": out}
     except Exception as e:
         return {"error": "trace unavailable: %s: %s" % (type(e).__name__, e)}
+
+
+def _single_fact_turn(chat, msg) -> dict:
+    """The single-fact (rich=False) path's route selection + render + derived framing, moved VERBATIM out of
+    `brain_reply` (2026-10-13, Stage-2 HANDOFF item 18b) so a fake-chat test can pin it
+    (tests/test_gnw_multistep_derived_honesty.py). Order: the transitive yes/no route, the compositional chain
+    route, then `chat.gate(msg)`; a `ChainedSVO` from ANY of them (including one a gate wrapper such as the
+    multistep chase returns) is a derived answer and gets the inference lead. Exceptions propagate: the caller
+    raises the same HTTP 500 it always did. Returns {gate_svo, is_chain_route, answer, abstained, verified,
+    chain_raw_answer, transitive_matched, t_meta}."""
+    _t_meta = None
+    # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
+    # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
+    # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
+    # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
+    # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
+    gate_svo = None
+    _is_chain_route = False
+    # board #140 / BRAIN_SOURCE_MONITORING_FRAMES_HONESTY (2026-09-01): the pre-`frame_derived_answer` CORE
+    # text, kept ONLY so the #129-organ-driven alt-framing below (webapp/source_monitoring_honesty_chat.py)
+    # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
+    # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
+    _chain_raw_answer = None
+    # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
+    # compositional chain route / chat.gate for the SAME reason that route already is -- see
+    # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
+    # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
+    # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
+    # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
+    # question). See webapp/reasoning_transitive_chat.py.
+    _transitive_matched = False
+    try:
+        from webapp.reasoning_transitive_chat import resolve_transitive_query
+        _t_result = resolve_transitive_query(chat, msg)
+    except Exception:
+        _t_result = None
+    if _t_result is not None:
+        _transitive_matched, gate_svo = _t_result
+        try:   # the engagement record for this matched question (attached to the reply below)
+            from webapp import reasoning_transitive_chat as _RTC
+            _t_meta = dict(_RTC.last_transitive_meta)
+        except Exception as _e:
+            _t_meta = {"error": "trace unavailable: %s" % _e}
+        _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+    if not _transitive_matched:
+        try:
+            from research.runners.compositional_chain_route import resolve_compositional_chain
+            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+            _is_chain_route = gate_svo is not None
+        except Exception:
+            gate_svo = None
+            _is_chain_route = False
+        if gate_svo is None:
+            gate_svo = chat.gate(msg)
+            # a gate that RETURNS a derived answer (the multistep chase's never-told terminal, a ChainedSVO;
+            # webapp/gnw_multistep_deliberation.py, Stage-2 HANDOFF item 18b) gets the same derived flag +
+            # framing as the routes above. Every other gate result has no `derived_from` -> unchanged.
+            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+    if gate_svo is None:
+        answer, abstained, verified = "I don't know about that.", True, False
+    else:
+        answer = chat.render(gate_svo)
+        abstained = False
+        # 'verified' = the render did NOT fall back to the raw triple
+        # (ChatBrain marks an unverified render with this suffix).
+        verified = "[unverified render" not in answer
+        if _is_chain_route:
+            # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): frame a
+            # composed multi-hop inference as the brain's OWN inference, surfacing the supporting hop-facts
+            # -- UNCONDITIONALLY, not gated behind the #129 provenance monitor in `brain_reply` (which must not
+            # be the only thing standing between a derived answer and being presented as a plain perceived
+            # fact). NOTE (2026-10-13): at production defaults (BRAIN_SOURCE_PROVENANCE_HONESTY and
+            # BRAIN_SOURCE_MONITORING_FRAMES_HONESTY both default-ON) `brain_reply` then SWAPS this lead for
+            # "I believe <answer>, but I reasoned that myself rather than being told it directly." whenever the
+            # monitor reads GENERATED -- still an inference framing, but without the hop list in the text (the
+            # response's `derived_from` keeps it). So the single-fact default wording is NOT "I derived this from".
+            from research.runners.compositional_chain_route import frame_derived_answer
+            _chain_raw_answer = answer
+            answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
+    return {"gate_svo": gate_svo, "is_chain_route": _is_chain_route, "answer": answer, "abstained": abstained,
+            "verified": verified, "chain_raw_answer": _chain_raw_answer, "transitive_matched": _transitive_matched,
+            "t_meta": _t_meta}
 
 
 def brain_reply(chat, req, source, cache_key) -> JSONResponse:
@@ -6644,6 +6732,12 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when this turn's direct fact
         # was a COMPOSED multi-hop inference (compositional_chain_route), not a directly-recalled one.
         _rich_derived = bool(r.get("derived"))
+        # A derived turn whose direct answer is a never-told conclusion (multistep chase / transitive, not the C2
+        # possessive chain whose conclusion is its own stored last hop) must not report that conclusion as a
+        # supporting fact: supporting_facts become the hops (+ the other kept facts) and the conclusion is reported
+        # as `derived_svo` (2026-10-13, Stage-2 HANDOFF item 18b). `facts` itself is unchanged (n_sentences etc.).
+        from research.runners.rich_answer_composer import derived_reply_fields as _derived_reply_fields
+        _rich_supporting, _rich_derived_svo = _derived_reply_fields(facts, _rich_derived, r.get("derived_from"))
         # EPISODIC STORE (Gate-B, D5, Hook B): a normal answered turn with a VERIFIED SVO BTSP-forms the answered
         # topic's (subject/agent) CA3 assembly (write-only; changes NO reply text). The spiking BTSP write is
         # ~seconds on cupy but ~510s/topic on numpy@2000, so it is GATED behind cupy (`_episodic_store_ok`) — on a
@@ -6678,6 +6772,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # one; derived_from names the verified hop-facts it was reasoned from. False/None otherwise.
             "derived": _rich_derived,
             "derived_from": (list(r.get("derived_from") or []) if _rich_derived else None),
+            # the conclusion a derived reply states (facts[0]); null on every non-derived turn.
+            "derived_svo": _rich_derived_svo,
             # every kept sentence is gate-sourced + verify-checked, so the
             # multi-sentence reply is verified-by-construction (unless it
             # abstained, in which case there is nothing to verify).
@@ -6687,7 +6783,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             "source": source,
             "rich": True,
             "n_sentences": int(r.get("n_sentences", 0)),
-            "supporting_facts": facts,
+            "supporting_facts": _rich_supporting,
             "followup": bool(r.get("followup", False)),
             # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
             # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
@@ -6960,70 +7056,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
     # smoke records), then render. gate() returns None on the moat.
     try:
-        # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
-        # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
-        # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
-        # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
-        # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
-        gate_svo = None
-        _is_chain_route = False
-        # board #140 / BRAIN_SOURCE_MONITORING_FRAMES_HONESTY (2026-09-01): the pre-`frame_derived_answer` CORE
-        # text, kept ONLY so the #129-organ-driven alt-framing below (webapp/source_monitoring_honesty_chat.py)
-        # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
-        # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
-        _chain_raw_answer = None
-        # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
-        # compositional chain route / chat.gate for the SAME reason that route already is -- see
-        # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
-        # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
-        # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
-        # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
-        # question). See webapp/reasoning_transitive_chat.py.
-        _transitive_matched = False
-        try:
-            from webapp.reasoning_transitive_chat import resolve_transitive_query
-            _t_result = resolve_transitive_query(chat, msg)
-        except Exception:
-            _t_result = None
-        if _t_result is not None:
-            _transitive_matched, gate_svo = _t_result
-            try:   # the engagement record for this matched question (attached to the reply below)
-                from webapp import reasoning_transitive_chat as _RTC
-                _t_meta = dict(_RTC.last_transitive_meta)
-            except Exception as _e:
-                _t_meta = {"error": "trace unavailable: %s" % _e}
-            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
-        if not _transitive_matched:
-            try:
-                from research.runners.compositional_chain_route import resolve_compositional_chain
-                gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
-                _is_chain_route = gate_svo is not None
-            except Exception:
-                gate_svo = None
-                _is_chain_route = False
-            if gate_svo is None:
-                gate_svo = chat.gate(msg)
-                # a gate that RETURNS a derived answer (the multistep chase's never-told terminal, a ChainedSVO;
-                # webapp/gnw_multistep_deliberation.py, Stage-2 HANDOFF item 18b) gets the same derived flag +
-                # framing as the routes above. Every other gate result has no `derived_from` -> unchanged.
-                _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
-        if gate_svo is None:
-            answer, abstained, verified = "I don't know about that.", True, False
-        else:
-            answer = chat.render(gate_svo)
-            abstained = False
-            # 'verified' = the render did NOT fall back to the raw triple
-            # (ChatBrain marks an unverified render with this suffix).
-            verified = "[unverified render" not in answer
-            if _is_chain_route:
-                # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): frame a
-                # composed multi-hop inference as the brain's OWN inference, surfacing the supporting hop-facts
-                # -- UNCONDITIONALLY, not gated behind the optional #129 provenance monitor below (which is
-                # default-OFF and must not be the only thing standing between a derived answer and being
-                # presented as a plain perceived fact).
-                from research.runners.compositional_chain_route import frame_derived_answer
-                _chain_raw_answer = answer
-                answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
+        _sf = _single_fact_turn(chat, msg)
+        gate_svo, _is_chain_route = _sf["gate_svo"], _sf["is_chain_route"]
+        answer, abstained, verified = _sf["answer"], _sf["abstained"], _sf["verified"]
+        _chain_raw_answer = _sf["chain_raw_answer"]
+        _transitive_matched, _t_meta = _sf["transitive_matched"], _sf["t_meta"]
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
@@ -7143,6 +7180,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # `derived_from` names the two independently-verified hop-facts it was reasoned from.
         "derived": bool(_is_chain_route),
         "derived_from": (list(getattr(gate_svo, "derived_from", None) or []) if _is_chain_route else None),
+        # the conclusion a derived reply states; null on every non-derived turn (same key as the rich path).
+        "derived_svo": (list(gate_svo) if _is_chain_route else None),
         "verified": verified,
         "renderer": rname,
         "brain": req.brain,

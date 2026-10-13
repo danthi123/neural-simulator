@@ -228,6 +228,24 @@ def _is_followup(question):
     return bool(content) and len(content) <= 3 and all(t in _FOLLOWUP_CUES for t in content)
 
 
+def derived_reply_fields(facts, derived, derived_from):
+    """The reply-level `supporting_facts` + `derived_svo` for one rich turn (2026-10-13, Stage-2 HANDOFF item 18b).
+    `facts` is the turn's kept fact list (after any confidence cap); facts[0] is the DIRECT answer. When the turn
+    is DERIVED and facts[0] is NOT one of its `derived_from` hops (a multistep-chase / transitive conclusion that was
+    never told), facts[0] must not be reported as a supporting fact: the supporting facts are the hops, then the
+    remaining kept facts not already among them. A possessive-chain (C2) conclusion IS `derived_from[-1]`, a stored
+    fact, so its `supporting_facts` stay `facts` unchanged. `derived_svo` is facts[0] on a derived turn (the
+    conclusion the reply states), else None. Returns (supporting_facts, derived_svo); `facts` is not modified (the
+    caller keeps it for `n_sentences`)."""
+    facts = [list(f) for f in (facts or [])]
+    if not (derived and facts):
+        return facts, None
+    hops = [list(h) for h in (derived_from or []) if isinstance(h, (list, tuple)) and len(h) == 3]
+    if facts[0] in hops:
+        return facts, list(facts[0])
+    return hops + [f for f in facts[1:] if f not in hops], list(facts[0])
+
+
 class NeuralDiscoursePlanner:
     """The NEURAL discourse-planner (burndown 3G / inventory C-6): the dlPFC spiking content-selection Control
     drives WHICH on-topic concepts the rich answer brings up, in WHAT NEURAL-RELEVANCE order, and WHEN to STOP --
@@ -650,7 +668,9 @@ class RichAnswerComposer:
         if type(direct).__name__ == "ChainedSVO":
             # a COMPOSED multi-hop inference (moat-hardening audit findings #4/#5) -- record it on the side
             # channel so answer() can flag + frame it, then continue treating `direct` as a plain [a,v,p] for
-            # the existing chain/elaboration/render pipeline (it IS a literal stored fact, the final hop).
+            # the existing chain/elaboration/render pipeline. It is a literal stored fact (the final hop) ONLY for
+            # the possessive-chain route; a multistep-chase / transitive ChainedSVO is a never-told conclusion, so
+            # the caller must not list it as a supporting fact (see `derived_reply_fields`).
             self._last_direct_derived = True
             self._last_direct_derived_from = list(getattr(direct, "derived_from", []))
         # OPEN-ENDED GENERATION (#3E): an open-ended prompt makes chat.gate VOLUNTEER a generated HYPOTHESIS (a

@@ -98,11 +98,15 @@ from research.runners.lexical_lemma import lemma_verb
 
 
 class ChainedSVO(list):
-    """A DERIVED (chain-composed) `[agent, action, patient]` triple -- itself a literal stored fact (the final
-    hop), but reached by CONNECTING two independently brain-verified hops rather than being asked/recalled
-    directly. A `list` subclass (mirrors `research.runners.brain_chat_tui.HypothesisSVO`) so it flows unchanged
-    through anything that treats a gate result as `[a, v, p]` (e.g. `chat.render`'s `a, v, p = gate_svo`
-    unpacking, or `list(gate_svo)`), while a caller that cares (the source-provenance-honesty wiring, the
+    """A DERIVED (chain-composed) `[agent, action, patient]` triple, reached by CONNECTING independently
+    brain-verified hops rather than being asked/recalled directly. Whether the triple is ITSELF a stored fact
+    depends on the producer: this module's possessive-chain route returns the final hop (a literal stored fact,
+    `derived_from[-1]`); the multistep chase (webapp/gnw_multistep_deliberation.py) and the transitive yes/no route
+    (webapp/reasoning_transitive_chat.py) return `[first agent, relation, terminal]`, a conclusion that was NEVER
+    told (webapp/server.py then reports it as `derived_svo` and lists `derived_from` as the supporting facts).
+    A `list` subclass (mirrors `research.runners.brain_chat_tui.HypothesisSVO`) so it flows unchanged through
+    anything that treats a gate result as `[a, v, p]` (e.g. `chat.render`'s `a, v, p = gate_svo` unpacking, or
+    `list(gate_svo)`), while a caller that cares (the source-provenance-honesty wiring, the
     episodic-store guard, the API response shape) can `isinstance`/type-check it and frame it as GENERATED, not
     PERCEIVED, keep it out of episodic/discourse-WM writes that assume a directly-recalled fact, and report a
     distinct API shape (`recalled_svo=None`, `derived=True`, `derived_from=[...]`) rather than one
