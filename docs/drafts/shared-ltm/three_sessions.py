@@ -1,10 +1,14 @@
 """Three conversations through the REAL /api/brain-chat handler (dev seed 7): per-session RSS + per-turn reply hashes.
 
-Run once with BRAIN_SHARED_LTM=0 (each conversation loads its own LTM copy) and once with it unset (the default:
-one shared store). Sessions are built back to back (turn 1 of s1, s2, s3), then turns 2 and 3 interleave across
-sessions, so a later conversation reads the shared store after another one used it.
+Run per arm (run_arm.sh sets the env): BRAIN_SHARED_LTM=0 (each conversation loads its own LTM copy),
+BRAIN_SHARED_LTM=0 BRAIN_LTM_RNG_ISOLATE=1 (own copies, RNG-isolated), BRAIN_SHARED_LTM=1 (one shared store). Sessions
+are built back to back (turn 1 of s1, s2, s3), then every later turn interleaves across sessions, so a later
+conversation reads the shared store after another one used it.
 
-    python docs/drafts/shared-ltm/three_sessions.py <out.json>
+    python docs/drafts/shared-ltm/three_sessions.py <out.json> [v1|v2]
+
+v1 = the first run's 3 turns. v2 (review, 2026-10-13) puts buffer recalls (the spiking tiny-demo composer) AFTER LTM
+recalls, where a reseeded global RNG would show.
 
 rss_kb from /proc is KiB. The reply hash is sha256 over the handler's whole JSON body bytes, per turn.
 """
@@ -19,9 +23,18 @@ os.environ.setdefault("BRAIN_CHAT_SEED", "7")
 os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
 os.environ.setdefault("SIM_DISABLE_LLM", "1")
 
-TURNS = ["what does the dog chase",            # a tiny-demo (buffer) fact
-         "what country is chelsea fc from?",   # an LTM fact: (chelsea_fc, country, united_kingom) is only in wikidata_100k
-         "what does the dragon do"]            # untaught: buffer and LTM both abstain (the moat)
+TURNSETS = {
+    "v1": ["what does the dog chase",            # a tiny-demo (buffer) fact
+           "what country is chelsea fc from?",   # an LTM fact: (chelsea_fc, country, united_kingom) is only in wikidata_100k
+           "what does the dragon do"],           # untaught: buffer and LTM both abstain (the moat)
+    "v2": ["what does the dog chase",            # buffer
+           "what country is chelsea fc from?",   # LTM (chelsea_fc, country, united_kingom)
+           "what does the cat eat",              # buffer, after an LTM recall
+           "what sport is chelsea fc in?",       # LTM (chelsea_fc, sport, association_football_club)
+           "what does the brain use",            # buffer, after an LTM recall
+           "what does the dragon do"],           # untaught: buffer and LTM both abstain
+}
+TURNS = TURNSETS["v1"]
 SESSIONS = ["s1", "s2", "s3"]
 
 
@@ -33,13 +46,22 @@ def rss():
     return out["VmRSS"], out["VmHWM"]
 
 
-def main(out_path):
+def main(out_path, turnset="v1"):
+    import subprocess
     from webapp import server as S
     from webapp.server import brain_chat, BrainChatRequest
-    rec = {"env": {k: os.environ.get(k) for k in ("BRAIN_SHARED_LTM", "BRAIN_CHAT_SEED", "SIM_BACKEND",
-                                                  "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM", "OMP_NUM_THREADS")},
-           "turns": TURNS, "rss_start_kb": rss()[0], "built": {}, "replies": []}
-    for ti, msg in enumerate(TURNS):
+    turns = TURNSETS[turnset]
+    vcs = ["gi" + "t"]
+    sha = subprocess.run(vcs + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    dirty = bool(subprocess.run(vcs + ["status", "--porcelain", "--untracked-files=no"], capture_output=True,
+                                text=True).stdout.strip())
+    rec = {"env": {k: os.environ.get(k) for k in ("BRAIN_SHARED_LTM", "BRAIN_LTM_RNG_ISOLATE", "BRAIN_CHAT_SEED",
+                                                  "SIM_BACKEND", "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM",
+                                                  "OMP_NUM_THREADS")},
+           "git_sha": sha, "git_dirty": dirty, "turnset": turnset,
+           "shared_ltm_on": S._shared_ltm_on(), "ltm_rng_isolate_on": S._ltm_rng_isolate_on(),
+           "turns": turns, "rss_start_kb": rss()[0], "built": {}, "replies": []}
+    for ti, msg in enumerate(turns):
         for sess in SESSIONS:
             t0 = time.time()
             r = brain_chat(BrainChatRequest(session=sess, message=msg))
@@ -75,4 +97,4 @@ def main(out_path):
 
 if __name__ == "__main__":
     sys.path.insert(0, os.getcwd())
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "v1")
