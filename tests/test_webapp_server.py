@@ -1223,12 +1223,14 @@ def test_brain_chat_rich_false_escape_is_single_svo(client, monkeypatch):
         "session": sess, "brain": "tiny-demo", "renderer": "stub"})
 
 
-def test_brain_chat_source_provenance_default_off_is_byte_identical(client, monkeypatch):
-    """Board #129: `BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> the response carries `provenance: null` and the
-    answer text is UNCHANGED (the organ is never built -> byte-identical to the pre-#129 endpoint)."""
+def test_brain_chat_source_provenance_explicit_off_is_byte_identical(client, monkeypatch):
+    """Board #129: `BRAIN_SOURCE_PROVENANCE_HONESTY=0` (the explicit off escape) -> the response carries
+    `provenance: null` and the answer text is UNCHANGED (the organ is never built -> byte-identical to the pre-#129
+    endpoint). The flag went DEFAULT-ON on 2026-09-01 (e73bea486, `_DEFAULT_ON = True`), so unset no longer means off:
+    this test used to delete the env var and went stale at the flip (FAILURE_LOG 2026-10-13)."""
     pytest.importorskip("numpy")
     monkeypatch.setenv("SIM_BACKEND", "numpy")
-    monkeypatch.delenv("BRAIN_SOURCE_PROVENANCE_HONESTY", raising=False)
+    monkeypatch.setenv("BRAIN_SOURCE_PROVENANCE_HONESTY", "0")
     try:
         import research.runners.brain_chat_tui  # noqa: F401
     except Exception as e:

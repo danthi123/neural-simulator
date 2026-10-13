@@ -10,6 +10,10 @@ GiB = KiB / 1048576.
 - ebc11c78c: this WORKLOG's first version, with the RSS evidence.
 - 8e0ea8415: review fixes (correctness SHIP, science FIX_FIRST). Release is OPT-IN, a release fails loudly, and the
   handler computes its key through the helper. This is instrument B in E1 below.
+- Follow-up after the d7e842686 review: released sessions' `_SESSION_MULTIREF` organs stay alive for the worker's
+  lifetime (wave3 tracks its d6 slice owner by id()), and the no-recorded-key check is per session. It also adds
+  E1 criterion 5 and fixes the stale provenance test. This changes worker code, so B must move to that commit:
+  regenerate the lines with gen_e1.py after setting its B constant.
 
 ## What is retained
 
@@ -23,7 +27,7 @@ GiB = KiB / 1048576.
   `SimulationBridge` (`RFPhasorComposer._store_substrate`).
 - `ltm_size_probe.py` loads only that LTM store, with no brain build (memcap 9): 395 shards, 78,857 facts, 78,857
   `SimulationBridge` handles. RSS goes up 5,709,276 KiB = 5.445 GiB (72.4 KiB per fact). Deleting the store and
-  running gc + malloc_trim gives back 5,372,704 KiB = 5.124 GiB. The battery's emo to bc_a step is
+  running gc + malloc_trim returns 5,372,704 KiB = 5.12 GiB to the OS (the rest stays as reusable heap). The battery's emo to bc_a step is
   +5,690,652 KiB = 5.427 GiB (below). So one live session costs about 5.44 GiB, almost all of it this LTM tier.
 
 ## The mechanism (as of 8e0ea8415)
@@ -60,7 +64,10 @@ server keeps its existing behaviour.
 | emo | 6679772 (6.37 GiB) | 6677732 (6.37 GiB) |
 | bc_a | 12370424 (11.80 GiB) | 6287396 (6.00 GiB) |
 | bc_b | 12370600 (11.80 GiB) | 6287384 (6.00 GiB) |
-| process hwm | 12454096 (11.88 GiB) | 6834412 (6.52 GiB) |
+| process hwm (3-turn list) | 12454096 (11.88 GiB) | 6834412 (6.52 GiB) |
+
+The 11.88 GiB peak is for this 3-turn list (2 sessions). The registered 4-turn pair (emo,bc_a,bc_b,selfinit; 3
+sessions) peaks at 16.14 GiB per arm (JOBS section 0).
 
 Scope of this evidence: byte-identical on emo,bc_a,bc_b, dev seed 7 (whole-record sha), at fefd940a7 only. Both
 output JSONs have sha256 `1b6dfe69a2e0ca972c19d6dc58325d4f8e66e21f554458cfee64ae64ac20dd01`, with no fields
@@ -86,7 +93,11 @@ sidecars only under `research/findings/raw`.
 - The default may flip to release-on only after E1 passes.
 - B must be reachable before it can be provisioned: this branch is not pushed. `tools/pool_provision.sh --revision
   8e0ea8415 --isolated` refuses a revision that does not contain origin/main; if it refuses, rebase or merge first.
-  Rebasing changes the SHA, so regenerate the B lines.
+  Rebasing changes the SHA, so regenerate the B lines (`python3 docs/drafts/battery-retention/gen_e1.py`, after
+  editing its B constant). A rebase also moves the base, so A stays a valid control only if
+  `git diff --name-only f24963bfb <new-base>` lists no code files (nothing outside research/findings,
+  research/coordination and docs). If it lists any, rebuild A at the new base with release unset instead of using
+  the f24963bfb pin.
 
 ## E1 equivalence check (Hermes runs this before the default can flip)
 
@@ -106,7 +117,7 @@ Discipline is that of JOBS section 5: one arm in flight globally, and the arms f
 line at a time with `tools/pool_queue.sh add` through the quoted heredoc of JOBS section 3. Provision both pins
 first: `bash tools/pool_provision.sh --revision <sha> --isolated wspool`.
 
-PASS requires all four of the following; anything else is FAIL, and the default stays OFF.
+PASS requires all five of the following; anything else is FAIL, and the default stays OFF.
 
 1. For all 6 seed x arm pairs, the whole-record sha256 of `A_s<seed>_<arm>.json` equals that of `B_s<seed>_<arm>.json`.
 2. Both ON arms of both instruments (`A_s7_on`, `A_s8_on`, `B_s7_on`, `B_s8_on`) show a `select` record with
@@ -120,6 +131,10 @@ PASS requires all four of the following; anything else is FAIL, and the default 
    `battery_turn`, no `battery_release` record, and the same RSS staircase as A_s7_on. The staircase test is per turn:
    |rss_kb(Bnorel) - rss_kb(A)| <= 2% of A at emo, bc_a, bc_b and selfinit. The 2% tolerance is this WORKLOG's
    choice, because RSS is not bit-reproducible.
+5. The instruments are live, not vacuous. No turn in any A or B json carries `_error`. Every json's emo and bc_a
+   responses report `source` containing `+LTM`, so the wikidata_100k tier actually loaded. Each A arm's RSS rises
+   by at least 4.5 GiB (4718592 KiB) from emo to bc_a, so the retention it controls for is really there. Each B arm's
+   bc_a RSS is at least 4 GiB (4194304 KiB) below its A arm's bc_a RSS, so the release really freed the session.
 
 Checker, run in the out dir after all 13 lines record rc=0 (`python3 e1_check.py`):
 
@@ -140,6 +155,16 @@ for s in (7, 8):
         chk(rel == [(("emo",), "emo", None), (("bc",), "bc_b", None), (("si",), "selfinit", None)],
             "B release s%d %s %r" % (s, a, rel))
         chk("_battery_release_error" not in open("B_s%d_%s.json" % (s, a)).read(), "B no error s%d %s" % (s, a))
+        bt = {}
+        for inst in ("A", "B"):
+            j = json.load(open("%s_s%d_%s.json" % (inst, s, a)))
+            chk(not any(isinstance(v, dict) and "_error" in v for v in j.values()), "%s no _error s%d %s" % (inst, s, a))
+            chk(all("+LTM" in str(j.get(t, {}).get("source", "")) for t in ("emo", "bc_a")),
+                "%s LTM loaded s%d %s" % (inst, s, a))
+            bt[inst] = {r["turn"]: r["rss_kb"] for r in rows("%s_s%d_%s_rss.jsonl" % (inst, s, a))
+                        if r.get("event") == "battery_turn"}
+        chk(bt["A"]["bc_a"] - bt["A"]["emo"] >= 4718592, "A retention step >= 4.5 GiB s%d %s" % (s, a))
+        chk(bt["A"]["bc_a"] - bt["B"]["bc_a"] >= 4194304, "B bc_a >= 4 GiB below A s%d %s" % (s, a))
     for inst in ("A", "B"):
         r = rows("%s_s%d_on_rss.jsonl" % (inst, s))
         i0 = next(i for i, x in enumerate(r) if x.get("event") == "battery_turn" and x["turn"] == "bc_b")

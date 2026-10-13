@@ -1052,18 +1052,32 @@ def session_release_plan(turn_labels):
     return plan
 
 
-def _release_sessions(keys, evict, live) -> None:
-    """Evict each server cache key through the reset teardown (`evict`), then collect cycles and hand freed heap back
-    to the OS (malloc_trim; glibc only, best-effort).
+def _release_sessions(session_keys, evict, live, keep_alive=None, multiref=None) -> None:
+    """Evict each recorded server cache key of each planned session through the reset teardown (`evict`), then collect
+    cycles and hand freed heap back to the OS (malloc_trim; glibc only, best-effort).
 
-    This DROPS the released session's ChatBrain and the per-session organs the teardown covers; it is safe for
-    replies only because nothing later in the turn list reads that session (session_release_plan). Equivalence
-    evidence: byte-identical on emo,bc_a,bc_b, dev seed 7 (whole-record sha) at fefd940a7; nothing broader yet.
-    Fails LOUDLY: raises RuntimeError when no key was recorded or a key was not live in `live` (the server's
-    _BRAIN_CHATS) at release time -- a release that frees nothing is a wrong instrument, never a silent pass. Every
-    key is still evicted before the raise; the worker catches it and records the error."""
-    keys = list(keys)
+    `session_keys`: {session: [cache keys recorded for it]}. This DROPS the released session's ChatBrain and the
+    per-session organs the teardown covers; it is safe for replies only because nothing later in the turn list reads
+    that session (session_release_plan). Equivalence evidence: byte-identical on emo,bc_a,bc_b, dev seed 7
+    (whole-record sha) at fefd940a7; nothing broader yet.
+
+    ID-REUSE GUARD: the wave3 merged pool (onebrain_xedge_wave3 `session_enter`) tracks its d6 slice owner by
+    id(MultiReferentWMOrgan). A freed per-session organ's address can be reused by the next session's organ, which
+    would then look like the SAME owner and skip the hard reset of the session slices. Before evicting, each released
+    session's _SESSION_MULTIREF organ (no ChatBrain reference; small) is appended to `keep_alive`, which the worker
+    holds for its lifetime, so organ ids stay unique exactly as in keep-everything mode.
+
+    Fails LOUDLY: raises RuntimeError when any planned session has no recorded key, or a key was not live in `live`
+    (the server's _BRAIN_CHATS) at release time -- a release that frees nothing is a wrong instrument, never a
+    silent pass. Every recorded key is still evicted before the raise; the worker catches it and records the error."""
+    keys = [k for s in session_keys for k in session_keys[s]]
+    empty = [s for s, ks in session_keys.items() if not ks]
     missing = [k for k in keys if k not in live]
+    if keep_alive is not None and multiref is not None:
+        for key in keys:
+            org = multiref.get(key)
+            if org is not None:
+                keep_alive.append(org)
     for key in keys:
         evict(key)
     import gc
@@ -1073,8 +1087,8 @@ def _release_sessions(keys, evict, live) -> None:
         ctypes.CDLL("libc.so.6").malloc_trim(0)
     except Exception:  # noqa: BLE001 -- not glibc: the memory is still free for reuse inside the process
         pass
-    if not keys:
-        raise RuntimeError("session release: no cache key was recorded for the planned session(s)")
+    if empty:
+        raise RuntimeError("session release: no cache key was recorded for session(s) %r" % (empty,))
     if missing:
         raise RuntimeError("session release: key(s) not live at release: %r" % (missing,))
 
@@ -1107,14 +1121,17 @@ def _collect_worker(env_json, turn_labels, out_path):
     releasing = session_release_enabled()
     release = session_release_plan(turn_labels) if releasing else {}
     keys_by_session = {}
+    released_multiref = []   # id-reuse guard (see _release_sessions): released sessions' d6 organs stay alive
 
     def _release_after(i, label):
         from webapp import server as _S
         sessions = release[i]
-        keys = [k for s in sessions for k in sorted(keys_by_session.pop(s, ()))]
+        session_keys = {s: sorted(keys_by_session.pop(s, ())) for s in sessions}
+        keys = [k for s in sessions for k in session_keys[s]]
         err = None
         try:
-            _release_sessions(keys, _S._evict_brain_chat_session, _S._BRAIN_CHATS)
+            _release_sessions(session_keys, _S._evict_brain_chat_session, _S._BRAIN_CHATS,
+                              keep_alive=released_multiref, multiref=_S._SESSION_MULTIREF)
         except Exception as e:  # noqa: BLE001 -- a release failure is recorded loudly, never a worker crash
             err = "%s: %s" % (type(e).__name__, e)
             print("[battery worker] RELEASE ERROR after %s (%s): %s" % (label, ",".join(sessions), err),
