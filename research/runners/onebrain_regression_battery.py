@@ -835,11 +835,11 @@ FACULTY_PROBES = [
     # probe by disabling its own default-ON mechanism for every turn in the same arm build). Left thin=True.
     ("gnw-deliberation",        "well",     ["activity.composer"], True),
     # LIFTED 2026-09-02: the multi-step gate wraps `chat.gate` itself (no dedicated response key) -- an explicit
-    # chase-form question ("... all the way") over the tiny-demo's own dog->chase->cat / cat->eat->fish chain drives
-    # the re-entrant workspace to the CHAIN TERMINAL ('fish'), which surfaces through the ALREADY-tracked
-    # `recalled_svo` field (a single-hop turn would instead recall/abstain on 'cat'). "well" never asks a chase-form
-    # question, so this never engaged before.
-    ("gnw-multistep-deliberation", "chase", ["recalled_svo"], False),
+    # chase-form question ("... all the way") over the tiny-demo's dog->chase->cat. The chase follows ONE relation,
+    # so it stops at 'cat' (cat->eat->fish is a different verb; the recorded intact read is [dog, chase, cat], the
+    # lesion abstains). A >=2-hop terminal is reported as DERIVED since 2026-10-13 (recalled_svo null, like an
+    # abstain), so derived/derived_from/abstained are tracked too. "well" never asks a chase-form question.
+    ("gnw-multistep-deliberation", "chase", ["recalled_svo", "derived", "derived_from", "abstained"], False),
     # LIFTED 2026-09-02: the self-initiation short-circuit is a DISJOINT idle/empty-turn class
     # (`is_selfinit_trigger`) -- "well" (real content) never matches it. `selfinit` is the empty-string message; the
     # top-level `abstained` field (not spoke) is the simplest robust categorical read (the nested `self_initiated`

@@ -197,7 +197,9 @@ def apply_cap(rich, r: dict, floor_sentences: int, confident) -> tuple:
     the honesty filter load-bearing on every kept sentence and is safe: the composer's gather is deterministic,
     so the FIRST `floor_sentences` facts a reach-sized gather produces are byte-identical to what a floor-sized
     gather alone would have produced (see the module docstring) -- truncating the tail and re-verifying only
-    THOSE facts reproduces exactly the floor-only answer, never a different one. `trace` is the additive
+    THOSE facts reproduces exactly the floor-only answer, never a different one. A DERIVED `r` (`r['derived']`)
+    gets its `frame_derived_answer` lead re-applied after the re-render (2026-10-13; unconditional, not behind
+    BRAIN_GNW_MULTISTEP_DERIVED, so truncated C2 replies change too). `trace` is the additive
     `confidence_forthcoming` response field (requested/kept counts, confident, granted, reason)."""
     facts = list(r.get("facts") or [])
     n_before = len(facts)
@@ -217,6 +219,15 @@ def apply_cap(rich, r: dict, floor_sentences: int, confident) -> tuple:
     new_kept = facts[:floor_sentences]
     dropped_extra = facts[floor_sentences:]
     paragraph, verified_kept, dropped_verify = rich.render_paragraph(new_kept)
+    if r.get("derived") and verified_kept:
+        # a DERIVED answer keeps its inference lead through the truncation (RichAnswerComposer.answer adds it after
+        # render_paragraph, so a bare re-render would drop it while `derived` stays true; 2026-10-13, Stage-2 HANDOFF
+        # item 18b). The floor-only answer carries the lead, so this keeps the "reproduces the floor-only answer"
+        # invariant above. NOT behind BRAIN_GNW_MULTISTEP_DERIVED: it applies to EVERY derived rich reply that is
+        # truncated, so it also changes truncated C2 (possessive-chain) replies, which lost their lead before (the
+        # honest direction). No escape flag; the pre-fix behavior was a reply that said derived but read as recall.
+        from research.runners.compositional_chain_route import frame_derived_answer
+        paragraph = frame_derived_answer(paragraph, r.get("derived_from"))
     undo_reach_bookkeeping(rich, dropped_extra)
     r_out = dict(r)
     r_out["answer"] = paragraph

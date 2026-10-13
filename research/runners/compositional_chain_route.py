@@ -98,21 +98,30 @@ from research.runners.lexical_lemma import lemma_verb
 
 
 class ChainedSVO(list):
-    """A DERIVED (chain-composed) `[agent, action, patient]` triple -- itself a literal stored fact (the final
-    hop), but reached by CONNECTING two independently brain-verified hops rather than being asked/recalled
-    directly. A `list` subclass (mirrors `research.runners.brain_chat_tui.HypothesisSVO`) so it flows unchanged
-    through anything that treats a gate result as `[a, v, p]` (e.g. `chat.render`'s `a, v, p = gate_svo`
-    unpacking, or `list(gate_svo)`), while a caller that cares (the source-provenance-honesty wiring, the
+    """A DERIVED (chain-composed) `[agent, action, patient]` triple, reached by CONNECTING independently
+    brain-verified hops rather than being asked/recalled directly. Whether the triple is ITSELF a stored fact
+    depends on the producer: this module's possessive-chain route returns the final hop (a literal stored fact,
+    `derived_from[-1]`); the multistep chase (webapp/gnw_multistep_deliberation.py) and the transitive yes/no route
+    (webapp/reasoning_transitive_chat.py) return `[first agent, relation, terminal]`, a conclusion that was NEVER
+    told (webapp/server.py then reports it as `derived_svo` and lists `derived_from` as the supporting facts).
+    A `list` subclass (mirrors `research.runners.brain_chat_tui.HypothesisSVO`) so it flows unchanged through
+    anything that treats a gate result as `[a, v, p]` (e.g. `chat.render`'s `a, v, p = gate_svo` unpacking, or
+    `list(gate_svo)`), while a caller that cares (the source-provenance-honesty wiring, the
     episodic-store guard, the API response shape) can `isinstance`/type-check it and frame it as GENERATED, not
     PERCEIVED, keep it out of episodic/discourse-WM writes that assume a directly-recalled fact, and report a
     distinct API shape (`recalled_svo=None`, `derived=True`, `derived_from=[...]`) rather than one
     indistinguishable from a real recall (moat-hardening audit findings #4/#5). `derived_from`: the ordered list
-    of `[a, v, p]` hop-facts the derivation actually confirmed (each independently a stored fact)."""
-    __slots__ = ("derived_from",)
+    of `[a, v, p]` hop-facts the derivation actually confirmed (each independently a stored fact).
+    `conclusion_is_hop` (2026-10-13): True ONLY when the producer guarantees the triple is its own stored last hop
+    (this module's possessive-chain route); every other producer leaves it False, so a consumer never infers
+    "stored" from list membership (the transitive spiking-reach fallback puts the conclusion itself in
+    `derived_from`)."""
+    __slots__ = ("derived_from", "conclusion_is_hop")
 
-    def __init__(self, svo, derived_from=None):
+    def __init__(self, svo, derived_from=None, conclusion_is_hop=False):
         super().__init__(svo)
         self.derived_from = list(derived_from) if derived_from else []
+        self.conclusion_is_hop = bool(conclusion_is_hop)
 
 
 def frame_derived_answer(surface: str, derived_from) -> str:
@@ -278,5 +287,6 @@ def resolve_compositional_chain(composer, question: str):
         if ambiguous2:
             return None
         if hop2 is not None:
-            return ChainedSVO([hop1, v2, hop2], derived_from=[[x, v1, hop1], [hop1, v2, hop2]])
+            return ChainedSVO([hop1, v2, hop2], derived_from=[[x, v1, hop1], [hop1, v2, hop2]],
+                              conclusion_is_hop=True)       # the conclusion IS the stored hop-2 fact
     return None                                  # no candidate hop-pair confirmed -> honest abstain
