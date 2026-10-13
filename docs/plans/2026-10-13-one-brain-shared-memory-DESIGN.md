@@ -292,3 +292,10 @@ the test-only reset, the learned-share counter. **Cognition seams** (six-seed, l
 brain-level learned store (M2-ON), the spiking "who told me" source monitor (M3b), the temporal-context "which
 conversation" read (named, not built), the tonic/phasic affect split, the one-write-decision reconsolidation (M6),
 sleep as a brain event with Step 4's replay policy, incremental D5 topic growth (or replay migration until then).
+
+## 9. Owner rulings on the open calls (2026-10-13)
+
+- **Deployment model: one brain per INSTANCE.** A person or a household runs its own sim. That instance's data stays accessible only to it, and a fresh-brain start is supported, so a brain can be tailored to its users through interaction over time, personal details included. "One brain for everyone" (the earlier ruling) means one brain shared by the instance's users.
+- **Disclosure: decide by kind of fact (option D).** Until the brain can tell personal facts from general ones, the interim policy is option B: a fact taught by one user is used for another user, framed anonymously as "someone told me". The goal is that the brain itself LEARNS what to share with whom, as a social-cognition faculty. The host policy gate in M4 is a declared scaffold with that faculty named as its replacement.
+- **Identity: a typed name for now.** The TUI and the web console both ask for a name at the start of a conversation. This is UNSETTLED and needs a design pass. The direction is OpenAI-API compatibility: identify the user as OpenAI-compatible chat APIs do, with the request-level `user` field and per-message `name`. Do not build cookie-based identity.
+- **Claude decided the remaining calls (2, 3, 4, 6, 7, 8) as recommended in §7.** These are: tonic/phasic affect split; serial turns behind the lock plus a bounded queue; auto-promote at sleep as the interim capacity rule; a test-only reset path; teacher writes tagged src=teacher; rollback/pin/quarantine.
