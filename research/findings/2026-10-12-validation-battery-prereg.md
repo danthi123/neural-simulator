@@ -33,6 +33,7 @@ artifacts:
 bar-sanity: research/packets/b2d-mouth-renderer/bar_sanity_record_amend2.json
 bar-sanity: docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json
 bar-sanity: docs/drafts/idle-replay/bar_sanity_record_c5_organ.json
+bar-sanity: docs/drafts/idle-replay/bar_sanity_record_c5_battery_amendB.json
 
 # The one validation battery: eight flip flags at current main, PRE-REGISTRATION
 
@@ -227,3 +228,137 @@ plus the re-measured S0/S1/S2 for the refute-lens.
 - Stale docstrings, noted not relied on: `webapp/d6_hebbian_chat.py` and `research/runners/d6_hebbian_store.py::
   hebbian_store_enabled` say "Default OFF" while the anchor is True; `onebrain_xedge_surprise_worldmodel_
   production.py`'s comment says "(OFF)" while `_XEDGE_SWM_DEFAULT_ON = True`. The anchors and the readers govern.
+
+## AMENDMENT B (2026-10-13, filed before any c5val_1012 or b2d1012 shard was read)
+
+**Filed by Claude on 2026-10-13, in its own commit, under RULING battery-amend-B-1013.** It folds in RULINGS
+c5-battery-lesion, c5-seed-provenance, lbf-host-input-rows and iw2-transitive-engagement, plus five constraints from
+the 2026-10-13 science review: the commit-lesion arm runs at the pin; the exposure arms run at a revision R_B
+branched from the pin; check E3 ties R_B to the pin; the C5 memory bar is read inside one revision with
+session release OFF; every C5 arm sets BRAIN_CHAT_SEED explicitly. This document has no Amendment A. The "A2" in
+section 5 C1 belongs to the 09-30 C1 prereg. B takes its letter from the ruling.
+
+**Stricter only.** No bar is loosened, and no seed, turn or arm is removed. Every bar in section 5 (F1, C1, C5, B1,
+B2, F2/F3) stands as written. Each B clause adds a condition, or removes numerator credit or definedness.
+
+**Data state at filing.** The c5val_1012 and b2d1012 shards that landed before this commit stay data and are unread.
+The only brain run made for B is one dev-seed-7 smoke of the commit-lesion arm (selfinit turn only, under
+`research/findings/raw/_regression_battery/c5val_1012_dev/`), read after this commit. Dev seeds carry no weight.
+
+### B.1 Revisions
+
+- **P** = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea, the battery pin of the C5 JOBS list.
+  `BRAIN_IDLE_REPLAY_COMMIT_LESION` exists at P (`research/runners/idle_replay_organ.py:148`). The registered OFF and
+  ON arms and B's COMMIT-LESION arm run at P.
+- **R_B** = e70e5c9954056edac46261e657b7477b58040857 (branch `claude-build/battery-amend-b-pin`), branched from P.
+  It is P plus one change: the label-only C5B exposure-session block in
+  `research/runners/onebrain_regression_battery.py` (`_EXTRA_TURNS` gains c5st_t1..c5st_t4, c5st_idle,
+  c5rt_t1..c5rt_t4, c5rt_idle). No `sim/`, `webapp/` or organ file differs from P, and the PROBE_TURNS roster (26)
+  is unchanged. The same block sits on the scorer branch (`claude-build/battery-amend-b`, aa54156b9); the scorer
+  reads `C5B_SESSIONS` from it.
+- **Reference for "changes which fact":** the STAGGERED session at R_B against the ROTATED session at R_B (one
+  revision, one release mode). Neither is compared with the pin's ON arm on which fact is voiced.
+
+### B.2 Arms per gate seed (seven; wspool only; one arm in flight globally, section 5 of the JOBS list)
+
+| arm | revision | runner env prefix (after the guards) | turns |
+|---|---|---|---|
+| off | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=… (registered) | emo,bc_a,bc_b,selfinit |
+| on | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… (registered) | emo,bc_a,bc_b,selfinit |
+| commitlesion | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=… | emo,bc_a,bc_b,selfinit |
+| off_rb | R_B | as off | emo,bc_a,bc_b,selfinit |
+| on_rb | R_B | as on | emo,bc_a,bc_b,selfinit |
+| stagger | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… | c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle |
+| rotated | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… | c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle |
+
+Facts: F1 "the lynx chases the vole", F2 "the heron hunts the frog", F3 "the yak eats the grass", F4 "the crow
+chases the wren"; every word was stored by the tiny-demo brain at dev seed 7 through the same handler. STAGGERED
+teaches F1 F2 F3 F4, one per turn, then takes the idle turn. ROTATED is the ruling's "permuted exposure": it teaches
+F3 F4 F1 F2 (the order rotated by two), then idles. Each session is its own fresh worker build. The code calls it
+`rotated` because `gates/attribution_required` reads the word "permuted" in runner code as a control arm.
+
+Every C5 arm (the registered pair included) sets BRAIN_CHAT_SEED explicitly, carries no other BRAIN_* key than its
+row above, and carries no LB_* key: `LB_BATTERY_RELEASE_SESSIONS` stays unset (session release OFF), so the memory
+bar keeps measuring production-like accumulation. Files: `c5_s<N>_<arm>.json`, its `.prov.json` and
+`c5_s<N>_<arm>_rss.jsonl` in `research/findings/raw/_regression_battery/c5val_1012/`.
+
+### B.3 C5 clauses (scorer `tools/c5_battery_score.py`)
+
+Bar-sanity record `docs/drafts/idle-replay/bar_sanity_record_c5_battery_amendB.json` (n=1000, synthetic): perfect
+brain 0.994 and noisy perfect brain 0.976 pass; all 13 null brains pass 0.000 (host random pick from the KB, with
+and without lesion awareness, from the taught facts, primacy, fixed fact, neutral ON, replay never fires, active-turn
+contamination, memory hog, unprovenanced seed, R_B drift, release mode on, random).
+
+- **B-SEED (validity; RULING c5-seed-provenance).** Every arm's sidecar exists; its `env.BRAIN_CHAT_SEED` equals the
+  seed; its git_sha equals P for off/on/commitlesion and R_B for off_rb/on_rb/stagger/rotated; its BRAIN_* env is
+  the arm's row in B.2 (BRAIN_CHAT_SEED and BRAIN_IDLE_REPLAY_LEAKLOG allowed) and it has no LB_* key; no turn body
+  carries `_error`. Else the seed is UNDEFINED and no clause reads that arm, so invalid data cannot fail a clause.
+- **C5.1, C5.2** unchanged (section 5), read on off and on at P.
+- **C5.3** unchanged in substance, with two readings fixed: 2 GB = 2e9 bytes (1953125 KiB, stricter than 2 GiB), and
+  the ON−OFF difference is read only between off and on at P (one revision, release mode unset in both). No RSS
+  difference is ever read across revisions or across release modes.
+- **B-C5a (the commit lesion changes the idle reply).** The lesion reached the organ (`idle_replay.lesions.commit`
+  true; else UNDEFINED). The commitlesion idle reply differs from the on idle reply AND is the neutral idle line
+  (abstained, n_utt 0, no winner, text exactly `idle_fallback_text()`, "Nothing in particular is surfacing for me to
+  bring up right now."). emo/bc_a/bc_b are byte-identical across off, on and commitlesion.
+- **E3 (cross-revision identity).** off_rb and on_rb are whole-record identical (every turn body, sorted-key JSON)
+  to off and on at P. Else the seed is UNDEFINED, its B-C5b reads undecided, and its two sessions are undecided in
+  B-C5c.
+- **B-C5b (exposure changes which fact).** Validity first: each session's idle turn ran the organ unlesioned with
+  K >= 1, and every taught fact is a candidate with t_enc >= 1, strictly increasing in teaching order; else
+  UNDEFINED. Then each session voices (n_utt 1, composer brain_store, decode_matches_winner) a fact taught in that
+  session, and the STAGGERED fact differs from the ROTATED fact.
+- **B-C5c (pooled; the organ's design prediction).** The most recently taught fact (F4 after STAGGERED, F2 after
+  ROTATED) is the voiced fact in all but at most 2 of the 12 exposure sessions. The two sessions' two newest facts
+  are disjoint ({F4, F3} against {F2, F1}), so a miss to the second-newest fact cannot make them agree.
+
+**Verdict precedence.** A failed clause on any seed, or a failed B-C5c: "C5 REVERT-CANDIDATE seed <n> clause <k>".
+Else any UNDEFINED seed, or an undecidable B-C5c: "C5 UNDEFINED" (RULING s2-c5-val (b): re-queue that seed's
+missing arms once at the same revision, then RESULT). Else "C5 STANDS (PROVISIONAL)". All clauses must hold on
+6/6 seeds. No reverting or tuning on gate seeds; Claude reverts on a REVERT-CANDIDATE.
+
+**Seed 42 is NON-BLIND.** The g6b pair ran at seed 42 and was read on 2026-10-12, before this prereg. The RESULT
+reports that cell as non-blind; it still counts, and no seed is removed. The c5-seed-provenance dev-7 identity
+artifact is committed separately with its prov file (server side), and its BRAIN_CHAT_SEED is reported there.
+
+Scorer command (after all 42 C5 arms land):
+`.venv/bin/python tools/c5_battery_score.py --dir research/findings/raw/_regression_battery/c5val_1012
+--pin f24963bfb05ca535f10f70bf4380fe4b2f68a9ea --rb-pin e70e5c9954056edac46261e657b7477b58040857
+--out research/findings/raw/_regression_battery/c5val_1012/c5_score.json`
+
+### B.4 tom-false-belief is a HOST-INPUT lesion (RULING lbf-host-input-rows)
+
+The row's lesion (`BRAIN_FALSE_BELIEF_LESION`) forces open the witness gate, whose witnessing input is host-parsed;
+the belief store's own lesion reads STORE-NOT-LOAD-BEARING on 6/6 gate seeds
+(`research/findings/raw/_fb_store/verdict.json`). Rule for b2d1012 and b2d1012-alloff: `tools/b2d_score.py` (default
+mode) keeps the row's cells in every level's per-seed denominator but never in a numerator (S0, S1 and S2), never
+in robust_core or union, and reports them in each level's `host_input` block. The registry is keyed by faculty name,
+so it applies to shards already generated at P. Its F1 is reported as "host-input lesion F1 n/6", never as a
+neural F1. Whether the BRAIN_FALSE_BELIEF_CHAT flip stands on a host-input F1 is a Claude ruling in the RESULT, not
+an automatic STANDS. The row module is retagged `kind="host-input"`; `load_bearing_fraction.py` and `lb_shard.py`
+count host-input rows in the denominator only. B1 per-faculty comparisons do not include the row.
+
+### B.5 transitive-chat engagement (RULING iw2-transitive-engagement)
+
+Faculty key `reasoning-transitive-chat` (the `transitive-chat` row of section 2). A DEFINED cell counts only when
+every arm file (intact_a, intact_b, lesion) carries, on the probe turn, a `transitive_trace` record with route
+`chase`, a non-empty `chase` hop list, no `error`, no turn `_error`, and `lesioned` true exactly in the lesion arms.
+Otherwise the cell reads `UNDEFINED:engagement-<reason>`: B2's re-run rule applies, and it is never load-bearing and
+never a pass. The 10-05 R data predate the engagement record (2aac93d43), so their F1 6/6 is UNDEFINED on
+engagement and is not cited as F1 evidence. The ruling's "count the row as stop-gate only" is read here as: a
+failing or UNDEFINED transitive F1 blocks the flip as usual, and a passing one validates the reply-level effect
+without being cited as spiking ownership (the reach sub-flip stays off). That reading is flagged for Claude's
+review of B.
+
+### B.6 Scorers registered before B are unchanged
+
+`tools/iw1_score.py` and `tools/iw2_score.py` call `b2d_score.score(..., amendment_b=False)`, because their preregs
+were registered before B and their bars do not change after the fact. `tools/b2d_score.py --no-amendment-b`
+reproduces the pre-B scorer.
+
+### B.7 JOBS
+
+The added C5 lines go in section 9 of `research/coordination/2026-10-12-validation-battery-JOBS.md`, committed after
+this amendment: dev-7 smoke lines first (commitlesion at P, stagger and rotated at R_B), then 30 gate lines (five
+per seed: commitlesion at P; off_rb, on_rb, stagger, rotated at R_B). This commit queues nothing. R_B must be
+provisioned on the pool (`~/derisk-pool/revisions/<R_B>`) before its lines dispatch.
