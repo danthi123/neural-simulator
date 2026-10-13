@@ -6346,7 +6346,20 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                         _rc_on = (_RC is not None) and _RC.reconsolidation_enabled()
                     except Exception:
                         _rc_on = False
+                    # INTERROGATIVE GUARD (HOST SCAFFOLD correction, Stage-2 HANDOFF 18a): `extract_assertion` strips
+                    # a leading "does"/"is"/"did" as a function word, so a bare yes/no question ("does crow chase
+                    # moth") read as an assertion and REWROTE the held fact. A question asserts nothing: it never
+                    # opens a store write. The surprise READ/notice above is untouched. Declaratives: byte-identical.
+                    # Escape: BRAIN_ACQUIRE_QUESTIONS=1 (pre-fix behaviour). See brain_chat_tui.is_interrogative_turn.
+                    try:
+                        from research.runners.brain_chat_tui import interrogative_blocks_store as _iq_block
+                        _rc_iq_block = bool(_iq_block(msg))
+                    except Exception:
+                        _rc_iq_block = False
                     if (_rc_on and sj.get("surprised")
+                            and str(p_asserted).lower() != str(p_stored).lower() and _rc_iq_block):
+                        reconsolidation_info = {"on": True, "action": "none", "reason": "interrogative_turn"}
+                    elif (_rc_on and sj.get("surprised")
                             and str(p_asserted).lower() != str(p_stored).lower()):
                         try:
                             composer = getattr(chat.inner, "composer", None)
