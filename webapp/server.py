@@ -4701,6 +4701,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # naming a session to release (the regression-battery worker) can never drift from the key cached here.
     cache_key = brain_chat_cache_key(req)
     renderer = cache_key[2]
+    _CE0 = None
     try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation.
         # Before the turn lock (M0): a turn WAITING for the lock already reads as active, so the tick skips it.
         from webapp import continuous_engine as _CE0
@@ -4708,40 +4709,56 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception:
         pass
     # ONE-BRAIN TURN LOCK (M0, docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md section 2): one turn at a time
-    # against the process-shared organs; the idle tick takes the same lock. Covers the backend pin, reset, build and
-    # the whole `brain_reply` pipeline. The mouth (Qwen render) is called from inside `brain_reply`, so it is inside
-    # the lock too. Escape: BRAIN_TURN_LOCK=0. Wait time: webapp.brain_turn_lock.stats() (no reply field changes).
-    from webapp.brain_turn_lock import brain_turn
-    with brain_turn("brain_chat"):
-        # A numpy-CPU code path elsewhere in this long-running server can have flipped
-        # the global backend cache away from the bridge's cupy arrays between turns;
-        # re-assert it here so gate()/render()/the rich path run consistently (the
-        # cupy/numpy-flip bug, 2026-06-24).
-        _pin_bridge_backend()
-        if req.reset:
-            _evict_brain_chat_session(cache_key)
+    # against the process-shared organs, FIFO; the idle tick takes the same lock one cheap step at a time. Covers the
+    # backend pin, reset, build and the whole `brain_reply` pipeline (the Qwen render is called from inside
+    # `brain_reply`, so it is inside the lock too). A turn not admitted within BRAIN_TURN_WAIT_TIMEOUT_S (default 300)
+    # gets a `busy` reply in the normal shape. Escape: BRAIN_TURN_LOCK=0. Wait time: webapp.brain_turn_lock.stats().
+    from webapp.brain_turn_lock import TurnBusy, brain_turn, busy_payload, turn_wait_timeout_s
+    try:
+        with brain_turn("brain_chat", timeout=turn_wait_timeout_s()):
+            return _brain_chat_turn(req, cache_key, renderer)
+    except TurnBusy as busy:
+        return JSONResponse(busy_payload(req, renderer, busy))
+    finally:
+        try:  # end-of-turn stamp: the idle tick measures idleness from here (it does NOT refill the wander budget)
+            if _CE0 is not None:
+                _CE0.mark_turn_end(cache_key)
+        except Exception:
+            pass
 
-        chat = _BRAIN_CHATS.get(cache_key)
-        source = None
-        if chat is None:
-            try:
-                chat, source = _build_chat_brain(req.brain, renderer)
-            except HTTPException:
-                raise
-            except Exception as e:  # a missing model / bad bundle -> a clean 400
-                raise HTTPException(
-                    400, f"failed to load brain {req.brain!r} with renderer "
-                         f"{renderer!r}: {type(e).__name__}: {e}")
-            chat._brain_chat_source = source  # type: ignore[attr-defined]
-            _BRAIN_CHATS[cache_key] = chat
-            _reload_persisted_learning(cache_key, chat)
-        source = getattr(chat, "_brain_chat_source", source)
 
-        # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +
-        # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
-        # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
-        # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
-        return brain_reply(chat, req, source, cache_key)
+def _brain_chat_turn(req, cache_key, renderer) -> JSONResponse:
+    """The locked part of one `brain_chat` turn (moved VERBATIM out of `brain_chat`, M0): backend pin, reset, cache
+    lookup / build / persisted-learning reload, then `brain_reply`. Only ever called with the turn lock held."""
+    # A numpy-CPU code path elsewhere in this long-running server can have flipped
+    # the global backend cache away from the bridge's cupy arrays between turns;
+    # re-assert it here so gate()/render()/the rich path run consistently (the
+    # cupy/numpy-flip bug, 2026-06-24).
+    _pin_bridge_backend()
+    if req.reset:
+        _evict_brain_chat_session(cache_key)
+
+    chat = _BRAIN_CHATS.get(cache_key)
+    source = None
+    if chat is None:
+        try:
+            chat, source = _build_chat_brain(req.brain, renderer)
+        except HTTPException:
+            raise
+        except Exception as e:  # a missing model / bad bundle -> a clean 400
+            raise HTTPException(
+                400, f"failed to load brain {req.brain!r} with renderer "
+                     f"{renderer!r}: {type(e).__name__}: {e}")
+        chat._brain_chat_source = source  # type: ignore[attr-defined]
+        _BRAIN_CHATS[cache_key] = chat
+        _reload_persisted_learning(cache_key, chat)
+    source = getattr(chat, "_brain_chat_source", source)
+
+    # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +
+    # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
+    # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
+    # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
+    return brain_reply(chat, req, source, cache_key)
 
 
 def _word_role_trace_reset(chat) -> None:
@@ -5151,8 +5168,12 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             if _ir_on:   # IDLE REPLAY (default OFF): the brain's own store, the spiking reactivation race
                 si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
             else:
-                siorg = _get_selfinit_organ(cache_key)
-                si = siorg.speak(lesion=_SI.selfinit_lesioned())
+                # M0: the idle tick wanders on this organ OUTSIDE the turn lock, so the turn takes the organ's own
+                # lock (it waits only if a wander on THIS session's organ is mid-flight).
+                from webapp import continuous_engine as _CE_si
+                with _CE_si.selfinit_lock(cache_key):
+                    siorg = _get_selfinit_organ(cache_key)
+                    si = siorg.speak(lesion=_SI.selfinit_lesioned())
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
             answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
