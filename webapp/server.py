@@ -7003,6 +7003,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 _is_chain_route = False
             if gate_svo is None:
                 gate_svo = chat.gate(msg)
+                # a gate that RETURNS a derived answer (the multistep chase's never-told terminal, a ChainedSVO;
+                # webapp/gnw_multistep_deliberation.py, Stage-2 HANDOFF item 18b) gets the same derived flag +
+                # framing as the routes above. Every other gate result has no `derived_from` -> unchanged.
+                _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:

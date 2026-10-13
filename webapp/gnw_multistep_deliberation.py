@@ -43,6 +43,10 @@ CONTRACT:
   * MOAT-SAFE. It NEVER un-abstains (a bus/deliberation abstain stays an abstain); on an unstored cue or an over-run
     past the leaf the chase reads `n_ignited==0` and ABSTAINS rather than confabulating a chain end; it never invents
     a fact. The emitted terminal is only ever a concept the substrate ignited off a real stored `query_patient` hop.
+  * HONESTY BOUNDARY (2026-10-13, Stage-2 HANDOFF item 18b). A terminal reached through >=2 committed hops was never
+    told: it is returned as a `ChainedSVO` whose `derived_from` lists the committed hop facts, so the reply carries
+    `derived` true and the "I derived this from: ..." lead (the C2 compositional route's framing), never a plain
+    recalled assertion. A one-hop terminal is the told fact and stays plain. Escape: `BRAIN_GNW_MULTISTEP_DERIVED=0`.
   * LESION-LOAD-BEARING. `BRAIN_GNW_MULTISTEP_LESION=1` runs the chase on the workspace built with the assembly
     self-recurrence ZEROED -> a hop can no longer sustain ignition -> `n_ignited` collapses at hop 0 -> the loop
     cannot advance/converge appropriately -> the multi-step answer collapses (the terminal is NOT reached). The
@@ -101,6 +105,32 @@ def multistep_enabled() -> bool:
     on-by-default after that GO, mirroring how the bus + single-hop deliberation were introduced default-off ->
     verified -> flipped.)"""
     return os.environ.get("BRAIN_GNW_MULTISTEP", "1").strip().lower() not in ("0", "false", "off", "no")
+
+
+def derived_terminal_framing_on() -> bool:
+    """HONESTY-BOUNDARY fix (Stage-2 HANDOFF item 18b, 2026-10-13), DEFAULT-ON. A chase terminal reached through >=2
+    committed hops was never told: it is the brain's own inference, so `deliberate_multistep` returns it as a
+    `ChainedSVO` carrying the hop facts -> the handler reports `derived` true / `derived_from` and frames the reply
+    with `frame_derived_answer`'s "I derived this from: ..." lead (the SAME framing the C2 compositional route uses),
+    instead of speaking it as a plain recalled assertion. `BRAIN_GNW_MULTISTEP_DERIVED=0` (or false/off/no) is the
+    escape: the pre-fix plain `[agent, action, terminal]` list (`derived` false, unframed). A one-hop terminal is
+    the told fact itself and is never marked derived, under either setting."""
+    return os.environ.get("BRAIN_GNW_MULTISTEP_DERIVED", "1").strip().lower() not in ("0", "false", "off", "no")
+
+
+def committed_path(agent, meta) -> list:
+    """The concepts the SUBSTRATE broadcast back on the chase, read off its own trace: `[agent, c1, c2, ...]`, one
+    `committed` concept per ADVANCE cycle, stopping at the COMMIT (ignition collapsed at the leaf). Never a host-
+    assumed path. Mirrors `webapp.reasoning_transitive_chat._chase_path`'s walk over the same trace."""
+    path = [agent]
+    for entry in (meta or {}).get("trace") or []:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("action") == "ADVANCE" and entry.get("committed") is not None:
+            path.append(entry["committed"])
+        elif entry.get("action") == "COMMIT":
+            break
+    return path
 
 
 def multistep_lesion_on() -> bool:
@@ -179,7 +209,8 @@ def deliberate_multistep(chat, base_svo, question, *, seed: int = _DEFAULT_SEED)
     returned UNCHANGED."""
     info = {"acted": False, "reason": None, "agent": None, "action": None, "first_patient": None,
             "terminal": None, "resolved_hops": None, "cycles": None, "halted_at_cap": None,
-            "abstained": False, "lesion": multistep_lesion_on(), "n_concepts": None}
+            "abstained": False, "lesion": multistep_lesion_on(), "n_concepts": None,
+            "derived": False, "derived_from": None}
 
     if base_svo is None:                                     # moat: never un-abstain a halted/unstored turn
         info["reason"] = "already_abstained"
@@ -214,6 +245,17 @@ def deliberate_multistep(chat, base_svo, question, *, seed: int = _DEFAULT_SEED)
     info["reason"] = "chain_terminal"
     out = list(base_svo)
     out[2] = terminal
+    # HONESTY BOUNDARY (Stage-2 HANDOFF item 18b): a terminal reached through >=2 committed hops was never told, so
+    # it is returned as a DERIVED answer (a ChainedSVO naming the hop facts the workspace committed), which the
+    # handler flags `derived` and frames as an inference. One hop = the told fact itself: plain, as before.
+    path = committed_path(agent, meta)
+    hops = [[path[i], action, path[i + 1]] for i in range(len(path) - 1)]
+    if (len(hops) >= 2 or int(meta.get("resolved_hops") or 0) >= 2) and derived_terminal_framing_on():
+        if not (hops and hops[-1][2] == terminal):
+            hops = []          # trace and terminal disagree: no hop list; frame_derived_answer's generic lead applies
+        from research.runners.compositional_chain_route import ChainedSVO
+        info["derived"], info["derived_from"] = True, hops
+        return ChainedSVO(out, derived_from=hops), info
     return out, info
 
 

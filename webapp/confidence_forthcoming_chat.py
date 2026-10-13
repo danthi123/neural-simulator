@@ -217,6 +217,13 @@ def apply_cap(rich, r: dict, floor_sentences: int, confident) -> tuple:
     new_kept = facts[:floor_sentences]
     dropped_extra = facts[floor_sentences:]
     paragraph, verified_kept, dropped_verify = rich.render_paragraph(new_kept)
+    if r.get("derived") and verified_kept:
+        # a DERIVED answer keeps its inference lead through the truncation (RichAnswerComposer.answer adds it after
+        # render_paragraph, so a bare re-render would drop it while `derived` stays true; 2026-10-13, Stage-2 HANDOFF
+        # item 18b). The floor-only answer carries the lead, so this keeps the "reproduces the floor-only answer"
+        # invariant above.
+        from research.runners.compositional_chain_route import frame_derived_answer
+        paragraph = frame_derived_answer(paragraph, r.get("derived_from"))
     undo_reach_bookkeeping(rich, dropped_extra)
     r_out = dict(r)
     r_out["answer"] = paragraph
