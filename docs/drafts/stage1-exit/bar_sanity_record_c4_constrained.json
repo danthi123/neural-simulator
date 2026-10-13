@@ -47,12 +47,12 @@
    0.0038
   ]
  },
- "repo_head": "bc8f804b9bc8cbd6610c6ff90b8c53168f7d58c5",
+ "repo_head": "a41082d547c3c7fbf811cc141011a110e89a61b7",
  "scorer_files": {
   "docs/drafts/stage1-exit/bar_sanity_c4_common.py": "aab0689717c6f34fe5cf836fd424e133be2a1b14d16529913d604504c68fdf7e",
-  "research/runners/stage1_exit_gate.py": "8f6f8cdbc0fd853cebd18f0fa7890343da804d8eff78d238cb85ef25fbbd6143"
+  "research/runners/stage1_exit_gate.py": "0a383e37211fc9521f618f24aa206a9429f0da73bba680fe3fbd9bcf121c33ff"
  },
- "scorer_sha256": "81c88db049c38ffa7f91b2b43f72c5b0a8c3a3eeb6121e141d7ca76fdd03f9af",
+ "scorer_sha256": "3085633103610ccaa54998167d52c3371d77570ddda8d99e0a358bb29fbdcc86",
  "seed": 0,
  "spec": "docs/drafts/stage1-exit/bar_sanity_spec_c4_constrained.py",
  "spec_sha256": "ac3989efa46fc068b17fb3f7a6d3cff9af2f33e77fff38bca8ac7f3beec3a427",
@@ -63,5 +63,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 218.9
+ "wall_s": 51.4
 }

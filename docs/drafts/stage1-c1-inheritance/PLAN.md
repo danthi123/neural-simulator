@@ -93,7 +93,9 @@ failing the bar is a FAIL, not an UNDEFINED. The scorer change re-runs `bar_sani
 byte-identical to today's default, tests updated. No further C1 gate run at the flip revision (A3 measured the
 configuration; attempt 2 measures it again at the gate seeds).
 
-**D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion).** Fold
+**D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion). DONE 2026-10-13:**
+registered as A2 in section 12 of the Stage-1 prereg (A2.1 C1, A2.2 C4), runner change, tests and the re-run
+bar-sanity records in one commit on `claude-build/c1-step-d`; attempt-2 shards go to `_stage1_exit/gate_a2/`. Fold
 `ATTEMPT2-C1-AMENDMENT-TEXT.md` into A2 (with the C4 control of RULING stage1-sync): for `cat_disc` and `cat_told` the
 counted lesion becomes `lesion_inherit_pathway` (one name for the arm and the patch it installs: every organ read with
 both learned pathways cut; applied = calls > 0; the read trace also records `lesion: all`, `lesion_held: true`), and
