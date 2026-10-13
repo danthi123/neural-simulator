@@ -99,6 +99,17 @@ organ's on-spec FAITHFUL/CALMER operating point, ~42 Hz; s7 pooled 38.2 Hz); tie
 asking order, stopping or the battery turns is read in that smoke. The chosen W is written into the module and
 committed with the design artifact BEFORE the battery runs. No other parameter is changed after that commit.
 
+**Design result (seed 9, `research/findings/raw/_curiosity_lp/design_s9.json`, run at 3449ba18a; recorded before
+the battery).** W_TOPIC_ASK = 80 (want_novel 34.9 Hz, familiar 1.3 Hz, threshold 18.1 Hz; w = 60 gives 23.7 Hz).
+One presentation fires all 25 afferents once and takes the slice's x from 1.000 to 0.650. Two further reads, written
+down here because they bear on the bars: (a) the 400 ms silent gap is NOT silent for the afferents: the OU background
+fires 167 topic-afferent spikes per gap (all slices), so x kept falling over the gap (0.650 -> 0.564) instead of
+recovering; (b) a second presentation after one gap reads 13.4 Hz, below threshold. Prediction from (a), stated
+before the battery: every slice, presented or not, loses transmission with elapsed turns, so B1/B1b (first asks)
+are at risk from turn count alone, which would make the trace a clock rather than an ask count. Per the no-tuning
+rule NOTHING is changed in response: the battery runs as frozen, and a failure is reported as this method's
+verdict (an OU-driven afferent background depletes a long-tau_d synapse), with the next method named, not fitted.
+
 ## 5. Arms (each a fresh build per seed)
 
 | arm | manipulation | counted |

@@ -125,8 +125,9 @@ TOPIC_ASK_JITTER = 0.2
 W_GRID = (10.0, 15.0, 20.0, 30.0, 45.0, 60.0, 80.0)   # the design grid for the topic -> ASK weight
 TARGET_WANT_NOVEL_HZ = 40.0                    # the organ's FAITHFUL/CALMER on-spec want_novel (~42 Hz; s7 pooled 38.2)
 # Frozen by the design rule (PLAN section 4.2): the W_GRID value whose fresh want_novel on DESIGN_SEED is closest to
-# TARGET_WANT_NOVEL_HZ. None until the design smoke has been run and its artifact committed.
-W_TOPIC_ASK = None
+# TARGET_WANT_NOVEL_HZ. FROZEN 2026-10-13 from research/findings/raw/_curiosity_lp/design_s9.json (run at 3449ba18a):
+# w=80 gives want_novel 34.9 Hz (the grid's closest to 40; w=60 gives 23.7). Not changed after this.
+W_TOPIC_ASK = 80.0
 
 BUILTIN_FACTS = (("brain", "use", "spikes"), ("brain", "learn", "words"), ("brain", "store", "memory"),
                  ("dog", "chase", "cat"), ("cat", "eat", "fish"))   # tiny-demo built-ins (s7 shard, before teaches)
