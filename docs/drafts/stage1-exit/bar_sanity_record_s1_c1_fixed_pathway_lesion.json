@@ -1,14 +1,17 @@
 {
  "backend": "numpy",
- "description": "C1 `cat_disc` verdict PASS under the real stage1_exit_gate.aggregate with GROUPS['cat_disc']['lesions'] = {lesion_pathway} (patch with call count); perfect = the pathway inheritor of the C1 PLAN.",
+ "description": "C1 `cat_disc` verdict PASS under the real stage1_exit_gate.aggregate with the runner's A2 GROUPS entry {lesion_inherit_pathway} (patch with call count) and A2's hop/flag validity record; perfect = the pathway inheritor of the C1 PLAN at the flip revision.",
  "failures": [],
  "kinds": {
   "info_perfect_both_routes": "info",
   "null_all_abstain": "null",
   "null_echo": "null",
+  "null_flags_not_recorded": "null",
   "null_frequency_shortcut": "null",
-  "null_lesion_pathway_inert": "null",
-  "null_lesion_pathway_unreproduced": "null",
+  "null_hop_not_recorded": "null",
+  "null_lesion_inherit_pathway_inert": "null",
+  "null_lesion_inherit_pathway_unreproduced": "null",
+  "null_lesion_never_called": "null",
   "null_never_abstains": "null",
   "null_permuted_inert": "null",
   "null_unclean": "null",
@@ -21,9 +24,12 @@
   "info_perfect_both_routes": 1000,
   "null_all_abstain": 0,
   "null_echo": 0,
+  "null_flags_not_recorded": 0,
   "null_frequency_shortcut": 0,
-  "null_lesion_pathway_inert": 0,
-  "null_lesion_pathway_unreproduced": 0,
+  "null_hop_not_recorded": 0,
+  "null_lesion_inherit_pathway_inert": 0,
+  "null_lesion_inherit_pathway_unreproduced": 0,
+  "null_lesion_never_called": 0,
   "null_never_abstains": 0,
   "null_permuted_inert": 0,
   "null_unclean": 0,
@@ -31,14 +37,17 @@
   "perfect_exact": 1000,
   "random": 0
  },
- "name": "stage1-C1 cat_disc, attempt 2 (pathway lesion counted)",
+ "name": "stage1-C1 cat_disc, attempt 2 (Amendment A2: lesion_inherit_pathway counted, hop record required)",
  "pass_rate": {
   "info_perfect_both_routes": 1.0,
   "null_all_abstain": 0.0,
   "null_echo": 0.0,
+  "null_flags_not_recorded": 0.0,
   "null_frequency_shortcut": 0.0,
-  "null_lesion_pathway_inert": 0.0,
-  "null_lesion_pathway_unreproduced": 0.0,
+  "null_hop_not_recorded": 0.0,
+  "null_lesion_inherit_pathway_inert": 0.0,
+  "null_lesion_inherit_pathway_unreproduced": 0.0,
+  "null_lesion_never_called": 0.0,
   "null_never_abstains": 0.0,
   "null_permuted_inert": 0.0,
   "null_unclean": 0.0,
@@ -59,15 +68,27 @@
    0.0,
    0.0038
   ],
+  "null_flags_not_recorded": [
+   0.0,
+   0.0038
+  ],
   "null_frequency_shortcut": [
    0.0,
    0.0038
   ],
-  "null_lesion_pathway_inert": [
+  "null_hop_not_recorded": [
    0.0,
    0.0038
   ],
-  "null_lesion_pathway_unreproduced": [
+  "null_lesion_inherit_pathway_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inherit_pathway_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_never_called": [
    0.0,
    0.0038
   ],
@@ -96,15 +117,15 @@
    0.0038
   ]
  },
- "repo_head": "6a1864a8bbcc776651a0ccdb62874ed6ae6659fb",
+ "repo_head": "a41082d547c3c7fbf811cc141011a110e89a61b7",
  "scorer_files": {
-  "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "18ed0659811cfc178d4a000466e20ac4bf09aacae76ad305c85d200828708a8b",
-  "research/runners/stage1_exit_gate.py": "df627e7a769d63fa37c1491f60b93ac8d8ff85b1d405c9a54e4a9310d3541199"
+  "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "933ded1e4fff383b267800e848b9c9b047eaa226bc5fd329551055017f2967cb",
+  "research/runners/stage1_exit_gate.py": "0a383e37211fc9521f618f24aa206a9429f0da73bba680fe3fbd9bcf121c33ff"
  },
- "scorer_sha256": "143fde543b181a4ca5c8b0238157edd26e7aefcf662f1e341fc26e30fbf9a8d1",
+ "scorer_sha256": "e2969f3a73b6de7e2323edaef91848710b5651af0dd2d40f947b5f6799ed2508",
  "seed": 0,
  "spec": "docs/drafts/stage1-exit/bar_sanity_spec_s1_c1_fixed_pathway_lesion.py",
- "spec_sha256": "c6fab484e75c3a23082f02d0ca40d91daa76a97b4612689798449cb7a7eaa154",
+ "spec_sha256": "3c9d9f729bb0d8aa83815a3c228c959b33cfed2e70e5d27ce504c19a008c50aa",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -112,5 +133,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 23.6
+ "wall_s": 25.2
 }

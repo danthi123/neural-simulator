@@ -110,12 +110,12 @@
    0.0038
   ]
  },
- "repo_head": "4625d662ac8a9e19119dd494c872165a762c0cb4",
+ "repo_head": "a41082d547c3c7fbf811cc141011a110e89a61b7",
  "scorer_files": {
-  "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "18ed0659811cfc178d4a000466e20ac4bf09aacae76ad305c85d200828708a8b",
-  "research/runners/stage1_exit_gate.py": "8f6f8cdbc0fd853cebd18f0fa7890343da804d8eff78d238cb85ef25fbbd6143"
+  "docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py": "933ded1e4fff383b267800e848b9c9b047eaa226bc5fd329551055017f2967cb",
+  "research/runners/stage1_exit_gate.py": "0a383e37211fc9521f618f24aa206a9429f0da73bba680fe3fbd9bcf121c33ff"
  },
- "scorer_sha256": "2436acd394dfea58cd19d36a48422a77967550abe8ca39749751fc538cf37cb6",
+ "scorer_sha256": "e2969f3a73b6de7e2323edaef91848710b5651af0dd2d40f947b5f6799ed2508",
  "seed": 0,
  "spec": "docs/drafts/stage1-exit/bar_sanity_spec_s1_c3_lived.py",
  "spec_sha256": "b1dfedd6bec2c5a8ef0a476700218671f085ed120739efe1dd911718b98c3a0c",
@@ -126,5 +126,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 40.7
+ "wall_s": 24.6
 }

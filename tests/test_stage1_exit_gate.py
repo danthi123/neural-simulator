@@ -228,3 +228,176 @@ def test_lesion_inherit_pathway_patch_cuts_the_organ_read_and_counts_calls(monke
         assert rec["calls"] == 1 and org.lesion is None          # the cut is per read; the organ's mode is restored
     finally:
         CIO.CategoryInheritOrgan.infer = orig
+
+
+# ── Amendment A2 (prereg section 12, 2026-10-13): the C1 counted lesion is lesion_inherit_pathway ──────────────────
+def test_a2_c1_counts_lesion_inherit_pathway_and_reports_lesion_draw_informational():
+    for g in ("cat_disc", "cat_told"):
+        assert list(SG.GROUPS[g]["lesions"]) == ["lesion_inherit_pathway"], g
+        env, patch, kind = SG.arm_spec(g, "lesion_inherit_pathway.rep0")
+        assert (env, patch, kind) == ({}, "lesion_inherit_pathway", "lesion")
+        assert SG.arm_spec(g, "lesion_draw") == ({"BRAIN_SPIKING_DRAW_LESION": "1"}, None, "informational")
+        counted = SG.arms_for(g, with_informational=False)
+        assert counted == ["intact_a", "intact_b", "lesion_inherit_pathway", "lesion_inherit_pathway.rep0", "permuted"]
+        assert "lesion_draw" in SG.arms_for(g) and "lesion_draw" not in counted
+
+
+def test_a2_bars_are_the_registered_0930_values():
+    """The bar is unchanged by A2: six gate seeds; PASS iff correct 6/6, lesion effect 6/6, reproduced 6/6 and
+    permuted tracks 6/6 (2026-09-30 C1 prereg section 'Verdict'; 2026-09-29 Stage-1 prereg section 4.1)."""
+    import tempfile
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "research", "findings",
+                           "2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md")) as f:
+        c1_prereg = f.read()
+    with open(os.path.join(root, SG.PREREG)) as f:
+        s1_prereg = f.read()
+    assert "PASS iff correct 6/6, lesion effect 6/6, reproduced 6/6,\n  permuted tracks 6/6" in c1_prereg
+    assert "**Bar.** 6/6 seeds `inherits`; permuted tracks 6/6; lesion effect 6/6 reproduced." in s1_prereg
+    assert tuple(SG.GATE_SEEDS) == (42, 43, 44, 100, 101, 102)
+    assert SG.aggregate.__defaults__[0] == SG.GATE_SEEDS
+    # behavioural: every clause at 6/6 reads PASS; one seed short on any clause reads FAIL (six seeds defined)
+    for spoil, want in ((None, "PASS"), ("incorrect", "FAIL"), ("lesion_inert", "FAIL"),
+                        ("unreproduced", "FAIL"), ("permuted_inert", "FAIL")):
+        with tempfile.TemporaryDirectory() as td:
+            _write_c1_tree(td, spoil_seed=(102 if spoil else None), spoil=spoil)
+            g = SG.aggregate(td, informational=False)["groups"]["cat_disc"]
+            assert g["verdict"] == want, (spoil, g["verdict"], g["why"])
+            assert g["n_defined"] == 6, (spoil, [r["undefined_reasons"] for r in g["seeds"].values()])
+
+
+def _c1_resp(label, message, arm):
+    """One synthetic reply for the C1 tree: the pathway inheritor at the flip revision (organ read with hop)."""
+    base = arm.split(".rep")[0]
+    r = {"answer": "ok: " + message, "abstained": False, "recalled_svo": None, "source": SG.EXPECTED_SOURCE}
+    if label == "p_canary_eat":
+        want = "bug" if base == "permuted" else "worm"
+        if base == "lesion_inherit_pathway":
+            r = dict(r, answer="I don't know about that.", abstained=True)
+            read = {"patient": None, "reason": "below_floor", "lesion": "all", "lesion_held": True}
+        else:
+            r = dict(r, answer="the canary probably eats the %s" % want, hypothesis_svo=["canary", "eat", want])
+            read = {"patient": want, "reason": "reached", "lesion": None, "lesion_held": None}
+        read.update(hop=True, hop_lateral_gain=0.5, query_steps=30)
+        r["category_inherit"] = {"observe": None, "read": read}
+    elif label == "p_canary_might":
+        r = dict(r, answer="I don't know about that.", abstained=True)
+    return r
+
+
+def _write_c1_tree(root, spoil_seed=None, spoil=None, calls=None, group="cat_disc"):
+    import json
+    for seed in SG.GATE_SEEDS:
+        for arm in SG.arms_for(group, with_informational=False):
+            base = arm.split(".rep")[0]
+            turns = SG.turns_for(group, seed, arm)
+            resp = {l: _c1_resp(l, m, arm) for l, m, _r in turns}
+            if seed == spoil_seed:
+                if spoil == "incorrect" and base in ("intact_a", "intact_b"):
+                    resp["p_canary_eat"] = dict(resp["p_canary_eat"], answer="I don't know about that.",
+                                                abstained=True, hypothesis_svo=None)
+                if spoil == "lesion_inert" and base == "lesion_inherit_pathway":
+                    resp = {l: _c1_resp(l, m, "intact_a") for l, m, _r in turns}
+                if spoil == "unreproduced" and arm == "lesion_inherit_pathway.rep0":
+                    resp["p_canary_eat"] = dict(resp["p_canary_eat"], answer="something else")
+                if spoil == "permuted_inert" and base == "permuted":
+                    resp["p_canary_eat"] = _c1_resp("p_canary_eat", "", "intact_a")
+                if spoil == "no_hop":
+                    resp["p_canary_eat"]["category_inherit"]["read"].pop("hop")
+            sh = {"seed": seed, "group": group, "arm": arm, "responses": resp, "sources": [SG.EXPECTED_SOURCE],
+                  "pythonhashseed_ok": True, "corpus_present": True, "patch": None,
+                  "c1_flags": {"BRAIN_CATEGORY_INHERIT": True, "BRAIN_CATEGORY_INHERIT_HOP": True}}
+            if seed == spoil_seed and spoil == "no_flags":
+                sh.pop("c1_flags")
+            if base == "lesion_inherit_pathway":
+                sh["patch"] = {"patch": "lesion_inherit_pathway", "calls": 2 if calls is None else calls}
+            p = SG.shard_path(root, seed, group, arm)
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w") as f:
+                json.dump(sh, f)
+
+
+def test_a2_lesion_never_called_makes_the_seed_undefined(tmp_path):
+    """calls == 0: the patch was installed but the inheritance pathway was never read under it. The lesion's reply
+    still differs here (an effect without engagement) and must NOT be credited: every seed is UNDEFINED and the group
+    INCOMPLETE, never PASS or FAIL."""
+    _write_c1_tree(str(tmp_path), calls=0)
+    agg = SG.aggregate(str(tmp_path), informational=False)
+    g = agg["groups"]["cat_disc"]
+    assert g["verdict"] == "INCOMPLETE" and g["n_defined"] == 0
+    for row in g["seeds"].values():
+        assert row["lesions"]["lesion_inherit_pathway"]["applied"] is False
+        assert any("never applied (patch calls == 0" in u for u in row["undefined_reasons"])
+    assert any("every in-process lesion applied" in c["name"] and c["ok"] is False for c in agg["preconditions"])
+
+
+def test_a2_lesion_engaged_is_scored_and_reports_the_organ_lesion_trace(tmp_path):
+    _write_c1_tree(str(tmp_path), calls=3)
+    g = SG.aggregate(str(tmp_path), informational=False)["groups"]["cat_disc"]
+    assert g["verdict"] == "PASS" and g["n_defined"] == 6
+    row = g["seeds"][42]
+    assert row["lesions"]["lesion_inherit_pathway"]["applied"] is True
+    eng = row["c1_engagement"]["lesion_inherit_pathway"]
+    assert eng["direct_read_hop"] is True and eng["direct_read_lesion"] == "all" and eng["direct_read_lesion_held"] is True
+
+
+def test_a2_direct_probe_read_without_hop_or_unrecorded_flags_is_undefined(tmp_path):
+    for spoil, msg in (("no_hop", "has no organ read recording hop: true"),
+                       ("no_flags", "records no effective C1 flag values")):
+        d = tmp_path / spoil
+        _write_c1_tree(str(d), spoil_seed=44, spoil=spoil)
+        g = SG.aggregate(str(d), informational=False)["groups"]["cat_disc"]
+        assert g["verdict"] == "INCOMPLETE" and g["n_defined"] == 5, (spoil, g["verdict"])
+        assert any(msg in u for u in g["seeds"][44]["undefined_reasons"]), g["seeds"][44]["undefined_reasons"]
+
+
+def test_a2_worker_records_the_effective_c1_flags(monkeypatch):
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT", raising=False)
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    assert SG.effective_c1_flags() == {"BRAIN_CATEGORY_INHERIT": True, "BRAIN_CATEGORY_INHERIT_HOP": True}
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", "0")
+    assert SG.effective_c1_flags() == {"BRAIN_CATEGORY_INHERIT": True, "BRAIN_CATEGORY_INHERIT_HOP": False}
+
+
+def test_a2_lesion_engages_through_the_chat_wiring_on_a_tiny_case(monkeypatch):
+    """The tiny case through webapp/category_inherit_chat.py's own gate wrapper (no brain build): taught facts reach
+    the organ, the strict route misses on `what does the canary eat`, and the wrapper reads the organ. Intact: the
+    flagged guess `worm` with hop recorded. Under the A2 patch: calls > 0, the read records lesion all / held / hop,
+    and the route abstains."""
+    for k in ("BRAIN_CATEGORY_INHERIT", "BRAIN_CATEGORY_INHERIT_HOP", "BRAIN_CATEGORY_INHERIT_LESION"):
+        monkeypatch.delenv(k, raising=False)
+    from research.runners import category_inherit_organ as CIO
+    from webapp import category_inherit_chat as CIC
+
+    class _Chat:                                # the two seams the wiring wraps; the strict route always misses
+        def __init__(self):
+            self.ext = None
+
+        def gate_extract(self, q):
+            return self.ext
+
+        def gate(self, q):
+            self.gate_extract(q)
+            return None
+
+    orig = CIO.CategoryInheritOrgan.infer
+    try:
+        chat = _Chat()
+        assert CIC.install(chat, seed=1) is True
+        for a, v, p in [("robin", "eat", "worm"), ("robin", "fly", "sky"), ("sparrow", "eat", "worm"),
+                        ("sparrow", "fly", "sky"), ("trout", "eat", "bug"), ("trout", "swim", "lake"),
+                        ("canary", "fly", "sky")]:
+            chat.ext = ("done", (a, v, p))
+            chat.gate_extract("the %s %s the %s" % (a, v, p))
+        chat.ext = ("route", "what does the canary eat", "canary", "eat", False)
+        out = chat.gate("what does the canary eat")
+        assert out is not None and tuple(out)[2] == "worm"
+        assert CIC.turn_stamp(chat)["read"]["hop"] is True
+        rec = SG.install_patch("lesion_inherit_pathway", 1)
+        assert chat.gate("what does the canary eat") is None
+        read = CIC.turn_stamp(chat)["read"]
+        assert rec["calls"] == 1
+        assert read["lesion"] == "all" and read["lesion_held"] is True and read["hop"] is True
+        assert read["patient"] is None
+    finally:
+        CIO.CategoryInheritOrgan.infer = orig
