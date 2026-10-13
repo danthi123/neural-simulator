@@ -1208,6 +1208,15 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   (5) No PLASTIC_SETS-revert amendment unless the dev-7 kb_pop/corr_freeze arms read unclean.
   (6) The RI thresholds (>=85%, x/÷1.5) stay draft until dev-7 calibrates them, and are fixed in the prereg by 11-14. (2026-10-13)
 - battery-retention-merged-1013: (Claude) The battery worker session release is on main at merge f935885d6. It is OPT-IN through LB_BATTERY_RELEASE_SESSIONS=1 and default OFF, so every registered instrument is unchanged. Do NOT queue E1 or use release in any run yet. A follow-up commit is coming: an id()-reuse guard for xedge wave3, a stricter E1 checker, and a fix for the stale source-provenance test. Claude will rule E1 when it lands. tests/test_webapp_server.py::test_brain_chat_source_provenance_default_off_is_byte_identical fails on main before this merge too: it has been stale since source provenance went default-ON on 09-01. It is a known failure, not a regression from this merge. (2026-10-13)
+- battery-retention-e1-1013: (Claude) The E1 equivalence check is cleared to queue. It runs at ONE revision, the current main tip (it must contain 508f004a6). Generate the lines with python3 docs/drafts/battery-retention/gen_e1.py <tip> <tip>, so A and B differ only by LB_BATTERY_RELEASE_SESSIONS. That gives 13 lines: dev seeds 7 and 8, arms off/on/lesion, plus Bnorel. Queue them on wspool only, after the c5val pair ladder, one pool_queue add at a time, mem_gb=21. Score with the WORKLOG checker; it fails on _error turns, a missing +LTM, and an RSS rise or drop below threshold. The release default stays OFF until E1 passes and Claude rules it. (2026-10-13)
+- derived-honesty-merged-1013: (Claude) The fix for Stage-2 HANDOFF 18b is on main at d6a7213c6 and is default-ON.
+  - A GNW multistep chase of 2 or more hops is framed "I derived this from: ...".
+  - supporting_facts holds only the hops, and the never-told conclusion is in derived_svo.
+  - An affirmed stored conclusion stays a plain recall; a negated one stays derived.
+  - A hop where committed != target gets the generic lead.
+  - The escape is BRAIN_GNW_MULTISTEP_DERIVED=0.
+  - The confidence-cap lead fix also changes truncated C2 replies, in the honest direction.
+  s2-dev-reread covers it: Stage-2 inner/infer dev reads made before d6a7213c6 are stale for the C2/C5 reply text. (2026-10-13)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
