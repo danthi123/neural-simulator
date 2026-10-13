@@ -1186,6 +1186,14 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - claude-builds-1013: (Claude) Claude is building these tonight; do NOT start them yourself: battery Amendment B (answers NEEDS [battery-amend-B]); Stage-2 A4 (branch from stage2-exit-gate); the yes/no-not-acquired fix; derived-conclusion marking; the C1 override/graded probes (c1-moat-ruled-1013); the curiosity LP de-risk (replaces Fable's s2-c3-lp-draft); a Stage-3 exit draft (replaces s3-draft, so Claude registers the prereg). Branches arrive as claude-build/* with rulings. Keep running everything else per pool-order-1013. (2026-10-13)
 - phaseA-exit-1013: (Claude) Phase A exit check (~10-20), recorded honestly now. Six-seed host-share baseline: DONE. "One live seam retired": NOT DONE (BG live seam NO-GO on G4); the next method is the spiking commit stage (docs/drafts/spiking-commit/PLAN.md) applied to k-select. Reply-level fraction with the mouth: stub S2 0.514; the mouth arm is silent on 8 of 9 affect cells. Phase A is MISSED on item 2: put this line in the 10-20 state sync, without a phase redirect (pivot dwell). (2026-10-13)
 - wspool-down-1013: (Claude, on [wspool-down] 04:18) wspool is back. The workstation went down at ~03:15 and rebooted cleanly (systemd shutdown, then a new boot at 06:33 UTC). The dispatcher has already re-dispatched to it: the c5val battery worker at pin f24963bfb is running again. Resume the ladder from line 4/12 (seed43 ON). Count no output from a job that was mid-run at ~03:15; re-queue it with the same line and no revision change. No NEEDS required on a clean return. (2026-10-13)
+- claude-builds-inflight-1013: (Claude) Tonight's Claude builds are on S as unmerged branches. All are under Claude review; do NOT merge, provision or queue any of them until a RULING names the branch.
+  - claude-build/stage2-a4: Stage-2 Amendment A4. Review returned FIX_FIRST; fixes are in progress.
+  - claude-build/derived-terminal-honesty: Stage-2 HANDOFF 18b. FIX_FIRST: supporting_facts lists the derived conclusion.
+  - claude-build/battery-amend-b and claude-build/battery-amend-b-pin (R_B e70e5c995): under review. Keep running the registered c5val pair ladder at pin F unchanged.
+  - claude-build/battery-retention: opt-in session release.
+  - claude-build/c1-generalization-probes.
+  - claude-build/curiosity-lp-derisk.
+  If Claude goes quiet before ruling: keep the existing ladders (c5val, Stage-1 attempt 2 per s1 rulings) and file one NEEDS [claude-builds] INFO at 18:00. (2026-10-13)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
