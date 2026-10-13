@@ -39,26 +39,35 @@ Design: `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md` (merge 2e7392f
   mind-wandering. A waiting turn is served between any two steps (FIFO).
 - Correction to the review's premise: the tick is not the only user of the self-init organ. A self-init trigger
   turn ("what are you thinking about?") speaks through the same organ (`brain_reply`, `_get_selfinit_organ(...)
-  .speak`), so that call now takes the organ's `selfinit_lock`; such a turn waits only for a wander that is
-  mid-flight on its own session's organ.
+  .speak`), so that call now takes the organ's `selfinit_lock`. Re-review: that turn holds the turn lock, so it
+  waits at most 0.25 s for the organ (`continuous_engine.selfinit_speak_or_mid_thought`); if its session's wander is
+  still running it answers with an honest mid-thought read-out (naming the last thought on record) instead of making
+  every other session wait out a ~55 s wander. The end-of-turn stamp is written inside the lock. A reset during the
+  wander drops what the wander wrote (IOR adaptation, ideation counter and store) and records nothing.
 - A caller-supplied `now` (the battery's single-threaded world steps) keeps the pre-M0 clock reference (turn start).
-  On a stub scenario with every gated faculty armed (3 sessions x 3 ticks, sleep depth included), the restructured
-  tick produced the same 33 faculty calls in the same order, the same 9 inner-life records and the same budgets as
-  the pre-M0 code (2e7392f12). The battery's direct `da_tag_capture_chat.mark_awake` loop is not locked; the battery
-  worker is single-threaded.
+  Equivalence with the pre-M0 tick (2e7392f12) on that clock is a test, `tests/test_tick_pre_m0_equivalence.py`: a
+  stub scenario with every gated faculty armed (3 sessions x 5 ticks, D5 + sleep replay sharing ticks, an ideation
+  tick, IOR) must reproduce a golden captured from the pre-M0 source (`tests/_capture_tick_pre_m0_golden.py`): the
+  same 73 faculty calls in order, the same 15 inner-life records, budgets, IOR adaptation and ideation counter. A
+  second test recomputes the golden from the pre-M0 commit when the clone has it. Swapping two consolidation steps
+  or skipping the budget spend fails it. The battery's direct `da_tag_capture_chat.mark_awake` loop is not locked;
+  the battery worker is single-threaded.
 - Still outside the lock (other owners' `server.py` regions): the startup warm thread (`_warm_chat_brain`, and with
   `BRAIN_PREWARM` a scratch `brain_reply`), `/api/brain-chat/reset`, and the shutdown persistence flush.
 
 ### Tests
 
-`tests/test_brain_turn_lock.py`, 36 tests, brain-free (the real `brain_chat` with build and `brain_reply` stubbed; the
+`tests/test_brain_turn_lock.py`, 41 tests, brain-free (the real `brain_chat` with build and `brain_reply` stubbed; the
 real `tick_idle_sessions` with stub organs). They pin BEHAVIOUR, not reply identity: two sessions never overlap (max
 concurrent 1) and the escape restores the overlap (max 2); FIFO arrival order; a releaser cannot jump a waiting
 thread; a timed-out waiter leaves the queue clean; the `busy` reply after the bound, then normal service; the
 turn-end stamp without a budget refill; a tick behind a same-session turn does not tick it when the turn ends; the
 battery clock ignores the end stamp; the wander runs without the turn lock and a turn gets in within 0.2 s; a
 same-session turn preempts the wander (dropped, recorded, no consolidation step); with 5 sessions x 0.3 s steps a
-waiting turn waits < 0.45 s. Command: `.venv/bin/python -m pytest tests/test_brain_turn_lock.py -q`.
+waiting turn waits < 0.45 s. Added after the re-review: the end stamp is written with the lock held (also when the
+turn body raises); a self-init turn returns the mid-thought read-out within the bound while a wander runs and never
+drives the busy organ; a reset during the wander leaves no wander state and no record in the fresh session (control:
+without a reset the IOR write stays). Command: `.venv/bin/python -m pytest tests/test_brain_turn_lock.py -q`.
 
 Single-caller byte identity, real brain (`research/runners/turn_lock_identity_check.py`, dev seed 7, numpy, stub
 renderer, production LTM default, one session, 5 turns: teach, ask, build-KB ask, LTM ask, re-ask; three fresh
@@ -118,6 +127,23 @@ turn on numpy with `OMP_NUM_THREADS=1` takes ~120-135 s; the first teach turn ~3
   session today; the one-brain arms are M2).
 - Peak RSS: phase 0 6.25 GB (one session), phase 1 11.86 GB (two sessions). The after-restart A turn took 469 s
   (session build + reload + recall on numpy).
+
+### Reserve slots across a reload (re-review item 1)
+
+- Defect found by the re-review: the facts checkpoint saved codes but not which `__free<k>__` reserve slot each
+  recruited word held, so the reload's re-store recruited words in re-store order. Order: teach "crow chase wren"
+  (wren takes the first free slot), reconsolidate to "moth" (moth takes the next slot), save, reload: moth went into
+  wren's old slot with its saved code while its own slot's placeholder kept the same code, and the next new word
+  (heron) took that code. Two words, one code.
+- Fix: the checkpoint also saves `slots` (`OneBrainComposer.recruited_slots`), and the reload calls
+  `restore_recruit(word, slot, saved_code)` for each saved word, in slot order, before the code injection and the
+  re-store. A checkpoint without `slots` (written before this) falls back to the old path.
+- Gate: `tests/test_cross_session_persistence.py::test_reload_keeps_each_recruited_word_in_its_own_reserve_slot`
+  (real `OneBrainComposer`, numpy, D=64, three reserve slots, that exact order: heron's code differs from moth's
+  and wren's, both keep their saved slot and code, and `query_patient("crow", "chase")` reads moth after the
+  reload), with a control that removes `restore_recruit` and reproduces the shared code. The round-trip test on the
+  stand-in now checks that each reloaded code equals the saved one (it passed before with the codebook stubbed out
+  during the reload; each stand-in instance now draws its own codes).
 
 ### Identity rerun after the review changes (review item 6)
 
