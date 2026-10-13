@@ -279,6 +279,28 @@ def test_turn_end_is_stamped_without_refilling_the_budget(stubbed_handler, monke
     assert CE._WANDER_BUDGET[key] == 0         # only mark_request (a new turn) refills
 
 
+def test_turn_end_is_stamped_while_the_lock_is_held(stubbed_handler, monkeypatch):
+    """Re-review item 3: the real handler writes the end stamp INSIDE the turn lock (try/finally around the turn
+    body), so a tick admitted right after the turn always reads it; also when the turn body raises."""
+    from fastapi import HTTPException
+    from webapp import continuous_engine as CE
+    S, _ = stubbed_handler
+    monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
+    held = []
+    real = CE.mark_turn_end
+    monkeypatch.setattr(CE, "mark_turn_end", lambda key: (held.append(L.held_by_current_thread()), real(key)))
+    S.brain_chat(S.BrainChatRequest(session="s", message="hi", brain="tiny-demo", renderer="stub"))
+
+    def boom(brain, r):
+        raise RuntimeError("no bundle")
+
+    monkeypatch.setattr(S, "_build_chat_brain", boom)
+    with pytest.raises(HTTPException):
+        S.brain_chat(S.BrainChatRequest(session="t", message="hi", brain="tiny-demo", renderer="stub"))
+    assert held == [True, True]
+    assert ("t", "tiny-demo", "stub") in CE._LAST_TURN_END
+
+
 def test_a_turn_not_admitted_in_time_gets_busy(stubbed_handler, monkeypatch):
     S, _ = stubbed_handler
     monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
@@ -402,7 +424,8 @@ def test_idle_tick_skips_a_session_marked_while_it_waited(tick_env, monkeypatch)
 
 def test_tick_behind_a_same_session_turn_does_not_tick_it_when_the_turn_ends(tick_env, monkeypatch):
     """Review item 3: the turn STARTED 30 s ago (idle by its start stamp), the tick waits behind it; when the turn
-    ends (end stamp, then release) the tick reads the clock inside the lock and measures from the end: not idle."""
+    ends (end stamp, then release) the tick reads the clock inside the lock and measures from the end: not idle.
+    The stamp-then-release order is the real handler's (pinned by test_turn_end_is_stamped_while_the_lock_is_held)."""
     CE = tick_env
     monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
     key = ("s0", "tiny-demo", "stub")

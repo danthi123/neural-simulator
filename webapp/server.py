@@ -4729,15 +4729,18 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     from webapp.brain_turn_lock import TurnBusy, brain_turn, busy_payload, turn_wait_timeout_s
     try:
         with brain_turn("brain_chat", timeout=turn_wait_timeout_s()):
-            return _brain_chat_turn(req, cache_key, renderer)
+            try:
+                return _brain_chat_turn(req, cache_key, renderer)
+            finally:
+                # end-of-turn stamp, written while the lock is still held (so a tick admitted next always sees it):
+                # the idle tick measures idleness from here (it does NOT refill the wander budget)
+                try:
+                    if _CE0 is not None:
+                        _CE0.mark_turn_end(cache_key)
+                except Exception:
+                    pass
     except TurnBusy as busy:
         return JSONResponse(busy_payload(req, renderer, busy))
-    finally:
-        try:  # end-of-turn stamp: the idle tick measures idleness from here (it does NOT refill the wander budget)
-            if _CE0 is not None:
-                _CE0.mark_turn_end(cache_key)
-        except Exception:
-            pass
 
 
 def _brain_chat_turn(req, cache_key, renderer) -> JSONResponse:
