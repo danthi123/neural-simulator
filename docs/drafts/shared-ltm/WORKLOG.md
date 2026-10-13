@@ -307,7 +307,11 @@ of headroom.
 
 Tests at the tip: `tests/test_shared_ltm.py` SIM_BACKEND=numpy (CUDA hidden) 35 passed, 1 skipped (the cupy guard
 test); SIM_BACKEND=cupy 36 passed. The composer / LTM / server suites listed under Review fixes: numpy 154 passed,
-5 skipped; cupy below.
+5 skipped; cupy 157 passed, 1 skipped, 1 failed. The failure is
+`test_arm_renderer_production_path.py::test_the_handler_resolves_the_omitted_renderer_with_the_production_resolver[production-env0-stub]`
+('qwen' != 'stub'). It passes alone and fails whenever an earlier test in the process built a cupy bridge: the same
+failure reproduces with only test_tiered_fact_store.py before it, on this branch and on the base 6a3bfe247 export.
+It predates this branch; not fixed here.
 
 ## Open risks
 
