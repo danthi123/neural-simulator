@@ -4572,18 +4572,19 @@ def _safe_json_response(resp, where):
 
 
 def brain_chat_cache_key(req) -> tuple:
-    """The (session, brain, renderer) key `brain_chat` caches a ChatBrain and every per-session registry under --
-    the SAME expression `brain_chat` uses (renderer resolved through `_default_brain_renderer()` when the request
-    names none), exposed so a caller can name the session it wants released."""
+    """The (session, brain, renderer) key `brain_chat` caches a ChatBrain and every per-session registry under.
+    `brain_chat` computes its own key by calling this (renderer resolved through `_default_brain_renderer()` when the
+    request names none), so a caller naming a session to release cannot drift from the handler."""
     return (req.session, req.brain, (req.renderer or _default_brain_renderer()).lower())
 
 
 def _evict_brain_chat_session(cache_key) -> None:
     """Drop everything this server holds for one (session, brain, renderer) key: the warm ChatBrain, the rich
-    composer, and the per-session registries. This is the `req.reset` teardown, moved here VERBATIM (same pops,
-    same order) so the regression-battery worker can release a session after its last turn instead of holding a
-    full ChatBrain per session for the process lifetime (finding 2026-10-12-battery-worker-per-kind-retention:
-    ~5.3 GB per session key). `brain_chat` with reset=True calls exactly this; nothing else changed."""
+    composer, and the per-session registries this teardown covers (their per-session organs go with them). This is
+    the `req.reset` teardown, moved here VERBATIM (same pops, same order); `brain_chat` with reset=True calls
+    exactly this. The regression-battery worker calls it, opt-in, to release a session after its last use (finding
+    2026-10-12-battery-worker-per-kind-retention: one ChatBrain, ~5.4 GiB, per session key). Known pre-existing gap,
+    not changed here: common_ground_ledger_production_organ.reset_organ is not in this teardown."""
     _BRAIN_CHATS.pop(cache_key, None)
     _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
     try:
@@ -4661,13 +4662,15 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
           "followup": bool,         # the turn was a 'tell me more'/'why?'
         }
     """
-    renderer = (req.renderer or _default_brain_renderer()).lower()
+    # The ONE key definition (brain_chat_cache_key): the handler computes its key through the helper so a caller
+    # naming a session to release (the regression-battery worker) can never drift from the key cached here.
+    cache_key = brain_chat_cache_key(req)
+    renderer = cache_key[2]
     # A numpy-CPU code path elsewhere in this long-running server can have flipped
     # the global backend cache away from the bridge's cupy arrays between turns;
     # re-assert it here so gate()/render()/the rich path run consistently (the
     # cupy/numpy-flip bug, 2026-06-24).
     _pin_bridge_backend()
-    cache_key = (req.session, req.brain, renderer)
     try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation
         from webapp import continuous_engine as _CE0
         _CE0.mark_request(cache_key)

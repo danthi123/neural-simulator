@@ -969,15 +969,9 @@ class _QwenGenerateCounter:
 
 
 # ── worker: build ONE fresh brain with a given env, run the probe turns, dump responses ──────────────────────────
-def _battery_turn_record(label) -> None:
-    """tree-c5-offcurve (RULING c5-probe-merged 2026-10-12): flag-independent per-turn RSS record.
-
-    The organ's sidecar (_leak_log) only fires when BRAIN_IDLE_REPLAY=1, so the OFF arm of the g6 pair would
-    log nothing; this hook runs from the battery worker's turn loop regardless of that flag. When
-    BRAIN_IDLE_REPLAY_LEAKLOG names a .jsonl sidecar, append {ts, pid, turn label, rss_kb, hwm_kb} read from
-    /proc/self/status after each brain_chat turn, event "battery_turn" -- same file the organ writes, so one
-    jsonl holds both arms' curves. Unset -> one environ lookup and return, byte-identical behavior, no file.
-    Never raises (a probe cannot break the battery)."""
+def _leaklog_append(rec) -> None:
+    """Append `rec` plus {ts, pid, rss_kb, hwm_kb} (read from /proc/self/status) to the BRAIN_IDLE_REPLAY_LEAKLOG
+    jsonl. Unset -> one environ lookup and return, no file. Never raises (a probe cannot break the battery)."""
     path = os.environ.get("BRAIN_IDLE_REPLAY_LEAKLOG") or ""
     if not path:
         return
@@ -990,8 +984,7 @@ def _battery_turn_record(label) -> None:
                     rss = int(line.split()[1])
                 elif line.startswith("VmHWM:"):
                     hwm = int(line.split()[1])
-        rec = {"ts": round(_time.time(), 3), "pid": os.getpid(), "turn": label, "event": "battery_turn",
-               "rss_kb": rss, "hwm_kb": hwm}
+        rec = dict(rec, ts=round(_time.time(), 3), pid=os.getpid(), rss_kb=rss, hwm_kb=hwm)
         with open(path, "a") as fh:
             fh.write(json.dumps(rec, sort_keys=True) + "\n")
             fh.flush()
@@ -1000,19 +993,50 @@ def _battery_turn_record(label) -> None:
         pass
 
 
-KEEP_SESSIONS_ENV = "BATTERY_KEEP_SESSIONS"
+def _battery_turn_record(label, session_release=False) -> None:
+    """tree-c5-offcurve (RULING c5-probe-merged 2026-10-12): flag-independent per-turn RSS record.
+
+    The organ's sidecar (_leak_log) only fires when BRAIN_IDLE_REPLAY=1, so the OFF arm of the g6 pair would
+    log nothing; this hook runs from the battery worker's turn loop regardless of that flag. When
+    BRAIN_IDLE_REPLAY_LEAKLOG names a .jsonl sidecar, append {ts, pid, turn label, rss_kb, hwm_kb, session_release}
+    read from /proc/self/status after each brain_chat turn, event "battery_turn" -- same file the organ writes, so one
+    jsonl holds both arms' curves. `session_release` stamps the worker's release mode (LB_BATTERY_RELEASE_SESSIONS)
+    so a curve always says which instrument drew it. Unset -> one environ lookup and return, byte-identical
+    behavior, no file. Never raises (a probe cannot break the battery)."""
+    _leaklog_append({"turn": label, "event": "battery_turn", "session_release": bool(session_release)})
+
+
+def _battery_release_record(label, sessions, n_keys, error) -> None:
+    """One "battery_release" sidecar record after the worker releases sessions (opt-in mode only): which sessions,
+    how many cache keys, the RSS right after the release, and the release error (None on success)."""
+    _leaklog_append({"turn": label, "event": "battery_release", "sessions": list(sessions), "n_keys": int(n_keys),
+                     "error": error})
+
+
+# ── opt-in session release (c5-next(b), 2026-10-13) ───────────────────────────────────────────────────────────────
+# brain_chat caches a full ChatBrain plus ~20 per-session registries per (session, brain, renderer) key and frees
+# them only on reset, so a worker that runs every session to the end holds one ChatBrain per session: ~5.4 GiB each,
+# almost all of it the tiny-demo's wikidata_100k LTM tier (finding 2026-10-12-battery-worker-per-kind-retention;
+# docs/drafts/battery-retention/WORKLOG.md). DEFAULT OFF: every registered instrument keeps the keep-everything
+# behaviour. LB_BATTERY_RELEASE_SESSIONS=1 (case-insensitive 1/true/on/yes; LB_ so the provenance sidecar records it)
+# releases each session after its last use. Equivalence evidence so far: byte-identical on emo,bc_a,bc_b, dev seed 7
+# (whole-record sha) at fefd940a7 only; the default may flip only after the WORKLOG's equivalence check E1 passes.
+RELEASE_SESSIONS_ENV = "LB_BATTERY_RELEASE_SESSIONS"
+
+
+def session_release_enabled(environ=None) -> bool:
+    """LB_BATTERY_RELEASE_SESSIONS read case-insensitively: 1/true/on/yes -> True; unset or anything else -> False."""
+    v = (os.environ if environ is None else environ).get(RELEASE_SESSIONS_ENV, "")
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def session_release_plan(turn_labels):
     """{turn index: [session, ...]} -- after which turn each session's server state may be released.
 
-    brain_chat caches a full ChatBrain plus ~20 per-session registries per (session, brain, renderer) key and frees
-    them only on reset, so a worker that ran every session to the end held ~5.3 GB per session (finding
-    2026-10-12-battery-worker-per-kind-retention). A session is released only once nothing later in THIS turn list
-    can read it: after its last brain_chat turn, or after the last world step that follows its first turn, whichever
-    is later -- world steps tick every live session (continuous_engine.tick_idle_sessions over _SESSION_MOOD, the
-    max of _LAST_REQUEST, mark_awake over _BRAIN_CHATS), so a session stays live through them exactly as before.
-    Pure: labels only, no brain import."""
+    A session is released only once nothing later in THIS turn list can read it: after its last brain_chat turn, or
+    after the last world step that follows its first turn, whichever is later -- world steps tick every live session
+    (continuous_engine.tick_idle_sessions over _SESSION_MOOD, the max of _LAST_REQUEST, mark_awake over
+    _BRAIN_CHATS), so a session stays live through them exactly as before. Pure: labels only, no brain import."""
     first, last, world = {}, {}, []
     for i, label in enumerate(turn_labels):
         if label in _WORLD_STEPS:
@@ -1028,9 +1052,18 @@ def session_release_plan(turn_labels):
     return plan
 
 
-def _release_sessions(keys, evict) -> None:
-    """Evict each server cache key through the reset teardown, then collect cycles and hand freed heap back to the
-    OS (malloc_trim; glibc only, best-effort). Memory only: no reply, organ or RNG state is touched."""
+def _release_sessions(keys, evict, live) -> None:
+    """Evict each server cache key through the reset teardown (`evict`), then collect cycles and hand freed heap back
+    to the OS (malloc_trim; glibc only, best-effort).
+
+    This DROPS the released session's ChatBrain and the per-session organs the teardown covers; it is safe for
+    replies only because nothing later in the turn list reads that session (session_release_plan). Equivalence
+    evidence: byte-identical on emo,bc_a,bc_b, dev seed 7 (whole-record sha) at fefd940a7; nothing broader yet.
+    Fails LOUDLY: raises RuntimeError when no key was recorded or a key was not live in `live` (the server's
+    _BRAIN_CHATS) at release time -- a release that frees nothing is a wrong instrument, never a silent pass. Every
+    key is still evicted before the raise; the worker catches it and records the error."""
+    keys = list(keys)
+    missing = [k for k in keys if k not in live]
     for key in keys:
         evict(key)
     import gc
@@ -1040,6 +1073,10 @@ def _release_sessions(keys, evict) -> None:
         ctypes.CDLL("libc.so.6").malloc_trim(0)
     except Exception:  # noqa: BLE001 -- not glibc: the memory is still free for reuse inside the process
         pass
+    if not keys:
+        raise RuntimeError("session release: no cache key was recorded for the planned session(s)")
+    if missing:
+        raise RuntimeError("session release: key(s) not live at release: %r" % (missing,))
 
 
 def _collect_worker(env_json, turn_labels, out_path):
@@ -1063,13 +1100,29 @@ def _collect_worker(env_json, turn_labels, out_path):
     if mode == ARM_RENDERER_PRODUCTION:
         from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
         counter = _QwenGenerateCounter().install(SpikingQwenFaculty)
-    from webapp.server import brain_chat, BrainChatRequest, brain_chat_cache_key, _evict_brain_chat_session
+    from webapp.server import brain_chat, BrainChatRequest
     responses = {}
-    # Release each session after the last turn that can read it (session_release_plan); BATTERY_KEEP_SESSIONS=1
-    # keeps every session to the end (the pre-2026-10-13 behaviour, ~5.3 GB per session).
-    release = {} if os.environ.get(KEEP_SESSIONS_ENV, "").strip() in ("1", "true", "on", "yes") \
-        else session_release_plan(turn_labels)
+    # Opt-in session release (LB_BATTERY_RELEASE_SESSIONS; default OFF = keep every session to the end, the
+    # registered-instrument behaviour). OFF runs exactly the pre-2026-10-13 loop: no key computation, no release.
+    releasing = session_release_enabled()
+    release = session_release_plan(turn_labels) if releasing else {}
     keys_by_session = {}
+
+    def _release_after(i, label):
+        from webapp import server as _S
+        sessions = release[i]
+        keys = [k for s in sessions for k in sorted(keys_by_session.pop(s, ()))]
+        err = None
+        try:
+            _release_sessions(keys, _S._evict_brain_chat_session, _S._BRAIN_CHATS)
+        except Exception as e:  # noqa: BLE001 -- a release failure is recorded loudly, never a worker crash
+            err = "%s: %s" % (type(e).__name__, e)
+            print("[battery worker] RELEASE ERROR after %s (%s): %s" % (label, ",".join(sessions), err),
+                  file=sys.stderr, flush=True)
+            if isinstance(responses.get(label), dict):
+                responses[label]["_battery_release_error"] = err
+        _battery_release_record(label, sessions, len(keys), err)
+
     for i, label in enumerate(turn_labels):
         if label in _WORLD_STEPS:              # label-only environment step (never a brain_chat turn)
             try:
@@ -1077,28 +1130,26 @@ def _collect_worker(env_json, turn_labels, out_path):
             except Exception as e:
                 responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
             if i in release:
-                _release_sessions([k for s in release[i] for k in keys_by_session.pop(s, ())],
-                                  _evict_brain_chat_session)
+                _release_after(i, label)
             continue
         _, msg, session, reset, percept, rich = _TURN_BY_LABEL[label]
         calls_before = counter.calls if counter is not None else 0
-        req = None
         try:
             kwargs = _arm_request_kwargs(mode, session, msg, reset, percept, rich)
             req = BrainChatRequest(**kwargs)
+            if releasing:   # the key brain_chat is about to cache under, computed BEFORE the call (same helper)
+                from webapp.server import brain_chat_cache_key
+                keys_by_session.setdefault(session, set()).add(brain_chat_cache_key(req))
             r = brain_chat(req)
             responses[label] = json.loads(r.body)
         except Exception as e:
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
-        if req is not None:   # the key brain_chat just cached under (computed after the turn: no extra side effect)
-            keys_by_session.setdefault(session, set()).add(brain_chat_cache_key(req))
         if counter is not None and isinstance(responses.get(label), dict):
             responses[label][ARM_RENDERER_KEY] = {"mode": mode,
                                                   "qwen_generate_calls": counter.calls - calls_before}
-        _battery_turn_record(label)      # RULING c5-probe-merged: flag-independent per-turn RSS, env-gated inside
-        if i in release:                 # nothing later in this list reads these sessions: free them
-            _release_sessions([k for s in release[i] for k in keys_by_session.pop(s, ())],
-                              _evict_brain_chat_session)
+        _battery_turn_record(label, releasing)   # RULING c5-probe-merged: per-turn RSS, env-gated inside
+        if i in release:                         # nothing later in this list reads these sessions: free them
+            _release_after(i, label)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     json.dump(responses, open(out_path, "w"), indent=2, default=str)
     print("[battery worker] env=%s -> %d turns -> %s" % (env, len(responses), out_path), flush=True)

@@ -1,10 +1,12 @@
-"""c5-next(b): the regression-battery worker releases each session's server state after its last use.
+"""c5-next(b): the regression-battery worker's OPT-IN session release (LB_BATTERY_RELEASE_SESSIONS).
 
 brain_chat caches a full ChatBrain + ~20 per-session registries per (session, brain, renderer) key and frees them only
-on reset, so a worker that kept every session held ~5.3 GB per session (finding
-2026-10-12-battery-worker-per-kind-retention). The worker now evicts a session through the SAME reset teardown once
-nothing later in its turn list can read it. CPU-only, no brain build: brain_chat is replaced by a fake that caches a
-stand-in chat object the way the real handler does.
+on reset, so a worker that keeps every session holds ~5.4 GiB per session (finding
+2026-10-12-battery-worker-per-kind-retention). Default OFF keeps every session (the registered-instrument
+behaviour); opt-in evicts a session through the SAME reset teardown once nothing later in its turn list can read it,
+and fails loudly when a key it should free was not live. CPU-only, no brain build: brain_chat is replaced by a fake
+that caches a stand-in chat object the way the real handler does (except the handler-path key test, which runs the
+real handler with its brain build stubbed).
 """
 import gc
 import json
@@ -32,8 +34,23 @@ def test_plan_keeps_a_session_live_through_a_later_world_step():
 
 def test_plan_without_world_steps_never_releases_before_the_last_use():
     labels = ["dr_a", "emo", "dr_b", "dr_c"]   # session 'dr' is interleaved with 'emo'
-    plan = B.session_release_plan(labels)
-    assert plan == {1: ["emo"], 3: ["dr"]}
+    assert B.session_release_plan(labels) == {1: ["emo"], 3: ["dr"]}
+
+
+@pytest.mark.parametrize("val,expected", [("1", True), ("TRUE", True), ("On", True), (" yes ", True),
+                                          ("0", False), ("", False), ("off", False), ("2", False)])
+def test_release_env_is_parsed_case_insensitively(val, expected):
+    assert B.session_release_enabled({B.RELEASE_SESSIONS_ENV: val}) is expected
+    assert B.session_release_enabled({}) is False         # unset -> OFF (the default)
+
+
+def test_release_raises_when_a_key_was_not_live():
+    evicted = []
+    with pytest.raises(RuntimeError, match="not live"):
+        B._release_sessions([("a", "b", "c"), ("x", "b", "c")], evicted.append, {("a", "b", "c"): object()})
+    assert evicted == [("a", "b", "c"), ("x", "b", "c")]   # every key is still evicted before the raise
+    with pytest.raises(RuntimeError, match="no cache key"):
+        B._release_sessions([], evicted.append, {})
 
 
 # ── the worker, with a fake brain_chat ──────────────────────────────────────────────────────────────────────────────
@@ -43,61 +60,126 @@ class _Chat:
 
 
 @pytest.fixture
-def fake_server(monkeypatch):
+def fake_server(monkeypatch, tmp_path):
     from fastapi.responses import JSONResponse
     from webapp import server as S
 
-    for k in ("SIM_BACKEND", "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM"):   # the worker setdefaults these: restore
-        monkeypatch.setenv(k, {"SIM_BACKEND": "numpy", "BRAIN_CHAT_RENDERER": "stub", "SIM_DISABLE_LLM": "1"}[k])
-    monkeypatch.delenv("BRAIN_IDLE_REPLAY_LEAKLOG", raising=False)
-    monkeypatch.delenv(B.KEEP_SESSIONS_ENV, raising=False)
+    for k, v in (("SIM_BACKEND", "numpy"), ("BRAIN_CHAT_RENDERER", "stub"), ("SIM_DISABLE_LLM", "1")):
+        monkeypatch.setenv(k, v)              # the worker setdefaults these: monkeypatch restores them
+    side = tmp_path / "side.jsonl"
+    monkeypatch.setenv("BRAIN_IDLE_REPLAY_LEAKLOG", str(side))
+    monkeypatch.delenv(B.RELEASE_SESSIONS_ENV, raising=False)
     monkeypatch.setattr(S, "_BRAIN_CHATS", {})
     monkeypatch.setattr(S, "_SESSION_MOOD", {})
-    refs, seen_live = {}, []
+    st = {"refs": {}, "seen_live": [], "skip_cache": set(), "side": side}
+    handler_reset = S._evict_brain_chat_session   # the handler's own reset path (a test may break the WORKER's evict)
 
     def fake_brain_chat(req):
         key = S.brain_chat_cache_key(req)
-        seen_live.append((req.session, sorted(k[0] for k in S._BRAIN_CHATS)))   # what is cached when this turn starts
+        st["seen_live"].append((req.session, sorted(k[0] for k in S._BRAIN_CHATS)))   # cached when this turn starts
         if req.reset:
-            S._evict_brain_chat_session(key)
-        chat = S._BRAIN_CHATS.get(key)
-        if chat is None:
-            chat = _Chat()
-            S._BRAIN_CHATS[key] = chat
-            refs[req.session] = weakref.ref(chat)
-        S._SESSION_MOOD[key] = {"v": 0.0}
+            handler_reset(key)
+        if req.session not in st["skip_cache"]:
+            chat = S._BRAIN_CHATS.get(key)
+            if chat is None:
+                chat = _Chat()
+                S._BRAIN_CHATS[key] = chat
+                st["refs"][req.session] = weakref.ref(chat)
+            S._SESSION_MOOD[key] = {"v": 0.0}
         return JSONResponse({"answer": "ok:" + req.message})
 
     monkeypatch.setattr(S, "brain_chat", fake_brain_chat)
-    return S, refs, seen_live
+    return S, st
 
 
-def test_worker_frees_a_session_before_the_next_session_builds(fake_server, tmp_path):
-    S, refs, seen_live = fake_server
+def _side(st):
+    return [json.loads(line) for line in st["side"].read_text().splitlines()]
+
+
+def test_default_keeps_every_session(fake_server, tmp_path):
+    S, st = fake_server
+    assert B._collect_worker("{}", ["emo", "bc_a", "bc_b"], str(tmp_path / "arm.json")) == 0
+    assert st["seen_live"] == [("emo", []), ("bc", ["emo"]), ("bc", ["bc", "emo"])]
+    assert sorted(k[0] for k in S._BRAIN_CHATS) == ["bc", "emo"]
+    recs = _side(st)
+    assert [r["event"] for r in recs] == ["battery_turn"] * 3          # no release records when OFF
+    assert all(r["session_release"] is False for r in recs)
+
+
+def test_opt_in_frees_a_session_before_the_next_session_builds(fake_server, tmp_path, monkeypatch):
+    S, st = fake_server
+    monkeypatch.setenv(B.RELEASE_SESSIONS_ENV, "True")
     out = tmp_path / "arm.json"
     assert B._collect_worker("{}", ["emo", "bc_a", "bc_b"], str(out)) == 0
     # 'emo' is gone when 'bc' starts, and 'bc_b' still sees its own session from bc_a
-    assert seen_live == [("emo", []), ("bc", []), ("bc", ["bc"])]
+    assert st["seen_live"] == [("emo", []), ("bc", []), ("bc", ["bc"])]
     gc.collect()
-    assert refs["emo"]() is None and refs["bc"]() is None      # nothing else pins the released chats
+    assert st["refs"]["emo"]() is None and st["refs"]["bc"]() is None      # nothing else pins the released chats
     assert S._BRAIN_CHATS == {} and S._SESSION_MOOD == {}
     body = json.loads(out.read_text())
     assert [body[k]["answer"] for k in ("emo", "bc_a", "bc_b")] == [
         "ok:" + B._TURN_BY_LABEL[k][1] for k in ("emo", "bc_a", "bc_b")]
+    assert not any("_battery_release_error" in v for v in body.values())
+    recs = _side(st)
+    assert [(r["event"], r["turn"]) for r in recs] == [
+        ("battery_turn", "emo"), ("battery_release", "emo"), ("battery_turn", "bc_a"),
+        ("battery_turn", "bc_b"), ("battery_release", "bc_b")]
+    assert all(r["session_release"] is True for r in recs if r["event"] == "battery_turn")
+    rel = [r for r in recs if r["event"] == "battery_release"]
+    assert [(r["sessions"], r["n_keys"], r["error"]) for r in rel] == [(["emo"], 1, None), (["bc"], 1, None)]
 
 
-def test_keep_sessions_env_restores_the_old_behaviour(fake_server, tmp_path, monkeypatch):
-    S, refs, seen_live = fake_server
-    monkeypatch.setenv(B.KEEP_SESSIONS_ENV, "1")
-    assert B._collect_worker("{}", ["emo", "bc_a", "bc_b"], str(tmp_path / "arm.json")) == 0
-    assert seen_live == [("emo", []), ("bc", ["emo"]), ("bc", ["bc", "emo"])]
-    assert sorted(k[0] for k in S._BRAIN_CHATS) == ["bc", "emo"]
+def test_a_key_that_was_not_live_is_recorded_loudly(fake_server, tmp_path, monkeypatch):
+    S, st = fake_server
+    monkeypatch.setenv(B.RELEASE_SESSIONS_ENV, "1")
+    st["skip_cache"].add("emo")               # the handler never cached 'emo' -> releasing it frees nothing
+    out = tmp_path / "arm.json"
+    assert B._collect_worker("{}", ["emo", "bc_a"], str(out)) == 0
+    body = json.loads(out.read_text())
+    assert "not live" in body["emo"]["_battery_release_error"]
+    assert "_battery_release_error" not in body["bc_a"]
+    rel = [r for r in _side(st) if r["event"] == "battery_release"]
+    assert "not live" in rel[0]["error"] and rel[1]["error"] is None
 
 
-def test_cache_key_matches_the_handler_expression():
+def test_a_reset_hook_exception_is_recorded_not_raised(fake_server, tmp_path, monkeypatch):
+    S, st = fake_server
+    monkeypatch.setenv(B.RELEASE_SESSIONS_ENV, "1")
+
+    def boom(key):
+        raise ValueError("reset hook failed")
+
+    monkeypatch.setattr(S, "_evict_brain_chat_session", boom)
+    out = tmp_path / "arm.json"
+    assert B._collect_worker("{}", ["emo", "bc_a"], str(out)) == 0      # the worker completes
+    body = json.loads(out.read_text())
+    assert body["emo"]["_battery_release_error"] == "ValueError: reset hook failed"
+    assert body["emo"]["answer"] == "ok:" + B._TURN_BY_LABEL["emo"][1]
+
+
+# ── the server side ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+@pytest.mark.parametrize("renderer", ["STUB", None])
+def test_cache_key_is_the_key_the_handler_caches_under(monkeypatch, renderer):
+    """Runs the REAL brain_chat handler (brain build + reply stubbed) and checks the key it cached under equals
+    brain_chat_cache_key(req), including the default-renderer path (renderer=None)."""
+    from fastapi.responses import JSONResponse
     from webapp import server as S
-    req = S.BrainChatRequest(session="emo", message="hi", brain="tiny-demo", renderer="STUB", rich=False, reset=True)
-    assert S.brain_chat_cache_key(req) == ("emo", "tiny-demo", "stub")
+    from webapp import continuous_engine as CE
+
+    monkeypatch.setenv("BRAIN_CHAT_RENDERER", "stub")
+    monkeypatch.setattr(S, "_BRAIN_CHATS", {})
+    monkeypatch.setattr(CE, "_LAST_REQUEST", {})
+    monkeypatch.setattr(CE, "_WANDER_BUDGET", {})
+    monkeypatch.setattr(S, "_pin_bridge_backend", lambda: None)
+    monkeypatch.setattr(S, "_build_chat_brain", lambda brain, r: (_Chat(), "stub-build"))
+    monkeypatch.setattr(S, "_reload_persisted_learning", lambda key, chat: None)
+    monkeypatch.setattr(S, "brain_reply", lambda chat, req, source, key: JSONResponse({"key": list(key)}))
+    req = S.BrainChatRequest(session="emo", message="hi", brain="tiny-demo", renderer=renderer, rich=False,
+                             reset=False)
+    resp = S.brain_chat(req)
+    assert list(S._BRAIN_CHATS) == [S.brain_chat_cache_key(req)]
+    assert tuple(json.loads(resp.body)["key"]) == S.brain_chat_cache_key(req)
 
 
 def test_evict_drops_every_server_registry_for_the_key(monkeypatch):
