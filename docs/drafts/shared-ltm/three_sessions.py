@@ -59,7 +59,8 @@ def main(out_path, turnset="v1"):
                                                   "SIM_BACKEND", "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM",
                                                   "OMP_NUM_THREADS")},
            "git_sha": sha, "git_dirty": dirty, "turnset": turnset,
-           "shared_ltm_on": S._shared_ltm_on(), "ltm_rng_isolate_on": S._ltm_rng_isolate_on(),
+           "shared_ltm_on": getattr(S, "_shared_ltm_on", lambda: None)(),   # None: a base without the flag
+           "ltm_rng_isolate_on": getattr(S, "_ltm_rng_isolate_on", lambda: None)(),
            "turns": turns, "rss_start_kb": rss()[0], "built": {}, "replies": []}
     for ti, msg in enumerate(turns):
         for sess in SESSIONS:
