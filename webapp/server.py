@@ -3465,6 +3465,35 @@ def _get_reconsolidation_organ():
     return get_organ(seed=_brain_chat_seed())
 
 
+# ── QUESTION-TURN GUARD for the assertion paths (Stage-2 HANDOFF 18a; HOST SCAFFOLD, docs/SCAFFOLD-LEDGER.md) ──────
+# The D2 surprise extractor and the B3 extractor strip a leading "does"/"is" as a function word, so a bare yes/no
+# question ("does crow chase moth") read as an ASSERTION: it rewrote the held fact (reconsolidation), was answered
+# "That surprises me" as if asserted, and was REJECTED by B3 as a contradiction. These pure helpers decide, from the
+# turn's form only (`brain_chat_tui.is_interrogative_turn`), that a question opens none of those assertion paths.
+# Escape: BRAIN_ACQUIRE_QUESTIONS=1 (the pre-fix behaviour). Brain-free tests: tests/test_interrogative_no_acquire.py.
+def _question_turn(msg) -> bool:
+    """True -> `msg` is a question by form and the escape is unset: no assertion-path write, notice or reject."""
+    try:
+        from research.runners.brain_chat_tui import interrogative_blocks_store
+        return bool(interrogative_blocks_store(msg))
+    except Exception:
+        return False
+
+
+def _reconsolidation_action(msg, rc_on, surprised, p_stored, p_asserted):
+    """The reconsolidation write decision for one turn: None (no window: off, not surprised, or a re-statement),
+    'blocked_interrogative' (the window would open but the turn is a question: no write), or 'rewrite'."""
+    if not (rc_on and surprised and str(p_asserted).lower() != str(p_stored).lower()):
+        return None
+    return "blocked_interrogative" if _question_turn(msg) else "rewrite"
+
+
+def _held_readout(agent, action, stored_patient) -> str:
+    """On a QUESTION turn whose queried patient differs from the held one: an honest read-out of what is held, in place
+    of the assertion-framed surprise notice ("That surprises me -- my mismatch monitor fired ...")."""
+    return f"What I hold is: {agent} {action} {stored_patient}. "
+
+
 def _get_causal_organ(cache_key):
     """The PER-SESSION spiking causal why/what-if forward-model organ (lazy build ~1-2s on the first causal turn).
     Keyed by the ChatBrain cache (NOT a process singleton): the organ grounds READ-ONLY against THIS brain's live
@@ -6435,8 +6464,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     sorg = _get_surprise_organ()
                     sj = sorg.judge(a_s, v_s, str(p_stored), str(p_asserted), lesion=_SO.surprise_lesioned())
                     surprise_info = dict(sj)
+                    _q_turn = _question_turn(msg)   # HANDOFF 18a: a question asserted nothing (read kept in the record)
                     if sj["surprised"]:
-                        surprise_prefix = _SO.surprise_notice(a_s, v_s, str(p_stored))
+                        surprise_prefix = (_held_readout(a_s, v_s, str(p_stored)) if _q_turn
+                                           else _SO.surprise_notice(a_s, v_s, str(p_stored)))
                     # ── RECONSOLIDATION / belief revision (Gate-B, F-lane, 2026-08-12) ───────────────────────
                     # When the asserted patient CONTRADICTS the stored one (the D2 spiking surprise window is OPEN),
                     # UPDATE the stored fact IN PLACE instead of appending a contradictory duplicate. The window-open
@@ -6453,8 +6484,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                         _rc_on = (_RC is not None) and _RC.reconsolidation_enabled()
                     except Exception:
                         _rc_on = False
-                    if (_rc_on and sj.get("surprised")
-                            and str(p_asserted).lower() != str(p_stored).lower()):
+                    # INTERROGATIVE GUARD (HOST SCAFFOLD correction, Stage-2 HANDOFF 18a): a question opens no store
+                    # write (`_reconsolidation_action`; escape BRAIN_ACQUIRE_QUESTIONS=1). For a declarative it returns
+                    # the pre-existing condition unchanged.
+                    _rc_act = _reconsolidation_action(msg, _rc_on, sj.get("surprised"), p_stored, p_asserted)
+                    if _rc_act == "blocked_interrogative":
+                        reconsolidation_info = {"on": True, "action": "none", "reason": "interrogative_turn"}
+                    elif _rc_act == "rewrite":
                         try:
                             composer = getattr(chat.inner, "composer", None)
                             res = _get_reconsolidation_organ().reconsolidate(
@@ -6529,7 +6565,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 chat.inner.is_it_true, msg, lesion=_NC.noncontradiction_lesioned())
             if nres is not None:
                 noncontradiction_info = dict(nres)
-                if nres["reject"]:
+                if nres["reject"] and _question_turn(msg):
+                    # HANDOFF 18a: a QUESTION ("does the dog eat grass") asserted nothing to reject; the normal answer
+                    # path replies (escape BRAIN_ACQUIRE_QUESTIONS=1 restores the rejection). Read kept in the record.
+                    noncontradiction_info["reject_skipped"] = "interrogative_turn"
+                elif nres["reject"]:
                     return JSONResponse({
                         "answer": _NC.rejection_message(nres["svo"], nres["stored_polarity"]),
                         "abstained": False, "recalled_svo": nres["svo"], "verified": True,
