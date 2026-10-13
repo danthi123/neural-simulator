@@ -127,3 +127,61 @@ store serializes LTM calls.
 - Existing suites still pass: test_tiered_fact_store, test_sharded_phasor_store, test_arm_renderer_production_path,
   test_battery_session_release, test_rank2_integrated_loop_thread, test_brain_prewarm_scratch_session (76 passed,
   1 skipped with test_shared_ltm), test_communicable_turn_wirein (8 passed).
+
+## Step 4: one real run, three conversations, both arms (numpy CPU, dev seed 7)
+
+Driver `docs/drafts/shared-ltm/three_sessions.py` calls the real `brain_chat` handler (tiny-demo, stub renderer,
+`SIM_DISABLE_LLM=1`, `BRAIN_CHAT_SEED=7`) for sessions s1, s2, s3. Turn 1 builds each session back to back; turns 2
+and 3 then interleave across sessions (s1, s2, s3), so s2 and s3 read the store after s1 used it. Turns:
+"what does the dog chase" (a tiny-demo buffer fact), "what country is chelsea fc from?" (recalls
+`[chelsea_fc, country, united_kingom]`, a fact that exists only in wikidata_100k, so the LTM answered),
+"what does the dragon do" (untaught: buffer and LTM both abstain). RSS is VmRSS after each session's first turn.
+`compare.py` hashes nothing itself; it compares the sha256 each arm recorded over the handler's whole JSON body.
+
+Commands (each arm under the brain lock; `run_arm.sh` = `mem_ok.sh <cap>` then
+`memcap.sh <cap> -- env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 [BRAIN_SHARED_LTM=0] python -u
+docs/drafts/shared-ltm/three_sessions.py docs/drafts/shared-ltm/runs/<arm>.json`):
+
+    flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock docs/drafts/shared-ltm/run_arm.sh off 20
+    flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock docs/drafts/shared-ltm/run_arm.sh on 14
+    python docs/drafts/shared-ltm/compare.py docs/drafts/shared-ltm/runs/off.json docs/drafts/shared-ltm/runs/on.json
+
+The off arm needs a 20 GiB cap, not 14: three private copies peak at 17.80 GiB, so it cannot run under 14. Both
+exited 0. Per-turn records: `runs/off.json`, `runs/on.json` (the bodies are included).
+
+| | off (`BRAIN_SHARED_LTM=0`) | on (default) |
+| --- | --- | --- |
+| RSS after s1 built | 6,192,752 KiB (5.91 GiB) | 6,192,480 KiB (5.91 GiB) |
+| RSS after s2 built | 11,732,828 KiB (11.19 GiB) | 6,493,592 KiB (6.19 GiB) |
+| RSS after s3 built | 17,328,092 KiB (16.53 GiB) | 6,654,440 KiB (6.35 GiB) |
+| added by s2 / by s3 | +5,540,076 / +5,595,264 KiB (5.28 / 5.34 GiB) | +301,112 / +160,848 KiB (0.29 / 0.15 GiB) |
+| process peak (VmHWM) | 18,659,232 KiB (17.80 GiB) | 7,071,332 KiB (6.74 GiB) |
+| LTM store objects | 3 (`ShardedPhasorStore`) | 1 (`SharedLTMView` x3, one store; one `_SHARED_LTM` entry) |
+| s2 / s3 build turn | 141.6 s / 142.6 s | 77.6 s / 79.8 s (no LTM reload) |
+| LTM recall turn s1 / s2 / s3 | 29.9 / 29.3 / 30.2 s | 30.4 / 29.3 / 29.4 s |
+
+Byte identity: 9/9 turns have the same sha256 in both arms (whole reply body, per (session, turn)):
+
+| turn | s1 | s2 | s3 |
+| --- | --- | --- | --- |
+| dog chase | 00e5253cc912b9b8 | e7095a6f4c343036 | e7095a6f4c343036 |
+| chelsea fc country (LTM) | 9063a984bb29b739 | 9063a984bb29b739 | 9063a984bb29b739 |
+| dragon (abstain) | b243040cff0a2c2e | b243040cff0a2c2e | b243040cff0a2c2e |
+
+(s1's first reply differs from s2/s3's in both arms alike: the first session in a fresh process differs from later
+ones, independent of this change.)
+
+## Open risks
+
+- LTM reads now serialize across conversations (one lock per store). Under concurrent chat, a conversation's LTM
+  query can wait for another's (~0.5-1 s each on cupy, more on numpy); before, private copies could overlap. Not
+  measured here (the run was sequential).
+- The shared store lives for the process; there is no eviction (it is the point). Each new key (a changed LTM flag
+  or bundle) adds one more ~5.4 GiB entry.
+- Direct `shard.kb` readers (chain route, multistep, elaboration) bypass the view's lock. Safe while nothing
+  writes kb; a future write path through `view.shards[i]` would not be refused (only the view's API is guarded;
+  the mutation-guard test covers the read API).
+- The Izhikevich-bank read paths (spiking cleanup, `BRAIN_METACOG_SPIKING_MARGIN=1`) and read noise are refused
+  for sharing, not proven safe: with any of them on, each conversation still gets its own copy.
+- The developed-bundle branch is covered by the brain-free test only (stubbed `load_developed_brain`); the real
+  run covered the tiny-demo path, the production default.
