@@ -220,8 +220,10 @@ def _lo(v):
 
 
 def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SEEDS):
-    b = B.score(base, base_tag, base_pin, seeds)
-    f = B.score(base, flip_tag, flip_pin, seeds)
+    # amendment_b=False: this scores the 2026-09-29 iw1 prereg as registered (validation-battery Amendment B amends
+    # only the 2026-10-12 battery prereg)
+    b = B.score(base, base_tag, base_pin, seeds, amendment_b=False)
+    f = B.score(base, flip_tag, flip_pin, seeds, amendment_b=False)
     out = {"step": "B", "base": {"tag": base_tag, "pin": base_pin, "verdict": b["verdict"],
                                   "not_defined": b["not_defined"], "preconditions": b["preconditions"]},
            "flip": {"tag": flip_tag, "pin": flip_pin, "verdict": f["verdict"], "not_defined": f["not_defined"],

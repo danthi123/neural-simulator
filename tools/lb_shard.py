@@ -69,8 +69,12 @@ def job_env(probe_set="adequate", fixes=True, extra_env=None):
         envd[k] = v
     return envd
 OUT_BASE = "research/findings/raw/_load_bearing/_shards"
-MEASURABLE_KINDS = ("neural-lesion", "whether-disable", "thin", "mechanism-only")
+MEASURABLE_KINDS = ("neural-lesion", "whether-disable", "thin", "mechanism-only", "host-input")
 COVERABLE_KINDS = ("neural-lesion", "whether-disable")
+# Amendment B to the 2026-10-12 validation-battery prereg: a host-input row (its lesion overrides a host-parsed input)
+# still gets a shard and is provenance-checked like a coverable row; `aggregate` keeps it in the per-seed denominator
+# and out of the numerator, robust core and union.
+HOST_INPUT_KIND = "host-input"
 PIN_FILENAME = "PIN.txt"
 # B2b Amendment 1.2 (research/findings/2026-09-24-production-default-battery-B2b-PREREGISTRATION.md), applied
 # generically: a (faculty, seed) cell is a measurement of `pin` only if EVERY sidecar in its shard directory
@@ -351,7 +355,7 @@ def cmd_aggregate(a):
         cell_dir = os.path.dirname(path)
         for p in rep.get("per_faculty", []):
             fac, kind = p["faculty"], p.get("kind")
-            if pin and kind in COVERABLE_KINDS:
+            if pin and (kind in COVERABLE_KINDS or kind == HOST_INPUT_KIND):
                 n_checked += 1
                 fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))
                 if fails:
@@ -368,8 +372,13 @@ def cmd_aggregate(a):
         cov = [f for f, r in rows.items() if s in r and r[s]["kind"] in ("neural-lesion", "whether-disable")]
         ex = [f for f in cov if rows[f][s]["verdict"] in ("regressed", "pass", "trace-only")]  # trace-only: LB_SWAP_DRIVE_PROBE
         lb = [f for f in ex if rows[f][s]["load_bearing"] is True]
+        hi = [f for f, r in rows.items() if s in r and r[s]["kind"] == HOST_INPUT_KIND
+              and r[s]["verdict"] in ("regressed", "pass", "trace-only")]
+        n_den = len(ex) + len(hi)
         out["per_seed"][s] = {"n_coverable_present": len(cov), "n_exercised": len(ex), "n_load_bearing": len(lb),
-                              "load_bearing_fraction": (len(lb) / len(ex)) if ex else None}
+                              "load_bearing_fraction": (len(lb) / n_den) if n_den else None}
+        if hi:
+            out["per_seed"][s]["n_host_input_exercised"] = len(hi)
     robust, union, missing = [], [], []
     for f, r in sorted(rows.items()):
         if not any(v["kind"] in ("neural-lesion", "whether-disable") for v in r.values()):
@@ -385,6 +394,12 @@ def cmd_aggregate(a):
             robust.append(f)
         if n_lb:
             union.append(f)
+    hi_rows = {f: r for f, r in sorted(rows.items()) if any(v["kind"] == HOST_INPUT_KIND for v in r.values())}
+    if hi_rows:
+        out["host_input_faculties"] = {f: {"seeds_present": [s for s in seeds if s in r],
+                                           "n_load_bearing": sum(1 for s in seeds if s in r and r[s]["load_bearing"] is True),
+                                           "verdicts": {s: r[s]["verdict"] for s in seeds if s in r}}
+                                       for f, r in hi_rows.items()}
     out["robust_core"] = robust
     out["robust_core_n"] = len(robust)
     out["union_n"] = len(union)

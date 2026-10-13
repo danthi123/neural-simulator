@@ -50,6 +50,23 @@ Usage (the pre-registration's fixed interface):
 
 `--identity-only` restricts the run to S0 (the "identity replay over B2b's cells" precondition step in the
 pre-registration's Step 5) and skips S1/S2/drift.
+
+VALIDATION-BATTERY AMENDMENT B (research/findings/2026-10-12-validation-battery-prereg.md, filed 2026-10-13 before
+any b2d1012 shard was read). Two scorer-side registries keyed by FACULTY NAME, so they apply to shards generated at
+the battery pin f24963bfb whatever the row metadata in their lb.json says:
+  HOST_INPUT_ROWS   a row whose lesion overrides a HOST-parsed input, not a neural read (RULING lbf-host-input-rows:
+                    tom-false-belief's witness-gate override; its belief store reads STORE-NOT-LOAD-BEARING 6/6,
+                    research/findings/raw/_fb_store/verdict.json). Its cells are judged and scored like any coverable
+                    cell and stay in every level's per-seed DENOMINATOR, but never in the NUMERATOR, and the row is
+                    never in robust_core/union. Its per-seed verdicts are reported in each level's `host_input` block
+                    (its F1 is a host-input lesion F1). A shard whose lb.json already says kind "host-input" (after
+                    the row module's retag) is treated the same way.
+  ENGAGEMENT_ROWS   a row whose route catches every exception and abstains (RULING iw2-transitive-engagement): a
+                    DEFINED cell counts only when every arm's probe-turn body carries the route's trace with the
+                    registered route, a non-empty per-hop list, no error, and the lesion flag set exactly in the
+                    lesion arms. Otherwise the cell's state is UNDEFINED:engagement-<reason> (B2's re-run rule
+                    applies; never load-bearing, never a pass).
+Both registries only remove numerator credit or definedness, so they can only lower a fraction or a count.
 """
 from __future__ import annotations
 
@@ -71,6 +88,19 @@ EXERCISED = ("regressed", "pass")
 C_VERDICTS = ("arm-build-failed", "lesion-knob-missing", "lesion-not-effective", "artifact-missing",
               "artifact-unreadable", "seed-missing-in-artifact", "noisy", "noisy-null-control")
 REPLY_FIELDS_DEFAULT = ("answer", "abstained", "recalled_svo")
+HOST_INPUT_KIND = "host-input"
+# Amendment B (validation battery 2026-10-12): faculty -> why its lesion is a host-input override, not a neural cut.
+HOST_INPUT_ROWS = {
+    "tom-false-belief": (
+        "BRAIN_FALSE_BELIEF_LESION forces open the witness gate, whose presence/witnessing input is host-parsed "
+        "(webapp/false_belief_chat.py leave/return regex); the belief store is not load-bearing 6/6 "
+        "(research/findings/raw/_fb_store/verdict.json, STORE-NOT-LOAD-BEARING). RULING lbf-host-input-rows."),
+}
+# Amendment B: faculty -> the engagement record its route must leave on the probe turn of every arm.
+ENGAGEMENT_ROWS = {
+    "reasoning-transitive-chat": {"trace_key": "transitive_trace", "route": "chase", "hops_key": "chase",
+                                  "lesion_key": "lesioned"},
+}
 
 
 def _j(path):
@@ -292,7 +322,7 @@ def judge_dir(d, fac, pin, host_sha=None, primary_sha=None, fields_row=None):
     r["rule7_organ_error"] = rule7_hits
     if any(x.startswith("E") for x in r["fails"]):
         r["class"] = "E"
-    elif r["kind"] in COVERABLE:
+    elif r["kind"] in COVERABLE or r["kind"] == HOST_INPUT_KIND:
         if rule7_hits:
             r["fails"].append("C rule7: organ error on probe turn %r: %s" % (r["turn"], rule7_hits[0]))
             r["class"] = "C"
@@ -309,6 +339,47 @@ def judge_dir(d, fac, pin, host_sha=None, primary_sha=None, fields_row=None):
                     v in C_VERDICTS or (isinstance(v, str) and v.startswith("unmapped-")))
                 r["class"] = "C" if is_c else "I"
     return r
+
+
+def is_host_input(fac, lb_kind):
+    """Amendment B: the row is scored as a host-input lesion (registry by faculty name, or a retagged lb.json)."""
+    return fac in HOST_INPUT_ROWS or lb_kind == HOST_INPUT_KIND
+
+
+def engagement_reason(canon, spec):
+    """Amendment B (RULING iw2-transitive-engagement). None when EVERY arm file in the cell's directory carries, on the
+    probe turn, the route's engagement record per `spec` ({trace_key, route, hops_key, lesion_key}): the registered
+    route, a non-empty per-hop list, no error (any non-null value counts, as in rule 7) and the lesion flag set
+    exactly in the lesion arms. Otherwise a short reason; the cell then reads UNDEFINED:engagement-<reason>."""
+    d, turn = canon.get("dir"), canon.get("turn")
+    if not d or not os.path.isdir(d):
+        return "no-dir"
+    names = sorted(fn for fn in os.listdir(d) if ARM_RE.match(fn) and not fn.endswith(".prov.json"))
+    if not {"intact_a", "intact_b", "lesion"} <= {_arm_kind(fn) for fn in names}:
+        return "missing-arms"
+    for fn in names:
+        try:
+            doc = _j(os.path.join(d, fn))
+        except Exception:
+            return "unreadable:%s" % fn
+        body = doc.get(turn) if isinstance(doc, dict) else None
+        if not isinstance(body, dict):
+            return "no-turn:%s" % fn
+        if body.get("_error") is not None:
+            return "turn-error:%s" % fn
+        t = body.get(spec["trace_key"])
+        if not isinstance(t, dict):
+            return "no-record:%s" % fn
+        if t.get("error") is not None:
+            return "error:%s" % fn
+        if t.get("route") != spec["route"]:
+            return "route-%s:%s" % (t.get("route"), fn)
+        hops = t.get(spec["hops_key"])
+        if not isinstance(hops, list) or not hops:
+            return "no-hops:%s" % fn
+        if bool(t.get(spec["lesion_key"])) != fn.startswith("lesion_"):
+            return "lesion-flag:%s" % fn
+    return None
 
 
 def final_state(canon, attempt1, first_host, rerun_host):
@@ -436,7 +507,10 @@ def check_code_root(fields, code_root, pin):
 # ──────────────────────────────────────────────── score() ────────────────────────────────────────────────
 
 def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=None, reruns_path=None,
-         dispatch_log=None, attempt1_dir=None, identity_only=False):
+         dispatch_log=None, attempt1_dir=None, identity_only=False, amendment_b=True):
+    """`amendment_b` (default True, the CLI's default too): apply HOST_INPUT_ROWS / ENGAGEMENT_ROWS. Scorers of
+    preregistrations registered before Amendment B (tools/iw1_score.py, tools/iw2_score.py) pass False so their
+    registered behaviour is unchanged; B amends the 2026-10-12 validation-battery prereg only."""
     fields = read_fields(fields_path) if fields_path else {}
     rows_fields = (fields.get("rows") or {})
     reply_fields = tuple(fields.get("reply_fields") or REPLY_FIELDS_DEFAULT)
@@ -463,15 +537,22 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         cell = {"faculty": fac, "seed": seed, "canonical": canon, "attempt1": attempt1, "rerun_log": rr,
                "first_host": first_host, "rerun_host": rerun_host, "dispatch_nodes": disp.get(key, [])}
         cell["kind"] = kind_of.get(fac)
-        cell["coverable"] = cell["kind"] in COVERABLE
-        cell["state"] = final_state(canon, attempt1, first_host, rerun_host) if cell["coverable"] \
+        cell["host_input"] = bool(amendment_b) and is_host_input(fac, cell["kind"])
+        cell["coverable"] = cell["kind"] in COVERABLE and not cell["host_input"]
+        cell["scored"] = cell["coverable"] or cell["host_input"]
+        cell["state"] = final_state(canon, attempt1, first_host, rerun_host) if cell["scored"] \
             else "reported (%s)" % canon["verdict"]
+        if amendment_b and cell["state"] == "DEFINED" and fac in ENGAGEMENT_ROWS:
+            why = engagement_reason(canon, ENGAGEMENT_ROWS[fac])
+            cell["engagement"] = why or "engaged"
+            if why:
+                cell["state"] = "UNDEFINED:engagement-%s" % why
         exp_node = rerun_host or (cell["dispatch_nodes"][-1] if cell["dispatch_nodes"] else None)
         exp_host = node_host.get(exp_node) if exp_node else None
         cell["host_check"] = {"expected_node": exp_node, "expected_host": exp_host,
                               "sidecar_host": canon["host"],
                               "ok": (exp_host is None) or (canon["host"] is None) or (exp_host == canon["host"])}
-        if cell["state"] == "DEFINED" and cell["coverable"] and not identity_only:
+        if cell["state"] == "DEFINED" and cell["scored"] and not identity_only:
             if (fields.get("not_replayed") or {}).get(fac):
                 # e.g. open-ended-generation: the distributional ruler has no decision fields to strip SD from
                 # (it never calls _spawn_arm/compare at all) -- S1 is defined to equal S0, per the prereg.
@@ -481,32 +562,45 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
                 cell["s1"] = score_s1(canon, frow, reply_fields)
             cell["s2"] = score_s2(canon, frow, reply_fields)
         out_cells[key] = cell
-    cov = {k: c for k, c in out_cells.items() if c["coverable"]}
+    # `scored` = the neural rows (`cov`) plus Amendment B's host-input rows (`hi`). Host-input cells sit in every
+    # per-seed denominator but never in a numerator, robust_core or union; they are reported in `host_input`.
+    scored = {k: c for k, c in out_cells.items() if c["scored"]}
+    cov = {k: c for k, c in scored.items() if c["coverable"]}
+    hi = {k: c for k, c in scored.items() if c["host_input"]}
     facs = sorted({c["faculty"] for c in cov.values()})
+    hi_facs = sorted({c["faculty"] for c in hi.values()})
+
+    def _fac_count(cells, f, is_lb_fn):
+        vs = [cells.get("s%d/%s" % (s, f)) for s in seeds]
+        resolved = [v for v in vs if v is not None and v["state"] == "DEFINED" and is_lb_fn(v) is not None]
+        n_lb = sum(1 for v in resolved if is_lb_fn(v) is True)
+        n_missing = len(vs) - len(resolved)
+        return n_lb if not n_missing else [n_lb, n_lb + n_missing]
 
     def _agg(level_key, is_lb_fn):
         per_seed = {}
         for s in seeds:
-            dc = [c for c in cov.values() if c["seed"] == s and c["state"] == "DEFINED"]
+            dc = [c for c in scored.values() if c["seed"] == s and c["state"] == "DEFINED"]
             ex = [c for c in dc if is_lb_fn(c) is not None]
-            lbc = [c for c in ex if is_lb_fn(c) is True]
+            lbc = [c for c in ex if is_lb_fn(c) is True and not c["host_input"]]
             per_seed[str(s)] = {"n_defined": len(dc), "n_exercised": len(ex), "n_load_bearing": len(lbc),
                                 "fraction": (len(lbc) / len(ex)) if ex else None}
-        per_fac = {}
-        for f in facs:
-            vs = [cov["s%d/%s" % (s, f)] for s in seeds]
-            resolved = [v for v in vs if v["state"] == "DEFINED" and is_lb_fn(v) is not None]
-            n_lb = sum(1 for v in resolved if is_lb_fn(v) is True)
-            n_missing = len(vs) - len(resolved)
-            per_fac[f] = {"n_load_bearing": n_lb if not n_missing else [n_lb, n_lb + n_missing]}
+            if hi:
+                per_seed[str(s)]["n_host_input_load_bearing_excluded"] = sum(
+                    1 for c in ex if is_lb_fn(c) is True and c["host_input"])
+        per_fac = {f: {"n_load_bearing": _fac_count(cov, f, is_lb_fn)} for f in facs}
         lo = lambda v: v if isinstance(v, int) else v[0]   # noqa: E731
         robust = sorted(f for f, v in per_fac.items() if lo(v["n_load_bearing"]) == len(seeds))
         union = sorted(f for f, v in per_fac.items() if lo(v["n_load_bearing"]) > 0)
         fr = [v["fraction"] for v in per_seed.values() if v["fraction"] is not None]
-        return {"per_seed": per_seed, "per_faculty": per_fac, "robust_core": robust, "robust_core_n": len(robust),
-                "union": union, "union_n": len(union),
-                "mean_fraction": statistics.fmean(fr) if fr else None,
-                "sd_fraction_pop": statistics.pstdev(fr) if fr else None}
+        out = {"per_seed": per_seed, "per_faculty": per_fac, "robust_core": robust, "robust_core_n": len(robust),
+               "union": union, "union_n": len(union),
+               "mean_fraction": statistics.fmean(fr) if fr else None,
+               "sd_fraction_pop": statistics.pstdev(fr) if fr else None}
+        if hi_facs:
+            out["host_input"] = {f: {"n_load_bearing": _fac_count(hi, f, is_lb_fn),
+                                     "reason": HOST_INPUT_ROWS.get(f, "lb.json kind host-input")} for f in hi_facs}
+        return out
 
     s0 = _agg("s0", lambda c: c["canonical"]["load_bearing"] if c["canonical"]["verdict"] in EXERCISED else None)
     res = {
@@ -515,11 +609,17 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         "counts": {"n_coverable_faculties": len(facs), "n_coverable_cells": len(cov),
                    "n_defined": sum(1 for c in cov.values() if c["state"] == "DEFINED")},
         "not_defined": {k: {"state": c["state"], "fails": c["canonical"]["fails"]}
-                        for k, c in cov.items() if c["state"] != "DEFINED"},
+                        for k, c in scored.items() if c["state"] != "DEFINED"},
         "organ_error_cells": {k: c["canonical"]["rule7_organ_error"] for k, c in out_cells.items()
                               if c["canonical"]["rule7_organ_error"]},
         "s0": s0,
     }
+    if hi:
+        res["counts"].update(n_host_input_faculties=len(hi_facs), n_host_input_cells=len(hi),
+                             n_host_input_defined=sum(1 for c in hi.values() if c["state"] == "DEFINED"))
+    eng = {k: c["engagement"] for k, c in scored.items() if "engagement" in c}
+    if eng:
+        res["engagement"] = eng
     if not identity_only:
         s1 = _agg("s1", lambda c: (True if c.get("s1", (None,))[0] == "regressed"
                                    else (False if c.get("s1", (None,))[0] == "pass" else None)))
@@ -527,17 +627,18 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
                                    else (False if c.get("s2", (None,))[0] == "pass" else None)))
         res["s1"], res["s2"] = s1, s2
         res["sd_only_rows"] = sorted(f for f, r in rows_fields.items() if r.get("sd_only"))
-        res["manifest"] = {k: {"dir": c["canonical"]["dir"], "state": c["state"],
-                               "s0": [c["canonical"]["verdict"], c["canonical"]["load_bearing"]],
-                               "s1": c.get("s1", (None, None))[0], "s2": c.get("s2", (None, None))[0],
-                               "s1_detail": c.get("s1", (None, {}))[1], "s2_detail": c.get("s2", (None, {}))[1]}
-                           for k, c in cov.items()}
+        res["manifest"] = {k: dict({"dir": c["canonical"]["dir"], "state": c["state"],
+                                    "s0": [c["canonical"]["verdict"], c["canonical"]["load_bearing"]],
+                                    "s1": c.get("s1", (None, None))[0], "s2": c.get("s2", (None, None))[0],
+                                    "s1_detail": c.get("s1", (None, {}))[1], "s2_detail": c.get("s2", (None, {}))[1]},
+                                   **({"host_input": True} if c["host_input"] else {}))
+                           for k, c in scored.items()}
     res["host_check_failures"] = {k: c["host_check"] for k, c in out_cells.items() if not c["host_check"]["ok"]}
-    fail_cells = sorted(k for k, c in cov.items() if c["state"] == "FAIL")
-    n_defined = res["counts"]["n_defined"]
+    fail_cells = sorted(k for k, c in scored.items() if c["state"] == "FAIL")
+    n_defined = sum(1 for c in scored.values() if c["state"] == "DEFINED")
     if fail_cells:
         verdict = "FAIL"
-    elif len(cov) and n_defined == len(cov):
+    elif len(scored) and n_defined == len(scored):
         verdict = "COMPLETE"
     else:
         verdict = "INCOMPLETE"
@@ -559,11 +660,11 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
     return res
 
 
-def drift(base, tag, pin, compare_tag, compare_pin, seeds, fields_path=None):
+def drift(base, tag, pin, compare_tag, compare_pin, seeds, fields_path=None, amendment_b=True):
     """Per-cell S0/S1/S2 comparison between `tag`@`pin` and `compare_tag`@`compare_pin`, over cells DEFINED in
     both. Reported, never gated (the pre-registration's 'Comparison with B2b' section)."""
-    a = score(base, tag, pin, seeds, fields_path=fields_path)
-    b = score(base, compare_tag, compare_pin, seeds, fields_path=fields_path)
+    a = score(base, tag, pin, seeds, fields_path=fields_path, amendment_b=amendment_b)
+    b = score(base, compare_tag, compare_pin, seeds, fields_path=fields_path, amendment_b=amendment_b)
     am, bm = a.get("manifest", {}), b.get("manifest", {})
     common = sorted(set(am) & set(bm))
     diffs = []
@@ -590,13 +691,18 @@ def main(argv=None):
     ap.add_argument("--compare-tag", default=None)
     ap.add_argument("--compare-pin", default=None)
     ap.add_argument("--identity-only", action="store_true")
+    ap.add_argument("--no-amendment-b", action="store_true",
+                    help="score without the validation-battery Amendment B registries (pre-B preregs only)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
+    amend_b = not a.no_amendment_b
     res = score(a.base, a.tag, a.pin, a.seeds, fields_path=a.fields, code_root=a.code_root, corpus_path=a.corpus,
                reruns_path=a.reruns, dispatch_log=a.dispatch_log, attempt1_dir=a.attempt1_dir,
-               identity_only=a.identity_only)
+               identity_only=a.identity_only, amendment_b=amend_b)
+    res["amendment_b"] = amend_b
     if a.compare_tag and not a.identity_only:
-        res["drift"] = drift(a.base, a.tag, a.pin, a.compare_tag, a.compare_pin, a.seeds, fields_path=a.fields)
+        res["drift"] = drift(a.base, a.tag, a.pin, a.compare_tag, a.compare_pin, a.seeds, fields_path=a.fields,
+                             amendment_b=amend_b)
     summary = {k: res[k] for k in ("verdict", "counts", "not_defined", "fail_cells") if k in res}
     summary["s0"] = {k: res["s0"].get(k) for k in ("robust_core_n", "union_n", "mean_fraction", "sd_fraction_pop")}
     if "s1" in res:
