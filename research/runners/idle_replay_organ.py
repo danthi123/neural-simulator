@@ -62,8 +62,9 @@ HOST (declared residuals, not hidden):
     the remark is inner speech in any experiential sense. The reply is a functional read-out of which engram
     reactivated; it never claims an experience.
 
-FLAGS. `BRAIN_IDLE_REPLAY` (default OFF; `_IDLE_REPLAY_DEFAULT_ON = False`). Off: the server never calls this module
-beyond the flag read, so every reply is byte-identical. `BRAIN_IDLE_REPLAY_OP` selects a REPLAY_GRID row (default 0).
+FLAGS. `BRAIN_IDLE_REPLAY` (default ON on research/c5-flip; PROVISIONAL, validation = battery-prereg 2026-10-12;
+`_IDLE_REPLAY_DEFAULT_ON = True`; an explicit `0` is the byte-identical pre-flip escape). Off: the server never
+calls this module beyond the flag read, so every reply is byte-identical to the pre-flip default. `BRAIN_IDLE_REPLAY_OP` selects a REPLAY_GRID row (default 0).
 """
 from __future__ import annotations
 
@@ -78,7 +79,8 @@ import numpy as np
 
 from research.runners import spiking_commit as SC
 
-_IDLE_REPLAY_DEFAULT_ON = False
+_IDLE_REPLAY_DEFAULT_ON = True   # PROVISIONAL: validation = battery-prereg 2026-10-12 (research/c5-flip);
+                                 # explicit BRAIN_IDLE_REPLAY=0 stays the byte-identical pre-flip escape.
 
 GATE_ENGRAM = "ir_engram"          # engram recurrence (NO-ENCODE closes it)
 GATE_COMMIT_IN = "ir_commit"       # engram -> commit gate (the commit lesion closes it)
