@@ -4080,50 +4080,113 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
     return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D), composer_kwargs=cb_kwargs or None)
 
 
-# ONE BRAIN, MANY CONVERSATIONS -- STEP 1 (owner-approved 2026-10-13): the imported knowledge store is loaded ONCE per
+# ONE BRAIN, MANY CONVERSATIONS -- STEP 1 (owner-approved 2026-10-13): the imported knowledge store loaded ONCE per
 # server process and shared READ-ONLY by every conversation. Each conversation's TieredFactStore wraps a per-
 # conversation `SharedLTMView` (its own trace state, one lock per store) over the SAME store object, instead of its
 # own ~5.44 GiB copy of wikidata_100k. Read-only analysis + thread safety: docs/drafts/shared-ltm/WORKLOG.md;
-# mechanism: research/runners/shared_ltm.py. BRAIN_SHARED_LTM=0 (off/false/no) is the escape: every conversation
-# loads its own store through `_load_or_build_ltm_store`, the exact pre-change call.
-_SHARED_LTM_DEFAULT_ON = True
-# (resolved bundle path, seed, D, n_shards, codebook cache, decode escalation, substrate store, batched substrate
-# scan, composer construction env) -> the loaded store + its lock. Lives for the process; never evicted.
+# mechanism: research/runners/shared_ltm.py. DEFAULT OFF (design docs/plans/2026-10-13-one-brain-shared-memory-
+# DESIGN.md section 5: default-off, then flip after validation): unset / BRAIN_SHARED_LTM=0 -> every conversation
+# loads its own store through `_load_or_build_ltm_store`, the exact pre-change call. BRAIN_SHARED_LTM=1 opts in.
+_SHARED_LTM_DEFAULT_ON = False
+# cache key (see `_shared_ltm_key`) -> the loaded store + its lock. Lives for the process; never evicted.
 _SHARED_LTM: dict = {}
-# Env read inside RFPhasorComposer's constructor that changes the loaded store (part of the cache key).
+# Env read inside the RFPhasorComposer / ShardedPhasorStore constructors that changes the loaded store (part of the
+# cache key; tests/test_shared_ltm.py scans those constructors and fails on an env read missing here).
 _SHARED_LTM_COMPOSER_ENV = ("BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_INDEX", "BRAIN_METACOG_SPIKING_MARGIN")
+# GLOBAL-RNG HYGIENE (review of claude-build/shared-ltm, 2026-10-13): every SimulationBridge build reseeds the
+# process-global np.random / random / cp.random streams to the bridge's seed (sim/bridge.py `_initialize_rng`), and the
+# LTM builds bridges at load and lazily on a shard's first recall (seed 42). With BRAIN_LTM_RNG_ISOLATE on, the LTM
+# load and every lazy LTM bridge build leave those streams untouched (research/runners/global_rng_guard.py), so a
+# recall no longer resets the chat's global noise to the seed-42 stream, and a shared store cannot carry one
+# conversation's history into another's noise. FORCED ON whenever the shared store is on (sharing is only byte-safe
+# with it); otherwise DEFAULT OFF = byte-identical to before (BRAIN_LTM_RNG_ISOLATE=1 opts in).
+_LTM_RNG_ISOLATE_DEFAULT_ON = False
 
 
 def _shared_ltm_on() -> bool:
-    """Unset/blank -> _SHARED_LTM_DEFAULT_ON. BRAIN_SHARED_LTM=1/true/on/yes forces on; anything else is off."""
+    """Unset/blank -> _SHARED_LTM_DEFAULT_ON (off). BRAIN_SHARED_LTM=1/true/on/yes turns it on; anything else is off."""
     env = os.environ.get("BRAIN_SHARED_LTM")
     if env is None or not env.strip():
         return _SHARED_LTM_DEFAULT_ON
     return env.strip().lower() in ("1", "true", "on", "yes")
 
 
+def _ltm_rng_isolate_on() -> bool:
+    """True whenever the shared store is on (forced); else BRAIN_LTM_RNG_ISOLATE=1/true/on/yes, default
+    _LTM_RNG_ISOLATE_DEFAULT_ON (off)."""
+    if _shared_ltm_on():
+        return True
+    env = os.environ.get("BRAIN_LTM_RNG_ISOLATE")
+    if env is None or not env.strip():
+        return _LTM_RNG_ISOLATE_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _file_stamp(path) -> tuple:
+    """(mtime_ns, size) of `path`, or None if absent -- a rebuilt bundle file changes its stamp."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return (int(st.st_mtime_ns), int(st.st_size))
+
+
 def _shared_ltm_key(ltm_bundle: str, seed: int, D: int, n_shards, enable_codebook_cache: bool,
                     enable_decode_escalation: bool) -> tuple:
-    """Everything that decides which store `_load_or_build_ltm_store` returns: two conversations share a store only
-    when every one of these matches."""
+    """Everything that decides which store `_load_or_build_ltm_store` returns; two conversations share a store only
+    when every one matches.
+      * A persisted bundle (manifest.json with n_shards): `ShardedPhasorStore.load` takes seed / D / n_shards from the
+        MANIFEST, so the caller's are irrelevant and left out (the tiny-demo and developed paths then share one copy);
+        the bundle files' (mtime, size) stamps are in, so a rebuilt bundle is a new key.
+      * A facts-only bundle (built at load): the caller's seed, D, n_shards plus the facts.json stamp.
+    Both: the codebook-cache / decode-escalation / substrate-store / batched-scan settings and the composer
+    construction env (`_SHARED_LTM_COMPOSER_ENV`)."""
     from research.runners.developed_brain_io import _ltm_substrate_store_on, _ltm_batched_substrate_scan_on
-    return (os.path.realpath(str(ltm_bundle)), int(seed), int(D), None if n_shards is None else int(n_shards),
-            bool(enable_codebook_cache), bool(enable_decode_escalation),
+    root = os.path.realpath(str(ltm_bundle))
+    persisted = False
+    try:
+        mani = json.loads((Path(root) / "manifest.json").read_text(encoding="utf-8"))
+        persisted = isinstance(mani, dict) and "n_shards" in mani
+    except Exception:
+        persisted = False
+    if persisted:
+        source = ("persisted", root) + tuple(_file_stamp(Path(root) / f)
+                                             for f in ("manifest.json", "facts.json", "composites.npz"))
+    else:
+        source = ("build", root, int(seed), int(D), None if n_shards is None else int(n_shards),
+                  _file_stamp(Path(root) / "facts.json"))
+    return (source, bool(enable_codebook_cache), bool(enable_decode_escalation),
             bool(_ltm_substrate_store_on()), bool(_ltm_batched_substrate_scan_on()),
             tuple((k, os.environ.get(k)) for k in _SHARED_LTM_COMPOSER_ENV))
+
+
+def _load_ltm_isolated(ltm_bundle: str, seed: int, n_shards, D: int, enable_codebook_cache, enable_decode_escalation):
+    """`_load_or_build_ltm_store` with the process-global RNG streams preserved across the load, and every shard set
+    to preserve them across its own lazy bridge builds (`RFPhasorComposer._isolate_global_rng`)."""
+    from research.runners.global_rng_guard import preserved_global_rng
+    with preserved_global_rng():
+        store = _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
+                                         enable_codebook_cache=enable_codebook_cache,
+                                         enable_decode_escalation=enable_decode_escalation)
+    for sh in getattr(store, "shards", None) or ():
+        sh._isolate_global_rng = True
+    return store
 
 
 def _ltm_store_for_conversation(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128,
                                 enable_codebook_cache: bool = None, enable_decode_escalation: bool = None):
     """The LTM one new conversation's TieredFactStore wraps (None = no LTM available).
-      * BRAIN_SHARED_LTM on (default): a new `SharedLTMView` over the process-shared store for this key, loaded on the
-        first conversation and reused by every later one. A store whose read path is not shown pure (spiking cleanup /
-        spiking margin / read noise) is not shared: that conversation gets its own copy (`shared_ltm.view_for`).
-      * off: `_load_or_build_ltm_store(...)`, a private copy per conversation (the pre-change behaviour)."""
+      * BRAIN_SHARED_LTM on: a new `SharedLTMView` over the process-shared store for this key, loaded (RNG-isolated)
+        on the first conversation and reused by every later one. A store whose read path is not shown pure (spiking
+        cleanup / spiking margin / read noise) is not shared: that conversation gets its own copy (`view_for`).
+      * off, BRAIN_LTM_RNG_ISOLATE on: a private copy per conversation, RNG-isolated (`_load_ltm_isolated`).
+      * off (the default): `_load_or_build_ltm_store(...)`, a private copy per conversation, the pre-change call."""
     if not _shared_ltm_on():
-        return _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
-                                        enable_codebook_cache=enable_codebook_cache,
-                                        enable_decode_escalation=enable_decode_escalation)
+        if not _ltm_rng_isolate_on():
+            return _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
+                                            enable_codebook_cache=enable_codebook_cache,
+                                            enable_decode_escalation=enable_decode_escalation)
+        return _load_ltm_isolated(ltm_bundle, seed, n_shards, D, enable_codebook_cache, enable_decode_escalation)
     if enable_codebook_cache is None:
         enable_codebook_cache = _ltm_codebook_cache_on()
     if enable_decode_escalation is None:
@@ -4132,9 +4195,7 @@ def _ltm_store_for_conversation(ltm_bundle: str, seed: int = 42, n_shards=None, 
     key = _shared_ltm_key(ltm_bundle, seed, D, n_shards, enable_codebook_cache, enable_decode_escalation)
     return _shared_ltm.view_for(
         _SHARED_LTM, key,
-        lambda: _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
-                                         enable_codebook_cache=enable_codebook_cache,
-                                         enable_decode_escalation=enable_decode_escalation),
+        lambda: _load_ltm_isolated(ltm_bundle, seed, n_shards, D, enable_codebook_cache, enable_decode_escalation),
         log=lambda m: print("[webapp] " + m, flush=True))
 
 
@@ -4214,7 +4275,7 @@ def _build_chat_brain(brain: str, renderer: str):
             try:
                 from research.runners.developed_brain_io import _inner_agent
                 from research.runners.tiered_fact_store import TieredFactStore
-                # one process-shared read-only store (BRAIN_SHARED_LTM=0: this conversation's own copy, as before)
+                # BRAIN_SHARED_LTM=1: one process-shared read-only store; default: this conversation's own copy, as before
                 _tiny_ltm = _ltm_store_for_conversation(_tiny_ltm_bundle, seed=_brain_chat_seed())
                 if _tiny_ltm is not None:
                     _tiny_inner = _inner_agent(agent)
@@ -4274,11 +4335,13 @@ def _build_chat_brain(brain: str, renderer: str):
         # brain auto-sizes it from THIS bundle's own fact count whenever the resolved composer_kind is 'onebrain'
         # (byte-identical no-op for 'rf'/'rate'/'slotbinder', i.e. every bundle on disk today) -- see
         # _onebrain_k_max_override()'s docstring + the finding it closes.
-        # ONE BRAIN, MANY CONVERSATIONS (step 1): with BRAIN_SHARED_LTM on (default) the knowledge store comes from the
-        # same process-shared read-only cache as the tiny-demo path (same loader, same key), handed in as `ltm_store`;
-        # off -> `ltm_store` None and load_developed_brain loads its own copy from `ltm_bundle`, exactly as before.
+        # ONE BRAIN, MANY CONVERSATIONS (step 1): with BRAIN_SHARED_LTM on the knowledge store comes from the same
+        # process-shared read-only cache as the tiny-demo path (same loader, same key), handed in as `ltm_store`; with
+        # only BRAIN_LTM_RNG_ISOLATE on, a private RNG-isolated copy is handed in the same way (so its load does not
+        # reseed the global RNG either). Both off (the default) -> `ltm_store` None and load_developed_brain loads its
+        # own copy from `ltm_bundle`, exactly as before.
         _ltm_store = None
-        if _ltm_bundle is not None and _shared_ltm_on():
+        if _ltm_bundle is not None and (_shared_ltm_on() or _ltm_rng_isolate_on()):
             _ltm_store = _ltm_store_for_conversation(_ltm_bundle, seed=_developed_ltm_seed(bundle),
                                                      enable_codebook_cache=_ltm_codebook_cache_on(),
                                                      enable_decode_escalation=_ltm_decode_escalation_on())

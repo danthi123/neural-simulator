@@ -19,6 +19,16 @@ The stateful read paths (the Izhikevich WTA bank behind spiking cleanup / the sp
 read-noise RNG) are NOT shown pure, so a store with any of them on is refused (`unshareable_reason`) and the caller
 falls back to a per-conversation copy.
 
+GLOBAL RNG (found in review, 2026-10-13). Building a bridge reseeds the process-global np.random / random / cp.random
+streams (sim/bridge.py `_initialize_rng`), so a COLD lazy build inside the store had a side effect outside it, and on a
+shared store whether a recall builds cold depends on other conversations. The server therefore loads a shared store
+under `global_rng_guard.preserved_global_rng()` and sets every shard's `_isolate_global_rng`, so no load or lazy
+build touches the global streams (`webapp/server.py` `_load_ltm_isolated`; BRAIN_LTM_RNG_ISOLATE, forced on with
+sharing).
+
+DEFAULT. Off in the server (`_SHARED_LTM_DEFAULT_ON = False`; BRAIN_SHARED_LTM=1 opts in), per the design's
+default-off-then-flip migration.
+
 CONCURRENCY. `/api/brain-chat` runs in FastAPI's threadpool and the continuous-state tick runs in an executor, so
 two conversations can query at once. One RLock per shared store serializes every call made through a view (the
 shard scratch bridges and `_scan_comps_cache` are single-user). Plain reads of `shard.kb` (the chain-route,
@@ -33,9 +43,12 @@ from __future__ import annotations
 
 import threading
 
-# The process cache the server owns is a plain dict passed in (so tests can use their own); this guard makes
-# "load once" hold when two conversations build at the same moment.
-_LOAD_GUARD = threading.Lock()
+# The process cache the server owns is a plain dict passed in (so tests can use their own). Locking is per key:
+# `_KEYS_GUARD` is held only for dict lookups (never across a load), and each key has its own load lock, so "load
+# once" holds for two conversations building the same key at the same moment while a cached key never waits behind
+# an unrelated key's load.
+_KEYS_GUARD = threading.Lock()
+_LOAD_LOCKS = {}   # (id(cache), key) -> threading.Lock
 
 class SharedLTMWriteError(RuntimeError):
     """A write was attempted on the process-shared, read-only LTM."""
@@ -70,26 +83,34 @@ def view_for(cache, key, loader, log=None):
     """The LTM one new conversation should wrap.
 
     `cache`: the process dict (key -> entry). `loader()`: loads a fresh store, or returns None (no LTM). On a cache
-    miss the store is loaded ONCE (under a guard, so a concurrent second conversation waits instead of loading a
-    second copy) and kept for the process lifetime. Returns a new `SharedLTMView` over the cached store; None when
-    the loader has no LTM; or, when the loaded store is not shareable (`unshareable_reason`), that store itself,
-    uncached: a per-conversation copy, as before this module."""
-    with _LOAD_GUARD:
+    miss the store is loaded ONCE (under that key's own load lock, so a concurrent second conversation on the same
+    key waits instead of loading a second copy; other keys are not blocked) and kept for the process lifetime.
+    Returns a new `SharedLTMView` over the cached store; None when the loader has no LTM; or, when the loaded store is
+    not shareable (`unshareable_reason`), that store itself, uncached: a per-conversation copy, as before this
+    module."""
+    with _KEYS_GUARD:
         ent = cache.get(key)
         if ent is None:
-            store = loader()
-            if store is None:
-                return None
-            reason = unshareable_reason(store)
-            if reason is not None:
+            load_lock = _LOAD_LOCKS.setdefault((id(cache), key), threading.Lock())
+    if ent is None:
+        with load_lock:
+            with _KEYS_GUARD:
+                ent = cache.get(key)          # another conversation may have finished the load while we waited
+            if ent is None:
+                store = loader()
+                if store is None:
+                    return None
+                reason = unshareable_reason(store)
+                if reason is not None:
+                    if log is not None:
+                        log("[shared-ltm] not sharing this LTM (per-conversation copy): %s" % reason)
+                    return store
+                ent = _Entry(store)
+                with _KEYS_GUARD:
+                    cache[key] = ent
                 if log is not None:
-                    log("[shared-ltm] not sharing this LTM (per-conversation copy): %s" % reason)
-                return store
-            ent = _Entry(store)
-            cache[key] = ent
-            if log is not None:
-                n = store.total_facts() if hasattr(store, "total_facts") else "?"
-                log("[shared-ltm] loaded the LTM once for this process: %s facts, key=%r" % (n, key))
+                    n = store.total_facts() if hasattr(store, "total_facts") else "?"
+                    log("[shared-ltm] loaded the LTM once for this process: %s facts, key=%r" % (n, key))
     return SharedLTMView(ent.store, ent.lock)
 
 

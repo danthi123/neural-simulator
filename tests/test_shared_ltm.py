@@ -189,6 +189,103 @@ def test_unshareable_store_is_returned_uncached():
 
 
 # ── the server: one store per key, the escape, the key ──────────────────────────────────────────────────────────
+
+
+def test_cached_key_never_waits_behind_another_keys_load():
+    """Per-key load locks: while key A's load is in progress, a conversation on an already-cached key B gets its view
+    at once, and a second conversation on A waits for A's single load instead of loading a second copy."""
+    cache = {}
+    store_b = _FakeStore("b")
+    view_for(cache, ("B",), lambda: store_b)
+    gate, loads = threading.Event(), []
+
+    def slow_loader():
+        loads.append(1)
+        gate.wait(10)
+        return _FakeStore("a")
+
+    t1 = threading.Thread(target=view_for, args=(cache, ("A",), slow_loader))
+    t1.start()
+    got = []
+    t2 = threading.Thread(target=lambda: got.append(view_for(cache, ("B",), lambda: _FakeStore("never"))))
+    t2.start()
+    t2.join(2.0)
+    assert got and got[0].shared_store is store_b      # not blocked by A's load
+    t3 = threading.Thread(target=view_for, args=(cache, ("A",), slow_loader))
+    t3.start()
+    gate.set()
+    t1.join(5.0)
+    t3.join(5.0)
+    assert len(loads) == 1 and cache[("A",)].store.tag == "a"
+
+
+# ── global-RNG hygiene: a recall must not reseed the process-global streams ─────────────────────────────────────
+def _global_rng_fingerprint():
+    import random
+    return (repr(np.random.get_state()[1][:8].tolist()), int(np.random.get_state()[2]), random.getstate()[1][:4])
+
+
+def test_preserved_global_rng_restores_numpy_and_python_streams():
+    import random
+    from research.runners.global_rng_guard import preserved_global_rng
+    np.random.seed(123)
+    random.seed(123)
+    before = (np.random.get_state()[1].copy(), np.random.get_state()[2], random.getstate())
+    with preserved_global_rng():
+        np.random.seed(42)
+        random.seed(42)
+        np.random.rand(5)
+    after = (np.random.get_state()[1], np.random.get_state()[2], random.getstate())
+    assert np.array_equal(before[0], after[0]) and before[1] == after[1] and before[2] == after[2]
+
+
+def test_cold_ltm_recall_reseeds_the_global_rng_unless_isolated():
+    """THE DEFECT, then the fix. A cold recall on a shard builds its RF bridges, and each build reseeds np.random to
+    seed 42 (sim/bridge.py `_initialize_rng`). With the shard's `_isolate_global_rng` set, the global stream after the
+    recall is exactly the one before it."""
+    leaky = _small_store()
+    np.random.seed(7)
+    want = np.random.rand()
+    np.random.seed(7)
+    leaky.query_patient("cat", "run")              # cold: builds bridges
+    leaked = np.random.rand()
+    assert leaked != want                          # the pre-existing reseed (the defect this branch isolates)
+    clean = _small_store()
+    for sh in clean.shards:
+        sh._isolate_global_rng = True
+    np.random.seed(7)
+    assert clean.query_patient("cat", "run") == leaky.query_patient("cat", "run") == "south"
+    assert np.random.rand() == want                # isolated: the recall left the global stream alone
+
+
+def test_shared_warm_and_private_cold_recall_leave_the_same_global_rng():
+    """The reviewer's synthetic check. Same prior global state; a recall through a view whose shard another
+    conversation already warmed, vs the same recall on a private cold store. Without isolation the next
+    `np.random.rand()` differs (the cold build reseeds, the warm one does not); with isolation both equal the draw
+    with no recall at all."""
+    def run(isolate):
+        shared, private = _small_store(), _small_store()
+        for st in (shared, private):
+            for sh in st.shards:
+                sh._isolate_global_rng = isolate
+        va, vb = _views(shared)
+        va.query_patient("cat", "run")             # conversation A warms the shard
+        np.random.seed(11)
+        vb.query_patient("cat", "run")             # conversation B: warm
+        on = np.random.rand()
+        np.random.seed(11)
+        private.query_patient("cat", "run")        # a private store: cold
+        off = np.random.rand()
+        return on, off
+    on, off = run(False)
+    assert on != off
+    np.random.seed(11)
+    baseline = np.random.rand()
+    on, off = run(True)
+    assert on == off == baseline
+
+
+# ── the server: flags, one store per key, the escape, the key ───────────────────────────────────────────────────
 class _FakeStore:
     def __init__(self, tag):
         self.tag = tag
@@ -198,13 +295,16 @@ class _FakeStore:
         return 0
 
 
+_ENV = ("BRAIN_SHARED_LTM", "BRAIN_LTM_RNG_ISOLATE", "BRAIN_LTM_CODEBOOK_CACHE", "BRAIN_LTM_DECODE_ESCALATION",
+        "BRAIN_LTM_SUBSTRATE_STORE", "BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_INDEX",
+        "BRAIN_METACOG_SPIKING_MARGIN")
+
+
 @pytest.fixture()
 def S(monkeypatch, tmp_path):
     from webapp import server as srv
     monkeypatch.setattr(srv, "_SHARED_LTM", {})
-    for k in ("BRAIN_SHARED_LTM", "BRAIN_LTM_CODEBOOK_CACHE", "BRAIN_LTM_DECODE_ESCALATION",
-              "BRAIN_LTM_SUBSTRATE_STORE", "BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_INDEX",
-              "BRAIN_METACOG_SPIKING_MARGIN"):
+    for k in _ENV:
         monkeypatch.delenv(k, raising=False)
     calls = []
 
@@ -213,6 +313,7 @@ def S(monkeypatch, tmp_path):
         calls.append(dict(ltm_bundle=ltm_bundle, seed=seed, n_shards=n_shards, D=D,
                           enable_codebook_cache=enable_codebook_cache,
                           enable_decode_escalation=enable_decode_escalation))
+        np.random.seed(42)                         # what a real load does to the global stream
         return _FakeStore(len(calls))
 
     monkeypatch.setattr(srv, "_load_or_build_ltm_store", fake_load)
@@ -222,13 +323,29 @@ def S(monkeypatch, tmp_path):
     return srv
 
 
-def test_two_conversations_get_the_identical_store_object(S):
+def test_default_is_off_and_makes_the_pre_change_call(S):
+    """DEFAULT OFF (design section 5: default-off, then flip): unset env -> no sharing, no RNG isolation, and each
+    conversation loads its own store through the pre-change call, argument for argument."""
+    assert S._SHARED_LTM_DEFAULT_ON is False and S._LTM_RNG_ISOLATE_DEFAULT_ON is False
+    assert S._shared_ltm_on() is False and S._ltm_rng_isolate_on() is False
+    a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
+    b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
+    assert isinstance(a, _FakeStore) and isinstance(b, _FakeStore) and a is not b
+    assert S._test_calls == [dict(ltm_bundle=S._test_bundle, seed=7, n_shards=None, D=128,
+                                  enable_codebook_cache=None, enable_decode_escalation=None)] * 2
+    assert not hasattr(a.shards[0], "_isolate_global_rng")
+    assert S._SHARED_LTM == {}
+
+
+def test_two_conversations_get_the_identical_store_object(S, monkeypatch):
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "1")
     a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     assert isinstance(a, SharedLTMView) and isinstance(b, SharedLTMView)
     assert a is not b                                  # each conversation has its own view (its own trace state)
     assert a.shared_store is b.shared_store            # ... over the ONE store
     assert len(S._test_calls) == 1                     # loaded once
+    assert a.shared_store.shards[0]._isolate_global_rng is True   # sharing forces RNG isolation
 
 
 def test_escape_flag_gives_each_conversation_its_own_store(S, monkeypatch):
@@ -236,21 +353,75 @@ def test_escape_flag_gives_each_conversation_its_own_store(S, monkeypatch):
     a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     assert isinstance(a, _FakeStore) and isinstance(b, _FakeStore) and a is not b
-    # the pre-change call, argument for argument: _load_or_build_ltm_store(bundle, seed=_brain_chat_seed())
     assert S._test_calls == [dict(ltm_bundle=S._test_bundle, seed=7, n_shards=None, D=128,
                                   enable_codebook_cache=None, enable_decode_escalation=None)] * 2
     assert S._SHARED_LTM == {}
 
 
-@pytest.mark.parametrize("val,on", [(None, True), ("", True), ("1", True), ("on", True), ("0", False),
+def test_shared_or_isolated_load_leaves_the_global_rng_alone(S, monkeypatch):
+    """A load reseeds np.random (the fake loader does what the real bridge init does). Plain OFF lets it through
+    (today's behaviour); OFF+BRAIN_LTM_RNG_ISOLATE=1 and the shared store do not, and flag every shard."""
+    np.random.seed(5)
+    want = np.random.rand()
+    np.random.seed(5)
+    S._ltm_store_for_conversation(S._test_bundle, seed=7)
+    assert np.random.rand() != want                    # plain OFF: the load reseeded (unchanged)
+    for env in ({"BRAIN_LTM_RNG_ISOLATE": "1"}, {"BRAIN_SHARED_LTM": "1"}):
+        S._SHARED_LTM.clear()
+        for k, v in env.items():
+            monkeypatch.setenv(k, v)
+        np.random.seed(5)
+        st = S._ltm_store_for_conversation(S._test_bundle, seed=7)
+        assert np.random.rand() == want, env
+        assert getattr(st, "shared_store", st).shards[0]._isolate_global_rng is True
+        for k in env:
+            monkeypatch.delenv(k)
+
+
+@pytest.mark.parametrize("val,on", [(None, False), ("", False), ("1", True), ("on", True), ("0", False),
                                     ("off", False), ("false", False), ("no", False)])
 def test_shared_ltm_flag_parsing(S, monkeypatch, val, on):
     if val is not None:
         monkeypatch.setenv("BRAIN_SHARED_LTM", val)
     assert S._shared_ltm_on() is on
+    assert S._ltm_rng_isolate_on() is on               # forced on with sharing; otherwise its own default (off)
+
+
+def test_rng_isolate_flag_parsing(S, monkeypatch):
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
+    for val, on in ((None, False), ("1", True), ("yes", True), ("0", False)):
+        if val is None:
+            monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE", raising=False)
+        else:
+            monkeypatch.setenv("BRAIN_LTM_RNG_ISOLATE", val)
+        assert S._ltm_rng_isolate_on() is on, val
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "1")
+    monkeypatch.setenv("BRAIN_LTM_RNG_ISOLATE", "0")
+    assert S._ltm_rng_isolate_on() is True             # cannot be turned off while sharing
+
+
+def _constructor_env_reads():
+    """Env names read in the RFPhasorComposer and ShardedPhasorStore constructors (and the store's `load`)."""
+    import inspect
+    import re
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    src = "".join(inspect.getsource(f) for f in (RFPhasorComposer.__init__, ShardedPhasorStore.__init__,
+                                                  ShardedPhasorStore.load))
+    pat = r"""(?:environ\.get\(|environ\[|getenv\()\s*['"]([A-Z0-9_]+)['"]"""
+    return set(re.findall(pat, src))
+
+
+def test_cache_key_covers_every_constructor_env_read(S):
+    reads = _constructor_env_reads()
+    assert reads, "the scan found no env reads -- the regex no longer matches the constructors"
+    missing = reads - set(S._SHARED_LTM_COMPOSER_ENV)
+    assert not missing, "constructor env reads missing from _SHARED_LTM_COMPOSER_ENV: %s" % sorted(missing)
 
 
 def test_cache_key_includes_every_flag(S, monkeypatch, tmp_path):
+    """A facts-only bundle (built at load): seed, D, n_shards, the facts.json stamp, every LTM flag and every
+    constructor env value are in the key."""
+    (tmp_path / "bundle" / "facts.json").write_text("[]")
     base_args = (S._test_bundle, 7, 128, None, True, True)
     base = S._shared_ltm_key(*base_args)
     other = tmp_path / "other"
@@ -259,21 +430,36 @@ def test_cache_key_includes_every_flag(S, monkeypatch, tmp_path):
                 (S._test_bundle, 7, 64, None, True, True), (S._test_bundle, 7, 128, 16, True, True),
                 (S._test_bundle, 7, 128, None, False, True), (S._test_bundle, 7, 128, None, True, False)]
     keys = [S._shared_ltm_key(*v) for v in variants]
-    for env, val in (("BRAIN_LTM_SUBSTRATE_STORE", "0"), ("BRAIN_BATCHED_SUBSTRATE_SCAN", "0"),
-                     ("BRAIN_SHARD_SPARSE_INDEX", "1"), ("BRAIN_METACOG_SPIKING_MARGIN", "1")):
+    for env, val in [("BRAIN_LTM_SUBSTRATE_STORE", "0"), ("BRAIN_BATCHED_SUBSTRATE_SCAN", "0")] + \
+            [(k, "1") for k in S._SHARED_LTM_COMPOSER_ENV if k != "BRAIN_BATCHED_SUBSTRATE_SCAN"]:
         monkeypatch.setenv(env, val)
         keys.append(S._shared_ltm_key(*base_args))
         monkeypatch.delenv(env)
+    (tmp_path / "bundle" / "facts.json").write_text("[1]")          # a rebuilt facts file
+    keys.append(S._shared_ltm_key(*base_args))
     assert all(k != base for k in keys)
     assert len(set(keys)) == len(keys)
-    assert S._shared_ltm_key(*base_args) == base       # restored env -> the same key again
-    # the same bundle through a symlink is the same store
     link = tmp_path / "link"
-    link.symlink_to(S._test_bundle)
-    assert S._shared_ltm_key(str(link), 7, 128, None, True, True) == base
+    link.symlink_to(S._test_bundle)                   # the same bundle through a symlink is the same store
+    assert S._shared_ltm_key(str(link), 7, 128, None, True, True) == S._shared_ltm_key(*base_args)
+
+
+def test_persisted_bundle_key_is_the_files_not_the_callers_seed(S, tmp_path):
+    """A persisted bundle (manifest with n_shards) loads seed / D / n_shards from its own manifest, so the key leaves
+    the caller's out (tiny-demo at BRAIN_CHAT_SEED and a developed bundle at its own seed share one copy) and
+    carries the files' (mtime, size) stamps instead (a rebuilt bundle is a new key)."""
+    b = tmp_path / "bundle"
+    (b / "manifest.json").write_text(json.dumps({"n_shards": 2, "seed": 42, "D": 128}))
+    (b / "facts.json").write_text("[]")
+    k7 = S._shared_ltm_key(str(b), 7, 128, None, True, True)
+    assert S._shared_ltm_key(str(b), 11, 64, 9, True, True) == k7
+    assert S._shared_ltm_key(str(b), 7, 128, None, False, True) != k7
+    (b / "manifest.json").write_text(json.dumps({"n_shards": 3, "seed": 42, "D": 128}))
+    assert S._shared_ltm_key(str(b), 7, 128, None, True, True) != k7
 
 
 def test_a_changed_flag_between_conversations_loads_a_second_store(S, monkeypatch):
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "1")
     a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     monkeypatch.setenv("BRAIN_LTM_CODEBOOK_CACHE", "0")
     b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
@@ -287,18 +473,19 @@ def _fake_tiny_demo(seed, use_multiturn=True, enable_neural_render=False, compos
 
 
 def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch):
-    """Through the real `_build_chat_brain` (tiny-demo branch; the brain build itself stubbed): two conversations'
-    TieredFactStores wrap views of the SAME store; the escape gives two stores."""
+    """Through the real `_build_chat_brain` (tiny-demo branch; the brain build itself stubbed): with BRAIN_SHARED_LTM=1
+    two conversations' TieredFactStores wrap views of the SAME store; the default gives two stores."""
     import research.runners.brain_chat_tui as tui
     monkeypatch.setattr(tui, "_build_tiny_demo", _fake_tiny_demo)
     monkeypatch.setattr(S, "_resolve_ltm_bundle", lambda: S._test_bundle)
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "1")
     c1, src1 = S._build_chat_brain("tiny-demo", "stub")
     c2, src2 = S._build_chat_brain("tiny-demo", "stub")
     t1, t2 = c1.inner.composer, c2.inner.composer
     assert isinstance(t1, TieredFactStore) and src1 == src2 == "tiny-demo +LTM"
     assert t1.buffer is not t2.buffer
     assert t1.ltm.shared_store is t2.ltm.shared_store
-    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
+    monkeypatch.delenv("BRAIN_SHARED_LTM")
     c3, _ = S._build_chat_brain("tiny-demo", "stub")
     c4, _ = S._build_chat_brain("tiny-demo", "stub")
     assert isinstance(c3.inner.composer.ltm, _FakeStore)
@@ -307,8 +494,9 @@ def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch
 
 
 def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch, tmp_path):
-    """The developed-bundle branch hands the shared view in as `ltm_store` (and no `ltm_bundle`); the escape passes
-    `ltm_bundle` and no store, the pre-change call. The build-fallback seed is the bundle's own brain.json seed."""
+    """The developed-bundle branch: shared on -> the shared view as `ltm_store` (no `ltm_bundle`); OFF+isolate -> a
+    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and no store, the pre-change call. The
+    build-fallback seed is the bundle's own brain.json seed."""
     import research.runners.developed_brain_io as dbio
     dev = tmp_path / "dev"
     dev.mkdir()
@@ -321,11 +509,40 @@ def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch,
 
     monkeypatch.setattr(dbio, "load_developed_brain", fake_load_developed)
     monkeypatch.setattr(S, "_resolve_ltm_bundle", lambda: S._test_bundle)
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "1")
     S._build_chat_brain(str(dev), "stub")
     S._build_chat_brain(str(dev), "stub")
     assert seen[0]["ltm_bundle"] is None and seen[1]["ltm_bundle"] is None
     assert seen[0]["ltm_store"].shared_store is seen[1]["ltm_store"].shared_store
     assert S._test_calls[0]["seed"] == 11 and len(S._test_calls) == 1
     monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
+    monkeypatch.setenv("BRAIN_LTM_RNG_ISOLATE", "1")
     S._build_chat_brain(str(dev), "stub")
-    assert seen[2]["ltm_bundle"] == S._test_bundle and seen[2]["ltm_store"] is None
+    assert seen[2]["ltm_bundle"] is None and isinstance(seen[2]["ltm_store"], _FakeStore)
+    assert seen[2]["ltm_store"].shards[0]._isolate_global_rng is True
+    monkeypatch.delenv("BRAIN_SHARED_LTM")
+    monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE")
+    S._build_chat_brain(str(dev), "stub")
+    assert seen[3]["ltm_bundle"] == S._test_bundle and seen[3]["ltm_store"] is None
+
+
+def test_load_developed_brain_installs_a_given_ltm_store(tmp_path):
+    """The REAL `ltm_store=` branch of `load_developed_brain` on a small saved developed bundle (rf composer): the
+    composer becomes a TieredFactStore over the given view, an LTM-only fact is recalled through the agent, the
+    bundle's own fact still comes from the buffer, and an untaught cue still abstains."""
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    from research.runners.developed_brain_io import save_developed_brain, load_developed_brain, _inner_agent
+    vocab = ["dog", "go", "north", "cat", "eat", "fish"]
+    a = BrainConversationalAgent(seed=42, concepts={w: None for w in vocab}, composer_kind="rf",
+                                 enable_neural_render=False)
+    a.composer.kb = []
+    a.composer.store("dog", "go", "north", polarity="AFFIRM")
+    bundle = str(tmp_path / "brain")
+    save_developed_brain(a, bundle, seed=42, composer_kind="rf")
+    (view,) = _views(_small_store(), 1)
+    agent, _m = load_developed_brain(bundle, composer_kind="rf", ltm_store=view)
+    comp = _inner_agent(agent).composer
+    assert isinstance(comp, TieredFactStore) and comp.ltm is view
+    assert agent.what_does("dog", "go") == "north"           # the bundle's own fact (buffer)
+    assert agent.what_does("river", "look") == "apple"       # an LTM-only fact, through the given store
+    assert agent.what_does("cat", "eat") is None              # the moat
