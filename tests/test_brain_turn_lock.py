@@ -376,7 +376,7 @@ def tick_env(monkeypatch):
     # earlier test changes which branch a later test's tick takes)
     for name in ("_LAST_REQUEST", "_LAST_TURN_END", "_REQ_SEQ", "_WANDER_BUDGET", "_INNER_LIFE", "_WANDER_ADAPT",
                  "_SELFINIT_LOCKS", "_IDEATE_TICK", "_MULLED_TOPIC", "_RECALLED_TOPIC", "_SPIKING_IDEATE_STORE",
-                 "_CONSOLIDATED_TOPICS", "_LAST_HOMEO_KB", "_SLEEP_REPLAYED", "_LAST_SLEEP_KB"):
+                 "_CONSOLIDATED_TOPICS", "_LAST_HOMEO_KB", "_SLEEP_REPLAYED", "_LAST_SLEEP_KB", "_LAST_WANDERED"):
         monkeypatch.setattr(CE, name, {})
     assert CE.continuous_enabled()
     return CE
@@ -487,7 +487,8 @@ def test_a_selfinit_turn_does_not_wait_out_a_running_wander(tick_env, monkeypatc
     monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
     log, entered, spoke = [], threading.Event(), []
     key = ("s0", "tiny-demo", "stub")
-    CE._INNER_LIFE[key] = [{"wandered": "cat"}]                     # an earlier wander's thought, not yet consumed
+    CE._tick_record(key, 1.0, {"v1": 0.0, "a1": 0.0, "diff": None, "note": "n"}, "cat", None, None, "n")
+    assert CE._INNER_LIFE[key][0]["wandered"] == "cat"               # an earlier wander's thought, not yet consumed
     CE._WANDER_BUDGET[key] = 1
     org = _SelfInit(key, log, wander_s=1.5, entered=entered)
     th = threading.Thread(target=lambda: CE.tick_idle_sessions(_mood(), lambda: _Affect(log),
@@ -538,6 +539,52 @@ def test_a_reset_during_the_wander_leaves_nothing_in_the_fresh_session(tick_env,
     CE._WANDER_BUDGET[key] = 1
     assert CE.tick_idle_sessions(mood, lambda: _Affect(log), selfinit_getter=lambda k: org) == 1
     assert key in CE._WANDER_ADAPT and CE._INNER_LIFE[key][-1]["wandered"] == "dog"
+
+
+def test_last_wandered_names_the_newest_thought_even_after_it_was_consumed(tick_env):
+    """Fold-in (a) of the M0 review (honesty): the next live turn consumes the newest wandered thought
+    (`recent_wander`); the mid-thought read-out must still name THAT one as the last thought, not an older unconsumed
+    record."""
+    CE = tick_env
+    key = ("s0", "tiny-demo", "stub")
+    feel = {"v1": 0.0, "a1": 0.0, "diff": None, "note": "idle"}
+    CE._tick_record(key, 1.0, feel, "cat", None, None, "n1")
+    CE._tick_record(key, 2.0, feel, "dog", None, None, "n2")
+    CE._tick_record(key, 3.0, feel, None, None, None, "n3")          # a later tick with no wander (budget drained)
+    assert CE.recent_wander(key) == "dog"                             # consumed by the next live turn
+    assert CE.last_wandered(key) == "dog"
+    assert CE.mid_thought_readout(key)["text"].endswith("The last thing my mind drifted to was dog.")
+    CE.forget_session(key)
+    assert CE.last_wandered(key) is None
+
+
+def test_a_stale_wander_leaves_a_fresh_sessions_mull_arm(tick_env, monkeypatch):
+    """Fold-in (b) of the M0 review: a reset and the FRESH session's turn arm a mull while the stale wander runs
+    outside the turn lock, before the wander reads the arm. The stale wander is dropped, so it must not consume the
+    fresh arm. Control: a wander that IS recorded consumes the arm it read (arm-once, as before)."""
+    CE = tick_env
+    monkeypatch.delenv(L.TURN_LOCK_ENV, raising=False)
+    monkeypatch.setenv("BRAIN_CONTINUOUS_WANDER_MULL", "1")
+    log, key, mood = [], ("s0", "tiny-demo", "stub"), _mood()
+    CE._WANDER_BUDGET[key] = 1
+
+    class _ResetBeforeTheMullRead(_SelfInit):
+        def _ensure_mouth(self):                                     # runs right before the wander reads the arm
+            if not getattr(self, "_done", False):
+                self._done = True
+                with L.brain_turn("reset"):
+                    CE.forget_session(key)
+                    CE.mark_request(key)
+                    CE.mark_mull(key, "otter")                       # 'otter' is not in the organ's lexicon
+
+    CE.tick_idle_sessions(mood, lambda: _Affect(log), selfinit_getter=lambda k: _ResetBeforeTheMullRead(key, log))
+    assert key not in CE._INNER_LIFE                                  # the stale wander was dropped
+    assert CE._MULLED_TOPIC.get(key) == "otter"
+    # control: the next (recorded) wander consumes the arm
+    assert CE.tick_idle_sessions(mood, lambda: _Affect(log), now=time.time() + 1000.0,
+                                 selfinit_getter=lambda k: _SelfInit(key, log)) == 1
+    assert CE._INNER_LIFE[key][-1]["wandered"] == "dog"
+    assert key not in CE._MULLED_TOPIC
 
 
 def test_mid_thought_readout_without_a_prior_thought(tick_env):

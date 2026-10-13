@@ -66,6 +66,8 @@ _WANDER_BUDGET: dict = {}
 # per-session stamp bumped by forget_session (never dropped), so a tick can tell the session was RESET while it worked
 # on it outside the lock (a reset through /api/brain-chat/reset sends no mark_request).
 _LAST_TURN_END: dict = {}
+# per-session newest concept a recorded wander surfaced (consumed or not): `last_wandered` reads it (fold-in (a))
+_LAST_WANDERED: dict = {}
 _REQ_SEQ: dict = {}
 _RESET_SEQ: dict = {}
 _REQ_COUNTER = itertools.count(1)
@@ -143,12 +145,12 @@ SELFINIT_TURN_WAIT_S = 0.25   # how long a "what are you thinking about" turn wa
 
 
 def last_wandered(cache_key) -> str | None:
-    """The most recent concept an idle wander surfaced for this session, WITHOUT consuming it (`recent_wander` does
-    consume). None when no unconsumed wander record exists."""
-    for rec in reversed(_INNER_LIFE.get(cache_key) or []):
-        if rec.get("wandered"):
-            return rec["wandered"]
-    return None
+    """The most recent concept an idle wander surfaced for this session, consumed or not, WITHOUT consuming it
+    (`recent_wander` does consume). None when no wander has surfaced one. HONESTY (one-brain M2 fold-in (a), M0 review
+    2026-10-13): this used to scan the inner-life log for the newest UNCONSUMED record, so once `recent_wander` had
+    consumed the newest thought the mid-thought reply named an OLDER one as "the last thing my mind drifted to". The
+    true newest is kept in `_LAST_WANDERED`, written where the record is (`_tick_record`)."""
+    return _LAST_WANDERED.get(cache_key)
 
 
 def mid_thought_readout(cache_key) -> dict:
@@ -197,6 +199,7 @@ def forget_session(cache_key) -> None:
     _LAST_REQUEST.pop(cache_key, None)
     _LAST_TURN_END.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
+    _LAST_WANDERED.pop(cache_key, None)
     _WANDER_BUDGET.pop(cache_key, None)
     _WANDER_ADAPT.pop(cache_key, None)
     _RECALLED_TOPIC.pop(cache_key, None)
@@ -881,7 +884,7 @@ def mark_mull(cache_key, topic) -> None:
         _MULLED_TOPIC[cache_key] = str(topic).lower()
 
 
-def _apply_wander_mull(cache_key, organ):
+def _apply_wander_mull(cache_key, organ, peek=None):
     """If MULL is armed for this session AND the mulled topic is one of THIS organ's own stored concepts, boost that
     concept's curiosity NOVELTY to `MULL_NOVELTY` and re-derive `gains_on` through the SAME spiking
     `CuriosityProductionOrgan` read the organ's baseline already uses (a genuine higher-novelty spiking read, not a
@@ -890,10 +893,19 @@ def _apply_wander_mull(cache_key, organ):
     `_WANDER_ADAPT`'s own base-capture on this session's first-ever tick, see the MULL section header above), or
     `(None, None)` if nothing armed / disabled / no match. CONSUMES the armed topic on every call while enabled
     (arm-once), so an unmatched mulled topic (outside this organ's tiny lexicon) still clears rather than lingering to
-    silently apply to some later, unrelated wander."""
+    silently apply to some later, unrelated wander.
+
+    `peek` (a dict; the real-time tick passes one, fold-in (b) of the M0 review 2026-10-13): READ the armed topic
+    instead of popping it and record it in `peek["topic"]`; the caller consumes it (`_consume_peeked_mull`) only when
+    the wander's result is recorded. The tick runs the wander OUTSIDE the turn lock, so a pop here could take the arm a
+    FRESH session's turn had just set (after a reset) and then drop it with the stale wander."""
     if not wander_mull_enabled():
         return None, None
-    topic = _MULLED_TOPIC.pop(cache_key, None)
+    if peek is None:
+        topic = _MULLED_TOPIC.pop(cache_key, None)
+    else:
+        topic = _MULLED_TOPIC.get(cache_key)
+        peek["topic"] = topic
     if not topic:
         return None, None
     agents = getattr(organ, "agents", None)
@@ -915,6 +927,14 @@ def _apply_wander_mull(cache_key, organ):
     pre_gains = list(gains)
     organ.gains_on = [1.0 + organ.gain_scale * (w / wmax if wmax > 1e-9 else 0.0) for w in wants]
     return pre_gains, {"mulled": topic, "basin": i, "boosted_novelty": MULL_NOVELTY}
+
+
+def _consume_peeked_mull(cache_key, peek) -> None:
+    """Consume the mull arm a recorded wander peeked (`_apply_wander_mull(peek=...)`): pop it only if it is still the
+    value the wander read, so an arm a turn set meanwhile is never taken."""
+    topic = (peek or {}).get("topic")
+    if topic and _MULLED_TOPIC.get(cache_key) == topic:
+        _MULLED_TOPIC.pop(cache_key, None)
 
 
 # ── IDEATION: an OCCASIONAL between-turn wander that GENERATES a NOVEL blended concept (creativity rung) ──────────
@@ -1205,12 +1225,13 @@ def _drop_wander_state(cache_key) -> None:
     _SPIKING_IDEATE_STORE.pop(cache_key, None)
 
 
-def _tick_think(cache_key, selfinit_organ, note):
+def _tick_think(cache_key, selfinit_organ, note, mull_peek=None):
     """(b) THOUGHT: the curiosity-biased spiking wander (or, occasionally, ideation) on THIS session's self-init organ.
     Touches that organ and this session's wander state: it writes the IOR adaptation, the ideation counter and the
     ideation store, and it consumes the mulled topic (armed by a live turn's `mark_mull`, not by the tick).
     `tick_idle_sessions` runs it OUTSIDE the turn lock (a ~55 s cupy wander must never hold a turn), under
-    `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.)"""
+    `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.) `mull_peek`
+    (a dict, the real-time tick): the mull arm is read, not popped (see `_apply_wander_mull`)."""
     wandered = None
     ideation = None
     mull = None
@@ -1239,7 +1260,7 @@ def _tick_think(cache_key, selfinit_organ, note):
                     selfinit_organ._ensure_mouth()   # need agents/novelties/gains_on populated (idempotent, cheap)
                 except Exception:
                     pass
-                pre_gains, mull = _apply_wander_mull(cache_key, selfinit_organ)
+                pre_gains, mull = _apply_wander_mull(cache_key, selfinit_organ, peek=mull_peek)
                 out = selfinit_organ.speak(lesion=False)
                 if pre_gains is not None:
                     selfinit_organ.gains_on = pre_gains
@@ -1270,6 +1291,8 @@ def _tick_record(cache_key, now, feel, wandered, ideation, mull, note, dropped=N
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
         del lst[:-_INNER_LIFE_MAX]
+    if wandered:
+        _LAST_WANDERED[cache_key] = wandered
     return rec
 
 
@@ -1339,9 +1362,10 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 continue
         # (2) NO TURN LOCK: the wander, on this session's own organ, under its organ lock.
         think = (None, None, None, feel["note"]) if feel is not None else None
+        mull_peek = {}   # fold-in (b): the wander reads the mull arm; (3) consumes it only for a recorded wander
         if feel is not None and siorg is not None:
             with selfinit_lock(cache_key):
-                think = _tick_think(cache_key, siorg, feel["note"])
+                think = _tick_think(cache_key, siorg, feel["note"], mull_peek=mull_peek)
         # (3) TURN LOCK: record, or drop a wander a turn preempted.
         with _brain_turn("idle_tick"):
             reset = _RESET_SEQ.get(cache_key) != reset0
@@ -1357,6 +1381,8 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     note = feel["note"] + "; a wandering thought was interrupted by your message, so I let it go"
                     wandered, ideation, mull = None, None, None
                 rec = _tick_record(cache_key, t, feel, wandered, ideation, mull, note, dropped)
+                if not preempted:
+                    _consume_peeked_mull(cache_key, mull_peek)   # a dropped wander leaves the arm for the next one
                 n += 1
                 if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
                     _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
