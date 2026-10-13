@@ -34,6 +34,7 @@ BRAINS (per draw, six seeds; KB = the tiny-demo's 5 build facts + the 4 taught f
   null_release_mode_on    as perfect, but the OFF and ON arms ran with LB_BATTERY_RELEASE_SESSIONS=1 (the
                           memory bar would not measure production-like accumulation).
   null_tag_lesion_inert   as perfect, but the tag lesion changes nothing (the newest fact still wins): B-C5d fails.
+  null_tag_lesion_silent  as perfect, but the tag-lesion arm never voices: silence is never "moved" (B-C5d undecided).
   null_host_newest_lifo   a host that voices the LAST store slot (newest appended: LIFO), silenced under the commit
                           lesion, blind to the tag lesion: B-C5d fails.
   random                  every idle turn of every arm: a uniformly random KB fact or the neutral line.
@@ -46,6 +47,10 @@ BRAINS (per draw, six seeds; KB = the tiny-demo's 5 build facts + the 4 taught f
                           arm (newest tag in an early slot) separates it; when the re-tell is informational it still
                           passes, and C5 STANDS then reads "selects by tag recency", never "the spiking race owns
                           content selection".
+  info_host_tag_argmax    a HOST argmax over the organ's own tag (newest t_enc wins, slot 0 on ties, silent under the
+                          commit lesion; no race). Review 2026-10-13: it passes every counted clause (and would pass a
+                          counted re-tell), so C5 ownership of content selection is UNDETERMINED (race vs host
+                          argmax); the named next method is a counted race-steer arm (Amendment C candidate).
   info_weak_race          as perfect with miss p 0.15 (how the pooled 10-of-12 clause bounds a weak race).
 """
 import os
@@ -195,6 +200,19 @@ def _brain(policy, miss=0.025, rss=("small",), fire=True, contaminate=False, unp
     return gen
 
 
+TAG_SILENT_P = 1 / 80          # dev seeds 1-8 stand-in: tag-lesion draws that latched nothing
+
+
+def _tag_argmax(rng, cands, taught, arm, miss):
+    """A HOST argmax over the organ's own tag, no spiking race: the newest t_enc wins, slot 0 on ties (every tag equal
+    under the tag lesion, and in the pair's build-only store), silent under the commit lesion."""
+    if arm == "commitlesion":
+        return None
+    if arm == "taglesion" or not taught:
+        return 0
+    return _newest(cands)
+
+
 def _newest(cands):
     return max(range(len(cands)), key=lambda i: cands[i]["t_enc"])
 
@@ -204,15 +222,17 @@ def _second(cands):
     return order[1]
 
 
-def _organ(rng, cands, taught, arm, miss, tag_inert=False, retell_last=False):
+def _organ(rng, cands, taught, arm, miss, tag_inert=False, retell_last=False, tag_silent=False):
     """The organ's design: the most excitable (newest-tagged) engram wins the race, missing to the second-newest with
     p `miss`; under the tag lesion every engram is equally excitable and the noise picks (dev seeds 1-8 stand-in:
-    newest won 10 of 80 tag-lesion draws, about chance 1/9)."""
+    newest won 10 of 80 tag-lesion draws, about chance 1/9, and 1 of 80 latched nothing: TAG_SILENT_P)."""
     if arm == "commitlesion":
         return None
     if not taught:
         return int(rng.integers(0, len(cands)))          # build facts only, all at age 1: the noise decides
     if arm == "taglesion" and not tag_inert:
+        if tag_silent or rng.random() < TAG_SILENT_P:
+            return None                                  # nothing latched: B-C5d reads that seed UNDEFINED
         return int(rng.integers(0, len(cands)))
     if arm == "retell" and retell_last:
         return len(cands) - 1
@@ -286,8 +306,10 @@ null_unprovenanced_seed = _brain(_organ, unprov_seed=43)
 null_rb_drift = _brain(_organ, rb_drift=True)
 null_release_mode_on = _brain(_organ, release=True)
 null_tag_lesion_inert = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, tag_inert=True))
+null_tag_lesion_silent = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, tag_silent=True))
 null_host_newest_lifo = _brain(_lifo(False))
 random = _brain(_random)
+info_host_tag_argmax = _brain(_tag_argmax)
 if C.RETELL_COUNTED:
     null_retell_last_slot = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, retell_last=True))
     null_host_newest_lifo_lesion_aware = _brain(_lifo(True))

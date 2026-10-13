@@ -75,10 +75,11 @@ POOLED CLAUSES:
            MAX_NEWEST_MISSES (2) of the 2 x n_seeds exposure sessions (10 of 12 at six seeds). The two sessions of a
            seed run the same race (same K, turn and seed), so these are n_seeds PAIRED outcomes, not 12 draws.
   B-C5d    the tag lesion moves the voiced fact: validity per seed (lesions.tag true, the other lesions off, equal
-           x_applied, the same candidate store as the intact STAGGERED arm; else UNDEFINED); `moved` = the
-           tag-lesion idle outcome differs from the intact STAGGERED voiced fact (nothing voiced counts as moved). At
-           most MAX_TAG_UNMOVED (2) of the seeds may read unmoved. Bar set on dev seeds 1-8 only, with the stand-in
-           organ, before gate data.
+           x_applied, the same candidate store as the intact STAGGERED arm; a winner that fails to decode makes the
+           seed UNDEFINED); `moved` = the tag-lesion voiced fact differs from the intact STAGGERED voiced fact. A
+           SILENT tag-lesion turn (nothing latched) is undecided for B-C5d, never counted as moved. Bar: at least
+           n_seeds - MAX_TAG_UNMOVED (4 of 6) seeds MOVED and at most MAX_TAG_UNMOVED (2) unmoved; undecided when
+           neither is settled. Set on dev seeds 1-8 only, with the stand-in organ, before gate data.
   B-C5e    the re-tell: the newest-tagged candidate (unique max t_enc) is a re-told fact in an EARLY store slot (kb_idx
            below the last slot; else the seed's re-tell is undecided and, when counted, UNDEFINED), and it is the
            voiced fact; at most MAX_RETELL_MISSES (1) misses. Counted only when RETELL_COUNTED (fixed from the dev-7
@@ -86,8 +87,11 @@ POOLED CLAUSES:
 
 VERDICT. A failed clause on any seed, or a failed pooled clause: "C5 REVERT-CANDIDATE seed <n> clause <k>". Else,
 any UNDEFINED seed (or an undecidable pooled clause): "C5 UNDEFINED". Else "C5 STANDS (PROVISIONAL)", with `reading`:
-STANDS means "the idle reply selects by tag recency"; it never means "the spiking race owns content selection" unless
-the tag-lesion AND counted re-tell arms pass. Seed 42 is
+STANDS means "the idle reply selects by tag recency"; ownership of content selection is UNDETERMINED. The tag-lesion
+and re-tell arms separate the TAG from the store SLOT only, never the spiking race from a host argmax over the same
+tag (newest t_enc wins, slot 0 on ties, silent under the commit lesion: it passes every counted clause, bar-sanity
+`info_host_tag_argmax`). The named next method is a counted race-steer arm (Amendment C candidate,
+docs/drafts/idle-replay/WORKLOG.md). Seed 42 is
 reported NON-BLIND (the g6b pair ran at seed 42 and was read before the prereg) and still counts: no seed is removed.
 
 Usage:
@@ -121,8 +125,8 @@ REPLY_FIELDS = ("answer", "abstained", "recalled_svo")
 MEM_BAR_KIB = 1953125            # 2 GB = 2e9 bytes / 1024
 MAX_NEWEST_MISSES = 2            # B-C5c: newest-taught fact voiced in >= 2*n_seeds - 2 sessions (10 of 12)
 # B-C5d (tag lesion; review ruling 2026-10-13, bar set on DEV seeds 1-8 with the stand-in organ before gate data:
-# the tag lesion moved the voiced fact in 70 of 80 dev draws, 5 of 10 on the worst dev seed, and on 8 of 8 dev
-# battery-noise draws). At most this many of the six seeds may keep the intact STAGGERED fact under the tag lesion.
+# the tag lesion moved the voiced fact in 69 of 80 dev draws (1 of them silent), 5 of 10 on the worst dev seed, and on
+# 8 of 8 dev battery-noise draws). At most this many of the six seeds may keep the intact STAGGERED fact under it.
 MAX_TAG_UNMOVED = 2
 # B-C5e (re-tell; counted only if the dev-7 smoke showed a re-tell that re-tags a fact in an early slot, see
 # RETELL_COUNTED). Dev seeds 1-8 stand-in: the in-place re-told fact won 80 of 80 draws. Misses allowed of six:
@@ -317,7 +321,12 @@ def tag_read(body, stagger_body):
         if key(body) != key(stagger_body):
             why.append("store-differs-from-stagger")
     v = _voiced(body)
-    return why, v, {"answer": (body or {}).get("answer"), "voiced": v, "K": sel.get("K")}
+    silent = v is None and ir.get("winner") is None
+    if v is None and not silent:
+        why.append("decode-failed")             # a winner that did not decode: a broken arm, the seed is UNDEFINED
+    # a SILENT arm (nothing latched) is no evidence the tag lesion MOVED the selection (review ruling 2026-10-13): it is
+    # undecided in B-C5d, never counted as moved (see aggregate)
+    return why, v, {"answer": (body or {}).get("answer"), "voiced": v, "K": sel.get("K"), "silent": silent}
 
 
 def retell_read(body, sess):
@@ -470,7 +479,8 @@ def score_seed(seed, arms, sessions=None, pin=None, rb_pin=None):
                                st_body[sessions["stagger"]["idle_label"]] if st_body is not None else None)
         und += ["taglesion:%s" % w for w in why]
         st = r["sessions"].get("stagger") or {}
-        moved = (tv != st.get("voiced")) if (not why and e3 is True and st.get("valid")) else None
+        moved = (tv != st.get("voiced")) if (not why and not td.get("silent") and e3 is True and st.get("valid")) \
+            else None
         r["sessions"]["taglesion"] = dict(td, valid=not why, e3=e3, moved=moved)
 
     # B-C5e the re-tell (pooled in aggregate; counted only when RETELL_COUNTED)
@@ -533,6 +543,12 @@ def aggregate(per_seed, seeds):
     if pooled_ok is False:
         fails.append(("pooled", "B-C5c"))
     tag_ok, tag = _pooled_count(per_seed, seeds, "taglesion", "moved", False, MAX_TAG_UNMOVED)
+    # B-C5d passes on MOVED seeds only: at least n - MAX_TAG_UNMOVED seeds must read moved; a silent seed is undecided,
+    # never moved. If too few seeds are decided to reach that count (and none fails it), the clause is undecided.
+    n_moved = sum(1 for v in tag["per_seed"].values() if v is True)
+    tag["n_moved"], tag["min_moved"] = n_moved, len(seeds) - MAX_TAG_UNMOVED
+    if tag_ok is not False:
+        tag_ok = True if n_moved >= len(seeds) - MAX_TAG_UNMOVED else None
     if tag_ok is False:
         fails.append(("pooled", "B-C5d"))
     rt_ok, rt = _pooled_count(per_seed, seeds, "retell", "retold_hit", False, MAX_RETELL_MISSES)
@@ -550,11 +566,12 @@ def aggregate(per_seed, seeds):
     nb = {s: NON_BLIND[s] for s in seeds if s in NON_BLIND}
     reading = None
     if verdict.startswith("C5 STANDS"):
-        reading = ("the idle reply selects by tag recency; the tag-lesion and re-tell arms pass, so the excitability "
-                   "tag, not the store slot, decides which fact is voiced" if RETELL_COUNTED and rt_ok is True else
-                   "the idle reply selects by tag recency (STAGGERED/ROTATED newest fact, tag lesion moves it); NOT "
-                   "'the spiking race owns content selection': the re-tell arm is informational, so a last-slot "
-                   "host is not excluded")
+        reading = ("the idle reply selects by tag recency (the newest fact wins; the tag lesion moves it%s). "
+                   "Ownership of content selection is UNDETERMINED (spiking race vs a host argmax over the same "
+                   "tag): the tag-lesion and re-tell arms separate tag from slot only, never the race from a host "
+                   "argmax. Next method: a counted race-steer arm (Amendment C candidate)." % (
+                       "; the counted re-tell separates the tag from the store slot" if RETELL_COUNTED and rt_ok is True
+                       else "; the re-tell arm is informational, so a last-slot host is not excluded either"))
     return {"verdict": verdict, "reading": reading, "failed_clauses": [list(x) for x in fails],
             "undefined_seeds": undef, "pooled_B-C5c": dict(pooled, ok=pooled_ok, paired_outcomes=len(seeds)),
             "pooled_B-C5d": dict(tag, ok=tag_ok), "pooled_B-C5e": dict(rt, ok=rt_ok), "non_blind": nb,

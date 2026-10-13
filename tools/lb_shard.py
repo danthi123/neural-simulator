@@ -299,6 +299,13 @@ def _host_input_rows():
     return HOST_INPUT_ROWS
 
 
+def _stop_gate_rows():
+    """Amendment B's stop-gate rows (one source: tools/b2d_score.py::ENGAGEMENT_ROWS): denominator and gating only."""
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from tools.b2d_score import ENGAGEMENT_ROWS  # noqa: E402
+    return ENGAGEMENT_ROWS
+
+
 def faculty_keys():
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     os.environ.setdefault("SIM_NO_PROVENANCE", "1")
@@ -382,7 +389,7 @@ def cmd_aggregate(a):
     for s in seeds:
         cov = [f for f, r in rows.items() if s in r and r[s]["kind"] in ("neural-lesion", "whether-disable")]
         ex = [f for f in cov if rows[f][s]["verdict"] in ("regressed", "pass", "trace-only")]  # trace-only: LB_SWAP_DRIVE_PROBE
-        lb = [f for f in ex if rows[f][s]["load_bearing"] is True]
+        lb = [f for f in ex if rows[f][s]["load_bearing"] is True and f not in _stop_gate_rows()]
         hi = [f for f, r in rows.items() if s in r and r[s]["kind"] == HOST_INPUT_KIND
               and r[s]["verdict"] in ("regressed", "pass", "trace-only")]
         n_den = len(ex) + len(hi)
@@ -391,7 +398,17 @@ def cmd_aggregate(a):
         if hi:
             out["per_seed"][s]["n_host_input_exercised"] = len(hi)
     robust, union, missing = [], [], []
+    sg_rows = {f: r for f, r in sorted(rows.items()) if f in _stop_gate_rows()}
+    if sg_rows:
+        # Amendment B, B.5: stop-gate rows sit in the per-seed denominator (`ex` above) but never in n_load_bearing,
+        # per_faculty, robust_core or union; their per-seed verdicts are reported here.
+        out["stop_gate_faculties"] = {f: {"seeds_present": [s for s in seeds if s in r],
+                                          "n_load_bearing": sum(1 for s in seeds if s in r and r[s]["load_bearing"] is True),
+                                          "verdicts": {s: r[s]["verdict"] for s in seeds if s in r}}
+                                      for f, r in sg_rows.items()}
     for f, r in sorted(rows.items()):
+        if f in sg_rows:
+            continue
         if not any(v["kind"] in ("neural-lesion", "whether-disable") for v in r.values()):
             continue
         have = [s for s in seeds if s in r]

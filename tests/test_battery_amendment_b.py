@@ -321,7 +321,7 @@ def _reply(answer, extra=None):
     return t
 
 
-def _battery(tmp_path, seeds=(42, 43), tom_kind="neural-lesion", tom_lb=True, trans=None):
+def _battery(tmp_path, seeds=(42, 43), tom_kind="neural-lesion", tom_lb=True, trans=None, trans_verdict="regressed"):
     base = tmp_path / "shards"
     for s in seeds:
         sdir = str(base / "tag" / ("s%d" % s))
@@ -332,7 +332,7 @@ def _battery(tmp_path, seeds=(42, 43), tom_kind="neural-lesion", tom_lb=True, tr
               verdict="regressed" if tom_lb else "pass")
         if trans is not None:
             ia, le = trans(s)
-            _cell(sdir, "reasoning-transitive-chat", "transitive_nonadjacent", ia, le)
+            _cell(sdir, "reasoning-transitive-chat", "transitive_nonadjacent", ia, le, verdict=trans_verdict)
     return str(base)
 
 
@@ -439,18 +439,33 @@ def _trans(ia_trace, le_trace):
     return make
 
 
+def _fields(tmp_path):
+    rows = {f: {"kept": ["answer"], "probe_turn": t} for f, t in (
+        ("row-a", "well"), ("row-b", "well"), ("tom-false-belief", "tom_fb"),
+        ("reasoning-transitive-chat", "transitive_nonadjacent"))}
+    p = str(tmp_path / "fields.json")
+    json.dump({"rows": rows, "reply_fields": ["answer", "abstained", "recalled_svo"]}, open(p, "w"))
+    return p
+
+
 def test_engaged_transitive_cells_are_defined(tmp_path):
-    res = bd.score(_battery(tmp_path, trans=_trans(_ttrace(False), _ttrace(True))), "tag", PIN, [42, 43])
+    res = bd.score(_battery(tmp_path, trans=_trans(_ttrace(False), _ttrace(True))), "tag", PIN, [42, 43],
+                   fields_path=_fields(tmp_path))
     assert res["engagement"]["s42/reasoning-transitive-chat"] == "engaged"
     # stop-gate row (ruling 2026-10-13): gating + denominator only, never a numerator / robust_core / union
     sg = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
     assert sg["gate"] == "not blocked" and sg["n_not_blocked"] == 2 and sg["per_seed"]["42"] == "not blocked"
-    for lvl in ("s0", "s2"):
+    for lvl in ("s0", "s1", "s2"):                                # S1 needs the fields file (kept: answer)
         ps = res[lvl]["per_seed"]["42"]
-        assert ps["n_exercised"] == 4 and ps["n_load_bearing"] == 1 and ps["n_stop_gate_load_bearing_excluded"] == 1
+        assert ps["n_exercised"] == 4 and ps["n_load_bearing"] == 1 and ps["n_stop_gate_load_bearing_excluded"] == 1, \
+            (lvl, ps)
+        assert res[lvl]["stop_gate"]["reasoning-transitive-chat"]["gate"] == "not blocked"
         assert "reasoning-transitive-chat" not in res[lvl]["per_faculty"]
         assert "reasoning-transitive-chat" not in res[lvl]["robust_core"] + res[lvl]["union"]
+    res = bd.score(_battery(tmp_path / "nofields", trans=_trans(_ttrace(False), _ttrace(True))), "tag", PIN, [42, 43])
     assert res["counts"]["n_stop_gate_cells"] == 2 and res["verdict"] == "COMPLETE"
+    assert res["stop_gate"]["reasoning-transitive-chat"] == {
+        "governing_level": "s0", "gate": "not blocked", "per_seed": {"42": "not blocked", "43": "not blocked"}}
 
 
 @pytest.mark.parametrize("ia,le,reason", [
@@ -467,7 +482,7 @@ def test_unengaged_transitive_cells_are_undefined(tmp_path, ia, le, reason):
     assert st.startswith("UNDEFINED:engagement-") and reason in st, st
     sg = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
     assert sg["gate"] == "BLOCKED" and sg["per_seed"]["42"] == "blocked:" + st
-    assert res["verdict"] == "INCOMPLETE"
+    assert res["verdict"] == "INCOMPLETE; STOP-GATE BLOCKED at S0: reasoning-transitive-chat"
 
 
 @pytest.mark.parametrize("ia,le", [(_ttrace(False), _ttrace(True, error="RuntimeError: build")),
@@ -494,12 +509,11 @@ def test_failing_transitive_cell_blocks_and_never_validates(tmp_path):
         ia, le = same(seed)
         le["transitive_nonadjacent"]["answer"] = ia["transitive_nonadjacent"]["answer"]
         return ia, le
-    base = _battery(tmp_path, trans=no_change)
-    for name in os.listdir(os.path.join(base, "tag", "s42", "reasoning-transitive-chat")):
-        pass
+    base = _battery(tmp_path, trans=no_change, trans_verdict="pass")
     res = bd.score(base, "tag", PIN, [42, 43])
     st = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
     assert st["gate"] == "BLOCKED" and "validated" not in json.dumps(st)
+    assert res["verdict"].endswith("STOP-GATE BLOCKED at S0: reasoning-transitive-chat")
 
 
 def test_stop_gate_registry_never_raises_a_fraction(tmp_path, monkeypatch):
@@ -602,7 +616,8 @@ def test_retell_counts_only_when_registered_counted(monkeypatch, counted):
     assert agg["pooled_B-C5e"]["n_bad"] == 6 and agg["pooled_B-C5e"]["counted"] is counted
     assert agg["verdict"].startswith("C5 REVERT-CANDIDATE") is counted
     if not counted:
-        assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "NOT 'the spiking race owns" in agg["reading"]
+        assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "UNDETERMINED" in agg["reading"]
+        assert "re-tell arm is informational" in agg["reading"]
 
 
 def test_retell_as_the_smoke_left_it_is_undecided(monkeypatch):
@@ -619,7 +634,8 @@ def test_retell_as_the_smoke_left_it_is_undecided(monkeypatch):
     data = S.perfect(_rng(26))
     _inplace_retell(S, data)
     per, agg = _score_draw(S, data)
-    assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "tag, not the store slot" in agg["reading"]
+    assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "counted re-tell separates" in agg["reading"]
+    assert "UNDETERMINED" in agg["reading"]                      # even a counted re-tell never settles ownership
 
 
 def test_dev7_retell_smoke_appended_both_slots():
@@ -638,3 +654,49 @@ def test_lifo_host_fails_amendment_b_overall():
     per, agg = _score_draw(S, lifo_aware(_rng(28)))
     assert agg["verdict"].startswith("C5 REVERT-CANDIDATE") is bool(C.RETELL_COUNTED)
     assert not hasattr(S, "info_host_fifo_lesion_aware")          # renamed: it was newest/LIFO, not FIFO
+
+
+def test_lb_shard_keeps_stop_gate_rows_out_of_the_numerator(tmp_path):
+    def cell(fac, lb):
+        d = tmp_path / "t" / "s42" / fac
+        d.mkdir(parents=True)
+        (d / "lb.json").write_text(json.dumps({"per_faculty": [{"faculty": fac, "kind": "neural-lesion", "verdict":
+                                                                "regressed" if lb else "pass", "load_bearing": lb,
+                                                                "null_control_clean": True}], "UNRELIABLE": False}))
+    cell("a", True)
+    cell("b", False)
+    cell("reasoning-transitive-chat", True)
+    out = str(tmp_path / "agg.json")
+    lb_shard.cmd_aggregate(argparse.Namespace(tag="t", seeds=[42], pin=None, base=str(tmp_path), out=out))
+    agg = json.load(open(out))
+    assert agg["per_seed"]["42"]["n_load_bearing"] == 1 and agg["per_seed"]["42"]["n_exercised"] == 3
+    assert agg["per_seed"]["42"]["load_bearing_fraction"] == pytest.approx(1 / 3)
+    assert "reasoning-transitive-chat" not in agg["per_faculty"] and "reasoning-transitive-chat" not in agg["robust_core"]
+    assert agg["union_n"] == 1 and agg["stop_gate_faculties"]["reasoning-transitive-chat"]["n_load_bearing"] == 1
+
+
+def test_silent_tag_lesion_is_never_moved_and_decode_failure_is_undefined():
+    S = _spec()
+    data = S.perfect(_rng(31))
+    for s_ in S.SEEDS:                                           # every tag-lesion arm latches nothing
+        c = data[s_]["taglesion"]["resp"]["c5st_idle"]["self_initiated"]["idle_replay"]["candidates"]
+        data[s_]["taglesion"]["resp"]["c5st_idle"] = S._idle(c, None, lesion_tag=True)
+    per, agg = _score_draw(S, data)
+    assert all(per[s_]["sessions"]["taglesion"]["moved"] is None for s_ in S.SEEDS)
+    assert agg["pooled_B-C5d"]["ok"] is None and agg["verdict"].startswith("C5 UNDEFINED")
+    assert agg["pooled_B-C5d"]["n_moved"] == 0
+    data = S.perfect(_rng(32))
+    ir = data[43]["taglesion"]["resp"]["c5st_idle"]["self_initiated"]["idle_replay"]
+    ir["decode_matches_winner"] = False                          # a winner that does not decode
+    per, _ = _score_draw(S, data)
+    assert "taglesion:decode-failed" in per[43]["undefined_reasons"]
+
+
+def test_host_tag_argmax_passes_every_counted_clause_so_ownership_is_undetermined():
+    S = _spec()
+    per, agg = _score_draw(S, S.info_host_tag_argmax(_rng(33)))
+    assert agg["verdict"] == "C5 STANDS (PROVISIONAL)"
+    assert "UNDETERMINED" in agg["reading"] and "race-steer" in agg["reading"]
+    assert "owns content selection" not in agg["reading"].replace("Ownership of content selection", "")
+    per, agg = _score_draw(S, S.null_tag_lesion_silent(_rng(34)))
+    assert not agg["verdict"].startswith("C5 STANDS")

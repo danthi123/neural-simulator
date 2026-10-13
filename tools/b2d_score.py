@@ -653,7 +653,8 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         "s0": s0,
     }
     if amendment_b:
-        # n_defined above counts the coverable (neural-lesion) cells; this counts every scored cell (host-input too)
+        # n_defined above counts the COVERABLE cells: neural-lesion rows INCLUDING the stop-gate (ENGAGEMENT_ROWS)
+        # cells, host-input cells excluded; this counts every scored cell (host-input too)
         res["counts"]["n_defined_all_scored"] = sum(1 for c in scored.values() if c["state"] == "DEFINED")
         res["counts"]["n_scored_cells"] = len(scored)
     if hi:
@@ -696,6 +697,14 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
     else:
         verdict = "INCOMPLETE"
     res["fail_cells"] = fail_cells
+    if sg_facs:
+        # Amendment B, B.5: the stop-gate rows gate their flip at S0 (the registered trace verdict, the governing
+        # level). A BLOCKED row is surfaced in the top-level verdict, never hidden in a sub-block.
+        res["stop_gate"] = {f: {"governing_level": "s0", "gate": s0["stop_gate"][f]["gate"],
+                                "per_seed": s0["stop_gate"][f]["per_seed"]} for f in sg_facs}
+        blocked = [f for f in sg_facs if s0["stop_gate"][f]["gate"] != "not blocked"]
+        if blocked:
+            verdict = "%s; STOP-GATE BLOCKED at S0: %s" % (verdict, ", ".join(blocked))
     res["verdict"] = verdict
     pre = [
         {"name": "code-root blobs match the fields file's cited blobs at --pin", "ok": True, "value": []},
@@ -757,6 +766,8 @@ def main(argv=None):
         res["drift"] = drift(a.base, a.tag, a.pin, a.compare_tag, a.compare_pin, a.seeds, fields_path=a.fields,
                              amendment_b=amend_b)
     summary = {k: res[k] for k in ("verdict", "counts", "not_defined", "fail_cells") if k in res}
+    if "stop_gate" in res:
+        summary["stop_gate"] = {f: v["gate"] for f, v in res["stop_gate"].items()}
     summary["s0"] = {k: res["s0"].get(k) for k in ("robust_core_n", "union_n", "mean_fraction", "sd_fraction_pop")}
     if "s1" in res:
         summary["s1"] = {k: res["s1"].get(k) for k in ("robust_core_n", "union_n", "mean_fraction",

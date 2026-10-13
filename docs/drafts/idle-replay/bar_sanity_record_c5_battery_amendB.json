@@ -4,6 +4,7 @@
  "failures": [],
  "kinds": {
   "info_host_newest_lifo_lesion_aware": "info",
+  "info_host_tag_argmax": "info",
   "info_retell_last_slot": "info",
   "info_weak_race": "info",
   "null_active_contamination": "null",
@@ -19,6 +20,7 @@
   "null_release_mode_on": "null",
   "null_replay_never_fires": "null",
   "null_tag_lesion_inert": "null",
+  "null_tag_lesion_silent": "null",
   "null_unprovenanced_seed": "null",
   "perfect": "perfect",
   "perfect_noisy": "perfect",
@@ -27,8 +29,9 @@
  "n": 1000,
  "n_pass": {
   "info_host_newest_lifo_lesion_aware": 986,
-  "info_retell_last_slot": 977,
-  "info_weak_race": 710,
+  "info_host_tag_argmax": 1000,
+  "info_retell_last_slot": 975,
+  "info_weak_race": 709,
   "null_active_contamination": 0,
   "null_fixed_fact": 0,
   "null_host_newest_lifo": 0,
@@ -42,16 +45,18 @@
   "null_release_mode_on": 0,
   "null_replay_never_fires": 0,
   "null_tag_lesion_inert": 0,
+  "null_tag_lesion_silent": 0,
   "null_unprovenanced_seed": 0,
-  "perfect": 983,
-  "perfect_noisy": 963,
+  "perfect": 973,
+  "perfect_noisy": 953,
   "random": 0
  },
  "name": "C5 bars + Amendment B (validation battery 2026-10-12, six gate seeds)",
  "pass_rate": {
   "info_host_newest_lifo_lesion_aware": 0.986,
-  "info_retell_last_slot": 0.977,
-  "info_weak_race": 0.71,
+  "info_host_tag_argmax": 1.0,
+  "info_retell_last_slot": 0.975,
+  "info_weak_race": 0.709,
   "null_active_contamination": 0.0,
   "null_fixed_fact": 0.0,
   "null_host_newest_lifo": 0.0,
@@ -65,9 +70,10 @@
   "null_release_mode_on": 0.0,
   "null_replay_never_fires": 0.0,
   "null_tag_lesion_inert": 0.0,
+  "null_tag_lesion_silent": 0.0,
   "null_unprovenanced_seed": 0.0,
-  "perfect": 0.983,
-  "perfect_noisy": 0.963,
+  "perfect": 0.973,
+  "perfect_noisy": 0.953,
   "random": 0.0
  },
  "pass_rate_ci95": {
@@ -75,13 +81,17 @@
    0.9766,
    0.9916
   ],
+  "info_host_tag_argmax": [
+   0.9962,
+   1.0
+  ],
   "info_retell_last_slot": [
-   0.9657,
-   0.9846
+   0.9634,
+   0.983
   ],
   "info_weak_race": [
-   0.6811,
-   0.7373
+   0.6801,
+   0.7363
   ],
   "null_active_contamination": [
    0.0,
@@ -135,32 +145,36 @@
    0.0,
    0.0038
   ],
+  "null_tag_lesion_silent": [
+   0.0,
+   0.0038
+  ],
   "null_unprovenanced_seed": [
    0.0,
    0.0038
   ],
   "perfect": [
-   0.9729,
-   0.9894
+   0.961,
+   0.9814
   ],
   "perfect_noisy": [
-   0.9494,
-   0.973
+   0.9381,
+   0.9645
   ],
   "random": [
    0.0,
    0.0038
   ]
  },
- "repo_head": "33294dadf8eff0a5465a7431612a8ca32e718c84",
+ "repo_head": "f3f6c07295120d7fc28b5ba126b83dc3d68eec10",
  "scorer_files": {
-  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "0b49cf8d6d67204d25c6872c88117d1a2ffe1e721a202b498a5cdf765101076b",
-  "tools/c5_battery_score.py": "4bf82208b121fec425b09603d22a590d08b0fcc023153c1b6cf83994591bdf44"
+  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "e6a65d9bbc6ae8df38001ecccde9ef25450d8259c7cc9e0253f7a0ead0783319",
+  "tools/c5_battery_score.py": "09790dcdff1cbf91e3e82fa6b47a86e7f66c8d2e5ba53d8f88d82f8acf646549"
  },
- "scorer_sha256": "430b80cc9cf8b7939ddcaade2c7d5075b5e8987751531cd342b6af9626a5b2d3",
+ "scorer_sha256": "45a42a18c76113c27301c387246c623828e2f16ed2fa036442b872bb33779128",
  "seed": 0,
  "spec": "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py",
- "spec_sha256": "0b49cf8d6d67204d25c6872c88117d1a2ffe1e721a202b498a5cdf765101076b",
+ "spec_sha256": "e6a65d9bbc6ae8df38001ecccde9ef25450d8259c7cc9e0253f7a0ead0783319",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -168,5 +182,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 20.5
+ "wall_s": 21.5
 }
