@@ -481,18 +481,19 @@ def _write_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
     """`save_session_facts` without the catch: returns the path, None for nothing to save, and RAISES on a failure."""
     if not persist_learning_enabled() or chat is None:
         return None
-    from research.runners.developed_brain_io import extract_facts, extract_grounded_codes
+    from research.runners.developed_brain_io import extract_facts, extract_grounded_codes, extract_recruited_slots
     agent = getattr(chat, "agent", chat)
     facts = extract_facts(agent)
     if not facts:
         return None
     codes = extract_grounded_codes(agent)
+    slots = extract_recruited_slots(agent)
     identity_dir = _facts_identity_dir(cache_key, base)
     cp_id = checkpoint or _new_checkpoint_id()
     path = _facts_checkpoint_path(identity_dir, cp_id)
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"schema_version": SCHEMA_VERSION, "checkpoint": cp_id, "facts": facts,
-               "codes": {w: list(map(float, ph)) for w, ph in codes.items()}}
+               "codes": {w: list(map(float, ph)) for w, ph in codes.items()}, "slots": slots}
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=2, ensure_ascii=False, default=str)
     _prune_checkpoints(identity_dir, persist_keep_n())
@@ -528,8 +529,15 @@ def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
         # inject persisted runtime-grounded codes for any word not already known (so re-store can encode it). On the
         # default onebrain composer the codebook is `comp.comp.concepts` (concept_codebook); a word injected there
         # is then recruited into a free cleanup slot by the re-store with that SAME code (OneBrainComposer._recruit_word
-        # reuses an existing inner code).
+        # reuses an existing inner code). That fallback is only for a word with no saved slot (a checkpoint written
+        # before "slots" was saved): it can land in another word's slot, the defect `restore_recruit` closes.
         codes = payload.get("codes", {}) or {}
+        # onebrain: put each recruited word back into the SAME reserve slot it held (with its saved code) BEFORE the
+        # re-store, so re-store order can never hand a word another word's slot (`OneBrainComposer.restore_recruit`).
+        restore = getattr(comp, "restore_recruit", None)
+        if callable(restore):
+            for w, s in sorted((payload.get("slots") or {}).items(), key=lambda kv: int(kv[1])):
+                restore(w, int(s), codes.get(w))
         try:
             concepts = concept_codebook(comp)
             if concepts is not None:

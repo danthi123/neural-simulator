@@ -13,6 +13,8 @@ Pre-fix these fail by import error (the module does not exist); post-fix they pa
 teeth: a fresh "pre-teach baseline" matrix, overwritten from a saved "post-teach" matrix, must equal post-teach and
 differ from pre-teach — exactly the gap the persistence closes.
 """
+import itertools
+import json
 import os
 
 import numpy as np
@@ -341,9 +343,14 @@ class _InnerRF:
 
 class _OneBrainLikeComposer:
     """kb + pol_words + `.comp.concepts`, no `.concepts`; `store` recruits a never-seen word's code onto the inner
-    comp (what OneBrainComposer._recruit_word does), so a reload can be checked for the taught word's code."""
+    comp (what OneBrainComposer._recruit_word does), so a reload can be checked for the taught word's code. Each
+    instance draws its codes from its OWN rng, so a fresh instance that did not get the saved codes injected gives a
+    taught word a DIFFERENT code (a reload that skipped the codebook fails the code-equality check)."""
+
+    _instances = itertools.count(1)
 
     def __init__(self, facts=()):
+        self._rng = np.random.default_rng(next(self._instances))
         base = {"dog": [0.1, 0.2], "chase": [0.3, 0.4], "cat": [0.5, 0.6], "AFFIRM": [0.0, 0.1],
                 "NEGATE": [0.9, 0.8], "__free0__": [0.2, 0.2], "__free1__": [0.3, 0.3]}
         self.comp = _InnerRF(base)
@@ -355,7 +362,7 @@ class _OneBrainLikeComposer:
     def store(self, a, v, p, polarity=None):
         for w in (a, v, p):
             if w not in self.comp.concepts:
-                self.comp.concepts[w] = [0.7, 0.7]
+                self.comp.concepts[w] = [float(x) for x in self._rng.uniform(0.0, 1.0, 2)]
         self.kb.append(({"agent": a, "action": v, "patient": p, "polarity": polarity or "AFFIRM"}, None))
 
 
@@ -380,6 +387,72 @@ def test_facts_round_trip_on_the_onebrain_composer(tmp_path, monkeypatch):
     fresh = _onebrain_chat([("dog", "chase", "cat")])                   # the build-time KB only, as after a restart
     assert CSP.reload_session_facts(key, fresh, base=tmp_path) == 1
     assert ("wug", "eat", "dax") in {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
+    # the reloaded taught words carry the SAVED codes, not codes the fresh instance would draw on its own (re-review
+    # 2026-10-13: without this the test passed with the codebook stubbed to None during the reload)
+    saved = json.loads(p.read_text())["codes"]
+    reloaded = fresh.agent.composer.comp.concepts
+    for w in ("wug", "eat", "dax"):
+        assert np.allclose(reloaded[w], saved[w]), w
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────
+# Reserve-slot identity across a reload (re-review 2026-10-13, FAILURE_LOG row of that date). The REAL onebrain
+# composer recruits a new word into the first free `__free<k>__` slot. The reload used to inject the saved codes and
+# re-store, so re-store order chose the slots: after "crow chase wren" (wren -> slot A) was reconsolidated to "moth"
+# (moth -> slot B), the reload put moth into slot A with slot B's code while `__free`B still held that code, and the
+# next new word (heron) took slot B: two words, one code. The fix saves each word's slot and restores it first.
+# ────────────────────────────────────────────────────────────────────────────────────────────
+_SLOT_VOCAB = sorted({"crow", "chase", "dog", "cat", "eat", "fish"})
+
+
+def _real_onebrain(monkeypatch):
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    from research.runners.one_brain_composer import OneBrainComposer
+    return OneBrainComposer(seed=7, D=64, vocab=_SLOT_VOCAB, k_max=8, vocab_headroom=3, enable_rf_cudagraph=False)
+
+
+def _taught_then_reconsolidated(monkeypatch, tmp_path):
+    comp = _real_onebrain(monkeypatch)
+    comp.store("crow", "chase", "wren")                                  # wren -> the first reserve slot
+    comp._recruit_word("moth")                                           # the correction turn recruits the new filler
+    assert comp.update_on_mismatch("crow", "chase", "moth")["action"] == "rewrite"
+    assert [f["patient"] for f, _ in comp.kb] == ["moth"]
+    slots = comp.recruited_slots()
+    assert slots["moth"] == slots["wren"] + 1
+    key = ("sessA", "tiny-demo", "stub")
+    assert CSP.save_session_facts(key, _FakeChat(comp), base=tmp_path) is not None
+    return comp, key
+
+
+def _reload_then_learn_heron(monkeypatch, tmp_path, key):
+    fresh = _real_onebrain(monkeypatch)
+    assert CSP.reload_session_facts(key, _FakeChat(fresh), base=tmp_path) == 1
+    fresh.store("dog", "chase", "heron")                                 # a NEW word after the reload
+    return fresh
+
+
+def test_reload_keeps_each_recruited_word_in_its_own_reserve_slot(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    comp, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
+    fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)
+    cc = fresh.comp.concepts
+    assert not np.allclose(cc["heron"], cc["moth"]), "a new word must not get a reloaded word's code"
+    assert not np.allclose(cc["heron"], cc["wren"])
+    for w in ("wren", "moth"):
+        assert fresh.recruited_slots()[w] == comp.recruited_slots()[w], w
+        assert np.allclose(cc[w], comp.comp.concepts[w]), w
+    assert fresh.query_patient("crow", "chase") == "moth"
+
+
+def test_reload_without_slot_restore_reproduces_the_shared_code(tmp_path, monkeypatch):
+    """Control: the same order with the slot restore removed gives heron moth's code (the reviewer's repro), so the
+    test above has teeth."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    _, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
+    monkeypatch.delattr(OneBrainComposer, "restore_recruit")
+    fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)
+    assert np.allclose(fresh.comp.concepts["heron"], fresh.comp.concepts["moth"])
 
 
 class _NoCodebookComposer(_OneBrainLikeComposer):

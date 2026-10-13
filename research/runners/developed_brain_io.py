@@ -74,6 +74,13 @@ def extract_grounded_codes(agent) -> dict[str, list]:
     return codes
 
 
+def extract_recruited_slots(agent) -> dict:
+    """{word: reserve slot index} for every word the onebrain composer recruited at runtime (empty for composers
+    without reserve slots). Saved beside the codes so a reload restores each word into its own slot."""
+    f = getattr(_inner_agent(agent).composer, "recruited_slots", None)
+    return {str(w): int(s) for w, s in f().items()} if callable(f) else {}
+
+
 def concept_codebook(comp):
     """The {word: phase code} dict a composer binds with. `comp.concepts` on the RF/rate composers; on the default
     OneBrainComposer (`Pool1BoundOneBrainComposer`, usually behind a `TieredFactStore`, which delegates attributes to
