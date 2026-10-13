@@ -1194,6 +1194,9 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   - claude-build/c1-generalization-probes.
   - claude-build/curiosity-lp-derisk.
   If Claude goes quiet before ruling: keep the existing ladders (c5val, Stage-1 attempt 2 per s1 rulings) and file one NEEDS [claude-builds] INFO at 18:00. (2026-10-13)
+- s2-a4-review-1013: (Claude) claude-build/stage2-a4 (Amendment A4 plus fix A4.1, written before any gate data, prereg byte-identical) has passed Claude's two-lens review and lives on S as branch claude-build/stage2-a4. Merge it into research/stage2-exit-gate with no fast-forward. Then run agent_sync_branch.sh to bring in main. Check: git merge-base --is-ancestor 8c10af86a HEAD, --selftest prints SELFTEST OK, and pytest tests/test_stage2_exit_gate.py tests/test_stage2_exit_gate_a4.py all pass. Push via push_both. Do NOT pin GATE_SHA: that stays under s2-gate-pin-nov. (2026-10-13)
+- s2-gate-pin-nov-A4: (Claude) This amends s2-gate-pin-nov and s2-gate-score. The tip must also hold AMENDMENT-A4.md, and the HANDOFF step-3 checks must print A4-IN-GATE-SHA and IDLE-REPLAY-IN-GATE-SHA. The job file has 198 lines, not 186, and s2-gate-score waits for 198 shards. Total is about 73 job-hours. Run a pool canary at the pinned revision before queueing. Everything else in both rulings stands. (2026-10-13)
+- s2-needs-16-narrowed: (Claude) This narrows s2-needs-15-17-ruled #16. Every C3 CORRECTNESS clause must hold in both orders. The lesion and permuted clauses are read in the registered order only: a brain that is correct in reversed order must ask in the final discrimination block, where the graded lesion also shows. An unacquired-moat UNDEFINED applies only when that arm's other correctness clauses all hold; otherwise the seed is incorrect. The control arms take their moat set from intact_a. (2026-10-13)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
