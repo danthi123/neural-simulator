@@ -181,3 +181,8 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   (no `reversed` arm there): re-pin after merging main, at a revision with AMENDMENT-A4.md and 8c10af86a.
 - Bar-sanity `_A4` records for all six specs (n=1000) replace the `_A3` ones; tests:
   `tests/test_stage2_exit_gate.py` + the new `tests/test_stage2_exit_gate_a4.py`.
+- 2026-10-13 (Claude) dev-7 smoke `ask/reversed` (`dev/s7/ask__reversed.json`, workstation numpy, memcap 9, at the
+  A4 runner): valid (19 turns, source tiny-demo +LTM, hash ok, corpus ok, no organ error), peak RSS 6.5 GB, 751 s.
+  Mirror image of the registered order: u_toad_1/2 ask, then DA 0.046 / threshold 59.8 Hz silences lp_ibex_1 and
+  the whole discrimination block (gap 0, moat 0 of 2, m_goat undefined); lp_unlearnable True for the DA-history
+  reason, not learning progress. Governs nothing (prereg section 11).
