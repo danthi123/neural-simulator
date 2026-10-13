@@ -185,3 +185,8 @@ ones, independent of this change.)
   for sharing, not proven safe: with any of them on, each conversation still gets its own copy.
 - The developed-bundle branch is covered by the brain-free test only (stubbed `load_developed_brain`); the real
   run covered the tiny-demo path, the production default.
+- `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md` (landed on s/main 79ba4b0a1, after this branch point)
+  names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. This branch ran
+  the three-session real-handler check above, not the battery §9.1 pair; that pair is still to run before the merge.
+  The design's M0 `turn_lock` will sit outside this per-store lock (this one is held only inside one store call), so
+  the two nest without a lock-order cycle.
