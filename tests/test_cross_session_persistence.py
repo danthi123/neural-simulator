@@ -323,3 +323,63 @@ def test_d5_checkpoint_selection_versions_and_resolves(tmp_path, monkeypatch):
     assert CSP._resolve_checkpoint(identity_dir, None) == ids[-1], "default selector must resolve to the latest"
     assert CSP._resolve_checkpoint(identity_dir, ids[0]) == ids[0], "an explicit id must resolve to itself"
     assert CSP._resolve_checkpoint(identity_dir, "bogus-id") is None, "an unknown id must resolve to None"
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────
+# The PRODUCTION DEFAULT composer (FAILURE_LOG 2026-10-13, found by the one-brain M0 probe's restart_persist_on
+# arm): the tiny-demo chat's composer is a OneBrainComposer (Pool1BoundOneBrainComposer) behind a TieredFactStore.
+# It has `kb` + `pol_words` but NO `.concepts` of its own: its codes live on the inner RF composer at
+# `.comp.concepts`. `extract_grounded_codes` read `comp.concepts`, so `save_session_facts` raised AttributeError,
+# swallowed it, and saved nothing. Brain-free stand-in of that shape, wrapped in the real TieredFactStore.
+# ────────────────────────────────────────────────────────────────────────────────────────────
+class _InnerRF:
+    def __init__(self, concepts):
+        self.concepts = dict(concepts)
+        self.pol_words = ["AFFIRM", "NEGATE"]
+
+
+class _OneBrainLikeComposer:
+    """kb + pol_words + `.comp.concepts`, no `.concepts`; `store` recruits a never-seen word's code onto the inner
+    comp (what OneBrainComposer._recruit_word does), so a reload can be checked for the taught word's code."""
+
+    def __init__(self, facts=()):
+        base = {"dog": [0.1, 0.2], "chase": [0.3, 0.4], "cat": [0.5, 0.6], "AFFIRM": [0.0, 0.1],
+                "NEGATE": [0.9, 0.8], "__free0__": [0.2, 0.2], "__free1__": [0.3, 0.3]}
+        self.comp = _InnerRF(base)
+        self.pol_words = ["AFFIRM", "NEGATE"]
+        self.kb = []
+        for f in facts:
+            self.store(*f)
+
+    def store(self, a, v, p, polarity=None):
+        for w in (a, v, p):
+            if w not in self.comp.concepts:
+                self.comp.concepts[w] = [0.7, 0.7]
+        self.kb.append(({"agent": a, "action": v, "patient": p, "polarity": polarity or "AFFIRM"}, None))
+
+
+def _onebrain_chat(facts):
+    from research.runners.tiered_fact_store import TieredFactStore
+    return _FakeChat(TieredFactStore(_OneBrainLikeComposer(facts), ltm=None))
+
+
+@pytest.mark.xfail(strict=True, raises=AttributeError,
+                   reason="FAILURE_LOG 2026-10-13: extract_grounded_codes reads comp.concepts (absent on onebrain)")
+def test_grounded_codes_read_the_onebrain_composer():
+    from research.runners.developed_brain_io import extract_grounded_codes
+    chat = _onebrain_chat([("dog", "chase", "cat"), ("wug", "eat", "dax")])
+    codes = extract_grounded_codes(chat.agent)
+    assert {"dog", "chase", "cat", "wug", "eat", "dax"} <= set(codes)
+    assert not ({"AFFIRM", "NEGATE"} & set(codes))                     # polarity tags are rebuilt from the seed
+
+
+@pytest.mark.xfail(strict=True, raises=AssertionError,
+                   reason="FAILURE_LOG 2026-10-13: save_session_facts saves nothing on the onebrain composer")
+def test_facts_round_trip_on_the_onebrain_composer(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    key = ("sessA", "tiny-demo", "stub")
+    p = CSP.save_session_facts(key, _onebrain_chat([("dog", "chase", "cat"), ("wug", "eat", "dax")]), base=tmp_path)
+    assert p is not None and p.exists()
+    fresh = _onebrain_chat([("dog", "chase", "cat")])                   # the build-time KB only, as after a restart
+    assert CSP.reload_session_facts(key, fresh, base=tmp_path) == 1
+    assert ("wug", "eat", "dax") in {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
