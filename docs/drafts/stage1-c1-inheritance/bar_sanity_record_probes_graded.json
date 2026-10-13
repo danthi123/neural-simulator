@@ -1,0 +1,80 @@
+{
+ "backend": "numpy",
+ "description": "C1 graded probe (dev 1-8): the inherited guess's rate rises strictly with shared traits 1 < 2 < 3",
+ "failures": [],
+ "kinds": {
+  "info_noisy_grading": "info",
+  "null": "null",
+  "null_count_only": "null",
+  "null_inverted": "null",
+  "null_one_top_tie": "null",
+  "perfect": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_noisy_grading": 419,
+  "null": 0,
+  "null_count_only": 0,
+  "null_inverted": 0,
+  "null_one_top_tie": 0,
+  "perfect": 1000,
+  "random": 0
+ },
+ "name": "c1-probe-graded",
+ "pass_rate": {
+  "info_noisy_grading": 0.419,
+  "null": 0.0,
+  "null_count_only": 0.0,
+  "null_inverted": 0.0,
+  "null_one_top_tie": 0.0,
+  "perfect": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_noisy_grading": [
+   0.3888,
+   0.4498
+  ],
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_count_only": [
+   0.0,
+   0.0038
+  ],
+  "null_inverted": [
+   0.0,
+   0.0038
+  ],
+  "null_one_top_tie": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "423a190e1f80d761c170f643323c72dc81ec54cb",
+ "scorer_files": {
+  "research/runners/c1_generalization_probes.py": "93eae717c1253c6c2da3199740f370e3bc7bcf86a3cad20ecee8373dbbe0be73"
+ },
+ "scorer_sha256": "8714e422856f8169a686d0e760f57edbd0557cc4bbea57a080c112a8cf41a199",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_probes_graded.py",
+ "spec_sha256": "d5570ca5b94bd82415602f92f3622ff1a5a369323cb18a9a2795ad435f7d2a7a",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 12.4
+}

@@ -1,0 +1,87 @@
+{
+ "backend": "numpy",
+ "description": "C1 override probe (dev 1-8): the told specific fact beats the inherited lake guess, organ and reply",
+ "failures": [],
+ "kinds": {
+  "null": "null",
+  "null_one_eel_template": "null",
+  "null_one_reply_lake": "null",
+  "null_one_template": "null",
+  "null_one_tie": "null",
+  "perfect": "perfect",
+  "perfect_eel_vacuous": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null": 0,
+  "null_one_eel_template": 0,
+  "null_one_reply_lake": 0,
+  "null_one_template": 0,
+  "null_one_tie": 0,
+  "perfect": 1000,
+  "perfect_eel_vacuous": 1000,
+  "random": 0
+ },
+ "name": "c1-probe-override",
+ "pass_rate": {
+  "null": 0.0,
+  "null_one_eel_template": 0.0,
+  "null_one_reply_lake": 0.0,
+  "null_one_template": 0.0,
+  "null_one_tie": 0.0,
+  "perfect": 1.0,
+  "perfect_eel_vacuous": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_one_eel_template": [
+   0.0,
+   0.0038
+  ],
+  "null_one_reply_lake": [
+   0.0,
+   0.0038
+  ],
+  "null_one_template": [
+   0.0,
+   0.0038
+  ],
+  "null_one_tie": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_eel_vacuous": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "423a190e1f80d761c170f643323c72dc81ec54cb",
+ "scorer_files": {
+  "research/runners/c1_generalization_probes.py": "93eae717c1253c6c2da3199740f370e3bc7bcf86a3cad20ecee8373dbbe0be73"
+ },
+ "scorer_sha256": "8714e422856f8169a686d0e760f57edbd0557cc4bbea57a080c112a8cf41a199",
+ "seed": 0,
+ "spec": "docs/drafts/stage1-c1-inheritance/bar_sanity_spec_probes_override.py",
+ "spec_sha256": "44b5dd0068d4f0357b75f4ca6501772a1fa2403ec99e682f4da18bf84e92e075",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 14.1
+}

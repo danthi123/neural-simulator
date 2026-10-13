@@ -1,0 +1,36 @@
+{
+ "run_id": "1791890374-233836",
+ "runner": "research/runners/c1_generalization_probes.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ae6f8c6c97c6b598c/research/runners/c1_generalization_probes.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--probe",
+  "graded",
+  "--out",
+  "research/findings/raw/_stage1_c1_generalization/smoke_dev7/s7/graded.json"
+ ],
+ "git_sha": "573cde215",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-13T07:19:34",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 18677.6,
+ "corpus_check_query": "curiosity learning progress per-topic",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_generalization/smoke_dev7/s7/graded.json"
+}
