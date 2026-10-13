@@ -218,4 +218,640 @@ Also still HELD per RULING pool-hold-1012: the 09-30 held _stage1_exit (204) and
 
 none — both prereg launch bars pass: peak 16.14 GiB x parallelism 1 = 16.14 GiB fits every pool node (32/46 GiB), and projected wall is 12 min/arm (2.4 h for all 12 sequential), far under 24 h. No NEEDS [aws-run] is forced.
 
-(W2 note for commit time: the 12 verbatim queue lines are machine lines longer than 800 chars; do not run tools/split_long_doc_lines.py --apply over the fenced command blocks — it would break copy-paste verbatim execution. Register or exempt before commit.)
+(W2 note for commit time: the verbatim queue lines (12 in section 3, 51 in section 9) are machine lines longer than 800 chars; do not run tools/split_long_doc_lines.py --apply over the fenced command blocks — it would break copy-paste verbatim execution. Register or exempt before commit.)
+
+## 9. Amendment B lines (prereg AMENDMENT B revision 1; NOT queued by this commit)
+
+Generated 2026-10-13 by Claude (coordinator build) for Amendment B revisions 1-2 (the review's FIX_FIRST). They replace the first filing's section 9 (written for R_B e70e5c995, superseded; nothing ran on it). Revisions: P = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea for off/on/commitlesion; R_B = 1304d8d6788125c20f3de912d258ea008f34ad89 (branch claude-build/battery-amend-b-pin: P plus the label-only C5B turn block) for off_rb, on_rb, stagger, rotated, taglesion and retell. R_B must be provisioned first (`~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89`; the dispatcher holds a line whose revision is not up). Every line: the section-1 guard prefix first, BRAIN_CHAT_SEED explicit, no LB_* key (session release OFF), wspool only, ONE arm in flight globally (section 5), pasted one `pool_queue.sh add` at a time with the section-3 heredoc pattern.
+
+**Memory basis.** The worker builds one brain per SESSION, about 5.2-5.9 GiB each: the 4-turn pair spans three sessions (peak 16.14 GiB), a C5B session arm is one session. The dev lines carry mem_gb=21 for every shape. After 9.1, re-stamp the stagger, rotated, taglesion and retell GATE lines to mem_gb = ceil(1.3 x that arm's dev-7 peak) (memcap = mem_gb + 1, mem_ok = mem_gb) before adding them; the pair-shaped lines keep 21/22.
+
+**Workstation dev checks already run (no weight, not the smoke of record).** (1) Commit lesion, selfinit only, 2026-10-13 02:28 from the uncommitted tree at bef736ce7 (before the first filing): lesions.commit true, gate_counts all 0, winner none, n_utt 0, neutral idle line, peak 5926140 KB. (2) Re-tell, 2026-10-13 08:20 at 33294dadf (runner identical to R_B's): both re-tells appended a store slot, so the re-tell arm is INFORMATIONAL (prereg B.3); the 7-turn single session peaked 6351424 KB (6.06 GiB). Artifacts under `research/findings/raw/_regression_battery/c5val_1012_dev/`.
+
+### 9.1 Dev-7 lines FIRST (nine, in order)
+
+Release condition for 9.2: all nine land rc=0; 9.1.1 (the commit-lesion smoke of record) shows lesions.commit true, gate_counts all 0 and the neutral idle line at selfinit; dev-7 E3 holds: c5_s7_off_rb.json and c5_s7_on_rb.json are whole-record identical (sorted-key JSON of every turn body) to c5_s7_off.json and c5_s7_on.json; each session smoke shows a select record with circuits_built > 0 at its idle turn. If E3 fails, do not queue 9.2: NEEDS with the differing turns.
+
+#### 9.1.1 dev seed 7, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm commitlesion (dev seed, no weight): B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.2 dev seed 7, off
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm off (dev seed, no weight): dev-7 E3 reference: OFF pair at P (dev only; the gate OFF arms are section 3); revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.3 dev seed 7, on
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm on (dev seed, no weight): dev-7 E3 reference: default-ON pair at P (dev only; the gate ON arms are section 3); revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.4 dev seed 7, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off_rb.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm off_rb (dev seed, no weight): E3: must be whole-record identical to c5_s7_off.json at P, else seed 7 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.5 dev seed 7, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on_rb.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm on_rb (dev seed, no weight): E3: must be whole-record identical to c5_s7_on.json at P, else seed 7 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.6 dev seed 7, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_stagger.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm stagger (dev seed, no weight): B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.7 dev seed 7, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_rotated.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm rotated (dev seed, no weight): B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.8 dev seed 7, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_taglesion.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm taglesion (dev seed, no weight): B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+#### 9.1.9 dev seed 7, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012_dev && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=7 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.json > research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B dev-7 SMOKE, arm retell (dev seed, no weight): B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+```
+
+### 9.2 Gate lines (42: per seed commitlesion@P; off_rb, on_rb, stagger, rotated, taglesion, retell @R_B)
+
+Order: seed 42, 43, 44, 100, 101, 102; within a seed commitlesion, off_rb, on_rb, stagger, rotated, taglesion, retell. The registered off/on lines of section 3 are unchanged and stay first for each seed. Seed 42 is NON-BLIND (g6b and the 10-12 identity smoke); it still runs and counts.
+
+#### 9.2.1 seed 42, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 42: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.2 seed 42, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 42: E3: must be whole-record identical to c5_s42_off.json at P, else seed 42 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.3 seed 42, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 42: E3: must be whole-record identical to c5_s42_on.json at P, else seed 42 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.4 seed 42, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 42: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.5 seed 42, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 42: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.6 seed 42, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 42: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.7 seed 42, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s42_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s42_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s42_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 42: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.8 seed 43, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 43: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.9 seed 43, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 43: E3: must be whole-record identical to c5_s43_off.json at P, else seed 43 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.10 seed 43, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 43: E3: must be whole-record identical to c5_s43_on.json at P, else seed 43 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.11 seed 43, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 43: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.12 seed 43, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 43: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.13 seed 43, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 43: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.14 seed 43, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s43_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s43_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s43_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 43: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.15 seed 44, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 44: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.16 seed 44, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 44: E3: must be whole-record identical to c5_s44_off.json at P, else seed 44 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.17 seed 44, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 44: E3: must be whole-record identical to c5_s44_on.json at P, else seed 44 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.18 seed 44, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 44: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.19 seed 44, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 44: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.20 seed 44, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 44: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.21 seed 44, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s44_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s44_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s44_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 44: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.22 seed 100, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 100: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.23 seed 100, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 100: E3: must be whole-record identical to c5_s100_off.json at P, else seed 100 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.24 seed 100, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 100: E3: must be whole-record identical to c5_s100_on.json at P, else seed 100 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.25 seed 100, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 100: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.26 seed 100, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 100: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.27 seed 100, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 100: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.28 seed 100, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s100_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s100_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s100_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 100: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.29 seed 101, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 101: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.30 seed 101, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 101: E3: must be whole-record identical to c5_s101_off.json at P, else seed 101 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.31 seed 101, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 101: E3: must be whole-record identical to c5_s101_on.json at P, else seed 101 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.32 seed 101, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 101: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.33 seed 101, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 101: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.34 seed 101, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 101: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.35 seed 101, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s101_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s101_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s101_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 101: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.36 seed 102, commitlesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/f24963bfb05ca535f10f70bf4380fe4b2f68a9ea && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_commitlesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_commitlesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_commitlesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm commitlesion seed 102: B-C5a: the organ's E->G commit gate closed; expect the neutral idle line at selfinit and emo/bc_a/bc_b byte-identical to off/on; at P; revision f24963bfb05ca535f10f70bf4380fe4b2f68a9ea; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.37 seed 102, off_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_off_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_off_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_off_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm off_rb seed 102: E3: must be whole-record identical to c5_s102_off.json at P, else seed 102 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.38 seed 102, on_rb
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_on_rb_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_on_rb.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_on_rb.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm on_rb seed 102: E3: must be whole-record identical to c5_s102_on.json at P, else seed 102 is UNDEFINED; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 = ceil(1.3 x 16.14 GiB pair peak); max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.39 seed 102, stagger
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_stagger_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_stagger.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_stagger.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm stagger seed 102: B-C5b/B-C5c: F1 F2 F3 F4 taught one per turn, then idle; design predicts F4 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.40 seed 102, rotated
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_rotated_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_rotated.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_rotated.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm rotated seed 102: B-C5b/B-C5c: the ruling's permuted exposure, F3 F4 F1 F2 then idle; design predicts F2 voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.41 seed 102, taglesion
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_taglesion_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_taglesion.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_taglesion.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm taglesion seed 102: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+#### 9.2.42 seed 102, retell
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89 && mkdir -p research/findings/raw/_regression_battery/c5val_1012 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/c5val_1012/c5_s102_retell_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle --out research/findings/raw/_regression_battery/c5val_1012/c5_s102_retell.json > research/findings/raw/_regression_battery/c5val_1012/c5_s102_retell.log 2>&1; }'
+```
+
+checked:
+
+```
+c5val_1012 Amendment B gate arm retell seed 102: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+```
+
+### 9.3 Scoring (after all 54 C5 arms land; prereg Amendment B, B.3)
+
+```
+.venv/bin/python tools/c5_battery_score.py --dir research/findings/raw/_regression_battery/c5val_1012 --pin f24963bfb05ca535f10f70bf4380fe4b2f68a9ea --rb-pin 1304d8d6788125c20f3de912d258ea008f34ad89 --out research/findings/raw/_regression_battery/c5val_1012/c5_score.json
+```
+
+Decision per RULING s2-c5-val: STANDS (PROVISIONAL), read as the scorer's `reading` (selects by tag recency; ownership of content selection UNDETERMINED, prereg B.3) / UNDEFINED (re-queue that seed's missing arms once, same revision, then RESULT) / REVERT-CANDIDATE seed n clause k (Claude reverts; never tune). STOP if an arm has rc!=0 twice.

@@ -741,3 +741,48 @@
   pool.queue.held-2026-09-30 (queued at writing) but now show queued=0 running=0, never in
   pool.queue.done, Start counts unmet -> filed [pool-hold] NEEDS once (T6's sanctioned requeue
   TSV exists but the ONCE re-queue belongs to T6). T1 is the next task (Start holds).
+
+
+## 2026-10-13 -- Amendment C candidate: a counted RACE-STEER arm (design only; NOT built into B) (Claude)
+
+**Why (re-review of battery Amendment B, RULING no-defer 2026-10-13).** A host argmax over the organ's own tag
+(newest t_enc wins, slot 0 on ties, silent under the commit lesion; no spiking race) passes every counted C5 clause
+of Amendment B (300/300 in the review; bar-sanity `info_host_tag_argmax` 1.000), and would pass a counted re-tell too.
+The tag-lesion and re-tell arms separate the TAG from the store SLOT, never the RACE from a host argmax over the same
+tag. So B ships with C5 ownership of content selection reported UNDETERMINED. This is the method that can settle it.
+
+**The manipulation.** During the idle race, inject extra drive into ONE non-newest candidate's engram population.
+The tag records (t_enc, age, x) are untouched, so a host argmax over the tag picks the same fact as without the
+steer; a spiking race, in which that population now reaches threshold first, should voice the steered fact.
+
+**The hook (read in research/runners/idle_replay_organ.py at the battery pin).** `ReplayCircuit._run` builds the
+rest-window current as `bias[self.eng[k]] = BIAS_PA * x[k]` (lines 283-285) and adds it, with the per-neuron OU
+noise, to `cp_external_input_current` on every rest step (lines 300-304). A steer is one more additive term on the
+same line: `cur[self.eng[j]] += STEER_PA` for t < REST_STEPS, for the steered candidate j only. It threads as an
+optional `steer=(j, pA)` argument through `ReplayCircuit.run` -> `IdleReplayOrgan.select` -> `speak`, read from an
+env flag (e.g. `BRAIN_IDLE_REPLAY_STEER=<rank>:<pA>`, rank = teaching-order position among the session's taught
+facts, so the target is named by the experiment, never by the organ's tag). `x_applied`, `t_enc` and the candidate
+list stay byte-identical with and without the steer; the trace records `steer: {"kb_idx", "pA"}`. Default unset:
+one environ lookup, byte-identical replies (the same pattern as the commit and tag lesions at :144/:148).
+
+**Arm.** STAGGERED turns (F1..F4, then idle) with the steer on F1 (the OLDEST taught fact, slot 5, the furthest from
+both the newest tag and the last slot). One arm per gate seed at a new revision R_C = pin + the hook (default off)
++ the arm's env, with the E3-style identity check (OFF/ON and STAGGERED at R_C whole-record identical to R_B's).
+
+**Dev-only bar rule (written before any gate data).** On DEV seeds 1-8 only, with the stand-in organ at the battery
+STAGGERED shape (K 9, idle turn 5, the battery noise-seed formula plus 10 extra noise draws per seed): sweep
+STEER_PA over a fixed grid (e.g. 0, 2, 4, 6, 8, 10, 12 pA, decided before the sweep) and freeze STEER_PA* = the
+smallest grid value at which the steered fact wins >= 8 of 10 draws on every dev seed; record the full dose-response
+curve. Counted gate clause: the steered fact is voiced on >= 5 of 6 gate seeds at STEER_PA* (tolerance set from
+the dev win rate at STEER_PA*, verified by bar-sanity with perfect >= 0.95). Reported, not gated: the voiced fact at
+STEER_PA*/2 (a race shows a graded crossover; an argmax shows none).
+
+**Nulls (bar-sanity must fail each).** (1) host argmax over the tag (voices F4 regardless of the steer); (2) the
+last-slot / LIFO host; (3) a steer-inert brain (the drive never reaches the race: F4 wins); (4) a non-selective
+steer (the same drive into every engram: F4 still wins); (5) random host over the KB; (6) a steer that only moves the
+reply when the tag lesion is also on (the arm runs with tags intact). Informational, disclosed: a host that READS the
+steer flag and voices its target passes; a behavioural arm cannot exclude a host that reads the manipulation, which
+is what the host-decision-share instrument (docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md) measures.
+
+**Status.** Design only. Not in Amendment B, not built, no runs. Building it is the next C5 ownership step after B's
+battery reads.

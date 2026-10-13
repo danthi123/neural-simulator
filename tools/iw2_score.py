@@ -364,8 +364,12 @@ def answer_rate_check(flipped, on_tag, off_tag, base=BASE, seeds=SEEDS):
 
 
 def score_B(base_tag, base_pin, flip_tag, flip_pin, flipped, base=BASE, seeds=SEEDS, off_tag=None):
-    b = B.score(base, base_tag, base_pin, seeds)
-    f = B.score(base, flip_tag, flip_pin, seeds)
+    # amendment_b=False: this scores the 2026-09-30 iw2 prereg as registered (validation-battery Amendment B amends
+    # only the 2026-10-12 battery prereg). Scope: in that mode b2d_score maps a shard whose lb.json says kind
+    # "host-input" for a HOST_INPUT_ROWS faculty (tom-false-belief, retagged after this prereg) back to its registered
+    # kind "neural-lesion", so a post-retag re-run is scored exactly as the prereg registered it.
+    b = B.score(base, base_tag, base_pin, seeds, amendment_b=False)
+    f = B.score(base, flip_tag, flip_pin, seeds, amendment_b=False)
     out = {"step": "B", "base": {"tag": base_tag, "pin": base_pin, "verdict": b["verdict"],
                                   "not_defined": b["not_defined"], "preconditions": b["preconditions"]},
            "flip": {"tag": flip_tag, "pin": flip_pin, "verdict": f["verdict"], "not_defined": f["not_defined"],

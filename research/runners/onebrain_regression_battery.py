@@ -596,6 +596,57 @@ _EXTRA_TURNS += [
     ("slp_recall", "you mentioned the owl", "slp", False, None, False),
 ]
 
+# ── C5 AMENDMENT-B EXPOSURE SESSIONS (label-only; NOT in PROBE_TURNS) ─────────────────────────────────────────────
+# Validation-battery prereg 2026-10-12, Amendment B (research/findings/2026-10-12-validation-battery-prereg.md). The
+# g6b-class pair's idle turn opens a fresh session, so every candidate engram is build-time (age 1, equal
+# excitability) and recency/salience never engage: the pair cannot tell the spiking race from a host random pick.
+# These two sessions teach the SAME four novel facts, one per turn, then take the idle turn ("" ->
+# is_selfinit_trigger): STAGGERED order F1 F2 F3 F4, ROTATED order F3 F4 F1 F2. The idle-replay organ's design
+# (research/runners/idle_replay_organ.py: excitability = BASE + s*exp(-age/TAU_TURNS); its own dev bar "the newest
+# fact wins") predicts the most recently taught fact wins: F4 after STAGGERED, F2 after ROTATED. The two sessions'
+# two newest facts are disjoint ({F4,F3} vs {F2,F1}), so a race miss to the second-newest fact cannot make the two
+# sessions agree. Each session runs as its own arm (one fresh worker build). Every fact uses words the tiny-demo
+# brain stored at dev seed 7 through this same handler (research/findings/raw/_stage2_exit/dev/s7/*__intact_a.json:
+# lynx/vole, heron/frog, yak/grass, crow/wren). C5B_SESSIONS is what tools/c5_battery_score.py reads. ROTATED is
+# RULING c5-battery-lesion's "permuted-exposure" session (the teach order rotated by two). It is a second exposure
+# condition, not a control arm, so the code does not call it "permuted" (gates/attribution_required reads that word
+# in runner code as a control; this runner computes no treatment/control pair, the scorer compares the sessions).
+C5B_FACTS = (("the lynx chases the vole", ("lynx", "chase", "vole")),     # F1
+             ("the heron hunts the frog", ("heron", "hunt", "frog")),      # F2
+             ("the yak eats the grass", ("yak", "eat", "grass")),          # F3
+             ("the crow chases the wren", ("crow", "chase", "wren")))      # F4
+C5B_ORDER = {"stagger": (0, 1, 2, 3), "rotated": (2, 3, 0, 1)}
+C5B_PREFIX = {"stagger": "c5st", "rotated": "c5rt"}
+
+
+def _c5b_session(name):
+    p, order = C5B_PREFIX[name], C5B_ORDER[name]
+    turns = [("%s_t%d" % (p, i + 1), C5B_FACTS[k][0], p, i == 0, None, False) for i, k in enumerate(order)]
+    return turns + [("%s_idle" % p, "", p, False, None, False)]
+
+
+C5B_SESSIONS = {name: {"labels": [t[0] for t in _c5b_session(name)], "idle_label": "%s_idle" % C5B_PREFIX[name],
+                       "taught": [list(C5B_FACTS[k][1]) for k in C5B_ORDER[name]]}
+                for name in ("stagger", "rotated")}
+_EXTRA_TURNS += _c5b_session("stagger") + _c5b_session("rotated")
+
+# RE-TELL session (Amendment B review, 2026-10-13). The idle organ lists candidates in store-slot order and builds its
+# circuit from (K, seed), so in STAGGERED and ROTATED the newest fact always sits in the LAST slot and both sessions
+# run the same race: a host that voices the last slot is indistinguishable from recency. This session teaches F1..F4,
+# then re-tells two EARLY facts late: t5 re-tells F2 verbatim, t6 re-tells F1 with a new patient (the brain's own
+# reconsolidation path rewrites a contradicted fact in its slot). Whichever re-tell re-tags a fact WITHOUT a new slot
+# makes the newest-tagged fact sit in an early slot: recency voices it, a last-slot host does not. Which of the two
+# does so is read from the idle turn's candidate record (kb_idx, t_enc); the scorer never assumes it.
+C5B_RETELL = [("c5re_t%d" % (i + 1), C5B_FACTS[i][0]) for i in range(4)] + [
+    ("c5re_t5", "the heron hunts the frog"),      # F2 again, verbatim
+    ("c5re_t6", "the lynx chases the frog")]      # F1 re-told with a new patient (lynx chase vole -> lynx chase frog)
+C5B_SESSIONS["retell"] = {
+    "labels": [t[0] for t in C5B_RETELL] + ["c5re_idle"], "idle_label": "c5re_idle",
+    "taught": [list(C5B_FACTS[k][1]) for k in range(4)],
+    "retold": [["heron", "hunt", "frog"], ["lynx", "chase", "frog"]]}
+_EXTRA_TURNS += ([(lab, txt, "c5re", i == 0, None, False) for i, (lab, txt) in enumerate(C5B_RETELL)]
+                 + [("c5re_idle", "", "c5re", False, None, False)])
+
 
 def _lbf_rows_extra_turns():
     """Turns that research/runners/lbf_rows/<module>.py declares as a LITERAL `EXTRA_TURNS` list (same 6-tuple shape as

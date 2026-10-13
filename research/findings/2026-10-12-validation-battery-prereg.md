@@ -33,6 +33,7 @@ artifacts:
 bar-sanity: research/packets/b2d-mouth-renderer/bar_sanity_record_amend2.json
 bar-sanity: docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json
 bar-sanity: docs/drafts/idle-replay/bar_sanity_record_c5_organ.json
+bar-sanity: docs/drafts/idle-replay/bar_sanity_record_c5_battery_amendB.json
 
 # The one validation battery: eight flip flags at current main, PRE-REGISTRATION
 
@@ -227,3 +228,245 @@ plus the re-measured S0/S1/S2 for the refute-lens.
 - Stale docstrings, noted not relied on: `webapp/d6_hebbian_chat.py` and `research/runners/d6_hebbian_store.py::
   hebbian_store_enabled` say "Default OFF" while the anchor is True; `onebrain_xedge_surprise_worldmodel_
   production.py`'s comment says "(OFF)" while `_XEDGE_SWM_DEFAULT_ON = True`. The anchors and the readers govern.
+
+## AMENDMENT B (2026-10-13, filed before any c5val_1012 or b2d1012 shard was read)
+
+**Filed by Claude on 2026-10-13, in its own commit, under RULING battery-amend-B-1013.** It folds in RULINGS
+c5-battery-lesion, c5-seed-provenance, lbf-host-input-rows and iw2-transitive-engagement, plus five constraints from
+the 2026-10-13 science review: the commit-lesion arm runs at the pin; the exposure arms run at a revision R_B
+branched from the pin; check E3 ties R_B to the pin; the C5 memory bar is read inside one revision with
+session release OFF; every C5 arm sets BRAIN_CHAT_SEED explicitly. This document has no Amendment A. The "A2" in
+section 5 C1 belongs to the 09-30 C1 prereg. B takes its letter from the ruling.
+
+**Revision 1 (2026-10-13, Amendment B review, both lenses FIX_FIRST; filed before any B arm ran and before any
+c5val_1012 or b2d1012 shard was read).** First filing a93fc12ea. Revision 1 adds the TAG-LESION and RE-TELL arms
+(B.2, B.3), discloses that STAGGERED and ROTATED run the same race (B.3), rules the transitive row a stop-gate row
+(B.5), adds the commit-gate-silence condition to B-C5a, the faculty-name host-input detection in `lb_shard.py`, the
+all-cells defined count and the host-substitutable report (B.4), the provenance disclosures below, and replaces
+R_B (B.1). Every change is stricter or report-only.
+
+**Revision 2 (2026-10-13, re-review FIX_FIRST; still before any B arm ran and before any c5val_1012 or b2d1012
+shard was read).** It discloses that a host argmax over the organ's own tag passes every counted clause, so C5
+ownership of content selection is reported UNDETERMINED (B.3), names the next method (a race-steer arm, design only),
+makes a silent tag-lesion arm undecided (never "moved") in B-C5d, corrects the dev count (69 of 80), records the
+re-tell observation as a production gap (B.2), surfaces the stop-gate status in the top-level verdict with S0
+governing (B.5), and keeps stop-gate rows out of `lb_shard.py`'s numerator too. Stricter or report-only throughout.
+
+**Stricter only.** No bar is loosened, and no seed, turn or arm is removed. Every bar in section 5 (F1, C1, C5, B1,
+B2, F2/F3) stands as written. Each B clause adds a condition, or removes numerator credit or definedness.
+
+**Data state at filing.** The c5val_1012 and b2d1012 shards that landed before this amendment stay data and are
+unread. Two workstation dev-seed-7 runs were made for B, under `research/findings/raw/_regression_battery/
+c5val_1012_dev/`. (1) The commit-lesion check, selfinit turn only, ran 2026-10-13 02:28 from the uncommitted tree
+at bef736ce7, BEFORE the first filing (a93fc12ea); its output was read after that commit. It is a dev check, not
+the smoke of record: JOBS 9.1.1 (commitlesion at P, the full pair turns) is. (2) The re-tell smoke of B.3, after
+revision 1's runner change and before this revision's commit. Dev seeds carry no weight.
+
+**Stand-in preview disclosure.** During the review a verifier previewed slot outcomes on GATE seeds with a stand-in
+idle-replay organ (the organ module alone, synthetic encoding records: no battery shard, no brain). The builder did
+not see that preview, and no gate-seed result of it is given here. The bars added by revision 1 were set from DEV
+seeds 1-8 only, with the same stand-in
+(`docs/drafts/idle-replay/c5_amendB_standin_dev.json`), before any gate data.
+
+### B.1 Revisions
+
+- **P** = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea, the battery pin of the C5 JOBS list.
+  `BRAIN_IDLE_REPLAY_COMMIT_LESION` and `BRAIN_IDLE_REPLAY_TAG_LESION` exist at P
+  (`research/runners/idle_replay_organ.py:148` and `:144`). The registered OFF and ON arms and B's COMMIT-LESION arm
+  run at P.
+- **R_B** = 1304d8d6788125c20f3de912d258ea008f34ad89 (branch `claude-build/battery-amend-b-pin`), branched from P. It is P plus one change: the
+  label-only C5B session block in `research/runners/onebrain_regression_battery.py` (`_EXTRA_TURNS` gains
+  c5st_t1..c5st_t4, c5st_idle, c5rt_t1..c5rt_t4, c5rt_idle, c5re_t1..c5re_t6, c5re_idle). No `sim/`, `webapp/` or
+  organ file differs from P, and the PROBE_TURNS roster (26) is unchanged. The same block sits on the scorer branch
+  (`claude-build/battery-amend-b`); the scorer reads `C5B_SESSIONS` from it. The first filing's R_B (e70e5c995,
+  without the re-tell turns) is superseded; nothing ran on it.
+- **Reference for "changes which fact":** the STAGGERED session at R_B against the ROTATED session at R_B (one
+  revision, one release mode); the TAG-LESION arm against the STAGGERED arm at R_B. None is compared with the pin's
+  ON arm on which fact is voiced.
+
+### B.2 Arms per gate seed (nine; wspool only; one arm in flight globally, section 5 of the JOBS list)
+
+| arm | revision | runner env prefix (after the guards) | turns |
+|---|---|---|---|
+| off | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY=0 BRAIN_IDLE_REPLAY_LEAKLOG=… (registered) | emo,bc_a,bc_b,selfinit |
+| on | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… (registered) | emo,bc_a,bc_b,selfinit |
+| commitlesion | P | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_COMMIT_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=… | emo,bc_a,bc_b,selfinit |
+| off_rb | R_B | as off | emo,bc_a,bc_b,selfinit |
+| on_rb | R_B | as on | emo,bc_a,bc_b,selfinit |
+| stagger | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… | c5st_t1,c5st_t2,c5st_t3,c5st_t4,c5st_idle |
+| rotated | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… | c5rt_t1,c5rt_t2,c5rt_t3,c5rt_t4,c5rt_idle |
+| taglesion | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_TAG_LESION=1 BRAIN_IDLE_REPLAY_LEAKLOG=… | as stagger |
+| retell | R_B | BRAIN_CHAT_SEED=N BRAIN_IDLE_REPLAY_LEAKLOG=… | c5re_t1,…,c5re_t6,c5re_idle |
+
+Facts: F1 "the lynx chases the vole", F2 "the heron hunts the frog", F3 "the yak eats the grass", F4 "the crow
+chases the wren"; every word was stored by the tiny-demo brain at dev seed 7 through the same handler. STAGGERED
+teaches F1 F2 F3 F4, one per turn, then takes the idle turn. ROTATED is the ruling's "permuted exposure": it teaches
+F3 F4 F1 F2 (the order rotated by two), then idles. TAG-LESION is STAGGERED with every engram's excitability set
+equal (the organ's own tag lesion). RE-TELL teaches F1..F4, then re-tells two EARLY-slot facts late: c5re_t5
+re-tells F2 verbatim, c5re_t6 re-tells F1 with a new patient ("the lynx chases the frog"; the production
+reconsolidation path was INTENDED to rewrite a contradicted fact in its own slot; the dev-7 smoke observed it
+APPEND instead, lynx chase frog at kb_idx 10 beside lynx chase vole at kb_idx 5), then idles. That observation is a
+production gap, recorded here and not fixed by B: a re-told or contradicted fact should update its existing
+engram, not duplicate it. Each session is its own fresh
+worker build. The code calls ROTATED `rotated` because `gates/attribution_required` reads the word "permuted" in
+runner code as a control arm.
+
+Every C5 arm (the registered pair included) sets BRAIN_CHAT_SEED explicitly, carries no other BRAIN_* key than its
+row above, and carries no LB_* key: `LB_BATTERY_RELEASE_SESSIONS` stays unset (session release OFF), so the memory
+bar keeps measuring production-like accumulation. Files: `c5_s<N>_<arm>.json`, its `.prov.json` and
+`c5_s<N>_<arm>_rss.jsonl` in `research/findings/raw/_regression_battery/c5val_1012/`.
+
+### B.3 C5 clauses (scorer `tools/c5_battery_score.py`)
+
+**The confound the review found (disclosed).** The organ lists candidates in store-slot order
+(`idle_replay_organ.py:441`), builds its circuit from (K, seed) and draws its noise from (seed, turn, K). STAGGERED
+and ROTATED have the same K (9), the same idle turn and the same slot ages, so on one seed they run the SAME race
+and differ only in what each slot holds, and the newest fact always sits in the LAST slot. Hence: B-C5b holds by
+construction for any brain that picks by slot; B-C5c's 12 sessions are 6 PAIRED outcomes, not 12 draws; and a host
+that voices the last slot (newest-appended, i.e. LIFO) and honours the commit lesion read C5 STANDS 50 of 50 in the
+review. The first filing's bar-sanity info brain `info_host_fifo_lesion_aware` was mislabelled (it voiced the
+newest, last slot: LIFO, not FIFO) and passed 1000 of 1000. It is renamed `newest/LIFO`. Only the TAG-LESION arm and
+the RE-TELL arm (newest tag in an EARLY slot) separate recency from the store slot.
+
+**What STANDS means.** "C5 STANDS (PROVISIONAL)" means the idle reply selects by tag recency. It never means "the
+spiking race owns content selection": a HOST argmax over the organ's own tag (newest t_enc wins, slot 0 on ties,
+silent under the commit lesion; no spiking race) passes every counted clause (300 of 300 in the re-review;
+bar-sanity `info_host_tag_argmax` 1.000) and would pass a counted re-tell too. The tag-lesion and re-tell arms
+separate the TAG from the store SLOT only, never the race from a host argmax. C5 ownership of content selection is
+therefore reported UNDETERMINED (race vs host argmax), not owned; the scorer writes this as `reading`.
+
+**Ruling on the next method (no-defer, 2026-10-13).** The named next method is a counted RACE-STEER arm: during the
+idle race, inject drive into a NON-newest candidate's engram population at a level set on dev seeds; a spiking race
+should then voice the steered fact, and a tag argmax would not change. Design only (hook, dev-only bar rule, nulls):
+`docs/drafts/idle-replay/WORKLOG.md`, "Amendment C candidate". It is not built into B; B ships with the UNDETERMINED
+reading.
+
+Bar-sanity record `docs/drafts/idle-replay/bar_sanity_record_c5_battery_amendB.json` (n=1000, synthetic; re-recorded
+for revision 2): the perfect brain (which now also models the dev tag-lesion silence, 1 of 80) passes 0.973 and the
+noisy perfect brain 0.953; all 16 null brains pass 0.000, including the tag-lesion-inert brain, the always-silent
+tag-lesion brain, and the newest/LIFO host (last slot, honours the commit lesion, blind to the tag lesion), which
+B-C5d fails. Informational, disclosed: the host tag argmax passes 1.000; a newest/LIFO host that also mimics the tag
+lesion with a random pick passes 0.986; a brain whose re-tell voices the last slot passes 0.975, because the re-tell
+arm is informational (below). No behavioural clause here excludes those hosts; that is why STANDS reads only
+"selects by tag recency" and ownership is UNDETERMINED.
+
+- **B-SEED (validity; RULING c5-seed-provenance).** Every arm's sidecar exists; its `env.BRAIN_CHAT_SEED` equals the
+  seed; its git_sha equals P for off/on/commitlesion and R_B for the R_B arms; its BRAIN_* env is the arm's row in
+  B.2 (BRAIN_CHAT_SEED and BRAIN_IDLE_REPLAY_LEAKLOG allowed) and it has no LB_* key; no turn body carries `_error`.
+  Else the seed is UNDEFINED and no clause reads that arm, so invalid data cannot fail a clause.
+- **C5.1, C5.2** unchanged (section 5), read on off and on at P.
+- **C5.3** unchanged in substance, with two readings fixed: 2 GB = 2e9 bytes (1953125 KiB, stricter than 2 GiB), and
+  the ON−OFF difference is read only between off and on at P (one revision, release mode unset in both). No RSS
+  difference is ever read across revisions or across release modes.
+- **B-C5a (the commit lesion changes the idle reply).** The lesion reached the organ (`idle_replay.lesions.commit`
+  true) and removed the pathway's output: no commit-gate spike (`sum(selection.gate_counts) == 0`, docs/TERMS.md
+  "lesion"); else UNDEFINED. The commitlesion idle reply differs from the on idle reply AND is the neutral idle line
+  (abstained, n_utt 0, no winner, text exactly `idle_fallback_text()`, "Nothing in particular is surfacing for me to
+  bring up right now."). emo/bc_a/bc_b are byte-identical across off, on and commitlesion.
+- **E3 (cross-revision identity).** off_rb and on_rb are whole-record identical (every turn body, sorted-key JSON)
+  to off and on at P. Else the seed is UNDEFINED, and its R_B session clauses read undecided.
+- **B-C5b (exposure changes which fact).** Validity first: each session's idle turn ran the organ unlesioned with
+  K >= 1, and every taught fact is a candidate with t_enc >= 1, strictly increasing in teaching order; else
+  UNDEFINED. Then each session voices (n_utt 1, composer brain_store, decode_matches_winner) a fact taught in that
+  session, and the STAGGERED fact differs from the ROTATED fact. Kept as registered; it holds by construction for a
+  slot-picking brain (above), so it carries no evidence against one.
+- **B-C5c (pooled; the organ's design prediction).** The most recently taught fact (F4 after STAGGERED, F2 after
+  ROTATED) is the voiced fact in all but at most 2 of the 12 exposure sessions. The two sessions of a seed run the
+  same race, so the 12 sessions are 6 paired outcomes: the 2 misses allowed may fall on one seed (both sessions) or
+  on two seeds (one session each). The two sessions' two newest facts are disjoint ({F4, F3} against {F2, F1}).
+- **B-C5d (pooled; the tag lesion moves the voiced fact; counted).** Validity per seed: the tag-lesion idle turn
+  records `lesions.tag` true with the other lesions off, equal `x_applied`, and the same candidate store (facts and
+  slots) as the intact STAGGERED arm, and a winner that fails to decode makes the seed UNDEFINED. `moved` = the
+  tag-lesion VOICED fact differs from the intact STAGGERED voiced fact. A SILENT tag-lesion turn (nothing latched) is
+  undecided for B-C5d and never counts as moved. Bar: at least 4 of the 6 seeds MOVED and at most 2 unmoved;
+  undecided (C5 UNDEFINED) when silent seeds leave neither settled. Making a silent seed UNDEFINED for the whole seed
+  was tried first and made the bar UNREACHABLE at the dev silence rate (bar-sanity perfect 0.920 < 0.95), so silence
+  is undecided inside B-C5d only. Set on DEV seeds 1-8 with the stand-in organ at the STAGGERED shape (K 9, idle
+  turn 5): the tag lesion moved the voiced fact on 8 of 8 dev battery-noise draws and in 69 of 80 extra dev draws
+  under the scorer's definition (5 of 10 on the worst dev seed, 8; 1 of the 80 latched nothing); intact voiced the
+  newest fact in 79 of 80. Out-of-sample check by the re-reviewer (stand-in, dev seeds 9-40): moved 31 of 32, newest
+  32 of 32.
+- **B-C5e (pooled; the re-tell).** Validity per seed: the newest-tagged candidate (unique max t_enc) is a re-told
+  fact sitting in an EARLY slot (kb_idx below the last slot); else that seed's re-tell is undecided. Outcome: that
+  fact is the voiced fact. Bar: at most 1 miss of 6. Dev seeds 1-8 stand-in: the in-place re-told fact won 80 of 80
+  draws (both possible store shapes). **Registered INFORMATIONAL (dev-7 smoke, before gate data).** The re-tell
+  smoke (`research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.json`, run 2026-10-13 08:20 at
+  33294dadf, clean tree, under the brain lock; runner identical to R_B's) shows both re-tells APPENDED a store slot:
+  F2 re-told verbatim moved to kb_idx 9 (t_enc 5), and F1 re-told with a new patient was stored as a new fact (lynx
+  chase frog, kb_idx 10, t_enc 6) beside the untouched lynx chase vole at kb_idx 5. The production reconsolidation
+  path was intended to rewrite it in its slot and did not on this route (the production gap of B.2). The newest-
+  tagged fact therefore sat in the LAST slot (K 10, voiced lynx chase frog), where recency and a last-slot host
+  agree. So B-C5e is reported, never in the verdict (`RETELL_COUNTED = False` in the scorer). Even a counted re-tell
+  would separate tag from slot only, not the race from a host tag argmax. The retell arm still runs on every gate
+  seed (no arm is removed).
+
+**Verdict precedence.** A failed clause on any seed, or a failed pooled clause: "C5 REVERT-CANDIDATE seed <n>
+clause <k>". Else any UNDEFINED seed, or an undecidable counted pooled clause: "C5 UNDEFINED" (RULING s2-c5-val (b):
+re-queue that seed's missing arms once at the same revision, then RESULT). Else "C5 STANDS (PROVISIONAL)" with the
+`reading` above. No reverting or tuning on gate seeds; Claude reverts on a REVERT-CANDIDATE.
+
+**Seed 42 is NON-BLIND.** The g6b pair ran at seed 42 and was read on 2026-10-12, before this prereg. The RESULT
+reports that cell as non-blind; it still counts, and no seed is removed. In addition, the 2026-10-12 "dev-7"
+identity smoke (c5-flip-merged-1012's "4/4 whole-record byte-identical") actually ran at seed 42: its prov
+(`sim-pool-node/.../1e2f1ddc4.../c5_offcurve_diag/identity_off_at_F.json.prov.json`) records no BRAIN_CHAT_SEED,
+and the worker's unset default is 42. So a seed-42 OFF record was also seen before this prereg. That artifact is
+committed separately with its prov file (server side).
+
+Scorer command (after all 54 C5 arms land):
+`.venv/bin/python tools/c5_battery_score.py --dir research/findings/raw/_regression_battery/c5val_1012
+--pin f24963bfb05ca535f10f70bf4380fe4b2f68a9ea --rb-pin 1304d8d6788125c20f3de912d258ea008f34ad89
+--out research/findings/raw/_regression_battery/c5val_1012/c5_score.json`
+
+### B.4 tom-false-belief is a HOST-INPUT lesion (RULING lbf-host-input-rows)
+
+The row's lesion (`BRAIN_FALSE_BELIEF_LESION`) forces open the witness gate, whose witnessing input is host-parsed;
+the belief store's own lesion reads STORE-NOT-LOAD-BEARING on 6/6 gate seeds
+(`research/findings/raw/_fb_store/verdict.json`). Rule for b2d1012 and b2d1012-alloff: `tools/b2d_score.py` (default
+mode) keeps the row's cells in every level's per-seed denominator but never in a numerator (S0, S1 and S2), never
+in robust_core or union, and reports them in each level's `host_input` block. The registry is keyed by faculty name,
+so it applies to shards already generated at P (whose lb.json says "neural-lesion"); `tools/lb_shard.py aggregate`
+detects the row by the same name registry. Its F1 is reported as "host-input lesion F1 n/6", never as a neural F1.
+Whether the BRAIN_FALSE_BELIEF_CHAT flip stands on a host-input F1 is a Claude ruling in the RESULT, not an
+automatic STANDS. The row module is retagged `kind="host-input"`; `load_bearing_fraction.py` and `lb_shard.py`
+count host-input rows in the denominator only. B1 per-faculty comparisons do not include the row.
+
+Report-only additions (no count moves): `counts.n_defined_all_scored` (DEFINED over every scored cell, host-input
+included) beside `counts.n_defined`, which counts the coverable neural-lesion cells INCLUDING the stop-gate cells
+of B.5 and excluding host-input cells; and a `host_substitutable` block for
+`neural-selfid` (RULING iw2-selfid-answer-rate: its intact reply equals the host router's, so its load-bearing
+reading shows the spiking route is used, not that a host could not produce the reply).
+
+### B.5 transitive-chat is a STOP-GATE row (RULING iw2-transitive-engagement; stricter reading ruled 2026-10-13)
+
+Faculty key `reasoning-transitive-chat` (the `transitive-chat` row of section 2). Engagement: a DEFINED cell counts
+only when every arm file (intact_a, intact_b, lesion) carries, on the probe turn, a `transitive_trace` record with
+route `chase`, a non-empty `chase` hop list, no `error`, no turn `_error`, and `lesioned` true exactly in the lesion
+arms. Otherwise the cell reads `UNDEFINED:engagement-<reason>`: B2's re-run rule applies. The 10-05 R data predate
+the engagement record (2aac93d43), so their F1 6/6 is UNDEFINED on engagement and is not cited as F1 evidence.
+
+Stop-gate (ruled before any b2d1012 read): the row's cells sit in each level's per-seed denominator and gate the
+flip, and are reported in a separate `stop_gate` block; they never count in the S0, S1 or S2 numerators, robust_core
+or union, in `tools/b2d_score.py` and in `tools/lb_shard.py aggregate` alike. S0 (the registered trace verdict) is
+the governing level for the gate. A failing or UNDEFINED transitive cell at S0 blocks the flip: the top-level
+`verdict` then ends "; STOP-GATE BLOCKED at S0: reasoning-transitive-chat", `stop_gate` carries the S0 gate per
+seed, and the CLI summary prints it. A passing row is reported as "not blocked", never as "validated", and is not
+cited as spiking ownership (the reach sub-flip stays off).
+
+### B.6 Scorers registered before B are unchanged
+
+`tools/iw1_score.py` and `tools/iw2_score.py` call `b2d_score.score(..., amendment_b=False)`, because their preregs
+were registered before B and their bars do not change after the fact. In that mode a shard whose lb.json says
+"host-input" for a registry row (written after the retag) is scored under the kind it was registered with
+("neural-lesion"). `tools/b2d_score.py --no-amendment-b` reproduces the pre-B scorer: its output on the landed
+b2d0929 and iw2-flip-1fb805e shards is identical to the pre-B scorer's (checked 2026-10-13).
+
+### B.7 JOBS
+
+The added C5 lines are section 9 of `research/coordination/2026-10-12-validation-battery-JOBS.md`. 9.1 holds the
+dev-7 lines, run first: commitlesion at P (the smoke of record), the dev-7 E3 pair (off and on at P, off_rb and
+on_rb at R_B) and the four session arms at R_B. 9.2's 42 gate lines (seven per seed: commitlesion at P; off_rb,
+on_rb, stagger, rotated, taglesion, retell at R_B) are released only after every 9.1 line lands rc=0 AND dev-7 E3
+holds (off_rb and on_rb whole-record identical to off and on). Memory is budgeted per SESSION (the worker builds
+one brain per session, about 5.2-5.9 GiB each; the 7-turn dev-7 re-tell session peaked 6.06 GiB): after the 9.1 smokes, the stagger, rotated, taglesion and retell
+gate lines are re-stamped mem_gb = ceil(1.3 x that arm's dev-7 peak). R_B must be provisioned on the pool
+(`~/derisk-pool/revisions/<R_B>`) before its lines dispatch. This amendment queues nothing.
