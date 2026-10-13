@@ -64,6 +64,7 @@ import argparse
 import json
 import os
 import re
+import resource
 import subprocess
 import sys
 import time
@@ -197,6 +198,7 @@ def run_worker(seed, probe, out_path):
            "session": session, "turns": [{"label": l, "message": m, "role": r} for l, m, r in TURNS[probe]],
            "responses": responses, "direct_reads": direct, "weight_audit": audit, "timings_s": timings,
            "wall_s": round(time.time() - t0, 1), "expected_source": SG.EXPECTED_SOURCE,
+           "peak_rss_kb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,   # pool mem_gb sizing
            "sources": sorted({str(r.get("source")) for r in responses.values() if isinstance(r, dict)})}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
