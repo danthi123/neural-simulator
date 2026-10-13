@@ -607,7 +607,7 @@ def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch
 
 def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch, tmp_path):
     """The developed-bundle branch: shared on -> the shared view as `ltm_store` (no `ltm_bundle`); OFF+isolate -> a
-    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and no store, the pre-change call. The
+    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and NO ltm_store kwarg, the pre-change call. The
     build-fallback seed is the bundle's own brain.json seed."""
     import research.runners.developed_brain_io as dbio
     dev = tmp_path / "dev"
@@ -635,7 +635,7 @@ def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch,
     monkeypatch.delenv("BRAIN_SHARED_LTM")
     monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE")
     S._build_chat_brain(str(dev), "stub")
-    assert seen[3]["ltm_bundle"] == S._test_bundle and seen[3]["ltm_store"] is None
+    assert seen[3]["ltm_bundle"] == S._test_bundle and "ltm_store" not in seen[3]   # the pre-change call
 
 
 def test_load_developed_brain_installs_a_given_ltm_store(tmp_path):

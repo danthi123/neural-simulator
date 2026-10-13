@@ -4338,19 +4338,20 @@ def _build_chat_brain(brain: str, renderer: str):
         # ONE BRAIN, MANY CONVERSATIONS (step 1): with BRAIN_SHARED_LTM on the knowledge store comes from the same
         # process-shared read-only cache as the tiny-demo path (same loader, same key), handed in as `ltm_store`; with
         # only BRAIN_LTM_RNG_ISOLATE on, a private RNG-isolated copy is handed in the same way (so its load does not
-        # reseed the global RNG either). Both off (the default) -> `ltm_store` None and load_developed_brain loads its
-        # own copy from `ltm_bundle`, exactly as before.
-        _ltm_store = None
+        # reseed the global RNG either). Both off (the default) -> no `ltm_store` kwarg at all and load_developed_brain
+        # loads its own copy from `ltm_bundle`: the same call as before the change.
+        _ltm_kw = {"ltm_bundle": _ltm_bundle}
         if _ltm_bundle is not None and (_shared_ltm_on() or _ltm_rng_isolate_on()):
             _ltm_store = _ltm_store_for_conversation(_ltm_bundle, seed=_developed_ltm_seed(bundle),
                                                      enable_codebook_cache=_ltm_codebook_cache_on(),
                                                      enable_decode_escalation=_ltm_decode_escalation_on())
+            if _ltm_store is not None:
+                _ltm_kw = {"ltm_bundle": None, "ltm_store": _ltm_store}
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                composer_kind=_composer_kind_override,
                                                integrated_loop=_integrated_loop_enabled(),
-                                               ltm_bundle=_ltm_bundle if _ltm_store is None else None,
-                                               ltm_store=_ltm_store,
+                                               **_ltm_kw,
                                                enable_codebook_cache=_ltm_codebook_cache_on(),
                                                enable_decode_escalation=_ltm_decode_escalation_on(),
                                                onebrain_k_max=_onebrain_k_max_override())
