@@ -152,15 +152,15 @@
    0.0038
   ]
  },
- "repo_head": "ecc660680d8d4935d90d4b51c8bd27f155e53576",
+ "repo_head": "33294dadf8eff0a5465a7431612a8ca32e718c84",
  "scorer_files": {
-  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "a990c47389ec7bc5e10a573acee703387cc3837d549971feca4027b4591d560b",
-  "tools/c5_battery_score.py": "aa8f477eecc2ace8590f1a4e44bcd176402024848cc4507c8ea45b5ebe8125b5"
+  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "0b49cf8d6d67204d25c6872c88117d1a2ffe1e721a202b498a5cdf765101076b",
+  "tools/c5_battery_score.py": "4bf82208b121fec425b09603d22a590d08b0fcc023153c1b6cf83994591bdf44"
  },
- "scorer_sha256": "2c31a85e8bae31e4bfba64d3dec972db23fa19a9beaba173e76dbb1004d664bb",
+ "scorer_sha256": "430b80cc9cf8b7939ddcaade2c7d5075b5e8987751531cd342b6af9626a5b2d3",
  "seed": 0,
  "spec": "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py",
- "spec_sha256": "a990c47389ec7bc5e10a573acee703387cc3837d549971feca4027b4591d560b",
+ "spec_sha256": "0b49cf8d6d67204d25c6872c88117d1a2ffe1e721a202b498a5cdf765101076b",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,

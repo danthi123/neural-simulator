@@ -583,14 +583,20 @@ def test_tag_lesion_validity():
     assert "arm-env:taglesion:BRAIN_IDLE_REPLAY_TAG_LESION=None" in per[101]["undefined_reasons"]
 
 
+def _inplace_retell(S, data):
+    for s in S.SEEDS:                                            # the shape a counted re-tell needs (newest tag early)
+        c = S._retell_cands(inplace=True)
+        data[s]["retell"]["resp"]["c5re_idle"] = S._idle(c, 5)
+
+
 @pytest.mark.parametrize("counted", [True, False])
 def test_retell_counts_only_when_registered_counted(monkeypatch, counted):
     S = _spec()
     monkeypatch.setattr(C, "RETELL_COUNTED", counted)
     data = S.perfect(_rng(25))
+    _inplace_retell(S, data)
     for s in S.SEEDS:                                            # the re-tell idle turn voices the LAST slot everywhere
-        body = data[s]["retell"]["resp"]["c5re_idle"]
-        cands = body["self_initiated"]["idle_replay"]["candidates"]
+        cands = data[s]["retell"]["resp"]["c5re_idle"]["self_initiated"]["idle_replay"]["candidates"]
         data[s]["retell"]["resp"]["c5re_idle"] = S._idle(cands, len(cands) - 1)
     per, agg = _score_draw(S, data)
     assert agg["pooled_B-C5e"]["n_bad"] == 6 and agg["pooled_B-C5e"]["counted"] is counted
@@ -599,14 +605,29 @@ def test_retell_counts_only_when_registered_counted(monkeypatch, counted):
         assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "NOT 'the spiking race owns" in agg["reading"]
 
 
-def test_retell_with_the_newest_tag_in_the_last_slot_is_undecided(monkeypatch):
+def test_retell_as_the_smoke_left_it_is_undecided(monkeypatch):
+    """The dev-7 smoke: both re-tells appended a slot, so the newest tag is in the last slot. Counted, every seed would
+    be UNDEFINED; registered informational (RETELL_COUNTED False), it never enters the verdict."""
     S = _spec()
+    assert C.RETELL_COUNTED is False
+    per, agg = _score_draw(S, S.perfect(_rng(26)))
+    assert all(per[s]["sessions"]["retell"]["reasons"] == ["retell:newest-in-last-slot"] for s in S.SEEDS)
+    assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and agg["pooled_B-C5e"]["counted"] is False
     monkeypatch.setattr(C, "RETELL_COUNTED", True)
-    data = S.perfect(_rng(26))
-    cands = data[42]["retell"]["resp"]["c5re_idle"]["self_initiated"]["idle_replay"]["candidates"]
-    cands[5]["kb_idx"] = 9                                       # the re-tell appended a slot
-    per, agg = _score_draw(S, data)
+    per, agg = _score_draw(S, S.perfect(_rng(26)))
     assert "retell:newest-in-last-slot" in per[42]["undefined_reasons"] and agg["verdict"].startswith("C5 UNDEFINED")
+    data = S.perfect(_rng(26))
+    _inplace_retell(S, data)
+    per, agg = _score_draw(S, data)
+    assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "tag, not the store slot" in agg["reading"]
+
+
+def test_dev7_retell_smoke_appended_both_slots():
+    d = json.load(open(os.path.join(_ROOT, "research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.json")))
+    ir = d["c5re_idle"]["self_initiated"]["idle_replay"]
+    why, hit, det = C.retell_read(d["c5re_idle"], C.c5b_sessions()["retell"])
+    assert why == ["newest-in-last-slot"] and det["newest_tagged"] == ["lynx", "chase", "frog"]
+    assert {tuple(c["fact"]): c["kb_idx"] for c in ir["candidates"]}[("lynx", "chase", "vole")] == 5
 
 
 def test_lifo_host_fails_amendment_b_overall():

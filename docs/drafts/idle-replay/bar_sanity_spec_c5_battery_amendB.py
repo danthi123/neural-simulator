@@ -78,7 +78,7 @@ SESSIONS = {"stagger": {"labels": ["c5st_t1", "c5st_t2", "c5st_t3", "c5st_t4", "
             "retell": {"labels": ["c5re_t1", "c5re_t2", "c5re_t3", "c5re_t4", "c5re_t5", "c5re_t6", "c5re_idle"],
                        "idle_label": "c5re_idle", "taught": [F[0], F[1], F[2], F[3]],
                        "retold": [["heron", "hunt", "frog"], ["lynx", "chase", "frog"]]}}
-F1R = ["lynx", "chase", "frog"]       # F1 re-told with a new patient, rewritten in its own (early) slot
+F1R = ["lynx", "chase", "frog"]       # F1 re-told with a new patient
 DEMO = "Something's been on my mind — cat eat worm. What does cat eat?"
 GB_KIB = 976562                       # 1e9 bytes in KiB
 
@@ -109,12 +109,19 @@ def _cands(taught=()):
     return out
 
 
-def _retell_cands():
-    """The re-tell store as the dev-7 smoke left it (B.3): F1 rewritten in its slot with a new patient (newest tag),
-    F2 re-told verbatim without a new slot or a new tag, F3 F4 as taught. The newest-tagged fact is NOT in the last slot."""
+def _retell_cands(inplace=False):
+    """The re-tell store. Default: as the dev-7 smoke left it (c5_s7_retell.json): both re-tells APPENDED a slot, F2
+    re-told verbatim at slot 9 (its old slot 6 record replaced), F1 re-told with a new patient at slot 10 beside the
+    untouched F1 at slot 5, so the newest-tagged fact is in the LAST slot (the arm is informational). `inplace=True`:
+    the shape a counted re-tell needs (F1 rewritten in its own early slot), used only to test the counted logic."""
     out = [{"fact": f, "kb_idx": i, "t_enc": 0, "age": 7} for i, f in enumerate(BUILD)]
-    out += [{"fact": F1R, "kb_idx": 5, "t_enc": 6, "age": 1}, {"fact": F[1], "kb_idx": 6, "t_enc": 2, "age": 5},
-            {"fact": F[2], "kb_idx": 7, "t_enc": 3, "age": 4}, {"fact": F[3], "kb_idx": 8, "t_enc": 4, "age": 3}]
+    if inplace:
+        out += [{"fact": F1R, "kb_idx": 5, "t_enc": 6, "age": 1}, {"fact": F[1], "kb_idx": 6, "t_enc": 2, "age": 5},
+                {"fact": F[2], "kb_idx": 7, "t_enc": 3, "age": 4}, {"fact": F[3], "kb_idx": 8, "t_enc": 4, "age": 3}]
+        return out
+    out += [{"fact": F[0], "kb_idx": 5, "t_enc": 1, "age": 6}, {"fact": F[2], "kb_idx": 7, "t_enc": 3, "age": 4},
+            {"fact": F[3], "kb_idx": 8, "t_enc": 4, "age": 3}, {"fact": F[1], "kb_idx": 9, "t_enc": 5, "age": 2},
+            {"fact": F1R, "kb_idx": 10, "t_enc": 6, "age": 1}]
     return out
 
 

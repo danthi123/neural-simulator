@@ -127,7 +127,11 @@ MAX_TAG_UNMOVED = 2
 # B-C5e (re-tell; counted only if the dev-7 smoke showed a re-tell that re-tags a fact in an early slot, see
 # RETELL_COUNTED). Dev seeds 1-8 stand-in: the in-place re-told fact won 80 of 80 draws. Misses allowed of six:
 MAX_RETELL_MISSES = 1
-RETELL_COUNTED = None            # set below from the dev-7 smoke, before any gate data (Amendment B, B.3)
+# Fixed from the dev-7 re-tell smoke (2026-10-13 08:27, research/findings/raw/_regression_battery/c5val_1012_dev/
+# c5_s7_retell.json), before any gate data: BOTH re-tells APPENDED a new store slot (F2 verbatim -> kb_idx 9; F1 with a
+# new patient -> lynx chase frog at kb_idx 10, the old lynx chase vole kept at 5; no in-slot rewrite on this route), so
+# the newest-tagged fact sat in the LAST slot and recency and a last-slot host agree. The re-tell is INFORMATIONAL.
+RETELL_COUNTED = False
 RELEASE_ENV = "LB_BATTERY_RELEASE_SESSIONS"
 # research/runners/self_initiated_production_organ.py::idle_fallback_text() (pinned by tests/test_battery_amendment_b.py)
 NEUTRAL_IDLE_LINE = "Nothing in particular is surfacing for me to bring up right now."
