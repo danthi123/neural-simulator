@@ -31,6 +31,10 @@ one or two LESION arms (the responsible faculty cut through an env flag producti
 monkeypatch in the arm's worker), a PERMUTED-EXPOSURE arm (the teacher's exposure permuted: the reply must follow the
 exposure), and for C2 two INFORMATIONAL arms (never counted). Lesion arms get a `.rep0` repeat (a second fresh process)
 so a reply-level effect is "reproduced against the lesion's own repeat" (docs/TERMS.md, load-bearing).
+AMENDMENT A4 (2026-10-13, docs/drafts/stage2-exit/AMENDMENT-A4.md), group `ask` only: a COUNTED `reversed` arm (the same
+probes with the probe blocks in reverse order, its own session; every C3 correctness clause must hold in BOTH orders), a
+taught moat whose teach turn was not acquired is UNDEFINED (never counted as novel), and an informational `da_lesion`
+arm (`BRAIN_CURIOSITY_DA_LESION=1`; reported, never counted). A FAIL of C1 / C3 also prints the gaps A4 names.
 
 HARNESS (identical in every arm incl. intact_a; declared in the prereg): numpy/CPU, one BLAS thread, stub renderer, no
 LLM, tiny-demo brain with the LTM tier at its shipped default (expected `source` = "tiny-demo +LTM"),
@@ -75,6 +79,16 @@ MAX_AGE_H = 240               # every pool line declares max_age_h (the dispatch
 # and 8.1 GB (emo) on the final runner, so mem_gb=9 (the dispatcher's budget) under a 10 GB memcap (the hard kill)
 MEM_GB = 9
 MEMCAP_GB = 10
+# amendment A4 (a): the taught-moat ask-rate is read over the moats whose teach turn was ACQUIRED; with none acquired the
+# rate does not exist and the seed is UNDEFINED for C3 (an acquisition failure is never read as a curiosity result)
+ASK_MOAT_MIN_DEFINED = 1
+# amendment A4 reporting rule (no bar change): a FAIL of these groups names these gaps, whichever sub-clause failed
+A4_NAMED_GAPS = {
+    "conv": ("wh-locative question parse",
+             "locative frame storage (the teach echo drops the preposition)",
+             "discourse elaboration for 'tell me more'"),
+    "ask": ("global DA engagement threshold; no per-topic learning-progress signal",),
+}
 
 BASE_ENV = {"SIM_BACKEND": "numpy", "BRAIN_CHAT_RENDERER": "stub", "SIM_DISABLE_LLM": "1", "CUDA_VISIBLE_DEVICES": "",
             "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1",
@@ -149,16 +163,22 @@ _INFER_PROBES = [
     ("p_yesno", "does crow chase moth", "probe"),                # transitive yes/no over a non-adjacent pair (reported;
     ("c_dog_chase", "what does the dog chase", "control"),       #   counted only in the informational transitive arm)
 ]
-_ASK_PROBES = [
+# the `ask` probes in three BLOCKS (amendment A4 names them so the reversed-order arm can reverse them); the registered
+# order is DISCRIM + LEARNABLE + UNLEARNABLE, unchanged since the prereg (pinned by tests/test_stage2_exit_gate_a4.py)
+_ASK_DISCRIM = [
     ("g_eel", "what does the eel chase", "probe"),               # NOVEL-topic gap: abstain + the follow-up question
     ("m_yak", "what does the yak chase", "probe"),               # TAUGHT-topic moat: abstain, no follow-up
     ("g_crab", "what does the crab chase", "probe"),
     ("m_moose", "what does the moose chase", "probe"),
     ("g_newt", "what does the newt chase", "probe"),
     ("m_goat", "what does the goat chase", "probe"),
+]
+_ASK_LEARNABLE = [
     ("lp_ibex_1", "what does the ibex chase", "probe"),          # a LEARNABLE gap: asked ...
     ("t_ibex", "the ibex chases the marmot", "teach"),           # ... the teacher answers ...
     ("lp_ibex_2", "what does the ibex chase", "probe"),          # ... the gap closes: recalled, not asked again
+]
+_ASK_UNLEARNABLE = [
     ("u_toad_1", "what does the toad chase", "probe"),           # an UNLEARNABLE gap: asked, never answered ...
     ("c_dog_1", "what does the dog chase", "control"),
     ("u_toad_2", "what does the toad chase", "probe"),
@@ -167,6 +187,15 @@ _ASK_PROBES = [
     ("c_dog_3", "what does the dog chase", "control"),
     ("u_toad_4", "what does the toad chase", "probe"),           # ... zero learning progress: the asking must STOP
 ]
+_ASK_PROBES = _ASK_DISCRIM + _ASK_LEARNABLE + _ASK_UNLEARNABLE
+_ASK_TEACH = [("t_yak", "the yak eats the grass", "teach"), ("t_moose", "the moose eats the leaf", "teach"),
+              ("t_goat", "the goat eats the hay", "teach")]
+# amendment A4 (b): the REVERSED-ORDER arm. The teach block stays first (it is the exposure the moats need, not a probe
+# block); the three probe blocks run in reverse order, each block's own order unchanged (the learnable block's teach turn
+# must sit between its two probes). Its own session, a COUNTED arm.
+_ASK_REVERSED = _ASK_TEACH + _ASK_UNLEARNABLE + _ASK_LEARNABLE + _ASK_DISCRIM
+# the topic each `what does the <x> chase` probe asks about (the moat rule reads it)
+ASK_PROBE_TOPIC = {l: m.split()[3] for l, m, _r in _ASK_PROBES if m.startswith("what does the ")}
 _INNER_PROBES = [
     ("p_private", "say something", "probe"),                     # PRIVATE speech: an idle turn voices a stored thought
     ("p_chase_all", "what does the lynx chase all the way", "probe"),      # INNER chain: lynx->vole->beetle->mite
@@ -215,15 +244,22 @@ GROUPS = {
     },
     "ask": {
         "criterion": "C3", "primary": True, "env": {},
-        "turns": [("t_yak", "the yak eats the grass", "teach"), ("t_moose", "the moose eats the leaf", "teach"),
-                  ("t_goat", "the goat eats the hay", "teach")] + _ASK_PROBES,
+        "turns": _ASK_TEACH + _ASK_PROBES,
         "permuted_turns": [("t_yak", "the eel eats the grass", "teach"), ("t_moose", "the crab eats the leaf", "teach"),
                            ("t_goat", "the newt eats the hay", "teach")] + _ASK_PROBES,
         "lesions": {"lesion_curiosity": {"env": {"BRAIN_CURIOSITY_LESION": "1"}, "patch": None,
                                          "cuts": "the curiosity drive pathway (from_novelty -> the spiking ASK pool)"},
                     "lesion_graded": {"env": {"BRAIN_CURIOSITY_GRADED_NOVELTY_LESION": "1"}, "patch": None,
                                       "cuts": "the graded per-topic novelty read (every topic reads ceiling novelty)"}},
-        "informational": {},
+        # amendment A4 (b): COUNTED order arms (production defaults, nothing installed; only the turn order differs)
+        "order_arms": {"reversed": {"turns": _ASK_REVERSED,
+                                    "note": "the probe blocks in reverse order (unlearnable, learnable, discrimination) "
+                                            "after the same teach block; every C3 correctness clause must hold here too"}},
+        # amendment A4 (c): the DA/engagement crave-threshold coupling pinned to gain 1.0 (reported, never counted)
+        "informational": {"da_lesion": {"env": {"BRAIN_CURIOSITY_DA_LESION": "1"}, "patch": None,
+                                        "note": "the default-ON DA/engagement crave-threshold modulation pinned to 0 "
+                                                "(gain 1.0): does the order confound vanish, and does the unlearnable "
+                                                "gap still stop? reported, never counted"}},
     },
     "emo": {
         "criterion": "C4", "primary": True, "env": {},
@@ -251,10 +287,18 @@ PRIMARY_GROUPS = tuple(g for g, d in GROUPS.items() if d["primary"])
 CRITERIA = ("C1", "C2", "C3", "C4", "C5")
 
 
+def order_arms(group):
+    """The COUNTED order arms of a group (amendment A4: `ask` -> ("reversed",); every other group none)."""
+    return tuple(GROUPS[group].get("order_arms") or {})
+
+
 def turns_for(group, seed, arm):
     g = GROUPS[group]
     if arm == "permuted":
         return list(g["permuted_turns"])
+    base = str(arm).split(".rep")[0]
+    if base in (g.get("order_arms") or {}):
+        return list(g["order_arms"][base]["turns"])
     return list(g["turns"])
 
 
@@ -266,19 +310,22 @@ def arms_for(group, with_repeats=True, with_informational=True):
         if with_repeats:
             arms.append(les + ".rep0")
     arms.append("permuted")
+    arms += list(order_arms(group))            # amendment A4: counted, so emitted, required and validated like the rest
     if with_informational:
         arms += list(g["informational"])
     return arms
 
 
 def arm_spec(group, arm):
-    """(env, patch, kind) for an arm. kind in intact | lesion | permuted | informational."""
+    """(env, patch, kind) for an arm. kind in intact | lesion | permuted | order | informational."""
     g = GROUPS[group]
     base = arm.split(".rep")[0]
     if base in ("intact_a", "intact_b"):
         return {}, None, "intact"
     if base == "permuted":
         return {}, None, "permuted"
+    if base in (g.get("order_arms") or {}):
+        return {}, None, "order"
     if base in g["lesions"]:
         d = g["lesions"][base]
         return dict(d["env"]), d["patch"], "lesion"
@@ -682,6 +729,14 @@ def private_selected_by_state(intact_scored, permuted_scored):
 
 
 # ══════════════════════════════════════════════ SCORING (pure functions over shard dicts) ══════════════════════════
+def _canonical_teach(message):
+    """A canonical active-voice teach sentence `the S Vs [prep] the O` -> [S, lemma, O], else None."""
+    m = re.match(r"^the ([a-z]+) ([a-z]+) (?:(?:in|on|at|to) )?the ([a-z]+)$", str(message or ""))
+    if m and _3SG_TO_LEMMA.get(m.group(2)):
+        return [m.group(1), _3SG_TO_LEMMA[m.group(2)], m.group(3)]
+    return None
+
+
 def _taught(shard_turns):
     """The facts the teacher asserted this session, as the host extractor would store a canonical active-voice
     3-content-word sentence (the PASSIVE teach is deliberately NOT listed here: what the brain stored from it is what
@@ -690,10 +745,33 @@ def _taught(shard_turns):
     for t in shard_turns or []:
         if t.get("role") != "teach":
             continue
-        m = re.match(r"^the ([a-z]+) ([a-z]+) (?:(?:in|on|at|to) )?the ([a-z]+)$", t["message"])
-        if m and _3SG_TO_LEMMA.get(m.group(2)):
-            facts.append([m.group(1), _3SG_TO_LEMMA[m.group(2)], m.group(3)])
+        f = _canonical_teach(t["message"])
+        if f:
+            facts.append(f)
     return facts
+
+
+def teach_acquired(resp, fact):
+    """Amendment A4 (a): did the brain ACQUIRE this canonical teach? Read at the reply level on the teach turn itself:
+    the turn did not abstain and its `recalled_svo` (the handler's echo of what it stored) is exactly the taught triple.
+    A role-binding abstain ("... didn't resolve the PATIENT", dev 7 `the goat eats the hay`) is not acquired."""
+    p = _primary(resp)
+    if p is None or p["abstained"] or not p["recalled_svo"] or len(p["recalled_svo"]) != 3:
+        return False
+    return [str(x).lower() for x in p["recalled_svo"]] == [str(x).lower() for x in fact]
+
+
+def acquired_topics(shard):
+    """{agent: acquired?} over the shard's own canonical teach turns (a topic taught twice counts if either landed)."""
+    resp = shard.get("responses") or {}
+    out = {}
+    for t in shard.get("turns") or []:
+        if t.get("role") != "teach":
+            continue
+        f = _canonical_teach(t.get("message"))
+        if f:
+            out[f[0]] = bool(out.get(f[0])) or teach_acquired(resp.get(t.get("label")), f)
+    return out
 
 
 def score_conv(shard, permuted=False):
@@ -764,14 +842,22 @@ def score_infer(shard, permuted=False):
 def score_ask(shard, permuted=False):
     """C3. Ask-rate on NOVEL-topic gaps >= 2x the rate on TAUGHT-topic moats (and >= 2/3 itself); the learnable gap is
     asked once, answered, then recalled and not asked; the unlearnable gap is asked at first and NOT asked by its 4th
-    probe (zero learning progress stops the asking). Permuted: the OTHER set was taught, so the asks must follow."""
+    probe (zero learning progress stops the asking). Permuted: the OTHER set was taught, so the asks must follow.
+    Reads by LABEL, so it scores the amendment-A4 reversed-order arm unchanged. Amendment A4 (a): the moat rate counts
+    only the taught moats this arm ACQUIRED (`acquired_topics`); an unacquired one is reported in `moats_undefined`."""
     resp = shard.get("responses") or {}
     gaps, moats = (["m_yak", "m_moose", "m_goat"], ["g_eel", "g_crab", "g_newt"]) if permuted else \
                   (["g_eel", "g_crab", "g_newt"], ["m_yak", "m_moose", "m_goat"])
+    # amendment A4 (a): a taught moat whose teach turn this arm did NOT acquire is UNDEFINED: excluded from the moat
+    # rate and never moved into the gap set (it is reported, below). The gap set is always the three never-taught topics.
+    acq = acquired_topics(shard)
+    moats_def = [l for l in moats if acq.get(ASK_PROBE_TOPIC[l]) is True]
+    moats_undef = [l for l in moats if l not in moats_def]
     a_gap = [asked(resp.get(l)) for l in gaps]
-    a_moat = [asked(resp.get(l)) for l in moats]
+    a_moat = [asked(resp.get(l)) for l in moats_def]
     rate_gap = (sum(1 for x in a_gap if x) / float(len(a_gap))) if all(x is not None for x in a_gap) else None
-    rate_moat = (sum(1 for x in a_moat if x) / float(len(a_moat))) if all(x is not None for x in a_moat) else None
+    rate_moat = ((sum(1 for x in a_moat if x) / float(len(a_moat)))
+                 if (len(moats_def) >= ASK_MOAT_MIN_DEFINED and all(x is not None for x in a_moat)) else None)
     ok = {"ask_rate_gap": rate_gap, "ask_rate_moat": rate_moat,
           "discriminates": (rate_gap is not None and rate_moat is not None and rate_gap >= ASK_GAP_FLOOR
                             and rate_gap >= ASK_RATIO_BAR * rate_moat),
@@ -782,6 +868,13 @@ def score_ask(shard, permuted=False):
           "builtin_dog_cat": all(_patient(resp.get(l)) == "cat" for l in ("c_dog_1", "c_dog_2", "c_dog_3"))}
     ok["all"] = bool(ok["discriminates"] and ok["lp_learnable"] and ok["lp_unlearnable"] and ok["all_gaps_abstain"]
                      and ok["builtin_dog_cat"])
+    # amendment A4 (a), reported: which taught moats counted, and whether the moat rate exists at all (the aggregate
+    # makes a seed UNDEFINED, never FAIL, when it does not)
+    ok["n_moats_defined"] = len(moats_def)
+    ok["moats_undefined"] = moats_undef
+    ok["moat_rate_defined"] = len(moats_def) >= ASK_MOAT_MIN_DEFINED
+    ok["moat_items"] = {l: {"topic": ASK_PROBE_TOPIC[l], "teach_acquired": bool(acq.get(ASK_PROBE_TOPIC[l])),
+                            "asked": asked(resp.get(l)), "counted": l in moats_def} for l in moats}
     ok["asked_by_label"] = {l: asked(resp.get(l)) for l in gaps + moats + ["lp_ibex_1", "lp_ibex_2", "u_toad_1", "u_toad_2", "u_toad_3", "u_toad_4"]}
     # secondary (internal) reads: the organ's own novelty / want / threshold per probe
     sec = {}
@@ -873,6 +966,32 @@ SCORED_LABELS = {
 }
 
 
+ASK_TAUGHT_MOATS = ("m_yak", "m_moose", "m_goat")       # the taught-topic moats of the registered (non-permuted) teaching
+
+
+def effective_scored_labels(group, les, intact_shard, lesion_shard):
+    """The lesion's scored turns. Amendment A4 (a), `ask` only: a taught moat whose teach turn was not acquired in BOTH
+    intact_a and the lesion arm is dropped (an effect on a topic the brain never learned is not a graded-novelty
+    effect). Only removes turns, so it can only make the lesion clause harder to meet."""
+    labs = list(SCORED_LABELS[group][les])
+    if group != "ask":
+        return labs
+    ai, al = acquired_topics(intact_shard or {}), acquired_topics(lesion_shard or {})
+    return [l for l in labs if l not in ASK_TAUGHT_MOATS
+            or (ai.get(ASK_PROBE_TOPIC[l]) is True and al.get(ASK_PROBE_TOPIC[l]) is True)]
+
+
+def _moat_reason(arm, scored):
+    """Amendment A4 (a): the UNDEFINED reason when an arm's taught-moat ask-rate does not exist (matched by the
+    stage precondition's tag `taught moat acquired`)."""
+    if scored.get("moat_rate_defined", True):
+        return []
+    n_def = int(scored.get("n_moats_defined") or 0)
+    und = scored.get("moats_undefined") or []
+    return ["%s: taught moat acquired on %d of %d (need >= %d; undefined %s): the moat ask-rate is undefined (A4 (a))"
+            % (arm, n_def, n_def + len(und), ASK_MOAT_MIN_DEFINED, ",".join(und))]
+
+
 def shard_path(out_dir, seed, group, arm):
     return os.path.join(out_dir, "s%d" % int(seed), "%s__%s.json" % (group, arm.replace(":", "_")))
 
@@ -929,6 +1048,9 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                             row["undefined_reasons"].append("%s arm missing or unreadable" % arm_name)
                 if have.get("permuted") is None or "responses" not in (have.get("permuted") or {}):
                     row["undefined_reasons"].append("permuted arm missing or unreadable")
+                for oa in order_arms(group):          # amendment A4 (b): a counted arm, so missing = UNDEFINED
+                    if have.get(oa) is None or "responses" not in (have.get(oa) or {}):
+                        row["undefined_reasons"].append("%s arm missing or unreadable" % oa)
                 # every COUNTED arm must be a valid measurement (prereg section 7), not only the intact pair
                 for arm_name in need:
                     sh = have.get(arm_name)
@@ -942,13 +1064,35 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                 row["correct"] = bool(row["intact"]["all"])
                 if group == "emo" and row["intact"]["n_parsed"] < 4:
                     row["undefined_reasons"].append("only %d of 4 feel reads parsed" % row["intact"]["n_parsed"])
+                if group == "ask":
+                    row["undefined_reasons"] += _moat_reason("intact_a", row["intact"])
+                # ── amendment A4 (b): every correctness clause must hold in EVERY counted order, not only the
+                #    registered one (so the probe order cannot carry the verdict) ──
+                if order_arms(group):
+                    row["correct_by_order"] = {"registered": bool(row["intact"]["all"])}
+                    row["orders"] = {}
+                    for oa in order_arms(group):
+                        O = have.get(oa)
+                        if O is not None and "responses" in O:
+                            so = SCORERS[group](O)
+                            row["orders"][oa] = so
+                            row["correct_by_order"][oa] = bool(so["all"])
+                            if group == "ask":
+                                row["undefined_reasons"] += _moat_reason(oa, so)
+                        else:
+                            row["correct_by_order"][oa] = None
+                    row["correct"] = all(v is True for v in row["correct_by_order"].values())
                 # ── lesion: the reply-level effect must be present AND reproduced ──
                 row["lesions"] = {}
                 for les in g["lesions"]:
                     L, R = have.get(les), have.get(les + ".rep0")
                     rec = {"present": L is not None, "repeat_present": R is not None}
                     if L is not None and "responses" in L:
-                        labs = SCORED_LABELS[group][les]
+                        labs = effective_scored_labels(group, les, ia, L)
+                        if group == "ask" and labs != SCORED_LABELS[group][les]:
+                            rec["scored_labels_dropped_A4"] = [l for l in SCORED_LABELS[group][les] if l not in labs]
+                        if not labs:
+                            row["undefined_reasons"].append("%s: no scored turn left after the A4 (a) moat rule" % les)
                         d = [reply_differs(ra, L["responses"], l) for l in labs]
                         rec["differs"] = dict(zip(labs, d)); rec["effect"] = any(x is True for x in d)
                         if group == "emo":
@@ -989,6 +1133,9 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         row["tracks"] = bool(sp["all"]) and row["private_selected_by_state"]
                     else:
                         row["tracks"] = bool(sp["all"])
+                        if group == "ask":
+                            # amendment A4 (a): the permuted teaching's own moats (eel/crab/newt) need their teach acquired
+                            row["undefined_reasons"] += _moat_reason("permuted", sp)
                 else:
                     row["tracks"] = None
                 # ── informational arms (never counted) ──
@@ -1000,7 +1147,11 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                             si = SCORERS[group](I)
                             row["informational"][inf] = {k: v for k, v in si.items()
                                                          if k in ("all", "conclusion", "derived_flag", "yesno_derived_moth",
-                                                                  "yesno_misparsed_as_first_hop", "yesno_reply")}
+                                                                  "yesno_misparsed_as_first_hop", "yesno_reply",
+                                                                  # amendment A4 (c): the DA-lesion arm's C3 reads
+                                                                  "ask_rate_gap", "ask_rate_moat", "discriminates",
+                                                                  "lp_learnable", "lp_unlearnable", "moats_undefined",
+                                                                  "asked_by_label")}
                             pi = I.get("patch")
                             if isinstance(pi, dict) and "calls" in pi:
                                 row["informational"][inf]["patch_calls"] = pi["calls"]
@@ -1021,9 +1172,16 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                        and all(n_rep[l] == n_def for l in les_names) and n_tr_def == n_def and n_tracks == n_def)
             else "FAIL")
         why = []
+        # amendment A4 (b): how many defined seeds were correct in each counted order
+        n_by_order = {}
+        if order_arms(group):
+            for o in ("registered",) + order_arms(group):
+                n_by_order[o] = sum(1 for s in defined if (rows[s].get("correct_by_order") or {}).get(o) is True)
         if verdict == "FAIL":
             if n_correct < n_def:
-                why.append("capability absent on %d of %d seeds" % (n_def - n_correct, n_def))
+                per_order = ", ".join("%s %d of %d" % (o, k, n_def) for o, k in n_by_order.items())
+                why.append("capability absent on %d of %d seeds%s" % (
+                    n_def - n_correct, n_def, (" (correct per order: %s)" % per_order) if per_order else ""))
             else:
                 for l in les_names:
                     if n_les[l] < n_def:
@@ -1050,9 +1208,17 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                     sub[k] += 1 if v else 0
         if group == "inner":
             sub["private_selected_by_state"] = sum(1 for s in defined if rows[s].get("private_selected_by_state"))
+        for oa in order_arms(group):        # amendment A4 (b): the same clauses read in each counted order arm
+            for k in ("all", "discriminates", "lp_learnable", "lp_unlearnable"):
+                sub["%s_%s" % (oa, k)] = sum(1 for s in defined if ((rows[s].get("orders") or {}).get(oa) or {}).get(k))
+        if group == "ask":
+            sub["all_taught_moats_acquired"] = sum(1 for s in defined if not rows[s]["intact"].get("moats_undefined"))
         per_group[group] = {"criterion": g["criterion"], "primary": g["primary"], "verdict": verdict, "why": why,
                             "n_defined": n_def, "n_correct": n_correct, "n_lesion_effect": n_les,
-                            "n_reproduced": n_rep, "n_permuted_tracks": n_tracks, "sub_clauses_n_true": sub, "seeds": rows}
+                            "n_reproduced": n_rep, "n_permuted_tracks": n_tracks, "sub_clauses_n_true": sub, "seeds": rows,
+                            "n_correct_by_order": n_by_order,
+                            # amendment A4 reporting rule: the gaps a FAIL of C1 / C3 names (no bar change)
+                            "named_gaps": list(A4_NAMED_GAPS.get(group, ())) if verdict == "FAIL" else []}
     crit = {}
     for c in CRITERIA:
         prim = [g for g in PRIMARY_GROUPS if GROUPS[g]["criterion"] == c][0]
@@ -1078,6 +1244,10 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
               note="a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it")
     v.require("every in-process lesion applied (patch called at least once)",
               sum(1 for r in prim_rows for les in (r.get("lesions") or {}).values() if les.get("applied") is False), expect=0)
+    v.require("the ask group's taught-moat ask-rate defined in every arm that reads it (amendment A4 (a))",
+              _n_rows_with("A4 (a)"), expect=0,
+              note="a taught moat whose teach turn was not acquired is UNDEFINED, never novel; with none acquired the "
+                   "moat rate does not exist (an acquisition gap, not a curiosity result)")
     v.require("six seeds defined for every primary criterion", sum(1 for g in PRIMARY_GROUPS if per_group[g]["n_defined"] < len(seeds)), expect=0)
     earned = v.decide(go=all(x == "PASS" for x in crit.values()), verbose=False)
     if earned["status"] == "UNDEFINED":
@@ -1108,13 +1278,26 @@ def report(agg):
     for g, d in agg["groups"].items():
         if d["sub_clauses_n_true"]:
             lines.append("- %s: %s" % (g, ", ".join("%s %d/%d" % (k, v, d["n_defined"]) for k, v in d["sub_clauses_n_true"].items())))
+    named = [(g, d) for g, d in agg["groups"].items() if d.get("named_gaps")]
+    if named:
+        lines += ["", "Named gaps (amendment A4 reporting rule; printed for a FAIL of C1 / C3, whichever sub-clause failed):"]
+        for g, d in named:
+            lines.append("- %s (%s): %s" % (d["criterion"], g, "; ".join(d["named_gaps"])))
     ask = agg["groups"]["ask"]["seeds"]
-    lines += ["", "Per-seed curiosity ask-rates (novel-topic gaps vs taught-topic moats; the bar is gap >= 2/3 and gap >= 2x moat):"]
+    lines += ["", "Per-seed curiosity ask-rates (novel-topic gaps vs taught-topic moats; the bar is gap >= 2/3 and gap >= 2x moat; "
+                  "amendment A4: every clause in BOTH orders, a taught moat not acquired is undefined):"]
     for s, row in ask.items():
         it = row.get("intact") or {}
-        lines.append("- seed %s: gap %s, moat %s, learnable %s, unlearnable-stops %s; %s" % (
+        lines.append("- seed %s: gap %s, moat %s, learnable %s, unlearnable-stops %s, moats undefined %s; %s" % (
             s, it.get("ask_rate_gap"), it.get("ask_rate_moat"), it.get("lp_learnable"), it.get("lp_unlearnable"),
-            "; ".join(row.get("undefined_reasons") or []) or "defined"))
+            it.get("moats_undefined") or "none", "; ".join(row.get("undefined_reasons") or []) or "defined"))
+        for oa, so in (row.get("orders") or {}).items():
+            lines.append("  - %s order: gap %s, moat %s, learnable %s, unlearnable-stops %s, moats undefined %s" % (
+                oa, so.get("ask_rate_gap"), so.get("ask_rate_moat"), so.get("lp_learnable"), so.get("lp_unlearnable"),
+                so.get("moats_undefined") or "none"))
+        for inf, si in (row.get("informational") or {}).items():
+            lines.append("  - %s (informational, never counted): gap %s, moat %s, learnable %s, unlearnable-stops %s" % (
+                inf, si.get("ask_rate_gap"), si.get("ask_rate_moat"), si.get("lp_learnable"), si.get("lp_unlearnable")))
     emo = agg["groups"]["emo"]["seeds"]
     lines += ["", "Per-seed discrete-emotion read (category named per situation; the 2-D sign/arousal read beside):"]
     for s, row in emo.items():
@@ -1161,19 +1344,27 @@ _AB = "I don't know about that."
 _ASK = " My curiosity is piqued — I haven't learned about %s yet: what can you tell me about %s?"
 
 
-def _fake_shard(group, responses, permuted=False):
-    return {"seed": 1, "group": group, "arm": "x", "responses": responses, "sources": [EXPECTED_SOURCE],
+def _fake_shard(group, responses, permuted=False, arm=None):
+    arm = arm or ("permuted" if permuted else "intact_a")
+    return {"seed": 1, "group": group, "arm": arm, "responses": responses, "sources": [EXPECTED_SOURCE],
             "pythonhashseed_ok": True, "builtin_facts": [["dog", "chase", "cat"], ["cat", "eat", "fish"]],
-            "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns_for(group, 1, "permuted" if permuted else "intact_a")]}
+            "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns_for(group, 1, arm)]}
 
 
-def _synthetic_ask(kind):
+_ROLE_ABSTAIN = ("I caught the verb 'eat' with the goat and the hay, but my role-binding didn't resolve the PATIENT — "
+                 "which of them is the 'eat' done to, the goat or the hay?")      # dev 7's reply to `the goat eats the hay`
+
+
+def _synthetic_ask(kind, unacquired=()):
     """A synthetic `ask` session: intact (asks on novel topics only, learnable closes, unlearnable stops) / lesioned
-    (never asks) / graded-lesioned (asks everywhere) / permuted-consistent."""
-    r = {"t_yak": _fake("the yak eats the grass", svo=["yak", "eat", "grass"]),
-         "t_moose": _fake("the moose eats the leaf", svo=["moose", "eat", "leaf"]),
-         "t_goat": _fake("the goat eats the hay", svo=["goat", "eat", "hay"]),
-         "t_ibex": _fake("the ibex chases the marmot", svo=["ibex", "chase", "marmot"])}
+    (never asks) / graded-lesioned (asks everywhere) / permuted-consistent. The teach turns echo what was stored, as
+    the live handler does (`recalled_svo` = the taught triple); `unacquired` names teach labels (t_yak/t_moose/t_goat)
+    that end in dev 7's role-binding abstain instead (amendment A4 (a)), and that topic then reads NOVEL (asked)."""
+    taught_msgs = {l: m for l, m, _r in turns_for("ask", 1, "permuted" if kind == "permuted" else "intact_a")
+                   if l in ("t_yak", "t_moose", "t_goat")}
+    r = {l: (_fake(_ROLE_ABSTAIN, True) if l in unacquired else _fake(m, svo=_canonical_teach(m)))
+         for l, m in taught_msgs.items()}
+    r["t_ibex"] = _fake("the ibex chases the marmot", svo=["ibex", "chase", "marmot"])
     for l in ("c_dog_1", "c_dog_2", "c_dog_3"):
         r[l] = _fake("the dog chases the cat", svo=["dog", "chase", "cat"])
     novel = {"g_eel": "eel", "g_crab": "crab", "g_newt": "newt"}
@@ -1182,10 +1373,12 @@ def _synthetic_ask(kind):
         novel, taught = ({"m_yak": "yak", "m_moose": "moose", "m_goat": "goat"}, {"g_eel": "eel", "g_crab": "crab", "g_newt": "newt"})
     ask_novel = kind != "lesion"
     ask_taught = kind == "graded_lesion"
+    # a taught topic whose teach was NOT acquired is novel to this brain: it asks there exactly as on a novel gap
+    unacq_topics = {(_canonical_teach(taught_msgs[l]) or [None])[0] for l in unacquired}
     for l, t in novel.items():
         r[l] = _fake(_AB + (_ASK % (t, t) if ask_novel else ""), True)
     for l, t in taught.items():
-        r[l] = _fake(_AB + (_ASK % (t, t) if ask_taught else ""), True)
+        r[l] = _fake(_AB + (_ASK % (t, t) if (ask_taught or (ask_novel and t in unacq_topics)) else ""), True)
     r["lp_ibex_1"] = _fake(_AB + (_ASK % ("ibex", "ibex") if ask_novel else ""), True)
     r["lp_ibex_2"] = _fake("the ibex chases the marmot", svo=["ibex", "chase", "marmot"])
     for l in ("u_toad_1", "u_toad_2", "u_toad_3"):
@@ -1256,10 +1449,11 @@ def selftest(verbose=True):
         seeds = (1, 2)
         for seed in seeds:
             kinds = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_curiosity.rep0": "lesion",
-                     "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted"}
+                     "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted",
+                     "reversed": "intact"}
             for arm, kind in kinds.items():
                 p = shard_path(td, seed, "ask", arm); os.makedirs(os.path.dirname(p), exist_ok=True)
-                json.dump(dict(_fake_shard("ask", _synthetic_ask(kind), permuted=(kind == "permuted")), seed=seed, arm=arm), open(p, "w"))
+                json.dump(dict(_fake_shard("ask", _synthetic_ask(kind), arm=arm), seed=seed, arm=arm), open(p, "w"))
         agg = aggregate(td, seeds=seeds)
         checks["aggregate: synthetic ask group PASSES 2/2; the stage is UNDEFINED while other groups are missing"] = (
             agg["groups"]["ask"]["verdict"] == "PASS" and agg["verdict"].startswith("UNDEFINED") and len(agg["missing_shards"]) > 0
@@ -1295,6 +1489,55 @@ def selftest(verbose=True):
         checks["aggregate: a failed null -> that seed UNDEFINED -> group INCOMPLETE"] = (
             agg3["groups"]["ask"]["verdict"] == "INCOMPLETE" and agg3["groups"]["ask"]["n_defined"] == 1)
         checks["report renders"] = "Stage-2 exit verdict" in report(agg3)
+    # ── amendment A4 (2026-10-13), group `ask` ──
+    checks["A4 (b): the reversed arm is counted, carries the same probes, the probe blocks reversed, the teach block first"] = (
+        "reversed" in arms_for("ask", with_informational=False) and "reversed" not in arms_for("conv")
+        and sorted(_labels("ask", 1, "reversed")) == sorted(_labels("ask", 1))
+        and _labels("ask", 1, "reversed")[:3] == ["t_yak", "t_moose", "t_goat"]
+        and _labels("ask", 1, "reversed")[3] == "u_toad_1" and _labels("ask", 1, "reversed")[-1] == "m_goat"
+        and arm_spec("ask", "reversed")[2] == "order")
+    s_goat = score_ask(_fake_shard("ask", _synthetic_ask("intact", unacquired=("t_goat",))))
+    checks["A4 (a): an unacquired taught moat is undefined (reported), never counted as a moat nor as novel"] = (
+        s_goat["moats_undefined"] == ["m_goat"] and s_goat["n_moats_defined"] == 2 and s_goat["ask_rate_moat"] == 0.0
+        and s_goat["ask_rate_gap"] == 1.0 and s_goat["moat_items"]["m_goat"]["asked"] is True and s_goat["all"]
+        and score_ask(_fake_shard("ask", _synthetic_ask("intact")))["moats_undefined"] == [])
+    with tempfile.TemporaryDirectory() as td:
+        seeds = (1, 2)
+        kinds = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_curiosity.rep0": "lesion",
+                 "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted",
+                 "reversed": "intact", "da_lesion": "intact"}
+
+        def _write(over=None, unacq=()):
+            for seed in seeds:
+                for arm, kind in dict(kinds, **(over or {})).items():
+                    p = shard_path(td, seed, "ask", arm); os.makedirs(os.path.dirname(p), exist_ok=True)
+                    json.dump(dict(_fake_shard("ask", _synthetic_ask(kind, unacquired=unacq), arm=arm), seed=seed, arm=arm),
+                              open(p, "w"))
+        _write(over={"reversed": "lesion"})
+        ag = aggregate(td, seeds=seeds)["groups"]["ask"]
+        checks["A4 (b): correct in the registered order but not in the reversed one -> FAIL 'capability absent', per order"] = (
+            ag["verdict"] == "FAIL" and any("capability absent" in w and "reversed 0 of 2" in w for w in ag["why"])
+            and ag["n_correct_by_order"] == {"registered": 2, "reversed": 0}
+            and ag["named_gaps"] == list(A4_NAMED_GAPS["ask"]))
+        _write(unacq=("t_goat",))
+        ag = aggregate(td, seeds=seeds)
+        g = ag["groups"]["ask"]
+        checks["A4 (a): goat not acquired in every arm -> still PASS; the graded lesion is scored on yak + moose only"] = (
+            g["verdict"] == "PASS" and g["sub_clauses_n_true"]["all_taught_moats_acquired"] == 0
+            and g["seeds"][1]["lesions"]["lesion_graded"]["scored_labels_dropped_A4"] == ["m_goat"]
+            and "da_lesion" in g["seeds"][1]["informational"] and g["named_gaps"] == [])
+        _write(unacq=("t_yak", "t_moose", "t_goat"))
+        ag = aggregate(td, seeds=seeds)
+        g = ag["groups"]["ask"]
+        checks["A4 (a): no taught moat acquired -> the seed is UNDEFINED (precondition), never a FAIL"] = (
+            g["verdict"] == "INCOMPLETE" and g["n_defined"] == 0 and ag["verdict"].startswith("UNDEFINED")
+            and any("A4 (a)" in r for r in g["seeds"][1]["undefined_reasons"])
+            and any(c["ok"] is False and "A4 (a)" in c["name"] for c in ag["preconditions"]))
+        _write(over={"da_lesion": "lesion"})
+        g = aggregate(td, seeds=seeds)["groups"]["ask"]
+        checks["A4 (c): the DA-lesion arm is reported and never counted"] = (
+            g["verdict"] == "PASS" and g["seeds"][1]["informational"]["da_lesion"]["discriminates"] is False
+            and "da_lesion" not in arms_for("ask", with_informational=False))
     lines = pool_job_lines("0123456789abcdef" * 2 + "01234567")
     checks["pool jobs: one per (seed, group, arm), pinned, memcapped, prereg-tagged, gate flag + max_age_h present"] = (
         len(lines) == len(GATE_SEEDS) * sum(len(arms_for(g)) for g in GROUPS)

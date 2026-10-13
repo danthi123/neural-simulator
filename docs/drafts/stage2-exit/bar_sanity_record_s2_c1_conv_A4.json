@@ -1,0 +1,137 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 C1 (grammatical grounded conversation): the real aggregate's `conv` verdict is PASS over six gate seeds; perfect = the capability present, realistic dev-7 reply surfaces; nulls = each lesion / the permuted arm made inert, unreproduced lesions, a non-deterministic build, degenerate and random brains, one brain per missing sub-capability.",
+ "failures": [],
+ "kinds": {
+  "info_flaky_0p01": "info",
+  "info_flaky_0p03": "info",
+  "null_all_abstain": "null",
+  "null_echo": "null",
+  "null_lesion_mouth_inert": "null",
+  "null_lesion_mouth_unreproduced": "null",
+  "null_never_abstains": "null",
+  "null_no_elaboration": "null",
+  "null_no_preposition": "null",
+  "null_passive_positional": "null",
+  "null_permuted_inert": "null",
+  "null_unclean": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_flaky_0p01": 753,
+  "info_flaky_0p03": 387,
+  "null_all_abstain": 0,
+  "null_echo": 0,
+  "null_lesion_mouth_inert": 0,
+  "null_lesion_mouth_unreproduced": 0,
+  "null_never_abstains": 0,
+  "null_no_elaboration": 0,
+  "null_no_preposition": 0,
+  "null_passive_positional": 0,
+  "null_permuted_inert": 0,
+  "null_unclean": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "random": 0
+ },
+ "name": "stage2-C1 conv",
+ "pass_rate": {
+  "info_flaky_0p01": 0.753,
+  "info_flaky_0p03": 0.387,
+  "null_all_abstain": 0.0,
+  "null_echo": 0.0,
+  "null_lesion_mouth_inert": 0.0,
+  "null_lesion_mouth_unreproduced": 0.0,
+  "null_never_abstains": 0.0,
+  "null_no_elaboration": 0.0,
+  "null_no_preposition": 0.0,
+  "null_passive_positional": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_unclean": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_flaky_0p01": [
+   0.7253,
+   0.7787
+  ],
+  "info_flaky_0p03": [
+   0.3573,
+   0.4176
+  ],
+  "null_all_abstain": [
+   0.0,
+   0.0038
+  ],
+  "null_echo": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_mouth_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_mouth_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_never_abstains": [
+   0.0,
+   0.0038
+  ],
+  "null_no_elaboration": [
+   0.0,
+   0.0038
+  ],
+  "null_no_preposition": [
+   0.0,
+   0.0038
+  ],
+  "null_passive_positional": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "4b19aafb82e9e52cd9dc4e36c1c1de393c577017",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "78ad07416918e08a0958b1f4b2e6ad9f8a8e11bc42ac0fbc4c260e0f0695c883",
+  "research/runners/stage2_exit_gate.py": "2a3a6c761d7e1116cf9d7dbdadc62d514e2e0f740e9b5071bb73088461f02937"
+ },
+ "scorer_sha256": "8115040b2e7359cda94fe653659895614ebf0eec50a5561d6334829a64ad854a",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c1_conv.py",
+ "spec_sha256": "dc844934b6996c9595d66ce82c48f68fc9cc46c5cabcc16b78017f1a9dd6c07e",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 31.7
+}

@@ -168,3 +168,16 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   govern those 4 names; main's 11 untracked files stay put for the future merge.
 
 - 2026-10-09 09:05 EDT — T14 Start met (11 files in dev/s7, landed Oct 6); [stage2-dev] INFO filed on main.
+
+## 2026-10-13 (Claude) AMENDMENT-A4: C3 order confound + unacquired moat; C1/C3 named gaps (branch claude-build/stage2-a4)
+
+- Implements Claude's 2026-10-13 ruling on NEEDS-CLAUDE #15-#17, outcome-blind (no gate data; dev 7 only).
+  `docs/drafts/stage2-exit/AMENDMENT-A4.md`. C3 `ask`: a COUNTED `reversed` arm (the probe blocks in reverse
+  order after the same teach block, its own session; every C3 clause must hold in both orders); a taught moat
+  whose teach turn was not acquired is UNDEFINED (never counted as novel; none acquired -> the seed is UNDEFINED);
+  an informational `da_lesion` arm (`BRAIN_CURIOSITY_DA_LESION=1`). A FAIL of C1 / C3 prints a `Named gaps`
+  line. #15: resolved by the idle-replay organ (main `8c10af86a`), no C5 change.
+- Gate jobs 186 -> 198. Prereg byte-identical (PREREG_SHA 24dac499e). GATE_SHA 43763e637 is VOID for the gate
+  (no `reversed` arm there): re-pin after merging main, at a revision with AMENDMENT-A4.md and 8c10af86a.
+- Bar-sanity `_A4` records for all six specs (n=1000) replace the `_A3` ones; tests:
+  `tests/test_stage2_exit_gate.py` + the new `tests/test_stage2_exit_gate_a4.py`.

@@ -141,7 +141,8 @@ def test_gate_seed_is_refused_without_the_flag():
 def test_pool_job_lines_are_pinned_memcapped_prereg_tagged_and_carry_max_age():
     sha = "f" * 40
     lines = SG.pool_job_lines(sha)
-    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 186
+    # 186 at the prereg; amendment A4 adds the counted `ask/reversed` arm and the informational `ask/da_lesion` arm
+    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 198
     for cmd, why in lines:
         assert ("revisions/%s" % sha) in cmd and ("memcap.sh %d" % SG.MEMCAP_GB) in cmd and "--prereg %s" % SG.PREREG in cmd
         assert ("mem_gb=%d" % SG.MEM_GB) in why and SG.PREREG in why and "max_age_h=240" in why
@@ -203,12 +204,13 @@ def test_gate_seed_shard_hands_the_gate_flag_to_its_worker(monkeypatch, tmp_path
 
 def _ask_tree(td, seeds=(1, 2)):
     kinds = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_curiosity.rep0": "lesion",
-             "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted"}
+             "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted",
+             "reversed": "intact"}                    # amendment A4 (b): the reversed-order arm is counted
     for seed in seeds:
         for arm, kind in kinds.items():
             p = SG.shard_path(td, seed, "ask", arm)
             os.makedirs(os.path.dirname(p), exist_ok=True)
-            d = dict(SG._fake_shard("ask", SG._synthetic_ask(kind), permuted=(kind == "permuted")), seed=seed, arm=arm,
+            d = dict(SG._fake_shard("ask", SG._synthetic_ask(kind), arm=arm), seed=seed, arm=arm,
                      corpus_present=True)
             with open(p, "w") as f:
                 json.dump(d, f)
@@ -403,7 +405,7 @@ def _e2e_inner(kind):
 
 def _e2e_shard(group, arm, resp, seed):
     base = arm.split(".rep")[0]
-    turns = SG.turns_for(group, seed, "permuted" if base == "permuted" else "intact_a")
+    turns = SG.turns_for(group, seed, base)          # the arm's own turn table (amendment A4: `reversed` reorders)
     return {"seed": seed, "group": group, "arm": arm, "responses": resp, "sources": [_S], "pythonhashseed_ok": True,
             "corpus_present": True, "builtin_facts": [["dog", "chase", "cat"], ["cat", "eat", "fish"]],
             "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns]}
@@ -422,7 +424,7 @@ def _e2e_build(td, seeds, mk):
 def _e2e_ideal(group, base):
     if group == "ask":
         k = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_graded": "graded_lesion",
-             "permuted": "permuted"}[base]
+             "permuted": "permuted", "reversed": "intact", "da_lesion": "intact"}[base]
         return SG._synthetic_ask(k)
     kind = "permuted" if base == "permuted" else ("lesion" if base.startswith("lesion") else "intact")
     if group == "inner" and base.startswith("lesion"):
@@ -448,7 +450,14 @@ def test_every_group_passes_on_an_ideal_brain_and_each_clause_bites(tmp_path):
     for g, d in agg["groups"].items():
         assert d["verdict"] == "FAIL" and any("not load-bearing" in w for w in d["why"]), (g, d["why"])
 
-    _e2e_build(td, (1, 2), lambda g, b: _e2e_ideal(g, "intact_a") if b == "permuted" else _e2e_ideal(g, b))
+    def _ignores_exposure(g, b):
+        if b != "permuted":
+            return _e2e_ideal(g, b)
+        r = _e2e_ideal(g, "intact_a")
+        if g == "ask":     # amendment A4 (a): it ACQUIRED what it was told (the teach echo), but its asks ignore it
+            r.update({l: v for l, v in SG._synthetic_ask("permuted").items() if l in ("t_yak", "t_moose", "t_goat")})
+        return r
+    _e2e_build(td, (1, 2), _ignores_exposure)
     agg = SG.aggregate(td, seeds=(1, 2))
     for g, d in agg["groups"].items():
         assert d["verdict"] == "FAIL" and any("not exposure-driven" in w for w in d["why"]), (g, d["why"])

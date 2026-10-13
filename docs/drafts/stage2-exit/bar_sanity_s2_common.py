@@ -32,6 +32,15 @@ voices a deterministic function of its taught store (the most recently taught fa
 `info_*` on purpose (a lookup gated by the ladder's sign; a host first-taught-fact FIFO): they satisfy the hardened bars, and
 who owns the category / the selection is the host-share instrument's question.
 
+AMENDMENT A4 (2026-10-13), group `ask`. A counted `reversed` arm (the probe blocks in reverse order, its own session) must
+pass every C3 correctness clause too, and a taught moat whose teach turn was not acquired is UNDEFINED. So the teach turns
+now echo what the brain stored (`recalled_svo` = the taught triple, as the live handler's echo does at dev 7; an
+unacquired teach is dev 7's role-binding abstain), the reversed arm reads the same brain in the reversed order, and the
+DA-throttle null applies its "silent after two asks" rule over the arm's OWN probe order. New brains: a perfect brain that
+failed to acquire one or two taught moats (and so asks about them: they are novel to it) must pass; nulls: the
+order-carried brain (perfect in the registered order, DA-throttled or never-stopping in the reversed one) and a brain that
+acquired no taught moat (the moat rate does not exist: UNDEFINED, never PASS).
+
 WHAT NOISE THE BAR SEES. Stage 2's scorer is a conjunction of exact reply checks, not a statistic, and the real null is
 exactly zero-noise (dev 7), so there is no read noise to model; the realistic part is the surface the checkers must
 survive. `flaky` (info only) drops each scored intact probe to an abstain with probability eps, the sensitivity of the
@@ -128,13 +137,22 @@ def _taught_extras(group):
 
 
 # ══════════════════════════════════════════════ the five groups' reply sets ═══════════════════════════════════════
-def _base(group, variant, perm):
-    """{label: response} for the teach / expose turns (never scored): the handler's echo of what it was told."""
+def role_abstain(m):
+    """Dev 7's reply to a teach the role binder could not resolve (`the goat eats the hay`): an abstain, nothing stored."""
+    w = m.split()
+    return R("I caught the verb '%s' with the %s and the %s, but my role-binding didn't resolve the PATIENT — which of "
+             "them is the '%s' done to, the %s or the %s?" % (w[2], w[1], w[-1], w[2], w[1], w[-1]), abst=True)
+
+
+def _base(group, variant, perm, unacquired=()):
+    """{label: response} for the teach / expose turns (never scored): the handler's echo of what it was told. A
+    canonical teach echoes the stored triple in `recalled_svo` (dev 7: `the yak eats the grass` -> [yak, eat, grass]);
+    a label in `unacquired` ends in the role-binding abstain instead (amendment A4 (a))."""
     turns = G.turns_for(group, SEEDS[0], "permuted" if perm else "intact_a")
     out = {}
     for l, m, r in turns:
         if r in ("teach", "expose"):
-            out[l] = R(m)
+            out[l] = role_abstain(m) if l in unacquired else R(m, G._canonical_teach(m) if r == "teach" else None)
     return out, turns
 
 
@@ -206,25 +224,31 @@ def reply_infer(variant, rng, realistic):
     return r
 
 
-def _ask_pattern(variant, rng, realistic):
-    """{label: asked?} for the ask group's scored probes."""
+ASK_UNACQUIRED = {"": (), "goat_unacq": ("t_goat",), "two_unacq": ("t_moose", "t_goat"),
+                  "none_acq": ("t_yak", "t_moose", "t_goat")}
+_TEACH_MOAT = {"t_yak": ("m_yak", "g_eel"), "t_moose": ("m_moose", "g_crab"), "t_goat": ("m_goat", "g_newt")}
+
+
+def _ask_pattern(variant, rng, realistic, order="intact_a", unacquired=()):
+    """{label: asked?} for the ask group's scored probes. `order` is the arm whose probe order the brain meets (the DA
+    throttle reads it); `unacquired` teach labels make their taught topic NOVEL to this brain, so it asks there as on a gap."""
     perm = variant == "permuted"
     novel = ["m_yak", "m_moose", "m_goat"] if perm else ["g_eel", "g_crab", "g_newt"]
     taught = ["g_eel", "g_crab", "g_newt"] if perm else ["m_yak", "m_moose", "m_goat"]
+    unacq_moats = [_TEACH_MOAT[t][1 if perm else 0] for t in unacquired]
     stop = int(rng.integers(2, 5)) if realistic else 4          # the unlearnable gap is asked on probes 1..stop-1, then not
     a = {}
     if variant in ("intact", "permuted", "no_stop", "da_throttled", "never_closes"):
         a.update({l: True for l in novel})
-        a.update({l: False for l in taught})
+        a.update({l: (l in unacq_moats) for l in taught})
         a["lp_ibex_1"] = True
         a["lp_ibex_2"] = False
         a.update({"u_toad_%d" % i: (i < stop) for i in range(1, 5)})
         if variant == "no_stop":                                # asks on every probe of the unlearnable gap
             a.update({"u_toad_%d" % i: True for i in range(1, 5)})
-        if variant == "da_throttled":                           # dev 7: the DA threshold goes quiet after two asks
-            seq = ["g_eel", "g_crab", "g_newt"]
-            n = 0
-            for l in ["g_eel", "m_yak", "g_crab", "m_moose", "g_newt", "m_goat", "lp_ibex_1", "u_toad_1"]:
+        if variant == "da_throttled":                           # dev 7: the DA threshold goes quiet after two asks,
+            n = 0                                               # counted along THIS arm's own probe order
+            for l, _m, _r in G.turns_for("ask", SEEDS[0], order):
                 if a.get(l):
                     n += 1
                     if n > 2:
@@ -242,9 +266,14 @@ def _ask_pattern(variant, rng, realistic):
 
 
 def reply_ask(variant, rng, realistic):
+    # variant = "<kind>[+<acquisition flag>][@<order arm>]" (amendment A4: the flag names unacquired teach turns, the
+    # order arm the probe order this arm met)
+    variant, _, order = variant.partition("@")
+    variant, _, flag = variant.partition("+")
+    unacq = ASK_UNACQUIRED[flag]
     perm = variant == "permuted"
-    r, turns = _base("ask", variant, perm)
-    a = _ask_pattern(variant, rng, realistic)
+    r, turns = _base("ask", variant, perm, unacquired=unacq)
+    a = _ask_pattern(variant, rng, realistic, order=order or "intact_a", unacquired=unacq)
     topic = {"g_eel": "eel", "g_crab": "crab", "g_newt": "newt", "m_yak": "yak", "m_moose": "moose", "m_goat": "goat",
              "lp_ibex_1": "ibex", "u_toad_1": "toad", "u_toad_2": "toad", "u_toad_3": "toad", "u_toad_4": "toad"}
     for l, t in topic.items():
@@ -400,7 +429,7 @@ def _sub(master, variant, salt):
 
 def _shard(group, seed, arm, responses, permuted_arm, extra_internal=None):
     base = arm.split(".rep")[0]
-    turns = G.turns_for(group, seed, "permuted" if base == "permuted" else "intact_a")
+    turns = G.turns_for(group, seed, base)                       # the arm's own table (A4: `reversed` reorders)
     sh = {"seed": seed, "group": group, "arm": arm, "responses": responses, "sources": [S], "pythonhashseed_ok": True,
           "corpus_present": True, "builtin_facts": facts_for(group, base == "permuted"),
           "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns],
@@ -415,6 +444,8 @@ def default_variants(group):
     v = {"intact_a": "intact", "intact_b": "intact", "permuted": "permuted"}
     for les in G.GROUPS[group]["lesions"]:
         v[les] = les
+    for oa in G.order_arms(group):                    # amendment A4: the same brain, met in another probe order
+        v[oa] = "intact"
     return v
 
 
@@ -440,6 +471,8 @@ def make_group(rng, group, over=None, realistic=True, unclean=False, unreproduce
         for arm in arms:
             base = arm.split(".rep")[0]
             variant = varmap[base]
+            if base in G.order_arms(group):
+                variant = variant + "@" + base            # the reply builder reads the probe order this arm met
             sub = _sub(master, variant, 0)
             if degenerate:
                 resp = reply_degenerate(degenerate, group, base == "permuted", sub)
@@ -454,7 +487,7 @@ def make_group(rng, group, over=None, realistic=True, unclean=False, unreproduce
             if arm == "intact_b" and unclean:                           # a non-deterministic build: the null fails
                 l0 = next(iter(resp))
                 resp[l0] = dict(resp[l0], answer=resp[l0]["answer"] + " (b)")
-            if base in ("intact_a", "intact_b") and flip:
+            if (base in ("intact_a", "intact_b") or base in G.order_arms(group)) and flip:
                 for l in flip:
                     resp[l] = R(AB, abst=True)
             data[seed][arm] = _shard(group, seed, arm, resp, base == "permuted")
@@ -553,7 +586,22 @@ def generators(group, extra_info=True):
         out["null_%s_inert" % l] = mk(over={l: "intact"})
         out["null_%s_unreproduced" % l] = mk(unreproduced=(l,))
     for name, v in _EXTRA.get(group, {}).items():
-        out[name] = mk(over={"intact_a": v, "intact_b": v})
+        # the same brain in every arm that reads correctness (amendment A4: the order arms too)
+        out[name] = mk(over=dict({"intact_a": v, "intact_b": v}, **{o: v for o in G.order_arms(group)}))
+    if group == "ask" and extra_info:
+        def _flag(f):
+            return {b: v + "+" + f for b, v in default_variants("ask").items()}
+        # PERFECT (amendment A4 (a)): the curiosity is intact but the role binder dropped one / two of the three taught
+        # facts (dev 7: `the goat eats the hay`). Those topics are novel to this brain and it asks about them; the moat
+        # rate is read over the acquired moats only, so it must pass.
+        out["perfect_goat_unacquired"] = mk(over=_flag("goat_unacq"))
+        out["perfect_two_moats_unacquired"] = mk(over=_flag("two_unacq"))
+        # NULL (a): nothing taught was acquired: the moat rate does not exist -> UNDEFINED, never PASS
+        out["null_no_moat_acquired"] = mk(over=_flag("none_acq"))
+        # NULL (b): the order carries the verdict: perfect in the registered order, the DA throttle (or a missing stop)
+        # in the reversed order only (the HANDOFF #16 confound, one order only). The pre-A4 scorer passed both.
+        out["null_order_carried"] = mk(over={"reversed": "da_throttled"})
+        out["null_order_carried_no_stop"] = mk(over={"reversed": "no_stop"})
     if group == "emo" and extra_info:
         # NULL (amendment A3): a host lookup of the heard affect words names the category; the ladder only supplies the
         # printed numbers. The ladder lesion clamps the numbers and leaves the word, so the NAMED category does not move.
@@ -583,6 +631,8 @@ def stage_generators():
         out["null_%s_random" % g] = (lambda g: lambda rng: _stage_with(rng, g))(g)
         for l in G.GROUPS[g]["lesions"]:
             out["null_%s_%s_inert" % (g, l)] = (lambda g, l: lambda rng: make_stage(rng, {g: {l: "intact"}}))(g, l)
+        for o in G.order_arms(g):                     # amendment A4 (b)
+            out["null_%s_%s_order_carried" % (g, o)] = (lambda g, o: lambda rng: make_stage(rng, {g: {o: "da_throttled"}}))(g, o)
     return out
 
 
