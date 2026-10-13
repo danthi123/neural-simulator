@@ -115,3 +115,15 @@ What decides the answer that is not neurons, on this route:
 
 File `NEEDS [c1-generalization] RESULT` with the per-seed clause table (ruling). No retune of the organ against
 these dev seeds without a new plan; a fix is judged on fresh dev seeds 9-16 first.
+
+## 7. Reads after the bars were committed (2026-10-13; the bars above are unchanged)
+
+- **Organ feed, dev 1-8 (diagnostic, `organ_feed/organ_feed_dev1-8.json`, commit 1b4dfffd4).** Bat O1 8/8; eel O3 7/8
+  (seed 5 ties, river/lake 1.24 < 1.25); graded strictly rising on 2/8 (seeds 5, 8): lake rates flat at about
+  0.075-0.093 across k. In the graded session the fish frames and even other targets' unshared frames read near the
+  told frames (newt reaches `find stone`, the toad's frame), so the frame layer associates nearly everything.
+- **Dev-7 smoke through the handler (`smoke_dev7/`).** Both shards DEFINED; every direct read equals the organ feed
+  exactly. OVERRIDE seed 7 PASS: bat lake 0.0467 before; after the told pond, pond 0.105 vs lake 0.0517 (reached),
+  reply recalled pond; eel river 0.1067 vs lake 0.0833 (reached, ratio 1.28), reply recalled river; canary swim still
+  abstains. GRADED seed 7 FAIL: newt 0.0817 = toad 0.0817 < eel 0.0933 (tie). Peak RSS 6.67 / 6.81 GB, wall 19 / 21
+  min. The dev 1-8 pool run decides; the organ feed predicts OVERRIDE FAIL on seed 5 (eel) and GRADED FAIL 6/8.
