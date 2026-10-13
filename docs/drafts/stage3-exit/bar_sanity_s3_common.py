@@ -41,8 +41,12 @@ def _sub(master, tag, salt=0):
     return np.random.default_rng([int(master), zlib.crc32(str(tag).encode()), int(salt)])
 
 
-def _decorate(resp, rng, label):
-    """The live handler's discourse lead / trailer around a reply (dev-7 Stage-2 surfaces); never inside a frame."""
+def _decorate(resp, master, kind, label):
+    """The live handler's discourse lead / trailer around a reply (dev-7 Stage-2 surfaces); never inside a frame. The
+    draw is keyed by (master, kind, LABEL), never by the draw sequence: a lesion that makes an earlier turn abstain must
+    not re-deal the leads of a later control turn (the dissociation clause reads the raw reply on those turns; whether
+    the LIVE handler's leads vary with the thread state is a dev-7 check, PLAN.md section 10)."""
+    rng = _sub(master, "%s|%s" % (kind, label), 1)
     a = str(resp.get("answer") or "")
     r = rng.random()
     subj = label.split("_")[-1] if "_" in label else "it"
@@ -94,10 +98,9 @@ def make_group(rng, group, kind="perfect", over=None, realistic=True, unclean=Fa
             else:
                 sh = G.synthetic_shard(group, seed, arm, k, rng=sub)
             if realistic:
-                dec = _sub(master, k, 1)
                 for label, resp in sh["responses"].items():
                     if isinstance(resp, dict) and "answer" in resp:
-                        _decorate(resp, dec, label)
+                        _decorate(resp, master, k, label)
                 _scale_rates(sh, _sub(master, k, 2))
             if arm.endswith(".rep0") and base in unreproduced:
                 for l in G.SCORED_LABELS[group][base]:

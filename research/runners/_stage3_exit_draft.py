@@ -2054,7 +2054,9 @@ def meta_brain(kind, arm, permuted=False, rng=None):
         if is_cons:
             rates = {"eat %s" % inferable: 0.08, "eat %s" % other: 0.01}
         else:
-            ratio = 1.4 if kind == "ri_unstable" else 1.04
+            # a tie (1.04) under every grid margin; `ri_unstable` sits inside the grid (1.4: the host margin decides);
+            # `perfect_hedge` REACHES the frame (1.8 > every margin) and hedges from the metacog read, not from the margin
+            ratio = {"ri_unstable": 1.4, "perfect_hedge": 1.8}.get(kind, 1.04)
             rates = {"eat %s" % inferable: round(0.048 * ratio, 4), "eat %s" % other: 0.048}
         answer = True
         if kind in ("perfect", "lesion_inert", "permuted_inert", "steer_inert", "ri_unstable", "conflict_counter"):

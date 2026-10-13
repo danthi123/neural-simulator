@@ -305,6 +305,21 @@ instrument-only amendments + GATE_SHA by 11-28 (after Stage-2 scoring 11-21); qu
 shards once 12-05; `--aggregate` ≤ 12-08; verify-go before 12-19.
 
 ## 10. Needs dev-7 verification (patches implemented defensively: applied=False → UNDEFINED)
+
+- **Dissociation under live discourse leads.** The dissociation clause (`UNCHANGED_LABELS`: C1 `c_direct`, C2 the
+  taught recalls) compares the raw primary reply on the control turns. If the live handler's discourse leads ("As for
+  it —", "Setting the held thread aside —") vary with the thread state after a lesion changes an earlier turn, the
+  clause reads a lesion as non-dissociated for a surface reason; the dev-7 smoke must show the control turns
+  byte-identical under `ws_lesion` / `inherit_lesion`, else the clause moves to the parsed primary fields
+  (`abstained`, `recalled_svo`, `derived`, `derived_from`) before registration and the lead variation is logged.
+  (The bar-sanity brains deal the leads per turn label, which is the assumption being checked.)
+- **A yes/no probe is a 3-token assertion to the surprise organ.** `surprise_production_organ.extract_assertion`
+  ("does puma chase flea" → `(puma, chase, flea)`; only WH-words and `?` are excluded) feeds `what_does` + the surprise
+  judge, with the belief-revision hooks inside that block (`webapp/server.py` ~6318). With `BRAIN_RECONSOLIDATION=0`
+  (the declared chain departure) no rewrite can follow, but dev-7 must show (i) no surprise prefix on p3/p2/m_adj/
+  m_cross/m_rev, (ii) no `(puma, chase, flea)` / `(shrew, chase, flea)` fact in the kb after the probes (the open
+  "questions acquired as facts" fix), (iii) `c_direct` after p3 still names the mantis only. If (ii) fails, the probes
+  carry a trailing `?` in the registered table (the pins in `tests/test_stage3_exit_draft.py` re-run).
 steer_leaf / silence_mantis (the cue is read off a `query_patient` wrapper; the drive edit inside `_deliberate_hop_conf`);
 chase_rates recorder; kselect_order (the kb multi-match on puma); steer_store (`_write_event` on slot 1 before the q1
 read); witness_flip (PLACE = first call per organ instance); presence_clamp (candidate mode internals); steer_frame
