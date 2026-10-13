@@ -172,8 +172,15 @@ Line-shape notes (all 12 identical in shape, proven against pool_queue.sh's gate
 | max_age_h (stamped in --checked) | 24 |
 | estimated wall per arm | ~12 min (4 turns incl. fresh worker build; dev smoke measured) |
 | estimated wall, 12 arms strictly sequential | 144 min = 2.4 h |
-| peak x parallelism (1) | 16.14 GiB < 32 GiB pool40/41/42 RAM and < 46 GiB wspool RAM — pass |
+| peak x parallelism (1) | 16.14 GiB < 46 GiB wspool RAM — pass (wspool only; see correction below) |
 | 24 h wall bar | 0.2 h/arm, 2.4 h total — pass |
+
+**Correction 2026-10-13 01:00 (measured `free -g` on pool41): pool40/41/42 total RAM = 15 GB, not the
+32 GiB assumed when this list was generated.** A mem_gb=21 arm therefore fits ONLY wspool (46 GB); no pool
+node can host even one arm, so line 3/12's `pool_node=pool41` pin was withdrawn (withdrawn.log 2026-10-13
+01:01) and the line re-added unpinned — during game-1013 the dispatcher skips unreachable wspool, so it
+holds until game off and then dispatches to the only node that fits. The one-arm-at-a-time discipline still
+binds on wspool (2 x mem_gb=21 = 42 <= 46 GiB, so the mem math alone would allow co-location).
 | NEEDS [aws-run] | none (both prereg launch bars pass; see section 8) |
 
 Unit note: the g6b checked text computed its 22 from decimal GB (16.924 x 1.3 = 22.00); the operative ruling and this sizing use binary GiB (16.14 x 1.3 = 20.98 -> 21), which is what c5-flip-merged-1012 stamps as mem_gb=21. memcap 22 covers either reading.
@@ -184,9 +191,9 @@ DECISION: one arm in flight GLOBALLY, at all times — not per node, not per see
 
 How it is enforced: the QUEUE NOW list is pasted ONE tools/pool_queue.sh add at a time; entry N+1 is added only after entry N's job has recorded rc=0 (the proven g6b pattern: "ON arm queued after this lands"). The 12 lines are NOT batch-added.
 
-Why batching is forbidden even though the dispatcher would accept it: with mem_gb=21 per line, two lines sum to 42 — that exceeds pool40/41/42 RAM (32 GiB) so those nodes physically cannot host two arms, but 42 <= 46 GiB means wspool COULD co-locate two. The mem math therefore does not by itself prevent co-location on wspool; discipline does. If a future operator must batch (e.g. unattended overnight), the hardening is to pin pool_node=wspool with mem_gb=26 (wspool-ram-1012: one at a time) so 2 x 26 = 52 > 46 makes co-location physically impossible — that variant is NOT used here because c5-flip-merged-1012 names mem_gb=21 and the paste discipline already guarantees serialization.
+Why batching is forbidden even though the dispatcher would accept it: with mem_gb=21 per line, two lines sum to 42 — that exceeds pool40/41/42 RAM (measured 15 GB each as of 2026-10-13, not the 32 GiB first assumed; they in fact cannot host even one arm) so only wspool can host arms, and 42 <= 46 GiB means wspool COULD co-locate two. The mem math therefore does not by itself prevent co-location on wspool; discipline does. If a future operator must batch (e.g. unattended overnight), the hardening is to pin pool_node=wspool with mem_gb=26 (wspool-ram-1012: one at a time) so 2 x 26 = 52 > 46 makes co-location physically impossible — that variant is NOT used here because c5-flip-merged-1012 names mem_gb=21 and the paste discipline already guarantees serialization.
 
-Per-seed order: OFF (BRAIN_IDLE_REPLAY=0) first, then default-ON (the g6b shape; C5(3)'s per-turn ON-OFF RSS diff needs the OFF curve first). Seed order: 42, 43, 44, 100, 101, 102. Nodes: no pool_node pin — any node that fits (wspool or pool40-42), whichever the dispatcher finds idle; serialization makes the choice irrelevant to correctness. Queue adds may run before the f24963b... provision marker is up (the dispatcher holds pinned lines until the revision is provisioned; pool_autodispatch.sh fails closed on the revision check).
+Per-seed order: OFF (BRAIN_IDLE_REPLAY=0) first, then default-ON (the g6b shape; C5(3)'s per-turn ON-OFF RSS diff needs the OFF curve first). Seed order: 42, 43, 44, 100, 101, 102. Nodes: no pool_node pin — any node that fits, which after the 2026-10-13 01:00 measurement means wspool only (pool40/41/42 are 15 GB total, below the 16.14 GiB arm peak; see the correction in section 4). Queue adds may run before the f24963b... provision marker is up (the dispatcher holds pinned lines until the revision is provisioned; pool_autodispatch.sh fails closed on the revision check).
 
 ## 6. alloff before answer_rate (RULING flip-hurts-answers)
 
