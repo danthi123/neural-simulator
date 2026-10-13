@@ -1,0 +1,265 @@
+{
+ "runner": "research/runners/c1_generalization_probes.py --organ-feed",
+ "plan": "docs/drafts/stage1-c1-inheritance/PROBES-PLAN.md",
+ "note": "DIAGNOSTIC, not the bar: standalone organ fed the probe facts, no brain",
+ "rows": [
+  {
+   "seed": 7,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0467,
+     "lake_rate_after": 0.0517,
+     "told_rate_after": 0.105,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 2.031
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.0933,
+     "lake_rate_after": 0.0833,
+     "told_rate_after": 0.1067,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.281
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.0817,
+     "toad": 0.0817,
+     "eel": 0.0933
+    },
+    "steps": [
+     0.0,
+     0.0116
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0783,
+        "eat bug": 0.0967,
+        "fly sky": 0.105,
+        "swim lake": 0.0467
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0467
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0467,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0233,
+        "lateral_at_read": 0.5
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.075,
+        "eat bug": 0.0867,
+        "fly sky": 0.0833,
+        "swim lake": 0.0517,
+        "swim pond": 0.105
+       },
+       "admitted": [
+        [
+         "pond",
+         0.105
+        ],
+        [
+         "lake",
+         0.0517
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.105,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1,
+        "lateral_at_read": 0.04761904761904753
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.06,
+        "bite hook": 0.0567,
+        "hide weed": 0.0533,
+        "swim lake": 0.0933,
+        "find stone": 0.0567,
+        "see moon": 0.0583,
+        "like rain": 0.0433
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0933
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0933,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": -0.08928571428571426
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0483,
+        "bite hook": 0.05,
+        "hide weed": 0.0767,
+        "swim lake": 0.0817,
+        "find stone": 0.105,
+        "see moon": 0.0583,
+        "like rain": 0.045
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0817,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1033,
+        "lateral_at_read": -0.2653061224489796
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.0433,
+        "bite hook": 0.08,
+        "hide weed": 0.0867,
+        "swim lake": 0.0817,
+        "find stone": 0.0767,
+        "see moon": 0.0733,
+        "like rain": 0.08
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0817,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1067,
+        "lateral_at_read": -0.30612244897959195
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.045,
+        "hide weed": 0.0433,
+        "swim lake": 0.0833,
+        "find stone": 0.0583,
+        "see moon": 0.06,
+        "like rain": 0.04,
+        "swim river": 0.1067
+       },
+       "admitted": [
+        [
+         "river",
+         0.1067
+        ],
+        [
+         "lake",
+         0.0833
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1067,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.105,
+        "lateral_at_read": 0.0156250000000001
+       }
+      }
+     }
+    }
+   }
+  }
+ ]
+}
