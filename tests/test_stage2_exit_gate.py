@@ -279,12 +279,13 @@ def test_grounding_set_is_required_where_a_scorer_reads_it(tmp_path):
     """C1 (`conv`) and C5 (`inner`) score grounding against `builtin_facts`; an arm that failed to record it would
     read as 'capability absent' (an instrument failure scored as a FAIL)."""
     assert SG.GROUNDING_GROUPS == ("conv", "inner")
-    shard = {"responses": {"x": {"answer": "a", "source": SG.EXPECTED_SOURCE}}, "sources": [SG.EXPECTED_SOURCE],
-             "pythonhashseed_ok": True, "corpus_present": True, "builtin_facts": []}
-    assert any("builtin_facts" in r for r in SG.arm_validity("inner", "intact_a", shard))
-    assert not SG.arm_validity("ask", "intact_a", shard)
-    shard["builtin_facts"] = [["dog", "chase", "cat"]]
-    assert not SG.arm_validity("inner", "intact_a", shard)
+    def _sh(group, facts):     # the arm's registered turn table is recorded (amendment A4 review: required)
+        return {"responses": {"x": {"answer": "a", "source": SG.EXPECTED_SOURCE}}, "sources": [SG.EXPECTED_SOURCE],
+                "pythonhashseed_ok": True, "corpus_present": True, "builtin_facts": facts,
+                "turns": [{"label": l, "message": m, "role": r} for l, m, r in SG.turns_for(group, 1, "intact_a")]}
+    assert any("builtin_facts" in r for r in SG.arm_validity("inner", "intact_a", _sh("inner", [])))
+    assert not SG.arm_validity("ask", "intact_a", _sh("ask", []))
+    assert not SG.arm_validity("inner", "intact_a", _sh("inner", [["dog", "chase", "cat"]]))
 
 
 def test_worker_captures_the_multistep_trace_the_handler_does_not_attach():
@@ -450,14 +451,9 @@ def test_every_group_passes_on_an_ideal_brain_and_each_clause_bites(tmp_path):
     for g, d in agg["groups"].items():
         assert d["verdict"] == "FAIL" and any("not load-bearing" in w for w in d["why"]), (g, d["why"])
 
-    def _ignores_exposure(g, b):
-        if b != "permuted":
-            return _e2e_ideal(g, b)
-        r = _e2e_ideal(g, "intact_a")
-        if g == "ask":     # amendment A4 (a): it ACQUIRED what it was told (the teach echo), but its asks ignore it
-            r.update({l: v for l, v in SG._synthetic_ask("permuted").items() if l in ("t_yak", "t_moose", "t_goat")})
-        return r
-    _e2e_build(td, (1, 2), _ignores_exposure)
+    # amendment A4 review ruling (2026-10-13): the permuted arm is a CONTROL; its moat set is intact_a's, so an
+    # exposure-blind brain (it replays the intact replies, teach echoes included) stays FAIL 'not exposure-driven'
+    _e2e_build(td, (1, 2), lambda g, b: _e2e_ideal(g, "intact_a") if b == "permuted" else _e2e_ideal(g, b))
     agg = SG.aggregate(td, seeds=(1, 2))
     for g, d in agg["groups"].items():
         assert d["verdict"] == "FAIL" and any("not exposure-driven" in w for w in d["why"]), (g, d["why"])
@@ -576,3 +572,28 @@ def test_pool_lines_declare_memory_above_the_measured_dev_peak():
     for cmd, why in SG.pool_job_lines("f" * 40):
         assert ("mem_ok.sh %d 1" % SG.MEM_GB) in cmd and ("memcap.sh %d --" % SG.MEMCAP_GB) in cmd, cmd
         assert ("mem_gb=%d " % SG.MEM_GB) in why, why
+
+
+# ── amendment A4 review (2026-10-13): a C1 FAIL carries the named-gaps line through aggregate and report ──
+def test_a_c1_fail_prints_the_named_gaps_line_through_aggregate_and_report(tmp_path):
+    """NEEDS-CLAUDE #17 ruling: no wording change; a C1 FAIL names the wh-locative parse, locative frame storage and
+    discourse elaboration, whichever sub-clause failed. Here the dev-7 shape: the deer reply drops its preposition."""
+    def _no_prep(g, b):
+        r = _e2e_ideal(g, b)
+        if g == "conv" and b in ("intact_a", "intact_b"):
+            r["p_deer_sleep"] = _e2e_R("the deer sleeps the meadow", ["deer", "sleep", "meadow"])
+        return r
+    td = str(tmp_path)
+    _e2e_build(td, (1, 2), _no_prep)
+    agg = SG.aggregate(td, seeds=(1, 2))
+    conv = agg["groups"]["conv"]
+    assert conv["verdict"] == "FAIL" and any("capability absent" in w for w in conv["why"])
+    assert conv["named_gaps"] == list(SG.A4_NAMED_GAPS["conv"])
+    assert all(d["named_gaps"] == [] for g, d in agg["groups"].items() if g != "conv")
+    rep = SG.report(agg)
+    assert "Named gaps (amendment A4 reporting rule, NEEDS-CLAUDE #17" in rep
+    assert ("- C1 (conv): wh-locative question parse; locative frame storage (the teach echo drops the preposition); "
+            "discourse elaboration for 'tell me more'") in rep
+    # an ideal brain names nothing
+    _e2e_build(td, (1, 2), _e2e_ideal)
+    assert "Named gaps" not in SG.report(SG.aggregate(td, seeds=(1, 2)))

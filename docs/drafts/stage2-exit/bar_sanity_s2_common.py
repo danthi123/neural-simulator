@@ -39,7 +39,11 @@ unacquired teach is dev 7's role-binding abstain), the reversed arm reads the sa
 DA-throttle null applies its "silent after two asks" rule over the arm's OWN probe order. New brains: a perfect brain that
 failed to acquire one or two taught moats (and so asks about them: they are novel to it) must pass; nulls: the
 order-carried brain (perfect in the registered order, DA-throttled or never-stopping in the reversed one) and a brain that
-acquired no taught moat (the moat rate does not exist: UNDEFINED, never PASS).
+acquired no taught moat (the moat rate does not exist: UNDEFINED, never PASS). A4 review (same day): a teach echo also lists
+the stored triple in `supporting_facts` (the live handler's shape), and acquisition reads both fields, so the null that
+STORED two moats, echoed another fact first and asks about them anyway (`null_stored_echoed_differently_asks`) fails; the
+per-topic-habituation brain (asks about an unknown topic at most twice) is `info_topic_habituation`, reported only: it
+passes both orders without a learning-progress signal, the residual AMENDMENT-A4.md names.
 
 WHAT NOISE THE BAR SEES. Stage 2's scorer is a conjunction of exact reply checks, not a statistic, and the real null is
 exactly zero-noise (dev 7), so there is no read noise to model; the realistic part is the surface the checkers must
@@ -144,15 +148,25 @@ def role_abstain(m):
              "them is the '%s' done to, the %s or the %s?" % (w[2], w[1], w[-1], w[2], w[1], w[-1]), abst=True)
 
 
-def _base(group, variant, perm, unacquired=()):
+def _base(group, variant, perm, unacquired=(), echo_other=()):
     """{label: response} for the teach / expose turns (never scored): the handler's echo of what it was told. A
-    canonical teach echoes the stored triple in `recalled_svo` (dev 7: `the yak eats the grass` -> [yak, eat, grass]);
-    a label in `unacquired` ends in the role-binding abstain instead (amendment A4 (a))."""
+    canonical teach echoes the stored triple in `recalled_svo` and lists it in `supporting_facts` (dev 7: `the yak eats
+    the grass` -> recalled [yak, eat, grass], supporting [yak eat grass, dog chase cat, cat eat fish]); a label in
+    `unacquired` ends in the role-binding abstain instead (amendment A4 (a)); a label in `echo_other` STORES the triple
+    but echoes another fact first (the triple only in `supporting_facts`; the A4 review's acquisition backdoor)."""
     turns = G.turns_for(group, SEEDS[0], "permuted" if perm else "intact_a")
     out = {}
     for l, m, r in turns:
         if r in ("teach", "expose"):
-            out[l] = role_abstain(m) if l in unacquired else R(m, G._canonical_teach(m) if r == "teach" else None)
+            f = G._canonical_teach(m) if r == "teach" else None
+            if l in unacquired:
+                out[l] = role_abstain(m)
+            elif l in echo_other:
+                out[l] = R(m, ["dog", "chase", "cat"], supporting_facts=[["dog", "chase", "cat"], f])
+            elif f:
+                out[l] = R(m, f, supporting_facts=[f])
+            else:
+                out[l] = R(m)
     return out, turns
 
 
@@ -226,17 +240,23 @@ def reply_infer(variant, rng, realistic):
 
 ASK_UNACQUIRED = {"": (), "goat_unacq": ("t_goat",), "two_unacq": ("t_moose", "t_goat"),
                   "none_acq": ("t_yak", "t_moose", "t_goat")}
+# A4 review: teach labels that are STORED but echoed second, and whose (known) topic the brain asks about anyway
+ASK_ECHO_OTHER = {"echo2": ("t_moose", "t_goat")}
 _TEACH_MOAT = {"t_yak": ("m_yak", "g_eel"), "t_moose": ("m_moose", "g_crab"), "t_goat": ("m_goat", "g_newt")}
 
 
-def _ask_pattern(variant, rng, realistic, order="intact_a", unacquired=()):
+def _ask_pattern(variant, rng, realistic, order="intact_a", unacquired=(), asks_known=(), habituates=False):
     """{label: asked?} for the ask group's scored probes. `order` is the arm whose probe order the brain meets (the DA
-    throttle reads it); `unacquired` teach labels make their taught topic NOVEL to this brain, so it asks there as on a gap."""
+    throttle reads it); `unacquired` teach labels make their taught topic NOVEL to this brain, so it asks there as on a
+    gap; `asks_known` teach labels' topics are known (stored) and the brain asks about them anyway (a null);
+    `habituates`: the A4 residual, it asks about an unknown topic at most twice (the unlearnable gap on probes 1-2)."""
     perm = variant == "permuted"
     novel = ["m_yak", "m_moose", "m_goat"] if perm else ["g_eel", "g_crab", "g_newt"]
     taught = ["g_eel", "g_crab", "g_newt"] if perm else ["m_yak", "m_moose", "m_goat"]
-    unacq_moats = [_TEACH_MOAT[t][1 if perm else 0] for t in unacquired]
+    unacq_moats = [_TEACH_MOAT[t][1 if perm else 0] for t in tuple(unacquired) + tuple(asks_known)]
     stop = int(rng.integers(2, 5)) if realistic else 4          # the unlearnable gap is asked on probes 1..stop-1, then not
+    if habituates:
+        stop = 3
     a = {}
     if variant in ("intact", "permuted", "no_stop", "da_throttled", "never_closes"):
         a.update({l: True for l in novel})
@@ -270,10 +290,12 @@ def reply_ask(variant, rng, realistic):
     # order arm the probe order this arm met)
     variant, _, order = variant.partition("@")
     variant, _, flag = variant.partition("+")
-    unacq = ASK_UNACQUIRED[flag]
+    unacq = ASK_UNACQUIRED.get(flag, ())
+    echo = ASK_ECHO_OTHER.get(flag, ())
     perm = variant == "permuted"
-    r, turns = _base("ask", variant, perm, unacquired=unacq)
-    a = _ask_pattern(variant, rng, realistic, order=order or "intact_a", unacquired=unacq)
+    r, turns = _base("ask", variant, perm, unacquired=unacq, echo_other=echo)
+    a = _ask_pattern(variant, rng, realistic, order=order or "intact_a", unacquired=unacq, asks_known=echo,
+                     habituates=(flag == "habit"))
     topic = {"g_eel": "eel", "g_crab": "crab", "g_newt": "newt", "m_yak": "yak", "m_moose": "moose", "m_goat": "goat",
              "lp_ibex_1": "ibex", "u_toad_1": "toad", "u_toad_2": "toad", "u_toad_3": "toad", "u_toad_4": "toad"}
     for l, t in topic.items():
@@ -598,6 +620,12 @@ def generators(group, extra_info=True):
         out["perfect_two_moats_unacquired"] = mk(over=_flag("two_unacq"))
         # NULL (a): nothing taught was acquired: the moat rate does not exist -> UNDEFINED, never PASS
         out["null_no_moat_acquired"] = mk(over=_flag("none_acq"))
+        # NULL (a, A4 review): the moose / goat facts are STORED but echoed second (the triple only in supporting_facts)
+        # and the brain asks about those known topics anyway. Reading `recalled_svo` alone dropped both moats and passed it.
+        out["null_stored_echoed_differently_asks"] = mk(over=_flag("echo2"))
+        # RESIDUAL (A4 review), reported never thresholded: per-topic habituation, it asks about an unknown topic at
+        # most twice. No learning-progress signal, yet it passes both orders (the per-session-budget brain does not).
+        out["info_topic_habituation"] = mk(over=_flag("habit"))
         # NULL (b): the order carries the verdict: perfect in the registered order, the DA throttle (or a missing stop)
         # in the reversed order only (the HANDOFF #16 confound, one order only). The pre-A4 scorer passed both.
         out["null_order_carried"] = mk(over={"reversed": "da_throttled"})

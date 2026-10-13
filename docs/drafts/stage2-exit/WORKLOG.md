@@ -186,3 +186,21 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   Mirror image of the registered order: u_toad_1/2 ask, then DA 0.046 / threshold 59.8 Hz silences lp_ibex_1 and
   the whole discrimination block (gap 0, moat 0 of 2, m_goat undefined); lp_unlearnable True for the DA-history
   reason, not learning progress. Governs nothing (prereg section 11).
+- 2026-10-13 (Claude, A4 review fix 9) provenance of `dev/s7/ask__reversed.json`: it was produced from an UNCOMMITTED
+  tree. The run (751 s wall) started before the A4 commit `1c934ae9c` existed, and the shard was committed in
+  `1dcdc2f57` 27 s after that commit. It was run with `SIM_NO_PROVENANCE=1`, so it has no `.prov.json` sidecar and no
+  revision pins its code. It is dev data and governs nothing (prereg section 11). It re-scores unchanged under the
+  review fixes (valid, including the new turn-table check).
+- 2026-10-13 (Claude) A4 review fixes (two reviewers of `1c934ae9c`: one MERGE, one FIX_FIRST, no blocker; all ten
+  applied, `AMENDMENT-A4.md` "Review record"). (1) A teach is acquired iff the reply did not abstain AND the taught
+  triple is in `supporting_facts` together with `recalled_svo`, which closes the "stored, echoed second, asks anyway"
+  backdoor (new null `null_stored_echoed_differently_asks`: 1.000 at `1c934ae9c`, 0.000 now). (2) Control arms
+  (permuted, lesion_graded, .rep0) take the moat set from `intact_a` only; the e2e permuted test is restored (FAIL "not
+  exposure-driven"). (3) No acquired moat makes the seed UNDEFINED only if every other correctness clause holds;
+  otherwise the seed is incorrect and the moat rate is reported undefined. (4) `arm_validity` requires each counted arm's
+  turn table to equal `turns_for(group, seed, arm)` (all 16 dev-7 shards pass). (5) `da_lesion` reports `lesion_held`;
+  if not held it is NOT HELD, never a lesion read. (6) The C3 line is now "C3 known architecture gaps (not the measured
+  cause)", printed beside the da_lesion read; C1's `Named gaps` stays. (7) The habituation residual and the accepted
+  scope are stated (informational `info_topic_habituation`). (8) Lane: +12 jobs ~3.0 h workstation / ~4.3 h pool;
+  gate ~73 job-hours. (10) A test pushes a C1 FAIL through aggregate + report. The six `_A4` bar-sanity records were
+  regenerated at the amended scorer. Tests: 49 passed (28 + 21); SELFTEST OK.

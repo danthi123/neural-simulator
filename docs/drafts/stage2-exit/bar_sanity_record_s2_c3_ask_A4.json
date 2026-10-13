@@ -1,10 +1,11 @@
 {
  "backend": "numpy",
- "description": "Stage-2 C3 (curiosity ask-rate and learning-progress): the real aggregate's `ask` verdict is PASS over six gate seeds; perfect = the capability present, realistic dev-7 reply surfaces; nulls = each lesion / the permuted arm made inert, unreproduced lesions, a non-deterministic build, degenerate and random brains, one brain per missing sub-capability; A4: perfect brains with unacquired taught moats, nulls with the verdict carried by one probe order or no moat acquired.",
+ "description": "Stage-2 C3 (curiosity ask-rate and learning-progress): the real aggregate's `ask` verdict is PASS over six gate seeds; perfect = the capability present, realistic dev-7 reply surfaces; nulls = each lesion / the permuted arm made inert, unreproduced lesions, a non-deterministic build, degenerate and random brains, one brain per missing sub-capability; A4: perfect brains with unacquired taught moats, nulls with the verdict carried by one probe order, no moat acquired, or a stored moat echoed second and asked anyway; info: per-topic habituation (the named residual).",
  "failures": [],
  "kinds": {
   "info_flaky_0p01": "info",
   "info_flaky_0p03": "info",
+  "info_topic_habituation": "info",
   "null_all_abstain": "null",
   "null_always_asks": "null",
   "null_da_throttled": "null",
@@ -20,6 +21,7 @@
   "null_order_carried": "null",
   "null_order_carried_no_stop": "null",
   "null_permuted_inert": "null",
+  "null_stored_echoed_differently_asks": "null",
   "null_unclean": "null",
   "perfect": "perfect",
   "perfect_exact": "perfect",
@@ -31,6 +33,7 @@
  "n_pass": {
   "info_flaky_0p01": 708,
   "info_flaky_0p03": 315,
+  "info_topic_habituation": 1000,
   "null_all_abstain": 0,
   "null_always_asks": 0,
   "null_da_throttled": 0,
@@ -46,6 +49,7 @@
   "null_order_carried": 0,
   "null_order_carried_no_stop": 0,
   "null_permuted_inert": 0,
+  "null_stored_echoed_differently_asks": 0,
   "null_unclean": 0,
   "perfect": 1000,
   "perfect_exact": 1000,
@@ -57,6 +61,7 @@
  "pass_rate": {
   "info_flaky_0p01": 0.708,
   "info_flaky_0p03": 0.315,
+  "info_topic_habituation": 1.0,
   "null_all_abstain": 0.0,
   "null_always_asks": 0.0,
   "null_da_throttled": 0.0,
@@ -72,6 +77,7 @@
   "null_order_carried": 0.0,
   "null_order_carried_no_stop": 0.0,
   "null_permuted_inert": 0.0,
+  "null_stored_echoed_differently_asks": 0.0,
   "null_unclean": 0.0,
   "perfect": 1.0,
   "perfect_exact": 1.0,
@@ -87,6 +93,10 @@
   "info_flaky_0p03": [
    0.287,
    0.3445
+  ],
+  "info_topic_habituation": [
+   0.9962,
+   1.0
   ],
   "null_all_abstain": [
    0.0,
@@ -148,6 +158,10 @@
    0.0,
    0.0038
   ],
+  "null_stored_echoed_differently_asks": [
+   0.0,
+   0.0038
+  ],
   "null_unclean": [
    0.0,
    0.0038
@@ -173,15 +187,15 @@
    0.0038
   ]
  },
- "repo_head": "4b19aafb82e9e52cd9dc4e36c1c1de393c577017",
+ "repo_head": "1dcdc2f57ca5fc14d4bc5a03201d6c8031b37de1",
  "scorer_files": {
-  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "78ad07416918e08a0958b1f4b2e6ad9f8a8e11bc42ac0fbc4c260e0f0695c883",
-  "research/runners/stage2_exit_gate.py": "2a3a6c761d7e1116cf9d7dbdadc62d514e2e0f740e9b5071bb73088461f02937"
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "7ba31e0d675eb751a20c64ed2cd44eb50b7bad47295bcf100d208436b0c68a63",
+  "research/runners/stage2_exit_gate.py": "7c06ec2ee974988b99111c44452cbd76ca9ca41cdeada47511c0cd45c0c43b31"
  },
- "scorer_sha256": "8115040b2e7359cda94fe653659895614ebf0eec50a5561d6334829a64ad854a",
+ "scorer_sha256": "ef6392a0427a8f7ff12d2163f8e7bc2d6c98a8de7ea5268d079d3051e1a38662",
  "seed": 0,
  "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c3_ask.py",
- "spec_sha256": "84d5b58187d20259812dc63ae75c6e0481311ad9c83c8ca9d35bf1e189cddc6d",
+ "spec_sha256": "ff796e591b999143430df532d7e5e8ed9f7a3c173e1a87acdb25677589904d13",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -189,5 +203,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 114.2
+ "wall_s": 168.1
 }

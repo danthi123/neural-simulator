@@ -1,11 +1,12 @@
-# Stage-2 exit gate, Amendment A4: C3's order confound and unacquired moat; the C1 / C3 named gaps (Claude, 2026-10-13)
+# Stage-2 exit gate, Amendment A4: C3's order confound and unacquired moat; C1's named gaps (Claude, 2026-10-13)
 
 Amends `research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md` (kept byte-identical, so `PREREG_SHA` is
-unchanged) together with Amendment A3. It implements Claude's 2026-10-13 ruling on HANDOFF NEEDS-CLAUDE #15, #16 and #17.
-Filed before any gate-seed job was queued. No gate-seed data exist (the window is 2026-11-03..11-10). The only data read
-are the dev-seed-7 shards, which govern nothing (prereg section 11). Criteria C1, C2, C4 and C5 keep every bar, arm, turn
-and seed. C3 gains one counted arm, one informational arm and one undefined rule. A FAIL of C1 or C3 also prints the gaps
-named below.
+unchanged) together with Amendment A3. It implements Claude's 2026-10-13 ruling on HANDOFF NEEDS-CLAUDE #15, #16 and #17,
+and the fixes and rulings of the two-reviewer review of the first A4 commit (`1c934ae9c`, same day; section "Review
+record"). Filed before any gate-seed job was queued. No gate-seed data exist (the window is 2026-11-03..11-10). The only
+data read are the dev-seed-7 shards, which govern nothing (prereg section 11). Criteria C1, C2, C4 and C5 keep every
+bar, arm, turn and seed. C3 gains one counted arm, one informational arm and one undefined rule. Every counted arm of
+every group must have run its own registered turn table. A FAIL of C1 also prints the gaps named below.
 
 ## Why (dev seed 7, `ask__intact_a.json`)
 
@@ -21,26 +22,41 @@ named below.
 
 ## A4.1 (a) A taught moat whose teach turn was not acquired is UNDEFINED
 
-- **Acquired** (`teach_acquired`, `acquired_topics` in the runner) means the teach turn's reply did not abstain and its
-  `recalled_svo` (the handler's echo of what it stored) is exactly the taught triple `[S, lemma, O]`. It is read per arm
-  from that arm's own teach turns: `intact_a`, the reversed arm and the permuted arm (whose moats are eel/crab/newt).
+- **Acquired** (`teach_acquired`, `acquired_teaches` in the runner) means the teach turn's reply did not abstain AND
+  the taught triple `[S, lemma, O]` is among the facts the reply carries: `supporting_facts` together with
+  `recalled_svo`. The handler puts only the first fact in `recalled_svo` and every voiced fact in `supporting_facts`
+  (dev 7 `t_yak`: yak eat grass, dog chase cat, cat eat fish).
+- **Direction (review fix 1).** The first A4 commit read `recalled_svo` alone. A brain that stored the taught triple but
+  echoed another fact first then had that moat dropped, so it could ask about topics it knew and escape the moat rate.
+  `null_stored_echoed_differently_asks` passed that scorer 1.000 and passes this one 0.000. Reading more of what the
+  reply carries can only mark MORE moats acquired, so the fix can only keep moats in the rate. A brain that echoes a
+  triple it did not store is still counted as acquiring it; its moat probe then reads as known.
+- **Which turn decides (ruling 2026-10-13).** The correctness sessions (`intact_a`, `intact_b`, `reversed`) each read
+  their own teach turns. The control arms (`permuted`, `lesion_graded` with its `.rep0`) take the moat set from
+  `intact_a`'s acquisition only, by teach label. The permuted arm's `t_goat` teaches `the newt eats the hay`, so `g_newt`
+  is undefined there exactly when `intact_a` did not acquire `t_goat`. A control arm's own teach echoes never drop a
+  scored turn. An exposure-blind permuted arm therefore stays FAIL "not exposure-driven", never UNDEFINED.
 - An unacquired moat is left out of `ask_rate_moat` and **never counted as novel**: the gap set stays the three
   never-taught topics. It is reported per seed as `moats_undefined`, with `moat_items` (topic, acquired, asked,
   counted) and the sub-clause count `all_taught_moats_acquired`.
-- The moat rate needs at least `ASK_MOAT_MIN_DEFINED = 1` acquired moat. With none, the rate does not exist and the seed
-  is UNDEFINED for C3, never FAIL. The aggregate gains the precondition "the ask group's taught-moat ask-rate defined in
-  every arm that reads it (amendment A4 (a))". An acquisition failure is a comprehension gap (C1's), not a curiosity
-  result.
-- The `lesion_graded` arm's scored turns lose any taught moat that was not acquired in both `intact_a` and the lesion
-  arm (`effective_scored_labels`). This only removes turns, so the lesion clause can only get harder to meet.
+- **No acquired moat (ruling 2026-10-13, narrowing the first ruling).** The moat rate needs at least
+  `ASK_MOAT_MIN_DEFINED = 1` acquired moat. With none, the seed is UNDEFINED only if the missing moat rate is what
+  decides it: every other correctness clause holds in every correctness session. That includes the gap-floor half of
+  `discriminates` (gap rate >= 2/3), which needs no moat rate. If any other clause fails, the seed is scored incorrect
+  (FAIL) and the moat rate is reported undefined (`discriminates` None, `moat_rate_decides` False). The aggregate's
+  precondition "the ask group's taught-moat ask-rate defined wherever it decides a correctness session (amendment A4
+  (a))" counts only the deciding case.
+- The `lesion_graded` arm is scored on the taught moats `intact_a` acquired (`effective_scored_labels`). The lesion
+  arm's own echoes are not read. When `intact_a` acquired none, the lesion has no scored turn and its effect is None
+  (not an effect). The seed is then decided by `intact_a`'s rule above: UNDEFINED, or incorrect.
 - `all_gaps_abstain` still covers all six discrimination probes, including an unacquired moat (unchanged, stricter).
 - **Stated honestly:** (a) is a validity correction, not a tightening. It can turn a pre-A4 FAIL into a PASS, but only
   where a "taught" moat was never learned. A curiosity-perfect brain that failed to acquire two of the three taught facts
   (and so asks about them) passed the pre-A4 bar 0.000 of the time and passes this one 1.000 (bar-sanity below). A brain
-  cannot reach a PASS by acquiring nothing (UNDEFINED; `null_no_moat_acquired` 0.000). With one acquired moat the ratio
-  bar tolerates no moat ask. With two it tolerates one, and only when the gap rate is 1.
+  cannot reach a PASS by acquiring nothing (`null_no_moat_acquired` 0.000). With one acquired moat the ratio bar
+  tolerates no moat ask. With two it tolerates one, and only when the gap rate is 1.
 
-## A4.2 (b) A counted REVERSED-ORDER arm: every C3 clause must hold in BOTH orders
+## A4.2 (b) A counted REVERSED-ORDER arm: every C3 correctness clause must hold in BOTH orders
 
 - **Arm `reversed`** (group `ask` only): production defaults, nothing installed, its own session
   (`s2_ask_reversed_<seed>`). It uses the same turns: the teach block first (the exposure the moats need, not a probe
@@ -48,17 +64,22 @@ named below.
   (`lp_ibex_1`, `t_ibex`, `lp_ibex_2`), then discrimination (`g_eel` .. `m_goat`). Each block keeps its own order.
   `_ASK_REVERSED` in the runner; the registered order is pinned by `tests/test_stage2_exit_gate_a4.py`.
 - It is a **counted** arm. It is emitted as a pool line, required (missing means UNDEFINED, never FAIL) and validated
-  like every counted arm (source, hash seed, corpus, errored turn, organ error).
+  like every counted arm (source, hash seed, corpus, errored turn, organ error, turn table).
+- **Turn table (review fix 4), every group.** `arm_validity` requires each counted arm's recorded turns (label and
+  message, in order) to equal `turns_for(group, seed, arm)`. The scorers read by label, so otherwise a `reversed` shard
+  recorded in the registered order would pass "both orders" vacuously. The same holds for a permuted shard recorded with
+  the intact teaching. Such an arm is UNDEFINED under the precondition "every counted arm ran its own registered turn
+  table". All 16 dev-seed-7 shards pass it.
 - **Correct** for a C3 seed is now `score_ask(intact_a)["all"]` AND `score_ask(reversed)["all"]`. That covers every
   correctness clause of prereg 4.3 (`discriminates`, `lp_learnable`, `lp_unlearnable`, `all_gaps_abstain`,
   `builtin_dog_cat`), plus rule (a), in both orders. A FAIL reads "capability absent on k of 6 seeds (correct per order:
   registered a of 6, reversed b of 6)". The sub-clauses `reversed_all`, `reversed_discriminates`, `reversed_lp_learnable`
   and `reversed_lp_unlearnable` are reported beside it, and the report prints each seed's reversed-order line.
-- **Scope, stated as a limit:** the lesion clauses (`lesion_curiosity`, `lesion_graded`, `.rep0`) and the permuted
-  clause are read in the registered order only, since there is no reversed lesion or permuted arm. The reversed arm has
-  no null pair of its own: the build's determinism is the intact pair's null at the same seed and revision.
-- **Reading a C3 FAIL** (ruling): it names the gap "global DA engagement threshold; no per-topic learning-progress
-  signal". The report prints it whichever clause failed (A4.4).
+- **Accepted scope (ruling 2026-10-13).** The correctness clauses must hold in both orders. The lesion clauses
+  (`lesion_curiosity`, `lesion_graded`, `.rep0`) and the permuted clause are read in the registered order only, since
+  there is no reversed lesion or permuted arm. This is accepted: a brain that is correct in the reversed order must ask in
+  the final discrimination block, which is where the graded lesion's effect also shows. The reversed arm has no null pair
+  of its own; the build's determinism is the intact pair's null at the same seed and revision.
 
 ## A4.3 (c) Informational DA-lesion arm (reported, never counted)
 
@@ -68,17 +89,23 @@ modulation to 0, gain 1.0. Arm `da_lesion` (group `ask`, the registered order) r
 a precondition and never in the stage verdict. Its question is whether the order confound vanishes without the DA
 coupling and whether the unlearnable gap then stops at all, which would show a learning-progress signal.
 
-## A4.4 Reporting rule for C1 and C3 (no bar change, no wording change)
+**Lesion held (review fix 5; docs/TERMS.md "lesion").** The arm reports `lesion_held` (`da_lesion_held`). It is True
+only if there is at least one `curiosity.curiosity_da` trace and every trace says `lesioned` True and `da_crave_gain`
+== 1.0. If it did not hold, the arm is reported as "attempted lesion (persistence unverified)", NOT HELD, and its C3
+reads are withheld: it is never presented as a lesion read.
 
-A FAIL of these groups prints a `Named gaps` line (`A4_NAMED_GAPS`) beside prereg section 8's sub-bar reading,
-whichever sub-clause failed:
+## A4.4 Reporting rules (no bar change, no wording change)
 
-- **C1 `conv`** (NEEDS-CLAUDE #17): "wh-locative question parse; locative frame storage (the teach echo drops the
-  preposition); discourse elaboration for 'tell me more'". Dev 7 shows all three. `where does the deer sleep` abstains at
-  the question parse, so the prepositional sub-bar measures the wh-parse before the frame inventory. The teach echo
-  `the deer sleeps the meadow` drops the preposition. `tell me more` returns "I don't have anything more to add". The
-  probe wording is kept: `deer_sleep` and `more` stay as registered.
-- **C3 `ask`** (NEEDS-CLAUDE #16): "global DA engagement threshold; no per-topic learning-progress signal".
+- **C1 `conv`** (NEEDS-CLAUDE #17 ruling). A C1 FAIL prints a `Named gaps` line (`A4_NAMED_GAPS`) beside prereg
+  section 8's sub-bar reading, whichever sub-clause failed: "wh-locative question parse; locative frame storage (the
+  teach echo drops the preposition); discourse elaboration for 'tell me more'". Dev 7 shows all three. `where does the
+  deer sleep` abstains at the question parse, so the prepositional sub-bar measures the wh-parse before the frame
+  inventory. The teach echo `the deer sleeps the meadow` drops the preposition. `tell me more` returns "I don't have
+  anything more to add". The probe wording is kept: `deer_sleep` and `more` stay as registered.
+- **C3 `ask`** (review fix 6). A C3 FAIL prints, in the per-seed C3 block right after the `da_lesion` lines, "C3 known
+  architecture gaps (not the measured cause): global DA engagement threshold; no per-topic learning-progress signal"
+  (`A4_KNOWN_ARCH_GAPS`). The line has no ruling as a measured cause. The `da_lesion` read beside it is the only
+  measurement in this gate that bears on the first gap.
 
 ## A4.5 NEEDS-CLAUDE #15 resolved (C5 private): no C5 change here
 
@@ -92,26 +119,31 @@ private half reads the demo lexicon again and FAILs "capability absent", as A3 s
 
 ## Lane
 
-Jobs: 186 -> 198 (6 seeds x 33 arms): +6 counted `ask/reversed`, +6 informational `ask/da_lesion`, both
-`mem_gb=9`, memcap 10, like every line. The `ask` arm measured 6.3-6.5 GB peak and 913 s at dev 7 (workstation), so
-the addition is about 3 job-hours on the pool (~1.4x slower). `--no-informational` drops `da_lesion` but never `reversed`.
+Jobs: 186 -> 198 (6 seeds x 33 arms): +6 counted `ask/reversed`, +6 informational `ask/da_lesion`, both `mem_gb=9`,
+memcap 10, like every line. The `ask` arm measured 6.3-6.5 GB peak and 751-913 s at dev 7 (workstation). The 12 extra
+jobs come to about 3.0 h at workstation speed and about 4.3 h on the pool (~1.4x slower). The gate total becomes about
+73 job-hours (prereg section 10 + A2: about 69). `--no-informational` drops `da_lesion` but never `reversed`.
 
 ## Bar-sanity (n = 1000 per brain, seed 0; `tools/bar_sanity.py`)
 
-New C3 generators (`bar_sanity_s2_common.py`). The teach turns now echo the stored triple, as dev 7's handler does. The
-reversed arm reads the same brain in the reversed order, and the DA-throttle null applies "silent after two asks" along
-each arm's own probe order. Pass rates under the pre-A4 scorer (HEAD `4b19aafb8`, n = 200) and this one:
+New C3 generators (`bar_sanity_s2_common.py`). The teach turns now echo the stored triple in `recalled_svo` and
+`supporting_facts`, as dev 7's handler does. The reversed arm reads the same brain in the reversed order, and the
+DA-throttle null applies "silent after two asks" along each arm's own probe order. Pass rates (n = 200) under the
+pre-A4 scorer (HEAD `4b19aafb8`), the first A4 commit (`1c934ae9c`) and this one:
 
-| generator | kind | pre-A4 | A4 |
-|---|---|---|---|
-| `perfect_goat_unacquired` (dev 7's shape: goat novel, asked) | perfect | 1.000 | 1.000 |
-| `perfect_two_moats_unacquired` | perfect | 0.000 | 1.000 |
-| `null_no_moat_acquired` | null | 0.000 | 0.000 |
-| `null_order_carried` (registered order perfect, the reversed order DA-throttled) | null | 1.000 | 0.000 |
-| `null_order_carried_no_stop` (the reversed order never stops on the unlearnable gap) | null | 1.000 | 0.000 |
+| generator | kind | pre-A4 | A4 `1c934ae9c` | A4 (this) |
+|---|---|---|---|---|
+| `perfect_goat_unacquired` (dev 7's shape: goat novel, asked) | perfect | 1.000 | 1.000 | 1.000 |
+| `perfect_two_moats_unacquired` | perfect | 0.000 | 1.000 | 1.000 |
+| `null_no_moat_acquired` | null | 0.000 | 0.000 | 0.000 |
+| `null_stored_echoed_differently_asks` (moose/goat stored, echoed second, asked anyway) | null | 0.000 | 1.000 | 0.000 |
+| `null_order_carried` (registered order perfect, the reversed order DA-throttled) | null | 1.000 | 0.000 | 0.000 |
+| `null_order_carried_no_stop` (the reversed order never stops on the unlearnable gap) | null | 1.000 | 0.000 | 0.000 |
+| `info_topic_habituation` (asks about an unknown topic at most twice; reported only) | info | 1.000 | 1.000 | 1.000 |
 
 Every other C3 null stays 0.000 and every perfect brain 1.000. The stage spec gains `null_ask_reversed_order_carried`.
-C1, C2, C4 and C5 were re-measured at the amended scorer (their records' scorer sha moved). All six records read OK:
+C1, C2, C4 and C5 were re-measured at the amended scorer (their records' scorer sha moved). All six records read OK and
+are hashed against the scorer at this commit:
 
 bar-sanity: docs/drafts/stage2-exit/bar_sanity_record_s2_c3_ask_A4.json
 bar-sanity: docs/drafts/stage2-exit/bar_sanity_record_s2_stage_A4.json
@@ -134,18 +166,32 @@ bar-sanity-before: docs/drafts/stage2-exit/bar_sanity_record_s2_c5_inner_A3.json
 `ask/intact_a` and `intact_b` read: `m_goat` undefined (goat not acquired), moat rate 0 of 2, gap rate 2/3, so
 `discriminates` holds; `lp_learnable` and `lp_unlearnable` are False. The registered order alone already fails, and the
 prereg's prediction (FAIL on `lp_unlearnable`) stands. The `lesion_graded` arm is scored on `m_yak` and `m_moose`.
-The `ask/reversed` dev smoke (`dev/s7/ask__reversed.json`: valid, peak RSS 6.5 GB, 751 s) shows the confound in mirror
-image. `u_toad_1` and `u_toad_2` ask (DA 0.554, then 0.246); from `u_toad_3` on, the DA level is 0.046 and the effective
-threshold 59.8 Hz, so nothing asks: `lp_ibex_1`, every gap and every moat are silent (gap rate 0, `discriminates`
-False). `lp_unlearnable` reads True there, but for the same history reason (the threshold rose), not a learning-progress
-signal. Each order passes the clauses the other fails, so neither order alone carries C3, which is what A4.2 requires.
+The `ask/reversed` dev smoke (`dev/s7/ask__reversed.json`: valid, peak RSS 6.5 GB, 751 s; provenance in the WORKLOG)
+shows the confound in mirror image. `u_toad_1` and `u_toad_2` ask (DA 0.554, then 0.246); from `u_toad_3` on, the DA
+level is 0.046 and the effective threshold 59.8 Hz, so nothing asks: `lp_ibex_1`, every gap and every moat are silent
+(gap rate 0, `discriminates` False). `lp_unlearnable` reads True there, but for the same history reason (the threshold
+rose), not a learning-progress signal. Each order passes the clauses the other fails, so neither order alone carries C3,
+which is what A4.2 requires. These reads are identical under the review fixes.
 
 ## What this does NOT establish
 
-Both orders passing is necessary for "the brain asks by topic history", not proof of it. A brain with a per-session ask
-budget large enough for both orders would pass, and no learning-progress organ is implied by a PASS. The DA-lesion arm is
-one informational read and attributes nothing. Rule (a) trusts the teach echo as the read of what was stored. A brain
-that echoes the triple but stores something else would be counted as acquiring it; the moat probes would then expose it.
+- **The residual loophole is per-topic habituation (review fix 7).** A brain that asks about an unknown topic at most
+  twice passes 2 of 2 in both orders. It asks each gap once, asks the ibex once and then learns it, and asks the toad on
+  probes 1 and 2 but not on 4. That brain has no learning-progress signal (`info_topic_habituation`, reported only,
+  passes 1.000). A per-session ask budget does NOT pass. In the reversed order the toad probes come first, so a budget
+  that stops the toad by probe 4 is spent before the ibex and the discrimination block. A PASS therefore says "the brain
+  asks by topic history, at least by count", not "a learning-progress organ".
+- The DA-lesion arm is one informational read and attributes nothing.
+- Rule (a) trusts the teach reply as the read of what was stored. A brain that voices a triple it did not store is
+  counted as acquiring it; its moat probe then reads as known.
+
+## Review record (2026-10-13; two reviewers of `1c934ae9c`, one MERGE, one FIX_FIRST, no blocker)
+
+Applied: (1) acquisition reads `supporting_facts` together with `recalled_svo`, plus the null above; (2) control arms
+take `intact_a`'s moat set; (3) an undefined moat rate never masks a FAIL another clause decides; (4) the turn-table
+validity rule; (5) `lesion_held` on the DA-lesion arm; (6) the C3 line reworded as known architecture gaps beside the
+DA-lesion read, not named gaps; (7) the habituation residual and the accepted scope; (8) the lane figures; (9) the dev
+shard's provenance note (WORKLOG); (10) a test that pushes a C1 FAIL through the report's `Named gaps` line.
 
 ## Consequences for the packet
 

@@ -70,7 +70,7 @@ def test_pool_lines_carry_one_reversed_and_one_da_lesion_line_per_seed():
     assert any("--arm reversed " in c for c, _w in no_info) and not any("--arm da_lesion " in c for c, _w in no_info)
 
 
-def _tree(td, over=None, unacquired=(), seeds=(1, 2), drop=()):
+def _tree(td, over=None, unacquired=(), seeds=(1, 2), drop=(), held=True, echo_other=(), unacq_by_arm=None):
     kinds = {"intact_a": "intact", "intact_b": "intact", "lesion_curiosity": "lesion", "lesion_curiosity.rep0": "lesion",
              "lesion_graded": "graded_lesion", "lesion_graded.rep0": "graded_lesion", "permuted": "permuted",
              "reversed": "intact", "da_lesion": "intact"}
@@ -83,8 +83,10 @@ def _tree(td, over=None, unacquired=(), seeds=(1, 2), drop=()):
                     os.remove(p)
                 continue
             os.makedirs(os.path.dirname(p), exist_ok=True)
-            d = dict(SG._fake_shard("ask", SG._synthetic_ask(kind, unacquired=unacquired), arm=arm), seed=seed, arm=arm,
-                     corpus_present=True)
+            un = (unacq_by_arm or {}).get(arm, unacquired)
+            syn = SG._synthetic_ask(kind, unacquired=un, echo_other=echo_other,
+                                    da_trace=(held if arm == "da_lesion" else None))
+            d = dict(SG._fake_shard("ask", syn, arm=arm), seed=seed, arm=arm, corpus_present=True)
             with open(p, "w") as f:
                 json.dump(d, f)
     return SG.aggregate(td, seeds=seeds)
@@ -129,6 +131,12 @@ def test_teach_acquired_reads_the_teach_echo_and_rejects_the_role_binding_abstai
     assert not SG.teach_acquired({"answer": "x", "abstained": True, "recalled_svo": f}, f)            # abstained
     assert not SG.teach_acquired({"answer": "x", "abstained": False, "recalled_svo": ["hay", "eat", "goat"]}, f)
     assert not SG.teach_acquired({"_error": "boom"}, f) and not SG.teach_acquired(None, f)
+    # review fix: the handler puts only the FIRST fact in recalled_svo; a stored triple echoed second is acquired
+    second = {"answer": "the dog chases the cat the goat eats the hay", "abstained": False,
+              "recalled_svo": ["dog", "chase", "cat"], "supporting_facts": [["dog", "chase", "cat"], f]}
+    assert SG.teach_acquired(second, f)
+    assert not SG.teach_acquired(dict(second, abstained=True), f)
+    assert not SG.teach_acquired(dict(second, supporting_facts=[["dog", "chase", "cat"]]), f)
 
 
 def test_dev7_goat_teach_was_not_acquired_so_m_goat_is_undefined_and_the_rate_is_over_yak_and_moose():
@@ -158,6 +166,11 @@ def test_an_unacquired_moat_drops_out_of_the_graded_lesion_scored_turns_only():
     lg = SG._fake_shard("ask", SG._synthetic_ask("graded_lesion"), arm="lesion_graded")
     assert SG.effective_scored_labels("ask", "lesion_graded", ia, lg) == ["m_yak", "m_moose"]
     assert SG.effective_scored_labels("ask", "lesion_curiosity", ia, lg) == SG.SCORED_LABELS["ask"]["lesion_curiosity"]
+    # ruling 2026-10-13: a control arm's OWN echoes never drop a scored turn (the moat set is intact_a's)
+    ia_all = SG._fake_shard("ask", SG._synthetic_ask("intact"))
+    lg_none = SG._fake_shard("ask", SG._synthetic_ask("graded_lesion", unacquired=("t_yak", "t_moose", "t_goat")),
+                             arm="lesion_graded")
+    assert SG.effective_scored_labels("ask", "lesion_graded", ia_all, lg_none) == ["m_yak", "m_moose", "m_goat"]
     for g, d in SG.SCORED_LABELS.items():          # every other group: identity
         if g != "ask":
             for les, labs in d.items():
@@ -173,21 +186,26 @@ def test_no_acquired_moat_in_any_counted_arm_makes_the_seed_undefined_with_the_a
         assert len(pre) == 1 and pre[0]["ok"] is False
 
 
-def test_the_permuted_arm_reads_its_own_teaching_acquisition(tmp_path):
-    """Permuted teaching acquires eel/crab/newt (its own moats); none acquired there -> UNDEFINED, not 'not
-    exposure-driven' (an acquisition gap is not a curiosity result)."""
+def test_control_arms_take_the_moat_set_from_intact_a_only(tmp_path):
+    """Ruling 2026-10-13: the correctness sessions (intact_a, intact_b, reversed) read their own teach turns; the
+    control arms (permuted, lesion_graded) take the moat set from intact_a's acquisition, so their own echoes never
+    drop a scored turn. A permuted arm whose own teach turns all abstained is still scored on eel/crab/newt."""
     td = str(tmp_path)
-    agg = _tree(td)
-    assert agg["groups"]["ask"]["verdict"] == "PASS"
-    for seed in (1, 2):
-        p = SG.shard_path(td, seed, "ask", "permuted")
-        d = json.load(open(p))
-        for l in ("t_yak", "t_moose", "t_goat"):
-            d["responses"][l] = SG._fake(SG._ROLE_ABSTAIN, True)
-        json.dump(d, open(p, "w"))
+    _tree(td)
+    for seed in (1, 2):                 # the control arms' OWN teach echoes abstain; their probe replies are unchanged
+        for arm in ("permuted", "lesion_graded", "lesion_graded.rep0"):
+            p = SG.shard_path(td, seed, "ask", arm)
+            d = json.load(open(p))
+            for l in ("t_yak", "t_moose", "t_goat"):
+                d["responses"][l] = SG._fake(SG._ROLE_ABSTAIN, True)
+            json.dump(d, open(p, "w"))
     g = SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]
-    assert g["verdict"] == "INCOMPLETE" and any("permuted: taught moat acquired on 0 of 3" in r
-                                                for r in g["seeds"][1]["undefined_reasons"])
+    assert g["verdict"] == "PASS", g["why"]
+    assert g["seeds"][1]["permuted"]["moats_undefined"] == [] and g["seeds"][1]["permuted"]["n_moats_defined"] == 3
+    assert "scored_labels_dropped_A4" not in g["seeds"][1]["lesions"]["lesion_graded"]
+    # and intact_a's own unacquired goat DOES carry into the permuted arm (t_goat teaches newt there)
+    g = _tree(td, unacquired=("t_goat",), unacq_by_arm={"permuted": ()})["groups"]["ask"]
+    assert g["verdict"] == "PASS" and g["seeds"][1]["permuted"]["moats_undefined"] == ["g_newt"]
 
 
 # ── (c) the DA-lesion arm and the reporting rules ────────────────────────────────────────────────────────────────────
@@ -195,18 +213,41 @@ def test_the_da_lesion_arm_is_reported_and_never_moves_the_verdict(tmp_path):
     for kind in ("intact", "lesion", "no_lp"):
         g = _tree(str(tmp_path), over={"da_lesion": kind})["groups"]["ask"]
         assert g["verdict"] == "PASS"
-        assert set(g["seeds"][1]["informational"]["da_lesion"]) >= {"discriminates", "lp_learnable", "lp_unlearnable"}
+        info = g["seeds"][1]["informational"]["da_lesion"]
+        assert info["lesion_held"] is True and info["n_da_traces"] > 0
+        assert set(info) >= {"discriminates", "lp_learnable", "lp_unlearnable"}
 
 
-def test_named_gaps_are_printed_for_a_c1_or_c3_fail_only(tmp_path):
+def test_a_da_lesion_that_did_not_hold_is_not_reported_as_a_lesion_read(tmp_path):
+    """docs/TERMS.md "lesion": the manipulation must be verified to hold where it is read. `curiosity_da.lesioned`
+    False (or a gain != 1.0, or no trace at all) -> NOT HELD, the C3 reads are withheld."""
+    td = str(tmp_path)
+    g = _tree(td, held=False)["groups"]["ask"]
+    info = g["seeds"][1]["informational"]["da_lesion"]
+    assert info["lesion_held"] is False and "discriminates" not in info and "attempted lesion" in info["status"]
+    assert "da_lesion (informational, never counted): NOT HELD" in SG.report(SG.aggregate(td, seeds=(1, 2)))
+    one_bad = SG._fake_shard("ask", SG._synthetic_ask("intact", da_trace=True), arm="da_lesion")
+    one_bad["responses"]["g_crab"]["curiosity"]["curiosity_da"]["da_crave_gain"] = 0.4
+    assert SG.da_lesion_held(one_bad)["not_held_on"] == ["g_crab"]
+    assert SG.da_lesion_held(SG._fake_shard("ask", SG._synthetic_ask("intact"), arm="da_lesion"))["n_da_traces"] == 0
+
+
+def test_c3_fail_prints_known_architecture_gaps_beside_the_da_lesion_read_not_named_gaps(tmp_path):
+    """Review 2026-10-13: the C3 line has no ruling as a measured cause; it is printed as known architecture gaps (not
+    the measured cause), next to the da_lesion read. Only C1 carries a `Named gaps` line (#17)."""
     agg = _tree(str(tmp_path), over={"reversed": "no_lp"})
-    assert agg["groups"]["ask"]["named_gaps"] == ["global DA engagement threshold; no per-topic learning-progress signal"]
-    assert all(d["named_gaps"] == [] for g, d in agg["groups"].items() if g != "ask")     # INCOMPLETE: nothing named
+    ask = agg["groups"]["ask"]
+    assert ask["verdict"] == "FAIL" and ask["named_gaps"] == []
+    assert ask["known_architecture_gaps"] == ["global DA engagement threshold", "no per-topic learning-progress signal"]
+    assert all(d["named_gaps"] == [] for g, d in agg["groups"].items())          # nothing else FAILed
     rep = SG.report(agg)
-    assert "Named gaps (amendment A4" in rep and "global DA engagement threshold" in rep
-    assert "  - reversed order: gap" in rep and "  - da_lesion (informational, never counted)" in rep
+    assert "Named gaps" not in rep and "(ruling)" not in rep
+    i_da = rep.index("  - da_lesion (informational, never counted, lesion held")
+    i_kag = rep.index("- C3 known architecture gaps (not the measured cause; read beside the da_lesion lines above): "
+                      "global DA engagement threshold; no per-topic learning-progress signal")
+    assert i_kag > i_da and "  - reversed order: gap" in rep
     agg = _tree(str(tmp_path))
-    assert agg["groups"]["ask"]["named_gaps"] == [] and "Named gaps" not in SG.report(agg)
+    assert agg["groups"]["ask"]["known_architecture_gaps"] == [] and "known architecture gaps" not in SG.report(agg)
     assert SG.A4_NAMED_GAPS["conv"] == ("wh-locative question parse",
                                         "locative frame storage (the teach echo drops the preposition)",
                                         "discourse elaboration for 'tell me more'")
@@ -226,3 +267,57 @@ def test_no_bar_constant_moved():
     assert SG.SCORED_LABELS["ask"] == {"lesion_curiosity": ["g_eel", "g_crab", "g_newt", "lp_ibex_1", "u_toad_1"],
                                        "lesion_graded": ["m_yak", "m_moose", "m_goat"]}
     assert SG.ASK_MOAT_MIN_DEFINED == 1
+
+
+# ── amendment A4 review (2026-10-13) ────────────────────────────────────────────────────────────────────────────────
+def test_a_stored_but_differently_echoed_moat_counts_and_a_brain_asking_there_fails(tmp_path):
+    """Review fix 1: reading `recalled_svo` alone dropped a moat whose triple was stored but echoed second, so a brain
+    that asks about topics it KNOWS escaped the moat rate (a pre-fix PASS). Acquisition now reads supporting_facts too."""
+    def _asks_on_known(td):
+        for seed in (1, 2):
+            for arm in ("intact_a", "intact_b", "reversed"):
+                p = SG.shard_path(td, seed, "ask", arm)
+                d = json.load(open(p))
+                for l, t in (("m_moose", "moose"), ("m_goat", "goat")):
+                    d["responses"][l] = SG._fake(SG._AB + SG._ASK % (t, t), True)
+                json.dump(d, open(p, "w"))
+    td = str(tmp_path)
+    _tree(td, echo_other=("t_moose", "t_goat"))
+    _asks_on_known(td)
+    g = SG.aggregate(td, seeds=(1, 2))["groups"]["ask"]
+    assert g["seeds"][1]["intact"]["moats_undefined"] == [] and g["seeds"][1]["intact"]["ask_rate_moat"] == pytest.approx(2.0 / 3.0)
+    assert g["verdict"] == "FAIL" and any("capability absent" in w for w in g["why"])
+
+
+def test_an_undefined_moat_rate_never_masks_a_fail_another_clause_decides(tmp_path):
+    """Ruling 2026-10-13: no acquired moat -> seed UNDEFINED only when every other correctness clause holds (in every
+    correctness session). If another clause fails, the seed is scored incorrect and the moat rate reported undefined."""
+    all3 = ("t_yak", "t_moose", "t_goat")
+    g = _tree(str(tmp_path), unacquired=all3)["groups"]["ask"]
+    assert g["verdict"] == "INCOMPLETE" and g["seeds"][1]["moat_rate_decides"] is True
+    for over in ({"intact_a": "no_lp", "intact_b": "no_lp"}, {"reversed": "no_lp"}):
+        agg = _tree(str(tmp_path), over=over, unacquired=all3)
+        g = agg["groups"]["ask"]
+        assert g["verdict"] == "FAIL" and g["n_defined"] == 2, (over, g["why"])
+        assert g["seeds"][1]["moat_rate_decides"] is False and not any("A4 (a)" in r for r in g["seeds"][1]["undefined_reasons"])
+        assert [c for c in agg["preconditions"] if "A4 (a)" in c["name"]][0]["ok"] is True
+    # the gap-floor half of `discriminates` is decided without a moat rate: a silent brain fails, not undefined
+    s = SG.score_ask(SG._fake_shard("ask", SG._synthetic_ask("lesion", unacquired=all3)))
+    assert s["discriminates"] is False and s["moat_undefined_decides"] is False
+
+
+def test_every_counted_arm_must_have_run_its_own_turn_table(tmp_path):
+    """Review fix 4: the scorers read by label, so a `reversed` shard recorded in the registered order (or a permuted
+    shard recorded with the intact teaching) would pass vacuously. Such an arm is UNDEFINED with a named precondition."""
+    td = str(tmp_path)
+    for arm, src in (("reversed", "intact_a"), ("permuted", "intact_a"), ("intact_b", "reversed")):
+        _tree(td)
+        p = SG.shard_path(td, 2, "ask", arm)
+        d = json.load(open(p))
+        d["turns"] = SG._fake_shard("ask", {}, arm=src)["turns"]
+        json.dump(d, open(p, "w"))
+        agg = SG.aggregate(td, seeds=(1, 2))
+        g = agg["groups"]["ask"]
+        assert g["verdict"] == "INCOMPLETE" and any("%s: turn table differs" % arm in r for r in g["seeds"][2]["undefined_reasons"])
+        assert [c for c in agg["preconditions"] if "turn table" in c["name"]][0]["ok"] is False
+    assert SG.arm_validity("ask", "reversed", dict(SG._fake_shard("ask", {}, arm="reversed"), turns=[])) != []
