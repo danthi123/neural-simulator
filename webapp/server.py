@@ -1994,25 +1994,38 @@ async def _persist_learning_on_shutdown() -> None:
             _organs = dict(_EP_sd._ORGANS)
         except Exception:
             _organs = {}
-        saved = 0
-        for cache_key, chat in list(_BRAIN_CHATS.items()):
+        # A session counts as FLUSHED only when its D5 store or its facts were actually written (FAILURE_LOG
+        # 2026-10-13: a swallowed facts-save error used to be counted here as a flushed session).
+        saved, empty, failed = 0, 0, []
+
+        def _flush(cache_key, chat, organ):
+            nonlocal saved, empty
             try:
-                save_session_learning(cache_key, chat, _organs.get(cache_key))
+                rec = save_session_learning(cache_key, chat, organ)
+            except Exception as e:
+                failed.append((cache_key, {"save_session_learning": "%s: %s" % (type(e).__name__, e)}))
+                return
+            if rec.get("errors"):
+                failed.append((cache_key, rec["errors"]))
+            if rec.get("saved"):
                 saved += 1
-            except Exception:
-                continue
+            elif not rec.get("errors"):
+                empty += 1
+
+        for cache_key, chat in list(_BRAIN_CHATS.items()):
+            _flush(cache_key, chat, _organs.get(cache_key))
         # any D5 session whose chat is not in _BRAIN_CHATS (e.g. a stub-renderer session) still gets its store saved
         for cache_key, organ in _organs.items():
             if cache_key not in _BRAIN_CHATS:
-                try:
-                    save_session_learning(cache_key, None, organ)
-                except Exception:
-                    continue
+                _flush(cache_key, None, organ)
         try:
             save_xedge()
         except Exception:
             pass
-        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s)", flush=True)
+        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s); {empty} had nothing to "
+              f"save; {len(failed)} FAILED", flush=True)
+        for cache_key, errs in failed:
+            print(f"[webapp] shutdown: PERSISTENCE SAVE FAILED for {cache_key!r}: {errs}", flush=True)
     except Exception as e:
         print(f"[webapp] shutdown: cross-session persistence flush skipped ({type(e).__name__}: {e})", flush=True)
 

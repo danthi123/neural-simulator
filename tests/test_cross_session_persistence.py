@@ -330,7 +330,8 @@ def test_d5_checkpoint_selection_versions_and_resolves(tmp_path, monkeypatch):
 # arm): the tiny-demo chat's composer is a OneBrainComposer (Pool1BoundOneBrainComposer) behind a TieredFactStore.
 # It has `kb` + `pol_words` but NO `.concepts` of its own: its codes live on the inner RF composer at
 # `.comp.concepts`. `extract_grounded_codes` read `comp.concepts`, so `save_session_facts` raised AttributeError,
-# swallowed it, and saved nothing. Brain-free stand-in of that shape, wrapped in the real TieredFactStore.
+# swallowed it, and saved nothing. Brain-free stand-in of that shape, wrapped in the real TieredFactStore. (These
+# were strict xfails in 061552d7c, before the fix.)
 # ────────────────────────────────────────────────────────────────────────────────────────────
 class _InnerRF:
     def __init__(self, concepts):
@@ -363,8 +364,6 @@ def _onebrain_chat(facts):
     return _FakeChat(TieredFactStore(_OneBrainLikeComposer(facts), ltm=None))
 
 
-@pytest.mark.xfail(strict=True, raises=AttributeError,
-                   reason="FAILURE_LOG 2026-10-13: extract_grounded_codes reads comp.concepts (absent on onebrain)")
 def test_grounded_codes_read_the_onebrain_composer():
     from research.runners.developed_brain_io import extract_grounded_codes
     chat = _onebrain_chat([("dog", "chase", "cat"), ("wug", "eat", "dax")])
@@ -373,8 +372,6 @@ def test_grounded_codes_read_the_onebrain_composer():
     assert not ({"AFFIRM", "NEGATE"} & set(codes))                     # polarity tags are rebuilt from the seed
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="FAILURE_LOG 2026-10-13: save_session_facts saves nothing on the onebrain composer")
 def test_facts_round_trip_on_the_onebrain_composer(tmp_path, monkeypatch):
     monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
     key = ("sessA", "tiny-demo", "stub")
@@ -383,3 +380,37 @@ def test_facts_round_trip_on_the_onebrain_composer(tmp_path, monkeypatch):
     fresh = _onebrain_chat([("dog", "chase", "cat")])                   # the build-time KB only, as after a restart
     assert CSP.reload_session_facts(key, fresh, base=tmp_path) == 1
     assert ("wug", "eat", "dax") in {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
+
+
+class _NoCodebookComposer(_OneBrainLikeComposer):
+    """The pre-fix failure shape: facts but no codebook anywhere, so the facts save raises."""
+
+    def __init__(self, facts=()):
+        super().__init__(facts)
+        del self.comp
+
+
+def test_save_session_learning_reports_a_failed_facts_save(tmp_path, monkeypatch):
+    from research.runners.tiered_fact_store import TieredFactStore
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    bad = _FakeChat(TieredFactStore(_NoCodebookComposer([("wug", "eat", "dax")]), ltm=None))
+    rec = CSP.save_session_learning(("s", "b", "r"), bad, None, base=tmp_path)
+    assert rec["saved"] is False and rec["facts"] is None and "AttributeError" in rec["errors"]["facts"]
+    good = CSP.save_session_learning(("s", "b", "r"), _onebrain_chat([("wug", "eat", "dax")]), None, base=tmp_path)
+    assert good["saved"] is True and good["errors"] == {}
+
+
+def test_shutdown_counts_only_sessions_actually_saved(tmp_path, monkeypatch, capsys):
+    import asyncio
+    from research.runners.tiered_fact_store import TieredFactStore
+    from webapp import server as S
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    monkeypatch.setenv("BRAIN_PERSIST_DIR", str(tmp_path))
+    monkeypatch.setattr(CSP, "save_xedge", lambda *a, **k: None)
+    bad = _FakeChat(TieredFactStore(_NoCodebookComposer([("wug", "eat", "dax")]), ltm=None))
+    monkeypatch.setattr(S, "_BRAIN_CHATS", {("a", "tiny-demo", "stub"): _onebrain_chat([("wug", "eat", "dax")]),
+                                            ("b", "tiny-demo", "stub"): bad})
+    asyncio.run(S._persist_learning_on_shutdown())
+    out = capsys.readouterr().out
+    assert "flushed 1 session(s)" in out and "1 FAILED" in out
+    assert "PERSISTENCE SAVE FAILED for ('b', 'tiny-demo', 'stub')" in out
