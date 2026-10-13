@@ -211,6 +211,10 @@ CHAT_BRAIN_ATTRS = (
     "_three_organ_installed", "_three_organ_orig_gate", "_category_inherit_installed", "_category_inherit_organ",
     "_da_tag_capture",                                     # synaptic tag / PRP ledger of the shared store
     "_da_encoding_mu",                                     # running mean of the shared store's encoding strength
+    # ChatBrain's own lazily built organs, caches and the known-word sets read off the shared store
+    "_anaphor_organ", "_qroute_organ", "_claim_verifier_cache", "_d6_engram_reads", "_gen_nfacts", "_gen_proposer",
+    "_spiking_draw_organ", "_spiking_plausibility_organ", "_spk_producer", "_spk_recall_mouth",
+    "stored_facts", "agents_set", "actions_set", "patients_set", "inflect",
 )
 # conversation-level fields of the agent (MultiTurnAgent): the discourse WM loop, the biased-competition buffer and
 # the referent registry. A fresh conversation gets None (the agent builds its own lazily, `_ensure_wm`).
