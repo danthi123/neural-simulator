@@ -1000,6 +1000,48 @@ def _battery_turn_record(label) -> None:
         pass
 
 
+KEEP_SESSIONS_ENV = "BATTERY_KEEP_SESSIONS"
+
+
+def session_release_plan(turn_labels):
+    """{turn index: [session, ...]} -- after which turn each session's server state may be released.
+
+    brain_chat caches a full ChatBrain plus ~20 per-session registries per (session, brain, renderer) key and frees
+    them only on reset, so a worker that ran every session to the end held ~5.3 GB per session (finding
+    2026-10-12-battery-worker-per-kind-retention). A session is released only once nothing later in THIS turn list
+    can read it: after its last brain_chat turn, or after the last world step that follows its first turn, whichever
+    is later -- world steps tick every live session (continuous_engine.tick_idle_sessions over _SESSION_MOOD, the
+    max of _LAST_REQUEST, mark_awake over _BRAIN_CHATS), so a session stays live through them exactly as before.
+    Pure: labels only, no brain import."""
+    first, last, world = {}, {}, []
+    for i, label in enumerate(turn_labels):
+        if label in _WORLD_STEPS:
+            world.append(i)
+            continue
+        session = _TURN_BY_LABEL[label][2]
+        first.setdefault(session, i)
+        last[session] = i
+    plan = {}
+    for session, i0 in first.items():
+        end = max([last[session]] + [w for w in world if w > i0])
+        plan.setdefault(end, []).append(session)
+    return plan
+
+
+def _release_sessions(keys, evict) -> None:
+    """Evict each server cache key through the reset teardown, then collect cycles and hand freed heap back to the
+    OS (malloc_trim; glibc only, best-effort). Memory only: no reply, organ or RNG state is touched."""
+    for key in keys:
+        evict(key)
+    import gc
+    gc.collect()
+    try:
+        import ctypes
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:  # noqa: BLE001 -- not glibc: the memory is still free for reuse inside the process
+        pass
+
+
 def _collect_worker(env_json, turn_labels, out_path):
     mode = arm_renderer_mode()
     if mode == ARM_RENDERER_STUB:
@@ -1021,27 +1063,42 @@ def _collect_worker(env_json, turn_labels, out_path):
     if mode == ARM_RENDERER_PRODUCTION:
         from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
         counter = _QwenGenerateCounter().install(SpikingQwenFaculty)
-    from webapp.server import brain_chat, BrainChatRequest
+    from webapp.server import brain_chat, BrainChatRequest, brain_chat_cache_key, _evict_brain_chat_session
     responses = {}
-    for label in turn_labels:
+    # Release each session after the last turn that can read it (session_release_plan); BATTERY_KEEP_SESSIONS=1
+    # keeps every session to the end (the pre-2026-10-13 behaviour, ~5.3 GB per session).
+    release = {} if os.environ.get(KEEP_SESSIONS_ENV, "").strip() in ("1", "true", "on", "yes") \
+        else session_release_plan(turn_labels)
+    keys_by_session = {}
+    for i, label in enumerate(turn_labels):
         if label in _WORLD_STEPS:              # label-only environment step (never a brain_chat turn)
             try:
                 responses[label] = _run_world_step(_WORLD_STEPS[label])
             except Exception as e:
                 responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
+            if i in release:
+                _release_sessions([k for s in release[i] for k in keys_by_session.pop(s, ())],
+                                  _evict_brain_chat_session)
             continue
         _, msg, session, reset, percept, rich = _TURN_BY_LABEL[label]
         calls_before = counter.calls if counter is not None else 0
+        req = None
         try:
             kwargs = _arm_request_kwargs(mode, session, msg, reset, percept, rich)
-            r = brain_chat(BrainChatRequest(**kwargs))
+            req = BrainChatRequest(**kwargs)
+            r = brain_chat(req)
             responses[label] = json.loads(r.body)
         except Exception as e:
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
+        if req is not None:   # the key brain_chat just cached under (computed after the turn: no extra side effect)
+            keys_by_session.setdefault(session, set()).add(brain_chat_cache_key(req))
         if counter is not None and isinstance(responses.get(label), dict):
             responses[label][ARM_RENDERER_KEY] = {"mode": mode,
                                                   "qwen_generate_calls": counter.calls - calls_before}
         _battery_turn_record(label)      # RULING c5-probe-merged: flag-independent per-turn RSS, env-gated inside
+        if i in release:                 # nothing later in this list reads these sessions: free them
+            _release_sessions([k for s in release[i] for k in keys_by_session.pop(s, ())],
+                              _evict_brain_chat_session)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     json.dump(responses, open(out_path, "w"), indent=2, default=str)
     print("[battery worker] env=%s -> %d turns -> %s" % (env, len(responses), out_path), flush=True)

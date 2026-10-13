@@ -4571,6 +4571,57 @@ def _safe_json_response(resp, where):
     return JSONResponse(safe)
 
 
+def brain_chat_cache_key(req) -> tuple:
+    """The (session, brain, renderer) key `brain_chat` caches a ChatBrain and every per-session registry under --
+    the SAME expression `brain_chat` uses (renderer resolved through `_default_brain_renderer()` when the request
+    names none), exposed so a caller can name the session it wants released."""
+    return (req.session, req.brain, (req.renderer or _default_brain_renderer()).lower())
+
+
+def _evict_brain_chat_session(cache_key) -> None:
+    """Drop everything this server holds for one (session, brain, renderer) key: the warm ChatBrain, the rich
+    composer, and the per-session registries. This is the `req.reset` teardown, moved here VERBATIM (same pops,
+    same order) so the regression-battery worker can release a session after its last turn instead of holding a
+    full ChatBrain per session for the process lifetime (finding 2026-10-12-battery-worker-per-kind-retention:
+    ~5.3 GB per session key). `brain_chat` with reset=True calls exactly this; nothing else changed."""
+    _BRAIN_CHATS.pop(cache_key, None)
+    _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
+    try:
+        from webapp import continuous_engine as _CE1
+        _CE1.forget_session(cache_key)  # drop this session's between-turn inner-life + last-request
+    except Exception:
+        pass
+    _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+    if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
+        sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
+    _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
+    _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+    _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
+    _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
+    try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
+        import research.runners.idle_replay_organ as _IR_reset
+        _IR_reset.reset_organ(cache_key)
+    except Exception:
+        pass
+    _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
+    _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
+    try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
+        import research.runners.d5_episodic_production_organ as _EP_reset
+        _EP_reset.reset_episodic_organ(cache_key)
+    except Exception:
+        pass
+    try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
+        import research.runners.causal_whatif_production_organ as _CA_reset
+        _CA_reset.reset_organ(cache_key)
+    except Exception:
+        pass
+    try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
+        from webapp import false_belief_chat as _FBC_reset
+        _FBC_reset.reset_session(cache_key)
+    except Exception:
+        pass
+
+
 @app.post("/api/brain-chat")
 def brain_chat(req: BrainChatRequest) -> JSONResponse:
     """One turn talking to a DEVELOPED brain (the INTERACT centerpiece).
@@ -4623,42 +4674,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception:
         pass
     if req.reset:
-        _BRAIN_CHATS.pop(cache_key, None)
-        _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
-        try:
-            from webapp import continuous_engine as _CE1
-            _CE1.forget_session(cache_key)  # drop this session's between-turn inner-life + last-request
-        except Exception:
-            pass
-        _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
-        if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
-            sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
-        _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
-        _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
-        _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
-        _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
-        try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
-            import research.runners.idle_replay_organ as _IR_reset
-            _IR_reset.reset_organ(cache_key)
-        except Exception:
-            pass
-        _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
-        _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
-        try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
-            import research.runners.d5_episodic_production_organ as _EP_reset
-            _EP_reset.reset_episodic_organ(cache_key)
-        except Exception:
-            pass
-        try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
-            import research.runners.causal_whatif_production_organ as _CA_reset
-            _CA_reset.reset_organ(cache_key)
-        except Exception:
-            pass
-        try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
-            from webapp import false_belief_chat as _FBC_reset
-            _FBC_reset.reset_session(cache_key)
-        except Exception:
-            pass
+        _evict_brain_chat_session(cache_key)
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
