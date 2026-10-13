@@ -222,7 +222,7 @@ none — both prereg launch bars pass: peak 16.14 GiB x parallelism 1 = 16.14 Gi
 
 ## 9. Amendment B lines (prereg AMENDMENT B revision 1; NOT queued by this commit)
 
-Generated 2026-10-13 by Claude (coordinator build) for Amendment B revision 1 (the review's FIX_FIRST). They replace the first filing's section 9 (written for R_B e70e5c995, superseded; nothing ran on it). Revisions: P = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea for off/on/commitlesion; R_B = 1304d8d6788125c20f3de912d258ea008f34ad89 (branch claude-build/battery-amend-b-pin: P plus the label-only C5B turn block) for off_rb, on_rb, stagger, rotated, taglesion and retell. R_B must be provisioned first (`~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89`; the dispatcher holds a line whose revision is not up). Every line: the section-1 guard prefix first, BRAIN_CHAT_SEED explicit, no LB_* key (session release OFF), wspool only, ONE arm in flight globally (section 5), pasted one `pool_queue.sh add` at a time with the section-3 heredoc pattern.
+Generated 2026-10-13 by Claude (coordinator build) for Amendment B revisions 1-2 (the review's FIX_FIRST). They replace the first filing's section 9 (written for R_B e70e5c995, superseded; nothing ran on it). Revisions: P = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea for off/on/commitlesion; R_B = 1304d8d6788125c20f3de912d258ea008f34ad89 (branch claude-build/battery-amend-b-pin: P plus the label-only C5B turn block) for off_rb, on_rb, stagger, rotated, taglesion and retell. R_B must be provisioned first (`~/derisk-pool/revisions/1304d8d6788125c20f3de912d258ea008f34ad89`; the dispatcher holds a line whose revision is not up). Every line: the section-1 guard prefix first, BRAIN_CHAT_SEED explicit, no LB_* key (session release OFF), wspool only, ONE arm in flight globally (section 5), pasted one `pool_queue.sh add` at a time with the section-3 heredoc pattern.
 
 **Memory basis.** The worker builds one brain per SESSION, about 5.2-5.9 GiB each: the 4-turn pair spans three sessions (peak 16.14 GiB), a C5B session arm is one session. The dev lines carry mem_gb=21 for every shape. After 9.1, re-stamp the stagger, rotated, taglesion and retell GATE lines to mem_gb = ceil(1.3 x that arm's dev-7 peak) (memcap = mem_gb + 1, mem_ok = mem_gb) before adding them; the pair-shaped lines keep 21/22.
 
@@ -325,7 +325,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B dev-7 SMOKE, arm taglesion (dev seed, no weight): B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+c5val_1012 Amendment B dev-7 SMOKE, arm taglesion (dev seed, no weight): B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
 ```
 
 #### 9.1.9 dev seed 7, retell
@@ -337,7 +337,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B dev-7 SMOKE, arm retell (dev seed, no weight): B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
+c5val_1012 Amendment B dev-7 SMOKE, arm retell (dev seed, no weight): B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; record says the g6b 4-turn pair (3 sessions) peaked 16924040 KB and the workstation one-session commit-lesion check 5926140 KB, so memory is per SESSION (~5.2-5.9 GiB each); mem_gb=21 covers either shape; max_age_h=24; one arm at a time globally (prereg Amendment B revision 1)
 ```
 
 ### 9.2 Gate lines (42: per seed commitlesion@P; off_rb, on_rb, stagger, rotated, taglesion, retell @R_B)
@@ -413,7 +413,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 42: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 42: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.7 seed 42, retell
@@ -425,7 +425,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 42: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 42: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=42 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.8 seed 43, commitlesion
@@ -497,7 +497,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 43: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 43: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.14 seed 43, retell
@@ -509,7 +509,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 43: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 43: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=43 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.15 seed 44, commitlesion
@@ -581,7 +581,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 44: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 44: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.21 seed 44, retell
@@ -593,7 +593,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 44: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 44: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=44 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.22 seed 100, commitlesion
@@ -665,7 +665,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 100: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 100: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.28 seed 100, retell
@@ -677,7 +677,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 100: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 100: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=100 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.29 seed 101, commitlesion
@@ -749,7 +749,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 101: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 101: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.35 seed 101, retell
@@ -761,7 +761,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 101: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 101: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=101 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.36 seed 102, commitlesion
@@ -833,7 +833,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm taglesion seed 102: B-C5d: STAGGERED turns with equal excitability; bar: tag lesion moves the voiced fact on >= 4 of 6 seeds (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm taglesion seed 102: B-C5d: STAGGERED turns with equal excitability; bar: the tag-lesion voiced fact differs from STAGGERED's on >= 4 of 6 seeds, a silent turn is undecided, never moved (set on dev seeds 1-8); at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 #### 9.2.42 seed 102, retell
@@ -845,7 +845,7 @@ python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t
 checked:
 
 ```
-c5val_1012 Amendment B gate arm retell seed 102: B-C5e: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; the re-told fact newest-tagged in an EARLY slot should be voiced; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
+c5val_1012 Amendment B gate arm retell seed 102: B-C5e INFORMATIONAL: F1..F4, then F2 re-told verbatim and F1 re-told with a new patient, then idle; reconsolidation was intended to rewrite the re-told fact in its slot, but the dev-7 smoke observed an append (lynx chase frog at kb_idx 10 beside lynx chase vole at 5): a production gap, a re-told or contradicted fact should update its existing engram; at R_B; revision 1304d8d6788125c20f3de912d258ea008f34ad89; BRAIN_CHAT_SEED=102 explicit, no LB_BATTERY_RELEASE_SESSIONS (release mode OFF); mem_gb=21 PROVISIONAL: re-stamp to ceil(1.3 x this arm's dev-7 peak) before adding; max_age_h=24; registered by prereg Amendment B revision 1; released only after every 9.1 line landed rc=0 and dev-7 E3 held; one arm at a time globally
 ```
 
 ### 9.3 Scoring (after all 54 C5 arms land; prereg Amendment B, B.3)
@@ -854,4 +854,4 @@ c5val_1012 Amendment B gate arm retell seed 102: B-C5e: F1..F4, then F2 re-told 
 .venv/bin/python tools/c5_battery_score.py --dir research/findings/raw/_regression_battery/c5val_1012 --pin f24963bfb05ca535f10f70bf4380fe4b2f68a9ea --rb-pin 1304d8d6788125c20f3de912d258ea008f34ad89 --out research/findings/raw/_regression_battery/c5val_1012/c5_score.json
 ```
 
-Decision per RULING s2-c5-val: STANDS (PROVISIONAL), read as the scorer's `reading` / UNDEFINED (re-queue that seed's missing arms once, same revision, then RESULT) / REVERT-CANDIDATE seed n clause k (Claude reverts; never tune). STOP if an arm has rc!=0 twice.
+Decision per RULING s2-c5-val: STANDS (PROVISIONAL), read as the scorer's `reading` (selects by tag recency; ownership of content selection UNDETERMINED, prereg B.3) / UNDEFINED (re-queue that seed's missing arms once, same revision, then RESULT) / REVERT-CANDIDATE seed n clause k (Claude reverts; never tune). STOP if an arm has rc!=0 twice.
