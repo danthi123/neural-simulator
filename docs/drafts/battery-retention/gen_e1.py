@@ -1,0 +1,33 @@
+src = open("research/coordination/2026-10-12-validation-battery-JOBS.md").read().splitlines()
+tmpl = src[45]   # line 46: seed 42 OFF, the registered line verbatim
+assert tmpl.startswith("python3 -c") and "BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY=0 " in tmpl
+A = "f24963bfb05ca535f10f70bf4380fe4b2f68a9ea"
+B = "8e0ea84150e7f7000fe520f4bf8ca86baee44560"
+OUT = "research/findings/raw/_regression_battery/battery_retention_equiv"
+arms = {"off": "BRAIN_IDLE_REPLAY=0 ", "on": "", "lesion": "BRAIN_IDLE_REPLAY_COMMIT_LESION=1 "}
+
+
+def line(rev, seed, arm, release, tag):
+    s = tmpl.replace(A, rev).replace("research/findings/raw/_regression_battery/c5val_1012", OUT)
+    s = s.replace("BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY=0 ",
+                  "BRAIN_CHAT_SEED=%d %s%s" % (seed, arms[arm], "LB_BATTERY_RELEASE_SESSIONS=1 " if release else ""))
+    s = s.replace("c5_s42_off", tag)
+    assert "c5_s42" not in s and "c5val_1012" not in s and s.count(tag) == 3
+    return s
+
+
+out = []
+n = 0
+for seed in (7, 8):
+    for arm in ("off", "on", "lesion"):
+        for rev, name, rel in ((A, "A", False), (B, "B", True)):
+            n += 1
+            tag = "%s_s%d_%s" % (name, seed, arm)
+            out.append("E1.%d `%s` (instrument %s, seed %d, arm %s):\n\n```\n%s\n```\n"
+                       % (n, tag, name, seed, arm, line(rev, seed, arm, rel, tag)))
+n += 1
+out.append("E1.%d `Bnorel_s7_on` (instrument B with release UNSET, seed 7, arm on):\n\n```\n%s\n```\n"
+           % (n, line(B, 7, "on", False, "Bnorel_s7_on")))
+open("/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/e1_lines.md",
+     "w").write("\n".join(out))
+print(n)

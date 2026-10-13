@@ -1,0 +1,6 @@
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 5924300, "k": null, "pid": 126607, "rss_kb": 5924300, "ts": 1791871546.402, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 6834412, "pid": 126607, "rss_kb": 6677732, "ts": 1791871690.896, "turn": "emo"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6834412, "k": null, "pid": 126607, "rss_kb": 6091200, "ts": 1791871810.166, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 6834412, "pid": 126607, "rss_kb": 6287396, "ts": 1791871870.776, "turn": "bc_a"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6834412, "k": null, "pid": 126607, "rss_kb": 6287396, "ts": 1791871870.777, "turn": 2}
+{"event": "battery_turn", "hwm_kb": 6834412, "pid": 126607, "rss_kb": 6287384, "ts": 1791872086.424, "turn": "bc_b"}
