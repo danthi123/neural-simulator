@@ -82,3 +82,48 @@ construction env read inside `RFPhasorComposer` is `BRAIN_BATCHED_SUBSTRATE_SCAN
 Build it. The knowledge is read-only on every chat path; the only per-conversation state is the trace
 instrumentation, which a per-conversation view keeps; the per-call scratch is shown pure; one lock per shared
 store serializes LTM calls.
+
+## Step 2: the mechanism
+
+- `research/runners/shared_ltm.py`: `view_for(cache, key, loader)` loads the store once per key (under a guard, so
+  two conversations building at once do not load two copies) and returns a new `SharedLTMView` for each
+  conversation. The view has the store's read API; each read runs under the store's RLock with this conversation's
+  trace state swapped in (store `trace` + `last_trace`, every shard's `last_trace`) and swapped out after.
+  `trace` / `last_trace` are the view's own. Other attributes (`shards`, `shard_for`, `total_facts`, ...) read
+  through. Writes (`store`, `update_on_mismatch`, setting any other attribute) raise `SharedLTMWriteError`.
+  Copies of a view share the store. `unshareable_reason` refuses a store with spiking cleanup, the spiking recall
+  margin or read noise on (the stateful read paths of step 1); such a store is returned uncached, a private copy.
+- `webapp/server.py`: `_SHARED_LTM` (the process cache), `_shared_ltm_on()` (`BRAIN_SHARED_LTM`, default on via
+  `_SHARED_LTM_DEFAULT_ON`), `_shared_ltm_key(...)` = (realpath of the bundle, seed, D, n_shards, codebook cache,
+  decode escalation, substrate store, batched substrate scan, the three composer-construction env values), and
+  `_ltm_store_for_conversation(...)`. The tiny-demo branch of `_build_chat_brain` calls it where it called
+  `_load_or_build_ltm_store`. With the flag off it makes exactly that call, argument for argument.
+- The developed-bundle branch uses the same cache and loader (`_load_or_build_ltm_store` mirrors
+  `load_developed_brain`'s own LTM handling; build-fallback seed = the bundle's `brain.json` seed via
+  `_developed_ltm_seed`) and hands the view to `load_developed_brain(ltm_store=...)` with `ltm_bundle=None`.
+  `ltm_store` is a new keyword, default None. With the flag off the call is the old one (`ltm_bundle=...`,
+  `ltm_store=None`).
+- The reply's `source` string is unchanged ("tiny-demo +LTM"), so replies can be compared byte for byte.
+
+## Step 3: tests (`tests/test_shared_ltm.py`, brain-free, 21 tests, ~4 s)
+
+- Two conversations get the identical store object: at `_ltm_store_for_conversation` (loader called once) and
+  through the real `_build_chat_brain` for the tiny-demo branch (brain build stubbed) and the developed branch
+  (`load_developed_brain` stubbed, checks `ltm_store` / `ltm_bundle` and the brain.json seed).
+- The escape `BRAIN_SHARED_LTM=0` gives distinct objects, through the pre-change call argument for argument, and
+  caches nothing. Flag parsing for unset / blank / on / off values.
+- The cache key changes with each of: bundle path, seed, D, n_shards, codebook cache, decode escalation,
+  `BRAIN_LTM_SUBSTRATE_STORE`, `BRAIN_BATCHED_SUBSTRATE_SCAN`, `BRAIN_SHARD_SPARSE_INDEX`,
+  `BRAIN_METACOG_SPIKING_MARGIN`; a symlinked bundle maps to the same key; a flag changed between conversations
+  loads a second store.
+- Mutation guard: sha256 over every fact's substrate weights, the codebook, roles, vocab and both RNG states is
+  unchanged after every read the chat path issues through two views (unknown words included).
+- Equivalence: two conversations' interleaved reads (hits, misses, `render_fact` after another conversation used
+  that shard, dead-end chains) on views over ONE store equal two private stores, answer and `last_trace`, op by op.
+- The lock: two threads querying through two views stay correct. Writes through a view raise.
+- Negative controls (run by hand, scratch script): removing the trace swap fails the equivalence test (at
+  `render_fact('cat')`); a read that grows the vocabulary fails the mutation guard; removing the lock fails the
+  concurrency test. So each test can fail.
+- Existing suites still pass: test_tiered_fact_store, test_sharded_phasor_store, test_arm_renderer_production_path,
+  test_battery_session_release, test_rank2_integrated_loop_thread, test_brain_prewarm_scratch_session (76 passed,
+  1 skipped with test_shared_ltm), test_communicable_turn_wirein (8 passed).
