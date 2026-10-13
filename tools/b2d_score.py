@@ -89,6 +89,7 @@ C_VERDICTS = ("arm-build-failed", "lesion-knob-missing", "lesion-not-effective",
               "artifact-unreadable", "seed-missing-in-artifact", "noisy", "noisy-null-control")
 REPLY_FIELDS_DEFAULT = ("answer", "abstained", "recalled_svo")
 HOST_INPUT_KIND = "host-input"
+HOST_INPUT_ROWS_REGISTERED_KIND = "neural-lesion"   # the kind those rows had when the pre-B preregs were registered
 # Amendment B (validation battery 2026-10-12): faculty -> why its lesion is a host-input override, not a neural cut.
 HOST_INPUT_ROWS = {
     "tom-false-belief": (
@@ -96,7 +97,14 @@ HOST_INPUT_ROWS = {
         "(webapp/false_belief_chat.py leave/return regex); the belief store is not load-bearing 6/6 "
         "(research/findings/raw/_fb_store/verdict.json, STORE-NOT-LOAD-BEARING). RULING lbf-host-input-rows."),
 }
-# Amendment B: faculty -> the engagement record its route must leave on the probe turn of every arm.
+# Amendment B (report only, RULING iw2-selfid-answer-rate): faculty -> why its intact reply is host-substitutable.
+HOST_SUBSTITUTABLE_ROWS = {
+    "neural-selfid": (
+        "the flag-on intact reply equals the host router's reply (iw2 neural-selfid finding, section 2); a reply "
+        "change under the lesion shows the spiking route is used, not that a host could not produce the reply"),
+}
+# Amendment B: faculty -> the engagement record its route must leave on the probe turn of every arm. These rows are
+# STOP-GATE rows (ruling of 2026-10-13): denominator and gating only, never a numerator, robust_core or union.
 ENGAGEMENT_ROWS = {
     "reasoning-transitive-chat": {"trace_key": "transitive_trace", "route": "chase", "hops_key": "chase",
                                   "lesion_key": "lesioned"},
@@ -537,7 +545,12 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         cell = {"faculty": fac, "seed": seed, "canonical": canon, "attempt1": attempt1, "rerun_log": rr,
                "first_host": first_host, "rerun_host": rerun_host, "dispatch_nodes": disp.get(key, [])}
         cell["kind"] = kind_of.get(fac)
+        if not amendment_b and cell["kind"] == HOST_INPUT_KIND and fac in HOST_INPUT_ROWS:
+            # a pre-B scorer (iw1/iw2, --no-amendment-b) reading a shard made after the row module's retag: score the
+            # row under the kind it was registered with, so those preregs read exactly as registered
+            cell["kind"] = HOST_INPUT_ROWS_REGISTERED_KIND
         cell["host_input"] = bool(amendment_b) and is_host_input(fac, cell["kind"])
+        cell["stop_gate"] = bool(amendment_b) and fac in ENGAGEMENT_ROWS and not cell["host_input"]
         cell["coverable"] = cell["kind"] in COVERABLE and not cell["host_input"]
         cell["scored"] = cell["coverable"] or cell["host_input"]
         cell["state"] = final_state(canon, attempt1, first_host, rerun_host) if cell["scored"] \
@@ -564,11 +577,25 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         out_cells[key] = cell
     # `scored` = the neural rows (`cov`) plus Amendment B's host-input rows (`hi`). Host-input cells sit in every
     # per-seed denominator but never in a numerator, robust_core or union; they are reported in `host_input`.
+    # Stop-gate rows (ENGAGEMENT_ROWS, Amendment B ruling of 2026-10-13) are scored like host-input rows for the
+    # numerators: per-seed denominator and gating only, reported in `stop_gate`, never in a numerator, robust_core or
+    # union. A failing or UNDEFINED stop-gate cell blocks its flip; a passing one reads "not blocked", never "validated".
     scored = {k: c for k, c in out_cells.items() if c["scored"]}
     cov = {k: c for k, c in scored.items() if c["coverable"]}
     hi = {k: c for k, c in scored.items() if c["host_input"]}
-    facs = sorted({c["faculty"] for c in cov.values()})
+    sg = {k: c for k, c in cov.items() if c["stop_gate"]}
+    neural = {k: c for k, c in cov.items() if not c["stop_gate"]}
+    facs = sorted({c["faculty"] for c in neural.values()})
     hi_facs = sorted({c["faculty"] for c in hi.values()})
+    sg_facs = sorted({c["faculty"] for c in sg.values()})
+
+    def _gate_status(c, is_lb_fn):
+        if c is None:
+            return "blocked:missing"
+        if c["state"] != "DEFINED":
+            return "blocked:%s" % c["state"]
+        v = is_lb_fn(c)
+        return "not blocked" if v is True else ("blocked:not-load-bearing" if v is False else "blocked:not-exercised")
 
     def _fac_count(cells, f, is_lb_fn):
         vs = [cells.get("s%d/%s" % (s, f)) for s in seeds]
@@ -582,13 +609,16 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         for s in seeds:
             dc = [c for c in scored.values() if c["seed"] == s and c["state"] == "DEFINED"]
             ex = [c for c in dc if is_lb_fn(c) is not None]
-            lbc = [c for c in ex if is_lb_fn(c) is True and not c["host_input"]]
+            lbc = [c for c in ex if is_lb_fn(c) is True and not c["host_input"] and not c["stop_gate"]]
             per_seed[str(s)] = {"n_defined": len(dc), "n_exercised": len(ex), "n_load_bearing": len(lbc),
                                 "fraction": (len(lbc) / len(ex)) if ex else None}
             if hi:
                 per_seed[str(s)]["n_host_input_load_bearing_excluded"] = sum(
                     1 for c in ex if is_lb_fn(c) is True and c["host_input"])
-        per_fac = {f: {"n_load_bearing": _fac_count(cov, f, is_lb_fn)} for f in facs}
+            if sg:
+                per_seed[str(s)]["n_stop_gate_load_bearing_excluded"] = sum(
+                    1 for c in ex if is_lb_fn(c) is True and c["stop_gate"])
+        per_fac = {f: {"n_load_bearing": _fac_count(neural, f, is_lb_fn)} for f in facs}
         lo = lambda v: v if isinstance(v, int) else v[0]   # noqa: E731
         robust = sorted(f for f, v in per_fac.items() if lo(v["n_load_bearing"]) == len(seeds))
         union = sorted(f for f, v in per_fac.items() if lo(v["n_load_bearing"]) > 0)
@@ -600,6 +630,14 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
         if hi_facs:
             out["host_input"] = {f: {"n_load_bearing": _fac_count(hi, f, is_lb_fn),
                                      "reason": HOST_INPUT_ROWS.get(f, "lb.json kind host-input")} for f in hi_facs}
+        if sg_facs:
+            out["stop_gate"] = {}
+            for f in sg_facs:
+                st = {str(s): _gate_status(sg.get("s%d/%s" % (s, f)), is_lb_fn) for s in seeds}
+                out["stop_gate"][f] = {"per_seed": st,
+                                       "n_not_blocked": sum(1 for v in st.values() if v == "not blocked"),
+                                       "gate": ("not blocked" if all(v == "not blocked" for v in st.values())
+                                                else "BLOCKED")}
         return out
 
     s0 = _agg("s0", lambda c: c["canonical"]["load_bearing"] if c["canonical"]["verdict"] in EXERCISED else None)
@@ -614,9 +652,24 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
                               if c["canonical"]["rule7_organ_error"]},
         "s0": s0,
     }
+    if amendment_b:
+        # n_defined above counts the coverable (neural-lesion) cells; this counts every scored cell (host-input too)
+        res["counts"]["n_defined_all_scored"] = sum(1 for c in scored.values() if c["state"] == "DEFINED")
+        res["counts"]["n_scored_cells"] = len(scored)
     if hi:
         res["counts"].update(n_host_input_faculties=len(hi_facs), n_host_input_cells=len(hi),
                              n_host_input_defined=sum(1 for c in hi.values() if c["state"] == "DEFINED"))
+    if sg:
+        res["counts"].update(n_stop_gate_faculties=len(sg_facs), n_stop_gate_cells=len(sg),
+                             n_stop_gate_defined=sum(1 for c in sg.values() if c["state"] == "DEFINED"))
+    hs = {f: why for f, why in HOST_SUBSTITUTABLE_ROWS.items()
+          if amendment_b and any(c["faculty"] == f for c in scored.values())}
+    if hs:
+        # report-only (RULING iw2-selfid-answer-rate): the intact reply equals the host router's, so the row's
+        # load-bearing reading says the lesion changes the reply, not that a host could not produce it. No count moves.
+        res["host_substitutable"] = {f: {"reason": why, "per_seed": {
+            str(s): (out_cells.get("s%d/%s" % (s, f)) or {}).get("state", "missing") for s in seeds}}
+            for f, why in hs.items()}
     eng = {k: c["engagement"] for k, c in scored.items() if "engagement" in c}
     if eng:
         res["engagement"] = eng

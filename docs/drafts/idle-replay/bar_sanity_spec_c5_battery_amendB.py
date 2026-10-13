@@ -2,8 +2,12 @@
 
 THE BAR. `tools/c5_battery_score.py` reads "C5 STANDS (PROVISIONAL)" over the six gate seeds. That needs every seed
 DEFINED (B-SEED provenance with session-release mode unset, the C5.1 replay-fired precondition, the commit lesion
-applied, E3: the R_B pair whole-record identical to the pin's, every taught fact encoded in order) and clauses C5.2, C5.3, B-C5a and B-C5b true on 6/6 seeds, plus the pooled B-C5c: the newest-taught fact
-is voiced in at least 10 of the 12 exposure sessions.
+applied with no commit-gate spike, E3: the R_B pair whole-record identical to the pin's, every taught fact encoded in
+order, the tag lesion applied with equal excitability over the STAGGERED store) and clauses C5.2, C5.3, B-C5a and
+B-C5b true on 6/6 seeds, plus the pooled clauses: B-C5c (the newest-taught fact voiced in at least 10 of the 12
+exposure sessions; the two sessions of a seed run the same race, so these are 6 paired outcomes), B-C5d (the tag
+lesion moves the voiced STAGGERED fact on at least 4 of 6 seeds) and, when RETELL_COUNTED, B-C5e (the re-told fact,
+newest-tagged in an EARLY store slot, is voiced on at least 5 of 6 seeds).
 
 THE DECISION IS THE REAL ONE. Each draw builds, per seed, the seven arm records the battery worker writes (responses,
 provenance sidecar, per-turn RSS sidecar; off/on/commitlesion at the pin P, off_rb/on_rb/stagger/rotated at R_B)
@@ -29,10 +33,19 @@ BRAINS (per draw, six seeds; KB = the tiny-demo's 5 build facts + the 4 taught f
                           fails: the R_B sessions cannot be read as the pin's organ).
   null_release_mode_on    as perfect, but the OFF and ON arms ran with LB_BATTERY_RELEASE_SESSIONS=1 (the
                           memory bar would not measure production-like accumulation).
+  null_tag_lesion_inert   as perfect, but the tag lesion changes nothing (the newest fact still wins): B-C5d fails.
+  null_host_newest_lifo   a host that voices the LAST store slot (newest appended: LIFO), silenced under the commit
+                          lesion, blind to the tag lesion: B-C5d fails.
   random                  every idle turn of every arm: a uniformly random KB fact or the neutral line.
-  info_host_fifo_lesion_aware  a host "newest taught" pick that also honours the commit lesion: it passes. A
-                          behavioural bar cannot tell a host that mimics every lesion from the circuit; ownership is
-                          the host-share instrument's question, stated here, not hidden.
+  (null|info)_retell_last_slot  as perfect, but the re-tell idle turn voices the last store slot: a null (must fail
+                          B-C5e) when RETELL_COUNTED, else informational.
+  (null|info)_host_newest_lifo_lesion_aware  the last-slot host that also mimics the tag lesion with a random pick.
+                          Before the 2026-10-13 review this brain was mislabelled `info_host_fifo_lesion_aware` (it
+                          voiced the newest/last slot, i.e. LIFO, not FIFO) and passed 1000 of 1000: the STAGGERED and
+                          ROTATED sessions put the newest fact in the last slot and run the same race. Only the re-tell
+                          arm (newest tag in an early slot) separates it; when the re-tell is informational it still
+                          passes, and C5 STANDS then reads "selects by tag recency", never "the spiking race owns
+                          content selection".
   info_weak_race          as perfect with miss p 0.15 (how the pooled 10-of-12 clause bounds a weak race).
 """
 import os
@@ -46,7 +59,8 @@ if _ROOT not in sys.path:
 from tools import c5_battery_score as C  # noqa: E402
 
 NAME = "C5 bars + Amendment B (validation battery 2026-10-12, six gate seeds)"
-DESCRIPTION = ("Synthetic per-seed arm records (off/on/commitlesion at P; off_rb/on_rb/stagger/rotated at R_B) -> "
+DESCRIPTION = ("Synthetic per-seed arm records (off/on/commitlesion at P; off_rb/on_rb/stagger/rotated/taglesion/"
+               "retell at R_B) -> "
                "c5_battery_score.score_seed + "
                "aggregate; PASS iff the verdict is 'C5 STANDS (PROVISIONAL)'.")
 SCORER_FILES = ["tools/c5_battery_score.py", "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py"]
@@ -60,19 +74,28 @@ F = [["lynx", "chase", "vole"], ["heron", "hunt", "frog"], ["yak", "eat", "grass
 SESSIONS = {"stagger": {"labels": ["c5st_t1", "c5st_t2", "c5st_t3", "c5st_t4", "c5st_idle"], "idle_label": "c5st_idle",
                         "taught": [F[0], F[1], F[2], F[3]]},
             "rotated": {"labels": ["c5rt_t1", "c5rt_t2", "c5rt_t3", "c5rt_t4", "c5rt_idle"],
-                         "idle_label": "c5rt_idle", "taught": [F[2], F[3], F[0], F[1]]}}
+                         "idle_label": "c5rt_idle", "taught": [F[2], F[3], F[0], F[1]]},
+            "retell": {"labels": ["c5re_t1", "c5re_t2", "c5re_t3", "c5re_t4", "c5re_t5", "c5re_t6", "c5re_idle"],
+                       "idle_label": "c5re_idle", "taught": [F[0], F[1], F[2], F[3]],
+                       "retold": [["heron", "hunt", "frog"], ["lynx", "chase", "frog"]]}}
+F1R = ["lynx", "chase", "frog"]       # F1 re-told with a new patient, rewritten in its own (early) slot
 DEMO = "Something's been on my mind — cat eat worm. What does cat eat?"
 GB_KIB = 976562                       # 1e9 bytes in KiB
 
 
-def _idle(cands, pick, lesion_commit=False, organ=True):
+def _idle(cands, pick, lesion_commit=False, organ=True, lesion_tag=False):
     """An idle-turn body. `pick` = index into cands, or None (nothing latched -> the neutral idle line)."""
     if not organ:
         return {"answer": DEMO, "abstained": False, "recalled_svo": None,
                 "self_initiated": {"composer": "onebrain", "path": "light-numpy-deferred-wander", "n_utt": 4}}
     fact = cands[pick]["fact"] if pick is not None else None
-    ir = {"lesions": {"no_encode": False, "tag": False, "commit": bool(lesion_commit)}, "candidates": cands,
-          "selection": {"K": len(cands)}, "winner": pick, "winner_fact": fact, "decoded": fact,
+    gates = [0] * len(cands)
+    if pick is not None and not lesion_commit:      # the closed E->G gate never spikes; a host may still voice a fact
+        gates[pick] = 9
+    x = [1.0] * len(cands) if lesion_tag else [0.8 + 0.1 * i for i in range(len(cands))]
+    ir = {"lesions": {"no_encode": False, "tag": bool(lesion_tag), "commit": bool(lesion_commit)}, "candidates": cands,
+          "selection": {"K": len(cands), "gate_counts": gates, "x_applied": x}, "winner": pick, "winner_fact": fact,
+          "decoded": fact,
           "decode_matches_winner": (True if fact else None)}
     si = {"composer": "brain_store", "path": "idle-replay", "n_utt": 1 if fact else 0,
           "utterance": " ".join(fact) if fact else None, "idle_replay": ir}
@@ -83,6 +106,15 @@ def _idle(cands, pick, lesion_commit=False, organ=True):
 def _cands(taught=()):
     out = [{"fact": f, "kb_idx": i, "t_enc": 0, "age": 1} for i, f in enumerate(BUILD)]
     out += [{"fact": f, "kb_idx": len(BUILD) + i, "t_enc": i + 1, "age": len(taught) - i} for i, f in enumerate(taught)]
+    return out
+
+
+def _retell_cands():
+    """The re-tell store as the dev-7 smoke left it (B.3): F1 rewritten in its slot with a new patient (newest tag),
+    F2 re-told verbatim without a new slot or a new tag, F3 F4 as taught. The newest-tagged fact is NOT in the last slot."""
+    out = [{"fact": f, "kb_idx": i, "t_enc": 0, "age": 7} for i, f in enumerate(BUILD)]
+    out += [{"fact": F1R, "kb_idx": 5, "t_enc": 6, "age": 1}, {"fact": F[1], "kb_idx": 6, "t_enc": 2, "age": 5},
+            {"fact": F[2], "kb_idx": 7, "t_enc": 3, "age": 4}, {"fact": F[3], "kb_idx": 8, "t_enc": 4, "age": 3}]
     return out
 
 
@@ -143,24 +175,41 @@ def _brain(policy, miss=0.025, rss=("small",), fire=True, contaminate=False, unp
                     "commitlesion": {"resp": cle, "prov": _prov(s, "commitlesion", ok), "rss": None},
                     "off_rb": {"resp": dict(off), "prov": _prov(s, "off_rb", ok), "rss": None},
                     "on_rb": {"resp": on_rb, "prov": _prov(s, "on_rb", ok), "rss": None}}
-            for name, sess in SESSIONS.items():
-                c = _cands(sess["taught"])
+            for arm, name in C.ARM_SESSION.items():
+                sess = SESSIONS[name]
+                c = _retell_cands() if name == "retell" else _cands(sess["taught"])
                 body = {lab: {"answer": "taught", "abstained": False, "recalled_svo": None}
                         for lab in sess["labels"][:-1]}
-                body[sess["idle_label"]] = _idle(c, policy(rng, c, sess["taught"], name, miss))
-                arms[name] = {"resp": body, "prov": _prov(s, name, s != unprov_seed), "rss": None}
+                body[sess["idle_label"]] = _idle(c, policy(rng, c, sess["taught"], arm, miss),
+                                                 lesion_tag=(arm == "taglesion"))
+                arms[arm] = {"resp": body, "prov": _prov(s, arm, s != unprov_seed), "rss": None}
             per[s] = arms
         return per
     return gen
 
 
-def _organ(rng, cands, taught, arm, miss):
+def _newest(cands):
+    return max(range(len(cands)), key=lambda i: cands[i]["t_enc"])
+
+
+def _second(cands):
+    order = sorted(range(len(cands)), key=lambda i: -cands[i]["t_enc"])
+    return order[1]
+
+
+def _organ(rng, cands, taught, arm, miss, tag_inert=False, retell_last=False):
+    """The organ's design: the most excitable (newest-tagged) engram wins the race, missing to the second-newest with
+    p `miss`; under the tag lesion every engram is equally excitable and the noise picks (dev seeds 1-8 stand-in:
+    newest won 10 of 80 tag-lesion draws, about chance 1/9)."""
     if arm == "commitlesion":
         return None
     if not taught:
         return int(rng.integers(0, len(cands)))          # build facts only, all at age 1: the noise decides
-    newest = len(cands) - 1
-    return newest - 1 if rng.random() < miss else newest
+    if arm == "taglesion" and not tag_inert:
+        return int(rng.integers(0, len(cands)))
+    if arm == "retell" and retell_last:
+        return len(cands) - 1
+    return _second(cands) if rng.random() < miss else _newest(cands)
 
 
 def _host_random_kb(aware):
@@ -198,10 +247,16 @@ def _random(rng, cands, taught, arm, miss):
     return None if k == len(cands) else k
 
 
-def _fifo_aware(rng, cands, taught, arm, miss):
-    if arm == "commitlesion":
-        return None
-    return len(cands) - 1 if taught else int(rng.integers(0, len(cands)))
+def _lifo(tag_aware):
+    """A host that voices the LAST store slot (newest-appended, i.e. LIFO), silenced under the commit lesion;
+    `tag_aware` also mimics the tag lesion with a random pick."""
+    def pol(rng, cands, taught, arm, miss):
+        if arm == "commitlesion":
+            return None
+        if not taught or (tag_aware and arm == "taglesion"):
+            return int(rng.integers(0, len(cands)))
+        return len(cands) - 1
+    return pol
 
 
 def decide(data):
@@ -223,6 +278,13 @@ null_memory_hog = _brain(_organ, rss=("hog",))
 null_unprovenanced_seed = _brain(_organ, unprov_seed=43)
 null_rb_drift = _brain(_organ, rb_drift=True)
 null_release_mode_on = _brain(_organ, release=True)
+null_tag_lesion_inert = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, tag_inert=True))
+null_host_newest_lifo = _brain(_lifo(False))
 random = _brain(_random)
-info_host_fifo_lesion_aware = _brain(_fifo_aware)
+if C.RETELL_COUNTED:
+    null_retell_last_slot = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, retell_last=True))
+    null_host_newest_lifo_lesion_aware = _brain(_lifo(True))
+else:
+    info_retell_last_slot = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, m, retell_last=True))
+    info_host_newest_lifo_lesion_aware = _brain(_lifo(True))
 info_weak_race = _brain(lambda r, c, t, a, m: _organ(r, c, t, a, 0.15))

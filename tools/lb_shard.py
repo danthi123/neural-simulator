@@ -292,6 +292,13 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
     return out, covered
 
 
+def _host_input_rows():
+    """Amendment B's faculty-name registry of host-input rows (one source: tools/b2d_score.py::HOST_INPUT_ROWS)."""
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from tools.b2d_score import HOST_INPUT_ROWS  # noqa: E402
+    return HOST_INPUT_ROWS
+
+
 def faculty_keys():
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     os.environ.setdefault("SIM_NO_PROVENANCE", "1")
@@ -355,6 +362,10 @@ def cmd_aggregate(a):
         cell_dir = os.path.dirname(path)
         for p in rep.get("per_faculty", []):
             fac, kind = p["faculty"], p.get("kind")
+            if fac in _host_input_rows():
+                # Amendment B: shards made at the battery pin still say "neural-lesion" for a host-input row (the
+                # retag came later), so the faculty NAME decides, exactly as tools/b2d_score.py does.
+                kind = HOST_INPUT_KIND
             if pin and (kind in COVERABLE_KINDS or kind == HOST_INPUT_KIND):
                 n_checked += 1
                 fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))

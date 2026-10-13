@@ -1,12 +1,14 @@
 {
  "backend": "numpy",
- "description": "Synthetic per-seed arm records (off/on/commitlesion at P; off_rb/on_rb/stagger/rotated at R_B) -> c5_battery_score.score_seed + aggregate; PASS iff the verdict is 'C5 STANDS (PROVISIONAL)'.",
+ "description": "Synthetic per-seed arm records (off/on/commitlesion at P; off_rb/on_rb/stagger/rotated/taglesion/retell at R_B) -> c5_battery_score.score_seed + aggregate; PASS iff the verdict is 'C5 STANDS (PROVISIONAL)'.",
  "failures": [],
  "kinds": {
-  "info_host_fifo_lesion_aware": "info",
+  "info_host_newest_lifo_lesion_aware": "info",
+  "info_retell_last_slot": "info",
   "info_weak_race": "info",
   "null_active_contamination": "null",
   "null_fixed_fact": "null",
+  "null_host_newest_lifo": "null",
   "null_host_random_kb": "null",
   "null_host_random_kb_lesion_aware": "null",
   "null_host_random_taught": "null",
@@ -16,6 +18,7 @@
   "null_rb_drift": "null",
   "null_release_mode_on": "null",
   "null_replay_never_fires": "null",
+  "null_tag_lesion_inert": "null",
   "null_unprovenanced_seed": "null",
   "perfect": "perfect",
   "perfect_noisy": "perfect",
@@ -23,10 +26,12 @@
  },
  "n": 1000,
  "n_pass": {
-  "info_host_fifo_lesion_aware": 1000,
-  "info_weak_race": 741,
+  "info_host_newest_lifo_lesion_aware": 986,
+  "info_retell_last_slot": 977,
+  "info_weak_race": 710,
   "null_active_contamination": 0,
   "null_fixed_fact": 0,
+  "null_host_newest_lifo": 0,
   "null_host_random_kb": 0,
   "null_host_random_kb_lesion_aware": 0,
   "null_host_random_taught": 0,
@@ -36,17 +41,20 @@
   "null_rb_drift": 0,
   "null_release_mode_on": 0,
   "null_replay_never_fires": 0,
+  "null_tag_lesion_inert": 0,
   "null_unprovenanced_seed": 0,
-  "perfect": 994,
-  "perfect_noisy": 976,
+  "perfect": 983,
+  "perfect_noisy": 963,
   "random": 0
  },
  "name": "C5 bars + Amendment B (validation battery 2026-10-12, six gate seeds)",
  "pass_rate": {
-  "info_host_fifo_lesion_aware": 1.0,
-  "info_weak_race": 0.741,
+  "info_host_newest_lifo_lesion_aware": 0.986,
+  "info_retell_last_slot": 0.977,
+  "info_weak_race": 0.71,
   "null_active_contamination": 0.0,
   "null_fixed_fact": 0.0,
+  "null_host_newest_lifo": 0.0,
   "null_host_random_kb": 0.0,
   "null_host_random_kb_lesion_aware": 0.0,
   "null_host_random_taught": 0.0,
@@ -56,25 +64,34 @@
   "null_rb_drift": 0.0,
   "null_release_mode_on": 0.0,
   "null_replay_never_fires": 0.0,
+  "null_tag_lesion_inert": 0.0,
   "null_unprovenanced_seed": 0.0,
-  "perfect": 0.994,
-  "perfect_noisy": 0.976,
+  "perfect": 0.983,
+  "perfect_noisy": 0.963,
   "random": 0.0
  },
  "pass_rate_ci95": {
-  "info_host_fifo_lesion_aware": [
-   0.9962,
-   1.0
+  "info_host_newest_lifo_lesion_aware": [
+   0.9766,
+   0.9916
+  ],
+  "info_retell_last_slot": [
+   0.9657,
+   0.9846
   ],
   "info_weak_race": [
-   0.713,
-   0.7672
+   0.6811,
+   0.7373
   ],
   "null_active_contamination": [
    0.0,
    0.0038
   ],
   "null_fixed_fact": [
+   0.0,
+   0.0038
+  ],
+  "null_host_newest_lifo": [
    0.0,
    0.0038
   ],
@@ -114,32 +131,36 @@
    0.0,
    0.0038
   ],
+  "null_tag_lesion_inert": [
+   0.0,
+   0.0038
+  ],
   "null_unprovenanced_seed": [
    0.0,
    0.0038
   ],
   "perfect": [
-   0.987,
-   0.9972
+   0.9729,
+   0.9894
   ],
   "perfect_noisy": [
-   0.9645,
-   0.9838
+   0.9494,
+   0.973
   ],
   "random": [
    0.0,
    0.0038
   ]
  },
- "repo_head": "bef736ce7ab3e89975009e6f84980dd94ab74cba",
+ "repo_head": "ecc660680d8d4935d90d4b51c8bd27f155e53576",
  "scorer_files": {
-  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "3a1ba49fd76421017ff066f5051eba6915227c0be879b0949a43fa95ecb6b6ec",
-  "tools/c5_battery_score.py": "135a6b20e15b6a3beea21e3b6490f0683dbfc5b2c336be820e035ee76d8ad38a"
+  "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py": "a990c47389ec7bc5e10a573acee703387cc3837d549971feca4027b4591d560b",
+  "tools/c5_battery_score.py": "aa8f477eecc2ace8590f1a4e44bcd176402024848cc4507c8ea45b5ebe8125b5"
  },
- "scorer_sha256": "e8dc2717812ed841cc3e504eff7ef4be078d82d4e1f17ef5dcd6f5755cba2e01",
+ "scorer_sha256": "2c31a85e8bae31e4bfba64d3dec972db23fa19a9beaba173e76dbb1004d664bb",
  "seed": 0,
  "spec": "docs/drafts/idle-replay/bar_sanity_spec_c5_battery_amendB.py",
- "spec_sha256": "3a1ba49fd76421017ff066f5051eba6915227c0be879b0949a43fa95ecb6b6ec",
+ "spec_sha256": "a990c47389ec7bc5e10a573acee703387cc3837d549971feca4027b4591d560b",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -147,5 +168,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 14.7
+ "wall_s": 20.5
 }

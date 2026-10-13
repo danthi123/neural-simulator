@@ -165,7 +165,7 @@ def test_e3_rb_pair_must_reproduce_the_pin_pair_whole_record():
     per, agg = _score_draw(S, S.null_rb_drift(_rng(14)))
     for s in S.SEEDS:
         assert "E3:on_rb-differs" in per[s]["undefined_reasons"] and per[s]["clauses"]["B-C5b"] is None
-        assert all(v["newest_hit"] is None for v in per[s]["sessions"].values())
+        assert all(per[s]["sessions"][n]["newest_hit"] is None for n in C.SESSION_ARMS)
     assert agg["verdict"].startswith("C5 UNDEFINED") and agg["pooled_B-C5c"]["undecided"] == 12
     data = S.perfect(_rng(15))
     data[101]["off_rb"]["resp"] = dict(data[101]["off_rb"]["resp"], emo={"answer": "drifted"})
@@ -228,7 +228,7 @@ def test_pooled_clause_tolerates_two_misses_not_three():
         cands = body["self_initiated"]["idle_replay"]["candidates"]
         data[seed][name]["resp"][S.SESSIONS[name]["idle_label"]] = S._idle(cands, len(cands) - 2)
     for s in S.SEEDS:                                            # make every session hit first
-        for name in S.SESSIONS:
+        for name in C.SESSION_ARMS:
             body = data[s][name]["resp"][S.SESSIONS[name]["idle_label"]]
             cands = body["self_initiated"]["idle_replay"]["candidates"]
             data[s][name]["resp"][S.SESSIONS[name]["idle_label"]] = S._idle(cands, len(cands) - 1)
@@ -442,7 +442,15 @@ def _trans(ia_trace, le_trace):
 def test_engaged_transitive_cells_are_defined(tmp_path):
     res = bd.score(_battery(tmp_path, trans=_trans(_ttrace(False), _ttrace(True))), "tag", PIN, [42, 43])
     assert res["engagement"]["s42/reasoning-transitive-chat"] == "engaged"
-    assert res["s2"]["per_faculty"]["reasoning-transitive-chat"]["n_load_bearing"] == 2
+    # stop-gate row (ruling 2026-10-13): gating + denominator only, never a numerator / robust_core / union
+    sg = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
+    assert sg["gate"] == "not blocked" and sg["n_not_blocked"] == 2 and sg["per_seed"]["42"] == "not blocked"
+    for lvl in ("s0", "s2"):
+        ps = res[lvl]["per_seed"]["42"]
+        assert ps["n_exercised"] == 4 and ps["n_load_bearing"] == 1 and ps["n_stop_gate_load_bearing_excluded"] == 1
+        assert "reasoning-transitive-chat" not in res[lvl]["per_faculty"]
+        assert "reasoning-transitive-chat" not in res[lvl]["robust_core"] + res[lvl]["union"]
+    assert res["counts"]["n_stop_gate_cells"] == 2 and res["verdict"] == "COMPLETE"
 
 
 @pytest.mark.parametrize("ia,le,reason", [
@@ -457,7 +465,8 @@ def test_unengaged_transitive_cells_are_undefined(tmp_path, ia, le, reason):
     res = bd.score(_battery(tmp_path, trans=_trans(ia, le)), "tag", PIN, [42, 43])
     st = res["not_defined"]["s42/reasoning-transitive-chat"]["state"]
     assert st.startswith("UNDEFINED:engagement-") and reason in st, st
-    assert res["s2"]["per_faculty"]["reasoning-transitive-chat"]["n_load_bearing"] == [0, 2]
+    sg = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
+    assert sg["gate"] == "BLOCKED" and sg["per_seed"]["42"] == "blocked:" + st
     assert res["verdict"] == "INCOMPLETE"
 
 
@@ -470,9 +479,141 @@ def test_errored_transitive_cells_never_count(tmp_path, ia, le):
     canon = bd.judge_dir(os.path.join(tmp_path, "shards", "tag", "s42", "reasoning-transitive-chat"),
                          "reasoning-transitive-chat", PIN)
     assert bd.engagement_reason(canon, bd.ENGAGEMENT_ROWS["reasoning-transitive-chat"]).startswith("error:")
-    assert res["s2"]["per_faculty"]["reasoning-transitive-chat"]["n_load_bearing"] == [0, 2]
+    assert res["s2"]["stop_gate"]["reasoning-transitive-chat"]["per_seed"]["42"] == "blocked:C-UNCONFIRMED"
 
 
 def test_engagement_registry_touches_no_other_row(tmp_path):
     res = bd.score(_battery(tmp_path), "tag", PIN, [42, 43])
     assert "engagement" not in res and res["verdict"] == "COMPLETE"
+
+
+def test_failing_transitive_cell_blocks_and_never_validates(tmp_path):
+    same = _trans(_ttrace(False), _ttrace(True))
+
+    def no_change(seed):
+        ia, le = same(seed)
+        le["transitive_nonadjacent"]["answer"] = ia["transitive_nonadjacent"]["answer"]
+        return ia, le
+    base = _battery(tmp_path, trans=no_change)
+    for name in os.listdir(os.path.join(base, "tag", "s42", "reasoning-transitive-chat")):
+        pass
+    res = bd.score(base, "tag", PIN, [42, 43])
+    st = res["s2"]["stop_gate"]["reasoning-transitive-chat"]
+    assert st["gate"] == "BLOCKED" and "validated" not in json.dumps(st)
+
+
+def test_stop_gate_registry_never_raises_a_fraction(tmp_path, monkeypatch):
+    base = _battery(tmp_path, trans=_trans(_ttrace(False), _ttrace(True)))
+    with_b = bd.score(base, "tag", PIN, [42, 43])["s0"]["mean_fraction"]
+    monkeypatch.setattr(bd, "ENGAGEMENT_ROWS", {})
+    without_b = bd.score(base, "tag", PIN, [42, 43])["s0"]["mean_fraction"]
+    assert with_b <= without_b
+
+
+def test_defined_count_over_all_scored_cells_is_reported(tmp_path):
+    res = bd.score(_battery(tmp_path), "tag", PIN, [42, 43])
+    assert res["counts"]["n_defined"] == 4                       # neural (coverable) cells: row-a, row-b x 2 seeds
+    assert res["counts"]["n_defined_all_scored"] == 6 and res["counts"]["n_scored_cells"] == 6   # + host-input
+
+
+def test_pre_b_scorer_maps_a_retagged_host_input_row_back_by_name(tmp_path):
+    base = _battery(tmp_path, tom_kind="host-input")
+    res = bd.score(base, "tag", PIN, [42, 43], amendment_b=False)
+    assert "tom-false-belief" in res["s2"]["per_faculty"] and "host_input" not in res["s2"]
+    assert res["s2"]["per_seed"]["42"]["n_load_bearing"] == 2
+    assert "n_defined_all_scored" not in res["counts"] and "stop_gate" not in res["s2"]
+
+
+def test_neural_selfid_is_reported_host_substitutable_only(tmp_path):
+    base = _battery(tmp_path)
+    for s in (42, 43):
+        _cell(str(tmp_path / "shards" / "tag" / ("s%d" % s)), "neural-selfid", "iw2si_use",
+              {"iw2si_use": _reply("I use spikes")}, {"iw2si_use": _reply("I don't know")})
+    res = bd.score(base, "tag", PIN, [42, 43])
+    assert res["host_substitutable"]["neural-selfid"]["per_seed"] == {"42": "DEFINED", "43": "DEFINED"}
+    assert "neural-selfid" in res["s2"]["per_faculty"]                     # report-only: no count moves
+    assert "host_substitutable" not in bd.score(base, "tag", PIN, [42, 43], amendment_b=False)
+
+
+def test_lb_shard_detects_host_input_rows_by_faculty_name(tmp_path):
+    def cell(fac, kind, lb):
+        d = tmp_path / "t" / "s42" / fac
+        d.mkdir(parents=True)
+        (d / "lb.json").write_text(json.dumps({"per_faculty": [{"faculty": fac, "kind": kind, "verdict": "regressed"
+                                                                if lb else "pass", "load_bearing": lb,
+                                                                "null_control_clean": True}], "UNRELIABLE": False}))
+    cell("a", "neural-lesion", True)
+    cell("b", "neural-lesion", False)
+    cell("tom-false-belief", "neural-lesion", True)              # a shard made at the pin, before the retag
+    out = str(tmp_path / "agg.json")
+    lb_shard.cmd_aggregate(argparse.Namespace(tag="t", seeds=[42], pin=None, base=str(tmp_path), out=out))
+    agg = json.load(open(out))
+    assert agg["per_seed"]["42"]["n_load_bearing"] == 1 and agg["per_seed"]["42"]["n_host_input_exercised"] == 1
+    assert "tom-false-belief" in agg["host_input_faculties"] and "tom-false-belief" not in agg["per_faculty"]
+
+
+# ── review fixes 2026-10-13: commit-gate silence, tag lesion, re-tell, the LIFO host ─────────────────────────────
+def test_commit_lesion_with_a_gate_spike_is_undefined():
+    S = _spec()
+    data = S.perfect(_rng(21))
+    body = data[44]["commitlesion"]["resp"]["selfinit"]
+    body["self_initiated"]["idle_replay"]["selection"]["gate_counts"][0] = 3
+    per, agg = _score_draw(S, data)
+    assert any(r.startswith("commit-lesion-gate-fired") for r in per[44]["undefined_reasons"])
+    assert per[44]["clauses"]["B-C5a"] is None and agg["verdict"].startswith("C5 UNDEFINED")
+
+
+def test_tag_lesion_must_move_the_voiced_fact():
+    S = _spec()
+    per, agg = _score_draw(S, S.null_tag_lesion_inert(_rng(22)))
+    assert agg["pooled_B-C5d"]["ok"] is False and "B-C5d" in agg["verdict"]
+    per, agg = _score_draw(S, S.null_host_newest_lifo(_rng(23)))
+    assert agg["pooled_B-C5d"]["ok"] is False and agg["verdict"].startswith("C5 REVERT-CANDIDATE")
+    # sessions pass by construction for the LIFO host: the review's confound, now caught only by the tag lesion
+    assert all(per[s]["clauses"]["B-C5b"] is True for s in S.SEEDS) and agg["pooled_B-C5c"]["misses"] == 0
+
+
+def test_tag_lesion_validity():
+    S = _spec()
+    data = S.perfect(_rng(24))
+    data[100]["taglesion"]["resp"]["c5st_idle"]["self_initiated"]["idle_replay"]["selection"]["x_applied"][0] = 9.0
+    data[101]["taglesion"]["prov"]["env"].pop("BRAIN_IDLE_REPLAY_TAG_LESION")
+    per, _ = _score_draw(S, data)
+    assert "taglesion:x-not-equal" in per[100]["undefined_reasons"]
+    assert "arm-env:taglesion:BRAIN_IDLE_REPLAY_TAG_LESION=None" in per[101]["undefined_reasons"]
+
+
+@pytest.mark.parametrize("counted", [True, False])
+def test_retell_counts_only_when_registered_counted(monkeypatch, counted):
+    S = _spec()
+    monkeypatch.setattr(C, "RETELL_COUNTED", counted)
+    data = S.perfect(_rng(25))
+    for s in S.SEEDS:                                            # the re-tell idle turn voices the LAST slot everywhere
+        body = data[s]["retell"]["resp"]["c5re_idle"]
+        cands = body["self_initiated"]["idle_replay"]["candidates"]
+        data[s]["retell"]["resp"]["c5re_idle"] = S._idle(cands, len(cands) - 1)
+    per, agg = _score_draw(S, data)
+    assert agg["pooled_B-C5e"]["n_bad"] == 6 and agg["pooled_B-C5e"]["counted"] is counted
+    assert agg["verdict"].startswith("C5 REVERT-CANDIDATE") is counted
+    if not counted:
+        assert agg["verdict"] == "C5 STANDS (PROVISIONAL)" and "NOT 'the spiking race owns" in agg["reading"]
+
+
+def test_retell_with_the_newest_tag_in_the_last_slot_is_undecided(monkeypatch):
+    S = _spec()
+    monkeypatch.setattr(C, "RETELL_COUNTED", True)
+    data = S.perfect(_rng(26))
+    cands = data[42]["retell"]["resp"]["c5re_idle"]["self_initiated"]["idle_replay"]["candidates"]
+    cands[5]["kb_idx"] = 9                                       # the re-tell appended a slot
+    per, agg = _score_draw(S, data)
+    assert "retell:newest-in-last-slot" in per[42]["undefined_reasons"] and agg["verdict"].startswith("C5 UNDEFINED")
+
+
+def test_lifo_host_fails_amendment_b_overall():
+    S = _spec()
+    per, agg = _score_draw(S, S.null_host_newest_lifo(_rng(27)))
+    assert agg["verdict"].startswith("C5 REVERT-CANDIDATE")
+    lifo_aware = getattr(S, "null_host_newest_lifo_lesion_aware", None) or S.info_host_newest_lifo_lesion_aware
+    per, agg = _score_draw(S, lifo_aware(_rng(28)))
+    assert agg["verdict"].startswith("C5 REVERT-CANDIDATE") is bool(C.RETELL_COUNTED)
+    assert not hasattr(S, "info_host_fifo_lesion_aware")          # renamed: it was newest/LIFO, not FIFO

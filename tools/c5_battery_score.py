@@ -30,6 +30,15 @@ LAYOUT. One directory, default research/findings/raw/_regression_battery/c5val_1
     on_rb         B (E3): as `on`
     stagger       B: as `on`, turns C5B_SESSIONS["stagger"]["labels"] (four facts taught one per turn, then idle)
     rotated       B: as `on`, turns C5B_SESSIONS["rotated"]["labels"] (the same facts in another order, then idle)
+    taglesion     B (review 2026-10-13): the STAGGERED turns with BRAIN_IDLE_REPLAY_TAG_LESION=1 (equal excitability)
+    retell        B (review 2026-10-13): turns C5B_SESSIONS["retell"]["labels"] (F1..F4, then F2 re-told verbatim and F1
+                  re-told with a new patient, then idle)
+
+THE CONFOUND THE REVIEW FOUND. The organ lists candidates in store-slot order and builds its circuit from (K, seed),
+with noise from (seed, turn, K). STAGGERED and ROTATED have the same K, idle turn and slot ages, so on one seed they
+run the SAME race and differ only in slot contents: B-C5b holds by construction for any brain that picks by slot, the
+12 sessions of B-C5c are 6 paired outcomes, and a host that voices the LAST slot (newest appended, LIFO) passes both.
+The TAG-LESION arm (B-C5d) and the RE-TELL arm (B-C5e, newest tag in an EARLY slot) are what separate them.
 
 PER-SEED CLAUSES (the registered C5 bars, then Amendment B's; a clause reads True / False, or None when its inputs
 are missing, and a seed is DEFINED only when every clause reads True or False and no validity reason was raised):
@@ -51,7 +60,8 @@ are missing, and a seed is DEFINED only when every clause reads True or False an
   B-C5a    the commit lesion changes the idle reply: the lesion must have reached the organ
            (idle_replay.lesions.commit true; else UNDEFINED); the commit-lesion idle reply differs from the ON idle
            reply AND is the neutral idle line (abstained, n_utt 0, no winner, the exact fallback text); and
-           emo/bc_a/bc_b are byte-identical across OFF, ON and commit-lesion (all at P).
+           emo/bc_a/bc_b are byte-identical across OFF, ON and commit-lesion (all at P). The lesion must also show
+           no commit-gate spike (sum of selection.gate_counts == 0), else UNDEFINED (docs/TERMS.md "lesion").
   E3       cross-revision check (precondition of B-C5b and of the seed's sessions in B-C5c): off_rb and on_rb are
            whole-record identical (every turn body, sorted-key JSON) to off and on. Else that seed is UNDEFINED, its
            B-C5b reads None and its two sessions are undecided in B-C5c.
@@ -60,13 +70,24 @@ are missing, and a seed is DEFINED only when every clause reads True or False an
            candidate with t_enc >= 1, t_enc strictly increasing in teaching order; else UNDEFINED). Then each
            session voices (n_utt 1, composer brain_store, decode_matches_winner) a fact taught in that session, and
            the STAGGERED fact differs from the ROTATED fact.
-POOLED CLAUSE:
+POOLED CLAUSES:
   B-C5c    the organ's design prediction: the most recently taught fact is the voiced fact in all but at most
-           MAX_NEWEST_MISSES (2) of the 2 x n_seeds exposure sessions (10 of 12 at six seeds). Its own dev bar
-           tolerates 3 of 10 noise draws per seed; here each session is one draw.
+           MAX_NEWEST_MISSES (2) of the 2 x n_seeds exposure sessions (10 of 12 at six seeds). The two sessions of a
+           seed run the same race (same K, turn and seed), so these are n_seeds PAIRED outcomes, not 12 draws.
+  B-C5d    the tag lesion moves the voiced fact: validity per seed (lesions.tag true, the other lesions off, equal
+           x_applied, the same candidate store as the intact STAGGERED arm; else UNDEFINED); `moved` = the
+           tag-lesion idle outcome differs from the intact STAGGERED voiced fact (nothing voiced counts as moved). At
+           most MAX_TAG_UNMOVED (2) of the seeds may read unmoved. Bar set on dev seeds 1-8 only, with the stand-in
+           organ, before gate data.
+  B-C5e    the re-tell: the newest-tagged candidate (unique max t_enc) is a re-told fact in an EARLY store slot (kb_idx
+           below the last slot; else the seed's re-tell is undecided and, when counted, UNDEFINED), and it is the
+           voiced fact; at most MAX_RETELL_MISSES (1) misses. Counted only when RETELL_COUNTED (fixed from the dev-7
+           smoke before gate data); otherwise reported, never in the verdict.
 
 VERDICT. A failed clause on any seed, or a failed pooled clause: "C5 REVERT-CANDIDATE seed <n> clause <k>". Else,
-any UNDEFINED seed (or an undecidable pooled clause): "C5 UNDEFINED". Else "C5 STANDS (PROVISIONAL)". Seed 42 is
+any UNDEFINED seed (or an undecidable pooled clause): "C5 UNDEFINED". Else "C5 STANDS (PROVISIONAL)", with `reading`:
+STANDS means "the idle reply selects by tag recency"; it never means "the spiking race owns content selection" unless
+the tag-lesion AND counted re-tell arms pass. Seed 42 is
 reported NON-BLIND (the g6b pair ran at seed 42 and was read before the prereg) and still counts: no seed is removed.
 
 Usage:
@@ -87,21 +108,32 @@ if _ROOT not in sys.path:
 
 SEEDS_DEFAULT = (42, 43, 44, 100, 101, 102)
 DIR_DEFAULT = "research/findings/raw/_regression_battery/c5val_1012"
-ARMS = ("off", "on", "commitlesion", "off_rb", "on_rb", "stagger", "rotated")
+ARMS = ("off", "on", "commitlesion", "off_rb", "on_rb", "stagger", "rotated", "taglesion", "retell")
 PAIR_ARMS = ("off", "on", "commitlesion", "off_rb", "on_rb")      # run the four pair turns
 SESSION_ARMS = ("stagger", "rotated")
-RB_ARMS = ("off_rb", "on_rb", "stagger", "rotated")              # run at R_B
+RB_ARMS = ("off_rb", "on_rb", "stagger", "rotated", "taglesion", "retell")   # run at R_B
+# the session (runner C5B_SESSIONS key) whose turns each session arm runs
+ARM_SESSION = {"stagger": "stagger", "rotated": "rotated", "taglesion": "stagger", "retell": "retell"}
 ACTIVE_TURNS = ("emo", "bc_a", "bc_b")
 IDLE_TURN = "selfinit"
 PAIR_TURNS = ACTIVE_TURNS + (IDLE_TURN,)
 REPLY_FIELDS = ("answer", "abstained", "recalled_svo")
 MEM_BAR_KIB = 1953125            # 2 GB = 2e9 bytes / 1024
 MAX_NEWEST_MISSES = 2            # B-C5c: newest-taught fact voiced in >= 2*n_seeds - 2 sessions (10 of 12)
+# B-C5d (tag lesion; review ruling 2026-10-13, bar set on DEV seeds 1-8 with the stand-in organ before gate data:
+# the tag lesion moved the voiced fact in 70 of 80 dev draws, 5 of 10 on the worst dev seed, and on 8 of 8 dev
+# battery-noise draws). At most this many of the six seeds may keep the intact STAGGERED fact under the tag lesion.
+MAX_TAG_UNMOVED = 2
+# B-C5e (re-tell; counted only if the dev-7 smoke showed a re-tell that re-tags a fact in an early slot, see
+# RETELL_COUNTED). Dev seeds 1-8 stand-in: the in-place re-told fact won 80 of 80 draws. Misses allowed of six:
+MAX_RETELL_MISSES = 1
+RETELL_COUNTED = None            # set below from the dev-7 smoke, before any gate data (Amendment B, B.3)
 RELEASE_ENV = "LB_BATTERY_RELEASE_SESSIONS"
 # research/runners/self_initiated_production_organ.py::idle_fallback_text() (pinned by tests/test_battery_amendment_b.py)
 NEUTRAL_IDLE_LINE = "Nothing in particular is surfacing for me to bring up right now."
 ARM_ENV = {"off": {"BRAIN_IDLE_REPLAY": "0"}, "on": {}, "commitlesion": {"BRAIN_IDLE_REPLAY_COMMIT_LESION": "1"},
-           "off_rb": {"BRAIN_IDLE_REPLAY": "0"}, "on_rb": {}, "stagger": {}, "rotated": {}}
+           "off_rb": {"BRAIN_IDLE_REPLAY": "0"}, "on_rb": {}, "stagger": {}, "rotated": {},
+           "taglesion": {"BRAIN_IDLE_REPLAY_TAG_LESION": "1"}, "retell": {}}
 ALLOWED_BRAIN_KEYS = ("BRAIN_CHAT_SEED", "BRAIN_IDLE_REPLAY_LEAKLOG")
 NON_BLIND = {42: ("the seed-42 OFF/ON pair repeats the g6b pair (seed 42, read 2026-10-12 before the prereg: "
                   "research/findings/2026-10-12-c5-g6b-replay-fired-pair.md); reported NON-BLIND, still counted")}
@@ -250,6 +282,70 @@ def session_read(body, taught):
     return why, voiced, detail
 
 
+def _voiced(body):
+    si, ir = _si(body), _ir(body)
+    dec = ir.get("decoded")
+    if (si.get("composer") == "brain_store" and int(si.get("n_utt") or 0) == 1 and ir.get("decode_matches_winner")
+            is True and isinstance(dec, list)):
+        return [str(x) for x in dec]
+    return None
+
+
+def tag_read(body, stagger_body):
+    """B-C5d validity + outcome for the TAG-LESION arm's idle turn (the STAGGERED turns with the tag lesion). Returns
+    (reasons, voiced_or_None, detail). Valid only when the tag lesion reached the organ alone (equal excitability
+    applied, the other lesions off) over the same candidate store as the intact STAGGERED arm."""
+    si, ir = _si(body), _ir(body)
+    why = []
+    if si.get("path") != "idle-replay" or not ir:
+        return ["not-organ-turn"], None, {}
+    les = ir.get("lesions") or {}
+    if not les.get("tag"):
+        why.append("tag-lesion-not-applied")
+    if les.get("no_encode") or les.get("commit"):
+        why.append("other-lesion-on")
+    sel = ir.get("selection") or {}
+    x = sel.get("x_applied")
+    if not isinstance(x, list) or not x or max(x) - min(x) > 1e-9:
+        why.append("x-not-equal")
+    if stagger_body is not None:
+        key = lambda b: [(list(c.get("fact") or []), c.get("kb_idx")) for c in (_ir(b).get("candidates") or [])]  # noqa: E731
+        if key(body) != key(stagger_body):
+            why.append("store-differs-from-stagger")
+    v = _voiced(body)
+    return why, v, {"answer": (body or {}).get("answer"), "voiced": v, "K": sel.get("K")}
+
+
+def retell_read(body, sess):
+    """B-C5e validity + outcome for the RE-TELL arm's idle turn. The newest-tagged candidate (unique max t_enc) must be
+    a re-told fact sitting in an EARLY store slot (kb_idx below the last slot): only then can recency and a last-slot
+    host disagree. Returns (reasons, hit_or_None, detail)."""
+    si, ir = _si(body), _ir(body)
+    if si.get("path") != "idle-replay" or not ir:
+        return ["not-organ-turn"], None, {}
+    why = []
+    les = ir.get("lesions") or {}
+    if any(bool(les.get(k)) for k in ("no_encode", "tag", "commit")):
+        why.append("lesioned")
+    cands = [c for c in (ir.get("candidates") or []) if isinstance(c, dict)]
+    if not cands:
+        return why + ["no-candidates"], None, {}
+    tmax = max(int(c.get("t_enc") or 0) for c in cands)
+    top = [c for c in cands if int(c.get("t_enc") or 0) == tmax]
+    last_idx = max(int(c.get("kb_idx") or 0) for c in cands)
+    newest = list(top[0].get("fact") or []) if len(top) == 1 else None
+    if newest is None:
+        why.append("newest-tag-not-unique")
+    elif newest not in [list(f) for f in sess.get("retold") or []]:
+        why.append("newest-not-retold:%s" % "-".join(newest))
+    elif int(top[0].get("kb_idx") or 0) >= last_idx:
+        why.append("newest-in-last-slot")          # the re-tell appended a slot: recency == last slot here
+    v = _voiced(body)
+    hit = (v == newest) if (not why and newest is not None) else None
+    return why, hit, {"answer": (body or {}).get("answer"), "voiced": v, "newest_tagged": newest,
+                      "newest_kb_idx": (top[0].get("kb_idx") if newest else None), "last_kb_idx": last_idx}
+
+
 def score_seed(seed, arms, sessions=None, pin=None, rb_pin=None):
     """Score one seed from its loaded arms ({arm: {"resp", "prov", "rss"}}). Pure: no file or brain access.
     `pin` is the revision P the off/on/commitlesion sidecars must record; `rb_pin` (default `pin`) the revision R_B
@@ -263,7 +359,7 @@ def score_seed(seed, arms, sessions=None, pin=None, rb_pin=None):
         a = arms.get(arm) or {}
         bad = prov_reasons(seed, arm, a.get("prov"), (rb_pin or pin) if arm in RB_ARMS else pin)
         body = a.get("resp")
-        need = PAIR_TURNS if arm in PAIR_ARMS else tuple(sessions[arm]["labels"])
+        need = PAIR_TURNS if arm in PAIR_ARMS else tuple(sessions[ARM_SESSION[arm]]["labels"])
         if not isinstance(body, dict):
             bad.append("arm-missing:%s" % arm)
         else:
@@ -311,8 +407,13 @@ def score_seed(seed, arms, sessions=None, pin=None, rb_pin=None):
     # B-C5a the commit lesion (all at P)
     if cle is not None and on is not None and off is not None:
         ci = cle[IDLE_TURN]
+        gates = (_ir(ci).get("selection") or {}).get("gate_counts")
         if _si(ci).get("path") != "idle-replay" or not (_ir(ci).get("lesions") or {}).get("commit"):
             und.append("commit-lesion-not-applied")
+            cl["B-C5a"] = None
+        elif not isinstance(gates, list) or sum(int(g or 0) for g in gates) != 0:
+            # TERMS "lesion": the cut must be shown to have removed the pathway's output: no commit-gate spike
+            und.append("commit-lesion-gate-fired:%s" % (gates,))
             cl["B-C5a"] = None
         else:
             neutral = (ci.get("answer") == NEUTRAL_IDLE_LINE and ci.get("abstained") is True
@@ -357,6 +458,27 @@ def score_seed(seed, arms, sessions=None, pin=None, rb_pin=None):
     else:
         cl["B-C5b"] = None
 
+    # B-C5d the tag lesion (pooled in aggregate): does removing the excitability tag move the voiced fact?
+    tl = resp.get("taglesion")
+    if tl is not None:
+        st_body = resp.get("stagger")
+        why, tv, td = tag_read(tl[sessions["stagger"]["idle_label"]],
+                               st_body[sessions["stagger"]["idle_label"]] if st_body is not None else None)
+        und += ["taglesion:%s" % w for w in why]
+        st = r["sessions"].get("stagger") or {}
+        moved = (tv != st.get("voiced")) if (not why and e3 is True and st.get("valid")) else None
+        r["sessions"]["taglesion"] = dict(td, valid=not why, e3=e3, moved=moved)
+
+    # B-C5e the re-tell (pooled in aggregate; counted only when RETELL_COUNTED)
+    rt = resp.get("retell")
+    if rt is not None:
+        why, hit, rd = retell_read(rt[sessions["retell"]["idle_label"]], sessions["retell"])
+        reasons = ["retell:%s" % w for w in why]
+        if RETELL_COUNTED:
+            und += reasons
+        r["sessions"]["retell"] = dict(rd, valid=not why, e3=e3, counted=bool(RETELL_COUNTED), reasons=reasons,
+                                       retold_hit=hit if (not why and e3 is True) else None)
+
     r["state"] = "DEFINED" if (not und and all(v is not None for v in cl.values())) else "UNDEFINED"
     return r
 
@@ -384,6 +506,21 @@ def pooled_newest(per_seed, seeds):
     return True, detail
 
 
+def _pooled_count(per_seed, seeds, arm, key, bad_value, max_bad):
+    """A pooled per-session clause: False when more than `max_bad` seeds read `bad_value`, None while any seed is
+    undecided, else True."""
+    vals = [((per_seed.get(s) or {}).get("sessions") or {}).get(arm, {}).get(key) for s in seeds]
+    bad = sum(1 for v in vals if v is bad_value)
+    und = sum(1 for v in vals if v is None)
+    detail = {"n_seeds": len(seeds), "n_bad": bad, "undecided": und, "max_bad": max_bad,
+              "per_seed": {str(s): v for s, v in zip(seeds, vals)}}
+    if bad > max_bad:
+        return False, detail
+    if und:
+        return None, detail
+    return True, detail
+
+
 def aggregate(per_seed, seeds):
     seeds = [int(s) for s in seeds]
     fails = [(s, k) for s in seeds for k, v in (per_seed[s]["clauses"] or {}).items() if v is False]
@@ -391,16 +528,32 @@ def aggregate(per_seed, seeds):
     pooled_ok, pooled = pooled_newest(per_seed, seeds)
     if pooled_ok is False:
         fails.append(("pooled", "B-C5c"))
+    tag_ok, tag = _pooled_count(per_seed, seeds, "taglesion", "moved", False, MAX_TAG_UNMOVED)
+    if tag_ok is False:
+        fails.append(("pooled", "B-C5d"))
+    rt_ok, rt = _pooled_count(per_seed, seeds, "retell", "retold_hit", False, MAX_RETELL_MISSES)
+    rt["counted"] = bool(RETELL_COUNTED)
+    if RETELL_COUNTED and rt_ok is False:
+        fails.append(("pooled", "B-C5e"))
+    pooled_undecided = pooled_ok is None or tag_ok is None or bool(RETELL_COUNTED and rt_ok is None)
     if fails:
         verdict = "C5 REVERT-CANDIDATE " + "; ".join("seed %s clause %s" % (s, k) if s != "pooled"
                                                      else "pooled clause %s" % k for s, k in fails)
-    elif undef or pooled_ok is None:
-        verdict = "C5 UNDEFINED (seeds %s)" % (",".join(str(s) for s in undef) or "pooled B-C5c undecided")
+    elif undef or pooled_undecided:
+        verdict = "C5 UNDEFINED (seeds %s)" % (",".join(str(s) for s in undef) or "a pooled clause undecided")
     else:
         verdict = "C5 STANDS (PROVISIONAL)"
     nb = {s: NON_BLIND[s] for s in seeds if s in NON_BLIND}
-    return {"verdict": verdict, "failed_clauses": [list(x) for x in fails], "undefined_seeds": undef,
-            "pooled_B-C5c": dict(pooled, ok=pooled_ok), "non_blind": nb,
+    reading = None
+    if verdict.startswith("C5 STANDS"):
+        reading = ("the idle reply selects by tag recency; the tag-lesion and re-tell arms pass, so the excitability "
+                   "tag, not the store slot, decides which fact is voiced" if RETELL_COUNTED and rt_ok is True else
+                   "the idle reply selects by tag recency (STAGGERED/ROTATED newest fact, tag lesion moves it); NOT "
+                   "'the spiking race owns content selection': the re-tell arm is informational, so a last-slot "
+                   "host is not excluded")
+    return {"verdict": verdict, "reading": reading, "failed_clauses": [list(x) for x in fails],
+            "undefined_seeds": undef, "pooled_B-C5c": dict(pooled, ok=pooled_ok, paired_outcomes=len(seeds)),
+            "pooled_B-C5d": dict(tag, ok=tag_ok), "pooled_B-C5e": dict(rt, ok=rt_ok), "non_blind": nb,
             "n_defined": sum(1 for s in seeds if per_seed[s]["state"] == "DEFINED"), "n_seeds": len(seeds)}
 
 
@@ -424,8 +577,9 @@ def main(argv=None):
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
     res = score_dir(a.dir, a.seeds, pin=a.pin, rb_pin=a.rb_pin)
-    print(json.dumps({k: res[k] for k in ("verdict", "failed_clauses", "undefined_seeds", "pooled_B-C5c",
-                                          "non_blind", "n_defined", "n_seeds")}, indent=1))
+    print(json.dumps({k: res[k] for k in ("verdict", "reading", "failed_clauses", "undefined_seeds", "pooled_B-C5c",
+                                          "pooled_B-C5d", "pooled_B-C5e", "non_blind", "n_defined", "n_seeds")},
+                     indent=1))
     for s, r in res["per_seed"].items():
         if r["undefined_reasons"]:
             print("seed %s UNDEFINED: %s" % (s, ", ".join(r["undefined_reasons"])))
