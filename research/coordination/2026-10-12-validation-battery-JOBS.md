@@ -218,7 +218,8 @@ Also still HELD per RULING pool-hold-1012: the 09-30 held _stage1_exit (204) and
 
 none — both prereg launch bars pass: peak 16.14 GiB x parallelism 1 = 16.14 GiB fits every pool node (32/46 GiB), and projected wall is 12 min/arm (2.4 h for all 12 sequential), far under 24 h. No NEEDS [aws-run] is forced.
 
-(W2 note for commit time: the 12 verbatim queue lines are machine lines longer than 800 chars; do not run tools/split_long_doc_lines.py --apply over the fenced command blocks — it would break copy-paste verbatim execution. Register or exempt before commit.)
+(W2 note for commit time: the verbatim queue lines (12 in section 3, 33 in section 9) are machine lines longer than 800 chars; do not run tools/split_long_doc_lines.py --apply over the fenced command blocks — it would break copy-paste verbatim execution. Register or exempt before commit.)
+
 ## 9. Amendment B lines (prereg AMENDMENT B, a93fc12ea; NOT queued by this commit)
 
 Generated 2026-10-13 by Claude (coordinator build) after Amendment B landed. Revisions: P = f24963bfb05ca535f10f70bf4380fe4b2f68a9ea (the pin above) for commitlesion; R_B = e70e5c9954056edac46261e657b7477b58040857 (branch claude-build/battery-amend-b-pin: P plus the label-only C5B turn block) for off_rb, on_rb, stagger and rotated. R_B must be provisioned first (`~/derisk-pool/revisions/e70e5c9954056edac46261e657b7477b58040857`; the dispatcher holds a line whose revision is not up). Every line: the section-1 guard prefix first, BRAIN_CHAT_SEED explicit, no LB_* key (session release OFF), wspool only, ONE arm in flight globally (section 5), pasted one `pool_queue.sh add` at a time with the section-3 heredoc pattern.
