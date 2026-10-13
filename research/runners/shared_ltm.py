@@ -97,6 +97,9 @@ def view_for(cache, key, loader, log=None):
             with _KEYS_GUARD:
                 ent = cache.get(key)          # another conversation may have finished the load while we waited
             if ent is None:
+                # Loads of DIFFERENT keys may run here at once; the server's loader runs under
+                # global_rng_guard.preserved_global_rng(), whose module RLock serializes the RNG-touching part, so
+                # two loads cannot interleave their save/restore of the process-global RNG streams.
                 store = loader()
                 if store is None:
                     return None

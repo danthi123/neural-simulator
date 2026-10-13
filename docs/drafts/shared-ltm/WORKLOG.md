@@ -191,7 +191,8 @@ ones, independent of this change.)
      so the guard swaps a temporary RandomState into the device slot for the block and puts the original object
      back, untouched. Checked on the cupy backend: same object back, next draw equal to the no-build draw, while
      the unguarded control differs.
-   - `RFPhasorComposer._isolate_global_rng` (default False = byte-identical). When set, every bridge the composer
+   - `RFPhasorComposer._isolate_global_rng` (default False; the default replies are byte-identical to base 6a3bfe247
+     on one turnset, step 6). When set, every bridge the composer
      builds goes through the guard (`_new_rf_bridge`, `_izh_bank`).
    - `webapp/server.py`: `BRAIN_LTM_RNG_ISOLATE` (`_ltm_rng_isolate_on()`). Forced on whenever the shared store is
      on; otherwise default off (`_LTM_RNG_ISOLATE_DEFAULT_ON = False`), so plain OFF is unchanged. When on,
@@ -211,9 +212,9 @@ ones, independent of this change.)
    - Per-key load locks (`shared_ltm._LOAD_LOCKS`). `_KEYS_GUARD` is held only for dict lookups, never across a
      load, so a cached key never waits behind another key's load. Two conversations on one cold key still load
      once.
-   - `test_cache_key_covers_every_constructor_env_read` scans the source of `RFPhasorComposer.__init__`,
-     `ShardedPhasorStore.__init__` and `ShardedPhasorStore.load` for env reads and fails on any name missing from
-     `_SHARED_LTM_COMPOSER_ENV`.
+   - `test_cache_key_covers_every_env_read_in_the_store_modules` (re-review: was constructors only) scans the WHOLE
+     source of rf_phasor_composer.py and sharded_phasor_store.py for env reads, fails on any name missing from
+     `_SHARED_LTM_COMPOSER_ENV`, and fails on any read whose name is not a string literal.
    - `research/runners/_knowledge_scale_100k_production_verify.py`: the "EXACT call" docstrings now say that call is
      the default-flags path, and that with either flag on the server passes `ltm_store=`.
 
@@ -284,6 +285,34 @@ RSS (VmRSS after each session's build turn; KiB, GiB = KiB / 1048576):
 The private-copy arms peak at 18.77 GiB under a 20 GiB cap: three private copies plus six turns leave about 1.2 GiB
 of headroom.
 
+## Step 6: re-review fixes (merge verdict MERGE as s/main 683c181b3; fixes before the flip)
+
+1. RNG guard thread safety: `global_rng_guard._GUARD_LOCK`, a module RLock held across every guarded block (a leaf
+   lock). Tests: restore on raise + lock released, nesting on one thread, two overlapping threads end on the original
+   stream, and the cupy branch (same RandomState object back, next draw equal; skipped without cupy or a device).
+2. The mutation-guard fingerprint reads the RF weights through `sim.backend.to_host` (it failed on cupy).
+3. The env scan covers the whole of rf_phasor_composer.py and sharded_phasor_store.py and fails on a non-literal name.
+4. "byte-identical" (docs/TERMS.md: in the data). The tip's three-session driver run against a code-only export of
+   base 6a3bfe247 (`git archive`, data symlinked; `run_base.sh`), seed 7, v2, under the brain lock:
+
+       flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock docs/drafts/shared-ltm/run_base.sh <base_export> 7 v2
+       python docs/drafts/shared-ltm/compare.py runs/base6a3bfe247_s7_v2.json runs/off_s7_v2.json
+
+   18/18 identical (sha256 of each reply body): the base equals plain OFF, so with step 5 base == off == offiso == on
+   at seed 7 on this turnset. The base JSON has no git SHA (the export is not a checkout) and both flag fields None
+   (its server has neither flag), which shows the base server was the one imported. The comments in server.py,
+   rf_phasor_composer.py and developed_brain_io.py cite this run for the replies and say "expected unchanged"
+   elsewhere.
+5. The developed branch passes `ltm_store=` only when a store was built; the default call has no such kwarg.
+
+Tests at the tip: `tests/test_shared_ltm.py` SIM_BACKEND=numpy (CUDA hidden) 35 passed, 1 skipped (the cupy guard
+test); SIM_BACKEND=cupy 36 passed. The composer / LTM / server suites listed under Review fixes: numpy 154 passed,
+5 skipped; cupy 157 passed, 1 skipped, 1 failed. The failure is
+`test_arm_renderer_production_path.py::test_the_handler_resolves_the_omitted_renderer_with_the_production_resolver[production-env0-stub]`
+('qwen' != 'stub'). It passes alone and fails whenever an earlier test in the process built a cupy bridge: the same
+failure reproduces with only test_tiered_fact_store.py before it, on this branch and on the base 6a3bfe247 export.
+It predates this branch; not fixed here.
+
 ## Open risks
 
 - LTM reads now serialize across conversations (one lock per store). Under concurrent chat, a conversation's LTM
@@ -299,11 +328,17 @@ of headroom.
 - The developed-bundle branch is covered by brain-free tests: the server branch with `load_developed_brain`
   stubbed, plus the real `ltm_store=` branch on a small saved bundle. No real-handler run on a developed bundle;
   the runs covered the tiny-demo path, the production default.
+- The RNG guard serializes guarded blocks on one module RLock (re-review): two guarded loads on two threads no
+  longer interleave their save/restore. RESIDUAL: a thread that draws from a global stream WITHOUT the guard while
+  another thread is inside a guarded block (a cold load or a cold lazy build) reads the block's seed-42 values. The
+  guard restores the streams afterwards; it cannot hide the window from unguarded readers. A whole cold load holds
+  the lock for minutes, so a concurrent unguarded draw in that window is possible under concurrent chat.
 - The RNG guard covers bridge BUILDS. Per-call global draws inside an LTM query would not be covered. None exist on
   the default read path (`rf_kick` / `rf_resonate_steps` draw nothing); the Izhikevich-bank paths that step the
   full simulation are refused for sharing.
 - `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md` (landed on s/main 79ba4b0a1, after this branch point)
-  names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. This branch ran
-  the three-session real-handler check above, not the battery §9.1 pair; that pair is still to run before the merge.
+  names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. That pair is the
+  FLIP validation (before `_SHARED_LTM_DEFAULT_ON` becomes True), not a merge precondition: the branch merged default
+  OFF on the three-session real-handler check above. The battery §9.1 pair has not run yet.
   The design's M0 `turn_lock` will sit outside this per-store lock (this one is held only inside one store call), so
   the two nest without a lock-order cycle.

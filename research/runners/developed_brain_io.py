@@ -701,7 +701,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     # buffer, then the routed LTM shard (sub-second at any K). No LTM -> the plain flat composer, byte-for-byte. The
     # tiers self-consistently encode by WORD, so a separate LTM codebook is correct (a fact is read from the tier it
     # was stored in). See tiered_fact_store.py + the sharded-fact-store finding (2026-08-20).
-    # `ltm_store` (one brain, many conversations, step 1; default None = byte-identical): an already-loaded LTM (the
+    # `ltm_store` (one brain, many conversations, step 1; default None: the pre-change branch, expected unchanged; the
+    # server passes it only when a flag is on): an already-loaded LTM (the
     # webapp's process-shared read-only `SharedLTMView`, research/runners/shared_ltm.py) installed INSTEAD of loading
     # `ltm_bundle`, so many conversations wrap one store rather than one copy each.
     if ltm_store is not None:

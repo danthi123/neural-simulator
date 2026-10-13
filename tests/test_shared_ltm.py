@@ -25,6 +25,7 @@ import numpy as np
 import pytest
 
 from research.runners.shared_ltm import SharedLTMView, SharedLTMWriteError, unshareable_reason, view_for
+from sim.backend import to_host
 from research.runners.sharded_phasor_store import ShardedPhasorStore
 from research.runners.tiered_fact_store import TieredFactStore
 
@@ -98,7 +99,7 @@ def test_recall_through_views_does_not_mutate_the_shared_store():
             for fact, handle in sh.kb:
                 h.update(json.dumps(fact, sort_keys=True).encode())
                 for arr in (handle.cp_rf_w_re.toarray(), handle.cp_rf_w_im.toarray()):
-                    h.update(np.ascontiguousarray(np.asarray(arr)).tobytes())
+                    h.update(np.ascontiguousarray(to_host(arr)).tobytes())   # cupy backend: device -> host
             h.update(json.dumps(sorted(sh.words)).encode())
             for w in sorted(sh.concepts):
                 h.update(w.encode())
@@ -220,9 +221,90 @@ def test_cached_key_never_waits_behind_another_keys_load():
 
 
 # ── global-RNG hygiene: a recall must not reseed the process-global streams ─────────────────────────────────────
-def _global_rng_fingerprint():
-    import random
-    return (repr(np.random.get_state()[1][:8].tolist()), int(np.random.get_state()[2]), random.getstate()[1][:4])
+def _np_state():
+    st = np.random.get_state()
+    return st[1].copy(), st[2], st[3], st[4]
+
+
+def _same_np_state(a, b):
+    return np.array_equal(a[0], b[0]) and a[1:] == b[1:]
+
+
+def test_preserved_global_rng_restores_on_raise_and_releases_the_lock():
+    from research.runners import global_rng_guard as G
+    np.random.seed(3)
+    before = _np_state()
+    with pytest.raises(ValueError):
+        with G.preserved_global_rng():
+            np.random.seed(42)
+            raise ValueError("boom")
+    assert _same_np_state(before, _np_state())
+    assert G._GUARD_LOCK.acquire(blocking=False)       # released after the raise
+    G._GUARD_LOCK.release()
+
+
+def test_preserved_global_rng_nests_on_one_thread():
+    from research.runners.global_rng_guard import preserved_global_rng
+    np.random.seed(4)
+    before = _np_state()
+    with preserved_global_rng():
+        np.random.seed(42)
+        inner_before = _np_state()
+        with preserved_global_rng():                  # re-entrant: no deadlock
+            np.random.seed(43)
+        assert _same_np_state(inner_before, _np_state())
+    assert _same_np_state(before, _np_state())
+
+
+def test_preserved_global_rng_serializes_two_threads():
+    """A enters, reseeds, holds 0.15 s; B starts 0.05 s later, reseeds, holds 0.3 s. Unserialized, B would save A's
+    reseeded state and restore it last, leaving the process on the seed-42 stream. With the guard's lock B waits for
+    A, and the process ends on its original stream."""
+    import time
+    from research.runners.global_rng_guard import preserved_global_rng
+    np.random.seed(5)
+    before = _np_state()
+
+    def block(seed, hold):
+        with preserved_global_rng():
+            np.random.seed(seed)
+            time.sleep(hold)
+            np.random.rand()
+
+    ta = threading.Thread(target=block, args=(42, 0.15))
+    tb = threading.Thread(target=block, args=(43, 0.3))
+    ta.start()
+    time.sleep(0.05)
+    tb.start()
+    ta.join(5)
+    tb.join(5)
+    assert _same_np_state(before, _np_state())
+
+
+def test_preserved_global_rng_keeps_the_cupy_state_object():
+    """The cupy branch: cupy.random.seed reseeds the CURRENT RandomState in place, so the guard swaps a temporary one
+    in and puts the original object back. Skipped without cupy or a CUDA device."""
+    cupy = pytest.importorskip("cupy")
+    try:
+        cupy.cuda.runtime.getDeviceCount()
+        cupy.random.get_random_state()
+    except Exception as e:                            # noqa: BLE001 -- no usable device
+        pytest.skip("no CUDA device: %s" % e)
+    from research.runners import global_rng_guard as G
+    orig_backend = G._backend_name
+    G._backend_name = lambda: "cupy"
+    try:
+        cupy.random.seed(123)
+        want = float(cupy.random.rand())
+        cupy.random.seed(123)
+        obj = cupy.random.get_random_state()
+        with G.preserved_global_rng():
+            cupy.random.seed(42)
+            cupy.random.rand(3)
+        assert cupy.random.get_random_state() is obj
+        assert float(cupy.random.rand()) == want
+    finally:
+        G._backend_name = orig_backend
 
 
 def test_preserved_global_rng_restores_numpy_and_python_streams():
@@ -400,22 +482,52 @@ def test_rng_isolate_flag_parsing(S, monkeypatch):
     assert S._ltm_rng_isolate_on() is True             # cannot be turned off while sharing
 
 
-def _constructor_env_reads():
-    """Env names read in the RFPhasorComposer and ShardedPhasorStore constructors (and the store's `load`)."""
-    import inspect
+_ENV_CALL = r"""(?:environ\.get|getenv|environ\.setdefault|environ\.pop)\(|environ\["""
+
+
+def _scan_env_reads(src, label="src"):
+    """(literal env names read in `src`, the env reads whose name is NOT a string literal -- the scan cannot see
+    which variable those read, so the cache key cannot be shown to cover them)."""
     import re
-    from research.runners.rf_phasor_composer import RFPhasorComposer
-    src = "".join(inspect.getsource(f) for f in (RFPhasorComposer.__init__, ShardedPhasorStore.__init__,
-                                                  ShardedPhasorStore.load))
-    pat = r"""(?:environ\.get\(|environ\[|getenv\()\s*['"]([A-Z0-9_]+)['"]"""
-    return set(re.findall(pat, src))
+    names, opaque = set(), []
+    for m in re.finditer(_ENV_CALL, src):
+        rest = src[m.end():m.end() + 80].lstrip()
+        lit = re.match(r"""['"]([A-Za-z0-9_]+)['"]""", rest)
+        if lit:
+            names.add(lit.group(1))
+        else:
+            opaque.append("%s: %s" % (label, src[m.start():m.end() + 40].splitlines()[0]))
+    return names, opaque
 
 
-def test_cache_key_covers_every_constructor_env_read(S):
-    reads = _constructor_env_reads()
-    assert reads, "the scan found no env reads -- the regex no longer matches the constructors"
-    missing = reads - set(S._SHARED_LTM_COMPOSER_ENV)
-    assert not missing, "constructor env reads missing from _SHARED_LTM_COMPOSER_ENV: %s" % sorted(missing)
+def _module_env_reads():
+    """Every env read anywhere in rf_phasor_composer.py and sharded_phasor_store.py (whole files: an env read in a
+    helper, a method or the module body counts, not only the constructors)."""
+    import research.runners.rf_phasor_composer as rf_mod
+    import research.runners.sharded_phasor_store as sh_mod
+    names, opaque = set(), []
+    for mod in (rf_mod, sh_mod):
+        n, o = _scan_env_reads(open(mod.__file__, encoding="utf-8").read(), mod.__name__)
+        names |= n
+        opaque += o
+    return names, opaque
+
+
+def test_cache_key_covers_every_env_read_in_the_store_modules(S):
+    names, opaque = _module_env_reads()
+    assert names, "the scan found no env reads -- the pattern no longer matches the modules"
+    assert not opaque, "env reads with a non-literal name (the key cannot cover them): %s" % opaque
+    missing = names - set(S._SHARED_LTM_COMPOSER_ENV)
+    assert not missing, "env reads missing from _SHARED_LTM_COMPOSER_ENV: %s" % sorted(missing)
+
+
+def test_env_scan_catches_helper_and_non_literal_reads():
+    """The scan's own discriminating check: a read inside a helper is found, and a non-literal name is opaque."""
+    src = ('def _flag(name):\n    return os.environ.get(name, "")\n'
+           'def _h():\n    return os.getenv( "BRAIN_X")\nY = os.environ["BRAIN_Y"]\n')
+    names, opaque = _scan_env_reads(src)
+    assert names == {"BRAIN_X", "BRAIN_Y"}
+    assert len(opaque) == 1 and "environ.get(" in opaque[0]
 
 
 def test_cache_key_includes_every_flag(S, monkeypatch, tmp_path):
@@ -495,7 +607,7 @@ def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch
 
 def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch, tmp_path):
     """The developed-bundle branch: shared on -> the shared view as `ltm_store` (no `ltm_bundle`); OFF+isolate -> a
-    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and no store, the pre-change call. The
+    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and NO ltm_store kwarg, the pre-change call. The
     build-fallback seed is the bundle's own brain.json seed."""
     import research.runners.developed_brain_io as dbio
     dev = tmp_path / "dev"
@@ -523,7 +635,7 @@ def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch,
     monkeypatch.delenv("BRAIN_SHARED_LTM")
     monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE")
     S._build_chat_brain(str(dev), "stub")
-    assert seen[3]["ltm_bundle"] == S._test_bundle and seen[3]["ltm_store"] is None
+    assert seen[3]["ltm_bundle"] == S._test_bundle and "ltm_store" not in seen[3]   # the pre-change call
 
 
 def test_load_developed_brain_installs_a_given_ltm_store(tmp_path):
