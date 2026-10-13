@@ -13,11 +13,23 @@ WHAT. Inside the block, numpy's and python's global states are saved and restore
 global RandomState object is swapped out for a temporary one (cupy.random.seed reseeds the current object IN PLACE, so
 saving a reference would not protect it) and put back afterwards, untouched. Draws the block makes from the global
 streams come from the temporary / restored-over state and leave no trace outside the block.
+
+THREADS (re-review, 2026-10-13). The global streams are process-wide, so two guarded blocks on two threads must not
+overlap: A saves S0 and reseeds, B saves A's reseeded state, A restores S0, B then restores the seed-42 state. A
+module-level RLock (`_GUARD_LOCK`) is held across the whole block, so guarded blocks serialize (re-entrant on one
+thread, so nesting works). It is a LEAF lock: nothing inside a guarded block takes another lock of this code, so it
+cannot join a lock-order cycle (the callers take their own locks -- a shared store's RLock, a key's load lock --
+BEFORE this one).
+RESIDUAL: a thread that draws from a global stream WITHOUT the guard while another thread is inside a guarded block
+reads the block's reseeded values. The guard restores the streams; it cannot hide the window from unguarded readers.
 """
 from __future__ import annotations
 
 import contextlib
 import random
+import threading
+
+_GUARD_LOCK = threading.RLock()
 
 
 def _backend_name():
@@ -30,6 +42,13 @@ def _backend_name():
 
 @contextlib.contextmanager
 def preserved_global_rng():
+    with _GUARD_LOCK:
+        with _preserved_global_rng_unlocked():
+            yield
+
+
+@contextlib.contextmanager
+def _preserved_global_rng_unlocked():
     import numpy as np
     np_state = np.random.get_state()
     py_state = random.getstate()
