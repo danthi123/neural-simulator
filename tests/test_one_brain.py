@@ -605,3 +605,20 @@ def test_off_tick_keeps_the_per_session_steps(fresh, monkeypatch):
         "read_differential": staticmethod(lambda v, lesion=False: {"differential": 0.0})})(), now=now,
         episodic_getter=lambda k: "organ", chat_getter=lambda k: "chat")
     assert ("sleep", A) in calls and ("save", A) in calls and ("homeo", A) in calls
+
+
+# ── the OpenAI shim carries the interlocutor (request `user`, else the last user message's `name`) ──────────────────
+
+def test_openai_shim_passes_the_interlocutor(monkeypatch):
+    from fastapi.responses import JSONResponse
+    from webapp import server as S
+    from webapp import openai_shim as OAS
+    seen = []
+    monkeypatch.setattr(S, "brain_chat", lambda r: (seen.append(r), JSONResponse({"answer": "ok"}))[1])
+    msgs = [{"role": "user", "content": "hi", "name": "Old"}, {"role": "assistant", "content": "x"},
+            {"role": "user", "content": "what does the wug eat", "name": " Carol "}]
+    S.openai_chat_completions(S.OpenAIChatRequest(messages=msgs))
+    S.openai_chat_completions(S.OpenAIChatRequest(messages=msgs, user="dave"))
+    S.openai_chat_completions(S.OpenAIChatRequest(messages=[{"role": "user", "content": "hi"}]))
+    assert [r.interlocutor for r in seen] == ["Carol", "dave", None]
+    assert OAS._last_user_name([{"role": "user", "content": "x", "name": "  "}]) is None
