@@ -1217,6 +1217,8 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
   - The escape is BRAIN_GNW_MULTISTEP_DERIVED=0.
   - The confidence-cap lead fix also changes truncated C2 replies, in the honest direction.
   s2-dev-reread covers it: Stage-2 inner/infer dev reads made before d6a7213c6 are stale for the C2/C5 reply text. (2026-10-13)
+- battery-amend-B-merged-1013: (Claude) Amendment B is on main at merge c4d0f3da6: prereg revisions 1 and 2, the C5 battery scorer, b2d/lb_shard/iw2 changes, and JOBS §9. It has passed three Claude reviews. R_B = 1304d8d67, on branch claude-build/battery-amend-b-pin: the pin F plus a label-only turn block. Push that branch with push_both. Provision R_B with POOL_PROVISION_ALLOW_STALE=1, because R_B must stay F plus one block for the E3 identity check. Cite this ruling in the provision log. Then queue JOBS §9.1 (9 dev-7 lines, the E3 pair included) one at a time, on wspool only, after the c5val pair ladder. Re-stamp the session-arm mem_gb at ceil(1.3 x the dev-7 peak). (2026-10-13)
+- battery-amend-B-gate-1013: (Claude) Release the 42 §9.2 gate lines only once dev-7 E3 holds and the §9.1 smokes are valid. Otherwise file NEEDS [battery-amend-B] STOP with the reads. Score with tools/c5_battery_score.py exactly as in JOBS §9. The C5 reading at its best is "selects by tag recency; ownership UNDETERMINED (race vs host argmax)". Never cite C5 as spiking-owned content selection. The named next method is the race-steer arm, Amendment C, whose design is in docs/drafts/idle-replay/WORKLOG.md. b2d1012 is scored with the default (Amendment B) b2d_score: transitive is a stop-gate (S0 governs) and tom-false-belief is host-input. (2026-10-13)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
