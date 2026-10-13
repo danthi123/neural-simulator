@@ -211,9 +211,9 @@ ones, independent of this change.)
    - Per-key load locks (`shared_ltm._LOAD_LOCKS`). `_KEYS_GUARD` is held only for dict lookups, never across a
      load, so a cached key never waits behind another key's load. Two conversations on one cold key still load
      once.
-   - `test_cache_key_covers_every_constructor_env_read` scans the source of `RFPhasorComposer.__init__`,
-     `ShardedPhasorStore.__init__` and `ShardedPhasorStore.load` for env reads and fails on any name missing from
-     `_SHARED_LTM_COMPOSER_ENV`.
+   - `test_cache_key_covers_every_env_read_in_the_store_modules` (re-review: was constructors only) scans the WHOLE
+     source of rf_phasor_composer.py and sharded_phasor_store.py for env reads, fails on any name missing from
+     `_SHARED_LTM_COMPOSER_ENV`, and fails on any read whose name is not a string literal.
    - `research/runners/_knowledge_scale_100k_production_verify.py`: the "EXACT call" docstrings now say that call is
      the default-flags path, and that with either flag on the server passes `ltm_store=`.
 
@@ -299,11 +299,17 @@ of headroom.
 - The developed-bundle branch is covered by brain-free tests: the server branch with `load_developed_brain`
   stubbed, plus the real `ltm_store=` branch on a small saved bundle. No real-handler run on a developed bundle;
   the runs covered the tiny-demo path, the production default.
+- The RNG guard serializes guarded blocks on one module RLock (re-review): two guarded loads on two threads no
+  longer interleave their save/restore. RESIDUAL: a thread that draws from a global stream WITHOUT the guard while
+  another thread is inside a guarded block (a cold load or a cold lazy build) reads the block's seed-42 values. The
+  guard restores the streams afterwards; it cannot hide the window from unguarded readers. A whole cold load holds
+  the lock for minutes, so a concurrent unguarded draw in that window is possible under concurrent chat.
 - The RNG guard covers bridge BUILDS. Per-call global draws inside an LTM query would not be covered. None exist on
   the default read path (`rf_kick` / `rf_resonate_steps` draw nothing); the Izhikevich-bank paths that step the
   full simulation are refused for sharing.
 - `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md` (landed on s/main 79ba4b0a1, after this branch point)
-  names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. This branch ran
-  the three-session real-handler check above, not the battery §9.1 pair; that pair is still to run before the merge.
+  names M1's validation as the battery §9.1 reply hashes ON vs OFF plus the per-session RSS drop. That pair is the
+  FLIP validation (before `_SHARED_LTM_DEFAULT_ON` becomes True), not a merge precondition: the branch merged default
+  OFF on the three-session real-handler check above. The battery §9.1 pair has not run yet.
   The design's M0 `turn_lock` will sit outside this per-store lock (this one is held only inside one store call), so
   the two nest without a lock-order cycle.
