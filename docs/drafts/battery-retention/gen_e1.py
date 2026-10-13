@@ -1,3 +1,5 @@
+"""Print the E1 command lines (markdown) to stdout, generated from the registered JOBS line 46. Run from the repo
+root: python3 docs/drafts/battery-retention/gen_e1.py > e1_lines.md"""
 src = open("research/coordination/2026-10-12-validation-battery-JOBS.md").read().splitlines()
 tmpl = src[45]   # line 46: seed 42 OFF, the registered line verbatim
 assert tmpl.startswith("python3 -c") and "BRAIN_CHAT_SEED=42 BRAIN_IDLE_REPLAY=0 " in tmpl
@@ -28,6 +30,4 @@ for seed in (7, 8):
 n += 1
 out.append("E1.%d `Bnorel_s7_on` (instrument B with release UNSET, seed 7, arm on):\n\n```\n%s\n```\n"
            % (n, line(B, 7, "on", False, "Bnorel_s7_on")))
-open("/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/e1_lines.md",
-     "w").write("\n".join(out))
-print(n)
+print("\n".join(out))

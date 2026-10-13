@@ -47,10 +47,34 @@ def test_release_env_is_parsed_case_insensitively(val, expected):
 def test_release_raises_when_a_key_was_not_live():
     evicted = []
     with pytest.raises(RuntimeError, match="not live"):
-        B._release_sessions([("a", "b", "c"), ("x", "b", "c")], evicted.append, {("a", "b", "c"): object()})
+        B._release_sessions({"a": [("a", "b", "c")], "x": [("x", "b", "c")]}, evicted.append,
+                            {("a", "b", "c"): object()})
     assert evicted == [("a", "b", "c"), ("x", "b", "c")]   # every key is still evicted before the raise
-    with pytest.raises(RuntimeError, match="no cache key"):
-        B._release_sessions([], evicted.append, {})
+
+
+def test_no_recorded_key_is_checked_per_session():
+    # one planned session has its key, the other recorded none: the release must name the empty one, not pass
+    # because the release as a whole had a key -- and the session that has a key is still evicted
+    evicted = []
+    with pytest.raises(RuntimeError, match=r"no cache key was recorded for session\(s\) \['bc'\]"):
+        B._release_sessions({"emo": [("emo", "b", "c")], "bc": []}, evicted.append, {("emo", "b", "c"): object()})
+    assert evicted == [("emo", "b", "c")]
+
+
+def test_released_multiref_organs_stay_alive_for_id_uniqueness():
+    # the wave3 pool tracks its d6 slice owner by id(MultiReferentWMOrgan): a released session's organ is kept
+    # alive so its address can never be reused by a later session's organ
+    class _Org:
+        pass
+    key = ("emo", "tiny-demo", "stub")
+    org = _Org()
+    multiref = {key: org}
+    ref = weakref.ref(org)
+    del org
+    keep = []
+    B._release_sessions({"emo": [key]}, multiref.pop, {key: object()}, keep_alive=keep, multiref=multiref)
+    gc.collect()
+    assert key not in multiref and ref() is not None and keep == [ref()]
 
 
 # ── the worker, with a fake brain_chat ──────────────────────────────────────────────────────────────────────────────
@@ -178,7 +202,8 @@ def test_cache_key_is_the_key_the_handler_caches_under(monkeypatch, renderer):
     req = S.BrainChatRequest(session="emo", message="hi", brain="tiny-demo", renderer=renderer, rich=False,
                              reset=False)
     resp = S.brain_chat(req)
-    assert list(S._BRAIN_CHATS) == [S.brain_chat_cache_key(req)]
+    assert list(S._BRAIN_CHATS) == [("emo", "tiny-demo", "stub")]           # the literal key, both renderers
+    assert S.brain_chat_cache_key(req) == ("emo", "tiny-demo", "stub")
     assert tuple(json.loads(resp.body)["key"]) == S.brain_chat_cache_key(req)
 
 
