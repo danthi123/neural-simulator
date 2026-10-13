@@ -450,6 +450,14 @@ class MoodConditionedRenderer:
 
     def render_svo(self, a, v, p):
         fac = self._fac()
+        if self.manner and fac is None and hasattr(self.base, "render_svo_manner"):
+            # ONE-BRAIN M2 (BRAIN_ONE_BRAIN on, generative renderer): the base is a webapp.one_brain.DeferredMouth,
+            # which renders the template now and the generative prose (with THIS manner) after the turn lock. Only
+            # that class has `render_svo_manner`, so every other base takes the unchanged branches below.
+            manner = self.manner.format(a=a, v=v, p=p) if "{" in self.manner else self.manner
+            out = self.base.render_svo_manner(a, v, p, manner)
+            self._note("render_svo", a, v, p, manner, out)
+            return out
         if self.manner and fac is not None:
             manner = self.manner.format(a=a, v=v, p=p) if "{" in self.manner else self.manner
             prompt = fac.CONSTRAIN_TEMPLATE.format(a=a, v=v, p=p) + " " + manner
