@@ -2,7 +2,7 @@
 # The M2 evidence queue: every brain-loading step (pytest included) under the brain lock + mem_ok + memcap, in order,
 # from a FROZEN export of the branch (git archive <sha>, research/findings + data symlinked; FROZEN_SHA inside):
 #   bash docs/drafts/one-brain-m2/queue_runs.sh <frozen_export_dir> <step> [<step> ...]
-# Steps: tests | probe7 | probe8 | off7 | off8 | on7 | on8 | pair7 | offpair7 | ltm7
+# Steps: tests | probe7 | inst7 | probe8 | off7 | off8 | on7 | on8 | pair7 | offpair7 | ltm7
 # Logs: docs/drafts/one-brain-m2/runs/<step>.log (hash runs: runs/<name>_s<seed>_<script>.json/.log).
 # The probe gets memcap 14 (its documented dev-run cap: the intact arm holds two per-session brains, ~11.9 GB at M0);
 # test_webapp_server gets 18 (task rule); everything else 12.
@@ -44,6 +44,10 @@ for step in "$@"; do
         "brain_chat_reset_idempotent or tiny_demo_answers_and_abstains or rich_false_escape or curiosity_d6_session_isolated or source_provenance_explicit_off"
       ;;
     probe7) probe 7 ;;
+    inst7)  # the two instrument arms again, after the freeze/zero fix (d56e7baf7)
+      locked probe_s7_instruments 14 "$PY" -u -m research.runners.one_brain_probe --seed 7 \
+        --arms freeze_learning zero_learned_store \
+        --out "$W/research/findings/raw/_one_brain_probe/m2_s7_instruments.json" ;;
     probe8) probe 8 ;;
     off7) hashes off 7 single ;;
     off8) hashes off 8 single ;;
