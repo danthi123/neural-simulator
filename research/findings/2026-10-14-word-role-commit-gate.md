@@ -1,7 +1,7 @@
 ---
 type: finding
-status: provisional
-claim_check: measured (tools/s2p_score.py O and R over the landed shards at P=c64f2c70d; awaiting Claude review)
+status: confirmed-with-caveats
+claim_check: measured (tools/s2p_score.py O and R over the landed shards at P=c64f2c70d; Claude verify-go 2026-10-14: CONFIRMED-WITH-CAVEATS, select/O/R re-scored byte-identical)
 date: 2026-10-14
 lane: load-bearing (the #1 metric, owner 2026-09-19)
 mechanism: word-role-commit organ (default OFF behind BRAIN_WORD_ROLE_COMMIT) gate-tested at P=c64f2c70d8232336992aab074f199c36a6560d45: step O operating point, step R reply-level lesion test of the commit stage plus the no-fact control
