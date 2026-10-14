@@ -281,8 +281,12 @@ C. By construction (no ON run with these conditions here; covered by unit tests)
 
 - Frozen export of the commit under test: `git archive <sha> -- . ':(exclude)research/findings'` into a directory,
   `research/findings` and `data` symlinked, `FROZEN_SHA` written.
-- `bash docs/drafts/one-brain-m2/queue_runs.sh <export> tests probe7 off7 probe8 off8 on7 on8 pair7 offpair7 ltm7`
-  (every step under `flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock` + `tools/mem_ok.sh` +
-  `tools/memcap.sh`; numpy CPU, `OMP_NUM_THREADS=1`).
-- Base: `run_hashes.sh base <git archive afeb1bcc9 export> <seed> single`.
+- `bash docs/drafts/one-brain-m2/queue_runs.sh <export> tests probe7 inst7 probe8 base7 base8 off7 off8 on7 on8 pair7
+  offpair7 ltm7` (every step under `flock -w 7200 /home/dant123/Projects/sim-rev/brain.lock` + `tools/mem_ok.sh` +
+  `tools/memcap.sh`; numpy CPU, one OMP thread; hash runs also `PYTHONHASHSEED=0` + one BLAS thread). The base steps
+  read `/home/dant123/Projects/sim-rev/m2base` (the afeb1bcc9 archive export; data + findings symlinked).
+- Code under test. Every hash run (`runs/*.json`), the s7 re-runs and the s8 probe ran on the export at `38130f5c8`.
+  After it the tip changed only ON paths no run exercised differently: the host source tags bind to a per-Context
+  conversation id (`806b60d5d`; a reset conversation is a new conversation for the frame), unit-tested only;
+  everything else after it is documentation and run records.
 - Compare: `python docs/drafts/one-brain-m2/compare_hashes.py <A.json> <B.json>`.
