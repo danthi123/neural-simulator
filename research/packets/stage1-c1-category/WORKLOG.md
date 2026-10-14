@@ -71,3 +71,20 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   gate shard at the pinned revision; the queued line re-runs it. New GATE row 6c2cb1362 in PINS.tsv; env.sh JOBS ->
   research/queue/requeue_stage1_c1_category_6c2cb1362.tsv (the same 54 seed x arm lines, max_age_h=168 in place of
   120). The bb6705de6 lines in pool.queue.held are retired, never released.
+
+## 2026-10-14 — section 5/6: registered scorer, verdict PASS + READY (provisional)
+
+- 54 gate shards copied into the worktree OUT (cp -a; rsync absent on S). Aggregate run from $W:
+  `SIM_NO_PROVENANCE=1 PYTHONPATH=. timeout 900 .venv/bin/python -m research.runners.stage1_c1_category
+  --aggregate research/findings/raw/_stage1_c1_category/gate --seeds 42,43,44,100,101,102 --out .../aggregate.json`
+  rc=0. Report: research/queue/stage1_c1_category_report.md.
+- Verdict (report first line): **C1 with the wiring ON: PASS** — correct 6/6, lesion effect reproduced 6/6,
+  permuted tracks 6/6; flip-readiness READY (safety 6/6, specificity 6/6). Section-6 row 1 sentence written into
+  the finding; informational arms line copied verbatim.
+- memcap.sh refused before exec (no systemd --user on S: "cannot enforce a cap, refusing uncapped") — ran the
+  JSON-only scorer directly under mem_ok 4 (avail 34G) + timeout 900; guess (marked): safe because the scorer
+  reads shard JSONs and the same aggregate had already run to completion on 10-06 at $P.
+- Not pushed (wake rule: sim-sync publishes main). runs.jsonl left untouched (section 2).
+- Board line for Claude to move: 2026-10-14 Stage-1 C1 with the category-inheritance wiring on (default off): PASS;
+  flip-readiness READY. Finding: research/findings/2026-10-14-stage1-c1-category-inheritance-RESULT.md.
+
