@@ -413,8 +413,28 @@ class RFPhasorComposer:
         self._dlpfc = None       # dialogue-planning Control (lazy; rebuilt only when the association graph changes)
         self._dlpfc_key = None
         self._bridge_cache = {}  # (c-opt) reuse RF bridges by neuron count -> avoid _initialize_simulation_data per op
+        # (global-RNG hygiene, DEFAULT False: expected unchanged; the server default replies were byte-identical to base
+        # 6a3bfe247 on the seed-7 three-session turnset, docs/drafts/shared-ltm/WORKLOG.md step 6) building a bridge runs `_initialize_rng(self.seed)`, which
+        # reseeds the process-global np.random / random / cp.random streams. True -> every bridge this composer builds
+        # (lazily, on first use of an op size; one per fact in the substrate store) leaves those streams exactly as they
+        # were (research/runners/global_rng_guard.py). The webapp sets it on the cortical-LTM shards under
+        # BRAIN_LTM_RNG_ISOLATE (forced on with BRAIN_SHARED_LTM), so a recall cannot reseed the chat's global noise.
+        self._isolate_global_rng = False
 
     # --- RF complex-synapse ops (each op a per-op RF bridge; reuse-by-import the substrate) ---
+    def _global_rng_guard(self):
+        """`preserved_global_rng()` when `_isolate_global_rng`, else a no-op context (the default)."""
+        if getattr(self, "_isolate_global_rng", False):
+            from research.runners.global_rng_guard import preserved_global_rng
+            return preserved_global_rng()
+        import contextlib
+        return contextlib.nullcontext()
+
+    def _new_rf_bridge(self, n):
+        """`_build_rf_bridge(n, self.seed)`, under `_global_rng_guard()` (see `_isolate_global_rng`)."""
+        with self._global_rng_guard():
+            return _build_rf_bridge(n, self.seed)
+
     def _resonate(self, n, conns, kick, period=None):
         # (c-opt) reuse a cached bridge per neuron count; zero its complex weights (rf_set_complex_weights appends)
         # and rf_kick resets the RF state -> each op is clean. Avoids _initialize_simulation_data per op.
@@ -423,7 +443,7 @@ class RFPhasorComposer:
         per = self.period if period is None else int(period)
         b = self._bridge_cache.get(n)
         if b is None:
-            b = _build_rf_bridge(n, self.seed)
+            b = self._new_rf_bridge(n)
             b.core_config.enable_rf_cudagraph = self._enable_rf_cudagraph   # opt-in megakernel resonate fast path
             self._bridge_cache[n] = b
         b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
@@ -801,9 +821,10 @@ class RFPhasorComposer:
                 if hasattr(cfg, f):
                     setattr(cfg, f, False)
             cfg.ou_std_current_pA = 0.0
-            bank = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                                    runtime_state=RuntimeState(), gpu_config=GPUConfig())
-            bank._initialize_simulation_data(called_from_playback_init=False)
+            with self._global_rng_guard():   # the bridge init reseeds the process-global RNGs (see _new_rf_bridge)
+                bank = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                                        runtime_state=RuntimeState(), gpu_config=GPUConfig())
+                bank._initialize_simulation_data(called_from_playback_init=False)
             # snapshot the resting state so each cleanup starts clean (a cached bank's v/u persist across calls,
             # which would let a recently-fired neuron's adapted state bias the next cleanup's WTA)
             bank._cleanup_v0 = bank.cp_membrane_potential_v.copy()
@@ -829,7 +850,7 @@ class RFPhasorComposer:
                 conns.append((D + k, d, cc[d]))
         b = self._bridge_cache.get(D + V)
         if b is None:
-            b = _build_rf_bridge(D + V, self.seed)
+            b = self._new_rf_bridge(D + V)
             self._bridge_cache[D + V] = b
         b.rf_set_complex_weights(conns)
         kick = np.zeros(D + V, dtype=np.complex128)
@@ -1157,7 +1178,7 @@ class RFPhasorComposer:
                 off = i * (1 + D)
                 zc = self._read_store_phasor(h)                     # the fact's stored composite phasor [D]
                 conns.extend((off + 1 + k, off, zc[k]) for k in range(D))
-            b = _build_rf_bridge(n, self.seed)
+            b = self._new_rf_bridge(n)
             b.core_config.enable_rf_cudagraph = self._enable_rf_cudagraph
             b.rf_set_complex_weights(conns)
             self._substrate_scan_bridge = b
@@ -1595,7 +1616,7 @@ class RFPhasorComposer:
         # from the dopamine signal at store time. g=1.0 (encoding_gain_fn=None) -> the byte-identical unit-mag write.
         g = 1.0 if self.encoding_gain_fn is None else float(self.encoding_gain_fn())
         conns = [(1 + k, 0, complex(g) * zc[k]) for k in range(D)]
-        b = _build_rf_bridge(1 + D, self.seed)
+        b = self._new_rf_bridge(1 + D)
         b.rf_set_complex_weights(conns)
         return b
 

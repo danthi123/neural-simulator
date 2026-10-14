@@ -91,3 +91,80 @@
   (patient unresolved) while the structurally identical "the fish eats the bug" bound fine.
   Reading: a missing reply stamp + missing observe record on the ABSTAIN path, not a missing
   flip behaviour — the pathway behaves on every parsed turn. No flip, no scorer change (RULING).
+
+## 2026-10-10 23:47 - flipdev rerun (c1-flipdev-rerun) scored: UNDEFINED, bridge bar clean
+Both arms complete (48/48 cells each; 3 stale `.part.json` leftovers from retried lines, final
+files all present; no re-queue). Scored with the UNCHANGED scorer: `flipdev_score.json`
+(provenance stamped). **Verdict UNDEFINED, n_pass=None/8 (0 of 8 seeds defined).**
+- Two numbers the ruling asked for: pathway FIRED in **16/48 ON cells** (bridge group 8/8 +
+  cat_disc and word on seeds 5-8); NOT ENGAGED in **32/48 ON cells** (`flag_on_not_engaged`:
+  all cat_told/lived/val_novel across all 8 seeds; cat_disc/word on seeds 1-4).
+- **Pass count: UNDEFINED** - every seed has >=3 not-engaged groups, so no seed is defined
+  and the bar cannot PASS or FAIL.
+- **Miss pattern: systemic non-engagement, NOT the t_bird_eat slot-collision cluster.** The
+  engagement precondition (a strict recall miss on that turn) simply does not trigger in
+  cat_told/lived/val_novel (any seed) and rarely in cat_disc/word (fires seeds 5-8 only).
+- Bridge group (the part that IS defined): prereg behavior is exact - `bat swim` -> flagged
+  guess `lake` on **8/8 ON seeds**, `canary swim`/`robin swim` (two hops) unchanged on all
+  seeds, OFF side silent on all three; canary-eat C1 probe fired (worm) 8/8 ON, null 8/8 OFF.
+- Where: workstation 34 + pool (dl4g243 11, dl5d243 11, mxl1462drl 43) + server 1 (canary);
+  validity does not depend on host class (scorer reads recorded replies only).
+STOP honored: report only, no fixes, no scorer change, no re-run (this was the one re-run).
+NEEDS [c1-flipdev] RESULT filed to the runbook. Next call (C1 method question: why the
+engagement precondition rarely fires) = Claude.
+
+## 2026-10-11 06:12 EDT - tree-c1-engage step 1: trigger-vs-threshold audit (zero-compute, rerun cells)
+
+- Audited all 48 ON cells of `research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/` per turn: whether
+  `category_inherit` is stamped, and the read's `reason` / rates. Dominant cause = **branch (a): the signal never
+  reaches the organ**, not a threshold miss:
+  - val_novel: 72 reads `organ_not_built` (no organ existed: nothing was ever observed in-session), 62 responses have
+    no trace at all.
+  - lived: 16 `organ_not_built`, 16 `agent_never_observed`, 8 `below_floor`; 23 responses untraced.
+  - cat_told: 8 `agent_never_observed`, 16 `below_floor` (rates present), 16 untraced.
+  - word: 8 `organ_not_built`, 8 `agent_never_observed`, 8 `below_floor`.
+  - Engaging categories are clean: cat_bridge 136/136 traced (16 reached / 16 below_floor with rates), cat_disc
+    reached 8 / below_floor 8.
+- Route traced: the observe path is `webapp/category_inherit_chat.py::_ci_gate_extract` (affirmative gate-extract
+  triples only, line 109); `_ci_gate` returns `organ_not_built` when no organ was ever fed (line 127-129). Told /
+  lived / val_novel signals arrive by channels that never pass through that observe path.
+- Per RULING tree-c1-engage branch (a): next = wire the gap (default-OFF path), unit test, rerun flipdev on dev
+  seeds, then RESULT. Branch (b) margins recorded above for the below_floor turns.
+
+## 2026-10-11 07:10 EDT - tree-c1-engage branch (a) wire: built + tested, commit gate-blocked (ASK filed)
+The branch-(a) wire is implemented as the default-OFF path `BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT` (webapp/
+category_inherit_chat.py::_ci_gate): when "1", the inherit organ is consulted on EVERY strict-recall route,
+including turns the production bus answers directly (the short-circuit the audit showed kept told/lived probes
+from ever reaching the organ). Production behaviour is untouched: the env defaults off and an organ abstain
+keeps the direct answer. 5 new unit tests in tests/test_category_inherit_organ.py (default-off, engage-on-
+committed + anaphora-direct, off = production short-circuit kept, abstain keeps the direct answer); 32/32 pass
+in 38.89s (tests/test_category_inherit_organ.py + tests/test_c1_flip_dev_check.py).
+NOT YET ON MAIN OR ON THE BRANCH COMMIT: the code commit is deterministically blocked by the pre-commit
+registry - run_all reports corpus-check-required's own selftest ghost (raw/g.json, 'selftest fallback probe'),
+consumer-hardware-reference's informational VRAM line and lane-starvation 4/5 as blocking, although every one
+of those gates exits rc=0 when run standalone on the same worktree. The two files are STAGED, uncommitted, in
+.claude/worktrees/c1-direct-consult (branch research/c1-direct-consult, from main 8b300d109). Gates are
+Claude-reserved; NEEDS-CLAUDE `[c1-direct-consult-gates]` ASK filed. Next (after Claude lands the commit):
+touch research/queue/provision.req/<branch-tip-sha> for the pool revision, then queue the flipdev rerun on dev
+seeds with BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT=1 on the ON-side lines and score it per the tree.
+2026-10-11 07:07 EDT - tree-c1-engage step 2: branch (a) wire built (BRAIN_CATEGORY_INHERIT_DIRECT_CONSULT, default OFF) + 5 unit tests, 32/32 pass, STAGED on research/c1-direct-consult; run_all gate-blocked (corpus-check ghost, consumer-hardware info line, lane-starvation) -> [c1-direct-consult-gates] ASK. RULING c1-direct-consult-hold: do NOT land; files kept unstaged on the branch as the record; branch synced with main (1f3215580).
+
+2026-10-11 08:00 EDT - tree-c1-observe (a): teach-observe wire at the store write (ChatBrain._ci_teach_observe on both _maybe_acquire hear paths), BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE default OFF, AFFIRM-only, exactly-once vs gate_extract (wrapper guard added, byte-identical when off); 25 tests in test_category_inherit_organ.py + 54 in the 4 touching files all green; committed 220c1213c on research/c1-teach-observe; provision.req filed (smoke pair queue refused until provisioned -> queues next wake). Unit tests carry the ruling's spec: told + lived one teach turn -> organ exists AND observed that agent: PASS.
+
+RESIDUAL val_novel (reported, NOT silently passed): the expose sentence is 5 content words, the B3 extractor declines it, so NO store write exists to hook; kb stays 5/5 across all 12 exposures; 0/8 ON cells ever observed; pinned by test_val_novel_exposure_writes_no_store. The exposure->observe site is a design call -> [c1-probe-bar] ASK.
+
+(b) direct-hit counts (turns with NO category_inherit trace = organ never consulted), ON side, 8 seeds: val_novel feel 48/48 and probes 14/16; lived probes 15/18; word probes 12/24 and controls 4/24; cat_told probes 9/18 and controls 9/18; cat_disc probes 4/16 and controls 8/24; cat_bridge 0/32 (fully consulted). Teach-role turns traced 100% everywhere.
+
+(c) scorer verdict, REPORTED not changed: flag_on_not_engaged fires only when SOME turn carries NO trace; organ_not_built/agent_never_observed reads DO carry a trace and are therefore counted as ENGAGED. The 32/48 failures are the NO-trace bypass turns (chain-route, open-ended, episodic, feel, and bare-word endpoints answering before chat.gate).
+
+PROPOSED TREE for [c1-probe-bar]: if direct hits must consult the organ -> wire organ consult on the bypass endpoints behind the same default-OFF flag, then rerun flipdev; if a direct-knowledge answer may count as inheritance -> the scorer stands and the UNDEFINED verdict is honest. val_novel: if an exposure must build the organ -> approve an exposure->observe hook (new design); else organ_not_built reads there stay by construction.
+2026-10-11 08:05 EDT - MiMo Pro consult (Q1 bar): direct hits must NOT count as inheritance-consulted — a direct-knowledge answer is byte-identical with the flag off, i.e. zero evidence about inheritance, and counting it would let failing cells pass while the organ does nothing. Proposed bar: split turns into IN-SCOPE (SVO-shaped routable strict misses the organ's input class can consume) vs OUT-OF-SCOPE direct-knowledge (chain/open-ended/episodic/feel/bare-word); engagement = an in-scope turn whose observe fired for that agent or whose read reached a patient; organ_not_built/agent_never_observed are NOT engagement; out-of-scope turns become a separate per-group direct-hit coverage stat.
+
+2026-10-11 08:05 EDT - MiMo Pro consult (Q2 val_novel): keep organ_not_built BY CONSTRUCTION — fabricating a triple at an exposure hook is the forbidden host shortcut (the brain's own extractor rejected the utterance; no SVO exists). If the flip must test val_novel, fix the STIMULUS: the teacher (legitimate host role) delivers an explicit AFFIRM-SVO teach turn during exposure ('the glorp eats the wug' form) so the existing legal path fires. (Q3): no new bypass wiring before Claude lands the bar + probe set; then re-score the HELD DIRECT_CONSULT restricted to in-scope SVO-shaped bypass turns only. Transcript: /opt/data/cache/delegation/live/deleg_6f6e6fda/task-0.log
+2026-10-11 08:20 EDT - provision 220c1213c OK on pool41/pool42/pool40/wspool; flipdev smoke pair QUEUED first (priority lane): cat_disc group, dev seed 1, both sides, BRAIN_CATEGORY_INHERIT_TEACH_OBSERVE=1, out research/findings/raw/_stage1_c1_teachobs/<side>/s1/, mem_gb=7 / memcap 9, max_age_h=72. Smoke-first: record peak RSS + wall from the result sidecar when it lands, then set the batch mem_gb=ceil(1.3 x peak); the 96-cell dev batch queues only after the smoke returns clean.
+2026-10-11 08:35 EDT - Claude rulings c1-bar-A1 + c1-valnovel received (2de2d6dbe): direct-hit probes are NOT inheritance evidence; engagement = in-scope turn where observe fired or the read reached a patient; AMENDMENT C1-A1 must be registered in the C1 prereg BEFORE the 96-cell batch (prereg = section-2 reserved -> driver HOLD, filed [c1-batch-a1] STOP); val_novel = teacher delivers explicit AFFIRM-SVO teach turn during exposure, registered inside A1, natural-sentence exposure stays a reported secondary; DIRECT_CONSULT stays held. Smoke pair DISPATCHED 08:12:44 pool40 (on side) / 08:12:51 pool41 (off side), cat_disc seed 1, revision 220c1213c sandboxed + memcap 9G; bridges up 08:27 (on: 2760 neurons/190317 synapses; off: 1044 neurons/43707 synapses); job_status row lands only on completion. Next per tree: smoke clean + A1 committed -> queue the 96-cell dev batch with TEACH_OBSERVE=1, score under A1, outcomes (a/b/c).
+2026-10-11 11:55 EDT - [stall check] 11:50 wake: pool NOT stalled (queue empty, no job procs on pool40/41/42/wspool, all claims rc-complete: teachobs x2 rc0, emerge33 rc0, laneC rc1 verdict-negative). The 2 result-less claims are dispatch-flag bugs: curiosity --probe returns before any --out write (main():235-237); emerge62c --demo has no --out flag and wrote no artifact. Fix: curiosity re-queued WITHOUT --probe with explicit --out (queue depth 1); emerge62c marked no-artifact - never lane-stock --probe/--demo runners. touchpoint s43/s100 and the animacy recheck are already DONE, so E has no pending banked claim.
+2026-10-11 12:55 EDT - [lane-stock] curiosity requeued probe landed at 11:58 (rc0, research/findings/raw/_lane_stock/curiosity_graded_novelty_probe_s7.json + prov): verdict-negative GO=false on dev seed 7 - graded_order, novelty_range, want_range, discriminates_old_constant, lesion_collapses, lesion_reverts, permuted_collapses all pass; want_tracks_novelty fails (want_hz stays 0 for known AND noisy_lo while novelty grades 1.9e-17->0.034; only noisy_hi/novel cross the 21.875 Hz threshold). Banked runner gate, no new claim; B-lane served. Closes the [pool-stall-cause2] correction loop (artifact arrived this time).
+2026-10-11 08:55 EDT - RULING tree-c1-rescore executed: c1_flip_dev_check.py updated to Amendment B-1 (registered in PLAN.md 45bee4aa3). Engagement = flag_value recorded + >=1 trace per ON cell (the old every-turn rule is gone); untraced bypass turns REPORTED per group (seed 1: cat_disc 3, cat_told 2, word 4, lived 4, val_novel 8 labels); an untraced turn whose reply changes FAILS the seed (why untraced_turn_changed, no ALLOWED exemption); query-shaped organ reads (carrying lesion) must record hop:true, while the organ_not_built DECLINE record is not a read (an intermediate strict check briefly made all 8 seeds UNDEFINED on word/lived/val_novel before this fix); flag-off unchanged; the bar text (a)(b)(c)+hop+PASS/UNDEFINED/FAIL unchanged.
+2026-10-11 08:56 EDT - Same commit: selftest 27/27 including the B-1 trio; bar_sanity_record_flipdev.json regenerated with the new scorer (OK: perfect 1.000, null 0.000, n=1000, seed 0). Rescore of the COMMITTED rerun cells, no new run -> OUTCOME (a): PASS 8/8 seeds defined+pass, violations 0, correct 8/8, bridge_correct 8/8, bridge moat 8 of 8 defined. Artifacts: research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/flipdev_score_B1.json - Claude reads it for the flip (PLAN step C). The cancelled smoke pair had already completed rc=0 on both sides (pool40 on / pool41 off, cat_disc dev seed 1, branch 220c1213c) before the cancel arrived; teach-observe stays parked as a section-5 strengthening item and its batch is cancelled.
+2026-10-11 09:28 EDT - _earn check 6 initially re-implemented the bridge moat clause as n_seeds_with_moat_guess_on == n_defined; the registered decide_dev never enforces the moat (report-only), so that invented rule downgraded the bar-sanity perfect brain to UNDEFINED (perfect passes 0.000). Check 6 now mirrors decide_dev (every defined seed passes the bar). NOTE for Claude: the real rerun cells carry n_moat_guess_on > 0 on 8/8 defined seeds while decide_dev PASSes - a docstring-(b)-vs-code gap in the registered step, NOT changed here (bar semantics are yours).

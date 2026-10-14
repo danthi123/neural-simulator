@@ -1,0 +1,4540 @@
+{
+ "runner": "research/runners/c1_flip_dev_check.py",
+ "prereg": "research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md",
+ "seed": 5,
+ "group": "cat_bridge",
+ "arm": "intact_a",
+ "kind": "intact",
+ "criterion": "C1-report",
+ "env": {},
+ "patch": null,
+ "pythonhashseed_ok": true,
+ "corpus_present": true,
+ "session": "s1_cat_bridge_intact_a_5",
+ "turns": [
+  {
+   "label": "t_robin_eat",
+   "message": "the robin eats the worm",
+   "role": "teach"
+  },
+  {
+   "label": "t_trout_eat",
+   "message": "the trout eats the bug",
+   "role": "teach"
+  },
+  {
+   "label": "t_robin_fly",
+   "message": "the robin flies in the sky",
+   "role": "teach"
+  },
+  {
+   "label": "t_trout_swim",
+   "message": "the trout swims in the lake",
+   "role": "teach"
+  },
+  {
+   "label": "t_sparrow_eat",
+   "message": "the sparrow eats the worm",
+   "role": "teach"
+  },
+  {
+   "label": "t_salmon_eat",
+   "message": "the salmon eats the bug",
+   "role": "teach"
+  },
+  {
+   "label": "t_sparrow_fly",
+   "message": "the sparrow flies in the sky",
+   "role": "teach"
+  },
+  {
+   "label": "t_salmon_swim",
+   "message": "the salmon swims in the lake",
+   "role": "teach"
+  },
+  {
+   "label": "t_finch_eat",
+   "message": "the finch eats the worm",
+   "role": "teach"
+  },
+  {
+   "label": "t_finch_fly",
+   "message": "the finch flies in the sky",
+   "role": "teach"
+  },
+  {
+   "label": "t_bat_eat",
+   "message": "the bat eats the bug",
+   "role": "teach"
+  },
+  {
+   "label": "t_bat_fly",
+   "message": "the bat flies in the sky",
+   "role": "teach"
+  },
+  {
+   "label": "t_canary_fly",
+   "message": "the canary flies in the sky",
+   "role": "teach"
+  },
+  {
+   "label": "p_canary_eat",
+   "message": "what does the canary eat",
+   "role": "probe"
+  },
+  {
+   "label": "c_canary_swim",
+   "message": "what does the canary swim",
+   "role": "control"
+  },
+  {
+   "label": "c_bat_swim",
+   "message": "what does the bat swim",
+   "role": "control"
+  },
+  {
+   "label": "c_robin_swim",
+   "message": "what does the robin swim",
+   "role": "control"
+  }
+ ],
+ "responses": {
+  "t_robin_eat": {
+   "answer": "the robin eats the worm the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "robin",
+    "eat",
+    "worm"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 3,
+   "supporting_facts": [
+    [
+     "robin",
+     "eat",
+     "worm"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "robin",
+      "confidence": 1.0,
+      "margin": 0.7322944482834692,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "robin"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6411337417974543,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "worm",
+      "confidence": 1.0,
+      "margin": 0.6523826528312515,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.21509467698204263,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.8601209705535273,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 5,
+    "n_facts_scanned": 6,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 70516.44094324722
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "robin",
+     "eats",
+     "worm"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6202052980895489
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 3,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 3,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 1,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": null,
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.4727272727272727,
+    "ema_engagement": 0.28363636363636363,
+    "afferent_pA": 397.09090909090907,
+    "da_level": 0.5130715506600928,
+    "snc_firing": 0.07749999999999994,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.7142857142857143,
+     "want_hz": 18.055555555555554,
+     "normalized": 0.4727272727272727,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.9404761904761906,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      1.0,
+      0.8571428571428571,
+      0.9642857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.7143561914158858,
+    "da_level": 0.5130715506600928,
+    "lesioned": false
+   }
+  },
+  "t_trout_eat": {
+   "answer": "the trout eats the bug",
+   "abstained": false,
+   "recalled_svo": [
+    "trout",
+    "eat",
+    "bug"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "trout",
+     "eat",
+     "bug"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "trout",
+      "confidence": 1.0,
+      "margin": 0.6595112467526552,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "trout"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.529912633583344,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "bug",
+      "confidence": 1.0,
+      "margin": 0.6763396964262494,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.0070902840130428555,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9294492702000777,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 6,
+    "n_facts_scanned": 7,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 71916.96078245403
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "trout",
+     "eats",
+     "bug"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5604606261950738
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 2,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": null,
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "turn_engagement": 0.2909090909090909,
+    "ema_engagement": 0.288,
+    "afferent_pA": 403.2,
+    "da_level": 0.5194521699082196,
+    "snc_firing": 0.07666666666666663,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6285714285714286,
+     "want_hz": 11.11111111111111,
+     "normalized": 0.2909090909090909,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7976190476190476,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      1.0,
+      0.5,
+      0.8928571428571429
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.8593981253083371,
+    "da_level": 0.5194521699082196,
+    "lesioned": false
+   }
+  },
+  "t_robin_fly": {
+   "answer": "The robin flys sky.",
+   "abstained": false,
+   "recalled_svo": [
+    "robin",
+    "fly",
+    "sky"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "robin",
+     "fly",
+     "sky"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "robin",
+      "confidence": 1.0,
+      "margin": 0.7096683025339285,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "robin"
+     },
+     {
+      "role": "action",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.6131437993344157,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "fly"
+     },
+     {
+      "role": "patient",
+      "word": "sky",
+      "confidence": 1.0,
+      "margin": 0.5918931318199938,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.18566882341359425,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 7,
+    "n_facts_scanned": 8,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 73477.3237232699
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "robin",
+     "flies",
+     "sky"
+    ],
+    "recall_action": "flies",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6200748114203865
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 3,
+    "topic": "robin",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "robin",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.005555555555555556,
+    "boost_max": 0.002777777777777778,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "robin",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.043333333333333335,
+    "evidence_rate": 0.0,
+    "margin": -0.043333333333333335,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "turn_engagement": 0.2909090909090909,
+    "ema_engagement": 0.28974545454545453,
+    "afferent_pA": 405.64363636363635,
+    "da_level": 0.5223859110716655,
+    "snc_firing": 0.07916666666666661,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6285714285714286,
+     "want_hz": 11.11111111111111,
+     "normalized": 0.2909090909090909,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7976190476190476,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.8571428571428571,
+      0.7142857142857143,
+      0.8214285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.856438085841145,
+    "da_level": 0.5223859110716655,
+    "lesioned": false
+   }
+  },
+  "t_trout_swim": {
+   "answer": "Setting the held thread aside \u2014 On trout, then \u2014 the trout swims the lake",
+   "abstained": false,
+   "recalled_svo": [
+    "trout",
+    "swim",
+    "lake"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "trout",
+     "swim",
+     "lake"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "trout",
+      "confidence": 1.0,
+      "margin": 0.6328495202401457,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "trout"
+     },
+     {
+      "role": "action",
+      "word": "swim",
+      "confidence": 1.0,
+      "margin": 0.5786591963454711,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "swim"
+     },
+     {
+      "role": "patient",
+      "word": "lake",
+      "confidence": 1.0,
+      "margin": 0.678726606284084,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.00418960162866038,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.7905596847019998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 8,
+    "n_facts_scanned": 9,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 77576.37743211168
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "trout",
+     "swims",
+     "lake"
+    ],
+    "recall_action": "swims",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5369969218400723
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 4,
+    "topic": "trout",
+    "swapped": true,
+    "held_topic_before": "robin",
+    "held_topic": "trout",
+    "evicted_topic": "robin",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.3111111111111111,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On trout, then \u2014 ",
+    "new_topic": "trout",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "trout",
+    "slot": 1,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "turn_engagement": 0.3272727272727272,
+    "ema_engagement": 0.31226181818181814,
+    "afferent_pA": 437.16654545454537,
+    "da_level": 0.5530107703541663,
+    "snc_firing": 0.08333333333333326,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6428571428571428,
+     "want_hz": 12.499999999999998,
+     "normalized": 0.3272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.8214285714285713,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.8571428571428571,
+      0.8214285714285714,
+      0.7857142857142857
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.9037987173162305,
+    "da_level": 0.5530107703541663,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "trout",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_sparrow_eat": {
+   "answer": "Setting the held thread aside \u2014 On worm, then \u2014 the sparrow eats the worm",
+   "abstained": false,
+   "recalled_svo": [
+    "sparrow",
+    "eat",
+    "worm"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "sparrow",
+     "eat",
+     "worm"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "sparrow",
+      "confidence": 1.0,
+      "margin": 0.67303492967386,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "sparrow"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6736424329019479,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "worm",
+      "confidence": 1.0,
+      "margin": 0.7005157503040689,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.055146634524090854,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9839173147056021,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 9,
+    "n_facts_scanned": 10,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 68417.10002353553
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "sparrow",
+     "eats",
+     "worm"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.617251412421914
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 5,
+    "topic": "worm",
+    "swapped": true,
+    "held_topic_before": "trout",
+    "held_topic": "worm",
+    "evicted_topic": "trout",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.23333333333333334,
+    "boost_max": 0.1588888888888889,
+    "on": true,
+    "lead": "On worm, then \u2014 ",
+    "new_topic": "worm",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "worm",
+    "slot": 2,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "turn_engagement": 0.1818181818181818,
+    "ema_engagement": 0.23399563636363635,
+    "afferent_pA": 327.5938909090909,
+    "da_level": 0.43677936260853206,
+    "snc_firing": 0.06333333333333331,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5642857142857143,
+     "want_hz": 6.944444444444444,
+     "normalized": 0.1818181818181818,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6904761904761904,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.8571428571428571,
+      0.39285714285714285,
+      0.8214285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.7350764676862354,
+    "da_level": 0.43677936260853206,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "worm",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_salmon_eat": {
+   "answer": "Setting the held thread aside \u2014 On bug, then \u2014 the salmon eats the bug",
+   "abstained": false,
+   "recalled_svo": [
+    "salmon",
+    "eat",
+    "bug"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "salmon",
+     "eat",
+     "bug"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "salmon",
+      "confidence": 1.0,
+      "margin": 0.5801964255339278,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "salmon"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.5797040606027883,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "bug",
+      "confidence": 1.0,
+      "margin": 0.5780777556113852,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.12083847128183667,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 10,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 61111.920531655094
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "salmon",
+     "eats",
+     "bug"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5717633426059876
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 6,
+    "topic": "bug",
+    "swapped": true,
+    "held_topic_before": "worm",
+    "held_topic": "bug",
+    "evicted_topic": "worm",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.29444444444444445,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On bug, then \u2014 ",
+    "new_topic": "bug",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "bug",
+    "slot": 3,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.1917800727272727,
+    "afferent_pA": 268.4921018181818,
+    "da_level": 0.3632172393609092,
+    "snc_firing": 0.049999999999999996,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5214285714285715,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6190476190476191,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.9285714285714286,
+      0.17857142857142858,
+      0.75
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.5989146521953619,
+    "da_level": 0.3632172393609092,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "bug",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_sparrow_fly": {
+   "answer": "Setting the held thread aside \u2014 On sparrow, then \u2014 The sparrow flys sky.",
+   "abstained": false,
+   "recalled_svo": [
+    "sparrow",
+    "fly",
+    "sky"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "sparrow",
+     "fly",
+     "sky"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "sparrow",
+      "confidence": 1.0,
+      "margin": 0.6355844895714766,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "sparrow"
+     },
+     {
+      "role": "action",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.6973947905054865,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "fly"
+     },
+     {
+      "role": "patient",
+      "word": "sky",
+      "confidence": 1.0,
+      "margin": 0.5317216301804838,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "worm",
+      "confidence": 1.0,
+      "margin": 0.005628397232682908,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999997,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 11,
+    "n_facts_scanned": 12,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 57760.2084898765
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "sparrow",
+     "flies",
+     "sky"
+    ],
+    "recall_action": "flies",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5740658614980259
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 7,
+    "topic": "sparrow",
+    "swapped": true,
+    "held_topic_before": "bug",
+    "held_topic": "sparrow",
+    "evicted_topic": "bug",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.31666666666666665,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On sparrow, then \u2014 ",
+    "new_topic": "sparrow",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "sparrow",
+    "slot": 4,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.17489384727272725,
+    "afferent_pA": 244.85138618181816,
+    "da_level": 0.33041429075230605,
+    "snc_firing": 0.045,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.55,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6666666666666666,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.7142857142857143,
+      0.6428571428571429,
+      0.6428571428571429
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.5397138628515044,
+    "da_level": 0.33041429075230605,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "sparrow",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_salmon_swim": {
+   "answer": "Setting the held thread aside \u2014 On salmon, then \u2014 the salmon swims the lake",
+   "abstained": false,
+   "recalled_svo": [
+    "salmon",
+    "swim",
+    "lake"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "salmon",
+     "swim",
+     "lake"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "salmon",
+      "confidence": 1.0,
+      "margin": 0.6425745172183024,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "salmon"
+     },
+     {
+      "role": "action",
+      "word": "swim",
+      "confidence": 1.0,
+      "margin": 0.7067345885813328,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "swim"
+     },
+     {
+      "role": "patient",
+      "word": "lake",
+      "confidence": 1.0,
+      "margin": 0.6119215067745586,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.3692189164169366,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999997,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 12,
+    "n_facts_scanned": 13,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 64334.348097702634
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "salmon",
+     "swims",
+     "lake"
+    ],
+    "recall_action": "swims",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6660899057982259
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 8,
+    "topic": "salmon",
+    "swapped": true,
+    "held_topic_before": "sparrow",
+    "held_topic": "salmon",
+    "evicted_topic": "sparrow",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2611111111111111,
+    "boost_max": 0.15999999999999998,
+    "on": true,
+    "lead": "On salmon, then \u2014 ",
+    "new_topic": "salmon",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "salmon",
+    "slot": 5,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "turn_engagement": 0.19999999999999998,
+    "ema_engagement": 0.1899575389090909,
+    "afferent_pA": 265.94055447272723,
+    "da_level": 0.35975509009912904,
+    "snc_firing": 0.04999999999999997,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5714285714285714,
+     "want_hz": 7.638888888888888,
+     "normalized": 0.19999999999999998,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7023809523809524,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.7142857142857143,
+      0.6785714285714286,
+      0.7142857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.5811544153922055,
+    "da_level": 0.35975509009912904,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "salmon",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_finch_eat": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On worm, then \u2014 the finch eats the worm",
+   "abstained": false,
+   "recalled_svo": [
+    "finch",
+    "eat",
+    "worm"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "finch",
+     "eat",
+     "worm"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "finch",
+      "confidence": 1.0,
+      "margin": 0.6644132327203109,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "finch"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6602388522921449,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "worm",
+      "confidence": 1.0,
+      "margin": 0.6105229670803163,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.19084422844627497,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.8205448890795348,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 13,
+    "n_facts_scanned": 14,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 60093.08397005335
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "finch",
+     "eats",
+     "worm"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5893128339237164
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 9,
+    "topic": "worm",
+    "swapped": true,
+    "held_topic_before": "salmon",
+    "held_topic": "worm",
+    "evicted_topic": "salmon",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.28888888888888886,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On worm, then \u2014 ",
+    "new_topic": "worm",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "worm",
+    "slot": 2,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.10833333333333334,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12333333333333334,
+    "margin": 0.07666666666666666,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "turn_engagement": 0.1818181818181818,
+    "ema_engagement": 0.18507392465454542,
+    "afferent_pA": 259.1034945163636,
+    "da_level": 0.3502333548716363,
+    "snc_firing": 0.04916666666666665,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5642857142857143,
+     "want_hz": 6.944444444444444,
+     "normalized": 0.1818181818181818,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6904761904761906,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      1.0,
+      0.35714285714285715,
+      0.7142857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.548593981253083,
+    "da_level": 0.3502333548716363,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "worm",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_finch_fly": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On finch, then \u2014 The finch flys sky.",
+   "abstained": false,
+   "recalled_svo": [
+    "finch",
+    "fly",
+    "sky"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "finch",
+     "fly",
+     "sky"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "finch",
+      "confidence": 1.0,
+      "margin": 0.6757814376020553,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "finch"
+     },
+     {
+      "role": "action",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.6464899995934792,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "fly"
+     },
+     {
+      "role": "patient",
+      "word": "sky",
+      "confidence": 1.0,
+      "margin": 0.5822980508773027,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.08131870232870944,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 14,
+    "n_facts_scanned": 15,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 63700.591664320644
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "finch",
+     "flies",
+     "sky"
+    ],
+    "recall_action": "flies",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5971776380803092
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 10,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 10,
+    "topic": "finch",
+    "swapped": true,
+    "held_topic_before": "worm",
+    "held_topic": "finch",
+    "evicted_topic": "worm",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.3111111111111111,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On finch, then \u2014 ",
+    "new_topic": "finch",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "finch",
+    "slot": 0,
+    "decision": "reduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.11166666666666666,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.11833333333333333,
+    "margin": 0.07999999999999999,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 10,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.17221138804363634,
+    "afferent_pA": 241.09594326109087,
+    "da_level": 0.3252552283796682,
+    "snc_firing": 0.04416666666666666,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5071428571428571,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5952380952380952,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.7142857142857143,
+      0.5,
+      0.5714285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.5367538233843119,
+    "da_level": 0.3252552283796682,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "finch",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_bat_eat": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bug, then \u2014 the bat eats the bug",
+   "abstained": false,
+   "recalled_svo": [
+    "bat",
+    "eat",
+    "bug"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "bat",
+     "eat",
+     "bug"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "bat",
+      "confidence": 1.0,
+      "margin": 0.5734780040420908,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "bat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.46312449692633695,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "bug",
+      "confidence": 1.0,
+      "margin": 0.7448985898632846,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.051744168470546505,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 15,
+    "n_facts_scanned": 16,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 57977.01988666063
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "bat",
+     "eats",
+     "bug"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5666490518604517
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 11,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 11,
+    "topic": "bug",
+    "swapped": true,
+    "held_topic_before": "finch",
+    "held_topic": "bug",
+    "evicted_topic": "finch",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2833333333333333,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On bug, then \u2014 ",
+    "new_topic": "bug",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "bug",
+    "slot": 3,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12166666666666667,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 11,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.16706637339927272,
+    "afferent_pA": 233.8929227589818,
+    "da_level": 0.3137617702468842,
+    "snc_firing": 0.045000000000000005,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5142857142857142,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6071428571428571,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.8928571428571429,
+      0.25,
+      0.6785714285714286
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.4893931919092254,
+    "da_level": 0.3137617702468842,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "bug",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_bat_fly": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bat, then \u2014 The bat flys sky.",
+   "abstained": false,
+   "recalled_svo": [
+    "bat",
+    "fly",
+    "sky"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "bat",
+     "fly",
+     "sky"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "bat",
+      "confidence": 1.0,
+      "margin": 0.6423898408604484,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "bat"
+     },
+     {
+      "role": "action",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.4959051801029392,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "fly"
+     },
+     {
+      "role": "patient",
+      "word": "sky",
+      "confidence": 1.0,
+      "margin": 0.6073024361579785,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.24055073622368858,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999997,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 16,
+    "n_facts_scanned": 17,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 52063.41684940461
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "bat",
+     "flies",
+     "sky"
+    ],
+    "recall_action": "flies",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5972296386690108
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 12,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 12,
+    "topic": "bat",
+    "swapped": true,
+    "held_topic_before": "bug",
+    "held_topic": "bat",
+    "evicted_topic": "bug",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.29444444444444445,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On bat, then \u2014 ",
+    "new_topic": "bat",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "bat",
+    "slot": 1,
+    "decision": "reduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.11833333333333333,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 12,
+    "lesioned": false,
+    "turn_engagement": 0.07272727272727272,
+    "ema_engagement": 0.11046291299607272,
+    "afferent_pA": 154.6480781945018,
+    "da_level": 0.1720918985889345,
+    "snc_firing": 0.019166666666666672,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.38571428571428573,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.07272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.39285714285714285,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.5357142857142857,
+      0.25,
+      0.39285714285714285
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.2614701529353716,
+    "da_level": 0.1720918985889345,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "bat",
+    "n_ignited_pre": 3,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "t_canary_fly": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On sky, then \u2014 The canary flys sky.",
+   "abstained": false,
+   "recalled_svo": [
+    "canary",
+    "fly",
+    "sky"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "canary",
+     "fly",
+     "sky"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "canary",
+      "confidence": 1.0,
+      "margin": 0.510235568622614,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "canary"
+     },
+     {
+      "role": "action",
+      "word": "fly",
+      "confidence": 1.0,
+      "margin": 0.7115734512834065,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "fly"
+     },
+     {
+      "role": "patient",
+      "word": "sky",
+      "confidence": 1.0,
+      "margin": 0.5348535838412103,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.019514058483564033,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999996,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 17,
+    "n_facts_scanned": 18,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 43945.71420635126
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "canary",
+     "flies",
+     "sky"
+    ],
+    "recall_action": "flies",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5552353324461589
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 13,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 13,
+    "topic": "sky",
+    "swapped": true,
+    "held_topic_before": "bat",
+    "held_topic": "sky",
+    "evicted_topic": "bat",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.29444444444444445,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On sky, then \u2014 ",
+    "new_topic": "sky",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "sky",
+    "slot": 2,
+    "decision": "reduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12166666666666667,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 13,
+    "lesioned": false,
+    "turn_engagement": 0.07272727272727272,
+    "ema_engagement": 0.08782152883479272,
+    "afferent_pA": 122.95014036870981,
+    "da_level": 0.08937447442983398,
+    "snc_firing": 0.005833333333333333,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.3928571428571429,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.07272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.4047619047619048,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.9642857142857143,
+      0.07142857142857142,
+      0.17857142857142858
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.1075481006413417,
+    "da_level": 0.08937447442983398,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "sky",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "p_canary_eat": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On canary, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "canary",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "canary"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 18,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 0.979702569829123
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 0.0,
+    "threshold": 19.09722222222222,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "canary",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.23715276022629025,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.6057291403394354,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 31.527659725138232,
+     "want_hz": 0.0,
+     "want_eff_hz": 0.0,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 14,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 14,
+    "topic": "canary",
+    "swapped": true,
+    "held_topic_before": "sky",
+    "held_topic": "canary",
+    "evicted_topic": "sky",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.28888888888888886,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On canary, then \u2014 ",
+    "new_topic": "canary",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "canary",
+    "slot": 3,
+    "decision": "reduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12166666666666667,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 14,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.13331042971573526,
+    "afferent_pA": 186.63460160202936,
+    "da_level": 0.23715276022629025,
+    "snc_firing": 0.030000000000000016,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5071428571428571,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6785714285714286,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.5357142857142857,
+      0.8214285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.356191415885545,
+    "da_level": 0.23715276022629025,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "canary",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "c_canary_swim": {
+   "answer": "As for it \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "canary",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "canary"
+     },
+     {
+      "role": "action",
+      "word": "swim",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "swim"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 18,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 2.682075873997779
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 0.0,
+    "threshold": 19.09722222222222,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "canary",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.22757100327352145,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.5913565049102821,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 32.293924331008355,
+     "want_hz": 0.0,
+     "want_eff_hz": 0.0,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 15,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 15,
+    "topic": "canary",
+    "swapped": false,
+    "held_topic_before": "canary",
+    "held_topic": "canary",
+    "evicted_topic": null,
+    "reason": "same_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 2,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.3333333333333333,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.011111111111111112,
+    "boost_max": 0.005555555555555556,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "same_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "canary",
+    "slot": 3,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 15,
+    "lesioned": false,
+    "turn_engagement": 0.12727272727272723,
+    "ema_engagement": 0.12968780824993045,
+    "afferent_pA": 181.56293154990263,
+    "da_level": 0.22757100327352145,
+    "snc_firing": 0.028333333333333353,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.48571428571428577,
+     "want_hz": 4.86111111111111,
+     "normalized": 0.12727272727272723,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6428571428571429,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.32142857142857145,
+      0.9642857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.3532313764183528,
+    "da_level": 0.22757100327352145,
+    "lesioned": false
+   }
+  },
+  "c_bat_swim": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On bat, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "bat",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "bat"
+     },
+     {
+      "role": "action",
+      "word": "swim",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "swim"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 18,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00029069767441860465,
+     "mean_magnitude": 2.6823223414164845
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 2.220446049250313e-16,
+    "want_hz": 0.0,
+    "threshold": 19.09722222222222,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "bat",
+    "graded_novelty": {
+     "on": true,
+     "value": 2.220446049250313e-16,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.15916268512376558,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.4887440276856484,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 39.07407792306614,
+     "want_hz": 0.0,
+     "want_eff_hz": 0.0,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 16,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 16,
+    "topic": "bat",
+    "swapped": true,
+    "held_topic_before": "canary",
+    "held_topic": "bat",
+    "evicted_topic": "canary",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.29444444444444445,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On bat, then \u2014 ",
+    "new_topic": "bat",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "bat",
+    "slot": 1,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.11833333333333333,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 16,
+    "lesioned": false,
+    "turn_engagement": 0.0909090909090909,
+    "ema_engagement": 0.10642057784542672,
+    "afferent_pA": 148.9888089835974,
+    "da_level": 0.15916268512376558,
+    "snc_firing": 0.01583333333333333,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.4535714285714285,
+     "want_hz": 3.472222222222222,
+     "normalized": 0.0909090909090909,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5892857142857142,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.5714285714285714,
+      0.6071428571428571
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.2466699555994074,
+    "da_level": 0.15916268512376558,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "bat",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "c_robin_swim": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On robin, then \u2014 I don't know about that.",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "robin",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "robin"
+     },
+     {
+      "role": "action",
+      "word": "swim",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "swim"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 18,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.0008720930232558139,
+     "mean_magnitude": 0.9733723063869416
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.0,
+    "want_hz": 0.0,
+    "threshold": 19.09722222222222,
+    "curious": false,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "robin",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.0,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.08397958658078122,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.37596937987117185,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 50.79462117038892,
+     "want_hz": 0.0,
+     "want_eff_hz": 0.0,
+     "curious": false
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 17,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 17,
+    "topic": "robin",
+    "swapped": true,
+    "held_topic_before": "bat",
+    "held_topic": "robin",
+    "evicted_topic": "bat",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.3,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On robin, then \u2014 ",
+    "new_topic": "robin",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "robin",
+    "slot": 4,
+    "decision": "reduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 17,
+    "lesioned": false,
+    "turn_engagement": 0.07272727272727272,
+    "ema_engagement": 0.08620459477453432,
+    "afferent_pA": 120.68643268434805,
+    "da_level": 0.08397958658078122,
+    "snc_firing": 0.0033333333333333335,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.4107142857142857,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.07272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5178571428571429,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.9285714285714286,
+      0.10714285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.110508140108534,
+    "da_level": 0.08397958658078122,
+    "lesioned": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "robin",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  }
+ },
+ "timings_s": {
+  "t_robin_eat": 530.2,
+  "t_trout_eat": 38.0,
+  "t_robin_fly": 40.4,
+  "t_trout_swim": 39.8,
+  "t_sparrow_eat": 49.4,
+  "t_salmon_eat": 43.2,
+  "t_sparrow_fly": 46.6,
+  "t_salmon_swim": 44.1,
+  "t_finch_eat": 54.3,
+  "t_finch_fly": 50.6,
+  "t_bat_eat": 49.1,
+  "t_bat_fly": 51.6,
+  "t_canary_fly": 52.1,
+  "p_canary_eat": 13.4,
+  "c_canary_swim": 10.8,
+  "c_bat_swim": 10.6,
+  "c_robin_swim": 11.2
+ },
+ "import_s": 0.3,
+ "wall_s": 1135.7,
+ "elapsed_seconds": 1135.7,
+ "expected_source": "tiny-demo +LTM",
+ "sources": [
+  "tiny-demo +LTM"
+ ],
+ "flip_dev": {
+  "side": "off",
+  "flag": "BRAIN_CATEGORY_INHERIT",
+  "flag_value": "0",
+  "group": "cat_bridge",
+  "hop": "1"
+ }
+}

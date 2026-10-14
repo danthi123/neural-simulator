@@ -89,6 +89,92 @@ import research.runners.spiking_qroute_selection_organ as _QROUTE  # noqa: E402
 # lesion (BRAIN_D6_HEBBIAN_FREEZE) targets learning-from-use only; a no-op unless BRAIN_D6_HEBBIAN_STORE is on.
 from research.runners.d6_hebbian_store import conversation_write as _d6_conversation_write  # noqa: E402
 
+# ── INTERROGATIVE-TURN GUARD on the HOST ACQUISITION SCAFFOLD (Stage-2 HANDOFF item 18a, 2026-10-13) ──────────────
+# THE DEFECT. A bare yes/no question with no '?' ("does crow chase moth") reached the store as an ASSERTION: the D2
+# surprise extractor strips "does" as a function word, reads (crow, chase, moth), and the reconsolidation organ then
+# REWROTE the held "crow chase wren" in place (dev seed 7, stage2 `infer` shard), so the next turn volunteered "the
+# crow chases the moth". `_maybe_acquire`'s B3 path had the same exposure for negative / connective-led yes/no
+# questions ("doesn't the crow chase the moth" was taught as a NEGATE fact), for a modal lead-in with a two-word
+# remainder ("can a robin breathe" -> [can, robin, breathe]), for tag questions ("crow chase moth, does it") and for a
+# trailing "or not" (taught as NEGATE). A question asserts nothing; it must never be stored.
+# WHAT THIS IS (honesty): HOST SCAFFOLD, not biology -- a regex speech-act classifier (docs/SCAFFOLD-LEDGER.md).
+# Deciding that a turn is a declarative to be taught is already a host decision (`_maybe_acquire`'s leading-word list
+# + the regex extractors); this predicate only CORRECTS that scaffold's misfire on interrogatives. It adds no store and
+# no answer. What is VERIFIED unchanged for declaratives is what tests/test_interrogative_no_acquire.py compares
+# exactly: on its declarative corpus `_maybe_acquire`'s return and `inner.hear` calls equal the escape arm's, and in
+# the dev-7 handler arms the declarative turns' answer/abstained/reconsolidation/surprised read-outs were equal.
+# The learned replacement is a form-to-role comprehension organ that reads clause type on the substrate (HANDOFF 14).
+# Escape: `BRAIN_ACQUIRE_QUESTIONS=1` restores the pre-fix behaviour exactly (questions reach the store again).
+# RESIDUAL (form is ambiguous without a lexicon): a modal lead-in followed by an -s/-ed word reads as a declarative
+# ("Will chases the ball" = a name + verb), so "can dogs bark" also reads declarative, i.e. keeps its pre-fix
+# handling. The do/be lead-ins (which `_maybe_acquire` already declined before this fix) have no such exception.
+_IQ_WH = frozenset({"what", "who", "whom", "whose", "where", "when", "why", "how", "which"})
+# do/be auxiliaries + every negative contraction: interrogative whenever they lead (no declarative starts with them)
+_IQ_AUX_ALWAYS = frozenset({
+    "does", "do", "did", "is", "are", "was", "were",
+    "doesn't", "don't", "didn't", "isn't", "aren't", "wasn't", "weren't", "can't", "couldn't", "won't",
+    "wouldn't", "shouldn't", "hasn't", "haven't", "hadn't", "mustn't",
+    "doesnt", "dont", "didnt", "isnt", "arent", "wasnt", "werent", "cant", "couldnt", "wont", "wouldnt",
+    "shouldnt", "hasnt", "havent", "hadnt",
+})
+# modal / have forms that can also be a subject word ("Will", "May"): interrogative only when the next word is not an
+# inflected verb ("Will chases the ball", "May likes cats", "had chases fish", "might makes right" stay declaratives)
+_IQ_AUX_MODAL = frozenset({"am", "can", "could", "will", "would", "shall", "should", "may", "might", "must",
+                           "has", "have", "had"})
+_IQ_TAG_PRONOUNS = frozenset({"it", "they", "he", "she", "we", "you", "i", "that", "there", "this"})
+# leading connectives the surprise/B3 extractors strip as function words ("so does crow chase moth" misfired too)
+_IQ_LEAD = frozenset({"and", "or", "so", "but", "then", "now", "also", "just", "please", "ok", "okay"})
+_IQ_WORD_RE = re.compile(r"[a-z']+")
+
+
+def acquire_questions_enabled() -> bool:
+    """`BRAIN_ACQUIRE_QUESTIONS` in {1,true,yes,on} -> the PRE-FIX behaviour (an interrogative may be acquired /
+    reconsolidated as an assertion). Default (unset): interrogatives are never stored."""
+    v = os.environ.get("BRAIN_ACQUIRE_QUESTIONS")
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _iq_inflected(w) -> bool:
+    """An -s / -ed verb form by shape (`chases`, `likes`, `hunted`); also matches a plural noun (the declared residual)."""
+    return len(w) > 3 and (w.endswith("ed") or (w.endswith("s") and not w.endswith(("ss", "us", "is"))))
+
+
+def is_interrogative_turn(text) -> bool:
+    """True iff `text` is a question by FORM: a '?'; a WH word anywhere; a leading do/be auxiliary or negative
+    contraction (after leading connectives); a leading modal/have form NOT followed by an inflected verb; a trailing
+    tag (`..., does it` / `..., isn't it`, but not `so do I`); or a trailing `or not`. Host scaffold (see the block
+    comment above); a declarative ("the crow chases the moth", "the dog does not eat grass", "Will chases the ball")
+    is False."""
+    t = str(text or "").replace("\u2019", "'").strip().lower()
+    if not t:
+        return False
+    if "?" in t:
+        return True
+    toks = _IQ_WORD_RE.findall(t)
+    if any(w in _IQ_WH for w in toks):
+        return True
+    if len(toks) >= 3 and toks[-2:] == ["or", "not"]:
+        return True
+    if (len(toks) >= 4 and toks[-1] in _IQ_TAG_PRONOUNS
+            and (toks[-2] in _IQ_AUX_ALWAYS or toks[-2] in _IQ_AUX_MODAL)
+            and toks[-3] not in ("so", "neither", "nor")):
+        return True
+    i = 0
+    while i < len(toks) and toks[i] in _IQ_LEAD:
+        i += 1
+    if i >= len(toks):
+        return False
+    if toks[i] in _IQ_AUX_ALWAYS:
+        return True
+    if toks[i] in _IQ_AUX_MODAL:
+        return not (i + 1 < len(toks) and _iq_inflected(toks[i + 1]))
+    return False
+
+
+def interrogative_blocks_store(text) -> bool:
+    """The guard every assertion-STORE path calls: True -> do not acquire / reconsolidate this turn."""
+    return (not acquire_questions_enabled()) and is_interrogative_turn(text)
+
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
 _SK_CODES = os.path.join(_REPO, "research", "findings", "raw", "_self_knowledge_grounded_codes.json")
 _SK_CURRICULUM = os.path.join(_REPO, "research", "findings", "raw", "_curriculum_self_knowledge.json")
@@ -1269,6 +1355,9 @@ class ChatBrain:
         if "?" in q or ql.split()[:1] and ql.split()[0] in (
                 "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
             return None
+        if interrogative_blocks_store(q):        # HOST SCAFFOLD correction (HANDOFF 18a): a question is never TAUGHT
+            return None                          # (modal / negative-aux / connective-led yes-no, WH anywhere). Escape:
+                                                 # BRAIN_ACQUIRE_QUESTIONS=1 (declarative corpus: exact-compare tests).
         # ── NON-CONTRADICTION STORE-SIDE (Gate-B, B3, 2026-08-12) ──────────────────────────────────────────
         # So the non-contradiction gate has NEGATIONS to fire against (today the console stores ZERO negations — the
         # legacy path below hard-codes polarity="AFFIRM" and only acquires an EXACTLY-3-whitespace-token input),
@@ -1334,6 +1423,8 @@ class ChatBrain:
         ql = q.lower()
         if "?" in q or ql.split()[:1] and ql.split()[0] in (
                 "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
+            return False
+        if interrogative_blocks_store(q):        # the SAME interrogative guard as `_maybe_acquire` (HANDOFF 18a)
             return False
         try:
             import research.runners.b3_noncontradiction_production_organ as _b3nc

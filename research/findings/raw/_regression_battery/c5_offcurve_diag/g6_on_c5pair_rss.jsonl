@@ -1,0 +1,10 @@
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 5518876, "k": null, "pid": 5161, "rss_kb": 5518876, "ts": 1791817343.204, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 6393948, "pid": 5161, "rss_kb": 6236020, "ts": 1791817513.106, "turn": "emo"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 11577124, "k": null, "pid": 5161, "rss_kb": 11554772, "ts": 1791817653.384, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 11783064, "pid": 5161, "rss_kb": 11690860, "ts": 1791817727.61, "turn": "bc_a"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 11783064, "k": null, "pid": 5161, "rss_kb": 11690860, "ts": 1791817727.614, "turn": 2}
+{"event": "battery_turn", "hwm_kb": 11783064, "pid": 5161, "rss_kb": 11690064, "ts": 1791817987.162, "turn": "bc_b"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 16918252, "k": null, "pid": 5161, "rss_kb": 16918252, "ts": 1791818129.008, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 17223756, "pid": 5161, "rss_kb": 17075724, "ts": 1791818163.944, "turn": "rich_well"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 22362992, "k": null, "pid": 5161, "rss_kb": 22340352, "ts": 1791818313.415, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 22458480, "pid": 5161, "rss_kb": 22415792, "ts": 1791818323.841, "turn": "rich_open"}

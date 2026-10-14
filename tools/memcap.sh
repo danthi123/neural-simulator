@@ -18,8 +18,13 @@
 #
 # Behavior: the command runs in a transient systemd --user scope with MemoryMax=<max_gb>G and
 # MemorySwapMax=<swap>G (default 0 -> no swap, so it can't thrash swap either). If it exceeds the
-# cap, the KERNEL OOM-kills THIS scope only. MemoryHigh is set to 90% of the cap to throttle
-# (reclaim pressure) before the hard kill, giving a softer landing. Exit code is the command's.
+# cap, the KERNEL OOM-kills THIS scope only. Exit code is the command's.
+#
+# NO MemoryHigh BY DEFAULT (2026-10-11/12). It used to be 90% of the cap "for a softer landing". With no swap,
+# anonymous memory cannot be reclaimed, so crossing MemoryHigh does not shrink the job: the kernel throttles every
+# allocation instead and the job sits in D-state (mem_cgroup_handle_over_high) for hours, never reaching the cap
+# that would kill it. Three C5 battery groups wedged that way overnight 10-11/12 and had to be killed by hand. A
+# clean OOM kill at MemoryMax is the honest landing. MEMCAP_HIGH_PCT=<1-99> restores a throttle zone on purpose.
 set -uo pipefail
 
 MAX_GB="${1:?usage: tools/memcap.sh <max_gb> [--swap <gb>] -- <command...>}"; shift
@@ -43,8 +48,11 @@ if ! systemctl --user is-system-running >/dev/null 2>&1 && ! systemd-run --user 
   exit 3
 fi
 
-HIGH_GB=$(( MAX_GB * 9 / 10 )); [ "$HIGH_GB" -lt 1 ] && HIGH_GB=1
-echo "[memcap] MemoryMax=${MAX_GB}G MemoryHigh=${HIGH_GB}G MemorySwapMax=${SWAP_GB}G :: $*" >&2
+HIGH=infinity
+if [ -n "${MEMCAP_HIGH_PCT:-}" ]; then
+  HIGH_GB=$(( MAX_GB * MEMCAP_HIGH_PCT / 100 )); [ "$HIGH_GB" -lt 1 ] && HIGH_GB=1; HIGH="${HIGH_GB}G"
+fi
+echo "[memcap] MemoryMax=${MAX_GB}G MemoryHigh=${HIGH} MemorySwapMax=${SWAP_GB}G :: $*" >&2
 exec systemd-run --user --scope --quiet \
-  -p MemoryMax="${MAX_GB}G" -p MemoryHigh="${HIGH_GB}G" -p MemorySwapMax="${SWAP_GB}G" \
+  -p MemoryMax="${MAX_GB}G" -p MemoryHigh="${HIGH}" -p MemorySwapMax="${SWAP_GB}G" \
   -- "$@"

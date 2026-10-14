@@ -31,10 +31,17 @@ the row shape.
 """
 from __future__ import annotations
 
+# CORRECTED 2026-10-13 (validation-battery prereg 2026-10-12, Amendment B; RULING lbf-host-input-rows): this row
+# shipped as kind="neural-lesion", but its lesion overrides the witnessing gate, and the witnessing/presence input is
+# HOST-parsed (webapp/false_belief_chat.py leave/return regex). The belief store itself is NOT load-bearing on 6/6 seeds
+# (research/findings/raw/_fb_store/verdict.json: STORE-NOT-LOAD-BEARING, tools/fb_store_score.py). Retagged
+# kind="host-input" (the learning.py whether-disable retag is the precedent): the harness still runs it, every scorer
+# keeps it out of the neural numerator and reports it as a host-input lesion. Shards made at the battery pin
+# f24963bfb still say "neural-lesion"; tools/b2d_score.py::HOST_INPUT_ROWS (keyed by faculty name) covers them.
 EXTRA_LESIONS = {
     "tom-false-belief": dict(
-        flag="BRAIN_FALSE_BELIEF_LESION", value="1", kind="neural-lesion",
-        note="forces the W3 register's witnessing gate open at write AND query "
+        flag="BRAIN_FALSE_BELIEF_LESION", value="1", kind="host-input",
+        note="HOST-INPUT lesion (Amendment B, 2026-10-13): forces the W3 register's witnessing gate open at write AND query "
              "(research/runners/tom_false_belief_chat_organ.py), collapsing the belief store onto reality. "
              "REQUIRES BRAIN_FALSE_BELIEF_CHAT=1 as a shared prerequisite in BOTH arms (a conditional "
              "default-OFF capability, not yet shipped default-on); at production defaults (flag unset) this "
@@ -78,6 +85,8 @@ def selftest() -> dict:
         "probe turn reachable by the battery": all(r[1] in labels for r in EXTRA_PROBES),
         "one fresh session": len(EXTRA_TURNS) == 1 and EXTRA_TURNS[0][3] is True,
         "the story is PLACE, LEAVE, MOVE, QUERY (an unwitnessed move)": kinds == ["place", "leave", "move", "query"],
+        "kind is host-input (Amendment B: the witness-gate input is host-parsed)":
+            EXTRA_LESIONS["tom-false-belief"]["kind"] == "host-input",
         "reply fields only, not thin": all(set(r[2]) == {"answer", "abstained", "recalled_svo"} and r[3] is False
                                            for r in EXTRA_PROBES),
     }

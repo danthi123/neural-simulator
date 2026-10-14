@@ -141,6 +141,22 @@ raise SystemExit(0)
 PY
 }
 
+# DISPATCHER HEARTBEAT (2026-10-11). pgrep cannot see a dispatcher in another PID namespace: on the server the
+# dispatcher runs on the host as `sim` (sim-pool-dispatch.service) while this check runs inside the agent
+# container, so it read DEAD while the dispatcher was live, and a second dispatcher was started from a session
+# (the 10-10/11 overnight stall, whose real cause was an all-stale queue). The dispatcher rewrites
+# .pool_sandbox_state (`mode=.. ts=<epoch> pid=..`) every cycle; a stamp no older than <max-age> s counts as live.
+dispatcher_heartbeat_live() {
+  local state="$1" now="$2" max_age="$3" ts
+  ts=$(sed -n 's/.* ts=\([0-9][0-9]*\).*/\1/p' "$state" 2>/dev/null | head -1)
+  [ -n "$ts" ] && [ $(( now - ts )) -le "$max_age" ]
+}
+
+if [ "${1:-}" = "--dispatcher-heartbeat" ]; then
+  [ "$#" -eq 4 ] || { echo "usage: $0 --dispatcher-heartbeat <state-file> <now-epoch> <max-age>" >&2; exit 2; }
+  dispatcher_heartbeat_live "$2" "$3" "$4"
+  exit $?
+fi
 if [ "${1:-}" = "--queue-health" ]; then
   [ "$#" -eq 4 ] || { echo "usage: $0 --queue-health <queue> <now-epoch> <max-age>" >&2; exit 2; }
   queue_health "$2" "$3" "$4"
@@ -385,6 +401,10 @@ QUEUE_PATH="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
 IFS=$'\t' read -r QDEPTH QSTALE QMALFORMED QTOTAL <<< "$(queue_health "$QUEUE_PATH" "$(date +%s)" "${POOL_JOB_MAX_AGE:-43200}")"
 QDEPTH=${QDEPTH:-0}; QSTALE=${QSTALE:-0}; QMALFORMED=${QMALFORMED:-0}; QTOTAL=${QTOTAL:-0}
 DISPATCH=$(pgrep -fc '[p]ool_autodispatch' 2>/dev/null | head -1); DISPATCH=${DISPATCH:-0}
+if [ "${DISPATCH:-0}" -eq 0 ] && dispatcher_heartbeat_live "$(dirname "$QUEUE_PATH")/.pool_sandbox_state" \
+     "$(date +%s)" "${POOL_HEARTBEAT_MAX_AGE:-900}"; then
+  DISPATCH=1   # live in another PID namespace (the server's systemd unit), seen through its per-cycle stamp
+fi
 echo "  queue depth=$QDEPTH live, $QSTALE stale  dispatcher=$([ "${DISPATCH:-0}" -gt 0 ] && echo LIVE || echo DEAD)"
 if [ "$QSTALE" -gt 0 ]; then
   echo "  · ignoring $QSTALE queue record(s) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h; dispatcher will not launch them."
@@ -395,7 +415,13 @@ if [ "${QMALFORMED:-0}" -gt 0 ]; then
   FAIL=1
 fi
 if [ "${QDEPTH:-0}" -eq 0 ]; then
-  if [ "$NO_READY_WORK" -eq 1 ]; then
+  if [ "${QSTALE:-0}" -gt 0 ]; then
+    # ALL-STALE QUEUE (2026-10-11): work IS queued but every line is past its max age, so the dispatcher skips
+    # all of it and the pool idles. "Queue empty" was the wrong message and pointed at the wrong fix.
+    echo "  ⛔ ALL $QSTALE QUEUED JOB(S) ARE STALE — the dispatcher skips lines past their max age; the pool idles."
+    echo "     A long-waiting batch declares max_age_h=N (cap ${POOL_JOB_MAX_AGE_CAP_H:-240}) in each line; re-add them with it."
+    FAIL=1
+  elif [ "$NO_READY_WORK" -eq 1 ]; then
     echo "  ⏸ pool queue empty: no CPU-compatible work is authorized; historical jobs will not be replayed."
   else
     echo "  ⛔ POOL QUEUE EMPTY — nothing is staged, so the next free node will idle by default."

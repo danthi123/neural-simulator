@@ -13,7 +13,43 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-06 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-13 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-13. **North star:** unchanged. A sim-brain that converses genuinely; Qwen stays the mouth; the #1
+metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
+**Frontier:**
+- Stage-1 attempt 2: C1 step D is landed at 927aeb87c; queue by 10-24, score by 10-28.
+- The C5 idle-replay flip is being validated through the battery under Amendment B (c4d0f3da6).
+- Stage-2 gate pin on 11-03, with Amendment A4.
+- The Stage-3 draft is on main (97bc60c0f).
+**Next command (Hermes, on S):** run `bash tools/status.sh`. Then work through the runbook RULINGs dated 2026-10-13 in order:
+battery-amend-B-merged/-gate, battery-retention-e1, c1-probes-merged/-score, s2-a4-review + s2-gate-pin-nov-A4, s3-smoke-rev.
+
+**Landed 2026-10-13 (Claude; each branch was adversarially verified before merge):**
+- **Derived-answer honesty, default-ON (d6a7213c6, HANDOFF 18b).**
+  - A chased conclusion of 2 or more hops is framed "I derived this from: ...".
+  - supporting_facts lists only the hops; the conclusion is in derived_svo.
+  - An affirmed stored conclusion stays a plain recall; a negated one stays derived.
+- **Questions are never stored, default-ON (3b4b31604, HANDOFF 18a).**
+  - A question is never acquired, never used to rewrite a fact, and never answered as if asserted.
+  - This is a host form-check scaffold, ledgered in docs/SCAFFOLD-LEDGER.md. Its replacement is a spiking clause-type organ.
+- **Battery Amendment B (c4d0f3da6).** C5 can read at best "selects by tag recency; ownership UNDETERMINED".
+  - A host argmax over the organ's tags passes every counted clause, so the race cannot be told apart from a host argmax.
+  - Next method: a race-steer arm (Amendment C; the design is in docs/drafts/idle-replay/WORKLOG.md).
+  - Production gap: a re-told or contradicted fact is appended, not reconsolidated in place.
+- **Battery worker session release (f935885d6 + 508f004a6).** It is opt-in. The E1 equivalence check is cleared.
+- **Stage-2 Amendment A4** is on S as claude-build/stage2-a4. Hermes merges it into research/stage2-exit-gate.
+- **C1 generalization probes (960ce6528).** Dev 7 gives override PASS and graded FAIL (newt = toad < eel).
+  - The inheritance organ links nearly every frame to every other one, so evidence does not add strength. This reads as templating, not knowledge.
+  - Dev seeds 1-8 are queued, and a FAIL gets a new method.
+- **Curiosity learning-progress de-risk (70fbe7bdf): NO-GO on dev 1-8.** Noise-driven slice depression acts as a clock.
+  - Next method: topic inputs with background noise off.
+- **Stage-3 exit draft (97bc60c0f).** It uses a two-clause verdict (capability AND ownership). PLAN §11 is ruled (s3-open-rulings-1013).
+- **Owner-level items:**
+  - The production wikidata_100k LTM costs ~5.1-5.4 GiB per live conversation, with no bound. That is in tension with one-brain; a shared LTM substrate is the candidate.
+  - Phase A exit was missed on "one live seam retired".
+
+## STATE OF THE PROJECT — 2026-10-06 (history; superseded by 2026-10-13 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-06. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 attempt 1 is fully

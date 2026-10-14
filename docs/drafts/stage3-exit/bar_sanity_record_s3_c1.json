@@ -1,0 +1,158 @@
+{
+ "backend": "numpy",
+ "description": "Stage-3 C1 (3-hop chain via the workspace): the real aggregate's `chain` criterion verdict is PASS over six gate seeds; perfect = the capability present and owned, realistic reply surfaces; nulls = production at main, the named host shortcuts (kb closure, relay, unmarked terminal, single-branch fork, order dependence, host k-select), each instrument (lesion, steer, permuted, null) made inert, an unreproduced lesion, read-out-dependent decisions.",
+ "failures": [],
+ "kinds": {
+  "null_closure_relay_ignition_check": "null",
+  "null_kb_closure_all_leaves": "null",
+  "null_kb_closure_first_match": "null",
+  "null_kselect_host": "null",
+  "null_lesion_inert": "null",
+  "null_lesion_kills_recall": "null",
+  "null_lesion_unreproduced": "null",
+  "null_order_dependent": "null",
+  "null_permuted_inert": "null",
+  "null_production_at_main": "null",
+  "null_ri_unstable": "null",
+  "null_single_branch_fork": "null",
+  "null_steer_inert": "null",
+  "null_unclean": "null",
+  "null_unmarked_terminal": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "perfect_swap_wording": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_closure_relay_ignition_check": 0,
+  "null_kb_closure_all_leaves": 0,
+  "null_kb_closure_first_match": 0,
+  "null_kselect_host": 0,
+  "null_lesion_inert": 0,
+  "null_lesion_kills_recall": 0,
+  "null_lesion_unreproduced": 0,
+  "null_order_dependent": 0,
+  "null_permuted_inert": 0,
+  "null_production_at_main": 0,
+  "null_ri_unstable": 0,
+  "null_single_branch_fork": 0,
+  "null_steer_inert": 0,
+  "null_unclean": 0,
+  "null_unmarked_terminal": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "perfect_swap_wording": 1000
+ },
+ "name": "stage3-C1 chain (DRAFT)",
+ "pass_rate": {
+  "null_closure_relay_ignition_check": 0.0,
+  "null_kb_closure_all_leaves": 0.0,
+  "null_kb_closure_first_match": 0.0,
+  "null_kselect_host": 0.0,
+  "null_lesion_inert": 0.0,
+  "null_lesion_kills_recall": 0.0,
+  "null_lesion_unreproduced": 0.0,
+  "null_order_dependent": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_production_at_main": 0.0,
+  "null_ri_unstable": 0.0,
+  "null_single_branch_fork": 0.0,
+  "null_steer_inert": 0.0,
+  "null_unclean": 0.0,
+  "null_unmarked_terminal": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "perfect_swap_wording": 1.0
+ },
+ "pass_rate_ci95": {
+  "null_closure_relay_ignition_check": [
+   0.0,
+   0.0038
+  ],
+  "null_kb_closure_all_leaves": [
+   0.0,
+   0.0038
+  ],
+  "null_kb_closure_first_match": [
+   0.0,
+   0.0038
+  ],
+  "null_kselect_host": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_kills_recall": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_order_dependent": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_production_at_main": [
+   0.0,
+   0.0038
+  ],
+  "null_ri_unstable": [
+   0.0,
+   0.0038
+  ],
+  "null_single_branch_fork": [
+   0.0,
+   0.0038
+  ],
+  "null_steer_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "null_unmarked_terminal": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_swap_wording": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "0927a6383127bf63738d5fe376a2b4b0e3f2eb9f",
+ "scorer_files": {
+  "docs/drafts/stage3-exit/bar_sanity_s3_common.py": "33021c29abd2cb859a42821a93b40be14fad99f5d6b04c7d1397b0294c5f02c5",
+  "research/runners/_stage3_exit_draft.py": "1e3daea01d36283d9032ed1884fa27c25ed62b2d334085e123a20fa741256d58"
+ },
+ "scorer_sha256": "d21fdbc9f6962b41b6b8104c1b0be9dedfeda3929f92d97028f4c08d083d9e7c",
+ "seed": 0,
+ "spec": "docs/drafts/stage3-exit/bar_sanity_spec_s3_c1_chain.py",
+ "spec_sha256": "6a093a685043eaa4aa4419a3872a33cc0fe72cf1fcb6bd0396a519ff6578c83d",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 314.3
+}

@@ -23,8 +23,12 @@ the existing spiking affect ladder). No sim/ edit.
 """
 from __future__ import annotations
 
+import itertools
 import os
+import threading
 import time
+
+from webapp.brain_turn_lock import brain_turn as _brain_turn
 
 IDLE_SEC = 20.0            # a session with no request for this long is "idle" -> the tick may run on it
 RELAX = 0.85              # per-tick appraisal relaxation toward the neutral setpoint (felt state decays with no input)
@@ -53,6 +57,19 @@ _INNER_LIFE: dict = {}
 _LAST_REQUEST: dict = {}
 # per-session remaining heavy-wander budget for this idle period (refilled to _wander_budget_per_turn() each turn)
 _WANDER_BUDGET: dict = {}
+# M0 turn-lock bookkeeping (webapp/brain_turn_lock.py). _LAST_TURN_END: per-session END-of-turn wall clock (set in
+# brain_chat's finally); a REAL-TIME tick measures idleness from the later of turn start and turn end, so a tick that
+# waited behind a turn never ticks that session the moment the turn releases. _REQ_SEQ: a per-session sequence stamp
+# from mark_request, NOT dropped by forget_session, so a tick can tell that a turn (even a reset turn) arrived while
+# it worked on that session outside the lock. _SELFINIT_LOCKS: one lock per session's self-init organ, held by the
+# tick's wander (which runs OUTSIDE the turn lock) and by a turn that speaks through the same organ. _RESET_SEQ: a
+# per-session stamp bumped by forget_session (never dropped), so a tick can tell the session was RESET while it worked
+# on it outside the lock (a reset through /api/brain-chat/reset sends no mark_request).
+_LAST_TURN_END: dict = {}
+_REQ_SEQ: dict = {}
+_RESET_SEQ: dict = {}
+_REQ_COUNTER = itertools.count(1)
+_SELFINIT_LOCKS: dict = {}
 # per-session topic the last live turn RECALLED (set by the handler on an in_memory referential recall); the next
 # idle tick CONSOLIDATES it (D5 learn-through-use). None/absent until a genuine spiking recall happens.
 _RECALLED_TOPIC: dict = {}
@@ -107,11 +124,78 @@ def mark_request(cache_key) -> None:
     idle period (so a returning user sees a fresh wandered thought), then the budget drains as it wanders."""
     _LAST_REQUEST[cache_key] = time.time()
     _WANDER_BUDGET[cache_key] = _wander_budget_per_turn()
+    _REQ_SEQ[cache_key] = next(_REQ_COUNTER)
+
+
+def mark_turn_end(cache_key) -> None:
+    """brain_chat's end-of-turn stamp (M0). Records when the turn RELEASED the brain; never refills the wander budget
+    (a refill is a new turn's event, `mark_request`). Read only by a real-time tick's idleness check."""
+    _LAST_TURN_END[cache_key] = time.time()
+
+
+def selfinit_lock(cache_key):
+    """The lock for this session's self-init organ: the tick's wander holds it outside the turn lock, and a turn that
+    speaks through the organ takes it too, so the two never drive the organ at once."""
+    return _SELFINIT_LOCKS.setdefault(cache_key, threading.Lock())
+
+
+SELFINIT_TURN_WAIT_S = 0.25   # how long a "what are you thinking about" turn waits for its own session's wander
+
+
+def last_wandered(cache_key) -> str | None:
+    """The most recent concept an idle wander surfaced for this session, WITHOUT consuming it (`recent_wander` does
+    consume). None when no unconsumed wander record exists."""
+    for rec in reversed(_INNER_LIFE.get(cache_key) or []):
+        if rec.get("wandered"):
+            return rec["wandered"]
+    return None
+
+
+def mid_thought_readout(cache_key) -> dict:
+    """The honest reply shape for a self-init turn that arrives while this session's wander is still running: a
+    functional read-out of that state (the wander has not finished, so there is no new thought to report), plus the
+    last thought an earlier wander surfaced if one is on record. `n_utt` 0: nothing was produced this turn."""
+    last = last_wandered(cache_key)
+    text = ("I'm in the middle of a thought right now (my idle wandering is still running), "
+            "so I can't say where it is going yet.")
+    if last:
+        text += " The last thing my mind drifted to was %s." % last
+    return {"n_utt": 0, "utterance": None, "mid_thought": True, "last_wandered": last, "text": text}
+
+
+def selfinit_speak_or_mid_thought(cache_key, speak, wait_s=None) -> dict:
+    """Run `speak()` (the turn's drive of this session's self-init organ) under the organ lock, waiting at most
+    `wait_s` (default SELFINIT_TURN_WAIT_S) for it. The caller holds the TURN lock, so it must not wait out a wander
+    (~55 s on the real organ) there: every other session and the tick would queue behind it. If the wander still
+    holds the organ, return `mid_thought_readout` instead (re-review 2026-10-13, item 2)."""
+    lock = selfinit_lock(cache_key)
+    if not lock.acquire(timeout=SELFINIT_TURN_WAIT_S if wait_s is None else float(wait_s)):
+        return mid_thought_readout(cache_key)
+    try:
+        return speak()
+    finally:
+        lock.release()
+
+
+def _idle_ref(cache_key, real_time: bool):
+    """The time idleness is measured from. Real time (the server loop): the later of the turn's start and end stamps.
+    A caller-supplied clock (`now` passed, the battery's world steps): the turn-start stamp alone, as before M0, because
+    that clock is defined relative to `_LAST_REQUEST` and must not mix with wall-clock end stamps."""
+    start = _LAST_REQUEST.get(cache_key)
+    if not real_time:
+        return start
+    end = _LAST_TURN_END.get(cache_key)
+    if start is None or end is None:
+        return start if end is None else end
+    return max(start, end)
 
 
 def forget_session(cache_key) -> None:
-    """On a session reset, drop its continuous state (mirrors _SESSION_MOOD/_SESSION_SELFINIT cleanup)."""
+    """On a session reset, drop its continuous state (mirrors _SESSION_MOOD/_SESSION_SELFINIT cleanup). Also stamps
+    `_RESET_SEQ`, so a wander still running on the old session drops what it wrote (`_drop_wander_state`)."""
+    _RESET_SEQ[cache_key] = next(_REQ_COUNTER)
     _LAST_REQUEST.pop(cache_key, None)
+    _LAST_TURN_END.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
     _WANDER_BUDGET.pop(cache_key, None)
     _WANDER_ADAPT.pop(cache_key, None)
@@ -550,12 +634,13 @@ def substrate_homeostasis_sleep_trigger_enabled() -> bool:
     return os.environ.get("BRAIN_DA_ENCODING_SLEEP_TRIGGER", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
-def _is_sleep_tick(cache_key, now: float) -> bool:
+def _is_sleep_tick(cache_key, now: float, real_time: bool = False) -> bool:
     """True iff this session has been idle >= SLEEP_IDLE_SEC (genuine sleep-depth), i.e. this idle tick is a NREM/
     sleep-replay-style consolidation event rather than a light between-turn pause. Requires an ACTUAL recorded
     last-request timestamp (mark_request, set on every real turn) -- a session with no timing evidence yet
-    (_LAST_REQUEST empty) is conservatively never treated as 'asleep' rather than manufacturing a sleep state."""
-    last = _LAST_REQUEST.get(cache_key)
+    (_LAST_REQUEST empty) is conservatively never treated as 'asleep' rather than manufacturing a sleep state.
+    `real_time` (the server loop's tick, M0): measured from the later of turn start and turn end (`_idle_ref`)."""
+    last = _idle_ref(cache_key, real_time)
     if last is None:
         return False
     return (now - last) >= SLEEP_IDLE_SEC
@@ -1088,15 +1173,10 @@ def recent_ideation(cache_key) -> dict | None:
     return None
 
 
-def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
-                 selfinit_organ=None) -> dict | None:
-    """One idle tick for ONE session: (a) FEELING keeps evolving — relax the appraisal + RE-READ the spiking affect
-    ladder; (b) a THOUGHT wanders — if a self-initiation organ is given, its curiosity-biased spiking selection
-    surfaces a concept (the mind drifting to something while idle). Both are recorded to the inner-life.
-
-    Returns the tick record (or None if the session has no mood yet). Pure w.r.t. the reply path — it only mutates
-    this session's mood EMA + the inner-life log; a live turn re-appraises from the message anyway."""
-    now = time.time() if now is None else now
+def _tick_feel(cache_key, session_mood: dict, affect_organ):
+    """(a) FEELING: homeostatic relaxation of this session's felt state toward baseline, then the spiking read of the
+    PROCESS-SHARED affect ladder at the new point. Cheap; `tick_idle_sessions` runs it under the turn lock. Returns
+    the partial record, or None if the session has no mood yet. (Moved verbatim out of `tick_session`, M0.)"""
     m = session_mood.get(cache_key)
     if m is None:
         return None
@@ -1112,11 +1192,25 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
         diff = None
     trend = "toward neutral" if abs(v1) < abs(v0) else "steady"
     note = "idle: felt state relaxing %s (was %+.2f, now %+.2f)" % (trend, v0, v1)
-    # (b) THOUGHT: a curiosity-biased spiking selection surfaces a wandered concept (a thought drifting while idle).
-    # OCCASIONALLY (default-OFF `BRAIN_CONTINUOUS_IDEATE`, every Nth wander) the wander instead GENERATES a NOVEL
-    # blended concept — the ideation/creativity rung — surfaced on a distinct, honestly-flagged channel. When
-    # ideation is off, or this is not an ideation tick, or the blend did not settle novel, the DEFAULT recall wander
-    # runs EXACTLY as today (byte-identical): the `ideation` key is then absent from `rec`.
+    return {"v1": v1, "a1": a1, "diff": diff, "note": note}
+
+
+def _drop_wander_state(cache_key) -> None:
+    """Undo what a wander WROTE for a session that was reset while it ran: the IOR adaptation (`_post_wander_ior`),
+    the ideation counter and the ideation store. Without this they re-appear in the fresh session after
+    `forget_session` cleared them (re-review 2026-10-13, item 4). The mulled topic is not cleared here: the wander only
+    consumes it (a pop), so a value present now was armed by a turn of the FRESH session."""
+    _WANDER_ADAPT.pop(cache_key, None)
+    _IDEATE_TICK.pop(cache_key, None)
+    _SPIKING_IDEATE_STORE.pop(cache_key, None)
+
+
+def _tick_think(cache_key, selfinit_organ, note):
+    """(b) THOUGHT: the curiosity-biased spiking wander (or, occasionally, ideation) on THIS session's self-init organ.
+    Touches that organ and this session's wander state: it writes the IOR adaptation, the ideation counter and the
+    ideation store, and it consumes the mulled topic (armed by a live turn's `mark_mull`, not by the tick).
+    `tick_idle_sessions` runs it OUTSIDE the turn lock (a ~55 s cupy wander must never hold a turn), under
+    `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.)"""
     wandered = None
     ideation = None
     mull = None
@@ -1158,16 +1252,41 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
                     note += " (it had been on my mind — we'd just been discussing ‘%s’)" % mull["mulled"]
         except Exception:
             wandered = None
-    rec = {"t": now, "valence": v1, "arousal": a1, "differential": diff, "wandered": wandered, "note": note}
+    return wandered, ideation, mull, note
+
+
+def _tick_record(cache_key, now, feel, wandered, ideation, mull, note, dropped=None):
+    """Append this tick's inner-life record (the shape `tick_session` always wrote). `dropped` (M0): a wander a turn
+    preempted, recorded instead of its result."""
+    rec = {"t": now, "valence": feel["v1"], "arousal": feel["a1"], "differential": feel["diff"], "wandered": wandered,
+           "note": note}
     if mull is not None:   # additive: absent when MULL is off/didn't match -> rec is byte-identical to today
         rec["mull"] = mull
     if ideation is not None:   # additive: absent when ideation is off -> rec is byte-identical to today
         rec["ideation"] = ideation
+    if dropped is not None:   # additive (M0): absent unless a turn preempted this tick's wander
+        rec["wander_dropped"] = dropped
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
         del lst[:-_INNER_LIFE_MAX]
     return rec
+
+
+def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
+                 selfinit_organ=None) -> dict | None:
+    """One idle tick for ONE session: (a) FEELING keeps evolving — relax the appraisal + RE-READ the spiking affect
+    ladder; (b) a THOUGHT wanders — if a self-initiation organ is given, its curiosity-biased spiking selection
+    surfaces a concept (the mind drifting to something while idle). Both are recorded to the inner-life.
+
+    Returns the tick record (or None if the session has no mood yet). Pure w.r.t. the reply path — it only mutates
+    this session's mood EMA + the inner-life log; a live turn re-appraises from the message anyway."""
+    now = time.time() if now is None else now
+    feel = _tick_feel(cache_key, session_mood, affect_organ)
+    if feel is None:
+        return None
+    wandered, ideation, mull, note = _tick_think(cache_key, selfinit_organ, feel["note"])
+    return _tick_record(cache_key, now, feel, wandered, ideation, mull, note)
 
 
 def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None,
@@ -1179,32 +1298,73 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
     `episodic_getter(cache_key)` (optional) supplies that session's ALREADY-BUILT episodic organ for the D5
     learn-through-use consolidation (default-OFF behind `BRAIN_D5_CONSOLIDATE`; never builds an organ just to tick).
     `chat_getter(cache_key)` (optional) supplies that session's ALREADY-BUILT chat for the DA-encoding substrate
-    homeostasis (Turrigiano synaptic-scaling) consolidation pass; None-returning getter -> that step is skipped."""
+    homeostasis (Turrigiano synaptic-scaling) consolidation pass; None-returning getter -> that step is skipped.
+
+    M0 LOCKING (webapp/brain_turn_lock.py, FIFO). Per session, in order: (1) under the turn lock, cheap: the idleness
+    check (wall clock read INSIDE the lock; idleness from the later of turn start and turn end) and the FEEL step
+    (relax + the shared-affect read); (2) WITHOUT the turn lock, under this session's `selfinit_lock`: the wander (a
+    ~55 s cupy CA3 wander never holds a turn; an exogenous input preempts mind-wandering); (3) under the turn lock:
+    record the result, or, if a turn for this session arrived meanwhile (`_REQ_SEQ` moved), DROP the wander and
+    record the drop, then skip the rest of this session; (4) each consolidation / ledger / persistence step under its
+    own turn-lock hold, re-checking that no turn arrived. A waiting turn is served between any two steps (FIFO).
+    With a caller-supplied `now` (the battery's single-threaded world steps) nothing can preempt, so the steps run in
+    exactly the pre-M0 order on the pre-M0 clock."""
     if not continuous_enabled():
         return 0
-    now = time.time() if now is None else now
+    real_time = now is None
     n = 0
     _d5_on = d5_consolidate_enabled()
     for cache_key in list(session_mood.keys()):
-        last = _LAST_REQUEST.get(cache_key)
-        if last is not None and (now - last) < IDLE_SEC:
-            continue  # still active -> don't tick mid-turn
-        try:
-            organ = affect_organ_getter()
-            # The cheap mood-relax runs every tick; the EXPENSIVE self-init wander only while this session has
-            # budget left for this idle period (refilled by mark_request each turn). Once drained, the mind keeps
-            # relaxing but stops wandering -> a truly idle server does not peg the GPU with endless ~55s wanders.
-            siorg = None
-            if selfinit_getter is not None and _WANDER_BUDGET.get(cache_key, 0) > 0:
-                try:
-                    siorg = selfinit_getter(cache_key)
-                except Exception:
-                    siorg = None
-            rec = tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg)
-            if rec is not None:
+        # (1) TURN LOCK, cheap: idleness + FEEL. The cheap mood-relax runs every tick; the EXPENSIVE self-init wander
+        # only while this session has budget left for this idle period (refilled by mark_request each turn). Once
+        # drained, the mind keeps relaxing but stops wandering -> a truly idle server does not peg the GPU with endless
+        # ~55s wanders.
+        with _brain_turn("idle_tick"):
+            t = time.time() if real_time else now
+            last = _idle_ref(cache_key, real_time)
+            if last is not None and (t - last) < IDLE_SEC:
+                continue  # still active -> don't tick mid-turn
+            seq0 = _REQ_SEQ.get(cache_key)
+            reset0 = _RESET_SEQ.get(cache_key)
+            try:
+                organ = affect_organ_getter()
+                siorg = None
+                if selfinit_getter is not None and _WANDER_BUDGET.get(cache_key, 0) > 0:
+                    try:
+                        siorg = selfinit_getter(cache_key)   # a cheap constructor; the mouth builds inside the wander
+                    except Exception:
+                        siorg = None
+                feel = _tick_feel(cache_key, session_mood, organ)
+            except Exception:
+                continue
+        # (2) NO TURN LOCK: the wander, on this session's own organ, under its organ lock.
+        think = (None, None, None, feel["note"]) if feel is not None else None
+        if feel is not None and siorg is not None:
+            with selfinit_lock(cache_key):
+                think = _tick_think(cache_key, siorg, feel["note"])
+        # (3) TURN LOCK: record, or drop a wander a turn preempted.
+        with _brain_turn("idle_tick"):
+            reset = _RESET_SEQ.get(cache_key) != reset0
+            if reset:
+                _drop_wander_state(cache_key)   # the session was reset mid-wander: nothing of it reaches the new one
+            preempted = reset or _REQ_SEQ.get(cache_key) != seq0
+            if feel is not None and not reset and not (preempted and cache_key not in session_mood):
+                wandered, ideation, mull, note = think
+                dropped = None
+                if preempted and (wandered or ideation is not None):
+                    dropped = {"concept": wandered, "ideation": ideation is not None,
+                               "reason": "a turn arrived during the wander (preempted)"}
+                    note = feel["note"] + "; a wandering thought was interrupted by your message, so I let it go"
+                    wandered, ideation, mull = None, None, None
+                rec = _tick_record(cache_key, t, feel, wandered, ideation, mull, note, dropped)
                 n += 1
                 if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
                     _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
+            if preempted:
+                continue   # the session is in conversation again: the rest of its tick waits for the next idle period
+
+        # (4) the consolidation / persistence / ledger steps, each under its own turn-lock hold, in the pre-M0 order.
+        def _s_d5():
             # D5 LEARN-THROUGH-USE: consolidate the memory this session USED, bounded by the per-recall budget.
             # Runs independently of the mood tick (a recalled-but-mood-less session still consolidates), and only
             # while a genuine recall has armed the budget for this idle period -> a truly idle server does not
@@ -1221,13 +1381,15 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
                         "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
+
+        def _s_sleep_replay():
             # OFFLINE SLEEP-REPLAY (#64): on a genuine SLEEP-DEPTH idle only (>= SLEEP_IDLE_SEC, the same NREM window the
             # Turrigiano pass uses), replay the BATCH of episodes this session stored since its last sleep so the whole
             # recent batch recalls STRONGER + its store-order is reinforced. Gated by BRAIN_SLEEP_REPLAY (default-OFF ->
             # the branch is never entered -> byte-identical to HEAD) AND _is_sleep_tick (an offline sleep event, not a
             # light between-turn pause). Reuses the SAME already-built episodic organ getter as D5 (never builds one just
             # to replay); consolidate_sleep_replay self-gates + rolls the store back on any failure.
-            if sleep_replay_enabled() and episodic_getter is not None and _is_sleep_tick(cache_key, now):
+            if sleep_replay_enabled() and episodic_getter is not None and _is_sleep_tick(cache_key, t, real_time):
                 try:
                     seorg = episodic_getter(cache_key)
                     if seorg is not None:
@@ -1237,6 +1399,8 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     _lg.getLogger(__name__).warning(
                         "sleep-replay consolidation failed for %s (persistent store rolled back)", cache_key,
                         exc_info=True)
+
+        def _s_persist():
             # CROSS-SESSION PERSISTENCE (#B8): on a genuine sleep-depth idle, FLUSH this session's conversation-driven
             # learning to disk (D5 within-assembly weights + the _maybe_acquire runtime facts) + the process-global
             # xedge cross-edge, so a server restart RELOADS it at boot instead of reverting to the build-time state.
@@ -1246,7 +1410,7 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
             try:
                 from research.runners.cross_session_persistence import (persist_learning_enabled as _pl_on,
                                                                          save_session_learning as _pl_save)
-                if _pl_on() and _is_sleep_tick(cache_key, now):
+                if _pl_on() and _is_sleep_tick(cache_key, t, real_time):
                     _porg = episodic_getter(cache_key) if episodic_getter is not None else None
                     _pchat = chat_getter(cache_key) if chat_getter is not None else None
                     _pl_save(cache_key, _pchat, _porg)
@@ -1254,95 +1418,117 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 import logging as _lg
                 _lg.getLogger(__name__).warning(
                     "cross-session persistence save failed for %s", cache_key, exc_info=True)
+
+        def _s_homeostasis():
             # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
             # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
             # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
             # consolidates a batch of freshly-encoded facts, offline — the between-turn cadence Turrigiano scaling wants.
-            if chat_getter is not None:
+            if chat_getter is None:
+                return
+            try:
+                _chat = chat_getter(cache_key)
+                if _chat is not None:
+                    # #138 (additive/default-off): BRAIN_DA_ENCODING_SLEEP_TRIGGER retargets the trigger from
+                    # "every idle tick" to "genuine sleep-depth idle only" (see
+                    # substrate_homeostasis_sleep_trigger_enabled). The two branches are an if/else on the SAME
+                    # call site (not an addition beside it) -> MUTUALLY EXCLUSIVE, so the pass can never
+                    # double-fire for one activation: OFF -> only the original unconditional call runs
+                    # (byte-identical to HEAD); ON -> ONLY the sleep-depth-gated call runs (the original call is
+                    # skipped entirely for this session, every tick, while the flag is armed).
+                    if substrate_homeostasis_sleep_trigger_enabled():
+                        if _is_sleep_tick(cache_key, t, real_time):
+                            consolidate_substrate_homeostasis(cache_key, _chat, trigger="nrem_sleep")
+                    else:
+                        consolidate_substrate_homeostasis(cache_key, _chat, trigger="idle_tick")
+            except Exception:
+                import logging as _lg
+                _lg.getLogger(__name__).warning(
+                    "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
+
+        def _s_tag_capture():
+            if chat_getter is None:
+                return
+            # DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py): run the
+            # session's synaptic tag / PRP / late-phase ledger up to world-now on the idle (and so the sleep-depth)
+            # tick, AFTER the Turrigiano pass above (the ledger reads that rescale back off the store). Unset flag
+            # -> tick_chat returns None before touching anything -> byte-identical.
+            try:
+                from webapp import da_tag_capture_chat as _DTC
+                if _DTC.tag_capture_enabled():
+                    _chat_tc = chat_getter(cache_key)
+                    if _chat_tc is not None:
+                        _DTC.tick_chat(_chat_tc)
+            except Exception:
+                import logging as _lg
+                _lg.getLogger(__name__).warning(
+                    "DA tag-and-capture tick failed for %s", cache_key, exc_info=True)
+
+        def _s_relax91():
+            if chat_getter is None:
+                return
+            # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
+            # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
+            # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.
+            # relax_idle() itself no-ops (returns None) for a session that never had an #84 turn.
+            if _affect_relax_drive_enabled():
                 try:
-                    _chat = chat_getter(cache_key)
-                    if _chat is not None:
-                        # #138 (additive/default-off): BRAIN_DA_ENCODING_SLEEP_TRIGGER retargets the trigger from
-                        # "every idle tick" to "genuine sleep-depth idle only" (see
-                        # substrate_homeostasis_sleep_trigger_enabled). The two branches are an if/else on the SAME
-                        # call site (not an addition beside it) -> MUTUALLY EXCLUSIVE, so the pass can never
-                        # double-fire for one activation: OFF -> only the original unconditional call runs
-                        # (byte-identical to HEAD); ON -> ONLY the sleep-depth-gated call runs (the original call is
-                        # skipped entirely for this session, every tick, while the flag is armed).
-                        if substrate_homeostasis_sleep_trigger_enabled():
-                            if _is_sleep_tick(cache_key, now):
-                                consolidate_substrate_homeostasis(cache_key, _chat, trigger="nrem_sleep")
-                        else:
-                            consolidate_substrate_homeostasis(cache_key, _chat, trigger="idle_tick")
+                    _chat2 = chat_getter(cache_key)
+                    if _chat2 is not None:
+                        from webapp import affect_drives_chat as _ADC
+                        rec91 = _ADC.relax_idle(_chat2, relax=RELAX, neutral=NEUTRAL)
+                        if rec91 is not None and rec91.get("relaxed"):
+                            lst91 = _INNER_LIFE.setdefault(cache_key, [])
+                            lst91.append({
+                                "t": t, "affect_drives_relax": True,
+                                "level": rec91.get("level", 0), "lead": rec91.get("lead", ""),
+                                "mood": rec91.get("mood", 0.0),
+                                "note": "idle: my felt warmth (the #84 lead) is fading toward neutral "
+                                        "(level now %s)" % rec91.get("level", 0),
+                            })
+                            if len(lst91) > _INNER_LIFE_MAX:
+                                del lst91[:-_INNER_LIFE_MAX]
                 except Exception:
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
-                        "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
-                # DA-GATED TAG-AND-CAPTURE (default-OFF `BRAIN_DA_TAG_CAPTURE`; webapp/da_tag_capture_chat.py): run the
-                # session's synaptic tag / PRP / late-phase ledger up to world-now on the idle (and so the sleep-depth)
-                # tick, AFTER the Turrigiano pass above (the ledger reads that rescale back off the store). Unset flag
-                # -> tick_chat returns None before touching anything -> byte-identical.
+                        "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
+
+        def _s_relax92():
+            if chat_getter is None:
+                return
+            # #92: extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship DA-mode
+            # engagement->forthcomingness coupling's OWN persistent EMA (see _da_relax_drive_enabled's header
+            # note) -- a second, independent axis (energy/engagement) alongside #91's (valence/warmth).
+            # Self-gates on BRAIN_CONTINUOUS_DA_RELAX (default-ON) -> the byte-identical escape when set to 0.
+            # relax_idle() itself no-ops (returns None) for a session that never had a DA-drives turn.
+            if _da_relax_drive_enabled():
                 try:
-                    from webapp import da_tag_capture_chat as _DTC
-                    if _DTC.tag_capture_enabled():
-                        _chat_tc = chat_getter(cache_key)
-                        if _chat_tc is not None:
-                            _DTC.tick_chat(_chat_tc)
+                    _chat3 = chat_getter(cache_key)
+                    if _chat3 is not None:
+                        from webapp import da_mode_drives_chat as _DMD
+                        rec92 = _DMD.relax_idle(_chat3, relax=RELAX, neutral=NEUTRAL)
+                        if rec92 is not None and rec92.get("relaxed"):
+                            lst92 = _INNER_LIFE.setdefault(cache_key, [])
+                            lst92.append({
+                                "t": t, "da_drives_relax": True,
+                                "mode": rec92.get("mode", "rest"), "lead": rec92.get("lead", ""),
+                                "da_level": rec92.get("da_level", 0.0),
+                                "note": "idle: my energy/engagement (the DA-mode lead) is settling toward "
+                                        "rest (mode now %s)" % rec92.get("mode", "rest"),
+                            })
+                            if len(lst92) > _INNER_LIFE_MAX:
+                                del lst92[:-_INNER_LIFE_MAX]
                 except Exception:
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
-                        "DA tag-and-capture tick failed for %s", cache_key, exc_info=True)
-                # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
-                # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
-                # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.
-                # relax_idle() itself no-ops (returns None) for a session that never had an #84 turn.
-                if _affect_relax_drive_enabled():
-                    try:
-                        _chat2 = chat_getter(cache_key)
-                        if _chat2 is not None:
-                            from webapp import affect_drives_chat as _ADC
-                            rec91 = _ADC.relax_idle(_chat2, relax=RELAX, neutral=NEUTRAL)
-                            if rec91 is not None and rec91.get("relaxed"):
-                                lst91 = _INNER_LIFE.setdefault(cache_key, [])
-                                lst91.append({
-                                    "t": now, "affect_drives_relax": True,
-                                    "level": rec91.get("level", 0), "lead": rec91.get("lead", ""),
-                                    "mood": rec91.get("mood", 0.0),
-                                    "note": "idle: my felt warmth (the #84 lead) is fading toward neutral "
-                                            "(level now %s)" % rec91.get("level", 0),
-                                })
-                                if len(lst91) > _INNER_LIFE_MAX:
-                                    del lst91[:-_INNER_LIFE_MAX]
-                    except Exception:
-                        import logging as _lg
-                        _lg.getLogger(__name__).warning(
-                            "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
-                # #92: extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship DA-mode
-                # engagement->forthcomingness coupling's OWN persistent EMA (see _da_relax_drive_enabled's header
-                # note) -- a second, independent axis (energy/engagement) alongside #91's (valence/warmth).
-                # Self-gates on BRAIN_CONTINUOUS_DA_RELAX (default-ON) -> the byte-identical escape when set to 0.
-                # relax_idle() itself no-ops (returns None) for a session that never had a DA-drives turn.
-                if _da_relax_drive_enabled():
-                    try:
-                        _chat3 = chat_getter(cache_key)
-                        if _chat3 is not None:
-                            from webapp import da_mode_drives_chat as _DMD
-                            rec92 = _DMD.relax_idle(_chat3, relax=RELAX, neutral=NEUTRAL)
-                            if rec92 is not None and rec92.get("relaxed"):
-                                lst92 = _INNER_LIFE.setdefault(cache_key, [])
-                                lst92.append({
-                                    "t": now, "da_drives_relax": True,
-                                    "mode": rec92.get("mode", "rest"), "lead": rec92.get("lead", ""),
-                                    "da_level": rec92.get("da_level", 0.0),
-                                    "note": "idle: my energy/engagement (the DA-mode lead) is settling toward "
-                                            "rest (mode now %s)" % rec92.get("mode", "rest"),
-                                })
-                                if len(lst92) > _INNER_LIFE_MAX:
-                                    del lst92[:-_INNER_LIFE_MAX]
-                    except Exception:
-                        import logging as _lg
-                        _lg.getLogger(__name__).warning(
-                            "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
-        except Exception:
-            continue
+                        "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
+
+        for _step in (_s_d5, _s_sleep_replay, _s_persist, _s_homeostasis, _s_tag_capture, _s_relax91, _s_relax92):
+            with _brain_turn("idle_tick"):
+                if _REQ_SEQ.get(cache_key) != seq0 or _RESET_SEQ.get(cache_key) != reset0:
+                    break   # a turn (or a reset) arrived: leave this session for the next idle period
+                try:
+                    _step()
+                except Exception:
+                    break   # the pre-M0 behaviour: an unexpected error skips the rest of this session's tick
     return n

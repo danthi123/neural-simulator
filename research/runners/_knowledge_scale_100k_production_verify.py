@@ -6,9 +6,12 @@ Wikidata facts, vocab 23,914) against the technical bar for a default-bundle-siz
       held probe set.
   (2) MOAT: unknown subjects / cross cues still abstain, 0 new confabulations.
   (3) LATENCY: warm routed-recall median < 1 s.
-Through the EXACT production path: `developed_brain_io.load_developed_brain(bundle, ltm_bundle=<wikidata_100k>)`
--- the same call `webapp/server.py`'s `_build_chat_brain` makes when `BRAIN_LTM_BUNDLE` points at a bundle,
-installing a `TieredFactStore(buffer, ShardedPhasorStore.load(...))` on the real agent.
+Through the production path: `developed_brain_io.load_developed_brain(bundle, ltm_bundle=<wikidata_100k>)` -- the
+call `webapp/server.py`'s `_build_chat_brain` makes for a developed bundle with the default flags (BRAIN_SHARED_LTM and
+BRAIN_LTM_RNG_ISOLATE off), installing a `TieredFactStore(buffer, ShardedPhasorStore.load(...))` on the real agent.
+With either flag on (2026-10-13, claude-build/shared-ltm) the server instead loads the store itself (shared or
+RNG-isolated) and passes `ltm_store=<that store>, ltm_bundle=None`; the store and its recall are the same, but this
+script does not exercise that call.
 
 METHODOLOGY NOTE (why the oracle is built over a SUBSET, not all 78,857 facts). The existing validated
 methodology (`_knowledge_scale_flip_soak.py`, 2026-08-21 finding) deliberately never builds a flat oracle past
@@ -105,8 +108,9 @@ def _build_small_flat_oracle(all_facts, sample_agents, vocab, seed, D):
 
 def _make_production_brain(seed, D, tmp_root):
     """A minimal but genuine `save_developed_brain` bundle (a few conversation-taught facts), then
-    `load_developed_brain(..., ltm_bundle=<real wikidata_100k>)` -- the EXACT call webapp/server.py's
-    `_build_chat_brain` makes for a developed-brain + BRAIN_LTM_BUNDLE. renderer is a webapp-layer concept
+    `load_developed_brain(..., ltm_bundle=<real wikidata_100k>)` -- the call webapp/server.py's `_build_chat_brain`
+    makes for a developed brain + BRAIN_LTM_BUNDLE under the default flags (with BRAIN_SHARED_LTM or
+    BRAIN_LTM_RNG_ISOLATE on it passes `ltm_store=` instead; see the module docstring). renderer is a webapp-layer concept
     (Qwen/stub/raw) applied on TOP of the loaded agent for rendering; this call is renderer-agnostic (it returns
     the raw agent `load_developed_brain` always returns) -- there is no Qwen warm anywhere in this path."""
     from research.runners.developed_brain_io import save_developed_brain

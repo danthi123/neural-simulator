@@ -1,0 +1,137 @@
+{
+ "backend": "numpy",
+ "description": "Stage-3 C2 (self-report tracks confidence, natural uncertainty): the real aggregate's `meta` criterion verdict is PASS over six gate seeds; perfect = type-2 AUROC over the guess stratum >= 0.75 with a load-bearing, steerable inheritance read-out; nulls = never abstains, hedge-by-taught, all-abstain, item-keyed, random opt-out, a host conflict counter, each instrument made inert, an unreproduced lesion, read-out-dependent decisions.",
+ "failures": [],
+ "kinds": {
+  "null_all_abstain": "null",
+  "null_conflict_counter": "null",
+  "null_hedge_by_taught": "null",
+  "null_item_keyed": "null",
+  "null_lesion_inert": "null",
+  "null_lesion_unreproduced": "null",
+  "null_never_abstains": "null",
+  "null_permuted_inert": "null",
+  "null_random_optout": "null",
+  "null_ri_unstable": "null",
+  "null_steer_inert": "null",
+  "null_unclean": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "perfect_verbal_hedge": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_all_abstain": 0,
+  "null_conflict_counter": 0,
+  "null_hedge_by_taught": 0,
+  "null_item_keyed": 0,
+  "null_lesion_inert": 0,
+  "null_lesion_unreproduced": 0,
+  "null_never_abstains": 0,
+  "null_permuted_inert": 0,
+  "null_random_optout": 0,
+  "null_ri_unstable": 0,
+  "null_steer_inert": 0,
+  "null_unclean": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "perfect_verbal_hedge": 1000
+ },
+ "name": "stage3-C2 meta (DRAFT)",
+ "pass_rate": {
+  "null_all_abstain": 0.0,
+  "null_conflict_counter": 0.0,
+  "null_hedge_by_taught": 0.0,
+  "null_item_keyed": 0.0,
+  "null_lesion_inert": 0.0,
+  "null_lesion_unreproduced": 0.0,
+  "null_never_abstains": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_random_optout": 0.0,
+  "null_ri_unstable": 0.0,
+  "null_steer_inert": 0.0,
+  "null_unclean": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "perfect_verbal_hedge": 1.0
+ },
+ "pass_rate_ci95": {
+  "null_all_abstain": [
+   0.0,
+   0.0038
+  ],
+  "null_conflict_counter": [
+   0.0,
+   0.0038
+  ],
+  "null_hedge_by_taught": [
+   0.0,
+   0.0038
+  ],
+  "null_item_keyed": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_never_abstains": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_random_optout": [
+   0.0,
+   0.0038
+  ],
+  "null_ri_unstable": [
+   0.0,
+   0.0038
+  ],
+  "null_steer_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_verbal_hedge": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "0927a6383127bf63738d5fe376a2b4b0e3f2eb9f",
+ "scorer_files": {
+  "docs/drafts/stage3-exit/bar_sanity_s3_common.py": "33021c29abd2cb859a42821a93b40be14fad99f5d6b04c7d1397b0294c5f02c5",
+  "research/runners/_stage3_exit_draft.py": "1e3daea01d36283d9032ed1884fa27c25ed62b2d334085e123a20fa741256d58"
+ },
+ "scorer_sha256": "d21fdbc9f6962b41b6b8104c1b0be9dedfeda3929f92d97028f4c08d083d9e7c",
+ "seed": 0,
+ "spec": "docs/drafts/stage3-exit/bar_sanity_spec_s3_c2_meta.py",
+ "spec_sha256": "9e8a2b5f2fbcff429e76b2b1d7f86886cab57162576a9485e672f11ad5b64a39",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 361.1
+}

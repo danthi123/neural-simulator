@@ -279,3 +279,8 @@ tasks needed). deep-research-at-wall cleared: local record (corpus check logged)
   PROVISIONAL ledger rows). No task closed by the provisional flip: #228
   (learn-through-use) and #202 (surprise world-model) stay open — not merged
   to main yet.
+2026-10-12 reconcile (driver): 4 landings since the last stamp -- B2d battery scored at P=5818dc6 PROVISIONAL (desc appended to #224); c5 g6 pair UNDEFINED + g6b replay-fired pair PASS (new task switch-on-replay); _BRAIN_CHATS ~5.3 GB/session-key retention root cause (new task bounded cache); validation-battery prereg drafted on branch research/battery-prereg awaiting Claude review (new task battery). Board updated via tools/vikunja.sh: 3 tasks created + labeled, #224 desc appended.
+
+## 2026-10-13  claude-night-arc
+
+Added #251-#257 (derived honesty done; questions not stored done; neural question organ; guess strength vs evidence; idle replay ownership; one shared LTM; curiosity learning-progress)

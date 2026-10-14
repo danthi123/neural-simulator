@@ -414,6 +414,7 @@ class OneBrainComposer:
         # spiking store. See 2026-08-12-onebrain-spiking-store... (the wrap-vs-inner codebook bug this closes).
         self._recruit_rng = np.random.default_rng(int(seed) + 90210)
         self._free_slots = []
+        self._recruited_slots = {}   # word -> reserve slot it was recruited into (saved by cross-session persistence)
         for _k in range(max(0, int(vocab_headroom))):
             _ph = f"__free{_k}__"
             if _ph in self.comp.concepts:                # avoid the (astronomically unlikely) name collision
@@ -607,7 +608,50 @@ class OneBrainComposer:
         self.words[s] = w                                    # the cleanup slot now decodes to the real word
         self._word_index.pop(ph, None)
         self._word_index[w] = s
+        if not hasattr(self, "_recruited_slots"):
+            self._recruited_slots = {}
+        self._recruited_slots[w] = s
         self._dg_index = None; self._dg_built_V = -1         # codebook mutated -> rebuild the DG index on next read
+        return True
+
+    def recruited_slots(self) -> dict:
+        """{word: cleanup slot index} for every word recruited into a reserve slot. Cross-session persistence saves it
+        so a reload re-recruits each word into the SAME slot (`restore_recruit`)."""
+        return dict(getattr(self, "_recruited_slots", {}))
+
+    def restore_recruit(self, w, slot, code=None) -> bool:
+        """Re-recruit a persisted word into the reserve slot it held when it was saved (cross-session reload).
+        Without this a reload re-recruited words in re-store order, so a word could take ANOTHER word's slot with its
+        own code while its own slot's `__free<k>__` placeholder kept that code for the next new word: two words, one
+        code (re-review 2026-10-13: learn 'crow chase wren', reconsolidate to 'moth', save, reload -> a later 'heron'
+        got moth's code). `code` (the saved bind code) wins over the slot's reserve code. Returns True iff `w` now
+        occupies `slot`; a slot that is not free (or a word already placed elsewhere) is left alone (False)."""
+        if not isinstance(w, str):
+            return False
+        if w in self._word_index:
+            return self._word_index[w] == slot
+        if slot not in self._free_slots:
+            return False
+        self._free_slots.remove(slot)
+        ph = self.words[slot]
+        reserve_code = self.comp.concepts.pop(ph, None)
+        if code is not None:
+            self.comp.concepts[w] = np.asarray(code, dtype=float)
+        elif self.comp.concepts.get(w) is None:
+            self.comp.concepts[w] = (reserve_code if reserve_code is not None
+                                     else self._recruit_rng.uniform(0.0, 1.0, self.D))
+        if w not in self.comp.words:
+            import bisect; bisect.insort(self.comp.words, w)
+        self.words[slot] = w
+        self._word_index.pop(ph, None)
+        self._word_index[w] = slot
+        if not hasattr(self, "_recruited_slots"):
+            self._recruited_slots = {}
+        self._recruited_slots[w] = slot
+        self._dg_index = None; self._dg_built_V = -1
+        cache = getattr(self, "_csr_cache", None)
+        if cache is not None:
+            cache.clear()                                    # the cleanup operator changed -> rebuild on next read
         return True
 
     def hear(self, sentence, voice="active", polarity=None):

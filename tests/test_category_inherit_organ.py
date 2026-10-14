@@ -68,14 +68,40 @@ def _chat(monkeypatch, patient="worm"):
     return chat, org
 
 
-def test_default_is_off():
-    assert CI._CATEGORY_INHERIT_DEFAULT_ON is False
+def test_default_is_on_and_explicit_zero_is_off():
+    # flip (RULING c1-flip-go, branch research/c1-flip): unset -> ON; every explicit value keeps the pre-flip
+    # semantics, so `BRAIN_CATEGORY_INHERIT=0` is the byte-identical escape to the pre-flip default.
+    assert CI._CATEGORY_INHERIT_DEFAULT_ON is True
     old = os.environ.pop("BRAIN_CATEGORY_INHERIT", None)
     try:
-        assert CI.category_inherit_enabled() is False
+        assert CI.category_inherit_enabled() is True
+        for v in ("0", "false", "no", "off", "", "junk"):
+            os.environ["BRAIN_CATEGORY_INHERIT"] = v
+            assert CI.category_inherit_enabled() is False, v
+        os.environ["BRAIN_CATEGORY_INHERIT"] = "1"
+        assert CI.category_inherit_enabled() is True
     finally:
-        if old is not None:
+        if old is None:
+            os.environ.pop("BRAIN_CATEGORY_INHERIT", None)
+        else:
             os.environ["BRAIN_CATEGORY_INHERIT"] = old
+
+
+def test_explicit_zero_installs_nothing_and_changes_no_reply(monkeypatch):
+    """Byte-identity of the =0 escape (flip requirement): with BRAIN_CATEGORY_INHERIT=0 the server never
+    installs the wrapper (source-pinned in test_server_installs_only_behind_the_flag) and an installed
+    wrapper is inert at runtime -- gate output identical to the pre-flip flag-off default."""
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT", "0")
+    chat, org = _chat(monkeypatch)
+    assert chat.gate("the canary flies in the sky") == ["canary", "fly", "sky"]
+    assert chat.gate("what does the canary eat") is None
+    assert org.observed == [] and org.asked == []
+    assert CI.turn_stamp(chat) is None
+    from research.runners.category_inherit_organ import category_inherit_hop_enabled as hop
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    assert hop() is True                       # unset hop default is ON with the flip...
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", "0")
+    assert hop() is False                      # ...and =0 restores the 09-30 organ byte-identically
 
 
 def test_wrapper_acts_only_on_a_direct_routable_miss(monkeypatch):

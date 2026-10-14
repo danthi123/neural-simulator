@@ -36,8 +36,10 @@ def _organ(facts, hop, lesion=None, seed=DEV_SEED):
 
 def test_env_parse(monkeypatch):
     from research.runners.category_inherit_organ import category_inherit_hop_enabled
+    # flip (RULING c1-flip-go): UNSET is the new default -- on. Every EXPLICIT value keeps the 2026-10-06
+    # semantics, so `BRAIN_CATEGORY_INHERIT_HOP=0` restores the 09-30 organ byte-identically.
     monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
-    assert category_inherit_hop_enabled() is False
+    assert category_inherit_hop_enabled() is True
     for v in ("0", "false", "off", "", "no"):
         monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", v)
         assert category_inherit_hop_enabled() is False, v
@@ -114,7 +116,8 @@ def test_the_transmission_gate_holds_the_gain(hop_on):
 
 # ── (d) option off = the 09-30 organ ────────────────────────────────────────────────────────────────────────────
 def test_off_builds_no_gate_and_reproduces_the_recorded_0930_reads(monkeypatch):
-    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    # flip (RULING c1-flip-go): the hop default is now ON when unset, so pin the pre-flip OFF build explicitly.
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", "0")
     rec = {r["seed"]: r for r in json.load(open(DEV_0930))["rows"]}[DEV_SEED]
     o = _organ(C1_FACTS + CANARY, "env")
     assert o.hop is False and o.query_steps == 60

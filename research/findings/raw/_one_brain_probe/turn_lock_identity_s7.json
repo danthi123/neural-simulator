@@ -1,0 +1,94 @@
+{
+ "runner": "turn_lock_identity_check",
+ "seed": 7,
+ "script": [
+  "the wug eats the dax",
+  "what does the wug eat",
+  "what does the dog chase",
+  "Tell me about angora_turkey.",
+  "what does the wug eat"
+ ],
+ "arms": {
+  "on": {
+   "seconds": 573.5,
+   "peak_rss_mb": 6507.5,
+   "turn_lock_env": "1"
+  },
+  "off": {
+   "seconds": 570.3,
+   "peak_rss_mb": 6506.1,
+   "turn_lock_env": "0"
+  },
+  "on_rep": {
+   "seconds": 568.1,
+   "peak_rss_mb": 6508.0,
+   "turn_lock_env": "1"
+  }
+ },
+ "verdict": {
+  "null_identical_per_turn": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "on_off_identical_per_turn": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "readable": true,
+  "byte_identical": true,
+  "on_off_diff_keys": {},
+  "null_diff_keys": {}
+ },
+ "hashes": {
+  "on": [
+   "954f3ae0a5b444b687732c44b307d965ba4df40bea4c5a32af823ba3b71e33bc",
+   "31c4e0423a791bdbcf10c9e5f61a14730fe2890e804414dbcaed9d93becbfc37",
+   "e7f59c2f83aca5792938056b5830d0b32902e7cc5785657d35bfcfd3caf920be",
+   "3e3245f4b65a830b325c1e2d188e5b5c206bfb511e8be42f6399ecb9474f11a4",
+   "4a54b989b84bae5bd67f4b13323bf21ccfad5ddc929c82437824eb536540df75"
+  ],
+  "off": [
+   "954f3ae0a5b444b687732c44b307d965ba4df40bea4c5a32af823ba3b71e33bc",
+   "31c4e0423a791bdbcf10c9e5f61a14730fe2890e804414dbcaed9d93becbfc37",
+   "e7f59c2f83aca5792938056b5830d0b32902e7cc5785657d35bfcfd3caf920be",
+   "3e3245f4b65a830b325c1e2d188e5b5c206bfb511e8be42f6399ecb9474f11a4",
+   "4a54b989b84bae5bd67f4b13323bf21ccfad5ddc929c82437824eb536540df75"
+  ],
+  "on_rep": [
+   "954f3ae0a5b444b687732c44b307d965ba4df40bea4c5a32af823ba3b71e33bc",
+   "31c4e0423a791bdbcf10c9e5f61a14730fe2890e804414dbcaed9d93becbfc37",
+   "e7f59c2f83aca5792938056b5830d0b32902e7cc5785657d35bfcfd3caf920be",
+   "3e3245f4b65a830b325c1e2d188e5b5c206bfb511e8be42f6399ecb9474f11a4",
+   "4a54b989b84bae5bd67f4b13323bf21ccfad5ddc929c82437824eb536540df75"
+  ]
+ },
+ "answers": {
+  "on": [
+   "the wug eats the dax the dog chases the cat the cat eats the fish",
+   "the wug eats the dax",
+   "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+   "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+   "Setting the held thread aside \u2014 As for it \u2014 On wug, then \u2014 the wug eats the dax"
+  ],
+  "off": [
+   "the wug eats the dax the dog chases the cat the cat eats the fish",
+   "the wug eats the dax",
+   "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+   "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+   "Setting the held thread aside \u2014 As for it \u2014 On wug, then \u2014 the wug eats the dax"
+  ],
+  "on_rep": [
+   "the wug eats the dax the dog chases the cat the cat eats the fish",
+   "the wug eats the dax",
+   "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+   "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+   "Setting the held thread aside \u2014 As for it \u2014 On wug, then \u2014 the wug eats the dax"
+  ]
+ }
+}
