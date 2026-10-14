@@ -1369,3 +1369,15 @@ class-11 lesion-verification paragraph (commit_lesioned true 6/6 lesion, false i
 120 _shards files, 108 raw files, sha1-verified then removed), then rc=0: merged into main as 1e4ec45ad.
 NEEDS [word-role-commit] RESULT filed (verify-go due). NEXT: RULING bg-commit-now-1014 + NEEDS
 [bg-commit-gate] GO TO RUN - docs/drafts/bg-commit/HANDOFF.md step 0 (pin + tests + provision).
+
+
+17:26: bg-commit-gate steps 0-2 started (NEEDS [bg-commit-gate] GO TO RUN + RULING bg-commit-now-1014,
+critical path = first live seam retirement): worktree research/bg-commit-gate off main 3e7a41d97; tests
+77/77 pass (test_bg_commit, test_bg_neural_seam, test_word_role_commit, test_idle_replay_organ); pin
+P=3e7a41d97818ad222adf1f05df83aac6db795883. Pin commit BLOCKED once by lane-starvation (waiver renewal
+budget exhausted at 7.82h) - fixed per the gate message by queueing lane restocks A/B/C/E dev seeds 19-21
++ lane C metacog smoke s9 (depth 5->9, pins cc2f4e626/afffc32e2), then committed ff9fa2c9f. Provision ok
+17:25:58 on all 4 nodes (pool41/pool42/pool40/wspool, markers_after all true). Six gate lines generated
+and committed 95abce562 (6/6 expected). Step-2 canary (seed-43 line on pool41, --wait-s 18000) launched
+17:26 as background proc_8912842d16ef. NEXT: canary rc -> ENGAGED check (step 2) -> queue the six gate
+lines (step 3) -> score when 42 arm files land (step 4).
