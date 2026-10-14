@@ -1349,3 +1349,9 @@ block 3 step-O canary + 6 lines.
 lines queued 12:06 (mem_gb=2 max_age_h=120). Also landed: 4 lane-stock restocks (laneA PARTIAL/BOUNDARY 3-seed
 replication, laneC SMOKE-GO, laneB/laneE ok, prov sidecars). Next = block 4 score O (tar pull; rsync absent).
 
+13:14: word-role-commit block 5 (step R, RULING spiking-commit-a1-run-1014): op=0, 12 R lines committed
+419cff8a2; canary PASS pool42 rc=0 wall=1701s (id load_bearing_fraction_c64f2c70d_pool42_20261014T124108,
+canary LB fraction 1.000 1/1); word_role_trace checks all pass (route=word_role_commit, error null,
+commit_lesioned T in lesion / F in intact, read_invariant T intact); 12 R lines queued 13:14 (mem_gb=8
+max_age_h=168). Next = block 6 score R when the 12 shards land (rsync absent, tar pull).
+
