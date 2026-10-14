@@ -36,6 +36,7 @@ DECLARED HOST SCAFFOLDS (ON only; each is named, none decides a recall):
 from __future__ import annotations
 
 import copy
+import itertools
 import os
 import threading
 import time
@@ -91,9 +92,13 @@ class Context:
 
     FIELDS = ("chat", "rich", "mood", "worldview", "multiref", "silent_wm", "discourse", "pmem", "selfinit")
 
+    _SEQ = itertools.count(1)
+
     def __init__(self, key):
         self.key = key
-        self.conversation_id = key
+        # the conversation id dies with the conversation (design section 1): a reset under the same session key is a
+        # NEW conversation, so a fact the earlier one taught is "someone told me" there too. Process-unique, opaque.
+        self.conversation_id = (key, next(Context._SEQ))
         self.interlocutor = None     # the typed name (request `interlocutor` / OpenAI `user`); never leaves this object
         for f in self.FIELDS:
             setattr(self, f, None)
@@ -441,7 +446,8 @@ class Brain:
 
     # -- host source tags (declared scaffold) --
     def note_taught(self, bkey, before, after, ckey) -> list:
-        """Tag every fact that entered the shared store during this conversation's turn with that conversation."""
+        """Tag every fact that entered the shared store during this conversation's turn with that conversation
+        (`ckey`: the Context's `conversation_id`)."""
         new = [f for f in after if f not in before]
         tags = self.fact_sources.setdefault(bkey, {})
         for f in new:

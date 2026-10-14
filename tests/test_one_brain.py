@@ -360,6 +360,17 @@ def test_on_conversations_share_one_brain_and_keep_their_own_state(on_handler):
     assert st["boundary_seen_at_start"][-1] is True                  # A's own state came back
 
 
+def test_a_reset_conversation_is_a_new_conversation_for_the_source_frame(on_handler):
+    """The conversation id dies with the conversation: after a reset under the same session key, a fact the earlier
+    conversation taught is framed like any other conversation's (the brain keeps the fact, not who told it)."""
+    S, reg, brain, st = on_handler
+    _turn(S, "A", "teach wug eat dax")
+    first = reg.get(("A", "tiny-demo", "stub")).conversation_id
+    r = _turn(S, "A", "ask wug eat dax", reset=True)
+    assert reg.get(("A", "tiny-demo", "stub")).conversation_id != first
+    assert r["answer"] == "Someone told me: wug eat dax"
+
+
 def test_interlocutor_stays_on_the_context(on_handler):
     S, reg, brain, st = on_handler
     _turn(S, "A", "teach wug eat dax", interlocutor="Alice")

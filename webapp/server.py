@@ -5080,8 +5080,8 @@ def _one_brain_turn(req, cache_key, renderer, ctx) -> JSONResponse:
         mouth.take_calls()                                  # nothing from an earlier turn
     before = _OB.learned_triples(chat)
     resp = brain_reply(chat, req, source, cache_key)
-    _ONE_BRAIN.note_taught(bk, before, _OB.learned_triples(chat), cache_key)
-    resp = _one_brain_source_frame(resp, bk, cache_key)
+    _ONE_BRAIN.note_taught(bk, before, _OB.learned_triples(chat), ctx.conversation_id)
+    resp = _one_brain_source_frame(resp, bk, ctx.conversation_id)
     if mouth is not None:
         calls = mouth.take_calls()
         if calls:
@@ -5089,7 +5089,7 @@ def _one_brain_turn(req, cache_key, renderer, ctx) -> JSONResponse:
     return resp
 
 
-def _one_brain_source_frame(resp, bk, cache_key):
+def _one_brain_source_frame(resp, bk, conversation_id):
     """The interim source frame (owner ruling 2026-10-13, policy B; a DECLARED HOST SCAFFOLD, design section 3, until
     M3's spiking source monitor): a reply that recalls a fact ANOTHER conversation taught leads with the anonymous
     "Someone told me: "; a reply whose supporting/derived facts include one ends with "(Someone told me part of
@@ -5108,7 +5108,7 @@ def _one_brain_source_frame(resp, bk, cache_key):
     # fact; plus the hops of a derived answer
     said = [f for f in map(_svo, body.get("supporting_facts") or []) if f] or ([rec] if rec else [])
     said += [f for f in map(_svo, body.get("derived_from") or []) if f]
-    told = [f for f in said if _ONE_BRAIN.taught_elsewhere(bk, f, cache_key)]
+    told = [f for f in said if _ONE_BRAIN.taught_elsewhere(bk, f, conversation_id)]
     if not told:
         return resp
     # the lead only when EVERYTHING the reply states came from another conversation; otherwise the part note (a
