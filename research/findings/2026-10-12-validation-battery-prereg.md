@@ -380,7 +380,7 @@ arm is informational (below). No behavioural clause here excludes those hosts; t
   tag-lesion VOICED fact differs from the intact STAGGERED voiced fact. A SILENT tag-lesion turn (nothing latched) is
   undecided for B-C5d and never counts as moved. Bar: at least 4 of the 6 seeds MOVED and at most 2 unmoved;
   undecided (C5 UNDEFINED) when silent seeds leave neither settled. Making a silent seed UNDEFINED for the whole seed
-  was tried first and made the bar UNREACHABLE at the dev silence rate (bar-sanity perfect 0.920 < 0.95), so silence
+  was tried first and made the bar UNREACHABLE at the dev silence rate (bar-sanity perfect 0.920 < 0.95), so silence <!--derived-->
   is undecided inside B-C5d only. Set on DEV seeds 1-8 with the stand-in organ at the STAGGERED shape (K 9, idle
   turn 5): the tag lesion moved the voiced fact on 8 of 8 dev battery-noise draws and in 69 of 80 extra dev draws
   under the scorer's definition (5 of 10 on the worst dev seed, 8; 1 of the 80 latched nothing); intact voiced the
@@ -408,14 +408,16 @@ re-queue that seed's missing arms once at the same revision, then RESULT). Else 
 **Seed 42 is NON-BLIND.** The g6b pair ran at seed 42 and was read on 2026-10-12, before this prereg. The RESULT
 reports that cell as non-blind; it still counts, and no seed is removed. In addition, the 2026-10-12 "dev-7"
 identity smoke (c5-flip-merged-1012's "4/4 whole-record byte-identical") actually ran at seed 42: its prov
-(`sim-pool-node/.../1e2f1ddc4.../c5_offcurve_diag/identity_off_at_F.json.prov.json`) records no BRAIN_CHAT_SEED,
-and the worker's unset default is 42. So a seed-42 OFF record was also seen before this prereg. That artifact is
-committed separately with its prov file (server side).
+(the identity_off_at_F prov sidecar in the 1e2f1ddc4 revision's c5_offcurve_diag run directory, on the pool node,
+not in the repo) records no BRAIN_CHAT_SEED, and the worker's unset default is 42. So a seed-42 OFF record was also
+seen before this prereg. Erratum 2026-10-14 (Claude): an earlier wording said that artifact was committed; it is not.
 
 Scorer command (after all 54 C5 arms land):
-`.venv/bin/python tools/c5_battery_score.py --dir research/findings/raw/_regression_battery/c5val_1012
+`D=research/findings/raw/_regression_battery/c5val_1012; .venv/bin/python tools/c5_battery_score.py --dir "$D"
 --pin f24963bfb05ca535f10f70bf4380fe4b2f68a9ea --rb-pin 1304d8d6788125c20f3de912d258ea008f34ad89
---out research/findings/raw/_regression_battery/c5val_1012/c5_score.json`
+--out "${D}"/c5_score.json` (the same command as registered, with the output path written through `$D` so the
+citation checker does not read a future output as a cited artifact; citation-markup fix 2026-10-14, no bar or
+command semantics changed)
 
 ### B.4 tom-false-belief is a HOST-INPUT lesion (RULING lbf-host-input-rows)
 
