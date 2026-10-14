@@ -35,9 +35,13 @@ neural-seam trial; at least 6 events per gated measure) and the construction gua
    k, motor_k -> commit gate G_k (12 excitatory, self-recurrent, transmission gate `bg_commit_in`), G_k -> GI_k
    (8 inhibitory) -| G_j (gate `bg_commit_excl`), G_k -> latch S_k (20 excitatory, self-holding S_k -> S_k, gate
    `bg_commit_latch`), and the single-slot exclusion GI_k -| S_j (a later commitment replaces an earlier one);
-   operating point `BG_COMMIT_GRID[4]` (`BG_COMMIT_OP = 4`). The shared wiring and read live in
-   `research/runners/spiking_commit.py`. The 09-29 latch stays built and its read is recorded from the same trial,
-   never used.
+   operating point `BG_COMMIT_GRID[4]` (`BG_COMMIT_OP = 4`), in full: NG 12, NGI 8, NS 20, W_XG 30, W_GG 20,
+   W_GGI 60, W_GIG 60, W_GS 12, W_SS 60, W_GIS 60, W_RESET 16 (selector_reset -> G and S, density 0.70, GABA_A),
+   READ_STEPS 30, READ_FRAC 0.03; every stage pathway at density 1.0, no jitter, frozen; AMPA excitation. **Frozen at
+   the commit that adds this amendment; any change to this row, to `BG_COMMIT_OP`, or to the trial schedule voids the
+   amendment** (pinned by `tests/test_bg_commit.py::test_frozen_row_4`, and by the precondition in item 5). The
+   shared wiring and read live in `research/runners/spiking_commit.py`. The 09-29 latch stays built and its read is
+   recorded from the same trial, never used.
 2. **The commit read.** Over the last 30 ms of the 200 ms zero-stimulus hold, S_k is ON iff its spike count reaches
    READ_FRAC x 20 x 30 (READ_FRAC 0.03: 18 spikes). Exactly one ON -> that action; none -> no commit (the turn falls
    through, as before); both -> co-commit (no commit, counted). The same spikes are re-read at READ_FRAC x0.5 and x2.
@@ -47,12 +51,19 @@ neural-seam trial; at least 6 events per gated measure) and the construction gua
 4. **G4, amended.** Measure: the fraction of `seam_b` neural-seam events whose committed action under the commit read
    changes at READ_FRAC x0.5 or x2, or that carry no commit record. **Bar: 0 (no event changes).** The 09-29 G4
    measure of the old latch read (now against the old read's own choice) is reported, not gated.
-5. **New precondition (UNDEFINED, never NO-GO).** Every neural-seam event of the three seam arms carries a commit
-   record naming the event's committed action, in shards run with `BRAIN_BG_COMMIT=1` (`commit_engaged` = 1.0), and
-   G4 has at least 6 events.
+5. **New preconditions (UNDEFINED, never NO-GO).** (a) Every neural-seam event of the three seam arms carries a
+   commit record, in shards run with `BRAIN_BG_COMMIT=1` (`commit_engaged` = 1.0). Its "names the event's committed
+   action" clause is presence-only: the organ copies the commit winner into the event's winner
+   (`bg_action_selection_production_organ.py:546`), so it cannot fail when the record is present. (b) Exactly one
+   neural-seam event per seam-arm turn: 12 x 6 = 72 (`commit_event_count_ok`). A turn whose stage raised leaves no
+   event, because `webapp/server.py:5699` swallows the exception and the turn falls through to SPEAK; that turn makes
+   the run UNDEFINED instead of passing G2b. (c) `commit.op == 4` on every event. (d) `commit.organ_seed` equals the
+   shard's chat seed on every event. (e) G4 has at least 6 events.
 6. **Scorer.** `host_share_bg_seam.score(..., commit=True)` and `verdict` with `BARS_AMENDED`; the per-event
    measures are `commit_event_measures` and the bar is `g4_commit_holds`. Without `--commit` the scorer reproduces the
-   committed 10-02 score exactly (`tests/test_bg_commit.py::test_scorer_without_commit_reproduces_the_1002_score`).
+   committed 10-02 score exactly (`tests/test_bg_commit.py::test_scorer_without_commit_reproduces_the_1002_score`),
+   and it refuses (ValueError) shards that carry this amendment's id or `BRAIN_BG_COMMIT=1`: a commit run is never
+   scored as a 09-29 run.
 
 ## Operating point (dev seeds 1-8 only)
 
@@ -76,7 +87,14 @@ rather than the read: the old latch read on the same trials fails them on 5 of 8
 data by a rule declared here: among rows whose stage checks (read invariance, the commit and latch lesions, membrane
 and no carry-over) hold on all eight seeds, the one whose committed action agrees most often with the old read on the
 same trials (`selection.json`). The choice was made on dev seeds only; rows 3 and 4 differ from the old read by one
-trial in each capability count.
+trial in each capability count. **Declared plainly:** this rule favoured the row that agrees most with the old latch
+read, and that read had already passed G2a, G2b and G3 on the 10-02 gate data; the selection therefore leans toward
+the decisions that passed those gates once.
+
+**Declared plainly (seed 42).** Under the flag the organ seed follows the chat seed, so chat seed 42 builds the organ
+at seed 42, and that is the organ all six 10-02 gate seeds used (the server's fixed organ seed). Its race on these
+four turns was already seen in the 10-02 gate data; only chat seeds 43, 44, 100, 101 and 102 are organ builds no
+gate run has seen.
 
 ## DEV expectations (organ level, row 4; stated before any gate seed)
 

@@ -63,6 +63,8 @@ ARMS = {
 }
 BG_FIELDS_EXTRA = ("bg_select.action",)
 AMENDMENT_ID = "2026-10-14-bg-live-seam-commit"
+FROZEN_COMMIT_OP = 4                 # the amendment's frozen BG_COMMIT_GRID row; any other op makes the run UNDEFINED
+SEAM_ARMS = ("seam_b", "seam_readout", "seam_lesion_value")
 COMMIT_ENV = ("BRAIN_BG_COMMIT", "BRAIN_BG_COMMIT_OP", "BRAIN_BG_COMMIT_LESION")
 _EV = {"label": None, "events": {}}
 
@@ -236,14 +238,17 @@ def _held(resp):
     return bool(((resp or {}).get("bg_select") or {}).get("action") == "STAY_SILENT")
 
 
-def commit_event_measures(e, env_on):
+def commit_event_measures(e, env_on, chat_seed=None):
     """The amended score's per-event measures (pure; 2026-10-14 amendment), from one `bg_neural` event: `engaged`
-    (the shard ran with BRAIN_BG_COMMIT=1 and the event's commit record names the event's committed action),
-    `commit_thr_change` (no commit record, or the commit read changes at READ_FRAC x0.5 or x2), `old_read_agree`
-    and `co_commit` (reported)."""
+    (the shard ran with BRAIN_BG_COMMIT=1 and the event carries a commit record; the winner clause is presence-only,
+    because the organ copies the commit winner into the event's winner), `op_ok` (the record's op is the frozen
+    FROZEN_COMMIT_OP), `seed_ok` (the record's organ_seed is the shard's chat seed), `commit_thr_change` (no commit
+    record, or the commit read changes at READ_FRAC x0.5 or x2), `old_read_agree` and `co_commit` (reported)."""
     cm = e.get("commit")
     var = (cm or {}).get("read_variants") or {}
     return {"engaged": int(bool(env_on) and cm is not None and cm.get("winner") == e.get("winner")),
+            "op_ok": int(cm is not None and cm.get("op") == FROZEN_COMMIT_OP),
+            "seed_ok": int(cm is not None and chat_seed is not None and cm.get("organ_seed") == int(chat_seed)),
             "commit_thr_change": int(cm is None or not cm.get("read_invariant") or not var
                                      or any(v != cm.get("winner") for v in var.values())),
             "old_read_agree": int(cm is not None and cm.get("winner") == cm.get("old_latch_winner")),
@@ -263,7 +268,10 @@ def score(shard_dir, seeds, commit=False):
     commit read changes at READ_FRAC x0.5 or x2, or the event carries no commit record), `commit_engaged` (the event
     carries a commit record whose winner is the event's committed action, in a shard run with BRAIN_BG_COMMIT=1),
     `old_read_agree` and `co_commit` (reported); the old latch's `latch_thr_change` is then measured against the old
-    read's own choice. Without `commit` the score is the 09-29 one, unchanged."""
+    read's own choice; `commit_event_count_ok` (exactly one neural-seam event per seam-arm turn: a turn whose stage
+    raised leaves none, because the server swallows the error and speaks), `commit_op_ok` and `commit_seed_ok`.
+    Without `commit` the score is the 09-29 one, unchanged; shards run with the commit stage are then REFUSED
+    (ValueError), never scored as a 09-29 run."""
     C = lane_c()
     fields = tuple(C.DECISION_FIELDS) + BG_FIELDS_EXTRA
     out = {"seeds": [int(s) for s in seeds], "per_seed": {}, "fields": list(fields)}
@@ -271,13 +279,19 @@ def score(shard_dir, seeds, commit=False):
               "latch_thr_change": [], "first12_change": [], "membrane_ok": [], "content_held": [], "empty_held": [],
               "sham_ok": [], "bus_unique_agree": [], "seam_intact_held_for_ns": [], "seam_lesion_held": []}
     if commit:
-        pooled.update({"commit_thr_change": [], "commit_engaged": [], "old_read_agree": [], "co_commit": []})
+        pooled.update({"commit_thr_change": [], "commit_engaged": [], "old_read_agree": [], "co_commit": [],
+                       "commit_event_count_ok": [], "commit_op_ok": [], "commit_seed_ok": []})
     prod_events = []          # per-turn {F,S,D,f_outcome,seed,live} records, for SCHEMA.seam_stats/classify_seam
     for s in seeds:
         sh = {}
         for arm in ARMS:
             p = os.path.join(shard_dir, "s%d" % int(s), arm + ".json")
             sh[arm] = json.load(open(p)) if os.path.exists(p) else None
+        if not commit and any(x is not None and (x.get("amendment") == AMENDMENT_ID
+                                                 or (x.get("env") or {}).get("BRAIN_BG_COMMIT") == "1")
+                              for x in sh.values()):
+            raise ValueError("seed %s: shards ran with the commit stage (amendment %s); score them with --commit "
+                             "(commit=True), never as a 09-29 run" % (s, AMENDMENT_ID))
         rows = []
         for label, _msg, cls in TURNS:
             ev = {"turn": label, "class": cls, "undefined": []}
@@ -327,15 +341,22 @@ def score(shard_dir, seeds, commit=False):
                         pooled["bus_disagree"].append(int(any(x != base for x in v.values())))
                         pooled["bus_unique_agree"].append(int(v["unique"] == base))
             for arm in ("seam_b", "seam_readout", "seam_lesion_value"):
+                if commit:
+                    n_ev = sum(1 for e in ((sh[arm] or {}).get("events") or {}).get(label, [])
+                               if e.get("kind") == "bg_neural")
+                    pooled["commit_event_count_ok"].append(int(n_ev == 1))
                 for e in ((sh[arm] or {}).get("events") or {}).get(label, []):
                     if e.get("kind") == "bg_neural":
                         lo, hi = e.get("v_range") or [None, None]
                         pooled["membrane_ok"].append(int(lo is not None and lo >= -150.0 and hi <= 100.0))
                         cm = e.get("commit") if commit else None
                         if commit:
-                            cmx = commit_event_measures(
-                                e, ((sh[arm] or {}).get("env") or {}).get("BRAIN_BG_COMMIT") == "1")
+                            env = (sh[arm] or {}).get("env") or {}
+                            cmx = commit_event_measures(e, env.get("BRAIN_BG_COMMIT") == "1",
+                                                        chat_seed=env.get("BRAIN_CHAT_SEED"))
                             pooled["commit_engaged"].append(cmx["engaged"])
+                            pooled["commit_op_ok"].append(cmx["op_ok"])
+                            pooled["commit_seed_ok"].append(cmx["seed_ok"])
                         if arm == "seam_b":
                             rd = e.get("readouts") or {}
                             old = cm.get("old_latch_winner") if cm is not None else e.get("winner")
@@ -405,7 +426,7 @@ BARS = {"F_before_min": 0.8, "empty_held_min": 0.75, "content_held_max": 0.0, "n
         "min_events_per_measure": 6}
 # AMENDMENT 2026-10-14 (research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md): G4 on the commit read, no
 # change allowed; the commit stage engaged on every neural-seam event (a precondition: UNDEFINED, never NO-GO).
-BARS_AMENDED = dict(BARS, commit_thr_change_max=0.0, commit_engaged_min=1.0)
+BARS_AMENDED = dict(BARS, commit_thr_change_max=0.0, commit_engaged_min=1.0, frozen_commit_op=FROZEN_COMMIT_OP)
 
 
 def verdict(sc, bars=None):
@@ -428,6 +449,14 @@ def verdict(sc, bars=None):
     if amended:
         v.require("commit stage engaged on every neural-seam event", m.get("commit_engaged"),
                   expect=lambda x: x is not None and x >= bars["commit_engaged_min"])
+        n_turns = len(SEAM_ARMS) * len(TURNS) * len(sc.get("seeds") or [])
+        v.require("exactly one neural-seam event per seam-arm turn (%d)" % n_turns,
+                  (m.get("commit_event_count_ok"), n.get("commit_event_count_ok", 0)),
+                  expect=lambda x: x[0] == 1.0 and x[1] == n_turns)
+        v.require("commit.op == %d on every neural-seam event" % FROZEN_COMMIT_OP, m.get("commit_op_ok"),
+                  expect=lambda x: x == 1.0)
+        v.require("commit.organ_seed == the shard's chat seed on every neural-seam event", m.get("commit_seed_ok"),
+                  expect=lambda x: x == 1.0)
         v.require("enough events for commit_thr_change", n.get("commit_thr_change", 0),
                   expect=lambda x: x >= bars["min_events_per_measure"])
     g = {

@@ -235,7 +235,8 @@ def _amended_copy(tmp_path, mutate=None):
                     if e.get("kind") == "bg_neural":
                         w = e.get("winner")
                         e["commit"] = {"winner": w, "read_invariant": True, "read_variants": {"x0.5": w, "x2": w},
-                                       "co_commit": False, "old_latch_winner": w}
+                                       "co_commit": False, "old_latch_winner": w, "op": 4,
+                                       "organ_seed": int(sh["env"]["BRAIN_CHAT_SEED"])}
                         if mutate:
                             mutate(s, arm, label, e)
             json.dump(sh, open(p, "w"))
@@ -277,6 +278,41 @@ def test_amended_scorer_unengaged_is_undefined(tmp_path):
     sc = H.score(_amended_copy(tmp_path, drop), GATE, commit=True)
     assert sc["pooled"]["commit_engaged"] < 1.0
     assert H.verdict(sc)["verdict"] == "UNDEFINED"
+
+
+@pytest.mark.parametrize("what", ["op", "organ_seed", "missing_event"])
+def test_amended_scorer_wrong_op_seed_or_missing_event_is_undefined(tmp_path, what):
+    """Review 2026-10-14: the frozen row (op 4), the organ seed = the chat seed, and exactly one neural-seam event per
+    seam-arm turn (a stage that raised leaves none: the server swallows it and speaks) are preconditions."""
+    import research.runners.host_share_bg_seam as H
+
+    def bad(s, arm, label, e):
+        if s == 44 and arm == "seam_b" and label == "hsb_q":
+            if what == "op":
+                e["commit"]["op"] = 3
+            elif what == "organ_seed":
+                e["commit"]["organ_seed"] = 42
+            else:
+                e["kind"] = "bg_neural_dropped"                           # the turn has no neural-seam event
+    sc = H.score(_amended_copy(tmp_path, bad), GATE, commit=True)
+    vd = H.verdict(sc)
+    assert vd["verdict"] == "UNDEFINED", vd
+    assert vd["gates"]["G2b_neural_seam_never_holds_a_content_turn"] is True   # it would have passed otherwise
+
+
+def test_scorer_refuses_commit_shards_without_commit(tmp_path):
+    import research.runners.host_share_bg_seam as H
+    with pytest.raises(ValueError):
+        H.score(_amended_copy(tmp_path), GATE)
+
+
+def test_frozen_row_4():
+    """The amendment freezes BG_COMMIT_GRID[4]; any change voids it."""
+    BG = _bg()
+    import research.runners.host_share_bg_seam as H
+    assert BG.BG_COMMIT_OP == 4 == H.FROZEN_COMMIT_OP
+    assert BG.bg_commit_row(4) == dict(NG=12, NGI=8, NS=20, W_XG=30.0, W_GG=20.0, W_GGI=60.0, W_GIG=60.0, W_GS=12.0,
+                                       W_SS=60.0, READ_STEPS=30, READ_FRAC=0.03, W_RESET=16.0, W_GIS=60.0, op=4)
 
 
 def test_arm_env_sets_the_commit_flag_on_seam_arms_only():

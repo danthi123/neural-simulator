@@ -45,11 +45,14 @@ git add docs/drafts/bg-commit/jobs && git commit -m "ops(bg-commit): six gate li
 
 Expect 6 lines. Any other count: STOP, NEEDS-CLAUDE.
 
-## 2. Canary first (the seed-42 line on one pool node), then the engagement check
+## 2. Canary first (the seed-43 line on one pool node), then the engagement check
+
+The canary runs seed 43, not 42: flag off, the organ is always built at seed 42, so only a seed other than 42 shows
+that the organ seed followed the chat seed.
 
 ```bash
 cd $P && J=$WT/bg-commit-gate/docs/drafts/bg-commit/jobs && PIN=$(awk '$1=="P"{print $2}' $WT/bg-commit-gate/docs/drafts/bg-commit/PINS.tsv)
-bash tools/pool_canary.sh run pool41 "$(head -1 $J/gate_${PIN:0:7}.txt)" --wait-s 18000; echo canary rc=$?
+bash tools/pool_canary.sh run pool41 "$(sed -n 2p $J/gate_${PIN:0:7}.txt)" --wait-s 18000; echo canary rc=$?
 ```
 
 Canary rc != 0: STOP, NEEDS-CLAUDE with the canary log path. Then open the canary's `seam_b.json` (under
@@ -61,7 +64,8 @@ import json, sys
 d = json.load(open(sys.argv[1]))
 ev = [e for evs in d["events"].values() for e in evs if e.get("kind") == "bg_neural"]
 ok = (d["env"].get("BRAIN_BG_COMMIT") == "1" and len(ev) == 4 and d.get("amendment") == "2026-10-14-bg-live-seam-commit"
-      and all(e.get("commit") and e["commit"]["winner"] == e["winner"] and e["commit"]["organ_seed"] == 42
+      and d["env"].get("BRAIN_CHAT_SEED") == "43"
+      and all(e.get("commit") and e["commit"]["organ_seed"] == 43 and e["commit"]["op"] == 4
               and set(e["commit"]["read_variants"]) == {"x0.5", "x2"} and "old_latch_winner" in e["commit"] for e in ev))
 print("ENGAGED" if ok else "NOT-ENGAGED")
 EOF
@@ -95,9 +99,9 @@ arm files). Still missing after one re-queue: STOP, NEEDS-CLAUDE.
 
 | verdict | gates | write | then |
 |---|---|---|---|
-| GO | all six true | PROVISIONAL finding `research/findings/<date>-bg-live-seam-commit-RESULT.md`: amendment section "Outcome -> verdict" sentence verbatim, the pooled and n tables copied from score.json, the reported numbers (old_read_agree, co_commit, first12_change, latch_thr_change of the old latch, S, D), the fixed caveats | NEEDS-CLAUDE "[bg-commit] GO PROVISIONAL, verify-go due" |
+| GO | the six GATED keys all true (G1, G2a, G2b, G3, `G4_commit_read_threshold_invariant`, G5); `G4_old_latch_read_threshold_invariant (reported, not gated)` is reported, not gated, and may be false | PROVISIONAL finding `research/findings/<date>-bg-live-seam-commit-RESULT.md`: amendment section "Outcome -> verdict" sentence verbatim, the pooled and n tables copied from score.json, the reported numbers (old_read_agree, co_commit, first12_change, latch_thr_change of the old latch, S, D), the fixed caveats | NEEDS-CLAUDE "[bg-commit] GO PROVISIONAL, verify-go due" |
 | NO-GO | G4_commit_read_threshold_invariant false | PROVISIONAL NO-GO finding: the amendment's G4 sentence verbatim, the per-seed seam_b events whose commit read changed (from `per_seed` and the shards' `commit.read_variants`) | NEEDS-CLAUDE |
-| NO-GO | any other gate false | PROVISIONAL NO-GO finding naming each false gate with the amendment's sentence for it | NEEDS-CLAUDE |
-| UNDEFINED | - | if a precondition names `commit stage engaged`: STOP, NEEDS-CLAUDE (do not re-run). Otherwise re-queue the seeds with missing arm files once; still UNDEFINED: STOP, NEEDS-CLAUDE |
+| NO-GO | any other GATED key false (never the reported G4_old_latch key) | PROVISIONAL NO-GO finding naming each false gated key with the amendment's sentence for it | NEEDS-CLAUDE |
+| UNDEFINED | - | if a precondition names `commit stage engaged`, `exactly one neural-seam event`, `commit.op` or `commit.organ_seed`: STOP, NEEDS-CLAUDE (do not re-run). Otherwise re-queue the seeds with missing arm files once; still UNDEFINED: STOP, NEEDS-CLAUDE |
 
 Do not flip `BRAIN_BG_COMMIT`, `BRAIN_BG_NEURAL_SEAM` or `BRAIN_GNW_UNIQUE_IGNITION_READ`; a flip is a separate packet.

@@ -3,7 +3,8 @@
 THE BAR. research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md: over the six gate seeds x four target turns
 (24 seam_b events), the committed action read at READ_FRAC x0.5 and x2 equals the action at READ_FRAC (no change on
 any event), with the precondition that every neural-seam event (seam_b, seam_readout, seam_lesion_value: 72) carries
-a commit record naming its committed action (else UNDEFINED, which this spec counts as not passing).
+a commit record naming its committed action, exactly one such event per seam-arm turn, the frozen op 4 and the
+shard's chat seed as organ seed (else UNDEFINED, which this spec counts as not passing).
 
 THE DECISION IS THE REAL ONE. A synthetic brain emits what the network emits per event: the two stage latches' spike
 counts over the read window. From there the REAL code decides: `bg_commit_read` (the organ's read and its x0.5 / x2
@@ -91,8 +92,8 @@ def _brain(kind, rng, drop=0.0):
                         counts[ch] = _latched(kind, rng)
                 cm = BG.bg_commit_read(_ROW, np.zeros((_T, 2), dtype=np.int32), _raster(counts),
                                        np.zeros((_T, 2), dtype=np.int32))
-                cm["old_latch_winner"] = cm["winner"]
-                e = {"kind": "bg_neural", "winner": cm["winner"], "commit": cm, "arm": arm}
+                cm.update({"old_latch_winner": cm["winner"], "op": BG.BG_COMMIT_OP, "organ_seed": _s})
+                e = {"kind": "bg_neural", "winner": cm["winner"], "commit": cm, "arm": arm, "seed": _s}
                 if drop and rng.random() < drop:
                     e.pop("commit")
                 events.append(e)
@@ -101,11 +102,15 @@ def _brain(kind, rng, drop=0.0):
 
 def decide(data):
     """The amended G4 with its preconditions, as `verdict` applies them to a pooled score."""
-    m_eng = [H.commit_event_measures(e, True)["engaged"] for e in data["events"]]
-    thr = [H.commit_event_measures(e, True)["commit_thr_change"] for e in data["events"] if e["arm"] == "seam_b"]
+    mx = [H.commit_event_measures(e, True, chat_seed=e["seed"]) for e in data["events"]]
+    thr = [x["commit_thr_change"] for x, e in zip(mx, data["events"]) if e["arm"] == "seam_b"]
     bars = H.BARS_AMENDED
-    if not m_eng or sum(m_eng) / len(m_eng) < bars["commit_engaged_min"]:
+    if len(mx) != len(_SEEDS) * len(_TURNS) * len(_ARMS):
+        return False                                       # UNDEFINED: not one event per seam-arm turn
+    if not mx or sum(x["engaged"] for x in mx) / len(mx) < bars["commit_engaged_min"]:
         return False                                       # UNDEFINED in the registered verdict
+    if not all(x["op_ok"] and x["seed_ok"] for x in mx):
+        return False                                       # UNDEFINED: not the frozen row / not the chat seed
     if len(thr) < bars["min_events_per_measure"]:
         return False
     return bool(H.g4_commit_holds({"commit_thr_change": round(sum(thr) / len(thr), 4)}, bars))
