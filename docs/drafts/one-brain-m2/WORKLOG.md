@@ -98,14 +98,14 @@ export with `BRAIN_ONE_BRAIN` unset. Compare: `compare_hashes.py`.
 | base vs OFF | 7 | unset (random) | 16/17 | turn 16: `curiosity.novelty` 0.9748080180058432 vs ...433 |
 | base vs OFF | 8 | base unset, OFF 0 | 16/17 | turn 16: the same field, ...433 vs ...432 |
 | base vs OFF | 7 | 0 | **17/17** | none |
-| base vs OFF | 8 | 0 | PENDING | |
+| base vs OFF | 8 | 0 | **17/17** | none |
 
 The one-ulp difference is not the branch: the same value flips between ...432 and ...433 across runs of EITHER code
 (base gave ...432 at s7 and ...433 at s8; the branch the reverse), and the topic gate behind it is seeded 42
 regardless of the chat seed. It is read after `topic_novelty` imprints `_brain_vocab(chat)`, a Python `set` of
 strings, whose iteration order follows the per-process string-hash seed. The project's identity convention is
 `PYTHONHASHSEED=0` + one BLAS thread (`docs/drafts/s2p/make_jobs.sh`); the hash script now sets it and both sides
-were re-run under it (rows 3-4).
+were re-run under it (rows 3-4): OFF is byte-identical to base on every reply body at both dev seeds.
 
 ## 5. ON: the M0 probe arms (seeds 7 and 8)
 
