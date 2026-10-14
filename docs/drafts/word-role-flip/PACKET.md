@@ -47,9 +47,46 @@ The flip unit of the 2026-10-12 battery prereg section 5, adapted to one faculty
   finding is the comparison point.
 
 Dev seeds first (RULING): smoke one line (dev seed 7) for peak RSS + wall time, then the four bars on dev seeds
-1-8. Gate seeds 42 43 44 100 101 102 run only through job lines registered against THIS packet after Claude
+1-8 (SUPERSEDED by amendment D below: dev 1-8 is skipped; smoke dev 7 only). Gate seeds 42 43 44 100 101 102
+run only through job lines registered against THIS packet after Claude
 approves it (gate_seed_guard resolves the gate seeds to the committed prereg; six seeds before any generalization
 claim, non-negotiable 6).
+
+## 2b. AMENDMENTS A-D + answers (RULING wrc-packet-review-1014/1014b, wrc-packet-answers-1014, 2026-10-14)
+
+**Order (D), replacing the dev 1-8 stage above: SKIP dev 1-8.** Sequence: smoke at dev seed 7 (peak RSS, wall,
+F2/F3 identity, the at-risk list of C, the off-target precondition of A) -> promote this packet to
+`research/findings/2026-10-1X-word-role-flip-PREREGISTRATION.md` on main with bar-sanity records -> ASK
+[wrc-flip-prereg] -> gate seeds only after that ASK is answered.
+
+**(A) OFF-TARGET set, exact strings, fixed now (10 statement-form turns; >= 8 required):**
+"the cat eats fish" / "the cat precedes the ball" / "the ball precedes the worm" / "Sally puts the marble in
+the basket." / "Sally leaves the room." / "Anne moves the marble to the box." / "the wolf hunts the deer" /
+"the dog and the cat walked in" / "the cat and the dog walked in" / "what do you usually drink?" is NOT in the
+set (its parse route engages and declines; it stays the commit packet's no-fact control). Precondition
+(measured on the dev-7 smoke, intact-at-ON): NO listed turn may engage the word-role parse (trace route); a
+listed turn that does makes the bar UNDEFINED plus a NEEDS, never a silent drop. The bar itself: BOTH lesions
+(`BRAIN_WORD_ROLE_LESION=1` PARSE and `BRAIN_WORD_ROLE_COMMIT_LESION=1` COMMIT, run separately) must leave every
+listed reply identical to intact-at-ON on **6/6 gate seeds** (reply fields `answer`/`abstained`/`recalled_svo`).
+
+**(B) F2/F3 identity (battery prereg section 5, dev seed 7).** `research/runners/iw1_default_identity.py` and
+`research/runners/iw2_default_identity.py` at the flip revision: `default` (no flags set; the flipped anchors)
+equals `on:both` (BRAIN_WORD_ROLE_PARSE=1 and BRAIN_WORD_ROLE_COMMIT=1 explicitly) on every script turn (the
+default IS the capability), and `off` (both flags `=0`) equals the pre-flip default on every turn (the escape
+still reproduces pre-flip behaviour), byte-identical apart from the volatile-key drops those runners already
+exclude.
+
+**(C) Scoped B1.** On the dev-7 smoke, run the battery turn script (iw2 scope/story turns + iw1 turns) ON vs
+alloff (both flags `=0`) at the flip revision; every row with a changed reply is AT RISK and is listed here
+before any gate seed runs. On the six gate seeds, each at-risk row's n_load_bearing at ON must be >= alloff at
+the same revision; a drop reverts the flip (battery prereg section 6). No at-risk rows: B1 is met by the identity
+record of (B).
+
+**(Answers) Q2: ONE commit flips both anchors (the commit flag is only read when parse is ON). Q3: the 10-12
+battery flip table is NOT amended (pinned at P/R_B); this packet registers its own flip unit, and later battery
+re-runs at revisions after the flip inherit the defaults (both rows are in the headline registry). Q4:
+confirmed — the only production reader is `brain_chat_tui` (`_neural_question_parse` line 1440, called 1723);
+webapp chat goes through ChatBrain, so production chat is the intended blast radius.**
 
 ## 3. Job shape
 
