@@ -1405,3 +1405,4 @@ never-latched reads table 66-79 with the 79-93 agent-latch correction, prereg se
 17/24/0-wrong/7-declined + exclusion 0/24 + baseline 9ea7411, not-a-live-seam section); NEEDS
 [wrc-finding-fixed] ASK filed (single dash). bg-commit step-2 canary still running on pool41 (seed-43 arm
 dir s43 appearing, started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue; then wrc-flip-packet draft.
+- 2026-10-14 18:43 [wrc-finding-fixed] ASK: 4 verify-go fixes committed on research/wrc-finding-fix; merge it and set status confirmed-with-caveats, then I draft word-role-flip PACKET.md. [dirty-ok: standing untracked raw; runbook-only commit]
