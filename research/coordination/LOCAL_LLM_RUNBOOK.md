@@ -1293,3 +1293,15 @@ trial-2 divergence was an instrumentation artifact (stash keys da_full/spk/rwin 
 arm). LADDER STOPPED before the 400-trial cells; one line added to research/FAILURE_LOG.md; disambiguation
 plan (gpe cand + 1-trial A/B, or arm-order reversal) recorded in SPIKING-WORKLOG on
 research/draft-ldc-outcome-timing. Next driver step: the gpe-observability probe, then branch per result.
+
+07:00: syn-zero rung-2 disambiguated (delegate plan executed): added gpe_0/gpe_1 to the instrument's
+candidate list and reran a 1-trial-per-phase A/B locally (ab_gpe_probe.json, rc=0, ~7 min < the 10-min
+S cap): **GPe records 0 spikes in the reward window in BOTH arms** (str_d2 667/630 still firing), DA
+bit-identical - the 717-synapse d2->gpe cut is INERT in the sb1 credit_immediate cell, so the ladder's
+400-trial cells would be byte-identity by construction. Ladder stays stopped; NEEDS [ldc-synzero-deadcut]
+filed; branch research/draft-ldc-outcome-timing commits the gpe-cand patch + probe artifact. Also read
+this wake: rulings t7-c1-duplicate-1014 (T7 C1 result duplicates the 10-06 record - do not merge
+3009927b6; FAILURE_LOG line added for the missed duplicate check), c1-flip-gate-1014 (flip waits on
+[c1-generalization] RESULT - the 16 dev 1-8 probe lines HAVE landed rc=0 at 960ce6528, scoring next,
+Stage-1 attempt 2 queues by 10-26) and spiking-commit-a1-run-1014 (run the word-role-commit packet after
+the c1 probe lines).
