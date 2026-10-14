@@ -15,7 +15,10 @@ OUT="$W/docs/drafts/one-brain-m2/runs/${NAME}_s${SEED}_${SCRIPT}"
 mkdir -p "$W/docs/drafts/one-brain-m2/runs"
 bash "$W/tools/mem_ok.sh" 12 || exit 3
 cd "$DIR" || exit 2
-bash "$W/tools/memcap.sh" 12 -- env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 BRAIN_CHAT_SEED="$SEED" \
+# PYTHONHASHSEED=0 + one BLAS thread: the project's byte-identity convention (docs/drafts/s2p/make_jobs.sh). Without it
+# base vs OFF at seed 7 differed by one ulp in curiosity novelty, read after a set-ordered vocab imprint (WORKLOG s.4).
+bash "$W/tools/memcap.sh" 12 -- env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 PYTHONHASHSEED=0 \
+  OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 BRAIN_CHAT_SEED="$SEED" \
   "$@" /home/dant123/Projects/sim/.venv/bin/python -u "$W/docs/drafts/one-brain-m2/conversation_hashes.py" \
   "$OUT.json" "$SCRIPT" 2>&1 | grep -v --line-buffered "SIM_BRIDGE:" > "$OUT.log"
 echo "RUN=${NAME}_s${SEED}_${SCRIPT} RC=${PIPESTATUS[0]}"

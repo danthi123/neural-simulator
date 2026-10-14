@@ -68,7 +68,7 @@ def main(out_path, script="single"):
     rec = {"script": script, "git_sha": sha, "cwd": os.getcwd(),
            "env": {k: os.environ.get(k) for k in ("BRAIN_ONE_BRAIN", "BRAIN_SHARED_LTM", "BRAIN_CHAT_SEED",
                                                   "SIM_BACKEND", "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM",
-                                                  "OMP_NUM_THREADS", "BRAIN_TURN_LOCK")},
+                                                  "OMP_NUM_THREADS", "BRAIN_TURN_LOCK", "PYTHONHASHSEED")},
            "one_brain_on": flag() if callable(flag) else None,       # None: a base without the flag
            "replies": []}
     t_all = time.time()

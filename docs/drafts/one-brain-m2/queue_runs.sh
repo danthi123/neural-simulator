@@ -2,7 +2,7 @@
 # The M2 evidence queue: every brain-loading step (pytest included) under the brain lock + mem_ok + memcap, in order,
 # from a FROZEN export of the branch (git archive <sha>, research/findings + data symlinked; FROZEN_SHA inside):
 #   bash docs/drafts/one-brain-m2/queue_runs.sh <frozen_export_dir> <step> [<step> ...]
-# Steps: tests | probe7 | inst7 | probe8 | off7 | off8 | on7 | on8 | pair7 | offpair7 | ltm7
+# Steps: tests | probe7 | inst7 | probe8 | base7 | base8 | off7 | off8 | on7 | on8 | pair7 | offpair7 | ltm7
 # Logs: docs/drafts/one-brain-m2/runs/<step>.log (hash runs: runs/<name>_s<seed>_<script>.json/.log).
 # The probe gets memcap 14 (its documented dev-run cap: the intact arm holds two per-session brains, ~11.9 GB at M0);
 # test_webapp_server gets 18 (task rule); everything else 12.
@@ -49,6 +49,11 @@ for step in "$@"; do
         --arms freeze_learning zero_learned_store \
         --out "$W/research/findings/raw/_one_brain_probe/m2_s7_instruments.json" ;;
     probe8) probe 8 ;;
+    base7|base8)   # the base export (git archive afeb1bcc9, data + findings symlinked)
+      sd="${step#base}"
+      echo "[queue] $(date -Is) START hashes base s$sd single"
+      flock -w 7200 "$LOCK" bash "$W/docs/drafts/one-brain-m2/run_hashes.sh" base /home/dant123/Projects/sim-rev/m2base "$sd" single
+      echo "[queue] $(date -Is) END hashes base s$sd single rc=$?" ;;
     off7) hashes off 7 single ;;
     off8) hashes off 8 single ;;
     on7) hashes on 7 single BRAIN_ONE_BRAIN=1 ;;
