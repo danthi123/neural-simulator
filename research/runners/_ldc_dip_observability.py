@@ -96,6 +96,9 @@ ARMS = {
     "memory_lesioned": {"lesion": (("mem_a", "mem_a"), ("mem_b", "mem_b"))},
     "critic_lesioned": {"lesion": (("striosome_value", "snc"),)},
     "reward_to_da_lesioned": {"lesion": (("reward_us", "snc"),)},
+    # native syn-zero D2-output lesion (RULING a2-syn-zero-approved): the indirect pathway's
+    # output synapses zeroed at build, held at test via lesion_weight_max_at_test (self-proving).
+    "d2_output_lesioned": {"lesion": (("str_d2_0", "gpe_0"), ("str_d2_1", "gpe_1"))},
 }
 
 

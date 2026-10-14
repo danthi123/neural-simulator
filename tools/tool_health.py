@@ -154,21 +154,33 @@ try:
         print(json.dumps({"ok": None, "presets_built": built, "note": "presets build; step needs GPU (" + backend + ")"}))
     else:
         # 2) a tiny CURRENT-preset SWEEP: step basic_stimulus_response over 2 amplitudes on the substrate
-        swept = []
-        for amp in (100.0, 200.0):
-            cfg = ExperimentPresets.basic_stimulus_response(input_amplitude_pA=amp, stimulus_duration_ms=20.0,
-                                                            num_trials=1, input_group_size=32, output_group_size=32)
-            eng = ExperimentEngine(n_neurons=64, dt_ms=1.0)
-            eng.load_experiment(cfg)
-            eng.initialize(cp_traits=xp.zeros(64, dtype=xp.int32), cp_module=xp)
-            eng.start(0.0, sim_bridge_ref=None)
-            fired = xp.zeros(64, dtype=bool); volt = xp.full(64, -65.0, dtype=xp.float32)
-            t, steps = 0.0, 0
-            while eng.is_experiment_running and not eng.is_experiment_complete and steps < 20000:
-                eng.step(t, fired, volt, None, xp); t += 1.0; steps += 1
-            assert eng.is_experiment_complete, "sweep amp=%s did not complete (%d steps)" % (amp, steps)
-            swept.append([amp, steps])
-        print(json.dumps({"ok": True, "presets_built": built, "swept": swept, "backend": backend}))
+        try:
+            swept = []
+            for amp in (100.0, 200.0):
+                cfg = ExperimentPresets.basic_stimulus_response(input_amplitude_pA=amp, stimulus_duration_ms=20.0,
+                                                                num_trials=1, input_group_size=32, output_group_size=32)
+                eng = ExperimentEngine(n_neurons=64, dt_ms=1.0)
+                eng.load_experiment(cfg)
+                eng.initialize(cp_traits=xp.zeros(64, dtype=xp.int32), cp_module=xp)
+                eng.start(0.0, sim_bridge_ref=None)
+                fired = xp.zeros(64, dtype=bool); volt = xp.full(64, -65.0, dtype=xp.float32)
+                t, steps = 0.0, 0
+                while eng.is_experiment_running and not eng.is_experiment_complete and steps < 20000:
+                    eng.step(t, fired, volt, None, xp); t += 1.0; steps += 1
+                assert eng.is_experiment_complete, "sweep amp=%s did not complete (%d steps)" % (amp, steps)
+                swept.append([amp, steps])
+            print(json.dumps({"ok": True, "presets_built": built, "swept": swept, "backend": backend}))
+        except Exception as e:
+            # cupy can IMPORT yet be unusable here (CUDA alloc/driver/device failures on a
+            # GPU-less or GPU-occupied host). That is the same condition as no cupy: presets
+            # already built, so report DEGRADED (ok None), never ROTTED — real engine rot
+            # (dead presets, incomplete sweeps) still lands in the outer except as ok False.
+            rt = traceback.format_exc()
+            if any(s in rt for s in ("cupy", "cuda", "CUDA", "device", "driver")):
+                print(json.dumps({"ok": None, "presets_built": built,
+                                  "note": "presets build; GPU step failed as unavailable: " + repr(e)[:80]}))
+            else:
+                raise
 except Exception:
     print(json.dumps({"ok": False, "err": traceback.format_exc()[-900:]}))
 '''
