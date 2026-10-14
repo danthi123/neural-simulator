@@ -75,13 +75,13 @@
    0.0038
   ]
  },
- "repo_head": null,
+ "repo_head": "68cf28ba780baa40027998c6382cbd0bfb690085",
  "scorer_files": {
   "docs/drafts/idle-replay/bar_sanity_spec_c5_organ.py": "a573654032ee4340b1a43764accaf26df9d7c104c22d3c870497a3d59e118679",
   "research/runners/idle_replay_battery.py": "a8f0dd1b7ea7ffa8dea8341a61ae6da13ddf1c6b5f6a7fbb76a8d8de8ce2554d",
-  "research/runners/spiking_commit.py": "ed4cd09aee8aadf5fb54ea4ac081dded0e70429e1c7f055407dae772e878715c"
+  "research/runners/spiking_commit.py": "2ec0ff0a60bc9d1db84bea64517acc8b00a6637065845ffe5e8fe68c57a77de2"
  },
- "scorer_sha256": "67188a8557001467a2806361629c0daaa6228358c286ff20ff348e2ffa30b851",
+ "scorer_sha256": "23b7d8a49c022af3b16a3b47c3d513d7a70996f1b08d578f5fcefb9e5fea9c77",
  "seed": 0,
  "spec": "docs/drafts/idle-replay/bar_sanity_spec_c5_organ.py",
  "spec_sha256": "a573654032ee4340b1a43764accaf26df9d7c104c22d3c870497a3d59e118679",
@@ -92,5 +92,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 32.4
+ "wall_s": 33.5
 }

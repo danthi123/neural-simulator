@@ -1,0 +1,583 @@
+{
+ "probe": "bg_commit_value_lesion",
+ "label": "DEV, reported only",
+ "seed": 3,
+ "op": 4,
+ "trials": [
+  {
+   "label": null,
+   "class": "empty",
+   "msg": "...",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    93,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    72,
+    92
+   ],
+   "gate_counts_hold": [
+    66,
+    83
+   ],
+   "motor_counts_hold": [
+    171,
+    122
+   ],
+   "old_latch_winner": null,
+   "old_latch_variants": {
+    "x0.5": null,
+    "x2": null
+   },
+   "old_latch_rates": [
+    0.0023,
+    0.0093
+   ],
+   "first_to_12": 1,
+   "v_range": [
+    -81.62947845458984,
+    39.99694061279297
+   ]
+  },
+  {
+   "label": null,
+   "class": "content",
+   "msg": "what does the dog chase",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    87,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    81,
+    0
+   ],
+   "gate_counts_hold": [
+    91,
+    0
+   ],
+   "motor_counts_hold": [
+    202,
+    0
+   ],
+   "old_latch_winner": 0,
+   "old_latch_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "old_latch_rates": [
+    0.0823,
+    0.0
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -82.51165008544922,
+    39.94880676269531
+   ]
+  },
+  {
+   "label": null,
+   "class": "one_word",
+   "msg": "hi",
+   "winner": 1,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "slot_counts": [
+    0,
+    88
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    93,
+    0
+   ],
+   "gate_counts_hold": [
+    0,
+    88
+   ],
+   "motor_counts_hold": [
+    1,
+    195
+   ],
+   "old_latch_winner": 1,
+   "old_latch_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "old_latch_rates": [
+    0.0,
+    0.109
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -81.55628204345703,
+    39.99559783935547
+   ]
+  },
+  {
+   "label": null,
+   "class": "empty",
+   "msg": "?",
+   "winner": 1,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "slot_counts": [
+    0,
+    86
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    0,
+    75
+   ],
+   "gate_counts_hold": [
+    0,
+    99
+   ],
+   "motor_counts_hold": [
+    0,
+    210
+   ],
+   "old_latch_winner": 1,
+   "old_latch_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "old_latch_rates": [
+    0.0,
+    0.0957
+   ],
+   "first_to_12": 1,
+   "v_range": [
+    -81.42213439941406,
+    39.994964599609375
+   ]
+  },
+  {
+   "label": null,
+   "class": "content",
+   "msg": "tell me about cats",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    83,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    84,
+    0
+   ],
+   "gate_counts_hold": [
+    80,
+    0
+   ],
+   "motor_counts_hold": [
+    184,
+    0
+   ],
+   "old_latch_winner": 0,
+   "old_latch_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "old_latch_rates": [
+    0.074,
+    0.0
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -81.06993103027344,
+    39.7137451171875
+   ]
+  },
+  {
+   "label": null,
+   "class": "one_word",
+   "msg": "ok",
+   "winner": null,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": null,
+    "x2": null
+   },
+   "slot_counts": [
+    0,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    0,
+    0
+   ],
+   "gate_counts_hold": [
+    0,
+    0
+   ],
+   "motor_counts_hold": [
+    0,
+    0
+   ],
+   "old_latch_winner": null,
+   "old_latch_variants": {
+    "x0.5": null,
+    "x2": null
+   },
+   "old_latch_rates": [
+    0.0,
+    0.0
+   ],
+   "first_to_12": null,
+   "v_range": [
+    -80.93512725830078,
+    34.999610900878906
+   ]
+  },
+  {
+   "label": null,
+   "class": "empty",
+   "msg": "..",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    87,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    0,
+    0
+   ],
+   "gate_counts_hold": [
+    119,
+    0
+   ],
+   "motor_counts_hold": [
+    293,
+    0
+   ],
+   "old_latch_winner": 0,
+   "old_latch_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "old_latch_rates": [
+    0.0833,
+    0.0
+   ],
+   "first_to_12": null,
+   "v_range": [
+    -81.9141845703125,
+    39.79121780395508
+   ]
+  },
+  {
+   "label": null,
+   "class": "content",
+   "msg": "the wolf bites the apple",
+   "winner": 1,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "slot_counts": [
+    0,
+    87
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    0,
+    181
+   ],
+   "gate_counts_hold": [
+    0,
+    0
+   ],
+   "motor_counts_hold": [
+    0,
+    0
+   ],
+   "old_latch_winner": 1,
+   "old_latch_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "old_latch_rates": [
+    0.0,
+    0.104
+   ],
+   "first_to_12": 1,
+   "v_range": [
+    -82.18870544433594,
+    39.93838119506836
+   ]
+  },
+  {
+   "label": null,
+   "class": "one_word",
+   "msg": "yes",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    91,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    163,
+    0
+   ],
+   "gate_counts_hold": [
+    65,
+    41
+   ],
+   "motor_counts_hold": [
+    180,
+    82
+   ],
+   "old_latch_winner": 0,
+   "old_latch_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "old_latch_rates": [
+    0.0827,
+    0.0013
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -82.25080108642578,
+    39.96370315551758
+   ]
+  },
+  {
+   "label": null,
+   "class": "empty",
+   "msg": "!",
+   "winner": 1,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "slot_counts": [
+    0,
+    88
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    85,
+    0
+   ],
+   "gate_counts_hold": [
+    0,
+    91
+   ],
+   "motor_counts_hold": [
+    0,
+    201
+   ],
+   "old_latch_winner": 1,
+   "old_latch_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "old_latch_rates": [
+    0.0,
+    0.1123
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -81.24468231201172,
+    39.2770881652832
+   ]
+  },
+  {
+   "label": null,
+   "class": "content",
+   "msg": "what does the cat eat",
+   "winner": 1,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "slot_counts": [
+    0,
+    100
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    97,
+    137
+   ],
+   "gate_counts_hold": [
+    0,
+    59
+   ],
+   "motor_counts_hold": [
+    1,
+    152
+   ],
+   "old_latch_winner": 1,
+   "old_latch_variants": {
+    "x0.5": 1,
+    "x2": 1
+   },
+   "old_latch_rates": [
+    0.0,
+    0.1003
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -82.5234375,
+    39.88886260986328
+   ]
+  },
+  {
+   "label": null,
+   "class": "one_word",
+   "msg": "hmm",
+   "winner": 0,
+   "co_commit": false,
+   "read_invariant": true,
+   "read_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "slot_counts": [
+    84,
+    0
+   ],
+   "slot_carry": [
+    0,
+    0
+   ],
+   "threshold": 18.0,
+   "gate_counts_drive": [
+    112,
+    0
+   ],
+   "gate_counts_hold": [
+    116,
+    0
+   ],
+   "motor_counts_hold": [
+    255,
+    0
+   ],
+   "old_latch_winner": 0,
+   "old_latch_variants": {
+    "x0.5": 0,
+    "x2": 0
+   },
+   "old_latch_rates": [
+    0.0747,
+    0.0
+   ],
+   "first_to_12": 0,
+   "v_range": [
+    -81.8511962890625,
+    39.883094787597656
+   ]
+  }
+ ],
+ "held": {
+  "empty": 0.5,
+  "content": 0.5,
+  "one_word": 0.25
+ },
+ "commit_rate": {
+  "empty": 1.0,
+  "content": 1.0,
+  "one_word": 0.75
+ },
+ "read_invariant_all": true
+}

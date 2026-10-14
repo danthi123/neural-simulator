@@ -43,7 +43,7 @@ import s2p_score as S  # noqa: E402
 NAME = "word-role-commit step O (organ battery, 6/6 gate seeds)"
 DESCRIPTION = ("Synthetic slot-latch spike counts per word -> the real commit read, case pass, battery all_pass and "
                "s2p_score.score_O; PASS iff 6/6 seeds all_pass at COMMIT_GRID row 0.")
-SCORER_FILES = ["tools/s2p_score.py", "research/runners/word_role_commit_organ.py",
+SCORER_FILES = ["tools/s2p_score.py", "research/runners/word_role_commit_organ.py", "research/runners/spiking_commit.py",
                 "research/runners/word_role_parser_organ.py", "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py"]
 
 _PACKET = "word-role-commit"

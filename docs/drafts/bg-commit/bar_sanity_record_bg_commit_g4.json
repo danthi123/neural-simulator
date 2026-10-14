@@ -1,0 +1,76 @@
+{
+ "backend": "numpy",
+ "description": "Synthetic stage-latch counts per event -> the real bg_commit_read, commit_event_measures and g4_commit_holds with the engagement precondition; PASS iff no seam_b event changes at x0.5 / x2.",
+ "failures": [],
+ "kinds": {
+  "info_weak_latch": "info",
+  "null_graded": "null",
+  "null_unengaged": "null",
+  "perfect": "perfect",
+  "perfect_noisy": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_weak_latch": 271,
+  "null_graded": 0,
+  "null_unengaged": 1,
+  "perfect": 1000,
+  "perfect_noisy": 1000,
+  "random": 0
+ },
+ "name": "BG live seam, amended G4 (the commit read is threshold-invariant on every gate event)",
+ "pass_rate": {
+  "info_weak_latch": 0.271,
+  "null_graded": 0.0,
+  "null_unengaged": 0.001,
+  "perfect": 1.0,
+  "perfect_noisy": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_weak_latch": [
+   0.2444,
+   0.2994
+  ],
+  "null_graded": [
+   0.0,
+   0.0038
+  ],
+  "null_unengaged": [
+   0.0002,
+   0.0056
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_noisy": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "843e43abcb21a21a0c392d29aa1e6cffa1e8a3c0",
+ "scorer_files": {
+  "docs/drafts/bg-commit/bar_sanity_spec_bg_commit_g4.py": "bd5d13b3652fdda150806f0ba3de7ded16d58bb85f05900a66e4c6bde4250529",
+  "research/runners/bg_action_selection_production_organ.py": "608869af7e2ee95ce11e0bf6ca76bbcfb544e1d3fa0fca9d0e50b3919239b2de",
+  "research/runners/host_share_bg_seam.py": "736469c50fc3c99915862b13c6dc72c89062119260db0982a42ff6198ea7cdca",
+  "research/runners/spiking_commit.py": "2ec0ff0a60bc9d1db84bea64517acc8b00a6637065845ffe5e8fe68c57a77de2"
+ },
+ "scorer_sha256": "9fa7cb663f360f9708ed81750ec2ffe66a53aaa2ccfd5177ac6e0c02253b72d1",
+ "seed": 0,
+ "spec": "docs/drafts/bg-commit/bar_sanity_spec_bg_commit_g4.py",
+ "spec_sha256": "bd5d13b3652fdda150806f0ba3de7ded16d58bb85f05900a66e4c6bde4250529",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 12.6
+}
