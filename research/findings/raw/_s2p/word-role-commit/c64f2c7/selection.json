@@ -1,0 +1,31 @@
+{
+ "dev_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "grid_len": 6,
+ "missing": [],
+ "op": 0,
+ "packet": "word-role-commit",
+ "step": "select",
+ "sweep_dir": "research/findings/raw/_s2p/word-role-commit/c64f2c7/sweep",
+ "table": {
+  "0": {
+   "1": true,
+   "2": true,
+   "3": true,
+   "4": true,
+   "5": true,
+   "6": true,
+   "7": true,
+   "8": true
+  }
+ },
+ "verdict": "SELECTED"
+}
