@@ -1,0 +1,319 @@
+{
+ "at_default": false,
+ "control": {
+  "n_defined": 6,
+  "n_ok": 6,
+  "per_seed": {
+   "100": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "101": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "102": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "42": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "43": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   },
+   "44": {
+    "detail": {
+     "answer_only": false,
+     "changed_fields": [],
+     "control_fails": [],
+     "intact_abstained": true,
+     "intact_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+     "reply_fields": [
+      "answer",
+      "abstained",
+      "recalled_svo"
+     ],
+     "s0": [
+      "pass",
+      false
+     ],
+     "turn": "s2wc_nf"
+    },
+    "state": "DEFINED",
+    "verdict": "control-ok"
+   }
+  },
+  "row": "word-role-commit-nofact-ctl"
+ },
+ "n_defined": 6,
+ "n_reply_load_bearing": 6,
+ "op": 0,
+ "packet": "word-role-commit",
+ "per_seed": {
+  "100": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "101": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "102": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "42": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "43": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  },
+  "44": {
+   "detail": {
+    "answer_only": false,
+    "changed_fields": [
+     "abstained",
+     "answer",
+     "recalled_svo"
+    ],
+    "intact_abstained": false,
+    "intact_answer": "the brain uses the spikes",
+    "lesion_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about usually yet: what can you tell me about usually?",
+    "reply_fields": [
+     "answer",
+     "abstained",
+     "recalled_svo"
+    ],
+    "s0": [
+     "regressed",
+     true
+    ],
+    "turn": "s2wc_use"
+   },
+   "reply_verdict": "regressed",
+   "state": "DEFINED"
+  }
+ },
+ "pin": "c64f2c70d8232336992aab074f199c36a6560d45",
+ "preconditions": [
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "capability cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  },
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "permuted-control cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  }
+ ],
+ "step": "R",
+ "tag": "s2p-R-wc-c64f2c7",
+ "undefined_reasons": [],
+ "verdict": "PASS"
+}
