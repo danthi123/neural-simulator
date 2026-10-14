@@ -92,7 +92,40 @@ from the frozen export. Reads: recall = an SVO with the expected role filler, ab
 other = anything else. Raw: `research/findings/raw/_one_brain_probe/m2_s7.json`, `m2_s7_instruments.json`,
 `m2_s8.json`; logs `docs/drafts/one-brain-m2/runs/probe_s*.log`.
 
-TABLE: PENDING (filled when every arm has run).
+Code per arm (the export's `FROZEN_SHA`): s7 one_brain / first freeze / first zero at `40764aead`; s7 intact,
+restart_persist_on_one_brain and both instrument re-runs (`m2_s7_instruments.json`) and every s8 arm at `38130f5c8`
+(the instrument fix `d56e7baf7` + the frame scoping). The probe's own `git_sha` reads "unknown" (an export has no git).
+
+| seed | arm | A_ask | B_ask | A_ask_again | B_ltm | B_build | all match | peak RSS MB | wall s |
+|---|---|---|---|---|---|---|---|---|---|
+| 7 | one_brain | recall | recall |  | recall | recall | yes | 6502 | 558 |
+| 7 | freeze_learning | abstain | abstain |  | recall | recall | yes | 6514 | 530 |
+| 7 | zero_learned_store | recall | abstain |  | recall | recall | yes | 6451 | 570 |
+| 7 | intact (OFF) | recall | abstain |  | recall | recall | yes | 11927 | 683 |
+| 7 | restart_persist_on_one_brain | recall | recall | recall | recall | recall | yes | 6431 | 507+549 |
+| 7 | freeze_learning (first run, before the fix) | **other** (pred abstain) | **other** (pred abstain) |  | recall | recall | **no** | 6501 | 529 |
+| 7 | zero_learned_store (first run, before the fix) | recall | **other** (pred abstain) |  | recall | recall | **no** | 6498 | 557 |
+| 8 | one_brain | recall | recall |  | recall | recall | yes | 6500 | 596 |
+| 8 | freeze_learning | abstain | abstain |  | recall | recall | yes | 6492 | 541 |
+| 8 | zero_learned_store | recall | abstain |  | recall | recall | yes | 6453 | 584 |
+| 8 | intact (OFF) | recall | abstain |  | recall | recall | yes | 11929 | 700 |
+| 8 | restart_persist_on_one_brain | recall | recall | recall | recall | recall | yes | 6432 | 516+576 |
+
+Reading it. At ON, conversation B recalls the fact conversation A taught (both seeds); with the shared store's
+plasticity gate shut, neither A nor B recalls it; zeroing what was learned since the build removes it from B; the LTM
+and build-fact controls recall in every arm (the lesions are specific). At OFF (intact) B abstains, as today. With
+persistence on, the brain writes ONE checkpoint under the brain identity
+(`facts/__one_brain____tiny-demo__stub-*/checkpoints/*/facts.json`, plus the process-global xedge) and after a restart
+both conversations recall. One brain is about half the memory of two per-session brains (6.5 vs 11.9 GB peak RSS).
+These are two DEV seeds; no generalization claim (the M2 flip needs the six gate seeds under a committed prereg).
+
+What B hears. s7 (`40764aead`): "Someone told me: the wug eats the dax the dog chases the cat the cat eats the fish";
+the rich reply also states two build facts, so the lead attributed build knowledge to "someone". Fixed in
+`38130f5c8`: the lead only when everything the reply states was told elsewhere, else the part note. s8: "the wug eats
+the dax the dog chases the cat the cat eats the fish (Someone told me part of that.)". Under the fixed freeze the
+teach turn itself says "I don't know about that. My curiosity is piqued -- I haven't learned about wug yet: what can
+you tell me about wug?" (no acquisition is reported). After a restart B recalls the fact with NO frame (the host
+source tags are not checkpointed; open risk 2).
 
 ### The first freeze and zero arms failed their prediction, and why (s7, code `40764aead`)
 
