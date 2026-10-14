@@ -88,3 +88,57 @@ SLF.12 `slf_s102_on`:
 python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_SHARED_LTM=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_on_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_on.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_on.log 2>&1; }'
 ```
 
+
+## Amendment A (2026-10-14, Claude): decompose the registered FAIL. Filed BEFORE any SLF-A line runs.
+
+The registered result stands: **FAIL** (pass-bar part 2). 5 of 6 seeds differ ON vs OFF only in `bc_a.d6_hebbian.held.readout` (seed 44 identical); parts 1 and 3 PASS. The flag stays OFF. Nothing above this section changes.
+
+**Hypothesis (from the record, not the data):** `BRAIN_SHARED_LTM=1` forces `BRAIN_LTM_RNG_ISOLATE` on, and isolation removes the seed-42 global-RNG reseed that every cold LTM bridge build does (FAILURE_LOG; the M2 builder's runs showed ON vs OFF+`BRAIN_SHARED_LTM=1` 17/17 identical). So the differing readout would come from the RNG-hygiene fix, not from sharing the store.
+
+**New arm:** `offiso` = production defaults + `BRAIN_LTM_RNG_ISOLATE=1` (sharing OFF), same revision e08895cd3, same six gate seeds. The `on` and `off` outputs above are reused unchanged.
+
+**Bars:**
+- **A1 (strict, blind):** for each seed, every per-turn response record in `slf_sN_on.json` equals `slf_sN_offiso.json` after dropping only wall-clock, latency and RSS fields. 6/6 seeds. This alone tests whether SHARING changes anything.
+- **A2 (declared NON-BLIND: set after seeing which key differed):** for each seed, `slf_sN_offiso.json` vs `slf_sN_off.json`. List every differing key. PASS if the reply-level fields of every turn (the reply text, `answer`, `abstained`, `recalled_svo`) are identical on 6/6 seeds. Report the numeric read-outs that move; they are the effect of removing the reseed.
+
+**Decision:**
+- A1 PASS and A2 PASS: Claude flips sharing ON with RNG isolation. The ledger row declares the read-out change and cites A1/A2.
+- A1 FAIL: sharing itself changes a record. The flag stays OFF; NEEDS with the differing turns.
+- A2 FAIL (a reply changes): the hygiene fix changes behaviour. The flag stays OFF; NEEDS. Claude then rules on the reseed separately.
+
+SLF-A.1 `slf_s42_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=42 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s42_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s42_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s42_offiso.log 2>&1; }'
+```
+
+SLF-A.2 `slf_s43_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=43 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s43_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s43_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s43_offiso.log 2>&1; }'
+```
+
+SLF-A.3 `slf_s44_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=44 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s44_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s44_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s44_offiso.log 2>&1; }'
+```
+
+SLF-A.4 `slf_s100_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=100 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s100_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s100_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s100_offiso.log 2>&1; }'
+```
+
+SLF-A.5 `slf_s101_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=101 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s101_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s101_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s101_offiso.log 2>&1; }'
+```
+
+SLF-A.6 `slf_s102_offiso`:
+
+```
+python3 -c 'import json,resource,subprocess,sys;r=subprocess.run(sys.argv[1:]);t=resource.getrusage(resource.RUSAGE_CHILDREN);print(json.dumps({"rc":r.returncode,"maxrss_kb":t.ru_maxrss}))' bash -c 'cd ~/derisk-pool/revisions/e08895cd3c723028b264d42c3d11d9ed8954e72c && mkdir -p research/findings/raw/_regression_battery/shared_ltm_flip_1013 && { .venv/bin/python tools/assert_flipped_defaults.py && .venv/bin/python tools/assert_iw1_defaults.py --expect-on "d6-hebbian-write,xedge-surprise-worldmodel" && .venv/bin/python tools/assert_iw2_defaults.py false-belief-chat,transitive-chat,neural-selfid && bash tools/mem_ok.sh 21 1 && bash tools/memcap.sh 22 -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= BRAIN_CHAT_SEED=102 BRAIN_LTM_RNG_ISOLATE=1 BRAIN_IDLE_REPLAY_LEAKLOG=$PWD/research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_offiso_rss.jsonl .venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns emo,bc_a,bc_b,selfinit --out research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_offiso.json > research/findings/raw/_regression_battery/shared_ltm_flip_1013/slf_s102_offiso.log 2>&1; }'
+```
+
