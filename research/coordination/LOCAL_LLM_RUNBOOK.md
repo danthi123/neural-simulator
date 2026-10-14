@@ -1340,3 +1340,5 @@ dev 1-8; commits 9303de62e + data + packet WORKLOG on research/word-role-commit;
 (seeds 16-18, C smoke s8) queued+dispatched 11:48-49 with .lane_waiver written (NEEDS [lane-waiver]); next =
 block 3 step-O canary + 6 lines.
 
+- 2026-10-14 11:58 [pool-sync-rsync] ASK: pool_sync pulls 0 files: rsync ABSENT on S (command not found); results strand (needed tar-over-ssh pull). Install rsync or fix the retrieval path. [dirty-ok: standing untracked raw; runbook-only commit]
+- 2026-10-14 11:58 [lane-waiver] INFO: .lane_waiver 11:51 NO-READY-WORK: lane_check queued=0; four lane-stock restocks (A/B/C/E) dispatched 11:48-49, none left ready-unqueued.
