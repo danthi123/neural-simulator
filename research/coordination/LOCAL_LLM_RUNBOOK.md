@@ -1395,3 +1395,13 @@ dev 7, step 2 before_you_build, step 3 ASK [ldc-gpe-tonic] with a flag-gated def
 behind bg-commit per its critical-path ruling; GPe silent = missing tonic pacemaking, not a dead cut to
 retarget). bg-commit step-2 canary on pool41 verified alive at 18:05 (sim bridge initialized 18:00, 184
 neurons, pid alive; host canary dir synced 18:22). NEXT: canary rc -> ENGAGED -> step 3 queue six lines.
+
+
+18:44: absorbed rulings 63176504c (wrc-verify-go-1014/1014b: verify-go CONFIRMED-WITH-CAVEATS with 4 finding
+fixes; wrc-flip-packet-1014: the flip packet is the next critical-path draft after the fix, ASK before any
+run). Applied all 4 fixes to research/findings/2026-10-14-word-role-commit-gate.md on NEW branch
+research/wrc-finding-fix (no-fact control wording lines 7/14/61 + the control-already-declines clause,
+never-latched reads table 66-79 with the 79-93 agent-latch correction, prereg section-4 report-only items
+17/24/0-wrong/7-declined + exclusion 0/24 + baseline 9ea7411, not-a-live-seam section); NEEDS
+[wrc-finding-fixed] ASK filed (single dash). bg-commit step-2 canary still running on pool41 (seed-43 arm
+dir s43 appearing, started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue; then wrc-flip-packet draft.
