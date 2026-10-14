@@ -66,6 +66,8 @@ _WANDER_BUDGET: dict = {}
 # per-session stamp bumped by forget_session (never dropped), so a tick can tell the session was RESET while it worked
 # on it outside the lock (a reset through /api/brain-chat/reset sends no mark_request).
 _LAST_TURN_END: dict = {}
+# per-session newest concept a recorded wander surfaced (consumed or not): `last_wandered` reads it (fold-in (a))
+_LAST_WANDERED: dict = {}
 _REQ_SEQ: dict = {}
 _RESET_SEQ: dict = {}
 _REQ_COUNTER = itertools.count(1)
@@ -143,12 +145,12 @@ SELFINIT_TURN_WAIT_S = 0.25   # how long a "what are you thinking about" turn wa
 
 
 def last_wandered(cache_key) -> str | None:
-    """The most recent concept an idle wander surfaced for this session, WITHOUT consuming it (`recent_wander` does
-    consume). None when no unconsumed wander record exists."""
-    for rec in reversed(_INNER_LIFE.get(cache_key) or []):
-        if rec.get("wandered"):
-            return rec["wandered"]
-    return None
+    """The most recent concept an idle wander surfaced for this session, consumed or not, WITHOUT consuming it
+    (`recent_wander` does consume). None when no wander has surfaced one. HONESTY (one-brain M2 fold-in (a), M0 review
+    2026-10-13): this used to scan the inner-life log for the newest UNCONSUMED record, so once `recent_wander` had
+    consumed the newest thought the mid-thought reply named an OLDER one as "the last thing my mind drifted to". The
+    true newest is kept in `_LAST_WANDERED`, written where the record is (`_tick_record`)."""
+    return _LAST_WANDERED.get(cache_key)
 
 
 def mid_thought_readout(cache_key) -> dict:
@@ -197,6 +199,7 @@ def forget_session(cache_key) -> None:
     _LAST_REQUEST.pop(cache_key, None)
     _LAST_TURN_END.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
+    _LAST_WANDERED.pop(cache_key, None)
     _WANDER_BUDGET.pop(cache_key, None)
     _WANDER_ADAPT.pop(cache_key, None)
     _RECALLED_TOPIC.pop(cache_key, None)
@@ -281,7 +284,8 @@ def mark_recall(cache_key, topic) -> None:
         _D5_BUDGET[cache_key] = _d5_budget_per_recall()
 
 
-def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None = None) -> dict | None:
+def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None = None,
+                            consolidated_key=None) -> dict | None:
     """BETWEEN-TURN D5 CONSOLIDATION (learn-through-use). For the topic the last live turn RECALLED, run the arc-1
     step-3 loop on the organ's REAL store: re-activate the assembly (a sustained cue → the dendritic apical latch
     COMPLETES it), the step-2 self-terminating apical-plateau window opens, and the substrate's OWN plateau-gated
@@ -293,7 +297,11 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
     is only the clock, the episode budget, and the snapshot/restore determinism guard (the step-2/3 runners' guard).
     BYTE-IDENTITY: every `cfg` field and BTSP transient the reactivate loop mutates is saved and restored, so the
     ONLY lasting change to the organ is the strengthened within-assembly weights — a later recall differs from HEAD
-    in nothing else. Returns a record, or None (disabled / no recalled topic / no store yet / topic not formed)."""
+    in nothing else. Returns a record, or None (disabled / no recalled topic / no store yet / topic not formed).
+
+    `consolidated_key` (M2, BRAIN_ONE_BRAIN on): the brain key the surfacing set is recorded under, because the
+    strengthened store is the brain's one D5 store (the recall that armed it stays this conversation's). None -> the
+    conversation key, as before."""
     if not d5_consolidate_enabled():
         return None
     topic = _RECALLED_TOPIC.get(cache_key)
@@ -381,7 +389,7 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
     # recall reply surfaces the risen graded strength — and ONLY its reply (a neighbour that was never consolidated is
     # not in this set, so its reply is untouched). Reached only on the SUCCESS path (a crash re-raises above, before
     # this line, so a rolled-back consolidation never surfaces a strength).
-    _CONSOLIDATED_TOPICS.setdefault(cache_key, set()).add(topic)
+    _CONSOLIDATED_TOPICS.setdefault(cache_key if consolidated_key is None else consolidated_key, set()).add(topic)
     rec = {"t": time.time(), "consolidated": topic, "slot": int(slot), "n_episodes": n_ep,
            "w_within_before": round(w0, 3), "w_within_after": round(wN, 3),
            "note": "idle: consolidated the used memory ‘%s’ (within-assembly weight %.1f → %.1f)" % (topic, w0, wN)}
@@ -881,7 +889,7 @@ def mark_mull(cache_key, topic) -> None:
         _MULLED_TOPIC[cache_key] = str(topic).lower()
 
 
-def _apply_wander_mull(cache_key, organ):
+def _apply_wander_mull(cache_key, organ, peek=None):
     """If MULL is armed for this session AND the mulled topic is one of THIS organ's own stored concepts, boost that
     concept's curiosity NOVELTY to `MULL_NOVELTY` and re-derive `gains_on` through the SAME spiking
     `CuriosityProductionOrgan` read the organ's baseline already uses (a genuine higher-novelty spiking read, not a
@@ -890,10 +898,19 @@ def _apply_wander_mull(cache_key, organ):
     `_WANDER_ADAPT`'s own base-capture on this session's first-ever tick, see the MULL section header above), or
     `(None, None)` if nothing armed / disabled / no match. CONSUMES the armed topic on every call while enabled
     (arm-once), so an unmatched mulled topic (outside this organ's tiny lexicon) still clears rather than lingering to
-    silently apply to some later, unrelated wander."""
+    silently apply to some later, unrelated wander.
+
+    `peek` (a dict; the real-time tick passes one, fold-in (b) of the M0 review 2026-10-13): READ the armed topic
+    instead of popping it and record it in `peek["topic"]`; the caller consumes it (`_consume_peeked_mull`) only when
+    the wander's result is recorded. The tick runs the wander OUTSIDE the turn lock, so a pop here could take the arm a
+    FRESH session's turn had just set (after a reset) and then drop it with the stale wander."""
     if not wander_mull_enabled():
         return None, None
-    topic = _MULLED_TOPIC.pop(cache_key, None)
+    if peek is None:
+        topic = _MULLED_TOPIC.pop(cache_key, None)
+    else:
+        topic = _MULLED_TOPIC.get(cache_key)
+        peek["topic"] = topic
     if not topic:
         return None, None
     agents = getattr(organ, "agents", None)
@@ -915,6 +932,14 @@ def _apply_wander_mull(cache_key, organ):
     pre_gains = list(gains)
     organ.gains_on = [1.0 + organ.gain_scale * (w / wmax if wmax > 1e-9 else 0.0) for w in wants]
     return pre_gains, {"mulled": topic, "basin": i, "boosted_novelty": MULL_NOVELTY}
+
+
+def _consume_peeked_mull(cache_key, peek) -> None:
+    """Consume the mull arm a recorded wander peeked (`_apply_wander_mull(peek=...)`): pop it only if it is still the
+    value the wander read, so an arm a turn set meanwhile is never taken."""
+    topic = (peek or {}).get("topic")
+    if topic and _MULLED_TOPIC.get(cache_key) == topic:
+        _MULLED_TOPIC.pop(cache_key, None)
 
 
 # ── IDEATION: an OCCASIONAL between-turn wander that GENERATES a NOVEL blended concept (creativity rung) ──────────
@@ -1205,12 +1230,13 @@ def _drop_wander_state(cache_key) -> None:
     _SPIKING_IDEATE_STORE.pop(cache_key, None)
 
 
-def _tick_think(cache_key, selfinit_organ, note):
+def _tick_think(cache_key, selfinit_organ, note, mull_peek=None):
     """(b) THOUGHT: the curiosity-biased spiking wander (or, occasionally, ideation) on THIS session's self-init organ.
     Touches that organ and this session's wander state: it writes the IOR adaptation, the ideation counter and the
     ideation store, and it consumes the mulled topic (armed by a live turn's `mark_mull`, not by the tick).
     `tick_idle_sessions` runs it OUTSIDE the turn lock (a ~55 s cupy wander must never hold a turn), under
-    `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.)"""
+    `selfinit_lock`. Returns (wandered, ideation, mull, note). (Moved verbatim out of `tick_session`, M0.) `mull_peek`
+    (a dict, the real-time tick): the mull arm is read, not popped (see `_apply_wander_mull`)."""
     wandered = None
     ideation = None
     mull = None
@@ -1239,7 +1265,7 @@ def _tick_think(cache_key, selfinit_organ, note):
                     selfinit_organ._ensure_mouth()   # need agents/novelties/gains_on populated (idempotent, cheap)
                 except Exception:
                     pass
-                pre_gains, mull = _apply_wander_mull(cache_key, selfinit_organ)
+                pre_gains, mull = _apply_wander_mull(cache_key, selfinit_organ, peek=mull_peek)
                 out = selfinit_organ.speak(lesion=False)
                 if pre_gains is not None:
                     selfinit_organ.gains_on = pre_gains
@@ -1270,6 +1296,8 @@ def _tick_record(cache_key, now, feel, wandered, ideation, mull, note, dropped=N
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
         del lst[:-_INNER_LIFE_MAX]
+    if wandered:
+        _LAST_WANDERED[cache_key] = wandered
     return rec
 
 
@@ -1290,7 +1318,7 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
 
 
 def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None,
-                       selfinit_getter=None, episodic_getter=None, chat_getter=None) -> int:
+                       selfinit_getter=None, episodic_getter=None, chat_getter=None, one_brain=None) -> int:
     """Run one tick over every session that is IDLE (no request for >= IDLE_SEC). Returns #sessions ticked.
 
     Called by the server's background loop. Skips sessions mid-conversation (raced writes) and any with no mood yet.
@@ -1308,9 +1336,22 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
     record the drop, then skip the rest of this session; (4) each consolidation / ledger / persistence step under its
     own turn-lock hold, re-checking that no turn arrived. A waiting turn is served between any two steps (FIFO).
     With a caller-supplied `now` (the battery's single-threaded world steps) nothing can preempt, so the steps run in
-    exactly the pre-M0 order on the pre-M0 clock."""
+    exactly the pre-M0 order on the pre-M0 clock.
+
+    M2, BRAIN_ONE_BRAIN on (`one_brain`, default: the adapter webapp/one_brain.py registers): the per-conversation steps
+    stay per conversation (the feel, the wander, the D5 consolidation of the memory THIS conversation recalled -- on
+    the brain's one store -- and the #91/#92 relaxations of this conversation's EMAs); the steps that act on the
+    shared store become BRAIN events (`_tick_brain_events`): sleep replay and the persistence save run when the WHOLE
+    brain has been idle >= SLEEP_IDLE_SEC (no turn in any conversation), the Turrigiano pass and the tag-and-capture
+    ledger when it has been idle >= IDLE_SEC -- once per brain, not once per conversation (one organism sleeps)."""
     if not continuous_enabled():
         return 0
+    if one_brain is None:
+        try:
+            from webapp import one_brain as _OBm
+            one_brain = _OBm.TICK_ADAPTER if _OBm.one_brain_on() else None
+        except Exception:
+            one_brain = None
     real_time = now is None
     n = 0
     _d5_on = d5_consolidate_enabled()
@@ -1339,9 +1380,10 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 continue
         # (2) NO TURN LOCK: the wander, on this session's own organ, under its organ lock.
         think = (None, None, None, feel["note"]) if feel is not None else None
+        mull_peek = {}   # fold-in (b): the wander reads the mull arm; (3) consumes it only for a recorded wander
         if feel is not None and siorg is not None:
             with selfinit_lock(cache_key):
-                think = _tick_think(cache_key, siorg, feel["note"])
+                think = _tick_think(cache_key, siorg, feel["note"], mull_peek=mull_peek)
         # (3) TURN LOCK: record, or drop a wander a turn preempted.
         with _brain_turn("idle_tick"):
             reset = _RESET_SEQ.get(cache_key) != reset0
@@ -1357,6 +1399,8 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     note = feel["note"] + "; a wandering thought was interrupted by your message, so I let it go"
                     wandered, ideation, mull = None, None, None
                 rec = _tick_record(cache_key, t, feel, wandered, ideation, mull, note, dropped)
+                if not preempted:
+                    _consume_peeked_mull(cache_key, mull_peek)   # a dropped wander leaves the arm for the next one
                 n += 1
                 if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
                     _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
@@ -1373,7 +1417,9 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     and _RECALLED_TOPIC.get(cache_key):
                 try:
                     eorg = episodic_getter(cache_key)
-                    if eorg is not None and consolidate_used_memory(cache_key, eorg) is not None:
+                    _ckey = one_brain.brain_key_of(cache_key) if one_brain is not None else None
+                    if eorg is not None and consolidate_used_memory(cache_key, eorg,
+                                                                    consolidated_key=_ckey) is not None:
                         _D5_BUDGET[cache_key] = max(0, _D5_BUDGET.get(cache_key, 0) - 1)
                 except Exception:
                     # consolidate_used_memory already rolled the store back + drained the topic on failure; LOG so a
@@ -1523,7 +1569,10 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     _lg.getLogger(__name__).warning(
                         "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
 
-        for _step in (_s_d5, _s_sleep_replay, _s_persist, _s_homeostasis, _s_tag_capture, _s_relax91, _s_relax92):
+        _steps = (_s_d5, _s_sleep_replay, _s_persist, _s_homeostasis, _s_tag_capture, _s_relax91, _s_relax92)
+        if one_brain is not None:   # M2: the shared-store steps are brain events (below), not per-conversation steps
+            _steps = (_s_d5, _s_relax91, _s_relax92)
+        for _step in _steps:
             with _brain_turn("idle_tick"):
                 if _REQ_SEQ.get(cache_key) != seq0 or _RESET_SEQ.get(cache_key) != reset0:
                     break   # a turn (or a reset) arrived: leave this session for the next idle period
@@ -1531,4 +1580,70 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     _step()
                 except Exception:
                     break   # the pre-M0 behaviour: an unexpected error skips the rest of this session's tick
+    if one_brain is not None:
+        _tick_brain_events(one_brain, now, real_time)
     return n
+
+
+def brain_idle_seconds(one_brain, bkey, t: float, real_time: bool):
+    """Seconds since the last turn in ANY conversation of brain `bkey` (M2), or None with no timing evidence yet (a
+    brain nobody has spoken to is never treated as asleep, as `_is_sleep_tick` does for one session)."""
+    keys = [k for k in (set(_LAST_REQUEST) | set(_LAST_TURN_END)) if one_brain.brain_key_of(k) == bkey]
+    refs = [r for r in (_idle_ref(k, real_time) for k in keys) if r is not None]
+    if not refs:
+        return None
+    return t - max(refs)
+
+
+def _tick_brain_events(one_brain, now, real_time) -> int:
+    """M2 brain events (BRAIN_ONE_BRAIN on): for each brain, sleep replay + the persistence save when the whole brain
+    is idle >= SLEEP_IDLE_SEC, the Turrigiano pass (or its #138 sleep-only variant) + the tag-and-capture ledger when
+    it is idle >= IDLE_SEC. Each step holds the turn lock on its own and re-reads the brain's idleness inside it, so a
+    turn in any conversation preempts the rest. Records go to the brain key's inner-life log. Returns #steps run."""
+    ran = 0
+    for bk in list(one_brain.brain_keys()):
+        def _idle():
+            t = time.time() if real_time else now
+            return t, brain_idle_seconds(one_brain, bk, t, real_time)
+
+        def _ev_sleep_replay(idle):
+            if sleep_replay_enabled() and idle >= SLEEP_IDLE_SEC:
+                org = one_brain.episodic(bk)
+                if org is not None:
+                    consolidate_sleep_replay(bk, org)
+
+        def _ev_persist(idle):
+            from research.runners.cross_session_persistence import (persist_learning_enabled as _pl_on,
+                                                                     save_session_learning as _pl_save)
+            if _pl_on() and idle >= SLEEP_IDLE_SEC:
+                _pl_save(bk, one_brain.chat(bk), one_brain.episodic(bk))
+
+        def _ev_homeostasis(idle):
+            chat = one_brain.chat(bk)
+            if chat is None:
+                return
+            if substrate_homeostasis_sleep_trigger_enabled():
+                if idle >= SLEEP_IDLE_SEC:
+                    consolidate_substrate_homeostasis(bk, chat, trigger="nrem_sleep")
+            else:
+                consolidate_substrate_homeostasis(bk, chat, trigger="idle_tick")
+
+        def _ev_tag_capture(idle):
+            from webapp import da_tag_capture_chat as _DTC
+            chat = one_brain.chat(bk)
+            if chat is not None and _DTC.tag_capture_enabled():
+                _DTC.tick_chat(chat)
+
+        for _ev in (_ev_sleep_replay, _ev_persist, _ev_homeostasis, _ev_tag_capture):
+            with _brain_turn("idle_tick"):
+                _t, idle = _idle()
+                if idle is None or idle < IDLE_SEC:
+                    break   # the brain is in conversation (or never spoke): no brain event this tick
+                try:
+                    _ev(idle)
+                    ran += 1
+                except Exception:
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning("one-brain %s event failed for %s", _ev.__name__, bk,
+                                                    exc_info=True)
+    return ran

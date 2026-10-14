@@ -51,6 +51,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import secrets
 import time as _time
@@ -500,6 +501,26 @@ def _write_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
     return path
 
 
+def _separate_reserve_codes(comp, cache_key) -> list:
+    """After a facts reload on the onebrain composer: re-code any free reserve slot that still holds a reloaded word's
+    code (`OneBrainComposer.separate_reserve_codes`), then check that every cleanup code is distinct and log an ERROR
+    naming the pairs if not (the postcondition; a composer without these methods is skipped). Returns the pairs."""
+    sep = getattr(comp, "separate_reserve_codes", None)
+    dup = getattr(comp, "duplicate_codes", None)
+    if not callable(sep) or not callable(dup):
+        return []
+    try:
+        sep()
+        pairs = dup()
+    except Exception:
+        logging.getLogger(__name__).warning("reserve-code separation failed for %s", cache_key, exc_info=True)
+        return []
+    if pairs:
+        logging.getLogger(__name__).error("facts reload for %s left %d cleanup code(s) shared: %s", cache_key,
+                                          len(pairs), pairs[:8])
+    return pairs
+
+
 def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = None) -> int:
     """Re-store the persisted session facts into a freshly-built chat's composer (so the runtime-taught knowledge
     survives). Injects any persisted runtime-grounded codes first (so a runtime-allocated word is encodable), then
@@ -536,8 +557,21 @@ def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
         # re-store, so re-store order can never hand a word another word's slot (`OneBrainComposer.restore_recruit`).
         restore = getattr(comp, "restore_recruit", None)
         if callable(restore):
-            for w, s in sorted((payload.get("slots") or {}).items(), key=lambda kv: int(kv[1])):
-                restore(w, int(s), codes.get(w))
+            # per word (one-brain M2 fold-in (c), M0 review 2026-10-13): a slot value that will not parse, or a
+            # restore that raises, skips THAT word only; it used to raise out of the sort key and drop every fact.
+            slots_ok = []
+            raw_slots = payload.get("slots") or {}
+            for w, s in (raw_slots.items() if isinstance(raw_slots, dict) else ()):
+                try:
+                    slots_ok.append((w, int(s)))
+                except (TypeError, ValueError):
+                    logging.getLogger(__name__).warning("persisted slot for %r is not an int (%r); %r re-recruits "
+                                                        "in re-store order", w, s, w)
+            for w, s in sorted(slots_ok, key=lambda kv: kv[1]):
+                try:
+                    restore(w, s, codes.get(w))
+                except Exception:
+                    logging.getLogger(__name__).warning("restore_recruit(%r, %r) failed", w, s, exc_info=True)
         try:
             concepts = concept_codebook(comp)
             if concepts is not None:
@@ -555,9 +589,9 @@ def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
         if not new_facts:
             return 0
         _restore_facts(agent, new_facts)
+        _separate_reserve_codes(comp, cache_key)
         return len(new_facts)
     except Exception:
-        import logging
         logging.getLogger(__name__).warning("session-facts persistence reload failed for %s", cache_key, exc_info=True)
         return 0
 

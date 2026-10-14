@@ -124,6 +124,15 @@ def _last_user_message(messages) -> str:
     return ""
 
 
+def _last_user_name(messages):
+    """The `name` of the last user message (OpenAI per-message participant name), or None."""
+    for m in reversed(messages or []):
+        if (m or {}).get("role") == "user":
+            n = m.get("name")
+            return n.strip() if isinstance(n, str) and n.strip() else None
+    return None
+
+
 MODEL_ID = "sim-brain"
 
 

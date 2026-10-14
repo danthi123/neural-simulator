@@ -21,8 +21,10 @@ A turn is read from the reply's SVO fields (recalled_svo, supporting_facts, deri
   other    = anything else (an answer that names no expected fact, or an SVO match on an abstained turn)
 
 ARMS. "needs" = the code the arm requires; an arm whose need is absent from webapp/ is reported UNDEFINED (with the
-missing need), never run on a substitute. Today's server has per-session brains (one ChatBrain + one composer + one
-D5 store per session key), so the M2 arms are UNDEFINED until the `BRAIN_ONE_BRAIN` flag exists.
+missing need), never run on a substitute. At M0 the server had per-session brains only, so the M2 arms were UNDEFINED;
+M2 (webapp/one_brain.py, `BRAIN_ONE_BRAIN`, default off) provides every need. Dev seeds 7 and 8 at M2:
+research/findings/raw/_one_brain_probe/m2_s7.json, m2_s7_instruments.json, m2_s8.json (docs/drafts/one-brain-m2/
+WORKLOG.md section 5).
 
   intact                 today's per-session brains                  phases [A_teach A_ask B_ask B_ltm B_build]
   restart_persist_off    BRAIN_PERSIST_LEARNING=0                    [A_teach A_ask @flush] | [B_ask A_ask_again B_ltm

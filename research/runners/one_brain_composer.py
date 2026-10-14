@@ -654,6 +654,48 @@ class OneBrainComposer:
             cache.clear()                                    # the cleanup operator changed -> rebuild on next read
         return True
 
+    def separate_reserve_codes(self) -> list:
+        """Give every still-free reserve slot whose placeholder code equals a live word's code a fresh code (one-brain
+        M2 fold-in (c), M0 review 2026-10-13). A reload that could not put a word back into its own slot (a checkpoint
+        with no slot record, an out-of-range or duplicated slot, or a slot value that would not parse) re-recruits the
+        word in re-store order: it keeps its saved code in another slot while its own slot's placeholder still holds
+        that code, so the next new word would get it too (two words, one code). The fresh code is drawn from an RNG
+        seeded by (seed, slot) only, so the recruit stream (`_recruit_rng`) is untouched. Returns the slots re-coded."""
+        live = [np.asarray(self.comp.concepts[w], dtype=float) for w in self.words
+                if isinstance(w, str) and not w.startswith("__free") and self.comp.concepts.get(w) is not None]
+        recoded = []
+        for s in list(self._free_slots):
+            ph = self.words[s]
+            code = self.comp.concepts.get(ph)
+            if code is None:
+                continue
+            c = np.asarray(code, dtype=float)
+            if any(c.shape == v.shape and np.array_equal(c, v) for v in live):
+                rng = np.random.default_rng([int(self.seed) + 90211, int(s)])
+                self.comp.concepts[ph] = rng.uniform(0.0, 1.0, self.D)
+                recoded.append(int(s))
+        if recoded:
+            self._dg_index = None; self._dg_built_V = -1
+            cache = getattr(self, "_csr_cache", None)
+            if cache is not None:
+                cache.clear()
+        return recoded
+
+    def duplicate_codes(self) -> list:
+        """Pairs of cleanup-codebook entries (words and free placeholders) that share one code: [] when every code is
+        distinct (the reload postcondition `cross_session_persistence.reload_session_facts` checks)."""
+        seen, dups = [], []
+        for w in self.words:
+            code = self.comp.concepts.get(w) if isinstance(w, str) else None
+            if code is None:
+                continue
+            c = np.asarray(code, dtype=float)
+            for w0, c0 in seen:
+                if c.shape == c0.shape and np.array_equal(c, c0):
+                    dups.append((w0, w))
+            seen.append((w, c))
+        return dups
+
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
         `polarity` (AFFIRM default / NEGATE) is bound as a role -> `ask_yes_no` returns yes/no/unknown."""

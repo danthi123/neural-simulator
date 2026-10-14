@@ -446,11 +446,60 @@ def test_reload_keeps_each_recruited_word_in_its_own_reserve_slot(tmp_path, monk
 
 def test_reload_without_slot_restore_reproduces_the_shared_code(tmp_path, monkeypatch):
     """Control: the same order with the slot restore removed gives heron moth's code (the reviewer's repro), so the
-    test above has teeth."""
+    test above has teeth. The post-reload reserve-code separation (M2 fold-in (c)) is a second defence against the
+    same collision, so it is removed too."""
     from research.runners.one_brain_composer import OneBrainComposer
     monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
     _, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
     monkeypatch.delattr(OneBrainComposer, "restore_recruit")
+    monkeypatch.delattr(OneBrainComposer, "separate_reserve_codes")
+    fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)
+    assert np.allclose(fresh.comp.concepts["heron"], fresh.comp.concepts["moth"])
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────
+# A damaged slot record (one-brain M2 fold-in (c), M0 review 2026-10-13). A non-int slot value used to raise out of
+# the sort key and drop EVERY fact (reload returned 0); a checkpoint with no slot record, an out-of-range slot or a
+# duplicated slot re-recruits the word in re-store order and the word's own reserve slot kept its code, so the next new
+# word shared it. Per-word parsing + the post-reload reserve-code separation fix both; the postcondition is that every
+# cleanup code is distinct.
+# ────────────────────────────────────────────────────────────────────────────────────────────
+def _edit_saved_slots(tmp_path, key, mutate):
+    d = CSP._facts_identity_dir(key, tmp_path)
+    p = CSP._facts_checkpoint_path(d, CSP._resolve_checkpoint(d, None))
+    payload = json.loads(p.read_text())
+    mutate(payload)
+    p.write_text(json.dumps(payload))
+
+
+_DAMAGED_SLOTS = {
+    "non_int": lambda pl: pl["slots"].update({"moth": "seven"}),
+    "slotless": lambda pl: pl.pop("slots"),
+    "out_of_range": lambda pl: pl["slots"].update({"moth": 999}),
+    "duplicate": lambda pl: pl["slots"].update({"moth": pl["slots"]["wren"]}),
+}
+
+
+@pytest.mark.parametrize("damage", sorted(_DAMAGED_SLOTS))
+def test_reload_with_a_damaged_slot_record_keeps_every_code_distinct(tmp_path, monkeypatch, damage):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    _, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
+    _edit_saved_slots(tmp_path, key, _DAMAGED_SLOTS[damage])
+    fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)       # asserts the reload restored the fact (1)
+    assert fresh.duplicate_codes() == []
+    cc = fresh.comp.concepts
+    assert not np.allclose(cc["heron"], cc["moth"]), damage
+    assert fresh.query_patient("crow", "chase") == "moth"
+
+
+def test_damaged_slot_record_without_the_separation_shares_a_code(tmp_path, monkeypatch):
+    """Control: a slot-less checkpoint reloaded with the separation removed gives heron moth's code, so the test
+    above has teeth."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    _, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
+    _edit_saved_slots(tmp_path, key, _DAMAGED_SLOTS["slotless"])
+    monkeypatch.delattr(OneBrainComposer, "separate_reserve_codes")
     fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)
     assert np.allclose(fresh.comp.concepts["heron"], fresh.comp.concepts["moth"])
 
