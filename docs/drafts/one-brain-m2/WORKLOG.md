@@ -200,9 +200,12 @@ and `recalled_svo` is identical (17/17 at both seeds). Bodies identical 14/17 at
 also the hash-seed ulp of section 4); the differing fields are numeric read-outs of the block the conversation TAUGHT
 ("the wug eats the dax"): `activity.rf.mean_magnitude` (s7 83467.6 -> 85884.5), the role-decode margins,
 `metacog.mean_role_conf`, `d6_hebbian.held.readout` (404.0 -> 415.7) on turns 1-2 (and the magnitude on turn 3 at
-s7), and the idle-replay candidate score of that engram on the empty turn 14. Build facts read identically. Cause:
-ATTRIBUTION PENDING (`ltm7`, OFF with `BRAIN_SHARED_LTM=1`: ON forces the shared LTM, which forces RNG isolation, so
-the LTM load no longer reseeds the global RNG streams the teach turn's write draws its noise from).
+s7), and the idle-replay candidate score of that engram on the empty turn 14. Build facts read identically.
+ATTRIBUTED, all of it, to the forced shared LTM: OFF with `BRAIN_SHARED_LTM=1` (`offltm_s7_single.json`) vs ON at s7,
+both hash-seeded: 17/17 bodies byte-identical. ON forces `BRAIN_SHARED_LTM`, which forces `BRAIN_LTM_RNG_ISOLATE`, so
+the LTM load no longer reseeds the process-global RNG streams the teach turn's write draws its noise from (the
+shared-LTM step's documented effect; its own flip battery is separate). The Brain/Context machinery itself (bind,
+brain-level keys, the tonic with one conversation, the tick adapter) changes no byte of a single conversation.
 
 B. Two conversations (pair script s7: A teaches, A says something happy, B asks).
 1. B recalls what A taught (OFF: "I don't know about that."; ON: the fact). The core change.
