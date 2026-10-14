@@ -1419,3 +1419,13 @@ LBF rows 6/6, answer_rate on/off with FLIP-HURTS-ANSWERS reported, OFF-TARGET co
 under the commit lesion at ON, dual-role decline rate reported), dev seeds 1-8 first, gate seeds only after
 Claude approves. NEEDS [wrc-flip-packet] ASK filed (single dash) - no run before that ruling. bg-commit
 step-2 canary still running on pool41 (started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue.
+
+
+19:36: absorbed rulings 3455e750e (wrc-packet-review-1014/1014b APPROVED WITH AMENDMENTS A-D, wrc-packet-answers
+Q2/Q3/Q4). Amended docs/drafts/word-role-flip/PACKET.md on research/wrc-flip-packet: (A) 10 exact off-target
+statement-form strings fixed + parse-route precondition (engaged turn = UNDEFINED + NEEDS) + both PARSE and
+COMMIT lesions must leave replies identical 6/6; (B) F2/F3 identity at dev 7 (iw1/iw2_default_identity,
+default==on:both, off==pre-flip byte-identical); (C) scoped B1 with an at-risk row list from the dev-7 ON vs
+alloff turn script; (D) order = smoke dev 7 -> promote to research/findings/2026-10-1X-word-role-flip-
+PREREGISTRATION.md on main with bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; dev 1-8 SKIPPED. NEXT:
+queue the dev-7 smoke lines (RSS/wall + F2/F3 + at-risk + off-target precondition) on the pool.
