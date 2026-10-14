@@ -25,3 +25,14 @@ Host, numpy CPU, `SIM_NO_PROVENANCE=1` for the S-side tests/select.
   (log `~/derisk-pool/canary/word_role_commit_organ_c64f2c70d_pool41_20261014T120516.log`).
 - All 6 O lines queued 12:06 (mem_gb=2, max_age_h=120). Step R waits for block 4 (score O).
 
+## Step R: canary + trace checks + queue (2026-10-14 13:09-13:14)
+
+- op re-read = 0; 12 R lines committed (`419cff8a2`).
+- Canary PASS on pool42: rc=0, wall=1701s, json=1, errors=0,
+  id `load_bearing_fraction_c64f2c70d_pool42_20261014T124108`
+  (registry line 2026-10-14T13:09:57; canary LB fraction 1.000, 1/1 env-lesion faculties).
+- Trace checks on the canary shard (s42) ALL PASS: `word_role_trace.route = word_role_commit` and
+  `error = null` in both arms; `commit_lesioned = true` in `lesion_*.json`, `false` in
+  `intact_a_*.json`; `commit.read_invariant = true` in intact.
+- All 12 R lines queued 13:14 (mem_gb=8, max_age_h=168). Step: score R when the 12 shards land.
+
