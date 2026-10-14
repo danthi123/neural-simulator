@@ -97,7 +97,7 @@ export with `BRAIN_ONE_BRAIN` unset. Compare: `compare_hashes.py`.
 |---|---|---|---|---|
 | base vs OFF | 7 | unset (random) | 16/17 | turn 16: `curiosity.novelty` 0.9748080180058432 vs ...433 |
 | base vs OFF | 8 | base unset, OFF 0 | 16/17 | turn 16: the same field, ...433 vs ...432 |
-| base vs OFF | 7 | 0 | PENDING | |
+| base vs OFF | 7 | 0 | **17/17** | none |
 | base vs OFF | 8 | 0 | PENDING | |
 
 The one-ulp difference is not the branch: the same value flips between ...432 and ...433 across runs of EITHER code
@@ -178,13 +178,13 @@ includes the brain build.
 
 | run | turn 0 (build) OFF / ON | turns 1-16 summed OFF / ON | median per-turn ratio ON/OFF (range) |
 |---|---|---|---|
-| single conversation s7 | 463.3 / 444.4 | 767.1 / 716.9 | 0.93 (0.90-0.97) |
+| single conversation s7 | 451.2 / 444.4 | 724.9 / 716.9 | 0.98 (0.95-1.02) |
 | single conversation s8 | 482.3 / 459.3 | 799.0 / 783.3 | 0.99 (0.92-1.02) |
 | two conversations s7 (pair) | 355.9 / 351.9 | 388.6 / 282.1 | 0.96 (0.18-0.99) |
 
 - The bind (saving one conversation's fields and restoring another's) costs nothing measurable: a single conversation
-  at ON is not slower (median ratio 0.93-0.99; the s7 OFF side ran without a hash seed, s8 both under it). Against
-  OFF with the shared LTM on (the like-for-like store), s7 turns 1-16: 725.0 s OFF vs 716.9 s ON.
+  at ON is not slower (median ratio 0.98-0.99, both sides hash-seeded). Against OFF with the shared LTM on (the
+  like-for-like store), s7 turns 1-16: 725.0 s OFF vs 716.9 s ON.
 - A NEW conversation is cheaper at ON: in the pair run B's second turn took 114.3 s at OFF (its own brain's first
   rich recall) and 20.5 s at ON (the ratio 0.18); in the probe, B's first ask took 124.7 / 125.9 s (s7 / s8) with its
   own per-session brain (intact) and 25.6 / 27.2 s on the shared brain.
@@ -198,9 +198,9 @@ includes the brain build.
 
 Measured (hash runs, ON vs OFF, same seed, both under `PYTHONHASHSEED=0` unless noted) and by construction.
 
-A. ONE conversation alone (single script; s8 both hash-seeded, s7 OFF side unseeded). Every `answer`, `abstained`
-and `recalled_svo` is identical (17/17 at both seeds). Bodies identical 14/17 at s8 (12/17 at s7, where turn 16 is
-also the hash-seed ulp of section 4); the differing fields are numeric read-outs of the block the conversation TAUGHT
+A. ONE conversation alone (single script, both sides hash-seeded). Every `answer`, `abstained`
+and `recalled_svo` is identical (17/17 at both seeds). Bodies identical 13/17 at s7 and 14/17 at s8 (both sides
+hash-seeded); the differing fields are numeric read-outs of the block the conversation TAUGHT
 ("the wug eats the dax"): `activity.rf.mean_magnitude` (s7 83467.6 -> 85884.5), the role-decode margins,
 `metacog.mean_role_conf`, `d6_hebbian.held.readout` (404.0 -> 415.7) on turns 1-2 (and the magnitude on turn 3 at
 s7), and the idle-replay candidate score of that engram on the empty turn 14. Build facts read identically.
@@ -208,7 +208,8 @@ ATTRIBUTED, all of it, to the forced shared LTM: OFF with `BRAIN_SHARED_LTM=1` (
 both hash-seeded: 17/17 bodies byte-identical. ON forces `BRAIN_SHARED_LTM`, which forces `BRAIN_LTM_RNG_ISOLATE`, so
 the LTM load no longer reseeds the process-global RNG streams the teach turn's write draws its noise from (the
 shared-LTM step's documented effect; its own flip battery is separate). The Brain/Context machinery itself (bind,
-brain-level keys, the tonic with one conversation, the tick adapter) changes no byte of a single conversation.
+brain-level keys, the tonic with one conversation) changes no byte of a single conversation's 17 replies (the driver
+runs no idle tick, so the brain-event tick is covered by unit tests only).
 
 B. Two conversations (pair script s7: A teaches, A says something happy, B asks).
 1. B recalls what A taught (OFF: "I don't know about that."; ON: the fact). The core change.
