@@ -84,7 +84,9 @@ the slots.
 
 Dual-role reads: 17/24 right, 0 wrong, 7 declined (seed 101: 1/4). The exclusion lesion gives 0/24 co-commits, so
 "at most one role" comes from the role layer, and the commit gate's cross-inhibition is not shown necessary.
-Count-mode baseline at 9ea7411.
+Count-mode baseline: the word-role-parse R data at 9ea7411 (count mode, same probe and seeds) passed reply-level
+load-bearing 6/6 (pre-registration section 5); each commit-mode reply's host-rule agreement is true 6/6 in the
+diagnostics table above.
 
 ## Not yet a live seam
 
