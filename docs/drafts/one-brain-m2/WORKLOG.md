@@ -47,7 +47,7 @@ only; no gate seed was run.
 
 ## 3. Tests
 
-- Brain-free (no lock needed; numpy, no build): `tests/test_one_brain.py` 35 passed: the flag parse (default off),
+- Brain-free (no lock needed; numpy, no build): `tests/test_one_brain.py` 38 passed (tip): the flag parse (default off),
   Context views vs a plain dict on a fixed op sequence (order, re-set, pop-then-set, a stored None), registry remove,
   the server views being Context fields + eviction removing the Context, the ATTRIBUTE CLASSIFICATION SCAN (every
   `chat.<attr> =` in `webapp/*.py` and every ChatBrain self-attribute written outside `__init__` must be classified
@@ -62,7 +62,9 @@ only; no gate seed was run.
   generates, the mood manner reaches the generative prompt, a template renderer gets no deferred mouth), the freeze
   gate, the zero instrument (only post-build blocks, caches invalidated, tags cleared, refused at OFF and in
   production), sleep/persist as ONE brain event only when the whole brain is idle >= 300 s, the OFF tick unchanged,
-  the OpenAI shim's interlocutor pass-through.
+  the OpenAI shim's interlocutor pass-through, the frozen acquisition reporting no acquisition (the real
+  `ChatBrain._maybe_acquire`), zero dropping the organs built after the build, a reset conversation being a new
+  conversation for the frame.
 - Brain-free regression: `test_brain_turn_lock.py`, `test_battery_session_release.py`,
   `test_tick_pre_m0_equivalence.py` (the pre-M0 golden tick trace), `test_idle_replay_organ.py`,
   `test_sleep_replay_capture.py`, `test_brain_prewarm_scratch_session.py`: 102 passed, 1 skipped.
@@ -181,7 +183,8 @@ includes the brain build.
 | two conversations s7 (pair) | 355.9 / 351.9 | 388.6 / 282.1 | 0.96 (0.18-0.99) |
 
 - The bind (saving one conversation's fields and restoring another's) costs nothing measurable: a single conversation
-  at ON is not slower (median ratio 0.93-0.99; the s7 OFF side ran without a hash seed, s8 both under it).
+  at ON is not slower (median ratio 0.93-0.99; the s7 OFF side ran without a hash seed, s8 both under it). Against
+  OFF with the shared LTM on (the like-for-like store), s7 turns 1-16: 725.0 s OFF vs 716.9 s ON.
 - A NEW conversation is cheaper at ON: in the pair run B's second turn took 114.3 s at OFF (its own brain's first
   rich recall) and 20.5 s at ON (the ratio 0.18); in the probe, B's first ask took 124.7 / 125.9 s (s7 / s8) with its
   own per-session brain (intact) and 25.6 / 27.2 s on the shared brain.
@@ -241,10 +244,11 @@ C. By construction (no ON run with these conditions here; covered by unit tests)
    source or WHEN tag yet, so conversation B can be told it discussed something only A discussed. The "Someone told
    me" frame covers RECALLED FACTS (`recalled_svo`, `supporting_facts`, `derived_from`), not D5 referential replies.
    This is M3's job (the source monitor reads "did YOU tell me"); until then a cross-conversation D5 "yes" is an
-   honesty gap at ON.
+   honesty gap at ON. Not triggered in the pair run (B's "did we discuss the wug" found no D5 episode and said it
+   did not recall), so it is structural, not observed.
 2. The source frame reads a HOST tag (declared scaffold, `one_brain_source.reason = "host_tag"`): exact (a, v, p)
    triples that entered the store during a conversation's turn. Not checkpointed: after a restart with persistence
-   (M5) a reloaded fact has no tag, so it is recalled with no frame. A reconsolidation rewrite is tagged to the
+   (M5) a reloaded fact has no tag, so it is recalled with no frame (observed: the restart arm's B_ask, both seeds). A reconsolidation rewrite is tagged to the
    conversation that rewrote it.
 3. The tonic mood baseline is not checkpointed (it restarts at neutral).
 4. The renderer is part of the brain key `("__one_brain__", brain, renderer)`: a stub conversation and a qwen
