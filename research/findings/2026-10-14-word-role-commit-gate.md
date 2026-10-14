@@ -4,14 +4,14 @@ status: provisional
 claim_check: measured (tools/s2p_score.py O and R over the landed shards at P=c64f2c70d; awaiting Claude review)
 date: 2026-10-14
 lane: load-bearing (the #1 metric, owner 2026-09-19)
-mechanism: word-role-commit organ (default OFF behind BRAIN_WORD_ROLE_COMMIT) gate-tested at P=c64f2c70d8232336992aab074f199c36a6560d45: step O operating point, step R reply-level lesion test of the commit stage plus the permuted nofact control
+mechanism: word-role-commit organ (default OFF behind BRAIN_WORD_ROLE_COMMIT) gate-tested at P=c64f2c70d8232336992aab074f199c36a6560d45: step O operating point, step R reply-level lesion test of the commit stage plus the no-fact control
 seeds: [42, 43, 44, 100, 101, 102]
 artifacts:
   - research/findings/raw/_s2p/word-role-commit/c64f2c7/selection.json
   - research/findings/raw/_s2p/word-role-commit/c64f2c7/verdicts/O.json
   - research/findings/raw/_s2p/word-role-commit/c64f2c7/verdicts/R.json
   - research/findings/2026-10-06-word-role-commit-PREREGISTRATION.md
-verdict: PROVISIONAL PASS. O: 6/6 seeds all-pass at op=0. R: 6/6 capability cells DEFINED and regressed under the word_role_commit lesion (n_reply_load_bearing 6 of 6); 6/6 permuted nofact controls control-ok. <!--derived-->
+verdict: PROVISIONAL PASS. O: 6/6 seeds all-pass at op=0. R: 6/6 capability cells DEFINED and regressed under the word_role_commit lesion (n_reply_load_bearing 6 of 6); 6/6 no-fact controls control-ok. <!--derived-->
 ---
 
 # word-role-commit gate at P=c64f2c70d (default OFF behind BRAIN_WORD_ROLE_COMMIT) -- PROVISIONAL
@@ -58,25 +58,39 @@ Artifact: `research/findings/raw/_s2p/word-role-commit/c64f2c7/verdicts/R.json`.
 | 102 | regressed | the brain uses the spikes | abstain (I don't know about that...) | control-ok |
 
 R verdict: PASS, op=0; capability cells DEFINED 6/6, reply load-bearing 6/6 (changed fields per seed: abstained,
-answer, recalled_svo; answer_only false). Permuted nofact control: intact and lesion answers identical on every
-seed (control-ok 6/6), so the lesion effect is specific to the committed role, not to perturbing the path.
+answer, recalled_svo; answer_only false). No-fact control: intact and lesion answers identical on every seed
+(control-ok 6/6); the control's intact arm already declines ('drink' never commits, (brain, None) 6/6), so
+control-ok holds even if the lesion broke every parse.
 
 ## Diagnostics (intact arm, per seed; intact_a_s2wc_use*.json word_role_trace.commit) <!--derived-->
 
-| seed | co_commit | relatch | read_invariant | read x0.5 == x2 | host-rule agree | latched min | unlatched max |
+| seed | co_commit | relatch | read_invariant | read x0.5 == x2 | host-rule agree | latched min | never-latched read |
 |---|---|---|---|---|---|---|---|
-| 42 | 0 | 0 | true | true | true | 95 | 93 |
-| 43 | 0 | 0 | true | true | true | 75 | 79 |
-| 44 | 0 | 0 | true | true | true | 85 | 84 |
-| 100 | 0 | 0 | true | true | true | 89 | 84 |
-| 101 | 0 | 0 | true | true | true | 94 | 88 |
-| 102 | 0 | 0 | true | true | true | 88 | 90 |
+| 42 | 0 | 0 | true | true | true | 95 | 0 |
+| 43 | 0 | 0 | true | true | true | 75 | 0 |
+| 44 | 0 | 0 | true | true | true | 85 | 0 |
+| 100 | 0 | 0 | true | true | true | 89 | 0 |
+| 101 | 0 | 0 | true | true | true | 94 | 0 |
+| 102 | 0 | 0 | true | true | true | 88 | 0 |
 
 Across seeds: co-commit reads 0 on every seed (no dual-role commits); relatch 0; the latch read is identical when
 every latch level is halved or doubled (read_invariant true 6/6); the committed roles agree with the host `_rule`
-record on every word of every seed. Latched min 75, unlatched max 93 across seeds; the commit gate (threshold
-18 bursts over the read window) separates the slots even where a non-committed ensemble's raw count sits near a
-committed one.
+record on every word of every seed. Latched min 75 across seeds; never-latched slots read 0 in every R trace
+(6/6 seeds; step-O levels 0-1 vs latched 71-85). The 79-93 figure previously labeled "unlatched max" was the agent
+latch still holding, not an unlatched slot; the commit gate (threshold 18 bursts over the read window) separates
+the slots.
+
+## Pre-registration section 4 (report-only) <!--derived-->
+
+Dual-role reads: 17/24 right, 0 wrong, 7 declined (seed 101: 1/4). The exclusion lesion gives 0/24 co-commits, so
+"at most one role" comes from the role layer, and the commit gate's cross-inhibition is not shown necessary.
+Count-mode baseline at 9ea7411.
+
+## Not yet a live seam
+
+Both flags stay default OFF; production still parses with BridgeParser. Residual host steps at ON: the commit read
+(`spiking_commit.py:181-196`; threshold-invariant, not deciding), the slot -> word mapping, the a==v guard, the
+self-alias resolution, and ROLE_MIN folded into W_RG.
 
 ## Lesion verification (docs/TERMS.md, class-11 "still holds at the moment of measurement")
 
