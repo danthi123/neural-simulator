@@ -19,13 +19,15 @@ locked() {   # <log name> <GB> <cmd ...>: run cmd from the export under the lock
   echo "[queue] $(date -Is) START $name"
   flock -w 7200 "$LOCK" bash -c 'cd "$1" && bash tools/mem_ok.sh "$2" && bash tools/memcap.sh "$2" -- env SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 "${@:3}"' \
     _ "$X" "$gb" "$@" > "$R/$name.log" 2>&1
-  echo "[queue] $(date -Is) END $name rc=$?"
+  local rc=$?
+  echo "[queue] $(date -Is) END $name rc=$rc"
 }
 
 hashes() {   # <name> <seed> <single|pair> [ENV=VAL ...]
   echo "[queue] $(date -Is) START hashes $1 s$2 $3 ${*:4}"
   flock -w 7200 "$LOCK" bash "$W/docs/drafts/one-brain-m2/run_hashes.sh" "$1" "$X" "$2" "$3" "${@:4}"
-  echo "[queue] $(date -Is) END hashes $1 s$2 $3 rc=$?"
+  local rc=$?
+  echo "[queue] $(date -Is) END hashes $1 s$2 $3 rc=$rc"
 }
 
 probe() {    # <seed>

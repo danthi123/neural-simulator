@@ -446,11 +446,13 @@ def test_reload_keeps_each_recruited_word_in_its_own_reserve_slot(tmp_path, monk
 
 def test_reload_without_slot_restore_reproduces_the_shared_code(tmp_path, monkeypatch):
     """Control: the same order with the slot restore removed gives heron moth's code (the reviewer's repro), so the
-    test above has teeth."""
+    test above has teeth. The post-reload reserve-code separation (M2 fold-in (c)) is a second defence against the
+    same collision, so it is removed too."""
     from research.runners.one_brain_composer import OneBrainComposer
     monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
     _, key = _taught_then_reconsolidated(monkeypatch, tmp_path)
     monkeypatch.delattr(OneBrainComposer, "restore_recruit")
+    monkeypatch.delattr(OneBrainComposer, "separate_reserve_codes")
     fresh = _reload_then_learn_heron(monkeypatch, tmp_path, key)
     assert np.allclose(fresh.comp.concepts["heron"], fresh.comp.concepts["moth"])
 

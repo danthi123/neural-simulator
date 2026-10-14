@@ -592,7 +592,6 @@ def reload_session_facts(cache_key, chat, base=None, checkpoint: str | None = No
         _separate_reserve_codes(comp, cache_key)
         return len(new_facts)
     except Exception:
-        import logging
         logging.getLogger(__name__).warning("session-facts persistence reload failed for %s", cache_key, exc_info=True)
         return 0
 
