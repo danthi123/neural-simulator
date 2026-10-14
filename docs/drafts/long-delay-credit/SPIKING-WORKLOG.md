@@ -1085,3 +1085,18 @@ Rung 2 BLOCKED on branch sync at 02:08: the tip 17f5f1955 (+provenance b5c7d3779
   depth 0 -> 1 at 04:36:21 (service dispatcher only; no session dispatcher running, per pool-stall-cause).
 - Readout per proposal (SPIKING-WORKLOG 1031): obs must diverge by trial 1; then the two 400-trial cells
   (test-2 argv, seeds 7/8); one RESULT.
+
+
+### 2026-10-14 06:00 - rung 2 (pool A/B) verdict = **FAIL** (MiMo Pro delegate, RULING models) - ladder STOPPED before the 400-trial cells.
+- Artifact research/findings/raw/_long_delay_credit_bg/synzero_rung2/ab_s7.json (rc=0, pool40, wall ~366 s/arm).
+- Lesion held: 717 synapses zeroed (355+362), lesion_weight_max_at_test 0.0 both projections.
+- BUT the cut is observationally SILENT in 20 trials: da_min/da_max/da_argmin and all eight spk_tot counts
+  are bit-identical on every trial, weights_per_trial identical; the apparent trial-2 divergence was ONLY
+  the stash keys da_full/spk/rwin present in the full arm's rows (order-dependent stash budget, no lesion
+  term) - an instrumentation artifact (see research/FAILURE_LOG.md line).
+- Verdict: criterion 'obs must diverge by trial 1' FAILS under both strict and intent readings. STOP before
+  the two 400-trial cells (expected outcome byte-identity).
+- Cheapest disambiguator (delegate): add gpe_0,gpe_1 to the cand tuple in Run.outcome and rerun a 1-trial-per-phase
+  A/B - gpe differs => live cut, criterion measured the wrong observable (retarget to gpe->gpi->th line);
+  gpe identical => the syn-zero cut is dead on the operative weights and the mechanism must be fixed, rungs 1-2 redone.
+  Pure-argv fallback: --arms d2_output_lesioned,full order-reversal to confirm the stash artifact.
