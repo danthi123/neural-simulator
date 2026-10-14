@@ -12,6 +12,19 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-14 — the speak-or-stay-silent choice gets an all-or-none commit; its six-seed test is registered, not run
+
+The 10-02 test of the brain's own speak-or-stay-silent choice failed on one point: the final read of which action
+won still depended on where the read was set, so host code still owned part of the decision. A commit stage now sits
+on the same network as the choice: a burst gate and a self-holding latch per action, read after a quiet pause, when
+a latch is either fully on (65 or more spikes in the read window) or silent. On eight practice seeds the read gives
+the same answer at half or twice its level on every trial, and cutting the gate or the latch removes every choice. It
+picks the same action as the old read on 96% of trials, so the brain's choices stay the same. The amendment for the
+six-seed test (`research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md`) changes only the read test; Hermes
+runs the six seeds. Open risks: the practice-seed operating point was chosen after seeing the data (declared), and
+with six separate network builds the "never silence a question" test can fail on noise in the choice itself. Off by
+default; nothing switched on.
+
 ## 2026-10-06 — Stage 1 after the re-runs: words and lived memory pass, categories fail, the feeling test fails on a flawed control
 
 **The two re-run Stage-1 tests are read.** **Remembering a lived event** now passes on all six seeds with a working
