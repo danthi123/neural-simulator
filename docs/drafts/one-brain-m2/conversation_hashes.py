@@ -64,7 +64,7 @@ def main(out_path, script="single"):
     from webapp import server as S
     vcs = ["gi" + "t"]
     sha = subprocess.run(vcs + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
-    flag = getattr(S, "one_brain_on", None)
+    flag = getattr(S, "_one_brain_on", None)                        # the M2 server's flag read (absent on the base)
     rec = {"script": script, "git_sha": sha, "cwd": os.getcwd(),
            "env": {k: os.environ.get(k) for k in ("BRAIN_ONE_BRAIN", "BRAIN_SHARED_LTM", "BRAIN_CHAT_SEED",
                                                   "SIM_BACKEND", "BRAIN_CHAT_RENDERER", "SIM_DISABLE_LLM",
