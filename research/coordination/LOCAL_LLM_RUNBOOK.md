@@ -1354,4 +1354,18 @@ replication, laneC SMOKE-GO, laneB/laneE ok, prov sidecars). Next = block 4 scor
 canary LB fraction 1.000 1/1); word_role_trace checks all pass (route=word_role_commit, error null,
 commit_lesioned T in lesion / F in intact, read_invariant T intact); 12 R lines queued 13:14 (mem_gb=8
 max_age_h=168). Next = block 6 score R when the 12 shards land (rsync absent, tar pull).
+- - 2026-10-14 15:55 [word-role-commit] RESULT: O+R PASS PROVISIONAL at P=c64f2c70d (O 6/6 all-pass op=0; R 6/6 reply-load-bearing, 6/6 control-ok), finding 2026-10-14-word-role-commit-gate.md merged 1e4ec45ad; verify-go due
 
+
+15:55: word-role-commit blocks 4-6 COMPLETE (RULING spiking-commit-a1-run-1014): step R scored PASS op=0,
+6/6 capability cells DEFINED, 6/6 reply regressed under the word_role_commit lesion, 6/6 permuted controls
+control-ok (step O earlier PASS 6/6 at op=0). 12 R shards arrived via host sim-sync (per pool-sync-1014:
+stopped tar-over-ssh pulls); scorer ran UNDEFINED once because the shards were only in the worktree (copied
+in for scoring; data-only commit). PROVISIONAL finding research/findings/2026-10-14-word-role-commit-gate.md
+committed 0d98050bf after claim_check (body needs full artifact paths, not bare verdicts/O.json) and the
+class-11 lesion-verification paragraph (commit_lesioned true 6/6 lesion, false intact). Routine-merges reviews:
+1 APPROVE, 1 BLOCK (R shards untracked) - delegation budget 2/2 exhausted, self-repaired with data commit
+0d1edebeb (121 files) and self-verified inline. agent_merge rc=2 twice (byte-identical untracked collisions:
+120 _shards files, 108 raw files, sha1-verified then removed), then rc=0: merged into main as 1e4ec45ad.
+NEEDS [word-role-commit] RESULT filed (verify-go due). NEXT: RULING bg-commit-now-1014 + NEEDS
+[bg-commit-gate] GO TO RUN - docs/drafts/bg-commit/HANDOFF.md step 0 (pin + tests + provision).
