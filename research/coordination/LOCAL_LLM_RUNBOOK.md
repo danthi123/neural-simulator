@@ -1383,3 +1383,13 @@ budget exhausted at 7.82h) - fixed per the gate message by queueing lane restock
 and committed 95abce562 (6/6 expected). Step-2 canary (seed-43 line on pool41, --wait-s 18000) launched
 17:26 as background proc_8912842d16ef. NEXT: canary rc -> ENGAGED check (step 2) -> queue the six gate
 lines (step 3) -> score when 42 arm files land (step 4).
+
+
+18:26: absorbed rulings c3a0b8271: needs-format-1014 (NEEDS lines get ONE leading dash - my 15:55 word-role
+RESULT line used "- - " and the watcher missed it for hours; fixed format going forward), wrc-verify-1014
+(word-role-commit verify-go is Claude's, running now - no flip packet, no credit counted yet),
+ldc-synzero-1014 (answers [ldc-synzero-deadcut]: step 1 read-only GPe-rate measurement on the intact arm
+dev 7, step 2 before_you_build, step 3 ASK [ldc-gpe-tonic] with a flag-gated default-OFF proposal - queued
+behind bg-commit per its critical-path ruling; GPe silent = missing tonic pacemaking, not a dead cut to
+retarget). bg-commit step-2 canary on pool41 verified alive at 18:05 (sim bridge initialized 18:00, 184
+neurons, pid alive; host canary dir synced 18:22). NEXT: canary rc -> ENGAGED -> step 3 queue six lines.
