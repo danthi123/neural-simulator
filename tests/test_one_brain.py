@@ -509,10 +509,26 @@ def test_freeze_gate_blocks_the_shared_store_write(monkeypatch):
     chat = brain.adopt(("__one_brain__", "b", "r"), _FakeChat(), "fake")
     monkeypatch.setenv(OB.ONE_BRAIN_ENV, "1")
     monkeypatch.setenv(OB.FREEZE_ENV, "1")
-    assert chat.inner.hear("wug eat dax") is None and len(chat.inner.composer.kb) == 1
+    with pytest.raises(OB.LearningFrozen):                          # a refused write, not a silent success
+        chat.inner.hear("wug eat dax")
+    assert len(chat.inner.composer.kb) == 1
     monkeypatch.setenv(OB.FREEZE_ENV, "0")
     chat.inner.hear("wug eat dax")
     assert len(chat.inner.composer.kb) == 2
+
+
+def test_frozen_acquisition_reports_no_acquisition_so_no_learner_observes_it(monkeypatch):
+    """The real `ChatBrain._maybe_acquire` under the gate: the refused write makes it report no
+    acquisition (None), so the category-inheritance organ, which feeds on the acquisition verdict, sees nothing."""
+    from research.runners.brain_chat_tui import ChatBrain
+    brain = OB.Brain()
+    chat = brain.adopt(("__one_brain__", "b", "r"), _FakeChat(), "fake")
+    monkeypatch.setenv(OB.ONE_BRAIN_ENV, "1")
+    monkeypatch.setenv(OB.FREEZE_ENV, "1")
+    acquire = ChatBrain._maybe_acquire.__get__(chat)                 # the production (B3 polar-assertion) path
+    assert acquire("the wug eats the dax") is None and len(chat.inner.composer.kb) == 1
+    monkeypatch.setenv(OB.FREEZE_ENV, "0")
+    assert acquire("the wug eats the dax") == ["wug", "eat", "dax"] and len(chat.inner.composer.kb) == 2
 
 
 def test_zero_drops_only_what_was_learned_since_the_build():
@@ -522,12 +538,25 @@ def test_zero_drops_only_what_was_learned_since_the_build():
     chat.inner.hear("wug eat dax")
     chat.inner.hear("crow chase wren")
     brain.note_taught(bk, [], [("wug", "eat", "dax")], "A")
+    chat._category_inherit_organ = "member->frame pathway taught wug->eat dax"   # built after the build: dropped
+    chat._gen_proposer, chat._gen_nfacts = "proposer over 4 facts", 4
     comp = chat.inner.composer
     rec = brain.zero_learned(bk)
     assert rec["zeroed"] == 2 and rec["n_build_facts"] == 2
+    assert rec["organs_dropped"] == ["_category_inherit_organ"] and chat._category_inherit_organ is None
+    assert chat._gen_proposer is None
     assert [f["agent"] for f, _ in comp.kb] == ["dog", "cat"] and len(comp.store_conns) == 2 * comp.D
     assert comp._store_dirty and comp._persistent_dirty and comp._csr_cache == {}
     assert brain.fact_sources[bk] == {} and chat.stored_facts == [("dog", "chase", "cat"), ("cat", "eat", "fish")]
+
+
+def test_zero_keeps_a_learned_organ_that_existed_at_the_build():
+    brain = OB.Brain()
+    bk = ("__one_brain__", "b", "r")
+    fc = _FakeChat()
+    fc.inner._source_provenance_monitor = "built with the brain"
+    chat = brain.adopt(bk, fc, "fake")
+    assert brain.zero_learned(bk)["organs_dropped"] == [] and chat.inner._source_provenance_monitor == "built with the brain"
 
 
 def test_zero_store_function_is_refused_off_and_in_production(fresh, monkeypatch):

@@ -219,6 +219,10 @@ CHAT_BRAIN_ATTRS = (
 # conversation-level fields of the agent (MultiTurnAgent): the discourse WM loop, the biased-competition buffer and
 # the referent registry. A fresh conversation gets None (the agent builds its own lazily, `_ensure_wm`).
 AGENT_CONTEXT_ATTRS = ("wm", "bcw", "_referent_history")
+# Brain-level LEARNED organs built lazily after the build: the zero instrument drops one that did not exist at the
+# build (its owner rebuilds it empty on next use). (owner, attribute): owner "chat" = the ChatBrain, "inner" = its
+# BrainConversationalAgent.
+ZERO_DROP_IF_BUILT_LATER = (("chat", "_category_inherit_organ"), ("inner", "_source_provenance_monitor"))
 
 
 def _fresh_value(attr, value):
@@ -378,6 +382,7 @@ class Brain:
         self.chats = {}                          # brain key -> the shared ChatBrain
         self.sources = {}                        # brain key -> its build source string
         self.n_build_facts = {}                  # brain key -> composer kb length right after the build
+        self.built_organs = {}                   # brain key -> which ZERO_DROP_IF_BUILT_LATER organs existed at build
         self.pristine = {}                       # brain key -> conversation-level state of the just-built chat
         self.bound = {}                          # brain key -> the Context whose state is resident on the chat
         self.fact_sources = {}                   # brain key -> {(a, v, p): conversation key that taught it}
@@ -397,6 +402,8 @@ class Brain:
         _install_freeze_gate(chat)
         self.pristine[bkey] = capture(chat)
         self.n_build_facts[bkey] = len(_buffer_kb(chat) or ())
+        self.built_organs[bkey] = {(o, a) for o, a in ZERO_DROP_IF_BUILT_LATER
+                                   if getattr(chat if o == "chat" else getattr(chat, o, None), a, None) is not None}
         self.chats[bkey] = chat
         self.sources[bkey] = source
         self.bound[bkey] = None
@@ -449,18 +456,33 @@ class Brain:
 
     # -- zero (experimenter instrument) --
     def zero_learned(self, bkey) -> dict:
-        """Drop every composer block learned since the build (the build KB and the LTM prior are untouched)."""
+        """Drop what the brain learned since the build: every composer block after the build KB, and every brain-level
+        learned organ that did not exist at the build (`ZERO_DROP_IF_BUILT_LATER`: the category-inheritance member->
+        frame pathway, the #129 provenance trace), which its owner rebuilds empty on next use; the generative proposer
+        (a view of the store) is rebuilt. The build KB and the LTM prior are untouched. Not reverted (declared): Hebbian
+        updates to an organ that existed at the build (the CA3 assoc graph `_learned_assoc`)."""
         chat = self.chats.get(bkey)
         if chat is None:
             return {"brain_key": list(bkey), "zeroed": 0, "reason": "no shared chat"}
         n0 = self.n_build_facts.get(bkey, 0)
         n = _truncate_buffer(chat, n0)
+        dropped = []
+        for owner_name, attr in ZERO_DROP_IF_BUILT_LATER:
+            owner = chat if owner_name == "chat" else getattr(chat, owner_name, None)
+            if owner is None or (owner_name, attr) in self.built_organs.get(bkey, ()):
+                continue
+            if getattr(owner, attr, None) is not None:
+                setattr(owner, attr, None)
+                dropped.append(attr)
+        if hasattr(chat, "_gen_proposer"):
+            chat._gen_proposer = None
+            chat._gen_nfacts = None
         try:
             chat._refresh_facts()
         except Exception:
             pass
         self.fact_sources[bkey] = {}
-        return {"brain_key": list(bkey), "zeroed": n, "n_build_facts": n0}
+        return {"brain_key": list(bkey), "zeroed": n, "n_build_facts": n0, "organs_dropped": dropped}
 
 
 class TickAdapter:
@@ -553,10 +575,18 @@ def _truncate_buffer(chat, n0) -> int:
     return n
 
 
+class LearningFrozen(RuntimeError):
+    """The shared store's write refused under `BRAIN_ONE_BRAIN_FREEZE_LEARNING=1` (ON)."""
+
+
 def _install_freeze_gate(chat) -> None:
-    """The shared store's plasticity gate (ON): with `BRAIN_ONE_BRAIN_FREEZE_LEARNING=1` the agent's `hear` comprehends
-    nothing into the store (the assertion is heard by the turn; no block is written). Read per call, so the flag can
-    move between turns. Installed on the shared inner agent only (an instance attribute; the class is untouched)."""
+    """The shared store's plasticity gate (ON): with `BRAIN_ONE_BRAIN_FREEZE_LEARNING=1` the agent's `hear` (the one
+    acquisition write the live turn makes: `ChatBrain._maybe_acquire` -> `inner.hear`) raises `LearningFrozen`, which
+    `_maybe_acquire` treats as a failed write: the turn reports NO acquisition, so no block is written AND no
+    downstream learner observes an acquired fact (the category-inheritance member->frame organ feeds on the
+    acquisition verdict; the first M2 run of the freeze arm, gated by returning None instead, still taught that organ
+    and B got a flagged guess: docs/drafts/one-brain-m2/WORKLOG.md section 5). Read per call, so the flag can move
+    between turns. Installed on the shared inner agent only (an instance attribute; the class is untouched)."""
     inner = getattr(chat, "inner", None)
     if inner is None or getattr(inner, "_one_brain_freeze_gate", False):
         return
@@ -564,7 +594,7 @@ def _install_freeze_gate(chat) -> None:
 
     def hear(sentence, voice="active", polarity=None):
         if freeze_learning_on():
-            return None
+            raise LearningFrozen("shared-store plasticity gate shut (BRAIN_ONE_BRAIN_FREEZE_LEARNING=1)")
         return orig(sentence, voice, polarity=polarity)
 
     inner.hear = hear
