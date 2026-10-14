@@ -16,3 +16,12 @@ Host, numpy CPU, `SIM_NO_PROVENANCE=1` for the S-side tests/select.
 | rc | do | result |
 |---|---|---|
 | 0 SELECTED, op = 0 | step 3 | DONE — WORKLOGged; step O lines at op=0 (block 3) next. |
+
+## Step O: canary + queue (2026-10-14 12:05-12:06)
+
+- op re-read = 0; 6 O lines committed (`19a8e0904`).
+- Canary PASS on pool41: rc=0, wall=5s, json=1, errors=0,
+  id `word_role_commit_organ_c64f2c70d_pool41_20261014T120516`
+  (log `~/derisk-pool/canary/word_role_commit_organ_c64f2c70d_pool41_20261014T120516.log`).
+- All 6 O lines queued 12:06 (mem_gb=2, max_age_h=120). Step R waits for block 4 (score O).
+
