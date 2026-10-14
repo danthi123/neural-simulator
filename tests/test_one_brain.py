@@ -275,6 +275,15 @@ def test_source_frame_is_anonymous_and_only_for_another_conversations_fact(fresh
     r = frame({"answer": "the dog chases the cat", "abstained": False, "recalled_svo": ["dog", "chase", "cat"],
                "supporting_facts": [["dog", "chase", "cat"], ["wug", "eat", "dax"]]})
     assert r["answer"] == "the dog chases the cat (Someone told me part of that.)"
+    # the M2 s7 one_brain arm's B_ask shape: the told fact recalled first, then build facts the brain knew itself ->
+    # the part note, never a lead that attributes the build facts to "someone"
+    r = frame({"answer": "the wug eats the dax the dog chases the cat", "abstained": False,
+               "recalled_svo": ["wug", "eat", "dax"], "supporting_facts": [["wug", "eat", "dax"], ["dog", "chase", "cat"]]})
+    assert r["answer"] == "the wug eats the dax the dog chases the cat (Someone told me part of that.)"
+    assert r["one_brain_source"]["facts"] == [["wug", "eat", "dax"]] and r["one_brain_source"]["n_facts_stated"] == 2
+    r = frame({"answer": "the dog chases the cat", "abstained": False, "recalled_svo": None,
+               "derived": True, "derived_from": [["dog", "chase", "cat"], ["wug", "eat", "dax"]]})
+    assert r["one_brain_source"]["placement"] == "part_note"                # a derived answer with a told hop
     same = {"answer": "the wug eats the dax", "abstained": False, "recalled_svo": ["wug", "eat", "dax"]}
     assert frame(same, ("A", "tiny-demo", "stub")) == same                 # the teller's conversation: untouched
     ab = {"answer": "I don't know about that.", "abstained": True, "recalled_svo": ["wug", "eat", "dax"]}

@@ -5100,18 +5100,27 @@ def _one_brain_source_frame(resp, bk, cache_key):
         return resp
     if not isinstance(body, dict) or body.get("abstained") or not isinstance(body.get("answer"), str):
         return resp
-    lead = _ONE_BRAIN.taught_elsewhere(bk, body.get("recalled_svo"), cache_key)
-    part = [list(f[:3]) for f in (body.get("supporting_facts") or []) + (body.get("derived_from") or [])
-            if _ONE_BRAIN.taught_elsewhere(bk, f, cache_key)]
-    if not lead and not part:
+    def _svo(f):
+        return list(f[:3]) if isinstance(f, (list, tuple)) and len(f) >= 3 else None
+
+    rec = _svo(body.get("recalled_svo"))
+    # the facts the reply states: the rich path's supporting facts (they include the recalled one), else the recalled
+    # fact; plus the hops of a derived answer
+    said = [f for f in map(_svo, body.get("supporting_facts") or []) if f] or ([rec] if rec else [])
+    said += [f for f in map(_svo, body.get("derived_from") or []) if f]
+    told = [f for f in said if _ONE_BRAIN.taught_elsewhere(bk, f, cache_key)]
+    if not told:
         return resp
+    # the lead only when EVERYTHING the reply states came from another conversation; otherwise the part note (a
+    # multi-fact reply mixing a told fact with what the brain knew from its build must not attribute it all)
+    lead = len(told) == len(said)
     if lead:
         body["answer"] = _OB.SOURCE_LEAD + body["answer"]
     else:
         body["answer"] = body["answer"].rstrip() + " " + _OB.SOURCE_PART_NOTE
     body["one_brain_source"] = {
-        "frame": "someone_told_me", "placement": "lead" if lead else "part_note",
-        "facts": ([list(body["recalled_svo"][:3])] if lead else []) + part, "reason": "host_tag",
+        "frame": "someone_told_me", "placement": "lead" if lead else "part_note", "facts": told,
+        "n_facts_stated": len(said), "reason": "host_tag",
         "scaffold": "M2 host source tag (design section 3); replaced by the M3 spiking source-monitor organ"}
     return JSONResponse(body)
 
