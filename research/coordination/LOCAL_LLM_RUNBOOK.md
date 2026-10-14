@@ -1286,3 +1286,10 @@ the 5.2h stall notice predates it (counted from SLF's last result). Also new thi
 one-brain-m2-merged-1014 - M2 merged default OFF, packet docs/drafts/one-brain-m2/PACKET-m2-fixes.md
 priority AFTER this SLF-A queueing; next task = packet items on research/one-brain-m2-fixes, finishing
 with NEEDS [m2-fixes] ASK.
+
+06:00: syn-zero rung-2 A/B (ab_s7.json, rc=0, pool40) scored FAIL by the MiMo Pro delegate (RULING models):
+the 717-synapse d2->gpe cut is bit-for-bit silent in every DA/spike scalar across 20 trials; the apparent
+trial-2 divergence was an instrumentation artifact (stash keys da_full/spk/rwin only in the first-listed
+arm). LADDER STOPPED before the 400-trial cells; one line added to research/FAILURE_LOG.md; disambiguation
+plan (gpe cand + 1-trial A/B, or arm-order reversal) recorded in SPIKING-WORKLOG on
+research/draft-ldc-outcome-timing. Next driver step: the gpe-observability probe, then branch per result.
