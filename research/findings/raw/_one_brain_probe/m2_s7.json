@@ -1,0 +1,1625 @@
+{
+ "runner": "one_brain_probe",
+ "seed": 7,
+ "prereg": null,
+ "git_sha": "",
+ "design": "docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md (M0)",
+ "backend": "numpy",
+ "arms": {
+  "one_brain": {
+   "arm": "one_brain",
+   "status": "RAN",
+   "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_CHAT_SEED": "7",
+    "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/one_brain_s7",
+    "BRAIN_PERSIST_LEARNING": "0",
+    "BRAIN_ONE_BRAIN": "1"
+   },
+   "phases": [
+    {
+     "arm": "one_brain",
+     "phase": 0,
+     "turns": [
+      {
+       "label": "A_teach",
+       "session": "one_brain_probe_A",
+       "message": "the wug eats the dax",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": null,
+       "seconds": 364.17
+      },
+      {
+       "label": "A_ask",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 114.36
+      },
+      {
+       "label": "B_ask",
+       "session": "one_brain_probe_B",
+       "message": "what does the wug eat",
+       "answer": "Someone told me: the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 25.56
+      },
+      {
+       "label": "B_ltm",
+       "session": "one_brain_probe_B",
+       "message": "Tell me about angora_turkey.",
+       "answer": "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+       "abstained": false,
+       "recalled_svo": [
+        "angora_turkey",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "supporting_facts": [
+        [
+         "angora_turkey",
+         "located_in_time_zone",
+         "kaliningrad_time"
+        ],
+        [
+         "angora_turkey",
+         "instance_of",
+         "city_work"
+        ],
+        [
+         "angora_turkey",
+         "country",
+         "the_republic_of_turkey"
+        ],
+        [
+         "angora_turkey",
+         "twinned_administrative_body",
+         "washington_dc"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 4,
+       "composer": "rf",
+       "read": "recall",
+       "seconds": 25.56
+      },
+      {
+       "label": "B_build",
+       "session": "one_brain_probe_B",
+       "message": "what does the dog chase",
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "supporting_facts": [
+        [
+         "dog",
+         "chase",
+         "cat"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 22.28
+      }
+     ],
+     "seconds": 552.1,
+     "peak_rss_mb": 6502.1,
+     "turn_lock": {
+      "n_acquired": 5,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 1.4889003068674356e-05,
+      "max_wait_s": 3.2509997254237533e-06,
+      "last_wait_s": 3.2509997254237533e-06,
+      "last_where": "brain_chat",
+      "by_where": {
+       "brain_chat": {
+        "n": 5,
+        "total_wait_s": 1.4889003068674356e-05,
+        "max_wait_s": 3.2509997254237533e-06
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_ONE_BRAIN": "1",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/one_brain_s7",
+      "BRAIN_PERSIST_LEARNING": "0",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 557.8,
+     "persist_dir_after": {
+      "n_files": 0,
+      "bytes": 0,
+      "files": []
+     }
+    }
+   ],
+   "reads": {
+    "A_ask": "recall",
+    "B_ask": "recall",
+    "B_ltm": "recall",
+    "B_build": "recall"
+   },
+   "prediction": {
+    "B_ltm": "recall",
+    "B_build": "recall",
+    "A_ask": "recall",
+    "B_ask": "recall"
+   },
+   "score": {
+    "rows": {
+     "B_ltm": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_build": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     }
+    },
+    "all_match": true,
+    "controls_recall": true,
+    "b_ask_interpretable": true
+   },
+   "peak_rss_mb": 6502.1
+  },
+  "freeze_learning": {
+   "arm": "freeze_learning",
+   "status": "RAN",
+   "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_CHAT_SEED": "7",
+    "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/freeze_learning_s7",
+    "BRAIN_PERSIST_LEARNING": "0",
+    "BRAIN_ONE_BRAIN": "1",
+    "BRAIN_ONE_BRAIN_FREEZE_LEARNING": "1"
+   },
+   "phases": [
+    {
+     "arm": "freeze_learning",
+     "phase": 0,
+     "turns": [
+      {
+       "label": "A_teach",
+       "session": "one_brain_probe_A",
+       "message": "the wug eats the dax",
+       "answer": "The wug eats dax.",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "rf",
+       "read": null,
+       "seconds": 133.52
+      },
+      {
+       "label": "A_ask",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "(My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps wug eat dax  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "supporting_facts": [],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": false,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "other",
+       "seconds": 12.06
+      },
+      {
+       "label": "B_ask",
+       "session": "one_brain_probe_B",
+       "message": "what does the wug eat",
+       "answer": "(My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps wug eat dax  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "supporting_facts": [],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": false,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "other",
+       "seconds": 8.15
+      },
+      {
+       "label": "B_ltm",
+       "session": "one_brain_probe_B",
+       "message": "Tell me about angora_turkey.",
+       "answer": "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+       "abstained": false,
+       "recalled_svo": [
+        "angora_turkey",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "supporting_facts": [
+        [
+         "angora_turkey",
+         "located_in_time_zone",
+         "kaliningrad_time"
+        ],
+        [
+         "angora_turkey",
+         "instance_of",
+         "city_work"
+        ],
+        [
+         "angora_turkey",
+         "country",
+         "the_republic_of_turkey"
+        ],
+        [
+         "angora_turkey",
+         "twinned_administrative_body",
+         "washington_dc"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 4,
+       "composer": "rf",
+       "read": "recall",
+       "seconds": 247.22
+      },
+      {
+       "label": "B_build",
+       "session": "one_brain_probe_B",
+       "message": "what does the dog chase",
+       "answer": "the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "supporting_facts": [
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 2,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 122.19
+      }
+     ],
+     "seconds": 523.3,
+     "peak_rss_mb": 6500.6,
+     "turn_lock": {
+      "n_acquired": 5,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 1.6391000826843083e-05,
+      "max_wait_s": 3.891000233124942e-06,
+      "last_wait_s": 3.0009978218004107e-06,
+      "last_where": "brain_chat",
+      "by_where": {
+       "brain_chat": {
+        "n": 5,
+        "total_wait_s": 1.6391000826843083e-05,
+        "max_wait_s": 3.891000233124942e-06
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_ONE_BRAIN": "1",
+      "BRAIN_ONE_BRAIN_FREEZE_LEARNING": "1",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/freeze_learning_s7",
+      "BRAIN_PERSIST_LEARNING": "0",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 529.2,
+     "persist_dir_after": {
+      "n_files": 0,
+      "bytes": 0,
+      "files": []
+     }
+    }
+   ],
+   "reads": {
+    "A_ask": "other",
+    "B_ask": "other",
+    "B_ltm": "recall",
+    "B_build": "recall"
+   },
+   "prediction": {
+    "B_ltm": "recall",
+    "B_build": "recall",
+    "A_ask": "abstain",
+    "B_ask": "abstain"
+   },
+   "score": {
+    "rows": {
+     "B_ltm": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_build": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask": {
+      "predicted": "abstain",
+      "observed": "other",
+      "match": false
+     },
+     "B_ask": {
+      "predicted": "abstain",
+      "observed": "other",
+      "match": false
+     }
+    },
+    "all_match": false,
+    "controls_recall": true,
+    "b_ask_interpretable": true
+   },
+   "peak_rss_mb": 6500.6
+  },
+  "zero_learned_store": {
+   "arm": "zero_learned_store",
+   "status": "RAN",
+   "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_CHAT_SEED": "7",
+    "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/zero_learned_store_s7",
+    "BRAIN_PERSIST_LEARNING": "0",
+    "BRAIN_ONE_BRAIN": "1"
+   },
+   "phases": [
+    {
+     "arm": "zero_learned_store",
+     "phase": 0,
+     "turns": [
+      {
+       "label": "A_teach",
+       "session": "one_brain_probe_A",
+       "message": "the wug eats the dax",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": null,
+       "seconds": 367.51
+      },
+      {
+       "label": "A_ask",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 120.91
+      },
+      {
+       "label": "@zero",
+       "result": {
+        "brains": [
+         {
+          "brain_key": [
+           "__one_brain__",
+           "tiny-demo",
+           "stub"
+          ],
+          "zeroed": 1,
+          "n_build_facts": 5,
+          "d5_reset": false
+         }
+        ]
+       }
+      },
+      {
+       "label": "B_ask",
+       "session": "one_brain_probe_B",
+       "message": "what does the wug eat",
+       "answer": "(My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps wug eat dax  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "supporting_facts": [],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": false,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "other",
+       "seconds": 11.58
+      },
+      {
+       "label": "B_ltm",
+       "session": "one_brain_probe_B",
+       "message": "Tell me about angora_turkey.",
+       "answer": "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+       "abstained": false,
+       "recalled_svo": [
+        "angora_turkey",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "supporting_facts": [
+        [
+         "angora_turkey",
+         "located_in_time_zone",
+         "kaliningrad_time"
+        ],
+        [
+         "angora_turkey",
+         "instance_of",
+         "city_work"
+        ],
+        [
+         "angora_turkey",
+         "country",
+         "the_republic_of_turkey"
+        ],
+        [
+         "angora_turkey",
+         "twinned_administrative_body",
+         "washington_dc"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 4,
+       "composer": "rf",
+       "read": "recall",
+       "seconds": 27.57
+      },
+      {
+       "label": "B_build",
+       "session": "one_brain_probe_B",
+       "message": "what does the dog chase",
+       "answer": "the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "supporting_facts": [
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 2,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 23.34
+      }
+     ],
+     "seconds": 551.6,
+     "peak_rss_mb": 6498.4,
+     "turn_lock": {
+      "n_acquired": 6,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 1.896699541248381e-05,
+      "max_wait_s": 4.474000888876617e-06,
+      "last_wait_s": 3.0470037017948925e-06,
+      "last_where": "brain_chat",
+      "by_where": {
+       "brain_chat": {
+        "n": 5,
+        "total_wait_s": 1.641699782339856e-05,
+        "max_wait_s": 4.474000888876617e-06
+       },
+       "zero_learned_store": {
+        "n": 1,
+        "total_wait_s": 2.549997589085251e-06,
+        "max_wait_s": 2.549997589085251e-06
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_ONE_BRAIN": "1",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/zero_learned_store_s7",
+      "BRAIN_PERSIST_LEARNING": "0",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 557.3,
+     "persist_dir_after": {
+      "n_files": 0,
+      "bytes": 0,
+      "files": []
+     }
+    }
+   ],
+   "reads": {
+    "A_ask": "recall",
+    "B_ask": "other",
+    "B_ltm": "recall",
+    "B_build": "recall"
+   },
+   "prediction": {
+    "B_ltm": "recall",
+    "B_build": "recall",
+    "A_ask": "recall",
+    "B_ask": "abstain"
+   },
+   "score": {
+    "rows": {
+     "B_ltm": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_build": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_ask": {
+      "predicted": "abstain",
+      "observed": "other",
+      "match": false
+     }
+    },
+    "all_match": false,
+    "controls_recall": true,
+    "b_ask_interpretable": true
+   },
+   "peak_rss_mb": 6498.4
+  },
+  "intact": {
+   "arm": "intact",
+   "status": "RAN",
+   "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_CHAT_SEED": "7",
+    "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/intact_s7",
+    "BRAIN_PERSIST_LEARNING": "0"
+   },
+   "phases": [
+    {
+     "arm": "intact",
+     "phase": 0,
+     "turns": [
+      {
+       "label": "A_teach",
+       "session": "one_brain_probe_A",
+       "message": "the wug eats the dax",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": null,
+       "seconds": 377.75
+      },
+      {
+       "label": "A_ask",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 117.1
+      },
+      {
+       "label": "B_ask",
+       "session": "one_brain_probe_B",
+       "message": "what does the wug eat",
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wug yet: what can you tell me about wug?",
+       "abstained": true,
+       "recalled_svo": null,
+       "supporting_facts": [],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": false,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 0,
+       "composer": "onebrain",
+       "read": "abstain",
+       "seconds": 124.68
+      },
+      {
+       "label": "B_ltm",
+       "session": "one_brain_probe_B",
+       "message": "Tell me about angora_turkey.",
+       "answer": "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+       "abstained": false,
+       "recalled_svo": [
+        "angora_turkey",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "supporting_facts": [
+        [
+         "angora_turkey",
+         "located_in_time_zone",
+         "kaliningrad_time"
+        ],
+        [
+         "angora_turkey",
+         "instance_of",
+         "city_work"
+        ],
+        [
+         "angora_turkey",
+         "country",
+         "the_republic_of_turkey"
+        ],
+        [
+         "angora_turkey",
+         "twinned_administrative_body",
+         "washington_dc"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 4,
+       "composer": "rf",
+       "read": "recall",
+       "seconds": 27.54
+      },
+      {
+       "label": "B_build",
+       "session": "one_brain_probe_B",
+       "message": "what does the dog chase",
+       "answer": "the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "supporting_facts": [
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 2,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 24.44
+      }
+     ],
+     "seconds": 671.7,
+     "peak_rss_mb": 11927.1,
+     "turn_lock": {
+      "n_acquired": 5,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 1.772199902916327e-05,
+      "max_wait_s": 4.121000529266894e-06,
+      "last_wait_s": 3.8529979065060616e-06,
+      "last_where": "brain_chat",
+      "by_where": {
+       "brain_chat": {
+        "n": 5,
+        "total_wait_s": 1.772199902916327e-05,
+        "max_wait_s": 4.121000529266894e-06
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/intact_s7",
+      "BRAIN_PERSIST_LEARNING": "0",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 683.3,
+     "persist_dir_after": {
+      "n_files": 0,
+      "bytes": 0,
+      "files": []
+     }
+    }
+   ],
+   "reads": {
+    "A_ask": "recall",
+    "B_ask": "abstain",
+    "B_ltm": "recall",
+    "B_build": "recall"
+   },
+   "prediction": {
+    "B_ltm": "recall",
+    "B_build": "recall",
+    "A_ask": "recall",
+    "B_ask": "abstain"
+   },
+   "score": {
+    "rows": {
+     "B_ltm": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_build": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_ask": {
+      "predicted": "abstain",
+      "observed": "abstain",
+      "match": true
+     }
+    },
+    "all_match": true,
+    "controls_recall": true,
+    "b_ask_interpretable": true
+   },
+   "peak_rss_mb": 11927.1
+  },
+  "restart_persist_on_one_brain": {
+   "arm": "restart_persist_on_one_brain",
+   "status": "RAN",
+   "env": {
+    "SIM_BACKEND": "numpy",
+    "BRAIN_CHAT_RENDERER": "stub",
+    "SIM_DISABLE_LLM": "1",
+    "BRAIN_CHAT_SEED": "7",
+    "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/restart_persist_on_one_brain_s7",
+    "BRAIN_PERSIST_LEARNING": "1",
+    "BRAIN_ONE_BRAIN": "1"
+   },
+   "phases": [
+    {
+     "arm": "restart_persist_on_one_brain",
+     "phase": 0,
+     "turns": [
+      {
+       "label": "A_teach",
+       "session": "one_brain_probe_A",
+       "message": "the wug eats the dax",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": null,
+       "seconds": 381.4
+      },
+      {
+       "label": "A_ask",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 119.5
+      },
+      {
+       "label": "@flush",
+       "ok": true
+      }
+     ],
+     "seconds": 501.1,
+     "peak_rss_mb": 6248.9,
+     "turn_lock": {
+      "n_acquired": 3,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 3.494200063869357e-05,
+      "max_wait_s": 2.8561000362969935e-05,
+      "last_wait_s": 2.8561000362969935e-05,
+      "last_where": "shutdown_flush",
+      "by_where": {
+       "brain_chat": {
+        "n": 2,
+        "total_wait_s": 6.381000275723636e-06,
+        "max_wait_s": 3.7229983718134463e-06
+       },
+       "shutdown_flush": {
+        "n": 1,
+        "total_wait_s": 2.8561000362969935e-05,
+        "max_wait_s": 2.8561000362969935e-05
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_ONE_BRAIN": "1",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/restart_persist_on_one_brain_s7",
+      "BRAIN_PERSIST_LEARNING": "1",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 506.8,
+     "persist_dir_after": {
+      "n_files": 5,
+      "bytes": 269185,
+      "files": [
+       "facts/__one_brain____tiny-demo__stub-5c453608/checkpoints/00001791940202986005076-d6e0/facts.json",
+       "xedge/pool/checkpoints/00001791940202987733764-de4f/weights.json",
+       "xedge/pool/checkpoints/00001791940202987733764-de4f/weights.npz",
+       "xedge/pool/checkpoints/00001791940202990026627-deab/weights.json",
+       "xedge/pool/checkpoints/00001791940202990026627-deab/weights.npz"
+      ]
+     }
+    },
+    {
+     "arm": "restart_persist_on_one_brain",
+     "phase": 1,
+     "turns": [
+      {
+       "label": "B_ask",
+       "session": "one_brain_probe_B",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 464.36
+      },
+      {
+       "label": "A_ask_again",
+       "session": "one_brain_probe_A",
+       "message": "what does the wug eat",
+       "answer": "the wug eats the dax the dog chases the cat the cat eats the fish",
+       "abstained": false,
+       "recalled_svo": [
+        "wug",
+        "eat",
+        "dax"
+       ],
+       "supporting_facts": [
+        [
+         "wug",
+         "eat",
+         "dax"
+        ],
+        [
+         "dog",
+         "chase",
+         "cat"
+        ],
+        [
+         "cat",
+         "eat",
+         "fish"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 3,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 27.2
+      },
+      {
+       "label": "B_ltm",
+       "session": "one_brain_probe_B",
+       "message": "Tell me about angora_turkey.",
+       "answer": "The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. The angora_turkey twinned_administrative_bodys washington_dc. \u2014 worth going further here.",
+       "abstained": false,
+       "recalled_svo": [
+        "angora_turkey",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "supporting_facts": [
+        [
+         "angora_turkey",
+         "located_in_time_zone",
+         "kaliningrad_time"
+        ],
+        [
+         "angora_turkey",
+         "instance_of",
+         "city_work"
+        ],
+        [
+         "angora_turkey",
+         "country",
+         "the_republic_of_turkey"
+        ],
+        [
+         "angora_turkey",
+         "twinned_administrative_body",
+         "washington_dc"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 4,
+       "composer": "rf",
+       "read": "recall",
+       "seconds": 27.33
+      },
+      {
+       "label": "B_build",
+       "session": "one_brain_probe_B",
+       "message": "what does the dog chase",
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "supporting_facts": [
+        [
+         "dog",
+         "chase",
+         "cat"
+        ]
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null,
+       "verified": true,
+       "rich": true,
+       "renderer": "template-stub (GPU-free)",
+       "source": "tiny-demo +LTM",
+       "provenance": null,
+       "episodic": null,
+       "followup": false,
+       "n_sentences": 1,
+       "composer": "onebrain",
+       "read": "recall",
+       "seconds": 23.68
+      }
+     ],
+     "seconds": 542.8,
+     "peak_rss_mb": 6431.2,
+     "turn_lock": {
+      "n_acquired": 4,
+      "n_waited": 0,
+      "n_timeouts": 0,
+      "total_wait_s": 1.2607008102349937e-05,
+      "max_wait_s": 4.180001269560307e-06,
+      "last_wait_s": 3.0840019462630153e-06,
+      "last_where": "brain_chat",
+      "by_where": {
+       "brain_chat": {
+        "n": 4,
+        "total_wait_s": 1.2607008102349937e-05,
+        "max_wait_s": 4.180001269560307e-06
+       }
+      }
+     },
+     "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+     "env": {
+      "BRAIN_CHAT_RENDERER": "stub",
+      "BRAIN_CHAT_SEED": "7",
+      "BRAIN_ONE_BRAIN": "1",
+      "BRAIN_PERSIST_DIR": "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/_persist/restart_persist_on_one_brain_s7",
+      "BRAIN_PERSIST_LEARNING": "1",
+      "BRAIN_TURN_LOCK": null,
+      "SIM_BACKEND": "numpy",
+      "SIM_DISABLE_LLM": "1"
+     },
+     "rc": 0,
+     "wall_seconds": 548.6,
+     "persist_dir_after": {
+      "n_files": 5,
+      "bytes": 269185,
+      "files": [
+       "facts/__one_brain____tiny-demo__stub-5c453608/checkpoints/00001791940202986005076-d6e0/facts.json",
+       "xedge/pool/checkpoints/00001791940202987733764-de4f/weights.json",
+       "xedge/pool/checkpoints/00001791940202987733764-de4f/weights.npz",
+       "xedge/pool/checkpoints/00001791940202990026627-deab/weights.json",
+       "xedge/pool/checkpoints/00001791940202990026627-deab/weights.npz"
+      ]
+     }
+    }
+   ],
+   "reads": {
+    "A_ask": "recall",
+    "B_ask": "recall",
+    "A_ask_again": "recall",
+    "B_ltm": "recall",
+    "B_build": "recall"
+   },
+   "prediction": {
+    "B_ltm": "recall",
+    "B_build": "recall",
+    "A_ask": "recall",
+    "B_ask": "recall",
+    "A_ask_again": "recall"
+   },
+   "score": {
+    "rows": {
+     "B_ltm": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_build": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "B_ask": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     },
+     "A_ask_again": {
+      "predicted": "recall",
+      "observed": "recall",
+      "match": true
+     }
+    },
+    "all_match": true,
+    "controls_recall": true,
+    "b_ask_interpretable": true
+   },
+   "peak_rss_mb": 6431.2
+  }
+ },
+ "contrasts": [
+  {
+   "name": "persistence flag: A recalls after a restart",
+   "status": "UNDEFINED",
+   "treatment": "restart_persist_on",
+   "comparison": "restart_persist_off",
+   "read": "A_ask_again",
+   "reason": "arm not run: restart_persist_on, restart_persist_off"
+  },
+  {
+   "name": "persistence flag: B recalls after a restart",
+   "status": "UNDEFINED",
+   "treatment": "restart_persist_on",
+   "comparison": "restart_persist_off",
+   "read": "B_ask",
+   "reason": "arm not run: restart_persist_on, restart_persist_off"
+  },
+  {
+   "name": "one brain: B recalls what A was told",
+   "status": "RAN",
+   "treatment": "one_brain",
+   "comparison": "intact",
+   "read": "B_ask",
+   "treatment_read": "recall",
+   "comparison_read": "abstain",
+   "moved": true,
+   "attributable_fraction": 1.0
+  },
+  {
+   "name": "plasticity gate: B recall under one brain",
+   "status": "RAN",
+   "treatment": "one_brain",
+   "comparison": "freeze_learning",
+   "read": "B_ask",
+   "treatment_read": "recall",
+   "comparison_read": "other",
+   "moved": true,
+   "attributable_fraction": 1.0
+  },
+  {
+   "name": "learned store: B recall under one brain",
+   "status": "RAN",
+   "treatment": "one_brain",
+   "comparison": "zero_learned_store",
+   "read": "B_ask",
+   "treatment_read": "recall",
+   "comparison_read": "other",
+   "moved": true,
+   "attributable_fraction": 1.0
+  },
+  {
+   "name": "one brain: B recalls after a restart",
+   "status": "UNDEFINED",
+   "treatment": "restart_persist_on_one_brain",
+   "comparison": "restart_persist_on",
+   "read": "B_ask",
+   "reason": "arm not run: restart_persist_on"
+  }
+ ],
+ "peak_rss_mb_children": 11927.1
+}

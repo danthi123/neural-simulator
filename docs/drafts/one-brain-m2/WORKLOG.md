@@ -76,7 +76,10 @@ only; no gate seed was run.
   tiny_demo_answers_and_abstains or rich_false_escape or curiosity_d6_session_isolated or
   source_provenance_explicit_off"`: 4 passed, 1 failed (`test_brain_chat_xedge_curiosity_d6_session_isolated`: the
   xedge curiosity-D6 pool build raises `KeyError: 'cue'` in `sim/regions.py` via
-  `_onebrain_crossedge_curiosity_to_d6wm.py:140`, files M2 does not touch). BASE CHECK: PENDING.
+  `_onebrain_crossedge_curiosity_to_d6wm.py:140`, files M2 does not touch). Pre-existing: run alone on the base export
+  (afeb1bcc9) it fails the same way (`KeyError: 'cue'`, 1 failed in 547 s). Logged in `research/FAILURE_LOG.md`.
+- Run logs are local only (`*.log` is gitignored): `docs/drafts/one-brain-m2/runs/*.log` in the worktree, with the
+  bridge's per-build INFO lines stripped.
 
 ## 4. OFF hash identity (single conversation)
 
