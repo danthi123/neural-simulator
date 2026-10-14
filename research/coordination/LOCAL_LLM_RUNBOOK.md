@@ -1332,3 +1332,11 @@ for observability: research/queue/dispatch.log and pool_sync.log are stale (last
 the live dispatcher logs off-host from S's view, so skip reasons are invisible here; node-side
 job_status.log's last v2 entry is SLF.11 from yesterday 23:20 (today's sandboxed launches did not
 append). Waiting, not acting: no relaunch, no waiver (lane waiver budget exhausted).
+
+11:57: word-role-commit packet (RULING spiking-commit-a1-run-1014, blocks 0-2): tests 104/104; P=c64f2c70d
+provisioned ok 11:30 on all 4 nodes; 8 sweep lines ran on pool40 (48 json + prov sidecars landed - tar-over-ssh
+pull, rsync ABSENT on S so pool_sync pulls 0 files, NEEDS [pool-sync-rsync]); select rc=0 SELECTED op=0 all-true
+dev 1-8; commits 9303de62e + data + packet WORKLOG on research/word-role-commit; lane-stock restocks A/B/C/E
+(seeds 16-18, C smoke s8) queued+dispatched 11:48-49 with .lane_waiver written (NEEDS [lane-waiver]); next =
+block 3 step-O canary + 6 lines.
+
