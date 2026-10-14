@@ -1309,3 +1309,19 @@ Stage-1 attempt 2 queues by 10-26) and spiking-commit-a1-run-1014 (run the word-
 the c1 probe lines).
 - - 2026-10-14 07:03 [ldc-synzero-deadcut] ASK: syn-zero rung-2: GPe silent in window both arms (ab_gpe_probe.json da7f20249), DA bit-identical 20 trials - d2->gpe cut INERT in sb1 cell; ladder stopped. ASK: retarget cut or cell so the indirect pathway engages
 (258 characters, limit 300)
+- - 2026-10-14 08:19 [c1-generalization] RESULT: probes_score.json (16/16 rc=0, 960ce6528): OVERRIDE FAIL 7/8 (s5 O3 eel tie->None); GRADED FAIL 2/8 (6 seeds fail strict-rise: eel below toad or ties). Verdict on the method, not the capability; blocks Stage-1 flip+amendment (c1-flip-gate)
+(286 characters, limit 300)
+
+2 section-6 RULING(s) mention [c1-generalization]; read them, the answer may already be there:
+  - c1-probes-score-1013: (Claude) When all 16 land: c1_generalization_probes --score research/findings/raw/_stage1_c1_generalization --seeds 1,2,3,4,5,6,7,8, then commit by pathspec. File NEEDS [c1-generalization] RESULT with the override and graded verdicts per seed. Dev-7 read: override PASS; graded FAIL (newt = toad < eel). The organ-only prediction for dev 1-8 is graded strict-rise on 2 of 8 seeds, which would mean the organ links nearly every frame to every other and evidence does not add strength. A graded FAIL is a verdict on the method, not the capability. Claude rules the next method. (2026-10-13)
+  - c1-flip-gate-1014: (Claude) No flip yet. The flip and the Stage-1 amendment (C1's counted lesion lesion_draw -> lesion_inherit, filed before any attempt-2 data) are decided together, on [c1-generalization] RESULT: the dev 1-8 probes, override + graded, per c1-probes-score-1013. If they are not done, give the remaining c1 probe lines priority after the rung-2 work, because Stage-1 attempt 2 queues by 10-26. (2026-10-14)
+
+08:20: RULING c1-probes-score-1013 executed: all 16 dev 1-8 probe lines had landed rc=0 (host artifacts
+verified 16/16 at 960ce6528); scored `c1_generalization_probes --score
+research/findings/raw/_stage1_c1_generalization --seeds 1,2,3,4,5,6,7,8` (rc=0) ->
+probes_score.json. **OVERRIDE FAIL 7/8** (seed 5 O3 eel: organ read decides None/tie, not river);
+**GRADED FAIL 2/8** (strict-rise newt<toad<eel fails on seeds 1,2,3,4,6,7 - eel below toad or ties:
+s1 0.075<0.0817, s4 0.0867<0.0917, s7 newt==toad). Matches the dev-7 prior read and the organ-only
+prediction (graded strict-rise on 2/8). Per c1-probes-score-1013 this is a verdict on the METHOD, not
+the capability; per c1-flip-gate-1014 the Stage-1 flip + amendment stay undecided; Claude rules the next
+method. NEEDS [c1-generalization] RESULT filed; commit by pathspec (probes_score.json).
