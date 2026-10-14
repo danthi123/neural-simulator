@@ -83,7 +83,27 @@ only; no gate seed was run.
 
 ## 4. OFF hash identity (single conversation)
 
-PENDING.
+Driver `docs/drafts/one-brain-m2/conversation_hashes.py`: the real `/api/brain-chat` handler (`S.brain_chat`), 17
+turns in one conversation that drive every per-conversation registry (the build buffer, a taught fact and its recall,
+the affect EMA, the LTM, the multiref WM and an anaphor, D5 "did we discuss", a contradiction + reconsolidation, the
+discourse register fold and before-query, prospective memory, the world-model expectation, an empty turn
+(self-initiation), "tell me more" (rich thread), an untaught word (the moat)); sha256 over each reply's WHOLE JSON
+body. tiny-demo, stub renderer, numpy CPU, one OMP thread. Base = `git archive afeb1bcc9` (S main); OFF = the branch
+export with `BRAIN_ONE_BRAIN` unset. Compare: `compare_hashes.py`.
+
+| run pair | seed | hash seed | identical bodies | the difference |
+|---|---|---|---|---|
+| base vs OFF | 7 | unset (random) | 16/17 | turn 16: `curiosity.novelty` 0.9748080180058432 vs ...433 |
+| base vs OFF | 8 | base unset, OFF 0 | 16/17 | turn 16: the same field, ...433 vs ...432 |
+| base vs OFF | 7 | 0 | PENDING | |
+| base vs OFF | 8 | 0 | PENDING | |
+
+The one-ulp difference is not the branch: the same value flips between ...432 and ...433 across runs of EITHER code
+(base gave ...432 at s7 and ...433 at s8; the branch the reverse), and the topic gate behind it is seeded 42
+regardless of the chat seed. It is read after `topic_novelty` imprints `_brain_vocab(chat)`, a Python `set` of
+strings, whose iteration order follows the per-process string-hash seed. The project's identity convention is
+`PYTHONHASHSEED=0` + one BLAS thread (`docs/drafts/s2p/make_jobs.sh`); the hash script now sets it and both sides
+were re-run under it (rows 3-4).
 
 ## 5. ON: the M0 probe arms (seeds 7 and 8)
 
@@ -150,11 +170,67 @@ code. Residual (declared): Hebbian updates to an organ that existed at the build
 
 ## 6. Latency per turn, ON vs OFF
 
-PENDING.
+Wall seconds per turn from the hash runs (one process each, serial, numpy CPU, one thread). The workstation is shared
+(the CPU pool and the GPU queue may have been running other jobs), so treat differences under ~10% as noise. Turn 0
+includes the brain build.
+
+| run | turn 0 (build) OFF / ON | turns 1-16 summed OFF / ON | median per-turn ratio ON/OFF (range) |
+|---|---|---|---|
+| single conversation s7 | 463.3 / 444.4 | 767.1 / 716.9 | 0.93 (0.90-0.97) |
+| single conversation s8 | 482.3 / 459.3 | 799.0 / 783.3 | 0.99 (0.92-1.02) |
+| two conversations s7 (pair) | 355.9 / 351.9 | 388.6 / 282.1 | 0.96 (0.18-0.99) |
+
+- The bind (saving one conversation's fields and restoring another's) costs nothing measurable: a single conversation
+  at ON is not slower (median ratio 0.93-0.99; the s7 OFF side ran without a hash seed, s8 both under it).
+- A NEW conversation is cheaper at ON: in the pair run B's second turn took 114.3 s at OFF (its own brain's first
+  rich recall) and 20.5 s at ON (the ratio 0.18); in the probe, B's first ask took 124.7 / 125.9 s (s7 / s8) with its
+  own per-session brain (intact) and 25.6 / 27.2 s on the shared brain.
+- Memory: 6.5 GB peak RSS for one brain serving two conversations vs 11.9 GB for two per-session brains (probe).
+- Not measured here: the deferred Qwen mouth (no GPU run; stub renderer throughout). With a generative renderer the
+  turn lock is released before generation, so a second conversation's turn waits only for the first one's decision
+  (`tests/test_one_brain.py::test_a_second_conversation_gets_its_turn_while_the_first_one_speaks`), plus the short
+  re-take of the lock for VERIFY.
 
 ## 7. Every reply change at ON, by design
 
-PENDING.
+Measured (hash runs, ON vs OFF, same seed, both under `PYTHONHASHSEED=0` unless noted) and by construction.
+
+A. ONE conversation alone (single script; s8 both hash-seeded, s7 OFF side unseeded). Every `answer`, `abstained`
+and `recalled_svo` is identical (17/17 at both seeds). Bodies identical 14/17 at s8 (12/17 at s7, where turn 16 is
+also the hash-seed ulp of section 4); the differing fields are numeric read-outs of the block the conversation TAUGHT
+("the wug eats the dax"): `activity.rf.mean_magnitude` (s7 83467.6 -> 85884.5), the role-decode margins,
+`metacog.mean_role_conf`, `d6_hebbian.held.readout` (404.0 -> 415.7) on turns 1-2 (and the magnitude on turn 3 at
+s7), and the idle-replay candidate score of that engram on the empty turn 14. Build facts read identically. Cause:
+ATTRIBUTION PENDING (`ltm7`, OFF with `BRAIN_SHARED_LTM=1`: ON forces the shared LTM, which forces RNG isolation, so
+the LTM load no longer reseeds the global RNG streams the teach turn's write draws its noise from).
+
+B. Two conversations (pair script s7: A teaches, A says something happy, B asks).
+1. B recalls what A taught (OFF: "I don't know about that."; ON: the fact). The core change.
+2. The source frame: "(Someone told me part of that.)" appended (or "Someone told me: " leading when everything the
+   reply states was told in another conversation) and a `one_brain_source` field with `reason: "host_tag"`.
+3. The TONIC mood term: B's phasic mood starts from the brain's tonic baseline, which A's happy turn moved (B reports
+   `affect.appraisal_valence` 0.0787 / `appraisal_arousal` 0.0597 on every turn instead of 0.0). Below the sign
+   threshold here, so no wording changed; a stronger or repeated affect in one conversation will change the tone of
+   the next one's first turns.
+4. Downstream of 1, in B's OWN conversation state: B now holds the recalled topic, so its next question gets the
+   thread-swap lead ("Setting the held thread aside -- On dog, then -- the dog chases the cat"), and "did we discuss
+   the wug" routes to the D5 referential read (B now knows the word) and answers "I don't recall us discussing wug --
+   no assembly completes for that cue" instead of the unknown-word reply. `swap_drives.held_topic` differs after.
+5. A's own replies change only by the numeric read-outs of A1.
+
+C. By construction (no ON run with these conditions here; covered by unit tests):
+1. With a generative (Qwen) renderer the brain decides on the template articulation inside the lock and the mouth
+   generates after it; prose that fails VERIFY keeps the verified template, and the in-lock `render_svo_regen` retry
+   no longer runs. Each reply carries a `one_brain_mouth` record. Mood manner reaches the prompt as before.
+2. Sleep replay, the persistence save, Turrigiano homeostasis and tag-and-capture are BRAIN events on whole-brain
+   idleness: a conversation idle alone while another is active no longer gets a sleep-replay or a persistence save
+   (inner-life notes and the consolidation timing change accordingly).
+3. A reset at ON forgets the conversation (its Context and wander state) but not what the brain learned: a reset
+   conversation can recall a fact it taught before the reset, framed "Someone told me" (a new conversation id).
+4. The lesion instruments, only when set: under `BRAIN_ONE_BRAIN_FREEZE_LEARNING=1` an assertion is not acquired and
+   the turn says it has not learned the word; `one_brain_zero_learned_store()` (test/experimenter only) removes what
+   was learned since the build.
+5. The interlocutor name changes no reply (stored on the Context only).
 
 ## 8. Open risks
 
