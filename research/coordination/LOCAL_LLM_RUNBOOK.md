@@ -1305,3 +1305,5 @@ this wake: rulings t7-c1-duplicate-1014 (T7 C1 result duplicates the 10-06 recor
 [c1-generalization] RESULT - the 16 dev 1-8 probe lines HAVE landed rc=0 at 960ce6528, scoring next,
 Stage-1 attempt 2 queues by 10-26) and spiking-commit-a1-run-1014 (run the word-role-commit packet after
 the c1 probe lines).
+- - 2026-10-14 07:03 [ldc-synzero-deadcut] ASK: syn-zero rung-2: GPe silent in window both arms (ab_gpe_probe.json da7f20249), DA bit-identical 20 trials - d2->gpe cut INERT in sb1 cell; ladder stopped. ASK: retarget cut or cell so the indirect pathway engages
+(258 characters, limit 300)
