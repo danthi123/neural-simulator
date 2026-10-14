@@ -573,6 +573,8 @@ class NeuralSeamSelector:
                 b.set_transmission_gate(gname, 0.0 if self.commit_lesion == les else 1.0)
         _neural_baseline(b, self.config)
         _step(b, self.config.warmup_steps)
+        if self.commit is not None:
+            bg_commit_settle(b, self.config)      # the warmup can ignite a latch: start from the post-reset state
         self._bridge = b
 
     def select_once(self, msg: str) -> dict:
@@ -664,16 +666,20 @@ BG_COMMIT_LESION_GATES = {"commit": BG_COMMIT_IN_GATE, "latch": BG_COMMIT_LATCH_
 BG_COMMIT_PREFIX = "bgc_"
 BG_COMMIT_CARRY_STEPS = 5                     # latch spikes in a trial's first steps = a latch left on by the last one
 # Rows. Row 0 is A1's COMMIT_GRID row 0 (word_role_parser_organ.py) unchanged, with W_XG = A1's W_RG and the
-# selector's own reset weight onto G and S; the other rows move one knob. Frozen with the DEV table in the worklog
-# (dev seeds 1-8 only); selection = the first row in grid order that passes on all eight (`_bg_commit_derisk`).
+# selector's own reset weight onto G and S. A1's latches coexist (several roles are held at once); a BG trial is ONE
+# decision whose race can switch channel within the 300 ms drive (dev seeds 1-8: row 0 co-commits on 2-9 of 12 empty
+# trials), so rows 1-4 add a single-slot exclusion: W_SGI (a latch keeps its GI pool on: the first commitment keeps
+# the decision) or W_GIS (a bursting gate's GI silences the other latch: a later commitment replaces it), each with
+# the A1 gate and a less sensitive one. Frozen with the DEV table in the worklog (dev seeds 1-8 only); selection = the
+# first row in grid order that passes on all eight (`_bg_commit_derisk.py --sweep`).
 _BCR = dict(NG=12, NGI=8, NS=20, W_XG=50.0, W_GG=20.0, W_GGI=60.0, W_GIG=60.0, W_GS=12.0, W_SS=60.0, READ_STEPS=30,
             READ_FRAC=0.03, W_RESET=16.0)
 BG_COMMIT_GRID = [
-    dict(_BCR),                      # 0: A1 row 0
-    dict(_BCR, W_XG=30.0),           # 1: less sensitive gate
-    dict(_BCR, W_XG=80.0),           # 2: more sensitive gate
-    dict(_BCR, W_SS=80.0),           # 3: stronger latch
-    dict(_BCR, W_RESET=32.0),        # 4: stronger between-trial reset of G and S
+    dict(_BCR),                                  # 0: A1 row 0 (latches coexist)
+    dict(_BCR, W_SGI=60.0),                      # 1: first commitment keeps the decision
+    dict(_BCR, W_SGI=60.0, W_XG=30.0),           # 2: ... with a less sensitive gate
+    dict(_BCR, W_GIS=60.0),                      # 3: a later commitment replaces an earlier one
+    dict(_BCR, W_GIS=60.0, W_XG=30.0),           # 4: ... with a less sensitive gate
 ]
 BG_COMMIT_OP = 0                      # the selected row (set from the dev sweep; see the worklog)
 
@@ -731,6 +737,17 @@ def bg_commit_parts(c: dict):
                                    weight_mean=float(c["W_RESET"]), weight_jitter=0.0, plastic=False,
                                    receptor="gaba_a"))
     return regions, P
+
+
+def bg_commit_settle(bridge, config):
+    """After the build's warmup, the selector's own between-trial reset and washout (candidate-agnostic), so the first
+    trial starts from the same state as every later one (dev: the warmup's thalamic transient ignited both latches)."""
+    xp, _ = get_backend()
+    _neural_baseline(bridge, config)
+    bridge.cp_external_input_current[xp.asarray(_indices(bridge, "selector_reset"))] = xp.float32(config.reset_pA)
+    _step(bridge, int(config.reset_steps))
+    _neural_baseline(bridge, config)
+    _step(bridge, int(config.washout_steps))
 
 
 def bg_commit_indices(bridge) -> dict:

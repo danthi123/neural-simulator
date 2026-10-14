@@ -87,6 +87,17 @@ def projections(K: int, p: dict, *, gate_in: str, gate_excl: str, latch_loop: st
                     "kind": "E_TO_E"})
         out.append({"name": "ss", "k": k, "pre": [("slot", k)], "post": [("slot", k)], "w": "W_SS",
                     "gate": latch_loop, "kind": "E_TO_E"})
+        # Optional single-slot exclusion (one decision among K, the BG use; absent unless the row sets it > 0, so the
+        # multi-slot users keep latches that coexist): W_SGI, the latch keeps its own GI pool active, so once k is
+        # latched no other gate can burst (the first commitment keeps the decision); W_GIS, a bursting gate's GI
+        # pool silences the other latches (a later commitment replaces an earlier one). Both on `gate_excl`.
+        if K > 1 and float(p.get("W_SGI", 0.0)) > 0.0:
+            out.append({"name": "sgi", "k": k, "pre": [("slot", k)], "post": [("gate_inh", k)], "w": "W_SGI",
+                        "gate": gate_excl, "kind": "E_TO_I"})
+        if K > 1 and float(p.get("W_GIS", 0.0)) > 0.0:
+            out.append({"name": "gis", "k": k, "pre": [("gate_inh", k)],
+                        "post": [("slot", j) for j in range(K) if j != k], "w": "W_GIS", "gate": gate_excl,
+                        "kind": "I_TO_E"})
     return out
 
 
