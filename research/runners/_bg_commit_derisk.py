@@ -12,7 +12,12 @@ PASS (all must hold on the seed): C1 every intact and lesion trial's read is inv
 C2 empty trials (the two live empties + 12) commit STAY-SILENT on >= 0.75; C3 no content trial (the live question +
 12) commits STAY-SILENT; C4 the commit and latch lesions commit nothing on any trial; C5 every trial keeps the
 membrane in [-150, +100] mV and starts with no latch carried over; C6 the live sequence holds both empties and does
-not hold the question. Selection (`--select`): the first row in grid order that passes on all eight dev seeds.
+not hold the question. Selection (`--select`), written before the sweep ran: the first row in grid order that passes on
+all eight dev seeds. It selected NONE (2026-10-14): C2 / C3 / C6 test the race, not the read (the old latch read on
+the same trials fails them on 5 of 8 seeds), so `select` also reports the DECLARED POST-DATA rule (dev data only,
+before any gate seed; worklog and amendment): among the rows whose STAGE criteria (C1, C4, C5) hold on all eight
+seeds, the one whose committed action agrees most often with the old latch read on the same intact trials (it
+retires the read without changing what the seam decides); a tie goes to the first in grid order.
 REPORTED (never in pass): co-commits, the exclusion lesion's outcomes, agreement with the old latch read (same
 trials), the old latch read's own x0.5 / x2 changes, the production first-to-12 read, latched minimum / unlatched
 maximum latch counts, the one-word hold rate.
@@ -48,6 +53,8 @@ MESSAGES = {"empty": ["...", "?", "..", "!"], "content": ["what does the dog cha
             "one_word": ["hi", "ok", "yes", "hmm"]}
 N_PER_CLASS, N_LESION = 12, 12
 LESIONS = ("commit", "latch", "excl")
+STAGE_CHECKS = ("C1_read_invariant_every_trial", "C4_commit_and_latch_lesions_commit_nothing",
+                "C5_membrane_and_no_carry")
 BARS = {"empty_held_min": 0.75, "content_held_max": 0.0, "v_lo": -150.0, "v_hi": 100.0}
 
 
@@ -133,6 +140,22 @@ def judge(res: dict, bars=BARS) -> dict:
     return res
 
 
+def run_value(seed: int, op: int) -> dict:
+    """REPORTED only (the G3 preview): the value lesion of the neural seam (heard/hold -> D1 closed) with the commit
+    stage on, 12 trials (four per class) on one fresh organ: held and commit rates per class, read invariance."""
+    row = BG.bg_commit_row(op)
+    o = BG.NeuralSeamSelector(seed=seed, lesion="value", commit=row)
+    cls_cycle = list(MESSAGES)
+    tr = [trial_record(cls_cycle[i % 3], MESSAGES[cls_cycle[i % 3]][(i // 3) % 4],
+                       o.select_once(MESSAGES[cls_cycle[i % 3]][(i // 3) % 4])) for i in range(N_LESION)]
+    by = {c: [t for t in tr if t["class"] == c] for c in MESSAGES}
+    frac = lambda rows, pred: round(sum(1 for t in rows if pred(t)) / len(rows), 4)  # noqa: E731
+    return {"probe": "bg_commit_value_lesion", "label": "DEV, reported only", "seed": int(seed), "op": int(op),
+            "trials": tr, "held": {c: frac(v, lambda t: t["winner"] == BG.STAY_SILENT) for c, v in by.items()},
+            "commit_rate": {c: frac(v, lambda t: t["winner"] is not None) for c, v in by.items()},
+            "read_invariant_all": all(t["read_invariant"] for t in tr)}
+
+
 def select(out_dir: str, seeds=DEV_SEEDS) -> dict:
     """The registered selection: the first BG_COMMIT_GRID row in grid order with all_pass on every dev seed."""
     table = {}
@@ -143,13 +166,28 @@ def select(out_dir: str, seeds=DEV_SEEDS) -> dict:
             rows[s] = json.load(open(p))["all_pass"] if os.path.exists(p) else None
         table[op] = rows
     sel = next((op for op, r in table.items() if all(v is True for v in r.values())), None)
-    return {"table": table, "selected": sel, "rule": "first row in grid order with all_pass on all dev seeds"}
+    stage, agree = {}, {}
+    for op in table:
+        recs = [json.load(open(os.path.join(out_dir, "op%d_s%d.json" % (op, s)))) for s in seeds
+                if os.path.exists(os.path.join(out_dir, "op%d_s%d.json" % (op, s)))]
+        if len(recs) != len(seeds):
+            continue
+        stage[op] = all(r["checks"][k] for r in recs for k in STAGE_CHECKS)
+        it = [t for r in recs for t in r["intact"]]
+        agree[op] = round(sum(1 for t in it if t["winner"] == t["old_latch_winner"]) / len(it), 4)
+    ok = [op for op in sorted(agree) if stage[op]]
+    post = max(ok, key=lambda op: (agree[op], -op)) if ok else None
+    return {"table": table, "selected": sel, "rule": "first row in grid order with all_pass on all dev seeds",
+            "declared_post_data": {"rule": "max agreement with the old latch read among rows with C1, C4, C5 on all "
+                                           "dev seeds; tie -> first in grid order",
+                                   "stage_ok": stage, "agree_old_latch_read": agree, "selected": post}}
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--sweep", action="store_true")
     ap.add_argument("--select", action="store_true")
+    ap.add_argument("--value-report", action="store_true", help="reported value-lesion arm (op<I>_s<S>_value.json)")
     ap.add_argument("--seeds", type=int, nargs="+", default=list(DEV_SEEDS))
     ap.add_argument("--ops", type=int, nargs="+", default=None)
     ap.add_argument("--out-dir", type=str, default="research/findings/raw/_bg_commit/dev_organ")
@@ -158,7 +196,20 @@ def main(argv=None):
         raise SystemExit("dev sweep only: gate seeds are refused")
     if a.select:
         r = select(a.out_dir, a.seeds)
+        r.update({"runner": "research.runners._bg_commit_derisk", "argv": list(sys.argv),
+                  "backend": os.environ.get("SIM_BACKEND"), "seeds": list(a.seeds),
+                  "note": "reads the sweep files only (no brain built); the sweep ran on numpy, CPU"})
         print(json.dumps(r))
+        json.dump(r, open(os.path.join(a.out_dir, "selection.json"), "w"), indent=1)
+        return 0
+    if a.value_report:
+        os.makedirs(a.out_dir, exist_ok=True)
+        for op in (a.ops if a.ops is not None else [BG.BG_COMMIT_OP]):
+            for s in a.seeds:
+                res = run_value(s, op)
+                json.dump(res, open(os.path.join(a.out_dir, "op%d_s%d_value.json" % (op, s)), "w"), indent=1)
+                print("value op%d s%d held=%s commit=%s inv=%s" % (op, s, res["held"], res["commit_rate"],
+                                                                   res["read_invariant_all"]), flush=True)
         return 0
     if a.sweep:
         os.makedirs(a.out_dir, exist_ok=True)

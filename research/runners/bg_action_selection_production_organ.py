@@ -667,11 +667,21 @@ BG_COMMIT_PREFIX = "bgc_"
 BG_COMMIT_CARRY_STEPS = 5                     # latch spikes in a trial's first steps = a latch left on by the last one
 # Rows. Row 0 is A1's COMMIT_GRID row 0 (word_role_parser_organ.py) unchanged, with W_XG = A1's W_RG and the
 # selector's own reset weight onto G and S. A1's latches coexist (several roles are held at once); a BG trial is ONE
-# decision whose race can switch channel within the 300 ms drive (dev seeds 1-8: row 0 co-commits on 2-9 of 12 empty
-# trials), so rows 1-4 add a single-slot exclusion: W_SGI (a latch keeps its GI pool on: the first commitment keeps
-# the decision) or W_GIS (a bursting gate's GI silences the other latch: a later commitment replaces it), each with
-# the A1 gate and a less sensitive one. Frozen with the DEV table in the worklog (dev seeds 1-8 only); selection = the
-# first row in grid order that passes on all eight (`_bg_commit_derisk.py --sweep`).
+# decision whose race can switch channel within the 300 ms drive, so rows 1-4 add a single-slot exclusion: W_SGI (a
+# latch keeps its GI pool on: the first commitment keeps the decision) or W_GIS (a bursting gate's GI silences the
+# other latch: a later commitment replaces it), each with the A1 gate and a less sensitive one. DEV table (Claude
+# build agent 2026-10-14, numpy, dev seeds 1-8, `_bg_commit_derisk.py`; raw research/findings/raw/_bg_commit/
+# dev_organ; per row 320 intact trials, 288 lesion trials; gate seeds never run):
+#   row  read invariant  latched min / unlatched max  empty held  content held  co-commit  agree old read  seeds all_pass
+#   0    320/320         65 / 1                       77/112      0/104         96         0.738           3/8
+#   1    320/320         65 / 1                       94/112      8/104         7          0.778           2/8
+#   2    320/320         67 / 1                       95/112      8/104         6          0.781           2/8
+#   3    320/320         65 / 1                       98/112      7/104         0          0.956           1/8
+#   4    320/320         67 / 1                       98/112      7/104         0          0.963           1/8
+#   (the old latch read on the same trials: empty 99/112, content 6/104; commit and latch lesions: 0 commits, every
+#   row.) The pre-data rule (all_pass on all eight) selected NONE because C2/C3/C6 test the race: the old read fails
+#   them on 5 of 8 seeds. Selected by the declared post-data rule (max agreement with the old read among rows whose
+#   stage criteria hold on all eight): row 4. See docs/drafts/bg-commit/WORKLOG.md.
 _BCR = dict(NG=12, NGI=8, NS=20, W_XG=50.0, W_GG=20.0, W_GGI=60.0, W_GIG=60.0, W_GS=12.0, W_SS=60.0, READ_STEPS=30,
             READ_FRAC=0.03, W_RESET=16.0)
 BG_COMMIT_GRID = [
@@ -681,7 +691,7 @@ BG_COMMIT_GRID = [
     dict(_BCR, W_GIS=60.0),                      # 3: a later commitment replaces an earlier one
     dict(_BCR, W_GIS=60.0, W_XG=30.0),           # 4: ... with a less sensitive gate
 ]
-BG_COMMIT_OP = 0                      # the selected row (set from the dev sweep; see the worklog)
+BG_COMMIT_OP = 4                      # the selected row (dev sweep + declared post-data rule; worklog)
 
 
 def bg_commit_enabled() -> bool:

@@ -21,6 +21,11 @@ ARMS
                         motor rule on the SAME trial (neural state fixed, only the host read changes)
   seam_lesion_value     as seam_b + BRAIN_BG_NEURAL_SEAM_LESION=value (neural intervention: heard/hold -> D1 closed)
 
+AMENDMENT 2026-10-14 (research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md): `--commit` adds
+BRAIN_BG_COMMIT=1 to the three seam arms only (the spiking commit stage decides; the organ seed follows
+BRAIN_CHAT_SEED); the prod arms are unchanged. `--score ... --commit` reads the commit record of every neural-seam
+event (`commit`: winner, read_invariant, read_variants, co_commit, old_latch_winner) and applies G4 to the commit read.
+
 Run one arm (~6 GB RSS; one ChatBrain build):
   bash tools/memcap.sh 12 -- env PYTHONHASHSEED=0 .venv/bin/python -m research.runners.host_share_bg_seam \
       --worker --seed 7 --arm prod_a --out research/findings/raw/_bg_live_seam/dev/s7/prod_a.json
@@ -57,6 +62,8 @@ ARMS = {
                            "BRAIN_BG_NEURAL_SEAM_LESION": "value"}, "observe"),
 }
 BG_FIELDS_EXTRA = ("bg_select.action",)
+AMENDMENT_ID = "2026-10-14-bg-live-seam-commit"
+COMMIT_ENV = ("BRAIN_BG_COMMIT", "BRAIN_BG_COMMIT_OP", "BRAIN_BG_COMMIT_LESION")
 _EV = {"label": None, "events": {}}
 
 
@@ -107,12 +114,13 @@ def install(mode):
              host_action=(out or {}).get("action"))
         return out
 
-    def decide_action_neural(msg, seed=42, lesion=None):
+    def decide_action_neural(msg, seed=None, lesion=None):      # seed None -> the organ's own rule (42 flag-off)
         out = orig_neural(msg, seed=seed, lesion=lesion)
         t = BG.decide_action_neural.last or {}
         rd = dict(t.get("readouts") or {})
+        extra = {"commit": t["commit"]} if t.get("commit") is not None else {}   # BRAIN_BG_COMMIT (amendment)
         _rec(kind="bg_neural", winner=t.get("winner"), latch_rates=t.get("latch_rates"), readouts=rd,
-             v_range=[t.get("v_min"), t.get("v_max")])
+             v_range=[t.get("v_min"), t.get("v_max")], **extra)
         if mode == "readout" and _EV["label"]:
             alt = rd.get("first_to_12_motor (production rule)")
             _rec(kind="bg_readout", applied=True, latch_winner=t.get("winner"), alt_winner=alt)
@@ -142,10 +150,12 @@ def install(mode):
             m.norgan_hop = norgan_hop
 
 
-def run_worker(seed, arm, out_path, backend="numpy"):
-    env_extra, mode = ARMS[arm]
-    C = lane_c()
-    env = dict(C.BASE_ENV)
+def arm_env(base_env, arm, seed, backend="numpy", commit=False, outer=None):
+    """The environment of one arm (pure). `commit` (amendment 2026-10-14): BRAIN_BG_COMMIT=1 on the seam arms only;
+    the commit variables are then explicitly empty everywhere else, as they are whenever the outer environment
+    (`outer`, default os.environ) carries one. Without either, the 09-29 environment, unchanged."""
+    env_extra, _mode = ARMS[arm]
+    env = dict(base_env)
     if backend != "numpy":                               # DEV-only replication on the GPU backend
         env["SIM_BACKEND"] = backend
         env.pop("CUDA_VISIBLE_DEVICES", None)
@@ -153,6 +163,19 @@ def run_worker(seed, arm, out_path, backend="numpy"):
     env["BRAIN_CHAT_SEED"] = str(int(seed))
     for k in ("BRAIN_BG_NEURAL_SEAM", "BRAIN_GNW_UNIQUE_IGNITION_READ", "BRAIN_BG_NEURAL_SEAM_LESION"):
         env.setdefault(k, "")                         # explicit empty = OFF in every arm that does not set it
+    outer = os.environ if outer is None else outer
+    if commit or any(outer.get(k) for k in COMMIT_ENV):
+        for k in COMMIT_ENV:
+            env[k] = ""
+        if commit and env_extra.get("BRAIN_BG_NEURAL_SEAM") == "1":
+            env["BRAIN_BG_COMMIT"] = "1"
+    return env
+
+
+def run_worker(seed, arm, out_path, backend="numpy", commit=False):
+    _env_extra, mode = ARMS[arm]
+    C = lane_c()
+    env = arm_env(C.BASE_ENV, arm, seed, backend=backend, commit=commit)
     for k, v in env.items():
         os.environ[k] = v
     import research.runners.onebrain_regression_battery as B
@@ -178,6 +201,7 @@ def run_worker(seed, arm, out_path, backend="numpy"):
     responses = json.load(open(resp_path))
     os.remove(resp_path)
     res = {"instrument": "host_share_bg_seam", "seed": int(seed), "arm": arm, "mode": mode, "env": env,
+           **({"amendment": AMENDMENT_ID} if commit else {}),
            "pythonhashseed_ok": os.environ.get("PYTHONHASHSEED") == "0", "responses": responses,
            "events": _EV["events"], "wall_seconds": round(time.time() - t0, 1)}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
@@ -186,7 +210,7 @@ def run_worker(seed, arm, out_path, backend="numpy"):
     return 0
 
 
-def run_all(seed, out_dir, backend="numpy", arms=None):
+def run_all(seed, out_dir, backend="numpy", arms=None, commit=False):
     """Every arm of one seed, each in its OWN fresh subprocess (PYTHONHASHSEED=0), sequentially; an existing arm file is
     kept (resumable). One brain-loading process at a time, so it is safe as ONE gpu_queue job."""
     import subprocess
@@ -201,6 +225,8 @@ def run_all(seed, out_dir, backend="numpy", arms=None):
                "--arm", arm, "--out", out, "--backend", backend]
         if int(seed) in GATE_SEEDS:
             cmd.append("--allow-gate-seeds")
+        if commit:
+            cmd.append("--commit")
         p = subprocess.run(cmd, env=env)
         ok = ok and p.returncode == 0 and os.path.exists(out)
     return 0 if ok else 1
@@ -210,15 +236,42 @@ def _held(resp):
     return bool(((resp or {}).get("bg_select") or {}).get("action") == "STAY_SILENT")
 
 
-def score(shard_dir, seeds):
+def commit_event_measures(e, env_on):
+    """The amended score's per-event measures (pure; 2026-10-14 amendment), from one `bg_neural` event: `engaged`
+    (the shard ran with BRAIN_BG_COMMIT=1 and the event's commit record names the event's committed action),
+    `commit_thr_change` (no commit record, or the commit read changes at READ_FRAC x0.5 or x2), `old_read_agree`
+    and `co_commit` (reported)."""
+    cm = e.get("commit")
+    var = (cm or {}).get("read_variants") or {}
+    return {"engaged": int(bool(env_on) and cm is not None and cm.get("winner") == e.get("winner")),
+            "commit_thr_change": int(cm is None or not cm.get("read_invariant") or not var
+                                     or any(v != cm.get("winner") for v in var.values())),
+            "old_read_agree": int(cm is not None and cm.get("winner") == cm.get("old_latch_winner")),
+            "co_commit": int(bool((cm or {}).get("co_commit")))}
+
+
+def g4_commit_holds(m, bars=None):
+    """The amended G4 on a pooled score: the commit read changed on no seam_b event."""
+    bars = bars if bars is not None else BARS_AMENDED
+    return m.get("commit_thr_change") is not None and m["commit_thr_change"] <= bars["commit_thr_change_max"]
+
+
+def score(shard_dir, seeds, commit=False):
     """Per seed and target turn, lane C's F / S / D and outcome labels for the production seam; the capability,
-    neural share and readout share for the neural seam; the bus-read variant disagreement. UNDEFINED reasons kept."""
+    neural share and readout share for the neural seam; the bus-read variant disagreement. UNDEFINED reasons kept.
+    `commit` (amendment 2026-10-14): also read every neural-seam event's commit record: `commit_thr_change` (the
+    commit read changes at READ_FRAC x0.5 or x2, or the event carries no commit record), `commit_engaged` (the event
+    carries a commit record whose winner is the event's committed action, in a shard run with BRAIN_BG_COMMIT=1),
+    `old_read_agree` and `co_commit` (reported); the old latch's `latch_thr_change` is then measured against the old
+    read's own choice. Without `commit` the score is the 09-29 one, unchanged."""
     C = lane_c()
     fields = tuple(C.DECISION_FIELDS) + BG_FIELDS_EXTRA
     out = {"seeds": [int(s) for s in seeds], "per_seed": {}, "fields": list(fields)}
     pooled = {"F": [], "S": [], "D": [], "cap": [], "ns": [], "readout": [], "bus_disagree": [],
               "latch_thr_change": [], "first12_change": [], "membrane_ok": [], "content_held": [], "empty_held": [],
               "sham_ok": [], "bus_unique_agree": [], "seam_intact_held_for_ns": [], "seam_lesion_held": []}
+    if commit:
+        pooled.update({"commit_thr_change": [], "commit_engaged": [], "old_read_agree": [], "co_commit": []})
     prod_events = []          # per-turn {F,S,D,f_outcome,seed,live} records, for SCHEMA.seam_stats/classify_seam
     for s in seeds:
         sh = {}
@@ -278,10 +331,19 @@ def score(shard_dir, seeds):
                     if e.get("kind") == "bg_neural":
                         lo, hi = e.get("v_range") or [None, None]
                         pooled["membrane_ok"].append(int(lo is not None and lo >= -150.0 and hi <= 100.0))
+                        cm = e.get("commit") if commit else None
+                        if commit:
+                            cmx = commit_event_measures(
+                                e, ((sh[arm] or {}).get("env") or {}).get("BRAIN_BG_COMMIT") == "1")
+                            pooled["commit_engaged"].append(cmx["engaged"])
                         if arm == "seam_b":
                             rd = e.get("readouts") or {}
-                            pooled["latch_thr_change"].append(int(rd.get("latch_rate_x0.5") != e.get("winner")
-                                                                  or rd.get("latch_rate_x2") != e.get("winner")))
+                            old = cm.get("old_latch_winner") if cm is not None else e.get("winner")
+                            pooled["latch_thr_change"].append(int(rd.get("latch_rate_x0.5") != old
+                                                                  or rd.get("latch_rate_x2") != old))
+                            if commit:
+                                for k in ("commit_thr_change", "old_read_agree", "co_commit"):
+                                    pooled[k].append(cmx[k])
                             pooled["first12_change"].append(
                                 int(rd.get("first_to_12_motor (production rule)") != e.get("winner")))
             ev["sham_ok"] = int(not any("sham" in u for u in ev["undefined"]))
@@ -332,6 +394,8 @@ def score(shard_dir, seeds):
         seam_held_attribution = attributable_to(
             "seam held-rate (intact vs value-lesioned, paired events)", intact_held_rate, lesion_held_rate)
     out["diagnostics"] = {"seam_held_attribution": seam_held_attribution}
+    if commit:
+        out["amendment"] = AMENDMENT_ID
     return out
 
 
@@ -339,13 +403,20 @@ def score(shard_dir, seeds):
 BARS = {"F_before_min": 0.8, "empty_held_min": 0.75, "content_held_max": 0.0, "ns_after_min": 0.3,
         "latch_thr_change_max": 0.10, "bus_unique_agree_min": 0.95, "membrane_ok_min": 1.0, "sham_ok_min": 1.0,
         "min_events_per_measure": 6}
+# AMENDMENT 2026-10-14 (research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md): G4 on the commit read, no
+# change allowed; the commit stage engaged on every neural-seam event (a precondition: UNDEFINED, never NO-GO).
+BARS_AMENDED = dict(BARS, commit_thr_change_max=0.0, commit_engaged_min=1.0)
 
 
-def verdict(sc, bars=BARS):
+def verdict(sc, bars=None):
     """G1-G5 over the pooled six-seed score. Preconditions (UNDEFINED, never NO-GO, when they fail): the sham null
     holds on every target event, no membrane-bound violation in any neural-seam trial, and every gated measure has
-    at least `min_events_per_measure` events."""
+    at least `min_events_per_measure` events. A score made with `commit` (the 2026-10-14 amendment) is judged with
+    BARS_AMENDED: G4 reads the commit read (`commit_thr_change` must be 0) and the commit stage must be engaged on
+    every neural-seam event (a precondition). G1, G2a, G2b, G3, G5 and the other preconditions are unchanged."""
     from tools.verdict import Verdict
+    amended = sc.get("amendment") == AMENDMENT_ID
+    bars = bars if bars is not None else (BARS_AMENDED if amended else BARS)
     m, n = sc["pooled"], sc["n"]
     v = Verdict("BG live seam retirement (plan step 3)")
     v.require("sham null holds on every target event", m["sham_ok"], expect=lambda x: x is not None
@@ -354,6 +425,11 @@ def verdict(sc, bars=BARS):
               expect=lambda x: x is not None and x >= bars["membrane_ok_min"])
     for k in ("F", "empty_held", "content_held", "ns", "latch_thr_change", "bus_unique_agree"):
         v.require("enough events for %s" % k, n.get(k, 0), expect=lambda x: x >= bars["min_events_per_measure"])
+    if amended:
+        v.require("commit stage engaged on every neural-seam event", m.get("commit_engaged"),
+                  expect=lambda x: x is not None and x >= bars["commit_engaged_min"])
+        v.require("enough events for commit_thr_change", n.get("commit_thr_change", 0),
+                  expect=lambda x: x >= bars["min_events_per_measure"])
     g = {
         "G1_production_host_owns_the_reply": m["F"] is not None and m["F"] >= bars["F_before_min"],
         "G2a_neural_seam_holds_on_empty_turns": m["empty_held"] is not None
@@ -363,10 +439,14 @@ def verdict(sc, bars=BARS):
         "G3_value_lesion_moves_the_reply": m["ns"] is not None and m["ns"] >= bars["ns_after_min"],
         "G4_latch_read_threshold_invariant": m["latch_thr_change"] is not None
         and m["latch_thr_change"] <= bars["latch_thr_change_max"],
+        **({"G4_commit_read_threshold_invariant": g4_commit_holds(m, bars)} if amended else {}),
         "G5_bus_argmax_does_no_work": m["bus_unique_agree"] is not None
         and m["bus_unique_agree"] >= bars["bus_unique_agree_min"],
     }
-    d = v.decide(go=all(g.values()), verbose=False)
+    if amended:                                     # the amendment's G4 replaces the 09-29 G4 (reported, not gated)
+        g["G4_old_latch_read_threshold_invariant (reported, not gated)"] = g.pop("G4_latch_read_threshold_invariant")
+    gated = {k: x for k, x in g.items() if "not gated" not in k}
+    d = v.decide(go=all(gated.values()), verbose=False)
     return {"verdict": d["status"], "gates": g, "status": d["status"], "preconditions": d["preconditions"],
             "production_seam_class_lane_c": sc.get("production_seam_class")}
 
@@ -382,17 +462,18 @@ def main(argv=None):
     ap.add_argument("--backend", choices=("numpy", "cupy"), default="numpy")
     ap.add_argument("--run-all", type=str, default=None, help="out dir: run every arm of --seed sequentially")
     ap.add_argument("--out", type=str, default=None)
+    ap.add_argument("--commit", action="store_true", help="amendment 2026-10-14: the commit stage on the seam arms")
     a = ap.parse_args(argv)
     if a.worker:
         if a.seed in GATE_SEEDS and not a.allow_gate_seeds:
             raise SystemExit("gate seed without --allow-gate-seeds (preregistration first)")
-        return run_worker(a.seed, a.arm, a.out, backend=a.backend)
+        return run_worker(a.seed, a.arm, a.out, backend=a.backend, commit=a.commit)
     if a.run_all:
         if a.seed in GATE_SEEDS and not a.allow_gate_seeds:
             raise SystemExit("gate seed without --allow-gate-seeds (preregistration first)")
-        return run_all(a.seed, a.run_all, backend=a.backend)
+        return run_all(a.seed, a.run_all, backend=a.backend, commit=a.commit)
     if a.score:
-        res = score(a.score, a.seeds)
+        res = score(a.score, a.seeds, commit=a.commit)
         res["label"] = ("GATE" if sorted(a.seeds) == sorted(GATE_SEEDS) else "DEV, not a verdict")
         vd = verdict(res)
         if res["label"] == "GATE":
