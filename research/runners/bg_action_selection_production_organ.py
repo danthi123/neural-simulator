@@ -394,8 +394,10 @@ def render_utterance(msg: str) -> list:
     return starts
 
 
-def neural_seam_parts():
-    """(extra_regions, extra_pathways, core_config_updates) added to the Gate-A v2 selector by the neural seam."""
+def neural_seam_parts(commit: dict | None = None):
+    """(extra_regions, extra_pathways, core_config_updates) added to the Gate-A v2 selector by the neural seam.
+    `commit` (a BG_COMMIT_GRID row, flag BRAIN_BG_COMMIT): the spiking commit stage is appended AFTER every region and
+    pathway below (region `bg-commit`); None -> byte-identical to the build without it."""
     from sim.enums import NeuronType
     from sim.regions import RegionPathway
     from research.runners._vocal_action_selector_gate import _region
@@ -431,6 +433,10 @@ def neural_seam_parts():
     for tgt in ("heard", "hold", "latch_0", "latch_1"):
         P.append(RegionPathway(from_region="selector_reset", to_region=tgt, density=0.70, weight_mean=16.0,
                                weight_jitter=0.0, plastic=False, receptor="gaba_a"))
+    if commit is not None:
+        r2, p2 = bg_commit_parts(commit)
+        regions += r2
+        P += p2
     return regions, P, {"enable_nmda_recurrent": True}
 
 
@@ -439,7 +445,7 @@ def _neural_baseline(bridge, config):
     _set_equal_tonic_current(bridge, config)
 
 
-def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_check=True):
+def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_check=True, commit=None):
     """ONE neural-seam race on a fixed schedule. The host adds only candidate-agnostic drive (equal tonic, shared
     arousal, the default-mode `hold` drive) and the rendered stimulus. Returns the latch read (the committed action)
     plus the same trial re-read under alternative host readout rules (`readouts`), the membrane range over EVERY
@@ -466,6 +472,10 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
     T = T_DRIVE + T_HOLD
     motor_t = np.zeros((T, 2), dtype=np.int32)
     latch_t = np.zeros((T, 2), dtype=np.int32)
+    if commit is not None:                            # bg-commit: the stage's gate and latch spikes, every step
+        cidx = bg_commit_indices(bridge)
+        gate_t = np.zeros((T, 2), dtype=np.int32)
+        slot_t = np.zeros((T, 2), dtype=np.int32)
     v_lo, v_hi = np.inf, -np.inf
     drive_on()
     for t in range(T):
@@ -476,6 +486,9 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
         for c in CHANNELS:
             motor_t[t, c] = int(f[idx[f"motor_{c}"]].sum())
             latch_t[t, c] = int(f[idx[f"latch_{c}"]].sum())
+            if commit is not None:
+                gate_t[t, c] = int(f[cidx["gate"][c]].sum())
+                slot_t[t, c] = int(f[cidx["slot"][c]].sum())
         if v_check:
             v = to_host(bridge.cp_membrane_potential_v)
             v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
@@ -523,29 +536,41 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
         "first_to_24_motor": first_crossing(24),
         "motor_majority_drive_window": majority(),
     }
-    return {"winner": winner, "committed": winner is not None, "latch_rates": latch_rates, "readouts": readouts,
-            "motor_total": motor_t.sum(axis=0).tolist(), "v_min": v_lo, "v_max": v_hi,
-            "latch_onset_ms": [int(np.argmax(latch_t[:, c] > 0)) if latch_t[:, c].any() else None for c in CHANNELS]}
+    out = {"winner": winner, "committed": winner is not None, "latch_rates": latch_rates, "readouts": readouts,
+           "motor_total": motor_t.sum(axis=0).tolist(), "v_min": v_lo, "v_max": v_hi,
+           "latch_onset_ms": [int(np.argmax(latch_t[:, c] > 0)) if latch_t[:, c].any() else None for c in CHANNELS]}
+    if commit is not None:                            # the commit read decides; the old latch read is reported only
+        cm = bg_commit_read(commit, gate_t, slot_t, motor_t)
+        cm.update({"old_latch_winner": winner, "old_latch_rates": latch_rates,
+                   "old_latch_variants": {"x0.5": readouts["latch_rate_x0.5"], "x2": readouts["latch_rate_x2"]}})
+        out.update({"winner": cm["winner"], "committed": cm["winner"] is not None, "commit": cm})
+    return out
 
 
 class NeuralSeamSelector:
     """The Gate-A v2 selector + the neural seam, built once per (seed, lesion) on a real SimulationBridge."""
 
-    def __init__(self, seed: int = 42, lesion: str | None = None):
+    def __init__(self, seed: int = 42, lesion: str | None = None, commit: dict | None = None,
+                 commit_lesion: str | None = None):
         self.seed = int(seed)
         self.config = selector_config("v2")
         self.lesion = lesion
+        self.commit = dict(commit) if commit is not None else None      # a BG_COMMIT_GRID row (flag BRAIN_BG_COMMIT)
+        self.commit_lesion = commit_lesion if commit is not None else None
         self._bridge = None
 
     def ensure_built(self):
         if self._bridge is not None:
             return
-        regions, pathways, updates = neural_seam_parts()
+        regions, pathways, updates = neural_seam_parts(self.commit)
         b = build_selector_bridge(self.seed, self.config, extra_regions=regions, extra_pathways=pathways,
                                   core_config_updates=updates)
         b.set_transmission_gate(DIRECT_PATH_GATE, 0.0 if self.lesion == "direct_path" else 1.0)
         b.set_transmission_gate(VALUE_AFFERENT_GATE, 0.0 if self.lesion == "value" else 1.0)
         b.set_transmission_gate(LATCH_INPUT_GATE, 0.0 if self.lesion == "latch" else 1.0)
+        if self.commit is not None:
+            for les, gname in BG_COMMIT_LESION_GATES.items():
+                b.set_transmission_gate(gname, 0.0 if self.commit_lesion == les else 1.0)
         _neural_baseline(b, self.config)
         _step(b, self.config.warmup_steps)
         self._bridge = b
@@ -553,37 +578,183 @@ class NeuralSeamSelector:
     def select_once(self, msg: str) -> dict:
         self.ensure_built()
         r = _run_neural_seam_trial(self._bridge, self.config, render_utterance(msg),
-                                   arousal=self.lesion != "arousal")
+                                   arousal=self.lesion != "arousal", commit=self.commit)
         r["heard_groups"] = len(render_utterance(msg))
+        if self.commit is not None:
+            r["commit"].update({"op": self.commit.get("op"), "lesion": self.commit_lesion, "organ_seed": self.seed})
         return r
 
 
 _NEURAL_ORGANS: dict = {}
 
 
-def get_neural_organ(seed: int = 42, lesion: str | None = None) -> NeuralSeamSelector:
-    key = (int(seed), lesion)
+def get_neural_organ(seed: int = 42, lesion: str | None = None, commit_op: int | None = None,
+                     commit_lesion: str | None = None) -> NeuralSeamSelector:
+    """`commit_op` None -> the neural-seam organ exactly as before (cache key (seed, lesion)); an int -> the same
+    build plus the spiking commit stage of BG_COMMIT_GRID[commit_op] (its own cache entry)."""
+    key = (int(seed), lesion) if commit_op is None else (int(seed), lesion, "commit", int(commit_op), commit_lesion)
     org = _NEURAL_ORGANS.get(key)
     if org is None:
-        org = NeuralSeamSelector(seed=seed, lesion=lesion)
+        if commit_op is None:
+            org = NeuralSeamSelector(seed=seed, lesion=lesion)
+        else:
+            org = NeuralSeamSelector(seed=seed, lesion=lesion, commit=bg_commit_row(commit_op),
+                                     commit_lesion=commit_lesion)
         _NEURAL_ORGANS[key] = org
     return org
 
 
-def decide_action_neural(msg: str, seed: int = 42, lesion: str | None = None) -> dict | None:
+def decide_action_neural(msg: str, seed: int | None = None, lesion: str | None = None) -> dict | None:
     """The neural seam's replacement for `decide_action`. Same return contract: None -> the turn falls through to the
     normal path; a dict only when the neural commit is STAY-SILENT. Differences: the race runs on EVERY turn (no host
     admission), the host injects no candidate score, and the committed action is the latched one. A non-commit (no
-    latch or both) falls through, as in production. The full trial record is attached as `trial` for tracing."""
+    latch or both) falls through, as in production. The full trial record is attached as `trial` for tracing.
+    `seed` None -> 42 (the organ seed the server has always used). With BRAIN_BG_COMMIT on (region `bg-commit`): the
+    spiking commit stage decides, and a None seed follows BRAIN_CHAT_SEED (declared in the 2026-10-14 amendment)."""
     les = neural_seam_lesion() if lesion is None else lesion
-    r = get_neural_organ(seed=seed, lesion=les).select_once(msg)
+    if bg_commit_enabled():
+        seed = bg_commit_seed() if seed is None else seed
+        r = get_neural_organ(seed=seed, lesion=les, commit_op=bg_commit_op(),
+                             commit_lesion=bg_commit_lesion()).select_once(msg)
+    else:
+        seed = 42 if seed is None else seed
+        r = get_neural_organ(seed=seed, lesion=les).select_once(msg)
     decide_action_neural.last = r
     if not r["committed"] or r["winner"] != STAY_SILENT:
         return None
+    step = (r["commit"] if "commit" in r else r)["latch_onset_ms"][STAY_SILENT]
     return {"action": ACTION_NAME[STAY_SILENT], "winner": int(r["winner"]), "speak_salience": None,
-            "silent_salience": None, "decision_step": r["latch_onset_ms"][STAY_SILENT], "loser_ratio": None,
+            "silent_salience": None, "decision_step": step, "loser_ratio": None,
             "lesion": les, "neural_seam": True, "trial": r}
 
 
 decide_action_neural.last = None
 # END neural-seam
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# BEGIN bg-commit (branch claude-build/bg-commit, 2026-10-14). DEFAULT-OFF; read only under BRAIN_BG_NEURAL_SEAM=1.
+# The spiking commit stage (docs/drafts/spiking-commit/PLAN.md section 3; the one copy: research/runners/
+# spiking_commit.py) on the BG channels, on the neural-seam organ's OWN bridge, replacing the fixed-rate latch read
+# that failed G4 on 2026-10-02 (research/findings/2026-10-02-bg-live-seam-retirement-RESULT.md: the SPEAK latch of
+# "what does the dog chase" held a graded 0.039 spikes/neuron/ms, so the x2 read dropped it). Worklog:
+# docs/drafts/bg-commit/WORKLOG.md. Amendment: research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md.
+#   sources X_k = motor_k (the selector's output pools, which already compete through the D1/GPi/thalamus race and the
+#   commit_fs cross-inhibition); commit gate G_k (motor_k -> G_k, gate `bg_commit_in`, the COMMIT lesion), exclusive
+#   across channels (GI_k -| G_j, gate `bg_commit_excl`, the EXCLUSION lesion); latch S_k (G_k -> S_k, S_k -> S_k,
+#   gate `bg_commit_latch`, the LATCH lesion). The between-trial selector_reset also reaches G and S
+#   (candidate-agnostic, like every other reset target).
+#   READ: over the last READ_STEPS of the zero-stimulus hold (T_HOLD), S_k is ON iff its spike count reaches READ_FRAC
+#   x NS x READ_STEPS; exactly one ON -> that action; none -> no commit (falls through, as before); both -> co-commit
+#   (no commit, counted). Re-read at x0.5 and x2 on the same spikes. The old latch (latch_k) is still built and its
+#   read is recorded from the same trial (`old_latch_winner`, reported, never used).
+# RESIDUAL HOST STEPS (declared): the word rendering, the trial schedule (drive / hold / read window), the latch read
+# (a threshold on the stage's latches whose invariance is measured, not assumed), and which env flag is on.
+# LEARNED-CONTENT FRACTION: 0 (wired, as the neural seam is).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+from research.runners import spiking_commit as _SC  # noqa: E402
+
+BG_COMMIT_FLAG = "BRAIN_BG_COMMIT"
+BG_COMMIT_OP_FLAG = "BRAIN_BG_COMMIT_OP"
+BG_COMMIT_LESION_FLAG = "BRAIN_BG_COMMIT_LESION"
+BG_COMMIT_IN_GATE = "bg_commit_in"            # motor_k -> G_k (lesion `commit`)
+BG_COMMIT_LATCH_GATE = "bg_commit_latch"      # S_k -> S_k (lesion `latch`)
+BG_COMMIT_EXCL_GATE = "bg_commit_excl"        # GI_k -| G_j (lesion `excl`)
+BG_COMMIT_LESION_GATES = {"commit": BG_COMMIT_IN_GATE, "latch": BG_COMMIT_LATCH_GATE, "excl": BG_COMMIT_EXCL_GATE}
+BG_COMMIT_PREFIX = "bgc_"
+BG_COMMIT_CARRY_STEPS = 5                     # latch spikes in a trial's first steps = a latch left on by the last one
+# Rows. Row 0 is A1's COMMIT_GRID row 0 (word_role_parser_organ.py) unchanged, with W_XG = A1's W_RG and the
+# selector's own reset weight onto G and S; the other rows move one knob. Frozen with the DEV table in the worklog
+# (dev seeds 1-8 only); selection = the first row in grid order that passes on all eight (`_bg_commit_derisk`).
+_BCR = dict(NG=12, NGI=8, NS=20, W_XG=50.0, W_GG=20.0, W_GGI=60.0, W_GIG=60.0, W_GS=12.0, W_SS=60.0, READ_STEPS=30,
+            READ_FRAC=0.03, W_RESET=16.0)
+BG_COMMIT_GRID = [
+    dict(_BCR),                      # 0: A1 row 0
+    dict(_BCR, W_XG=30.0),           # 1: less sensitive gate
+    dict(_BCR, W_XG=80.0),           # 2: more sensitive gate
+    dict(_BCR, W_SS=80.0),           # 3: stronger latch
+    dict(_BCR, W_RESET=32.0),        # 4: stronger between-trial reset of G and S
+]
+BG_COMMIT_OP = 0                      # the selected row (set from the dev sweep; see the worklog)
+
+
+def bg_commit_enabled() -> bool:
+    """DEFAULT-OFF. `BRAIN_BG_COMMIT` in {1,true,yes,on} -> under BRAIN_BG_NEURAL_SEAM=1 the commit stage decides."""
+    return (os.environ.get(BG_COMMIT_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def bg_commit_op() -> int:
+    """`BRAIN_BG_COMMIT_OP` (a BG_COMMIT_GRID index); unset or invalid -> BG_COMMIT_OP."""
+    try:
+        i = int((os.environ.get(BG_COMMIT_OP_FLAG) or "").strip())
+    except ValueError:
+        return BG_COMMIT_OP
+    return i if 0 <= i < len(BG_COMMIT_GRID) else BG_COMMIT_OP
+
+
+def bg_commit_lesion() -> str | None:
+    """`BRAIN_BG_COMMIT_LESION` in {commit, latch, excl} (each closes one transmission gate); else None."""
+    v = (os.environ.get(BG_COMMIT_LESION_FLAG) or "").strip().lower()
+    return v if v in BG_COMMIT_LESION_GATES else None
+
+
+def bg_commit_seed() -> int:
+    """The organ seed under the flag: BRAIN_CHAT_SEED when it parses, else 42. (Flag off, the server always built the
+    organ at 42, so the 10-02 gate's six chat seeds shared one organ build; declared in the amendment.)"""
+    try:
+        return int((os.environ.get("BRAIN_CHAT_SEED") or "").strip())
+    except ValueError:
+        return 42
+
+
+def bg_commit_row(i: int) -> dict:
+    i = int(i)
+    if not (0 <= i < len(BG_COMMIT_GRID)):
+        raise ValueError("BG commit operating point %d outside 0..%d" % (i, len(BG_COMMIT_GRID) - 1))
+    return dict(BG_COMMIT_GRID[i], op=i)
+
+
+def bg_commit_parts(c: dict):
+    """(regions, pathways) of the stage on the motor pools, appended to the neural-seam build (same bridge)."""
+    from sim.enums import NeuronType
+    from sim.regions import RegionPathway
+    from research.runners._vocal_action_selector_gate import _region
+    regions, P = _SC.region_parts([f"motor_{ch}" for ch in CHANNELS], c, prefix=BG_COMMIT_PREFIX,
+                                  gate_in=BG_COMMIT_IN_GATE, gate_excl=BG_COMMIT_EXCL_GATE,
+                                  latch_loop=BG_COMMIT_LATCH_GATE, make_region=_region,
+                                  exc_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL,
+                                  inh_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON)
+    for ch in CHANNELS:
+        nm = _SC.region_names(BG_COMMIT_PREFIX, ch)
+        for pop in ("gate", "slot"):
+            P.append(RegionPathway(from_region="selector_reset", to_region=nm[pop], density=0.70,
+                                   weight_mean=float(c["W_RESET"]), weight_jitter=0.0, plastic=False,
+                                   receptor="gaba_a"))
+    return regions, P
+
+
+def bg_commit_indices(bridge) -> dict:
+    out = {"gate": [], "slot": []}
+    for ch in CHANNELS:
+        nm = _SC.region_names(BG_COMMIT_PREFIX, ch)
+        out["gate"].append(_indices(bridge, nm["gate"]))
+        out["slot"].append(_indices(bridge, nm["slot"]))
+    return out
+
+
+def bg_commit_read(c: dict, gate_t, slot_t, motor_t) -> dict:
+    """The commit read of one trial from its recorded per-step gate / latch spikes (pure). The decision is
+    `winner`; everything else is the record the scorer and the worklog read."""
+    T = int(slot_t.shape[0])
+    rs = int(c["READ_STEPS"])
+    slot_counts = [int(x) for x in slot_t[T - rs:].sum(axis=0)]
+    rd = _SC.read_with_variants(slot_counts, int(c["NS"]), rs, float(c["READ_FRAC"]))
+    onset = [int(np.argmax(slot_t[:, ch] > 0)) if slot_t[:, ch].any() else None for ch in CHANNELS]
+    return {"winner": rd["winner"], "on": rd["on"], "co_commit": bool(rd["co_commit"]), "threshold": rd["threshold"],
+            "read_variants": rd["variants"], "read_invariant": bool(rd["read_invariant"]), "slot_counts": slot_counts,
+            "gate_counts_drive": [int(x) for x in gate_t[:T_DRIVE].sum(axis=0)],
+            "gate_counts_hold": [int(x) for x in gate_t[T_DRIVE:].sum(axis=0)],
+            "motor_counts_hold": [int(x) for x in motor_t[T_DRIVE:].sum(axis=0)],
+            "slot_carry": [int(x) for x in slot_t[:BG_COMMIT_CARRY_STEPS].sum(axis=0)],
+            "latch_onset_ms": onset}
+# END bg-commit
