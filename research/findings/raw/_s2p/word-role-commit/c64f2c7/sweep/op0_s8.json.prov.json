@@ -1,0 +1,40 @@
+{
+ "run_id": "1791991883-2",
+ "runner": "research/runners/word_role_commit_organ.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/c64f2c70d8232336992aab074f199c36a6560d45/research/runners/word_role_commit_organ.py",
+  "--sweep",
+  "--seeds",
+  "6",
+  "--out-dir",
+  "research/findings/raw/_s2p/word-role-commit/c64f2c7/sweep"
+ ],
+ "git_sha": "c64f2c70d8232336992aab074f199c36a6560d45",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "071b35659a925e603a31fc77815550efe6835c420032c81c96e3cf6a17da70fd",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-14T11:31:23",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1791991883609960337-4573",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "4G",
+  "POOL_JOB_MEM_GB": "2",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "node-mxl1462drl",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_s2p/word-role-commit/c64f2c7/sweep/op0_s8.json"
+}
