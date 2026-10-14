@@ -1100,3 +1100,20 @@ Rung 2 BLOCKED on branch sync at 02:08: the tip 17f5f1955 (+provenance b5c7d3779
   A/B - gpe differs => live cut, criterion measured the wrong observable (retarget to gpe->gpi->th line);
   gpe identical => the syn-zero cut is dead on the operative weights and the mechanism must be fixed, rungs 1-2 redone.
   Pure-argv fallback: --arms d2_output_lesioned,full order-reversal to confirm the stash artifact.
+
+
+### 2026-10-14 07:00 - rung-2 disambiguation: the d2->gpe cut is DEAD in this cell (gpe probe, rc=0).
+- Followed the delegate's primary disambiguator: added gpe_0,gpe_1 to the instrument's cand tuple
+  (research/runners/_ldc_dip_observability.py) and reran a 1-trial-per-phase A/B
+  (ab_gpe_probe.json + prov, dev seed 7, same frozen sb1 argv).
+- Result: **gpe_0/gpe_1 record 0 spikes in the reward window in BOTH arms** (full arm too), while str_d2
+  fires 667/630 - the indirect-pathway target population is SILENT in this cell's measured window.
+  Therefore zeroing the 717 str_d2->gpe synapses cannot change anything: DA (da_min/da_max/da_argmin)
+  is bit-identical, as are all other recorded populations, on every trial.
+- Rung-2 verdict stands as FAIL with a sharper cause: not an observability gap but an INERT CUT - the
+  instrument's lesioned pathway is not engaged by the credit_immediate sb1 cell. The 400-trial cells
+  would have been byte-identity by construction.
+- Ladder cannot resume until the cut is retargeted: either a cell/schedule where the indirect pathway
+  carries signal (GPe active in the outcome computation) or a different cut on the operative pathway.
+  Filed NEEDS [ldc-synzero-deadcut] ASK on main. Rung-1 (build-level: synapses exist, lesion holds at
+  test) and rung-2 (behavior-level: pathway engaged) are now cleanly separated as rung criteria.

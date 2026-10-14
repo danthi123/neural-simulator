@@ -246,7 +246,7 @@ class Run:
         beside the DA trace and stashed on self.last_out for run_trial (read-only; dynamics unchanged)."""
         das = []
         names = {r.name for r in self.b.region_manager.regions()}
-        cand = ("lhb", "lhb_inh", "rmtg", "snc", "str_d1_0", "str_d1_1", "str_d2_0", "str_d2_1")
+        cand = ("lhb", "lhb_inh", "rmtg", "snc", "str_d1_0", "str_d1_1", "str_d2_0", "str_d2_1", "gpe_0", "gpe_1")
         rec = tuple(r for r in cand if r in names)
         trace = {r: [] for r in rec}
         rwin_f = []
