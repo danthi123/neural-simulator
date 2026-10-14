@@ -1270,3 +1270,17 @@ gone); queued syn-zero rung-2 pool A/B (seed 7, 20 trials, full vs d2_output_les
 argv, mem_gb=2 max_age_h=24, out _long_delay_credit_bg/synzero_rung2/ab_s7.json), depth 0->1. Next after
 it lands: the two 400-trial cells (seeds 7/8) then one RESULT; SLF-A.1-A.6 queueing follows per RULING
 shared-ltm-flip-amendA-1014 (order: right after this sync+rung-2 work).
+
+04:56: RULING shared-ltm-flip-amendA-1014 executed: queued SLF-A.1-SLF-A.6 VERBATIM from the JOBS file
+(Amendment A section, filed before data in c8759a385) - offiso arms (BRAIN_LTM_RNG_ISOLATE=1, sharing
+off) at revision e08895cd3, seeds 42/43/44/100/101/102, prereg d8e72021f, pool_node=wspool mem_gb=21
+max_age_h=24, one arm globally; depth 0->6 at 04:52. **wspool is UNREACHABLE since ~04:50**
+(ssh 192.168.0.68 port 22 timeout at 04:55, while provisioning reached it at 04:31-04:35): the add's
+node check logged "skipping unreachable node(s): wspool" and queued anyway; per RULING pool-stall-cause
+the dispatcher health-checks and skips it too, so the 6 lines wait in queue inside the 24h max_age_h
+window - NOT requeued or failed (game-1013 / wspool-down-1013 precedents). syn-zero rung-2 A/B confirmed
+ALIVE on pool40 by ssh (python pid 3656887 in the sandbox, bwrap revision 32850fc49, started 04:36:38) -
+the 5.2h stall notice predates it (counted from SLF's last result). Also new this wake: ruling
+one-brain-m2-merged-1014 - M2 merged default OFF, packet docs/drafts/one-brain-m2/PACKET-m2-fixes.md
+priority AFTER this SLF-A queueing; next task = packet items on research/one-brain-m2-fixes, finishing
+with NEEDS [m2-fixes] ASK.
