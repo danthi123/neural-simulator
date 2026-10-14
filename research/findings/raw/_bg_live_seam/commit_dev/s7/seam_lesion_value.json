@@ -1,0 +1,663 @@
+{
+ "instrument": "host_share_bg_seam",
+ "seed": 7,
+ "arm": "seam_lesion_value",
+ "mode": "observe",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_LTM_SHIP_DEFAULT": "1",
+  "BRAIN_BG_NEURAL_SEAM": "1",
+  "BRAIN_GNW_UNIQUE_IGNITION_READ": "1",
+  "BRAIN_BG_NEURAL_SEAM_LESION": "value",
+  "BRAIN_CHAT_SEED": "7",
+  "BRAIN_BG_COMMIT": "1",
+  "BRAIN_BG_COMMIT_OP": "",
+  "BRAIN_BG_COMMIT_LESION": ""
+ },
+ "amendment": "2026-10-14-bg-live-seam-commit",
+ "pythonhashseed_ok": true,
+ "responses": {
+  "hsb_empty1": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 301,
+    "lesioned": true
+   }
+  },
+  "hsb_q": {
+   "answer": "the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 2,
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "cat",
+      "confidence": 1.0,
+      "margin": 0.7061040278079339,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "cat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.73995980026762,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "fish",
+      "confidence": 1.0,
+      "margin": 0.5690845696533703,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": null,
+      "confidence": 1.0,
+      "margin": 0.09690536611937062,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9765625923791127,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 4,
+    "n_facts_scanned": 5,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 40903.680714801776
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.09269111534688368,
+    "threshold": 0.060034058880282674,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08104205205341658,
+     "min_hi": 0.06695760458601124,
+     "mean_lo": 0.03831601280798336,
+     "max_lo": 0.053110513174554105,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6177232712454817
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 2,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 2,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.0012916666666666632,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 7,
+    "vplus_rate": 0.03779166666666667,
+    "vminus_rate": 0.03908333333333333,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 2,
+    "topic": "dog",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "dog",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 7,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.011111111111111112,
+    "boost_max": 0.008333333333333333,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "dog",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.051666666666666666,
+    "evidence_rate": 0.0,
+    "margin": -0.051666666666666666,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.39682539682539686,
+    "ema_engagement": 0.2380952380952381,
+    "afferent_pA": 333.33333333333337,
+    "da_level": 0.4527551329242779,
+    "snc_firing": 0.06499999999999997,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 7,
+    "shared_salience": {
+     "raw": 0.7,
+     "want_hz": 17.36111111111111,
+     "normalized": 0.39682539682539686,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 43.74999999999999,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 21.874999999999996,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 1.0,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      1.0,
+      1.0
+     ],
+     "fresh_ref": 26.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.613714849531327,
+    "da_level": 0.4527551329242779,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 4,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 4,
+     "readout": 207.99880120241923,
+     "floor": 0.001,
+     "held": true
+    }
+   }
+  },
+  "hsb_empty2": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 188,
+    "lesioned": true
+   }
+  },
+  "hsb_hi": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 297,
+    "lesioned": true
+   }
+  }
+ },
+ "events": {
+  "hsb_empty1": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.109
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -80.42350769042969,
+     39.179786682128906
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      86
+     ],
+     "gate_counts_drive": [
+      0,
+      43
+     ],
+     "gate_counts_hold": [
+      0,
+      50
+     ],
+     "motor_counts_hold": [
+      0,
+      50
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      301
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.109
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 7
+    }
+   }
+  ],
+  "hsb_q": [
+   {
+    "kind": "bg_neural",
+    "winner": null,
+    "latch_rates": [
+     0.0,
+     0.101
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -81.3281021118164,
+     39.3298454284668
+    ],
+    "commit": {
+     "winner": null,
+     "on": [],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": null,
+      "x2": null
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      0
+     ],
+     "gate_counts_drive": [
+      0,
+      88
+     ],
+     "gate_counts_hold": [
+      22,
+      28
+     ],
+     "motor_counts_hold": [
+      87,
+      122
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      198
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.101
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 7
+    }
+   },
+   {
+    "kind": "bus",
+    "committed": "cat",
+    "n_ignited": 1,
+    "rates": [
+     0.33333,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "variants": {
+     "argmax_thr (production)": "cat",
+     "argmax_thr_x0.5": "cat",
+     "argmax_thr_x1.5": "cat",
+     "unique": "cat",
+     "unique_thr_x0.5": "cat",
+     "unique_thr_x1.5": "cat"
+    }
+   }
+  ],
+  "hsb_empty2": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.1003
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -81.7318115234375,
+     39.75074005126953
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      83
+     ],
+     "gate_counts_drive": [
+      0,
+      90
+     ],
+     "gate_counts_hold": [
+      0,
+      88
+     ],
+     "motor_counts_hold": [
+      0,
+      201
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      188
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.1003
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 7
+    }
+   }
+  ],
+  "hsb_hi": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.105
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -81.62600708007812,
+     39.82521057128906
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      81
+     ],
+     "gate_counts_drive": [
+      0,
+      52
+     ],
+     "gate_counts_hold": [
+      0,
+      77
+     ],
+     "motor_counts_hold": [
+      0,
+      150
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      297
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.105
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 7
+    }
+   }
+  ]
+ },
+ "wall_seconds": 450.2
+}

@@ -129,4 +129,20 @@ live sequence the question turn is SPEAK on 8/8 dev seeds in rows 1-4.
 rate no longer follows the class (empty 0.25-0.75, content 0.0-0.75): the class information reaches the commit only
 through the value synapses.
 
-**Live dev canary** (seed 7, all seven arms, `--commit`): see the next entry.
+## 2026-10-14: live dev canary (seed 7, all seven arms, `--commit`, the real `/api/brain-chat` path)
+
+`research/findings/raw/_bg_live_seam/commit_dev/` (score `score_s7.json`, DEV label, n too small for a verdict).
+Every neural-seam event carries the commit record (12/12 engaged; organ seed 7, row 4, no carry-over); the commit
+read is invariant on 4/4 seam_b events (latched 76-87 spikes, other latch 0); empties held 2/2, the question and
+'hi' SPEAK; the old latch read agrees 4/4 (rates 0.098-0.105, all far from its x2 level this time); G1 F 1.0, G5
+1.0, sham 1.0, membrane 1.0. G3 reads 0.25 (1 of 4): with the value synapses closed the commits go on but by coin
+flip, and on this seed three of four flips matched the intact turn. The organ-level value lesion predicts about half
+the events change (bar 0.3 pooled over 24 events); G3 is the second open risk after G2b.
+
+## Bar-sanity of the amended G4
+
+`docs/drafts/bg-commit/bar_sanity_spec_bg_commit_g4.py` -> `bar_sanity_record_bg_commit_g4.json` (n 1000, seed 0):
+perfect 1.000 and perfect_noisy 1.000 (latched N(84, 7), the dev distribution; and N(70, 12) floored at 37); null_graded
+0.000 (the 10-02 failure shape), null_unengaged 0.001, random 0.000; info_weak_latch 0.271 (a latch near 45 spikes
+crosses the x2 level, 36, often enough to fail one of 24 events). The A1 organ and C5 idle-replay records were
+re-run after their scorer files moved: identical pass rates, refreshed (commit a48cc8ba6).
