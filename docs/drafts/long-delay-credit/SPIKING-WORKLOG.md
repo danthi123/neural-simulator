@@ -1067,3 +1067,21 @@ One RESULT filed to runbook.
 Built the additive ARMS entry `d2_output_lesioned` (str_d2_0->gpe_0, str_d2_1->gpe_1 via the runner's own syn.zero at the lesions dict; held assertion at line ~473 unchanged). Smoke = test-2 frozen params, --n-train 3 --n-test 2 --soft-bounds 1 --seeds 7, wall 4 min (<10 min budget), rc=0, artifact scratch/synzero_smoke.json (not committed). Readout: lesions = {str_d2_0->gpe_0: 355, str_d2_1->gpe_1: 362} = 717 synapses (~690 expected, within the smoke's tolerance), lesion_weight_max_at_test = {0.0, 0.0} (held = self-proving at test). LDCBG_RESULT success 1.0 at n-train 3 (dev smoke, not evidence). NEXT: provision this tip, then pool A/B (20 trials, sb1, seed 7: full vs d2_output_lesioned, obs must diverge by trial 1), then the two 400-trial cells (seeds 7/8), one RESULT.
 Ran with the gate remedy `tool_health.py --only experiment-engine`: the experiment-engine smoke was ROTTED by cudaErrorInsufficientDriver (cupy imports but cannot alloc on this GPU-less host) - the tool's own documented intent is degraded-not-rotted when the GPU is unavailable, but the graceful path only caught ImportError. Patched tools/tool_health.py's _EXP_SMOKE to classify cupy/CUDA/device/driver failures after preset-build as ok None (DEGRADED) while real engine rot (dead presets, incomplete sweeps) still reports ok False (ROTTED): now 0 ROTTED - 1 degraded. tools/ edit rides this research branch for Claude's merge (tools/ is reserved on main).
 Rung 2 BLOCKED on branch sync at 02:08: the tip 17f5f1955 (+provenance b5c7d3779, json-align 654dbe563) does not contain published main c16f0d7cb, so pool provision REFUSED it as stale; agent_sync_branch.sh research/draft-ldc-outcome-timing then exited rc=2 - the merge brings main's 2026-10-12-validation-battery-prereg.md and claim_check rejects it in this tree: cites research/findings/raw/_regression_battery/c5val_1012/c5_score.json (absent anywhere under the repo), cites sim-pool-node/.../identity_off_at_F.json.prov.json in node-path form (the file exists only at research/findings/raw/_regression_battery/c5_offcurve_diag/identity_off_at_F.json.prov.json), and line 383 value 0.92 traces to no cited artifact. Preregs are Claude-reserved (runbook section 2), so filed NEEDS [t1-a2-sync] and stopped: rung-2 A/B + the two 400-trial cells wait on the sync. Waiver used this run: NO-READY-WORK at research/queue/.lane_waiver 01:59 (queue depth 0, exit 02:00). Guess (marked): taking main's copy of tool_health.json pre-sync was chosen because it is a generated state file, not code.
+
+
+### 2026-10-14 04:36 - syn-zero ladder rung 2 unblocked and QUEUED (RULING t1-a2-sync-fixed-1014).
+- Sync: Claude fixed main's claim_check defect in 9911b9bad (citation markup only);
+  agent_sync_branch.sh then merged main 9e0c7ab6c -> branch tip **32850fc491a11eca6cbbcf323e599afd84caa561**
+  (rc=0; one non-blocking discriminating-power warning x2). One side fix of my own: the merge brings
+  tracked research/findings/raw/_regression_battery/c5_offcurve_diag/smoke_c5a_selfinit.json without its
+  provenance sibling (untracked on main), which tripped gates/artifact_provenance; copied the byte-identical
+  .prov.json from the main checkout into the worktree (untracked sidecar, same erratum family as 9911b9bad).
+- Provision: touch research/queue/provision.req/32850fc49... -> state ok rc=0 at 04:35:33, all four nodes
+  (pool41, pool42, pool40, wspool) provisioned on attempt 1. (The 02:17 stale refusals are gone.)
+- Queued rung 2 (pool A/B, dev seed 7): one line, --arms full,d2_output_lesioned, --n-train 20 --n-test 2,
+  sb1 frozen test-2 argv (reward-on 150, outcome 250, w-outc-strio 30, w-clear-fs 60, omission-route 1,
+  w-outc-lhb 30, w-rus-lhbinh 54, w-lhbinh-lhb 48, w-lhb-rmtg 20, w-rmtg-snc 3, soft-bounds 1),
+  out research/findings/raw/_long_delay_credit_bg/synzero_rung2/ab_s7.json; mem_gb=2 max_age_h=24;
+  depth 0 -> 1 at 04:36:21 (service dispatcher only; no session dispatcher running, per pool-stall-cause).
+- Readout per proposal (SPIKING-WORKLOG 1031): obs must diverge by trial 1; then the two 400-trial cells
+  (test-2 argv, seeds 7/8); one RESULT.
