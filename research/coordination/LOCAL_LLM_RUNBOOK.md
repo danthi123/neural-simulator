@@ -1342,3 +1342,9 @@ block 3 step-O canary + 6 lines.
 
 - 2026-10-14 11:58 [pool-sync-rsync] ASK: pool_sync pulls 0 files: rsync ABSENT on S (command not found); results strand (needed tar-over-ssh pull). Install rsync or fix the retrieval path. [dirty-ok: standing untracked raw; runbook-only commit]
 - 2026-10-14 11:58 [lane-waiver] INFO: .lane_waiver 11:51 NO-READY-WORK: lane_check queued=0; four lane-stock restocks (A/B/C/E) dispatched 11:48-49, none left ready-unqueued.
+
+12:06: word-role-commit block 3 (step O, RULING spiking-commit-a1-run-1014): op=0 re-read, 6 O lines committed
+19a8e0904; canary PASS pool41 rc=0 wall=5s (id word_role_commit_organ_c64f2c70d_pool41_20261014T120516); 6 O
+lines queued 12:06 (mem_gb=2 max_age_h=120). Also landed: 4 lane-stock restocks (laneA PARTIAL/BOUNDARY 3-seed
+replication, laneC SMOKE-GO, laneB/laneE ok, prov sidecars). Next = block 4 score O (tar pull; rsync absent).
+
