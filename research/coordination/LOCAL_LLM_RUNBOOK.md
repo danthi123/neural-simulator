@@ -1406,3 +1406,14 @@ never-latched reads table 66-79 with the 79-93 agent-latch correction, prereg se
 17/24/0-wrong/7-declined + exclusion 0/24 + baseline 9ea7411, not-a-live-seam section); NEEDS
 [wrc-finding-fixed] ASK filed (single dash). bg-commit step-2 canary still running on pool41 (seed-43 arm
 dir s43 appearing, started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue; then wrc-flip-packet draft.
+- 2026-10-14 19:10 [wrc-flip-packet] ASK: PACKET.md drafted per wrc-flip-packet-1014 (four bars fixed before data, dev seeds first); review before any run. Baseline numbers added to the finding. [dirty-ok: standing untracked raw; runbook-only commit]
+
+
+19:16: RULING wrc-finding-merged-1014 executed: research/wrc-finding-fix merged (6c83b8d2d, status
+confirmed-with-caveats d7ddeb111). Drafted docs/drafts/word-role-flip/PACKET.md per wrc-flip-packet-1014 on
+branch research/wrc-flip-packet (commit carries the count-mode baseline numbers 9ea7411 PASS 6/6 + host-rule
+agree 6/6 into the finding per the same ruling): four bars fixed before data (F1 at the flipped default on both
+LBF rows 6/6, answer_rate on/off with FLIP-HURTS-ANSWERS reported, OFF-TARGET control 6/6 identical replies
+under the commit lesion at ON, dual-role decline rate reported), dev seeds 1-8 first, gate seeds only after
+Claude approves. NEEDS [wrc-flip-packet] ASK filed (single dash) - no run before that ruling. bg-commit
+step-2 canary still running on pool41 (started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue.
