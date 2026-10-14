@@ -1320,3 +1320,15 @@ the capability; per c1-flip-gate-1014 the Stage-1 flip + amendment stay undecide
 method. NEEDS [c1-generalization] RESULT filed; commit by pathspec (probes_score.json).
 
 - 2026-10-14 08:22 [c1-generalization] RESULT: probes_score.json (16/16 rc=0, 960ce6528): OVERRIDE FAIL 7/8 (s5 O3 eel tie->None); GRADED FAIL 2/8 (6 seeds fail strict-rise: eel below toad or ties). Verdict on the method, not the capability; blocks Stage-1 flip+amendment (c1-flip-gate)
+
+09:33: Stall wake (3.0 h no result) diagnosed - jobs ALIVE, no fault: the gap is (1) Claude's
+b2d_amend2_probe --arm intact_a --seed 1 (pid 29140 on wspool, started 06:02, now 3h30m, D-state but
+utime advancing across a 12 s sample, RSS 14.2G, out dir not yet written - slow-but-progressing, NOT
+requeued: Claude's job) and (2) the 5 remaining SLF-A.2-6 lines are pool_node=wspool mem_gb=21 (only
+wspool has 21G) so the dispatcher correctly skips wspool while the probe holds it; pool40/41/42 idle
+because the queue has no lines eligible for them. wspool health re-probed directly: .provisioned_ok
+present on e08895cd3, mem_ok 21 passes (avail 26G), the battery --help probe passes, reachable. Note
+for observability: research/queue/dispatch.log and pool_sync.log are stale (last write 09-30/10-12) -
+the live dispatcher logs off-host from S's view, so skip reasons are invisible here; node-side
+job_status.log's last v2 entry is SLF.11 from yesterday 23:20 (today's sandboxed launches did not
+append). Waiting, not acting: no relaunch, no waiver (lane waiver budget exhausted).
