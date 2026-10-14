@@ -1,0 +1,33 @@
+{
+ "run_id": "1791995959-O",
+ "runner": "tools/s2p_score.py",
+ "argv": [
+  "tools/s2p_score.py",
+  "O",
+  "--packet",
+  "word-role-commit",
+  "--dir",
+  "research/findings/raw/_s2p/word-role-commit/c64f2c7/O",
+  "--selection",
+  "research/findings/raw/_s2p/word-role-commit/c64f2c7/selection.json",
+  "--pin",
+  "c64f2c70d8232336992aab074f199c36a6560d45",
+  "--out",
+  "research/findings/raw/_s2p/word-role-commit/c64f2c7/verdicts/O.json"
+ ],
+ "git_sha": "14f8a93a08150c359eb3932aa433096d64926461",
+ "git_dirty": true,
+ "started": "2026-10-14T12:39:19",
+ "env": {
+  "SIM_BACKEND": "numpy (unset in env; effective via setdefault)",
+  "SIM_NO_PROVENANCE": "unset"
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "unset (defaults to numpy)",
+ "sim_backend_cupy_importable": false,
+ "backend": "numpy",
+ "device": "cpu",
+ "device_name": "cpu",
+ "artifact": "research/findings/raw/_s2p/word-role-commit/c64f2c7/verdicts/O.json"
+}
