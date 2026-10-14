@@ -183,10 +183,48 @@ def select(out_dir: str, seeds=DEV_SEEDS) -> dict:
                                    "stage_ok": stage, "agree_old_latch_read": agree, "selected": post}}
 
 
+def summary(out_dir: str, seeds=DEV_SEEDS) -> dict:
+    """Per-row aggregates over the dev sweep files (pure; the amendment's table cites this file)."""
+    out = {}
+    for op in range(len(BG.BG_COMMIT_GRID)):
+        recs = [json.load(open(os.path.join(out_dir, "op%d_s%d.json" % (op, s)))) for s in seeds
+                if os.path.exists(os.path.join(out_dir, "op%d_s%d.json" % (op, s)))]
+        if len(recs) != len(seeds):
+            continue
+        it = [t for r in recs for t in r["intact"]]
+        every = it + [t for r in recs for v in r["lesions"].values() for t in v]
+        by = {c: [t for t in it if t["class"] == c] for c in MESSAGES}
+        n_held = lambda ts, k="winner": sum(1 for t in ts if t[k] == BG.STAY_SILENT)  # noqa: E731
+        on = [x for t in every for x in t["slot_counts"] if x >= t["threshold"]]
+        off = [x for t in every for x in t["slot_counts"] if x < t["threshold"]]
+        out[op] = {
+            "trials_intact": len(it), "trials_all": len(every),
+            "read_invariant": sum(1 for t in every if t["read_invariant"]),
+            "latched_min": min(on), "latched_max": max(on), "unlatched_max": max(off),
+            "empty_held": n_held(by["empty"]), "n_empty": len(by["empty"]),
+            "empty_held_frac": round(n_held(by["empty"]) / len(by["empty"]), 4),
+            "content_held": n_held(by["content"]), "n_content": len(by["content"]),
+            "content_held_frac": round(n_held(by["content"]) / len(by["content"]), 4),
+            "one_word_held": n_held(by["one_word"]), "co_commit": sum(1 for t in it if t["co_commit"]),
+            "agree_old_latch_read": round(sum(1 for t in it if t["winner"] == t["old_latch_winner"]) / len(it), 4),
+            "old_read_empty_held": n_held(by["empty"], "old_latch_winner"),
+            "old_read_content_held": n_held(by["content"], "old_latch_winner"),
+            "lesion_commits": {k: sum(1 for r in recs for t in r["lesions"][k] if t["winner"] is not None)
+                               for k in LESIONS},
+            "lesion_trials": {k: sum(len(r["lesions"][k]) for r in recs) for k in LESIONS},
+            "seeds_all_pass": sum(1 for r in recs if r["all_pass"]),
+            "live_q_speak": sum(1 for r in recs for t in r["intact"] if t["label"] == "hsb_q" and t["winner"] == BG.SPEAK),
+        }
+    return {"runner": "research.runners._bg_commit_derisk", "argv": list(sys.argv), "seeds": list(seeds),
+            "backend": os.environ.get("SIM_BACKEND"), "rows": out,
+            "note": "aggregates of the dev sweep files (no brain built); the sweep ran on numpy, CPU"}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--sweep", action="store_true")
     ap.add_argument("--select", action="store_true")
+    ap.add_argument("--summary", action="store_true", help="write <out-dir>/summary.json (per-row aggregates)")
     ap.add_argument("--value-report", action="store_true", help="reported value-lesion arm (op<I>_s<S>_value.json)")
     ap.add_argument("--seeds", type=int, nargs="+", default=list(DEV_SEEDS))
     ap.add_argument("--ops", type=int, nargs="+", default=None)
@@ -194,6 +232,11 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if set(a.seeds) & set(GATE_SEEDS):
         raise SystemExit("dev sweep only: gate seeds are refused")
+    if a.summary:
+        r = summary(a.out_dir, a.seeds)
+        json.dump(r, open(os.path.join(a.out_dir, "summary.json"), "w"), indent=1)
+        print(json.dumps(r["rows"]))
+        return 0
     if a.select:
         r = select(a.out_dir, a.seeds)
         r.update({"runner": "research.runners._bg_commit_derisk", "argv": list(sys.argv),
