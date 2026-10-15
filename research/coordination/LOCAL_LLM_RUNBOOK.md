@@ -1547,5 +1547,13 @@ xedge probe); non-reply diffs on all turns. Root cause: _XEDGE_SWM_DEFAULT_ON = 
 default-ON at P and the runner's off arm (ALL PACKET_FLAGS =0, flags_env confirms) forces it off -> exactly the
 probe turn moves. MiMo Pro delegate verdict: expected_by_construction protocol mismatch (bar B words off as
 the word-role flags; runner off zeroes everything), NOT a smoke failure; F2 default@F vs on:word-role stands,
-literal F3 needs a word-role-only-off arm or bar reword = Claude-reserved -> NEEDS [wrc-flip-smoke] ASK filed.
 6 F files still landing (depth ~4-10); F2/F3-side compares run next wake. Lanes restocked before this commit.
+06:55: RULING wrc-f3-1015 executed (ONE task): clarified bar (B) in PACKET.md on research/wrc-flip-packet
+(off = ONLY the two word-role flags =0; all-off arm's reply diffs at already-ON packets' probes: iw1 {12}
+xedge, iw2 {4,9,14,15} false-belief/transitive/neural-selfid - report never count) + added the
+off:word-role arm to iw1/iw2 arm_env (verified: zeroes only the two flags, others unset; bad packet
+rejected), committed on the branch through gates, provisioned the new tip, queued the F3 rerun lines
+(iw1+iw2 off:word-role @F, seed 7). Answered NEEDS [wrc-flip-smoke] removed from the list. The original
+10-line smoke keeps landing (iw1@F default+off in). NEXT: F-side compares when files land - F2
+default@F==on:word-role, F3 off:word-role@F==default@P; then at-risk list C + precondition A; then
+promote to prereg (ASK [wrc-flip-prereg]).
