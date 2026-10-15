@@ -1562,3 +1562,13 @@ set (iw1@8407f2193-era pin ce2e028, seed 7, 13 turns) -> see compare_default_onw
 (F2 = default IS the capability). iw2@F still landing, off:word-role F3 rerun lines queued behind it.
 NEXT: iw2 F2 + F3 (off:word-role@8407f2193 vs default@96e5198f5) when their files land, then at-risk list C
 + precondition A, then prereg promotion ASK [wrc-flip-prereg].
+08:15: wrc smoke F-side scoring: F2 PASS both runners (default@F == on:word-role@F, verdict IDENTICAL,
+zero reply diffs; iw1 13 turns committed 13ae12088, iw2 16 turns now). F3 off:word-role@F vs default@P
+(both runners): reply_differing_turns EMPTY and every persisted field byte-equal, but verdict DIFFERS on
+sha_canon/sha_raw alone (hashes of the un-persisted server body) at iw1 {2,4,6,7,8} / iw2 {7,8,11};
+shas byte-equal at all other turns across nodes/times (turn_wall_s differs there), rss noise not counted
+by runner. F3 verdict needs a judge: delegation budget for this run exhausted (2/2 used) -> filed NEEDS
+[wrc-f3-verdict] ASK, halting per resource-unavailable rule. Compare artifacts
+_iw{1,2}/identity/{ce2e028,8407f21}/compare_{default_onwr,offwr_vs_Pdefault}.json committed.
+NEXT when ruled: at-risk list C + precondition A, then prereg promotion ASK [wrc-flip-prereg].
+- 08:15 [wrc-f3-verdict] ASK 1: F3 (off:word-role@F==default@P) ruled by judge? replies+persisted fields identical ALL turns; only sha_canon/sha_raw (body hashes) differ iw1{2,4,6,7,8} iw2{7,8,11}. Delegate budget 2/2 used, no MiMo Pro verdict possible. PASS/FAIL/UNDEFINED? blocks: wrc smoke

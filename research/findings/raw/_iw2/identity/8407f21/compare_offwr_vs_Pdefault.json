@@ -1,0 +1,59 @@
+{
+ "runner": "research.runners.iw2_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/iw2_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw2/identity/8407f21/off_word-role.json",
+  "research/findings/raw/_iw2/identity/96e5198/default.json",
+  "--expect",
+  "same",
+  "--out",
+  "research/findings/raw/_iw2/identity/8407f21/compare_offwr_vs_Pdefault.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "off:word-role",
+  "default"
+ ],
+ "git_shas": [
+  null,
+  null
+ ],
+ "expect": "same",
+ "packet": null,
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "same_script": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true,
+  "deterministic_env_both": true
+ },
+ "differing_turns": [
+  7,
+  8,
+  11
+ ],
+ "reply_differing_turns": [],
+ "reply_diffs": [],
+ "ok": false,
+ "verdict": "DIFFERS",
+ "inputs": [
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw2/identity/8407f21/off_word-role.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw2/identity/96e5198/default.json"
+ ]
+}
