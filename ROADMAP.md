@@ -12,7 +12,30 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
-## 2026-10-14 — the speak-or-stay-silent choice gets an all-or-none commit; its six-seed test is registered, not run
+## 2026-10-15 — shared memory switches on by default; the BG commit's six-seed test comes back NO-GO; word-role's flip packet is in progress
+
+**Shared memory is now ON by default** (merge `1ff97a8cd`). The 10-14 flip battery Amendment A asked one question
+per pair of arms: does SHARING a memory across conversations change anything? A1 (strict, blind: `on` vs
+`offiso` after dropping only wall-clock/latency/RSS fields) was identical on all 6 seeds; A2 (declared non-blind:
+`offiso` vs `off`) kept every reply-level field identical on all 6 seeds, the single moved key being one numeric
+read-out of the held engram on 5 of 6 seeds - exactly the declared effect of removing the reseed. Claude's
+independent re-score matched. Sharing runs with RNG isolation; `BRAIN_SHARED_LTM=0` is the escape. It is not a
+faculty and takes no ledger row.
+
+**The BG commit stage fails its own six-seed gate (NO-GO).** The read itself is now solid: the commit read is
+threshold-invariant (G4 true at half and twice the read level, the earlier defect fixed), the host still owns the
+reply (G1), the seam never holds a content turn (G2b), and the bus argmax does no work (G5). Two capability keys
+failed: the seam's race held only 8 of 12 empty turns (G2a, 0.6667) and cutting the value route moved the reply
+on only 7 of 24 lesioned events (G3, 0.2917 against the registered 0.3 bar). The finding is filed as a
+PROVISIONAL NO-GO (`research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`); the next method Claude ruled on
+is **tonic pallidal drive**. Nothing switched on.
+
+**Word-role commit: confirmed-with-caveats, flip packet in progress.** The commit test's caveat (5 of 22 first-12
+turns changed vs the registered 0) is on record; the flip packet (`docs/drafts/word-role-flip/PACKET.md`, branch
+`research/wrc-flip-packet`) carries Claude's amendments A-D, the identity runners now know a `word-role` packet,
+and the dev-7 smoke queues next.
+
+## 2026-10-14 — the speak-or-stay-silent choice gets an all-or-none commit; its six-seed test is registered, not run (result 10-15: NO-GO — see above)
 
 The 10-02 test of the brain's own speak-or-stay-silent choice failed on one point: the final read of which action
 won still depended on where the read was set, so host code still owned part of the decision. A commit stage now sits
