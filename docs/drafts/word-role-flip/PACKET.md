@@ -69,6 +69,15 @@ listed turn that does makes the bar UNDEFINED plus a NEEDS, never a silent drop.
 (`BRAIN_WORD_ROLE_LESION=1` PARSE and `BRAIN_WORD_ROLE_COMMIT_LESION=1` COMMIT, run separately) must leave every
 listed reply identical to intact-at-ON on **6/6 gate seeds** (reply fields `answer`/`abstained`/`recalled_svo`).
 
+**Precondition readout (dev-7 smoke, intact-at-ON = `default`@ce2e028, 2026-10-15):** 9/9 listed strings are
+present in the smoke scripts (>= 8 required). The persisted serving-subsystem `for` field on each is
+`wm-focus-bind` (iw1 turns 0/2), `d6-hebbian-write` (iw1 turn 4), `false-belief-chat` (iw2 turns 1/2/3),
+`transitive-chat` (iw2 turns 6/7), `scope` (iw2 turn 11) — none is a word-role handler, so no listed turn was
+answered by the word-role path. Caveat for the prereg review: `for` names the serving subsystem, not the
+parse-route trace itself (the route lives in the response body the identity rows do not persist); if `for` is
+not accepted as the trace-route readout, the precondition needs a dedicated trace run before this bar can
+stand. Sources: `research/findings/raw/_iw{1,2}/identity/ce2e028/default.json`.
+
 **(B) F2/F3 identity (battery prereg section 5, dev seed 7).** `research/runners/iw1_default_identity.py` and
 `research/runners/iw2_default_identity.py` at the flip revision: `default` (no flags set; the flipped anchors)
 equals `on:both` (BRAIN_WORD_ROLE_PARSE=1 and BRAIN_WORD_ROLE_COMMIT=1 explicitly) on every script turn (the
@@ -89,6 +98,15 @@ alloff (both flags `=0`) at the flip revision; every row with a changed reply is
 before any gate seed runs. On the six gate seeds, each at-risk row's n_load_bearing at ON must be >= alloff at
 the same revision; a drop reverts the flip (battery prereg section 6). No at-risk rows: B1 is met by the identity
 record of (B).
+
+**At-risk list (measured 2026-10-15 from the dev-7 smoke): ZERO at-risk rows.** Reply fields
+(`answer`/`abstained`/`recalled_svo`) are identical between `default`@F (both flags on) and
+`off:word-role`@F (both flags 0) on all 13 iw1 turns and all 16 iw2 turns (29/29 rows unchanged), so B1 is
+met by the identity record of (B). Caveat: the comparison is cross-revision (`default`@ce2e028 vs
+`off:word-role`@8407f2193, differing only by the arm-support commit) — the same cross-revision form whose
+acceptance is pending in NEEDS `[wrc-f3-verdict]`. Sources:
+`research/findings/raw/_iw{1,2}/identity/ce2e028/default.json` vs
+`research/findings/raw/_iw{1,2}/identity/8407f21/off_word-role.json`.
 
 **(Answers) Q2: ONE commit flips both anchors (the commit flag is only read when parse is ON). Q3: the 10-12
 battery flip table is NOT amended (pinned at P/R_B); this packet registers its own flip unit, and later battery
