@@ -1439,3 +1439,14 @@ provision requested for 9919725a9. An earlier stray provision request for the pr
 from a timed-out script (harmless: no jobs pinned there). NEXT: provision ok -> smoke job lines (iw1/iw2
 default-identity arms default/on:both/off dev 7, off-target 10-turn precondition + both lesions, RSS/wall)
 -> canary -> queue. bg-commit step-2 canary on pool41 still running (started 17:26).
+
+
+20:31: lane-D failure triaged: my first restock line used the wrong shape (--seeds/--out without --shard) and
+exited rc=2 'bad command' (runner requires one of --worker/--shard/--aggregate/...); requeued the corrected
+per-history form (--shard --seed N --arm intact_a, 3 lines seeds 19-21) and it is dispatched (depth 3, D
+served). The other four restock lines finished rc=0 (lane_dev7 A/B/E + metacog smoke s10 landed). The
+fast dispatcher empties the queue in minutes, so lanes are restocked immediately BEFORE each gated commit
+(A/B/C/E dev 25-27 + metacog s11 queued just before this commit). Flip-revision provision 9919725a9 OK on
+all four nodes (pool40/41/42 + wspool). NEXT: word-role-flip smoke at the flip revision - iw1/iw2
+default_identity need a PACKET_FLAGS entry for WORD_ROLE (branch edit) -> queue as canary first. bg-commit
+step-2 canary on pool41 still running (started 17:26, rc expected ~21:00).
