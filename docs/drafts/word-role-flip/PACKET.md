@@ -93,6 +93,17 @@ arm: its reply diff at an already-default-ON packet's probe turn (dev-7 seed: iw
 anchors) is expected by construction — report it, never count it. F3 stays: `off:word-role`@F byte-identical to
 `default`@P on every script turn.
 
+**Pin record (RULING wrc-f3-verdict-1015, 2026-10-15):** the first F3 run was UNDEFINED (confounded), not a
+PASS or a FAIL: F=`8407f2193` carries the shared-LTM default-ON commit `cbffef7f8` (via the `ce2e02852` main
+merge) and P=`96e5198f5` does not, and that flip's declared and A1/A2-verified effect is non-reply body
+fields moving with replies identical — exactly the turns that differed (iw1 2/4/6/7/8, iw2 7/8/11). Re-pin:
+**P' = `b1c11a0887b3c17ff7198674e9c33f162a3d58b9`** = main with shared-LTM ON (`cbffef7f8` is an ancestor) and
+both word-role anchors at their old default OFF (`_WORD_ROLE_PARSE_DEFAULT_ON = False` line 279,
+`_WORD_ROLE_COMMIT_DEFAULT_ON = False` line 315 in `research/runners/brain_chat_tui.py`) — the word-role
+flip commit `9919725a9` lives only on this branch, so pre-flip main is exactly that state. F3 stands
+unchanged: `off:word-role`@F byte-identical (sha_canon) to `default`@P' on every script turn; the dev-7
+`default`@P' reruns are queued for iw1 and iw2.
+
 **(C) Scoped B1.** On the dev-7 smoke, run the battery turn script (iw2 scope/story turns + iw1 turns) ON vs
 alloff (both flags `=0`) at the flip revision; every row with a changed reply is AT RISK and is listed here
 before any gate seed runs. On the six gate seeds, each at-risk row's n_load_bearing at ON must be >= alloff at
@@ -102,9 +113,10 @@ record of (B).
 **At-risk list (measured 2026-10-15 from the dev-7 smoke): ZERO at-risk rows.** Reply fields
 (`answer`/`abstained`/`recalled_svo`) are identical between `default`@F (both flags on) and
 `off:word-role`@F (both flags 0) on all 13 iw1 turns and all 16 iw2 turns (29/29 rows unchanged), so B1 is
-met by the identity record of (B). Caveat: the comparison is cross-revision (`default`@ce2e028 vs
-`off:word-role`@8407f2193, differing only by the arm-support commit) — the same cross-revision form whose
-acceptance is pending in NEEDS `[wrc-f3-verdict]`. Sources:
+met by the identity record of (B). The comparison is cross-revision (`default`@ce2e028 vs
+`off:word-role`@8407f2193), but it is confound-immune: (C) compares REPLY fields only, and the one revision
+difference between those pins (shared-LTM ON at F, OFF at P) is verified reply-identical (SLF-A A1 6/6,
+ruling wrc-f3-verdict-1015 confirming it explains the F3 body-hash turns). Sources:
 `research/findings/raw/_iw{1,2}/identity/ce2e028/default.json` vs
 `research/findings/raw/_iw{1,2}/identity/8407f21/off_word-role.json`.
 
