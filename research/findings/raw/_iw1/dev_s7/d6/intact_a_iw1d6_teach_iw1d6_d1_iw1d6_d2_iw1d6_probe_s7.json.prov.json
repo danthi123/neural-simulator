@@ -1,0 +1,43 @@
+{
+ "run_id": "1790730541-3142211",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "iw1d6_teach,iw1d6_d1,iw1d6_d2,iw1d6_probe",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/findings/raw/_iw1/dev_s7/d6/intact_a_iw1d6_teach_iw1d6_d1_iw1d6_d2_iw1d6_probe_s7.json"
+ ],
+ "git_sha": "fac3f699c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T21:09:01",
+ "env": {
+  "BRAIN_D6_HEBBIAN_STORE": "1",
+  "BRAIN_D6_ENGRAM_VOCAB": "1",
+  "BRAIN_D6_ENGRAM_READTIME": "1",
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "2",
+  "OPENBLAS_NUM_THREADS": "2",
+  "SIM_RUN_ID": "1790730541-3142122",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 781.9,
+ "corpus_check_query": "integration packets: flip de-risked GO 6/6 default-off chat faculties to on-by-default with reply-level load-bearing",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_iw1/dev_s7/d6/intact_a_iw1d6_teach_iw1d6_d1_iw1d6_d2_iw1d6_probe_s7.json"
+}

@@ -1,0 +1,1 @@
+AWS r7i.4xlarge (128 GB), rev 18ec1f86d, g6 OFF and ON run concurrently with the battery_turn + organ RSS sidecars (RULING c5-off-baseline); launched by Claude 2026-10-12

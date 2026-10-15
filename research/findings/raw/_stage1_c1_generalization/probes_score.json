@@ -1,0 +1,1082 @@
+{
+ "runner": "research/runners/c1_generalization_probes.py",
+ "plan": "docs/drafts/stage1-c1-inheritance/PROBES-PLAN.md",
+ "ruling": "c1-moat-ruled-1013",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "override": {
+  "verdict": "FAIL",
+  "n_pass": 7,
+  "n_seeds": 8,
+  "why": [
+   "seed 5: O3 eel: organ read decides None (tie), not river"
+  ],
+  "per_seed": {
+   "1": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0633,
+      "lake_rate_after": 0.06,
+      "told_rate_after": 0.1083,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 1.805,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.075,
+      "lake_rate_after": 0.085,
+      "told_rate_after": 0.1117,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.314,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0567
+        ],
+        [
+         "bug",
+         0.025
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "lake",
+         0.01
+        ],
+        [
+         "pond",
+         0.0
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "2": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0533,
+      "lake_rate_after": 0.0567,
+      "told_rate_after": 0.115,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 2.028,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.0883,
+      "lake_rate_after": 0.0833,
+      "told_rate_after": 0.1067,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.281,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0667
+        ],
+        [
+         "bug",
+         0.025
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0167
+        ],
+        [
+         "lake",
+         0.0033
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "3": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0667,
+      "lake_rate_after": 0.0733,
+      "told_rate_after": 0.1117,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 1.524,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.075,
+      "lake_rate_after": 0.075,
+      "told_rate_after": 0.1117,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.489,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0683
+        ],
+        [
+         "bug",
+         0.0033
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "lake",
+         0.0
+        ],
+        [
+         "pond",
+         0.0
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "4": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0483,
+      "lake_rate_after": 0.05,
+      "told_rate_after": 0.105,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 2.1,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.0867,
+      "lake_rate_after": 0.085,
+      "told_rate_after": 0.1083,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.274,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0617
+        ],
+        [
+         "bug",
+         0.04
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0067
+        ],
+        [
+         "lake",
+         0.0033
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "5": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "O3 eel: organ read decides None (tie), not river"
+    ],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.025,
+      "lake_rate_after": 0.025,
+      "told_rate_after": 0.1,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 4.0,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.09,
+      "lake_rate_after": 0.09,
+      "told_rate_after": 0.1117,
+      "organ_decides_told": false,
+      "post_reason": "tie",
+      "post_patient": null,
+      "told_over_lake_after": 1.241,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.06
+        ],
+        [
+         "bug",
+         0.01
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0033
+        ],
+        [
+         "lake",
+         0.0
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "6": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0733,
+      "lake_rate_after": 0.0817,
+      "told_rate_after": 0.1133,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 1.387,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.08,
+      "lake_rate_after": 0.0767,
+      "told_rate_after": 0.1133,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.477,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0833
+        ],
+        [
+         "bug",
+         0.0317
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0183
+        ],
+        [
+         "lake",
+         0.0067
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "7": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0467,
+      "lake_rate_after": 0.0517,
+      "told_rate_after": 0.105,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 2.031,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.0933,
+      "lake_rate_after": 0.0833,
+      "told_rate_after": 0.1067,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.281,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0867
+        ],
+        [
+         "bug",
+         0.015
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0133
+        ],
+        [
+         "lake",
+         0.0017
+        ]
+       ]
+      }
+     }
+    }
+   },
+   "8": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.03,
+      "lake_rate_after": 0.03,
+      "told_rate_after": 0.1067,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 3.557,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.0883,
+      "lake_rate_after": 0.0883,
+      "told_rate_after": 0.1117,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.265,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.055
+        ],
+        [
+         "bug",
+         0.0067
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.01
+        ],
+        [
+         "lake",
+         0.0
+        ]
+       ]
+      }
+     }
+    }
+   }
+  },
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every seed defined",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "C1 flags effective (BRAIN_CATEGORY_INHERIT and _HOP true)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "organ engaged (teach turns observed with the expected SVO; pre-override probes are organ reads)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every organ read records hop:true and no lesion",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "direct reads present and reproducing the turn's trace",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no organ errors, no errored turns, valid shards",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "undefined_reasons": []
+ },
+ "graded": {
+  "verdict": "FAIL",
+  "n_pass": 2,
+  "n_seeds": 8,
+  "why": [
+   "seed 1: lake rate not strictly rising newt<toad<eel: {'newt': 0.075, 'toad': 0.0817, 'eel': 0.075}",
+   "seed 2: lake rate not strictly rising newt<toad<eel: {'newt': 0.09, 'toad': 0.0917, 'eel': 0.0883}",
+   "seed 3: lake rate not strictly rising newt<toad<eel: {'newt': 0.0767, 'toad': 0.0783, 'eel': 0.075}",
+   "seed 4: lake rate not strictly rising newt<toad<eel: {'newt': 0.075, 'toad': 0.0917, 'eel': 0.0867}",
+   "seed 6: lake rate not strictly rising newt<toad<eel: {'newt': 0.0783, 'toad': 0.08, 'eel': 0.08}",
+   "seed 7: lake rate not strictly rising newt<toad<eel: {'newt': 0.0817, 'toad': 0.0817, 'eel': 0.0933}"
+  ],
+  "per_seed": {
+   "1": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.075, 'toad': 0.0817, 'eel': 0.075}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.075,
+      "toad": 0.0817,
+      "eel": 0.075
+     },
+     "steps": [
+      0.0067,
+      -0.0067
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.075,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0817,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.075,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "2": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.09, 'toad': 0.0917, 'eel': 0.0883}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.09,
+      "toad": 0.0917,
+      "eel": 0.0883
+     },
+     "steps": [
+      0.0017,
+      -0.0034
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.0883,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0917,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.09,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "3": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.0767, 'toad': 0.0783, 'eel': 0.075}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.0767,
+      "toad": 0.0783,
+      "eel": 0.075
+     },
+     "steps": [
+      0.0016,
+      -0.0033
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.075,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0783,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0767,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "4": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.075, 'toad': 0.0917, 'eel': 0.0867}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.075,
+      "toad": 0.0917,
+      "eel": 0.0867
+     },
+     "steps": [
+      0.0167,
+      -0.005
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.0867,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0917,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.075,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "5": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "core": {
+     "measured": true,
+     "rising": true,
+     "rates": {
+      "newt": 0.0717,
+      "toad": 0.0833,
+      "eel": 0.09
+     },
+     "steps": [
+      0.0116,
+      0.0067
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.09,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0833,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0717,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "6": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.0783, 'toad': 0.08, 'eel': 0.08}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.0783,
+      "toad": 0.08,
+      "eel": 0.08
+     },
+     "steps": [
+      0.0017,
+      0.0
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.08,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.08,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0783,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "7": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.0817, 'toad': 0.0817, 'eel': 0.0933}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.0817,
+      "toad": 0.0817,
+      "eel": 0.0933
+     },
+     "steps": [
+      0.0,
+      0.0116
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.0933,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0817,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0817,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   },
+   "8": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "core": {
+     "measured": true,
+     "rising": true,
+     "rates": {
+      "newt": 0.0783,
+      "toad": 0.085,
+      "eel": 0.0883
+     },
+     "steps": [
+      0.0067,
+      0.0033
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.0883,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.085,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0783,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   }
+  },
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every seed defined",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "C1 flags effective (BRAIN_CATEGORY_INHERIT and _HOP true)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "organ engaged (teach turns observed with the expected SVO; pre-override probes are organ reads)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every organ read records hop:true and no lesion",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "direct reads present and reproducing the turn's trace",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no organ errors, no errored turns, valid shards",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "undefined_reasons": []
+ },
+ "root": "research/findings/raw/_stage1_c1_generalization",
+ "scored_at": "2026-10-14T08:22:48"
+}

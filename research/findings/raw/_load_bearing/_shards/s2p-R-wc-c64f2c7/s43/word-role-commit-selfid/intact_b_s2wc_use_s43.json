@@ -1,0 +1,330 @@
+{
+  "s2wc_use": {
+    "answer": "the brain uses the spikes",
+    "abstained": false,
+    "recalled_svo": [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "brain",
+          "confidence": 1.0,
+          "margin": 0.6389571559149103,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "brain"
+        },
+        {
+          "role": "action",
+          "word": "use",
+          "confidence": 1.0,
+          "margin": 0.6789136823298737,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "use"
+        },
+        {
+          "role": "patient",
+          "word": "spikes",
+          "confidence": 1.0,
+          "margin": 0.5871637357872505,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "attribute",
+          "word": null,
+          "confidence": 1.0,
+          "margin": 0.06659863946373727,
+          "margin_spiking": null,
+          "cue": false
+        },
+        {
+          "role": "polarity",
+          "word": "AFFIRM",
+          "confidence": 1.0,
+          "margin": 0.9999999999999994,
+          "margin_spiking": null,
+          "cue": false
+        }
+      ],
+      "matched_fact_index": 0,
+      "n_facts_scanned": 5,
+      "abstained": false,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.11177325581395349,
+        "mean_magnitude": 41410.182870976845
+      },
+      "composer": "onebrain"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999898734179,
+      "rate_perceived": 0.09875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.0947718891723637,
+      "threshold": 0.06032454599202189,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07997666222084746,
+        "min_hi": 0.06691467366215187,
+        "mean_lo": 0.03759547655202469,
+        "max_lo": 0.053734418321891915,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 0.5943266426991543
+    },
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "word_role_trace": {
+      "route": "word_role_commit",
+      "lesioned": false,
+      "op": 0,
+      "error": null,
+      "agent": "brain",
+      "action": "use",
+      "roles": {
+        "brain": "agent",
+        "usually": null,
+        "use": "action"
+      },
+      "counts": {
+        "brain": {
+          "agent": 30,
+          "action": 0,
+          "patient": 0
+        },
+        "usually": {
+          "agent": 0,
+          "action": 3,
+          "patient": 0
+        },
+        "use": {
+          "agent": 0,
+          "action": 23,
+          "patient": 0
+        }
+      },
+      "commit_op": 0,
+      "commit_lesioned": false,
+      "commit": {
+        "per_item": [
+          {
+            "new": [
+              "agent"
+            ],
+            "role": "agent"
+          },
+          {
+            "new": [],
+            "role": null
+          },
+          {
+            "new": [
+              "action"
+            ],
+            "role": "action"
+          }
+        ],
+        "slot_counts": [
+          {
+            "agent": 80,
+            "action": 0,
+            "patient": 0
+          },
+          {
+            "agent": 79,
+            "action": 0,
+            "patient": 0
+          },
+          {
+            "agent": 78,
+            "action": 75,
+            "patient": 0
+          }
+        ],
+        "threshold": 18.0,
+        "read_variants": {
+          "x0.5": [
+            "brain",
+            "use"
+          ],
+          "x2": [
+            "brain",
+            "use"
+          ]
+        },
+        "read_invariant": true,
+        "co_commit": 0,
+        "relatch": 0,
+        "host_rule_roles": {
+          "brain": "agent",
+          "usually": null,
+          "use": "action"
+        }
+      }
+    },
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": 0.0010000000000000009,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 43,
+      "vplus_rate": 0.03979166666666667,
+      "vminus_rate": 0.03879166666666667,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.25454545454545446,
+      "ema_engagement": 0.15272727272727268,
+      "afferent_pA": 213.81818181818176,
+      "da_level": 0.2848631343973412,
+      "snc_firing": 0.03833333333333333,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.5965517241379311,
+        "want_hz": 9.72222222222222,
+        "normalized": 0.25454545454545446,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8275862068965518,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.6896551724137931,
+          0.9655172413793104
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.3473112974839663,
+      "da_level": 0.2848631343973412,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 4,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 4,
+        "readout": 207.99881300278312,
+        "floor": 0.001,
+        "held": true
+      }
+    }
+  }
+}

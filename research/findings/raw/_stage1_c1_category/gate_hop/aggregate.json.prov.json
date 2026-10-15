@@ -1,0 +1,32 @@
+{
+ "run_id": "1791466095-47563",
+ "runner": "research/runners/stage1_c1_category.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/stage1_c1_category.py",
+  "--aggregate",
+  "research/findings/raw/_stage1_c1_category/gate_hop",
+  "--hop",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_stage1_c1_category/gate_hop/aggregate.json"
+ ],
+ "git_sha": "ce4c5e13c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-08T09:28:15",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 41710.8,
+ "corpus_check_query": "stage2 dev smoke re-queue 11 lines seed 7 at synced tip (RULING stage2-dev-smoke)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_c1_category/gate_hop/aggregate.json"
+}

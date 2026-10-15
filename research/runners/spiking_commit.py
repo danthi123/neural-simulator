@@ -1,10 +1,17 @@
 """The spiking commit stage as a reusable piece: K competing sources -> exclusive commit gates -> bistable latches,
 read by persistence (docs/drafts/spiking-commit/PLAN.md, section 3).
 
-PLAN section 3 "Reuse" names this file as the shared home of the stage. Its first user is the idle-replay organ
-(`research/runners/idle_replay_organ.py`, Stage-2 C5 build, 2026-10-06). A1 (`word_role_parser_organ.py`) still
-carries its own inline copy of the same wiring; application A2 moves A1 onto this module with a byte-identity test
-(PLAN: "one copy, two users, before a third"). Until then the two copies are declared, not hidden.
+PLAN section 3 "Reuse" names this file as the shared home of the stage. Users: the idle-replay organ
+(`research/runners/idle_replay_organ.py`, Stage-2 C5 build, 2026-10-06); A1 word-role-parse
+(`word_role_parser_organ.py`, built with `commit=`; moved onto this module 2026-10-14 with a byte-identity test,
+`tests/test_bg_commit.py::test_a1_commit_battery_byte_identical`); the BG live seam (`bg_action_selection_production_
+organ.py`, flag BRAIN_BG_COMMIT, a region-built bridge: `region_parts`). Declared remaining copy: the emotion-category
+organ (`emotion_category_organ.py`) still wires the same stage inline.
+
+One topology (`projections`), two emitters: `commit_plan` (explicit-wiring entries for `inject_explicit_wiring`
+builds) and `region_parts` (BrainRegion / RegionPathway lists for region-built bridges; density 1.0 and no jitter, so
+the same all-to-all edges, autapses included). Two reads: `latch_read` / `read_with_variants` (one presentation) and
+`sequence_read` (several presentations; a latch already ON before an item cannot be claimed by it).
 
 The stage, for K alternatives with source populations X_k (which already compete upstream):
   * commit gate G_k: NG excitatory neurons, X_k -> G_k (W_XG, transmission gate `gate_in`), G_k -> G_k (W_GG), G_k ->
@@ -17,7 +24,7 @@ The stage, for K alternatives with source populations X_k (which already compete
     (abstain, counted). No count is compared with another alternative's count. `read_with_variants` re-reads the same
     counts at scale 0.5 and 2 (the threshold-invariance bar, the bg-live-seam G4 lesson).
 
-Pure plan building and pure reads: no bridge is touched here, so this module imports only numpy.
+Pure plan building and pure reads: no bridge is touched here (`region_parts` imports `sim.regions` lazily).
 """
 from __future__ import annotations
 
@@ -59,24 +66,92 @@ def layout(K: int, offset: int, NG: int, NGI: int, NS: int) -> Dict[str, object]
             "all_slot": np.arange(o_s, end, dtype=np.int64), "end": int(end)}
 
 
-def commit_plan(sources: Sequence[np.ndarray], lay: Dict[str, object], p: dict, *, prefix: str,
-                gate_in: str, gate_excl: str, latch_loop: str) -> dict:
-    """Plan entries wiring sources[k] -> G_k -> S_k with the exclusion and the latch loop. `p` holds W_XG, W_GG,
-    W_GGI, W_GIG, W_GS, W_SS. The three transmission-gate names are the stage's lesions."""
-    K = len(sources)
-    plan = {}
+def projections(K: int, p: dict, *, gate_in: str, gate_excl: str, latch_loop: str) -> List[dict]:
+    """The stage's topology in emission order, per alternative k: xg (source -> G, `gate_in`), gg (G -> G), ggi
+    (G -> GI), gig (GI -| every other G, `gate_excl`; only when K > 1), gs (G -> S), ss (S -> S, `latch_loop`).
+    Each entry: name, k, pre/post as lists of (population, index) with population in {source, gate, gate_inh, slot},
+    the weight key, the transmission gate and the connection kind (I_TO_E is inhibitory)."""
+    out = []
     for k in range(K):
-        g, gi, s = lay["gate"][k], lay["gate_inh"][k], lay["slot"][k]
-        plan["%sxg_%d" % (prefix, k)] = dense(sources[k], g, p["W_XG"], conn_type="E_TO_E", transmission_gate=gate_in)
-        plan["%sgg_%d" % (prefix, k)] = dense(g, g, p["W_GG"], conn_type="E_TO_E")
-        plan["%sggi_%d" % (prefix, k)] = dense(g, gi, p["W_GGI"], conn_type="E_TO_I")
+        out.append({"name": "xg", "k": k, "pre": [("source", k)], "post": [("gate", k)], "w": "W_XG",
+                    "gate": gate_in, "kind": "E_TO_E"})
+        out.append({"name": "gg", "k": k, "pre": [("gate", k)], "post": [("gate", k)], "w": "W_GG", "gate": None,
+                    "kind": "E_TO_E"})
+        out.append({"name": "ggi", "k": k, "pre": [("gate", k)], "post": [("gate_inh", k)], "w": "W_GGI",
+                    "gate": None, "kind": "E_TO_I"})
         if K > 1:
-            other_g = np.concatenate([lay["gate"][j] for j in range(K) if j != k])
-            plan["%sgig_%d" % (prefix, k)] = dense(gi, other_g, p["W_GIG"], conn_type="I_TO_E",
-                                                   transmission_gate=gate_excl)
-        plan["%sgs_%d" % (prefix, k)] = dense(g, s, p["W_GS"], conn_type="E_TO_E")
-        plan["%sss_%d" % (prefix, k)] = dense(s, s, p["W_SS"], conn_type="E_TO_E", transmission_gate=latch_loop)
+            out.append({"name": "gig", "k": k, "pre": [("gate_inh", k)],
+                        "post": [("gate", j) for j in range(K) if j != k], "w": "W_GIG", "gate": gate_excl,
+                        "kind": "I_TO_E"})
+        out.append({"name": "gs", "k": k, "pre": [("gate", k)], "post": [("slot", k)], "w": "W_GS", "gate": None,
+                    "kind": "E_TO_E"})
+        out.append({"name": "ss", "k": k, "pre": [("slot", k)], "post": [("slot", k)], "w": "W_SS",
+                    "gate": latch_loop, "kind": "E_TO_E"})
+        # Optional single-slot exclusion (one decision among K, the BG use; absent unless the row sets it > 0, so the
+        # multi-slot users keep latches that coexist): W_SGI, the latch keeps its own GI pool active, so once k is
+        # latched no other gate can burst (the first commitment keeps the decision); W_GIS, a bursting gate's GI
+        # pool silences the other latches (a later commitment replaces an earlier one). Both on `gate_excl`.
+        if K > 1 and float(p.get("W_SGI", 0.0)) > 0.0:
+            out.append({"name": "sgi", "k": k, "pre": [("slot", k)], "post": [("gate_inh", k)], "w": "W_SGI",
+                        "gate": gate_excl, "kind": "E_TO_I"})
+        if K > 1 and float(p.get("W_GIS", 0.0)) > 0.0:
+            out.append({"name": "gis", "k": k, "pre": [("gate_inh", k)],
+                        "post": [("slot", j) for j in range(K) if j != k], "w": "W_GIS", "gate": gate_excl,
+                        "kind": "I_TO_E"})
+    return out
+
+
+def commit_plan(sources: Sequence[np.ndarray], lay: Dict[str, object], p: dict, *, prefix: str,
+                gate_in: str, gate_excl: str, latch_loop: str, plasticity_gate: str = GATE_FIXED) -> dict:
+    """Plan entries wiring sources[k] -> G_k -> S_k with the exclusion and the latch loop. `p` holds W_XG, W_GG,
+    W_GGI, W_GIG, W_GS, W_SS. The three transmission-gate names are the stage's lesions. `plasticity_gate` names the
+    (frozen) plasticity gate of every entry; the default is this module's GATE_FIXED."""
+    pops = {"source": list(sources), "gate": lay["gate"], "gate_inh": lay["gate_inh"], "slot": lay["slot"]}
+    plan = {}
+    for e in projections(len(sources), p, gate_in=gate_in, gate_excl=gate_excl, latch_loop=latch_loop):
+        pre = np.concatenate([pops[r][j] for r, j in e["pre"]])
+        post = np.concatenate([pops[r][j] for r, j in e["post"]])
+        plan["%s%s_%d" % (prefix, e["name"], e["k"])] = dense(pre, post, p[e["w"]], conn_type=e["kind"],
+                                                              transmission_gate=e["gate"],
+                                                              plasticity_gate=plasticity_gate)
     return plan
+
+
+def region_names(prefix: str, k: int) -> Dict[str, str]:
+    """Region names of alternative k's gate, gate-inhibitory pool and latch in a region-built bridge."""
+    return {"gate": "%sgate_%d" % (prefix, k), "gate_inh": "%sgate_inh_%d" % (prefix, k),
+            "slot": "%sslot_%d" % (prefix, k)}
+
+
+def region_parts(source_regions: Sequence[str], p: dict, *, prefix: str, gate_in: str, gate_excl: str,
+                 latch_loop: str, make_region, exc_type, inh_type):
+    """The stage for a region-built bridge: (BrainRegion list, RegionPathway list). Same topology as `commit_plan`
+    (`projections`), every pathway at density 1.0 with no jitter (all-to-all; a region pathway onto its own region
+    keeps autapses, as `dense` does). The new regions have no internal connectivity (the recurrences are pathways),
+    so appended after a build's own regions and pathways they leave every earlier pathway's random draw unchanged.
+    `make_region(name, n, exc_fraction=, neuron_type=)` is the caller's BrainRegion factory; `p` also holds NG, NGI,
+    NS. Inhibitory pathways use GABA_A."""
+    from sim.regions import RegionPathway
+    K = len(source_regions)
+    regions = []
+    for k in range(K):
+        nm = region_names(prefix, k)
+        regions += [make_region(nm["gate"], int(p["NG"]), exc_fraction=1.0, neuron_type=exc_type),
+                    make_region(nm["gate_inh"], int(p["NGI"]), exc_fraction=0.0, neuron_type=inh_type),
+                    make_region(nm["slot"], int(p["NS"]), exc_fraction=1.0, neuron_type=exc_type)]
+
+    def region(pop, j):
+        return source_regions[j] if pop == "source" else region_names(prefix, j)[pop]
+
+    pathways = []
+    for e in projections(K, p, gate_in=gate_in, gate_excl=gate_excl, latch_loop=latch_loop):
+        for pr, pj in e["pre"]:
+            for qr, qj in e["post"]:
+                kw = {"receptor": "gaba_a"} if e["kind"] == "I_TO_E" else {}
+                pathways.append(RegionPathway(from_region=region(pr, pj), to_region=region(qr, qj), density=1.0,
+                                              weight_mean=float(p[e["w"]]), weight_jitter=0.0, plastic=False,
+                                              transmission_gate=e["gate"], **kw))
+    return regions, pathways
 
 
 def latch_read(slot_counts: Sequence[int], NS: int, read_steps: int, read_frac: float, scale: float = 1.0) -> dict:
@@ -94,3 +169,30 @@ def read_with_variants(slot_counts: Sequence[int], NS: int, read_steps: int, rea
     variants = {tag: latch_read(slot_counts, NS, read_steps, read_frac, sc)["winner"]
                 for tag, sc in (("x0.5", 0.5), ("x2", 2.0))}
     return dict(base, variants=variants, read_invariant=all(v == base["winner"] for v in variants.values()))
+
+
+def sequence_read(counts: Sequence[Sequence[float]], NS: int, read_steps: int, read_frac: float,
+                  scale: float = 1.0) -> dict:
+    """The read over a SEQUENCE of presentations whose latches carry over (A1's incremental assignment). counts[i][k]
+    is latch k's count over the last READ_STEPS of item i's hold. Item i's outcome = the one latch that turned ON
+    during item i (ON now and not ON after item i-1); none -> None; several -> None and a co-commit. An alternative
+    claimed by two items (a latch that died and re-latched) is unfilled and counted as a re-latch. Returns
+    dict(threshold, per_item=[{new: [k...], role: k|None}], filled={k: item}, co_commit, relatch, latched_at_end)."""
+    thr = float(read_frac) * float(scale) * int(NS) * int(read_steps)
+    on_before = set()
+    per, co, claim = [], 0, {}
+    for i, row in enumerate(counts):
+        on_now = {k for k, c in enumerate(row) if float(c) >= thr}
+        new = on_now - on_before
+        if len(new) == 1:
+            role = next(iter(new))
+            claim.setdefault(role, []).append(i)
+        else:
+            role = None
+            co += int(len(new) > 1)
+        per.append({"new": sorted(new), "role": role})
+        on_before = on_now
+    filled = {r: idx[0] for r, idx in claim.items() if len(idx) == 1}
+    relatch = sum(1 for idx in claim.values() if len(idx) > 1)
+    return {"threshold": thr, "per_item": per, "filled": filled, "co_commit": co, "relatch": relatch,
+            "latched_at_end": sorted(on_before)}

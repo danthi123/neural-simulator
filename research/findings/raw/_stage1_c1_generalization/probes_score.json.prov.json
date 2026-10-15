@@ -1,0 +1,29 @@
+{
+ "run_id": "1791980568-34668",
+ "runner": "research/runners/c1_generalization_probes.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/c1_generalization_probes.py",
+  "--score",
+  "research/findings/raw/_stage1_c1_generalization",
+  "--seeds",
+  "1,2,3,4,5,6,7,8"
+ ],
+ "git_sha": "3312c439c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-14T08:22:48",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 261006.6,
+ "corpus_check_query": "emerge60 Broca producer console demo re-queue: what does the existing record say",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_stage1_c1_generalization/probes_score.json"
+}

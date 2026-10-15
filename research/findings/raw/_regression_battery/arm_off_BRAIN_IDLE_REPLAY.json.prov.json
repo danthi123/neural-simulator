@@ -1,0 +1,36 @@
+{
+ "run_id": "1791431360-4348",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/ubuntu/sim/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_IDLE_REPLAY\": \"0\"}",
+  "--turns",
+  "well,question,unknown,hold,held,scalar,open,confirm,contra,expect_q,episodic,vision,bgdots,dr_a,dr_b,dr_c,chase,selfinit,animacy,verbsel,emo,bc_a,bc_b,rich_well,rich_open,pmem_form",
+  "--out",
+  "research/findings/raw/_regression_battery/arm_off_BRAIN_IDLE_REPLAY.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-08T03:49:20",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1791431360-4341"
+ },
+ "host": "ip-172-31-32-69",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_regression_battery/arm_off_BRAIN_IDLE_REPLAY.json"
+}

@@ -41,6 +41,9 @@ gold-standard lesions used here. Where a faculty has no dedicated neural-cut kno
                   gnw-deliberation / value-driven-choice >=2-distinct-patient conflict — see the battery's own note).
   mechanism-only  the flip changes the SUBSTRATE not the ANSWER by design (one-brain-substrate: onebrain==rf answers).
   proposed        no clean lesion knob exists yet; the minimal one to add is named in the note. (NOT faked.)
+  host-input      the lesion flag overrides a HOST-parsed input, not a neural read (validation-battery prereg
+                  2026-10-12, Amendment B: tom-false-belief's witness gate). Measured like a neural-lesion row, kept
+                  in the fraction's DENOMINATOR, never in its NUMERATOR; reported separately as a host-input lesion.
 
 RELIABILITY — "changed, and not just noise" (the metric's own qualifier). The webapp default builds the tiny-demo brain
 and every organ at seed 42 (hardcoded; no per-request seed), so a given env is DETERMINISTIC: re-running an arm yields
@@ -1894,6 +1897,10 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
     # did not) is exercised-and-NOT-load-bearing; no other path emits it, so the default battery is unchanged.
     exercised = [p for p in coverable if p["verdict"] in ("regressed", "pass", "trace-only")]
     load_bearing = [p for p in exercised if p["load_bearing"] is True]
+    # HOST-INPUT rows (Amendment B to the 2026-10-12 validation-battery prereg): measured, in the DENOMINATOR, never
+    # in the NUMERATOR (a host-input override is not a neural load). Empty -> every count below is unchanged.
+    host_input = [p for p in per if p["kind"] == "host-input"]
+    hi_exercised = [p for p in host_input if p["verdict"] in ("regressed", "pass", "trace-only")]
     report["counts"] = {
         "n_faculties_total": len(per),
         "n_coverable_env_lesion": len(coverable),
@@ -1910,6 +1917,12 @@ def run(out_dir="research/findings/raw/_load_bearing", only=None, repeats=1, see
         "n_proposed": len([p for p in per if p["kind"] == "proposed"]),
     }
     n_ex = report["counts"]["n_exercised"]
+    if host_input:
+        report["counts"].update(n_host_input=len(host_input), n_host_input_exercised=len(hi_exercised),
+                                n_host_input_load_bearing=len([p for p in hi_exercised if p["load_bearing"] is True]))
+        n_ex += len(hi_exercised)
+        report["host_input_faculties"] = {p["faculty"]: {"verdict": p["verdict"], "load_bearing": p["load_bearing"]}
+                                          for p in host_input}
     report["load_bearing_fraction"] = (report["counts"]["n_load_bearing"] / n_ex) if n_ex else None
     report["load_bearing_faculties"] = [p["faculty"] for p in load_bearing]
     report["not_load_bearing_faculties"] = [p["faculty"] for p in exercised if p["load_bearing"] is False]

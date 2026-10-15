@@ -1,0 +1,38 @@
+{
+ "run_id": "1791894058-438709",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adf5ef3e9f6cee678/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "c5re_t1,c5re_t2,c5re_t3,c5re_t4,c5re_t5,c5re_t6,c5re_idle",
+  "--out",
+  "research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.json"
+ ],
+ "git_sha": "33294dadf",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-13T08:20:58",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7",
+  "BRAIN_IDLE_REPLAY_LEAKLOG": "/home/dant123/Projects/sim/.claude/worktrees/agent-adf5ef3e9f6cee678/research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell_rss.jsonl"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 22361.9,
+ "corpus_check_query": "curiosity learning progress per-topic",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_regression_battery/c5val_1012_dev/c5_s7_retell.json"
+}

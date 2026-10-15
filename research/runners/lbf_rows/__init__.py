@@ -22,7 +22,8 @@ keep the two dicts in lockstep for any faculty you want actually measured:
     EXTRA_LESIONS = {
         "<faculty_key>": dict(flag="BRAIN_<X>_LESION", value="1", kind="neural-lesion", note="..."),
         ...   # EXACT shape as a FACULTY_LESIONS value in load_bearing_fraction.py: flag / value / kind / note.
-        #       kind is one of neural-lesion / whether-disable / in-process / thin / mechanism-only / proposed
+        #       kind is one of neural-lesion / whether-disable / in-process / thin / mechanism-only / proposed /
+        #       host-input (the lesion overrides a host-parsed input; denominator only, never the numerator)
         #       (see load_bearing_fraction.py's module docstring for what each means).
     }
     EXTRA_PROBES = {      # or a LIST of the same 4-tuples (FACULTY_PROBES' own shape); both are accepted

@@ -97,4 +97,29 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   54 lines, 54 hop-flagged, 54 gate seeds, 54 named with prereg
   research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md (verified EXISTS at the pin via
   git cat-file), all carry mem_gb+max_age_h. pool_canaries.tsv has no stage1_c1_category@2c2d55952 record, so
-  the 3b adds WILL hit the pool-canary guard -> §3 STOP + NEEDS [c1-gatehop] at the actual refusal.
+ the 3b adds WILL hit the pool-canary guard -> §3 STOP + NEEDS [c1-gatehop] at the actual refusal.
+ - 2026-10-09 03:25 EDT (Hermes, driver) — RULING c1-stamp-fix executed (code + tests in this commit).
+ Defect: the comprehension-repair abstain early return (server.py:6265) returned before the two
+ `category_inherit` attach sites, so a turn where the C1 organ FIRED on an OOV abstain carried no
+ stamp (the [c1-flipdev-diagnose] RESULT 10-08 14:07 named it). Fix: webapp/category_inherit_chat.py
+ gains `turn_stamp(chat)` = the trace only when the organ engaged this turn (an observe or read
+ record exists), None otherwise; webapp/server.py gains ONE helper `_attach_category_inherit(resp,
+ chat)` called before all three returns (abstain, rich, single-fact), attaching the key EXACTLY when
+ the pathway fired and leaving it absent otherwise — a missing stamp now always means the pathway
+ never fired. The wiring test pins the new shape (one write + three call sites) and
+ `test_category_inherit_stamp_both_paths` covers fired/present vs idle/absent; 37 category-inherit
+ tests pass (organ + hop). Consumers checked (c1_flip_dev_check.py, stage1_c1_category.py): all
+ `.get()` + normalize absence, no breakage.
+ Branch note: the RULING names research/stage1-exit-gate, but that branch predates the organ (0 hits
+ for category_inherit; claude-review/c1-hop is not an ancestor); the fix is on research/c1-stamp-fix
+ branched from main 613edd284, where the code lives. NEEDS [c1-stamp-fix] filed for the merge; once
+ merged, RULING c1-flipdev-rerun can run against the unchanged scorer.
+
+## 2026-10-11 14:40 -- flip build committed (research/c1-flip, commit 680a313e8)
+- RULING c1-flip-go FLIP decided: _CATEGORY_INHERIT_DEFAULT_ON = True; BRAIN_CATEGORY_INHERIT_HOP defaults ON when unset; every explicit value keeps pre-flip semantics so BRAIN_CATEGORY_INHERIT=0 / HOP=0 are the byte-identical escapes (tests pin both, incl. source-level server-installs-nothing).
+- Fixes a pre-existing check-6 bug on main: the bar outcome was its own precondition, so any FAIL downgraded to UNDEFINED (exposed at 32db95f88 by seed 4 word/c_otter_chase content_changed; pre-existing per mainwt comparison).
+- Reports per ruling: one-hop bat->lake flagged guess PASS 8/8 dev seeds (owner item: is one shared feature enough? -- answered by the 8/8 since the flag alone gates the guess); bridge bar capacity 24 slots (8 seeds x 3 bridge turns); untraced bypass turns 129 across the 8 ON seeds (cat_disc 3, cat_told 2, word 4, lived 4, val_novel 8 per seed; bridge group 0).
+- Ledger: row category-inherit (retire_status BLOCKED:neural-render, subflag flip markers), total_faculties 69->70. LBF: research/runners/lbf_rows/category_inherit.py (probe c_bat_swim, lesion BRAIN_CATEGORY_INHERIT_LESION=1, no REQUIRED_ENV). Board sync receipt: task #246 label 7.
+- Checks on branch: 62 relevant tests pass + scorer --selftest 27/27 + bar-sanity OK + LBF row selftest + ledger yaml 70/70 unique.
+- Gates on commit: board-sync-on-status-change satisfied via #246; production-integration [D] retire_status satisfied.
+- Awaiting Claude merge per tree-c1-flip path (a). Teach-observe stays parked.

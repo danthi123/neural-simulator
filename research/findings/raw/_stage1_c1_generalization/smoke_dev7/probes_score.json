@@ -1,0 +1,237 @@
+{
+ "runner": "research/runners/c1_generalization_probes.py",
+ "plan": "docs/drafts/stage1-c1-inheritance/PROBES-PLAN.md",
+ "ruling": "c1-moat-ruled-1013",
+ "seeds": [
+  7
+ ],
+ "override": {
+  "verdict": "PASS",
+  "n_pass": 1,
+  "n_seeds": 1,
+  "why": [],
+  "per_seed": {
+   "7": {
+    "defined": true,
+    "pass": true,
+    "why": [],
+    "eel_vacuous": false,
+    "cases": {
+     "bat": {
+      "guess_before": true,
+      "lake_rate_before": 0.0467,
+      "lake_rate_after": 0.0517,
+      "told_rate_after": 0.105,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "pond",
+      "told_over_lake_after": 2.031,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     },
+     "eel": {
+      "guess_before": true,
+      "lake_rate_before": 0.0933,
+      "lake_rate_after": 0.0833,
+      "told_rate_after": 0.1067,
+      "organ_decides_told": true,
+      "post_reason": "reached",
+      "post_patient": "river",
+      "told_over_lake_after": 1.281,
+      "reply_names_told": true,
+      "reply_route": "recalled"
+     }
+    },
+    "collateral": {
+     "c_bat_eat": {
+      "patient": "bug",
+      "abstained": false,
+      "read": {
+       "patient": null,
+       "admitted": null
+      }
+     },
+     "c_canary_eat": {
+      "patient": "worm",
+      "abstained": false,
+      "read": {
+       "patient": "worm",
+       "admitted": [
+        [
+         "worm",
+         0.0867
+        ],
+        [
+         "bug",
+         0.015
+        ]
+       ]
+      }
+     },
+     "c_canary_swim": {
+      "patient": null,
+      "abstained": true,
+      "read": {
+       "patient": null,
+       "admitted": [
+        [
+         "pond",
+         0.0133
+        ],
+        [
+         "lake",
+         0.0017
+        ]
+       ]
+      }
+     }
+    }
+   }
+  },
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every seed defined",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "C1 flags effective (BRAIN_CATEGORY_INHERIT and _HOP true)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "organ engaged (teach turns observed with the expected SVO; pre-override probes are organ reads)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every organ read records hop:true and no lesion",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "direct reads present and reproducing the turn's trace",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no organ errors, no errored turns, valid shards",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "undefined_reasons": []
+ },
+ "graded": {
+  "verdict": "FAIL",
+  "n_pass": 0,
+  "n_seeds": 1,
+  "why": [
+   "seed 7: lake rate not strictly rising newt<toad<eel: {'newt': 0.0817, 'toad': 0.0817, 'eel': 0.0933}"
+  ],
+  "per_seed": {
+   "7": {
+    "defined": true,
+    "pass": false,
+    "why": [
+     "lake rate not strictly rising newt<toad<eel: {'newt': 0.0817, 'toad': 0.0817, 'eel': 0.0933}"
+    ],
+    "core": {
+     "measured": true,
+     "rising": false,
+     "rates": {
+      "newt": 0.0817,
+      "toad": 0.0817,
+      "eel": 0.0933
+     },
+     "steps": [
+      0.0,
+      0.0116
+     ]
+    },
+    "per_target": {
+     "eel": {
+      "k": 3,
+      "lake_rate": 0.0933,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "toad": {
+      "k": 2,
+      "lake_rate": 0.0817,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     },
+     "newt": {
+      "k": 1,
+      "lake_rate": 0.0817,
+      "reason": "reached",
+      "patient": "lake",
+      "reply_patient": "lake"
+     }
+    }
+   }
+  },
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every seed defined",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "C1 flags effective (BRAIN_CATEGORY_INHERIT and _HOP true)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "organ engaged (teach turns observed with the expected SVO; pre-override probes are organ reads)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every organ read records hop:true and no lesion",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "direct reads present and reproducing the turn's trace",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no organ errors, no errored turns, valid shards",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "undefined_reasons": []
+ },
+ "root": "research/findings/raw/_stage1_c1_generalization/smoke_dev7",
+ "scored_at": "2026-10-13T11:32:42"
+}

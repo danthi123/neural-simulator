@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-10-05T04:28:16Z",
+ "updated_at": "2026-10-11T18:17:38Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -2432,6 +2432,30 @@
    "op": "set-desc",
    "args": "task=232",
    "head": "1f93a0d05"
+  },
+  {
+   "at": "2026-10-09T05:03:05Z",
+   "op": "create-task",
+   "args": "proj=2 title=Check the two pathways just switched on by default before they merge into the live brain",
+   "head": "44091b850"
+  },
+  {
+   "at": "2026-10-09T05:03:09Z",
+   "op": "label-task",
+   "args": "task=245 label=7",
+   "head": "44091b850"
+  },
+  {
+   "at": "2026-10-11T18:17:38Z",
+   "op": "create-task",
+   "args": "proj=2 title=Check the category-inheritance pathway just switched on by default before it merges into the live brain",
+   "head": "32db95f88"
+  },
+  {
+   "at": "2026-10-11T18:17:38Z",
+   "op": "label-task",
+   "args": "task=246 label=7",
+   "head": "32db95f88"
   }
  ]
 }

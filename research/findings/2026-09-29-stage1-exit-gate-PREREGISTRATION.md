@@ -447,3 +447,81 @@ recorded). Dev seeds govern nothing; these are integrity smokes plus the first r
 ## 12. Amendments
 
 (Appended dated entries only. The bars, arms and turns above are frozen at the commit that adds this file.)
+
+Amendment A1 (2026-10-04, after attempt 1; the C4 derangement guard and the C3 recall lesion's engagement rule) was
+filed as `docs/drafts/stage1-exit/AMENDMENT-A1.md` (commit c10a74767) and governs this file as written there.
+
+### Amendment A2 (2026-10-13, Claude): Stage-1 attempt 2, C1 counted lesion and C4 scrambled-control draw
+
+Filed in its own commit BEFORE any attempt-2 data: no attempt-2 line has been queued (RULING pool-hold-1012:
+attempt 2 is fresh lines at current main, after PLAN step D). It folds the C1 section
+(`docs/drafts/stage1-c1-inheritance/ATTEMPT2-C1-AMENDMENT-TEXT.md`, RULINGs stage1-c1-lesion, c1-flip-config;
+`docs/drafts/stage1-c1-inheritance/PLAN.md` step D) together with the C4 control of RULING stage1-sync. Bars, seeds
+(42, 43, 44, 100, 101, 102), turns, the null, the correctness rules and section 7's verdict rules are unchanged.
+
+bar-sanity: docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json
+bar-sanity: docs/drafts/stage1-exit/bar_sanity_record_c4_constrained.json
+bar-sanity-before: docs/drafts/stage1-exit/bar_sanity_record_s1_c1_registered.json
+bar-sanity-before: docs/drafts/stage1-exit/bar_sanity_record_c4_old_control.json
+
+(Both cited records are re-run in this commit, because it edits `research/runners/stage1_exit_gate.py`, one of their
+scorer files: `python tools/bar_sanity.py <spec> --n 1000 --seed 0 --out <same path>`, with spec
+`docs/drafts/stage1-exit/bar_sanity_spec_s1_c1_fixed_pathway_lesion.py` and
+`docs/drafts/stage1-exit/bar_sanity_spec_c4_constrained.py`. The records are synthetic: they draw no brain.)
+
+**A2.1 C1: the counted lesion cuts the route that answers (`cat_disc`; `cat_told` diagnostic).**
+
+*Why.* Section 3 asks for "a lesion arm per responsible faculty". At attempt 1 no C1 route answered, so the
+registered `lesion_draw` (the generative DRAW) was the only candidate. At attempt 2 the C1 answer comes from the
+category-inheritance organ on the strict route's recall miss (`webapp/category_inherit_chat.py`, flipped default on
+after its dev check; `research/findings/2026-10-06-stage1-c1-category-inheritance-RESULT.md`). `lesion_draw` does
+not engage on that route: on the wiring's six gate seeds it changed no probe and left no engagement record. Under
+Amendment A1's rule (a no-effect lesion with no engagement record is UNDEFINED) every seed would read UNDEFINED, so
+the registered bar is UNREACHABLE for this route (`docs/drafts/stage1-exit/bar_sanity_record_s1_c1_registered.json`).
+
+*Change.* For `cat_disc` and `cat_told`, the counted lesion arm is `lesion_inherit_pathway` with its `.rep0` repeat
+(one name for the arm and the in-process patch it installs, `research/runners/stage1_exit_gate.py::install_patch`).
+It runs every organ read with both learned pathways (member->frame, frame->frame) silenced and restores them after,
+and records `calls`. (The wiring gate's env lesion `lesion_inherit`, `BRAIN_CATEGORY_INHERIT_LESION=1`, is not used by
+Stage 1.) The arm is APPLIED only if `calls > 0`; the direct probe's `category_inherit.read` also records `lesion:
+"all"` and `lesion_held: true`, reported beside it. `lesion_draw` stays as an informational arm (reported, never
+counted). Turns, the permuted arm, the null, the correctness rule and the bar (correct 6/6, lesion effect 6/6
+reproduced, permuted tracks 6/6) are unchanged.
+
+*Engagement is a precondition, never a pass.* An in-process lesion arm (or its `.rep0`) whose patch recorded
+`calls == 0` is applied=False and void (section 7), so that seed is UNDEFINED for the group, whatever its replies
+show: an effect without engagement is not credited. The scorer applies this to every in-process lesion of every group
+(section 7 already says so; at attempt 1 a void arm reached only the stage precondition). Re-scoring the committed
+attempt-1 data under this runner leaves C2 `word` and C3 `lived` (gate_c3rerun) at PASS 6/6, unchanged.
+
+*The attempt-2 C1 configuration includes the hop fix* (RULING c1-hop-first;
+`research/findings/2026-10-06-c1-hop-attenuation-bridging-member.md`): the flip revision has the category-inheritance
+wiring ON and its hop attenuation ON by default (`BRAIN_CATEGORY_INHERIT_HOP` unset = on after the flip). Every
+attempt-2 arm records the effective values of both (`c1_flags`: `BRAIN_CATEGORY_INHERIT`,
+`BRAIN_CATEGORY_INHERIT_HOP`, read through the production readers), and the direct probe's (`p_canary_eat`)
+`category_inherit.read` must record `hop: true` in every flag-on C1 arm, else the seed is UNDEFINED for C1. Every
+other organ read of a flag-on C1 session must record `hop: true` as well (the validation battery's wording, prereg
+2026-10-12 section 5 C1(a)); a C1 arm with no flag record is UNDEFINED. The C1 evidence A2 rests on is the gate
+re-measure WITH the fix (prereg 2026-09-30 section 13, amendment 2026-10-06,
+`research/findings/raw/_stage1_c1_category/gate_hop/`), not the 09-30 PASS measured without it.
+
+*Runner change (this commit).* `GROUPS["cat_disc"]` and `GROUPS["cat_told"]`: `lesions` =
+`{"lesion_inherit_pathway": {"env": {}, "patch": "lesion_inherit_pathway", ...}}`, `informational` =
+`{"lesion_draw": ...}`; the worker records `c1_flags`; the aggregate adds the per-arm `c1_engagement` record and the
+UNDEFINED reasons above. The bar-sanity spec's arm key `lesion_pathway` is renamed `lesion_inherit_pathway` (and the
+`PATCH_OF` / role name in `docs/drafts/stage1-exit/bar_sanity_s1_c123_common.py`); the spec adds three nulls that
+must fail (hop not recorded, flags not recorded, a lesion effect with `calls == 0`). Attempt-2 shards go to
+`research/findings/raw/_stage1_exit/gate_a2/` (`--emit-pool-jobs <sha> --out-dir ...`), never into attempt 1's `gate/`.
+
+**A2.2 C4: the scrambled-values control draw (RULINGs s1-c4-control, s1-c4-control-sanity, stage1-sync).**
+
+As registered, the permuted-map arm's derangement was drawn without constraint, and a brain whose reads follow its
+learned values exactly passes the six-seed clause "scrambled r < 0.20" only 0.461 of the time
+(`bar_sanity_record_c4_old_control.json`: UNREACHABLE), because a random derangement of 24 bimodal values can itself
+correlate with the norms. The draw is now rejection-sampled from a fixed RNG (seed = the brain seed): a derangement
+is used only if |r(scrambled values, human ratings)| <= `SCRAMBLE_R_MAX` = 0.05, and the drawn permutation, its r and
+the within-sign-group r (reported, not gated) are recorded in the arm (`_scrambled_valence_draw`, commits bc8f804b9 and
+b245fffd8). At 0.10 the realistic perfect brain passed 0.943 (`bar_sanity_record_c4_constrained_0p10.json`,
+UNREACHABLE); at 0.05 it passes 0.987 with every null at 0.000 (`bar_sanity_record_c4_constrained.json`, OK). Every
+C4 bar is unchanged: intact r >= 0.55 on every seed, scrambled r < 0.20 on every seed, the lesion silences the read;
+A1.1's guard (the permuted map must derange all 24 held-out words) stays.

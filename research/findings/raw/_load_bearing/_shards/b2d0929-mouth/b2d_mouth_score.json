@@ -226,8 +226,8 @@
    "final": "MOUTH-SILENT",
    "seed": 100,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s101/affect-coloring": {
@@ -282,8 +282,8 @@
    "final": "MOUTH-SILENT",
    "seed": 101,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s102/affect-coloring": {
@@ -327,8 +327,8 @@
    "final": "MOUTH-SILENT",
    "seed": 102,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s42/affect-appraisal-interoceptive": {
@@ -474,8 +474,8 @@
    "final": "MOUTH-SILENT",
    "seed": 44,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s100/affect-appraisal-interoceptive": {
@@ -525,8 +525,8 @@
    "final": "MOUTH-SILENT",
    "seed": 100,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s101/affect-appraisal-interoceptive": {
@@ -576,8 +576,8 @@
    "final": "MOUTH-SILENT",
    "seed": 101,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s102/affect-appraisal-interoceptive": {
@@ -621,8 +621,8 @@
    "final": "MOUTH-SILENT",
    "seed": 102,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s42/affect-drives-response": {
@@ -838,8 +838,8 @@
    "final": "DEFINED",
    "seed": 100,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s101/affect-drives-response": {
@@ -889,8 +889,8 @@
    "final": "MOUTH-SILENT",
    "seed": 101,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   },
   "s102/affect-drives-response": {
@@ -940,8 +940,8 @@
    "final": "MOUTH-SILENT",
    "seed": 102,
    "stub": {
-    "class": "E",
-    "s2": null
+    "class": null,
+    "s2": "pass"
    }
   }
  },

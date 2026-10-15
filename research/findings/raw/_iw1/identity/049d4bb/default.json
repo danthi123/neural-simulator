@@ -1,0 +1,270 @@
+{
+ "arm": "default",
+ "seed": 7,
+ "cwd": "/home/node/derisk-pool/revisions/049d4bb0beac083bfdc364c8ffd8ac5b86ca9b49",
+ "flags_env": {
+  "BRAIN_D6_HEBBIAN_STORE": null,
+  "BRAIN_D6_ENGRAM_VOCAB": null,
+  "BRAIN_D6_ENGRAM_READTIME": null,
+  "BRAIN_MULTIREF_FOCUS_BIND": null,
+  "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": null
+ },
+ "corpus_present": true,
+ "corpus_missing": [],
+ "ltm_bundle": "wikidata_100k",
+ "ltm_bundle_dir": "/home/node/Projects/sim-data/knowledge_bundles/wikidata_100k",
+ "allow_degraded": false,
+ "sources": [
+  "tiny-demo +LTM"
+ ],
+ "sim_backend": "numpy",
+ "n_turns": 13,
+ "wall_s": 1208.1,
+ "turns": [
+  {
+   "turn": 0,
+   "message": "the dog and the cat walked in",
+   "for": "wm-focus-bind",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "3ef1d0955a1695670d834508d6fdf752249cc8c2e29975e49bffa628b4c84fc4",
+   "sha_canon": "b4b531c5aa36e157378d7310d44b02475ac34322a49cea82965c02e39745d254",
+   "dropped_volatile_keys": [],
+   "answer": "the dog cats the walked",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "cat",
+    "walked"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 275.09
+  },
+  {
+   "turn": 1,
+   "message": "what does it chase",
+   "for": "wm-focus-bind",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "d2ffb8ce0e8775b77207273be94b4515ceb8a4fc9f2efbafa20b3886d609561f",
+   "sha_canon": "435816cce1940a1b4643d9129226d97cc4020d2c8ff121c4f0f39f6cc56e9f47",
+   "dropped_volatile_keys": [],
+   "answer": "the dog chases the cat",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 298.11
+  },
+  {
+   "turn": 2,
+   "message": "the cat and the dog walked in",
+   "for": "wm-focus-bind",
+   "session": "iw1-identity-b",
+   "status": 200,
+   "sha_raw": "9f4fe5ca4f820d609cc3f68d2d45d56d6f38c24c2394a1196108d7daa3e01c9f",
+   "sha_canon": "93f16e79d06d49fef06189a99b968581793de5de898d8484172f8a45ec427def",
+   "dropped_volatile_keys": [],
+   "answer": "the cat dogs the walked",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "dog",
+    "walked"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 224.97
+  },
+  {
+   "turn": 3,
+   "message": "what does it chase",
+   "for": "wm-focus-bind",
+   "session": "iw1-identity-b",
+   "status": 200,
+   "sha_raw": "3518c70357e860a358183cc572c7a4788e6b10d20b9ce22d74a1ae2b5c8d1b52",
+   "sha_canon": "47585f195670129283ba57ff26511f226485447917e6a273cb5420dcc7a4aa0a",
+   "dropped_volatile_keys": [],
+   "answer": "The dog chases cat.",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 26.03
+  },
+  {
+   "turn": 4,
+   "message": "the wolf hunts the deer",
+   "for": "d6-hebbian-write",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "c34cbc6c46a425819cf72283de9bba25a0a7e90bf957721e282bf0cb554ebb16",
+   "sha_canon": "845a31be2087011a87afcaf5b121dbdfd77e2b63305fb6a1ee0dfda8c935e360",
+   "dropped_volatile_keys": [],
+   "answer": "the wolf hunts the deer \u2014 worth going further here.",
+   "abstained": false,
+   "recalled_svo": [
+    "wolf",
+    "hunt",
+    "deer"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 13.41
+  },
+  {
+   "turn": 5,
+   "message": "what does the cat eat",
+   "for": "d6-hebbian-write",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "de6d3d40158adbc421656b415a7af72199195aeb97c00bc133a42c21ac0df500",
+   "sha_canon": "a3d14e8bf4da8d462e7aee66aa66d13cf8588b5849c30c9eb6918525457fe404",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 On cat, then \u2014 The cat eats fish.",
+   "abstained": false,
+   "recalled_svo": [
+    "cat",
+    "eat",
+    "fish"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 161.21
+  },
+  {
+   "turn": 6,
+   "message": "what does the wolf hunt",
+   "for": "d6-hebbian-write",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "0025b589da82a632486630fa913438939a9e9c5281e3ef46caa560d1157e087b",
+   "sha_canon": "3066034a39edfd9005a6563767359ee49a2596806217d2bc3666ca2e9d9e30eb",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer",
+   "abstained": false,
+   "recalled_svo": [
+    "wolf",
+    "hunt",
+    "deer"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 28.07
+  },
+  {
+   "turn": 7,
+   "message": "that was wonderful, I am so happy",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "f38551364297345b38d731e313c43df2fbd26c743b757673ba49f9317d18d3f9",
+   "sha_canon": "683f024408a6695fbb3e01462da386518438c44f3f1013b07894db4c493e95b2",
+   "dropped_volatile_keys": [],
+   "answer": "The wonderful bes happy.",
+   "abstained": false,
+   "recalled_svo": [
+    "wonderful",
+    "be",
+    "happy"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 118.75
+  },
+  {
+   "turn": 8,
+   "message": "that was terrible, I am so sad",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "dc87138558d7ecd610bbf87820f74bb452b0404214c546ad664c69767103483d",
+   "sha_canon": "338622160d373b962b436926c26e9c0f26581c5d8bd96fd917437a65af3b68a3",
+   "dropped_volatile_keys": [],
+   "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+   "abstained": false,
+   "recalled_svo": [
+    "terrible",
+    "be",
+    "sad"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 14.15
+  },
+  {
+   "turn": 9,
+   "message": "that was wonderful, I am so happy",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "9a98d630912d9d6d261015354c29b7ce87230271f6100876529bd3537461a726",
+   "sha_canon": "227a422c747d0d7ab226f975798a8ff9eab822fc98c6df6a74fa7da0de950406",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 On wonderful, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+   "abstained": false,
+   "recalled_svo": [
+    "wonderful",
+    "be",
+    "happy"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 13.86
+  },
+  {
+   "turn": 10,
+   "message": "that was terrible, I am so sad",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "e9caccc8cb364105ec6332ad652cbefdc0054c9878a83162f658cf86e594ada0",
+   "sha_canon": "bf57f6e494d990ca72b24c4ff49492693d97e83952bfa50d2591396660643ace",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 On terrible, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+   "abstained": false,
+   "recalled_svo": [
+    "terrible",
+    "be",
+    "sad"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 14.76
+  },
+  {
+   "turn": 11,
+   "message": "that was wonderful, I am so happy",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "784fbd8e23d97051ac95b2458ec9eb807335fe857b85a25b34f385d55ed02c55",
+   "sha_canon": "215e83faadca19749c89347893d6d6379acde322d07172dda24c1752a84b8789",
+   "dropped_volatile_keys": [],
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+   "abstained": false,
+   "recalled_svo": [
+    "wonderful",
+    "be",
+    "happy"
+   ],
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 13.82
+  },
+  {
+   "turn": 12,
+   "message": "what do you expect?",
+   "for": "xedge-surprise-worldmodel",
+   "session": "iw1-identity",
+   "status": 200,
+   "sha_raw": "d311d9493d20d6e943eb7f710a75a467414f351f84a2c81d2ef8eaee83ab9d53",
+   "sha_canon": "9513fb9def2a7fb5c4140ddbc6bd014333d3d5b625675eab199e64645024395d",
+   "dropped_volatile_keys": [],
+   "answer": "My affective forward model expects this to keep going positive (predicted next-turn valence +, pool-rate margin +430 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation.",
+   "abstained": false,
+   "recalled_svo": null,
+   "source": "tiny-demo +LTM",
+   "turn_wall_s": 5.86
+  }
+ ],
+ "session_sha_canon": "b0fb480c7b2974aef9ad43119f02df2de77e7bba3b0ba60ca30c7a066e5ca3d6",
+ "git_sha": null
+}

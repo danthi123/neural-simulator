@@ -1,0 +1,32 @@
+{
+ "run_id": "1792084541-44668",
+ "runner": "research/runners/iw1_default_identity.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/iw1_default_identity.py",
+  "--compare",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/8407f21/off_word-role.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/b1c11a08/default.json",
+  "--expect",
+  "same",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/8407f21/compare_offwr_vs_pprime.json"
+ ],
+ "git_sha": "c929250b0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T13:15:41",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 364979.8,
+ "corpus_check_query": "emerge60 Broca producer console demo re-queue: what does the existing record say",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_iw1/identity/8407f21/compare_offwr_vs_pprime.json"
+}

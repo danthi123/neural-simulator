@@ -1861,13 +1861,18 @@ async def _warm_chat_brain() -> None:
             # model load) AND caches the default ChatBrain so the default first
             # turn is instant. Cache key MUST mirror brain_chat()'s lookup.
             default_brain = "tiny-demo"   # == BrainChatRequest.brain default
-            chat, source = _build_chat_brain(default_brain, renderer)
-            chat._brain_chat_source = source  # type: ignore[attr-defined]
             cache_key = ("default", default_brain, renderer)
-            _BRAIN_CHATS.setdefault(cache_key, chat)
-            # CROSS-SESSION PERSISTENCE (#B8): reload the default session's persisted learning onto the warm chat
-            # (no-op unless BRAIN_PERSIST_LEARNING is armed). Best-effort; never blocks boot.
-            _reload_persisted_learning(cache_key, _BRAIN_CHATS[cache_key])
+            if _one_brain_on():
+                # M2: build THE brain (shared ChatBrain + its brain-level persistence reload) for the default
+                # conversation; this whole warm runs under the turn lock at ON (`_warm_locked` below).
+                _one_brain_chat_for(cache_key, build=True)
+            else:
+                chat, source = _build_chat_brain(default_brain, renderer)
+                chat._brain_chat_source = source  # type: ignore[attr-defined]
+                _BRAIN_CHATS.setdefault(cache_key, chat)
+                # CROSS-SESSION PERSISTENCE (#B8): reload the default session's persisted learning onto the warm chat
+                # (no-op unless BRAIN_PERSIST_LEARNING is armed). Best-effort; never blocks boot.
+                _reload_persisted_learning(cache_key, _BRAIN_CHATS[cache_key])
             # AFFECT (Gate-B): pre-build the co-resident spiking affect organ so the first turn's mood read is
             # fast. Best-effort + guarded (default-ON; BRAIN_AFFECT=0 skips it); a failure never blocks chat.
             try:
@@ -1974,8 +1979,15 @@ async def _warm_chat_brain() -> None:
                   "— the chat endpoint will build on the first turn / use the "
                   "stub renderer", flush=True)
 
+    def _warm_locked() -> None:
+        # M2, BRAIN_ONE_BRAIN on: the warm builds THE brain and its process-shared organs, so it takes the turn lock
+        # for the whole build (a first turn waits behind it, bounded, `busy` after BRAIN_TURN_WAIT_TIMEOUT_S).
+        from webapp.brain_turn_lock import brain_turn as _bt
+        with _bt("warm"):
+            _warm()
+
     # Daemon thread: never blocks process exit, never blocks uvicorn boot.
-    _threading.Thread(target=_warm, name="qwen-warm", daemon=True).start()
+    _threading.Thread(target=_warm_locked if _one_brain_on() else _warm, name="qwen-warm", daemon=True).start()
 
 
 @app.on_event("shutdown")
@@ -1994,25 +2006,57 @@ async def _persist_learning_on_shutdown() -> None:
             _organs = dict(_EP_sd._ORGANS)
         except Exception:
             _organs = {}
-        saved = 0
-        for cache_key, chat in list(_BRAIN_CHATS.items()):
+        # A session counts as FLUSHED only when its D5 store or its facts were actually written (FAILURE_LOG
+        # 2026-10-13: a swallowed facts-save error used to be counted here as a flushed session).
+        saved, empty, failed = 0, 0, []
+
+        def _flush(cache_key, chat, organ):
+            nonlocal saved, empty
             try:
-                save_session_learning(cache_key, chat, _organs.get(cache_key))
+                rec = save_session_learning(cache_key, chat, organ)
+            except Exception as e:
+                failed.append((cache_key, {"save_session_learning": "%s: %s" % (type(e).__name__, e)}))
+                return
+            if rec.get("errors"):
+                failed.append((cache_key, rec["errors"]))
+            if rec.get("saved"):
                 saved += 1
-            except Exception:
-                continue
-        # any D5 session whose chat is not in _BRAIN_CHATS (e.g. a stub-renderer session) still gets its store saved
-        for cache_key, organ in _organs.items():
-            if cache_key not in _BRAIN_CHATS:
-                try:
-                    save_session_learning(cache_key, None, organ)
-                except Exception:
-                    continue
+            elif not rec.get("errors"):
+                empty += 1
+
+        if _one_brain_on():
+            # M2: persistence is BRAIN-level -- one checkpoint per brain (its key), not one per conversation -- and
+            # the flush takes the turn lock so it never interleaves with a turn (bounded; on a timeout it flushes
+            # anyway and says so: a shutdown must not hang on a stuck turn).
+            from webapp.brain_turn_lock import TurnBusy, brain_turn, turn_wait_timeout_s
+
+            def _flush_brains():
+                for bk, chat in list(_ONE_BRAIN.chats.items()):
+                    _flush(bk, chat, _organs.get(bk))
+                for bk, organ in _organs.items():
+                    if bk not in _ONE_BRAIN.chats:
+                        _flush(bk, None, organ)
+            try:
+                with brain_turn("shutdown_flush", timeout=turn_wait_timeout_s()):
+                    _flush_brains()
+            except TurnBusy:
+                print("[webapp] shutdown: turn lock not granted in time; flushing the brain without it", flush=True)
+                _flush_brains()
+        else:
+            for cache_key, chat in list(_BRAIN_CHATS.items()):
+                _flush(cache_key, chat, _organs.get(cache_key))
+            # any D5 session whose chat is not in _BRAIN_CHATS (e.g. a stub-renderer session) still gets its store saved
+            for cache_key, organ in _organs.items():
+                if cache_key not in _BRAIN_CHATS:
+                    _flush(cache_key, None, organ)
         try:
             save_xedge()
         except Exception:
             pass
-        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s)", flush=True)
+        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s); {empty} had nothing to "
+              f"save; {len(failed)} FAILED", flush=True)
+        for cache_key, errs in failed:
+            print(f"[webapp] shutdown: PERSISTENCE SAVE FAILED for {cache_key!r}: {errs}", flush=True)
     except Exception as e:
         print(f"[webapp] shutdown: cross-session persistence flush skipped ({type(e).__name__}: {e})", flush=True)
 
@@ -3009,7 +3053,28 @@ def llm_chat_reset(name: str, mode: str = "tier1") -> JSONResponse:
 # `stub`/`raw` renderer — the moat + recall are CPU; only fluent surface
 # form needs the GPU. So the console works out of the box, GPU-light.
 
-_BRAIN_CHATS: dict[tuple[str, str, str], object] = {}
+# ONE BRAIN, MANY CONVERSATIONS -- M2 (docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md section 2): every
+# per-conversation registry below is a dict-shaped VIEW of one field of a `Context` (webapp/one_brain.py), one Context
+# per conversation key (session, brain, renderer) in `_CONTEXTS`. The dict semantics (get/set/pop/setdefault/in/order)
+# are unchanged, so with BRAIN_ONE_BRAIN unset (the default) every turn runs exactly as before. With BRAIN_ONE_BRAIN=1
+# the brain-level rows live on `_ONE_BRAIN` (one shared ChatBrain per (brain, renderer)) and `_BRAIN_CHATS` stays empty.
+from webapp import one_brain as _OB
+_CONTEXTS = _OB.ContextRegistry()
+_ONE_BRAIN = _OB.Brain()
+_OB.TICK_ADAPTER = _OB.TickAdapter(_ONE_BRAIN)
+_BRAIN_CHATS = _CONTEXTS.view("chat")   # OFF: each conversation's own ChatBrain (Context.chat)
+
+
+def _one_brain_on() -> bool:
+    """BRAIN_ONE_BRAIN (webapp/one_brain.py `one_brain_on`; default OFF)."""
+    return _OB.one_brain_on()
+
+
+def _bkey(cache_key):
+    """The key a BRAIN-LEVEL registry (D5 episodic store, idle-replay record, causal organ, sleep/consolidation
+    bookkeeping, persistence identity) is keyed by: the conversation key itself when BRAIN_ONE_BRAIN is off (today's
+    per-session brains), the brain key ('__one_brain__', brain, renderer) when it is on."""
+    return _OB.brain_key(cache_key) if _one_brain_on() else cache_key
 # Parallel cache of the RICH composer (the multi-sentence grounded path)
 # keyed identically to _BRAIN_CHATS. The RichAnswerComposer WRAPS the warm
 # ChatBrain (reuse-by-import, NO sim/ edit): on rich=True one turn becomes a
@@ -3017,7 +3082,7 @@ _BRAIN_CHATS: dict[tuple[str, str, str], object] = {}
 # elaboration), each sentence VERIFY-checked against the brain so the
 # no-confab moat EXTENDS to multi-sentence. Built lazily on first rich turn
 # (it carries discourse-thread state so 'tell me more' walks forward).
-_BRAIN_RICH: dict[tuple[str, str, str], object] = {}
+_BRAIN_RICH = _CONTEXTS.view("rich")   # Context.rich (conversation-level at ON too: the discourse thread)
 
 # ─── AFFECT / EMOTION (Gate-B, 2026-08-12): the brain's live MOOD colors the production turn ─────────────────
 # The mood is a persistent spiking STATE read NEURALLY off the co-resident graded-affect ladder
@@ -3027,7 +3092,7 @@ _BRAIN_RICH: dict[tuple[str, str, str], object] = {}
 # UNCHANGED (affect only colors an ALREADY-matched answer; it can never manufacture a fact or flip an abstain).
 # Per-session mood STATE (EMA of the appraised valence/arousal), keyed identically to the ChatBrain cache. Held
 # host-side; the NEURAL read (the ladder differential) is the load-bearing spiking part. Cleared on reset.
-_SESSION_MOOD: dict[tuple[str, str, str], dict] = {}
+_SESSION_MOOD = _CONTEXTS.view("mood")   # Context.mood: the PHASIC mood (ON adds the brain-level tonic baseline)
 _MOOD_EMA_DECAY = 0.4   # a strong induction turn dominates; a neutral turn (0 affective hits) HOLDS the prior mood
 
 # ─── INTERNAL WORLDVIEW / AFFECTIVE WORLD-MODEL (Gate-B, E2): the brain's spiking forward model predicts the
@@ -3035,7 +3100,7 @@ _MOOD_EMA_DECAY = 0.4   # a strong induction turn dominates; a neutral turn (0 a
 # Per-session forward-model STATE (the affective context sign + the prediction the model held from the prior
 # turn), keyed identically to the ChatBrain cache. Held host-side; the queryable PREDICTION + the surprise
 # MISMATCH are the load-bearing spiking reads. Cleared on reset. See research/runners/worldmodel_production_organ.py.
-_SESSION_WORLDVIEW: dict[tuple[str, str, str], dict] = {}
+_SESSION_WORLDVIEW = _CONTEXTS.view("worldview")   # Context.worldview
 
 
 def _get_affect_organ():
@@ -3100,7 +3165,7 @@ def _get_self_schema_organ():
 # across a span. The organ's process singleton accumulates a referent codebook across ALL sessions, so a hold-query
 # would re-materialize other conversations' referents — the buffer MUST be per-session. Keyed identically to the
 # ChatBrain cache; cleared on reset. See research/runners/d6_multiref_wm_production_organ.py. ────────────────────
-_SESSION_MULTIREF: dict = {}
+_SESSION_MULTIREF = _CONTEXTS.view("multiref")   # Context.multiref
 
 # ─── ACTIVITY-SILENT WORKING MEMORY (Gate-B, Mongillo 2008, 2026-08-26): a maintenance-mode swap on the anaphora
 # referent store — the discourse FOCUS is held in short-term synaptic FACILITATION (cp_stp_u) across an intervening
@@ -3108,14 +3173,14 @@ _SESSION_MULTIREF: dict = {}
 # PER-SESSION (the focus + which-referent-in-which-assembly is THIS conversation's; a process singleton would leak one
 # conversation's focus into another's recall), keyed identically to the ChatBrain cache; cleared on reset. DEFAULT-OFF
 # (BRAIN_SILENT_WM). See research/runners/activity_silent_wm_production_organ.py. ──────────────────────────────────────
-_SESSION_SILENT_WM: dict = {}
+_SESSION_SILENT_WM = _CONTEXTS.view("silent_wm")   # Context.silent_wm
 
 # ─── DISCOURSE EVENT REGISTER (Gate-B, D3): the running "who-was-doing-it-BEFORE across a connective" turn STATE
 # (boundary_seen / heard_any), keyed identically to the ChatBrain cache. The spiking register OBJECT itself is built
 # once with the agent (attached as _event_register); only this small per-conversation fold state lives here so a
 # before-answer is surfaced ONLY after a connective actually opened a boundary this conversation. Cleared on reset.
 # See research/runners/d3_discourse_event_register_production_organ.py. ───────────────────────────────────────────
-_SESSION_DISCOURSE: dict = {}
+_SESSION_DISCOURSE = _CONTEXTS.view("discourse")   # Context.discourse
 
 # ─── PROSPECTIVE MEMORY (Gate-B, 2026-08-13): a spiking intention-LATCH + BA10 cue-MONITOR that HOLDS a deferred
 # intention ("remind me to X when Y") across intervening turns and RELEASES it only when the cue appears. The latch
@@ -3123,14 +3188,14 @@ _SESSION_DISCOURSE: dict = {}
 # conversation's — so the organ is PER-SESSION (keyed identically to the ChatBrain cache; cleared on reset). The
 # substrate calibration (homeostat bias + NMDA-plateau threshold) is process-cached per seed, so only the
 # intention-holding bridge is per-session. See research/runners/prospective_memory_production_organ.py. ────────────
-_SESSION_PMEM: dict = {}
+_SESSION_PMEM = _CONTEXTS.view("pmem")   # Context.pmem
 
 # ─── SELF-INITIATED UTTERANCE (2026-08-18): the first INTERNALLY-GENERATED turn class. On an IDLE/EMPTY turn the brain
 # SELECTS a stored concept ITSELF (a curiosity-biased CA3 wander on cupy; the mouth's curiosity-top decodable concept
 # on the numpy-deferred path) and SPEAKS it through the OneBrainComposer mouth. PER-SESSION organ (its own self-
 # contained selection substrate + mouth, like _SESSION_MULTIREF), keyed identically to the ChatBrain cache; cleared on
 # reset. See research/runners/self_initiated_production_organ.py. ──────────────────────────────────────────────────
-_SESSION_SELFINIT: dict = {}
+_SESSION_SELFINIT = _CONTEXTS.view("selfinit")   # Context.selfinit (design row "B target, C today": declared residual)
 # The DEFAULT-ON master switch (the production-integration anchor). BRAIN_SELF_INITIATE=0 disables the idle block
 # byte-identically (the row STAYS on_by_default:YES). Flipping this to False would turn the faculty OFF by default.
 _SELF_INITIATE_DEFAULT_ON = True
@@ -3391,7 +3456,7 @@ def _get_episodic_organ_existing(cache_key):
     Used by the continuous tick's `consolidate_used_memory`. Returns None if no organ exists for this session."""
     try:
         import research.runners.d5_episodic_production_organ as _EP
-        return _EP._ORGANS.get(cache_key)
+        return _EP._ORGANS.get(_bkey(cache_key))   # M2: the brain's one D5 store when BRAIN_ONE_BRAIN is on
     except Exception:
         return None
 
@@ -3400,7 +3465,10 @@ def _get_chat_existing(cache_key):
     """The session's live chat IF one was already built this conversation. Used by the continuous tick's DA-encoding
     substrate-homeostasis consolidation pass (`consolidate_substrate_homeostasis`) — never builds a chat just to
     consolidate (the Turrigiano synaptic-scaling pass only refines a store the live turns already wrote). Returns None
-    if no chat exists for this session yet."""
+    if no chat exists for this session yet. M2, BRAIN_ONE_BRAIN on: the shared ChatBrain with THIS conversation bound
+    to it (its conversation-level fields resident; the caller, the idle tick, holds the turn lock), or None."""
+    if _one_brain_on():
+        return _one_brain_chat_for(cache_key, build=False)
     return _BRAIN_CHATS.get(cache_key)
 
 
@@ -3465,13 +3533,42 @@ def _get_reconsolidation_organ():
     return get_organ(seed=_brain_chat_seed())
 
 
+# ── QUESTION-TURN GUARD for the assertion paths (Stage-2 HANDOFF 18a; HOST SCAFFOLD, docs/SCAFFOLD-LEDGER.md) ──────
+# The D2 surprise extractor and the B3 extractor strip a leading "does"/"is" as a function word, so a bare yes/no
+# question ("does crow chase moth") read as an ASSERTION: it rewrote the held fact (reconsolidation), was answered
+# "That surprises me" as if asserted, and was REJECTED by B3 as a contradiction. These pure helpers decide, from the
+# turn's form only (`brain_chat_tui.is_interrogative_turn`), that a question opens none of those assertion paths.
+# Escape: BRAIN_ACQUIRE_QUESTIONS=1 (the pre-fix behaviour). Brain-free tests: tests/test_interrogative_no_acquire.py.
+def _question_turn(msg) -> bool:
+    """True -> `msg` is a question by form and the escape is unset: no assertion-path write, notice or reject."""
+    try:
+        from research.runners.brain_chat_tui import interrogative_blocks_store
+        return bool(interrogative_blocks_store(msg))
+    except Exception:
+        return False
+
+
+def _reconsolidation_action(msg, rc_on, surprised, p_stored, p_asserted):
+    """The reconsolidation write decision for one turn: None (no window: off, not surprised, or a re-statement),
+    'blocked_interrogative' (the window would open but the turn is a question: no write), or 'rewrite'."""
+    if not (rc_on and surprised and str(p_asserted).lower() != str(p_stored).lower()):
+        return None
+    return "blocked_interrogative" if _question_turn(msg) else "rewrite"
+
+
+def _held_readout(agent, action, stored_patient) -> str:
+    """On a QUESTION turn whose queried patient differs from the held one: an honest read-out of what is held, in place
+    of the assertion-framed surprise notice ("That surprises me -- my mismatch monitor fired ...")."""
+    return f"What I hold is: {agent} {action} {stored_patient}. "
+
+
 def _get_causal_organ(cache_key):
     """The PER-SESSION spiking causal why/what-if forward-model organ (lazy build ~1-2s on the first causal turn).
     Keyed by the ChatBrain cache (NOT a process singleton): the organ grounds READ-ONLY against THIS brain's live
     composer (its event set + causal curriculum are gated by that composer's moat recall), so a per-brain organ
     keeps one brain's grounding out of another's. Cleared on reset. See research/runners/causal_whatif_production_organ.py."""
     from research.runners.causal_whatif_production_organ import get_organ
-    return get_organ(cache_key, seed=_brain_chat_seed())
+    return get_organ(_bkey(cache_key), seed=_brain_chat_seed())   # M2: one organ per brain when BRAIN_ONE_BRAIN is on
 
 
 def _get_noncontradiction_organ():
@@ -3500,6 +3597,8 @@ def _episodic_store_ok() -> bool:
     residual: the recall GATE is still spiking + load-bearing; only the WRITE is amortized to the cupy deployment).
     `BRAIN_EPISODIC_STORE` (1/true/on force-ON, 0/off force-OFF) overrides the backend gate for tests/deployments."""
     import os as _os
+    if _OB.freeze_learning_on():   # M2 lesion arm: the shared store's plasticity gate is shut (no episode is written)
+        return False
     v = _os.environ.get("BRAIN_EPISODIC_STORE")
     if v is not None:
         return v.strip().lower() not in ("0", "false", "no", "off", "")
@@ -3541,12 +3640,22 @@ def _emotion_category_on() -> bool:
 
 def _update_session_mood(cache_key: tuple, appr: dict) -> dict:
     """EMA-update this session's mood from the message appraisal. A message with NO strongly-affective words
-    (n_hits==0) HOLDS the prior mood (cross-turn persistence); an affective message moves it."""
-    m = _SESSION_MOOD.get(cache_key) or {"valence": 0.0, "arousal": 0.0}
+    (n_hits==0) HOLDS the prior mood (cross-turn persistence); an affective message moves it.
+
+    M2, BRAIN_ONE_BRAIN on (design section 1 "Affect", owner call 2): this EMA is the PHASIC mood of this conversation;
+    the brain also keeps a TONIC baseline (a slow EMA over every conversation's affective appraisals, `Brain.tonic`),
+    and a conversation's phasic mood STARTS from the tonic baseline instead of neutral -- a hard exchange with one person
+    leaves a trace when the next one arrives. A single conversation is unchanged (its first mood starts from a tonic
+    that no affective turn has moved yet)."""
+    m = _SESSION_MOOD.get(cache_key)
+    if not m:
+        m = _ONE_BRAIN.tonic_seed() if _one_brain_on() else {"valence": 0.0, "arousal": 0.0}
     if int(appr.get("n_hits", 0)) > 0:
         d = _MOOD_EMA_DECAY
         m = {"valence": d * m["valence"] + (1.0 - d) * float(appr["valence"]),
              "arousal": d * m["arousal"] + (1.0 - d) * float(appr["arousal"])}
+        if _one_brain_on():
+            _ONE_BRAIN.update_tonic(appr)
     _SESSION_MOOD[cache_key] = m
     return m
 
@@ -3842,8 +3951,9 @@ def _open_ended_acquire_route(chat, msg) -> bool:
 
 
 def _category_inherit_on() -> bool:
-    """BRAIN_CATEGORY_INHERIT (default OFF; anchor `_CATEGORY_INHERIT_DEFAULT_ON` in webapp/category_inherit_chat.py):
-    category inheritance on the strict route's recall miss (Stage-1 C1). Off -> no wrapper, no trace key."""
+    """BRAIN_CATEGORY_INHERIT (default ON since the flip, 2026-10-11 RULING c1-flip-go; anchor
+    `_CATEGORY_INHERIT_DEFAULT_ON` in webapp/category_inherit_chat.py): category inheritance on the strict route's
+    recall miss (Stage-1 C1). Explicit =0 (the byte-identical pre-flip escape) -> no wrapper, no trace key."""
     from webapp.category_inherit_chat import category_inherit_enabled
     return category_inherit_enabled()
 
@@ -3854,6 +3964,22 @@ def _category_inherit_trace(chat):
         return turn_trace(chat)
     except Exception as e:  # never let a trace read crash a turn
         return {"error": f"{type(e).__name__}: {e}"}
+
+
+def _attach_category_inherit(resp, chat):
+    """RULING c1-stamp-fix: the ONE `category_inherit` stamp site, called before EVERY return path
+    (rich, single-fact, and the comprehension-repair abstain early return). The key is present
+    exactly when the organ engaged this turn (turn_stamp) and absent otherwise, so a missing
+    stamp always means the pathway never fired. Flag off or nothing to say -> nothing attached."""
+    if not _category_inherit_on():
+        return
+    try:
+        from webapp.category_inherit_chat import turn_stamp
+        tr = turn_stamp(chat)
+    except Exception as e:  # never let a stamp read crash a turn
+        tr = {"error": f"{type(e).__name__}: {e}"}
+    if tr is not None:
+        resp["category_inherit"] = tr
 
 
 def _oeg_on() -> bool:
@@ -4034,6 +4160,140 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
     return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D), composer_kwargs=cb_kwargs or None)
 
 
+# ONE BRAIN, MANY CONVERSATIONS -- STEP 1 (owner-approved 2026-10-13): the imported knowledge store loaded ONCE per
+# server process and shared READ-ONLY by every conversation. Each conversation's TieredFactStore wraps a per-
+# conversation `SharedLTMView` (its own trace state, one lock per store) over the SAME store object, instead of its
+# own ~5.44 GiB copy of wikidata_100k. Read-only analysis + thread safety: docs/drafts/shared-ltm/WORKLOG.md;
+# mechanism: research/runners/shared_ltm.py. DEFAULT ON since 2026-10-15 (design section 5: default-off, then flip
+# after validation): the flip battery research/coordination/2026-10-13-shared-ltm-flip-JOBS.md Amendment A passed
+# A1 (on == offiso, whole record, 6/6 gate seeds) and A2 (offiso vs off: every reply-level field identical, 6/6; the
+# one moved key is the non-reply d6_hebbian.held.readout on 5/6, the declared RNG-isolation read-out change).
+# BRAIN_SHARED_LTM=0 is the escape: every conversation loads its own store through `_load_or_build_ltm_store`, the
+# exact pre-change call.
+_SHARED_LTM_DEFAULT_ON = True
+# cache key (see `_shared_ltm_key`) -> the loaded store + its lock. Lives for the process; never evicted.
+_SHARED_LTM: dict = {}
+# Env read inside the RFPhasorComposer / ShardedPhasorStore constructors that changes the loaded store (part of the
+# cache key; tests/test_shared_ltm.py scans those constructors and fails on an env read missing here).
+_SHARED_LTM_COMPOSER_ENV = ("BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_INDEX", "BRAIN_METACOG_SPIKING_MARGIN")
+# GLOBAL-RNG HYGIENE (review of claude-build/shared-ltm, 2026-10-13): every SimulationBridge build reseeds the
+# process-global np.random / random / cp.random streams to the bridge's seed (sim/bridge.py `_initialize_rng`), and the
+# LTM builds bridges at load and lazily on a shard's first recall (seed 42). With BRAIN_LTM_RNG_ISOLATE on, the LTM
+# load and every lazy LTM bridge build leave those streams untouched (research/runners/global_rng_guard.py), so a
+# recall no longer resets the chat's global noise to the seed-42 stream, and a shared store cannot carry one
+# conversation's history into another's noise. FORCED ON whenever the shared store is on (sharing is only byte-safe
+# with it); otherwise DEFAULT OFF (BRAIN_LTM_RNG_ISOLATE=1 opts in). Both flags off: the replies are byte-identical to
+# base 6a3bfe247 on the seed-7 three-session turnset (18/18 sha256, docs/drafts/shared-ltm/WORKLOG.md step 6); other paths expected unchanged.
+_LTM_RNG_ISOLATE_DEFAULT_ON = False
+
+
+def _shared_ltm_on() -> bool:
+    """Unset/blank -> _SHARED_LTM_DEFAULT_ON (on). BRAIN_SHARED_LTM=1/true/on/yes turns it on; anything else is off.
+    FORCED ON with BRAIN_ONE_BRAIN (M2): one brain reads one process-shared prior, RNG-isolated (`_ltm_rng_isolate_on`)."""
+    if _one_brain_on():
+        return True
+    env = os.environ.get("BRAIN_SHARED_LTM")
+    if env is None or not env.strip():
+        return _SHARED_LTM_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _ltm_rng_isolate_on() -> bool:
+    """True whenever the shared store is on (forced); else BRAIN_LTM_RNG_ISOLATE=1/true/on/yes, default
+    _LTM_RNG_ISOLATE_DEFAULT_ON (off)."""
+    if _shared_ltm_on():
+        return True
+    env = os.environ.get("BRAIN_LTM_RNG_ISOLATE")
+    if env is None or not env.strip():
+        return _LTM_RNG_ISOLATE_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _file_stamp(path) -> tuple:
+    """(mtime_ns, size) of `path`, or None if absent -- a rebuilt bundle file changes its stamp."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return (int(st.st_mtime_ns), int(st.st_size))
+
+
+def _shared_ltm_key(ltm_bundle: str, seed: int, D: int, n_shards, enable_codebook_cache: bool,
+                    enable_decode_escalation: bool) -> tuple:
+    """Everything that decides which store `_load_or_build_ltm_store` returns; two conversations share a store only
+    when every one matches.
+      * A persisted bundle (manifest.json with n_shards): `ShardedPhasorStore.load` takes seed / D / n_shards from the
+        MANIFEST, so the caller's are irrelevant and left out (the tiny-demo and developed paths then share one copy);
+        the bundle files' (mtime, size) stamps are in, so a rebuilt bundle is a new key.
+      * A facts-only bundle (built at load): the caller's seed, D, n_shards plus the facts.json stamp.
+    Both: the codebook-cache / decode-escalation / substrate-store / batched-scan settings and the composer
+    construction env (`_SHARED_LTM_COMPOSER_ENV`)."""
+    from research.runners.developed_brain_io import _ltm_substrate_store_on, _ltm_batched_substrate_scan_on
+    root = os.path.realpath(str(ltm_bundle))
+    persisted = False
+    try:
+        mani = json.loads((Path(root) / "manifest.json").read_text(encoding="utf-8"))
+        persisted = isinstance(mani, dict) and "n_shards" in mani
+    except Exception:
+        persisted = False
+    if persisted:
+        source = ("persisted", root) + tuple(_file_stamp(Path(root) / f)
+                                             for f in ("manifest.json", "facts.json", "composites.npz"))
+    else:
+        source = ("build", root, int(seed), int(D), None if n_shards is None else int(n_shards),
+                  _file_stamp(Path(root) / "facts.json"))
+    return (source, bool(enable_codebook_cache), bool(enable_decode_escalation),
+            bool(_ltm_substrate_store_on()), bool(_ltm_batched_substrate_scan_on()),
+            tuple((k, os.environ.get(k)) for k in _SHARED_LTM_COMPOSER_ENV))
+
+
+def _load_ltm_isolated(ltm_bundle: str, seed: int, n_shards, D: int, enable_codebook_cache, enable_decode_escalation):
+    """`_load_or_build_ltm_store` with the process-global RNG streams preserved across the load, and every shard set
+    to preserve them across its own lazy bridge builds (`RFPhasorComposer._isolate_global_rng`)."""
+    from research.runners.global_rng_guard import preserved_global_rng
+    with preserved_global_rng():
+        store = _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
+                                         enable_codebook_cache=enable_codebook_cache,
+                                         enable_decode_escalation=enable_decode_escalation)
+    for sh in getattr(store, "shards", None) or ():
+        sh._isolate_global_rng = True
+    return store
+
+
+def _ltm_store_for_conversation(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128,
+                                enable_codebook_cache: bool = None, enable_decode_escalation: bool = None):
+    """The LTM one new conversation's TieredFactStore wraps (None = no LTM available).
+      * BRAIN_SHARED_LTM on: a new `SharedLTMView` over the process-shared store for this key, loaded (RNG-isolated)
+        on the first conversation and reused by every later one. A store whose read path is not shown pure (spiking
+        cleanup / spiking margin / read noise) is not shared: that conversation gets its own copy (`view_for`).
+      * off, BRAIN_LTM_RNG_ISOLATE on: a private copy per conversation, RNG-isolated (`_load_ltm_isolated`).
+      * off (the default): `_load_or_build_ltm_store(...)`, a private copy per conversation, the pre-change call."""
+    if not _shared_ltm_on():
+        if not _ltm_rng_isolate_on():
+            return _load_or_build_ltm_store(ltm_bundle, seed=seed, n_shards=n_shards, D=D,
+                                            enable_codebook_cache=enable_codebook_cache,
+                                            enable_decode_escalation=enable_decode_escalation)
+        return _load_ltm_isolated(ltm_bundle, seed, n_shards, D, enable_codebook_cache, enable_decode_escalation)
+    if enable_codebook_cache is None:
+        enable_codebook_cache = _ltm_codebook_cache_on()
+    if enable_decode_escalation is None:
+        enable_decode_escalation = _ltm_decode_escalation_on()
+    from research.runners import shared_ltm as _shared_ltm
+    key = _shared_ltm_key(ltm_bundle, seed, D, n_shards, enable_codebook_cache, enable_decode_escalation)
+    return _shared_ltm.view_for(
+        _SHARED_LTM, key,
+        lambda: _load_ltm_isolated(ltm_bundle, seed, n_shards, D, enable_codebook_cache, enable_decode_escalation),
+        log=lambda m: print("[webapp] " + m, flush=True))
+
+
+def _developed_ltm_seed(bundle: str) -> int:
+    """The seed `load_developed_brain(bundle)` builds an LTM with when it has to build one (its `seed=None` default:
+    the developed bundle's own brain.json seed). The persisted fast path ignores it (the LTM manifest's seed wins)."""
+    from research.runners.developed_brain_io import _read_manifest
+    manifest = _read_manifest(bundle) or {}
+    return int(manifest.get("seed", 42))
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -4102,7 +4362,8 @@ def _build_chat_brain(brain: str, renderer: str):
             try:
                 from research.runners.developed_brain_io import _inner_agent
                 from research.runners.tiered_fact_store import TieredFactStore
-                _tiny_ltm = _load_or_build_ltm_store(_tiny_ltm_bundle, seed=_brain_chat_seed())
+                # BRAIN_SHARED_LTM=1: one process-shared read-only store; default: this conversation's own copy, as before
+                _tiny_ltm = _ltm_store_for_conversation(_tiny_ltm_bundle, seed=_brain_chat_seed())
                 if _tiny_ltm is not None:
                     _tiny_inner = _inner_agent(agent)
                     _tiny_inner.composer = TieredFactStore(_tiny_inner.composer, _tiny_ltm)
@@ -4161,11 +4422,23 @@ def _build_chat_brain(brain: str, renderer: str):
         # brain auto-sizes it from THIS bundle's own fact count whenever the resolved composer_kind is 'onebrain'
         # (byte-identical no-op for 'rf'/'rate'/'slotbinder', i.e. every bundle on disk today) -- see
         # _onebrain_k_max_override()'s docstring + the finding it closes.
+        # ONE BRAIN, MANY CONVERSATIONS (step 1): with BRAIN_SHARED_LTM on the knowledge store comes from the same
+        # process-shared read-only cache as the tiny-demo path (same loader, same key), handed in as `ltm_store`; with
+        # only BRAIN_LTM_RNG_ISOLATE on, a private RNG-isolated copy is handed in the same way (so its load does not
+        # reseed the global RNG either). Both off (the default) -> no `ltm_store` kwarg at all and load_developed_brain
+        # loads its own copy from `ltm_bundle`: the same call as before the change.
+        _ltm_kw = {"ltm_bundle": _ltm_bundle}
+        if _ltm_bundle is not None and (_shared_ltm_on() or _ltm_rng_isolate_on()):
+            _ltm_store = _ltm_store_for_conversation(_ltm_bundle, seed=_developed_ltm_seed(bundle),
+                                                     enable_codebook_cache=_ltm_codebook_cache_on(),
+                                                     enable_decode_escalation=_ltm_decode_escalation_on())
+            if _ltm_store is not None:
+                _ltm_kw = {"ltm_bundle": None, "ltm_store": _ltm_store}
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                composer_kind=_composer_kind_override,
                                                integrated_loop=_integrated_loop_enabled(),
-                                               ltm_bundle=_ltm_bundle,
+                                               **_ltm_kw,
                                                enable_codebook_cache=_ltm_codebook_cache_on(),
                                                enable_decode_escalation=_ltm_decode_escalation_on(),
                                                onebrain_k_max=_onebrain_k_max_override())
@@ -4228,6 +4501,9 @@ def _prewarm_discard_scratch_session(cache_key: tuple) -> None:
         _CA_scratch.reset_organ(cache_key)
     except Exception:
         pass
+    _ctx_scratch = _CONTEXTS.remove(cache_key)   # M2: the scratch conversation's Context goes too
+    if _ctx_scratch is not None:
+        _ONE_BRAIN.release(_ctx_scratch)
 
 
 def _prewarm_scratch_kernel_warm(default_brain: str, renderer: str) -> None:
@@ -4261,6 +4537,13 @@ def _prewarm_scratch_kernel_warm(default_brain: str, renderer: str) -> None:
     caller (never blocks boot; this is a latency optimization, not a correctness path)."""
     scratch_key = (_PREWARM_SCRATCH_SESSION, default_brain, renderer)
     try:
+        if _one_brain_on():
+            # M2: one brain -- the scratch turn is a throwaway CONVERSATION on the shared brain (its Context is
+            # discarded below; the warm thread holds the turn lock at ON). Building a second chat here would write
+            # into the brain-keyed registries from a chat that is not the brain's.
+            _brain_chat_turn(BrainChatRequest(session=scratch_key[0], message="what does the dog chase?",
+                                              brain=default_brain, renderer=renderer), scratch_key, renderer)
+            return
         chat, source = _build_chat_brain(default_brain, renderer)
         chat._brain_chat_source = source  # type: ignore[attr-defined]
         _BRAIN_CHATS[scratch_key] = chat
@@ -4514,6 +4797,12 @@ class BrainChatRequest(BaseModel):
     # existing callers are byte-identical. See research/runners/vision_identity_production_organ.py.
     percept: str | None = None
     # ── END faculty:vision-identity ──
+    # INTERLOCUTOR (one-brain M2; owner ruling 2026-10-13: "a typed name for now", OpenAI-compatible direction): the
+    # optional name of who is speaking in this conversation. `user` is the OpenAI-style alias (the request-level
+    # `user` field). Stored on this conversation's Context ONLY: it never reaches the brain-level store, a source tag
+    # or another conversation's reply (a fact taught here is framed "Someone told me" elsewhere, never with the name).
+    interlocutor: str | None = None
+    user: str | None = None
 
 
 def _json_safe(obj, _path="", _bad=None):
@@ -4554,6 +4843,64 @@ def _safe_json_response(resp, where):
     return JSONResponse(safe)
 
 
+def brain_chat_cache_key(req) -> tuple:
+    """The (session, brain, renderer) key `brain_chat` caches a ChatBrain and every per-session registry under.
+    `brain_chat` computes its own key by calling this (renderer resolved through `_default_brain_renderer()` when the
+    request names none), so a caller naming a session to release cannot drift from the handler."""
+    return (req.session, req.brain, (req.renderer or _default_brain_renderer()).lower())
+
+
+def _evict_brain_chat_session(cache_key) -> None:
+    """Drop everything this server holds for one (session, brain, renderer) key: the warm ChatBrain, the rich
+    composer, and the per-session registries this teardown covers (their per-session organs go with them). This is
+    the `req.reset` teardown, moved here VERBATIM (same pops, same order); `brain_chat` with reset=True calls
+    exactly this. The regression-battery worker calls it, opt-in, to release a session after its last use (finding
+    2026-10-12-battery-worker-per-kind-retention: one ChatBrain, ~5.4 GiB, per session key). Known pre-existing gap,
+    not changed here: common_ground_ledger_production_organ.reset_organ is not in this teardown."""
+    _BRAIN_CHATS.pop(cache_key, None)
+    _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
+    try:
+        from webapp import continuous_engine as _CE1
+        _CE1.forget_session(cache_key)  # drop this session's between-turn inner-life + last-request
+    except Exception:
+        pass
+    _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+    if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
+        sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
+    _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
+    _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+    _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
+    _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
+    try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
+        import research.runners.idle_replay_organ as _IR_reset
+        _IR_reset.reset_organ(cache_key)
+    except Exception:
+        pass
+    _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
+    _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
+    try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
+        import research.runners.d5_episodic_production_organ as _EP_reset
+        _EP_reset.reset_episodic_organ(cache_key)
+    except Exception:
+        pass
+    try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
+        import research.runners.causal_whatif_production_organ as _CA_reset
+        _CA_reset.reset_organ(cache_key)
+    except Exception:
+        pass
+    try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
+        from webapp import false_belief_chat as _FBC_reset
+        _FBC_reset.reset_session(cache_key)
+    except Exception:
+        pass
+    # M2: the conversation's Context goes with it (every field above is already cleared). At BRAIN_ONE_BRAIN on, the
+    # brain-level rows (the shared store, D5, causal, idle-replay record) are keyed by the brain key, so the resets
+    # above leave them alone; the shared chat only forgets that this conversation was the resident one.
+    _ctx_gone = _CONTEXTS.remove(cache_key)
+    if _ctx_gone is not None:
+        _ONE_BRAIN.release(_ctx_gone)
+
+
 @app.post("/api/brain-chat")
 def brain_chat(req: BrainChatRequest) -> JSONResponse:
     """One turn talking to a DEVELOPED brain (the INTERACT centerpiece).
@@ -4568,7 +4915,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                                     # "I don't know about that." on abstain
           "abstained": bool,        # the no-confab MOAT fired (the brain
                                     # was never taught this) — shown distinctly
-          "recalled_svo": [a, v, p] | null,   # the stored fact the gate hit
+          "recalled_svo": [a, v, p] | null,   # the stored fact the gate hit (null on a derived answer)
+          "derived": bool,          # the answer is the brain's own multi-hop inference, not a recall
+          "derived_from": [[a, v, p], ...] | null,  # the hop facts it was reasoned from (derived only)
+          "derived_svo": [a, v, p] | null,    # the conclusion a derived answer states (derived only;
+                                    # for a multistep/transitive answer it was never told)
           "verified": bool,         # the render re-parsed back to the fact
           "renderer": str,          # which renderer produced the surface form
           "brain": str, "source": str,
@@ -4589,59 +4940,65 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
           # rich=True only (the multi-sentence grounded path):
           "rich": bool,             # whether the rich path produced this turn
           "n_sentences": int,       # number of brain-sourced sentences
-          "supporting_facts": [[a, v, p], ...],   # the verified SVOs behind it
+          "supporting_facts": [[a, v, p], ...],   # the verified SVOs behind it; on a derived answer whose
+                                    # conclusion was never told, the hops + other kept facts (the
+                                    # conclusion itself is in derived_svo, not here)
           "followup": bool,         # the turn was a 'tell me more'/'why?'
         }
     """
-    renderer = (req.renderer or _default_brain_renderer()).lower()
+    # The ONE key definition (brain_chat_cache_key): the handler computes its key through the helper so a caller
+    # naming a session to release (the regression-battery worker) can never drift from the key cached here.
+    cache_key = brain_chat_cache_key(req)
+    renderer = cache_key[2]
+    _CE0 = None
+    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation.
+        # Before the turn lock (M0): a turn WAITING for the lock already reads as active, so the tick skips it.
+        from webapp import continuous_engine as _CE0
+        _CE0.mark_request(cache_key)
+    except Exception:
+        pass
+    # ONE-BRAIN TURN LOCK (M0, docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md section 2): one turn at a time
+    # against the process-shared organs, FIFO; the idle tick takes the same lock one cheap step at a time. Covers the
+    # backend pin, reset, build and the whole `brain_reply` pipeline (the Qwen render is called from inside
+    # `brain_reply`, so it is inside the lock too). A turn not admitted within BRAIN_TURN_WAIT_TIMEOUT_S (default 300)
+    # gets a `busy` reply in the normal shape. Escape: BRAIN_TURN_LOCK=0. Wait time: webapp.brain_turn_lock.stats().
+    from webapp.brain_turn_lock import TurnBusy, brain_turn, busy_payload, turn_wait_timeout_s
+    try:
+        with brain_turn("brain_chat", timeout=turn_wait_timeout_s()):
+            try:
+                resp = _brain_chat_turn(req, cache_key, renderer)
+            finally:
+                # end-of-turn stamp, written while the lock is still held (so a tick admitted next always sees it):
+                # the idle tick measures idleness from here (it does NOT refill the wander budget)
+                try:
+                    if _CE0 is not None:
+                        _CE0.mark_turn_end(cache_key)
+                except Exception:
+                    pass
+    except TurnBusy as busy:
+        return JSONResponse(busy_payload(req, renderer, busy))
+    # M2, BRAIN_ONE_BRAIN on with a generative renderer: the mouth runs HERE, after the turn lock is released (design
+    # section 2: the brain's decision is done; articulation is not the brain). Nothing is pending otherwise.
+    pending = getattr(resp, "_one_brain_mouth", None)
+    if pending is not None:
+        resp = _one_brain_articulate(resp, pending)
+    return resp
+
+
+def _brain_chat_turn(req, cache_key, renderer) -> JSONResponse:
+    """The locked part of one `brain_chat` turn (moved VERBATIM out of `brain_chat`, M0): backend pin, reset, cache
+    lookup / build / persisted-learning reload, then `brain_reply`. Only ever called with the turn lock held."""
     # A numpy-CPU code path elsewhere in this long-running server can have flipped
     # the global backend cache away from the bridge's cupy arrays between turns;
     # re-assert it here so gate()/render()/the rich path run consistently (the
     # cupy/numpy-flip bug, 2026-06-24).
     _pin_bridge_backend()
-    cache_key = (req.session, req.brain, renderer)
-    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation
-        from webapp import continuous_engine as _CE0
-        _CE0.mark_request(cache_key)
-    except Exception:
-        pass
     if req.reset:
-        _BRAIN_CHATS.pop(cache_key, None)
-        _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
-        try:
-            from webapp import continuous_engine as _CE1
-            _CE1.forget_session(cache_key)  # drop this session's between-turn inner-life + last-request
-        except Exception:
-            pass
-        _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
-        if "research.runners.emotion_category_organ" in sys.modules:  # the held emotion channels (s2-c4-build)
-            sys.modules["research.runners.emotion_category_organ"].forget_session(cache_key)
-        _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
-        _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
-        _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
-        _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
-        try:  # drop this conversation's idle-replay encoding record (Stage-2 C5 build; empty unless BRAIN_IDLE_REPLAY)
-            import research.runners.idle_replay_organ as _IR_reset
-            _IR_reset.reset_organ(cache_key)
-        except Exception:
-            pass
-        _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
-        _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
-        try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
-            import research.runners.d5_episodic_production_organ as _EP_reset
-            _EP_reset.reset_episodic_organ(cache_key)
-        except Exception:
-            pass
-        try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
-            import research.runners.causal_whatif_production_organ as _CA_reset
-            _CA_reset.reset_organ(cache_key)
-        except Exception:
-            pass
-        try:  # drop this conversation's false-belief (ToM) scenario, if any (A5, Gate-B)
-            from webapp import false_belief_chat as _FBC_reset
-            _FBC_reset.reset_session(cache_key)
-        except Exception:
-            pass
+        _evict_brain_chat_session(cache_key)
+    ctx = _CONTEXTS.ensure(cache_key)          # M2: this conversation's Context (its registries are fields of it)
+    _note_interlocutor(ctx, req)
+    if _one_brain_on():
+        return _one_brain_turn(req, cache_key, renderer, ctx)
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -4664,6 +5021,165 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
     # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
     return brain_reply(chat, req, source, cache_key)
+
+
+# ── ONE BRAIN, MANY CONVERSATIONS -- M2 (BRAIN_ONE_BRAIN on; webapp/one_brain.py) ───────────────────────────────────
+def _note_interlocutor(ctx, req) -> None:
+    """Record the typed interlocutor name (request `interlocutor`, or the OpenAI-style `user`) on this Context only."""
+    name = getattr(req, "interlocutor", None) or getattr(req, "user", None)
+    if isinstance(name, str) and name.strip():
+        ctx.interlocutor = name.strip()[:200]
+
+
+def _one_brain_chat_for(cache_key, build=True):
+    """The shared ChatBrain of this conversation's brain with this conversation BOUND to it (turn lock held). Builds
+    the brain on first use (`build`): `_build_chat_brain`, then `Brain.adopt`, then the brain-level persistence reload
+    (keyed by the brain key: one checkpoint for the brain, not one per conversation; still gated by
+    BRAIN_PERSIST_LEARNING, default off). `build=False` (the idle tick) returns None when the brain or the
+    conversation does not exist."""
+    bk = _OB.brain_key(cache_key)
+    chat = _ONE_BRAIN.chat(bk)
+    if chat is None:
+        if not build:
+            return None
+        chat, source = _build_chat_brain(cache_key[1], cache_key[2])
+        chat._brain_chat_source = source  # type: ignore[attr-defined]
+        _ONE_BRAIN.adopt(bk, chat, source)
+        _reload_persisted_learning(bk, chat)
+    ctx = _CONTEXTS.get(cache_key)
+    if ctx is None:
+        if not build:
+            return None
+        ctx = _CONTEXTS.ensure(cache_key)
+    return _ONE_BRAIN.bind(bk, ctx)
+
+
+def _deferred_mouth(chat):
+    """The DeferredMouth under the (possibly mood-wrapped) renderer of a shared chat, or None (a template renderer)."""
+    r = getattr(chat, "renderer", None)
+    for _ in range(3):
+        if isinstance(r, _OB.DeferredMouth):
+            return r
+        r = getattr(r, "base", None)
+    return None
+
+
+def _one_brain_turn(req, cache_key, renderer, ctx) -> JSONResponse:
+    """One turn at BRAIN_ONE_BRAIN on (turn lock held): bind this conversation to the brain's shared ChatBrain, run
+    the SAME `brain_reply` pipeline, tag the facts this turn taught with this conversation (host bookkeeping), frame a
+    recall of a fact another conversation taught, and hand any deferred mouth calls to `brain_chat` (after the lock)."""
+    try:
+        chat = _one_brain_chat_for(cache_key, build=True)
+    except HTTPException:
+        raise
+    except Exception as e:  # a missing model / bad bundle -> a clean 400 (the same message as the per-session path)
+        raise HTTPException(
+            400, f"failed to load brain {req.brain!r} with renderer "
+                 f"{renderer!r}: {type(e).__name__}: {e}")
+    bk = _OB.brain_key(cache_key)
+    source = getattr(chat, "_brain_chat_source", None)
+    mouth = _deferred_mouth(chat)
+    if mouth is not None:
+        mouth.take_calls()                                  # nothing from an earlier turn
+    before = _OB.learned_triples(chat)
+    resp = brain_reply(chat, req, source, cache_key)
+    _ONE_BRAIN.note_taught(bk, before, _OB.learned_triples(chat), ctx.conversation_id)
+    resp = _one_brain_source_frame(resp, bk, ctx.conversation_id)
+    if mouth is not None:
+        calls = mouth.take_calls()
+        if calls:
+            resp._one_brain_mouth = (mouth, calls, chat)    # type: ignore[attr-defined]
+    return resp
+
+
+def _one_brain_source_frame(resp, bk, conversation_id):
+    """The interim source frame (owner ruling 2026-10-13, policy B; a DECLARED HOST SCAFFOLD, design section 3, until
+    M3's spiking source monitor): a reply that recalls a fact ANOTHER conversation taught leads with the anonymous
+    "Someone told me: "; a reply whose supporting/derived facts include one ends with "(Someone told me part of
+    that.)". Never a name, never which conversation. The read is the host tag (`one_brain_source.reason`)."""
+    try:
+        body = json.loads(bytes(resp.body))
+    except Exception:
+        return resp
+    if not isinstance(body, dict) or body.get("abstained") or not isinstance(body.get("answer"), str):
+        return resp
+    def _svo(f):
+        return list(f[:3]) if isinstance(f, (list, tuple)) and len(f) >= 3 else None
+
+    rec = _svo(body.get("recalled_svo"))
+    # the facts the reply states: the rich path's supporting facts (they include the recalled one), else the recalled
+    # fact; plus the hops of a derived answer
+    said = [f for f in map(_svo, body.get("supporting_facts") or []) if f] or ([rec] if rec else [])
+    said += [f for f in map(_svo, body.get("derived_from") or []) if f]
+    told = [f for f in said if _ONE_BRAIN.taught_elsewhere(bk, f, conversation_id)]
+    if not told:
+        return resp
+    # the lead only when EVERYTHING the reply states came from another conversation; otherwise the part note (a
+    # multi-fact reply mixing a told fact with what the brain knew from its build must not attribute it all)
+    lead = len(told) == len(said)
+    if lead:
+        body["answer"] = _OB.SOURCE_LEAD + body["answer"]
+    else:
+        body["answer"] = body["answer"].rstrip() + " " + _OB.SOURCE_PART_NOTE
+    body["one_brain_source"] = {
+        "frame": "someone_told_me", "placement": "lead" if lead else "part_note", "facts": told,
+        "n_facts_stated": len(said), "reason": "host_tag",
+        "scaffold": "M2 host source tag (design section 3); replaced by the M3 spiking source-monitor organ"}
+    return JSONResponse(body)
+
+
+def _one_brain_articulate(resp, pending):
+    """The deferred mouth after the turn lock (BRAIN_ONE_BRAIN on, generative renderer): generate each recorded call
+    whose template surface reached the answer, VERIFY each prose surface under a short re-take of the turn lock (the
+    brain's on-substrate re-parse), substitute the verified prose. Never raises: on any failure the template answer,
+    which the brain already verified, is returned."""
+    mouth, calls, chat = pending
+    try:
+        body = json.loads(bytes(resp.body))
+        from webapp.brain_turn_lock import brain_turn as _bt
+        ans, rec = _OB.articulate(body.get("answer"), calls, mouth,
+                                  verify=lambda prose, svo: bool(chat._verify(prose, None, svo)),
+                                  relock=lambda: _bt("mouth_verify"))
+        body["answer"] = ans
+        body["one_brain_mouth"] = rec
+        return JSONResponse(body)
+    except Exception as e:
+        print(f"[webapp] one-brain deferred mouth failed ({type(e).__name__}: {e}); template answer kept", flush=True)
+        return resp
+
+
+def one_brain_zero_learned_store() -> dict:
+    """EXPERIMENTER INSTRUMENT (M0 probe arm `zero_learned_store`; also the test-only learned-store reset of design
+    section 6): with BRAIN_ONE_BRAIN on, zero what every shared brain learned since its build -- the composer blocks
+    after the build KB, the brain's D5 episodic store and idle-replay record, and the consolidation/sleep bookkeeping
+    keyed by the brain. The build KB and the LTM prior are untouched; no Context is touched. Refused with
+    BRAIN_PRODUCTION=1 and at BRAIN_ONE_BRAIN off (there is no shared store to zero). Takes the turn lock."""
+    if os.environ.get("BRAIN_PRODUCTION", "").strip().lower() in ("1", "true", "on", "yes"):
+        raise RuntimeError("one_brain_zero_learned_store is refused with BRAIN_PRODUCTION=1")
+    if not _one_brain_on():
+        raise RuntimeError("one_brain_zero_learned_store needs BRAIN_ONE_BRAIN=1")
+    from webapp.brain_turn_lock import brain_turn as _bt
+    out = []
+    with _bt("zero_learned_store"):
+        for bk in list(_ONE_BRAIN.chats):
+            rec = _ONE_BRAIN.zero_learned(bk)
+            try:
+                import research.runners.d5_episodic_production_organ as _EPz
+                rec["d5_reset"] = _EPz._ORGANS.pop(bk, None) is not None
+            except Exception:
+                rec["d5_reset"] = False
+            try:
+                import research.runners.idle_replay_organ as _IRz
+                _IRz.reset_organ(bk)
+            except Exception:
+                pass
+            try:
+                from webapp import continuous_engine as _CEz
+                _CEz.forget_session(bk)
+            except Exception:
+                pass
+            out.append(rec)
+    return {"brains": out}
 
 
 def _word_role_trace_reset(chat) -> None:
@@ -4727,6 +5243,88 @@ def _mouth_trace(chat, answer):
         return {"error": "trace unavailable: %s: %s" % (type(e).__name__, e)}
 
 
+def _single_fact_turn(chat, msg) -> dict:
+    """The single-fact (rich=False) path's route selection + render + derived framing, moved VERBATIM out of
+    `brain_reply` (2026-10-13, Stage-2 HANDOFF item 18b) so a fake-chat test can pin it
+    (tests/test_gnw_multistep_derived_honesty.py). Order: the transitive yes/no route, the compositional chain
+    route, then `chat.gate(msg)`; a `ChainedSVO` from ANY of them (including one a gate wrapper such as the
+    multistep chase returns) is a derived answer and gets the inference lead. Exceptions propagate: the caller
+    raises the same HTTP 500 it always did. Returns {gate_svo, is_chain_route, answer, abstained, verified,
+    chain_raw_answer, transitive_matched, t_meta}."""
+    _t_meta = None
+    # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
+    # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
+    # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
+    # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
+    # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
+    gate_svo = None
+    _is_chain_route = False
+    # board #140 / BRAIN_SOURCE_MONITORING_FRAMES_HONESTY (2026-09-01): the pre-`frame_derived_answer` CORE
+    # text, kept ONLY so the #129-organ-driven alt-framing below (webapp/source_monitoring_honesty_chat.py)
+    # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
+    # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
+    _chain_raw_answer = None
+    # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
+    # compositional chain route / chat.gate for the SAME reason that route already is -- see
+    # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
+    # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
+    # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
+    # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
+    # question). See webapp/reasoning_transitive_chat.py.
+    _transitive_matched = False
+    try:
+        from webapp.reasoning_transitive_chat import resolve_transitive_query
+        _t_result = resolve_transitive_query(chat, msg)
+    except Exception:
+        _t_result = None
+    if _t_result is not None:
+        _transitive_matched, gate_svo = _t_result
+        try:   # the engagement record for this matched question (attached to the reply below)
+            from webapp import reasoning_transitive_chat as _RTC
+            _t_meta = dict(_RTC.last_transitive_meta)
+        except Exception as _e:
+            _t_meta = {"error": "trace unavailable: %s" % _e}
+        _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+    if not _transitive_matched:
+        try:
+            from research.runners.compositional_chain_route import resolve_compositional_chain
+            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+            _is_chain_route = gate_svo is not None
+        except Exception:
+            gate_svo = None
+            _is_chain_route = False
+        if gate_svo is None:
+            gate_svo = chat.gate(msg)
+            # a gate that RETURNS a derived answer (the multistep chase's never-told terminal, a ChainedSVO;
+            # webapp/gnw_multistep_deliberation.py, Stage-2 HANDOFF item 18b) gets the same derived flag +
+            # framing as the routes above. Every other gate result has no `derived_from` -> unchanged.
+            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
+    if gate_svo is None:
+        answer, abstained, verified = "I don't know about that.", True, False
+    else:
+        answer = chat.render(gate_svo)
+        abstained = False
+        # 'verified' = the render did NOT fall back to the raw triple
+        # (ChatBrain marks an unverified render with this suffix).
+        verified = "[unverified render" not in answer
+        if _is_chain_route:
+            # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): frame a
+            # composed multi-hop inference as the brain's OWN inference, surfacing the supporting hop-facts
+            # -- UNCONDITIONALLY, not gated behind the #129 provenance monitor in `brain_reply` (which must not
+            # be the only thing standing between a derived answer and being presented as a plain perceived
+            # fact). NOTE (2026-10-13): at production defaults (BRAIN_SOURCE_PROVENANCE_HONESTY and
+            # BRAIN_SOURCE_MONITORING_FRAMES_HONESTY both default-ON) `brain_reply` then SWAPS this lead for
+            # "I believe <answer>, but I reasoned that myself rather than being told it directly." whenever the
+            # monitor reads GENERATED -- still an inference framing, but without the hop list in the text (the
+            # response's `derived_from` keeps it). So the single-fact default wording is NOT "I derived this from".
+            from research.runners.compositional_chain_route import frame_derived_answer
+            _chain_raw_answer = answer
+            answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
+    return {"gate_svo": gate_svo, "is_chain_route": _is_chain_route, "answer": answer, "abstained": abstained,
+            "verified": verified, "chain_raw_answer": _chain_raw_answer, "transitive_matched": _transitive_matched,
+            "t_meta": _t_meta}
+
+
 def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     """THE SHARED FULL-FACULTY TURN PIPELINE — the entire faculty-DRIVE coupling sequence run on an already-built
     ChatBrain, returning the SAME JSONResponse the `/api/brain-chat` handler has always returned. Extracted
@@ -4759,7 +5357,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # which facts the brain holds off the engrams as they are NOW (research/runners/d6_hebbian_store.readtime_refresh),
     # so a later loss of an engram (a lesion, decay) is reflected in the known-word sets. Off -> only this env read.
     # Not wrapped in try/except: with the flag on, a failure must surface, not silently fall back to the host list.
-    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+    from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+    if _d6_readtime_on():
         from research.runners.d6_hebbian_store import readtime_refresh as _d6_readtime_refresh
         _d6_readtime_refresh(chat)
 
@@ -4867,7 +5466,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _gnw_multistep_mod.install_multistep_gate(chat)
         except Exception:
             pass
-    # ── BEGIN faculty wire-in: CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1), DEFAULT-OFF ──
+    # ── BEGIN faculty wire-in: CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1), DEFAULT-ON ─────
+    # since the flip (2026-10-11 RULING c1-flip-go; explicit BRAIN_CATEGORY_INHERIT=0 is the byte-identical escape).
     # (BRAIN_CATEGORY_INHERIT; webapp/category_inherit_chat.py + research/runners/category_inherit_organ.py). Installed
     # OUTSIDE every gate wrapper above (and inside the default-off open-ended-gated trace below), so it acts only on the
     # stack's FINAL verdict: an acquired fact is observed by a rung-3c learned member->frame + frame->frame Hebbian
@@ -4958,7 +5558,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         import research.runners.idle_replay_organ as _IR
         _ir_on = _IR.idle_replay_enabled()
         if _ir_on:
-            _IR.note_turn(cache_key, chat, seed=_brain_chat_seed())
+            _IR.note_turn(_bkey(cache_key), chat, seed=_brain_chat_seed())
     except Exception:
         _ir_on = False
 
@@ -4987,12 +5587,19 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         try:
             _si_rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
             if _ir_on:   # IDLE REPLAY (default OFF): the brain's own store, the spiking reactivation race
-                si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())
+                si = _IR.speak(_bkey(cache_key), chat, seed=_brain_chat_seed())
             else:
-                siorg = _get_selfinit_organ(cache_key)
-                si = siorg.speak(lesion=_SI.selfinit_lesioned())
+                # M0: the idle tick wanders on this organ OUTSIDE the turn lock, so the turn takes the organ's own
+                # lock, waiting at most a short bound: this turn holds the TURN lock, so it must not wait out a
+                # wander there. A wander still running -> the honest "mid-thought" read-out instead.
+                from webapp import continuous_engine as _CE_si
+                si = _CE_si.selfinit_speak_or_mid_thought(
+                    cache_key, lambda: _get_selfinit_organ(cache_key).speak(lesion=_SI.selfinit_lesioned()))
             spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
-            answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
+            if si.get("mid_thought"):
+                answer = si["text"]
+            else:
+                answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
             return JSONResponse({
                 "answer": answer,
                 "abstained": (not spoke), "recalled_svo": None, "verified": bool(spoke),
@@ -5274,7 +5881,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             import research.runners.d5_episodic_production_organ as _OE_EP
             if _OE_EP.episodic_enabled() and _oe.get("known") and _oe.get("facts") and _episodic_store_ok():
                 _oe_ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-                _OE_EP.get_episodic_organ(cache_key, _brain_chat_seed(), _oe_ep_topics).note_topic(_oe["facts"][0][0])
+                _OE_EP.get_episodic_organ(_bkey(cache_key), _brain_chat_seed(), _oe_ep_topics).note_topic(_oe["facts"][0][0])
         except Exception:
             pass  # never let the episodic write crash an open-ended turn -- degrade to the un-noted turn
         # ── R1 RUNG-2 (2026-09-02): the open-ended turn now ALSO runs the shared pipeline's per-turn SESSION-STATE
@@ -5659,7 +6266,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
             ref = _EP.extract_referent(msg, _ep_topics)
             if ref is not None:
-                eorg = _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics)
+                eorg = _EP.get_episodic_organ(_bkey(cache_key), _brain_chat_seed(), _ep_topics)
                 rec = eorg.recall(ref, lesion=_EP.episodic_lesioned())
                 episodic_info = dict(rec)
                 # D5 LEARN-THROUGH-USE (continuous engine, DEFAULT-ON since 2026-08-21, BRAIN_D5_CONSOLIDATE=0 is the
@@ -5687,7 +6294,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     try:
                         _comp = getattr(getattr(chat, "inner", None), "composer", None)
                         _kb_iter = getattr(_comp, "kb", []) or []
-                        if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+                        from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+                        if _d6_readtime_on():
                             from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
                             _kb_iter = _d6_visible_kb(_comp) or []   # D6 (default-OFF): engram-held facts only
                         for _f, _h in _kb_iter:
@@ -5698,7 +6306,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     except Exception:
                         content = None
                 return JSONResponse({
-                    "answer": _EP.recall_disclosure(rec, content, cache_key=cache_key),
+                    "answer": _EP.recall_disclosure(rec, content, cache_key=_bkey(cache_key)),
                     "abstained": (not bool(rec.get("in_memory"))),
                     "recalled_svo": None, "verified": bool(rec.get("in_memory")),
                     "renderer": rname, "brain": req.brain, "source": source,
@@ -6262,6 +6870,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     if tom_info is not None and tom_info.get("acted"):
                         payload["affective_tom"] = tom_info
                     # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────
+                    _attach_category_inherit(payload, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix:
+                    # this abstain return path carries it too: present exactly when the organ fired this turn)
                     return JSONResponse(payload)
         except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
             comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
@@ -6306,8 +6916,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     sorg = _get_surprise_organ()
                     sj = sorg.judge(a_s, v_s, str(p_stored), str(p_asserted), lesion=_SO.surprise_lesioned())
                     surprise_info = dict(sj)
+                    _q_turn = _question_turn(msg)   # HANDOFF 18a: a question asserted nothing (read kept in the record)
                     if sj["surprised"]:
-                        surprise_prefix = _SO.surprise_notice(a_s, v_s, str(p_stored))
+                        surprise_prefix = (_held_readout(a_s, v_s, str(p_stored)) if _q_turn
+                                           else _SO.surprise_notice(a_s, v_s, str(p_stored)))
                     # ── RECONSOLIDATION / belief revision (Gate-B, F-lane, 2026-08-12) ───────────────────────
                     # When the asserted patient CONTRADICTS the stored one (the D2 spiking surprise window is OPEN),
                     # UPDATE the stored fact IN PLACE instead of appending a contradictory duplicate. The window-open
@@ -6324,8 +6936,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                         _rc_on = (_RC is not None) and _RC.reconsolidation_enabled()
                     except Exception:
                         _rc_on = False
-                    if (_rc_on and sj.get("surprised")
-                            and str(p_asserted).lower() != str(p_stored).lower()):
+                    # INTERROGATIVE GUARD (HOST SCAFFOLD correction, Stage-2 HANDOFF 18a): a question opens no store
+                    # write (`_reconsolidation_action`; escape BRAIN_ACQUIRE_QUESTIONS=1). For a declarative it returns
+                    # the pre-existing condition unchanged.
+                    _rc_act = _reconsolidation_action(msg, _rc_on, sj.get("surprised"), p_stored, p_asserted)
+                    if _rc_act == "blocked_interrogative":
+                        reconsolidation_info = {"on": True, "action": "none", "reason": "interrogative_turn"}
+                    elif _rc_act == "rewrite":
                         try:
                             composer = getattr(chat.inner, "composer", None)
                             res = _get_reconsolidation_organ().reconsolidate(
@@ -6400,7 +7017,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 chat.inner.is_it_true, msg, lesion=_NC.noncontradiction_lesioned())
             if nres is not None:
                 noncontradiction_info = dict(nres)
-                if nres["reject"]:
+                if nres["reject"] and _question_turn(msg):
+                    # HANDOFF 18a: a QUESTION ("does the dog eat grass") asserted nothing to reject; the normal answer
+                    # path replies (escape BRAIN_ACQUIRE_QUESTIONS=1 restores the rejection). Read kept in the record.
+                    noncontradiction_info["reject_skipped"] = "interrogative_turn"
+                elif nres["reject"]:
                     return JSONResponse({
                         "answer": _NC.rejection_message(nres["svo"], nres["stored_polarity"]),
                         "abstained": False, "recalled_svo": nres["svo"], "verified": True,
@@ -6622,6 +7243,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when this turn's direct fact
         # was a COMPOSED multi-hop inference (compositional_chain_route), not a directly-recalled one.
         _rich_derived = bool(r.get("derived"))
+        # A derived turn whose direct answer is a never-told conclusion (multistep chase / transitive, not the C2
+        # possessive chain whose conclusion is its own stored last hop) must not report that conclusion as a
+        # supporting fact: supporting_facts become the hops (+ the other kept facts) and the conclusion is reported
+        # as `derived_svo` (2026-10-13, Stage-2 HANDOFF item 18b). `facts` itself is unchanged (n_sentences etc.).
+        from research.runners.rich_answer_composer import derived_reply_fields as _derived_reply_fields
+        _rich_supporting, _rich_derived_svo = _derived_reply_fields(
+            facts, _rich_derived, r.get("derived_from"), r.get("direct_svo"), r.get("conclusion_is_hop", False))
         # EPISODIC STORE (Gate-B, D5, Hook B): a normal answered turn with a VERIFIED SVO BTSP-forms the answered
         # topic's (subject/agent) CA3 assembly (write-only; changes NO reply text). The spiking BTSP write is
         # ~seconds on cupy but ~510s/topic on numpy@2000, so it is GATED behind cupy (`_episodic_store_ok`) — on a
@@ -6632,7 +7260,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         if _episodic_on and (not r["abstained"]) and facts and not _rich_derived and _episodic_store_ok():
             try:
                 _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-                _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics).note_topic(facts[0][0])
+                _EP.get_episodic_organ(_bkey(cache_key), _brain_chat_seed(), _ep_topics).note_topic(facts[0][0])
             except Exception:
                 pass
         # OPEN-ENDED GENERATION (#3E): a generated HYPOTHESIS turn returns NO supporting facts (a guess is not a
@@ -6656,6 +7284,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # one; derived_from names the verified hop-facts it was reasoned from. False/None otherwise.
             "derived": _rich_derived,
             "derived_from": (list(r.get("derived_from") or []) if _rich_derived else None),
+            # the conclusion a derived reply states (the gated direct fact, only if VERIFY kept its sentence);
+            # null on every non-derived turn.
+            "derived_svo": _rich_derived_svo,
             # every kept sentence is gate-sourced + verify-checked, so the
             # multi-sentence reply is verified-by-construction (unless it
             # abstained, in which case there is nothing to verify).
@@ -6665,7 +7296,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             "source": source,
             "rich": True,
             "n_sentences": int(r.get("n_sentences", 0)),
-            "supporting_facts": facts,
+            "supporting_facts": _rich_supporting,
             "followup": bool(r.get("followup", False)),
             # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
             # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
@@ -6931,74 +7562,18 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _mt = _mouth_trace(chat, resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
         if _mt is not None:
             resp["mouth_trace"] = _mt
-        if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
-            resp["category_inherit"] = _category_inherit_trace(chat)
+        _attach_category_inherit(resp, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix: fired-only)
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
     # smoke records), then render. gate() returns None on the moat.
     try:
-        # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
-        # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
-        # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
-        # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
-        # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
-        gate_svo = None
-        _is_chain_route = False
-        # board #140 / BRAIN_SOURCE_MONITORING_FRAMES_HONESTY (2026-09-01): the pre-`frame_derived_answer` CORE
-        # text, kept ONLY so the #129-organ-driven alt-framing below (webapp/source_monitoring_honesty_chat.py)
-        # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
-        # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
-        _chain_raw_answer = None
-        # TRANSITIVE-CHASE ROUTE (A6, 2026-09-24, default-OFF BRAIN_TRANSITIVE_CHAT): checked BEFORE the
-        # compositional chain route / chat.gate for the SAME reason that route already is -- see
-        # research/findings/2026-09-24-reasoning-transitive-chat-PREREGISTRATION.md. `resolve_transitive_query`
-        # returns None when the flag is off or "does X R Y" doesn't match (byte-identical fall-through), or
-        # (True, svo_or_None) when it DID match -- svo_or_None=None is an honest abstain, NOT "try the ordinary
-        # path" (the generic parser's documented 3rd-content-token truncation would silently answer a different
-        # question). See webapp/reasoning_transitive_chat.py.
-        _transitive_matched = False
-        try:
-            from webapp.reasoning_transitive_chat import resolve_transitive_query
-            _t_result = resolve_transitive_query(chat, msg)
-        except Exception:
-            _t_result = None
-        if _t_result is not None:
-            _transitive_matched, gate_svo = _t_result
-            try:   # the engagement record for this matched question (attached to the reply below)
-                from webapp import reasoning_transitive_chat as _RTC
-                _t_meta = dict(_RTC.last_transitive_meta)
-            except Exception as _e:
-                _t_meta = {"error": "trace unavailable: %s" % _e}
-            _is_chain_route = gate_svo is not None and hasattr(gate_svo, "derived_from")
-        if not _transitive_matched:
-            try:
-                from research.runners.compositional_chain_route import resolve_compositional_chain
-                gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
-                _is_chain_route = gate_svo is not None
-            except Exception:
-                gate_svo = None
-                _is_chain_route = False
-            if gate_svo is None:
-                gate_svo = chat.gate(msg)
-        if gate_svo is None:
-            answer, abstained, verified = "I don't know about that.", True, False
-        else:
-            answer = chat.render(gate_svo)
-            abstained = False
-            # 'verified' = the render did NOT fall back to the raw triple
-            # (ChatBrain marks an unverified render with this suffix).
-            verified = "[unverified render" not in answer
-            if _is_chain_route:
-                # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): frame a
-                # composed multi-hop inference as the brain's OWN inference, surfacing the supporting hop-facts
-                # -- UNCONDITIONALLY, not gated behind the optional #129 provenance monitor below (which is
-                # default-OFF and must not be the only thing standing between a derived answer and being
-                # presented as a plain perceived fact).
-                from research.runners.compositional_chain_route import frame_derived_answer
-                _chain_raw_answer = answer
-                answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
+        _sf = _single_fact_turn(chat, msg)
+        gate_svo, _is_chain_route = _sf["gate_svo"], _sf["is_chain_route"]
+        answer, abstained, verified = _sf["answer"], _sf["abstained"], _sf["verified"]
+        _chain_raw_answer = _sf["chain_raw_answer"]
+        _transitive_matched, _t_meta = _sf["transitive_matched"], _sf["t_meta"]
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
@@ -7071,7 +7646,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _episodic_on and gate_svo is not None and not _is_chain_route and _episodic_store_ok():
         try:
             _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
-            _EP.get_episodic_organ(cache_key, _brain_chat_seed(), _ep_topics).note_topic(gate_svo[0])
+            _EP.get_episodic_organ(_bkey(cache_key), _brain_chat_seed(), _ep_topics).note_topic(gate_svo[0])
         except Exception:
             pass
 
@@ -7118,6 +7693,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # `derived_from` names the two independently-verified hop-facts it was reasoned from.
         "derived": bool(_is_chain_route),
         "derived_from": (list(getattr(gate_svo, "derived_from", None) or []) if _is_chain_route else None),
+        # the conclusion a derived reply states; null on every non-derived turn (same key as the rich path).
+        "derived_svo": (list(gate_svo) if _is_chain_route else None),
         "verified": verified,
         "renderer": rname,
         "brain": req.brain,
@@ -7310,8 +7887,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     _mt = _mouth_trace(chat, _resp.get("answer"))   # MOUTH TRACE (B2d Amendment 2; BRAIN_MOUTH_TRACE, default off)
     if _mt is not None:
         _resp["mouth_trace"] = _mt
-    if _category_inherit_on():  # CATEGORY INHERITANCE per-turn trace (default-OFF; absent when off)
-        _resp["category_inherit"] = _category_inherit_trace(chat)
+    _attach_category_inherit(_resp, chat)   # CATEGORY INHERITANCE stamp (RULING c1-stamp-fix: fired-only)
     return _safe_json_response(_resp, "single-fact")
 
 
@@ -7325,6 +7901,7 @@ class OpenAIChatRequest(BaseModel):
     messages: list[dict] = []
     stream: bool = False
     session: str | None = None      # optional: pin a conversation; else a stable per-model default
+    user: str | None = None         # OpenAI request-level end-user id: the interlocutor name (one-brain M2)
 
 
 def _shim_brain_selection(model_field: str | None) -> tuple[str, str]:
@@ -7383,7 +7960,10 @@ def openai_chat_completions(req: OpenAIChatRequest):
     session = req.session or ("openai-%s" % (req.model or "sim-brain"))
     # SERVE THE DEVELOPED KNOWLEDGE BRAIN (+ the cortical LTM via BRAIN_LTM_BUNDLE downstream), not only 'tiny-demo'.
     brain_id, renderer = _shim_brain_selection(req.model)
-    r = brain_chat(BrainChatRequest(session=session, message=user_msg, brain=brain_id, renderer=renderer))
+    # INTERLOCUTOR (one-brain M2): the request-level `user`, else the last user message's `name` (OpenAI style)
+    _who = req.user or _OAS._last_user_name(req.messages)
+    r = brain_chat(BrainChatRequest(session=session, message=user_msg, brain=brain_id, renderer=renderer,
+                                    interlocutor=_who))
     resp = _json.loads(bytes(r.body))
     reply = resp.get("answer") or resp.get("response") or ""
     # CONTINUOUS-STATE ENGINE: this session's between-turn inner-life (mood evolution while idle), same cache_key
@@ -7416,6 +7996,20 @@ def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
     whether a session existed."""
     renderer = (req.renderer or _default_brain_renderer()).lower()
     cache_key = (req.session, req.brain, renderer)
+    if _one_brain_on():
+        # M2: the reset runs under the turn lock (it can no longer interleave with a turn or an idle-tick step) and
+        # drops the WHOLE conversation (`_evict_brain_chat_session`, including the continuous engine's state, so a
+        # wander still running for it is dropped). The brain's learned store is not touched: one brain.
+        from webapp.brain_turn_lock import TurnBusy, brain_turn, turn_wait_timeout_s
+        try:
+            with brain_turn("brain_chat_reset", timeout=turn_wait_timeout_s()):
+                existed = cache_key in _CONTEXTS
+                _evict_brain_chat_session(cache_key)
+        except TurnBusy as busy:
+            return JSONResponse({"reset": False, "busy": True, "session": req.session, "brain": req.brain,
+                                 "renderer": renderer, "turn_lock": {"waited_s": round(float(busy.waited_s), 3),
+                                                                     "timeout_s": busy.timeout_s}})
+        return JSONResponse({"reset": existed, "session": req.session, "brain": req.brain, "renderer": renderer})
     existed = cache_key in _BRAIN_CHATS
     _BRAIN_CHATS.pop(cache_key, None)
     _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too

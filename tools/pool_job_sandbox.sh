@@ -34,6 +34,7 @@
 #     a fresh /proc (this pid namespace only) and /dev (null/zero/random/tty only), each revision the job line pins
 #     (~/derisk-pool/revisions/<sha>: source, .venv, data/corpus), ~/Projects/sim-data (the LTM bundles), and the
 #     shared ~/derisk-pool/sim checkout ONLY for a line that pins no revision.
+#   - read-only (owner 2026-10-09): ~/derisk-pool/corpus_extra, the prereg'd corpora kept outside revisions.
 #   - writable: a fresh tmpfs /tmp, a fresh tmpfs over the node's HOME (so ~/.ssh, ~/.config, every other job's
 #     files and every other revision are simply absent -- HOME keeps its real path so `cd ~/derisk-pool/...` and
 #     Path.home()/Projects/sim-data resolve as today), and ONLY the output area:
@@ -252,6 +253,10 @@ sb_prepare() {
       || return 1
   fi
   SB_ARGV+=(--ro-bind-try "$home/Projects/sim-data" "$home/Projects/sim-data")
+  # corpus_extra (owner-approved 2026-10-09): prereg'd large text corpora (e.g. fineweb_edu.txt) live OUTSIDE any
+  # revision at ~/derisk-pool/corpus_extra. Read-only, and only when it is a real directory with no symlink on its
+  # path (sb_safe_dir), so state planted by an unsandboxed job cannot redirect the bind.
+  if sb_safe_dir "$pool/corpus_extra"; then SB_ARGV+=(--ro-bind "$pool/corpus_extra" "$pool/corpus_extra"); fi
   # Outer resource scope: the line's own memcap, and always for an agent line.
   read -r cap swap <<< "$(sb_memcap "$job")"
   if [ "$SB_AGENT" = 1 ] && [ -z "${cap:-}" ]; then cap=$SB_AGENT_MEM_GB; swap=0; fi

@@ -61,14 +61,14 @@
    0.0056
   ]
  },
- "repo_head": "eee74b9d7e4cda3b78ce531a3401cd4d63dc2bb1",
+ "repo_head": "f3f6c07295120d7fc28b5ba126b83dc3d68eec10",
  "scorer_files": {
   "docs/drafts/spiking-commit/bar_sanity_spec_a1_reply.py": "fb7235c2f1884e7143071fc3cef06eb5c4088daff78a058382c14eda8ba6fa50",
-  "tools/b2d_score.py": "5b8234f77ae623d1be6c939be1d9ce3b759c21bdf270a54d0d9d8b4aff1ddb68",
-  "tools/iw2_score.py": "4284949d7a1ff281fb5644a394fa4d7d4d0a2c7c6b0846a7655097a093c935ed",
+  "tools/b2d_score.py": "700c1530d37631d7e23c16d2d16f42b28276b15672b1053d1945196574e0d5b2",
+  "tools/iw2_score.py": "440e9e82b62f5f06398bf6468434aebb969fee2468c215e53008ac7b4dd658cf",
   "tools/s2p_score.py": "6e16e311780d91967e7b26af2d725dc52dd433f605c86fcc78f6f3f3fd597616"
  },
- "scorer_sha256": "db38bdaab935d3f0212fe3ed7ff6aa55a0964f087d88db978f75f9f2880a6821",
+ "scorer_sha256": "5c204473af2e8be17c4707f55ef432364cd234b5840f3f70166cffab6b965c1c",
  "seed": 0,
  "spec": "docs/drafts/spiking-commit/bar_sanity_spec_a1_reply.py",
  "spec_sha256": "fb7235c2f1884e7143071fc3cef06eb5c4088daff78a058382c14eda8ba6fa50",
@@ -79,5 +79,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 48.9
+ "wall_s": 15.2
 }

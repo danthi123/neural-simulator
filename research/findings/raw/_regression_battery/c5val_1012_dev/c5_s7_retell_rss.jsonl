@@ -1,0 +1,15 @@
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 5924476, "k": null, "pid": 438709, "rss_kb": 5924476, "ts": 1791894168.069, "turn": 1}
+{"event": "battery_turn", "hwm_kb": 6291108, "pid": 438709, "rss_kb": 6150296, "ts": 1791894186.585, "turn": "c5re_t1"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6291108, "k": null, "pid": 438709, "rss_kb": 6150296, "ts": 1791894186.592, "turn": 2}
+{"event": "battery_turn", "hwm_kb": 6339584, "pid": 438709, "rss_kb": 6150308, "ts": 1791894196.236, "turn": "c5re_t2"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6339584, "k": null, "pid": 438709, "rss_kb": 6150308, "ts": 1791894196.244, "turn": 3}
+{"event": "battery_turn", "hwm_kb": 6339584, "pid": 438709, "rss_kb": 6151148, "ts": 1791894205.551, "turn": "c5re_t3"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6339584, "k": null, "pid": 438709, "rss_kb": 6151148, "ts": 1791894205.559, "turn": 4}
+{"event": "battery_turn", "hwm_kb": 6339584, "pid": 438709, "rss_kb": 6154808, "ts": 1791894214.752, "turn": "c5re_t4"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6339584, "k": null, "pid": 438709, "rss_kb": 6161052, "ts": 1791894215.095, "turn": 5}
+{"event": "battery_turn", "hwm_kb": 6351424, "pid": 438709, "rss_kb": 6165152, "ts": 1791894439.035, "turn": "c5re_t5"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6351424, "k": null, "pid": 438709, "rss_kb": 6165152, "ts": 1791894439.274, "turn": 6}
+{"event": "battery_turn", "hwm_kb": 6351424, "pid": 438709, "rss_kb": 6165676, "ts": 1791894449.403, "turn": "c5re_t6"}
+{"circ_k": null, "circuits_built": 0, "event": "turn", "hwm_kb": 6351424, "k": null, "pid": 438709, "rss_kb": 6165676, "ts": 1791894449.411, "turn": 7}
+{"circ_k": 10, "circuits_built": 1, "event": "select", "hwm_kb": 6351424, "k": 10, "pid": 438709, "rss_kb": 6165676, "ts": 1791894450.426, "turn": 7}
+{"event": "battery_turn", "hwm_kb": 6351424, "pid": 438709, "rss_kb": 6166440, "ts": 1791894450.762, "turn": "c5re_idle"}

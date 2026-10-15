@@ -61,17 +61,18 @@
    0.0038
   ]
  },
- "repo_head": "eee74b9d7e4cda3b78ce531a3401cd4d63dc2bb1",
+ "repo_head": "68cf28ba780baa40027998c6382cbd0bfb690085",
  "scorer_files": {
-  "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py": "9b48d0163d831551d870b6d363422c9721a66583d08c219bc90cf1baeb3c0a5c",
+  "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py": "eef1652409ec2a212608d05af44fb15a2fcebce2f27c062e7c2380ea9665ce69",
+  "research/runners/spiking_commit.py": "2ec0ff0a60bc9d1db84bea64517acc8b00a6637065845ffe5e8fe68c57a77de2",
   "research/runners/word_role_commit_organ.py": "87a21bf6e212a3cee67b5cfead192e8480f449724d5bc3c25904a88c007a7b44",
-  "research/runners/word_role_parser_organ.py": "7586088ec6ff827fe389c8f88ec1e7cf6f502a17199e46c28b41942502949d28",
+  "research/runners/word_role_parser_organ.py": "e3f98ecdc5f584b7036bf9b5f7001244c2dfea2c7d04e47f5ae427804e80e8ea",
   "tools/s2p_score.py": "6e16e311780d91967e7b26af2d725dc52dd433f605c86fcc78f6f3f3fd597616"
  },
- "scorer_sha256": "c635d470f6aecac6c8b464aacdac4b331c520ed9c4a47403c506fb668f395839",
+ "scorer_sha256": "b685270c081c3573648ae5beb45f941002a9e252c0f1c0bc26178980b1af969c",
  "seed": 0,
  "spec": "docs/drafts/spiking-commit/bar_sanity_spec_a1_organ.py",
- "spec_sha256": "9b48d0163d831551d870b6d363422c9721a66583d08c219bc90cf1baeb3c0a5c",
+ "spec_sha256": "eef1652409ec2a212608d05af44fb15a2fcebce2f27c062e7c2380ea9665ce69",
  "thresholds": {
   "null_max": 0.05,
   "override_reason": null,
@@ -79,5 +80,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 23.8
+ "wall_s": 16.1
 }

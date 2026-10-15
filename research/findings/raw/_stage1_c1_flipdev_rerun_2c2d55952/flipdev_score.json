@@ -1,0 +1,285 @@
+{
+ "verdict": "UNDEFINED",
+ "undefined_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "n_pass": null,
+ "bridge_summary": {
+  "n_defined": 8,
+  "n_seeds_with_moat_guess_on": 8,
+  "canary_eat_on": [
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm",
+   "worm"
+  ]
+ },
+ "runner": "research/runners/c1_flip_dev_check.py",
+ "root": "research/findings/raw/_stage1_c1_flipdev",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "per_seed": {
+  "1": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_disc:flag_on_not_engaged",
+    "on/cat_told:flag_on_not_engaged",
+    "on/word:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "2": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_disc:flag_on_not_engaged",
+    "on/cat_told:flag_on_not_engaged",
+    "on/word:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "3": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_disc:flag_on_not_engaged",
+    "on/cat_told:flag_on_not_engaged",
+    "on/word:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "4": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_disc:flag_on_not_engaged",
+    "on/cat_told:flag_on_not_engaged",
+    "on/word:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "5": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_told:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "6": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_told:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "7": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_told:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  },
+  "8": {
+   "defined": false,
+   "pass": null,
+   "undefined": [
+    "on/cat_told:flag_on_not_engaged",
+    "on/lived:flag_on_not_engaged",
+    "on/val_novel:flag_on_not_engaged"
+   ]
+  }
+ },
+ "bridge": {
+  "1": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "2": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "3": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "4": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "5": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "6": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "7": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  },
+  "8": {
+   "defined": true,
+   "canary_eat_on": "worm",
+   "canary_eat_off": null,
+   "moat_guesses_on": {
+    "c_canary_swim": null,
+    "c_bat_swim": "lake",
+    "c_robin_swim": null
+   },
+   "moat_guesses_off": {
+    "c_canary_swim": null,
+    "c_bat_swim": null,
+    "c_robin_swim": null
+   },
+   "bat_facts_observed": [
+    true,
+    true
+   ],
+   "n_moat_guesses_on": 1
+  }
+ },
+ "scored_at": "2026-10-10T23:45:27"
+}

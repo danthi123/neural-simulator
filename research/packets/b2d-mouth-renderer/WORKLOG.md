@@ -135,3 +135,144 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
 - Step 6 substitutions (rsync absent on S): `cp -a` byte copy; git add done per-existing-pathspec (the
   never-rerun `b2d_mouth_reruns.tsv` and `_b2d0929_attempt1/` do not exist, and a missing pathspec would
   abort the whole add). Data + b2d_mouth_score.json committed on the packet branch with the Agent trailer.
+
+## 2026-10-07 07:41 EDT — wave 4 (every-session line)
+
+- `b2d_queue_next_wave.sh --dry-run`: 43 line(s) would be queued as wave 4; queued for real: 43 attempted, 43 well-formed, rc=0 (lines 130-172 of 258; fresh-queued was 0 < threshold 10).
+- lb.json-landed 129/258. Ledger b2d_waves.tsv updated; push skipped (RULING a2-no-push).
+
+## 2026-10-08 07:26 EDT — wave 5 (every-session line)
+
+- `b2d_queue_next_wave.sh --dry-run`: 43 line(s) would be queued as wave 5; queued for real: 43 attempted, 43 well-formed, rc=0 (lines 173-215 of 258; fresh-queued was 0 < threshold 10).
+- lb.json-landed 172/258. Ledger b2d_waves.tsv updated; push skipped (RULING a2-no-push).
+- Section-5 every-session check: gpu.queue holds 0 mouth lines (dispatcher down, card idle); the mouth arm already
+  completed on W and its step-4 score is COMPLETE (17 MOUTH-SILENT, 1 DEFINED; step 6 committed 10-07), so no GPU
+  action is owed — the arm waits only on NEEDS-CLAUDE #6 (registered arm schedule).
+
+## 2026-10-08 12:44 EDT — every-session line
+
+- Stub arm: lb.json-landed 184/258 (+12 since 07:26). fresh-queued=29 stale=0 >= threshold 10 -> wave script
+  correctly queued nothing (wave 6 comes when < 10 fresh remain).
+- Mouth arm: all 18/18 lb.json present on the shared tree; step-4 score unchanged (COMPLETE, 17 MOUTH-SILENT +
+  1 DEFINED, committed 10-07); still awaiting NEEDS-CLAUDE #6. gpu.queue: 0 lines, card idle, dispatcher down
+  (start is denied to the local model; nothing registered waits on it).
+- No ledger change this session (no wave queued).
+
+## 2026-10-09 13:50 — §6 while-running status (Hermes, driver session)
+
+- stub arm: **231/258** lb.json landed (27 outstanding, all queued); mouth arm **18/18**.
+- `b2d_queue_next_wave.sh --status` from $W: fresh-queued=26 stale-queued=0 — at/above the
+  threshold 10 and waves 1-6 cover all 258 registered lines, so **no wave queued**.
+- ledger note: waves 4-6 (commits 898a03fa1, bc8aa27db, b922d6142) live on this branch,
+  committed from this worktree after the 2026-10-06 merge; main's b2d_waves.tsv still shows
+  the 130-row pre-wave-4 snapshot and heals on the next Claude merge. No tooling runs from
+  main's copy (step 6/7 read $W), so nothing is blocked.
+
+## 2026-10-09 14:47 — §6 every-session status (Hermes, driver session)
+
+- stub arm: **232/258** lb.json (26 outstanding, all queued, stale=0); mouth 18/18.
+- fresh-queued=25 >= threshold 10 and waves 1-6 cover the full set -> **no wave queued,
+  no ledger change**. Progress steady (~1 cell/10 min); no ended-badly wake since 11:35.
+
+## 2026-10-09 15:35 — pool41 kill (rc=137) diagnosed: auto-retried, nothing to do (Hermes)
+
+- Woke to "1 pool job ended badly on pool41: killed (memory?)". Traced to the b2d stub line
+  `b2d0929/s102/curiosity-followup` (mem_gb=8): attempt 1 got rc=137 at 15:20:33, and the
+  dispatcher **re-dispatched the same cell at 15:21:29** — it was live and writing intact
+  arms at 15:30. Per HANDOFF 6 no hand re-queue; the pool did it.
+- Health sweep (read-only ssh): pool41 has exactly one lb-less dir (curiosity, running);
+  pool42's lb-less dir `s102/reconsolidation` is its 15:28:04 fresh start (files=0, not dead);
+  pool40/wspool carry no b2d0929 dirs (its 3 historical rc=137 rows are Oct-8 other work).
+  Accounting closes: 258 - 233 landed = 22 queued + 2 running + 1 retry-running.
+- If attempt 2 also dies, step 8's INCOMPLETE list takes it via step 9's `rerun_stub_cell`
+  row (once per cell). No NEEDS, no ledger change.
+
+## 2026-10-09 16:38 — §6 every-session status (Hermes, driver session)
+
+- stub arm: **236/258** lb.json (22 outstanding: 20 queued + 2 running, stale=0); mouth 18/18.
+- **curiosity-followup s102 attempt 2 LANDED** (lb.json synced) — the 15:20 rc=137 kill is
+  fully recovered; no cell awaiting the step-9 re-run row so far.
+- fresh-queued=20 >= threshold 10 -> no wave queued. Harvest prep note: step 7's
+  `pool_sync.sh`/`copy_results.sh` call `rsync`, which is absent on this host (rc=1); the
+  periodic node->tree sync delivers cells anyway (curiosity came through on its own), and
+  any stragglers can be no-clobber scp'd as done for the marker bisect. Handle at 258.
+
+## 2026-10-09 18:40 — §6 status + wave-cap probe (Hermes, driver session)
+
+- stub arm: **245/258** lb.json (13 outstanding: 11 queued + 2 running, stale=0); mouth 18/18.
+- Probed the below-threshold future: `b2d_queue_next_wave.sh` queues only unhandled lines
+  from the 258-line `b2d_jobs.txt` registry (line 131-132 skip handled/landed), and wave 6
+  reads as 42/43 done (todo=1) -> the next real run resumes wave 6, finds nothing unhandled,
+  prints "no unqueued line left", and exits 0. **No wave-7/unregistered-line risk** once
+  fresh-queued drops under 10; the prereg set cannot grow past 258.
+
+## 2026-10-09 19:40 — §6 status + FIRST live below-threshold queue run (Hermes, driver session)
+
+- stub arm: **249/258** lb.json (9 outstanding: 7 queued + 2 running, stale=0); mouth 18/18.
+- fresh-queued=7 dropped under THRESHOLD 10, so ran the real `b2d_queue_next_wave.sh` (not
+  --status) as the HANDOFF's every-session line prescribes: "no unqueued b2d0929 line left
+  in b2d_jobs.txt", **wave 7: 0 line(s) attempted**, rc=0, ledger unchanged at 258 rows.
+  The registry cap verified live — the prereg battery stays at 258; no NEEDS.
+
+## 2026-10-09 20:45 — §6 status at 257/258 + harvest-path probe (Hermes, driver session)
+
+- stub arm: **257/258** lb.json; dispatched-ever=258, fresh-queued=0, stale=0 — the LAST
+  cell started on pool41 at 20:35:36. Mouth 18/18. Step 7 fires at the next wake.
+- env.sh is pre-migration: `P=/home/dant123/sim` (does not exist here) and
+  `TREE=$HOME/derisk-pool/revisions/<PIN_P>` (no local export of 5818dc6). The wave script
+  already defaults POOL_ROOT to this checkout. Harvest will therefore use explicit paths
+  (primary $PWD shards -> `cp -a` into this worktree's SH/b2d0929, excluding PIN.txt and
+  b2d_score*.json per copy_results.sh stub semantics — rsync is absent here), then the
+  step-7 commit. Step-8's `--code-root $TREE` needs the same treatment; decide then.
+
+## 2026-10-09 23:20 — step 7 HARVEST complete (Hermes, driver session)
+
+- **258/258 stub lb.json landed** (21:07); last cell = curiosity-followup s102 retry (pool41
+  15:21, the 15:20 rc=137 auto-retry) + reconsolidation s102. Harvested all 258 dirs into
+  this worktree with `cp -a` (rsync absent on S; env.sh's P=/home/dant123/sim + TREE export
+  are pre-migration — bypassed with explicit paths) and committed as data:
+  **`21b684827` "data(B2d): stub-arm shards at P=5818dc6 (raw arm files + sidecars; not yet
+  scored)" — 2208 files, 334,162 insertions.**
+- Shape check: 216 fat cells (intact_a/b + lesion[.rep0] + lb.json, all with .prov sidecars);
+  42 thin cells carry lb.json only with per-faculty `verdict: "not-covered:thin"` = the 7
+  uncovered faculties (gnw-deliberation, learned-referent, one-brain-substrate, onebrain-xedge,
+  spiking-qroute, surprise-salience-snc-afferent, value-driven-choice) x 6 seeds — registered
+  shape, not data loss (identical thin shape on the nodes).
+- lane-starvation ⛔ tripped on commit (lanes A-E empty since the battery drained): waived with
+  CLASS NO-READY-WORK + checked (lane_check 0/0; §4 Start-blocked inventory) at the SHARED
+  queue root — note `research/queue/.lane_waiver` resolves under the git common dir, NOT the
+  worktree. Auto-expires 6h; next commits may need a fresh one or lane jobs.
+- **Step 8 next wake**: aggregate + `b2d_score.py` (scoring = registered scorer; decide the
+  `--code-root $TREE` adaptation — no local export of 5818dc6 on S).
+
+## 2026-10-09 23:50 — stall wake "pool has work, no result 3.0h": FALSE ALARM (Hermes, driver session)
+
+- Checked all 3 nodes: **no runner processes anywhere** (pool40/41/42), queue files empty
+  (pool.queue=0, gpu.queue=0, pool.queue.running=0) — no jobs exist to be dead.
+- The 4 `sleep_transitive_inference` seed-44 lines in dispatch.log were **NOT dispatched
+  tonight**: dispatch.log mtime = 2026-09-30 20:23:28, zero B2d lines in it, time-only
+  stamps — they are Sep-30 dispatches of the sleep battery, whose results exist locally
+  (seed44_b/c/n/x.json, Sep 30 22:06-23:03; seed101/102 parts claimed Oct 1 00:20-00:35).
+- Tonight's "work" was the B2d stub arm: every claim has an rc=0 job_status row; last
+  result = 20:35 (final cell). 23:47 − 20:35 = 3.1h — the "3.0h" gap exactly matches the
+  battery having legitimately drained, not a death.
+- Bookkeeping quirks noted (not touched): pool.queue.done = 0 lines despite 4357 claims
+  (no tool in tools/ writes it — legacy), pool.queue.unchecked holds 1 ancient unrunnable
+  stub (`1788569058 SIM_BACKEND=numpy`, Sep 2) + 2 Jul/Aug malformed lines — both
+  quarantined-by-design, never dispatched. The external stall detector's "has work" source
+  is not in this repo; expect repeat wakes until new results land.
+
+## 2026-10-10 15:55 EDT — steps 8-10: aggregate, both scores, PROVISIONAL finding (S)
+
+- Every-session line: fresh-queued=0, lb.json 258/258, ledger unchanged (no wave needed).
+- Step 8: code-root = provisioned export of P copied from pool41 to scratch, manifest verified (True, 6970
+  files); aggregate mean 0.843137, robust core 28, union 29, provenance 216/216 valid, rc=0.
+- Stub score `b2d_score.json`: verdict **COMPLETE**, 216/216 defined, no fail cells, no preconditions
+  failed, no reruns; S1 headline mean 0.733 SD 0.019 robust core 21; S0 0.843/28; S2 0.514/18.
+- Mouth score `b2d_mouth_score.json` (re-run): **COMPLETE**; coloring + appraisal MOUTH-SILENT 6/6 as
+  A1.3 predicted; drives-response 0 of 6 reply-load-bearing (1 defined, 5 silent -> MIXED); null floor held.
+- Step 9: both verdicts COMPLETE -> step 10, no re-run rows, no precondition failures.
+- Step 10: finding `research/findings/2026-10-10-B2d-battery-at-P5818dc6-PROVISIONAL.md` (draft_finding.py,
+  numbers untouched; Operational notes appended) + the four registered artifacts committed on this branch.
+  NEEDS-CLAUDE #2 (review + merge) filed as a RESULT on the runbook; push skipped per §3 / RULING a2-no-push
+  (branch @ sha named in the RESULT instead); board card sync = Claude via that RESULT line.

@@ -55,7 +55,8 @@ _ON = ("1", "true", "yes", "on")
 def d6_hebbian_enabled() -> bool:
     """`BRAIN_D6_HEBBIAN_STORE` in {1,true,yes,on} -> the composer writes fact blocks with the local Hebbian rule
     (research/runners/d6_hebbian_store.py) and this module's observability hook is active. Default OFF."""
-    return os.environ.get("BRAIN_D6_HEBBIAN_STORE", "").strip().lower() in _ON
+    from research.runners.d6_hebbian_store import hebbian_store_enabled
+    return hebbian_store_enabled()
 
 
 def store_composer(chat):

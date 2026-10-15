@@ -1,0 +1,804 @@
+{
+ "seed": 102,
+ "op_index": 0,
+ "mode": "commit",
+ "params": {
+  "NW": 8,
+  "NP": 8,
+  "R": 12,
+  "NI": 12,
+  "DRIVE_PA": 1500.0,
+  "TEACH_PA": 1500.0,
+  "LR": 0.1,
+  "W_MAX": 20.0,
+  "POS_GAIN": 0.04,
+  "EPOCHS": 8,
+  "TRAIN_STEPS": 40,
+  "TEST_STEPS": 60,
+  "W_INIT": 0.05,
+  "W_RI": 120.0,
+  "W_IR": 60.0,
+  "ROLE_MIN": 9,
+  "ROLE_MARGIN": 2.0,
+  "N_SPARE": 4
+ },
+ "commit": {
+  "BASE_OP": 7,
+  "NG": 12,
+  "NGI": 8,
+  "NS": 20,
+  "W_RG": 50.0,
+  "W_GG": 20.0,
+  "W_GGI": 60.0,
+  "W_GIG": 60.0,
+  "W_GS": 12.0,
+  "W_SS": 60.0,
+  "HOLD_STEPS": 100,
+  "READ_STEPS": 30,
+  "READ_FRAC": 0.03
+ },
+ "cases": {
+  "svo": {
+   "content": [
+    "dog",
+    "chase"
+   ],
+   "want": [
+    "dog",
+    "chase"
+   ],
+   "got": [
+    "dog",
+    "chase"
+   ],
+   "roles": {
+    "dog": "agent",
+    "chase": "action"
+   },
+   "counts": {
+    "dog": {
+     "agent": 30,
+     "action": 0,
+     "patient": 0
+    },
+    "chase": {
+     "agent": 0,
+     "action": 26,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 94,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 90,
+     "action": 79,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 64,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 56,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [
+      "agent"
+     ],
+     "role": "agent"
+    },
+    {
+     "new": [
+      "action"
+     ],
+     "role": "action"
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     "dog",
+     "chase"
+    ],
+    "x2": [
+     "dog",
+     "chase"
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": [
+    "dog",
+    "chase"
+   ],
+   "pass": true
+  },
+  "self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": [
+    "brain",
+    "use"
+   ],
+   "got": [
+    "brain",
+    "use"
+   ],
+   "roles": {
+    "brain": "agent",
+    "use": "action"
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 24,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 93,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 92,
+     "action": 79,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 58,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 56,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [
+      "agent"
+     ],
+     "role": "agent"
+    },
+    {
+     "new": [
+      "action"
+     ],
+     "role": "action"
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     "brain",
+     "use"
+    ],
+    "x2": [
+     "brain",
+     "use"
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": [
+    "brain",
+    "use"
+   ],
+   "pass": true
+  },
+  "adverb": {
+   "content": [
+    "brain",
+    "usually",
+    "use"
+   ],
+   "want": [
+    "brain",
+    "use"
+   ],
+   "got": [
+    "brain",
+    "use"
+   ],
+   "roles": {
+    "brain": "agent",
+    "usually": null,
+    "use": "action"
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "usually": {
+     "agent": 0,
+     "action": 3,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 18,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 93,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 92,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 87,
+     "action": 83,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 58,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 2,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 41,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [
+      "agent"
+     ],
+     "role": "agent"
+    },
+    {
+     "new": [],
+     "role": null
+    },
+    {
+     "new": [
+      "action"
+     ],
+     "role": "action"
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     "brain",
+     "use"
+    ],
+    "x2": [
+     "brain",
+     "use"
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": [
+    "brain",
+    "use"
+   ],
+   "pass": true
+  },
+  "swapped": {
+   "content": [
+    "chase",
+    "dog"
+   ],
+   "want": [
+    "dog",
+    "chase"
+   ],
+   "got": [
+    "dog",
+    "chase"
+   ],
+   "roles": {
+    "chase": "action",
+    "dog": "agent"
+   },
+   "counts": {
+    "chase": {
+     "agent": 0,
+     "action": 21,
+     "patient": 0
+    },
+    "dog": {
+     "agent": 20,
+     "action": 1,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 0,
+     "action": 80,
+     "patient": 0
+    },
+    {
+     "agent": 91,
+     "action": 75,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 0,
+     "action": 45,
+     "patient": 0
+    },
+    {
+     "agent": 52,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [
+      "action"
+     ],
+     "role": "action"
+    },
+    {
+     "new": [
+      "agent"
+     ],
+     "role": "agent"
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     "dog",
+     "chase"
+    ],
+    "x2": [
+     "dog",
+     "chase"
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": [
+    "dog",
+    "chase"
+   ],
+   "pass": true
+  },
+  "novel": {
+   "content": [
+    "zorp",
+    "glim"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "zorp": null,
+    "glim": null
+   },
+   "counts": {
+    "zorp": {
+     "agent": 2,
+     "action": 0,
+     "patient": 0
+    },
+    "glim": {
+     "agent": 0,
+     "action": 3,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 2,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [],
+     "role": null
+    },
+    {
+     "new": [],
+     "role": null
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     null,
+     null
+    ],
+    "x2": [
+     null,
+     null
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": [
+    null,
+    null
+   ],
+   "pass": true
+  },
+  "lesion_self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "brain": null,
+    "use": null
+   },
+   "counts": {
+    "brain": {
+     "agent": 2,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 3,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 2,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [],
+     "role": null
+    },
+    {
+     "new": [],
+     "role": null
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     null,
+     null
+    ],
+    "x2": [
+     null,
+     null
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": null,
+   "pass": true
+  },
+  "commit_lesion_self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "brain": null,
+    "use": null
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 24,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [],
+     "role": null
+    },
+    {
+     "new": [],
+     "role": null
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     null,
+     null
+    ],
+    "x2": [
+     null,
+     null
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": null,
+   "pass": true
+  },
+  "latch_lesion_self": {
+   "content": [
+    "brain",
+    "use"
+   ],
+   "want": null,
+   "got": null,
+   "roles": {
+    "brain": null,
+    "use": null
+   },
+   "counts": {
+    "brain": {
+     "agent": 27,
+     "action": 0,
+     "patient": 0
+    },
+    "use": {
+     "agent": 0,
+     "action": 24,
+     "patient": 0
+    }
+   },
+   "slot_counts": [
+    {
+     "agent": 1,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 0,
+     "patient": 0
+    }
+   ],
+   "gate_counts": [
+    {
+     "agent": 58,
+     "action": 0,
+     "patient": 0
+    },
+    {
+     "agent": 0,
+     "action": 56,
+     "patient": 0
+    }
+   ],
+   "per_item": [
+    {
+     "new": [],
+     "role": null
+    },
+    {
+     "new": [],
+     "role": null
+    }
+   ],
+   "read_variants": {
+    "x0.5": [
+     null,
+     null
+    ],
+    "x2": [
+     null,
+     null
+    ]
+   },
+   "read_invariant": true,
+   "threshold": 18.0,
+   "co_commit": 0,
+   "relatch": 0,
+   "host_rule": null,
+   "pass": true
+  }
+ },
+ "read_invariant": true,
+ "all_pass": true,
+ "backend": "numpy",
+ "weights": {
+  "word_taught": 11.175,
+  "word_untaught": 0.125,
+  "pos_matched": 4.549,
+  "pos_other": 0.067
+ },
+ "diagnostics": {
+  "dual_role": {
+   "cat@0": {
+    "want": "agent",
+    "got": "agent",
+    "ok": true,
+    "slot_counts": {
+     "agent": 93,
+     "action": 0,
+     "patient": 0
+    }
+   },
+   "cat@2": {
+    "want": "patient",
+    "got": "patient",
+    "ok": true,
+    "slot_counts": {
+     "agent": 0,
+     "action": 0,
+     "patient": 86
+    }
+   },
+   "fish@0": {
+    "want": "agent",
+    "got": "agent",
+    "ok": true,
+    "slot_counts": {
+     "agent": 88,
+     "action": 0,
+     "patient": 0
+    }
+   },
+   "fish@2": {
+    "want": "patient",
+    "got": "patient",
+    "ok": true,
+    "slot_counts": {
+     "agent": 0,
+     "action": 0,
+     "patient": 93
+    }
+   }
+  },
+  "dual_role_excl_lesion": {
+   "cat@0": {
+    "new": [
+     "agent"
+    ],
+    "co_commit": 0
+   },
+   "cat@2": {
+    "new": [
+     "patient"
+    ],
+    "co_commit": 0
+   },
+   "fish@0": {
+    "new": [
+     "agent"
+    ],
+    "co_commit": 0
+   },
+   "fish@2": {
+    "new": [
+     "patient"
+    ],
+    "co_commit": 0
+   }
+  },
+  "dual_role_ok": 4,
+  "excl_lesion_co_commit": 0,
+  "host_rule_agrees": {
+   "svo": true,
+   "self": true,
+   "adverb": true,
+   "swapped": true,
+   "novel": true
+  },
+  "latched_min": 75,
+  "unlatched_max": 1,
+  "co_commit_total": 0,
+  "relatch_total": 0
+ },
+ "commit_lesion_moved_parse": true,
+ "prereg": "research/findings/2026-10-06-word-role-commit-PREREGISTRATION.md"
+}

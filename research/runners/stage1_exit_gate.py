@@ -21,7 +21,8 @@ THE FOUR CRITERIA (one probe GROUP each; two diagnostic sub-groups):
 ARMS (every group): intact_a (production, nothing installed), intact_b (an independent same-seed rebuild = the null),
 one or two LESION arms (the responsible faculty cut: an env flag production already carries, or an in-process
 monkeypatch in the arm's worker), a PERMUTED-EXPOSURE arm (the teacher's exposure permuted: the reply must follow the
-exposure), and for C4 one INFORMATIONAL arm (a default-off candidate mechanism; never counted). Lesion arms get a
+exposure), and for C4 one INFORMATIONAL arm (a default-off candidate mechanism; never counted); for C1, Amendment A2
+counts the in-process `lesion_inherit_pathway` and reports the attempt-1 `lesion_draw` as informational. Lesion arms get a
 `.rep0` repeat (a second fresh process) so a reply-level effect is "reproduced against the lesion's own repeat"
 (docs/TERMS.md, load-bearing).
 
@@ -61,6 +62,7 @@ GATE_SEEDS = (42, 43, 44, 100, 101, 102)
 DEV_SEEDS = tuple(range(1, 13))
 EXPECTED_SOURCE = "tiny-demo +LTM"
 GATE_OUT_DIR = "research/findings/raw/_stage1_exit/gate"
+ATTEMPT2_OUT_DIR = "research/findings/raw/_stage1_exit/gate_a2"   # Amendment A2: attempt 2's fresh lines land here
 PREREG = "research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md"
 VALENCE_R_BAR = 0.55          # the roadmap's own Stage-1 bar (DR-2, every seed)
 CONTROL_R_CEILING = 0.20      # a lesion / permuted arm must read below this (or UNDEFINED) for the effect to vanish
@@ -165,14 +167,31 @@ def _val_novel_turns(swap_company=False):
     ]
 
 
+# ── C1 lesion arms, Amendment A2 (prereg section 12, 2026-10-13; RULINGs stage1-c1-lesion, c1-flip-config) ───────────
+# The attempt-2 C1 answer comes from the category-inheritance organ on the strict route's recall miss
+# (webapp/category_inherit_chat.py, default ON since the flip). The registered `lesion_draw` never engages on that
+# route, so under Amendment A1's engagement rule every seed would read UNDEFINED (bar-sanity record
+# docs/drafts/stage1-exit/bar_sanity_record_s1_c1_registered.json: UNREACHABLE). The counted C1 lesion is the
+# in-process patch `lesion_inherit_pathway` (one name for the arm and the patch): every organ read with both learned
+# pathways cut; applied = calls > 0, and an arm whose patch was never called voids the seed (UNDEFINED). `lesion_draw`
+# stays as an informational arm (reported, never counted). The bar (correct 6/6, lesion effect 6/6 reproduced,
+# permuted tracks 6/6) is unchanged.
+_C1_LESIONS = {"lesion_inherit_pathway": {
+    "env": {}, "patch": "lesion_inherit_pathway",
+    "cuts": "the category-inheritance organ's learned pathways (member->frame and frame->frame) on every organ read"}}
+_C1_INFORMATIONAL = {"lesion_draw": {"env": {"BRAIN_SPIKING_DRAW_LESION": "1"}, "patch": None,
+                                     "cuts": "the spiking generative DRAW's likelihood (uniform drive)"}}
+C1_GROUPS = ("cat_disc", "cat_told")
+C1_DIRECT_PROBE = "p_canary_eat"   # the direct (strict-route-miss) probe: its organ read must record `hop: true`
+C1_FLAG_NAMES = ("BRAIN_CATEGORY_INHERIT", "BRAIN_CATEGORY_INHERIT_HOP")
+
 GROUPS = {
     "cat_disc": {
         "criterion": "C1", "primary": True, "env": {},
         "turns": _CAT_CONTEXT + [("t_canary_fly", "the canary flies in the sky", "teach")] + _CAT_PROBES,
         "permuted_turns": _CAT_CONTEXT + [("t_canary_fly", "the canary swims in the lake", "teach")] + _CAT_PROBES,
-        "lesions": {"lesion_draw": {"env": {"BRAIN_SPIKING_DRAW_LESION": "1"}, "patch": None,
-                                    "cuts": "the spiking generative DRAW's likelihood (uniform drive)"}},
-        "informational": {},
+        "lesions": dict(_C1_LESIONS),          # Amendment A2: the counted lesion cuts the route that answers
+        "informational": dict(_C1_INFORMATIONAL),
     },
     "cat_told": {
         "criterion": "C1", "primary": False, "env": {},
@@ -184,9 +203,8 @@ GROUPS = {
                   ("c_bird_eat", "what does the bird eat", "control"),      # premise 2 recalled (class property)
                   ] + _CAT_PROBES[:2] + [("c_canary_swim", "what does the canary swim", "control")],
         "permuted_turns": None,   # filled below: canary told `isa fish`
-        "lesions": {"lesion_draw": {"env": {"BRAIN_SPIKING_DRAW_LESION": "1"}, "patch": None,
-                                    "cuts": "the spiking generative DRAW's likelihood (uniform drive)"}},
-        "informational": {},
+        "lesions": dict(_C1_LESIONS),          # Amendment A2 (diagnostic group: reported, never counted)
+        "informational": dict(_C1_INFORMATIONAL),
     },
     "word": {
         "criterion": "C2", "primary": True, "env": {},
@@ -389,6 +407,19 @@ def parse_feel(answer):
     return {"differential": d, "sign": sign}
 
 
+def effective_c1_flags():
+    """Amendment A2: the EFFECTIVE values of BRAIN_CATEGORY_INHERIT and BRAIN_CATEGORY_INHERIT_HOP in this process
+    (unset = the flipped defaults, read through the production readers themselves). A reader that cannot be imported
+    records the error, and the aggregate then makes the C1 seed UNDEFINED."""
+    try:
+        from webapp.category_inherit_chat import category_inherit_enabled
+        from research.runners.category_inherit_organ import category_inherit_hop_enabled
+        return {"BRAIN_CATEGORY_INHERIT": bool(category_inherit_enabled()),
+                "BRAIN_CATEGORY_INHERIT_HOP": bool(category_inherit_hop_enabled())}
+    except Exception as e:      # recorded, never raised: a missing record is an instrument failure, scored UNDEFINED
+        return {"error": "%s: %s" % (type(e).__name__, e)}
+
+
 def run_worker(seed, group, arm, out_path, labels=None):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
@@ -407,6 +438,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     t0 = time.time()
     from webapp.server import brain_chat, BrainChatRequest
     import_s = time.time() - t0
+    c1_flags = effective_c1_flags()      # Amendment A2: every arm records the effective C1 flag values
     turns = turns_for(group, seed, arm)
     if labels:
         keep = set(labels.split(","))
@@ -425,7 +457,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     out = {"runner": "research/runners/stage1_exit_gate.py", "prereg": PREREG,
            "seed": int(seed), "group": group, "arm": arm, "kind": kind, "criterion": GROUPS[group]["criterion"],
            "env": dict(GROUPS[group]["env"], **env), "patch": patch_rec, "pythonhashseed_ok": hash_ok,
-           "corpus_present": corpus_present,
+           "corpus_present": corpus_present, "c1_flags": c1_flags,
            "session": session, "turns": [{"label": l, "message": m, "role": r} for l, m, r in turns],
            "responses": responses, "timings_s": timings, "import_s": round(import_s, 1),
            "wall_s": round(time.time() - t0, 1), "elapsed_seconds": round(time.time() - t0, 1),
@@ -675,6 +707,39 @@ def _scored_labels(group):
             "val_heldout": None, "val_novel": None}[group]
 
 
+def c1_engagement(shard, arm):
+    """Amendment A2, the C1 validity record of one arm: (record, undefined_reasons).
+    * the arm must record the EFFECTIVE values of both C1 flags (`c1_flags`, written by `effective_c1_flags`);
+    * in a flag-on arm (BRAIN_CATEGORY_INHERIT effective on) the direct probe's `category_inherit.read` must exist
+      and record `hop: true`, and so must every other organ read of the session (a read made with no organ built
+      carries no organ state and is skipped).
+    The read's `lesion` / `lesion_held` are reported beside (the patch's own trace), never thresholded."""
+    reasons = []
+    flags = (shard or {}).get("c1_flags")
+    rec = {"flags": flags}
+    if not isinstance(flags, dict) or any(not isinstance(flags.get(k), bool) for k in C1_FLAG_NAMES):
+        reasons.append("A2: %s records no effective C1 flag values (%s)" % (arm, ", ".join(C1_FLAG_NAMES)))
+        return rec, reasons
+    if not flags["BRAIN_CATEGORY_INHERIT"]:
+        return rec, reasons
+    reads = {}
+    for label, resp in ((shard or {}).get("responses") or {}).items():
+        rd = ((resp or {}).get("category_inherit") or {}).get("read") if isinstance(resp, dict) else None
+        if isinstance(rd, dict):
+            reads[label] = rd
+    direct = reads.get(C1_DIRECT_PROBE)
+    rec.update(n_organ_reads=len(reads), direct_read_hop=(direct or {}).get("hop"),
+               direct_read_patient=(direct or {}).get("patient"), direct_read_reason=(direct or {}).get("reason"),
+               direct_read_lesion=(direct or {}).get("lesion"), direct_read_lesion_held=(direct or {}).get("lesion_held"))
+    if direct is None or direct.get("hop") is not True:
+        reasons.append("A2: %s: the direct probe %s has no organ read recording hop: true" % (arm, C1_DIRECT_PROBE))
+    no_hop = sorted(l for l, rd in reads.items() if l != C1_DIRECT_PROBE and rd.get("reason") != "organ_not_built"
+                    and rd.get("hop") is not True)
+    if no_hop:
+        reasons.append("A2: %s: organ read(s) without hop: true on %s" % (arm, ",".join(no_hop)))
+    return rec, reasons
+
+
 def aggregate(root, seeds=GATE_SEEDS, informational=True):
     shards = _load_shards(root, seeds)
     seeds = [int(s) for s in seeds]
@@ -714,6 +779,16 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         sh = have.get(arm_name)
                         if sh is None or "responses" not in sh:
                             row["undefined_reasons"].append("%s arm missing or unreadable" % arm_name)
+                if group in C1_GROUPS:
+                    # Amendment A2: every counted C1 arm records the effective flag values, and a flag-on arm's
+                    # direct probe carries an organ read with hop: true; else the seed is UNDEFINED for C1
+                    row["c1_engagement"] = {}
+                    for arm_name in arms_for(group, with_informational=False):
+                        sh = have.get(arm_name)
+                        if sh is None or "responses" not in sh:
+                            continue                 # a missing counted arm is already an UNDEFINED reason above
+                        row["c1_engagement"][arm_name], why_c1 = c1_engagement(sh, arm_name)
+                        row["undefined_reasons"].extend(why_c1)
                 if have.get("permuted") is None or "responses" not in (have.get("permuted") or {}):
                     row["undefined_reasons"].append("permuted arm missing or unreadable")
                 elif group == "val_heldout":
@@ -782,6 +857,17 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         p = L.get("patch")
                         if isinstance(p, dict) and "calls" in p:
                             rec["patch_calls"] = p["calls"]; rec["applied"] = p["calls"] > 0
+                            pr = (R or {}).get("patch") if isinstance(R, dict) else None
+                            if isinstance(pr, dict) and "calls" in pr:
+                                rec["repeat_patch_calls"] = pr["calls"]
+                                rec["applied"] = rec["applied"] and pr["calls"] > 0
+                            # prereg section 7: an in-process lesion whose patch was never called is applied=False
+                            # and voids that arm, so the seed is UNDEFINED (Amendment A2: the C1 lesion must
+                            # provably engage the inheritance pathway; calls == 0 is never a pass or a fail)
+                            if rec["applied"] is False:
+                                row["undefined_reasons"].append(
+                                    "%s: in-process lesion never applied (patch calls == 0 in the arm or its "
+                                    "repeat): the arm is void" % les)
                         else:
                             # Amendment A1: an env-flag lesion carries no engagement record. On attempt 1 one of them
                             # (C3's) cut a path production never calls, and its "no effect" was scored as "not
@@ -823,6 +909,11 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                                 row["informational"][inf] = {"r": score_val_heldout(I["responses"])["r"]}
                             elif group == "val_novel":
                                 row["informational"][inf] = {"inherits": score_val_novel(I["responses"])["inherits"]}
+                            elif group in C1_GROUPS:   # Amendment A2: lesion_draw is reported here, never counted
+                                labs = _scored_labels(group)
+                                row["informational"][inf] = {
+                                    "inherits": score_cat(I["responses"])["inherits"],
+                                    "differs": dict(zip(labs, [reply_differs(ra, I["responses"], l) for l in labs]))}
             rows[seed] = row
             if not row["undefined_reasons"] and "correct" in row:
                 defined.append(seed)
@@ -1097,13 +1188,17 @@ def main():
     ap.add_argument("--allow-gate-seed", action="store_true",
                     help="required to run a GATE seed (42/43/44/100/101/102); dev seeds need nothing")
     ap.add_argument("--no-informational", action="store_true", help="emit/aggregate without the informational arms")
+    ap.add_argument("--out-dir", default=GATE_OUT_DIR,
+                    help="--emit-pool-jobs: shard directory (attempt 2: %s; never attempt 1's %s)"
+                         % (ATTEMPT2_OUT_DIR, GATE_OUT_DIR))
     a = ap.parse_args()
     if a.selftest:
         ok, _ = selftest()
         sys.exit(0 if ok else 1)
     if a.emit_pool_jobs:
         seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else GATE_SEEDS
-        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, informational=not a.no_informational):
+        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, out_dir=a.out_dir,
+                                       informational=not a.no_informational):
             print("%s\t%s" % (cmd, why))
         return
     if a.aggregate:

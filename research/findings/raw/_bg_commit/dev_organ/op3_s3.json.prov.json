@@ -1,0 +1,41 @@
+{
+ "run_id": "1791974814-175336",
+ "runner": "research/runners/_bg_commit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab68c685ffb2cfd3d/research/runners/_bg_commit_derisk.py",
+  "--sweep",
+  "--seeds",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "--out-dir",
+  "research/findings/raw/_bg_commit/dev_organ"
+ ],
+ "git_sha": "2e50292f2",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-14T06:46:54",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1228.1,
+ "corpus_check_query": "BG live seam latch read not threshold-invariant (G4)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_bg_commit/dev_organ/op3_s3.json"
+}

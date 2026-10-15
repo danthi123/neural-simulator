@@ -414,6 +414,7 @@ class OneBrainComposer:
         # spiking store. See 2026-08-12-onebrain-spiking-store... (the wrap-vs-inner codebook bug this closes).
         self._recruit_rng = np.random.default_rng(int(seed) + 90210)
         self._free_slots = []
+        self._recruited_slots = {}   # word -> reserve slot it was recruited into (saved by cross-session persistence)
         for _k in range(max(0, int(vocab_headroom))):
             _ph = f"__free{_k}__"
             if _ph in self.comp.concepts:                # avoid the (astronomically unlikely) name collision
@@ -607,8 +608,93 @@ class OneBrainComposer:
         self.words[s] = w                                    # the cleanup slot now decodes to the real word
         self._word_index.pop(ph, None)
         self._word_index[w] = s
+        if not hasattr(self, "_recruited_slots"):
+            self._recruited_slots = {}
+        self._recruited_slots[w] = s
         self._dg_index = None; self._dg_built_V = -1         # codebook mutated -> rebuild the DG index on next read
         return True
+
+    def recruited_slots(self) -> dict:
+        """{word: cleanup slot index} for every word recruited into a reserve slot. Cross-session persistence saves it
+        so a reload re-recruits each word into the SAME slot (`restore_recruit`)."""
+        return dict(getattr(self, "_recruited_slots", {}))
+
+    def restore_recruit(self, w, slot, code=None) -> bool:
+        """Re-recruit a persisted word into the reserve slot it held when it was saved (cross-session reload).
+        Without this a reload re-recruited words in re-store order, so a word could take ANOTHER word's slot with its
+        own code while its own slot's `__free<k>__` placeholder kept that code for the next new word: two words, one
+        code (re-review 2026-10-13: learn 'crow chase wren', reconsolidate to 'moth', save, reload -> a later 'heron'
+        got moth's code). `code` (the saved bind code) wins over the slot's reserve code. Returns True iff `w` now
+        occupies `slot`; a slot that is not free (or a word already placed elsewhere) is left alone (False)."""
+        if not isinstance(w, str):
+            return False
+        if w in self._word_index:
+            return self._word_index[w] == slot
+        if slot not in self._free_slots:
+            return False
+        self._free_slots.remove(slot)
+        ph = self.words[slot]
+        reserve_code = self.comp.concepts.pop(ph, None)
+        if code is not None:
+            self.comp.concepts[w] = np.asarray(code, dtype=float)
+        elif self.comp.concepts.get(w) is None:
+            self.comp.concepts[w] = (reserve_code if reserve_code is not None
+                                     else self._recruit_rng.uniform(0.0, 1.0, self.D))
+        if w not in self.comp.words:
+            import bisect; bisect.insort(self.comp.words, w)
+        self.words[slot] = w
+        self._word_index.pop(ph, None)
+        self._word_index[w] = slot
+        if not hasattr(self, "_recruited_slots"):
+            self._recruited_slots = {}
+        self._recruited_slots[w] = slot
+        self._dg_index = None; self._dg_built_V = -1
+        cache = getattr(self, "_csr_cache", None)
+        if cache is not None:
+            cache.clear()                                    # the cleanup operator changed -> rebuild on next read
+        return True
+
+    def separate_reserve_codes(self) -> list:
+        """Give every still-free reserve slot whose placeholder code equals a live word's code a fresh code (one-brain
+        M2 fold-in (c), M0 review 2026-10-13). A reload that could not put a word back into its own slot (a checkpoint
+        with no slot record, an out-of-range or duplicated slot, or a slot value that would not parse) re-recruits the
+        word in re-store order: it keeps its saved code in another slot while its own slot's placeholder still holds
+        that code, so the next new word would get it too (two words, one code). The fresh code is drawn from an RNG
+        seeded by (seed, slot) only, so the recruit stream (`_recruit_rng`) is untouched. Returns the slots re-coded."""
+        live = [np.asarray(self.comp.concepts[w], dtype=float) for w in self.words
+                if isinstance(w, str) and not w.startswith("__free") and self.comp.concepts.get(w) is not None]
+        recoded = []
+        for s in list(self._free_slots):
+            ph = self.words[s]
+            code = self.comp.concepts.get(ph)
+            if code is None:
+                continue
+            c = np.asarray(code, dtype=float)
+            if any(c.shape == v.shape and np.array_equal(c, v) for v in live):
+                rng = np.random.default_rng([int(self.seed) + 90211, int(s)])
+                self.comp.concepts[ph] = rng.uniform(0.0, 1.0, self.D)
+                recoded.append(int(s))
+        if recoded:
+            self._dg_index = None; self._dg_built_V = -1
+            cache = getattr(self, "_csr_cache", None)
+            if cache is not None:
+                cache.clear()
+        return recoded
+
+    def duplicate_codes(self) -> list:
+        """Pairs of cleanup-codebook entries (words and free placeholders) that share one code: [] when every code is
+        distinct (the reload postcondition `cross_session_persistence.reload_session_facts` checks)."""
+        seen, dups = [], []
+        for w in self.words:
+            code = self.comp.concepts.get(w) if isinstance(w, str) else None
+            if code is None:
+                continue
+            c = np.asarray(code, dtype=float)
+            for w0, c0 in seen:
+                if c.shape == c0.shape and np.array_equal(c, c0):
+                    dups.append((w0, w))
+            seen.append((w, c))
+        return dups
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
@@ -878,8 +964,8 @@ class OneBrainComposer:
         # D6 LEARN-THROUGH-USE (default-OFF, BRAIN_D6_HEBBIAN_STORE): write the block by a LOCAL Hebbian rule on the
         # substrate instead of copying the host-read composite into the weights (research/runners/d6_hebbian_store.py).
         # Off (unset) -> only this env read happens -> the direct write below is byte-identical.
-        if os.environ.get("BRAIN_D6_HEBBIAN_STORE", "").strip().lower() in ("1", "true", "yes", "on"):
-            from research.runners import d6_hebbian_store as _d6
+        from research.runners import d6_hebbian_store as _d6
+        if _d6.hebbian_store_enabled():
             _freeze = _d6.hebbian_freeze_lesioned() and bool(getattr(self, "_d6_conv_write", False))
             w, self._d6_last_encode = _d6.hebbian_encode(self, i, fillers, roles, freeze=_freeze)
             self._write_block(i, w)

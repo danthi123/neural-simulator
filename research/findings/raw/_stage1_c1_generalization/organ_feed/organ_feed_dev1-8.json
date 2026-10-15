@@ -1,0 +1,2064 @@
+{
+ "runner": "research/runners/c1_generalization_probes.py --organ-feed",
+ "plan": "docs/drafts/stage1-c1-inheritance/PROBES-PLAN.md",
+ "note": "DIAGNOSTIC, not the bar: standalone organ fed the probe facts, no brain",
+ "rows": [
+  {
+   "seed": 1,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0633,
+     "lake_rate_after": 0.06,
+     "told_rate_after": 0.1083,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 1.805
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.075,
+     "lake_rate_after": 0.085,
+     "told_rate_after": 0.1117,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.314
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.075,
+     "toad": 0.0817,
+     "eel": 0.075
+    },
+    "steps": [
+     0.0067,
+     -0.0067
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0783,
+        "eat bug": 0.105,
+        "fly sky": 0.0983,
+        "swim lake": 0.0633
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0633
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0633,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0383,
+        "lateral_at_read": 0.3947368421052633
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0833,
+        "eat bug": 0.0867,
+        "fly sky": 0.0733,
+        "swim lake": 0.06,
+        "swim pond": 0.1083
+       },
+       "admitted": [
+        [
+         "pond",
+         0.1083
+        ],
+        [
+         "lake",
+         0.06
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1083,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.115,
+        "lateral_at_read": -0.06153846153846155
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0617,
+        "bite hook": 0.0667,
+        "hide weed": 0.0633,
+        "swim lake": 0.075,
+        "find stone": 0.0417,
+        "see moon": 0.0583,
+        "like rain": 0.0417
+       },
+       "admitted": [
+        [
+         "lake",
+         0.075
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.075,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.075,
+        "lateral_at_read": 0.0
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.0533,
+        "hide weed": 0.08,
+        "swim lake": 0.0817,
+        "find stone": 0.1183,
+        "see moon": 0.0567,
+        "like rain": 0.0433
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0817,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1,
+        "lateral_at_read": -0.22448979591836743
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.0667,
+        "bite hook": 0.07,
+        "hide weed": 0.0717,
+        "swim lake": 0.075,
+        "find stone": 0.05,
+        "see moon": 0.1117,
+        "like rain": 0.1117
+       },
+       "admitted": [
+        [
+         "lake",
+         0.075
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.075,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0817,
+        "lateral_at_read": -0.0888888888888889
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.0533,
+        "hide weed": 0.0533,
+        "swim lake": 0.085,
+        "find stone": 0.0433,
+        "see moon": 0.0733,
+        "like rain": 0.045,
+        "swim river": 0.1117
+       },
+       "admitted": [
+        [
+         "river",
+         0.1117
+        ],
+        [
+         "lake",
+         0.085
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1117,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": 0.0895522388059701
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 2,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0533,
+     "lake_rate_after": 0.0567,
+     "told_rate_after": 0.115,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 2.028
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.0883,
+     "lake_rate_after": 0.0833,
+     "told_rate_after": 0.1067,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.281
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.09,
+     "toad": 0.0917,
+     "eel": 0.0883
+    },
+    "steps": [
+     0.0017,
+     -0.0034
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0733,
+        "eat bug": 0.11,
+        "fly sky": 0.1117,
+        "swim lake": 0.0533
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0533
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0533,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.03,
+        "lateral_at_read": 0.43750000000000006
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0783,
+        "eat bug": 0.0983,
+        "fly sky": 0.0867,
+        "swim lake": 0.0567,
+        "swim pond": 0.115
+       },
+       "admitted": [
+        [
+         "pond",
+         0.115
+        ],
+        [
+         "lake",
+         0.0567
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.115,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1067,
+        "lateral_at_read": 0.072463768115942
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.04,
+        "bite hook": 0.0667,
+        "hide weed": 0.0567,
+        "swim lake": 0.0883,
+        "find stone": 0.0433,
+        "see moon": 0.0333,
+        "like rain": 0.0367
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0883
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0883,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.085,
+        "lateral_at_read": 0.0377358490566037
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0517,
+        "bite hook": 0.065,
+        "hide weed": 0.08,
+        "swim lake": 0.0917,
+        "find stone": 0.1133,
+        "see moon": 0.035,
+        "like rain": 0.0383
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0917
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0917,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0817,
+        "lateral_at_read": 0.10909090909090904
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.0567,
+        "bite hook": 0.0667,
+        "hide weed": 0.0717,
+        "swim lake": 0.09,
+        "find stone": 0.0583,
+        "see moon": 0.0983,
+        "like rain": 0.1083
+       },
+       "admitted": [
+        [
+         "lake",
+         0.09
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.09,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.065,
+        "lateral_at_read": 0.27777777777777773
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0383,
+        "bite hook": 0.055,
+        "hide weed": 0.0417,
+        "swim lake": 0.0833,
+        "find stone": 0.05,
+        "see moon": 0.0367,
+        "like rain": 0.0417,
+        "swim river": 0.1067
+       },
+       "admitted": [
+        [
+         "river",
+         0.1067
+        ],
+        [
+         "lake",
+         0.0833
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1067,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": 0.04687500000000004
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 3,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0667,
+     "lake_rate_after": 0.0733,
+     "told_rate_after": 0.1117,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 1.524
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.075,
+     "lake_rate_after": 0.075,
+     "told_rate_after": 0.1117,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.489
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.0767,
+     "toad": 0.0783,
+     "eel": 0.075
+    },
+    "steps": [
+     0.0016,
+     -0.0033
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0417,
+        "eat bug": 0.1017,
+        "fly sky": 0.0967,
+        "swim lake": 0.0667
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0667
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0667,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.045,
+        "lateral_at_read": 0.325
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.045,
+        "eat bug": 0.09,
+        "fly sky": 0.0817,
+        "swim lake": 0.0733,
+        "swim pond": 0.1117
+       },
+       "admitted": [
+        [
+         "pond",
+         0.1117
+        ],
+        [
+         "lake",
+         0.0733
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1117,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1067,
+        "lateral_at_read": 0.04477611940298499
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0567,
+        "bite hook": 0.07,
+        "hide weed": 0.0717,
+        "swim lake": 0.075,
+        "find stone": 0.0583,
+        "see moon": 0.0533,
+        "like rain": 0.0383
+       },
+       "admitted": [
+        [
+         "lake",
+         0.075
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.075,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.09,
+        "lateral_at_read": -0.2
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.05,
+        "bite hook": 0.06,
+        "hide weed": 0.0817,
+        "swim lake": 0.0783,
+        "find stone": 0.1,
+        "see moon": 0.0533,
+        "like rain": 0.045
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0783
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0783,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1,
+        "lateral_at_read": -0.2765957446808511
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.0633,
+        "bite hook": 0.0767,
+        "hide weed": 0.0717,
+        "swim lake": 0.0767,
+        "find stone": 0.0933,
+        "see moon": 0.1083,
+        "like rain": 0.115
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0767
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0767,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0917,
+        "lateral_at_read": -0.1956521739130435
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0433,
+        "bite hook": 0.0533,
+        "hide weed": 0.0583,
+        "swim lake": 0.075,
+        "find stone": 0.0683,
+        "see moon": 0.0483,
+        "like rain": 0.0367,
+        "swim river": 0.1117
+       },
+       "admitted": [
+        [
+         "river",
+         0.1117
+        ],
+        [
+         "lake",
+         0.075
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1117,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.115,
+        "lateral_at_read": -0.029850746268656785
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 4,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0483,
+     "lake_rate_after": 0.05,
+     "told_rate_after": 0.105,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 2.1
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.0867,
+     "lake_rate_after": 0.085,
+     "told_rate_after": 0.1083,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.274
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.075,
+     "toad": 0.0917,
+     "eel": 0.0867
+    },
+    "steps": [
+     0.0167,
+     -0.005
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0683,
+        "eat bug": 0.0867,
+        "fly sky": 0.0883,
+        "swim lake": 0.0483
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0483
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0483,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0317,
+        "lateral_at_read": 0.34482758620689646
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0683,
+        "eat bug": 0.07,
+        "fly sky": 0.0717,
+        "swim lake": 0.05,
+        "swim pond": 0.105
+       },
+       "admitted": [
+        [
+         "pond",
+         0.105
+        ],
+        [
+         "lake",
+         0.05
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.105,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.11,
+        "lateral_at_read": -0.047619047619047665
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.07,
+        "bite hook": 0.0617,
+        "hide weed": 0.0683,
+        "swim lake": 0.0867,
+        "find stone": 0.06,
+        "see moon": 0.0467,
+        "like rain": 0.04
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0867
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0867,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0867,
+        "lateral_at_read": 0.0
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0533,
+        "bite hook": 0.0617,
+        "hide weed": 0.0717,
+        "swim lake": 0.0917,
+        "find stone": 0.1133,
+        "see moon": 0.0433,
+        "like rain": 0.0433
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0917
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0917,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0833,
+        "lateral_at_read": 0.0909090909090909
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.06,
+        "bite hook": 0.075,
+        "hide weed": 0.0783,
+        "swim lake": 0.075,
+        "find stone": 0.0917,
+        "see moon": 0.08,
+        "like rain": 0.1033
+       },
+       "admitted": [
+        [
+         "lake",
+         0.075
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.075,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0667,
+        "lateral_at_read": 0.11111111111111109
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0567,
+        "bite hook": 0.06,
+        "hide weed": 0.0567,
+        "swim lake": 0.085,
+        "find stone": 0.0633,
+        "see moon": 0.0417,
+        "like rain": 0.04,
+        "swim river": 0.1083
+       },
+       "admitted": [
+        [
+         "river",
+         0.1083
+        ],
+        [
+         "lake",
+         0.085
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1083,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": 0.06153846153846155
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 5,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.025,
+     "lake_rate_after": 0.025,
+     "told_rate_after": 0.1,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 4.0
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.09,
+     "lake_rate_after": 0.09,
+     "told_rate_after": 0.1117,
+     "organ_decides_told": false,
+     "post_reason": "tie",
+     "post_patient": null,
+     "told_over_lake_after": 1.241
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": true,
+    "rates": {
+     "newt": 0.0717,
+     "toad": 0.0833,
+     "eel": 0.09
+    },
+    "steps": [
+     0.0116,
+     0.0067
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0467,
+        "eat bug": 0.09,
+        "fly sky": 0.0983,
+        "swim lake": 0.025
+       },
+       "admitted": [
+        [
+         "lake",
+         0.025
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.025,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0083,
+        "lateral_at_read": 0.6666666666666667
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0567,
+        "eat bug": 0.0917,
+        "fly sky": 0.095,
+        "swim lake": 0.025,
+        "swim pond": 0.1
+       },
+       "admitted": [
+        [
+         "pond",
+         0.1
+        ],
+        [
+         "lake",
+         0.025
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0917,
+        "lateral_at_read": 0.08333333333333345
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.065,
+        "bite hook": 0.06,
+        "hide weed": 0.0633,
+        "swim lake": 0.09,
+        "find stone": 0.0483,
+        "see moon": 0.0333,
+        "like rain": 0.035
+       },
+       "admitted": [
+        [
+         "lake",
+         0.09
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.09,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0617,
+        "lateral_at_read": 0.31481481481481477
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0483,
+        "bite hook": 0.0383,
+        "hide weed": 0.0817,
+        "swim lake": 0.0833,
+        "find stone": 0.1117,
+        "see moon": 0.0333,
+        "like rain": 0.035
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0833
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0833,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1,
+        "lateral_at_read": -0.20000000000000012
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.065,
+        "bite hook": 0.0733,
+        "hide weed": 0.0733,
+        "swim lake": 0.0717,
+        "find stone": 0.055,
+        "see moon": 0.1133,
+        "like rain": 0.1083
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0717
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0717,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0817,
+        "lateral_at_read": -0.13953488372093015
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0567,
+        "bite hook": 0.045,
+        "hide weed": 0.0567,
+        "swim lake": 0.09,
+        "find stone": 0.0533,
+        "see moon": 0.0333,
+        "like rain": 0.0367,
+        "swim river": 0.1117
+       },
+       "admitted": [
+        [
+         "river",
+         0.1117
+        ],
+        [
+         "lake",
+         0.09
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": null,
+       "reason": "tie"
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 6,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0733,
+     "lake_rate_after": 0.0817,
+     "told_rate_after": 0.1133,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 1.387
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.08,
+     "lake_rate_after": 0.0767,
+     "told_rate_after": 0.1133,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.477
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.0783,
+     "toad": 0.08,
+     "eel": 0.08
+    },
+    "steps": [
+     0.0017,
+     0.0
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.085,
+        "eat bug": 0.115,
+        "fly sky": 0.11,
+        "swim lake": 0.0733
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0733
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0733,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0433,
+        "lateral_at_read": 0.40909090909090906
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.095,
+        "eat bug": 0.0983,
+        "fly sky": 0.0883,
+        "swim lake": 0.0817,
+        "swim pond": 0.1133
+       },
+       "admitted": [
+        [
+         "pond",
+         0.1133
+        ],
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1133,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.095,
+        "lateral_at_read": 0.1617647058823529
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.065,
+        "bite hook": 0.0667,
+        "hide weed": 0.0633,
+        "swim lake": 0.08,
+        "find stone": 0.0533,
+        "see moon": 0.0567,
+        "like rain": 0.0433
+       },
+       "admitted": [
+        [
+         "lake",
+         0.08
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.08,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.095,
+        "lateral_at_read": -0.1875
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.065,
+        "hide weed": 0.0817,
+        "swim lake": 0.08,
+        "find stone": 0.1117,
+        "see moon": 0.055,
+        "like rain": 0.0467
+       },
+       "admitted": [
+        [
+         "lake",
+         0.08
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.08,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0967,
+        "lateral_at_read": -0.2083333333333333
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.06,
+        "bite hook": 0.075,
+        "hide weed": 0.07,
+        "swim lake": 0.0783,
+        "find stone": 0.0733,
+        "see moon": 0.0717,
+        "like rain": 0.0833
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0783
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0783,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0883,
+        "lateral_at_read": -0.12765957446808504
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.0617,
+        "hide weed": 0.0567,
+        "swim lake": 0.0767,
+        "find stone": 0.0567,
+        "see moon": 0.055,
+        "like rain": 0.0433,
+        "swim river": 0.1133
+       },
+       "admitted": [
+        [
+         "river",
+         0.1133
+        ],
+        [
+         "lake",
+         0.0767
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1133,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1067,
+        "lateral_at_read": 0.0588235294117646
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 7,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.0467,
+     "lake_rate_after": 0.0517,
+     "told_rate_after": 0.105,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 2.031
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.0933,
+     "lake_rate_after": 0.0833,
+     "told_rate_after": 0.1067,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.281
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": false,
+    "rates": {
+     "newt": 0.0817,
+     "toad": 0.0817,
+     "eel": 0.0933
+    },
+    "steps": [
+     0.0,
+     0.0116
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0783,
+        "eat bug": 0.0967,
+        "fly sky": 0.105,
+        "swim lake": 0.0467
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0467
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0467,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0233,
+        "lateral_at_read": 0.5
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.075,
+        "eat bug": 0.0867,
+        "fly sky": 0.0833,
+        "swim lake": 0.0517,
+        "swim pond": 0.105
+       },
+       "admitted": [
+        [
+         "pond",
+         0.105
+        ],
+        [
+         "lake",
+         0.0517
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.105,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1,
+        "lateral_at_read": 0.04761904761904753
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.06,
+        "bite hook": 0.0567,
+        "hide weed": 0.0533,
+        "swim lake": 0.0933,
+        "find stone": 0.0567,
+        "see moon": 0.0583,
+        "like rain": 0.0433
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0933
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0933,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": -0.08928571428571426
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.0483,
+        "bite hook": 0.05,
+        "hide weed": 0.0767,
+        "swim lake": 0.0817,
+        "find stone": 0.105,
+        "see moon": 0.0583,
+        "like rain": 0.045
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0817,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1033,
+        "lateral_at_read": -0.2653061224489796
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.0433,
+        "bite hook": 0.08,
+        "hide weed": 0.0867,
+        "swim lake": 0.0817,
+        "find stone": 0.0767,
+        "see moon": 0.0733,
+        "like rain": 0.08
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0817
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0817,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1067,
+        "lateral_at_read": -0.30612244897959195
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0467,
+        "bite hook": 0.045,
+        "hide weed": 0.0433,
+        "swim lake": 0.0833,
+        "find stone": 0.0583,
+        "see moon": 0.06,
+        "like rain": 0.04,
+        "swim river": 0.1067
+       },
+       "admitted": [
+        [
+         "river",
+         0.1067
+        ],
+        [
+         "lake",
+         0.0833
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1067,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.105,
+        "lateral_at_read": 0.0156250000000001
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "seed": 8,
+   "override_cases": {
+    "bat": {
+     "guess_before": true,
+     "lake_rate_before": 0.03,
+     "lake_rate_after": 0.03,
+     "told_rate_after": 0.1067,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "pond",
+     "told_over_lake_after": 3.557
+    },
+    "eel": {
+     "guess_before": true,
+     "lake_rate_before": 0.0883,
+     "lake_rate_after": 0.0883,
+     "told_rate_after": 0.1117,
+     "organ_decides_told": true,
+     "post_reason": "reached",
+     "post_patient": "river",
+     "told_over_lake_after": 1.265
+    }
+   },
+   "graded": {
+    "measured": true,
+    "rising": true,
+    "rates": {
+     "newt": 0.0783,
+     "toad": 0.085,
+     "eel": 0.0883
+    },
+    "steps": [
+     0.0067,
+     0.0033
+    ]
+   },
+   "reads": {
+    "override": {
+     "p_bat_swim_pre": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.05,
+        "eat bug": 0.1,
+        "fly sky": 0.105,
+        "swim lake": 0.03
+       },
+       "admitted": [
+        [
+         "lake",
+         0.03
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.03,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.01,
+        "lateral_at_read": 0.6666666666666666
+       }
+      }
+     },
+     "p_bat_swim_post": {
+      "bat/swim": {
+       "rates": {
+        "eat worm": 0.0533,
+        "eat bug": 0.0867,
+        "fly sky": 0.0883,
+        "swim lake": 0.03,
+        "swim pond": 0.1067
+       },
+       "admitted": [
+        [
+         "pond",
+         0.1067
+        ],
+        [
+         "lake",
+         0.03
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "pond",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1067,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": 0.04687500000000004
+       }
+      }
+     }
+    },
+    "graded": {
+     "p_eel_swim": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0617,
+        "bite hook": 0.065,
+        "hide weed": 0.07,
+        "swim lake": 0.0883,
+        "find stone": 0.0467,
+        "see moon": 0.0467,
+        "like rain": 0.035
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0883
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0883,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.08,
+        "lateral_at_read": 0.09433962264150941
+       }
+      }
+     },
+     "p_toad_swim": {
+      "toad/swim": {
+       "rates": {
+        "eat bug": 0.04,
+        "bite hook": 0.0433,
+        "hide weed": 0.085,
+        "swim lake": 0.085,
+        "find stone": 0.1133,
+        "see moon": 0.0467,
+        "like rain": 0.035
+       },
+       "admitted": [
+        [
+         "lake",
+         0.085
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.085,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.0917,
+        "lateral_at_read": -0.07843137254901945
+       }
+      }
+     },
+     "p_newt_swim": {
+      "newt/swim": {
+       "rates": {
+        "eat bug": 0.04,
+        "bite hook": 0.0883,
+        "hide weed": 0.0817,
+        "swim lake": 0.0783,
+        "find stone": 0.0717,
+        "see moon": 0.0833,
+        "like rain": 0.085
+       },
+       "admitted": [
+        [
+         "lake",
+         0.0783
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "lake",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.0783,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.095,
+        "lateral_at_read": -0.21276595744680846
+       }
+      }
+     },
+     "p_eel_swim_post": {
+      "eel/swim": {
+       "rates": {
+        "eat bug": 0.0433,
+        "bite hook": 0.0517,
+        "hide weed": 0.0633,
+        "swim lake": 0.0883,
+        "find stone": 0.0483,
+        "see moon": 0.0467,
+        "like rain": 0.0333,
+        "swim river": 0.1117
+       },
+       "admitted": [
+        [
+         "river",
+         0.1117
+        ],
+        [
+         "lake",
+         0.0883
+        ]
+       ],
+       "lesion": null,
+       "lesion_held": null,
+       "floor_rate": 0.02,
+       "tie_margin": 1.25,
+       "hop": true,
+       "hop_lateral_gain": 0.5,
+       "query_steps": 30,
+       "patient": "river",
+       "reason": "reached",
+       "attribution": {
+        "rate_intact": 0.1117,
+        "rate_learned_pathways_cut": 0.0,
+        "learned_pathways": 1.0,
+        "rate_lateral_at_read_cut": 0.1017,
+        "lateral_at_read": 0.0895522388059701
+       }
+      }
+     }
+    }
+   }
+  }
+ ]
+}

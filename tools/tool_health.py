@@ -174,6 +174,14 @@ except Exception:
 '''
 
 
+_NO_CUDA_DEVICE = ("cudaErrorInsufficientDriver", "cudaErrorNoDevice")
+
+
+def _no_cuda_device(text):
+    """A dead/absent CUDA driver (cupy imports, the device does not): a GPU-less host, not a rotted tool."""
+    return any(k in (text or "") for k in _NO_CUDA_DEVICE)
+
+
 def check_experiment_engine(timeout=120):
     rc, out, err, to = _run([_py(), "-c", _EXP_SMOKE], timeout=timeout)
     if to:
@@ -194,6 +202,12 @@ def check_experiment_engine(timeout=120):
         return _result("experiment-engine", "experiment", DEGRADED,
                        "current presets build fine; step-sweep needs a GPU — %s" % d.get("note", ""),
                        "build 4 presets (step needs cupy/GPU)")
+    if _no_cuda_device(d.get("err")):
+        # 2026-10-11 (Hermes [tool-health-probe-gap]): cupy imported but the CUDA driver is dead, so the step-sweep
+        # raised; the presets were never the problem. Same precedent as auto-tune below: DEGRADED, not ROTTED.
+        return _result("experiment-engine", "experiment", DEGRADED,
+                       "step-sweep needs a GPU; this host has no usable CUDA device (not rotted): " +
+                       str(d.get("err"))[-120:], "build 4 presets (step needs a CUDA device)")
     return _result("experiment-engine", "experiment", ROTTED, d.get("err", "unknown failure"),
                    "build 4 presets + step basic_stimulus_response")
 
@@ -208,6 +222,10 @@ def check_auto_tune(timeout=300):
         why = "quick tuning sweep completed (rc=0)"
     elif status == UNKNOWN:
         why = "timed out after %ss with no visible progress" % timeout
+    elif _no_cuda_device(err or out):
+        # same precedent as experiment-engine: the sweep needs a GPU; a GPU-less host (the Hermes container) is not rot
+        status = DEGRADED
+        why = "needs a GPU; this host has no usable CUDA device (not rotted): " + (err or out)[-120:]
     else:
         why = ("exit rc=%s. " % rc) + (err or out)[-300:]
     return _result("auto-tune", "experiment", status, why, "neural-simulator.py --auto-tune --quick")
@@ -397,6 +415,10 @@ def selftest():
         bad.append("a timeout WITH progress should be ready(slow)")
     if verdict_from_rc(None, True, False) != UNKNOWN:
         bad.append("a timeout with no progress should be unknown, not rotted")
+    if not _no_cuda_device("cupy_backends.cuda.api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: x"):
+        bad.append("a dead CUDA driver is not recognised as a GPU-less host")
+    if _no_cuda_device("AssertionError: preset built nothing: basic"):
+        bad.append("FALSE POSITIVE: a real preset failure read as a GPU-less host")
     # rot -> backlog item (the enforcement wiring)
     rotted = [_result("experiment-engine", "experiment", ROTTED, "dead preset")]
     items = to_backlog_items(rotted)

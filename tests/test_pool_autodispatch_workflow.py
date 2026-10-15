@@ -287,6 +287,33 @@ def test_no_ready_work_waiver_is_bounded_and_workboard_tied(tmp_path: Path) -> N
 
 # ------------------------------------------------------------- workflow_check.sh honours AWS extra-nodes (fix round #2)
 
+def test_dispatcher_heartbeat_counts_a_fresh_stamp_as_live(tmp_path: Path) -> None:
+    """2026-10-11: the server's dispatcher is invisible to pgrep from the agent container; its per-cycle
+    .pool_sandbox_state stamp is the liveness signal. Fresh = live, old or missing = not live."""
+    now = 2_000_000_000
+    state = tmp_path / ".pool_sandbox_state"
+    state.write_text(f"mode=on ts={now - 120} pid=42\n")
+    ok = subprocess.run(["bash", str(WORKFLOW), "--dispatcher-heartbeat", str(state), str(now), "900"],
+                        cwd=ROOT, capture_output=True, text=True)
+    assert ok.returncode == 0, ok.stderr
+    state.write_text(f"mode=on ts={now - 5000} pid=42\n")
+    old = subprocess.run(["bash", str(WORKFLOW), "--dispatcher-heartbeat", str(state), str(now), "900"],
+                         cwd=ROOT, capture_output=True, text=True)
+    assert old.returncode != 0
+    missing = subprocess.run(["bash", str(WORKFLOW), "--dispatcher-heartbeat", str(tmp_path / "nope"), str(now), "900"],
+                             cwd=ROOT, capture_output=True, text=True)
+    assert missing.returncode != 0
+
+
+def test_an_all_stale_queue_is_reported_as_stale_not_empty() -> None:
+    """2026-10-11: QDEPTH=0 with QSTALE>0 means queued work the dispatcher will skip, not an empty queue."""
+    src = WORKFLOW.read_text()
+    i = src.index('if [ "${QDEPTH:-0}" -eq 0 ]; then')
+    block = src[i:i + 900]
+    assert block.index("ARE STALE") < block.index("POOL QUEUE EMPTY")
+    assert "max_age_h=N" in block
+
+
 def test_workflow_check_pool_nodes_default_unaffected_when_no_extra_nodes_file(tmp_path: Path) -> None:
     res = run_bash(WORKFLOW, "--print-pool-check-nodes",
                    env={"POOL_EXTRA_NODES_FILE": str(tmp_path / "does-not-exist"),

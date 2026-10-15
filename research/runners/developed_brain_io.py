@@ -63,12 +63,40 @@ def extract_grounded_codes(agent) -> dict[str, list]:
     codes and are reproduced from the seed on reload, so they are excluded."""
     comp = _inner_agent(agent).composer
     pol = set(getattr(comp, "pol_words", []))
+    concepts = concept_codebook(comp)
+    if concepts is None:
+        raise AttributeError("%s has no concept codebook (.concepts or .comp.concepts)" % type(comp).__name__)
     codes = {}
-    for w, ph in comp.concepts.items():
-        if w in pol:
+    for w, ph in concepts.items():
+        if w in pol or _is_reserve_slot(w):
             continue
         codes[w] = np.asarray(ph, dtype=float).tolist()
     return codes
+
+
+def extract_recruited_slots(agent) -> dict:
+    """{word: reserve slot index} for every word the onebrain composer recruited at runtime (empty for composers
+    without reserve slots). Saved beside the codes so a reload restores each word into its own slot."""
+    f = getattr(_inner_agent(agent).composer, "recruited_slots", None)
+    return {str(w): int(s) for w, s in f().items()} if callable(f) else {}
+
+
+def concept_codebook(comp):
+    """The {word: phase code} dict a composer binds with. `comp.concepts` on the RF/rate composers; on the default
+    OneBrainComposer (`Pool1BoundOneBrainComposer`, usually behind a `TieredFactStore`, which delegates attributes to
+    its buffer) the codes live on its inner RF composer, `comp.comp.concepts` (a recruited word's code is written
+    there by `_recruit_word`). None when neither exists. (FAILURE_LOG 2026-10-13: reading only `comp.concepts` made
+    every facts save on the production default brain raise and save nothing.)"""
+    c = getattr(comp, "concepts", None)
+    if c is not None:
+        return c
+    return getattr(getattr(comp, "comp", None), "concepts", None)
+
+
+def _is_reserve_slot(w) -> bool:
+    """An UNRECRUITED reserve cleanup slot of the onebrain composer (`__free<k>__`): rebuilt from the seed at every
+    build, so it is not a learned code and is never persisted."""
+    return isinstance(w, str) and w.startswith("__free") and w.endswith("__")
 
 
 def extract_facts(agent) -> list[dict]:
@@ -523,7 +551,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                          ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128,
                          ltm_composer_kwargs=None, enable_codebook_cache=False,
                          enable_decode_escalation=False, decode_escalate_margin=None,
-                         integrated_loop=False, onebrain_k_max=None):
+                         integrated_loop=False, onebrain_k_max=None, ltm_store=None):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -701,7 +729,15 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     # buffer, then the routed LTM shard (sub-second at any K). No LTM -> the plain flat composer, byte-for-byte. The
     # tiers self-consistently encode by WORD, so a separate LTM codebook is correct (a fact is read from the tier it
     # was stored in). See tiered_fact_store.py + the sharded-fact-store finding (2026-08-20).
-    if ltm_bundle is not None:
+    # `ltm_store` (one brain, many conversations, step 1; default None: the pre-change branch, expected unchanged; the
+    # server passes it only when a flag is on): an already-loaded LTM (the
+    # webapp's process-shared read-only `SharedLTMView`, research/runners/shared_ltm.py) installed INSTEAD of loading
+    # `ltm_bundle`, so many conversations wrap one store rather than one copy each.
+    if ltm_store is not None:
+        from research.runners.tiered_fact_store import TieredFactStore
+        inner = _inner_agent(agent)
+        inner.composer = TieredFactStore(inner.composer, ltm_store)
+    elif ltm_bundle is not None:
         from research.runners.tiered_fact_store import (TieredFactStore, build_ltm_from_facts, auto_n_shards)
         from research.runners.sharded_phasor_store import ShardedPhasorStore
         ltm = None
