@@ -26,8 +26,9 @@ under `global_rng_guard.preserved_global_rng()` and sets every shard's `_isolate
 build touches the global streams (`webapp/server.py` `_load_ltm_isolated`; BRAIN_LTM_RNG_ISOLATE, forced on with
 sharing).
 
-DEFAULT. Off in the server (`_SHARED_LTM_DEFAULT_ON = False`; BRAIN_SHARED_LTM=1 opts in), per the design's
-default-off-then-flip migration.
+DEFAULT. On in the server since 2026-10-15 (`_SHARED_LTM_DEFAULT_ON = True`; BRAIN_SHARED_LTM=0 is the escape),
+after the flip battery's Amendment A passed A1 and A2 on 6/6 gate seeds (research/coordination/
+2026-10-13-shared-ltm-flip-JOBS.md).
 
 CONCURRENCY. `/api/brain-chat` runs in FastAPI's threadpool and the continuous-state tick runs in an executor, so
 two conversations can query at once. One RLock per shared store serializes every call made through a view (the
