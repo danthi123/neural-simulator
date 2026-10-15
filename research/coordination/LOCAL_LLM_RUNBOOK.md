@@ -1459,3 +1459,12 @@ BRAIN_BG_COMMIT=1, seed 43, organ_seed 43, op=4, read_variants x0.5/x2 present, 
 Queued the six gate lines from jobs/gate_3e7a41d.txt with the HANDOFF's checked text (mem_gb=8 max_age_h=168).
 NEXT: when the 42 arm files are in - HANDOFF section 4 score + data commit; keep the wrc-flip smoke (PACKET_FLAGS
 entry for WORD_ROLE in iw1/iw2 default_identity on research/wrc-flip-packet) as the next packet task.
+
+
+22:40: bg gate progress 28/42 arm files (all six seeds 4-6 arms each, six lines still running, first
+exits not yet recorded) - score waits for all 42. While waiting, smoke-prep on research/wrc-flip-packet:
+added the word-role packet entry (BRAIN_WORD_ROLE_PARSE + BRAIN_WORD_ROLE_COMMIT) to PACKET_FLAGS in both
+iw1/iw2_default_identity; arm_env verified locally (default = unset -> reads the flipped anchors, off = both
+'0', on:word-role = both '1', other packets untouched in iw2 / untouched in iw1) and both --selftest rc=0.
+NEXT: queue the dev-7 identity smoke lines at the flip revision 9919725a9 (canary first), plus the off-target
+10-turn precondition runner; and score bg at 42/42.
