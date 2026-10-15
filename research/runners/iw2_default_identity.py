@@ -106,6 +106,15 @@ def arm_env(arm: str) -> dict:
         return {f: None for f in flags}
     if arm == "off":
         return {f: "0" for f in flags}
+    if arm.startswith("off:"):
+        # word-role-only-off (RULING wrc-f3-1015): zero ONLY the named packet's flags, every other flag at its
+        # production default. Amendment B's "off" is this arm, not the all-flags `off` above.
+        want = [p for p in arm[4:].split("+") if p]
+        bad = [p for p in want if p not in PACKET_FLAGS]
+        if bad or not want:
+            raise SystemExit("unknown packet(s) in %r (known: %s)" % (arm, sorted(PACKET_FLAGS)))
+        zero = {f for p in want for f in PACKET_FLAGS[p]}
+        return {f: ("0" if f in zero else None) for f in flags}
     if arm.startswith("on:"):
         want = [p for p in arm[3:].split("+") if p]
         bad = [p for p in want if p not in PACKET_FLAGS]

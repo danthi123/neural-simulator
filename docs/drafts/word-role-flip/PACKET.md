@@ -76,6 +76,14 @@ default IS the capability), and `off` (both flags `=0`) equals the pre-flip defa
 still reproduces pre-flip behaviour), byte-identical apart from the volatile-key drops those runners already
 exclude.
 
+**Clarification (RULING wrc-f3-1015, 2026-10-15):** in this bar `off` means ONLY `BRAIN_WORD_ROLE_PARSE=0` and
+`BRAIN_WORD_ROLE_COMMIT=0`, every other flag at its production default — run it as the new `off:word-role` arm
+(zeroes only this packet's PACKET_FLAGS; every other flag unset). The runner's all-flags `off` arm is a DIFFERENT
+arm: its reply diff at an already-default-ON packet's probe turn (dev-7 seed: iw1 turn 12 via xedge
+`_XEDGE_SWM_DEFAULT_ON=True`; iw2 turns 4/9/14/15 via the already-ON false-belief/transitive/neural-selfid
+anchors) is expected by construction — report it, never count it. F3 stays: `off:word-role`@F byte-identical to
+`default`@P on every script turn.
+
 **(C) Scoped B1.** On the dev-7 smoke, run the battery turn script (iw2 scope/story turns + iw1 turns) ON vs
 alloff (both flags `=0`) at the flip revision; every row with a changed reply is AT RISK and is listed here
 before any gate seed runs. On the six gate seeds, each at-risk row's n_load_bearing at ON must be >= alloff at
