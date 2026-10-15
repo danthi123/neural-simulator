@@ -1475,3 +1475,14 @@ dedicated unit tests - the verification done is arm_env output inspection (print
 on:word-role shapes correct in both runners). The branch commit for those two files was first blocked by
 lane-starvation (dispatcher had emptied the queue again); fixed by restocking all five lanes (A/B/E dev
 28-30, metacog smoke s12, lane-D seed 22) and retrying.
+- 2026-10-14 23:39 [bg-commit] RESULT: six-seed gate NO-GO: G2a empty_held 0.667, G3 lesion 0.292 <0.3; G1/G2b/G4/G5 true. Finding 2026-10-14-bg-live-seam-commit-RESULT.md on research/bg-commit-gate; verdict + next method for Claude. [dirty-ok: standing untracked raw; runbook-only commit]
+
+
+23:44: bg-commit gate VERDICT: all six gate lines rc=0, 42/42 arm files + 42 prov sidecars in; score rc=0
+(stamped). verdict = NO-GO: G2a_neural_seam_holds_on_empty_turns false (empty_held 0.6667, 8/12) and
+G3_value_lesion_moves_the_reply false (seam_lesion_held 0.2917 < the amendment's 0.3 bar, 7/24); G1, G2b,
+G4_commit_read_threshold_invariant, G5 and the reported-only old-latch G4 all true; all preconditions ok;
+production_seam_class HOST-OWNED (replaceable). Per HANDOFF section 5 row 'any other GATED key false': wrote
+the finding research/findings/2026-10-14-bg-live-seam-commit-RESULT.md (status qualified, both amendment
+sentences verbatim, gates table, pooled + per-seed evidence) on research/bg-commit-gate with the data commit
+(shards + score). NEEDS [bg-commit] RESULT filed. NEXT: word-role-flip dev-7 smoke queue at 9919725a9.
