@@ -276,7 +276,7 @@ def _substrate_parse_lesioned() -> bool:
 # alone is subthreshold, so the parse declines); BRAIN_WORD_ROLE_OP picks the organ's frozen GRID index (default 0).
 # Named residuals: the organ is trained on the composer's fact index (a host transcription), the self-alias ->
 # 'brain' resolution stays host. See the organ's docstring.
-_WORD_ROLE_PARSE_DEFAULT_ON = False
+_WORD_ROLE_PARSE_DEFAULT_ON = True
 _WORD_ROLE_DEFAULT_OP = 0   # the operating point used when BRAIN_WORD_ROLE_OP is unset (T21 sets it)
 
 
@@ -312,7 +312,7 @@ def _word_role_op() -> int:
 # the host ROLE_MIN / ROLE_MARGIN rule and the per-role argmax are not called. BRAIN_WORD_ROLE_COMMIT_OP picks the
 # COMMIT_GRID row (default 0); BRAIN_WORD_ROLE_COMMIT_LESION=1 closes the role -> commit-gate transmission (the role
 # ensembles still fire, nothing commits, the parse declines).
-_WORD_ROLE_COMMIT_DEFAULT_ON = False
+_WORD_ROLE_COMMIT_DEFAULT_ON = True
 _WORD_ROLE_COMMIT_DEFAULT_OP = 0
 
 
