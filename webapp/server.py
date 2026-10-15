@@ -5131,14 +5131,27 @@ def _one_brain_source_frame(resp, bk, conversation_id):
 def _one_brain_articulate(resp, pending):
     """The deferred mouth after the turn lock (BRAIN_ONE_BRAIN on, generative renderer): generate each recorded call
     whose template surface reached the answer, VERIFY each prose surface under a short re-take of the turn lock (the
-    brain's on-substrate re-parse), substitute the verified prose. Never raises: on any failure the template answer,
-    which the brain already verified, is returned."""
+    brain's on-substrate re-parse), substitute the verified prose. A reply with MORE THAN ONE supporting fact is
+    verified at CLAIM level against the whole set (`ChatBrain._verify_claim_set`, PACKET-m2-fixes item 1), so a
+    sentence smuggling one unsupported clause anywhere is rejected whole; single-fact replies keep `_verify`.
+    Never raises: on any failure the template answer, which the brain already verified, is returned."""
     mouth, calls, chat = pending
     try:
         body = json.loads(bytes(resp.body))
         from webapp.brain_turn_lock import brain_turn as _bt
+        gated = [list(f[:3]) for f in (body.get("supporting_facts") or [])
+                 if isinstance(f, (list, tuple)) and len(f) >= 3]
+
+        def _verify(prose, svo):
+            if len(gated) > 1 and hasattr(chat, "_verify_claim_set"):
+                accepted, _res = chat._verify_claim_set(prose, gated)
+                if accepted is not None:      # claim moat active -> its verdict is authoritative
+                    return bool(accepted)
+                # moat disabled/unbuildable -> the declared single-triple fallback (production's escape parity)
+            return bool(chat._verify(prose, None, svo))
+
         ans, rec = _OB.articulate(body.get("answer"), calls, mouth,
-                                  verify=lambda prose, svo: bool(chat._verify(prose, None, svo)),
+                                  verify=_verify,
                                   relock=lambda: _bt("mouth_verify"))
         body["answer"] = ans
         body["one_brain_mouth"] = rec

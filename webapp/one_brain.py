@@ -302,9 +302,12 @@ class DeferredMouth:
     """Stands in for a generative renderer on the shared ChatBrain at ON. Inside the turn lock every render call
     returns the template articulation (the brain decides, and VERIFYs, on it) and is recorded; after the lock,
     `articulate` runs the generative model on each recorded call whose template surface reached the answer, re-takes
-    the lock only to VERIFY each prose surface (the on-substrate re-parse, `ChatBrain._verify`), and substitutes the
-    verified prose. A prose surface that fails VERIFY leaves the template surface in place (never unverified prose).
-    No batch methods: the rich composer then renders per fact through `render_svo`."""
+    the lock only to VERIFY each prose surface (the on-substrate re-parse: `ChatBrain._verify` for a single-fact
+    reply, `ChatBrain._verify_claim_set` over the whole supporting set for a multi-fact reply - PACKET-m2-fixes
+    item 1), and substitutes the verified prose. A prose surface that fails VERIFY leaves the template surface in
+    place; VERIFY here is a grounding check against the brain's supporting facts, not a guarantee that every
+    sentence the model would have phrased is entailed word-for-word. No batch methods: the rich composer then
+    renders per fact through `render_svo`."""
 
     def __init__(self, base):
         from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty

@@ -671,3 +671,83 @@ def test_openai_shim_passes_the_interlocutor(monkeypatch):
     S.openai_chat_completions(S.OpenAIChatRequest(messages=[{"role": "user", "content": "hi"}]))
     assert [r.interlocutor for r in seen] == ["Carol", "dave", None]
     assert OAS._last_user_name([{"role": "user", "content": "x", "name": "  "}]) is None
+
+
+# ── PACKET-m2-fixes item 1 (major, honesty): the deferred mouth verifies MULTI-FACT prose against the whole set ─────
+
+class _FakeClaimChat:
+    """A ChatBrain stand-in with the production split: `_verify` = the old single-triple re-parse (accepts any
+    surface that re-parses carrying this svo - the hole), `_verify_claim_set` = the claim moat over the gathered
+    set (rejects a surface asserting ANY clause outside it; (None, None) when the moat is disabled)."""
+
+    def __init__(self, moat=True):
+        self.moat = moat
+        self.verify_seen = []
+        self.claim_seen = []
+
+    def _verify(self, surface, asserted, svo):
+        # the old single-triple hole, faithfully: a surface PASSES if it carries this triple ANYWHERE - which lets
+        # a multi-clause sentence with an unsupported extra clause through (the packet's repro).
+        self.verify_seen.append((surface, list(svo)))
+        phrase = " ".join(str(x).lower() for x in svo)
+        return phrase in " ".join(surface.lower().split())
+
+    def _verify_claim_set(self, surface, gated):
+        self.claim_seen.append((surface, [list(f) for f in gated]))
+        if not self.moat:
+            return None, None
+        allowed = {str(x).lower() for f in gated for x in f[:3]}
+        stop = {"the", "a", "an", "and", "too", "eats", "eat", "in", "of", "to", "is", "are"}
+        unknown = [t for t in surface.lower().replace(",", " ").replace(".", " ").split()
+                   if t not in stop and t not in allowed]
+        return (not unknown, {"unknown": unknown})
+
+
+class _FakeMouth:
+    def __init__(self, prose):
+        self._prose = prose
+
+    def generate(self, call):
+        return self._prose
+
+
+def _ob_resp(answer, supporting_facts):
+    from types import SimpleNamespace
+    return SimpleNamespace(body=json.dumps(
+        {"answer": answer, "supporting_facts": supporting_facts}).encode())
+
+
+def test_m2_item1_multi_fact_prose_never_substitutes_an_unsupported_clause():
+    """PACKET-m2-fixes item 1. Repro pinned: the single-fact `_verify` alone ACCEPTED
+    'the wug eats the dax, and the cat eats the moon too' (n_verified=1) - a sentence carrying a clause no
+    gathered fact supports. At ON, a reply with MORE THAN ONE supporting fact must verify each prose surface
+    against the whole set (claim moat), so the unsupported clause rejects the whole surface and the template
+    the brain already verified stays in place."""
+    from webapp import server as S
+    tmpl = "the wug eats the dax"
+    answer = f"Right: {tmpl}."
+    chat = _FakeClaimChat()
+    mouth = _FakeMouth("the wug eats the dax, and the cat eats the moon too")
+    calls = [{"method": "render_svo", "svo": ["the wug", "eats", "the dax"], "manner": "", "template": tmpl}]
+    facts = [["the wug", "eats", "the dax"], ["the cat", "eats", "the fish"]]
+    resp = S._one_brain_articulate(_ob_resp(answer, facts), (mouth, calls, chat))
+    body = json.loads(bytes(resp.body))
+    assert body["answer"] == answer, "unsupported clause reached the answer as verified prose"
+    assert body["one_brain_mouth"]["n_verified"] == 0
+    assert body["one_brain_mouth"]["n_kept_template"] == 1
+    assert chat.claim_seen, "multi-fact reply was never verified against its supporting set"
+
+
+def test_m2_item1_single_fact_reply_keeps_the_single_triple_path():
+    """The single-fact reply keeps the old behaviour: `_verify` substitutes it, the claim moat is not consulted."""
+    from webapp import server as S
+    tmpl = "a wug dax meal happens"
+    answer = f"Note: {tmpl}."
+    chat = _FakeClaimChat()
+    mouth = _FakeMouth("the wug eats the dax")
+    calls = [{"method": "render_svo", "svo": ["the wug", "eats", "the dax"], "manner": "", "template": tmpl}]
+    resp = S._one_brain_articulate(_ob_resp(answer, [["the wug", "eats", "the dax"]]), (mouth, calls, chat))
+    body = json.loads(bytes(resp.body))
+    assert body["answer"] == "Note: the wug eats the dax."
+    assert body["one_brain_mouth"]["n_verified"] == 1
+    assert chat.claim_seen == []
