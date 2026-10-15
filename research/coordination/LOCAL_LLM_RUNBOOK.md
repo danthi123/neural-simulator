@@ -1572,3 +1572,15 @@ by runner. F3 verdict needs a judge: delegation budget for this run exhausted (2
 _iw{1,2}/identity/{ce2e028,8407f21}/compare_{default_onwr,offwr_vs_Pdefault}.json committed.
 NEXT when ruled: at-risk list C + precondition A, then prereg promotion ASK [wrc-flip-prereg].
 - 08:15 [wrc-f3-verdict] ASK 1: F3 (off:word-role@F==default@P) ruled by judge? replies+persisted fields identical ALL turns; only sha_canon/sha_raw (body hashes) differ iw1{2,4,6,7,8} iw2{7,8,11}. Delegate budget 2/2 used, no MiMo Pro verdict possible. PASS/FAIL/UNDEFINED? blocks: wrc smoke
+09:10: wrc smoke (ONE task): measured the two remaining smoke components from the landed dev-7 files and
+recorded both in PACKET.md on research/wrc-flip-packet. (C) at-risk list: ZERO changed replies between
+default@F (ON) and off:word-role@F (alloff) across 29/29 rows (iw1 13 + iw2 16) -> no at-risk rows, B1 met
+by the identity record; cross-revision caveat noted (same form pending [wrc-f3-verdict]). (A) precondition:
+9/9 listed statement-form strings present in the smoke scripts (>=8 required), serving-subsystem `for`
+field = wm-focus-bind / d6-hebbian-write / false-belief-chat / transitive-chat / scope, NONE word-role ->
+no listed turn answered by the word-role path; caveat recorded that `for` is the serving subsystem, not the
+parse-route trace body (not persisted) - if `for` is not the trace readout, the precondition needs a
+dedicated trace run (prereg review decides). F2 PASS both runners stands; F3 still pending NEEDS
+[wrc-f3-verdict]. NEXT when ruled: promote packet to prereg + bar-sanity -> ASK [wrc-flip-prereg] -> gate
+seeds; the (A) lesion bars themselves (PARSE/COMMIT lesions vs intact-at-ON, 6/6) still need their gate-seed
+runs after that ASK.
