@@ -405,10 +405,20 @@ def S(monkeypatch, tmp_path):
     return srv
 
 
-def test_default_is_off_and_makes_the_pre_change_call(S):
-    """DEFAULT OFF (design section 5: default-off, then flip): unset env -> no sharing, no RNG isolation, and each
-    conversation loads its own store through the pre-change call, argument for argument."""
-    assert S._SHARED_LTM_DEFAULT_ON is False and S._LTM_RNG_ISOLATE_DEFAULT_ON is False
+def test_default_is_on_with_rng_isolation(S):
+    """DEFAULT ON since 2026-10-15 (flip battery Amendment A: A1 and A2 PASS 6/6): unset env -> one shared store,
+    RNG isolation forced on; BRAIN_LTM_RNG_ISOLATE's own default stays off (it only matters with sharing off)."""
+    assert S._SHARED_LTM_DEFAULT_ON is True and S._LTM_RNG_ISOLATE_DEFAULT_ON is False
+    assert S._shared_ltm_on() is True and S._ltm_rng_isolate_on() is True
+    a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
+    b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
+    assert isinstance(a, SharedLTMView) and a.shared_store is b.shared_store and len(S._test_calls) == 1
+
+
+def test_escape_off_makes_the_pre_change_call(S, monkeypatch):
+    """BRAIN_SHARED_LTM=0 is the escape: no sharing, no RNG isolation, and each conversation loads its own store
+    through the pre-change call, argument for argument."""
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
     assert S._shared_ltm_on() is False and S._ltm_rng_isolate_on() is False
     a = S._ltm_store_for_conversation(S._test_bundle, seed=7)
     b = S._ltm_store_for_conversation(S._test_bundle, seed=7)
@@ -445,10 +455,12 @@ def test_shared_or_isolated_load_leaves_the_global_rng_alone(S, monkeypatch):
     (today's behaviour); OFF+BRAIN_LTM_RNG_ISOLATE=1 and the shared store do not, and flag every shard."""
     np.random.seed(5)
     want = np.random.rand()
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")        # the escape: plain OFF
     np.random.seed(5)
     S._ltm_store_for_conversation(S._test_bundle, seed=7)
     assert np.random.rand() != want                    # plain OFF: the load reseeded (unchanged)
-    for env in ({"BRAIN_LTM_RNG_ISOLATE": "1"}, {"BRAIN_SHARED_LTM": "1"}):
+    monkeypatch.delenv("BRAIN_SHARED_LTM")
+    for env in ({"BRAIN_SHARED_LTM": "0", "BRAIN_LTM_RNG_ISOLATE": "1"}, {"BRAIN_SHARED_LTM": "1"}, {}):
         S._SHARED_LTM.clear()
         for k, v in env.items():
             monkeypatch.setenv(k, v)
@@ -460,7 +472,7 @@ def test_shared_or_isolated_load_leaves_the_global_rng_alone(S, monkeypatch):
             monkeypatch.delenv(k)
 
 
-@pytest.mark.parametrize("val,on", [(None, False), ("", False), ("1", True), ("on", True), ("0", False),
+@pytest.mark.parametrize("val,on", [(None, True), ("", True), ("1", True), ("on", True), ("0", False),
                                     ("off", False), ("false", False), ("no", False)])
 def test_shared_ltm_flag_parsing(S, monkeypatch, val, on):
     if val is not None:
@@ -586,7 +598,7 @@ def _fake_tiny_demo(seed, use_multiturn=True, enable_neural_render=False, compos
 
 def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch):
     """Through the real `_build_chat_brain` (tiny-demo branch; the brain build itself stubbed): with BRAIN_SHARED_LTM=1
-    two conversations' TieredFactStores wrap views of the SAME store; the default gives two stores."""
+    two conversations' TieredFactStores wrap views of the SAME store; the escape BRAIN_SHARED_LTM=0 gives two stores."""
     import research.runners.brain_chat_tui as tui
     monkeypatch.setattr(tui, "_build_tiny_demo", _fake_tiny_demo)
     monkeypatch.setattr(S, "_resolve_ltm_bundle", lambda: S._test_bundle)
@@ -597,7 +609,7 @@ def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch
     assert isinstance(t1, TieredFactStore) and src1 == src2 == "tiny-demo +LTM"
     assert t1.buffer is not t2.buffer
     assert t1.ltm.shared_store is t2.ltm.shared_store
-    monkeypatch.delenv("BRAIN_SHARED_LTM")
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
     c3, _ = S._build_chat_brain("tiny-demo", "stub")
     c4, _ = S._build_chat_brain("tiny-demo", "stub")
     assert isinstance(c3.inner.composer.ltm, _FakeStore)
@@ -607,7 +619,7 @@ def test_build_chat_brain_tiny_demo_conversations_share_one_store(S, monkeypatch
 
 def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch, tmp_path):
     """The developed-bundle branch: shared on -> the shared view as `ltm_store` (no `ltm_bundle`); OFF+isolate -> a
-    private RNG-isolated store as `ltm_store`; the default -> `ltm_bundle` and NO ltm_store kwarg, the pre-change call. The
+    private RNG-isolated store as `ltm_store`; the escape (=0) -> `ltm_bundle` and NO ltm_store kwarg, the pre-change call. The
     build-fallback seed is the bundle's own brain.json seed."""
     import research.runners.developed_brain_io as dbio
     dev = tmp_path / "dev"
@@ -632,8 +644,7 @@ def test_build_chat_brain_developed_bundle_shares_the_same_cache(S, monkeypatch,
     S._build_chat_brain(str(dev), "stub")
     assert seen[2]["ltm_bundle"] is None and isinstance(seen[2]["ltm_store"], _FakeStore)
     assert seen[2]["ltm_store"].shards[0]._isolate_global_rng is True
-    monkeypatch.delenv("BRAIN_SHARED_LTM")
-    monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE")
+    monkeypatch.delenv("BRAIN_LTM_RNG_ISOLATE")          # BRAIN_SHARED_LTM=0 stays set: the escape
     S._build_chat_brain(str(dev), "stub")
     assert seen[3]["ltm_bundle"] == S._test_bundle and "ltm_store" not in seen[3]   # the pre-change call
 

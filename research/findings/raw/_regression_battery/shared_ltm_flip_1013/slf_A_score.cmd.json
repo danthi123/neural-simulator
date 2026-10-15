@@ -1,0 +1,35 @@
+{
+ "runner": "vm_slf_score.py",
+ "script": "/opt/data/cache/scratch/vm_slf_score.py",
+ "argv": [
+  "python3",
+  "/opt/data/cache/scratch/vm_slf_score.py"
+ ],
+ "seed": null,
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "config": {
+  "spec": "research/coordination/2026-10-13-shared-ltm-flip-JOBS.md Amendment A",
+  "arms": [
+   "on",
+   "offiso",
+   "off"
+  ],
+  "A1": "on == offiso after stripping wall-clock/latency/RSS keys (strict blind)",
+  "A2": "offiso vs off, reply-level fields must be identical (declared non-blind)",
+  "base": "research/findings/raw/_regression_battery/shared_ltm_flip_1013"
+ },
+ "provenance": {
+  "date": "2026-10-15",
+  "A1": "PASS",
+  "A2": "PASS"
+ },
+ "sim_backend": "numpy",
+ "device": "cpu"
+}

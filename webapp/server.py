@@ -4164,10 +4164,13 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
 # server process and shared READ-ONLY by every conversation. Each conversation's TieredFactStore wraps a per-
 # conversation `SharedLTMView` (its own trace state, one lock per store) over the SAME store object, instead of its
 # own ~5.44 GiB copy of wikidata_100k. Read-only analysis + thread safety: docs/drafts/shared-ltm/WORKLOG.md;
-# mechanism: research/runners/shared_ltm.py. DEFAULT OFF (design docs/plans/2026-10-13-one-brain-shared-memory-
-# DESIGN.md section 5: default-off, then flip after validation): unset / BRAIN_SHARED_LTM=0 -> every conversation
-# loads its own store through `_load_or_build_ltm_store`, the exact pre-change call. BRAIN_SHARED_LTM=1 opts in.
-_SHARED_LTM_DEFAULT_ON = False
+# mechanism: research/runners/shared_ltm.py. DEFAULT ON since 2026-10-15 (design section 5: default-off, then flip
+# after validation): the flip battery research/coordination/2026-10-13-shared-ltm-flip-JOBS.md Amendment A passed
+# A1 (on == offiso, whole record, 6/6 gate seeds) and A2 (offiso vs off: every reply-level field identical, 6/6; the
+# one moved key is the non-reply d6_hebbian.held.readout on 5/6, the declared RNG-isolation read-out change).
+# BRAIN_SHARED_LTM=0 is the escape: every conversation loads its own store through `_load_or_build_ltm_store`, the
+# exact pre-change call.
+_SHARED_LTM_DEFAULT_ON = True
 # cache key (see `_shared_ltm_key`) -> the loaded store + its lock. Lives for the process; never evicted.
 _SHARED_LTM: dict = {}
 # Env read inside the RFPhasorComposer / ShardedPhasorStore constructors that changes the loaded store (part of the
@@ -4185,7 +4188,7 @@ _LTM_RNG_ISOLATE_DEFAULT_ON = False
 
 
 def _shared_ltm_on() -> bool:
-    """Unset/blank -> _SHARED_LTM_DEFAULT_ON (off). BRAIN_SHARED_LTM=1/true/on/yes turns it on; anything else is off.
+    """Unset/blank -> _SHARED_LTM_DEFAULT_ON (on). BRAIN_SHARED_LTM=1/true/on/yes turns it on; anything else is off.
     FORCED ON with BRAIN_ONE_BRAIN (M2): one brain reads one process-shared prior, RNG-isolated (`_ltm_rng_isolate_on`)."""
     if _one_brain_on():
         return True

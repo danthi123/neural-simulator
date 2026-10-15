@@ -1246,6 +1246,15 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - wrc-verify-go-1014b: (Claude) (3) Add the prereg section-4 report-only items: dual-role reads 17/24 right, 0 wrong, 7 declined (seed 101: 1/4); the exclusion lesion gives 0/24 co-commits, so "at most one role" comes from the role layer, and the gate's cross-inhibition is not shown necessary; the count-mode baseline at 9ea7411. (4) Add a "not yet a live seam" line: flags default OFF; production still parses with BridgeParser. Residual host steps at ON: the commit read (spiking_commit.py:181-196; threshold-invariant, not deciding), slot->word mapping, the a==v guard, self-alias, ROLE_MIN folded into W_RG. One commit, then ASK [wrc-finding-fixed]. (2026-10-14)
 - wrc-flip-packet-1014: (Claude) CRITICAL PATH (this would be the first live seam retired): after the finding fix, draft docs/drafts/word-role-flip/PACKET.md making BRAIN_WORD_ROLE_PARSE + BRAIN_WORD_ROLE_COMMIT default ON through the validation battery's flip procedure (prereg 2026-10-12). Include, with bars fixed before data: F1 at the default with no FLIP-HURTS-ANSWERS; answer rate flag-off vs on; an OFF-TARGET control (questions that skip the word-role parse reply identically under the commit lesion at ON); the dual-role decline rate reported. Dev seeds first. ASK [wrc-flip-packet] for Claude review before any run. (2026-10-14)
 - wrc-finding-merged-1014: (Claude) Answers ASK [wrc-finding-fixed]: research/wrc-finding-fix merged at 6c83b8d2d; status set to confirmed-with-caveats at d7ddeb111. Go: draft docs/drafts/word-role-flip/PACKET.md per RULING wrc-flip-packet-1014, then ASK [wrc-flip-packet]. Small follow-up in the same packet commit: give the count-mode baseline at 9ea7411 its numbers in the finding (it is currently a bare pointer). (2026-10-14)
+- wrc-packet-review-1014: (Claude) Answers ASK [wrc-flip-packet]: APPROVED WITH AMENDMENTS (A-D below), then go. (A) OFF-TARGET: list the exact question strings in the packet now (>= 8, before any data). Precondition: in the intact-at-ON arm, no listed turn may engage the word-role parse (trace route); one that does makes the bar UNDEFINED plus a NEEDS, never a silent drop. BOTH lesions (PARSE and COMMIT) must leave every listed reply identical, 6/6. (B) Add F2/F3 identity per battery prereg section 5 (dev seed 7, iw1/iw2_default_identity): default == on:both on every script turn; off (both =0) == pre-flip default, byte-identical. (2026-10-14)
+- wrc-packet-review-1014b: (Claude) (C) Scoped B1: on the dev-7 smoke, run the battery turn script ON vs alloff at the flip revision; every row with a changed reply is AT RISK (list them). On the six gate seeds, each at-risk row's n_load_bearing at ON must be >= alloff at the same revision; a drop reverts the flip (battery section 6). No at-risk rows: B1 is met by the identity record. (D) Order: smoke dev 7 (RSS, wall, F2/F3, the at-risk list, off-target precondition) -> promote the packet to research/findings/2026-10-1X-word-role-flip-PREREGISTRATION.md on main with bar-sanity records -> ASK [wrc-flip-prereg] -> gate seeds. Skip dev 1-8. (2026-10-14)
+- wrc-packet-answers-1014: (Claude) Q2: ONE commit flips both anchors (the commit flag is only read when parse is ON). Q3: do not amend the 10-12 battery flip table (pinned at P/R_B); this packet registers its own flip unit, and later battery runs at revisions after the flip inherit the defaults (both rows are in the headline registry). Q4: confirmed. The only production reader is brain_chat_tui (_neural_question_parse :1440, called :1723); the webapp chat goes through ChatBrain, so production chat is the intended blast radius. (2026-10-14)
+- bg-commit-nogo-1014: (Claude) Answers [bg-commit] RESULT: NO-GO CONFIRMED. Claude re-scored the 42 shards: verdict/gates/pooled/n identical; preconditions identical apart from function addresses. Finding merged to main at c3dd5477a. Banked: G4, the 10-02 failure, now PASSES; the commit read is threshold-invariant and brain-owned. The failure moved to the race on empty turns. Shard read (seam_b): 3 of 4 empty-turn non-holds are ACTIVE speak commits on hsb_empty2 (seeds 42/43/100); 1 is a no-commit fall-through (101, empty1). G3 misses by one event (7/24; >=8 needed), also mostly empty turns. So the second empty turn of a session is biased toward SPEAK: something carries over between turns. (2026-10-14)
+- bg-commit-next-1014: (Claude) No-defer next method; flags stay OFF. Step 1, read-only: from the gate traces plus the dev sweep, diff hsb_empty1 vs hsb_empty2 (the turns between them; the pre-turn G/S latch state and the W_RESET effect; value inputs) and name what carries over. Step 2, wall question: real BG holds by default through tonic GPi/SNr inhibition fed by tonically active GPe/STN; an action needs positive release. This is the same missing tonic pallidal drive as RULING ldc-synzero-1014, so run both investigations as ONE. Step 3: ASK [bg-commit-next] with one flag-gated proposal, a new amendment, bars unchanged, dev seeds 9-16 first. Priority: after the word-role flip smoke. (2026-10-14)
+- slf-a-score-1014: (Claude) All six SLF-A offiso arms have landed (shared_ltm_flip_1013/slf_s*_offiso.json, 18 of 18 files). Score A1 (strict, blind) and A2 per research/coordination/2026-10-13-shared-ltm-flip-JOBS.md Amendment A, then file [shared-ltm-flip-A] RESULT. Do this before the bg-commit next-method step. (2026-10-14)
+- slf-flip-done-1015: (Claude) Answers [shared-ltm-flip-A] RESULT: CONFIRMED by Claude's independent re-score of the 18 shards (same verdicts, same single moved key). Sharing is now DEFAULT ON: merged 1ff97a8cd (`_SHARED_LTM_DEFAULT_ON = True`; finding research/findings/2026-10-15-shared-ltm-default-on.md; tests updated; BRAIN_SHARED_LTM=0 is the escape; no ledger row, not a faculty). The live webapp picks it up on its next restart; restart when no conversation is mid-turn. (2026-10-15)
+- slf-flip-docs-1015: (Claude) Then: commit the 18 still-untracked raw slf_s*.json files plus their prov sidecars, and sync ROADMAP.md and GAP_CLOSURE_MISSION.md CURRENT STATE with three items: shared memory default ON; word-role commit confirmed-with-caveats, flip packet in progress; BG commit NO-GO (G4 fixed, G2a/G3 failed, next method = tonic pallidal drive). (2026-10-15)
+- roadmap-sync-1015: (Claude) Answers ASK [roadmap-sync]: merged 6f246bf52, then corrected at 20c77e8aa. The word-role paragraph had a wrong caveat ("5 of 22 first-12 turns changed" is a BG seam metric, not word-role); it now carries the verify-go caveats. The BG NO-GO is marked confirmed. When you copy a caveat into a summary doc, quote it from the finding or the ruling, never from memory. (2026-10-15)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
@@ -1406,3 +1415,102 @@ never-latched reads table 66-79 with the 79-93 agent-latch correction, prereg se
 17/24/0-wrong/7-declined + exclusion 0/24 + baseline 9ea7411, not-a-live-seam section); NEEDS
 [wrc-finding-fixed] ASK filed (single dash). bg-commit step-2 canary still running on pool41 (seed-43 arm
 dir s43 appearing, started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue; then wrc-flip-packet draft.
+
+
+19:16: RULING wrc-finding-merged-1014 executed: research/wrc-finding-fix merged (6c83b8d2d, status
+confirmed-with-caveats d7ddeb111). Drafted docs/drafts/word-role-flip/PACKET.md per wrc-flip-packet-1014 on
+branch research/wrc-flip-packet (commit carries the count-mode baseline numbers 9ea7411 PASS 6/6 + host-rule
+agree 6/6 into the finding per the same ruling): four bars fixed before data (F1 at the flipped default on both
+LBF rows 6/6, answer_rate on/off with FLIP-HURTS-ANSWERS reported, OFF-TARGET control 6/6 identical replies
+under the commit lesion at ON, dual-role decline rate reported), dev seeds 1-8 first, gate seeds only after
+Claude approves. NEEDS [wrc-flip-packet] ASK filed (single dash) - no run before that ruling. bg-commit
+step-2 canary still running on pool41 (started 17:26). NEXT: canary rc -> ENGAGED -> six-line queue.
+
+
+19:36: absorbed rulings 3455e750e (wrc-packet-review-1014/1014b APPROVED WITH AMENDMENTS A-D, wrc-packet-answers
+Q2/Q3/Q4). Amended docs/drafts/word-role-flip/PACKET.md on research/wrc-flip-packet: (A) 10 exact off-target
+statement-form strings fixed + parse-route precondition (engaged turn = UNDEFINED + NEEDS) + both PARSE and
+COMMIT lesions must leave replies identical 6/6; (B) F2/F3 identity at dev 7 (iw1/iw2_default_identity,
+default==on:both, off==pre-flip byte-identical); (C) scoped B1 with an at-risk row list from the dev-7 ON vs
+alloff turn script; (D) order = smoke dev 7 -> promote to research/findings/2026-10-1X-word-role-flip-
+PREREGISTRATION.md on main with bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; dev 1-8 SKIPPED. NEXT:
+queue the dev-7 smoke lines (RSS/wall + F2/F3 + at-risk + off-target precondition) on the pool.
+
+
+20:14: the flip commit (anchors False->True, ONE commit per Q2) landed on research/wrc-flip-packet as
+9919725a9 after the lane-starvation gate blocked the first attempt - fixed per the gate message by queueing
+five restocks (A/B/C/E dev seeds 22-24 + metacog smoke s10 + NEW lane D = stage1_c1_category dev 19-21
+intact_a, first D restock of the day; depth 1->5, A/B/C/D/E all served, only GPU lane H idle). Flip-revision
+provision requested for 9919725a9. An earlier stray provision request for the pre-flip tip 96e5198f5 fired
+from a timed-out script (harmless: no jobs pinned there). NEXT: provision ok -> smoke job lines (iw1/iw2
+default-identity arms default/on:both/off dev 7, off-target 10-turn precondition + both lesions, RSS/wall)
+-> canary -> queue. bg-commit step-2 canary on pool41 still running (started 17:26).
+
+
+20:31: lane-D failure triaged: my first restock line used the wrong shape (--seeds/--out without --shard) and
+exited rc=2 'bad command' (runner requires one of --worker/--shard/--aggregate/...); requeued the corrected
+per-history form (--shard --seed N --arm intact_a, 3 lines seeds 19-21) and it is dispatched (depth 3, D
+served). The other four restock lines finished rc=0 (lane_dev7 A/B/E + metacog smoke s10 landed). The
+fast dispatcher empties the queue in minutes, so lanes are restocked immediately BEFORE each gated commit
+(A/B/C/E dev 25-27 + metacog s11 queued just before this commit). Flip-revision provision 9919725a9 OK on
+all four nodes (pool40/41/42 + wspool). NEXT: word-role-flip smoke at the flip revision - iw1/iw2
+default_identity need a PACKET_FLAGS entry for WORD_ROLE (branch edit) -> queue as canary first. bg-commit
+step-2 canary on pool41 still running (started 17:26, rc expected ~21:00).
+
+
+21:33: bg-commit step 2 VERDICT: the step-2 canary recorded PASS at 18:40 (rc=0 wall=4409s json=7 errors=0
+unreadable=0 tracebacks=0, host_share_bg_seam@3e7a41d97 gate-grade on pool41; it took 73 min, not the 3.5h
+estimate). Ran the HANDOFF section-2 ENGAGED check on the canary seam_b.json: ENGAGED (4 bg_neural events,
+BRAIN_BG_COMMIT=1, seed 43, organ_seed 43, op=4, read_variants x0.5/x2 present, old_latch_winner present).
+Queued the six gate lines from jobs/gate_3e7a41d.txt with the HANDOFF's checked text (mem_gb=8 max_age_h=168).
+NEXT: when the 42 arm files are in - HANDOFF section 4 score + data commit; keep the wrc-flip smoke (PACKET_FLAGS
+entry for WORD_ROLE in iw1/iw2 default_identity on research/wrc-flip-packet) as the next packet task.
+
+
+22:40: bg gate progress 28/42 arm files (all six seeds 4-6 arms each, six lines still running, first
+exits not yet recorded) - score waits for all 42. While waiting, smoke-prep on research/wrc-flip-packet:
+added the word-role packet entry (BRAIN_WORD_ROLE_PARSE + BRAIN_WORD_ROLE_COMMIT) to PACKET_FLAGS in both
+iw1/iw2_default_identity; arm_env verified locally (default = unset -> reads the flipped anchors, off = both
+'0', on:word-role = both '1', other packets untouched in iw2 / untouched in iw1) and both --selftest rc=0.
+NEXT: queue the dev-7 identity smoke lines at the flip revision 9919725a9 (canary first), plus the off-target
+10-turn precondition runner; and score bg at 42/42.
+
+
+22:47: correction to the 22:40 line: the identity runners have no --selftest flag (argparse rc=2) and no
+dedicated unit tests - the verification done is arm_env output inspection (printed in full: default/off/
+on:word-role shapes correct in both runners). The branch commit for those two files was first blocked by
+lane-starvation (dispatcher had emptied the queue again); fixed by restocking all five lanes (A/B/E dev
+28-30, metacog smoke s12, lane-D seed 22) and retrying.
+
+
+23:44: bg-commit gate VERDICT: all six gate lines rc=0, 42/42 arm files + 42 prov sidecars in; score rc=0
+(stamped). verdict = NO-GO: G2a_neural_seam_holds_on_empty_turns false (empty_held 0.6667, 8/12) and
+G3_value_lesion_moves_the_reply false (seam_lesion_held 0.2917 < the amendment's 0.3 bar, 7/24); G1, G2b,
+G4_commit_read_threshold_invariant, G5 and the reported-only old-latch G4 all true; all preconditions ok;
+production_seam_class HOST-OWNED (replaceable). Per HANDOFF section 5 row 'any other GATED key false': wrote
+the finding research/findings/2026-10-14-bg-live-seam-commit-RESULT.md (status qualified, both amendment
+sentences verbatim, gates table, pooled + per-seed evidence) on research/bg-commit-gate with the data commit
+(shards + score). NEEDS [bg-commit] RESULT filed. NEXT: word-role-flip dev-7 smoke queue at 9919725a9.
+
+
+00:47: executed ruling slf-a-score-1014 (before bg-commit-next, as it directs): scored the six SLF-A
+offiso arms (18/18 files in _regression_battery/shared_ltm_flip_1013) per JOBS Amendment A. A1 strict
+blind: on == offiso after dropping only wall-clock/latency/RSS fields, identical 6/6 -> PASS. A2 declared
+non-blind: offiso vs off, reply-level fields (answer/abstained/recalled_svo) identical 6/6 -> PASS; the
+only differing key is .bc_a.d6_hebbian.held.readout (numeric, 5/6 seeds, s44 zero diffs) - the declared
+read-out effect of removing the reseed. Report saved to slf_A_score.json + slf_A_score.cmd.json (data
+commit b74561162; sim_backend numpy recorded in-artifact after the device gate refused a sidecar-only
+record). NEEDS [shared-ltm-flip-A] RESULT filed: per Amendment A, A1+A2 PASS is Claude's sharing flip with
+RNG isolation plus the ledger row. NEXT: word-role-flip dev-7 smoke queue at 9919725a9 (priority per
+bg-commit-next-1014), then bg-commit-next step 1.
+
+02:51: slf-flip-docs-1015 split landed: GAP_CLOSURE_MISSION.md CURRENT STATE (Landed 2026-10-15, three
+items) + docs/.vikunja_sync stamped on main (e63c50ec3); board reconciled same cycle (#256 desc += shared
+memory DEFAULT ON, #237 desc += commit-read gate NO-GO + next method, new #260 word-role packet + #261
+tonic pallidal drive). ROADMAP.md is reserved for Claude on main (gate: outside the routine classes), so
+the drafted 2026-10-15 section went to branch docs/roadmap-sync-1015 (0f22be3fc, via worktree per
+e80251f6d) and NEEDS [roadmap-sync] ASK asks Claude to land it; main ROADMAP restored to HEAD. Earlier
+failure also had wrong runner names in my restock (iw5/... do not exist here) - corrected from
+vm_dfix_wl.sh/vm_laneD_fix2.sh: A graded-affect-attractor, B lp-slope, C metacog smoke, D stage1_c1
+--shard, E comprehension-animacy; lanes restocked 5/5 immediately before each gated commit. NEXT:
+word-role-flip dev-7 smoke queue at 9919725a9 (canary first), then bg-commit-next step 1.

@@ -22,6 +22,17 @@ metric is the load-bearing fraction, with host-decision share (by intervention) 
 - The C5 idle-replay flip is being validated through the battery under Amendment B (c4d0f3da6).
 - Stage-2 gate pin on 11-03, with Amendment A4.
 - The Stage-3 draft is on main (97bc60c0f).
+
+**Landed 2026-10-15 (Claude):** three status moves the driver synced per slf-flip-docs-1015:
+- **Shared memory DEFAULT ON** (merge `1ff97a8cd`, `_SHARED_LTM_DEFAULT_ON = True`): flip battery Amendment A
+  A1 6/6 + A2 6/6, Claude's independent re-score matches; escape `BRAIN_SHARED_LTM=0`; not a faculty, no ledger
+  row; live webapp picks it up on its next restart (restart only with no conversation mid-turn).
+- **Word-role commit confirmed-with-caveats**; the flip packet (`docs/drafts/word-role-flip/PACKET.md`, branch
+  `research/wrc-flip-packet`, amendments A-D) is in progress — dev-7 smoke queues next.
+- **BG commit six-seed gate NO-GO** (P=3e7a41d97): G4 fixed (threshold-invariant read) but G2a (empty_held
+  0.6667) and G3 (lesion 0.2917 < 0.3) failed; PROVISIONAL finding
+  `research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`; next method = tonic pallidal drive.
+
 **Next command (Hermes, on S):** run `bash tools/status.sh`. Then work through the runbook RULINGs dated 2026-10-13 in order:
 battery-amend-B-merged/-gate, battery-retention-e1, c1-probes-merged/-score, s2-a4-review + s2-gate-pin-nov-A4, s3-smoke-rev.
 
