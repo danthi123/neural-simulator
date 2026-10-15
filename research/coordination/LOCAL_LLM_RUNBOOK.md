@@ -1527,3 +1527,14 @@ speedup-smoke-first; the 6 F lines went out at 16/17 directly. Compare steps (de
 off@F vs default@P) run locally when the files land. Lanes restocked before this commit. NEXT: land smoke
 compares + at-risk list C + off-target precondition A from the outputs, then promote the packet to
 prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1 (tonic pallidal drive).
+
+04:44: wake reported 4 pool jobs ended badly - all mine from the wrc smoke: the identity runner refused
+(rc 3) because it requires PYTHONHASHSEED=0 alongside OMP/OPENBLAS/MKL=1 and my lines omitted it
+(reproduced the exact refuse message on pool42 in <60s: "hash-randomized iteration order ... Refusing to
+run"); the pool40 "stopped" one was my earlier mem-8 pkill. Cause was env, not memory. Withdrew the 8 still-
+queued smoke lines (withdraw --expect 2 and --expect 6, reason logged) and requeued all 10 with
+PYTHONHASHSEED=0 in the env (mem 16/17 kept, per the ~12 GB canary peak), P=96e5198f5 / F=ce2e02852,
+depth 10. The 2 batch-2 P jobs already running die on their own; the corrected lines are queued behind
+them. Lanes restocked before this commit. NEXT: when the 10 files land, run the compares (default vs
+on:word-role at F; off@F vs default@P), extract at-risk list C + off-target precondition A, then promote the
+packet to prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1.
