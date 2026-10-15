@@ -1429,3 +1429,13 @@ default==on:both, off==pre-flip byte-identical); (C) scoped B1 with an at-risk r
 alloff turn script; (D) order = smoke dev 7 -> promote to research/findings/2026-10-1X-word-role-flip-
 PREREGISTRATION.md on main with bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; dev 1-8 SKIPPED. NEXT:
 queue the dev-7 smoke lines (RSS/wall + F2/F3 + at-risk + off-target precondition) on the pool.
+
+
+20:14: the flip commit (anchors False->True, ONE commit per Q2) landed on research/wrc-flip-packet as
+9919725a9 after the lane-starvation gate blocked the first attempt - fixed per the gate message by queueing
+five restocks (A/B/C/E dev seeds 22-24 + metacog smoke s10 + NEW lane D = stage1_c1_category dev 19-21
+intact_a, first D restock of the day; depth 1->5, A/B/C/D/E all served, only GPU lane H idle). Flip-revision
+provision requested for 9919725a9. An earlier stray provision request for the pre-flip tip 96e5198f5 fired
+from a timed-out script (harmless: no jobs pinned there). NEXT: provision ok -> smoke job lines (iw1/iw2
+default-identity arms default/on:both/off dev 7, off-target 10-turn precondition + both lesions, RSS/wall)
+-> canary -> queue. bg-commit step-2 canary on pool41 still running (started 17:26).
