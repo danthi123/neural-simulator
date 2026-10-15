@@ -1648,3 +1648,18 @@ running now (expect ~12:27-12:30). nodes listed as iw1-launch-proof bwrap sandbo
 from my shell reports all four nodes UNREACHABLE (different ssh cfg) but results arrive anyway via the shared
 findings/raw mount (iw1's file appeared with node uid 999), so the bank path is not blocked. NEXT when iw2
 lands: run the F3 compare off:word-role@8407f21 vs default@P' (sha_canon every turn) + at-risk list C on P'.
+13:17: F3 rerun under RULING wrc-f3-verdict-1015 LANDED AND IS CLEAN. default@P'(b1c11a088) ran on the pool
+(iw1 12:13, iw2 12:27; dispatcher-restarted lane). Compare off:word-role@8407f2193 vs default@P' -> verdict
+IDENTICAL on BOTH runners: differing_turns [], reply_differing_turns [] (iw2 reply_diffs []), preconditions
+all true (same seed/turns/status/corpus/ltm/deterministic_env). The 5 iw1 + 3 iw2 body-hash-only mismatches
+of the first attempt are explained exactly by the shared-LTM ON/OFF confound the ruling identified - with
+shared-LTM ON at P' every sha_canon matches. Data committed 792dcd039 (default@P' x2 + prov, compare x2 +
+prov; data-only commit). NEEDS updated: [wrc-f3-verdict] rerun outcome recorded, NEW ASK [wrc-flip-prereg]
+(prereg promotion - bars/preregs are s2-reserved; all four smoke components now read: (A) 9/9 OFF-TARGET,
+(B) F2 PASS both runners, F3 rerun IDENTICAL, (C) 0 changed replies across 29/29 rows). Lanes restocked
+before this doc-only commit per lane rule. NEXT: wait on [wrc-flip-prereg] to queue the 6-seed PARSE/COMMIT
+lesion gate runs; nothing else in s4 can move without it.
+13:17: [wrc-f3-verdict] rerun outcome: PASS-candidate - verdict IDENTICAL x2 (iw1, iw2) at re-pin
+P'=b1c11a0887b3c17ff7198674e9c33f162a3d58b9 (shared-LTM ON + word-role defaults OFF), artifacts
+research/findings/raw/_iw{1,2}/identity/{b1c11a08/default.json,8407f21/compare_offwr_vs_pprime.json}
+committed 792dcd039. Stamp PASS on bar (B)/F3 or send back; bars are s2-reserved.
