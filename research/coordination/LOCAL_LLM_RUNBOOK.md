@@ -1617,3 +1617,12 @@ runners exist at P' (git cat-file) and pool41 has the provisioned venv. NEXT whe
 compare off:word-role@8407f21 vs default@P' (bar unchanged: sha_canon identical on EVERY script turn; the
 shared-LTM body-field turns must now match since P' carries shared-LTM ON), then record F2/F3 final reads
 in PACKET.md.
+11:52: triaged the 2 bad pool jobs = MY OWN F3-rerun lines (both died within seconds on pool40 with
+'command not found'). Root cause mine: the queue line I built at 11:37 carried a literal
+'OMP_THREADS_PLACEHOLDER' token between SIM_BACKEND=numpy and OMP_NUM_THREADS=1, and env treats a bare word as
+the command to run, so it executed the placeholder instead of python (pool.running record line confirms it
+verbatim). Nothing else in the line differed from the working 96e5198-wave shape. Requeued both corrected
+lines (same P', --arm default --seed 7, out _iw{1,2}/identity/b1c11a08/default.json, depth 0->2, checked
+reason records the first attempt's failure). Also noted: pool_queue add takes no --nodes flag (my
+'--nodes pool41,pool42' was silently ignored; node choice is dispatcher-side) - future queue adds must not
+pass one. NEXT when results land: off:word-role@8407f21 vs default@P' compare per the unchanged bar.
