@@ -26,14 +26,17 @@ faculty and takes no ledger row.
 threshold-invariant (G4 true at half and twice the read level, the earlier defect fixed), the host still owns the
 reply (G1), the seam never holds a content turn (G2b), and the bus argmax does no work (G5). Two capability keys
 failed: the seam's race held only 8 of 12 empty turns (G2a, 0.6667) and cutting the value route moved the reply
-on only 7 of 24 lesioned events (G3, 0.2917 against the registered 0.3 bar). The finding is filed as a
-PROVISIONAL NO-GO (`research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`); the next method Claude ruled on
+on only 7 of 24 lesioned events (G3, 0.2917 against the registered 0.3 bar). The NO-GO is confirmed by
+Claude's re-score of all 42 shards (`research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`); the next method Claude ruled on
 is **tonic pallidal drive**. Nothing switched on.
 
-**Word-role commit: confirmed-with-caveats, flip packet in progress.** The commit test's caveat (5 of 22 first-12
-turns changed vs the registered 0) is on record; the flip packet (`docs/drafts/word-role-flip/PACKET.md`, branch
-`research/wrc-flip-packet`) carries Claude's amendments A-D, the identity runners now know a `word-role` packet,
-and the dev-7 smoke queues next.
+**Word-role commit: confirmed-with-caveats, flip packet in progress.** Claude's verify-go re-scored the six-seed
+gate byte-identical: with the flags on, spiking neurons commit each word's role and cutting only that commit stage
+changes the answer on 6 of 6 seeds. The caveats on record: the no-fact control could not have caught a lesion that
+breaks every parse (the flip packet adds a real off-target control); one-word-two-roles questions were answered 17
+of 24 right, 0 wrong, 7 declined (seed 101: 1 of 4), an answer-rate risk the packet measures; and it is not yet a
+live seam, because both flags are still off by default. The flip packet (`docs/drafts/word-role-flip/PACKET.md`,
+branch `research/wrc-flip-packet`) carries Claude's amendments A-D; the dev-7 smoke queues next.
 
 ## 2026-10-14 — the speak-or-stay-silent choice gets an all-or-none commit; its six-seed test is registered, not run (result 10-15: NO-GO — see above)
 
