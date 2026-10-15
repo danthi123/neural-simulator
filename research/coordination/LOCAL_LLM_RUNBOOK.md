@@ -1595,3 +1595,18 @@ require two MiMo Pro delegates and this run's delegation budget is 2/2 EXHAUSTED
 INFO and halting per the resource-unavailable rule. The critical path stays: answer [wrc-f3-verdict] ->
 packet promote + bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; bg-commit-next (tonic pallidal drive,
 one investigation with ldc-gpe-tonic) queues right after the wrc smoke.
+11:29: RULING wrc-f3-verdict-1015 executed (ONE task). Identified P' = b1c11a0887b3c17ff7198674e9c33f162a3d58b9
+and VERIFIED both ruling conditions by git: cbffef7f8 (shared-LTM ON) IS an ancestor of b1c11a088, and at
+b1c11a088 research/runners/brain_chat_tui.py holds _WORD_ROLE_PARSE_DEFAULT_ON = False (line 279) +
+_WORD_ROLE_COMMIT_DEFAULT_ON = False (line 315) - the word-role flip commit 9919725a9 lives only on this
+branch, so pre-flip main is exactly 'shared-LTM ON + word-role OFF'. Recorded P' in PACKET.md on
+research/wrc-flip-packet (c229489be), with the (C) readout upgraded from 'pending NEEDS' to
+confound-immune: (C) compares REPLY fields only and the shared-LTM flip is verified reply-identical
+(SLF-A A1 6/6). MISTAKE disclosed: first tried tools/pool_provision.sh --revision b1c11a088 pool41 pool42 -
+that tool is BANNED on this host (pool_health.py: 'server-side provision.req instead, RULING
+compute-placement'); it died harmlessly at 'rsync: command not found' (server lacks rsync; nothing was
+transferred). Switched to the sanctioned path: touched research/queue/provision.req/b1c11a0887b3... (empty
+file, the established request shape). NEXT when the provision-ok event lands: queue the two dev-7
+default@P' identity lines (iw1 + iw2, same line shape as the 96e5198 wave, out
+_iw{1,2}/identity/b1c11a08/default.json; pool add REFUSES pre-provision lines, so they wait for the event),
+then compare off:word-role@8407f21 vs default@P' per the unchanged bar (sha_canon every turn).
