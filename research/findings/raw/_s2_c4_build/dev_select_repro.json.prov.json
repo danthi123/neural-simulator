@@ -1,0 +1,41 @@
+{
+ "run_id": "1792095660-2",
+ "runner": "research/runners/emotion_category_dev.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/940f789731307f25ae1882bd4c1bbb911087549f/research/runners/emotion_category_dev.py",
+  "--select",
+  "--seeds",
+  "1-8",
+  "--out",
+  "research/findings/raw/_s2_c4_build/dev_select_repro.json"
+ ],
+ "git_sha": "940f789731307f25ae1882bd4c1bbb911087549f",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "aa17737c5c4beaf8124f71801e304489f4a53d4b0eb77683c15a52ccfd071597",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T16:21:00",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1792095660428093322-18295",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "5G",
+  "POOL_JOB_MEM_GB": "4",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "node-mxl1462drl",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_s2_c4_build/dev_select_repro.json"
+}
