@@ -1584,3 +1584,14 @@ dedicated trace run (prereg review decides). F2 PASS both runners stands; F3 sti
 [wrc-f3-verdict]. NEXT when ruled: promote packet to prereg + bar-sanity -> ASK [wrc-flip-prereg] -> gate
 seeds; the (A) lesion bars themselves (PARSE/COMMIT lesions vs intact-at-ON, 6/6) still need their gate-seed
 runs after that ASK.
+11:12: heartbeat wake (nothing new 2h). Re-read s1/s2/s6 + NEEDS; walked every s4 start condition: T0
+queue empty with no held keys; T2/T8 identity 5=5; T6 stage-1 gate 207 >= 204; T7 c1 113 >= 54; T9 B2d
+stub 258/258 landed + both scores COMPLETE + PROVISIONAL finding + NEEDS #2 filed (10-10, nothing left);
+T10 LDC gate 0/150 (blocked: ladder stopped by the synzero ruling, next = bg-commit-next tonic after the
+wrc smoke); T12 closed per RULING T12-seam-map; GPU dispatcher down but no GPU lines queued (mouth arm
+landed; gpu_queue beyond status is not mine). No s4 task can move -> s5, but s5's plan + refute steps
+require two MiMo Pro delegates and this run's delegation budget is 2/2 EXHAUSTED -> filed NEEDS [wrc-idle]
+INFO and halting per the resource-unavailable rule. The critical path stays: answer [wrc-f3-verdict] ->
+packet promote + bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; bg-commit-next (tonic pallidal drive,
+one investigation with ldc-gpe-tonic) queues right after the wrc smoke.
+- 11:12 [wrc-idle] INFO 1: heartbeat idle-block - no s4 task movable (T9 scored 10-10, T6 207/204, T7 113/54, T12 closed, T1 stopped by ruling, T10 awaits the stopped ladder); s5 needs 2 delegates, budget 2/2 EXHAUSTED; answering [wrc-f3-verdict] unblocks the whole critical path
