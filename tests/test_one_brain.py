@@ -817,3 +817,45 @@ def test_m2_item3_turn_lock_forced_at_one_brain_on(monkeypatch):
     assert L.turn_lock_enabled() is True
     monkeypatch.delenv("BRAIN_TURN_LOCK")
     assert L.turn_lock_enabled() is L._TURN_LOCK_DEFAULT_ON
+
+
+# ── PACKET-m2-fixes items 6 + 8 ────────────────────────────────────────────────────────────────────────────────────
+
+def test_m2_item6_getitem_raises_keyerror_when_context_vanished():
+    """item 6: `__getitem__` must raise KeyError when the Context vanished between the presence check and the
+    read — the current code does `getattr(self._reg.get(key), field)` = getattr(None, field) -> AttributeError on
+    that race, breaking dict-exact KeyError semantics."""
+    from webapp import one_brain as OB
+    reg = OB.ContextRegistry()
+    view = reg.view("mood")
+    view["k"] = "v"
+    assert view["k"] == "v"
+    # the race window simulated exactly: present-marked key whose Context is gone (registry.get -> None)
+    view._present["ghost"] = None
+    with pytest.raises(KeyError):
+        view["ghost"]
+    del view["k"]
+    with pytest.raises(KeyError):
+        view["k"]
+
+
+def test_m2_item8_source_frame_mandatory_for_every_shown_answer(fresh):
+    """item 8: every answer the interim frame REWRITES with the 'Someone told me' scaffold (host text in the
+    brain's voice, declared until M3) carries `one_brain_source` with reason host_tag/scaffold — the attribution
+    is present wherever the changed answer text is shown, never silently."""
+    from fastapi.responses import JSONResponse
+    S, _, brain = fresh
+    bk = ("__one_brain__", "tiny-demo", "stub")
+    brain.fact_sources[bk] = {("wug", "eat", "dax"): ("A", "tiny-demo", "stub")}
+    shapes = [
+        {"answer": "the wug eats the dax", "abstained": False, "recalled_svo": ["wug", "eat", "dax"]},
+        {"answer": "the dog chases the cat", "abstained": False, "recalled_svo": ["dog", "chase", "cat"],
+         "supporting_facts": [["dog", "chase", "cat"], ["wug", "eat", "dax"]]},
+        {"answer": "the dog chases the cat", "abstained": False, "recalled_svo": None, "derived": True,
+         "derived_from": [["dog", "chase", "cat"], ["wug", "eat", "dax"]]},
+    ]
+    for body in shapes:
+        r = json.loads(S._one_brain_source_frame(JSONResponse(body), bk, ("B", "tiny-demo", "stub")).body)
+        assert "one_brain_source" in r, f"changed answer shown without source attribution: {r}"
+        assert r["one_brain_source"]["reason"] in ("host_tag", "scaffold"), r["one_brain_source"]
+        assert "told me" in r["answer"], r["answer"]

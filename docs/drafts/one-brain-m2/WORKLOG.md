@@ -107,6 +107,12 @@ strings, whose iteration order follows the per-process string-hash seed. The pro
 `PYTHONHASHSEED=0` + one BLAS thread (`docs/drafts/s2p/make_jobs.sh`); the hash script now sets it and both sides
 were re-run under it (rows 3-4): OFF is byte-identical to base on every reply body at both dev seeds.
 
+**Scope of this identity (M2 packet item 7).** The 17/17 covers ONLY the 17-turn script described above. The
+fold-ins (a)-(c) (section 2) intentionally change OFF behaviour on paths that script never reaches — each fold-in
+is pinned by its own hash, not this one. Reset, tick, warm, shutdown, prewarm and the OpenAI shim have NO OFF hash
+run at all: their OFF identity is by construction and code review, not by hash. Any claim of "OFF is byte-identical"
+means the script's turns, nothing wider.
+
 ## 5. ON: the M0 probe arms (seeds 7 and 8)
 
 `research.runners.one_brain_probe` (M0, predictions committed before any run), stub renderer, numpy CPU, memcap 14,
@@ -276,6 +282,19 @@ C. By construction (no ON run with these conditions here; covered by unit tests)
 12. One process-wide turn lock: N simultaneous conversations serialize (with the stub renderer the whole turn).
 13. Unchanged at OFF by construction (OFF must be byte-identical): the reset route still never calls
    `forget_session` at OFF (M0 finding); it does at ON.
+14. Prewarm at ON (`server.py:4537`; M2 packet item 4, DECLARED): the scratch turn's pending mouth calls are
+   dropped, so prewarm no longer warms the first Qwen generation — the first real turn pays it. Declared, not fixed:
+   articulating the scratch turn would run the generative mouth on a throwaway turn (and its calls are not in an
+   answer anywhere), so the cheaper honest state is this record; review decides whether scratch-turn calls should
+   warm.
+15. Shutdown flush (`server.py:2044`; M2 packet item 5, DECLARED): if the turn lock times out at shutdown the flush
+   runs unlocked and could capture a half-written composer. Declared, not fixed: the PREVIOUS good snapshot is
+   already on disk (an unlocked flush risks only writing a newer, possibly torn one after it), and the fix — flush
+   the last good snapshot when the lock was not granted — touches persistence timing; review decides.
+   Update to risk 1 (M2 packet item 2, landed on `research/one-brain-m2-fixes`): the D5 referential disclosure at
+   ON is now source-neutral — `recall_disclosure(..., source_attributed=not _one_brain_on())` says "Someone
+   mentioned {topic}", never "Earlier you brought up {topic}" — so a cross-conversation "yes" no longer claims
+   THIS conversation. M3's source monitor remains the real fix (WHO mentioned it).
 
 ## 9. Reproduce
 

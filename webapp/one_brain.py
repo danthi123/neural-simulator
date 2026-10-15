@@ -18,7 +18,11 @@ brain key (`brain_key`) instead of the conversation key. The turn lock (webapp/b
 `turn_lock`.
 
 FLAG OFF (the default): today's per-session behaviour, routed through the Context fields; nothing in this module
-changes a reply (asserted by hash on data: docs/drafts/one-brain-m2/WORKLOG.md).
+changes a reply on the 17-turn conversation-hash script (asserted by hash on data:
+docs/drafts/one-brain-m2/WORKLOG.md section 4). SCOPE of that claim (M2 packet item 7): the identity covers only
+that script; the fold-ins (a)-(c) (WORKLOG section 2) intentionally change OFF behaviour on paths the script never
+reaches (each fold-in has its own hash), and reset, tick, warm, shutdown, prewarm and the OpenAI shim have NO OFF
+hash run — their OFF identity is by construction, not by hash.
 
 FLAG ON: a conversation is BOUND to the shared ChatBrain for its turn (`Brain.bind`, under the turn lock): the
 outgoing conversation's C fields are saved into its Context and the incoming one's restored. Host code here is
@@ -162,7 +166,12 @@ class ContextFieldView(MutableMapping):
     def __getitem__(self, key):
         if key not in self._present:
             raise KeyError(key)
-        return getattr(self._reg.get(key), self._field)
+        ctx = self._reg.get(key)
+        if ctx is None:
+            # the Context vanished between the presence check and this read (M2 packet item 6): dict-exact KeyError,
+            # never getattr(None, field) -> AttributeError on a race.
+            raise KeyError(key)
+        return getattr(ctx, self._field)
 
     def __setitem__(self, key, value):
         setattr(self._reg.ensure(key), self._field, value)
