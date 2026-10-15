@@ -1538,3 +1538,14 @@ depth 10. The 2 batch-2 P jobs already running die on their own; the corrected l
 them. Lanes restocked before this commit. NEXT: when the 10 files land, run the compares (default vs
 on:word-role at F; off@F vs default@P), extract at-risk list C + off-target precondition A, then promote the
 packet to prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1.
+- 2026-10-15 06:20 [wrc-flip-smoke] ASK 1: bar(B) F3 off@F==default@P unsatisfiable: runner off zeroes ALL flags (xedge ships ON); P compare reply-diff={turn12} only, expected-by-construction (MiMo Pro verdict). Need word-role-only-off arm or bar reword; blocks: word-role-flip smoke
+
+06:20: ONE task = wrc-flip dev-7 smoke scoring (P half). Landed 4 P files (iw1 13 turns, iw2 16 turns;
+preconditions all true: same seed/n_turns/status 200/corpus/ltm wikidata_100k). Ran --expect same compares
+locally: BOTH runners verdict DIFFERS, reply_differing_turns={12} only (turn 12 = 'what do you expect?', the
+xedge probe); non-reply diffs on all turns. Root cause: _XEDGE_SWM_DEFAULT_ON = True, so xedge already ships
+default-ON at P and the runner's off arm (ALL PACKET_FLAGS =0, flags_env confirms) forces it off -> exactly the
+probe turn moves. MiMo Pro delegate verdict: expected_by_construction protocol mismatch (bar B words off as
+the word-role flags; runner off zeroes everything), NOT a smoke failure; F2 default@F vs on:word-role stands,
+literal F3 needs a word-role-only-off arm or bar reword = Claude-reserved -> NEEDS [wrc-flip-smoke] ASK filed.
+6 F files still landing (depth ~4-10); F2/F3-side compares run next wake. Lanes restocked before this commit.
