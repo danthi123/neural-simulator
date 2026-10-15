@@ -1488,3 +1488,16 @@ production_seam_class HOST-OWNED (replaceable). Per HANDOFF section 5 row 'any o
 the finding research/findings/2026-10-14-bg-live-seam-commit-RESULT.md (status qualified, both amendment
 sentences verbatim, gates table, pooled + per-seed evidence) on research/bg-commit-gate with the data commit
 (shards + score). NEEDS [bg-commit] RESULT filed. NEXT: word-role-flip dev-7 smoke queue at 9919725a9.
+- 2026-10-15 00:35 [shared-ltm-flip-A] RESULT: A1 PASS 6/6, A2 PASS 6/6 (reply fields identical; only mover d6_hebbian.held.readout, 5/6 seeds); score slf_A_score.json in shared_ltm_flip_1013. [dirty-ok: standing untracked raw; runbook-only commit]
+
+
+00:47: executed ruling slf-a-score-1014 (before bg-commit-next, as it directs): scored the six SLF-A
+offiso arms (18/18 files in _regression_battery/shared_ltm_flip_1013) per JOBS Amendment A. A1 strict
+blind: on == offiso after dropping only wall-clock/latency/RSS fields, identical 6/6 -> PASS. A2 declared
+non-blind: offiso vs off, reply-level fields (answer/abstained/recalled_svo) identical 6/6 -> PASS; the
+only differing key is .bc_a.d6_hebbian.held.readout (numeric, 5/6 seeds, s44 zero diffs) - the declared
+read-out effect of removing the reseed. Report saved to slf_A_score.json + slf_A_score.cmd.json (data
+commit b74561162; sim_backend numpy recorded in-artifact after the device gate refused a sidecar-only
+record). NEEDS [shared-ltm-flip-A] RESULT filed: per Amendment A, A1+A2 PASS is Claude's sharing flip with
+RNG isolation plus the ledger row. NEXT: word-role-flip dev-7 smoke queue at 9919725a9 (priority per
+bg-commit-next-1014), then bg-commit-next step 1.
