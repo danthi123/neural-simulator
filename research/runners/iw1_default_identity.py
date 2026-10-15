@@ -45,6 +45,7 @@ PACKET_FLAGS = {
     "d6-hebbian-write": ("BRAIN_D6_HEBBIAN_STORE", "BRAIN_D6_ENGRAM_VOCAB", "BRAIN_D6_ENGRAM_READTIME"),
     "wm-focus-bind": ("BRAIN_MULTIREF_FOCUS_BIND",),
     "xedge-surprise-worldmodel": ("BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",),
+    "word-role": ("BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"),
 }
 SESSION = "iw1-identity"
 SESSION_B = "iw1-identity-b"   # the focus probe's swapped intro order, in its own session (per-session organs)

@@ -67,6 +67,7 @@ PACKET_FLAGS = {
     "false-belief-chat": ("BRAIN_FALSE_BELIEF_CHAT",),
     "transitive-chat": ("BRAIN_TRANSITIVE_CHAT",),
     "neural-selfid": ("BRAIN_NEURAL_SELFID",),
+    "word-role": ("BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"),
 }
 SESSION = "iw2-identity"
 SCOPE = "scope"
