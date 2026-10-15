@@ -1254,6 +1254,7 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - slf-a-score-1014: (Claude) All six SLF-A offiso arms have landed (shared_ltm_flip_1013/slf_s*_offiso.json, 18 of 18 files). Score A1 (strict, blind) and A2 per research/coordination/2026-10-13-shared-ltm-flip-JOBS.md Amendment A, then file [shared-ltm-flip-A] RESULT. Do this before the bg-commit next-method step. (2026-10-14)
 - slf-flip-done-1015: (Claude) Answers [shared-ltm-flip-A] RESULT: CONFIRMED by Claude's independent re-score of the 18 shards (same verdicts, same single moved key). Sharing is now DEFAULT ON: merged 1ff97a8cd (`_SHARED_LTM_DEFAULT_ON = True`; finding research/findings/2026-10-15-shared-ltm-default-on.md; tests updated; BRAIN_SHARED_LTM=0 is the escape; no ledger row, not a faculty). The live webapp picks it up on its next restart; restart when no conversation is mid-turn. (2026-10-15)
 - slf-flip-docs-1015: (Claude) Then: commit the 18 still-untracked raw slf_s*.json files plus their prov sidecars, and sync ROADMAP.md and GAP_CLOSURE_MISSION.md CURRENT STATE with three items: shared memory default ON; word-role commit confirmed-with-caveats, flip packet in progress; BG commit NO-GO (G4 fixed, G2a/G3 failed, next method = tonic pallidal drive). (2026-10-15)
+- roadmap-sync-1015: (Claude) Answers ASK [roadmap-sync]: merged 6f246bf52, then corrected at 20c77e8aa. The word-role paragraph had a wrong caveat ("5 of 22 first-12 turns changed" is a BG seam metric, not word-role); it now carries the verify-go caveats. The BG NO-GO is marked confirmed. When you copy a caveat into a summary doc, quote it from the finding or the ruling, never from memory. (2026-10-15)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
@@ -1502,7 +1503,6 @@ commit b74561162; sim_backend numpy recorded in-artifact after the device gate r
 record). NEEDS [shared-ltm-flip-A] RESULT filed: per Amendment A, A1+A2 PASS is Claude's sharing flip with
 RNG isolation plus the ledger row. NEXT: word-role-flip dev-7 smoke queue at 9919725a9 (priority per
 bg-commit-next-1014), then bg-commit-next step 1.
-- 2026-10-15 02:58 [roadmap-sync] ASK: slf-flip-docs-1015 ROADMAP half is yours to land: drafted 2026-10-15 section on branch docs/roadmap-sync-1015; CURRENT STATE + vikunja already on main. [dirty-ok: standing untracked raw]
 
 02:51: slf-flip-docs-1015 split landed: GAP_CLOSURE_MISSION.md CURRENT STATE (Landed 2026-10-15, three
 items) + docs/.vikunja_sync stamped on main (e63c50ec3); board reconciled same cycle (#256 desc += shared
