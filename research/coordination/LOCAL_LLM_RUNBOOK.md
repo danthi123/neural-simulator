@@ -1663,3 +1663,23 @@ lesion gate runs; nothing else in s4 can move without it.
 P'=b1c11a0887b3c17ff7198674e9c33f162a3d58b9 (shared-LTM ON + word-role defaults OFF), artifacts
 research/findings/raw/_iw{1,2}/identity/{b1c11a08/default.json,8407f21/compare_offwr_vs_pprime.json}
 committed 792dcd039. Stamp PASS on bar (B)/F3 or send back; bars are s2-reserved.
+- - -
+16:25: [m2-fixes] ASK — PACKET-m2-fixes all 8 items are committed on branch `research/one-brain-m2-fixes`, tip
+0938b88b8 (from main 30ab399b6), NOT merged (Claude's review, per the packet). Landed: item 1 multi-fact
+claim-verify for deferred-mouth prose at ON (`source_attributed` claim-set path + honest DeferredMouth docstring,
+2a13b1b15); item 2 source-neutral D5 recall disclosure at ON (`recall_disclosure(..., source_attributed=not
+_one_brain_on())`, "Someone mentioned {topic}" replaces "Earlier you brought up", 1f0aff670); item 3 turn lock
+FORCED at ON (`BRAIN_TURN_LOCK=0` ignored when `BRAIN_ONE_BRAIN=1`, 83f106f14); item 6 `ContextFieldView.__getitem__`
+raises KeyError when the Context vanished (never getattr(None, field)); item 7 OFF-identity scope in WORKLOG §4 +
+`one_brain.py` FLAG OFF (only the 17-turn script; fold-ins (a)-(c) intentionally change OFF on paths it never
+reaches; reset/tick/warm/shutdown/prewarm/OpenAI shim have no OFF hash run); item 8 test that `one_brain_source`
+(reason host_tag/scaffold) is mandatory wherever the "Someone told me" answer text is shown; items 4+5 DECLARED in
+WORKLOG §8 risks 14/15 (prewarm drops the scratch turn's pending mouth calls; shutdown flush can run unlocked on a
+lock timeout) under the packet's declaration option (0938b88b8). Tests: `tests/test_one_brain.py` 45 passed (7 new
+m2 tests, RED-then-GREEN, SIM_BACKEND=numpy), `tests/test_brain_turn_lock.py` 43 passed. FLAGGED: the
+`tests/test_webapp_server.py` subset relevant here (source_provenance / xedge_surprise_episodic /
+d6_semantic_drop, real brain builds) exceeded a 420 s window under the brain lock + mem_ok 18 on this server, and
+could NOT be rerun under memcap because `tools/memcap.sh` REFUSES here (systemd --user unavailable) — the packet's
+memcap-18 recipe needs a host where memcap works (or a longer window); no GPU/dev-seed violations (no GPU runs).
+Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside tests (packet header).
+16:25: m2 PACKET executed as the one task: all 8 items on research/one-brain-m2-fixes (tip 0938b88b8; 4 commits 2a13b1b15/1f0aff670/83f106f14/0938b88b8); test_one_brain 45/45 + test_brain_turn_lock 43/43; NEEDS [m2-fixes] filed (webapp_server heavy subset + memcap-unavailable caveat inside).
