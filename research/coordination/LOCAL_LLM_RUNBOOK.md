@@ -1468,3 +1468,10 @@ iw1/iw2_default_identity; arm_env verified locally (default = unset -> reads the
 '0', on:word-role = both '1', other packets untouched in iw2 / untouched in iw1) and both --selftest rc=0.
 NEXT: queue the dev-7 identity smoke lines at the flip revision 9919725a9 (canary first), plus the off-target
 10-turn precondition runner; and score bg at 42/42.
+
+
+22:47: correction to the 22:40 line: the identity runners have no --selftest flag (argparse rc=2) and no
+dedicated unit tests - the verification done is arm_env output inspection (printed in full: default/off/
+on:word-role shapes correct in both runners). The branch commit for those two files was first blocked by
+lane-starvation (dispatcher had emptied the queue again); fixed by restocking all five lanes (A/B/E dev
+28-30, metacog smoke s12, lane-D seed 22) and retrying.
