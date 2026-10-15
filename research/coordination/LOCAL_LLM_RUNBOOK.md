@@ -1450,3 +1450,12 @@ fast dispatcher empties the queue in minutes, so lanes are restocked immediately
 all four nodes (pool40/41/42 + wspool). NEXT: word-role-flip smoke at the flip revision - iw1/iw2
 default_identity need a PACKET_FLAGS entry for WORD_ROLE (branch edit) -> queue as canary first. bg-commit
 step-2 canary on pool41 still running (started 17:26, rc expected ~21:00).
+
+
+21:33: bg-commit step 2 VERDICT: the step-2 canary recorded PASS at 18:40 (rc=0 wall=4409s json=7 errors=0
+unreadable=0 tracebacks=0, host_share_bg_seam@3e7a41d97 gate-grade on pool41; it took 73 min, not the 3.5h
+estimate). Ran the HANDOFF section-2 ENGAGED check on the canary seam_b.json: ENGAGED (4 bg_neural events,
+BRAIN_BG_COMMIT=1, seed 43, organ_seed 43, op=4, read_variants x0.5/x2 present, old_latch_winner present).
+Queued the six gate lines from jobs/gate_3e7a41d.txt with the HANDOFF's checked text (mem_gb=8 max_age_h=168).
+NEXT: when the 42 arm files are in - HANDOFF section 4 score + data commit; keep the wrc-flip smoke (PACKET_FLAGS
+entry for WORD_ROLE in iw1/iw2 default_identity on research/wrc-flip-packet) as the next packet task.
