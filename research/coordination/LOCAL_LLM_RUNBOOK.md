@@ -1514,3 +1514,16 @@ failure also had wrong runner names in my restock (iw5/... do not exist here) - 
 vm_dfix_wl.sh/vm_laneD_fix2.sh: A graded-affect-attractor, B lp-slope, C metacog smoke, D stage1_c1
 --shard, E comprehension-animacy; lanes restocked 5/5 immediately before each gated commit. NEXT:
 word-role-flip dev-7 smoke queue at 9919725a9 (canary first), then bg-commit-next step 1.
+
+04:18: word-role-flip dev-7 smoke QUEUED (amendment D order: smoke -> prereg -> gates), 10 lines. Branch
+was stale for provisioning (e4e4836b5 refused: does not contain published main b1c11a088 and main changed
+more than docs) - brought main into it with tools/agent_sync_branch.sh (RULING sync-branch): new pin
+F=ce2e028529713fc9f1659baa3c3dd1381dc1dd23, provision ok on all four nodes. Pre-flip pin P=96e5198f5
+(provisioned). Queued: P {iw1,iw2} x {default,off} + F {iw1,iw2} x {default, off, on:word-role}, seed 7,
+out research/findings/raw/_iw{1,2}/identity/<P7>/. First attempt used mem_ok 8/memcap 9 - the 2026-09-30
+canary record says peak ~12 GB, so those 4 dispatched jobs were killed on the four nodes (pattern scoped to
+identity/96e5198 + the P revision sha) and requeued at mem_gb=16/memcap 17 = ceil(1.3 x 12) per
+speedup-smoke-first; the 6 F lines went out at 16/17 directly. Compare steps (default vs on:word-role at F,
+off@F vs default@P) run locally when the files land. Lanes restocked before this commit. NEXT: land smoke
+compares + at-risk list C + off-target precondition A from the outputs, then promote the packet to
+prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1 (tonic pallidal drive).
