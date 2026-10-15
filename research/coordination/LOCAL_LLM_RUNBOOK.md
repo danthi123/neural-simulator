@@ -1502,3 +1502,15 @@ commit b74561162; sim_backend numpy recorded in-artifact after the device gate r
 record). NEEDS [shared-ltm-flip-A] RESULT filed: per Amendment A, A1+A2 PASS is Claude's sharing flip with
 RNG isolation plus the ledger row. NEXT: word-role-flip dev-7 smoke queue at 9919725a9 (priority per
 bg-commit-next-1014), then bg-commit-next step 1.
+- 2026-10-15 02:58 [roadmap-sync] ASK: slf-flip-docs-1015 ROADMAP half is yours to land: drafted 2026-10-15 section on branch docs/roadmap-sync-1015; CURRENT STATE + vikunja already on main. [dirty-ok: standing untracked raw]
+
+02:51: slf-flip-docs-1015 split landed: GAP_CLOSURE_MISSION.md CURRENT STATE (Landed 2026-10-15, three
+items) + docs/.vikunja_sync stamped on main (e63c50ec3); board reconciled same cycle (#256 desc += shared
+memory DEFAULT ON, #237 desc += commit-read gate NO-GO + next method, new #260 word-role packet + #261
+tonic pallidal drive). ROADMAP.md is reserved for Claude on main (gate: outside the routine classes), so
+the drafted 2026-10-15 section went to branch docs/roadmap-sync-1015 (0f22be3fc, via worktree per
+e80251f6d) and NEEDS [roadmap-sync] ASK asks Claude to land it; main ROADMAP restored to HEAD. Earlier
+failure also had wrong runner names in my restock (iw5/... do not exist here) - corrected from
+vm_dfix_wl.sh/vm_laneD_fix2.sh: A graded-affect-attractor, B lp-slope, C metacog smoke, D stage1_c1
+--shard, E comprehension-animacy; lanes restocked 5/5 immediately before each gated commit. NEXT:
+word-role-flip dev-7 smoke queue at 9919725a9 (canary first), then bg-commit-next step 1.
