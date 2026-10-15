@@ -794,3 +794,26 @@ def test_m2_item2_wiring_gates_on_one_brain_on():
     import inspect
     from webapp import server as S
     assert "source_attributed=not _one_brain_on()" in inspect.getsource(S)
+
+
+# ── PACKET-m2-fixes item 3 (major, integrity): the turn lock is FORCED at ON ────────────────────────────────────────
+
+def test_m2_item3_turn_lock_forced_at_one_brain_on(monkeypatch):
+    """PACKET-m2-fixes item 3. BRAIN_TURN_LOCK=0 is the pre-M0 escape — at ON one shared brain carries every
+    conversation, and the lock is what serialises a single reply: shipping ON with the escape available would run
+    the shared turn lock off in production. At ON the escape must be ignored (lock held); off-ON it must still
+    work byte-identically (default untouched)."""
+    monkeypatch.setenv("BRAIN_ONE_BRAIN", "1")
+    monkeypatch.setenv("BRAIN_TURN_LOCK", "0")
+    assert L.turn_lock_enabled() is True, "ON must force the turn lock; the escape must not apply"
+    with L.brain_turn("m2-item3") as waited:
+        assert L.held_by_current_thread(), "brain_turn did not hold the lock under ON + escape"
+    # off-ON the escape still disables the lock, byte-identical to HEAD:
+    monkeypatch.delenv("BRAIN_ONE_BRAIN")
+    assert L.turn_lock_enabled() is False
+    monkeypatch.setenv("BRAIN_ONE_BRAIN", "1")
+    # an explicit ENABLED value stays enabled under ON (no change), and unset stays at the default:
+    monkeypatch.setenv("BRAIN_TURN_LOCK", "1")
+    assert L.turn_lock_enabled() is True
+    monkeypatch.delenv("BRAIN_TURN_LOCK")
+    assert L.turn_lock_enabled() is L._TURN_LOCK_DEFAULT_ON

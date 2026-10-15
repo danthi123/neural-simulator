@@ -126,12 +126,20 @@ _STATS = _fresh_stats()
 
 
 def turn_lock_enabled(env=None) -> bool:
-    """True unless `BRAIN_TURN_LOCK` is one of {0, false, off, no} (case-insensitive). Unset or empty -> ON."""
+    """True unless `BRAIN_TURN_LOCK` is one of {0, false, off, no} (case-insensitive). Unset or empty -> ON.
+    AT ONE_BRAIN ON (PACKET-m2-fixes item 3) the lock is FORCED: the escape is ignored there — one shared brain
+    carries every conversation and the lock is what serialises a single reply, so ON + `BRAIN_TURN_LOCK=0` would
+    ship the shared turn lock off in production. Off-ON the escape is byte-identical to HEAD (default untouched)."""
     env = os.environ if env is None else env
     v = env.get(TURN_LOCK_ENV)
     if v is None or not v.strip():
         return _TURN_LOCK_DEFAULT_ON
-    return v.strip().lower() not in ("0", "false", "off", "no")
+    if v.strip().lower() in ("0", "false", "off", "no"):
+        from webapp import one_brain as _OB   # lazy: webapp/one_brain imports this module inside Brain.__init__
+        if _OB.one_brain_on(env):            # forced at ON — the escape does not apply
+            return True
+        return False
+    return True
 
 
 def turn_wait_timeout_s(env=None):
