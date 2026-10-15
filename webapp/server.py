@@ -6302,6 +6302,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     pass
                 # CONTENT (a DECLARED host-oracle residual): surface a fact the brain holds about `ref`, rendered
                 # through the SAME governed render path the moat covers — ONLY when the spiking assembly COMPLETED.
+                # SOURCE (PACKET-m2-fixes item 2): the D5 store is brain-level with no source tag (until M3), so at
+                # ON the disclosure must not claim THIS conversation ("Earlier you brought up"): source-neutral
+                # ("Someone mentioned ...") — off-ON every reply stays byte-identical to HEAD.
                 content = None
                 if rec.get("in_memory"):
                     try:
@@ -6319,7 +6322,8 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     except Exception:
                         content = None
                 return JSONResponse({
-                    "answer": _EP.recall_disclosure(rec, content, cache_key=_bkey(cache_key)),
+                    "answer": _EP.recall_disclosure(rec, content, cache_key=_bkey(cache_key),
+                                                   source_attributed=not _one_brain_on()),
                     "abstained": (not bool(rec.get("in_memory"))),
                     "recalled_svo": None, "verified": bool(rec.get("in_memory")),
                     "renderer": rname, "brain": req.brain, "source": source,

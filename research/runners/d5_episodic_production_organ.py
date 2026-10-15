@@ -260,9 +260,15 @@ def _sleep_replayed_when(cache_key, topic: str):
         return None
 
 
-def recall_disclosure(record: dict, content: str | None = None, *, cache_key=None) -> str:
+def recall_disclosure(record: dict, content: str | None = None, *, cache_key=None,
+                      source_attributed: bool = True) -> str:
     """Compose the honest recall line from a spiking recall record. in_memory (a spiking completion) gates whether
     any content is surfaced at all — a completion failure is an honest abstain, never a confabulation.
+
+    `source_attributed=False` (PACKET-m2-fixes item 2, passed at ONE_BRAIN ON): the D5 store is brain-level with NO
+    source tag, so a topic conversation A stored can be recalled while conversation B is asking — the disclosure
+    must then say 'Someone mentioned {topic}', not 'Earlier you brought up {topic}' (a false first-person claim
+    about THIS conversation). Default True keeps every existing caller byte-identical to HEAD.
 
     When the D5 learn-through-use consolidation is armed (`BRAIN_D5_CONSOLIDATE`) AND this specific topic has actually
     been consolidated this conversation (`_topic_consolidated`), the reply ALSO surfaces the GRADED apical magnitude
@@ -276,12 +282,13 @@ def recall_disclosure(record: dict, content: str | None = None, *, cache_key=Non
     topic = record.get("topic", "that")
     if record.get("in_memory"):
         cue = float(record.get("apical_cue", 0.0))
+        opener = f"Someone mentioned {topic}" if not source_attributed else f"Earlier you brought up {topic}"
         if _d5_strength_visible() and _topic_consolidated(cache_key, topic):
             strength = float((record.get("graded_cue") or {}).get(SURFACED_GRADED_READ, 0.0))
-            lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
+            lead = (f"{opener} — my hippocampal readout completes its assembly for it "
                     f"(dendritic dAP completion {cue:.2f}, recall strength {strength:.1f} mV).")
         else:
-            lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
+            lead = (f"{opener} — my hippocampal readout completes its assembly for it "
                     f"(dendritic dAP completion {cue:.2f}).")
         # ADDITIVE (#64): if this topic was replayed in the session's last offline SLEEP-REPLAY pass, surface the BATCH
         # retention (its recall reads stronger — the risen graded apical magnitude) + the host store-order WHEN position.

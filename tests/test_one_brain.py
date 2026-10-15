@@ -751,3 +751,46 @@ def test_m2_item1_single_fact_reply_keeps_the_single_triple_path():
     assert body["answer"] == "Note: the wug eats the dax."
     assert body["one_brain_mouth"]["n_verified"] == 1
     assert chat.claim_seen == []
+
+
+# ── PACKET-m2-fixes item 2 (major, honesty): the D5 referential disclosure is source-neutral at ON ──────────────────
+
+def test_m2_item2_d5_recall_is_source_neutral_at_one_brain_on(monkeypatch):
+    """PACKET-m2-fixes item 2. The D5 episodic store is brain-level with NO source tag: a topic conversation A
+    stored can be recalled while conversation B is asking, and the old disclosure asserted
+    'Earlier you brought up {topic}' - a false first-person claim about THIS conversation. At ON the reply must
+    disclose source-neutrally ('Someone mentioned ...') or abstain.
+
+    Drives `recall_disclosure` (a pure function of the recall record) with a record in `EpisodicDapMemory.recall`'s
+    exact shape rather than a REAL store: a genuine numpy BTSP write is ~510s/topic (server.py _episodic_store_ok),
+    i.e. pool-class, not unit-testable here. The scenario's precondition is pinned instead: BRAIN_EPISODIC_STORE=1
+    forces that write path ON on numpy (it is deferred there by default), so cross-conversation storage CAN happen
+    once forced - which is exactly why the disclosure needs a source gate."""
+    monkeypatch.setenv("BRAIN_EPISODIC_STORE", "1")
+    import research.runners.d5_episodic_production_organ as EP
+    from webapp import server as S
+    assert S._episodic_store_ok(), "BRAIN_EPISODIC_STORE=1 must force the numpy write path ON (scenario precondition)"
+    graded = {r: 0.0 for r in EP.GRADED_READS}
+    rec = {"topic": "wug", "slot": 0, "formed": True, "in_memory": True,
+           "apical_cue": 0.85, "apical_perm": 0.0, "apical_nocue": 0.0,
+           "graded_cue": dict(graded), "graded_perm": dict(graded), "graded_nocue": dict(graded),
+           "reason": "completion"}
+    # at ON - no source tag until M3 - the disclosure must not claim THIS conversation:
+    out = EP.recall_disclosure(rec, None, source_attributed=False)
+    assert "you brought up" not in out, out
+    assert "Someone mentioned" in out, out
+    assert "my hippocampal readout completes its assembly for it" in out, out   # the spiking completion still discloses
+    # the source-attributed default (every existing non-ON caller) stays byte-identical to HEAD:
+    head = EP.recall_disclosure(rec, None)
+    assert head.startswith("Earlier you brought up wug"), head
+    # the abstain branch is already source-honest (a non-recall claims nothing):
+    fail = dict(rec, in_memory=False, formed=False)
+    abstain = EP.recall_disclosure(fail, None, source_attributed=False)
+    assert "I don't recall" in abstain, abstain
+
+
+def test_m2_item2_wiring_gates_on_one_brain_on():
+    """The gate is wired at the call site: the server passes source_attributed=not _one_brain_on()."""
+    import inspect
+    from webapp import server as S
+    assert "source_attributed=not _one_brain_on()" in inspect.getsource(S)
