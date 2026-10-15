@@ -1626,3 +1626,13 @@ lines (same P', --arm default --seed 7, out _iw{1,2}/identity/b1c11a08/default.j
 reason records the first attempt's failure). Also noted: pool_queue add takes no --nodes flag (my
 '--nodes pool41,pool42' was silently ignored; node choice is dispatcher-side) - future queue adds must not
 pass one. NEXT when results land: off:word-role@8407f21 vs default@P' compare per the unchanged bar.
+12:00: exit 3 on pool41 = the documented identity-runner refusal: the runner requires PYTHONHASHSEED=0
+(reproduced rc 3 on pool42 in the 04:46 fixenv record, line 'env bug: ... refuses (rc 3)'), and both of my
+requeued P' lines omitted it. Also found my mem_gb=8/memcap 9 was below the sanctioned wave's record
+(mem_gb=16, canary peak ~12 GB, 1.3x) - the dispatcher's mem_gb reservation is what routes these lines to
+the big-RAM node (all 14 prior mem_ok-16 jobs ran on wspool, 31G; pool41/42 only have 15G). Requeued both
+lines in the exact fixenv shape (PYTHONHASHSEED=0 + mem_ok 16 1 + memcap 17 + mem_gb=16 in the record),
+depth 0->2, checked reason names both of my earlier failures. Attempt history for this pin: 11:37 died on my
+OMP_THREADS_PLACEHOLDER token; 11:53 died rc 3 missing PYTHONHASHSEED=0; this is attempt 3 with the record's
+own env and memory shape. NEXT when results land: off:word-role@8407f21 vs default@P' compare (bar
+unchanged, sha_canon every turn) then PACKET.md final reads.
