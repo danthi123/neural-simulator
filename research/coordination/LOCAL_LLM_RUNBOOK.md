@@ -1557,3 +1557,8 @@ rejected), committed on the branch through gates, provisioned the new tip, queue
 10-line smoke keeps landing (iw1@F default+off in). NEXT: F-side compares when files land - F2
 default@F==on:word-role, F3 off:word-role@F==default@P; then at-risk list C + precondition A; then
 promote to prereg (ASK [wrc-flip-prereg]).
+07:02: wrc smoke F2 (iw1 half): default@F vs on:word-role@F --expect same ran locally on the landed 3-file
+set (iw1@8407f2193-era pin ce2e028, seed 7, 13 turns) -> see compare_default_onwr.json verdict above
+(F2 = default IS the capability). iw2@F still landing, off:word-role F3 rerun lines queued behind it.
+NEXT: iw2 F2 + F3 (off:word-role@8407f2193 vs default@96e5198f5) when their files land, then at-risk list C
++ precondition A, then prereg promotion ASK [wrc-flip-prereg].
