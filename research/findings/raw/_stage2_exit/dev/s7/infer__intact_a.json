@@ -2250,7 +2250,7 @@
    "curiosity": {
     "on": true,
     "lesioned": false,
-    "novelty": -3.3306690738754696e-16,
+    "novelty": 0.0,
     "want_hz": 0.0,
     "threshold": 19.09722222222222,
     "curious": false,
@@ -2265,7 +2265,7 @@
     "topic": "crow",
     "graded_novelty": {
      "on": true,
-     "value": -3.3306690738754696e-16,
+     "value": 0.0,
      "lesioned": false
     },
     "curiosity_da": {
@@ -2727,23 +2727,23 @@
   }
  },
  "timings_s": {
-  "t_heron_hunt": 498.0,
-  "t_frog_eat": 42.9,
-  "t_crow_chase": 41.6,
-  "t_wren_chase": 45.2,
-  "p_prey_eat": 30.3,
-  "c_heron_hunt": 203.4,
-  "c_frog_eat": 36.3,
-  "c_prey_chase": 14.0,
-  "p_yesno": 294.5,
-  "c_dog_chase": 39.9
+  "t_heron_hunt": 586.5,
+  "t_frog_eat": 50.8,
+  "t_crow_chase": 35.5,
+  "t_wren_chase": 36.0,
+  "p_prey_eat": 28.8,
+  "c_heron_hunt": 202.8,
+  "c_frog_eat": 50.4,
+  "c_prey_chase": 17.6,
+  "p_yesno": 225.3,
+  "c_dog_chase": 38.4
  },
- "import_s": 0.2,
- "wall_s": 1246.3,
- "elapsed_seconds": 1246.3,
+ "import_s": 0.3,
+ "wall_s": 1272.3,
+ "elapsed_seconds": 1272.3,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6290.5,
+  "peak_rss_mb": 5972.7,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

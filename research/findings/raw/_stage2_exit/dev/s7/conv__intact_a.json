@@ -1826,7 +1826,7 @@
    "curiosity": {
     "on": true,
     "lesioned": false,
-    "novelty": -1.1102230246251565e-16,
+    "novelty": 0.0,
     "want_hz": 0.0,
     "threshold": 19.09722222222222,
     "curious": false,
@@ -1841,7 +1841,7 @@
     "topic": "owl",
     "graded_novelty": {
      "on": true,
-     "value": -1.1102230246251565e-16,
+     "value": 0.0,
      "lesioned": false
     },
     "curiosity_da": {
@@ -2574,7 +2574,7 @@
    "curiosity": {
     "on": true,
     "lesioned": false,
-    "novelty": 0.9532050931328422,
+    "novelty": 0.9532050931328421,
     "want_hz": 38.19444444444444,
     "threshold": 19.09722222222222,
     "curious": true,
@@ -2589,7 +2589,7 @@
     "topic": "zorblat",
     "graded_novelty": {
      "on": true,
-     "value": 0.9532050931328422,
+     "value": 0.9532050931328421,
      "lesioned": false
     },
     "curiosity_da": {
@@ -2763,24 +2763,24 @@
   }
  },
  "timings_s": {
-  "t_fox_chase": 481.0,
-  "t_fox_eat": 36.3,
-  "t_deer_sleep": 34.7,
-  "t_mole_passive": 36.0,
-  "p_fox_chase": 187.6,
-  "p_more": 6.7,
-  "p_deer_sleep": 12.0,
-  "p_owl_hunt": 10.0,
-  "c_mole_hunt": 29.1,
-  "c_dog_chase": 32.4,
-  "c_oov": 9.8
+  "t_fox_chase": 537.3,
+  "t_fox_eat": 47.0,
+  "t_deer_sleep": 55.6,
+  "t_mole_passive": 50.3,
+  "p_fox_chase": 177.5,
+  "p_more": 7.6,
+  "p_deer_sleep": 12.7,
+  "p_owl_hunt": 10.5,
+  "c_mole_hunt": 32.0,
+  "c_dog_chase": 35.7,
+  "c_oov": 15.7
  },
- "import_s": 0.2,
- "wall_s": 876.0,
- "elapsed_seconds": 876.0,
+ "import_s": 0.4,
+ "wall_s": 982.3,
+ "elapsed_seconds": 982.3,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6303.4,
+  "peak_rss_mb": 5983.7,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

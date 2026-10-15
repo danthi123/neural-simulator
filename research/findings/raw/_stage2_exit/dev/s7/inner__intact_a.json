@@ -1790,7 +1790,7 @@
    "curiosity": {
     "on": true,
     "lesioned": false,
-    "novelty": 1.1102230246251565e-16,
+    "novelty": 0.0,
     "want_hz": 0.0,
     "threshold": 19.09722222222222,
     "curious": false,
@@ -1805,7 +1805,7 @@
     "topic": "mite",
     "graded_novelty": {
      "on": true,
-     "value": 1.1102230246251565e-16,
+     "value": 0.0,
      "lesioned": false
     },
     "curiosity_da": {
@@ -2660,23 +2660,23 @@
   }
  },
  "timings_s": {
-  "t_lynx": 444.2,
-  "t_vole": 32.0,
-  "t_beetle": 34.2,
-  "p_private": 7.0,
-  "p_chase_all": 146.6,
-  "p_chase_all_vole": 33.0,
-  "c_lynx_chase": 29.2,
-  "c_mite_all": 10.8,
-  "c_beetle_all": 30.8,
-  "c_dog_chase": 25.4
+  "t_lynx": 520.2,
+  "t_vole": 35.8,
+  "t_beetle": 38.2,
+  "p_private": 12.6,
+  "p_chase_all": 171.3,
+  "p_chase_all_vole": 36.4,
+  "c_lynx_chase": 32.3,
+  "c_mite_all": 12.4,
+  "c_beetle_all": 35.0,
+  "c_dog_chase": 30.9
  },
  "import_s": 0.3,
- "wall_s": 793.4,
- "elapsed_seconds": 793.4,
+ "wall_s": 925.4,
+ "elapsed_seconds": 925.4,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6294.7,
+  "peak_rss_mb": 5881.6,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [
