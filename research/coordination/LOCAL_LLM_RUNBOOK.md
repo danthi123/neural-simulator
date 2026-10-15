@@ -1610,3 +1610,10 @@ file, the established request shape). NEXT when the provision-ok event lands: qu
 default@P' identity lines (iw1 + iw2, same line shape as the 96e5198 wave, out
 _iw{1,2}/identity/b1c11a08/default.json; pool add REFUSES pre-provision lines, so they wait for the event),
 then compare off:word-role@8407f21 vs default@P' per the unchanged bar (sha_canon every turn).
+11:37: provision ok for b1c11a088 (main P') landed -> queued the two F3-rerun dev-7 lines (ONE task): iw1 +
+iw2 `--arm default --seed 7` at P' with out _iw{1,2}/identity/b1c11a08/default.json, checked reason names
+RULING wrc-f3-verdict-1015, mem_gb=8, max_age_h=72, nodes pool41+pool42 (depth 0->2). Pre-checks: both
+runners exist at P' (git cat-file) and pool41 has the provisioned venv. NEXT when the two results land:
+compare off:word-role@8407f21 vs default@P' (bar unchanged: sha_canon identical on EVERY script turn; the
+shared-LTM body-field turns must now match since P' carries shared-LTM ON), then record F2/F3 final reads
+in PACKET.md.
