@@ -1636,3 +1636,15 @@ depth 0->2, checked reason names both of my earlier failures. Attempt history fo
 OMP_THREADS_PLACEHOLDER token; 11:53 died rc 3 missing PYTHONHASHSEED=0; this is attempt 3 with the record's
 own env and memory shape. NEXT when results land: off:word-role@8407f21 vs default@P' compare (bar
 unchanged, sha_canon every turn) then PACKET.md final reads.
+12:19: stall check (3.7h no results) = jobs were NOT dead. iw1 default@P' finished 12:00-12:13 and its
+result is banked server-side (research/findings/raw/_iw1/identity/b1c11a08/default.json + .prov.json,
+8690 B); iw2 was still sitting in pool.queue because THE POOL DISPATCHER DAEMON IS DOWN - its log
+/tmp/pool_dispatch.log last wrote Oct 12 10:27, no pool_autodispatch process on S or wspool, and the only
+dispatches since then were the inline fill passes that pool_queue.sh add runs at add time (my three queue
+scripts today at 11:37/11:52/12:00 each dispatched their first line that way; the leftover line strands with
+nothing to retry it). Launched the sanctioned self-heal from workflow_check.sh:434 (nohup recipe, run as a
+tracked background process) - it drained the queue immediately: iw2 dispatched to wspool 12:14:23 and is
+running now (expect ~12:27-12:30). nodes listed as iw1-launch-proof bwrap sandbox, no network. pool_sync.sh
+from my shell reports all four nodes UNREACHABLE (different ssh cfg) but results arrive anyway via the shared
+findings/raw mount (iw1's file appeared with node uid 999), so the bank path is not blocked. NEXT when iw2
+lands: run the F3 compare off:word-role@8407f21 vs default@P' (sha_canon every turn) + at-risk list C on P'.
