@@ -47,6 +47,10 @@ PACKET_FLAGS = {
     "xedge-surprise-worldmodel": ("BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",),
     "word-role": ("BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"),
 }
+# word-role is NOT a wave-1 packet: it sits in PACKET_FLAGS only so the identity arms can set its two flags (the
+# word-role flip's F2/F3/B1 arms, RULING wrc-f3-1015). tools/integration_wave1_flip lists only these, and the script
+# stays unchanged so the measured F2/F3 records hold (RULING wrc-wave2-split-1016).
+WAVE1_PACKETS = ("d6-hebbian-write", "wm-focus-bind", "xedge-surprise-worldmodel")
 SESSION = "iw1-identity"
 SESSION_B = "iw1-identity-b"   # the focus probe's swapped intro order, in its own session (per-session organs)
 POS, NEG = "that was wonderful, I am so happy", "that was terrible, I am so sad"

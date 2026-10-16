@@ -160,8 +160,11 @@ def test_packet_lists_agree():
     guard = importlib.import_module("tools.assert_iw2_defaults")
     score = importlib.import_module("tools.iw2_score")
     ident = importlib.import_module("research.runners.iw2_default_identity")
-    assert sorted(flip.PACKETS) == sorted(guard.ANCHORS) == sorted(score.PACKETS) == sorted(ident.PACKET_FLAGS) \
+    assert sorted(flip.PACKETS) == sorted(guard.ANCHORS) == sorted(score.PACKETS) == sorted(ident.WAVE2_PACKETS) \
         == sorted(PACKETS)
+    # the identity runner also carries the word-role flip's arm flags, never as a wave-2 packet (RULING
+    # wrc-wave2-split-1016)
+    assert set(ident.PACKET_FLAGS) - set(ident.WAVE2_PACKETS) == {"word-role"}
     for p, spec in flip.PACKETS.items():
         assert guard.ANCHORS[p] == (spec["anchor_file"], spec["anchor"])
         assert tuple(score.PACKETS[p]["flags"]) == spec["flags"] == ident.PACKET_FLAGS[p]
@@ -377,8 +380,8 @@ def test_identity_arm_env_and_script():
     with pytest.raises(SystemExit):
         t.arm_env("on:nope")
     tags = [x[1] for x in t.TURNS]
-    for p in t.PACKET_FLAGS:
-        assert p in tags, p                               # every packet is reached by >= 1 turn
+    for p in t.WAVE2_PACKETS:
+        assert p in tags, p                               # every wave-2 packet is reached by >= 1 turn
     assert t.SCOPE in tags
     # every segment starts with a reset and with scope turns (so a scope difference is never carried-over state)
     for i, (_m, tag, reset) in enumerate(t.TURNS):

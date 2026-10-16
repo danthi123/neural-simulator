@@ -69,6 +69,11 @@ PACKET_FLAGS = {
     "neural-selfid": ("BRAIN_NEURAL_SELFID",),
     "word-role": ("BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"),
 }
+# word-role is NOT a wave-2 packet: it sits in PACKET_FLAGS only so the identity arms can set its two flags (the
+# word-role flip's F2/F3/B1 arms, RULING wrc-f3-1015; prereg research/findings/2026-10-16-word-role-flip-
+# PREREGISTRATION.md). The wave-2 tooling (integration_wave2_flip, assert_iw2_defaults, iw2_score) lists only these,
+# and TURNS stays unchanged so the script sha of the measured F2/F3 records holds (RULING wrc-wave2-split-1016).
+WAVE2_PACKETS = ("false-belief-chat", "transitive-chat", "neural-selfid")
 SESSION = "iw2-identity"
 SCOPE = "scope"
 # (message, tag, reset). tag = the packet whose flag the turn is there to reach, or SCOPE (no wave-2 flag may change

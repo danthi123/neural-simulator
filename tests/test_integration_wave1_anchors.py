@@ -300,7 +300,8 @@ def test_identity_arm_env():
     assert on["BRAIN_D6_HEBBIAN_STORE"] is None
     with pytest.raises(SystemExit):
         t.arm_env("on:nope")
-    assert set(t.PACKET_FLAGS) == set(importlib.import_module("tools.integration_wave1_flip").PACKETS)
+    assert set(t.WAVE1_PACKETS) == set(importlib.import_module("tools.integration_wave1_flip").PACKETS)
+    assert set(t.PACKET_FLAGS) - set(t.WAVE1_PACKETS) == {"word-role"}   # RULING wrc-wave2-split-1016
 
 
 def test_identity_compare_verdicts():
