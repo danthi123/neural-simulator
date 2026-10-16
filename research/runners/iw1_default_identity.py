@@ -142,6 +142,7 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
     sys.path.insert(0, os.getcwd())
     from fastapi.testclient import TestClient  # noqa: E402
     from webapp import server as _server  # noqa: E402
+    from research.runners.wr_route import wr_route as _wr_route  # noqa: E402 (Amendment E readout)
     ltm_dir = _server._default_ltm_bundle_dir() if _server._ltm_ship_default_on() else None
     if ltm_dir is None and not allow_degraded:
         _refuse("the shipped LTM default resolves no knowledge bundle (ship-default %s, BRAIN_DATA_ROOT=%r)"
@@ -162,6 +163,7 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
                      "sha_raw": hashlib.sha256(body).hexdigest(), "sha_canon": hashlib.sha256(canon).hexdigest(),
                      "dropped_volatile_keys": dropped, "answer": d.get("answer"), "abstained": d.get("abstained"),
                      "recalled_svo": d.get("recalled_svo"), "source": d.get("source"),
+                     "wr_route": _wr_route(d.get("word_role_trace")),
                      "turn_wall_s": round(time.time() - t1, 2)})
         print("[iw1-identity] %s turn %d status=%d canon=%s ans=%r" % (arm, i, res.status_code,
               rows[-1]["sha_canon"][:12], (d.get("answer") or "")[:90]), flush=True)
