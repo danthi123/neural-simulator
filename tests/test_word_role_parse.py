@@ -1,7 +1,8 @@
 """Packet word-role-parse (session 2): the question parser's role map reads the WORDS on spiking neurons.
 
 Pins, without building a brain unless stated:
-  * the anchor `_WORD_ROLE_PARSE_DEFAULT_ON` is False and its reader's semantics (unset -> anchor, explicit values);
+  * the anchor `_WORD_ROLE_PARSE_DEFAULT_ON` is True (flip 2026-10-16, RULING wrc-tests-1016) and its reader's
+    semantics (unset -> anchor, explicit values); the escape BRAIN_WORD_ROLE_PARSE=0 is byte-identical pre-flip;
   * FLAG OFF is byte-identical: `_neural_question_parse` takes the positional BridgeParser read, never touches the
     organ, and the parse-lesion check still comes first when the flag is on;
   * FLAG ON routes to the organ, returns (agent, action) or None, and never raises;
@@ -58,8 +59,32 @@ def _stub_chat():
 
 
 # ── the anchor and its readers ─────────────────────────────────────────────────────────────────────────────────────
-def test_anchor_is_false():
-    assert _tui()._WORD_ROLE_PARSE_DEFAULT_ON is False
+def test_anchor_is_true(monkeypatch):
+    """DEFAULT ON since 2026-10-16 (RULING wrc-tests-1016); BRAIN_WORD_ROLE_PARSE=0 is the escape."""
+    T = _tui()
+    assert T._WORD_ROLE_PARSE_DEFAULT_ON is True
+    _set(monkeypatch, "BRAIN_WORD_ROLE_PARSE", None)
+    assert T._word_role_parse_enabled() is True
+    for off in ("0", "false", "off", "no", ""):
+        _set(monkeypatch, "BRAIN_WORD_ROLE_PARSE", off)
+        assert T._word_role_parse_enabled() is False
+
+
+def test_anchor_escape_both_flags_zero_is_pre_flip(monkeypatch):
+    """both = 0 -> pre-flip behaviour: the positional read runs, no commit kwargs reach the organ (wrc-tests-1016)."""
+    import research.runners.word_role_parser_organ as W
+    _set(monkeypatch, "BRAIN_WORD_ROLE_PARSE", "0")
+    _set(monkeypatch, "BRAIN_WORD_ROLE_COMMIT", "0")
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+
+    def boom(*a, **k):
+        raise AssertionError("the organ must not be touched when both flags are 0")
+    monkeypatch.setattr(W, "parse_from_brain", boom)
+    chat = _stub_chat()
+    _FakeParser.calls = 0
+    assert chat._neural_question_parse(["dog", "chase"]) == ("dog", "chase")
+    assert _FakeParser.calls == 3                          # the positional read, byte-identical to pre-flip
+    assert getattr(chat, "last_word_role_meta", None) is None
 
 
 @pytest.mark.parametrize("v", ENV_VALUES)
@@ -119,7 +144,8 @@ def test_flag_off_is_the_positional_path_and_never_touches_the_organ(monkeypatch
 def test_flag_on_routes_to_the_organ(monkeypatch):
     T = _tui()
     monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
-    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    monkeypatch.setenv("BRAIN_WORD_ROLE_COMMIT", "0")       # escape: with the default-ON commit flag this route
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)  # only runs pre-flip (word_role, not _commit)
     monkeypatch.delenv("BRAIN_WORD_ROLE_LESION", raising=False)
     monkeypatch.setenv("BRAIN_WORD_ROLE_OP", "0")
     import research.runners.word_role_parser_organ as W
@@ -175,7 +201,8 @@ def _fake_parse(roles, counts, agent, action):
 
 def test_trace_records_route_lesion_flag_and_roles(monkeypatch):
     monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
-    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    monkeypatch.setenv("BRAIN_WORD_ROLE_COMMIT", "0")       # escape: the word_role (non-commit) trace only exists
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)  # pre-flip; the default-on route is word_role_commit
     monkeypatch.delenv("BRAIN_WORD_ROLE_LESION", raising=False)
     monkeypatch.setenv("BRAIN_WORD_ROLE_OP", "0")
     import research.runners.word_role_parser_organ as W
@@ -200,6 +227,7 @@ def test_trace_records_route_lesion_flag_and_roles(monkeypatch):
 
 def test_trace_records_a_swallowed_error(monkeypatch):
     monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
+    monkeypatch.setenv("BRAIN_WORD_ROLE_COMMIT", "0")       # escape: assert the word_role route's error trace
     monkeypatch.setenv("BRAIN_WORD_ROLE_LESION", "1")
     monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
     import research.runners.word_role_parser_organ as W

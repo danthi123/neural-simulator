@@ -2,7 +2,8 @@
 spiking commit stage instead of the host ROLE_MIN / ROLE_MARGIN rule and per-role argmax.
 
 Pins (numpy, CPU; organ builds take ~2 s each):
-  * the chat flags: BRAIN_WORD_ROLE_COMMIT default OFF and its readers; with it off the word-role route is unchanged
+  * the chat flags: BRAIN_WORD_ROLE_COMMIT default ON since 2026-10-16 flip (RULING wrc-tests-1016) and its
+    readers; with the escape BRAIN_WORD_ROLE_COMMIT=0 the word-role route is unchanged
     (same route name, same parse_from_brain call, no commit keys in the record);
   * with it on the route records `word_role_commit`, the commit row, the commit lesion and the commit read, and a
     swallowed organ error is recorded;
@@ -43,11 +44,12 @@ def _set(monkeypatch, name, v):
 
 
 # ── the chat flags ─────────────────────────────────────────────────────────────────────────────────────────────────
-@pytest.mark.parametrize("v,want", [(None, False), ("", False), ("0", False), ("off", False), ("1", True),
+@pytest.mark.parametrize("v,want", [(None, True), ("", False), ("0", False), ("off", False), ("1", True),
                                     ("true", True), (" on ", True)])
-def test_commit_flag_default_off(monkeypatch, v, want):
+def test_commit_flag_default_on(monkeypatch, v, want):
+    """DEFAULT ON since 2026-10-16 (flip, RULING wrc-tests-1016); BRAIN_WORD_ROLE_COMMIT=0 is the escape."""
     T = _tui()
-    assert T._WORD_ROLE_COMMIT_DEFAULT_ON is False
+    assert T._WORD_ROLE_COMMIT_DEFAULT_ON is True
     _set(monkeypatch, "BRAIN_WORD_ROLE_COMMIT", v)
     assert T._word_role_commit_enabled() is want
 
@@ -84,8 +86,8 @@ def _recording_parse(calls, result):
 def test_flag_off_route_is_unchanged(monkeypatch):
     import research.runners.word_role_parser_organ as W
     monkeypatch.setenv("BRAIN_WORD_ROLE_PARSE", "1")
-    monkeypatch.delenv("BRAIN_WORD_ROLE_COMMIT", raising=False)
-    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)
+    monkeypatch.setenv("BRAIN_WORD_ROLE_COMMIT", "0")       # escape (default is ON since the 2026-10-16 flip):
+    monkeypatch.delenv("BRAIN_SUBSTRATE_PARSE_LESION", raising=False)  # off -> pre-flip route, no commit kwargs
     monkeypatch.delenv("BRAIN_WORD_ROLE_LESION", raising=False)
     calls = []
     monkeypatch.setattr(W, "parse_from_brain", _recording_parse(calls, {"agent": "brain", "action": "use"}))
