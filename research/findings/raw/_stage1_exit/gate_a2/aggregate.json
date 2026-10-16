@@ -1,0 +1,3695 @@
+{
+ "stage": "STAGE-1 (INFANT) exit",
+ "verdict": "PASS",
+ "GO": true,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "criteria": {
+  "C1": "PASS",
+  "C2": "PASS",
+  "C3": "PASS",
+  "C4": "PASS"
+ },
+ "groups": {
+  "cat_disc": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_inherit_pathway": 6
+   },
+   "n_reproduced": {
+    "lesion_inherit_pathway": 6
+   },
+   "n_permuted_tracks": 6,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": "worm",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 2,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 1,
+       "direct_read_hop": true,
+       "direct_read_patient": "bug",
+       "direct_read_reason": "reached",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": "worm",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": true,
+        "p_canary_might": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 2,
+       "applied": true,
+       "repeat_patch_calls": 2
+      }
+     },
+     "permuted": {
+      "direct_patient": "bug",
+      "direct_abstained": false,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": true,
+      "generative_correct": false,
+      "inherits": true,
+      "names_other_category": false,
+      "identity_robin": true,
+      "identity_trout": true,
+      "moat_canary_swim": false
+     },
+     "tracks": true,
+     "informational": {
+      "lesion_draw": {
+       "inherits": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    }
+   }
+  },
+  "cat_told": {
+   "criterion": "C1",
+   "primary": false,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 6 of 6 seeds"
+   ],
+   "n_defined": 6,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_inherit_pathway": 0
+   },
+   "n_reproduced": {
+    "lesion_inherit_pathway": 6
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "c1_engagement": {
+      "intact_a": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "intact_b": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      },
+      "lesion_inherit_pathway": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "lesion_inherit_pathway.rep0": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": "all",
+       "direct_read_lesion_held": true
+      },
+      "permuted": {
+       "flags": {
+        "BRAIN_CATEGORY_INHERIT": true,
+        "BRAIN_CATEGORY_INHERIT_HOP": true
+       },
+       "n_organ_reads": 3,
+       "direct_read_hop": true,
+       "direct_read_patient": null,
+       "direct_read_reason": "below_floor",
+       "direct_read_lesion": null,
+       "direct_read_lesion_held": null
+      }
+     },
+     "intact": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_inherit_pathway": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       },
+       "effect": false,
+       "attributable": null,
+       "reproduced": true,
+       "patch_calls": 3,
+       "applied": true,
+       "repeat_patch_calls": 3
+      }
+     },
+     "permuted": {
+      "direct_patient": null,
+      "direct_abstained": true,
+      "generative_patient": null,
+      "generative_abstained": true,
+      "direct_correct": false,
+      "generative_correct": false,
+      "inherits": false,
+      "names_other_category": false,
+      "identity_robin": false,
+      "identity_trout": false,
+      "moat_canary_swim": true
+     },
+     "tracks": null,
+     "informational": {
+      "lesion_draw": {
+       "inherits": false,
+       "differs": {
+        "p_canary_eat": false,
+        "p_canary_might": false
+       }
+      }
+     }
+    }
+   }
+  },
+  "word": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_recruit": 6
+   },
+   "n_reproduced": {
+    "lesion_recruit": 6
+   },
+   "n_permuted_tracks": 6,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "bear_chase": true,
+      "otter_eat": true,
+      "moat_otter_chase": true,
+      "moat_clam_eat": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recruit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_bear_chase": true,
+        "p_otter_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 21,
+       "applied": true,
+       "repeat_patch_calls": 21
+      }
+     },
+     "permuted": {
+      "bear_chase_not_otter": true,
+      "otter_chase_bear": true,
+      "clam_eat_otter": true,
+      "otter_eat_abstains": true,
+      "pre_abstained": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "anaphora_it_eat": false,
+      "anaphora_reply_patient": "fish"
+     },
+     "tracks": true,
+     "informational": {}
+    }
+   }
+  },
+  "lived": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_recall": 6,
+    "lesion_episodic": 6
+   },
+   "n_reproduced": {
+    "lesion_recall": 6,
+    "lesion_episodic": 6
+   },
+   "n_permuted_tracks": 6,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_recall": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_bite": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "patch_calls": 4,
+       "applied": true,
+       "repeat_patch_calls": 4
+      },
+      "lesion_episodic": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_wolf_discuss": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pre_abstained": true,
+      "pre_not_in_memory": true,
+      "recall": true,
+      "disclosure": true,
+      "moat_wolf_chase": true,
+      "builtin_dog_cat": true,
+      "in_memory_internal": true,
+      "all": true
+     },
+     "tracks": true,
+     "informational": {}
+    }
+   }
+  },
+  "val_heldout": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_affect": 6
+   },
+   "n_reproduced": {
+    "lesion_affect": 6
+   },
+   "n_permuted_tracks": 6,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.817,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.069,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.05,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.061,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.05,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.061,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.039,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.05,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.059,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.038,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.059,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.038,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.5833333333333334,
+      "n_neutral_reads": 10
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": -0.144,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.938
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.805,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.037,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.051,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.038,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.022,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": -0.022,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.051,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.051,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.039,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": -0.022,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.4583333333333333,
+      "n_neutral_reads": 13
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": 0.046,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.946
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.824,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.039,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.073,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.052,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.051,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.039,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.07,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.062,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.062,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.044,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": -0.003,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.057,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.067,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": -0.045,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.058,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.066,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": -0.003,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.068,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.6666666666666666,
+      "n_neutral_reads": 8
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": 0.081,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.951
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.809,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.004,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.054,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.079,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.001,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.054,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.041,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.023,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.004,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.072,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.055,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.041,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.049,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.059,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": -0.036,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.059,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.06,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.059,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": -0.036,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.625,
+      "n_neutral_reads": 9
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": -0.073,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.947
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.836,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.036,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.074,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.048,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.048,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.036,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.049,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.035,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.049,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.041,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.041,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.024,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": -0.024,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.041,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.042,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.041,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": -0.003,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.5416666666666666,
+      "n_neutral_reads": 11
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": -0.001,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.946
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "n_parsed": 24,
+      "r": 0.82,
+      "undefined_reason": null,
+      "rows": [
+       {
+        "word": "nice",
+        "norm": 7.4,
+        "reply_differential": 0.02,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "home",
+        "norm": 7.4,
+        "reply_differential": 0.051,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "proud",
+        "norm": 7.6,
+        "reply_differential": 0.062,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "help",
+        "norm": 7.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "brave",
+        "norm": 7.2,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "sing",
+        "norm": 7.0,
+        "reply_differential": 0.062,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "gift",
+        "norm": 7.6,
+        "reply_differential": 0.051,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "friend",
+        "norm": 7.9,
+        "reply_differential": 0.021,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "warm",
+        "norm": 7.1,
+        "reply_differential": 0.002,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "smile",
+        "norm": 7.7,
+        "reply_differential": 0.071,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "kind",
+        "norm": 7.3,
+        "reply_differential": 0.037,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "happy",
+        "norm": 8.5,
+        "reply_differential": 0.072,
+        "reply_sign": "positive"
+       },
+       {
+        "word": "trouble",
+        "norm": 3.0,
+        "reply_differential": -0.02,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "lonely",
+        "norm": 2.3,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "bite",
+        "norm": 3.0,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "cry",
+        "norm": 2.4,
+        "reply_differential": -0.049,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "scared",
+        "norm": 2.8,
+        "reply_differential": -0.049,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "mad",
+        "norm": 2.9,
+        "reply_differential": -0.036,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "bad",
+        "norm": 2.5,
+        "reply_differential": -0.037,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "hurt",
+        "norm": 2.2,
+        "reply_differential": -0.061,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "lost",
+        "norm": 2.8,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "die",
+        "norm": 1.7,
+        "reply_differential": -0.049,
+        "reply_sign": "negative"
+       },
+       {
+        "word": "evil",
+        "norm": 2.2,
+        "reply_differential": -0.019,
+        "reply_sign": "neutral"
+       },
+       {
+        "word": "war",
+        "norm": 2.1,
+        "reply_differential": 0.0,
+        "reply_sign": "neutral"
+       }
+      ],
+      "sign_agreement": 0.5416666666666666,
+      "n_neutral_reads": 11
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "r_lesion": null,
+       "effect": true,
+       "reason": "no variance in the reply differentials (every read neutral)",
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "r": -0.104,
+      "reason": null
+     },
+     "tracks": true,
+     "informational": {
+      "dr2_off": {
+       "r": 0.944
+      }
+     }
+    }
+   }
+  },
+  "val_novel": {
+   "criterion": "C4",
+   "primary": false,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 6 of 6 seeds"
+   ],
+   "n_defined": 6,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_affect": 0
+   },
+   "n_reproduced": {
+    "lesion_affect": 6
+   },
+   "n_permuted_tracks": 0,
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "intact": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "negative",
+      "sign_at_neg_word": "positive",
+      "inherits": false
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "lesion_inherits": false,
+       "effect": null,
+       "attributable": 1.0,
+       "reproduced": true,
+       "applied": null
+      }
+     },
+     "permuted": {
+      "pipeline_carries_company": true,
+      "delta_at_pos_word": 0.0,
+      "delta_at_neg_word": 0.0,
+      "sign_at_pos_word": "positive",
+      "sign_at_neg_word": "negative",
+      "inherits": false
+     },
+     "tracks": false,
+     "informational": {
+      "learned_vocab": {
+       "inherits": false
+      }
+     }
+    }
+   }
+  }
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "missing_shards": [],
+ "bars": {
+  "valence_r": 0.55,
+  "control_r_ceiling": 0.2,
+  "min_words_for_r": 12,
+  "seeds_required": 6
+ },
+ "runner": "research/runners/stage1_exit_gate.py",
+ "prereg": "research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}

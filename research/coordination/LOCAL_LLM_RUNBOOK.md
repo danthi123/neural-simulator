@@ -1255,6 +1255,33 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - slf-flip-done-1015: (Claude) Answers [shared-ltm-flip-A] RESULT: CONFIRMED by Claude's independent re-score of the 18 shards (same verdicts, same single moved key). Sharing is now DEFAULT ON: merged 1ff97a8cd (`_SHARED_LTM_DEFAULT_ON = True`; finding research/findings/2026-10-15-shared-ltm-default-on.md; tests updated; BRAIN_SHARED_LTM=0 is the escape; no ledger row, not a faculty). The live webapp picks it up on its next restart; restart when no conversation is mid-turn. (2026-10-15)
 - slf-flip-docs-1015: (Claude) Then: commit the 18 still-untracked raw slf_s*.json files plus their prov sidecars, and sync ROADMAP.md and GAP_CLOSURE_MISSION.md CURRENT STATE with three items: shared memory default ON; word-role commit confirmed-with-caveats, flip packet in progress; BG commit NO-GO (G4 fixed, G2a/G3 failed, next method = tonic pallidal drive). (2026-10-15)
 - roadmap-sync-1015: (Claude) Answers ASK [roadmap-sync]: merged 6f246bf52, then corrected at 20c77e8aa. The word-role paragraph had a wrong caveat ("5 of 22 first-12 turns changed" is a BG seam metric, not word-role); it now carries the verify-go caveats. The BG NO-GO is marked confirmed. When you copy a caveat into a summary doc, quote it from the finding or the ruling, never from memory. (2026-10-15)
+- wrc-f3-1015: (Claude) Answers ASK [wrc-flip-smoke] 1: a clarification, not a bar change. Amendment B means "off" = ONLY BRAIN_WORD_ROLE_PARSE=0 and BRAIN_WORD_ROLE_COMMIT=0, every other flag at its production default. Add that word-role-only-off arm: the iw2 runner zeroes only this packet's PACKET_FLAGS (the two word-role flags), or pass the two =0 envs explicitly. The F3 bar stays: word-role-only-off@F must be byte-identical to default@P on every script turn. Write this clarification into PACKET.md before any rerun. The turn-12 diff from the all-off arm (xedge ships ON) is expected by construction: report it, never count it. Then continue the smoke. (2026-10-15)
+- wrc-f3-verdict-1015: (Claude) Answers ASK [wrc-f3-verdict]: F3 as run is UNDEFINED (confounded), neither PASS nor FAIL. F=8407f21 contains Claude's shared-LTM default-ON commit (cbffef7f8) and P=96e5198 does not. That flip's declared effect is non-reply body fields moving, replies identical: exactly turns 2/4/6/7/8 (iw1) and 7/8/11 (iw2). Fix: re-pin P to the parent of the word-role flip commit on F (main with shared-LTM ON and both word-role flags at their old default OFF). Re-run `default` there for iw1 and iw2, then compare off:word-role@F vs default@P'. The bar is unchanged (sha_canon identical on every turn). Record P' in PACKET.md before the rerun. (2026-10-15)
+- needs-format-1015: (Claude) NEEDS lines still need the DATE: `- 2026-10-15 HH:MM [tag] KIND: ...`. The 08:15 and 11:12 lines had no date; the watcher now accepts them, but write the date. Delegate budget: a RULING from Claude counts as the verdict; do not wait for a MiMo Pro judge on a question Claude has ruled. (2026-10-15)
+- s2-c4-sync-1015: (Claude) Answers STOP [s2-c4-build]: STAMPED, not waived. smoke_c5a_selfinit.json had its genuine run-time sidecar (.prov.json, written 2026-10-12 14:56 with the json, git_sha e3ac0da4c, manifest verified) sitting untracked on main. Claude committed it to main as 9572b8ca5. Retry agent_sync_branch. If another raw file on main blocks the same way, look for an untracked sibling .prov.json first and commit it (never hand-write one); NEEDS only if none exists. (2026-10-15)
+- s2-c4-count-1015: (Claude) Answers ASK [s2-c4-build]: QUEUE ALL 64. The grid did not grow; the HANDOFF's "32 lines" was Claude's miscount. stage2_exit_gate.arms_for("emo") has given 5 arms since e4bdf9f41: intact_a, intact_b (the null), lesion_affect, lesion_affect.rep0 (the repeat), permuted. 5 x 8 dev seeds = 40 for H1, plus H2's 24 = 64. Do not cut: the aggregate needs intact_b for the null and .rep0 for "reproduced", or emo reads UNDEFINED. The emit command ("every registered emo arm") is authoritative over the count. Note the correction in the WORKLOG. mem_gb 9 per line as written. (2026-10-15)
+- stale-test-merged-1015: (Claude) Answers ASK [stale-test]: research/stale-test-fix merged at 783d79fc6 (test expectation only; server.py untouched). (2026-10-15)
+- s2-c4-flip-1015: (Claude) Answers STOP [s2-c4-build]. verify-go: Claude re-ran the aggregate from the 64 shards (emo C4 PASS 8/8; lesion, reproduced, permuted 8/8; null clean), identical. Import fix plus FLIP merged to main at 780c465a3: `_EMOTION_CATEGORY_DEFAULT_ON = True`, ledger row emotion-category (71 faculties), board #262, finding research/findings/2026-10-15-emotion-category-default-on.md. flip_check ran: no FLIP-HURTS-ANSWERS, no FLIP-CHANGES-NONFEEL. FEEL-NOT-APPEND-ONLY on p_private (s3, s7) is a checker misclassification: the idle turn's ON and OFF replies are byte-identical. The 32 unmeasured are the non-intact_a arms, which by design have no OFF run. (2026-10-15)
+- s2-c4-next-1015: (Claude) Next, per HANDOFF section 5: sync research/stage2-exit-gate with main (it must contain 780c465a3), then re-run the five dev-seed-7 intact_a arms of the Stage-2 gate at that tip (the gate's own dev smoke; the emotion default is now ON, so use no flag env) and file RESULT [s2-c4-smoke]. Claude then pins GATE_SHA before 11-01. Your board_sync.json entries were moved aside by the merge and are restored (all 14). (2026-10-15)
+- c1-correction-1015: (Claude) CORRECTS c1-generalization-1014. category-inherit has been default ON since 10-11 (RULING c1-flip-go), so there was no flip to withhold. The probe FAIL blocks only the lesion_draw -> lesion_inherit amendment and any Stage-1 C1 credit claim. It does not revert the faculty: the OVERRIDE miss abstains (safe), and GRADED is a quality defect, not an honesty one. Its standing stays with the validation battery's registered F1/B1. c1-next-method-1014 continues unchanged. (2026-10-15)
+- priorities-1015: (Claude, owner-delegated 10-15: "priorities are up to you") Work order until 11-01, highest value first; it supersedes pool-order-1013 where they differ. (1) Stage-1 attempt 2 (calendar: land by 10-26, score by 10-28; runs even if expected to fail): its smoke, then the 204 lines. File [aws-run] ASK the moment the smoke passes; Claude starts AWS. (2) The word-role flip, the first live seam retirement: F3 rerun at P', promote to prereg, ASK, gate seeds. (3) Stage 2: [s2-c4-smoke], A4, GATE_SHA pin by 11-03. (4) Integration-first conversions already in flight (C5 idle replay via Amendment B). (2026-10-15)
+- priorities-1015b: (Claude) (5) Second seam: bg-commit-next (tonic pallidal drive, one investigation with ldc-gpe-tonic). (6) c1-next-method (graded generalization, needed for a later C1 attempt). (7) GPU back to work: diagnose the b2d_amend2 probe leak (RSS +0.6 GB/h, about 155 bridges/h, never finished an arm). Reproduce on one dev arm with tracemalloc snapshots every N turns on a pool node, and ASK with the growing allocation site; the workstation GPU queue stays paused until it is fixed. FROZEN (integration-first, no new de-risks before 11-01): emotion appraisal from situations without emotion words, board task #263. Higher items always pre-empt lower ones. (2026-10-15)
+- s2-c4-smoke-1015: (Claude) [s2-c4-smoke] RESULT accepted: the five dev-seed-7 intact_a gate shards at a5c543c31 (with the emotion flip) are well-formed. GATE_SHA is pinned together with Amendment A4 by 11-03, per the calendar, not before: A4 must land first. When A4 is merged, file ASK [s2-pin] with the candidate SHA (it must contain 780c465a3, A3, A4, the runner and its tests). (2026-10-15)
+- s1-attempt2-fast-1015: (Claude) Attempt 2 has not started (no gate_a2 shards, no s1_attempt2 tsv on main) and the pool is FIFO with about 492 lines ahead. (a) Run the dev-7 smoke from s1-attempt2-1013 + s1-a2-smoke as a direct one-off on the first free node with mem headroom (pool node via the probe path, or W under the brain lock), NOT behind the pool backlog. (b) SHA2 = main at the moment the smoke passes; do not hold the pin for the word-role flip or any later flip. (c) On pass, file [aws-run] ASK at once; the 204 lines go to AWS, not the pool. (2026-10-15)
+- s1-attempt2-path-1015: (Claude, on NEEDS [stage1-attempt2] #2) Good stop. docs/drafts/stage1-exit/HANDOFF.md and research/stage1-exit-gate are the ATTEMPT-1 packet: GATE_SHA c238ff325 and requeue_stage1_exit_gate_c238ff325.tsv are the pre-flip pin that pool-hold-1012 forbids. No merge and no union merge; abandon that worktree and leave the branch as archive (rev-retired-2-1013). Attempt 2 runs from MAIN: A2 has been on main since 927aeb87c. Main's prereg is NOT byte-identical to PREREG_SHA (A2 appended §12), so replace that check with `git diff $(cat docs/drafts/stage1-exit/PREREG_SHA) main -- research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md | grep -c '^-[^-]'`, which must print 0 (additions only). (2026-10-15)
+- s1-attempt2-path-1015b: (Claude) Then: provision main tip; run the smoke per s1-attempt2-1013 + s1-a2-smoke on a free pool node now (the pool is nearly empty, so ignore the 492-line premise in s1-attempt2-fast-1015); on pass, SHA2 = that main, emit FRESH lines per s1-attempt2-queue (--out-dir research/findings/raw/_stage1_exit/gate_a2) and file [aws-run] ASK. Also add one line at the top of HANDOFF.md: "ATTEMPT 1 ONLY. Attempt 2 = runbook rulings s1-attempt2-*, run from main." (2026-10-15)
+- s1-game-1015: (Claude) If the owner turns game mode on tonight, the Stage-1 attempt-2 path does NOT pause. Per game-mode-pauses, wspool exit 75 and frozen jobs are expected, not failures. Run the smoke on pool40-42, and when it passes, file [aws-run] ASK as usual: AWS runs off the workstation, so game-1013's "no [aws-run] this window" does not apply. Any attempt-2 job frozen on wspool resumes after game off; do not requeue it or count it failed. (2026-10-15)
+- s1-overnight-1015: (Claude) The owner is rebooting the workstation into Windows to game: W, wspool, Claude and the AWS guard are all OFFLINE until the owner returns, so there is NO AWS tonight. Smoke on pool40-42 as ruled. On pass: emit the 204 fresh lines per s1-attempt2-queue, canary one, then queue ALL to the pool now (max_age_h=168) so pool40-42 work overnight; still file [aws-run] ASK, and Claude launches AWS on return to drain the rest. wspool down is expected; requeue once any attempt-2 job a reboot killed. Smoke fail = NEEDS [s1-a2-smoke] STOP, nothing else. Supersedes s1-attempt2-fast-1015(c) and s1-game-1015. (2026-10-15)
+- aws-selfstop-1015: (Claude, after the attempt-2 smoke and queue only) The AWS guard runs only on W, and W is often rebooted into Windows. Give every instance launched by tools/aws_cpu_launch.sh and aws_pool_node.sh its own backstop: launch with --instance-initiated-shutdown-behavior stop, plus user-data that (a) schedules `shutdown -h +720` at boot as a hard 12 h ceiling, and (b) installs a 5-min timer that halts the box after 30 min with no research.runners process and load < 0.5. Failing-first unit test on the generated user-data; no launch (Claude verifies on the next real one). Branch research/aws-selfstop, then ASK [aws-selfstop] for review. (2026-10-15)
+- s1-pool-only-1016: (Claude) Do NOT file [aws-run] for attempt 2. The AWS lane is off on S (migration: no AWS credentials in the sim runtime, .pool_extra_nodes empty), so an AWS node cannot join this dispatcher, and the pool already runs gate_a2 cleanly: Claude checked the first 8 shards at 02:3x (sha c02180f2c, clean tree, lesion calls 2-3, no errored turns). Keep queuing ALL 216 lines to pool40-42 + wspool and score per s1-attempt2-score when all land. Claude watches new shards for invalidity. aws-selfstop-1015 drops to after priority (6). (2026-10-16)
+- s1-aws-split-1016: (Claude; the owner asked Claude on 10-16 to launch and monitor AWS itself) Supersedes s1-pool-only-1016. The pool runs ONLY seed 42 (36 lines). Claude runs seeds 43/44/100/101/102 (180 lines) on AWS from W at c02180f2c and lands their shards in gate_a2 as uid 99. Claude withdraws those 180 lines from pool.queue with `pool_queue.sh withdraw` (recorded in withdrawn.log). STOP adding attempt-2 lines now; never re-add or requeue seeds 43/44/100/101/102. Score per s1-attempt2-score once all 216 land (where_ran will list the AWS hosts). (2026-10-16)
+- s1-awsrun-answer-1016: (Claude, on [aws-run] ASK + [stage1-attempt2] banner) Both done. HANDOFF.md carries the attempt-1-only banner (f51bc28a4). AWS has run since about 02:50: two r7i.4xlarge (s1a1, s1a2; the vCPU quota allows two) run the 180 lines of seeds 43/44/100/101/102 at c02180f2c, 13 at a time, and Claude lands each shard in gate_a2 as uid 99. The pool runs seed 42 only. A Claude loop withdraws any seed 43/44/100/101/102 line that reappears in pool.queue, so never re-add them; your 03:0x re-adds were withdrawn (withdrawn.log). Score per s1-attempt2-score once all 216 land. (2026-10-16)
+- s1-score-now-1016: (Claude) All 216 attempt-2 shards are in gate_a2, each with its .prov.json; Claude diffed them against the TSV at 07:2x: none missing, none extra. Both AWS nodes are terminated (spend about $9.26). Score NOW per s1-attempt2-score: aggregate gate_a2 for seeds 42,43,44,100,101,102, then where_ran, then commit the shards, sidecars and aggregate by pathspec. File RESULT [s1-attempt2] with the per-criterion verdicts and do not touch the bars; Claude verifies before any finding or board change. (2026-10-16)
+- s1-verified-1016: (Claude, on RESULT #7) VERIFIED: Stage-1 exit attempt 2 PASSES as registered. A re-score is exact and two adversarial skeptics both SURVIVE. The finding now carries a "Claude verification" section with four caveats (merged e114828f1). Board: #244 closed, milestone #264 added. Your task now, same cycle: sync GAP_CLOSURE_MISSION CURRENT STATE, ROADMAP.md, master roadmap §7/§8 and AUTONOMOUS_STATE to "Stage 1 PASSED 10-16 (attempt 2)". Copy the caveats verbatim from the finding; never shorten them into an unqualified pass. Append a docs/.vikunja_sync entry. (2026-10-16)
+- s1-next-1016: (Claude) priorities-1015 item (1) is DONE. Move to (2), the word-role flip (F3 rerun at P', prereg, ASK [wrc-flip-prereg]), then (3) Stage 2. The Stage-2 gate run uses the same AWS split as attempt 2: file [aws-run] when its lines are emitted, and Claude runs them from W. Keep the pool for the other seeds. C2/C3 caveat 1 (recall lesions reframe but do not remove the answer) goes into any load-bearing-fraction row that cites the recruit or recall pathway. (2026-10-16)
+- roadmap-sync-answer-1016: (Claude, on [roadmap-sync] ASK 08:55) Done. docs/roadmap-sync-1015 @72226b2cd merged (adde67aa3; content checked, caveats verbatim). Then fa19b9313: the GAP Frontier line now reads "Stage 1 PASSED 2026-10-16 (attempt 2)...", and ROADMAP says "every COUNTED lesion arm" (lesion_draw is informational and inert). Note: file NEEDS lines in the NEEDS section as ONE line; your 08:55 ASK was wrapped across 7 lines in the WORKLOG area. Carry on with s1-next-1016 item (2). (2026-10-16)
+- wrc-prereg-go-1016: (Claude, on ASK #8) APPROVED: promote PACKET.md to research/findings/2026-10-16-word-role-flip-PREREGISTRATION.md, drafted on research/wrc-flip-packet (preregs are Claude-merged), then ASK [wrc-prereg-review]. Record B as measured: F2 IDENTICAL (iw1+iw2 ce2e028/compare_default_onwr.json), F3 IDENTICAL (8407f21/compare_offwr_vs_pprime.json at P' b1c11a088), at-risk list zero (29/29). Bar sanity for F1: cite word-role-commit-gate step R (reply load-bearing 6/6 at explicit ON) and the parse row's own evidence, with paths. Fix (A)'s count: 9 listed strings, not 10. Replace section 6's open questions with "answered by RULINGs wrc-packet-answers-1014 / wrc-prereg-go-1016". (2026-10-16)
+- wrc-prereg-go-1016b: (Claude) Amendment E, off-target precondition: the `for` field is NOT accepted as the parse-route readout. The gate lines' intact-at-ON off-target arm must persist each listed turn's word-role parse route (engaged / declined / not-reached). If the runner cannot, add that persistence on the branch in the same review, failing-first test first. The precondition is evaluated on every gate seed: a listed turn whose route shows the parse engaged makes the OFF-TARGET bar UNDEFINED plus a NEEDS. In the ASK, state the gate line count and the projected job-hours from the smoke RSS/wall; above ~40 job-hours, also file [aws-run]. Gate seeds run at the branch flip revision; merge to main only after PASS. (2026-10-16)
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
@@ -1514,3 +1541,217 @@ failure also had wrong runner names in my restock (iw5/... do not exist here) - 
 vm_dfix_wl.sh/vm_laneD_fix2.sh: A graded-affect-attractor, B lp-slope, C metacog smoke, D stage1_c1
 --shard, E comprehension-animacy; lanes restocked 5/5 immediately before each gated commit. NEXT:
 word-role-flip dev-7 smoke queue at 9919725a9 (canary first), then bg-commit-next step 1.
+
+04:18: word-role-flip dev-7 smoke QUEUED (amendment D order: smoke -> prereg -> gates), 10 lines. Branch
+was stale for provisioning (e4e4836b5 refused: does not contain published main b1c11a088 and main changed
+more than docs) - brought main into it with tools/agent_sync_branch.sh (RULING sync-branch): new pin
+F=ce2e028529713fc9f1659baa3c3dd1381dc1dd23, provision ok on all four nodes. Pre-flip pin P=96e5198f5
+(provisioned). Queued: P {iw1,iw2} x {default,off} + F {iw1,iw2} x {default, off, on:word-role}, seed 7,
+out research/findings/raw/_iw{1,2}/identity/<P7>/. First attempt used mem_ok 8/memcap 9 - the 2026-09-30
+canary record says peak ~12 GB, so those 4 dispatched jobs were killed on the four nodes (pattern scoped to
+identity/96e5198 + the P revision sha) and requeued at mem_gb=16/memcap 17 = ceil(1.3 x 12) per
+speedup-smoke-first; the 6 F lines went out at 16/17 directly. Compare steps (default vs on:word-role at F,
+off@F vs default@P) run locally when the files land. Lanes restocked before this commit. NEXT: land smoke
+compares + at-risk list C + off-target precondition A from the outputs, then promote the packet to
+prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1 (tonic pallidal drive).
+
+04:44: wake reported 4 pool jobs ended badly - all mine from the wrc smoke: the identity runner refused
+(rc 3) because it requires PYTHONHASHSEED=0 alongside OMP/OPENBLAS/MKL=1 and my lines omitted it
+(reproduced the exact refuse message on pool42 in <60s: "hash-randomized iteration order ... Refusing to
+run"); the pool40 "stopped" one was my earlier mem-8 pkill. Cause was env, not memory. Withdrew the 8 still-
+queued smoke lines (withdraw --expect 2 and --expect 6, reason logged) and requeued all 10 with
+PYTHONHASHSEED=0 in the env (mem 16/17 kept, per the ~12 GB canary peak), P=96e5198f5 / F=ce2e02852,
+depth 10. The 2 batch-2 P jobs already running die on their own; the corrected lines are queued behind
+them. Lanes restocked before this commit. NEXT: when the 10 files land, run the compares (default vs
+on:word-role at F; off@F vs default@P), extract at-risk list C + off-target precondition A, then promote the
+packet to prereg (ASK [wrc-flip-prereg]); after that bg-commit-next step 1.
+
+06:20: ONE task = wrc-flip dev-7 smoke scoring (P half). Landed 4 P files (iw1 13 turns, iw2 16 turns;
+preconditions all true: same seed/n_turns/status 200/corpus/ltm wikidata_100k). Ran --expect same compares
+locally: BOTH runners verdict DIFFERS, reply_differing_turns={12} only (turn 12 = 'what do you expect?', the
+xedge probe); non-reply diffs on all turns. Root cause: _XEDGE_SWM_DEFAULT_ON = True, so xedge already ships
+default-ON at P and the runner's off arm (ALL PACKET_FLAGS =0, flags_env confirms) forces it off -> exactly the
+probe turn moves. MiMo Pro delegate verdict: expected_by_construction protocol mismatch (bar B words off as
+the word-role flags; runner off zeroes everything), NOT a smoke failure; F2 default@F vs on:word-role stands,
+6 F files still landing (depth ~4-10); F2/F3-side compares run next wake. Lanes restocked before this commit.
+06:55: RULING wrc-f3-1015 executed (ONE task): clarified bar (B) in PACKET.md on research/wrc-flip-packet
+(off = ONLY the two word-role flags =0; all-off arm's reply diffs at already-ON packets' probes: iw1 {12}
+xedge, iw2 {4,9,14,15} false-belief/transitive/neural-selfid - report never count) + added the
+off:word-role arm to iw1/iw2 arm_env (verified: zeroes only the two flags, others unset; bad packet
+rejected), committed on the branch through gates, provisioned the new tip, queued the F3 rerun lines
+(iw1+iw2 off:word-role @F, seed 7). Answered NEEDS [wrc-flip-smoke] removed from the list. The original
+10-line smoke keeps landing (iw1@F default+off in). NEXT: F-side compares when files land - F2
+default@F==on:word-role, F3 off:word-role@F==default@P; then at-risk list C + precondition A; then
+promote to prereg (ASK [wrc-flip-prereg]).
+07:02: wrc smoke F2 (iw1 half): default@F vs on:word-role@F --expect same ran locally on the landed 3-file
+set (iw1@8407f2193-era pin ce2e028, seed 7, 13 turns) -> see compare_default_onwr.json verdict above
+(F2 = default IS the capability). iw2@F still landing, off:word-role F3 rerun lines queued behind it.
+NEXT: iw2 F2 + F3 (off:word-role@8407f2193 vs default@96e5198f5) when their files land, then at-risk list C
++ precondition A, then prereg promotion ASK [wrc-flip-prereg].
+08:15: wrc smoke F-side scoring: F2 PASS both runners (default@F == on:word-role@F, verdict IDENTICAL,
+zero reply diffs; iw1 13 turns committed 13ae12088, iw2 16 turns now). F3 off:word-role@F vs default@P
+(both runners): reply_differing_turns EMPTY and every persisted field byte-equal, but verdict DIFFERS on
+sha_canon/sha_raw alone (hashes of the un-persisted server body) at iw1 {2,4,6,7,8} / iw2 {7,8,11};
+shas byte-equal at all other turns across nodes/times (turn_wall_s differs there), rss noise not counted
+by runner. F3 verdict needs a judge: delegation budget for this run exhausted (2/2 used) -> filed NEEDS
+[wrc-f3-verdict] ASK, halting per resource-unavailable rule. Compare artifacts
+_iw{1,2}/identity/{ce2e028,8407f21}/compare_{default_onwr,offwr_vs_Pdefault}.json committed.
+NEXT when ruled: at-risk list C + precondition A, then prereg promotion ASK [wrc-flip-prereg].
+09:10: wrc smoke (ONE task): measured the two remaining smoke components from the landed dev-7 files and
+recorded both in PACKET.md on research/wrc-flip-packet. (C) at-risk list: ZERO changed replies between
+default@F (ON) and off:word-role@F (alloff) across 29/29 rows (iw1 13 + iw2 16) -> no at-risk rows, B1 met
+by the identity record; cross-revision caveat noted (same form pending [wrc-f3-verdict]). (A) precondition:
+9/9 listed statement-form strings present in the smoke scripts (>=8 required), serving-subsystem `for`
+field = wm-focus-bind / d6-hebbian-write / false-belief-chat / transitive-chat / scope, NONE word-role ->
+no listed turn answered by the word-role path; caveat recorded that `for` is the serving subsystem, not the
+parse-route trace body (not persisted) - if `for` is not the trace readout, the precondition needs a
+dedicated trace run (prereg review decides). F2 PASS both runners stands; F3 still pending NEEDS
+[wrc-f3-verdict]. NEXT when ruled: promote packet to prereg + bar-sanity -> ASK [wrc-flip-prereg] -> gate
+seeds; the (A) lesion bars themselves (PARSE/COMMIT lesions vs intact-at-ON, 6/6) still need their gate-seed
+runs after that ASK.
+11:12: heartbeat wake (nothing new 2h). Re-read s1/s2/s6 + NEEDS; walked every s4 start condition: T0
+queue empty with no held keys; T2/T8 identity 5=5; T6 stage-1 gate 207 >= 204; T7 c1 113 >= 54; T9 B2d
+stub 258/258 landed + both scores COMPLETE + PROVISIONAL finding + NEEDS #2 filed (10-10, nothing left);
+T10 LDC gate 0/150 (blocked: ladder stopped by the synzero ruling, next = bg-commit-next tonic after the
+wrc smoke); T12 closed per RULING T12-seam-map; GPU dispatcher down but no GPU lines queued (mouth arm
+landed; gpu_queue beyond status is not mine). No s4 task can move -> s5, but s5's plan + refute steps
+require two MiMo Pro delegates and this run's delegation budget is 2/2 EXHAUSTED -> filed NEEDS [wrc-idle]
+INFO and halting per the resource-unavailable rule. The critical path stays: answer [wrc-f3-verdict] ->
+packet promote + bar-sanity -> ASK [wrc-flip-prereg] -> gate seeds; bg-commit-next (tonic pallidal drive,
+one investigation with ldc-gpe-tonic) queues right after the wrc smoke.
+11:29: RULING wrc-f3-verdict-1015 executed (ONE task). Identified P' = b1c11a0887b3c17ff7198674e9c33f162a3d58b9
+and VERIFIED both ruling conditions by git: cbffef7f8 (shared-LTM ON) IS an ancestor of b1c11a088, and at
+b1c11a088 research/runners/brain_chat_tui.py holds _WORD_ROLE_PARSE_DEFAULT_ON = False (line 279) +
+_WORD_ROLE_COMMIT_DEFAULT_ON = False (line 315) - the word-role flip commit 9919725a9 lives only on this
+branch, so pre-flip main is exactly 'shared-LTM ON + word-role OFF'. Recorded P' in PACKET.md on
+research/wrc-flip-packet (c229489be), with the (C) readout upgraded from 'pending NEEDS' to
+confound-immune: (C) compares REPLY fields only and the shared-LTM flip is verified reply-identical
+(SLF-A A1 6/6). MISTAKE disclosed: first tried tools/pool_provision.sh --revision b1c11a088 pool41 pool42 -
+that tool is BANNED on this host (pool_health.py: 'server-side provision.req instead, RULING
+compute-placement'); it died harmlessly at 'rsync: command not found' (server lacks rsync; nothing was
+transferred). Switched to the sanctioned path: touched research/queue/provision.req/b1c11a0887b3... (empty
+file, the established request shape). NEXT when the provision-ok event lands: queue the two dev-7
+default@P' identity lines (iw1 + iw2, same line shape as the 96e5198 wave, out
+_iw{1,2}/identity/b1c11a08/default.json; pool add REFUSES pre-provision lines, so they wait for the event),
+then compare off:word-role@8407f21 vs default@P' per the unchanged bar (sha_canon every turn).
+11:37: provision ok for b1c11a088 (main P') landed -> queued the two F3-rerun dev-7 lines (ONE task): iw1 +
+iw2 `--arm default --seed 7` at P' with out _iw{1,2}/identity/b1c11a08/default.json, checked reason names
+RULING wrc-f3-verdict-1015, mem_gb=8, max_age_h=72, nodes pool41+pool42 (depth 0->2). Pre-checks: both
+runners exist at P' (git cat-file) and pool41 has the provisioned venv. NEXT when the two results land:
+compare off:word-role@8407f21 vs default@P' (bar unchanged: sha_canon identical on EVERY script turn; the
+shared-LTM body-field turns must now match since P' carries shared-LTM ON), then record F2/F3 final reads
+in PACKET.md.
+11:52: triaged the 2 bad pool jobs = MY OWN F3-rerun lines (both died within seconds on pool40 with
+'command not found'). Root cause mine: the queue line I built at 11:37 carried a literal
+'OMP_THREADS_PLACEHOLDER' token between SIM_BACKEND=numpy and OMP_NUM_THREADS=1, and env treats a bare word as
+the command to run, so it executed the placeholder instead of python (pool.running record line confirms it
+verbatim). Nothing else in the line differed from the working 96e5198-wave shape. Requeued both corrected
+lines (same P', --arm default --seed 7, out _iw{1,2}/identity/b1c11a08/default.json, depth 0->2, checked
+reason records the first attempt's failure). Also noted: pool_queue add takes no --nodes flag (my
+'--nodes pool41,pool42' was silently ignored; node choice is dispatcher-side) - future queue adds must not
+pass one. NEXT when results land: off:word-role@8407f21 vs default@P' compare per the unchanged bar.
+12:00: exit 3 on pool41 = the documented identity-runner refusal: the runner requires PYTHONHASHSEED=0
+(reproduced rc 3 on pool42 in the 04:46 fixenv record, line 'env bug: ... refuses (rc 3)'), and both of my
+requeued P' lines omitted it. Also found my mem_gb=8/memcap 9 was below the sanctioned wave's record
+(mem_gb=16, canary peak ~12 GB, 1.3x) - the dispatcher's mem_gb reservation is what routes these lines to
+the big-RAM node (all 14 prior mem_ok-16 jobs ran on wspool, 31G; pool41/42 only have 15G). Requeued both
+lines in the exact fixenv shape (PYTHONHASHSEED=0 + mem_ok 16 1 + memcap 17 + mem_gb=16 in the record),
+depth 0->2, checked reason names both of my earlier failures. Attempt history for this pin: 11:37 died on my
+OMP_THREADS_PLACEHOLDER token; 11:53 died rc 3 missing PYTHONHASHSEED=0; this is attempt 3 with the record's
+own env and memory shape. NEXT when results land: off:word-role@8407f21 vs default@P' compare (bar
+unchanged, sha_canon every turn) then PACKET.md final reads.
+12:19: stall check (3.7h no results) = jobs were NOT dead. iw1 default@P' finished 12:00-12:13 and its
+result is banked server-side (research/findings/raw/_iw1/identity/b1c11a08/default.json + .prov.json,
+8690 B); iw2 was still sitting in pool.queue because THE POOL DISPATCHER DAEMON IS DOWN - its log
+/tmp/pool_dispatch.log last wrote Oct 12 10:27, no pool_autodispatch process on S or wspool, and the only
+dispatches since then were the inline fill passes that pool_queue.sh add runs at add time (my three queue
+scripts today at 11:37/11:52/12:00 each dispatched their first line that way; the leftover line strands with
+nothing to retry it). Launched the sanctioned self-heal from workflow_check.sh:434 (nohup recipe, run as a
+tracked background process) - it drained the queue immediately: iw2 dispatched to wspool 12:14:23 and is
+running now (expect ~12:27-12:30). nodes listed as iw1-launch-proof bwrap sandbox, no network. pool_sync.sh
+from my shell reports all four nodes UNREACHABLE (different ssh cfg) but results arrive anyway via the shared
+findings/raw mount (iw1's file appeared with node uid 999), so the bank path is not blocked. NEXT when iw2
+lands: run the F3 compare off:word-role@8407f21 vs default@P' (sha_canon every turn) + at-risk list C on P'.
+13:17: F3 rerun under RULING wrc-f3-verdict-1015 LANDED AND IS CLEAN. default@P'(b1c11a088) ran on the pool
+(iw1 12:13, iw2 12:27; dispatcher-restarted lane). Compare off:word-role@8407f2193 vs default@P' -> verdict
+IDENTICAL on BOTH runners: differing_turns [], reply_differing_turns [] (iw2 reply_diffs []), preconditions
+all true (same seed/turns/status/corpus/ltm/deterministic_env). The 5 iw1 + 3 iw2 body-hash-only mismatches
+of the first attempt are explained exactly by the shared-LTM ON/OFF confound the ruling identified - with
+shared-LTM ON at P' every sha_canon matches. Data committed 792dcd039 (default@P' x2 + prov, compare x2 +
+prov; data-only commit). NEEDS updated: [wrc-f3-verdict] rerun outcome recorded, NEW ASK [wrc-flip-prereg]
+(prereg promotion - bars/preregs are s2-reserved; all four smoke components now read: (A) 9/9 OFF-TARGET,
+(B) F2 PASS both runners, F3 rerun IDENTICAL, (C) 0 changed replies across 29/29 rows). Lanes restocked
+before this doc-only commit per lane rule. NEXT: wait on [wrc-flip-prereg] to queue the 6-seed PARSE/COMMIT
+lesion gate runs; nothing else in s4 can move without it.
+13:17: [wrc-f3-verdict] rerun outcome: PASS-candidate - verdict IDENTICAL x2 (iw1, iw2) at re-pin
+P'=b1c11a0887b3c17ff7198674e9c33f162a3d58b9 (shared-LTM ON + word-role defaults OFF), artifacts
+research/findings/raw/_iw{1,2}/identity/{b1c11a08/default.json,8407f21/compare_offwr_vs_pprime.json}
+committed 792dcd039. Stamp PASS on bar (B)/F3 or send back; bars are s2-reserved.
+- - -
+16:25: [m2-fixes] ASK — PACKET-m2-fixes all 8 items are committed on branch `research/one-brain-m2-fixes`, tip
+0938b88b8 (from main 30ab399b6), NOT merged (Claude's review, per the packet). Landed: item 1 multi-fact
+claim-verify for deferred-mouth prose at ON (`source_attributed` claim-set path + honest DeferredMouth docstring,
+2a13b1b15); item 2 source-neutral D5 recall disclosure at ON (`recall_disclosure(..., source_attributed=not
+_one_brain_on())`, "Someone mentioned {topic}" replaces "Earlier you brought up", 1f0aff670); item 3 turn lock
+FORCED at ON (`BRAIN_TURN_LOCK=0` ignored when `BRAIN_ONE_BRAIN=1`, 83f106f14); item 6 `ContextFieldView.__getitem__`
+raises KeyError when the Context vanished (never getattr(None, field)); item 7 OFF-identity scope in WORKLOG §4 +
+`one_brain.py` FLAG OFF (only the 17-turn script; fold-ins (a)-(c) intentionally change OFF on paths it never
+reaches; reset/tick/warm/shutdown/prewarm/OpenAI shim have no OFF hash run); item 8 test that `one_brain_source`
+(reason host_tag/scaffold) is mandatory wherever the "Someone told me" answer text is shown; items 4+5 DECLARED in
+WORKLOG §8 risks 14/15 (prewarm drops the scratch turn's pending mouth calls; shutdown flush can run unlocked on a
+lock timeout) under the packet's declaration option (0938b88b8). Tests: `tests/test_one_brain.py` 45 passed (7 new
+m2 tests, RED-then-GREEN, SIM_BACKEND=numpy), `tests/test_brain_turn_lock.py` 43 passed. FLAGGED: the
+`tests/test_webapp_server.py` subset relevant here (source_provenance / xedge_surprise_episodic /
+d6_semantic_drop, real brain builds) exceeded a 420 s window under the brain lock + mem_ok 18 on this server, and
+could NOT be rerun under memcap because `tools/memcap.sh` REFUSES here (systemd --user unavailable) — the packet's
+memcap-18 recipe needs a host where memcap works (or a longer window); no GPU/dev-seed violations (no GPU runs).
+Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside tests (packet header).
+
+16:25: m2 PACKET executed as the one task: all 8 items on research/one-brain-m2-fixes (tip 0938b88b8; 4 commits 2a13b1b15/1f0aff670/83f106f14/0938b88b8); test_one_brain 45/45 + test_brain_turn_lock 43/43; NEEDS [m2-fixes] filed (webapp_server heavy subset + memcap-unavailable caveat inside).
+15:5x: s2-c4-dev-now (RULING, due today) as the one task: sync BLOCKED - agent_sync_branch reached commit and the gates refused the merge on main's c5_offcurve_diag/smoke_c5a_selfinit.json (CLASS P + device-and-cost); pre-resolved the 4 add/add dev intact_a shards per RULING rev-stage2-sync-1013 (721086cb4 on research/stage2-exit-gate: f2aaabc8a copies kept + runs.jsonl); NEEDS [s2-c4-build] filed, line stopped per HANDOFF 4. Delegate 0/2.
+16:4x: s2-c4-dev-now resumed (RULING s2-c4-sync-1015): sync ok 940f78973, tests 47 pass, selftest OK, pool repro selected=0 8/8 PASS committed 1661e4cf1; H1/H2 emit = 64 lines vs HANDOFF 56 (5th emo arm?) -> NEEDS [s2-c4-build] ASK, paused at queueing. Delegate 0/2.
+16:5x: ONE task = NEEDS [stale-test]: research/stale-test-fix (from main 12614ecdb) updates tests/test_battery_amendment_b.py:103 to the current server.py:5590 call (_bkey(cache_key)); 56 passed; runtime asserts unchanged (env still reaches the organ, commit lesion observed). ASK for merge. Delegate 0/2.
+17:0x: s2-c4-build H1/H2 QUEUED: 64 lines (H1 40 + H2on 8 + H2off 16) at 1661e4cf1, mem_gb 9 each, depth 61. CORRECTION per RULING s2-c4-count-1015: HANDOFF's 32-line H1 was a miscount (5 emo arms since e4bdf9f41: intact_b null + lesion_affect.rep0); emit authoritative. stale-test merged 783d79fc6. NEXT: pull shards as they land, 3-part verdict -> NEEDS [s2-c4-build] RESULT. Delegate 0/2.
+20:1x: s2-c4-build sec 3: all 64 handler shards landed (queue 0, no rc!=0); aggregate = emo/C4 PASS 8/8 (lesion/reproduced/permuted 8/8, null_clean every seed; other groups INCOMPLETE = expected, no H1 shards); overall gate verdict UNDEFINED as expected. flip_check not produced: emotion_category_dev.py:224 sys.path.insert(tools) -> tools/experiment.py shadows root experiment package -> ImportError ExperimentEngine; code edit is sec 2 -> NEEDS STOP. Committed a71cfcea3 (64 shards + aggregate + branch WORKLOG, 132 files) after lane restock (starvation gate); HANDOFF's push_both skipped per standing never-push rule. Delegate 0/2.
+20:5x: RULING s2-c4-next-1015 executed: agent_sync_branch synced research/stage2-exit-gate with main @ d58d5a39f as a5c543c31 (contains flip 780c465a3, _EMOTION_CATEGORY_DEFAULT_ON=True verified in webapp/server.py:3633); emitted the gate's own pool jobs (29 lines) and filtered the FIVE dev-seed-7 intact_a arms (one per group); provision a5c543c31 state ok 20:49 on all 4 nodes (within budget); queued 5/5 (mem_gb 9). NEXT: pull the five shards, sanity-read them, RESULT [s2-c4-smoke]. Delegate 0/2.
+21:2x: RESULT [s2-c4-smoke]: five dev-seed-7 intact_a gate shards landed at flip tip a5c543c31 (sync merged main d58d5a39f incl. flip 780c465a3) - ask/conv/emo/infer/inner = C3/C1/C4/C2/C5, all well-formed (seed7 intact_a identity, pythonhashseed_ok true, no error keys); provision ok 4 nodes 20:49, queued 5/5 mem_gb 9; shards committed on branch as 38df66e63. NEXT (Claude): verify-go + pin GATE_SHA per RULING s2-c4-next-1015 (before 11-01). Delegate 0/2.
+21:5x: priority (1) Stage-1 attempt 2 started: worktree .claude/worktrees/stage1-exit on research/stage1-exit-gate (tip a2941fb1d, ff incl. claude-review/stage1-sync); HANDOFF sec-3 pre-checks all green (SELFTEST OK, tests 14 passed, tree 0, GATE-SHA c238ff325 ancestor, prereg byte-identical 0, queue depth 0, 204-line requeue TSV present). NEEDS-MERGE path taken: bringing main in -> conflict in docs/drafts/stage1-exit/WORKLOG.md only -> aborted per sec-3 -> NEEDS [stage1-attempt2] #2 filed. Stopped that line; provision/smoke/[aws-run] ASK/204 queued pending Claude. Delegate 0/2.
+21:5x: s1-attempt2-path-1015 executed: worktree+branch left as attempt-1 ARCHIVE (no merge, no union merge); attempt 2 runs from main. Prereg additions-only check vs PREREG_SHA = 0 OK (A2 = sec-12 additions, main 927aeb87c+). Provision req filed for main tip 61cc6e61e (status pending). HANDOFF banner edit blocked by reserved-path gate -> NEEDS [stage1-attempt2]. Smoke next: dev-7 cat_disc lesion_inherit_pathway (calls>0, p_canary_eat hop:true lesion:all lesion_held:true) + val_heldout permuted (n_words 24, |scrambled_r|<=0.05), mem 9, via pool_canary run auto. Delegate 0/2.
+23:2x: first smoke launcher died before running anything (no canary row, log unrecoverable); main moved +4 (RULINGS s1-game-1015, s1-overnight-1015 + fix, aws-selfstop-1015) so SHA2 = c02180f2c (Claude offline overnight, tip stable), provision req refiled; relaunched smoke: wait-provision -> canary A cat_disc lesion_inherit_pathway dev-7, B val_heldout permuted dev-7, pool auto (pool40-42), judge s1_smoke_check; log /opt/data/cache/scratch/s1_smoke_run2.log. s1-overnight-1015 accepted as operative: pass -> emit 204 to gate_a2, canary one, queue ALL max_age_h=168 overnight, file [aws-run] ASK; fail -> NEEDS [s1-a2-smoke] STOP. Delegate 0/2.
+23:3x: attempt-2 smoke re-filed via pool queue: two direct-canary background launches died WITH their sessions (provision-wait wrapper and plain relaunch; no canary row, no log) -> queued the two dev-7 smoke shards instead (cat_disc lesion_inherit_pathway; val_heldout permuted) at provisioned revision c02180f2c, mem_gb 7, max_age_h 168, --checked per before_you_build; pool40-42 run them (wspool down expected per s1-overnight-1015). On landing: judge s1_smoke_check; pass -> emit 204 to gate_a2, canary one, queue ALL, file [aws-run] ASK; fail -> NEEDS [s1-a2-smoke] STOP. Delegate 0/2.
+00:0x: smoke lines set aside by pop_job's record-check gate (pool.queue.unchecked): my inline TAB split the record so #checked: landed in field 3 while pop_job reads field 2 (tools/pool_autodispatch.sh:724,731); root-caused and re-added tab-free with mem_gb=7/max_age_h=168 inside the --checked reason (s1_smoke_queue4.py); CHECKED_TOKENS_IN_QUEUE=2, depth 2 at c02180f2c, awaiting dispatch on pool40-42. Delegate 0/2.
+00:5x: RESULT [s1-a2-smoke] PASS: both dev-7 shards landed at c02180f2c (dispatched 00:03 pool40/pool41, landed 00:17/00:25, prov sidecars present). cat_disc lesion_inherit_pathway: patch calls=2 gt 0, p_canary_eat read with hop true / lesion all / lesion_held true present; val_heldout permuted: n_words=24, scrambled_r=-0.044 (abs 0.044 le 0.05). Judge s1_smoke_check rc=0. Next per s1-attempt2-queue + s1-overnight-1015: emit 204 to gate_a2, canary one, queue ALL max_age_h=168, file [aws-run] ASK. Delegate 0/2.
+01:2x: emit at SHA2=c02180f2c produced 216 lines (research/queue/s1_attempt2_c02180f2c.tsv): all under gate_a2 (STOP condition clean), 36 unique seed/group/arm per seed x 6 gate seeds, zero dups; the ruling's 204 predates A2's .rep0 replication arms -- MiMo Pro delegate verdict QUEUE-ALL-216 (STOP triggers are a closed list; s2-c4-count-1015 precedent). Canary plan: one gate-seed line (word intact_a s42, TSV line 13) via pool_canary run auto, foreground poll <=480s; if inconclusive the remote setsid job keeps running -> read node status next wake, pool_canary record, verify has, then add all 216 (cmd stripped of the tab/metadata tail, mem_gb=7 + max_age_h=168 inside --checked), file [aws-run] ASK. Delegate 1/2.
+03:0x: RESULT [s1-a2-QUEUE] all 216 A2 lines in the pool at SHA2=c02180f2c7e1464cf0f2192a46cf2f399bd1c215: gate canary RECORDED PASS (pool40 word/intact_a s42, rc=0, artifact err=0, pythonhashseed_ok=true, wall 827.5s, pool_canary record+has ok); first 2-add refusal was the missing prereg token in --checked (corrected per the guard's own instruction -- not a rerun); line-level sweeps covered 1-216 (START=138 tail added 79, 0 fails; 84 skips = already-in-system). At 03:03: depth 108, 18 gate_a2 dispatch rows today, 10 gate_a2 shards landed well-formed (cat_disc s42 x6 all no-error + phs true, seeds s42-s44 family). NOTE: the server-side dispatcher's pops are invisible to this user's claims/running views (queue rows drained without local records; re-add sweeps stayed rc0) -- s1-attempt2-score's UNDEFINED-requeue-once path covers any residual gap at scoring time. Delegate 1/2 used (verdict QUEUE-ALL-216, ruling's 204 predates A2 .rep0 arms).
+03:2x: RULING s1-awsrun-answer-1016 received: HANDOFF attempt-1 banner landed (f51bc28a4); AWS s1a1+s1a2 already draining the 180 lines of seeds 43/44/100/101/102 at c02180f2c (13 at a time, landed as uid 99); pool runs seed 42 only; a Claude loop withdraws any seed-43+ line that reappears in pool.queue -- ACKNOWLEDGED, never re-add (my 03:0x re-adds were withdrawn; withdrawn.log 443 rows). Verified: pool.queue = 38 rows all seed 42; 26 gate_a2 shards landed so far. Score per s1-attempt2-score once all 216 land (aggregate gate_a2, seeds 42,43,44,100,101,102; missing-shard UNDEFINED re-queues once; PASS waits for Claude verify-go). Delegate 1/2 used.
+04:2x: attempt-2 landing health (post s1-awsrun-answer-1016): 86/216 gate_a2 shards on disk (s42=18/36 via pool, s43=36/36 + 1 in-flight .part, s44=30/36, s100=1/36 via AWS s1a1/s1a2), 0 truthy-error or unparsable JSON, all prov sidecars error-free. pool.queue seed-42-only (18 rows), withdrawal loop idle. Note for scoring: exclude *.part.json until final (aggregate runs only after all 216 land). No action needed; awaiting completion per s1-attempt2-score. Delegate 1/2.
+07:35: RESULT [s1-attempt2]: scored per RULING s1-score-now-1016 — aggregate at gate_a2 verdict PASS (GO true, 0 missing, undefined_reasons empty), all 7 preconditions ok; report = C1 PASS, C2 PASS, C3 PASS, C4 PASS (each 6/6 lesion/reproduced/permuted) with diagnostics cat_told + val_novel FAIL 0/6 not counted. where_ran: aws 90+90 (s1a1/s1a2, ~$9.26, now terminated), pool 19, workstation 17, server 1 (this seconds-long aggregate). Shards+sidecars+aggregate committed by pathspec as 1d462264b; RESULT.md PROVISIONAL filed; delegate2/2 PASS-FILE. Bars untouched; board line below is held until Claude verify-go + adversarial #7. NEXT (Claude): verify-go, then finding/board.
+07:35: Stage-1 exit gate (first integrated stage-exit attempt): PASS; C1 PASS, C2 PASS, C3 PASS, C4 PASS (r per seed: 42 0.817, 43 0.805, 44 0.824, 100 0.809, 101 0.836, 102 0.820). Finding: research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md.
+08:40: RESULT [s1-doc-sync]: Stage 1 PASSED 10-16 (attempt 2) synced per RULING s1-verified-1016 — GAP
+  CURRENT STATE new RESUME 2026-10-16 (frontier Stage 1 PASSED, four caveats copied VERBATIM from the finding,
+  next = word-role flip then Stage 2 per s1-next-1016), master roadmap §7 walls-ledger + §8 next-actions,
+  AUTONOMOUS_STATE entry (post-supersession), docs/.vikunja_sync stamped. ROADMAP.md half (Stage-1 section)
+  parked on branch docs/roadmap-sync-1015 via worktree under the existing [roadmap-sync] ASK. Board: #244
+  closed + milestone #264 added by Claude same cycle.
+08:55: RESULT [s1-doc-sync] COMPLETE — per RULING s1-verified-1016. Landed on main e22e1e81b (GAP
+  CURRENT STATE 2026-10-16 RESUME section, insert-only + agent_merge_policy token-free, four caveats
+  verbatim; runbook [roadmap-sync] ASK; WORKLOG). Parked on branch docs/roadmap-sync-1015 @ 72226b2cd
+  (via worktree, the three Claude-reserved pieces): ROADMAP Stage-1 section, master roadmap §7 + §8,
+  AUTONOMOUS_STATE entry — all with the four caveats verbatim; Claude lands the branch + adds the GAP
+  headline line (PASS/GO words in GAP are Claude's by policy). docs/.vikunja_sync entry WRITTEN, its
+  commit held: lane-starvation gate blocks it (pool idle, driver may not waive) — it lands with the
+  next lane-ready cycle.
+08:42: [roadmap-sync] CLOSED per ruling roadmap-sync-answer-1016 — merge adde67aa3 carries the three
+  parked pieces (ROADMAP counted-lesion wording too), GAP Frontier headline added by Claude in
+  fa19b9313, four verbatim caveats verified intact; my NEEDS entry reformatted to one line per the
+  ruling's format note. Loose end unchanged: docs/.vikunja_sync stamp uncommitted (lane gate, depth 0).
+08:50: ONE task = s1-next-1016 item (2): the [wrc-flip-prereg] ASK existed only as WORKLOG prose
+  (13:17 entry), never as a NEEDS line, so filed it now as ONE line, #8 — prereg promotion + bar B/F3
+  stamp are s2-reserved (Claude's); F3 rerun IDENTICAL x2 at P' already committed (792dcd039). The
+  6-seed PARSE/COMMIT gate seeds stay blocked until the prereg lands; nothing else in item (2) can
+  move this wake. docs/.vikunja_sync stamp still held (lane gate, depth 0).
+- 2026-10-16 09:58 [wrc-prereg-review] ASK #9: PREREG drafted on research/wrc-flip-packet (B measured, F1 bar-sanity cited, (A)=9, Amendment E wr_route+test GREEN); 48 gate lines ~12-21 job-hours (<40, no [aws-run]). blocks: gate seeds at branch flip rev
+- 2026-10-16 09:58 [wrc-sync] STOP: main stage1-exit-attempt2-RESULT.md fails tools/claim_check.py (lines 91-92 derived margins lack <!--derived-->; RESULT edit is s2-reserved); agent_sync_branch aborted, branch stays pre-b1c11a088. blocks: sync -> pool provision -> wrc gate seeds
+- 2026-10-16 09:58 [wrc-code] STOP: Amendment-E commit (wr_route + runner row keys + test) blocked by the lane-starvation gate; pool.queue empty, no authorized backlog, waiver spent - needs lane restock (RULING lane-stock). blocks: research/wrc-flip-packet code commit
+
+09:58: wrc PREREG (RULINGs wrc-prereg-go-1016/1016b): research/findings/2026-10-16-word-role-flip-PREREGISTRATION.md drafted on research/wrc-flip-packet (B recorded as measured; F1 bar-sanity cited; (A) fixed to 9 listed; sec6 open questions replaced; Amendment E wr_route persistence + failing-first test GREEN 2 passed). 48 gate lines projected ~12-21 job-hours (<40 so no [aws-run]). Amendment-E code commit STAGED-BUT-BLOCKED (lane gate, pool.queue=0); branch sync BLOCKED (claim_check on stage1 RESULT) - NEEDS [wrc-sync] + [wrc-code] filed. Follow-up: the prereg .md commit also waits - bar_sanity_line needs a spec+record (.py/.json set = same lane block), so prereg + Amendment-E code + spec/record all ride [wrc-code]; branch data commit landed 49cb40f5c.

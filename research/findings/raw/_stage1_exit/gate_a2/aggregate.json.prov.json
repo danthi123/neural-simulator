@@ -1,0 +1,31 @@
+{
+ "run_id": "1792150096-325926",
+ "runner": "research/runners/stage1_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/stage1_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_stage1_exit/gate_a2",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_stage1_exit/gate_a2/aggregate.json"
+ ],
+ "git_sha": "93f397860",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-16T07:28:16",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 28619.8,
+ "corpus_check_query": "s1 attempt-2 pre-queue smoke: dev-7 cat_disc lesion_inherit_pathway (calls>0, p_canary_eat hop/lesion/held) and val_heldout permuted (n_words 24, |scrambled_r|<=0.05)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage1_exit/gate_a2/aggregate.json"
+}

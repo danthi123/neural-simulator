@@ -100,7 +100,7 @@ def test_commit_lesion_env_reaches_the_reply_level_organ_call(monkeypatch):
     assert r["idle_replay"]["lesions"]["commit"] is True and r["idle_replay"]["winner"] is None
     # the server's idle branch calls the module-level speak with no lesion kwargs, so the env decides
     src = open(os.path.join(_ROOT, "webapp", "server.py"), encoding="utf-8").read()
-    assert "si = _IR.speak(cache_key, chat, seed=_brain_chat_seed())" in src
+    assert "si = _IR.speak(_bkey(cache_key), chat, seed=_brain_chat_seed())" in src
     assert "answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()" in src
 
 

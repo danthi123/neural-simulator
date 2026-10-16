@@ -187,13 +187,15 @@ def battery_verdict(records: List[dict], seeds=DEV_SEEDS) -> dict:
 # ── handler-level dev lines (the Stage-2 runner's own worker, flag ON; for the pool via the runbook's routes) ─────────
 HANDLER_OUT = "research/findings/raw/_s2_c4_build/handler"
 FLAG_ENV = "BRAIN_EMOTION_CATEGORY=1"
+FLAG_OFF_ENV = "BRAIN_EMOTION_CATEGORY=0"   # explicit: the server default is ON since 2026-10-15
 
 
 def handler_lines(sha: str, seeds=DEV_SEEDS, groups=("emo",), arms=None, flag_on: bool = True,
                   out_dir: str = HANDLER_OUT, max_age_h: int = 168):
     """Pool lines for DEV seeds through `research.runners.stage2_exit_gate --shard` at revision `sha` (which must
-    contain this module AND the Stage-2 runner). Each line is the Stage-2 runner's own line with the flag added to its
-    `env` (flag_on) or not (flag_off), written under `out_dir/{on,off}/`. Refuses gate seeds."""
+    contain this module AND the Stage-2 runner). Each line is the Stage-2 runner's own line with BRAIN_EMOTION_CATEGORY=1
+    (flag_on) or =0 (flag_off; explicit since the default flipped ON 2026-10-15) added to its `env`, written under
+    `out_dir/{on,off}/`. Refuses gate seeds."""
     import research.runners.stage2_exit_gate as G
     bad = [s for s in seeds if int(s) in GATE_SEEDS]
     if bad:
@@ -206,9 +208,9 @@ def handler_lines(sha: str, seeds=DEV_SEEDS, groups=("emo",), arms=None, flag_on
         if not m or m.group(1) not in groups or (arms is not None and m.group(2) not in arms):
             continue
         cmd = cmd.replace(" --allow-gate-seed", "").replace(" --prereg %s" % G.PREREG, "")
-        if flag_on:
-            cmd = cmd.replace("-- env SIM_BACKEND=numpy", "-- env %s SIM_BACKEND=numpy" % FLAG_ENV)
-            assert FLAG_ENV in cmd
+        flag = FLAG_ENV if flag_on else FLAG_OFF_ENV
+        cmd = cmd.replace("-- env SIM_BACKEND=numpy", "-- env %s SIM_BACKEND=numpy" % flag)
+        assert flag in cmd
         why = "s2-c4-build handler dev (%s, flag %s); %s" % (sha[:9], "ON" if flag_on else "OFF",
                                                             why.split("; ", 1)[1].split("; record:")[0])
         out.append((cmd, why + "; mem_gb=%d max_age_h=%d" % (G.MEM_GB, min(int(max_age_h), 240))))
@@ -221,8 +223,9 @@ def flip_check(on_dir: str, off_dir: str, seeds) -> dict:
     OFF answer plus exactly one feel clause; the ON answer rate (tools/answer_rate.classify over every turn) is not
     below OFF. `FLIP-HURTS-ANSWERS` / `FLIP-CHANGES-NONFEEL` flags are reported; UNMEASURED pairs are listed."""
     import glob
-    sys.path.insert(0, os.path.join(_REPO, "tools"))
-    from answer_rate import classify
+    # Import through the repo root (tools/ is a namespace package). Putting tools/ first on sys.path let
+    # tools/experiment.py shadow the root `experiment` package (ImportError: ExperimentEngine), 2026-10-15.
+    from tools.answer_rate import classify
     from research.runners import emotion_category_organ as E
     clauses = {E.feel_clause(c) for c in list(CATS) + [None]}
     per, flags, unmeasured = {}, set(), []

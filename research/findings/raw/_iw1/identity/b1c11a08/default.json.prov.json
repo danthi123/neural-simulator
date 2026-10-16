@@ -1,0 +1,42 @@
+{
+ "run_id": "1792080026-2",
+ "runner": "research/runners/iw1_default_identity.py",
+ "argv": [
+  "/srv/simpool/derisk-pool/revisions/b1c11a0887b3c17ff7198674e9c33f162a3d58b9/research/runners/iw1_default_identity.py",
+  "--arm",
+  "default",
+  "--seed",
+  "7",
+  "--out",
+  "research/findings/raw/_iw1/identity/b1c11a08/default.json"
+ ],
+ "git_sha": "b1c11a0887b3c17ff7198674e9c33f162a3d58b9",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "44e34624d4f81ae86d1f5a99627de32ce7d0c19131cd1441dd97a5cffdc112c2",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T12:00:26",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1792080025648073597-12420",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "17G",
+  "POOL_JOB_MEM_GB": "16",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_iw1/identity/b1c11a08/default.json"
+}
