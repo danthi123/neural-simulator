@@ -1,0 +1,51 @@
+{
+ "runner": "research.runners.iw1_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/iw1_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw1/identity/ce2e028/default.json",
+  "research/findings/raw/_iw1/identity/ce2e028/on_word-role.json",
+  "--expect",
+  "same",
+  "--out",
+  "research/findings/raw/_iw1/identity/ce2e028/compare_default_onwr.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "on:word-role"
+ ],
+ "git_shas": [
+  null,
+  null
+ ],
+ "expect": "same",
+ "ltm_bundles": [
+  "wikidata_100k",
+  "wikidata_100k"
+ ],
+ "sources": [
+  [
+   "tiny-demo +LTM"
+  ],
+  [
+   "tiny-demo +LTM"
+  ]
+ ],
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "all_status_200": true,
+  "all_turns_present": true,
+  "corpus_present_both": true,
+  "same_ltm_bundle": true
+ },
+ "differing_turns": [],
+ "reply_differing_turns": [],
+ "ok": true,
+ "verdict": "IDENTICAL",
+ "inputs": [
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/ce2e028/default.json",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_iw1/identity/ce2e028/on_word-role.json"
+ ]
+}
