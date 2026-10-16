@@ -1704,13 +1704,8 @@ d6_semantic_drop, real brain builds) exceeded a 420 s window under the brain loc
 could NOT be rerun under memcap because `tools/memcap.sh` REFUSES here (systemd --user unavailable) — the packet's
 memcap-18 recipe needs a host where memcap works (or a longer window); no GPU/dev-seed violations (no GPU runs).
 Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside tests (packet header).
-- 2026-10-16 08:55 [roadmap-sync] ASK: Stage-1 2026-10-16 doc-sync, split by the gates. (a) Three
-  reserved-path pieces are parked unmerged on branch docs/roadmap-sync-1015 (via worktree) — please
-  land: ROADMAP.md Stage-1 section (caveats verbatim, plus the parked 10-15 half); master roadmap §7
-  walls-ledger + §8 next-actions Stage-1 lines; AUTONOMOUS_STATE post-supersession entry. (b) GAP
-  CURRENT STATE 2026-10-16 section landed insert-only on main, but agent_merge_policy reserves any
-  inserted line containing PASS/GO — please add the headline line "Stage 1 PASSED 2026-10-16 (attempt
-  2)" (the four verbatim caveats are already inserted below it). .vikunja_sync stamp + WORKLOG landed.
+- 2026-10-16 08:55 [roadmap-sync] INFO: CLOSED — both asks answered (merge adde67aa3, GAP headline fa19b9313, ruling roadmap-sync-answer-1016). Still held: docs/.vikunja_sync commit, lane-starvation (depth 0, no waiver), lands next lane-ready cycle.
+
 16:25: m2 PACKET executed as the one task: all 8 items on research/one-brain-m2-fixes (tip 0938b88b8; 4 commits 2a13b1b15/1f0aff670/83f106f14/0938b88b8); test_one_brain 45/45 + test_brain_turn_lock 43/43; NEEDS [m2-fixes] filed (webapp_server heavy subset + memcap-unavailable caveat inside).
 15:5x: s2-c4-dev-now (RULING, due today) as the one task: sync BLOCKED - agent_sync_branch reached commit and the gates refused the merge on main's c5_offcurve_diag/smoke_c5a_selfinit.json (CLASS P + device-and-cost); pre-resolved the 4 add/add dev intact_a shards per RULING rev-stage2-sync-1013 (721086cb4 on research/stage2-exit-gate: f2aaabc8a copies kept + runs.jsonl); NEEDS [s2-c4-build] filed, line stopped per HANDOFF 4. Delegate 0/2.
 16:4x: s2-c4-dev-now resumed (RULING s2-c4-sync-1015): sync ok 940f78973, tests 47 pass, selftest OK, pool repro selected=0 8/8 PASS committed 1661e4cf1; H1/H2 emit = 64 lines vs HANDOFF 56 (5th emo arm?) -> NEEDS [s2-c4-build] ASK, paused at queueing. Delegate 0/2.
@@ -1745,3 +1740,7 @@ Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside te
   headline line (PASS/GO words in GAP are Claude's by policy). docs/.vikunja_sync entry WRITTEN, its
   commit held: lane-starvation gate blocks it (pool idle, driver may not waive) — it lands with the
   next lane-ready cycle.
+08:42: [roadmap-sync] CLOSED per ruling roadmap-sync-answer-1016 — merge adde67aa3 carries the three
+  parked pieces (ROADMAP counted-lesion wording too), GAP Frontier headline added by Claude in
+  fa19b9313, four verbatim caveats verified intact; my NEEDS entry reformatted to one line per the
+  ruling's format note. Loose end unchanged: docs/.vikunja_sync stamp uncommitted (lane gate, depth 0).
