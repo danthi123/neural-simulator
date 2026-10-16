@@ -61,14 +61,14 @@
    0.0056
   ]
  },
- "repo_head": "8da9804b29b9d9af9a68f9cfe7ebd3bc6d5c7816",
+ "repo_head": "b8106e51153d9dcc87053184c9e496e15e4a9b02",
  "scorer_files": {
   "docs/drafts/word-role-flip/bar_sanity_spec_f1b_commit.py": "00cc2bfa13def7f0776604da9dbc722903fe251dcff854af00a3757515f8e948",
   "tools/b2d_score.py": "700c1530d37631d7e23c16d2d16f42b28276b15672b1053d1945196574e0d5b2",
   "tools/iw2_score.py": "440e9e82b62f5f06398bf6468434aebb969fee2468c215e53008ac7b4dd658cf",
-  "tools/s2p_score.py": "6e16e311780d91967e7b26af2d725dc52dd433f605c86fcc78f6f3f3fd597616"
+  "tools/s2p_score.py": "49360330df2a6b7520a853b7c0dbe193ec5aefd72b15d0033fffb617ef9abc3d"
  },
- "scorer_sha256": "cc10733c0dd5a7376221f67720b30ca5154e0533a6b62c52e8225538202c4219",
+ "scorer_sha256": "8289e15145c3e47bd0705c13db6dd167fc64c5c4e3560d25f1a5e17f54634cec",
  "seed": 0,
  "spec": "docs/drafts/word-role-flip/bar_sanity_spec_f1b_commit.py",
  "spec_sha256": "00cc2bfa13def7f0776604da9dbc722903fe251dcff854af00a3757515f8e948",
@@ -79,5 +79,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 42.6
+ "wall_s": 14.9
 }
