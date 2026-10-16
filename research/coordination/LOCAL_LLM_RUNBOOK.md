@@ -1703,6 +1703,13 @@ d6_semantic_drop, real brain builds) exceeded a 420 s window under the brain loc
 could NOT be rerun under memcap because `tools/memcap.sh` REFUSES here (systemd --user unavailable) — the packet's
 memcap-18 recipe needs a host where memcap works (or a longer window); no GPU/dev-seed violations (no GPU runs).
 Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside tests (packet header).
+- 2026-10-16 08:55 [roadmap-sync] ASK: Stage-1 2026-10-16 doc-sync, split by the gates. (a) Three
+  reserved-path pieces are parked unmerged on branch docs/roadmap-sync-1015 (via worktree) — please
+  land: ROADMAP.md Stage-1 section (caveats verbatim, plus the parked 10-15 half); master roadmap §7
+  walls-ledger + §8 next-actions Stage-1 lines; AUTONOMOUS_STATE post-supersession entry. (b) GAP
+  CURRENT STATE 2026-10-16 section landed insert-only on main, but agent_merge_policy reserves any
+  inserted line containing PASS/GO — please add the headline line "Stage 1 PASSED 2026-10-16 (attempt
+  2)" (the four verbatim caveats are already inserted below it). .vikunja_sync stamp + WORKLOG landed.
 16:25: m2 PACKET executed as the one task: all 8 items on research/one-brain-m2-fixes (tip 0938b88b8; 4 commits 2a13b1b15/1f0aff670/83f106f14/0938b88b8); test_one_brain 45/45 + test_brain_turn_lock 43/43; NEEDS [m2-fixes] filed (webapp_server heavy subset + memcap-unavailable caveat inside).
 15:5x: s2-c4-dev-now (RULING, due today) as the one task: sync BLOCKED - agent_sync_branch reached commit and the gates refused the merge on main's c5_offcurve_diag/smoke_c5a_selfinit.json (CLASS P + device-and-cost); pre-resolved the 4 add/add dev intact_a shards per RULING rev-stage2-sync-1013 (721086cb4 on research/stage2-exit-gate: f2aaabc8a copies kept + runs.jsonl); NEEDS [s2-c4-build] filed, line stopped per HANDOFF 4. Delegate 0/2.
 16:4x: s2-c4-dev-now resumed (RULING s2-c4-sync-1015): sync ok 940f78973, tests 47 pass, selftest OK, pool repro selected=0 8/8 PASS committed 1661e4cf1; H1/H2 emit = 64 lines vs HANDOFF 56 (5th emo arm?) -> NEEDS [s2-c4-build] ASK, paused at queueing. Delegate 0/2.
@@ -1723,3 +1730,9 @@ Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside te
 04:2x: attempt-2 landing health (post s1-awsrun-answer-1016): 86/216 gate_a2 shards on disk (s42=18/36 via pool, s43=36/36 + 1 in-flight .part, s44=30/36, s100=1/36 via AWS s1a1/s1a2), 0 truthy-error or unparsable JSON, all prov sidecars error-free. pool.queue seed-42-only (18 rows), withdrawal loop idle. Note for scoring: exclude *.part.json until final (aggregate runs only after all 216 land). No action needed; awaiting completion per s1-attempt2-score. Delegate 1/2.
 07:35: RESULT [s1-attempt2]: scored per RULING s1-score-now-1016 — aggregate at gate_a2 verdict PASS (GO true, 0 missing, undefined_reasons empty), all 7 preconditions ok; report = C1 PASS, C2 PASS, C3 PASS, C4 PASS (each 6/6 lesion/reproduced/permuted) with diagnostics cat_told + val_novel FAIL 0/6 not counted. where_ran: aws 90+90 (s1a1/s1a2, ~$9.26, now terminated), pool 19, workstation 17, server 1 (this seconds-long aggregate). Shards+sidecars+aggregate committed by pathspec as 1d462264b; RESULT.md PROVISIONAL filed; delegate2/2 PASS-FILE. Bars untouched; board line below is held until Claude verify-go + adversarial #7. NEXT (Claude): verify-go, then finding/board.
 07:35: Stage-1 exit gate (first integrated stage-exit attempt): PASS; C1 PASS, C2 PASS, C3 PASS, C4 PASS (r per seed: 42 0.817, 43 0.805, 44 0.824, 100 0.809, 101 0.836, 102 0.820). Finding: research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md.
+08:40: RESULT [s1-doc-sync]: Stage 1 PASSED 10-16 (attempt 2) synced per RULING s1-verified-1016 — GAP
+  CURRENT STATE new RESUME 2026-10-16 (frontier Stage 1 PASSED, four caveats copied VERBATIM from the finding,
+  next = word-role flip then Stage 2 per s1-next-1016), master roadmap §7 walls-ledger + §8 next-actions,
+  AUTONOMOUS_STATE entry (post-supersession), docs/.vikunja_sync stamped. ROADMAP.md half (Stage-1 section)
+  parked on branch docs/roadmap-sync-1015 via worktree under the existing [roadmap-sync] ASK. Board: #244
+  closed + milestone #264 added by Claude same cycle.

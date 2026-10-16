@@ -13,7 +13,52 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
+#1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
+**Frontier:** **Stage-1 attempt 2 — verdict registered and Claude-verified (2026-10-16).** The verdict, its
+numbers and its four caveats live verbatim in `research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`
+(verify-go + two adversarial reviews survived, merge `e114828f1`; RULING `s1-verified-1016`: board #244 closed,
+milestone #264 added). All four primary criteria are covered by that finding at 6/6 each; the diagnostics
+`cat_told` and `val_novel` read 0/6 and are prereg-frozen as not counted. Per RULING `s1-next-1016`,
+priorities-1015 item (1) is done: next is (2) the word-role flip (F3 rerun at P', prereg, ASK
+[wrc-flip-prereg]), then (3) Stage 2 (same AWS split as attempt 2: file [aws-run] when its lines are emitted,
+pool for the other seeds). The one-line headline + the caveats copy for this section are Claude's to insert
+(the finding's verdict headline line is reserved for Claude by
+agent_merge_policy; ASK [s1-doc-sync]).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-verified-1016` and
+`s1-next-1016`, then section 4 in order.
+
+**Stage-1 attempt 2 — four caveats ride the verdict, copied verbatim from the finding (never an unqualified
+claim):**
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
+**Decisions-owned (from the finding):** this stage bar does not measure host-decision share — the k-select step
+is still host code and the load-bearing work is the step-3 ownership moves; caveat 1 above goes into any
+load-bearing-fraction row that cites the recruit or recall pathway (RULING `s1-next-1016`).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-13 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**⚠️ Superseded 2026-10-16 — the live RESUME point is the 2026-10-16 section above; everything
+below this heading is history.**
 
 **Date:** 2026-10-13. **North star:** unchanged. A sim-brain that converses genuinely; Qwen stays the mouth; the #1
 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
