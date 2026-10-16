@@ -157,9 +157,10 @@ def test_engagement_missing_record_is_undefined(tmp_path):
 
 # ── ENGAGEMENT for word-role-parse (RULING word-role-engagement, Claude 2026-10-06): webapp/server.py's
 #    `word_role_trace` must show the route ran, the lesion flag matched the arm and no exception was swallowed. ────────
-def _wr_arms(tmp_path, lesion_trace):
+def _wr_arms(tmp_path, lesion_trace, intact=None):
     import json as _j
-    intact = {"route": "word_role", "lesioned": False, "error": None, "roles": {"brain": "agent", "use": "action"}}
+    intact = intact or {"route": "word_role", "lesioned": False, "error": None,
+                        "roles": {"brain": "agent", "use": "action"}}
     for name, t in (("intact_a_x.json", intact), ("intact_b_x.json", intact),
                     ("lesion_x.json", lesion_trace), ("lesion_x.json.rep0", lesion_trace)):
         body = {"answer": "b"}
@@ -172,7 +173,9 @@ def _wr_arms(tmp_path, lesion_trace):
 
 def test_word_role_engagement_spec_is_registered():
     import s2p_score as S2
-    assert S2.PACKETS["word-role-parse"]["engagement"] == {"trace_key": "word_role_trace", "route": "word_role"}
+    assert S2.PACKETS["word-role-parse"]["engagement"] == {
+        "trace_key": "word_role_trace", "route": "word_role", "routes": ["word_role", "word_role_commit"],
+        "off_keys": ["commit_lesioned"]}
 
 
 @pytest.mark.parametrize("lesion_trace,why", [
@@ -184,6 +187,29 @@ def test_word_role_engagement_spec_is_registered():
 def test_word_role_engagement_states(tmp_path, lesion_trace, why):
     import s2p_score as S2
     got = S2.engagement_state(_wr_arms(tmp_path, lesion_trace), S2.PACKETS["word-role-parse"]["engagement"])
+    assert got is None if why is None else got.startswith(why)
+
+
+# RULING wrc-f1a-engagement (Claude 2026-10-16): at the flipped default (BRAIN_WORD_ROLE_COMMIT on) the parse row's
+# organ call records route `word_role_commit`; it is engaged when the word -> role lesion (`lesioned`) matches the arm
+# and the commit cut (`commit_lesioned`) is off in every arm, so the parse row never scores the commit lesion.
+_WRC_INTACT = {"route": "word_role_commit", "lesioned": False, "commit_lesioned": False, "error": None}
+
+
+@pytest.mark.parametrize("lesion_trace,intact,why", [
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": False, "error": None}, _WRC_INTACT, None),
+    ({"route": "word_role_commit", "lesioned": False, "commit_lesioned": True, "error": None}, _WRC_INTACT,
+     "lesion-flag"),
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": True, "error": None}, _WRC_INTACT,
+     "commit_lesioned-on"),
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": False, "error": None},
+     dict(_WRC_INTACT, commit_lesioned=True), "commit_lesioned-on"),
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": False, "error": "X"}, _WRC_INTACT, "error"),
+    ({"route": "other", "lesioned": True, "commit_lesioned": False, "error": None}, _WRC_INTACT, "route-other"),
+])
+def test_word_role_parse_engagement_at_commit_default(tmp_path, lesion_trace, intact, why):
+    import s2p_score as S2
+    got = S2.engagement_state(_wr_arms(tmp_path, lesion_trace, intact), S2.PACKETS["word-role-parse"]["engagement"])
     assert got is None if why is None else got.startswith(why)
 
 
@@ -207,6 +233,7 @@ def _wc_arms(tmp_path, lesion_trace):
     ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": False, "error": None}, "lesion-flag"),
     ({"route": "word_role", "lesioned": False, "commit_lesioned": True, "error": None}, "route-word_role"),
     ({"route": "word_role_commit", "lesioned": False, "commit_lesioned": True, "error": "X"}, "error"),
+    ({"route": "word_role_commit", "lesioned": True, "commit_lesioned": True, "error": None}, "lesioned-on"),
     (None, "no-record"),
 ])
 def test_word_role_commit_engagement_states(tmp_path, lesion_trace, why):

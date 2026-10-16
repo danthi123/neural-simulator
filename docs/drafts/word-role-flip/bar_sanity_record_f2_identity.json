@@ -1,0 +1,82 @@
+{
+ "backend": "numpy",
+ "description": "Two synthetic arm records per runner -> the registered iw1/iw2 compare(expect=same); PASS iff both return IDENTICAL (every precondition of the real compare holds).",
+ "failures": [],
+ "kinds": {
+  "info_vacuous_pair": "info",
+  "null_corpus_drop": "null",
+  "null_one_turn": "null",
+  "null_seed_mismatch": "null",
+  "perfect": "perfect",
+  "perfect_noisy": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_vacuous_pair": 1000,
+  "null_corpus_drop": 0,
+  "null_one_turn": 0,
+  "null_seed_mismatch": 0,
+  "perfect": 1000,
+  "perfect_noisy": 1000,
+  "random": 0
+ },
+ "name": "word-role-flip F2 (default == on:both on every script turn of iw1 and iw2)",
+ "pass_rate": {
+  "info_vacuous_pair": 1.0,
+  "null_corpus_drop": 0.0,
+  "null_one_turn": 0.0,
+  "null_seed_mismatch": 0.0,
+  "perfect": 1.0,
+  "perfect_noisy": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_vacuous_pair": [
+   0.9962,
+   1.0
+  ],
+  "null_corpus_drop": [
+   0.0,
+   0.0038
+  ],
+  "null_one_turn": [
+   0.0,
+   0.0038
+  ],
+  "null_seed_mismatch": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_noisy": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "8da9804b29b9d9af9a68f9cfe7ebd3bc6d5c7816",
+ "scorer_files": {
+  "docs/drafts/word-role-flip/bar_sanity_spec_f2_identity.py": "584c8e0130a187d531bb0880d7b76baab8ae2a638c869d2394f661d728081bbc",
+  "research/runners/iw1_default_identity.py": "968e44f80363d369eb77ff87a76fe2f357c516412c62190f3b267251649265d4",
+  "research/runners/iw2_default_identity.py": "d757efe2e267ef0befc0d572fda1841a3624f161c6f2efd8cbfffbae1391d055"
+ },
+ "scorer_sha256": "1a80de8506f28a9bcab2e453a70f82bcc84bc18fac82de15573e2de099195085",
+ "seed": 0,
+ "spec": "docs/drafts/word-role-flip/bar_sanity_spec_f2_identity.py",
+ "spec_sha256": "584c8e0130a187d531bb0880d7b76baab8ae2a638c869d2394f661d728081bbc",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 0.3
+}
