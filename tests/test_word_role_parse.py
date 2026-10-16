@@ -283,7 +283,7 @@ def test_row_module_selftest_and_shape():
     from research.runners.lbf_rows import word_role_parse as R
     st = R.selftest()
     assert st["ok"], st["checks"]
-    assert R.REQUIRED_ENV == {"BRAIN_NEURAL_SELFID": "1", "BRAIN_WORD_ROLE_PARSE": "1"}
+    assert not hasattr(R, "REQUIRED_ENV")  # REQUIRED_ENV lifted at the flip: the row joins at the default
     assert [t[1] for t in R.EXTRA_TURNS] == ["what do you usually use?", "what do you usually drink?"]
     assert set(R.EXTRA_LESIONS) == {"word-role-selfid", "word-role-nofact-ctl"}
     assert all(v["flag"] == "BRAIN_WORD_ROLE_LESION" for v in R.EXTRA_LESIONS.values())
@@ -306,7 +306,7 @@ def test_row_expectations():
     assert R.expectation_holds("word-role-selfid", None, None)["held"] is False      # never raises
 
 
-def test_row_modules_register_when_env_is_set(monkeypatch):
+def test_row_modules_register_with_and_without_the_flags(monkeypatch):
     from research.runners import lbf_rows
     from research.runners.lbf_rows import word_role_parse as R
     monkeypatch.setenv("BRAIN_NEURAL_SELFID", "1")
@@ -318,7 +318,9 @@ def test_row_modules_register_when_env_is_set(monkeypatch):
     monkeypatch.delenv("BRAIN_WORD_ROLE_PARSE")
     lesions2, probes2 = {}, []
     rep2 = lbf_rows.merge_lbf_rows(lesions2, probes2, _mods_override=[R])
-    assert not lesions2 and not probes2 and rep2["parked"]            # opt-in: parked without the flags
+    # REQUIRED_ENV lifted at the flip: the row joins at the default, nothing parked
+    assert set(rep2["keys_added"]) == {"word-role-selfid", "word-role-nofact-ctl"}
+    assert not rep2["parked"]
 
 
 # ── the organ ──────────────────────────────────────────────────────────────────────────────────────────────────────

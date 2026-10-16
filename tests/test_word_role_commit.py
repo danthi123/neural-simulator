@@ -215,7 +215,7 @@ def test_row_module_selftest_and_shape():
     assert set(R.EXTRA_LESIONS) == {"word-role-commit-selfid", "word-role-commit-nofact-ctl"}
 
 
-def test_row_modules_register_only_with_the_commit_flag(monkeypatch):
+def test_row_modules_register_with_and_without_the_commit_flag(monkeypatch):
     from research.runners import lbf_rows
     from research.runners.lbf_rows import word_role_commit as R
     for k in ("BRAIN_NEURAL_SELFID", "BRAIN_WORD_ROLE_PARSE", "BRAIN_WORD_ROLE_COMMIT"):
@@ -225,8 +225,10 @@ def test_row_modules_register_only_with_the_commit_flag(monkeypatch):
     assert set(rep["keys_added"]) == {"word-role-commit-selfid", "word-role-commit-nofact-ctl"}
     monkeypatch.delenv("BRAIN_WORD_ROLE_COMMIT")
     lesions2, probes2 = {}, []
-    lbf_rows.merge_lbf_rows(lesions2, probes2, _mods_override=[R])
-    assert not lesions2 and not probes2
+    rep2 = lbf_rows.merge_lbf_rows(lesions2, probes2, _mods_override=[R])
+    # REQUIRED_ENV lifted at the flip: the row joins at the default, nothing parked
+    assert set(rep2["keys_added"]) == {"word-role-commit-selfid", "word-role-commit-nofact-ctl"}
+    assert not rep2["parked"]
 
 
 def test_scorer_packet_matches_the_chat_flags():

@@ -32,7 +32,7 @@ from __future__ import annotations
 from tools.lab import lever
 
 # Opt-in until a flip: the rows join the headline set only by a later packet.
-REQUIRED_ENV = {"BRAIN_NEURAL_SELFID": "1", "BRAIN_WORD_ROLE_PARSE": "1", "BRAIN_WORD_ROLE_COMMIT": "1"}
+# REQUIRED_ENV lifted by the iw2 flip (tools/integration_wave2_flip.py): REQUIRED_ENV = {"BRAIN_NEURAL_SELFID": "1", "BRAIN_WORD_ROLE_PARSE": "1", "BRAIN_WORD_ROLE_COMMIT": "1"}
 
 EXTRA_TURNS = [
     ("s2wc_use", "what do you usually use?", "s2wc", True, None, False),
@@ -111,8 +111,7 @@ def selftest() -> dict:
                                            for r in EXTRA_PROBES),
         "lesion is the commit-stage cut": all(v["flag"] == "BRAIN_WORD_ROLE_COMMIT_LESION"
                                               and v["kind"] == "neural-lesion" for v in EXTRA_LESIONS.values()),
-        "opt-in by the selfid + word-role + commit flags": REQUIRED_ENV == {
-            "BRAIN_NEURAL_SELFID": "1", "BRAIN_WORD_ROLE_PARSE": "1", "BRAIN_WORD_ROLE_COMMIT": "1"},
+        "row is default-on (REQUIRED_ENV lifted at the flip)": "REQUIRED_ENV" not in globals(),
         "the lesion flag resolves in the chat source": "BRAIN_WORD_ROLE_COMMIT_LESION" in text,
         "the control is the only EXPECT row": set(EXPECT) == {"word-role-commit-nofact-ctl"},
     }
