@@ -1,0 +1,34 @@
+{
+ "run_id": "1792110566-3900076",
+ "runner": "research/runners/emotion_category_dev.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/emocat-flip/research/runners/emotion_category_dev.py",
+  "--flip-check",
+  "research/findings/raw/_s2_c4_build/handler/on",
+  "research/findings/raw/_s2_c4_build/handler/off",
+  "--seeds",
+  "1,2,3,4,5,6,7,8",
+  "--out",
+  "research/findings/raw/_s2_c4_build/handler/flip_check.json"
+ ],
+ "git_sha": "69511f9cd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T20:29:26",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 136980.3,
+ "corpus_check_query": "BG live seam latch read not threshold-invariant (G4)",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_s2_c4_build/handler/flip_check.json"
+}

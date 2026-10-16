@@ -3626,9 +3626,11 @@ def _brain_vocab(chat) -> set:
 
 # EMOTION-CATEGORY channels of the affect ladder (Stage-2 C4, packet s2-c4-build, docs/drafts/stage2-c4-build/PLAN.md):
 # the feel read-out names the channel the spiking commit latched (research/runners/emotion_category_organ.py).
-# DEFAULT OFF until the dev battery, the handler dev check and the FLIP-HURTS-ANSWERS check have passed.
-# `BRAIN_EMOTION_CATEGORY` set and non-empty overrides the default either way.
-_EMOTION_CATEGORY_DEFAULT_ON = False
+# DEFAULT ON since 2026-10-15: the dev battery, the handler dev check (C4 PASS 8/8 dev seeds through the live handler,
+# research/findings/raw/_s2_c4_build/handler/aggregate_on.json) and the flip check (no FLIP-HURTS-ANSWERS, no
+# FLIP-CHANGES-NONFEEL; flip_check.json) passed. Finding: research/findings/2026-10-15-emotion-category-default-on.md.
+# `BRAIN_EMOTION_CATEGORY` set and non-empty overrides the default either way (=0 is the byte-identical escape).
+_EMOTION_CATEGORY_DEFAULT_ON = True
 
 
 def _emotion_category_on() -> bool:
