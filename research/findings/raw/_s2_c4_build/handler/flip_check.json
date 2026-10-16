@@ -1,0 +1,158 @@
+{
+ "pairs": {
+  "s1/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s2/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s3/ask__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 7,
+   "answered_off": 7,
+   "n": 19
+  },
+  "s3/conv__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 7,
+   "answered_off": 7,
+   "n": 11
+  },
+  "s3/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s3/infer__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 9,
+   "answered_off": 9,
+   "n": 10
+  },
+  "s3/inner__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [
+    "p_private"
+   ],
+   "answered_on": 9,
+   "answered_off": 9,
+   "n": 10
+  },
+  "s4/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s5/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s6/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s7/ask__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 7,
+   "answered_off": 7,
+   "n": 19
+  },
+  "s7/conv__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 7,
+   "answered_off": 7,
+   "n": 11
+  },
+  "s7/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  },
+  "s7/infer__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 9,
+   "answered_off": 9,
+   "n": 10
+  },
+  "s7/inner__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [
+    "p_private"
+   ],
+   "answered_on": 9,
+   "answered_off": 9,
+   "n": 10
+  },
+  "s8/emo__intact_a.json": {
+   "nonfeel_differ": [],
+   "feel_bad": [],
+   "answered_on": 5,
+   "answered_off": 5,
+   "n": 13
+  }
+ },
+ "flags": [
+  "FEEL-NOT-APPEND-ONLY"
+ ],
+ "unmeasured": [
+  "s1/emo__intact_b.json",
+  "s1/emo__lesion_affect.json",
+  "s1/emo__lesion_affect.rep0.json",
+  "s1/emo__permuted.json",
+  "s2/emo__intact_b.json",
+  "s2/emo__lesion_affect.json",
+  "s2/emo__lesion_affect.rep0.json",
+  "s2/emo__permuted.json",
+  "s3/emo__intact_b.json",
+  "s3/emo__lesion_affect.json",
+  "s3/emo__lesion_affect.rep0.json",
+  "s3/emo__permuted.json",
+  "s4/emo__intact_b.json",
+  "s4/emo__lesion_affect.json",
+  "s4/emo__lesion_affect.rep0.json",
+  "s4/emo__permuted.json",
+  "s5/emo__intact_b.json",
+  "s5/emo__lesion_affect.json",
+  "s5/emo__lesion_affect.rep0.json",
+  "s5/emo__permuted.json",
+  "s6/emo__intact_b.json",
+  "s6/emo__lesion_affect.json",
+  "s6/emo__lesion_affect.rep0.json",
+  "s6/emo__permuted.json",
+  "s7/emo__intact_b.json",
+  "s7/emo__lesion_affect.json",
+  "s7/emo__lesion_affect.rep0.json",
+  "s7/emo__permuted.json",
+  "s8/emo__intact_b.json",
+  "s8/emo__lesion_affect.json",
+  "s8/emo__lesion_affect.rep0.json",
+  "s8/emo__permuted.json"
+ ],
+ "n_pairs": 16
+}

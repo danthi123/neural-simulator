@@ -1,0 +1,31 @@
+{
+ "run_id": "1792109246-129563",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/stage2-exit-gate/research/runners/stage2_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_s2_c4_build/handler/on",
+  "--seeds",
+  "1,2,3,4,5,6,7,8",
+  "--out",
+  "research/findings/raw/_s2_c4_build/handler/aggregate_on.json"
+ ],
+ "git_sha": "1661e4cf1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T20:07:26",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 389684.6,
+ "corpus_check_query": "emerge60 Broca producer console demo re-queue: what does the existing record say",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_s2_c4_build/handler/aggregate_on.json"
+}
