@@ -88,8 +88,9 @@ What survived:
 - **Engagement.** Every counted in-process lesion recorded calls: inherit_pathway 2, recruit 21, recall 4. The
   episodic and affect lesions are traced as lesioned. The C4 permuted arm has n_words 24 and a scrambled |r| of at
   most 0.035. C1's permuted arm flips the answer to `bug` on 6/6, which rules out a frequency shortcut.
-- **Margins.** C4 r is 0.805-0.836, at least 0.255 above the 0.55 bar. C1's worm rate is 0.047-0.088 against a 0.02
-  floor, with the competitor at 0. C3's apical cue is at least 0.556 against 0.20. No single seed carries a
+- **Margins** (derived by the data skeptic from the per-seed shards `research/findings/raw/_stage1_exit/gate_a2/s*/*.json`):
+  <!--derived--> C4 r is 0.805-0.836, at least 0.255 above the 0.55 bar. C1's worm rate is 0.047-0.088 against a 0.02
+  <!--derived--> floor, with the competitor at 0. C3's apical cue is at least 0.556 against 0.20. No single seed carries a
   criterion.
 - **Where-ran.** aws 180 / pool 19 / workstation 17. The learned valence map is git-tracked and loaded on every
   host, and the cross-host nulls match, so validity does not depend on host. Seed 42 is the only non-AWS seed, so
