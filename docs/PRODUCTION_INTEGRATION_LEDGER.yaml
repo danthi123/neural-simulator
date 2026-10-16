@@ -107,7 +107,8 @@ headline:
   # facilitation variable on an existing projection, and an abstain branch on the counted opponent read). Evidence:
   # _lbf_fix_episodic_store/verdict.json, _pmem_facilitation.json, finding
   # 2026-09-22-source-provenance-abstain-at-tie-load-bearing-6-6.md, and the allfixes2 aggregate.
-  total_faculties: 70   # == the number of `rows` below (69->70 2026-10-11: +1 for the Stage-1 C1 category-inherit
+  total_faculties: 71   # == the number of `rows` below (70->71 2026-10-15: +1 for the Stage-2 C4 emotion-category
+  # flip, default-ON per docs/drafts/stage2-c4-build/HANDOFF.md section 5). Prior: 69->70 2026-10-11: +1 for the Stage-1 C1 category-inherit
   # flip (RULING c1-flip-go): the recall-miss organ joins the headline registry as `category-inherit`, default-ON,
   # numpy Hebbian organ so no default_on_spiking bump; see its row's flip markers). 64->66 2026-09-05: +2 rows for the rank-16
   # da-write-gain-spiking and rank-10 curiosity-graded-novelty production-flips, neither of which had a ledger
@@ -1425,3 +1426,23 @@ rows:
       file: research/runners/spiking_qroute_selection_organ.py
       symbol: "def spiking_qroute_enabled"
     evidence: "integrated no-regression battery all_pass=True 0/38 regress (research/findings/raw/_regression_battery/battery_BRAIN_SPIKING_QROUTE.json); focused 6-seed GO; finding 2026-09-16-wiring-flips-novelty-anaphor-qroute-DEFAULT-ON-integrated-no-regression-GO.md"
+
+  - key: emotion-category
+    faculty: "DISCRETE EMOTION CATEGORY on the feel read-out (Stage-2 C4): four appraisal channels of the affect
+      ladder (joy / fear / anger / sadness) race and a spiking commit latches one; the feel reply names the latched
+      channel as a functional read ('The emotion channel that latched on my affect ladder is fear.'), never a claim
+      of felt experience. Separates fear from anger, which the signed scalar ladder reads identically."
+    de_risked: YES              # dev battery + handler dev check through the live /api/brain-chat handler: C4 PASS 8/8 dev seeds (research/findings/raw/_s2_c4_build/handler/aggregate_on.json)
+    wired: YES                  # webapp/server.py _emotion_category_on -> research/runners/emotion_category_organ.py (the feel read-out hook)
+    on_by_default: YES          # FLIPPED 2026-10-15 per docs/drafts/stage2-c4-build/HANDOFF.md section 5 (Claude verify-go re-scored the aggregate identically)
+    retire_status: "ADDITIVE"   # no host decision of the category existed before; the category is chosen by the spiking commit. The sign/arousal feel text stays the production feel_readout template (rendering).
+    default_anchor:
+      - file: webapp/server.py
+        assign: _EMOTION_CATEGORY_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
+    scaffold_retired: NO
+    host_scaffold_in_default: "(none for the category choice) -- the feel sentence around it is the production feel_readout template; BRAIN_EMOTION_CATEGORY=0 is the byte-identical escape."
+    lesion_note: "LESION-LOAD-BEARING at dev (8/8 seeds): BRAIN_AFFECT_LESION=1 (affect_out clamped to 0) changes the NAMED category on every seed, reproduced against its .rep0 repeat; the permuted-exposure arm names the swapped categories 8/8; null clean 8/8."
+    evidence: "research/findings/raw/_s2_c4_build/handler/aggregate_on.json (emo C4 PASS 8/8, lesion 8/8, reproduced 8/8, permuted 8/8); research/findings/raw/_s2_c4_build/handler/flip_check.json (no FLIP-HURTS-ANSWERS, no FLIP-CHANGES-NONFEEL); finding research/findings/2026-10-15-emotion-category-default-on.md. Gate-seed C4 is measured by the Stage-2 exit gate (pinned at a revision containing this flip)."

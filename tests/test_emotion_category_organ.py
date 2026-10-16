@@ -58,11 +58,12 @@ def _server_switch():
     return ns
 
 
-@pytest.mark.parametrize("v,want", [(None, False), ("", False), ("0", False), ("off", False), ("1", True),
+@pytest.mark.parametrize("v,want", [(None, True), ("", True), ("0", False), ("off", False), ("1", True),
                                     ("true", True), (" on ", True)])
-def test_flag_default_off(monkeypatch, v, want):
+def test_flag_default_on(monkeypatch, v, want):
+    """DEFAULT ON since 2026-10-15 (handler dev check C4 PASS 8/8 + flip check); BRAIN_EMOTION_CATEGORY=0 is the escape."""
     ns = _server_switch()
-    assert ns["_EMOTION_CATEGORY_DEFAULT_ON"] is False
+    assert ns["_EMOTION_CATEGORY_DEFAULT_ON"] is True
     if v is None:
         monkeypatch.delenv("BRAIN_EMOTION_CATEGORY", raising=False)
     else:
