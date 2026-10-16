@@ -8,6 +8,9 @@ scorer: tools/answer_rate.py, research/runners/iw1_default_identity.py --compare
 ---
 # word-role flip: registration text held by Claude (to be committed as research/findings/2026-10-16-word-role-flip-PREREGISTRATION.md once its bar-sanity records exist)
 
+> **PROMOTED 2026-10-16** to `research/findings/2026-10-16-word-role-flip-PREREGISTRATION.md` (with the per-row F1
+> engagement rule and the row lift, RULING `wrc-f1a-engagement`). That file is the registration; this draft is history.
+
 Written by Claude before any gate-seed run of this flip. It promotes the reviewed packet
 `docs/drafts/word-role-flip/PACKET.md` (branch `research/wrc-flip-packet`) as approved by RULINGs
 `wrc-packet-review-1014`/`1014b`, `wrc-packet-answers-1014`, `wrc-f3-1015`, `wrc-f3-verdict-1015` and
