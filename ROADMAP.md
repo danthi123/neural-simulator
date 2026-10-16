@@ -18,7 +18,7 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 clear before Stage 2 — is run in full: 216 jobs (six seeds, 36 per seed) from the main branch at `c02180f2c`,
 split between the local pool (seed 42) and two AWS nodes (the other seeds). All four primary criteria are met on
 6 of 6 seeds each: category inheritance (C1), word learning (C2), remembered lived events (C3) and held-out
-feeling words (C4). Every lesion arm changed the reply on 6 of 6 and reproduced; the shuffled-exposure control
+feeling words (C4). Every counted lesion arm changed the reply on 6 of 6 and reproduced (caveat 1 says how); the shuffled-exposure control
 was tracked on 6 of 6. Claude's verify-go re-score is exact and two adversarial reviews survived
 (`research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`, merge `e114828f1`). The two diagnostics
 (`cat_told`, `val_novel`) read 0/6 and are registered in advance as not counted. Next: the word-role flip (F3

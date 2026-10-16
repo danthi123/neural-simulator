@@ -17,16 +17,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 **Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
 #1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
-**Frontier:** **Stage-1 attempt 2 — verdict registered and Claude-verified (2026-10-16).** The verdict, its
+**Frontier:** **Stage 1 PASSED 2026-10-16 (attempt 2): C1-C4 each 6/6, Claude-verified, with the four caveats listed below (never cite it without them).** The verdict, its
 numbers and its four caveats live verbatim in `research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`
 (verify-go + two adversarial reviews survived, merge `e114828f1`; RULING `s1-verified-1016`: board #244 closed,
 milestone #264 added). All four primary criteria are covered by that finding at 6/6 each; the diagnostics
 `cat_told` and `val_novel` read 0/6 and are prereg-frozen as not counted. Per RULING `s1-next-1016`,
 priorities-1015 item (1) is done: next is (2) the word-role flip (F3 rerun at P', prereg, ASK
 [wrc-flip-prereg]), then (3) Stage 2 (same AWS split as attempt 2: file [aws-run] when its lines are emitted,
-pool for the other seeds). The one-line headline + the caveats copy for this section are Claude's to insert
-(the finding's verdict headline line is reserved for Claude by
-agent_merge_policy; ASK [s1-doc-sync]).
+pool for the other seeds). Headline inserted by Claude 2026-10-16 (ASK [roadmap-sync] answered).
 **Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-verified-1016` and
 `s1-next-1016`, then section 4 in order.
 
