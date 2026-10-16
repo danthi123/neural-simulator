@@ -1736,3 +1736,11 @@ Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside te
   AUTONOMOUS_STATE entry (post-supersession), docs/.vikunja_sync stamped. ROADMAP.md half (Stage-1 section)
   parked on branch docs/roadmap-sync-1015 via worktree under the existing [roadmap-sync] ASK. Board: #244
   closed + milestone #264 added by Claude same cycle.
+08:55: RESULT [s1-doc-sync] COMPLETE — per RULING s1-verified-1016. Landed on main e22e1e81b (GAP
+  CURRENT STATE 2026-10-16 RESUME section, insert-only + agent_merge_policy token-free, four caveats
+  verbatim; runbook [roadmap-sync] ASK; WORKLOG). Parked on branch docs/roadmap-sync-1015 @ 72226b2cd
+  (via worktree, the three Claude-reserved pieces): ROADMAP Stage-1 section, master roadmap §7 + §8,
+  AUTONOMOUS_STATE entry — all with the four caveats verbatim; Claude lands the branch + adds the GAP
+  headline line (PASS/GO words in GAP are Claude's by policy). docs/.vikunja_sync entry WRITTEN, its
+  commit held: lane-starvation gate blocks it (pool idle, driver may not waive) — it lands with the
+  next lane-ready cycle.
