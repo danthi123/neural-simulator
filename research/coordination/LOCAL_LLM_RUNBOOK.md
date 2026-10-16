@@ -1705,6 +1705,7 @@ could NOT be rerun under memcap because `tools/memcap.sh` REFUSES here (systemd 
 memcap-18 recipe needs a host where memcap works (or a longer window); no GPU/dev-seed violations (no GPU runs).
 Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside tests (packet header).
 - 2026-10-16 08:55 [roadmap-sync] INFO: CLOSED — both asks answered (merge adde67aa3, GAP headline fa19b9313, ruling roadmap-sync-answer-1016). Still held: docs/.vikunja_sync commit, lane-starvation (depth 0, no waiver), lands next lane-ready cycle.
+- 2026-10-16 08:50 [wrc-flip-prereg] ASK #8: promote the word-role-flip packet to prereg (amendments A-D; stamp bar B/F3) — bars/preregs are s2-reserved; F3 rerun IDENTICAL x2 at P' b1c11a088 (data 792dcd039). blocks: 6-seed PARSE/COMMIT gate seeds (s1-next item (2))
 
 16:25: m2 PACKET executed as the one task: all 8 items on research/one-brain-m2-fixes (tip 0938b88b8; 4 commits 2a13b1b15/1f0aff670/83f106f14/0938b88b8); test_one_brain 45/45 + test_brain_turn_lock 43/43; NEEDS [m2-fixes] filed (webapp_server heavy subset + memcap-unavailable caveat inside).
 15:5x: s2-c4-dev-now (RULING, due today) as the one task: sync BLOCKED - agent_sync_branch reached commit and the gates refused the merge on main's c5_offcurve_diag/smoke_c5a_selfinit.json (CLASS P + device-and-cost); pre-resolved the 4 add/add dev intact_a shards per RULING rev-stage2-sync-1013 (721086cb4 on research/stage2-exit-gate: f2aaabc8a copies kept + runs.jsonl); NEEDS [s2-c4-build] filed, line stopped per HANDOFF 4. Delegate 0/2.
@@ -1744,3 +1745,8 @@ Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside te
   parked pieces (ROADMAP counted-lesion wording too), GAP Frontier headline added by Claude in
   fa19b9313, four verbatim caveats verified intact; my NEEDS entry reformatted to one line per the
   ruling's format note. Loose end unchanged: docs/.vikunja_sync stamp uncommitted (lane gate, depth 0).
+08:50: ONE task = s1-next-1016 item (2): the [wrc-flip-prereg] ASK existed only as WORKLOG prose
+  (13:17 entry), never as a NEEDS line, so filed it now as ONE line, #8 — prereg promotion + bar B/F3
+  stamp are s2-reserved (Claude's); F3 rerun IDENTICAL x2 at P' already committed (792dcd039). The
+  6-seed PARSE/COMMIT gate seeds stay blocked until the prereg lands; nothing else in item (2) can
+  move this wake. docs/.vikunja_sync stamp still held (lane gate, depth 0).
