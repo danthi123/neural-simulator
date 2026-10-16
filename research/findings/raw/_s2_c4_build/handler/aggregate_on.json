@@ -1,0 +1,1747 @@
+{
+ "stage": "STAGE-2 (CHILD) exit",
+ "verdict": "UNDEFINED (INCOMPLETE): unmet: no primary shard missing (measured=184 expect=0); unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=32 expect=0); unmet: six seeds defined for every primary criterion (measured=4 expect=0)",
+ "GO": false,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": false,
+   "detail": "measured=184 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": false,
+   "detail": "measured=32 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM in every counted arm"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no errored turn and no organ error in any counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "an errored reply or a caught organ exception is an instrument failure, never an effect or a FAIL"
+  },
+  {
+   "kind": "require",
+   "name": "the grounding set (builtin_facts) recorded in every conv/inner counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": false,
+   "detail": "measured=4 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [
+  "unmet: no primary shard missing (measured=184 expect=0)",
+  "unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=32 expect=0)",
+  "unmet: six seeds defined for every primary criterion (measured=4 expect=0)"
+ ],
+ "criteria": {
+  "C1": "INCOMPLETE",
+  "C2": "INCOMPLETE",
+  "C3": "INCOMPLETE",
+  "C4": "PASS",
+  "C5": "INCOMPLETE"
+ },
+ "groups": {
+  "conv": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 8 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_mouth": 0
+   },
+   "n_reproduced": {
+    "lesion_mouth": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "infer": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 8 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_chain_route": 0
+   },
+   "n_reproduced": {
+    "lesion_chain_route": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "ask": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 8 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_reproduced": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  },
+  "emo": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 8,
+   "n_correct": 8,
+   "n_lesion_effect": {
+    "lesion_affect": 8
+   },
+   "n_reproduced": {
+    "lesion_affect": 8
+   },
+   "n_permuted_tracks": 8,
+   "sub_clauses_n_true": {
+    "sign_correct_all": 0
+   },
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.036,
+       "fear": -0.021,
+       "anger": -0.053,
+       "sadness": -0.039
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.038,
+       "anger": -0.039,
+       "sadness": 0.048
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.038,
+       "fear": -0.002,
+       "anger": -0.049,
+       "sadness": -0.037
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.038,
+       "anger": -0.037,
+       "sadness": 0.036
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.037,
+       "fear": -0.022,
+       "anger": -0.051,
+       "sadness": -0.05
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.04,
+       "anger": -0.051,
+       "sadness": 0.051
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.039,
+       "fear": -0.023,
+       "anger": -0.051,
+       "sadness": -0.051
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.039,
+       "anger": -0.051,
+       "sadness": 0.05
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.034,
+       "fear": -0.003,
+       "anger": -0.052,
+       "sadness": -0.04
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.039,
+       "anger": -0.053,
+       "sadness": 0.034
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.035,
+       "fear": -0.021,
+       "anger": -0.048,
+       "sadness": -0.048
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.037,
+       "anger": -0.049,
+       "sadness": 0.048
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.038,
+       "fear": -0.023,
+       "anger": -0.052,
+       "sadness": -0.052
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.052,
+       "anger": -0.051,
+       "sadness": 0.051
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.035,
+       "fear": -0.021,
+       "anger": -0.052,
+       "sadness": -0.053
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.052,
+       "anger": -0.053,
+       "sadness": 0.049
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    }
+   }
+  },
+  "inner": {
+   "criterion": "C5",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 8 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_reproduced": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "private_selected_by_state": 0
+   },
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "7": {
+     "seed": 7,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   }
+  }
+ },
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "missing_shards": [
+  "research/findings/raw/_s2_c4_build/handler/on/s1/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/conv__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/conv__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/conv__lesion_mouth.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/conv__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/infer__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/infer__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/infer__lesion_chain_route.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/infer__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__lesion_curiosity.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__lesion_graded.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/ask__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s1/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s2/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s3/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s4/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s5/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s6/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s7/inner__permuted.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__intact_a.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__intact_b.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__lesion_workspace.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__lesion_selfinit.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_s2_c4_build/handler/on/s8/inner__permuted.json"
+ ],
+ "bars": {
+  "ask_ratio": 2.0,
+  "ask_gap_floor": 0.6666666666666666,
+  "seeds_required": 8,
+  "emotion_categories": 4
+ },
+ "runner": "research/runners/stage2_exit_gate.py",
+ "prereg": "research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}
