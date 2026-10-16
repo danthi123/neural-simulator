@@ -1,0 +1,89 @@
+{
+ "backend": "numpy",
+ "description": "Synthetic intact/parse-lesion/commit-lesion arm records per runner -> each runner's own compare() preconditions and diff lists, filtered to the nine registered statement-form turns plus the amendment-E wr_route precondition.",
+ "failures": [],
+ "kinds": {
+  "info_unlisted_noise": "info",
+  "null_engaged_route": "null",
+  "null_leak": "null",
+  "null_missing_listed": "null",
+  "null_precondition": "null",
+  "perfect": "perfect",
+  "perfect_unlisted": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_unlisted_noise": 1000,
+  "null_engaged_route": 0,
+  "null_leak": 0,
+  "null_missing_listed": 0,
+  "null_precondition": 0,
+  "perfect": 1000,
+  "perfect_unlisted": 1000,
+  "random": 0
+ },
+ "name": "word-role-flip F4 (nine listed turns reply-identical under both lesions, wr_route never engaged)",
+ "pass_rate": {
+  "info_unlisted_noise": 1.0,
+  "null_engaged_route": 0.0,
+  "null_leak": 0.0,
+  "null_missing_listed": 0.0,
+  "null_precondition": 0.0,
+  "perfect": 1.0,
+  "perfect_unlisted": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_unlisted_noise": [
+   0.9962,
+   1.0
+  ],
+  "null_engaged_route": [
+   0.0,
+   0.0038
+  ],
+  "null_leak": [
+   0.0,
+   0.0038
+  ],
+  "null_missing_listed": [
+   0.0,
+   0.0038
+  ],
+  "null_precondition": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_unlisted": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "8da9804b29b9d9af9a68f9cfe7ebd3bc6d5c7816",
+ "scorer_files": {
+  "docs/drafts/word-role-flip/bar_sanity_spec_f4_offtarget.py": "78460e8e6d6d8da47d518312fe137e29a0a12106afdb2735be50dfea3a379f0c",
+  "research/runners/iw1_default_identity.py": "968e44f80363d369eb77ff87a76fe2f357c516412c62190f3b267251649265d4",
+  "research/runners/iw2_default_identity.py": "d757efe2e267ef0befc0d572fda1841a3624f161c6f2efd8cbfffbae1391d055"
+ },
+ "scorer_sha256": "fe5b746d99d6ba0cac0f19c31a047744b0e8edf7f8a4e0006bd69cee9ed90866",
+ "seed": 0,
+ "spec": "docs/drafts/word-role-flip/bar_sanity_spec_f4_offtarget.py",
+ "spec_sha256": "78460e8e6d6d8da47d518312fe137e29a0a12106afdb2735be50dfea3a379f0c",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 1.2
+}
