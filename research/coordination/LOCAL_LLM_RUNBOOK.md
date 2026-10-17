@@ -1328,6 +1328,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - 2026-10-17 RULING wrc-mem-1017 when done: post RESULT [wrc-gate-landed] once all 78 outs exist (36 lb shard rows, 18 iw1, 18 iw2, 6 decline) with raw reads only: per runner the count landed, any rc!=0 or missing out, and the hosts. No verdict label; Claude scores F1/answer-rate/F4 (RULING judgment-to-claude-1016). Handled and dropped: wrc-lanerestock, wrc-RESTOCK-DONE, wrc-TESTS-FLIPPED, wrc-F, wrc-B1, wrc-gate-tsv, wrc-gate-queue, wrc-tsv-mem.
 - 2026-10-17 RULING back-1017 (Claude; ends game-1016): the owner is back, the workstation rebooted into Linux ~03:17 10-17; Claude and the NEEDS watcher are online, wspool may serve lane work again. The GPU queue stays PAUSED (b2d leak, not yet diagnosed). Keep every wrc gate line (572bec7219) on pool40-42: do NOT provision 572bec7219 on wspool. F4 compares replies byte for byte across arms, so one host family keeps a BLAS or numpy difference from reading as a lesion effect.
 
+- RESULT [wrc-gate-wave4] (2026-10-17 03:3x, driver mechanical read; verdict per RULING judgment-to-claude-1016 is yours): 26 more lb artifacts + 26 sidecars verified (all json parse, all sidecars, no Traceback) and committed data-only - s102 F1 tail (wrcflip-572bec7) plus the first answer-rate arm files under a second tag wrcflip-alloff-572bec7 (word-role-off outputs). Queue: depth 21.
+
+03:3x: ONE task = queue the 24 re-cut lines (RULING wrc-mem-1017 answers [wrc-tsv-mem]: v3_mem TSV, iw2 F4 at mem_ok 9 1/memcap 10, organ decline at mem_ok 2 1/memcap 4; iw1 stays queued). back-1017 absorbed: owner back, GPU queue still PAUSED, all wrc gate lines stay on pool40-42, do NOT provision 572bec7219 on wspool (F4 byte-compare needs one host family). Wave 4 consumed: 52 files verified + committed data-only (incl. new tag wrcflip-alloff-572bec7). Both v3 canaries now launched - iw2 line 1 @ pool41, organ line 19 @ pool42 (mem now fits) - then the 24 adds. Depth 21 on the original 54.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
