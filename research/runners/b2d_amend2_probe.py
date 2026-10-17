@@ -28,8 +28,12 @@ _generate_batch, installed before the worker's counter; split per turn by the co
 The arm file records the export's .source_revision, whether its manifest verifies, the learned valence map the affect
 organ loaded (entries and sha256; the 18 A1.2 cells ran without it), the LTM bundle, and the responses. GPU only in
 use: on numpy the worker would resolve the stub renderer, which the scorer reads as class M.
+
+The arm exits with rc 4 before any brain work when the process-shared knowledge store is off (`preflight_problems`):
+it opens one conversation per candidate, and without sharing each loads its own ~5.4 GiB copy.
 """
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -39,6 +43,16 @@ import sys
 DEV_SEEDS = tuple(range(1, 9))
 GATE_SEEDS = (42, 43, 44, 100, 101, 102)
 TRACE_ENV = {"BRAIN_MOUTH_TRACE": "1"}
+
+# PREFLIGHT (2026-10-17; infra only, the arm's replies, prompts and record are unchanged). The 2026-10-14 arm at the
+# P2 export (8a969e7) never finished: that revision loads one PRIVATE copy of the imported knowledge store per
+# conversation (wikidata_100k: 78,857 one-per-fact 129-neuron SimulationBridges, ~5.4 GiB) and this probe opens one
+# conversation per candidate, so an arm held len(CANDIDATES) copies (RSS 15 -> 22 GB) inside a memcap whose MemoryHigh
+# (90% of the cap) throttled every allocation: 210,394 bridges in 12 h, three unthrottled bursts of ~270/s and the rest
+# at ~1 per 23 s (gpu_queue.log). webapp/server.py now loads ONE store per process and hands every conversation a
+# read-only view (`_SHARED_LTM_DEFAULT_ON`, 2026-10-15); an arm refuses to start without it.
+SHARED_LTM_ENV = "BRAIN_SHARED_LTM"
+PRIVATE_LTM_OK_ENV = "B2D_ALLOW_PRIVATE_LTM"   # dev escape only (measuring the old behaviour); never in a job line
 
 # The three affect rows of the mouth arm (A1.2) and their registered lesion flags (research/runners/
 # load_bearing_fraction.py FACULTY_LESIONS and research/runners/lbf_rows/live_organs.py).
@@ -71,6 +85,44 @@ CANDIDATES = (
     {"id": "c3", "question": "What is l_quipe_de_france?", "rich": True},
     {"id": "c4", "question": "Tell me about angora_turkey.", "rich": True},
 )
+
+
+def _source_constant(path, const):
+    """Value of a module-level `CONST = <literal>` in the file at `path`, parsed from source (no import, so the
+    server module is not loaded before the worker has applied the arm env). None when absent or not a literal."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            tree = ast.parse(fh.read(), filename=path)
+    except (OSError, SyntaxError):
+        return None
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == const for t in node.targets):
+            try:
+                return ast.literal_eval(node.value)
+            except ValueError:
+                return None
+    return None
+
+
+def preflight_problems(root=None, environ=None):
+    """Why this arm would hold one private knowledge-store copy per candidate conversation (empty = safe to start).
+    Reads the SOURCE of webapp/server.py (`_SHARED_LTM_DEFAULT_ON`) and the ambient BRAIN_SHARED_LTM, mirroring
+    `webapp.server._shared_ltm_on()` without importing it. The arm env (`ARMS`) never touches either."""
+    root = root or os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    env = os.environ if environ is None else environ
+    n = len(CANDIDATES)
+    tail = (" (each of the %d candidate conversations would load its own ~5.4 GiB wikidata_100k copy: ~%d GiB per arm,"
+            " and the 2026-10-14 arm at 8a969e7 crawled for 12 h on exactly this)" % (n, round(5.4 * n)))
+    flag = (env.get(SHARED_LTM_ENV) or "").strip()
+    if flag:
+        if flag.lower() not in ("1", "true", "on", "yes"):
+            return ["%s=%r turns the process-shared knowledge store off%s" % (SHARED_LTM_ENV, flag, tail)]
+        return []
+    const = _source_constant(os.path.join(root, "webapp", "server.py"), "_SHARED_LTM_DEFAULT_ON")
+    if const is not True:
+        return ["webapp/server.py has no `_SHARED_LTM_DEFAULT_ON = True` (read %r): the shared knowledge store is "
+                "absent or off in this revision%s" % (const, tail)]
+    return []
 
 
 def mood_label(cid):
@@ -202,6 +254,11 @@ def main(argv=None):
     ap.add_argument("--pin", required=True, help="the 40-hex revision this export is (recorded; the scorer checks it)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
+    problems = preflight_problems()
+    if problems and os.environ.get(PRIVATE_LTM_OK_ENV, "").strip().lower() not in ("1", "true", "on", "yes"):
+        for p in problems:
+            print("[b2d-amend2] REFUSED: " + p, file=sys.stderr, flush=True)
+        return 4
     os.environ["BRAIN_CHAT_SEED"] = str(a.seed)   # the substrate seed (webapp.server._brain_chat_seed)
     import research.runners.onebrain_regression_battery as B
     table, order = turn_table(B._TURN_BY_LABEL["emo"][1])
