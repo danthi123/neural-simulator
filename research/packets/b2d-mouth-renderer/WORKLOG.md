@@ -297,3 +297,9 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   numbers untouched; Operational notes appended) + the four registered artifacts committed on this branch.
   NEEDS-CLAUDE #2 (review + merge) filed as a RESULT on the runbook; push skipped per §3 / RULING a2-no-push
   (branch @ sha named in the RESULT instead); board card sync = Claude via that RESULT line.
+- 2026-10-17: P2 re-pinned per b2d-p2-repin-1017 -> 74460d594598a9367e7935fc7b5cc2efc2b0a13b (S main with
+  Amendment 2, shared-LTM default-on, memcap without MemoryHigh, and the b2d-leak-1017 probe guard), per
+  RULING b2d-dev-landed-1017: all 30 A2 dev arms finished DONE(rc=0) on the W GPU queue by 09:43 (12 min
+  each, peak 11.2 GB; smoke arm meets every A2.4 condition) and landed under
+  research/findings/raw/_b2d_amend2/74460d5/dev. Branch synced to main 865f52943 (merge f3601fb28) before
+  the pin write; _provenance/runs.jsonl drift restored first per RULING T1-provision.
