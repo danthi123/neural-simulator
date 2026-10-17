@@ -168,3 +168,39 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   govern those 4 names; main's 11 untracked files stay put for the future merge.
 
 - 2026-10-09 09:05 EDT — T14 Start met (11 files in dev/s7, landed Oct 6); [stage2-dev] INFO filed on main.
+
+## 2026-10-13 (Claude) AMENDMENT-A4: C3 order confound + unacquired moat; C1/C3 named gaps (branch claude-build/stage2-a4)
+
+- Implements Claude's 2026-10-13 ruling on NEEDS-CLAUDE #15-#17, outcome-blind (no gate data; dev 7 only).
+  `docs/drafts/stage2-exit/AMENDMENT-A4.md`. C3 `ask`: a COUNTED `reversed` arm (the probe blocks in reverse
+  order after the same teach block, its own session; every C3 clause must hold in both orders); a taught moat
+  whose teach turn was not acquired is UNDEFINED (never counted as novel; none acquired -> the seed is UNDEFINED);
+  an informational `da_lesion` arm (`BRAIN_CURIOSITY_DA_LESION=1`). A FAIL of C1 / C3 prints a `Named gaps`
+  line. #15: resolved by the idle-replay organ (main `8c10af86a`), no C5 change.
+- Gate jobs 186 -> 198. Prereg byte-identical (PREREG_SHA 24dac499e). GATE_SHA 43763e637 is VOID for the gate
+  (no `reversed` arm there): re-pin after merging main, at a revision with AMENDMENT-A4.md and 8c10af86a.
+- Bar-sanity `_A4` records for all six specs (n=1000) replace the `_A3` ones; tests:
+  `tests/test_stage2_exit_gate.py` + the new `tests/test_stage2_exit_gate_a4.py`.
+- 2026-10-13 (Claude) dev-7 smoke `ask/reversed` (`dev/s7/ask__reversed.json`, workstation numpy, memcap 9, at the
+  A4 runner): valid (19 turns, source tiny-demo +LTM, hash ok, corpus ok, no organ error), peak RSS 6.5 GB, 751 s.
+  Mirror image of the registered order: u_toad_1/2 ask, then DA 0.046 / threshold 59.8 Hz silences lp_ibex_1 and
+  the whole discrimination block (gap 0, moat 0 of 2, m_goat undefined); lp_unlearnable True for the DA-history
+  reason, not learning progress. Governs nothing (prereg section 11).
+- 2026-10-13 (Claude, A4 review fix 9) provenance of `dev/s7/ask__reversed.json`: it was produced from an UNCOMMITTED
+  tree. The run (751 s wall) started before the A4 commit `1c934ae9c` existed, and the shard was committed in
+  `1dcdc2f57` 27 s after that commit. It was run with `SIM_NO_PROVENANCE=1`, so it has no `.prov.json` sidecar and no
+  revision pins its code. It is dev data and governs nothing (prereg section 11). It re-scores unchanged under the
+  review fixes (valid, including the new turn-table check).
+- 2026-10-13 (Claude) A4 review fixes (two reviewers of `1c934ae9c`: one MERGE, one FIX_FIRST, no blocker; all ten
+  applied, `AMENDMENT-A4.md` "Review record"). (1) A teach is acquired iff the reply did not abstain AND the taught
+  triple is in `supporting_facts` together with `recalled_svo`, which closes the "stored, echoed second, asks anyway"
+  backdoor (new null `null_stored_echoed_differently_asks`: 1.000 at `1c934ae9c`, 0.000 now). (2) Control arms
+  (permuted, lesion_graded, .rep0) take the moat set from `intact_a` only; the e2e permuted test is restored (FAIL "not
+  exposure-driven"). (3) No acquired moat makes the seed UNDEFINED only if every other correctness clause holds;
+  otherwise the seed is incorrect and the moat rate is reported undefined. (4) `arm_validity` requires each counted arm's
+  turn table to equal `turns_for(group, seed, arm)` (all 16 dev-7 shards pass). (5) `da_lesion` reports `lesion_held`;
+  if not held it is NOT HELD, never a lesion read. (6) The C3 line is now "C3 known architecture gaps (not the measured
+  cause)", printed beside the da_lesion read; C1's `Named gaps` stays. (7) The habituation residual and the accepted
+  scope are stated (informational `info_topic_habituation`). (8) Lane: +12 jobs ~3.0 h workstation / ~4.3 h pool;
+  gate ~73 job-hours. (10) A test pushes a C1 FAIL through aggregate + report. The six `_A4` bar-sanity records were
+  regenerated at the amended scorer. Tests: 49 passed (28 + 21); SELFTEST OK.

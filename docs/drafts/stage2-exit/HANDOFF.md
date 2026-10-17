@@ -29,6 +29,14 @@ per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end an
   must differ from the intact one). It lives beside the prereg, which stays byte-identical, so `PREREG_SHA` does not
   move. `GATE_SHA` must be pinned at a revision that contains the amendment, the amended runner and its tests
   (`git cat-file -e $SHA:docs/drafts/stage2-exit/AMENDMENT-A3.md`). No dev line is re-run.
+- **Amendment A4 (Claude, 2026-10-13; `docs/drafts/stage2-exit/AMENDMENT-A4.md`)** rules NEEDS-CLAUDE #15-#17. C3 `ask`
+  gains a COUNTED `reversed` arm (the probe blocks in reverse order; every C3 clause must hold in both orders) and an
+  informational `da_lesion` arm (reported with `lesion_held`), and a taught moat whose teach turn was not acquired is
+  UNDEFINED (a seed only when that decides it). Every counted arm must have run its own registered turn table. A C1 FAIL
+  prints a `Named gaps` line; a C3 FAIL prints a `C3 known architecture gaps (not the measured cause)` line beside the
+  da_lesion read. The gate is now **198** jobs (6 seeds x 33 arms). **The GATE_SHA pinned on 2026-10-06
+  (`43763e637`) is void for the gate**: it has no `reversed` arm. Re-pin (Hermes, under a Claude ruling) only at a revision that contains
+  AMENDMENT-A4.md AND main at or after `8c10af86a` (idle replay ON, the C5 private voice); step 3 checks both.
 - `docs/drafts/stage2-exit/PREREG_SHA` holds the LAST commit that touched the prereg (the original plus its dated
   pre-dispatch amendments; today `24dac499e`). `docs/drafts/stage2-exit/GATE_SHA` holds the revision the gate runs
   at; it is written by Claude only after the dev-seed-7 smoke has been read. **GATE_SHA does not exist yet.** If
@@ -50,11 +58,11 @@ inside that window and after the Stage-1 result has been scored (so the two stag
 
 - Do NOT run steps 3-5 before **2026-11-01**, unless a Claude inspection note in this file's WORKLOG says otherwise.
 - Run steps 3-5 (checks, provisioning, queueing) between **2026-11-03 and 2026-11-10**; target **2026-11-05**. The
-  gate needs ~69 job-hours (prereg section 10 + A2): on pool41+pool42 alone, one gate job per node, that is ~35 h of
+  gate needs ~73 job-hours (prereg section 10 + A2 + A4): on pool41+pool42 alone, one gate job per node, that is ~37 h of
   wall time AFTER the lines are reached (and they wait behind every smaller line: section 5's ETA), so a queue that is more than ~150 lines deep on the day you queue means the AWS decision
   (NEEDS-CLAUDE #13) must be raised the same day, with the pool lines queued anyway.
 - If on 2026-11-10 the gate is still not queued for any reason, queue it that day and add NEEDS-CLAUDE #13.
-- Scoring (step 7) happens as soon as the 186 shards have landed; the finding is written the same day, no later
+- Scoring (step 7) happens as soon as the 198 shards have landed (186 before amendment A4); the finding is written the same day, no later
   than **2026-11-21**. If the shards are incomplete on 11-21, score anyway (the verdict is UNDEFINED (INCOMPLETE))
   and write the finding as such; that is the calendar attempt.
 
@@ -119,7 +127,7 @@ for name, d in sh.items():
         print("  %-16s %-42s -> %r abst=%s svo=%s der=%s" % (t["label"], t["message"][:42], str(x.get("answer"))[:150],
               x.get("abstained"), x.get("recalled_svo"), x.get("derived")))
     base = arm.split(".rep")[0]
-    if base in ("intact_a", "intact_b", "permuted") or base in SG.GROUPS[g]["informational"]:
+    if base in ("intact_a", "intact_b", "permuted") or base in SG.order_arms(g) or base in SG.GROUPS[g]["informational"]:
         s = SG.SCORERS[g](d, permuted=(base == "permuted"))
         print("  SCORE", {k: v for k, v in s.items() if not isinstance(v, (list, dict)) or k in ("named", "curiosity_internal", "chain_internal", "chain_internal_vole")})
     if base in SG.GROUPS[g]["lesions"] and (g + "__intact_a") in sh:
@@ -147,10 +155,12 @@ dated section-12 amendment in its own commit; then pin `git rev-parse HEAD > doc
 ```bash
 cd $W
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --selftest | tail -1                    # must print: SELFTEST OK
-SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py | tail -1   # must print: 22 passed
+SIM_NO_PROVENANCE=1 $PY -m pytest -q -p no:cacheprovider tests/test_stage2_exit_gate.py tests/test_stage2_exit_gate_a4.py | tail -1   # must print: 49 passed
 git checkout -- research/findings/raw/_provenance/runs.jsonl 2>/dev/null       # every runner appends to this shared log; never commit it
 git status --short | grep -v "^??" | wc -l                                      # must print 0 (nothing uncommitted)
 SHA=$(cat docs/drafts/stage2-exit/GATE_SHA); git merge-base --is-ancestor $SHA HEAD && echo GATE-SHA-OK
+git cat-file -e $SHA:docs/drafts/stage2-exit/AMENDMENT-A4.md && echo A4-IN-GATE-SHA          # amendment A4: if silent, take the NEEDS-MERGE path below (it re-pins at HEAD), then re-run this block
+git merge-base --is-ancestor 8c10af86a $SHA && echo IDLE-REPLAY-IN-GATE-SHA                       # A4.5 (C5 private voice): if silent, the same; still silent after a re-pin: STOP (NEEDS-CLAUDE #2)
 git diff $(cat docs/drafts/stage2-exit/PREREG_SHA) $SHA -- research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md | wc -l   # must print 0
 test "$(git log -1 --format=%H $SHA -- research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md)" = "$(cat docs/drafts/stage2-exit/PREREG_SHA)" && echo PREREG-PIN-OK
 git fetch origin main && git merge-base --is-ancestor origin/main $SHA && echo CONTAINS-MAIN || echo NEEDS-MERGE
@@ -183,10 +193,10 @@ done
   shard from it is UNDEFINED by the aggregate's precondition.
 - If pool40 is back (`ssh -o BatchMode=yes pool40 true` succeeds), add it to both commands.
 
-## 5. Queue the 186 gate jobs (one per seed x group x arm)
+## 5. Queue the 198 gate jobs (one per seed x group x arm; 186 before amendment A4)
 
 ```bash
-cd $W && SHA=$(cat docs/drafts/stage2-exit/GATE_SHA) && SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --emit-pool-jobs $SHA --max-age-h 240 > /home/dant123/Projects/sim/research/queue/stage2_exit_gate_jobs.tsv && wc -l /home/dant123/Projects/sim/research/queue/stage2_exit_gate_jobs.tsv   # must print 186
+cd $W && SHA=$(cat docs/drafts/stage2-exit/GATE_SHA) && SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --emit-pool-jobs $SHA --max-age-h 240 > /home/dant123/Projects/sim/research/queue/stage2_exit_gate_jobs.tsv && wc -l /home/dant123/Projects/sim/research/queue/stage2_exit_gate_jobs.tsv   # must print 198
 cd $P && bash -c 'while IFS=$'"'"'\t'"'"' read -r cmd why; do bash tools/pool_queue.sh add "$cmd" --checked "$why" </dev/null || echo "ADD-FAILED: $cmd"; done < research/queue/stage2_exit_gate_jobs.tsv'
 bash tools/pool_queue.sh list | head -3
 ```
@@ -194,10 +204,10 @@ bash tools/pool_queue.sh list | head -3
 Every line already carries `mem_gb=9 max_age_h=240` in its `--checked` reason (the dispatcher skips a line older
 than 12 h without the token; 240 h is the cap). Any `ADD-FAILED`: re-run the loop once for those lines only (the
 duplicate guard refuses lines already queued). Still failing: STOP (NEEDS-CLAUDE #4). Append to the WORKLOG: the
-SHA, the queue time, the queue depth before and after, "186 jobs queued".
+SHA, the queue time, the queue depth before and after, "198 jobs queued".
 
-**ETA.** Prereg section 10 + amendment A2: about 69 job-hours; each job peaks at ~6.3-8.1 GB RSS (`mem_gb=9`,
-memcap 10), so pool41/pool42 (15 GB each) run ONE gate job each at a time: ~35 h of wall time once the lines are
+**ETA.** Prereg section 10 + amendments A2 and A4: about 73 job-hours; each job peaks at ~6.3-8.1 GB RSS (`mem_gb=9`,
+memcap 10), so pool41/pool42 (15 GB each) run ONE gate job each at a time: ~37 h of wall time once the lines are
 reached. The dispatcher is first-fit: while smaller (`mem_gb=2`) lines are queued, a node's budget never reaches
 9 GB and these lines wait behind them (2026-09-30: 97 such lines held every 7 GB line); count them in the depth. Record the start time; do not re-queue a
 running job (check `ssh <node> 'ps aux | grep [s]tage2_exit_gate'` first). If the queue depth before your add is
@@ -210,10 +220,10 @@ Results sync back into `$P/research/findings/raw/_stage2_exit/gate/` (`pool-sync
 `bash tools/pool_sync.sh` by hand).
 
 ```bash
-find $P/research/findings/raw/_stage2_exit/gate -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'aggregate.json' | wc -l   # 186 when complete
+find $P/research/findings/raw/_stage2_exit/gate -name '*.json' ! -name '*.prov.json' ! -name '*.part*' ! -name 'aggregate.json' | wc -l   # 198 when complete
 ```
 
-When the count stops rising for 6 h below 186: run step 7's aggregate (its `missing_shards` list names them),
+When the count stops rising for 6 h below 198: run step 7's aggregate (its `missing_shards` list names them),
 re-queue exactly those lines from `research/queue/stage2_exit_gate_jobs.tsv` ONCE (grep the line by its `--group`,
 `--arm` and `--seed`), wait again. Still missing after that: score anyway (the verdict will be UNDEFINED
 (INCOMPLETE)) and add NEEDS-CLAUDE #5.
@@ -263,6 +273,8 @@ Stage line (first line of the report):
 | `UNDEFINED (INCOMPLETE)` naming `lesion applied` or `PYTHONHASHSEED` | finding marked UNDEFINED; NEEDS-CLAUDE #8. |
 | `UNDEFINED (INCOMPLETE)` naming `errored turn` or `organ error` | finding marked UNDEFINED; NEEDS-CLAUDE #8 (an instrument or organ crash; never read it as a lesion effect). Do not re-run. |
 | `UNDEFINED (INCOMPLETE)` naming `grounding set` | finding marked UNDEFINED; NEEDS-CLAUDE #1 (the worker did not find the session's ChatBrain). |
+| `UNDEFINED (INCOMPLETE)` naming `turn table` | finding marked UNDEFINED; NEEDS-CLAUDE #8 (an arm ran a turn table other than its registered one, e.g. a node at another revision). Do not re-run. |
+| `UNDEFINED (INCOMPLETE)` naming `taught-moat ask-rate` (`A4 (a)`) | finding marked UNDEFINED for C3 (the brain acquired no taught moat and every other C3 clause held); NEEDS-CLAUDE #16. Do not re-run. |
 
 Per-criterion sentence (copy the one matching each group's verdict; `<crit>` = C1..C5, `<group>` = its group; the
 numbers come from the report's table row and the sub-clause line):
@@ -270,14 +282,14 @@ numbers come from the report's table row and the sub-clause line):
 | verdict | sentence |
 |---|---|
 | PASS | `<crit>` (`<group>`): PASS. Correct on 6 of 6 seeds; every lesion arm changed the reply on 6 of 6 and reproduced; the permuted exposure was tracked on 6 of 6. |
-| FAIL, "capability absent" | `<crit>` (`<group>`): FAIL, capability absent on <k> of 6 seeds; sub-clauses: <copy the group's sub-clause line>. The integrated brain does not show this Stage-2 ability at production defaults; the gap named in prereg section 8 applies. |
+| FAIL, "capability absent" | `<crit>` (`<group>`): FAIL, capability absent on <k> of 6 seeds; sub-clauses: <copy the group's sub-clause line>. The integrated brain does not show this Stage-2 ability at production defaults; the gap named in prereg section 8 applies. For C1 add: "Named gaps (amendment A4): <copy the report's Named gaps line>". For C3 add: "<copy the report's `C3 known architecture gaps (not the measured cause)` line>" (never call them named gaps or the cause). |
 | FAIL, "not load-bearing" | `<crit>` (`<group>`): FAIL, not load-bearing: the reply was correct but the <lesion> arm changed it on only <k> of 6 seeds. |
 | FAIL, "permuted exposure" | `<crit>` (`<group>`): FAIL, not exposure-driven: the permuted exposure was tracked on only <k> of 6 seeds. |
 | INCOMPLETE | `<crit>` (`<group>`): UNDEFINED, <n> of 6 seeds defined (reasons in aggregate.json). |
 
 For C2 add the ownership line from the informational arms: "`infer` informational: qp_lesion conclusion intact on
-<n>/6 (the route did not need the spiking read), transitive_chat derived-moth on <n>/6." For C3 copy the per-seed
-ask-rate lines from the report verbatim; for C4 copy the per-seed discrete-emotion lines verbatim.
+<n>/6 (the route did not need the spiking read), transitive_chat derived-moth on <n>/6." For C3 (amendment A4) copy the per-seed lines with their indented reversed-order and da_lesion lines (a da_lesion line
+marked NOT HELD is an attempted lesion, never a lesion read), and the per-seed ask-rate lines from the report verbatim; for C4 copy the per-seed discrete-emotion lines verbatim.
 
 Board line (never edit the primary checkout's files; append it to the WORKLOG, Claude moves it to the board):
 `<date> Stage-2 exit gate (second integrated stage-exit attempt): <stage verdict>; C1 <v>, C2 <v>, C3 <v>, C4 <v>, C5 <v>. Finding: <path>.`
@@ -330,6 +342,7 @@ Board line (never edit the primary checkout's files; append it to the WORKLOG, C
     taught, so `private_voices_stored_fact` is False on every seed and C5 reads "capability absent" (prereg 4.5
     predicted PASS). Decide: keep the prereg's grounding (the honest reading: a fixed demo store is not the brain's
     knowledge; the named gap becomes "the idle turn selects from the brain's own store") or amend it.
+    RULED 2026-10-13 (Claude, AMENDMENT-A4.md A4.5): resolved by the idle-replay organ (default ON on main since `8c10af86a`); A3's clause stands; the gate revision must contain `8c10af86a`.
 16. (review, dev 7) C3 is order-confounded by the default-ON DA/engagement crave threshold (`BRAIN_CURIOSITY_DA`,
     2026-08-21): each low-engagement abstain lowers DA and raises the threshold, so after two asks nothing asks
     (newt, ibex_1, toad_1 all silent at novelty ~0.97). lp_learnable / lp_unlearnable then fail for a history reason,
@@ -337,10 +350,12 @@ Board line (never edit the primary checkout's files; append it to the WORKLOG, C
     acquired (role-binding abstain), so one "taught" moat was novel. Decide before any gate seed: a protocol
     amendment (e.g. the LP probes first / each block in its own session / an informational `BRAIN_CURIOSITY_DA_LESION`
     arm / condition moats on acquisition) or keep it and read the FAIL as the DA-engagement mechanism.
+    RULED 2026-10-13 (Claude, AMENDMENT-A4.md A4.1-A4.4): unacquired taught moat = UNDEFINED (the seed only when that decides it); a counted `reversed` arm (every C3 correctness clause in both orders); an informational `da_lesion` arm with `lesion_held`; a FAIL prints "global DA engagement threshold; no per-topic learning-progress signal" as known architecture gaps (not the measured cause).
 17. (review, dev 7) C1: `tell me more` returns "I don't have anything more to add" (no elaboration) and `where does
     the deer sleep` abstains at the question parse, so the prepositional sub-bar measures the wh-parse, not the frame
     inventory (the teach echo "the deer sleeps the meadow" is the frame evidence). C1 still FAILs as predicted; decide
     whether the probe wording or the named gap changes.
+    RULED 2026-10-13 (Claude, AMENDMENT-A4.md A4.4): no wording change; a C1 FAIL names the wh-locative question parse, locative frame storage and discourse elaboration.
 18. (review, dev 7; production, not this packet) the bare yes/no `does crow chase moth` is acquired as an assertion
     and reconsolidates memory (the next turn volunteers "the crow chases the moth"); and the multistep chase speaks
     its never-told terminal as a plain assertion ("the lynx chases the mite", `derived` false). Both are moat /
