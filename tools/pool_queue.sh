@@ -249,6 +249,15 @@ case "${1:-list}" in
              echo "   bash tools/pool_canary.sh run <node> '<this line>'" >&2
              exit 2
            fi
+           # SCORER PRE-FLIGHT GUARD (2026-10-16, tools/gate_preflight.py). The canary proves a gate line STARTS;
+           # three defects in one day on the word-role flip were ones only a SCORER read shows (engagement route,
+           # forced packet flags at the default, shards in dirs the scorer never reads). A gate-seed line is refused
+           # until the registered scorer has read a dev-seed run of this prereg at this revision CLEAN (or a Claude
+           # ruling ACKed a flagged read).
+           if ! PF_WHY=$(python3 "$ROOT/tools/gate_preflight.py" check --prereg "$PREREG_PATH" --revision "$GS_PINNED_REV" 2>&1); then
+             echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS]: $PF_WHY" >&2
+             exit 2
+           fi
          fi
          # POOL_NODE VALIDATION (2026-09-25 review, LOW: "pool_queue.sh add does not check a pool_node=<name>
          # against known nodes, so a typo would leave a line stuck until it goes stale"). pop_job's node

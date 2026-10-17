@@ -326,6 +326,9 @@ def main(argv=None):
     a3.add_argument("--selection", required=True)
     a3.add_argument("--out", required=True)
     a3.add_argument("--at-default", action="store_true", help="T21 F1: the packet's path is the default here")
+    a3.add_argument("--seeds", type=int, nargs="+", default=None,
+                    help="score these seeds instead of the six gate seeds (a dev-seed PRE-FLIGHT read before any gate "
+                         "line is queued, tools/gate_preflight.py; never a verdict)")
     a4 = sub.add_parser("op", help="print the selected operating point (exit 3 if none)")
     a4.add_argument("--packet", required=True, choices=sorted(PACKETS))
     a4.add_argument("--selection", required=True)
@@ -341,7 +344,8 @@ def main(argv=None):
     elif a.step == "O":
         res, code = score_O(a.packet, a.dir, a.selection, a.pin)
     else:
-        res, code = score_R(a.packet, a.tag, a.pin, a.selection, at_default=a.at_default)
+        res, code = score_R(a.packet, a.tag, a.pin, a.selection, at_default=a.at_default,
+                            **({"seeds": a.seeds} if a.seeds else {}))
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(res, f, indent=1, sort_keys=True)
