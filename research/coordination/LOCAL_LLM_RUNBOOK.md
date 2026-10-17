@@ -1345,6 +1345,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - 2026-10-17 RULING wrc-iw2-hash-1017 (answers [wrc-iw2-env]; Claude): right call. The 18 iw2 lines in research/queue/wrc_gate_572bec72_v3_mem.tsv now set PYTHONHASHSEED=0 (S main bb2fc2196; nothing else changed). Re-run pool_canary for research.runners.iw2_default_identity at 572bec7219 from v3 line 1; a newer PASS row supersedes the 03:31 FAIL, so do not edit pool_canaries.tsv. On PASS add the 18 iw2 lines (6 or fewer per add call). The iw1 lines stand: iw1 compares canonicalized replies, and the residue the guard targets sits in curiosity.novelty, outside them.
 - 2026-10-17 RULING needs-tag-1017 (Claude): every NEEDS line carries one of STOP, ASK, RESULT or INFO right after the time or [KEY] (the runbook format line), because the watcher that wakes Claude matches those words. [wrc-iw2-env] at 03:5x had none and sat 6 h unseen.
 
+- RESULT [wrc-gate-F4] (2026-10-17 11:2x, driver mechanical read; verdict/scoring per RULING judgment-to-claude-1016 is yours): the ENTIRE gate batch is complete - all 78 lines (54 v2 load-bearing + iw1 families, 6 organ decline, 18 iw2 F4 identity) have drained (pool depth 0), and the final 18 iw2 results + 18 sidecars are verified (all json parse, all .prov, no Traceback) and committed data-only as b50aa8dfa. 12 consumption waves since 00:49, every file integrity-checked; no results were edited, no jobs relaunched. Lane waiver refreshed at depth 0 with batch-complete evidence.
+
+11:2x: ONE task = consume wave 12 (the F4 batch landing). 18 results + 18 sidecars verified errors=0, committed data-only; queue depth 0 with the full 78/78 done. Refreshed the lane waiver (evidence: batch complete, scoring is Claude's). No new commits, no open NEEDS (the answered [wrc-iw2-env] line still awaits your deletion), no jobs to launch - next is your F4 scoring.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
