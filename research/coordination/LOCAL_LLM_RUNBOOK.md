@@ -1312,6 +1312,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 23:0x: ONE task = the 78-line gate queue (game-1016). Canary outcomes so far: iw2 line 55 @ pool41 = INCONCLUSIVE (the line's own mem_ok 16 1 refused: 17 GB needed, pool41 offers 14; nothing recorded); iw1 line 37 @ pool40 and lb line 1 @ pool42 still running. Root cause found: 42 of the 78 v2 lines (iw1 18, iw2 18, organ 6) carry mem_ok.sh 16 1 + memcap 17 = 17 GB, but pool40-42 are 16 GB nodes (best available 16) - their canaries can never pass mem_ok; the organ canary was therefore not launched (same profile, would be inconclusive). Only the lb family fits (mem_ok 8 2, 36 lines). Filed NEEDS [wrc-tsv-mem]: Claude re-cuts the 42 lines or waives. Plan: if the lb canary PASSes, queue the lb-eligible 36 now (same wrc-gate-go authorization, subset that fits); hold 42 for Claude.
 
+- RESULT [wrc-gate-wave1] (2026-10-17 00:5x, driver mechanical read; verdict per RULING judgment-to-claude-1016 is yours): first gate-wave lb artifacts landed - 29 results (24 json + 5 .rep0) + 29 sidecars under research/findings/raw/_load_bearing/_shards/wrcflip-572bec7/ (s42: 40 files, s43: 18); integrity: all parse, every result has a .prov, no Traceback; committed data-only. Queue: depth 46, 16 claim events at 572bec7219.
+
+00:5x: ONE task = consume the first gate wave. 29 load_bearing results (seeds 42/43, F1/answer-rate families, tag wrcflip-572bec7) + 29 sidecars verified (all json parse, all sidecars present, no tracebacks) and committed data-only. Posted RESULT [wrc-gate-wave1] with raw reads, no label (ruling judgment-to-claude-1016). depth 46 + 16 claims: more waves incoming. NEEDS [wrc-tsv-mem] unchanged (24 iw2/organ lines still held; both canary retries inconclusive).
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
