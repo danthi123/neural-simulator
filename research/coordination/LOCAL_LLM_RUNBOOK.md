@@ -1349,6 +1349,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 11:2x: ONE task = consume wave 12 (the F4 batch landing). 18 results + 18 sidecars verified errors=0, committed data-only; queue depth 0 with the full 78/78 done. Refreshed the lane waiver (evidence: batch complete, scoring is Claude's). No new commits, no open NEEDS (the answered [wrc-iw2-env] line still awaits your deletion), no jobs to launch - next is your F4 scoring.
 
+RESULT [T2]: integration wave 2 @ 2196ef6af (already merged per RULING iw2-merged). Section-5 rows all green at P=573a943 / F=1fb805e: D0 IDENTICAL (PASS); D_false-belief-chat / D_transitive-chat / D_neural-selfid all DIFFERS-IN-SCOPE (D_p and S_p both pass); R_fb / R_tr / R_si all PASS (fresh vs shards landed 10-01 19:02, scored 19:23; R re-derived + committed by Claude b242a0870). iw2-selfid precondition checked by driver 10-17 15:4x: flip-pin 1fb805e on-arm turns 14 "what are you?" and 15 "who are you?" each abstained=True -> neural-selfid legitimately in the flip list, no [iw2-selfid] NEEDS. Branch sections 5-11 committed (tip 2196ef6af, PROVISIONAL findings). No new NEEDS: everything the tables asked for passed and the merge already happened.
+
+15:4x: ONE task = T2 section-5 close-out (heartbeat pick; T1 done, T6 gate count 205>=204, Stage-2 pin dated 11-03). Verified the committed 10-01 D/R verdicts (did NOT re-run: my first --compare calls self-compared and my first score calls missed --tag; the HANDOFF-correct files were already landed, committed, and fresh vs the 19:02 shards), confirmed lesion-kept=4 gate, re-derived the table outcome (all three packets pass -> flip list), checked the iw2-selfid turns (14/15 abstained OK), removed my four stray self-compare jsons from the worktree, filed RESULT [T2]. Merge note: RULING iw2-merged says 2196ef6af already merged, so no merge ASK.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
