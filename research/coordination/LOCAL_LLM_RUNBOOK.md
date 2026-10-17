@@ -1320,6 +1320,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 
 01:5x: ONE task = consume gate wave 2. 38 more load_bearing results verified (48 json + 12 .rep0 + 60 sidecars under wrcflip-572bec7 total, all parse, all sidecars present, no tracebacks) and committed data-only. Posted RESULT [wrc-gate-wave2], no label (judgment-to-claude-1016). depth 38: remaining F1/answer-rate lines still draining across seeds 100/101/102 + 44 tails. NEEDS [wrc-tsv-mem] unchanged (24 lines held).
 
+- RESULT [wrc-gate-wave3] (2026-10-17 02:5x, driver mechanical read; verdict per RULING judgment-to-claude-1016 is yours): 38 more lb artifacts + sidecars verified and committed data-only under research/findings/raw/_load_bearing/_shards/wrcflip-572bec7/ (recent files now s44 30, s100 40, s101 40, s102 10); integrity: all parse, all sidecars present, no Traceback. Queue: depth 30.
+
+02:5x: ONE task = consume gate wave 3. 38 more results verified (48 json + 12 .rep0 + 60 sidecars in the recent window, all parse/sidecars/no-traceback) and committed data-only. Posted RESULT [wrc-gate-wave3], no label (judgment-to-claude-1016). depth 30: seeds 101/102 F1 tails still draining; iw1 identity + answer-rate lines interleave. NEEDS [wrc-tsv-mem] unchanged.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
