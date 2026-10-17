@@ -1,0 +1,38 @@
+{
+ "run_id": "1792234054-621336",
+ "runner": "research/runners/b2d_amend2_probe.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/74460d594598a9367e7935fc7b5cc2efc2b0a13b/research/runners/b2d_amend2_probe.py",
+  "--arm",
+  "intact_b",
+  "--seed",
+  "5",
+  "--pin",
+  "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+  "--out",
+  "research/findings/raw/_b2d_amend2/74460d5/dev/s5/intact_b.json"
+ ],
+ "git_sha": "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "806e8ab40d72d5739de6761e8279d9af07f1cdb34bce5c381f5d244b8b2bdab2",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-17T06:47:34",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "LB_ARM_RENDERER": "production"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_b2d_amend2/74460d5/dev/s5/intact_b.json"
+}
