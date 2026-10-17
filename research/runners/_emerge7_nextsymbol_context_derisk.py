@@ -403,7 +403,21 @@ def main():
     else:
         verdict = f"ERROR -- {err}"
 
-    summary = {"probe": "emerge7_nextsymbol_context", "verdict": verdict,
+    # VERDICT PRECONDITIONS (tools.verdict; retrofitted on touch 2026-10-12, gate verdict-preconditions). INVALID,
+    # TASK-MISDESIGNED and INCONCLUSIVE above were never mechanism verdicts; they now read UNDEFINED, as they always meant.
+    from tools.verdict import Verdict
+    _v = Verdict("emerge7 next-symbol context", chance=chance)
+    if err is None:
+        _v.require("locality assert held (no W.T / BPTT)", bool(loc))
+        _v.require("held-out split is gradient-learnable (grad-oracle held >= chance + 0.15)", bool(held_learnable))
+        _v.require("task sane (train-cell fit >= 0.75 and systematic oracle > 0.99)", bool(task_sane))
+    else:
+        _v.require("no run error", False)
+    _vd = _v.decide(go=bool(go) if err is None else False, verbose=False)
+    if _vd["status"] == "UNDEFINED" and not verdict.startswith("UNDEFINED"):
+        verdict = "UNDEFINED -- " + verdict
+    summary = {"probe": "emerge7_nextsymbol_context", "verdict": verdict, "status": _vd["status"], "GO": _vd["go"], "preconditions": _vd["preconditions"],
+               "undefined_reasons": _vd["undefined_reasons"],
                "mechanism": "confirmed local target-based credit (s*-h), s*=fixed-random next-symbol embedding; forward + "
                             "e-prop eligibility (reused verbatim from Task-A); input-driven teacher-forced; separate local "
                             "delta readout; NO free-run, NO BPTT, NO weight transport",

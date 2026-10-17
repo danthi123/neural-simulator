@@ -1,0 +1,135 @@
+{
+ "check": "answer_rate",
+ "label": "d6-hebbian-write: iw1-R-d6-049d4bb vs iw1-alloff-049d4bb",
+ "per_seed": {
+  "42": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  },
+  "43": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  },
+  "44": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  },
+  "100": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  },
+  "101": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  },
+  "102": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 0,
+    "answered": 0,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": null
+   },
+   "status": "UNMEASURED"
+  }
+ },
+ "n_seeds": 6,
+ "n_measured": 0,
+ "unmeasured_seeds": [
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "hurt_seeds": [],
+ "flags": [],
+ "status": "UNMEASURED",
+ "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+ "abstention_detection": "abstained flag; fallback text patterns [\"\\\\bi\\\\s+(?:do\\\\s+not|don['\u2019]?t)\\\\s+know\\\\s+about\\\\s+that\\\\b\", \"\\\\bi\\\\s+haven[\u2019']?t\\\\s+learned\\\\s+about\\\\b.*\\\\byet\\\\b\"]"
+}

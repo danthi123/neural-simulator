@@ -1,4 +1,4 @@
-"""CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1; default-OFF, `BRAIN_CATEGORY_INHERIT`).
+"""CATEGORY INHERITANCE on the strict route's recall miss (Stage-1 C1; default-ON since the flip, `BRAIN_CATEGORY_INHERIT`).
 
 Wires `research/runners/category_inherit_organ.CategoryInheritOrgan` (rung-3c's learned member->context pathway,
 generalized to runtime vocabulary) into the live `/api/brain-chat` turn:
@@ -16,8 +16,9 @@ generalized to runtime vocabulary) into the live `/api/brain-chat` turn:
 Installed by `webapp/server.py::brain_reply` OUTSIDE every other gate wrapper (after the multistep gate, before the
 default-off open-ended-gated trace), so it acts only on the stack's final verdict and never changes a committed
 answer. It wraps the INSTANCE's `gate_extract` to see each turn's route (every production bus calls
-`chat.gate_extract`), and `gate` to act on the miss. Idempotent. Flag OFF (the default): `brain_reply` never imports
-this module and nothing is wrapped -> byte-identical. The host-escape path (`BRAIN_GNW_BUS_HOST=1`, the original
+`chat.gate_extract`), and `gate` to act on the miss. Idempotent. Flag OFF (explicit `BRAIN_CATEGORY_INHERIT=0`,
+the byte-identical escape to the pre-flip default): `brain_reply` never imports this module and nothing is wrapped.
+The host-escape path (`BRAIN_GNW_BUS_HOST=1`, the original
 `ChatBrain.gate`, which never calls `gate_extract`) is NOT covered: declared.
 
 Lesion: `BRAIN_CATEGORY_INHERIT_LESION=1` (read-time transmission lesion inside the organ; see its module doc).
@@ -27,9 +28,9 @@ from __future__ import annotations
 
 import os
 
-# PRODUCTION DEFAULT -- OFF. A flip needs the prereg's six-seed C1 PASS (flag on) plus the flip checks named in its
-# HANDOFF; flipping is never done on this research branch.
-_CATEGORY_INHERIT_DEFAULT_ON = False
+# PRODUCTION DEFAULT -- ON since the flip (research/c1-flip, RULING c1-flip-go, 2026-10-11; A3 PASS + B PASS
+# preceded it). Explicit `BRAIN_CATEGORY_INHERIT=0` restores the pre-flip default byte-identically.
+_CATEGORY_INHERIT_DEFAULT_ON = True   # flipped default-ON 2026-10-11 (RULING c1-flip-go, branch research/c1-flip)
 
 
 def category_inherit_enabled() -> bool:
@@ -150,3 +151,13 @@ def turn_trace(chat):
     """The per-turn trace attached to the response as `category_inherit` (flag on only)."""
     return {"observe": getattr(chat, "_ci_last_observe", None),
             "read": getattr(chat, "_last_category_inherit", None)}
+
+
+def turn_stamp(chat):
+    """RULING c1-stamp-fix: the trace only when the organ engaged this turn (an observe or read
+    record exists), None otherwise — the server attaches `category_inherit` exactly when the
+    pathway fired, so a MISSING stamp always means it never fired."""
+    tr = turn_trace(chat)
+    if tr.get("observe") is not None or tr.get("read") is not None:
+        return tr
+    return None

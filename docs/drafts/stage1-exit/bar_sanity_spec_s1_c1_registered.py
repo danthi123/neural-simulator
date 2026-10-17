@@ -9,6 +9,11 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bar_sanity_s1_c123_common as C  # noqa: E402
 
+# Amendment A2 (2026-10-13) moved `lesion_draw` to the informational arms; this spec measures the bar AS REGISTERED, so it
+# re-installs `lesion_draw` as the counted C1 lesion in the imported scorer module (the runner file is not edited).
+C.G.GROUPS["cat_disc"]["lesions"] = {"lesion_draw": dict(C.G._C1_INFORMATIONAL["lesion_draw"])}
+C.G.GROUPS["cat_disc"]["informational"] = {}
+
 NAME = "stage1-C1 cat_disc as registered (lesion_draw counted)"
 DESCRIPTION = ("C1 `cat_disc` verdict PASS under the real stage1_exit_gate.aggregate, six gate seeds, registered lesion lesion_draw; "
                "perfect = generative-route inheritor and pathway inheritor (the planned attempt-2 build).")

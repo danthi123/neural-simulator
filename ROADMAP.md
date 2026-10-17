@@ -12,6 +12,80 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-16 — the first Stage-1 exit gate is verified: all four primary tests met on all six seeds
+
+**Stage 1 passed on attempt 2 (2026-10-16).** The first integrated stage-exit gate — the four tests a brain must
+clear before Stage 2 — is run in full: 216 jobs (six seeds, 36 per seed) from the main branch at `c02180f2c`,
+split between the local pool (seed 42) and two AWS nodes (the other seeds). All four primary criteria are met on
+6 of 6 seeds each: category inheritance (C1), word learning (C2), remembered lived events (C3) and held-out
+feeling words (C4). Every counted lesion arm changed the reply on 6 of 6 and reproduced (caveat 1 says how); the shuffled-exposure control
+was tracked on 6 of 6. Claude's verify-go re-score is exact and two adversarial reviews survived
+(`research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`, merge `e114828f1`). The two diagnostics
+(`cat_told`, `val_novel`) read 0/6 and are registered in advance as not counted. Next: the word-role flip (F3
+rerun at P', prereg), then the Stage-2 gate with the same pool/AWS split.
+
+The PASS carries four caveats, copied verbatim from the finding (never an unqualified pass):
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
+**Decisions-owned:** this stage bar does not measure host-decision share — k-select is still host code; the
+load-bearing work is the step-3 ownership moves.
+
+## 2026-10-15 — shared memory switches on by default; the BG commit's six-seed test comes back NO-GO; word-role's flip packet is in progress
+
+**Shared memory is now ON by default** (merge `1ff97a8cd`). The 10-14 flip battery Amendment A asked one question
+per pair of arms: does SHARING a memory across conversations change anything? A1 (strict, blind: `on` vs
+`offiso` after dropping only wall-clock/latency/RSS fields) was identical on all 6 seeds; A2 (declared non-blind:
+`offiso` vs `off`) kept every reply-level field identical on all 6 seeds, the single moved key being one numeric
+read-out of the held engram on 5 of 6 seeds - exactly the declared effect of removing the reseed. Claude's
+independent re-score matched. Sharing runs with RNG isolation; `BRAIN_SHARED_LTM=0` is the escape. It is not a
+faculty and takes no ledger row.
+
+**The BG commit stage fails its own six-seed gate (NO-GO).** The read itself is now solid: the commit read is
+threshold-invariant (G4 true at half and twice the read level, the earlier defect fixed), the host still owns the
+reply (G1), the seam never holds a content turn (G2b), and the bus argmax does no work (G5). Two capability keys
+failed: the seam's race held only 8 of 12 empty turns (G2a, 0.6667) and cutting the value route moved the reply
+on only 7 of 24 lesioned events (G3, 0.2917 against the registered 0.3 bar). The NO-GO is confirmed by
+Claude's re-score of all 42 shards (`research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`); the next method Claude ruled on
+is **tonic pallidal drive**. Nothing switched on.
+
+**Word-role commit: confirmed-with-caveats, flip packet in progress.** Claude's verify-go re-scored the six-seed
+gate byte-identical: with the flags on, spiking neurons commit each word's role and cutting only that commit stage
+changes the answer on 6 of 6 seeds. The caveats on record: the no-fact control could not have caught a lesion that
+breaks every parse (the flip packet adds a real off-target control); one-word-two-roles questions were answered 17
+of 24 right, 0 wrong, 7 declined (seed 101: 1 of 4), an answer-rate risk the packet measures; and it is not yet a
+live seam, because both flags are still off by default. The flip packet (`docs/drafts/word-role-flip/PACKET.md`,
+branch `research/wrc-flip-packet`) carries Claude's amendments A-D; the dev-7 smoke queues next.
+
+## 2026-10-14 — the speak-or-stay-silent choice gets an all-or-none commit; its six-seed test is registered, not run (result 10-15: NO-GO — see above)
+
+The 10-02 test of the brain's own speak-or-stay-silent choice failed on one point: the final read of which action
+won still depended on where the read was set, so host code still owned part of the decision. A commit stage now sits
+on the same network as the choice: a burst gate and a self-holding latch per action, read after a quiet pause, when
+a latch is either fully on (65 or more spikes in the read window) or silent. On eight practice seeds the read gives
+the same answer at half or twice its level on every trial, and cutting the gate or the latch removes every choice. It
+picks the same action as the old read on 96.25% of trials; 3.75% of trials differ. The amendment for the
+six-seed test (`research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md`) changes only the read test; Hermes
+runs the six seeds. Open risks: the practice-seed operating point was chosen after seeing the data (declared), and
+with six separate network builds the "never silence a question" test can fail on noise in the choice itself. Off by
+default; nothing switched on.
+
 ## 2026-10-06 — Stage 1 after the re-runs: words and lived memory pass, categories fail, the feeling test fails on a flawed control
 
 **The two re-run Stage-1 tests are read.** **Remembering a lived event** now passes on all six seeds with a working

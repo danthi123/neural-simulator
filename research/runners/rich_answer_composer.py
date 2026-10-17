@@ -228,6 +228,31 @@ def _is_followup(question):
     return bool(content) and len(content) <= 3 and all(t in _FOLLOWUP_CUES for t in content)
 
 
+def derived_reply_fields(facts, derived, derived_from, direct_svo=None, conclusion_is_hop=False):
+    """The reply-level `supporting_facts` + `derived_svo` for one rich turn (2026-10-13, Stage-2 HANDOFF item 18b).
+    `facts` is the turn's KEPT fact list (after VERIFY and any confidence cap); `direct_svo` is the turn's GATED
+    direct fact (`r['direct_svo']`, the conclusion of a derived turn); `conclusion_is_hop` is the producer's own
+    mark (`ChainedSVO.conclusion_is_hop`, True only for the C2 possessive chain, whose conclusion is its stored last
+    hop). Rules, on a DERIVED turn only:
+      * `derived_svo` = `direct_svo` iff it is among the kept facts (the reply states it), else None (VERIFY dropped
+        the conclusion sentence, so the reply does not state it). Without `direct_svo` (a legacy caller) facts[0].
+      * C2 (`conclusion_is_hop`): `supporting_facts` = `facts`, unchanged.
+      * otherwise the conclusion was never told: `supporting_facts` = the hops, then the other kept facts, with the
+        conclusion itself excluded wherever it appears (the transitive fallback even lists it in `derived_from`).
+    A non-derived turn returns (`facts`, None). `facts` is not modified (the caller keeps it for `n_sentences`)."""
+    facts = [list(f) for f in (facts or [])]
+    if not (derived and facts):
+        return facts, None
+    conclusion = list(direct_svo) if direct_svo is not None else facts[0]
+    derived_svo = conclusion if conclusion in facts else None
+    if conclusion_is_hop:
+        return facts, derived_svo
+    hops = [list(h) for h in (derived_from or []) if isinstance(h, (list, tuple)) and len(h) == 3]
+    supporting = [h for h in hops if h != conclusion]
+    supporting += [f for f in facts if f not in supporting and f not in hops and f != conclusion]
+    return supporting, derived_svo
+
+
 class NeuralDiscoursePlanner:
     """The NEURAL discourse-planner (burndown 3G / inventory C-6): the dlPFC spiking content-selection Control
     drives WHICH on-topic concepts the rich answer brings up, in WHAT NEURAL-RELEVANCE order, and WHEN to STOP --
@@ -347,6 +372,8 @@ class RichAnswerComposer:
         # Reset at the top of EVERY `gather()` call so it never leaks from a prior turn onto an unrelated one.
         self._last_direct_derived = False
         self._last_direct_derived_from = []
+        self._last_direct_svo = None                 # the gated direct fact of this turn (r['direct_svo'])
+        self._last_direct_conclusion_is_hop = False  # ChainedSVO.conclusion_is_hop of that fact
 
     # ------------------------------------------------------------------------------------------------
     # GATHER: assemble a small GROUNDED fact-set (a) direct + (b) chain + (c) elaboration.
@@ -634,6 +661,8 @@ class RichAnswerComposer:
         # ChainedSVO flag never leaks onto this one.
         self._last_direct_derived = False
         self._last_direct_derived_from = []
+        self._last_direct_svo = None                 # the gated direct fact of this turn (r['direct_svo'])
+        self._last_direct_conclusion_is_hop = False  # ChainedSVO.conclusion_is_hop of that fact
         # the conversation-wide exclude: the chain + elaboration never restate a fact said anywhere in the
         # conversation, so 'tell me more' always brings genuinely NEW content.
         convo_exclude = [list(f) for f in self._conversation_said]
@@ -650,9 +679,12 @@ class RichAnswerComposer:
         if type(direct).__name__ == "ChainedSVO":
             # a COMPOSED multi-hop inference (moat-hardening audit findings #4/#5) -- record it on the side
             # channel so answer() can flag + frame it, then continue treating `direct` as a plain [a,v,p] for
-            # the existing chain/elaboration/render pipeline (it IS a literal stored fact, the final hop).
+            # the existing chain/elaboration/render pipeline. It is a literal stored fact (the final hop) ONLY for
+            # the possessive-chain route; a multistep-chase / transitive ChainedSVO is a never-told conclusion, so
+            # the caller must not list it as a supporting fact (see `derived_reply_fields`).
             self._last_direct_derived = True
             self._last_direct_derived_from = list(getattr(direct, "derived_from", []))
+            self._last_direct_conclusion_is_hop = bool(getattr(direct, "conclusion_is_hop", False))
         # OPEN-ENDED GENERATION (#3E): an open-ended prompt makes chat.gate VOLUNTEER a generated HYPOTHESIS (a
         # HypothesisSVO). It is a single, clearly-FLAGGED guess -- it MUST NOT be chained/elaborated with stored
         # recall (mixing a guess with asserted facts blurs the honesty boundary, and its own novel (a,v,p) is not
@@ -662,6 +694,7 @@ class RichAnswerComposer:
         if isinstance(direct, HypothesisSVO):
             return None, [direct]
         a, v, p = direct
+        self._last_direct_svo = [a, v, p]
         # the discourse TOPIC for the chain + elaboration: the answer's PATIENT if the brain can say more about
         # it (it is itself an agent of some fact), else the question's subject `a`.
         agents_set = {f[0] for f in self._stored_facts()}
@@ -1053,7 +1086,11 @@ class RichAnswerComposer:
                 # every ordinary turn (byte-identical addition -- existing callers that ignore these keys are
                 # unaffected).
                 "derived": bool(self._last_direct_derived),
-                "derived_from": list(self._last_direct_derived_from)}
+                "derived_from": list(self._last_direct_derived_from),
+                # the GATED direct fact (the conclusion of a derived turn) even if VERIFY dropped its sentence,
+                # and whether the producer guarantees it is a stored hop (C2); see `derived_reply_fields`.
+                "direct_svo": (list(self._last_direct_svo) if self._last_direct_svo is not None else None),
+                "conclusion_is_hop": bool(self._last_direct_conclusion_is_hop)}
 
 
 # ====================================================================================================

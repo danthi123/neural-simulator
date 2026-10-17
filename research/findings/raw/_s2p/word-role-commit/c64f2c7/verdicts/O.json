@@ -1,0 +1,58 @@
+{
+ "dir": "research/findings/raw/_s2p/word-role-commit/c64f2c7/O",
+ "n_all_pass": 6,
+ "n_defined": 6,
+ "op": 0,
+ "packet": "word-role-commit",
+ "per_seed": {
+  "100": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "101": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "102": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "42": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "43": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  },
+  "44": {
+   "all_pass": true,
+   "failed_cases": [],
+   "fails": [],
+   "state": "DEFINED"
+  }
+ },
+ "pin": "c64f2c70d8232336992aab074f199c36a6560d45",
+ "preconditions": [
+  {
+   "detail": "measured=6 expect=6",
+   "kind": "require",
+   "name": "organ cells DEFINED on 6/6 seeds",
+   "note": "",
+   "ok": true
+  }
+ ],
+ "step": "O",
+ "undefined_reasons": [],
+ "verdict": "PASS"
+}

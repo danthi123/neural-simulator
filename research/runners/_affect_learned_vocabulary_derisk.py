@@ -295,6 +295,8 @@ def part_eval(seed, out_dir, scratch_dir, n_shuf=N_SHUF, log=print):
     shas = set()
     for d_ in (out_dir, scratch_dir):
         for tp in glob.glob(os.path.join(d_, f"train_s{seed}_r*.json")):
+            if tp.endswith(".prov.json"):
+                continue  # provenance sidecar, not a train artifact (no vocab_sha); glob must not read it
             with open(tp) as fh:
                 shas.add(json.load(fh).get("vocab_sha"))
     out = {"seed": seed, "n_shuf": n_shuf, "reader_loaded": reader_loaded, "vocab_shas": sorted(shas),
@@ -330,6 +332,8 @@ def _lesion_reads(reader, words):
 def score(run_dir):
     rows = {}
     for p in sorted(glob.glob(os.path.join(run_dir, "eval_s*.json"))):
+        if p.endswith(".prov.json"):
+            continue  # provenance sidecar, not an eval row (no "seed" key)
         with open(p) as fh:
             d = json.load(fh)
         rows[d["seed"]] = d

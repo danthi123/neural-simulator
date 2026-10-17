@@ -1,0 +1,158 @@
+{
+  "probe": "emerge33_spatial_pooler_emergence",
+  "verdict": "GO -- a SELF-ORGANIZED emergent superordinate: a competitive HTM Spatial Pooler DEVELOPS a shared column BLOCK for same-category members from varied experience (not the raw input overlap -- an INTERNAL self-organized representation), and the on-bridge inheritance rides it: a HELD-OUT member (property never taught) INHERITS via the emergent block (1.00, 3/category). The LOAD-BEARING control PERMUTED-FEATURES (members draw from the MIXED pool -> the pooler forms no category block) collapses it (0.44); dAP-LESION 0.00; random-codes (no pooler, seed-dependent) 0.53; a disjoint code ABSTAINS (1.00); 6-seed. => the cortex LEARNS a shared category representation from experience (the closest to a hand-assigned block, but self-organized) AND infers over it -- the research gate's top mechanism. NO sim/ edit.",
+  "status": "GO",
+  "GO": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "no run error",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every seed produced the htm, permuted, nopooler and lesion arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "mechanism": "an HTM Spatial Pooler (competitive Hebbian + homeostatic boosting) forms an overlap-preserving self-organized column SDR per member; same-category members converge on a shared column block (the emergent superordinate); the property is taught on training members' codes via the committed sim/ three-term kernel and a held-out member inherits via the shared block; sim/ unchanged",
+  "task": "pooler forms codes from varied inputs; teach property on training codes; test held-out inheritance + moat vs permuted-features + no-pooler + dAP-lesion; multi-seed",
+  "seeds": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "config": {
+    "epochs": 80,
+    "n_per": 9,
+    "n_col": 80,
+    "K": 12,
+    "pool_epochs": 800
+  },
+  "elapsed_seconds": 184.5,
+  "per_seed": [
+    {
+      "seed": 7,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 8,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.6666666666666666,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 9,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.6666666666666666,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 10,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 11,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.16666666666666666,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 12,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "nopooler": {
+        "held_out": 0.6666666666666666,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the Spatial Pooler is a RATE-reference for the representation step (competitive Hebbian + kWTA); the FULLY-SPIKING pooler (lateral-inhibition kWTA + homeostatic excitability on the bridge) is the flagged follow-on. The INHERITANCE runs on the real spiking bridge over the self-organized codes. Deepens EMERGE-30/32 (which rode the environment's structure) with an INTERNAL learned block."
+}

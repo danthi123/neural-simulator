@@ -5,7 +5,8 @@ Packet `s2-c4-build` (Claude, 2026-10-06; docs/drafts/stage2-c4-build/PLAN.md). 
 the discrete emotion category the brain's affect ladder holds, and the ladder lesion (`BRAIN_AFFECT_LESION=1`, the
 `affect_out` gate) changes the named category on every feel turn. Today the production feel read-out
 (`affect_production_organ.feel_readout`) prints a sign, a number and an arousal band, and the production ladder is a
-signed scalar: fear and anger read identically (prereg 4.4). DEFAULT OFF behind `BRAIN_EMOTION_CATEGORY` (the switch: `webapp/server.py` `_emotion_category_on`).
+signed scalar: fear and anger read identically (prereg 4.4). DEFAULT ON since 2026-10-15 behind `BRAIN_EMOTION_CATEGORY` (=0 is the escape; the switch: `webapp/server.py`
+`_emotion_category_on`).
 
 WHAT THIS ORGAN IS (one `SimulationBridge`, Izhikevich neurons, explicit wiring, no region framework; the same
 construction as `word_role_parser_organ.py`, whose commit stage it reuses in form and parameters):

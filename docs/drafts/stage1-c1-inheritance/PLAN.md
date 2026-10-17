@@ -69,13 +69,33 @@ guess. PASS iff 8/8. A cell without the hop env, or an organ read without `hop:
 true`, is UNDEFINED. This measures the merged stack, flip specificity outside the C1 script, and the fix through the
 handler.
 
+**Amendment B-1 (2026-10-11, Claude; RULING c1-flipdev-B1): the "flag engaged" precondition is replaced.**
+Written AFTER the rerun at DEV_SHA 2c2d55952 read UNDEFINED 0/8, and said so here. The old precondition (every
+flag-on turn carries the `category_inherit` trace) could not be met by construction: chain, open-ended, episodic,
+feel and bare-word turns are answered by endpoints that never call `chat.gate`, so they can never carry the trace,
+and no seed of any group with such turns could ever be defined (the rerun: 32 of 48 ON cells, all for that reason).
+A precondition no run can meet has no discriminating power. It was meant to prove the wiring was APPLIED, and
+step B is a specificity check: whether the flag changes replies it should not.
+
+New precondition, per ON cell: the cell records `BRAIN_CATEGORY_INHERIT=1` and `BRAIN_CATEGORY_INHERIT_HOP=1`; at
+least one turn carries the trace (the wiring is installed in that session); every organ read records `hop: true`;
+and, in groups that ask it, `p_canary_eat` carries an organ read with `hop: true`. The scorer reports untraced
+turns per group (count and labels); they are never silently passed. OFF cells: no trace on any turn, unchanged.
+
+Unchanged: the dev bar above, word for word. Every turn of every group is still compared ON vs OFF on reply
+content, and an untraced turn whose reply changes FAILS the seed exactly as before. The rescore uses the committed
+rerun cells (`research/findings/raw/_stage1_c1_flipdev_rerun_2c2d55952/`); no new run. A seed defined under B-1 but
+failing the bar is a FAIL, not an UNDEFINED. The scorer change re-runs `bar_sanity_record_flipdev.json` in its commit.
+
 **C. Flip (Claude, after A3 PASS and B PASS).** Claude reads both scores and the bridge report and decides the flip
 (section 4). On a flip branch: `_CATEGORY_INHERIT_DEFAULT_ON = True` AND the hop option on by default (unset
 `BRAIN_CATEGORY_INHERIT_HOP` -> on; `=0` restores the 09-30 organ), the explicit `BRAIN_CATEGORY_INHERIT=0` path stays
 byte-identical to today's default, tests updated. No further C1 gate run at the flip revision (A3 measured the
 configuration; attempt 2 measures it again at the gate seeds).
 
-**D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion).** Fold
+**D. Amendment A2, C1 section (Claude, before any attempt-2 data; RULING stage1-c1-lesion). DONE 2026-10-13:**
+registered as A2 in section 12 of the Stage-1 prereg (A2.1 C1, A2.2 C4), runner change, tests and the re-run
+bar-sanity records in one commit on `claude-build/c1-step-d`; attempt-2 shards go to `_stage1_exit/gate_a2/`. Fold
 `ATTEMPT2-C1-AMENDMENT-TEXT.md` into A2 (with the C4 control of RULING stage1-sync): for `cat_disc` and `cat_told` the
 counted lesion becomes `lesion_inherit_pathway` (one name for the arm and the patch it installs: every organ read with
 both learned pathways cut; applied = calls > 0; the read trace also records `lesion: all`, `lesion_held: true`), and

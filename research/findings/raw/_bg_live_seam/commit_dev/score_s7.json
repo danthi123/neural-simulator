@@ -1,0 +1,176 @@
+{
+ "seeds": [
+  7
+ ],
+ "per_seed": {
+  "7": [
+   {
+    "turn": "hsb_empty1",
+    "class": "empty",
+    "undefined": [],
+    "host_consulted": true,
+    "prod_held": true,
+    "F": 1,
+    "intervene_outcome": "follows_host",
+    "S": 0,
+    "D": 1,
+    "seam_held": true,
+    "capability": 1,
+    "neural_share": 0,
+    "seam_lesion_held": true,
+    "readout_alt_differs": false,
+    "readout_share": 0,
+    "sham_ok": 1
+   },
+   {
+    "turn": "hsb_q",
+    "class": "content",
+    "undefined": [],
+    "host_consulted": false,
+    "prod_held": false,
+    "F": 1,
+    "intervene_outcome": "follows_host",
+    "S": 0,
+    "D": 1,
+    "seam_held": false,
+    "capability": 1,
+    "neural_share": 0,
+    "seam_lesion_held": false,
+    "readout_alt_differs": false,
+    "readout_share": 0,
+    "sham_ok": 1
+   },
+   {
+    "turn": "hsb_empty2",
+    "class": "empty",
+    "undefined": [],
+    "host_consulted": true,
+    "prod_held": true,
+    "F": 1,
+    "intervene_outcome": "follows_host",
+    "S": 0,
+    "D": 1,
+    "seam_held": true,
+    "capability": 1,
+    "neural_share": 0,
+    "seam_lesion_held": true,
+    "readout_alt_differs": false,
+    "readout_share": 0,
+    "sham_ok": 1
+   },
+   {
+    "turn": "hsb_hi",
+    "class": "one_word",
+    "undefined": [],
+    "host_consulted": false,
+    "prod_held": false,
+    "F": 1,
+    "intervene_outcome": "follows_host",
+    "S": 0,
+    "D": 1,
+    "seam_held": false,
+    "capability": null,
+    "neural_share": 1,
+    "seam_lesion_held": true,
+    "readout_alt_differs": false,
+    "readout_share": 0,
+    "sham_ok": 1
+   }
+  ]
+ },
+ "fields": [
+  "abstained",
+  "recalled_svo",
+  "supporting_facts",
+  "n_sentences",
+  "verified",
+  "metacog.confident",
+  "hedge",
+  "hold",
+  "bg_select.action"
+ ],
+ "pooled": {
+  "F": 1.0,
+  "S": 0.0,
+  "D": 1.0,
+  "cap": 1.0,
+  "ns": 0.25,
+  "readout": 0.0,
+  "bus_disagree": 0.0,
+  "latch_thr_change": 0.0,
+  "first12_change": 0.0,
+  "membrane_ok": 1.0,
+  "content_held": 0.0,
+  "empty_held": 1.0,
+  "sham_ok": 1.0,
+  "bus_unique_agree": 1.0,
+  "seam_intact_held_for_ns": 0.5,
+  "seam_lesion_held": 0.75,
+  "commit_thr_change": 0.0,
+  "commit_engaged": 1.0,
+  "old_read_agree": 1.0,
+  "co_commit": 0.0
+ },
+ "n": {
+  "F": 4,
+  "S": 4,
+  "D": 4,
+  "cap": 3,
+  "ns": 4,
+  "readout": 4,
+  "bus_disagree": 2,
+  "latch_thr_change": 4,
+  "first12_change": 4,
+  "membrane_ok": 12,
+  "content_held": 1,
+  "empty_held": 2,
+  "sham_ok": 4,
+  "bus_unique_agree": 2,
+  "seam_intact_held_for_ns": 4,
+  "seam_lesion_held": 4,
+  "commit_thr_change": 4,
+  "commit_engaged": 12,
+  "old_read_agree": 4,
+  "co_commit": 4
+ },
+ "production_seam_class": "UNDEFINED",
+ "production_seam_stats": {
+  "n_live": 4,
+  "n_F": 4,
+  "n_S": 4,
+  "n_D": 4,
+  "live_seeds": [
+   7
+  ],
+  "HS": 1.0,
+  "NS": 0.0,
+  "MS": 0.0,
+  "SC": 0.0,
+  "DA": 1.0,
+  "buckets": {
+   "host_decided": 0,
+   "host_causal_replaceable": 4,
+   "host_causal_s_undefined": 0,
+   "neural_decided": 0,
+   "masked": 0,
+   "undefined": 0
+  }
+ },
+ "diagnostics": {
+  "seam_held_attribution": -0.5
+ },
+ "amendment": "2026-10-14-bg-live-seam-commit",
+ "label": "DEV, not a verdict",
+ "dev_readout": {
+  "gates": {
+   "G1_production_host_owns_the_reply": true,
+   "G2a_neural_seam_holds_on_empty_turns": true,
+   "G2b_neural_seam_never_holds_a_content_turn": true,
+   "G3_value_lesion_moves_the_reply": false,
+   "G4_commit_read_threshold_invariant": true,
+   "G5_bus_argmax_does_no_work": true,
+   "G4_old_latch_read_threshold_invariant (reported, not gated)": true
+  },
+  "status": "UNDEFINED"
+ }
+}

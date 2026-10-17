@@ -43,6 +43,13 @@ CONTRACT:
   * MOAT-SAFE. It NEVER un-abstains (a bus/deliberation abstain stays an abstain); on an unstored cue or an over-run
     past the leaf the chase reads `n_ignited==0` and ABSTAINS rather than confabulating a chain end; it never invents
     a fact. The emitted terminal is only ever a concept the substrate ignited off a real stored `query_patient` hop.
+  * HONESTY BOUNDARY (2026-10-13, Stage-2 HANDOFF item 18b). A terminal reached through >=2 committed hops that is
+    not itself a stored fact was never told: it is returned as a `ChainedSVO` whose `derived_from` lists the
+    committed hop facts (empty, with the generic lead, when a hop committed a non-target concept), so the reply
+    carries `derived` true and an inference framing, never a plain recalled assertion. Rich path: "I derived this
+    from: <hops>. <answer>"; single-fact path at production defaults: "I believe <answer>, but I reasoned that
+    myself rather than being told it directly." (see `derived_terminal_framing_on`). A one-hop terminal, or a
+    conclusion that is also stored directly, stays plain. Escape: `BRAIN_GNW_MULTISTEP_DERIVED=0`.
   * LESION-LOAD-BEARING. `BRAIN_GNW_MULTISTEP_LESION=1` runs the chase on the workspace built with the assembly
     self-recurrence ZEROED -> a hop can no longer sustain ignition -> `n_ignited` collapses at hop 0 -> the loop
     cannot advance/converge appropriately -> the multi-step answer collapses (the terminal is NOT reached). The
@@ -103,6 +110,74 @@ def multistep_enabled() -> bool:
     return os.environ.get("BRAIN_GNW_MULTISTEP", "1").strip().lower() not in ("0", "false", "off", "no")
 
 
+def derived_terminal_framing_on() -> bool:
+    """HONESTY-BOUNDARY fix (Stage-2 HANDOFF item 18b, 2026-10-13), DEFAULT-ON. A chase terminal reached through >=2
+    committed hops, and not itself a stored fact, was never told: it is the brain's own inference, so
+    `deliberate_multistep` returns it as a `ChainedSVO` carrying the hop facts -> the handler reports `derived`
+    true / `derived_from` / `derived_svo` and frames the reply as an inference instead of a plain recalled assertion.
+    The wording differs by path at production defaults: the rich path leads with `frame_derived_answer`'s "I derived
+    this from: <hops>." (the C2 route's lead); the single-fact path's default-ON source-monitoring swap
+    (BRAIN_SOURCE_MONITORING_FRAMES_HONESTY) replaces that lead with "I believe <answer>, but I reasoned that myself
+    rather than being told it directly." (no hop list in the text; `derived_from` still carries the hops).
+    ESCAPE: `BRAIN_GNW_MULTISTEP_DERIVED=0` (or false/off/no) restores this module's pre-fix return only, the plain
+    `[agent, action, terminal]` list (`derived` false, unframed). It does NOT revert the same-day handler and
+    confidence-cap changes (webapp/server.py, webapp/confidence_forthcoming_chat.py), which apply to every derived
+    answer. A one-hop terminal is the told fact itself and is never marked derived, under either setting."""
+    return os.environ.get("BRAIN_GNW_MULTISTEP_DERIVED", "1").strip().lower() not in ("0", "false", "off", "no")
+
+
+def committed_hops(agent, action, meta) -> Tuple[list, bool]:
+    """The hops the SUBSTRATE committed on the chase, read off its own trace: one `[x, action, committed]` per
+    ADVANCE cycle, stopping at the COMMIT (ignition collapsed at the leaf). Never a host-assumed path; the walk
+    mirrors `webapp.reasoning_transitive_chat._chase_path`. Returns (hops, mismatch). `mismatch` is True when any
+    ADVANCE committed a concept other than the composer's proposed `target` (`_deliberate_hop_conf` can let a
+    distractor win the WTA) or re-cued from a concept other than the previous commit: such a hop is not a stored
+    fact, so the caller must not list it as a premise."""
+    hops, x, mismatch = [], agent, False
+    for entry in (meta or {}).get("trace") or []:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("action") == "ADVANCE" and entry.get("committed") is not None:
+            if entry.get("target") != entry["committed"] or entry.get("x", x) != x:
+                mismatch = True
+            hops.append([x, action, entry["committed"]])
+            x = entry["committed"]
+        elif entry.get("action") == "COMMIT":
+            break
+    return hops, mismatch
+
+
+def conclusion_is_stored(composer, agent, action, patient) -> bool:
+    """Is `[agent, action, patient]` itself a stored AFFIRMED fact (polarity None/AFFIRM; a stored NEGATE triple
+    does not count)? A declared HOST read used only to LABEL the answer's
+    provenance (a told conclusion stays a plain recall), never to choose the answer: an exact match over the
+    composer's fact list (the D6 read-time view when that flag is on, like `_all_concepts`) and, when the composer
+    has a routed LTM tier, the agent's one shard (`ltm.shard_for(agent).kb`, the same routing the store's own reads
+    use). `query_patient` cannot answer this: it returns one patient per (agent, action). Any error -> False (the
+    answer is then framed derived, the cautious direction)."""
+    def _hit(kb):
+        for item in kb or []:
+            fact = item[0] if isinstance(item, (list, tuple)) else item
+            if (isinstance(fact, dict) and fact.get("agent") == agent and fact.get("action") == action
+                    and fact.get("patient") == patient and fact.get("polarity") in (None, "AFFIRM")):
+                return True          # a NEGATE triple (a heard negation) contradicts the conclusion: never "stored"
+        return False
+    try:
+        kb = getattr(composer, "kb", [])
+        from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+        if _d6_readtime_on():
+            from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
+            kb = _d6_visible_kb(composer) or []
+        if _hit(kb):
+            return True
+        ltm = getattr(composer, "ltm", None)
+        if ltm is not None and hasattr(ltm, "shard_for"):
+            return _hit(getattr(ltm.shard_for(agent), "kb", []))
+    except Exception:
+        return False
+    return False
+
+
 def multistep_lesion_on() -> bool:
     """The load-bearing lesion lever. `BRAIN_GNW_MULTISTEP_LESION` truthy -> run the chase on the workspace with the
     assembly self-recurrence ZEROED -> a hop cannot sustain ignition -> `n_ignited` collapses -> the loop cannot
@@ -135,7 +210,8 @@ def _all_concepts(composer) -> list:
     (read straight off `composer.kb`, no substrate retrieval). Order-preserving-ish (sorted) for determinism."""
     seen = set()
     kb = getattr(composer, "kb", [])
-    if os.environ.get("BRAIN_D6_ENGRAM_READTIME", "").strip().lower() in ("1", "true", "yes", "on"):
+    from research.runners.d6_hebbian_store import engram_readtime_enabled as _d6_readtime_on
+    if _d6_readtime_on():
         # D6 (default-OFF): the concepts are those whose engram reactivates NOW, not every host kb record.
         from research.runners.d6_hebbian_store import visible_kb as _d6_visible_kb
         kb = _d6_visible_kb(composer) or []
@@ -178,7 +254,8 @@ def deliberate_multistep(chat, base_svo, question, *, seed: int = _DEFAULT_SEED)
     returned UNCHANGED."""
     info = {"acted": False, "reason": None, "agent": None, "action": None, "first_patient": None,
             "terminal": None, "resolved_hops": None, "cycles": None, "halted_at_cap": None,
-            "abstained": False, "lesion": multistep_lesion_on(), "n_concepts": None}
+            "abstained": False, "lesion": multistep_lesion_on(), "n_concepts": None,
+            "derived": False, "derived_from": None}
 
     if base_svo is None:                                     # moat: never un-abstain a halted/unstored turn
         info["reason"] = "already_abstained"
@@ -213,6 +290,24 @@ def deliberate_multistep(chat, base_svo, question, *, seed: int = _DEFAULT_SEED)
     info["reason"] = "chain_terminal"
     out = list(base_svo)
     out[2] = terminal
+    # HONESTY BOUNDARY (Stage-2 HANDOFF item 18b): a terminal reached through >=2 committed hops was never told, so
+    # it is returned as a DERIVED answer (a ChainedSVO naming the hop facts the workspace committed), which the
+    # handler flags `derived` and frames as an inference. One hop = the told fact itself: plain, as before. A
+    # conclusion that is itself a stored fact (told directly as well as reachable by chaining) also stays plain.
+    hops, mismatch = committed_hops(agent, action, meta)
+    multi_hop = len(hops) >= 2 or int(meta.get("resolved_hops") or 0) >= 2
+    if multi_hop and derived_terminal_framing_on():
+        if conclusion_is_stored(composer, agent, action, terminal):
+            info["conclusion_stored"] = True
+            return out, info
+        if mismatch or not (hops and hops[-1][2] == terminal):
+            # a hop committed a non-target concept, or the trace and terminal disagree: no premise list (a premise
+            # that was never told must not be named); frame_derived_answer's generic lead applies.
+            info["hop_mismatch"] = True
+            hops = []
+        from research.runners.compositional_chain_route import ChainedSVO
+        info["derived"], info["derived_from"] = True, hops
+        return ChainedSVO(out, derived_from=hops), info
     return out, info
 
 

@@ -1,0 +1,36 @@
+{
+ "run_id": "1791891647-310965",
+ "runner": "research/runners/_curiosity_lp_trace_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9a1eaa088a9554ad/research/runners/_curiosity_lp_trace_derisk.py",
+  "--battery",
+  "--seeds",
+  "1,2,3,4,5,6,7,8",
+  "--out",
+  "research/findings/raw/_curiosity_lp/battery_dev1-8.json"
+ ],
+ "git_sha": "df71b3b6f",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-13T07:40:47",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 19950.9,
+ "corpus_check_query": "curiosity learning progress per-topic",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_curiosity_lp/battery_dev1-8.json"
+}

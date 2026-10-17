@@ -68,14 +68,40 @@ def _chat(monkeypatch, patient="worm"):
     return chat, org
 
 
-def test_default_is_off():
-    assert CI._CATEGORY_INHERIT_DEFAULT_ON is False
+def test_default_is_on_and_explicit_zero_is_off():
+    # flip (RULING c1-flip-go, branch research/c1-flip): unset -> ON; every explicit value keeps the pre-flip
+    # semantics, so `BRAIN_CATEGORY_INHERIT=0` is the byte-identical escape to the pre-flip default.
+    assert CI._CATEGORY_INHERIT_DEFAULT_ON is True
     old = os.environ.pop("BRAIN_CATEGORY_INHERIT", None)
     try:
-        assert CI.category_inherit_enabled() is False
+        assert CI.category_inherit_enabled() is True
+        for v in ("0", "false", "no", "off", "", "junk"):
+            os.environ["BRAIN_CATEGORY_INHERIT"] = v
+            assert CI.category_inherit_enabled() is False, v
+        os.environ["BRAIN_CATEGORY_INHERIT"] = "1"
+        assert CI.category_inherit_enabled() is True
     finally:
-        if old is not None:
+        if old is None:
+            os.environ.pop("BRAIN_CATEGORY_INHERIT", None)
+        else:
             os.environ["BRAIN_CATEGORY_INHERIT"] = old
+
+
+def test_explicit_zero_installs_nothing_and_changes_no_reply(monkeypatch):
+    """Byte-identity of the =0 escape (flip requirement): with BRAIN_CATEGORY_INHERIT=0 the server never
+    installs the wrapper (source-pinned in test_server_installs_only_behind_the_flag) and an installed
+    wrapper is inert at runtime -- gate output identical to the pre-flip flag-off default."""
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT", "0")
+    chat, org = _chat(monkeypatch)
+    assert chat.gate("the canary flies in the sky") == ["canary", "fly", "sky"]
+    assert chat.gate("what does the canary eat") is None
+    assert org.observed == [] and org.asked == []
+    assert CI.turn_stamp(chat) is None
+    from research.runners.category_inherit_organ import category_inherit_hop_enabled as hop
+    monkeypatch.delenv("BRAIN_CATEGORY_INHERIT_HOP", raising=False)
+    assert hop() is True                       # unset hop default is ON with the flip...
+    monkeypatch.setenv("BRAIN_CATEGORY_INHERIT_HOP", "0")
+    assert hop() is False                      # ...and =0 restores the 09-30 organ byte-identically
 
 
 def test_wrapper_acts_only_on_a_direct_routable_miss(monkeypatch):
@@ -123,9 +149,27 @@ def test_server_installs_only_behind_the_flag():
     src = open(os.path.join(os.path.dirname(__file__), "..", "webapp", "server.py")).read()
     i = src.find("_ci_mod.install(chat")
     assert i > 0 and "if _category_inherit_on():" in src[i - 400:i]
+    # RULING c1-stamp-fix: ONE write of the stamp (in the helper), called before EVERY return path.
     import re
-    assert len(re.findall(r'(?<![_\w])resp\["category_inherit"\]', src)) == 1      # the rich path
-    assert src.count('_resp["category_inherit"]') == 1                                 # the single-fact path
+    assert src.count('resp["category_inherit"] =') == 1                     # the helper's single write
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(payload, chat\)", src)) == 1  # abstain early return
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(resp, chat\)", src)) == 1     # the rich path
+    assert len(re.findall(r"(?m)^\s*_attach_category_inherit\(_resp, chat\)", src)) == 1    # single-fact path
+
+
+def test_category_inherit_stamp_both_paths():
+    """RULING c1-stamp-fix: the stamp is present exactly when the organ fired this turn (an observe
+    or read record exists) and absent otherwise — the invariant that lets a missing stamp be read
+    as 'the pathway never fired'. The three server call sites are pinned in the test above."""
+    from types import SimpleNamespace
+
+    chat = SimpleNamespace()
+    assert CI.turn_stamp(chat) is None                       # nothing fired this turn -> nothing to stamp
+    chat._last_category_inherit = {"patient": "worm", "reason": "reached"}
+    st = CI.turn_stamp(chat)                                 # the read fired -> the stamp carries the decision
+    assert st is not None and (st.get("read") or {}).get("patient") == "worm", st
+    chat2 = SimpleNamespace(_ci_last_observe={"observed": True})   # a teach turn fired the observe leg
+    assert (CI.turn_stamp(chat2) or {}).get("observe") == {"observed": True}
 
 
 # ── (2) the spiking organ at a dev seed ──────────────────────────────────────────────────────────────────────────

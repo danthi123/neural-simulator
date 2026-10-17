@@ -1,0 +1,32 @@
+{
+ "run_id": "1790738054-329055",
+ "runner": "research/runners/iw1_default_identity.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/runners/iw1_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw1/dev_s7/identity/default.json",
+  "research/findings/raw/_iw1/dev_s7/identity/on_xedge-surprise-worldmodel.json",
+  "--expect",
+  "differs",
+  "--out",
+  "research/findings/raw/_iw1/dev_s7/verdicts/D_xedge-surprise-worldmodel.json"
+ ],
+ "git_sha": "6f4c02368",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-29T23:14:14",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8294.1,
+ "corpus_check_query": "integration packets: flip de-risked GO 6/6 default-off chat faculties to on-by-default with reply-level load-bearing",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_iw1/dev_s7/verdicts/D_xedge-surprise-worldmodel.json"
+}

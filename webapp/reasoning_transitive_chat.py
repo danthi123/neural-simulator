@@ -146,6 +146,8 @@ def _spiking_reach_answer(composer, agent: str, relation: str, target: str, seed
             idx = path.index(target)
             derived_from = [[path[i], relation, path[i + 1]] for i in range(idx)]
         else:                                              # detect fired but the read-out path is incomplete: recorded
+            # NOTE (2026-10-13): this derived_from names the never-told conclusion itself, not a stored hop. The
+            # ChainedSVO keeps conclusion_is_hop=False, so consumers do not treat it as stored (default-off path).
             derived_from = [[agent, relation, target]]
         return True, ChainedSVO([agent, relation, target], derived_from=derived_from)
     except Exception as e:  # recorded (ENGAGEMENT, session 7): an exception must not read as a lesion effect

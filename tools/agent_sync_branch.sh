@@ -9,8 +9,9 @@
 #   2. it runs in the branch's own worktree (or a temporary one it removes afterwards); files you had STAGED are
 #      unstaged for the merge and staged again afterwards, whatever happens;
 #   3. it merges with --no-ff --no-commit and concludes with `git commit`, so every gate runs on the merge result;
-#   4. it resolves a conflict ONLY in two coordination files: research/coordination/LOCAL_LLM_RUNBOOK.md takes main's
-#      copy (main's runbook is the live one) and research/FAILURE_LOG.md keeps both sides' lines. Any other
+#   4. it resolves a conflict ONLY in append-only coordination files: research/coordination/LOCAL_LLM_RUNBOOK.md
+#      takes main's copy (main's runbook is the live one); research/FAILURE_LOG.md and any *WORKLOG.md (append-only
+#      packet logs, Claude 2026-10-10 after three sync STOPs on worklogs) keep both sides' lines. Any other
 #      conflict, a local change the merge would overwrite, or a failing gate aborts and leaves the branch as it was.
 # Exit 0 = merged, or already contains main; 2 = refused (reason printed; report it as NEEDS-CLAUDE); else git error.
 set -uo pipefail
@@ -67,7 +68,7 @@ if ! git merge -q --no-ff --no-commit "$main" >/dev/null 2>&1; then
     case "$f" in
       research/coordination/LOCAL_LLM_RUNBOOK.md)
         git checkout --theirs -- "$f" && git add -- "$f" || bad+=("$f") ;;
-      research/FAILURE_LOG.md)
+      research/FAILURE_LOG.md|*WORKLOG.md)
         if git cat-file -e ":2:$f" 2>/dev/null && git cat-file -e ":3:$f" 2>/dev/null; then
           base=$(mktemp); ours=$(mktemp); theirs=$(mktemp)
           { git show ":1:$f" 2>/dev/null || true; } > "$base"

@@ -1,0 +1,31 @@
+{
+ "dev_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "grid_len": 7,
+ "missing": [],
+ "op": 0,
+ "packet": "transitive-spiking-reach",
+ "step": "select",
+ "sweep_dir": "research/findings/raw/_s2p/transitive-spiking-reach/83efc76/sweep",
+ "table": {
+  "0": {
+   "1": true,
+   "2": true,
+   "3": true,
+   "4": true,
+   "5": true,
+   "6": true,
+   "7": true,
+   "8": true
+  }
+ },
+ "verdict": "SELECTED"
+}

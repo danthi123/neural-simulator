@@ -1,0 +1,2461 @@
+{
+  "probe": "b2d-amend2",
+  "arm": "intact_a",
+  "arm_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+  },
+  "seed": 3,
+  "pin": "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+  "renderer_mode": "production",
+  "backend": "cupy",
+  "revision": {
+    "source_revision_present": true,
+    "git_sha": "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+    "source_kind": "git_archive",
+    "source_manifest_sha256": "806e8ab40d72d5739de6761e8279d9af07f1cdb34bce5c381f5d244b8b2bdab2",
+    "source_ancestry_sha256": "b32cfe29333e12074fa80d43877d2e55cb32713ee60798af1e81969ba4c4dfa2",
+    "excluded_worktree_paths": "0",
+    "created_utc": "2026-10-17T08:09:48Z",
+    "exported_by": "research/packets/b2d-mouth-renderer/export_local_revision.sh",
+    "manifest_verified": true
+  },
+  "valence_map": {
+    "path": "research/findings/raw/_affect_learned_valence_map.json",
+    "exists": true,
+    "entries": 139,
+    "dr2_enabled": true,
+    "sha256": "7cd29801136c51d8422d9bf990206e4fcd16555ec012e4ebf47bf6664f446916"
+  },
+  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "candidates": [
+    {
+      "id": "c1",
+      "question": "What is l_quipe_de_france?",
+      "rich": false
+    },
+    {
+      "id": "c2",
+      "question": "Tell me about angora_turkey.",
+      "rich": false
+    },
+    {
+      "id": "c3",
+      "question": "What is l_quipe_de_france?",
+      "rich": true
+    },
+    {
+      "id": "c4",
+      "question": "Tell me about angora_turkey.",
+      "rich": true
+    }
+  ],
+  "turns": {
+    "a2_c1_mood": [
+      "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+      "a2_c1",
+      true,
+      null,
+      false
+    ],
+    "a2_c1_q": [
+      "What is l_quipe_de_france?",
+      "a2_c1",
+      false,
+      null,
+      false
+    ],
+    "a2_c2_mood": [
+      "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+      "a2_c2",
+      true,
+      null,
+      false
+    ],
+    "a2_c2_q": [
+      "Tell me about angora_turkey.",
+      "a2_c2",
+      false,
+      null,
+      false
+    ],
+    "a2_c3_mood": [
+      "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+      "a2_c3",
+      true,
+      null,
+      false
+    ],
+    "a2_c3_q": [
+      "What is l_quipe_de_france?",
+      "a2_c3",
+      false,
+      null,
+      true
+    ],
+    "a2_c4_mood": [
+      "Wonderful! I am so happy and delighted, this is fantastic and amazing!",
+      "a2_c4",
+      true,
+      null,
+      false
+    ],
+    "a2_c4_q": [
+      "Tell me about angora_turkey.",
+      "a2_c4",
+      false,
+      null,
+      true
+    ]
+  },
+  "responses": {
+    "a2_c1_mood": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "wonderful",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "wonderful"
+          },
+          {
+            "role": "action",
+            "word": "brain",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "brain"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 1.6875840349631623
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [
+          "wonderful",
+          "happy",
+          "delighted",
+          "fantastic",
+          "amazing"
+        ],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": {
+        "on": true,
+        "lesioned": false,
+        "kind": "update",
+        "context_sign": 1,
+        "predicted_next_sign": 1,
+        "pred_margin": 435.4166666666667
+      },
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9846370043548995,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "wonderful",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9846370043548995,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7449669071571824,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3674503607357735,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.965568894176696,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 53.17862513972451,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "Gladly! ",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.7818181818181817,
+        "ema_engagement": 0.469090909090909,
+        "afferent_pA": 656.7272727272726,
+        "da_level": 0.7449669071571824,
+        "snc_firing": 0.1158333333333333,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.8450000000000001,
+          "want_hz": 29.861111111111107,
+          "normalized": 0.7818181818181817,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9916666666666668,
+          "n_tokens": 5,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.241106719367589,
+        "da_level": 0.7449669071571824,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": true,
+        "encode": {
+          "frozen": false,
+          "steps": 208,
+          "block": 4,
+          "phase_lock_steps": 184,
+          "n_saturated": 128,
+          "mean_abs_w": 1.0,
+          "min_abs_w": 0.9999999999999998
+        },
+        "held": {
+          "block": 4,
+          "readout": 207.99881860305084,
+          "floor": 0.001,
+          "held": true
+        }
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "wonderful",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c1_q": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about quipe yet: what can you tell me about quipe? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "l_quipe_de_france",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "l_quipe_de_france"
+          },
+          {
+            "role": "action",
+            "word": "isa",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "isa"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 0.0
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": null,
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9813119697865631,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "quipe",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9813119697865631,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.707608466858705,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3114127002880576,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 14.562328257174444,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 50.99938278898,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 2,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "turn_engagement": 0.41818181818181815,
+        "ema_engagement": 0.43854545454545446,
+        "afferent_pA": 613.9636363636363,
+        "da_level": 0.707608466858705,
+        "snc_firing": 0.10833333333333331,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.6875,
+          "want_hz": 15.97222222222222,
+          "normalized": 0.41818181818181815,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9791666666666667,
+          "n_tokens": 2,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.0645586297760214,
+        "da_level": 0.707608466858705,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": false
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "l_quipe_de_france",
+          "action": "isa",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c2_mood": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "wonderful",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "wonderful"
+          },
+          {
+            "role": "action",
+            "word": "brain",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "brain"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 1.6875840349631623
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [
+          "wonderful",
+          "happy",
+          "delighted",
+          "fantastic",
+          "amazing"
+        ],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": {
+        "on": true,
+        "lesioned": false,
+        "kind": "update",
+        "context_sign": 1,
+        "predicted_next_sign": 1,
+        "pred_margin": 436.45833333333337
+      },
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9846370043548995,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "wonderful",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9846370043548995,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7449669071571824,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3674503607357735,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.965568894176696,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 53.17862513972451,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "Gladly! ",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.7818181818181817,
+        "ema_engagement": 0.469090909090909,
+        "afferent_pA": 656.7272727272726,
+        "da_level": 0.7449669071571824,
+        "snc_firing": 0.1158333333333333,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.8450000000000001,
+          "want_hz": 29.861111111111107,
+          "normalized": 0.7818181818181817,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9916666666666668,
+          "n_tokens": 5,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.2305665349143613,
+        "da_level": 0.7449669071571824,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": true,
+        "encode": {
+          "frozen": false,
+          "steps": 208,
+          "block": 4,
+          "phase_lock_steps": 184,
+          "n_saturated": 128,
+          "mean_abs_w": 1.0,
+          "min_abs_w": 0.9999999999999998
+        },
+        "held": {
+          "block": 4,
+          "readout": 207.99881860305084,
+          "floor": 0.001,
+          "held": true
+        }
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "wonderful",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c2_q": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about angora yet: what can you tell me about angora? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "tell",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "tell"
+          },
+          {
+            "role": "action",
+            "word": "brain",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "brain"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 1.6875840349631623
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": null,
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9865300984028249,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "angora",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9865300984028249,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7749113264201424,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.4123669896302136,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.521430593065803,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 54.92538293006385,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 2,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "turn_engagement": 0.4909090909090909,
+        "ema_engagement": 0.48218181818181816,
+        "afferent_pA": 675.0545454545454,
+        "da_level": 0.7749113264201424,
+        "snc_firing": 0.12249999999999986,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.7416666666666667,
+          "want_hz": 18.75,
+          "normalized": 0.4909090909090909,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9861111111111112,
+          "n_tokens": 3,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.1541501976284594,
+        "da_level": 0.7749113264201424,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": false
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "tell",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c3_mood": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "wonderful",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "wonderful"
+          },
+          {
+            "role": "action",
+            "word": "brain",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "brain"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 1.6875840349631623
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [
+          "wonderful",
+          "happy",
+          "delighted",
+          "fantastic",
+          "amazing"
+        ],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": {
+        "on": true,
+        "lesioned": false,
+        "kind": "update",
+        "context_sign": 1,
+        "predicted_next_sign": 1,
+        "pred_margin": 436.11111111111114
+      },
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9846370043548995,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "wonderful",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9846370043548995,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7449669071571824,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3674503607357735,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.965568894176696,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 53.17862513972451,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "Gladly! ",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.7818181818181817,
+        "ema_engagement": 0.469090909090909,
+        "afferent_pA": 656.7272727272726,
+        "da_level": 0.7449669071571824,
+        "snc_firing": 0.1158333333333333,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.8450000000000001,
+          "want_hz": 29.861111111111107,
+          "normalized": 0.7818181818181817,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9916666666666668,
+          "n_tokens": 5,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.2305665349143613,
+        "da_level": 0.7449669071571824,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": true,
+        "encode": {
+          "frozen": false,
+          "steps": 208,
+          "block": 4,
+          "phase_lock_steps": 184,
+          "n_saturated": 128,
+          "mean_abs_w": 1.0,
+          "min_abs_w": 0.9999999999999998
+        },
+        "held": {
+          "block": 4,
+          "readout": 207.99881860305084,
+          "floor": 0.001,
+          "held": true
+        }
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "wonderful",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c3_q": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about quipe yet: what can you tell me about quipe? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": true,
+      "n_sentences": 0,
+      "supporting_facts": [],
+      "followup": false,
+      "activity": {
+        "roles": [
+          {
+            "word": "l_quipe_de_france",
+            "confidence": 0.4089778086093774,
+            "winner_score_raw": 0.4089778086093774,
+            "runner_word": "van_morisson",
+            "runner_confidence": 0.24912484061666462,
+            "runner_score_raw": 0.24912484061666462,
+            "margin": 0.15985296799271276,
+            "margin_norm": 0.3908597587370117,
+            "margin_snr": 6.564008810212234,
+            "margin_spiking": null,
+            "conflict": 0.3785501251683098,
+            "role": "agent",
+            "cue": true,
+            "asserted": "l_quipe_de_france"
+          },
+          {
+            "word": "sport",
+            "confidence": 0.43796377407614506,
+            "winner_score_raw": 0.43796377407614506,
+            "runner_word": "okres_ko_ice_okolie",
+            "runner_confidence": 0.25534858262642995,
+            "runner_score_raw": 0.25534858262642995,
+            "margin": 0.1826151914497151,
+            "margin_norm": 0.4169641459912189,
+            "margin_snr": 6.995114775824468,
+            "margin_spiking": null,
+            "conflict": 0.36830236730898186,
+            "role": "action",
+            "cue": true,
+            "asserted": "sport"
+          },
+          {
+            "word": "association_football_club",
+            "confidence": 0.45495219736712644,
+            "winner_score_raw": 0.45495219736712644,
+            "runner_word": "nal_hardcover",
+            "runner_confidence": 0.2646838060357357,
+            "runner_score_raw": 0.2646838060357357,
+            "margin": 0.19026839133139073,
+            "margin_norm": 0.4182162258239106,
+            "margin_snr": 7.309788840409031,
+            "margin_spiking": null,
+            "conflict": 0.3678023395388123,
+            "role": "patient",
+            "cue": false
+          }
+        ],
+        "matched_fact_index": 24,
+        "n_facts_scanned": 177,
+        "abstained": false,
+        "rf": {
+          "n_readout_neurons": 256,
+          "frac_fired": 1.0,
+          "mean_magnitude": 104.49940829734831
+        },
+        "composer": "rf",
+        "source_fact": {
+          "agent": "l_quipe_de_france",
+          "action": "sport",
+          "patient": "association_football_club",
+          "polarity": "AFFIRM"
+        }
+      },
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "worldmodel": null,
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "metacog": null,
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9813119697865631,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "quipe",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9813119697865631,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.707608466858705,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3114127002880576,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 14.562328257174444,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 50.99938278898,
+          "curious": true
+        }
+      },
+      "affect_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 2,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "turn_engagement": 0.41818181818181815,
+        "ema_engagement": 0.43854545454545446,
+        "afferent_pA": 613.9636363636363,
+        "da_level": 0.707608466858705,
+        "snc_firing": 0.10833333333333331,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.6875,
+          "want_hz": 15.97222222222222,
+          "normalized": 0.41818181818181815,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9791666666666667,
+          "n_tokens": 2,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.0645586297760214,
+        "da_level": 0.707608466858705,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": false
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": [
+          {
+            "method": "render_svo",
+            "svo": [
+              "l_quipe_de_france",
+              "sport",
+              "association_football_club"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The French football club l'Equipe de France competes in the association football league.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "l_quipe_de_france",
+              "sport",
+              "association_football_club"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "L_quipe_de_france sport association_football_club represents a football club based in L_quipe_de_france",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "association_football_club",
+              "described_by_source",
+              "armenian_soviet_encyclopedia"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The association of football club with Armenian Soviet Encyclopedia is described by Armenians.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "association_football_club",
+              "described_by_source",
+              "armenian_soviet_encyclopedia"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Association football club was described by Armenian Soviet Encyclopedia.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "armenian_soviet_encyclopedia",
+              "country",
+              "hayastani_hanrapetut_yun"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Hayastani Hanrapetut Yunhayastan Armeniain Sovjet Encyclopedia.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "armenian_soviet_encyclopedia",
+              "country",
+              "hayastani_hanrapetut_yun"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Armenian Soviet Encyclopedia is a country in Hayastani Hanrapetut Yun.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "l_quipe_de_france",
+              "country",
+              "franzoesische_republik"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "France is the country of the Franc\u0153se Republic.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "l_quipe_de_france",
+              "country",
+              "franzoesische_republik"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Liquida\u00e7\u00e3o de Fran\u00e7a \u00e9 um pa\u00eds francesa.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "l_quipe_de_france",
+              "participant_of",
+              "world_championship_football_2010"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The participant of l_quique_de_france in the world championship football 2010 was France.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "l_quipe_de_france",
+              "participant_of",
+              "world_championship_football_2010"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Liquiede de France participated in the World Championship Football 2010.",
+            "in_answer": false
+          }
+        ]
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "l_quipe_de_france",
+          "action": "isa",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 10
+      }
+    },
+    "a2_c4_mood": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about wonderful yet: what can you tell me about wonderful? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": {
+        "roles": [
+          {
+            "role": "agent",
+            "word": "wonderful",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "wonderful"
+          },
+          {
+            "role": "action",
+            "word": "brain",
+            "confidence": null,
+            "margin": null,
+            "margin_spiking": null,
+            "cue": true,
+            "asserted": "brain"
+          }
+        ],
+        "matched_fact_index": null,
+        "n_facts_scanned": 5,
+        "abstained": true,
+        "rf": {
+          "n_readout_neurons": 6880,
+          "frac_fired": 0.01875,
+          "mean_magnitude": 1.6875840349632152
+        },
+        "composer": "onebrain"
+      },
+      "provenance": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [
+          "wonderful",
+          "happy",
+          "delighted",
+          "fantastic",
+          "amazing"
+        ],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "metacog": null,
+      "worldmodel": {
+        "on": true,
+        "lesioned": false,
+        "kind": "update",
+        "context_sign": 1,
+        "predicted_next_sign": 1,
+        "pred_margin": 436.45833333333337
+      },
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9846370043548995,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "wonderful",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9846370043548995,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7449669071571824,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.3674503607357735,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.965568894176696,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 53.17862513972451,
+          "curious": true
+        }
+      },
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "Gladly! ",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.7818181818181817,
+        "ema_engagement": 0.469090909090909,
+        "afferent_pA": 656.7272727272726,
+        "da_level": 0.7449669071571824,
+        "snc_firing": 0.1158333333333333,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.8450000000000001,
+          "want_hz": 29.861111111111107,
+          "normalized": 0.7818181818181817,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9916666666666668,
+          "n_tokens": 5,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.2305665349143613,
+        "da_level": 0.7449669071571824,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": true,
+        "encode": {
+          "frozen": false,
+          "steps": 208,
+          "block": 4,
+          "phase_lock_steps": 184,
+          "n_saturated": 128,
+          "mean_abs_w": 1.0,
+          "min_abs_w": 0.9999999999999998
+        },
+        "held": {
+          "block": 4,
+          "readout": 207.99881860305084,
+          "floor": 0.001,
+          "held": true
+        }
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": []
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "wonderful",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 0
+      }
+    },
+    "a2_c4_q": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about angora yet: what can you tell me about angora? \u2014 worth going further here.",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_from": null,
+      "derived_svo": null,
+      "verified": false,
+      "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": true,
+      "n_sentences": 0,
+      "supporting_facts": [],
+      "followup": false,
+      "activity": {
+        "roles": [
+          {
+            "word": "angora_turkey",
+            "confidence": 0.4049030563140399,
+            "winner_score_raw": 0.4049030563140399,
+            "runner_word": "dustin_hoffman",
+            "runner_confidence": 0.23646822703224812,
+            "runner_score_raw": 0.23646822703224812,
+            "margin": 0.16843482928179176,
+            "margin_norm": 0.41598804019687835,
+            "margin_snr": 6.507261741361758,
+            "margin_spiking": null,
+            "conflict": 0.3686916343210879,
+            "role": "agent",
+            "cue": true,
+            "asserted": "angora_turkey"
+          },
+          {
+            "word": "located_in_time_zone",
+            "confidence": 0.3460822480738748,
+            "winner_score_raw": 0.3460822480738748,
+            "runner_word": "bell_surname",
+            "runner_confidence": 0.23334087700424883,
+            "runner_score_raw": 0.23334087700424883,
+            "margin": 0.11274137106962595,
+            "margin_norm": 0.3257646740661355,
+            "margin_snr": 5.529537290555965,
+            "margin_spiking": null,
+            "conflict": 0.402712398767438,
+            "role": "action",
+            "cue": true,
+            "asserted": "located_in_time_zone"
+          },
+          {
+            "word": "kaliningrad_time",
+            "confidence": 0.4374313632103715,
+            "winner_score_raw": 0.4374313632103715,
+            "runner_word": "arsenal_w_f_c",
+            "runner_confidence": 0.2560089621378785,
+            "runner_score_raw": 0.2560089621378785,
+            "margin": 0.18142240107249302,
+            "margin_norm": 0.41474483979901017,
+            "margin_snr": 7.052466962709022,
+            "margin_spiking": null,
+            "conflict": 0.36918672365949085,
+            "role": "patient",
+            "cue": false
+          }
+        ],
+        "matched_fact_index": 95,
+        "n_facts_scanned": 248,
+        "abstained": false,
+        "rf": {
+          "n_readout_neurons": 256,
+          "frac_fired": 1.0,
+          "mean_magnitude": 104.49941295280772
+        },
+        "composer": "rf",
+        "source_fact": {
+          "agent": "angora_turkey",
+          "action": "located_in_time_zone",
+          "patient": "kaliningrad_time",
+          "polarity": "AFFIRM"
+        }
+      },
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.021111111111111112,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.47240699999999997,
+        "appraisal_arousal": 0.358203,
+        "appraisal_hits": [],
+        "pos_rate": 0.021111111111111112,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "worldmodel": null,
+      "multiref": null,
+      "noncontradiction": null,
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "metacog": null,
+      "curiosity": {
+        "on": true,
+        "lesioned": false,
+        "novelty": 0.9865300984028249,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "curious": true,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "topic": "angora",
+        "graded_novelty": {
+          "on": true,
+          "value": 0.9865300984028249,
+          "lesioned": false
+        },
+        "curiosity_da": {
+          "on": true,
+          "lesioned": false,
+          "da_level": 0.7749113264201424,
+          "da_tonic": 0.5,
+          "k_da": 1.5,
+          "da_crave_gain": 1.4123669896302136,
+          "base_threshold": 19.09722222222222,
+          "eff_threshold": 13.521430593065803,
+          "want_hz": 38.88888888888888,
+          "want_eff_hz": 54.92538293006385,
+          "curious": true
+        }
+      },
+      "affect_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "ema_valence": 0.47240699999999997,
+        "ema_arousal": 0.358203,
+        "body_h": 0.7362035,
+        "body_a": 0.5373045,
+        "mood": 0.067375,
+        "felt_arousal": 0.0465,
+        "level": 2,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "graded_affect",
+        "seed": 3,
+        "vplus_rate": 0.067375,
+        "vminus_rate": 0.0,
+        "surfaced": false
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 2,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 3,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "common_ground_drives": {
+        "on": true,
+        "topic": null,
+        "decision": null,
+        "reason": "no_grounded_topic",
+        "lead": "",
+        "lesioned": false,
+        "reason_lead": "no_referent"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 2,
+        "lesioned": false,
+        "turn_engagement": 0.4909090909090909,
+        "ema_engagement": 0.48218181818181816,
+        "afferent_pA": 675.0545454545454,
+        "da_level": 0.7749113264201424,
+        "snc_firing": 0.12249999999999986,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 3,
+        "shared_salience": {
+          "raw": 0.7416666666666667,
+          "want_hz": 18.75,
+          "normalized": 0.4909090909090909,
+          "lesioned": false,
+          "calib": {
+            "want_novel_hz": 38.19444444444444,
+            "want_familiar_hz": 0.0,
+            "threshold_hz": 19.09722222222222,
+            "novel_signal": 0.95,
+            "familiar_signal": 0.0,
+            "read_reps": 4
+          },
+          "on": true
+        },
+        "spiking_novelty": {
+          "novelty": 0.9861111111111112,
+          "n_tokens": 3,
+          "per_word_freshness": [
+            0.9583333333333334,
+            1.0,
+            1.0
+          ],
+          "fresh_ref": 24.0,
+          "n_channels": 64,
+          "lesioned": false,
+          "on": true
+        },
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 2.1541501976284594,
+        "da_level": 0.7749113264201424,
+        "lesioned": false
+      },
+      "d6_hebbian": {
+        "on": true,
+        "wrote_this_turn": false
+      },
+      "mouth_trace": {
+        "wrapped": true,
+        "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+        "manner_template": "",
+        "tone_level": 0,
+        "calls": [
+          {
+            "method": "render_svo",
+            "svo": [
+              "angora_turkey",
+              "located_in_time_zone",
+              "kaliningrad_time"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The angora turkey is located in Kaliningrad time zone.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "angora_turkey",
+              "located_in_time_zone",
+              "kaliningrad_time"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Angora Turkey is located in time zone Kaliningrad Time.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "angora_turkey",
+              "instance_of",
+              "city_work"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The triple consists of an animal and a city work.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "angora_turkey",
+              "instance_of",
+              "city_work"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Angora turkey is an instance of city work.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "angora_turkey",
+              "country",
+              "the_republic_of_turkey"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The Republic of Turkey is a country.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "angora_turkey",
+              "country",
+              "the_republic_of_turkey"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The Angora Turkey Country is the Republic of Turkey.",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo",
+            "svo": [
+              "angora_turkey",
+              "twinned_administrative_body",
+              "washington_dc"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "Angora turkeys can be tamed and twinned with Washington D.C., which is the capital of the United States",
+            "in_answer": false
+          },
+          {
+            "method": "render_svo_regen",
+            "svo": [
+              "angora_turkey",
+              "twinned_administrative_body",
+              "washington_dc"
+            ],
+            "manner": "",
+            "generative": true,
+            "base": "off-bridge Qwen-0.5B (spiking forward)",
+            "surface": "The Angora Turkey, a unique hybrid of domestic turkey and wild turkey, has been twinned with Washington D.C",
+            "in_answer": false
+          }
+        ]
+      },
+      "category_inherit": {
+        "observe": null,
+        "read": {
+          "agent": "tell",
+          "action": "brain",
+          "patient": null,
+          "reason": "organ_not_built"
+        }
+      },
+      "_arm_renderer": {
+        "mode": "production",
+        "qwen_generate_calls": 8
+      }
+    }
+  },
+  "qwen_prompts": {
+    "a2_c1_mood": [],
+    "a2_c1_q": [],
+    "a2_c2_mood": [],
+    "a2_c2_q": [],
+    "a2_c3_mood": [],
+    "a2_c3_q": [
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (l_quipe_de_france, sport, association_football_club) into one short grammatical sentence. Keep the same verb 'sport'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'l_quipe_de_france sport association_football_club'. Use the words l_quipe_de_france, sport, and association_football_club. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (association_football_club, described_by_source, armenian_soviet_encyclopedia) into one short grammatical sentence. Keep the same verb 'described_by_source'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'association_football_club described_by_source armenian_soviet_encyclopedia'. Use the words association_football_club, described_by_source, and armenian_soviet_encyclopedia. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (armenian_soviet_encyclopedia, country, hayastani_hanrapetut_yun) into one short grammatical sentence. Keep the same verb 'country'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'armenian_soviet_encyclopedia country hayastani_hanrapetut_yun'. Use the words armenian_soviet_encyclopedia, country, and hayastani_hanrapetut_yun. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (l_quipe_de_france, country, franzoesische_republik) into one short grammatical sentence. Keep the same verb 'country'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'l_quipe_de_france country franzoesische_republik'. Use the words l_quipe_de_france, country, and franzoesische_republik. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (l_quipe_de_france, participant_of, world_championship_football_2010) into one short grammatical sentence. Keep the same verb 'participant_of'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'l_quipe_de_france participant_of world_championship_football_2010'. Use the words l_quipe_de_france, participant_of, and world_championship_football_2010. Reply with only the sentence, nothing else."
+        ]
+      }
+    ],
+    "a2_c4_mood": [],
+    "a2_c4_q": [
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (angora_turkey, located_in_time_zone, kaliningrad_time) into one short grammatical sentence. Keep the same verb 'located_in_time_zone'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'angora_turkey located_in_time_zone kaliningrad_time'. Use the words angora_turkey, located_in_time_zone, and kaliningrad_time. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (angora_turkey, instance_of, city_work) into one short grammatical sentence. Keep the same verb 'instance_of'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'angora_turkey instance_of city_work'. Use the words angora_turkey, instance_of, and city_work. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (angora_turkey, country, the_republic_of_turkey) into one short grammatical sentence. Keep the same verb 'country'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'angora_turkey country the_republic_of_turkey'. Use the words angora_turkey, country, and the_republic_of_turkey. Reply with only the sentence, nothing else."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Turn the triple (angora_turkey, twinned_administrative_body, washington_dc) into one short grammatical sentence. Keep the same verb 'twinned_administrative_body'. Reply with only the sentence."
+        ]
+      },
+      {
+        "method": "_generate",
+        "prompts": [
+          "Write exactly one short sentence that means 'angora_turkey twinned_administrative_body washington_dc'. Use the words angora_turkey, twinned_administrative_body, and washington_dc. Reply with only the sentence, nothing else."
+        ]
+      }
+    ]
+  },
+  "qwen_prompts_unassigned": 0
+}

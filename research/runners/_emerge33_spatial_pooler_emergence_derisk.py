@@ -204,7 +204,19 @@ def main():
     else:
         verdict = f"ERROR -- {err}"
 
-    summary = {"probe": "emerge33_spatial_pooler_emergence", "verdict": verdict,
+    # VERDICT PRECONDITIONS (tools.verdict; retrofitted on touch 2026-10-12, gate verdict-preconditions). The GO rule
+    # above is unchanged; these say what it rested on, and a failed one makes the run UNDEFINED, never a negative.
+    from tools.verdict import Verdict
+    _v = Verdict("emerge33 spatial-pooler emergence")
+    _v.require("no run error", err is None)
+    _v.require("every seed produced the htm, permuted, nopooler and lesion arms",
+               (len(per) == len(a.seeds) and all(all(k in p for k in ("htm", "permuted", "nopooler", "lesion"))
+                                                 for p in per)) if err is None else None)
+    _vd = _v.decide(go=bool(go) if err is None else False, verbose=False)
+    if _vd["status"] == "UNDEFINED" and not verdict.startswith("UNDEFINED"):
+        verdict = "UNDEFINED -- " + verdict
+    summary = {"probe": "emerge33_spatial_pooler_emergence", "verdict": verdict, "status": _vd["status"], "GO": _vd["go"], "preconditions": _vd["preconditions"],
+               "undefined_reasons": _vd["undefined_reasons"],
                "mechanism": "an HTM Spatial Pooler (competitive Hebbian + homeostatic boosting) forms an overlap-preserving "
                             "self-organized column SDR per member; same-category members converge on a shared column block "
                             "(the emergent superordinate); the property is taught on training members' codes via the committed "

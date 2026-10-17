@@ -83,7 +83,12 @@ PACKETS = {
         # the lesion was on in the lesion arms (off in the intact arms) and no error was swallowed. R data pinned
         # before the trace existed (s2p-R-wr-9ea7411) re-scores UNDEFINED:engagement-no-record; its confirmed PASS
         # stands with the inferred-engagement caveat in research/findings/2026-10-06-word-role-parse-gate.md.
-        "engagement": {"trace_key": "word_role_trace", "route": "word_role"}},
+        # RULING wrc-f1a-engagement (Claude 2026-10-16): with BRAIN_WORD_ROLE_COMMIT on (the flipped default) the
+        # same organ call records route `word_role_commit` and still records the word -> role lesion as `lesioned`,
+        # so that route is engaged too; the commit cut must then be OFF in every arm (`off_keys`), so this row's
+        # lesion arm is the parse lesion alone.
+        "engagement": {"trace_key": "word_role_trace", "route": "word_role",
+                       "routes": ["word_role", "word_role_commit"], "off_keys": ["commit_lesioned"]}},
     "word-role-commit": {
         # Packet word-role-commit (docs/drafts/spiking-commit/PLAN.md, application A1): the word-role parse decided by
         # the organ's spiking commit stage (COMMIT_GRID, 6 rows) instead of the host ROLE_MIN / margin / argmax read.
@@ -96,7 +101,10 @@ PACKETS = {
         "probe_message": "what do you usually use?", "intact_must_contain": ["spikes"], "intact_must_not_contain": [],
         "control": {"row": "word-role-commit-nofact-ctl", "shard_dir": "word-role-commit-nofact-ctl",
                     "intact_must_contain": [], "intact_must_not_contain": [], "intact_abstains": True},
-        "engagement": {"trace_key": "word_role_trace", "route": "word_role_commit", "lesion_key": "commit_lesioned"}},
+        # RULING wrc-f1a-engagement: the word -> role lesion must be OFF in every arm, so this row's lesion arm is
+        # the commit cut alone.
+        "engagement": {"trace_key": "word_role_trace", "route": "word_role_commit", "lesion_key": "commit_lesioned",
+                       "off_keys": ["lesioned"]}},
 }
 
 
@@ -224,10 +232,11 @@ def score_R(packet, tag, pin, selection, base=I.BASE, seeds=GATE_SEEDS, at_defau
 
 
 def engagement_state(d, eng):
-    """None when every arm file in shard dir `d` records engagement per `eng` ({"trace_key", "route"[, "lesion_key"]}):
-    the last turn body carrying `trace_key` reads that route with no error, and its lesion record (`lesion_key`,
-    default `lesioned`) is True in lesion arms and False in intact arms. Otherwise a short reason (the cell then reads
-    UNDEFINED:engagement-<reason>)."""
+    """None when every arm file in shard dir `d` records engagement per `eng` ({"trace_key", "route"[, "routes",
+    "lesion_key", "off_keys"]}): the last turn body carrying `trace_key` reads that route (or one of `routes`) with no
+    error, its lesion record (`lesion_key`, default `lesioned`) is True in lesion arms and False in intact arms, and
+    every `off_keys` record is falsy in every arm (another row's cut never rides along). Otherwise a short reason (the
+    cell then reads UNDEFINED:engagement-<reason>)."""
     arms = sorted(p for p in glob.glob(os.path.join(d, "*.json*"))
                   if not p.endswith(".prov.json") and os.path.basename(p) != "lb.json")
     if not arms:
@@ -244,10 +253,13 @@ def engagement_state(d, eng):
         t = bodies[-1][eng["trace_key"]] or {}
         if t.get("error"):
             return "error:%s" % name
-        if t.get("route") != eng["route"]:
+        if t.get("route") not in eng.get("routes", [eng["route"]]):
             return "route-%s:%s" % (t.get("route"), name)
         if bool(t.get(eng.get("lesion_key", "lesioned"))) != is_lesion:
             return "lesion-flag:%s" % name
+        for k in eng.get("off_keys", ()):
+            if t.get(k):
+                return "%s-on:%s" % (k, name)
     return None
 
 
@@ -314,6 +326,9 @@ def main(argv=None):
     a3.add_argument("--selection", required=True)
     a3.add_argument("--out", required=True)
     a3.add_argument("--at-default", action="store_true", help="T21 F1: the packet's path is the default here")
+    a3.add_argument("--seeds", type=int, nargs="+", default=None,
+                    help="score these seeds instead of the six gate seeds (a dev-seed PRE-FLIGHT read before any gate "
+                         "line is queued, tools/gate_preflight.py; never a verdict)")
     a4 = sub.add_parser("op", help="print the selected operating point (exit 3 if none)")
     a4.add_argument("--packet", required=True, choices=sorted(PACKETS))
     a4.add_argument("--selection", required=True)
@@ -329,7 +344,8 @@ def main(argv=None):
     elif a.step == "O":
         res, code = score_O(a.packet, a.dir, a.selection, a.pin)
     else:
-        res, code = score_R(a.packet, a.tag, a.pin, a.selection, at_default=a.at_default)
+        res, code = score_R(a.packet, a.tag, a.pin, a.selection, at_default=a.at_default,
+                            **({"seeds": a.seeds} if a.seeds else {}))
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(res, f, indent=1, sort_keys=True)

@@ -1,0 +1,43 @@
+{
+ "run_id": "1792249035-2",
+ "runner": "research/runners/iw2_default_identity.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/572bec7219e479aaffa8a5dcb5f45774b0f1ee1d/research/runners/iw2_default_identity.py",
+  "--arm",
+  "default",
+  "--seed",
+  "101",
+  "--out",
+  "research/findings/raw/_iw2/flip-gate/572bec72/s101__commit_lesion.json"
+ ],
+ "git_sha": "572bec7219e479aaffa8a5dcb5f45774b0f1ee1d",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "18270e4221dba5fe37085a7a7323c70882813e878381718c45d68ccba029c36a",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-17T10:57:15",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1792249035074428174-2651",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "10G",
+  "POOL_JOB_MEM_GB": "9",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "BRAIN_WORD_ROLE_COMMIT_LESION": "1"
+ },
+ "host": "node-dl4g243",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_iw2/flip-gate/572bec72/s101__commit_lesion.json"
+}

@@ -74,7 +74,7 @@ import os
 # PRODUCTION DEFAULT — OFF. The owner-gated flip to default-ON is a SEPARATE, later step (never autonomous),
 # mirroring every prior xedge production module's `_XEDGE_*_DEFAULT_ON` convention (e.g. `onebrain_xedge_
 # surprise_episodic_production._XEDGE_SE_DEFAULT_ON`).
-_XEDGE_SWM_DEFAULT_ON = False
+_XEDGE_SWM_DEFAULT_ON = True
 
 
 def xedge_surprise_worldmodel_enabled() -> bool:

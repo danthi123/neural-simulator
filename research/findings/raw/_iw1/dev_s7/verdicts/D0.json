@@ -1,0 +1,36 @@
+{
+ "runner": "research.runners.iw1_default_identity --compare",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/runners/iw1_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw1/dev_s7/identity/default.json",
+  "research/findings/raw/_iw1/dev_s7/identity/off.json",
+  "--expect",
+  "same",
+  "--out",
+  "research/findings/raw/_iw1/dev_s7/verdicts/D0.json"
+ ],
+ "sim_backend": "numpy",
+ "arms": [
+  "default",
+  "off"
+ ],
+ "git_shas": [
+  "6f4c023684d5dedb7b1eeb3fbc4df03d05862d80",
+  "6f4c023684d5dedb7b1eeb3fbc4df03d05862d80"
+ ],
+ "expect": "same",
+ "preconditions": {
+  "same_seed": true,
+  "same_n_turns": true,
+  "all_status_200": true
+ },
+ "differing_turns": [],
+ "reply_differing_turns": [],
+ "ok": true,
+ "verdict": "IDENTICAL",
+ "inputs": [
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/findings/raw/_iw1/dev_s7/identity/default.json",
+  "/home/dant123/Projects/sim/.claude/worktrees/integration-wave1/research/findings/raw/_iw1/dev_s7/identity/off.json"
+ ]
+}

@@ -323,7 +323,12 @@ def _handler_multistep(chain=("zorp", "blib", "krad", "munt")):
 
     def _svo3(r):
         s = r.get("recalled_svo")
-        return list(s) if isinstance(s, (list, tuple)) and len(s) == 3 else None
+        if isinstance(s, (list, tuple)) and len(s) == 3:
+            return list(s)
+        # a >=2-hop terminal is a DERIVED answer since 2026-10-13 (recalled_svo null, `derived_from` = the committed
+        # hops; Stage-2 HANDOFF item 18b): the reply's claim is [first agent, relation, last hop's patient].
+        df = [h for h in (r.get("derived_from") or []) if isinstance(h, (list, tuple)) and len(h) == 3]
+        return [df[0][0], df[0][1], df[-1][2]] if (r.get("derived") and df) else None
 
     on_svo, off_svo = _svo3(on), _svo3(off)
     return {

@@ -1,0 +1,16 @@
+# Packet: M2 (one-brain mode) review fixes — for Hermes, 2026-10-14
+
+M2 (`BRAIN_ONE_BRAIN`, DEFAULT OFF) merged to main as 694e8327c. Claude's review: the OFF path is byte-identical to base (17/17 at dev seeds 7 and 8, re-verified) and is clean. The findings below are about the ON path. **Until items 1-3 land and Claude has reviewed them, nobody enables `BRAIN_ONE_BRAIN=1` outside tests.**
+
+Work on branch `research/one-brain-m2-fixes` from main. Each item comes with a test that fails on the current code. Commit as you go and never use --no-verify. Run anything that builds a brain under the brain lock + mem_ok + memcap; that includes pytest of tests/test_webapp_server.py, at memcap 18 with `-k`. Use dev seeds only.
+
+1. **[major, honesty] Multi-fact prose check at ON.** `webapp/server.py:5138` + `webapp/one_brain.py:351-373`: the deferred mouth checks each Qwen sentence with the single-fact `chat._verify` only. Production's multi-fact path uses `_verify_claim_set` (`research/runners/rich_answer_composer.py:1014-1024`), which rejects a sentence with any unsupported clause. Repro: `OB.articulate` accepted "the wug eats the dax, and the cat eats the moon too" (n_verified=1). Fix: when there is more than one supporting fact, verify with `chat._verify_claim_set(prose, gated)` (or reuse `_verify_rendered`). Until that test passes, ON must refuse generative renderers (stub only). Fix the `DeferredMouth` docstring ("never unverified prose").
+2. **[honesty] "Did we discuss X?" at ON.** The D5 episodic store is brain-level with no source tag, so conversation B can be told "we discussed" something only A discussed: a false first-person claim. Until M3 adds source tags, gate the D5 referential reply at ON: abstain, or "someone mentioned that". Test with `BRAIN_EPISODIC_STORE=1` (the D5 write is off on numpy).
+3. **Lock at ON.** `webapp/brain_turn_lock.py:173`: with `BRAIN_ONE_BRAIN=1` and `BRAIN_TURN_LOCK=0`, bind/swap, the source tags and zero run unlocked. At ON, force the lock (or refuse to start), with a test.
+4. Prewarm at ON (`server.py:4537`): the scratch turn's pending mouth calls are dropped, so prewarm no longer warms the first Qwen generation. Articulate them, or declare it in the WORKLOG.
+5. Shutdown flush (`server.py:2044`): if the lock times out, the flush runs unlocked and can capture a half-written composer. Flush the last good snapshot, or declare it in the WORKLOG.
+6. `webapp/one_brain.py:162-165`: `__getitem__` returns `getattr(None, field)` when a Context vanished between the check and the read. Raise KeyError instead, with a test.
+7. Docs scope: WORKLOG §4 and the `one_brain.py:20` docstring must say that OFF identity covers only the 17-turn script; that fold-ins (a)-(c) intentionally change OFF behaviour on paths the script never reaches; and that reset, tick, warm, shutdown, prewarm and the OpenAI shim have no OFF hash run.
+8. The "Someone told me" lead is host text in the brain's voice (a declared scaffold until M3). Keep `one_brain_source` (reason host_tag/scaffold) mandatory wherever the answer text is shown, and add a test that it is present.
+
+**Done =** all 8 committed with their tests passing, then NEEDS `[m2-fixes] ASK` with the branch tip for Claude's review. Do not merge it yourself.

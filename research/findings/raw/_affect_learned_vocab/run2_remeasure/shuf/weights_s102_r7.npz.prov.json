@@ -1,0 +1,43 @@
+{
+ "run_id": "1791536951-2",
+ "runner": "research/runners/_affect_learned_vocabulary_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/cc7091bbec79d45c763f5775ab92f20baa5b865c/research/runners/_affect_learned_vocabulary_derisk.py",
+  "--part",
+  "all",
+  "--seed",
+  "102",
+  "--replicas",
+  "0-8",
+  "--corpus-path",
+  "/home/node/derisk-pool/corpus_extra/fineweb_edu.txt",
+  "--out-dir",
+  "research/findings/raw/_affect_learned_vocab/run2_remeasure"
+ ],
+ "git_sha": "cc7091bbec79d45c763f5775ab92f20baa5b865c",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "0f40f0f3b6410c900a8d043c4f5b8a12197bb1530b7877aa39151306330562e9",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-09T05:09:11",
+ "env": {
+  "OPENBLAS_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1791536950905116723-13461",
+  "POOL_JOB_MEM_GB": "3",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "host": "node-dl5d243",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_learned_vocab/run2_remeasure/shuf/weights_s102_r7.npz"
+}

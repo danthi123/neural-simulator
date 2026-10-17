@@ -25,6 +25,9 @@ registered correctness is "either route names `worm`". Two perfect brains exist 
   pathway  the inheritance rides a NEW route (docs/drafts/stage1-c1-inheritance/PLAN.md: a learned agent->context pathway read
            on the strict route's recall miss, flagged as an inference), which is what attempt 2 will run; the DRAW is not on
            its path, so `lesion_draw` changes nothing.
+Amendment A2 (2026-10-13) makes `lesion_inherit_pathway` the runner's own counted C1 lesion (`lesion_draw` informational)
+and adds the C1 validity record: every arm records the effective flags and the direct probe's organ read records
+`hop: true` (`_c1_record`). The as-registered spec re-installs `lesion_draw` as the counted arm to keep measuring the old bar.
 """
 from __future__ import annotations
 
@@ -100,7 +103,7 @@ def _teach(group, perm, rng, realistic):
 
 # ══════════════════════════════════════════════ C1 (cat_disc) ═════════════════════════════════════════════════════════
 def reply_cat_disc(kind, role, rng, realistic):
-    """kind: gen | pathway | both | frequency | absent ; role: intact | lesion_draw | lesion_pathway | permuted |
+    """kind: gen | pathway | both | frequency | absent ; role: intact | lesion_draw | lesion_inherit_pathway | permuted |
     lesion_draw_u<k> (info: the lesioned draw picks uniformly among k patients)."""
     perm = role == "permuted"
     r = _teach("cat_disc", perm, rng, realistic)
@@ -132,7 +135,7 @@ def reply_cat_disc(kind, role, rng, realistic):
     elif kind == "pathway":
         if intact_like:
             r["p_canary_eat"] = probably(want)
-        elif role == "lesion_pathway":
+        elif role == "lesion_inherit_pathway":
             pass                                              # the learned pathway is cut: back to the strict-route miss
         elif role == "lesion_draw":
             r["p_canary_eat"] = probably(want)                # the DRAW is not on this route: nothing changes
@@ -140,7 +143,7 @@ def reply_cat_disc(kind, role, rng, realistic):
         if intact_like or role in ("lesion_draw",):
             r["p_canary_eat"] = probably(want)
             r["p_canary_might"] = hyp(want) if intact_like else gen_abst
-        elif role == "lesion_pathway":
+        elif role == "lesion_inherit_pathway":
             r["p_canary_might"] = hyp(want)
     elif kind == "frequency":                                 # a verb->patient frequency shortcut: always the commonest patient
         r["p_canary_eat"] = probably("worm")
@@ -219,7 +222,8 @@ REPLIES = {"cat_disc": reply_cat_disc, "word": reply_word, "lived": reply_lived}
 DEFAULT_KIND = {"cat_disc": "gen", "word": "bound", "lived": "lived"}
 SCORED = {"cat_disc": ["p_canary_eat", "p_canary_might"], "word": ["p_bear_chase", "p_otter_eat"],
           "lived": {"lesion_recall": ["p_wolf_bite"], "lesion_episodic": ["p_wolf_discuss"]}}
-PATCH_OF = {"lesion_recruit": "lesion_recruit", "lesion_recall": "lesion_lived_recall", "lesion_pathway": "lesion_inherit_pathway"}
+PATCH_OF = {"lesion_recruit": "lesion_recruit", "lesion_recall": "lesion_lived_recall",
+            "lesion_inherit_pathway": "lesion_inherit_pathway"}   # Amendment A2: one name for arm and patch
 
 
 def reply_degenerate(kind, group, perm, rng):
@@ -261,11 +265,14 @@ def default_roles(group):
     return v
 
 
-def make_group(rng, group, kind=None, over=None, realistic=True, unclean=False, unreproduced=(), degenerate=None, reply=None):
+def make_group(rng, group, kind=None, over=None, realistic=True, unclean=False, unreproduced=(), degenerate=None, reply=None,
+               c1_hop=True, c1_flags=True, zero_calls=()):
     """One six-seed run of ONE group: {seed: {arm: shard}}.
     kind          : which perfect/null brain (see the reply_* functions); default the registered mechanism's perfect brain
     over          : {arm_base: (kind, role)} replaces that arm's kind/role (an inert lesion = (kind, "intact"))
-    unclean / unreproduced / degenerate : as in the Stage-2 builder."""
+    unclean / unreproduced / degenerate : as in the Stage-2 builder.
+    c1_hop / c1_flags : C1 only (Amendment A2): the organ read records hop / the arm records the effective flags
+    zero_calls    : arm bases whose in-process patch records calls == 0 (installed, never engaged)"""
     kind = kind or DEFAULT_KIND[group]
     fn = reply or REPLIES[group]
     data = {}
@@ -295,9 +302,33 @@ def make_group(rng, group, kind=None, over=None, realistic=True, unclean=False, 
                 patch = {"patch": PATCH_OF[base], "calls": int(_sub(master, "patch", base).integers(4, 30))}
                 if base == "lesion_recall":
                     patch["calls_total"] = patch["calls"] + 26
-            data[seed][arm] = {"seed": seed, "group": group, "arm": arm, "responses": resp, "sources": [S],
-                               "pythonhashseed_ok": True, "corpus_present": True, "patch": patch}
+                if base in zero_calls:
+                    patch["calls"] = 0                  # the patch was installed but never called (not engaged)
+            sh = {"seed": seed, "group": group, "arm": arm, "responses": resp, "sources": [S],
+                  "pythonhashseed_ok": True, "corpus_present": True, "patch": patch}
+            if group in G.C1_GROUPS:
+                _c1_record(sh, base, c1_hop, c1_flags)
+            data[seed][arm] = sh
     return data
+
+
+def _c1_record(sh, base, hop, flags):
+    """Amendment A2's per-arm C1 record, as the attempt-2 worker writes it at the flip revision: the effective flag
+    values (`c1_flags`) and, on the direct probe, the organ read (`category_inherit.read`) with `hop: true`; a lesion
+    arm's read also carries `lesion: "all"` / `lesion_held: true`. hop=False is the 09-30 organ (no hop record);
+    flags=False is a shard written before A2 (no flag record)."""
+    if flags:
+        sh["c1_flags"] = {"BRAIN_CATEGORY_INHERIT": True, "BRAIN_CATEGORY_INHERIT_HOP": bool(hop)}
+    d = sh["responses"].get(G.C1_DIRECT_PROBE)
+    if not isinstance(d, dict):
+        return
+    hs = d.get("hypothesis_svo")
+    cut = base == "lesion_inherit_pathway"
+    read = {"patient": (hs[2] if hs and not d.get("abstained") else None), "reason": ("reached" if hs else "below_floor"),
+            "lesion": "all" if cut else None, "lesion_held": True if cut else None}
+    if hop:
+        read.update(hop=True, hop_lateral_gain=0.5, query_steps=30)
+    sh["responses"][G.C1_DIRECT_PROBE] = dict(d, category_inherit={"observe": None, "read": read})
 
 
 # ══════════════════════════════════════════════ the decision = the real aggregate ══════════════════════════════════

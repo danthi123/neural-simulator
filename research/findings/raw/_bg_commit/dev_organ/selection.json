@@ -1,0 +1,93 @@
+{
+ "table": {
+  "0": {
+   "1": true,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": true,
+   "8": true
+  },
+  "1": {
+   "1": false,
+   "2": true,
+   "3": true,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "2": {
+   "1": false,
+   "2": true,
+   "3": true,
+   "4": false,
+   "5": false,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "3": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": true,
+   "6": false,
+   "7": false,
+   "8": false
+  },
+  "4": {
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false,
+   "5": true,
+   "6": false,
+   "7": false,
+   "8": false
+  }
+ },
+ "selected": null,
+ "rule": "first row in grid order with all_pass on all dev seeds",
+ "declared_post_data": {
+  "rule": "max agreement with the old latch read among rows with C1, C4, C5 on all dev seeds; tie -> first in grid order",
+  "stage_ok": {
+   "0": true,
+   "1": true,
+   "2": true,
+   "3": true,
+   "4": true
+  },
+  "agree_old_latch_read": {
+   "0": 0.7375,
+   "1": 0.7781,
+   "2": 0.7812,
+   "3": 0.9563,
+   "4": 0.9625
+  },
+  "selected": 4
+ },
+ "runner": "research.runners._bg_commit_derisk",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab68c685ffb2cfd3d/research/runners/_bg_commit_derisk.py",
+  "--select",
+  "--out-dir",
+  "research/findings/raw/_bg_commit/dev_organ"
+ ],
+ "backend": "numpy",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "note": "reads the sweep files only (no brain built); the sweep ran on numpy, CPU"
+}

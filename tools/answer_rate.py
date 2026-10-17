@@ -24,7 +24,12 @@ Two cell layouts:
   paired    the same faculty dir under two shard tags, `--on-tag` (flip/flag-on) and `--off-tag` (flag-off, e.g. the
             iw*-alloff-<F7> attribution run), per seed:
      python tools/answer_rate.py paired --on-tag iw2-flip-<F7> --off-tag iw2-alloff-<F7> --faculty tom-false-belief
-Library: `report(per_seed)`, `prefixed_per_seed(dirs)`, `paired_per_seed(base, on_tag, off_tag, faculty, seeds)`.
+            exactly one of --off-tag / --off-arm: `--off-arm <lesion arm stem>` takes the off side from the LESION arm
+            beside the intact arms in the ON-tag dir (the alloff cells abstain by design via REQUIRED_ENV, so the off
+            side must be a cell the brain ran normally -- RULING answer-rate-off); its label carries `off = lesion arm`:
+     python tools/answer_rate.py paired --on-tag iw1-R-d6-049d4bb --off-arm lesion_d6_hebbian_write --faculty d6-hebbian-write
+Library: `report(per_seed)`, `prefixed_per_seed(dirs)`,
+         `paired_per_seed(base, on_tag, off_tag, faculty, seeds, off_arm=None)`.
 Exit 0 always (reported, not gated) unless --strict, which exits 4 on FLIP-HURTS-ANSWERS and 3 when nothing measured.
 """
 from __future__ import annotations
@@ -135,12 +140,15 @@ def prefixed_per_seed(dirs):
     return out
 
 
-def paired_per_seed(base, on_tag, off_tag, faculty, seeds=SEEDS):
+def paired_per_seed(base, on_tag, off_tag, faculty, seeds=SEEDS, off_arm=None):
+    """Per seed: on = `^intact` in the on-tag dir; off = `^intact` in the off-tag dir, or, with `off_arm`, the lesion
+    arm of that name in the ON-tag dir (off = lesion arm; the alloff cells abstain by design via REQUIRED_ENV)."""
     out = {}
     for s in seeds:
         on_d = os.path.join(base, on_tag, "s%d" % s, faculty)
-        off_d = os.path.join(base, off_tag, "s%d" % s, faculty)
-        out[str(s)] = {"on": probes_in(on_d, r"^intact"), "off": probes_in(off_d, r"^intact")}
+        out[str(s)] = {"on": probes_in(on_d, r"^intact"),
+                       "off": probes_in(on_d, "^" + re.escape(off_arm)) if off_arm
+                              else probes_in(os.path.join(base, off_tag, "s%d" % s, faculty), r"^intact")}
     return out
 
 
@@ -164,7 +172,9 @@ def main(argv=None):
     p1.add_argument("dirs", nargs="+", help="shard dirs or globs (one per seed)")
     p2 = sub.add_parser("paired")
     p2.add_argument("--on-tag", required=True)
-    p2.add_argument("--off-tag", required=True)
+    p2.add_argument("--off-tag", help="flag-off shard tag (alloff attribution run); exactly one of --off-tag/--off-arm")
+    p2.add_argument("--off-arm", dest="off_arm",
+                    help="off side = this LESION arm inside the ON-tag dir (label: off = lesion arm)")
     p2.add_argument("--faculty", required=True, help="the faculty's shard dir name")
     p2.add_argument("--base", default=BASE)
     p2.add_argument("--seeds", default=",".join(map(str, SEEDS)))
@@ -179,8 +189,13 @@ def main(argv=None):
             return 2
         rep = report(prefixed_per_seed(dirs), label=a.dirs[0])
     else:
-        rep = report(paired_per_seed(a.base, a.on_tag, a.off_tag, a.faculty, [int(x) for x in a.seeds.split(",")]),
-                     label="%s: %s vs %s" % (a.faculty, a.on_tag, a.off_tag))
+        if bool(a.off_tag) == bool(a.off_arm):                       # both or neither: exactly one off side
+            print("answer_rate: paired needs EXACTLY one of --off-tag / --off-arm", file=sys.stderr)
+            return 2
+        label = ("%s: %s vs off-arm %s (off = lesion arm)" % (a.faculty, a.on_tag, a.off_arm) if a.off_arm
+                 else "%s: %s vs %s" % (a.faculty, a.on_tag, a.off_tag))
+        rep = report(paired_per_seed(a.base, a.on_tag, a.off_tag, a.faculty,
+                                     [int(x) for x in a.seeds.split(",")], off_arm=a.off_arm), label=label)
     print(json.dumps(rep, indent=1) if a.json else render(rep))
     if a.strict:
         return 4 if rep["flags"] else (3 if rep["status"] == "UNMEASURED" else 0)

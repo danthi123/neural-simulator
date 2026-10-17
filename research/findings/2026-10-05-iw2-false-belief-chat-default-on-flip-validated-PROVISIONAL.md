@@ -19,6 +19,7 @@ artifacts:
   - research/findings/raw/_iw2/identity/573a943/default.json
   - research/findings/raw/_iw2/identity/1fb805e/default.json
   - research/findings/raw/_load_bearing/_shards/iw2-flip-1fb805e/s42/tom-false-belief/intact_a_tom_fb.json
+  - research/findings/raw/_fb_store/verdict.json
 ---
 
 # iw2 false-belief-chat: default-on flip validated (PROVISIONAL, 2026-10-05)
@@ -147,3 +148,14 @@ prediction is that the store is not necessary on this probe. The reason is a com
 with zero: no simulated time passes between the narration and the question. Separately, an empty or tied store now
 abstains instead of answering the host argmax's slot-0 default, which on this probe is the false-belief location; this
 matters most for T18's synaptic write, whose belief does not yet persist through the hold (RULING `fb-relay2`).
+
+### Store lesion read on the six gate seeds (Claude, 2026-10-13, RULING `lbf-host-input-rows`)
+
+The store lesion registered above has read: `research/findings/raw/_fb_store/verdict.json` (tag fbstore-290e3be, pin
+290e3be3f, scorer `tools/fb_store_score.py`) is STORE-NOT-LOAD-BEARING on 6/6 gate seeds, all six cells DEFINED, none
+undefined. With the store's self-recurrence cut, every seed still answered "Sally will look in the basket for the
+marble." and none abstained, so on this probe the spiking store is not necessary for the reply. The `tom-false-belief`
+row's lesion therefore removes a host input (the witnessing override), not a neural pathway: its row module is now
+tagged `kind="host-input"` and, from the 2026-10-12 validation battery's Amendment B on, its load-bearing reading is
+excluded from the S1/S2 neural numerator and reported separately as a host-input lesion. The capability is not
+retired; T18's synaptic write is the route to a store whose lesion changes the reply.

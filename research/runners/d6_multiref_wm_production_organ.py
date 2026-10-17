@@ -241,11 +241,28 @@ _FOCUS_STATE_ARRAYS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_
                        "cp_refractory_timers")
 
 
+# PRODUCTION-DEFAULT ANCHOR (integration wave 1, 2026-09-29; packet research/packets/integration-wave1/wm-focus-bind/).
+# It governs the default of BRAIN_MULTIREF_FOCUS_BIND, read ONLY through `multiref_focus_bind_enabled` below. While the
+# anchor is False the reader is byte-identical to the pre-anchor expression (tests/test_integration_wave1_anchors.py
+# pins the truth table); flipping it to True makes the flag ON unless explicitly set off (0/false/no/off/empty). The
+# lesion knob BRAIN_MULTIREF_LESION is not governed by it.
+_MULTIREF_FOCUS_BIND_DEFAULT_ON = False
+_FLAG_ON = ("1", "true", "yes", "on")
+_FLAG_OFF = ("0", "false", "no", "off", "")
+
+
+def _anchored_flag(name: str, default_on: bool) -> bool:
+    v = os.environ.get(name)
+    if default_on:
+        return not (v is not None and v.strip().lower() in _FLAG_OFF)
+    return v is not None and v.strip().lower() in _FLAG_ON
+
+
 def multiref_focus_bind_enabled() -> bool:
     """`BRAIN_MULTIREF_FOCUS_BIND` in {1,true,yes,on} -> the spiking referent->focus binding + pronoun resolution
-    (see the block comment above). DEFAULT-OFF: unset/anything else -> byte-identical to before this flag existed."""
-    v = os.environ.get("BRAIN_MULTIREF_FOCUS_BIND")
-    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+    (see the block comment above). DEFAULT-OFF while `_MULTIREF_FOCUS_BIND_DEFAULT_ON` is False: unset/anything else
+    -> byte-identical to before this flag existed."""
+    return _anchored_flag("BRAIN_MULTIREF_FOCUS_BIND", _MULTIREF_FOCUS_BIND_DEFAULT_ON)
 
 
 def is_hold_query(text: str) -> bool:

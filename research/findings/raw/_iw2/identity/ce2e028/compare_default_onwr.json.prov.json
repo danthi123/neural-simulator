@@ -1,0 +1,32 @@
+{
+ "run_id": "1792065842-25236",
+ "runner": "research/runners/iw2_default_identity.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/iw2_default_identity.py",
+  "--compare",
+  "research/findings/raw/_iw2/identity/ce2e028/default.json",
+  "research/findings/raw/_iw2/identity/ce2e028/on_word-role.json",
+  "--expect",
+  "same",
+  "--out",
+  "research/findings/raw/_iw2/identity/ce2e028/compare_default_onwr.json"
+ ],
+ "git_sha": "13ae12088",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-15T08:04:02",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 346280.8,
+ "corpus_check_query": "emerge60 Broca producer console demo re-queue: what does the existing record say",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_iw2/identity/ce2e028/compare_default_onwr.json"
+}

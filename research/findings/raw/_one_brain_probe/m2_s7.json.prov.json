@@ -1,0 +1,38 @@
+{
+ "run_id": "1791937374-2908146",
+ "runner": "research/runners/one_brain_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/m2branch/research/runners/one_brain_probe.py",
+  "--seed",
+  "7",
+  "--arms",
+  "one_brain",
+  "freeze_learning",
+  "zero_learned_store",
+  "intact",
+  "restart_persist_on_one_brain",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/m2_s7.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": null,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-13T20:22:54",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "../../sim/.claude/worktrees/agent-a8b17662cef3f73dc/research/findings/raw/_one_brain_probe/m2_s7.json"
+}

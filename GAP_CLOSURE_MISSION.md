@@ -13,7 +13,97 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-06 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
+#1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
+**Frontier:** **Stage 1 PASSED 2026-10-16 (attempt 2): C1-C4 each 6/6, Claude-verified, with the four caveats listed below (never cite it without them).** The verdict, its
+numbers and its four caveats live verbatim in `research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`
+(verify-go + two adversarial reviews survived, merge `e114828f1`; RULING `s1-verified-1016`: board #244 closed,
+milestone #264 added). All four primary criteria are covered by that finding at 6/6 each; the diagnostics
+`cat_told` and `val_novel` read 0/6 and are prereg-frozen as not counted. Per RULING `s1-next-1016`,
+priorities-1015 item (1) is done: next is (2) the word-role flip (F3 rerun at P', prereg, ASK
+[wrc-flip-prereg]), then (3) Stage 2 (same AWS split as attempt 2: file [aws-run] when its lines are emitted,
+pool for the other seeds). Headline inserted by Claude 2026-10-16 (ASK [roadmap-sync] answered).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-verified-1016` and
+`s1-next-1016`, then section 4 in order.
+
+**Stage-1 attempt 2 — four caveats ride the verdict, copied verbatim from the finding (never an unqualified
+claim):**
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
+**Decisions-owned (from the finding):** this stage bar does not measure host-decision share — the k-select step
+is still host code and the load-bearing work is the step-3 ownership moves; caveat 1 above goes into any
+load-bearing-fraction row that cites the recruit or recall pathway (RULING `s1-next-1016`).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-13 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**⚠️ Superseded 2026-10-16 — the live RESUME point is the 2026-10-16 section above; everything
+below this heading is history.**
+
+**Date:** 2026-10-13. **North star:** unchanged. A sim-brain that converses genuinely; Qwen stays the mouth; the #1
+metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
+**Frontier:**
+- Stage-1 attempt 2: C1 step D is landed at 927aeb87c; queue by 10-24, score by 10-28.
+- The C5 idle-replay flip is being validated through the battery under Amendment B (c4d0f3da6).
+- Stage-2 gate pin on 11-03, with Amendment A4.
+- The Stage-3 draft is on main (97bc60c0f).
+
+**Landed 2026-10-15 (Claude):** three status moves the driver synced per slf-flip-docs-1015:
+- **Shared memory DEFAULT ON** (merge `1ff97a8cd`, `_SHARED_LTM_DEFAULT_ON = True`): flip battery Amendment A
+  A1 6/6 + A2 6/6, Claude's independent re-score matches; escape `BRAIN_SHARED_LTM=0`; not a faculty, no ledger
+  row; live webapp picks it up on its next restart (restart only with no conversation mid-turn).
+- **Word-role commit confirmed-with-caveats**; the flip packet (`docs/drafts/word-role-flip/PACKET.md`, branch
+  `research/wrc-flip-packet`, amendments A-D) is in progress — dev-7 smoke queues next.
+- **BG commit six-seed gate NO-GO** (P=3e7a41d97): G4 fixed (threshold-invariant read) but G2a (empty_held
+  0.6667) and G3 (lesion 0.2917 < 0.3) failed; PROVISIONAL finding
+  `research/findings/2026-10-14-bg-live-seam-commit-RESULT.md`; next method = tonic pallidal drive.
+
+**Next command (Hermes, on S):** run `bash tools/status.sh`. Then work through the runbook RULINGs dated 2026-10-13 in order:
+battery-amend-B-merged/-gate, battery-retention-e1, c1-probes-merged/-score, s2-a4-review + s2-gate-pin-nov-A4, s3-smoke-rev.
+
+**Landed 2026-10-13 (Claude; each branch was adversarially verified before merge):**
+- **Derived-answer honesty, default-ON (d6a7213c6, HANDOFF 18b).**
+  - A chased conclusion of 2 or more hops is framed "I derived this from: ...".
+  - supporting_facts lists only the hops; the conclusion is in derived_svo.
+  - An affirmed stored conclusion stays a plain recall; a negated one stays derived.
+- **Questions are never stored, default-ON (3b4b31604, HANDOFF 18a).**
+  - A question is never acquired, never used to rewrite a fact, and never answered as if asserted.
+  - This is a host form-check scaffold, ledgered in docs/SCAFFOLD-LEDGER.md. Its replacement is a spiking clause-type organ.
+- **Battery Amendment B (c4d0f3da6).** C5 can read at best "selects by tag recency; ownership UNDETERMINED".
+  - A host argmax over the organ's tags passes every counted clause, so the race cannot be told apart from a host argmax.
+  - Next method: a race-steer arm (Amendment C; the design is in docs/drafts/idle-replay/WORKLOG.md).
+  - Production gap: a re-told or contradicted fact is appended, not reconsolidated in place.
+- **Battery worker session release (f935885d6 + 508f004a6).** It is opt-in. The E1 equivalence check is cleared.
+- **Stage-2 Amendment A4** is on S as claude-build/stage2-a4. Hermes merges it into research/stage2-exit-gate.
+- **C1 generalization probes (960ce6528).** Dev 7 gives override PASS and graded FAIL (newt = toad < eel).
+  - The inheritance organ links nearly every frame to every other one, so evidence does not add strength. This reads as templating, not knowledge.
+  - Dev seeds 1-8 are queued, and a FAIL gets a new method.
+- **Curiosity learning-progress de-risk (70fbe7bdf): NO-GO on dev 1-8.** Noise-driven slice depression acts as a clock.
+  - Next method: topic inputs with background noise off.
+- **Stage-3 exit draft (97bc60c0f).** It uses a two-clause verdict (capability AND ownership). PLAN §11 is ruled (s3-open-rulings-1013).
+- **Owner-level items:**
+  - The production wikidata_100k LTM costs ~5.1-5.4 GiB per live conversation, with no bound. That is in tension with one-brain; a shared LTM substrate is the candidate.
+  - Phase A exit was missed on "one live seam retired".
+
+## STATE OF THE PROJECT — 2026-10-06 (history; superseded by 2026-10-13 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-06. **North star:** a sim-brain that converses genuinely; Qwen stays the mouth; #1 metric = the
 load-bearing fraction, host-decision share (by intervention) beside it. **Frontier:** Stage-1 attempt 1 is fully
@@ -34,8 +124,10 @@ permuted control before attempt 2. Move the host-owned C2/C3 decisions into the 
 - **Affect audit ruled** (`docs/drafts/stage1-exit/AUDIT-affect-pool-results.md`): void = only attempt 1's `gate/`
   C4 cells (already corrected). Pool/AWS LBF affect rows before 10-05 stand with a provenance caveat (norm values,
   same-input contrast). Finding: `research/findings/2026-10-04-stage1-exit-gate-RESULT.md` (review 2026-10-06).
-- **Owed:** C1 wiring-on gate (T7): re-queue the 2 missing s42 cells; amended C4 control (Claude, before attempt 2);
+- **Owed:** C1 wiring-on gate (T7): amended C4 control (Claude, before attempt 2);
   Stage-2 dev smoke re-queued at a synced revision (RULING `stage2-dev-smoke`).
+  The 2 missing s42 lateral cells are no longer owed: withdrawn and never re-queued per RULING
+  `pool-hold-c1-closed` (board item retracted 2026-10-08 per `c1-requeue-board`).
 
 *Entries below are history.*
 

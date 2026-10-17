@@ -1,0 +1,178 @@
+{
+ "runner": "research.runners._bg_commit_derisk",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab68c685ffb2cfd3d/research/runners/_bg_commit_derisk.py",
+  "--summary",
+  "--out-dir",
+  "research/findings/raw/_bg_commit/dev_organ"
+ ],
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "backend": "numpy",
+ "rows": {
+  "0": {
+   "trials_intact": 320,
+   "trials_all": 608,
+   "read_invariant": 608,
+   "latched_min": 65,
+   "latched_max": 99,
+   "unlatched_max": 1,
+   "empty_held": 77,
+   "n_empty": 112,
+   "empty_held_frac": 0.6875,
+   "content_held": 0,
+   "n_content": 104,
+   "content_held_frac": 0.0,
+   "one_word_held": 2,
+   "co_commit": 96,
+   "agree_old_latch_read": 0.7375,
+   "old_read_empty_held": 99,
+   "old_read_content_held": 6,
+   "lesion_commits": {
+    "commit": 0,
+    "latch": 0,
+    "excl": 64
+   },
+   "lesion_trials": {
+    "commit": 96,
+    "latch": 96,
+    "excl": 96
+   },
+   "seeds_all_pass": 3,
+   "live_q_speak": 8
+  },
+  "1": {
+   "trials_intact": 320,
+   "trials_all": 608,
+   "read_invariant": 608,
+   "latched_min": 65,
+   "latched_max": 99,
+   "unlatched_max": 1,
+   "empty_held": 94,
+   "n_empty": 112,
+   "empty_held_frac": 0.8393,
+   "content_held": 8,
+   "n_content": 104,
+   "content_held_frac": 0.0769,
+   "one_word_held": 20,
+   "co_commit": 7,
+   "agree_old_latch_read": 0.7781,
+   "old_read_empty_held": 99,
+   "old_read_content_held": 6,
+   "lesion_commits": {
+    "commit": 0,
+    "latch": 0,
+    "excl": 64
+   },
+   "lesion_trials": {
+    "commit": 96,
+    "latch": 96,
+    "excl": 96
+   },
+   "seeds_all_pass": 2,
+   "live_q_speak": 8
+  },
+  "2": {
+   "trials_intact": 320,
+   "trials_all": 608,
+   "read_invariant": 608,
+   "latched_min": 67,
+   "latched_max": 100,
+   "unlatched_max": 1,
+   "empty_held": 95,
+   "n_empty": 112,
+   "empty_held_frac": 0.8482,
+   "content_held": 8,
+   "n_content": 104,
+   "content_held_frac": 0.0769,
+   "one_word_held": 20,
+   "co_commit": 6,
+   "agree_old_latch_read": 0.7812,
+   "old_read_empty_held": 99,
+   "old_read_content_held": 6,
+   "lesion_commits": {
+    "commit": 0,
+    "latch": 0,
+    "excl": 64
+   },
+   "lesion_trials": {
+    "commit": 96,
+    "latch": 96,
+    "excl": 96
+   },
+   "seeds_all_pass": 2,
+   "live_q_speak": 8
+  },
+  "3": {
+   "trials_intact": 320,
+   "trials_all": 608,
+   "read_invariant": 608,
+   "latched_min": 65,
+   "latched_max": 109,
+   "unlatched_max": 1,
+   "empty_held": 98,
+   "n_empty": 112,
+   "empty_held_frac": 0.875,
+   "content_held": 7,
+   "n_content": 104,
+   "content_held_frac": 0.0673,
+   "one_word_held": 15,
+   "co_commit": 0,
+   "agree_old_latch_read": 0.9563,
+   "old_read_empty_held": 99,
+   "old_read_content_held": 6,
+   "lesion_commits": {
+    "commit": 0,
+    "latch": 0,
+    "excl": 64
+   },
+   "lesion_trials": {
+    "commit": 96,
+    "latch": 96,
+    "excl": 96
+   },
+   "seeds_all_pass": 1,
+   "live_q_speak": 8
+  },
+  "4": {
+   "trials_intact": 320,
+   "trials_all": 608,
+   "read_invariant": 608,
+   "latched_min": 67,
+   "latched_max": 104,
+   "unlatched_max": 1,
+   "empty_held": 98,
+   "n_empty": 112,
+   "empty_held_frac": 0.875,
+   "content_held": 7,
+   "n_content": 104,
+   "content_held_frac": 0.0673,
+   "one_word_held": 16,
+   "co_commit": 0,
+   "agree_old_latch_read": 0.9625,
+   "old_read_empty_held": 99,
+   "old_read_content_held": 6,
+   "lesion_commits": {
+    "commit": 0,
+    "latch": 0,
+    "excl": 64
+   },
+   "lesion_trials": {
+    "commit": 96,
+    "latch": 96,
+    "excl": 96
+   },
+   "seeds_all_pass": 1,
+   "live_q_speak": 8
+  }
+ },
+ "note": "aggregates of the dev sweep files (no brain built); the sweep ran on numpy, CPU"
+}

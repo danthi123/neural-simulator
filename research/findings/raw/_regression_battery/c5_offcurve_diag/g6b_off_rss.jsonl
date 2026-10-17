@@ -1,0 +1,4 @@
+{"event": "battery_turn", "hwm_kb": 6388168, "pid": 16, "rss_kb": 6231220, "ts": 1791832116.147, "turn": "emo"}
+{"event": "battery_turn", "hwm_kb": 11776668, "pid": 16, "rss_kb": 11685200, "ts": 1791832295.564, "turn": "bc_a"}
+{"event": "battery_turn", "hwm_kb": 11776668, "pid": 16, "rss_kb": 11684336, "ts": 1791832496.063, "turn": "bc_b"}
+{"event": "battery_turn", "hwm_kb": 16914020, "pid": 16, "rss_kb": 16914020, "ts": 1791832623.939, "turn": "selfinit"}

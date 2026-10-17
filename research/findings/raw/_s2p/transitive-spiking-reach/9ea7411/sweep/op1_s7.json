@@ -1,0 +1,109 @@
+{
+ "seed": 7,
+ "op_index": 1,
+ "params": {
+  "W_HOP": 20.0,
+  "W_WAVE_MATCH": 3.0,
+  "W_GOAL_MATCH": 1.0,
+  "W_MATCH_DETECT": 6.0,
+  "START_PA": 1500.0,
+  "START_STEPS": 20,
+  "GOAL_PA": 1500.0,
+  "DETECT_MIN": 10
+ },
+ "cases": {
+  "derived2": {
+   "detect": 39,
+   "reached": true,
+   "want_reached": true,
+   "path": [
+    "cat",
+    "ball",
+    "worm"
+   ],
+   "pass": true
+  },
+  "derived3": {
+   "detect": 38,
+   "reached": true,
+   "want_reached": true,
+   "path": [
+    "cat",
+    "ball",
+    "worm",
+    "river"
+   ],
+   "pass": true
+  },
+  "reversed": {
+   "detect": 0,
+   "reached": false,
+   "want_reached": false,
+   "path": [
+    "river"
+   ],
+   "pass": true
+  },
+  "unrelated": {
+   "detect": 1,
+   "reached": false,
+   "want_reached": false,
+   "path": [
+    "cat",
+    "ball",
+    "worm",
+    "river"
+   ],
+   "pass": true
+  },
+  "branch_river": {
+   "detect": 41,
+   "reached": true,
+   "want_reached": true,
+   "path": [
+    "cat",
+    "ball",
+    "worm",
+    "river"
+   ],
+   "pass": true
+  },
+  "branch_sun": {
+   "detect": 40,
+   "reached": true,
+   "want_reached": true,
+   "path": [
+    "cat",
+    "sun"
+   ],
+   "pass": true
+  },
+  "lesion_derived3": {
+   "detect": 0,
+   "reached": false,
+   "want_reached": false,
+   "path": [
+    "cat"
+   ],
+   "pass": true
+  },
+  "path3": {
+   "detect": 38,
+   "reached": true,
+   "want_reached": true,
+   "path": [
+    "cat",
+    "ball",
+    "worm",
+    "river"
+   ],
+   "pass": true
+  },
+  "branch": {
+   "detect": 40,
+   "pass": true
+  }
+ },
+ "all_pass": true,
+ "backend": "numpy"
+}

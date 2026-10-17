@@ -71,3 +71,55 @@ Append-only. One line per step, newest last. The local model appends here; Claud
   gate shard at the pinned revision; the queued line re-runs it. New GATE row 6c2cb1362 in PINS.tsv; env.sh JOBS ->
   research/queue/requeue_stage1_c1_category_6c2cb1362.tsv (the same 54 seed x arm lines, max_age_h=168 in place of
   120). The bb6705de6 lines in pool.queue.held are retired, never released.
+- 2026-10-07 02:1x Hermes (T7, HANDOFF docs/drafts/stage1-c1-inheritance/HANDOFF.md, steps 0-3; §4 order: T1's grid
+  runs on the pool, so moved on). Step 0 READY (claude-review/c1-hop is an ancestor of main; HOP_FLAG present in
+  c1_flip_dev_check.py). Step 1 already done (bde11b91a, 106 files tracked under gate/ incl. sidecars). Step 2 @
+  DEV_SHA 2c2d559525e0508552143c2525a91270d130b1dd: pytest -q (3 files, -k "verdict or gate_ or env_parse") under
+  nice -n 10 -> 12 passed, 30 deselected in 86 s; both selftests -> SELFTEST OK (organ-building tests belong to W,
+  not run here). Step 3 provision via the server per RULING iw2-provision (NOT the HANDOFF's pool_provision.sh line,
+  forbidden on S): touched research/queue/provision.req/2c2d55952... at 02:06 EDT; status state "running"
+  (attempt 1/3, 7214 files/114 MiB + 278 MiB data -> pool41/42/40). Emitted research/queue/c1_flipdev_2c2d559.tsv
+  = 96 lines, every why already carries mem_gb= and max_age_h= (no append needed); canary extract (--seed 1 --side
+  on --group cat_disc) = 1 line, NOT yet queued (awaits state ok). Concurrent: T1's 144-line LDC grid at 9f625fd1c
+  (mem_gb=2) dispatches ahead of the 7-9 GB C1 lines under FIRST-FIT -- deliberate, both inside max_age_h. Next:
+  provision ok -> queue canary -> verify landing per the step-3 check (16 turns, flag "1", hop "1", trace on every
+  turn, read hop True 30, flagged-worm guess) -> 3b emit 54 gate_hop + queue other 95 -> step 4 score -> step 5
+  [c1-gatehop]/[c1-flipdev] RESULT lines. Unsure: none (no verdict written).
+- 2026-10-07 02:17 Hermes: provision 2c2d55952 -> state ok (pool41/42/40; wspool optional, backfilled later;
+  RULING compute-placement server path, no pool_provision.sh). Canary line queued via pool_queue.sh add
+  (research/findings/raw/_stage1_c1_flipdev/on/s1/cat_disc__intact_a.json); c1_in_queue=1, pool depth 101 at
+  add time. Waiting for the canary to dispatch, run and arrive via sim-sync before the step-3 landing check;
+  3b's 54 gate_hop + the other 95 flip-dev lines stay unqueued until it passes (HANDOFF order).
+- 2026-10-07 03:0x Hermes: while the canary waits (queued at pool.queue line 101/101; last dispatch 02:07, all
+  three nodes running T1 grid lines, no ordering control in pool_queue.sh), prepped the landing check at
+  _scratch/c1_canary_check.py (verbatim step-3 heredoc; runners byte-identical between 2c2d55952 and main so it
+  runs from $P without a worktree checkout) and pre-emitted research/queue/c1_gatehop_2c2d55952.tsv (NO adds):
+  54 lines, 54 hop-flagged, 54 gate seeds, 54 named with prereg
+  research/findings/2026-09-30-stage1-c1-category-inheritance-PREREGISTRATION.md (verified EXISTS at the pin via
+  git cat-file), all carry mem_gb+max_age_h. pool_canaries.tsv has no stage1_c1_category@2c2d55952 record, so
+ the 3b adds WILL hit the pool-canary guard -> §3 STOP + NEEDS [c1-gatehop] at the actual refusal.
+ - 2026-10-09 03:25 EDT (Hermes, driver) — RULING c1-stamp-fix executed (code + tests in this commit).
+ Defect: the comprehension-repair abstain early return (server.py:6265) returned before the two
+ `category_inherit` attach sites, so a turn where the C1 organ FIRED on an OOV abstain carried no
+ stamp (the [c1-flipdev-diagnose] RESULT 10-08 14:07 named it). Fix: webapp/category_inherit_chat.py
+ gains `turn_stamp(chat)` = the trace only when the organ engaged this turn (an observe or read
+ record exists), None otherwise; webapp/server.py gains ONE helper `_attach_category_inherit(resp,
+ chat)` called before all three returns (abstain, rich, single-fact), attaching the key EXACTLY when
+ the pathway fired and leaving it absent otherwise — a missing stamp now always means the pathway
+ never fired. The wiring test pins the new shape (one write + three call sites) and
+ `test_category_inherit_stamp_both_paths` covers fired/present vs idle/absent; 37 category-inherit
+ tests pass (organ + hop). Consumers checked (c1_flip_dev_check.py, stage1_c1_category.py): all
+ `.get()` + normalize absence, no breakage.
+ Branch note: the RULING names research/stage1-exit-gate, but that branch predates the organ (0 hits
+ for category_inherit; claude-review/c1-hop is not an ancestor); the fix is on research/c1-stamp-fix
+ branched from main 613edd284, where the code lives. NEEDS [c1-stamp-fix] filed for the merge; once
+ merged, RULING c1-flipdev-rerun can run against the unchanged scorer.
+
+## 2026-10-11 14:40 -- flip build committed (research/c1-flip, commit 680a313e8)
+- RULING c1-flip-go FLIP decided: _CATEGORY_INHERIT_DEFAULT_ON = True; BRAIN_CATEGORY_INHERIT_HOP defaults ON when unset; every explicit value keeps pre-flip semantics so BRAIN_CATEGORY_INHERIT=0 / HOP=0 are the byte-identical escapes (tests pin both, incl. source-level server-installs-nothing).
+- Fixes a pre-existing check-6 bug on main: the bar outcome was its own precondition, so any FAIL downgraded to UNDEFINED (exposed at 32db95f88 by seed 4 word/c_otter_chase content_changed; pre-existing per mainwt comparison).
+- Reports per ruling: one-hop bat->lake flagged guess PASS 8/8 dev seeds (owner item: is one shared feature enough? -- answered by the 8/8 since the flag alone gates the guess); bridge bar capacity 24 slots (8 seeds x 3 bridge turns); untraced bypass turns 129 across the 8 ON seeds (cat_disc 3, cat_told 2, word 4, lived 4, val_novel 8 per seed; bridge group 0).
+- Ledger: row category-inherit (retire_status BLOCKED:neural-render, subflag flip markers), total_faculties 69->70. LBF: research/runners/lbf_rows/category_inherit.py (probe c_bat_swim, lesion BRAIN_CATEGORY_INHERIT_LESION=1, no REQUIRED_ENV). Board sync receipt: task #246 label 7.
+- Checks on branch: 62 relevant tests pass + scorer --selftest 27/27 + bar-sanity OK + LBF row selftest + ledger yaml 70/70 unique.
+- Gates on commit: board-sync-on-status-change satisfied via #246; production-integration [D] retire_status satisfied.
+- Awaiting Claude merge per tree-c1-flip path (a). Teach-observe stays parked.

@@ -102,6 +102,7 @@ from sim.enums import NeuronModel  # noqa: E402
 from sim.backend import get_backend, to_host  # noqa: E402
 
 from research.runners._gnw_rung1_ignition_curve_derisk import _snapshot_state, _reset_quiescent  # noqa: E402
+from research.runners import spiking_commit as SC  # noqa: E402  (the shared commit stage)
 from tools.lab import lever  # noqa: E402
 
 ROLES = ("agent", "action", "patient")
@@ -293,16 +294,12 @@ class WordRoleParserOrgan:
         n = o_inh + 3 * NI
         c = self.c
         if c is not None:                                  # commit stage appended after the count-rule organ
-            NG, NGI, NS = int(c["NG"]), int(c["NGI"]), int(c["NS"])
-            o_g = n
-            o_gi = o_g + 3 * NG
-            o_s = o_gi + 3 * NGI
-            n = o_s + 3 * NS
-            self.gate_idx = {r: np.arange(o_g + k * NG, o_g + (k + 1) * NG, dtype=np.int64) for k, r in enumerate(ROLES)}
-            self.gate_inh_idx = {r: np.arange(o_gi + k * NGI, o_gi + (k + 1) * NGI, dtype=np.int64)
-                                 for k, r in enumerate(ROLES)}
-            self.slot_idx = {r: np.arange(o_s + k * NS, o_s + (k + 1) * NS, dtype=np.int64) for k, r in enumerate(ROLES)}
-            self.all_slot = np.arange(o_s, o_s + 3 * NS, dtype=np.int64)
+            lay = SC.layout(len(ROLES), n, int(c["NG"]), int(c["NGI"]), int(c["NS"]))   # (research/runners/
+            n = int(lay["end"])                                                          # spiking_commit.py)
+            self.gate_idx = dict(zip(ROLES, lay["gate"]))
+            self.gate_inh_idx = dict(zip(ROLES, lay["gate_inh"]))
+            self.slot_idx = dict(zip(ROLES, lay["slot"]))
+            self.all_slot = lay["all_slot"]
         self.word_idx = {w: np.arange(i * NW, (i + 1) * NW, dtype=np.int64) for i, w in enumerate(self.vocab)}
         self.spare_idx = [np.arange((V + j) * NW, (V + j + 1) * NW, dtype=np.int64) for j in range(S)]
         self.pos_idx = [np.arange(o_pos + k * NP, o_pos + (k + 1) * NP, dtype=np.int64) for k in range(3)]
@@ -346,20 +343,10 @@ class WordRoleParserOrgan:
             plan["ir_" + r] = _dense(self.inh_idx[r], others, p["W_IR"], plastic=False, conn_type="I_TO_E",
                                      plasticity_gate=GATE_FIXED, receptor=p.get("RECEPTOR"))
         inh = np.concatenate([self.inh_idx[r] for r in ROLES])
-        if c is not None:
-            for r in ROLES:
-                g, gi, s = self.gate_idx[r], self.gate_inh_idx[r], self.slot_idx[r]
-                other_g = np.concatenate([self.gate_idx[o] for o in ROLES if o != r])
-                plan["rg_" + r] = _dense(self.role_idx[r], g, c["W_RG"], plastic=False, conn_type="E_TO_E",
-                                         plasticity_gate=GATE_FIXED, transmission_gate=GATE_COMMIT_IN)
-                plan["gg_" + r] = _dense(g, g, c["W_GG"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED)
-                plan["ggi_" + r] = _dense(g, gi, c["W_GGI"], plastic=False, conn_type="E_TO_I",
-                                          plasticity_gate=GATE_FIXED)
-                plan["gig_" + r] = _dense(gi, other_g, c["W_GIG"], plastic=False, conn_type="I_TO_E",
-                                          plasticity_gate=GATE_FIXED, transmission_gate=GATE_COMMIT_EXCL)
-                plan["gs_" + r] = _dense(g, s, c["W_GS"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED)
-                plan["ss_" + r] = _dense(s, s, c["W_SS"], plastic=False, conn_type="E_TO_E", plasticity_gate=GATE_FIXED,
-                                         transmission_gate=GATE_SLOT_LOOP)
+        if c is not None:                                  # the shared stage: role_k -> G_k -> S_k (W_RG is W_XG)
+            plan.update(SC.commit_plan([self.role_idx[r] for r in ROLES], lay, dict(c, W_XG=c["W_RG"]),
+                                       prefix="commit_", gate_in=GATE_COMMIT_IN, gate_excl=GATE_COMMIT_EXCL,
+                                       latch_loop=GATE_SLOT_LOOP, plasticity_gate=GATE_FIXED))
             inh = np.concatenate([inh] + [self.gate_inh_idx[r] for r in ROLES])
         bridge.inject_explicit_wiring(plan, output_inhibitory_indices=inh)
         bridge.set_plasticity_gate(GATE_FIXED, 0.0)
@@ -565,24 +552,13 @@ class WordRoleParserOrgan:
         several -> None and a co-commit). A role claimed by two items (a latch that died and re-latched) -> that role
         is unfilled and counted. No count is compared with another alternative's count."""
         c = self.c
-        thr = float(c["READ_FRAC"]) * float(scale) * int(c["NS"]) * int(c["READ_STEPS"])
-        on_before = set()
-        per, co, claim = [], 0, {}
-        for i, it in enumerate(items):
-            on_now = {r for r in ROLES if it["slot_counts"][r] >= thr}
-            new = on_now - on_before
-            if len(new) == 1:
-                role = next(iter(new))
-                claim.setdefault(role, []).append(i)
-            else:
-                role = None
-                co += int(len(new) > 1)
-            per.append({"new": sorted(new), "role": role})
-            on_before = on_now
-        filled = {r: idx[0] for r, idx in claim.items() if len(idx) == 1}
-        relatch = sum(1 for idx in claim.values() if len(idx) > 1)
-        return {"threshold": thr, "per_item": per, "filled": filled, "co_commit": co, "relatch": relatch,
-                "latched_at_end": sorted(on_before)}
+        rd = SC.sequence_read([[it["slot_counts"][r] for r in ROLES] for it in items], int(c["NS"]),
+                              int(c["READ_STEPS"]), float(c["READ_FRAC"]), scale)
+        return {"threshold": rd["threshold"],
+                "per_item": [{"new": sorted(ROLES[k] for k in pi["new"]),
+                              "role": None if pi["role"] is None else ROLES[pi["role"]]} for pi in rd["per_item"]],
+                "filled": {ROLES[k]: i for k, i in rd["filled"].items()}, "co_commit": rd["co_commit"],
+                "relatch": rd["relatch"], "latched_at_end": sorted(ROLES[k] for k in rd["latched_at_end"])}
 
     def commit_read_word(self, word: str, pos: int, lesion: bool = False) -> Tuple[Optional[str], dict]:
         """One word at one position from a fresh parse state (diagnostics: the dual-role reads)."""

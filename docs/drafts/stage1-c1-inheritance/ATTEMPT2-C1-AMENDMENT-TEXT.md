@@ -3,6 +3,10 @@
 Fold this section into Amendment A2 (with the C4 control of RULING stage1-sync), committed before any attempt-2 gate
 data, in the amendment order the `prereg_amendment_order` gate checks. Not registered by itself.
 
+**Status 2026-10-13: REGISTERED** as A2.1 in section 12 of
+`research/findings/2026-09-29-stage1-exit-gate-PREREGISTRATION.md` (PLAN step D), with the runner change and the
+re-run records in the same commit. The registered text is the one that governs; this draft is kept as the record.
+
 bar-sanity: docs/drafts/stage1-exit/bar_sanity_record_s1_c1_fixed_pathway_lesion.json
 
 (Re-run that record in A2's own commit: A2 edits `research/runners/stage1_exit_gate.py`, one of its scorer files, so

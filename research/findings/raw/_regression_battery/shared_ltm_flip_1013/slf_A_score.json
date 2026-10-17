@@ -1,0 +1,99 @@
+{
+ "A1": "PASS",
+ "A2": "PASS",
+ "a1_fail": {},
+ "a2_fail": {},
+ "a2_report": {
+  "42": {
+   "n_diff_keys": 1,
+   "sample": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     365.8193136281218,
+     375.05459587751085
+    ]
+   ],
+   "numeric_movers": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     365.8193136281218,
+     375.05459587751085
+    ]
+   ]
+  },
+  "43": {
+   "n_diff_keys": 1,
+   "sample": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     318.4115893072353,
+     314.10180556293074
+    ]
+   ],
+   "numeric_movers": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     318.4115893072353,
+     314.10180556293074
+    ]
+   ]
+  },
+  "44": {
+   "n_diff_keys": 0,
+   "sample": [],
+   "numeric_movers": []
+  },
+  "100": {
+   "n_diff_keys": 1,
+   "sample": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     325.79982651480435,
+     321.49003163255765
+    ]
+   ],
+   "numeric_movers": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     325.79982651480435,
+     321.49003163255765
+    ]
+   ]
+  },
+  "101": {
+   "n_diff_keys": 1,
+   "sample": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     359.0467826851328,
+     374.4389095512068
+    ]
+   ],
+   "numeric_movers": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     359.0467826851328,
+     374.4389095512068
+    ]
+   ]
+  },
+  "102": {
+   "n_diff_keys": 1,
+   "sample": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     319.6429711155215,
+     319.02727411561926
+    ]
+   ],
+   "numeric_movers": [
+    [
+     ".bc_a.d6_hebbian.held.readout",
+     319.6429711155215,
+     319.02727411561926
+    ]
+   ]
+  }
+ },
+ "sim_backend": "numpy"
+}
