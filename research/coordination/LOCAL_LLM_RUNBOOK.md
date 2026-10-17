@@ -1337,6 +1337,10 @@ Test triage is done (RESULT 10-01). When nothing in section 4 can move, run ONE 
 - 2026-10-17 RULING b2d-p2-repin-1017 cause and state: the 10-14 arm crawled because 8a969e7 loads one private 5.4 GiB wikidata_100k store per candidate conversation (4 per arm) under the old MemoryHigh throttle; no per-turn leak (byte-identical arm output pre/post guard, numpy seed 1). W GPU queue: the 28 lines at 8a969e7 were replaced by the 30 dev + dev-lesion lines from `b2d_amend2.py jobs --pin 74460d5...` (backup gpu.queue.b2d-8a969e7-bak-20261017); one smoke arm (route s1) is running with the queue paused behind it; Claude resumes it after reading wall time and RSS.
 - 2026-10-17 RULING b2d-p2-repin-1017 for Hermes (after the wrc gate, priority unchanged): record P2 = 74460d594598a9367e7935fc7b5cc2efc2b0a13b in the AMEND2 HANDOFF and WORKLOG on research/b2d-amend2 (sync main into it first with agent_sync_branch.sh), and read outputs from research/findings/raw/_b2d_amend2/74460d5/dev once synced. Nothing to queue: the arms run on the W GPU queue.
 
+- RESULT [wrc-gate-wave5] (2026-10-17 04:2x, driver mechanical read; verdict per RULING judgment-to-claude-1016 is yours): two data commits this wake - 28 results + 28 sidecars (answer-rate arm wrcflip-alloff s100-s102, organ decline step-R under _s2p/word-role-commit/572bec72/decline, first iw1 flip-gate F4 artifact) plus a 56-file leftover sweep of earlier wrcflip-alloff files waves 1-3 missed; every file json-parses, has a .prov, no Traceback. Queue: depth 16. Canary ledger: lb PASS pool42, organ PASS pool42, iw2 FAIL pool40 (NEEDS [wrc-iw2-env] still open).
+
+04:2x: ONE task = consume wave 5 + absorb RULING b2d-p2-repin-1017 (P' = 74460d594598a9367e7935fc7b5cc2efc2b0a13b; GPU queue stays paused - no pool-lane action). Committed 56 fresh files, then swept the _shards/wrcflip* tree: 56 older wrcflip-alloff files waves 1-3 had missed (they only covered wrcflip-572bec7) - all verified errors=0 and committed. NEEDS [wrc-iw2-env] NOT yet handled: the 18 F4 iw2 lines still wait on PYTHONHASHSEED=0 + canary-FAIL clearing. depth 16, pool40-42 only (back-1017).
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
