@@ -1353,6 +1353,8 @@ RESULT [T2]: integration wave 2 @ 2196ef6af (already merged per RULING iw2-merge
 
 15:4x: ONE task = T2 section-5 close-out (heartbeat pick; T1 done, T6 gate count 205>=204, Stage-2 pin dated 11-03). Verified the committed 10-01 D/R verdicts (did NOT re-run: my first --compare calls self-compared and my first score calls missed --tag; the HANDOFF-correct files were already landed, committed, and fresh vs the 19:02 shards), confirmed lesion-kept=4 gate, re-derived the table outcome (all three packets pass -> flip list), checked the iw2-selfid turns (14/15 abstained OK), removed my four stray self-compare jsons from the worktree, filed RESULT [T2]. Merge note: RULING iw2-merged says 2196ef6af already merged, so no merge ASK.
 
+- 17:5x: ONE task = T8 (section 7 next: flip battery wave 2). Wave-2 queue REFUSED (no pre-flight read of the iw1-wave-battery prereg at 957c2752c, gate_preflight). Per the mechanism (RULING accel-tools-1016): queued the 48-line dev-seed (7) copy of flip_957c275.txt lines 1-48 (ok=48; canary load_bearing_fraction@957c2752c=PASS; s42->s7 out paths); 9 running across pool40-42. Next: record gate_preflight CLEAN via s7read.py (registered iw1_score.score_R, seeds=[7]), then queue wave 2 (lines 44-86) + the missing s42/discourse-register retry. NOT queued yet: gate seeds blocked until the record lands.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
