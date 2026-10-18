@@ -105,8 +105,11 @@ def probes_in(d, arm_re):
     return out
 
 
-def report(per_seed, label=""):
-    """`per_seed` = {seed: {"on": [bodies], "off": [bodies]}} -> the reported check (JSON-able)."""
+def report(per_seed, label="", mode=None):
+    """`per_seed` = {seed: {"on": [bodies], "off": [bodies]}} -> the reported check (JSON-able). `mode` ("paired" |
+    "prefixed"; the CLI passes it, added 2026-10-18) is recorded as the report's `mode` key ONLY when given, so
+    tools/smoke_first.py can tell a paired smoke record from a prefixed one while every other caller (tools/iw2_score.py)
+    gets the report byte-for-byte as before; no existing key changes."""
     rows, hurts, unmeasured = {}, [], []
     for seed in sorted(per_seed, key=lambda s: (0, int(s), "") if str(s).isdigit() else (1, 0, str(s))):
         on, off = rate(per_seed[seed].get("on") or []), rate(per_seed[seed].get("off") or [])
@@ -123,11 +126,14 @@ def report(per_seed, label=""):
     measured = len(rows) - len(unmeasured)
     flags = [HURTS] if hurts else []
     status = HURTS if hurts else ("UNMEASURED" if (not measured or unmeasured) else "OK")
-    return {"check": "answer_rate", "label": label, "per_seed": rows, "n_seeds": len(rows), "n_measured": measured,
-            "unmeasured_seeds": unmeasured, "hurt_seeds": hurts, "flags": flags, "status": status,
-            "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, "
-                    "changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
-            "abstention_detection": "abstained flag; fallback text patterns %s" % [p.pattern for p in ABSTAIN_RES]}
+    rep = {"check": "answer_rate", "label": label, "per_seed": rows, "n_seeds": len(rows), "n_measured": measured,
+           "unmeasured_seeds": unmeasured, "hurt_seeds": hurts, "flags": flags, "status": status,
+           "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, "
+                   "changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+           "abstention_detection": "abstained flag; fallback text patterns %s" % [p.pattern for p in ABSTAIN_RES]}
+    if mode is not None:
+        rep["mode"] = mode
+    return rep
 
 
 def prefixed_per_seed(dirs):
@@ -187,7 +193,7 @@ def main(argv=None):
         if not dirs:
             print("answer_rate: no shard dir matched", file=sys.stderr)
             return 2
-        rep = report(prefixed_per_seed(dirs), label=a.dirs[0])
+        rep = report(prefixed_per_seed(dirs), label=a.dirs[0], mode="prefixed")
     else:
         if bool(a.off_tag) == bool(a.off_arm):                       # both or neither: exactly one off side
             print("answer_rate: paired needs EXACTLY one of --off-tag / --off-arm", file=sys.stderr)
@@ -195,7 +201,8 @@ def main(argv=None):
         label = ("%s: %s vs off-arm %s (off = lesion arm)" % (a.faculty, a.on_tag, a.off_arm) if a.off_arm
                  else "%s: %s vs %s" % (a.faculty, a.on_tag, a.off_tag))
         rep = report(paired_per_seed(a.base, a.on_tag, a.off_tag, a.faculty,
-                                     [int(x) for x in a.seeds.split(",")], off_arm=a.off_arm), label=label)
+                                     [int(x) for x in a.seeds.split(",")], off_arm=a.off_arm), label=label,
+                     mode="paired")
     print(json.dumps(rep, indent=1) if a.json else render(rep))
     if a.strict:
         return 4 if rep["flags"] else (3 if rep["status"] == "UNMEASURED" else 0)

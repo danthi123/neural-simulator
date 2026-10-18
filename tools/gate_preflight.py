@@ -23,6 +23,10 @@ them with the registered scorer restricted to that seed (e.g. `tools/s2p_score.p
   check   --prereg P --revision R
           exit 0 iff the latest row for (P, R) is CLEAN or ACK (R matches on its first 9 hex chars); used by
           tools/pool_queue.sh before a GATE-seed line is accepted. Exit 2 with the reason otherwise.
+          FIRST it runs the smoke-first check (tools/smoke_first.py, RULING smoke-first-1018, 2026-10-18): when P is a
+          FLIP prereg first added on or after 2026-10-18 it must cite a committed, valid dev-seed answer_rate record
+          at R, else exit 2 before the pre-flight rows are even read. Older preregs and non-flip preregs pass it. It
+          refuses only on a determinate violation; an internal error in the check is printed and never blocks the pool.
 
 It cannot judge the bar; it judges that the instrument can read the brain. A CLEAN read with a FAILING dev verdict
 is fine (a dev seed is no verdict); an UNDEFINED one is a defect to fix before gate seeds are spent.
@@ -148,6 +152,19 @@ def check(prereg, revision):
         prereg, rev, last["verdict"], last["detail"], last["log"])
 
 
+def smoke_first_check(prereg, revision):
+    """(ok, reason) from the shared smoke-first validator (tools/smoke_first.py). Fail-OPEN only on an internal error
+    of the check itself (reported on stderr): a determinate violation is a refusal, a bug in the new check must not
+    stop the pool."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import smoke_first
+        return smoke_first.check_queue(prereg, revision, ROOT)
+    except Exception as e:                                    # noqa: BLE001 -- see the docstring
+        print("gate_preflight: smoke-first check skipped (%s: %s)" % (type(e).__name__, e), file=sys.stderr)
+        return True, "smoke-first check skipped"
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     command = []
@@ -169,6 +186,10 @@ def main(argv=None):
         return cmd_record(a, command)
     if a.step == "ack":
         return cmd_ack(a)
+    ok, why = smoke_first_check(a.prereg, a.revision)
+    if not ok:
+        print("⛔ " + why, file=sys.stderr)
+        return 2
     ok, why = check(a.prereg, a.revision)
     print(("✓ " if ok else "⛔ ") + why, file=sys.stdout if ok else sys.stderr)
     return 0 if ok else 2
