@@ -1,0 +1,32 @@
+{
+ "run_id": "1792286943-90683",
+ "runner": "tools/b2d_amend2.py",
+ "argv": [
+  "tools/b2d_amend2.py",
+  "dev",
+  "--pin",
+  "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+  "--base",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_b2d_amend2/74460d5/dev",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/b2d-amend2/research/findings/raw/_b2d_amend2/74460d5/dev/selection.json"
+ ],
+ "git_sha": "6cbd9c87f",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-17T21:29:03",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 111944.5,
+ "corpus_check_query": "word-role flip B1 pre-gate iw1/iw2 default vs off:word-role dev-7 identity rows at F",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_b2d_amend2/74460d5/dev/selection.json"
+}

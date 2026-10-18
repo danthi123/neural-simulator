@@ -1,0 +1,364 @@
+{
+  "pin": "74460d594598a9367e7935fc7b5cc2efc2b0a13b",
+  "rule": "first candidate (declared order) with >= 6 of 8 dev seeds passing: valid arms, Qwen spoke on the probe turn in all three intact arms, counter == trace == captured prompts, manner clause visible in the prompt, tone level != 0 in intact_a, and replies and mouth replies equal across the three",
+  "candidates": {
+    "c1": {
+      "question": "What is l_quipe_de_france?",
+      "rich": false,
+      "n_ok": 0,
+      "eligible": false,
+      "seeds": {
+        "1": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "2": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "3": {
+          "ok": false,
+          "why": [
+            "mouth-silent",
+            "not-engaged"
+          ],
+          "tone_level": 0,
+          "calls": 0
+        },
+        "4": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "5": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "6": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "7": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "8": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        }
+      }
+    },
+    "c2": {
+      "question": "Tell me about angora_turkey.",
+      "rich": false,
+      "n_ok": 0,
+      "eligible": false,
+      "seeds": {
+        "1": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "2": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "3": {
+          "ok": false,
+          "why": [
+            "mouth-silent",
+            "not-engaged"
+          ],
+          "tone_level": 0,
+          "calls": 0
+        },
+        "4": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "5": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "6": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "7": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        },
+        "8": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 0
+        }
+      }
+    },
+    "c3": {
+      "question": "What is l_quipe_de_france?",
+      "rich": true,
+      "n_ok": 0,
+      "eligible": false,
+      "seeds": {
+        "1": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "2": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "3": {
+          "ok": false,
+          "why": [
+            "mouth-silent",
+            "not-engaged"
+          ],
+          "tone_level": 0,
+          "calls": 10
+        },
+        "4": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "5": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "6": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "7": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "8": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        }
+      }
+    },
+    "c4": {
+      "question": "Tell me about angora_turkey.",
+      "rich": true,
+      "n_ok": 0,
+      "eligible": false,
+      "seeds": {
+        "1": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "2": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "3": {
+          "ok": false,
+          "why": [
+            "mouth-silent",
+            "not-engaged"
+          ],
+          "tone_level": 0,
+          "calls": 8
+        },
+        "4": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "5": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "6": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "7": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        },
+        "8": {
+          "ok": false,
+          "why": [
+            "mouth-silent"
+          ],
+          "tone_level": 2,
+          "calls": 10
+        }
+      }
+    }
+  },
+  "missing_or_invalid": [],
+  "lesion_smoke": {
+    "s1/les_coloring": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    },
+    "s1/les_appraisal": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    },
+    "s1/les_drives": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    },
+    "s2/les_coloring": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    },
+    "s2/les_appraisal": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    },
+    "s2/les_drives": {
+      "valid": true,
+      "fails": [],
+      "route": {
+        "c1": "ok",
+        "c2": "ok",
+        "c3": "ok",
+        "c4": "ok"
+      }
+    }
+  },
+  "selected": null,
+  "lesion_smoke_ok": false,
+  "status": "NO-CANDIDATE"
+}

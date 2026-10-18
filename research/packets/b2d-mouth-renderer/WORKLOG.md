@@ -303,3 +303,4 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   each, peak 11.2 GB; smoke arm meets every A2.4 condition) and landed under
   research/findings/raw/_b2d_amend2/74460d5/dev. Branch synced to main 865f52943 (merge f3601fb28) before
   the pin write; _provenance/runs.jsonl drift restored first per RULING T1-provision.
+- 2026-10-17 21:35: step 4 dev selection at P2 74460d5: status NO-CANDIDATE (n_ok c1=0 c2=0 c3=0 c4=0, missing_or_invalid=[], lesion_smoke_ok=false, rc=0); selection.json committed; no gate line queued per the step-4 table.
