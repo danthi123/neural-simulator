@@ -4,7 +4,7 @@ chooses between: stock  = ChatBrain._verify(surface, asserted, svo) (the stub's 
 flag on = ChatBrain._verify_claim_set(surface, [svo]) over the 1-fact set (if it returns None the composer falls back to the same _verify).
 The composer-level sweep (composer_stub_sweep.py, production ChatBrain, _render_one_verified) is run on a seeded 3000-fact sample and the two
 must agree fact by fact on that sample (checked in the output: composer_sample_agrees).  HURTS = stock answers, flag-on abstains.
-usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.stub_population_exhaustive <out.json> [parser_seed=1]
+usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.stub_population_exhaustive <out.json> [parser_seed=1] [composer_sweep_sample.json]
 """
 import collections, json, os, random, socket, sys, time
 
@@ -20,7 +20,7 @@ FLAG = "BRAIN_MOAT_SLUG_NORM"
 SAMPLE = "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000.json"
 
 
-def main(out_path, seed=1):
+def main(out_path, seed=1, sample_path=SAMPLE):
     aff = [(r["fact"]["agent"], r["fact"]["action"], r["fact"]["patient"]) for r in json.load(open(FACTS))
            if r["fact"].get("polarity") == "AFFIRM"]
     chat = ChatBrain.__new__(ChatBrain)
@@ -50,8 +50,8 @@ def main(out_path, seed=1):
         if (i + 1) % 10000 == 0:
             print("[pop] %d/%d t=%.0fs cells %s" % (i + 1, len(aff), time.time() - t0, dict(cells)), flush=True)
     agree = None
-    if os.path.exists(SAMPLE):
-        d = json.load(open(SAMPLE))
+    if os.path.exists(sample_path):
+        d = json.load(open(sample_path))
         rnd = random.Random()
         random.seed(d["sample_seed"]); sample = random.sample(aff, d["n_facts"])
         hurt_set = {tuple(h["svo"]) for h in hurts}
@@ -72,4 +72,4 @@ def main(out_path, seed=1):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 1)
+    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 1, sys.argv[3] if len(sys.argv) > 3 else SAMPLE)
