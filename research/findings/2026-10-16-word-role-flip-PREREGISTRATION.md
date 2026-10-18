@@ -151,3 +151,16 @@ plus NEEDS. The flip merges to main only after PASS.
 **Read.** For every script turn of iw1 and iw2 on every gate seed, compare `abstained` (and an empty answer) in the existing intact-at-default F4 file against the new `off:word-role` file. A HURTS turn: the default abstains where off answers. A HELPS turn: the reverse. Both are listed per seed with the default arm's `wr_route`.
 
 **Decision, fixed before these arms run (Claude).** Zero HURTS turns on all six seeds: no FLIP-HURTS-ANSWERS on the battery, the PASS stands and the flip merges to main. Any HURTS turn on any seed: the flip is HELD (a decision not to flip, recorded as a deviation from the PASS, as in RULING `iw1-wmf-hold`; no registered verdict changes), both defaults stay OFF on main, and the next method (no-defer) targets the case behind each HURTS turn. HELPS turns are reported and never offset a HURTS turn. A missing or failed off arm is re-run once; a seed still unmeasured keeps the flip held.
+
+## AMENDMENT G READ (2026-10-18, Claude): the flip is HELD
+
+**Data.** 9 of 12 off arms had landed when the decision was taken. Missing: iw1 seeds 100, 101 and 102, which finish for the record and cannot change a HURTS-triggered hold. Every HURTS arm ran on the workstation (`tools/where_ran.py`: workstation=3). Engagement is recorded per turn: the default arm's `wr_route` is `declined`, and the off arm's is `not-reached`.
+
+| runner | seeds | HURTS turns | HELPS turns |
+|---|---|---|---|
+| iw1 | 42, 43, 44 | 1 each: turn 5 "what does the cat eat" (default: "I don't know about that."; off: "The cat eats fish.") | 0 |
+| iw2 | 42, 43, 44, 100, 101, 102 | 0 | 0 |
+
+**Decision (applied as fixed above, not re-decided).** Any HURTS turn holds the flip. `research/wrc-flip-packet` is not merged, and both word-role defaults stay OFF on main. The registered PASS (F1 parse and commit 6/6, F4 0 of 108 changed) stands as a record with this deviation (FLIP-HURTS-ANSWERS on the battery), as in RULING `iw1-wmf-hold`. RULINGS `wrc-amendG-verdict-1018`, `wrc-hold-1018` and `wrc-next-method-1018`.
+
+**What failed, and what stays open (no-defer).** The METHOD that failed: a commit that declines whenever the noun has been heard in both roles ("cat" as agent and as patient), which leaves the reply with nothing to say. The CAPABILITY, the brain committing word roles itself, stays open. Next method: the question's own learned construction supplies the role evidence that breaks the tie (the do-support wh-frame binds its subject slot through synapses learned from exposure and teacher correction), tested with made-up markers so that no English template can pass it. Claude writes that packet.
