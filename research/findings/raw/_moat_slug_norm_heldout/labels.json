@@ -1,10 +1,11 @@
 {
  "_doc": "hand labels (rubric in make_labels.py), assigned before any slug-norm verdict on this corpus",
  "backend": "numpy",
- "device": "cpu",
+ "device": "cpu (labels are hand-assigned; this script only writes them out)",
+ "host": "dant123-wk",
  "script": "research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
  "argv": [
-  "research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
   "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
   "research/findings/raw/_moat_slug_norm_heldout/labels.json"
  ],

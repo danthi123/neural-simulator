@@ -12,7 +12,10 @@ Rubric (the memo's, moat-memo/labels.py): does the sentence assert anything NOT 
   N no-claim   - fragment/persona that asserts nothing about the facts.
 When torn between B and U the label is U (the bar counts U, so a doubtful sentence is held against the verifier).
 usage (cwd = worktree): make_labels.py <corpus.json> <out labels.json> [--partial]"""
-import json, os, sys
+import json, os, socket, sys
+
+import research.runners  # noqa: F401  (the provenance door: stamps labels.json with run id, host, backend)
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from unique_sentences import unique
 
@@ -93,7 +96,7 @@ if __name__ == "__main__":
     labels = [{"num": u["num"], "turn": u["turn"], "svo": u["svo"], "surface": u["surface"], "label": LAB[u["num"]]}
               for u in uniq if u["num"] in LAB]
     json.dump({"_doc": "hand labels (rubric in make_labels.py), assigned before any slug-norm verdict on this corpus",
-               "backend": "numpy", "device": "cpu", "script": "research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
-               "argv": sys.argv, "n_labels": len(labels), "partial": partial, "labels": labels}, open(out, "w"), indent=1)
+               "backend": "numpy", "device": "cpu (labels are hand-assigned; this script only writes them out)", "host": socket.gethostname(),
+               "script": "research/findings/raw/_moat_slug_norm_heldout/make_labels.py", "argv": sys.argv, "n_labels": len(labels), "partial": partial, "labels": labels}, open(out, "w"), indent=1)
     import collections
     print(len(labels), dict(collections.Counter(l["label"] for l in labels)))

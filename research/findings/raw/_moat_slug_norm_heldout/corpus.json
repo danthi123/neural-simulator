@@ -1,12 +1,14 @@
 {
- "_doc": "held-out real-Qwen corpus; no verifier verdict and no label in this file",
+ "_doc": "held-out real-Qwen corpus; no verifier verdict and no label in this file. Turns h01-h16 were generated with the qwen-cpu renderer (raw files hb1, hb2), h17-h29 with qwen-gpu (hb5): see raw_files[].generation_device. extraction_host / extraction_host_gpus are where THIS extraction ran (the generation host is per raw file where it was recorded).",
  "backend": "numpy",
- "device": "cpu",
+ "device": "cpu (extraction only; generation devices per raw file)",
+ "extraction_host": "dant123-wk",
+ "extraction_host_gpus": "NVIDIA GeForce RTX 3090",
  "renderer": "qwen-gpu",
  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
  "script": "research/findings/raw/_moat_slug_norm_heldout/extract_corpus.py",
  "argv": [
-  "research/findings/raw/_moat_slug_norm_heldout/extract_corpus.py",
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/extract_corpus.py",
   "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
   "/home/dant123/Projects/sim-rev/moat-build/hb1.json",
   "/home/dant123/Projects/sim-rev/moat-build/hb2.json",
@@ -16,17 +18,26 @@
   {
    "file": "hb1.json",
    "sha256": "feeaeb8f522559a913360ad16f1a3414bca5c875fa2ce3985f4c299babda9437",
-   "bytes": 191557
+   "bytes": 191557,
+   "renderer": "qwen-cpu",
+   "generation_device": "cpu (Qwen-0.5B fp32)",
+   "generation_host": "not recorded in this raw file (written before drive_memo recorded it)"
   },
   {
    "file": "hb2.json",
    "sha256": "72f0db7526a7954120b134fa2e4518bf81257fb8da6351ef25ec5802cf51b160",
-   "bytes": 189868
+   "bytes": 189868,
+   "renderer": "qwen-cpu",
+   "generation_device": "cpu (Qwen-0.5B fp32)",
+   "generation_host": "not recorded in this raw file (written before drive_memo recorded it)"
   },
   {
    "file": "hb5.json",
    "sha256": "706ab97723fc0495796cfb26df150b2d97eaab0834ad78503cf614d47a5eece5",
-   "bytes": 305477
+   "bytes": 305477,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "not recorded in this raw file (written before drive_memo recorded it)"
   }
  ],
  "n_turns": 29,
@@ -3640,11 +3651,5 @@
    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zhejiang yet: what can you tell me about zhejiang?",
    "abstained": true
   }
- ],
- "generation": {
-  "h01-h08": "hb1.json: Qwen-0.5B fp32 on CPU (CUDA hidden), batch 1-8",
-  "h09-h16": "hb2.json: Qwen-0.5B fp32 on CPU, batch 9-16",
-  "h17-h29": "hb5.json: Qwen-0.5B fp16 on the GPU via tools/gpu_queue.sh (qwen-gpu), after the 2026-10-18 reboot killed batches 17-29",
-  "flag": "BRAIN_MOAT_SLUG_NORM unset in every generation process (both render_svo and render_svo_regen recorded per fact)"
- }
+ ]
 }
