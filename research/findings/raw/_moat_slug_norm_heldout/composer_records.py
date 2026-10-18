@@ -13,7 +13,8 @@ Per candidate (RichAnswerComposer._verify_rendered) the replay records the numbe
 vs the single-triple chat._verify fallback when the claim verifier is unbuildable) and the verdict.
 
 usage (cwd = worktree, as a module):
-  python -m research.findings.raw._moat_slug_norm_heldout.composer_records <out.json> <stratum name> <corpus.json> <on1.json,on2.json> [<off1.json,...>]
+  python -m research.findings.raw._moat_slug_norm_heldout.composer_records <out.json> <stratum name> <corpus.json> <on1.json,on2.json> [<off1.json,...>] [--off-is-stock]
+  --off-is-stock: the baseline is the recorded flag-off run itself (used for the stub-mouth arms, whose baseline is not the live Qwen turn).
 """
 import collections, hashlib, json, os, socket, sys
 
@@ -39,7 +40,7 @@ def cand_by_turn(trace):
     return out
 
 
-def main(out_path, name, corpus_path, on_arg, off_arg=None):
+def main(out_path, name, corpus_path, on_arg, off_arg=None, off_is_stock=False):
     corpus = json.load(open(corpus_path))
     live = {t["label"]: t for t in corpus["turns"]}
     on_resp, on_trace, on_miss, on_meta = load_many(on_arg)
@@ -50,6 +51,10 @@ def main(out_path, name, corpus_path, on_arg, off_arg=None):
         if not t.get("calls") or lab not in on_resp:
             continue
         r = on_resp[lab]
+        if off_is_stock:          # the stock baseline is itself a recorded flag-off run with the same renderer (stub arms)
+            if lab not in off_resp:
+                continue
+            t = dict(t, abstained=off_resp[lab].get("abstained"), answer=off_resp[lab].get("answer"))
         stock_abs = bool(t["abstained"]); on_abs = bool(r.get("abstained"))
         cands = on_c.get(lab, [])
         row = {"label": lab, "entity": t["entity"], "n_gathered": len(t["gated"]),
@@ -63,7 +68,7 @@ def main(out_path, name, corpus_path, on_arg, off_arg=None):
                                                   "single_triple": c["single_triple"], "ok": c["ok"]} for c in cands]},
                "status": ("HURTS" if (not stock_abs and on_abs) else "HELPS" if (stock_abs and not on_abs)
                           else "both_answer" if not stock_abs else "both_abstain")}
-        if lab in off_resp:
+        if lab in off_resp and not off_is_stock:
             ro = off_resp[lab]
             row["flag_off_replay"] = {"abstained": bool(ro.get("abstained")), "answer": ro.get("answer"),
                                       "equals_live": ro.get("answer") == t["answer"] and bool(ro.get("abstained")) == stock_abs}
@@ -96,4 +101,4 @@ def main(out_path, name, corpus_path, on_arg, off_arg=None):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:6])
+    main(*sys.argv[1:6], off_is_stock=("--off-is-stock" in sys.argv))

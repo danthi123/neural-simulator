@@ -5,7 +5,7 @@ the numbers the report quotes, so nothing in the report is typed by hand.  Reads
   composer_records_s3_stub.json (optional)                      the same turns with the template stub mouth
   composer_stub_sweep_3000.json, stub_population_exhaustive.json  one-fact stub-mouth HURTS
   corpus.json / s3_corpus.json                                  raw-row counts of the unbuildable turns
-usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.final_summary <out.json>
+usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.heldout_numbers <out.json>
 """
 import collections, json, os, socket, sys
 
@@ -48,7 +48,7 @@ def raw_rows_in_turns(corpus, turns):
 def main(out):
     r12 = load("results_strata_s1_s2.json"); r3 = load("results_strata_s3.json")
     out_d = {"_doc": "numbers behind the held-out BRAIN_MOAT_SLUG_NORM report (module docstring)", "backend": "numpy", "device": "cpu",
-             "host": socket.gethostname(), "script": H + "final_summary.py", "argv": sys.argv,
+             "host": socket.gethostname(), "script": H + "heldout_numbers.py", "argv": sys.argv,
              "seeds_note": "parser seeds 42,43,44,100,101,102,1 of one deterministic brain build: a single replicate per sentence, not independent draws",
              "verifier_level": {}, "composer_path": {}, "unbuildable": {}}
     for nm, R in (("S1", r12), ("S2", r12), ("S3", r3)):
