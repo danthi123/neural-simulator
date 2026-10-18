@@ -1,0 +1,3007 @@
+{
+ "_doc": "hand labels (rubric in make_labels.py), assigned before any slug-norm verdict on this corpus",
+ "backend": "numpy",
+ "device": "cpu",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
+ "argv": [
+  "research/findings/raw/_moat_slug_norm_heldout/make_labels.py",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "research/findings/raw/_moat_slug_norm_heldout/labels.json"
+ ],
+ "n_labels": 272,
+ "partial": false,
+ "labels": [
+  {
+   "num": 1,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   "surface": "The country of Indonesia is Asian Games.",
+   "label": "U"
+  },
+  {
+   "num": 2,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   "surface": "The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia",
+   "label": "U"
+  },
+  {
+   "num": 3,
+   "turn": "h01",
+   "svo": [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   "surface": "The etymology of Indonesia shares borders with Australia and New Zealand.",
+   "label": "U"
+  },
+  {
+   "num": 4,
+   "turn": "h01",
+   "svo": [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   "surface": "The etymology of Indonesia shares its borders with Australia's continent.",
+   "label": "B"
+  },
+  {
+   "num": 5,
+   "turn": "h01",
+   "svo": [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   "surface": "The shares of Commonwealth Australia border New Zealand.",
+   "label": "B"
+  },
+  {
+   "num": 6,
+   "turn": "h01",
+   "svo": [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   "surface": "The Commonwealth of Australia shares borders with New Zealand.",
+   "label": "F"
+  },
+  {
+   "num": 7,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   "surface": "The triple (1962_asian_summer_games) refers to an instance of the 1962",
+   "label": "U"
+  },
+  {
+   "num": 8,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+   "label": "F"
+  },
+  {
+   "num": 9,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ],
+   "surface": "The 3rd Asian Games followed closely on the heels of the 1962 Asian Games.",
+   "label": "U"
+  },
+  {
+   "num": 10,
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ],
+   "surface": "In 1962, Asian Games followed Third Asian Games.",
+   "label": "B"
+  },
+  {
+   "num": 11,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The Almera is located in Rome time zone.",
+   "label": "U"
+  },
+  {
+   "num": 12,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "Almer A Spain is located in the Time Zone of Rome Time.",
+   "label": "F"
+  },
+  {
+   "num": 13,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "country",
+    "kingdom_of_the_spains"
+   ],
+   "surface": "Almer A from Spain is the country of the Kingdom of Spain.",
+   "label": "U"
+  },
+  {
+   "num": 14,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "country",
+    "kingdom_of_the_spains"
+   ],
+   "surface": "Almera Spain is a country within the Kingdom of the Spains.",
+   "label": "U"
+  },
+  {
+   "num": 15,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Almera is an instance of a city in Spain.",
+   "label": "U"
+  },
+  {
+   "num": 16,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Almera A is an instance of a city-work.",
+   "label": "U"
+  },
+  {
+   "num": 17,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "twinned_administrative_body",
+    "buenos_aires_city"
+   ],
+   "surface": "Almer is twinned with Barcelona in Spain.",
+   "label": "U"
+  },
+  {
+   "num": 18,
+   "turn": "h02",
+   "svo": [
+    "almer_a_spain",
+    "twinned_administrative_body",
+    "buenos_aires_city"
+   ],
+   "surface": "Almera, a city in Spain, has been twinned with Buenos Aires City.",
+   "label": "B"
+  },
+  {
+   "num": 19,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Sport is an association football club.",
+   "label": "U"
+  },
+  {
+   "num": 20,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The Aus FB A League Br sports association football club is based in London.",
+   "label": "U"
+  },
+  {
+   "num": 21,
+   "turn": "h03",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described by association football club.",
+   "label": "U"
+  },
+  {
+   "num": 22,
+   "turn": "h03",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is associated with the description of the association football club in its sources.",
+   "label": "B"
+  },
+  {
+   "num": 23,
+   "turn": "h03",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun.",
+   "label": "B"
+  },
+  {
+   "num": 24,
+   "turn": "h03",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content.",
+   "label": "U"
+  },
+  {
+   "num": 25,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "country",
+    "commonwealth_australia"
+   ],
+   "surface": "The Commonwealth of Australia is a country.",
+   "label": "B"
+  },
+  {
+   "num": 26,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "country",
+    "commonwealth_australia"
+   ],
+   "surface": "Australia is a Commonwealth member and AusFB is a league in Australia.",
+   "label": "U"
+  },
+  {
+   "num": 27,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "located_in_the_administrative_territoria",
+    "constitution_of_queensland"
+   ],
+   "surface": "The constitution of Queensland is located in the administrative territory.",
+   "label": "U"
+  },
+  {
+   "num": 28,
+   "turn": "h03",
+   "svo": [
+    "aus_fb_a_league_br",
+    "located_in_the_administrative_territoria",
+    "constitution_of_queensland"
+   ],
+   "surface": "Aus Facebook League is located in the administrative territory of Queensland's constitution.",
+   "label": "U"
+  },
+  {
+   "num": 29,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Bison Ravi is of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 30,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Bison Ravi is an instance of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 31,
+   "turn": "h04",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 32,
+   "turn": "h04",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 33,
+   "turn": "h04",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 34,
+   "turn": "h04",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 35,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   "surface": "The bison ravi lives in the country of the franzoesische republic.",
+   "label": "B"
+  },
+  {
+   "num": 36,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   "surface": "Bison Ravi lives in the country of Franzosenische Republik.",
+   "label": "U"
+  },
+  {
+   "num": 37,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ],
+   "surface": "The bison ravi is a writer.",
+   "label": "F"
+  },
+  {
+   "num": 38,
+   "turn": "h04",
+   "svo": [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ],
+   "surface": "Bison Ravi, the famous writer of bison stories, is known for his unique style in writing.",
+   "label": "U"
+  },
+  {
+   "num": 39,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Carl Lamarc is a human species.",
+   "label": "F"
+  },
+  {
+   "num": 40,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Carl Lamarc is an instance of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 41,
+   "turn": "h05",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 42,
+   "turn": "h05",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 43,
+   "turn": "h05",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 44,
+   "turn": "h05",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 45,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Carl Lamarc is an actor in television.",
+   "label": "F"
+  },
+  {
+   "num": 46,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Carl Lamarc is an actor known for his work in television.",
+   "label": "B"
+  },
+  {
+   "num": 47,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "languages_spoken_written_or_signed",
+    "wie_gehts"
+   ],
+   "surface": "Languages spoken written or signed.",
+   "label": "N"
+  },
+  {
+   "num": 48,
+   "turn": "h05",
+   "svo": [
+    "carl_lamarc",
+    "languages_spoken_written_or_signed",
+    "wie_gehts"
+   ],
+   "surface": "The German language spoken in Germany is written or signed using Latin alphabet characters.",
+   "label": "U"
+  },
+  {
+   "num": 49,
+   "turn": "h06",
+   "svo": [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The city of Green Bay is in the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 50,
+   "turn": "h06",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The share bordering Canada is u_s_of_a.",
+   "label": "B"
+  },
+  {
+   "num": 51,
+   "turn": "h06",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The U.S. stock market borders Canada's portal portal.",
+   "label": "U"
+  },
+  {
+   "num": 52,
+   "turn": "h06",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States.",
+   "label": "F"
+  },
+  {
+   "num": 53,
+   "turn": "h06",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada Portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 54,
+   "turn": "h06",
+   "svo": [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The city of Green Bay is an instance of a city.",
+   "label": "B"
+  },
+  {
+   "num": 55,
+   "turn": "h06",
+   "svo": [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "CityOfGreenBay is an instance of CityWork.",
+   "label": "F"
+  },
+  {
+   "num": 56,
+   "turn": "h06",
+   "svo": [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ],
+   "surface": "The city of Green Bay is located in the time zone of UTC 06.",
+   "label": "F"
+  },
+  {
+   "num": 57,
+   "turn": "h06",
+   "svo": [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ],
+   "surface": "The city of Green Bay is located in the time zone UTC 06.",
+   "label": "F"
+  },
+  {
+   "num": 58,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Danny Lanois is a human-specie.",
+   "label": "F"
+  },
+  {
+   "num": 59,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Danny Lanois is an instance of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 60,
+   "turn": "h07",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 61,
+   "turn": "h07",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 62,
+   "turn": "h07",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 63,
+   "turn": "h07",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 64,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "country_of_citizenship",
+    "canada_portal"
+   ],
+   "surface": "Canada is Danny's country of citizenship.",
+   "label": "B"
+  },
+  {
+   "num": 65,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "country_of_citizenship",
+    "canada_portal"
+   ],
+   "surface": "Danny Lanois is from Canada's country of citizenship, where he operates his portal.",
+   "label": "U"
+  },
+  {
+   "num": 66,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "occupation",
+    "non_degreed_engineer"
+   ],
+   "surface": "Danny Lanois is an experienced non-degreed engineer.",
+   "label": "B"
+  },
+  {
+   "num": 67,
+   "turn": "h07",
+   "svo": [
+    "danny_lanois",
+    "occupation",
+    "non_degreed_engineer"
+   ],
+   "surface": "Danny Lanois is an engineer who works without a degree.",
+   "label": "F"
+  },
+  {
+   "num": 68,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "The entity \"e\" is an example of the species \"human\".",
+   "label": "U"
+  },
+  {
+   "num": 69,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Ee Horton is an instance of human species.",
+   "label": "B"
+  },
+  {
+   "num": 70,
+   "turn": "h08",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 71,
+   "turn": "h08",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 72,
+   "turn": "h08",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 73,
+   "turn": "h08",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 74,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "The country of citizenship is e_s_horton.",
+   "label": "U"
+  },
+  {
+   "num": 75,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "The United States of America is the country of citizenship for all citizens in Ee Horton country.",
+   "label": "U"
+  },
+  {
+   "num": 76,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ],
+   "surface": "The manner of death is natural cause.",
+   "label": "B"
+  },
+  {
+   "num": 77,
+   "turn": "h08",
+   "svo": [
+    "e_e_horton",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ],
+   "surface": "E-E Horton's manner of death was through natural causes.",
+   "label": "F"
+  },
+  {
+   "num": 78,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Fernand Joseph Desire Contandin is of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 79,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Fernand Joseph Desire Contandin is an instance of human species.",
+   "label": "F"
+  },
+  {
+   "num": 80,
+   "turn": "h09",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 81,
+   "turn": "h09",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 82,
+   "turn": "h09",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 83,
+   "turn": "h09",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 84,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   "surface": "fernand joseph desire to belong to the franzoesische republic.",
+   "label": "U"
+  },
+  {
+   "num": 85,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   "surface": "Fernand Joseph Desire Contandin is a citizen of the Federal Republic of Germany.",
+   "label": "U"
+  },
+  {
+   "num": 86,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Fernando Joseph Desire Contandin is an television actor.",
+   "label": "U"
+  },
+  {
+   "num": 87,
+   "turn": "h09",
+   "svo": [
+    "fernand_joseph_desire_contandin",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Fernand Joseph Desire Contandin is an actor known for his work in television.",
+   "label": "B"
+  },
+  {
+   "num": 88,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "located_in_time_zone",
+    "kaliningrad_time"
+   ],
+   "surface": "Located in Kaliningrad Time, Adana is situated within its geographical location.",
+   "label": "B"
+  },
+  {
+   "num": 89,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "located_in_time_zone",
+    "kaliningrad_time"
+   ],
+   "surface": "Geography of Adana is located in time zone Kaliningrad's time.",
+   "label": "F"
+  },
+  {
+   "num": 90,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The geography of Adana is an instance of a city work.",
+   "label": "F"
+  },
+  {
+   "num": 91,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Geography of Adana is an instance of city work.",
+   "label": "F"
+  },
+  {
+   "num": 92,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "country",
+    "the_republic_of_turkey"
+   ],
+   "surface": "The geography of Adana is in Turkey.",
+   "label": "F"
+  },
+  {
+   "num": 93,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "country",
+    "the_republic_of_turkey"
+   ],
+   "surface": "The geography of Adana is part of Turkey's country.",
+   "label": "B"
+  },
+  {
+   "num": 94,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "twinned_administrative_body",
+    "saint_petersburg_city"
+   ],
+   "surface": "The geography of Adana is twin to Saint Petersburg City.",
+   "label": "F"
+  },
+  {
+   "num": 95,
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "twinned_administrative_body",
+    "saint_petersburg_city"
+   ],
+   "surface": "Geography_of_adana and Saint_Petersburg_city have been twinned for administrative purposes since their creation in 1",
+   "label": "U"
+  },
+  {
+   "num": 96,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Vietnam War was described in the Armenian Soviet Encyclopedia.",
+   "label": "U"
+  },
+  {
+   "num": 97,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+   "label": "F"
+  },
+  {
+   "num": 98,
+   "turn": "h11",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun.",
+   "label": "B"
+  },
+  {
+   "num": 99,
+   "turn": "h11",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content.",
+   "label": "U"
+  },
+  {
+   "num": 100,
+   "turn": "h11",
+   "svo": [
+    "hayastani_hanrapetut_yun",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ],
+   "surface": "The Persian Empire shared its border with the Sassanid Persia of Iran.",
+   "label": "U"
+  },
+  {
+   "num": 101,
+   "turn": "h11",
+   "svo": [
+    "hayastani_hanrapetut_yun",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ],
+   "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+   "label": "F"
+  },
+  {
+   "num": 102,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "twinned_administrative_body",
+    "montr_al_canada"
+   ],
+   "surface": "The twinned administrative body is Montr\u00e9al and Ottawa.",
+   "label": "U"
+  },
+  {
+   "num": 103,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "twinned_administrative_body",
+    "montr_al_canada"
+   ],
+   "surface": "Ha noi vietnam twinned administrative body Montrer al canada.",
+   "label": "U"
+  },
+  {
+   "num": 104,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "country",
+    "chxhcn_vietnam"
+   ],
+   "surface": "The Ha Noi Vietnam is a country.",
+   "label": "U"
+  },
+  {
+   "num": 105,
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "country",
+    "chxhcn_vietnam"
+   ],
+   "surface": "Ha noi vietnam is a country in China.",
+   "label": "U"
+  },
+  {
+   "num": 106,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The history of Ferrara is located in Rome time zone.",
+   "label": "F"
+  },
+  {
+   "num": 107,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "History_of_Ferrara is located in the Time_Zone of_Rome_Time.",
+   "label": "F"
+  },
+  {
+   "num": 108,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "country",
+    "italian_republic"
+   ],
+   "surface": "The history of Ferrara is Italian.",
+   "label": "B"
+  },
+  {
+   "num": 109,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "country",
+    "italian_republic"
+   ],
+   "surface": "The history of Ferrara, a city in Italy, was influenced by the Italian Republic.",
+   "label": "U"
+  },
+  {
+   "num": 110,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The history of Ferrara is an instance of its city work.",
+   "label": "B"
+  },
+  {
+   "num": 111,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "History_of_Ferrara is an instance of Ferrara's work.",
+   "label": "U"
+  },
+  {
+   "num": 112,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "described_by_source",
+    "nordisk_familjebok"
+   ],
+   "surface": "The history of Ferrara was described by Nordisk familjebok.",
+   "label": "F"
+  },
+  {
+   "num": 113,
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "described_by_source",
+    "nordisk_familjebok"
+   ],
+   "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+   "label": "F"
+  },
+  {
+   "num": 114,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "The ida lundgren is an instance of a human species.",
+   "label": "F"
+  },
+  {
+   "num": 115,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Ida Lundgren is an instance of a human species.",
+   "label": "F"
+  },
+  {
+   "num": 116,
+   "turn": "h13",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 117,
+   "turn": "h13",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 118,
+   "turn": "h13",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 119,
+   "turn": "h13",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 120,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Ida Lundgren is a television actor.",
+   "label": "F"
+  },
+  {
+   "num": 121,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Ida Lundgren is an occupation television actor.",
+   "label": "B"
+  },
+  {
+   "num": 122,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "country_of_citizenship",
+    "climate_of_sweden"
+   ],
+   "surface": "Sweden is a country of citizenship.",
+   "label": "U"
+  },
+  {
+   "num": 123,
+   "turn": "h13",
+   "svo": [
+    "ida_lundgren",
+    "country_of_citizenship",
+    "climate_of_sweden"
+   ],
+   "surface": "Ida Lundgren is from Sweden's climate of peace and stability.",
+   "label": "U"
+  },
+  {
+   "num": 124,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "country",
+    "china_pr"
+   ],
+   "surface": "China is located in Japan.",
+   "label": "U"
+  },
+  {
+   "num": 125,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The Ji Nan City is located in China's country.",
+   "label": "B"
+  },
+  {
+   "num": 126,
+   "turn": "h14",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China shares border with Bharat Ganjariya.",
+   "label": "U"
+  },
+  {
+   "num": 127,
+   "turn": "h14",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China Pr shares borders with Bharat Ganjera.",
+   "label": "U"
+  },
+  {
+   "num": 128,
+   "turn": "h14",
+   "svo": [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Bharat Ganjariya shares border with China Pr.",
+   "label": "U"
+  },
+  {
+   "num": 129,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   "surface": "The city of Ji Nan is located in Australian Western Standard Time.",
+   "label": "F"
+  },
+  {
+   "num": 130,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   "surface": "The Ji Nan City is located in the Australian Western Standard Time zone.",
+   "label": "F"
+  },
+  {
+   "num": 131,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "twinned_administrative_body",
+    "ciudad_aztl_n"
+   ],
+   "surface": "The city of Ji-Nan has its own administrative body.",
+   "label": "U"
+  },
+  {
+   "num": 132,
+   "turn": "h14",
+   "svo": [
+    "ji_nan_city",
+    "twinned_administrative_body",
+    "ciudad_aztl_n"
+   ],
+   "surface": "The city of Ji-Nan is twinned with Ciudad Aztl\u00e1n, which is an administrative body in Mexico.",
+   "label": "U"
+  },
+  {
+   "num": 133,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Keifer Sutherland is of human species.",
+   "label": "F"
+  },
+  {
+   "num": 134,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Keifer Sutherland is an instance of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 135,
+   "turn": "h15",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 136,
+   "turn": "h15",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 137,
+   "turn": "h15",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 138,
+   "turn": "h15",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 139,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   "surface": "The country of citizenship for Keifer Sutherland is United Kingdom.",
+   "label": "F"
+  },
+  {
+   "num": 140,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   "surface": "Keifer Sutherland's citizenship is in the United Kingdom of Great Britain and Northern Ireland.",
+   "label": "B"
+  },
+  {
+   "num": 141,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Keifer Sutherland is an actor.",
+   "label": "B"
+  },
+  {
+   "num": 142,
+   "turn": "h15",
+   "svo": [
+    "keifer_sutherland",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Keifer Sutherland is an actor who has appeared in numerous television shows and films.",
+   "label": "U"
+  },
+  {
+   "num": 143,
+   "turn": "h16",
+   "svo": [
+    "larry_shaw_director",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Larry Shaw is an instance of a human species.",
+   "label": "F"
+  },
+  {
+   "num": 144,
+   "turn": "h16",
+   "svo": [
+    "larry_shaw_director",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Larry Shaw is an instance of the human species.",
+   "label": "F"
+  },
+  {
+   "num": 145,
+   "turn": "h16",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The human species has common names.",
+   "label": "B"
+  },
+  {
+   "num": 146,
+   "turn": "h16",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an instance of common names.",
+   "label": "F"
+  },
+  {
+   "num": 147,
+   "turn": "h16",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "The common names subclass of the subclass of meanings of names.",
+   "label": "U"
+  },
+  {
+   "num": 148,
+   "turn": "h16",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 149,
+   "turn": "h16",
+   "svo": [
+    "larry_shaw_director",
+    "place_of_birth",
+    "u_s_of_a"
+   ],
+   "surface": "Larry Shaw was born in the United States.",
+   "label": "F"
+  },
+  {
+   "num": 150,
+   "turn": "h16",
+   "svo": [
+    "larry_shaw_director",
+    "occupation",
+    "film_directors"
+   ],
+   "surface": "Larry Shaw is an occupation in the film directors' field.",
+   "label": "B"
+  },
+  {
+   "num": 151,
+   "turn": "h16",
+   "svo": [
+    "larry_shaw_director",
+    "occupation",
+    "film_directors"
+   ],
+   "surface": "Larry Shaw was an occupation for film directors.",
+   "label": "U"
+  },
+  {
+   "num": 152,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "The triple (luk_cs_p_l, instance_of, human_specie).",
+   "label": "N"
+  },
+  {
+   "num": 153,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Luk_cs_p_l is an instance of human_specie.",
+   "label": "F"
+  },
+  {
+   "num": 154,
+   "turn": "h17",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The entity is human.",
+   "label": "B"
+  },
+  {
+   "num": 155,
+   "turn": "h17",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an example of the common names system.",
+   "label": "B"
+  },
+  {
+   "num": 156,
+   "turn": "h17",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Commonly known as subclasses of names",
+   "label": "U"
+  },
+  {
+   "num": 157,
+   "turn": "h17",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 158,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "The United States of America is the country of citizenship for Luk CS P L.",
+   "label": "F"
+  },
+  {
+   "num": 159,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "Luk_cs_p_l is from the country of citizenship U.S.",
+   "label": "F"
+  },
+  {
+   "num": 160,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Occupation is a television actor.",
+   "label": "U"
+  },
+  {
+   "num": 161,
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "occupation",
+    "television_actor"
+   ],
+   "surface": "Luk Cs P L is a television actor.",
+   "label": "F"
+  },
+  {
+   "num": 162,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The city of Rome is located in the time zone of Italy.",
+   "label": "U"
+  },
+  {
+   "num": 163,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "Merano, Italy is located in the time zone of Rome.",
+   "label": "F"
+  },
+  {
+   "num": 164,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "country",
+    "italian_republic"
+   ],
+   "surface": "Merano is located in Italy.",
+   "label": "F"
+  },
+  {
+   "num": 165,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "country",
+    "italian_republic"
+   ],
+   "surface": "Merano, Italy is the country's Italian republic.",
+   "label": "B"
+  },
+  {
+   "num": 166,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "instance_of",
+    "italian_communes"
+   ],
+   "surface": "The Merano is an Italian commune.",
+   "label": "F"
+  },
+  {
+   "num": 167,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "instance_of",
+    "italian_communes"
+   ],
+   "surface": "Merano, Italy is an instance of Italian Communes.",
+   "label": "F"
+  },
+  {
+   "num": 168,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "twinned_administrative_body",
+    "historic_centre_of_salzburg"
+   ],
+   "surface": "The historic centre of Salzburg and its twinned administrative body were both tamed in 1972.",
+   "label": "U"
+  },
+  {
+   "num": 169,
+   "turn": "h18",
+   "svo": [
+    "merano_italy",
+    "twinned_administrative_body",
+    "historic_centre_of_salzburg"
+   ],
+   "surface": "Merano, Italy, has two administrative bodies: the Municipality of Merano and the Historic Centre of Salzburg.",
+   "label": "U"
+  },
+  {
+   "num": 170,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The country of China is the United States.",
+   "label": "U"
+  },
+  {
+   "num": 171,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The United States of America is known as the \"NC-Artists\" country.",
+   "label": "U"
+  },
+  {
+   "num": 172,
+   "turn": "h19",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The number of shares in Canada is u_s_of_a.",
+   "label": "U"
+  },
+  {
+   "num": 173,
+   "turn": "h19",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+   "label": "U"
+  },
+  {
+   "num": 174,
+   "turn": "h19",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 175,
+   "turn": "h19",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 176,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "The NCAT is an instance of higher general education.",
+   "label": "U"
+  },
+  {
+   "num": 177,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "Ancillary college or university is an example of a higher general education institution.",
+   "label": "U"
+  },
+  {
+   "num": 178,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "located_in_the_administrative_territoria",
+    "the_tar_heel_state"
+   ],
+   "surface": "The Tar Heel State is located in the administrative territory of the United States.",
+   "label": "U"
+  },
+  {
+   "num": 179,
+   "turn": "h19",
+   "svo": [
+    "nc_arts",
+    "located_in_the_administrative_territoria",
+    "the_tar_heel_state"
+   ],
+   "surface": "The NC-ARTS is located in the administrative territory of the Tarheel State.",
+   "label": "B"
+  },
+  {
+   "num": 180,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Use a human species as an instance of the use.",
+   "label": "U"
+  },
+  {
+   "num": 181,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "The instance_of human_specie is a unique species within its own domain.",
+   "label": "U"
+  },
+  {
+   "num": 182,
+   "turn": "h20",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The entity is human.",
+   "label": "B"
+  },
+  {
+   "num": 183,
+   "turn": "h20",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an example of the common names system.",
+   "label": "B"
+  },
+  {
+   "num": 184,
+   "turn": "h20",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Commonly known as subclasses of names",
+   "label": "U"
+  },
+  {
+   "num": 185,
+   "turn": "h20",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 186,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "country_of_citizenship",
+    "bharat_ganrajya"
+   ],
+   "surface": "Bharat Ganjam is the country of citizenship for India.",
+   "label": "U"
+  },
+  {
+   "num": 187,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "country_of_citizenship",
+    "bharat_ganrajya"
+   ],
+   "surface": "Bharat Ganjira is a country of citizenship in India.",
+   "label": "U"
+  },
+  {
+   "num": 188,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "occupation",
+    "music_composer"
+   ],
+   "surface": "Occupied musician.",
+   "label": "N"
+  },
+  {
+   "num": 189,
+   "turn": "h20",
+   "svo": [
+    "ousepachan",
+    "occupation",
+    "music_composer"
+   ],
+   "surface": "Pechan, a musician, is also an occupation who creates music compositions.",
+   "label": "U"
+  },
+  {
+   "num": 190,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   "surface": "Nagasaki is located in Japan.",
+   "label": "B"
+  },
+  {
+   "num": 191,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   "surface": "Prefectures of Nagasaki in the modern era of Japan.",
+   "label": "N"
+  },
+  {
+   "num": 192,
+   "turn": "h21",
+   "svo": [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "China's border with Japan is shared with Taiwan Province of China.",
+   "label": "U"
+  },
+  {
+   "num": 193,
+   "turn": "h21",
+   "svo": [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Modern-era Japan shares borders with China Pr.",
+   "label": "F"
+  },
+  {
+   "num": 194,
+   "turn": "h21",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China shares borders with Bharat Ganjamya.",
+   "label": "U"
+  },
+  {
+   "num": 195,
+   "turn": "h21",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China's share of India's total stock market is about 15%.",
+   "label": "U"
+  },
+  {
+   "num": 196,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+   "label": "F"
+  },
+  {
+   "num": 197,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   "surface": "The prefecture of Nagasaki is located in the Korea Standard Time time zone.",
+   "label": "F"
+  },
+  {
+   "num": 198,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ],
+   "surface": "Nagasaki Prefecture and Busan Districts of Busan have been twinned administratively since their establishment.",
+   "label": "U"
+  },
+  {
+   "num": 199,
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ],
+   "surface": "The prefecture of Nagasaki has partnered with Busan to establish a twinned administrative body for their districts.",
+   "label": "U"
+  },
+  {
+   "num": 200,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   "surface": "The Republic of Brazil has shares bordering Paraguay.",
+   "label": "B"
+  },
+  {
+   "num": 201,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+   "label": "F"
+  },
+  {
+   "num": 202,
+   "turn": "h22",
+   "svo": [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The republic of Brazil shares borders with the Federal Republic of Germany.",
+   "label": "U"
+  },
+  {
+   "num": 203,
+   "turn": "h22",
+   "svo": [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The Republic of Brazil shares borders with France's Republic.",
+   "label": "B"
+  },
+  {
+   "num": 204,
+   "turn": "h22",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The French Republic shares its border with the United Kingdom.",
+   "label": "F"
+  },
+  {
+   "num": 205,
+   "turn": "h22",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The German federal republic shares borders with the United Kingdom.",
+   "label": "U"
+  },
+  {
+   "num": 206,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   "surface": "The Repartition of Paraguay was described by Broccohaus and Efron Encyclopedia.",
+   "label": "U"
+  },
+  {
+   "num": 207,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   "surface": "Replica of Paraguay described by source Brockhaus & Efron Encyclopedie.",
+   "label": "U"
+  },
+  {
+   "num": 208,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ],
+   "surface": "Rep Blica del Paraguay es parte de la Uni\u00f3n Nacional.",
+   "label": "U"
+  },
+  {
+   "num": 209,
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ],
+   "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+   "label": "F"
+  },
+  {
+   "num": 210,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The person is located in time zone Rome.",
+   "label": "U"
+  },
+  {
+   "num": 211,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "S_Te_France is located in Rome's time zone.",
+   "label": "F"
+  },
+  {
+   "num": 212,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The country of France is the country of the French Republic.",
+   "label": "U"
+  },
+  {
+   "num": 213,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "France is a country in Europe, known as the \"country\" of Germany's republic.",
+   "label": "U"
+  },
+  {
+   "num": 214,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "instance_of",
+    "communes_in_france"
+   ],
+   "surface": "The French commune of Montmartre is an instance of a historical district in Paris.",
+   "label": "U"
+  },
+  {
+   "num": 215,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "instance_of",
+    "communes_in_france"
+   ],
+   "surface": "The S_Te_France instance_of communes_in_france.",
+   "label": "F"
+  },
+  {
+   "num": 216,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "located_in_the_administrative_territoria",
+    "department_of_herault"
+   ],
+   "surface": "The S\u00e8te is located in Herault's administrative territory.",
+   "label": "B"
+  },
+  {
+   "num": 217,
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "located_in_the_administrative_territoria",
+    "department_of_herault"
+   ],
+   "surface": "S_T_E_France is located in the administrative territory of the Department of Herault.",
+   "label": "B"
+  },
+  {
+   "num": 218,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Shelley winters is an instance of human species.",
+   "label": "F"
+  },
+  {
+   "num": 219,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Shelly Winters is an instance of a human species.",
+   "label": "U"
+  },
+  {
+   "num": 220,
+   "turn": "h24",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The entity is human.",
+   "label": "B"
+  },
+  {
+   "num": 221,
+   "turn": "h24",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an example of the common names system.",
+   "label": "B"
+  },
+  {
+   "num": 222,
+   "turn": "h24",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Commonly known as subclasses of names",
+   "label": "U"
+  },
+  {
+   "num": 223,
+   "turn": "h24",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 224,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "Shellieth winters lives in the United States of America.",
+   "label": "U"
+  },
+  {
+   "num": 225,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "Shelli Winter's citizenship is in the United States of America (U.S.).",
+   "label": "U"
+  },
+  {
+   "num": 226,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "occupation",
+    "writter"
+   ],
+   "surface": "Shelli Winter's occupation is a writer.",
+   "label": "U"
+  },
+  {
+   "num": 227,
+   "turn": "h24",
+   "svo": [
+    "shelley_winters",
+    "occupation",
+    "writter"
+   ],
+   "surface": "Shelly Winter's occupation is a writer.",
+   "label": "U"
+  },
+  {
+   "num": 228,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Steven Lipson is an instance of a human species.",
+   "label": "F"
+  },
+  {
+   "num": 229,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Steven Lipson is an instance of human species.",
+   "label": "F"
+  },
+  {
+   "num": 230,
+   "turn": "h25",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "The entity is human.",
+   "label": "B"
+  },
+  {
+   "num": 231,
+   "turn": "h25",
+   "svo": [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   "surface": "Human species is an example of the common names system.",
+   "label": "B"
+  },
+  {
+   "num": 232,
+   "turn": "h25",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Commonly known as subclasses of names",
+   "label": "U"
+  },
+  {
+   "num": 233,
+   "turn": "h25",
+   "svo": [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   "surface": "Common names are subclasses of meanings of names.",
+   "label": "F"
+  },
+  {
+   "num": 234,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "Steven Lipson is from the United States of America.",
+   "label": "B"
+  },
+  {
+   "num": 235,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "Steven Lipson is from the United States of America (U.S.).",
+   "label": "B"
+  },
+  {
+   "num": 236,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "occupation",
+    "non_degreed_engineer"
+   ],
+   "surface": "Steven Lipson is an engineer.",
+   "label": "B"
+  },
+  {
+   "num": 237,
+   "turn": "h25",
+   "svo": [
+    "steven_lipson",
+    "occupation",
+    "non_degreed_engineer"
+   ],
+   "surface": "Steven Lipson is an engineer who has not completed a degree.",
+   "label": "F"
+  },
+  {
+   "num": 238,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The weather in Stavenger is located in Rome time.",
+   "label": "F"
+  },
+  {
+   "num": 239,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The weather in Stavenger is similar to Rome's time zone.",
+   "label": "B"
+  },
+  {
+   "num": 240,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "country",
+    "royal_kingdom_of_norway"
+   ],
+   "surface": "The weather in Stavanger is in the royal kingdom of Norway.",
+   "label": "U"
+  },
+  {
+   "num": 241,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "country",
+    "royal_kingdom_of_norway"
+   ],
+   "surface": "The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year",
+   "label": "U"
+  },
+  {
+   "num": 242,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The weather in Stavenger is an instance of the city work.",
+   "label": "F"
+  },
+  {
+   "num": 243,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The weather in Stavanger is of the city's work.",
+   "label": "U"
+  },
+  {
+   "num": 244,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "twinned_administrative_body",
+    "city_of_houston_texas"
+   ],
+   "surface": "The weather in Stavenger is similar to Houston's administrative body.",
+   "label": "U"
+  },
+  {
+   "num": 245,
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "twinned_administrative_body",
+    "city_of_houston_texas"
+   ],
+   "surface": "The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement",
+   "label": "U"
+  },
+  {
+   "num": 246,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The University of Saarland is a federal republic of Germany.",
+   "label": "U"
+  },
+  {
+   "num": 247,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "Universitetsdagsasaila saarela eesti kehitys.",
+   "label": "U"
+  },
+  {
+   "num": 248,
+   "turn": "h27",
+   "svo": [
+    "federal_republic_of_germany",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The federal republic of germany is located in time zone Rome.",
+   "label": "F"
+  },
+  {
+   "num": 249,
+   "turn": "h27",
+   "svo": [
+    "federal_republic_of_germany",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The federal republic of germany is located in time zone rome time.",
+   "label": "F"
+  },
+  {
+   "num": 250,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "Universit\u00e4t f\u00fcr Schiedsrichter ist eine Instanz der h\u00f6heren allgemeinen Bildung.",
+   "label": "U"
+  },
+  {
+   "num": 251,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "Universit\u0103\u021bii de Saarbr\u00fccken se afl\u0103 \u00een classificarea unei institu\u021biilor de",
+   "label": "U"
+  },
+  {
+   "num": 252,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "located_in_the_administrative_territoria",
+    "county_of_saarbruecken"
+   ],
+   "surface": "The university is located in the administrative territory of Saarbruecken.",
+   "label": "B"
+  },
+  {
+   "num": 253,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "located_in_the_administrative_territoria",
+    "county_of_saarbruecken"
+   ],
+   "surface": "Universitetsgeb\u00e4\u00fc in der administrat\u00fcrreiton der Stadt Saarbr\u00fccken.",
+   "label": "U"
+  },
+  {
+   "num": 254,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "member_of",
+    "german_research_network"
+   ],
+   "surface": "The university of Saarland is a member of the German Research Network.",
+   "label": "F"
+  },
+  {
+   "num": 255,
+   "turn": "h27",
+   "svo": [
+    "universitat_des_saarlandes",
+    "member_of",
+    "german_research_network"
+   ],
+   "surface": "Universit\u00e4t des Saarlandes is a member of the German Research Network.",
+   "label": "F"
+  },
+  {
+   "num": 256,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The Rome time zone is located in the Canton of Italy.",
+   "label": "U"
+  },
+  {
+   "num": 257,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome",
+   "label": "U"
+  },
+  {
+   "num": 258,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   "surface": "The capital city of Canton is Switzerland.",
+   "label": "U"
+  },
+  {
+   "num": 259,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   "surface": "Waadt Canton of Switzerland is a canton in the Confederation of Switzerland.",
+   "label": "B"
+  },
+  {
+   "num": 260,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   "surface": "Canton de Berne shares its border with Canton of Switzerland.",
+   "label": "U"
+  },
+  {
+   "num": 261,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   "surface": "Waadt Canton of shares borders with Canton de Berne.",
+   "label": "F"
+  },
+  {
+   "num": 262,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ],
+   "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+   "label": "B"
+  },
+  {
+   "num": 263,
+   "turn": "h28",
+   "svo": [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ],
+   "surface": "The Waadt Canton of contains administrative territorial jurisdiction in Nord-Vaud district.",
+   "label": "U"
+  },
+  {
+   "num": 264,
+   "turn": "h29",
+   "svo": [
+    "zhejiang_province",
+    "country",
+    "china_pr"
+   ],
+   "surface": "Zhejiang Province is a country in China.",
+   "label": "U"
+  },
+  {
+   "num": 265,
+   "turn": "h29",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China shares borders with Bharat Ganjamya.",
+   "label": "U"
+  },
+  {
+   "num": 266,
+   "turn": "h29",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China's share of India's total stock market is about 15%.",
+   "label": "U"
+  },
+  {
+   "num": 267,
+   "turn": "h29",
+   "svo": [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Bharat Ganjariyan, shares border with China Pr.",
+   "label": "U"
+  },
+  {
+   "num": 268,
+   "turn": "h29",
+   "svo": [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Bihar shares border with China Prussia",
+   "label": "U"
+  },
+  {
+   "num": 269,
+   "turn": "h29",
+   "svo": [
+    "zhejiang_province",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   "surface": "Zhejiang province is located in time zone Australia's Western Standard Time.",
+   "label": "B"
+  },
+  {
+   "num": 270,
+   "turn": "h29",
+   "svo": [
+    "zhejiang_province",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   "surface": "Zhejiang Province is located in the Time Zone of Australia's Western Standard Time.",
+   "label": "B"
+  },
+  {
+   "num": 271,
+   "turn": "h29",
+   "svo": [
+    "zhejiang_province",
+    "shares_border_with",
+    "air_pollution_in_shanghai"
+   ],
+   "surface": "Zhejiang Province shares air pollution with Shanghai.",
+   "label": "U"
+  },
+  {
+   "num": 272,
+   "turn": "h29",
+   "svo": [
+    "zhejiang_province",
+    "shares_border_with",
+    "air_pollution_in_shanghai"
+   ],
+   "surface": "Zhejiang Province shares border with Shanghai for air pollution.",
+   "label": "U"
+  }
+ ]
+}

@@ -55,7 +55,33 @@ _set("129 130", "F"); _set("125", "B"); _set("124 126 127 128 131 132", "U")
 _set("133 134 136 138 139", "F"); _set("135 140 141", "B"); _set("137 142", "U")
 # h16 larry_shaw_director
 _set("143 144 146 148 149", "F"); _set("145 150", "B"); _set("147 151", "U")
-# ---- turns h17..h29 are labelled in the next block (generated on the GPU after the reboot) ----
+# ---- turns h17..h29 (generated on the GPU after the reboot) ----
+# h17 luk_cs_p_l
+_set("153 157 158 159 161", "F"); _set("154 155", "B"); _set("156 160", "U"); _set("152", "N")
+# h18 merano_italy
+_set("163 164 166 167", "F"); _set("165", "B"); _set("162 168 169", "U")
+# h19 nc_arts
+_set("174 175", "F"); _set("179", "B"); _set("170 171 172 173 176 177 178", "U")
+# h20 ousepachan
+_set("185", "F"); _set("182 183", "B"); _set("180 181 184 186 187 189", "U"); _set("188", "N")
+# h21 prefecture_of_nagasaki
+_set("193 196 197", "F"); _set("190", "B"); _set("192 194 195 198 199", "U"); _set("191", "N")
+# h22 rep_blica_del_paraguay
+_set("201 204 209", "F"); _set("200 203", "B"); _set("202 205 206 207 208", "U")
+# h23 s_te_france
+_set("211 215", "F"); _set("216 217", "B"); _set("210 212 213 214", "U")
+# h24 shelley_winters  (a spelling variant of the name counts as a misnaming -> U; "doubtful goes to U")
+_set("218 223", "F"); _set("220 221", "B"); _set("219 222 224 225 226 227", "U")
+# h25 steven_lipson
+_set("228 229 233 237", "F"); _set("230 231 234 235 236", "B"); _set("232", "U")
+# h26 the_weather_in_stavenger
+_set("238 242", "F"); _set("239", "B"); _set("240 241 243 244 245", "U")
+# h27 universitat_des_saarlandes
+_set("248 249 254 255", "F"); _set("252", "B"); _set("246 247 250 251 253", "U")
+# h28 waadt_canton_of
+_set("261", "F"); _set("259 262", "B"); _set("256 257 258 260 263", "U")
+# h29 zhejiang_province
+_set("269 270", "B"); _set("264 265 266 267 268 271 272", "U")
 
 if __name__ == "__main__":
     corpus = json.load(open(sys.argv[1])); out = sys.argv[2]; partial = "--partial" in sys.argv
