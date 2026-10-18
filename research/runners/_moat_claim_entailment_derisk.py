@@ -265,8 +265,10 @@ class ClaimEntailmentVerifier:
         t = self._normalise_slugs(prose)
         lead = "|".join(GUARD_DETERMINERS + GUARD_COPULAS)
         for rel in sorted(self.verbs):
-            if "_" not in rel and re.search(
-                    r"(?<![a-z0-9_])(?:" + lead + r")\s+" + re.escape(rel) + r"(?:s|es)?(?![a-z0-9_])", t):
+            # the plural of a relation that ends in -y is -ies ('country' -> 'countries'): the same common-noun use, and a form the
+            # slug_norm inflection reading (`_base_verb`) now recognises, so the guard must cover it too
+            forms = re.escape(rel) + r"(?:s|es)?" + ((r"|" + re.escape(rel[:-1]) + "ies") if rel.endswith("y") else "")
+            if "_" not in rel and re.search(r"(?<![a-z0-9_])(?:" + lead + r")\s+(?:" + forms + r")(?![a-z0-9_])", t):
                 return rel
         return None
 
@@ -286,6 +288,14 @@ class ClaimEntailmentVerifier:
             return b
         if tok in self.verbs:
             return tok
+        if self.slug_norm and tok not in self.nouns:
+            # English inflections the stock map lacks, read as the relation ONLY when the de-inflected form is a relation gathered for
+            # this turn and the token is not itself a gathered slug: 'countries' -> country (ys -> y), 'goes' -> go (es). Never maps a
+            # token onto a relation that was not gathered, so a different slug cannot match ('sports' is not 'sport_club').
+            if tok.endswith("ies") and tok[:-3] + "y" in self.verbs:
+                return tok[:-3] + "y"
+            if tok.endswith("es") and tok[:-2] in self.verbs:
+                return tok[:-2]
         return None
 
     def _classify(self, tok):
@@ -486,7 +496,7 @@ class ClaimEntailmentVerifier:
                     # subjectless clause (coordinated VP / relative clause) carries the antecedent subject
                     # (a stranded leading NP first, else the previous clause's substrate-assigned agent).
                     explicit = (nouns[0] if len(nouns) >= 1 and (
-                        self._noun_is_before(toks, nouns[0], verb, r"[^a-z0-9_]") if self.slug_norm
+                        self._noun_before_verb(toks, nouns[0], verb) if self.slug_norm
                         else self._noun_is_before(toks, nouns[0], verb)) else None)
                     if explicit is not None:
                         if pending_subject is not None:      # a leading NP that never got its predicate
@@ -585,6 +595,27 @@ class ClaimEntailmentVerifier:
         # ACCEPT: every clause was function-only, grounded, or a properly-flagged hypothesis.
         return {"accepted": True, "reject_reason": None, "grounded": grounded,
                 "hypotheses": hypotheses, "trace": trace}
+
+    def _noun_before_verb(self, toks, noun, verb_base):
+        """slug_norm only: True iff `noun` first appears before the clause's predicate. The predicate is the first token that IS a
+        verb form of `verb_base` (`_classify(tok) == ('verb', verb_base)`), found by the same lexical rule that chose `verb_base`.
+        The stock `_noun_is_before` instead takes the first token that merely starts with `verb_base[:3]`; a subject slug that
+        begins with the relation's first three letters ('county_of_inyo' + 'country', 'sporting_benevento' + 'sport',
+        'shawano_county' + 'shares_border_with', 'gene_wolf' + 'genre', ...) then matches ITSELF as the verb, lands at the same
+        index as the noun, and the clause loses its explicit subject (rejected as 'no resolvable subject'; with a previous clause
+        it would instead have carried that clause's agent over). Measured 2026-10-18: this prefix rule alone accounts for all 125
+        one-fact stub-mouth HURTS of the 78,857 LTM facts. Exact matching can only move the verb to a token that IS a verb form,
+        never lets a different gathered slug match."""
+        n_i = v_i = None
+        for i, t in enumerate(toks):
+            tt = re.sub(r"[^a-z0-9_]", "", t)
+            if n_i is None and tt == noun:
+                n_i = i
+            if v_i is None and self._classify(tt) == ("verb", verb_base):
+                v_i = i
+        if n_i is None or v_i is None:
+            return True                                      # default subject-first
+        return n_i < v_i
 
     @staticmethod
     def _noun_is_before(toks, noun, verb_base, keep=r"[^a-z_]"):

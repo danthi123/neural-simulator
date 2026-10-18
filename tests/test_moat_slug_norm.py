@@ -628,3 +628,113 @@ def test_a_hedge_looking_gathered_noun_is_kept_as_a_noun(parser):
     # a hedge word that is NOT a noun is still dropped (an ungrounded hedged triple is rejected, a grounded one is kept)
     assert not _verify_on(parser, TURK, "Perhaps Turkey borders Ankara.")["accepted"]
     assert _verify_on(parser, TURK, "Perhaps Turkey borders Greece.")["accepted"]
+
+
+# ================================================================================================================
+# 2026-10-18 follow-up: the 125 stub-mouth HURTS (0.16% of the 78,857 LTM facts as one-fact turns) and a sixth leak class.
+# CAUSE (measured: the rule predicts exactly those 125 facts, 0 misses, 0 extras): `_noun_is_before` located the predicate as
+# the first token that merely STARTS WITH the relation's first three letters, so a subject slug beginning with them
+# ('county_of_inyo' + country, 'sporting_benevento' + sport, 'shawano_county' + shares_border_with, 'gene_wolf' + genre) matched
+# ITSELF as the verb, sat at the same index as the noun, and the clause lost its explicit subject: rejected as "no resolvable
+# subject" when alone, or -- worse -- given the PREVIOUS clause's agent (a leak). The stub's relation inflections ('countrys',
+# 'sports', 'shares_border_withs') were never the problem: the stock inflection map already reads them. Under slug_norm the predicate
+# is now the first token that IS a verb form of the relation; flag off the old rule is untouched (the golden tests above).
+# ================================================================================================================
+from research.runners.brain_chat_tui import StubRenderer                                   # noqa: E402
+
+# one real fact per relation behind the 125 HURTS (agent begins with the relation's first three letters)
+STUB_FORMS = [
+    ("sporting_benevento", "sport", "association_football_club"),
+    ("county_of_inyo", "country", "u_s_of_a"),
+    ("suburban_train", "subclass_of", "public_transportation"),
+    ("insulin_dependent_diabetes_mellitus", "instance_of", "organic_cause"),
+    ("shawano_county", "shares_border_with", "wausau_wi_msa"),
+    ("gene_wolf", "genre", "sciene_fiction"),
+    ("headington_united_fc", "headquarters_location", "city_of_dreaming_spires"),
+]
+_STUB = StubRenderer()
+
+
+def _stub_sentence(svo):
+    return _STUB.render_svo(*svo)[0]
+
+
+def test_the_seven_stub_relation_forms_are_the_ones_the_stub_produces():
+    assert [_stub_sentence(f).split()[2] for f in STUB_FORMS] == [
+        "sports", "countrys", "subclass_ofs", "instance_ofs", "shares_border_withs", "genres", "headquarters_locations"]
+    assert all(f[0].startswith(f[1][:3]) for f in STUB_FORMS)            # the precondition of the old failure
+
+
+@pytest.mark.parametrize("fact", STUB_FORMS, ids=lambda f: f[1])
+def test_a_stub_sentence_whose_subject_shares_the_relations_first_letters_is_accepted(seed_parsers, fact):
+    prose = _stub_sentence(fact)
+    assert _verdicts(seed_parsers, [fact], prose, slug_norm=True) == [True] * len(SEEDS), prose
+    # flag off nothing changes: the stock claim gate rejected these sentences and still does (golden tests cover byte identity)
+    assert _verdicts(seed_parsers, [fact], prose, slug_norm=False) == [False] * len(SEEDS), prose
+
+
+@pytest.mark.parametrize("fact", STUB_FORMS, ids=lambda f: f[1])
+def test_a_deinflected_form_that_is_not_gathered_is_still_rejected(seed_parsers, fact):
+    a, v, p = fact
+    prose = _stub_sentence(fact)
+    # the relation this turn gathered is a DIFFERENT slug that merely starts like the stub's word ('sports' vs 'sport_club'):
+    other = [(a, v + "_club", p)]
+    assert _verdicts(seed_parsers, other, prose, slug_norm=True) == [False] * len(SEEDS), prose
+    # the relation is simply not gathered
+    assert _verdicts(seed_parsers, [(a, "something_else", p)], prose, slug_norm=True) == [False] * len(SEEDS), prose
+
+
+def test_sports_does_not_match_a_gathered_sport_club_unless_sport_itself_is_gathered(seed_parsers, parser):
+    prose = "The sporting_benevento sports association_football_club."
+    assert _verdicts(seed_parsers, [("sporting_benevento", "sport_club", "association_football_club")], prose, True) == [False] * len(SEEDS)
+    both = [("sporting_benevento", "sport_club", "association_football_club"), ("sporting_benevento", "sport", "association_football_club")]
+    assert _verdicts(seed_parsers, both, prose, True) == [True] * len(SEEDS)
+    ver = _build_like_production(parser, [("sporting_benevento", "sport_club", "association_football_club")], slug_norm=True)
+    assert ver._classify("sports") == ("unknown", "sports") and ver._classify("sport_club") == ("verb", "sport_club")
+
+
+@pytest.mark.parametrize("prose", [
+    "The county_of_inyo countrys canada.",                  # object not gathered
+    "The county_of_inyo countrys county_of_inyo.",          # object swapped for the subject
+    "The u_s_of_a countrys county_of_inyo.",                # role swap
+    "The county_of_inyo sports u_s_of_a.",                  # a relation that was not gathered
+    "The county_of_inyo does not country u_s_of_a.",        # negation
+])
+def test_stub_style_sentences_that_are_not_the_gathered_fact_are_rejected(seed_parsers, prose):
+    gated = [("county_of_inyo", "country", "u_s_of_a")]
+    assert _verdicts(seed_parsers, gated, prose, slug_norm=True) == [False] * len(SEEDS), prose
+
+
+def test_a_subject_that_starts_like_the_relation_no_longer_borrows_the_previous_clauses_agent(seed_parsers):
+    """The sixth leak class. The second clause's subject 'shawano_county' begins with 'sha' (shares_border_with), so the old rule lost
+    it and carried 'canada_x' over: (canada_x, sbw, usa_x) and (canada_x, sbw, shawano_county) are both gathered, so the false
+    claim 'shawano_county shares a border with usa_x' was ACCEPTED. Flag off that stock behaviour is unchanged (pinned, not fixed)."""
+    gated = [("canada_x", "shares_border_with", "usa_x"), ("canada_x", "shares_border_with", "shawano_county")]
+    for prose in ("Canada_x shares_border_withs usa_x and shawano_county shares_border_withs usa_x.",
+                  "The canada_x shares_border_withs usa_x and the shawano_county shares_border_withs usa_x."):
+        assert _verdicts(seed_parsers, gated, prose, slug_norm=True) == [False] * len(SEEDS), prose
+        assert _verdicts(seed_parsers, gated, prose, slug_norm=False) == [True] * len(SEEDS), prose      # the stock leak, untouched
+    # the faithful two-clause sentence is still accepted
+    ok = "Canada_x shares_border_withs usa_x and canada_x shares_border_withs shawano_county."
+    assert _verdicts(seed_parsers, gated, ok, slug_norm=True) == [True] * len(SEEDS)
+
+
+# ---- relation inflections the stock map lacks (ys -> y, es): read as the relation only when the de-inflected form is gathered
+def test_countries_reads_as_the_gathered_relation_country_but_only_when_country_is_gathered(seed_parsers, parser):
+    gated = [("county_of_inyo", "country", "u_s_of_a")]
+    assert _verdicts(seed_parsers, gated, "The county_of_inyo countries u_s_of_a.", True) == [True] * len(SEEDS)
+    assert _verdicts(seed_parsers, gated, "The county_of_inyo countries u_s_of_a.", False) == [False] * len(SEEDS)
+    assert _verdicts(seed_parsers, [("county_of_inyo", "language", "u_s_of_a")], "The county_of_inyo countries u_s_of_a.", True) == [False] * len(SEEDS)
+    # a token that is itself a gathered noun stays a noun: 'countries' the object slug is never turned into the relation
+    ver = _build_like_production(parser, [("x_y", "country", "countries")], slug_norm=True)
+    assert ver._classify("countries") == ("noun", "countries")
+    ver = _build_like_production(parser, [("x_y", "country", "z_w")], slug_norm=True)
+    assert ver._classify("countries") == ("verb", "country")
+    assert _build_like_production(parser, [("x_y", "country", "z_w")])._classify("countries") == ("unknown", "countries")   # flag off
+
+
+def test_es_inflection_is_read_only_for_a_gathered_relation(seed_parsers):
+    gated = [("tom_cat", "go", "home_base")]
+    assert _verdicts(seed_parsers, gated, "Tom_cat goes home_base.", True) == [True] * len(SEEDS)
+    assert _verdicts(seed_parsers, gated, "Tom_cat goes home_base.", False) == [False] * len(SEEDS)
+    assert _verdicts(seed_parsers, [("tom_cat", "walk", "home_base")], "Tom_cat goes home_base.", True) == [False] * len(SEEDS)
