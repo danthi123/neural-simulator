@@ -152,6 +152,9 @@ def test_dry_run_prints_the_remote_script_and_runs_nothing(tmp_path):
     res = _run(server, env, "--dry-run", "status")
     assert res.returncode == 0
     assert 'bash "$HOME/Projects/sim/tools/gpu_queue.sh" status' in res.stdout
+    res = _run(server, env, "--dry-run", "events", "7")
+    assert res.returncode == 0 and "grep -aE" in res.stdout and "| tail -n 7" in res.stdout and 'echo "now: ' in res.stdout
+    assert "gpu_queue.log" in res.stdout and "sparse-checkout" not in res.stdout
     res = _run(server, env, "--dry-run", "add", "echo hi")
     assert res.returncode == 0 and "sparse-checkout set --no-cone" in res.stdout and "gpu_add.sh" in res.stdout
     assert "# git push workstation:Projects/sim " in res.stdout and "fetch" not in res.stdout
@@ -162,6 +165,7 @@ def test_dry_run_prints_the_remote_script_and_runs_nothing(tmp_path):
 def test_status_log_yield_provision_argument_checks(tmp_path):
     server, home, env = _setup(tmp_path)
     assert _run(server, env, "log", "x").returncode == 2
+    assert _run(server, env, "events", "x").returncode == 2
     assert _run(server, env, "yield", "--max-hours", "1;id").returncode == 2
     assert _run(server, env, "provision", "not-a-sha").returncode == 2
     res = _run(server, env, "--dry-run", "yield", "--max-hours", "1.5")

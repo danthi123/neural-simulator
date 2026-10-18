@@ -9,8 +9,12 @@
 #
 # Env overrides (tests only -- never set these in production; each is honoured by the underlying tool it names):
 #   GPU_QUEUE_DIR, POOL_QUEUE_PATH, POOL_NODES, POOL_SSH_CONFIG, AWS_DAILY_CAP_USD, SIM_ENGINE_PYTHON,
-#   HANDOFF_BATTERIES_TSV, STATUS_SSH (ssh binary override, for a stub in tests)
+#   HANDOFF_BATTERIES_TSV, STATUS_SSH (ssh binary override, for a stub in tests), STALL_WATCH_CMD / STALL_WATCH_TIMEOUT
+#   (the stall watcher's command and its time limit, in seconds) and STALL_WATCH_ROOT / POOL_CANARIES_PATH (where it reads)
 #   (POOL_NODES unset -> default node list comes from tools/pool_nodes.conf)
+# Production knobs, only if the inference below is wrong: STALL_WATCH_POOL_TZ / STALL_WATCH_GPU_TZ name the zone the
+# pool.running / gpu_queue.log stamps were written in (tools/stall_watch.py: without them the pool zone is inferred from the
+# file and the GPU zone is read off the workstation's own clock).
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
@@ -92,6 +96,24 @@ if [ -f "$TSV" ]; then
     | awk -F'\t' '{printf "  %-20s %s/%s  %s\n", $1, $2, $3, $4}'
 else
   echo "  (no battery registry at $TSV)"
+fi
+
+# ---- Stalls (tools/stall_watch.py, RULING stall-alarm-1018). READ-ONLY: it prints a line per pool/GPU line past twice its
+# expected wall with no output, and Hermes acts on it. A failure of the watcher (crash, timeout, missing python) must
+# never break this snapshot, so it is run under `timeout`, its status is read, and every outcome ends in an echo. Its exit
+# codes: 0 nothing stalled, 3 at least one STALL; anything else (a traceback is 1, a usage error 2, a timeout 124) is the
+# watcher failing and is shown as UNAVAILABLE, never as a report (review 2026-10-18: a crash used to print its traceback
+# under "Stalls" because rc 1 meant STALL).
+echo "-- Stalls --"
+if [ -n "${STALL_WATCH_CMD:-}" ]; then read -r -a SW_CMD <<<"$STALL_WATCH_CMD"; else SW_CMD=("$PY" "$ROOT/tools/stall_watch.py"); fi
+SW_OUT=$(STALL_WATCH_SSH="$SSH_BIN" POOL_SSH_CONFIG="$POOL_SSH_CONFIG" timeout "${STALL_WATCH_TIMEOUT:-75}" "${SW_CMD[@]}" 2>&1)
+SW_RC=$?
+if { [ "$SW_RC" -eq 0 ] || [ "$SW_RC" -eq 3 ]; } && [ -n "$SW_OUT" ]; then
+  printf '%s\n' "$SW_OUT" | head -6 | cut -c1-230 | sed 's/^/  /'
+  SW_N=$(printf '%s\n' "$SW_OUT" | wc -l)
+  if [ "$SW_N" -gt 6 ]; then echo "  ... and $((SW_N - 6)) more line(s): run tools/stall_watch.py"; fi
+else
+  echo "  stall_watch: UNAVAILABLE (rc=$SW_RC) $(printf '%s' "$SW_OUT" | head -1 | cut -c1-150)"
 fi
 
 # ---- Recent failures: GPU log DONE(rc!=0) in the last 24h + pool job_status non-zero (gathered above) -----------
