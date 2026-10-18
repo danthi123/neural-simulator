@@ -76,7 +76,13 @@ def summarise(verdict):
                     kept_fact_labels[lab[(t["label"], tuple(c["svo"]), c["surface"])]] += 1
                     break
         turns_answered += bool(got)
-    return {"raw_rows": sum(tot_raw.values()), "unique_sentences": sum(tot_uni.values()),
+    unbuildable = sorted({k[0] for k, (acc, why) in verdict.items() if acc is None})
+    unbuildable_rows = sum(1 for k, (acc, why) in verdict.items() if acc is None)
+    return {"turns_with_unbuildable_claim_verifier": unbuildable, "rows_in_those_turns": unbuildable_rows,
+            "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes "
+                                "the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back "
+                                "to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+            "raw_rows": sum(tot_raw.values()), "unique_sentences": sum(tot_uni.values()),
             "label_totals_raw": dict(tot_raw), "label_totals_unique": dict(tot_uni),
             "kept_raw": {l: raw[(l, True)] for l in "FBUN"}, "kept_unique": {l: uni[(l, True)] for l in "FBUN"},
             "distinct_svo_surface_kept": {l: dist[(l, True)] for l in "FBUN"},
@@ -92,8 +98,8 @@ res = {"_doc": "B2h (BRAIN_MOAT_SLUG_NORM=1) vs stock on the held-out corpus; la
 for seed in SEEDS:
     off = summarise(run(seed, False)); on = summarise(run(seed, True))
     res["per_seed"][str(seed)] = {"stock": {k: v for k, v in off.items() if k != "kept_sentences"}, "b2h": on}
-    print("seed %3d | stock kept %d/%d | B2h kept raw %d (unique %d) | by label raw %s | unique %s | facts %d/%d | turns answered %d/%d" % (
-        seed, off["kept_raw_total"], off["raw_rows"], on["kept_raw_total"], on["kept_unique_total"], on["kept_raw"],
+    print("seed %3d | unbuildable turns %s (%d rows) | stock kept %d/%d | B2h kept raw %d (unique %d) | by label raw %s | unique %s | facts %d/%d | turns answered %d/%d" % (
+        seed, on["turns_with_unbuildable_claim_verifier"], on["rows_in_those_turns"], off["kept_raw_total"], off["raw_rows"], on["kept_raw_total"], on["kept_unique_total"], on["kept_raw"],
         on["kept_unique"], on["facts_kept"], on["facts"], on["turns_answered"], on["turns"]), flush=True)
 leaks = collections.OrderedDict()
 for seed, r in res["per_seed"].items():
