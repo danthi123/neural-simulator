@@ -80,3 +80,22 @@ def test_ack_needs_a_ruling_in_the_runbook(tmp_path):
 
 def test_dev_seed_lines_need_no_preflight(tmp_path):
     assert _add(tmp_path, seed="7").returncode == 0
+
+
+def test_ack_accepts_a_real_section_6_ruling(tmp_path):
+    # 2026-10-18: ack split on "## RULINGS" but the header is "## 6. RULINGS (...)", so every ack was refused.
+    r = _pf(tmp_path, "ack", "--prereg", PREREG, "--revision", HEAD_SHA, "--ruling", "smoke-first-1018")
+    assert r.returncode == 0, r.stderr
+
+
+def test_ruling_section_excludes_needs_and_needs_an_entry():
+    import gate_preflight as gp
+    rb = ("## 5. Idle\n- early-key: not a ruling section\n"
+          "## 6. RULINGS (Claude writes)\n- alpha-key: do it (2026-10-18)\n- 2026-10-18 RULING beta-1018 (Claude): ok\n"
+          "  continuation mentions gamma-key\n"
+          "## NEEDS CLAUDE\n- 2026-10-18 10:00 [delta-key] ASK: please\n")
+    assert gp.ruling_present(rb, "alpha-key") and gp.ruling_present(rb, "beta-1018")
+    assert not gp.ruling_present(rb, "gamma-key")      # a mention inside another entry is not a ruling
+    assert not gp.ruling_present(rb, "delta-key")      # NEEDS lines never count
+    assert not gp.ruling_present(rb, "early-key")      # nor other sections
+    assert not gp.ruling_present(rb, "beta")           # no prefix matches

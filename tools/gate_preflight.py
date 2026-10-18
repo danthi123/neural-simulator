@@ -126,13 +126,32 @@ def cmd_record(a, command):
     return 0 if verdict == "CLEAN" else 1
 
 
+def ruling_section(rb):
+    """Section 6 of the runbook only: from the `## 6. RULINGS` (or bare `## RULINGS`) header to the next `## ` header, so a
+    NEEDS line never counts as a ruling. (Before 2026-10-18 this split on the literal "## RULINGS", which the real header
+    `## 6. RULINGS (...)` never contains, so every ack was refused.)"""
+    m = re.search(r"^##\s+(?:6\.\s*)?RULINGS\b.*$", rb, re.M)
+    if not m:
+        return ""
+    rest = rb[m.end():]
+    n = re.search(r"^## ", rest, re.M)
+    return rest[:n.start()] if n else rest
+
+
+def ruling_present(rb, key):
+    """True when KEY is a RULING entry of section 6: `- KEY:` or `- <date> RULING KEY` (a bare substring is not enough)."""
+    if not key:
+        return False
+    k = re.escape(key)
+    return bool(re.search(r"^-\s+(?:%s:|(?:\d{4}-\d{2}-\d{2}\s+)?RULING\s+%s(?![A-Za-z0-9_.\-]))" % (k, k), ruling_section(rb), re.M))
+
+
 def cmd_ack(a):
     rev = _rev9(a.revision)
     with open(RUNBOOK) as f:
         rb = f.read()
-    rulings = rb.split("## RULINGS", 1)[1] if "## RULINGS" in rb else ""
-    if not a.ruling or a.ruling not in rulings:
-        raise SystemExit("gate_preflight ack: ruling %r is not in the runbook's RULINGS section" % a.ruling)
+    if not ruling_present(rb, a.ruling):
+        raise SystemExit("gate_preflight ack: ruling %r is not a RULING entry in section 6 of the runbook" % a.ruling)
     _append({"date": _now(), "prereg": a.prereg, "revision": rev, "verdict": "ACK",
              "detail": "ruling " + a.ruling, "log": "", "command": ""})
     print("gate_preflight: ACK %s @ %s by ruling %s" % (a.prereg, rev, a.ruling))
