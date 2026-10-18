@@ -2,6 +2,8 @@
 usage (cwd = a worktree; run with that worktree's .venv):
   drive.py --labels a2_c1_mood,a2_c1_q --out OUT.json [--renderer stub|qwen-cpu] [--extra JSON]
  stub     : the battery worker's default stub mode (renderer='stub', numpy).
+ qwen-gpu : (added 2026-10-18 for turns 17-29 of the held-out run) the same as qwen-cpu with CUDA VISIBLE: the faculty then
+            runs fp16 on the GPU, the production device. Everything else is unchanged.
  qwen-cpu : LB_ARM_RENDERER=production (renderer omitted = console 'auto') with webapp.server._default_brain_renderer
             forced to 'qwen' (the only GPU-dependent step) and CUDA hidden -> the production QwenRenderer on CPU.
  --extra  : JSON list of [label, message, session, rich] fresh-session turns (reset=True) appended to the turn table.
@@ -12,7 +14,7 @@ import argparse, json, os, sys
 ap = argparse.ArgumentParser()
 ap.add_argument("--labels", required=True)
 ap.add_argument("--out", required=True)
-ap.add_argument("--renderer", default="stub", choices=["stub", "qwen-cpu"])
+ap.add_argument("--renderer", default="stub", choices=["stub", "qwen-cpu", "qwen-gpu"])
 ap.add_argument("--seed", type=int, default=1)
 ap.add_argument("--extra", default="[]")
 a = ap.parse_args()
@@ -20,8 +22,9 @@ sys.path.insert(0, os.getcwd())
 os.environ["SIM_BACKEND"] = "numpy"
 os.environ["BRAIN_CHAT_SEED"] = str(a.seed)
 os.environ["BRAIN_MOUTH_TRACE"] = "1"
-if a.renderer == "qwen-cpu":
-    os.environ["CUDA_VISIBLE_DEVICES"] = ""          # never touch the GPU
+if a.renderer in ("qwen-cpu", "qwen-gpu"):
+    if a.renderer == "qwen-cpu":
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""      # never touch the GPU
     os.environ["LB_ARM_RENDERER"] = "production"
 import research.runners.onebrain_regression_battery as B
 import research.runners.b2d_amend2_probe as P
@@ -67,11 +70,11 @@ _wrap(RichAnswerComposer, "render_paragraph",
                         "kept": [list(f) for f in r[1]], "dropped": [list(f) for f in r[2]]})
 
 cap = None
-if a.renderer == "qwen-cpu":
+if a.renderer in ("qwen-cpu", "qwen-gpu"):
     import webapp.server as S
     S._default_brain_renderer = lambda: "qwen"
     import torch
-    assert not torch.cuda.is_available(), "CUDA visible!"
+    assert torch.cuda.is_available() == (a.renderer == "qwen-gpu"), "CUDA visibility does not match --renderer"
     from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
     cap = P.PromptCapture().install(SpikingQwenFaculty)
 # learn the current turn from the request the worker builds
