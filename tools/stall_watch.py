@@ -642,6 +642,25 @@ def main_ref_of(root):
     return "main"
 
 
+def current_nodes(opts, root):
+    """The live pool node set: --nodes / POOL_NODES, else tools/pool_nodes.conf plus research/queue/.pool_extra_nodes.
+    Claims on any other node (a retired one, e.g. the 09-24 pool1/pool2) are not lines that can stall: skipping them
+    keeps one permanent UNKNOWN line per retired node out of every heartbeat. An empty set means "unknown": judge all."""
+    raw = opts.nodes or os.environ.get("POOL_NODES")
+    if raw:
+        return set(raw.split())
+    nodes = set()
+    for path in (os.path.join(SCRIPT_ROOT, "tools", "pool_nodes.conf"),
+                 os.path.join(root, "research", "queue", ".pool_extra_nodes")):
+        try:
+            with open(path, encoding="utf-8", errors="replace") as fh:
+                for line in fh:
+                    nodes.update(line.split("#", 1)[0].split())
+        except OSError:
+            continue
+    return nodes
+
+
 def scan(opts, now=None):
     """-> (stalls, unknowns). stalls = dicts ready to print; unknowns = reason strings. Never raises on a source."""
     now = time.time() if now is None else now
@@ -674,7 +693,10 @@ def scan(opts, now=None):
         claims, why = read_pool_claims(running_path(opts, root), now, opts.max_age_days, opts.pool_tz)
         if why:
             unknowns.append("pool: " + why)
+        nodes = current_nodes(opts, root)
         for c in claims:
+            if nodes and c["node"] not in nodes:
+                continue                                                   # a retired node: nothing there can stall
             consider("pool", c["node"], c["ts"], c["job"])
     # --- GPU
     status, log, parse, why = gpu_read(opts, root)
@@ -753,6 +775,8 @@ def parse_args(argv=None):
                     help="zone of the pool.running stamps (TZ name; default: inferred from the file, else this process's)")
     ap.add_argument("--gpu-tz", default=os.environ.get("STALL_WATCH_GPU_TZ"),
                     help="zone of the gpu_queue.log stamps (TZ name; default: the remote `now:` line, else this process's)")
+    ap.add_argument("--nodes", help="live pool nodes, space-separated (default: POOL_NODES, else tools/pool_nodes.conf "
+                    "+ research/queue/.pool_extra_nodes); claims on other nodes are skipped")
     ap.add_argument("--no-pool", dest="pool", action="store_false")
     ap.add_argument("--factor", type=float, default=FACTOR)
     ap.add_argument("--min-wall-s", type=float, default=MIN_WALL_S)
