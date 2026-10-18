@@ -1,0 +1,3041 @@
+{
+ "_doc": "hand labels for stratum S3 (rubric in make_labels_s3.py), assigned before any slug-norm verdict on this corpus",
+ "backend": "numpy",
+ "device": "cpu (labels are hand-assigned; this script only writes them out)",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/make_labels_s3.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/make_labels_s3.py",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_labels.json"
+ ],
+ "n_labels": 275,
+ "partial": false,
+ "labels": [
+  {
+   "num": 1,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Academia de Coimbra is associated with the football club.",
+   "label": "B"
+  },
+  {
+   "num": 2,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The academica_de_coimbra sports association is known for its association_football_club.",
+   "label": "U"
+  },
+  {
+   "num": 3,
+   "turn": "s3a01",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 4,
+   "turn": "s3a01",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 5,
+   "turn": "s3a01",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 6,
+   "turn": "s3a01",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 7,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "country",
+    "portugal_portal"
+   ],
+   "surface": "Academia de Coimbra is located in Portugal.",
+   "label": "U"
+  },
+  {
+   "num": 8,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "country",
+    "portugal_portal"
+   ],
+   "surface": "Academica de Coimbra is located in Portugal's capital city of Lisbon.",
+   "label": "U"
+  },
+  {
+   "num": 9,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "headquarters_location",
+    "municipality_of_coimbra"
+   ],
+   "surface": "Academica de Coimbra is headquartered in the municipality of Coimbra.",
+   "label": "F"
+  },
+  {
+   "num": 10,
+   "turn": "s3a01",
+   "svo": [
+    "academica_de_coimbra",
+    "headquarters_location",
+    "municipality_of_coimbra"
+   ],
+   "surface": "The Academia de Coimbra's headquarters is located in the municipality of Coimbra.",
+   "label": "U"
+  },
+  {
+   "num": 11,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Angola's national football team competes in association football clubs.",
+   "label": "B"
+  },
+  {
+   "num": 12,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The Angola national football team is part of an association football club.",
+   "label": "U"
+  },
+  {
+   "num": 13,
+   "turn": "s3a02",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 14,
+   "turn": "s3a02",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 15,
+   "turn": "s3a02",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 16,
+   "turn": "s3a02",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 17,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "country",
+    "repubilika_ya_ngola"
+   ],
+   "surface": "Angola's national football team represents its country.",
+   "label": "B"
+  },
+  {
+   "num": 18,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "country",
+    "repubilika_ya_ngola"
+   ],
+   "surface": "Angola's national football team has a country representative who is called the Republic of Angola.",
+   "label": "B"
+  },
+  {
+   "num": 19,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "participant_of",
+    "2006_fifa_world_cup_final_positions"
+   ],
+   "surface": "In 2006, Angola's national football team participated in the FIFA World Cup final.",
+   "label": "U"
+  },
+  {
+   "num": 20,
+   "turn": "s3a02",
+   "svo": [
+    "angola_national_football_team",
+    "participant_of",
+    "2006_fifa_world_cup_final_positions"
+   ],
+   "surface": "Angola's national football team participated in the 2006 FIFA World Cup final positions.",
+   "label": "F"
+  },
+  {
+   "num": 21,
+   "turn": "s3a03",
+   "svo": [
+    "bac_u_county",
+    "located_in_time_zone",
+    "west_africa_summer_time"
+   ],
+   "surface": "The county located in time zone and situated in West Africa during summer time.",
+   "label": "U"
+  },
+  {
+   "num": 22,
+   "turn": "s3a03",
+   "svo": [
+    "bac_u_county",
+    "located_in_time_zone",
+    "west_africa_summer_time"
+   ],
+   "surface": "Bac_u_county is located in time_zone and situated in West Africa during summer time.",
+   "label": "U"
+  },
+  {
+   "num": 23,
+   "turn": "s3a03",
+   "svo": [
+    "bac_u_county",
+    "country",
+    "danubian_carpathian_area"
+   ],
+   "surface": "The country of Bacau County has a Danubian Carpathian area.",
+   "label": "B"
+  },
+  {
+   "num": 24,
+   "turn": "s3a03",
+   "svo": [
+    "bac_u_county",
+    "country",
+    "danubian_carpathian_area"
+   ],
+   "surface": "The Bacu County is located in the Danubian Carpathian area.",
+   "label": "U"
+  },
+  {
+   "num": 25,
+   "turn": "s3a04",
+   "svo": [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   "surface": "Bobolice is in Pole Land.",
+   "label": "B"
+  },
+  {
+   "num": 26,
+   "turn": "s3a04",
+   "svo": [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   "surface": "Bobolino commune is located in the country of Pole Land.",
+   "label": "U"
+  },
+  {
+   "num": 27,
+   "turn": "s3a04",
+   "svo": [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The pole is located in time zone Rome.",
+   "label": "U"
+  },
+  {
+   "num": 28,
+   "turn": "s3a04",
+   "svo": [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "Pole Land is located in time zone ROME_TIME.",
+   "label": "F"
+  },
+  {
+   "num": 29,
+   "turn": "s3a04",
+   "svo": [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ],
+   "surface": "Bobolice commune borders Szczecinek commune.",
+   "label": "F"
+  },
+  {
+   "num": 30,
+   "turn": "s3a04",
+   "svo": [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ],
+   "surface": "Bobolice commune shares border with Szczecinka commune.",
+   "label": "U"
+  },
+  {
+   "num": 31,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The country of France is the Federal Republic of Germany.",
+   "label": "U"
+  },
+  {
+   "num": 32,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The cantons of Switzerland and France share the same country, which is called Franche-Comt\u00e9.",
+   "label": "U"
+  },
+  {
+   "num": 33,
+   "turn": "s3a05",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The French Republic shares its border with the United Kingdom.",
+   "label": "F"
+  },
+  {
+   "num": 34,
+   "turn": "s3a05",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The German federal republic shares borders with the United Kingdom.",
+   "label": "U"
+  },
+  {
+   "num": 35,
+   "turn": "s3a05",
+   "svo": [
+    "united_kingom",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The united kingdom shares borders with france's republic.",
+   "label": "B"
+  },
+  {
+   "num": 36,
+   "turn": "s3a05",
+   "svo": [
+    "united_kingom",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The United Kingdom shares borders with both France and Germany.",
+   "label": "U"
+  },
+  {
+   "num": 37,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "instance_of",
+    "cantons_in_france"
+   ],
+   "surface": "The entity known as France has its instances in Canada and Switzerland.",
+   "label": "U"
+  },
+  {
+   "num": 38,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "instance_of",
+    "cantons_in_france"
+   ],
+   "surface": "Canton_of_Craonne is an example of an instance of cantons_in_france.",
+   "label": "B"
+  },
+  {
+   "num": 39,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "located_in_the_administrative_territoria",
+    "aisne_d_partement"
+   ],
+   "surface": "Aisne-d Parti is located in the administrative territory of Canton of Cnaan.",
+   "label": "U"
+  },
+  {
+   "num": 40,
+   "turn": "s3a05",
+   "svo": [
+    "canton_of_craonne",
+    "located_in_the_administrative_territoria",
+    "aisne_d_partement"
+   ],
+   "surface": "Canton de la Neuf-D'\u00cele is located in the administrative territory of \u00cele-de-France.",
+   "label": "U"
+  },
+  {
+   "num": 41,
+   "turn": "s3a06",
+   "svo": [
+    "city_of_district_significance_ukraine",
+    "country",
+    "ukraine"
+   ],
+   "surface": "The city of Donetsk, Ukraine, is the capital of the Ukrainian Republic.",
+   "label": "U"
+  },
+  {
+   "num": 42,
+   "turn": "s3a06",
+   "svo": [
+    "city_of_district_significance_ukraine",
+    "country",
+    "ukraine"
+   ],
+   "surface": "The city of district significance in Ukraine is known for its rich history and cultural heritage.",
+   "label": "U"
+  },
+  {
+   "num": 43,
+   "turn": "s3a06",
+   "svo": [
+    "ukraine",
+    "located_in_time_zone",
+    "west_africa_summer_time"
+   ],
+   "surface": "The UK is in the west of Africa during summer time.",
+   "label": "U"
+  },
+  {
+   "num": 44,
+   "turn": "s3a06",
+   "svo": [
+    "ukraine",
+    "located_in_time_zone",
+    "west_africa_summer_time"
+   ],
+   "surface": "Ukraine is located in the time zone of West Africa's summer time.",
+   "label": "F"
+  },
+  {
+   "num": 45,
+   "turn": "s3a07",
+   "svo": [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   "surface": "The country mansion is classified as a domestic architecture.",
+   "label": "F"
+  },
+  {
+   "num": 46,
+   "turn": "s3a07",
+   "svo": [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   "surface": "A country mansion is a type of architectural structure designed for a specific purpose or location within a country's domestic architecture.",
+   "label": "U"
+  },
+  {
+   "num": 47,
+   "turn": "s3a07",
+   "svo": [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   "surface": "The domestic architecture has box rooms.",
+   "label": "F"
+  },
+  {
+   "num": 48,
+   "turn": "s3a07",
+   "svo": [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   "surface": "Domestic architecture includes box rooms.",
+   "label": "F"
+  },
+  {
+   "num": 49,
+   "turn": "s3a07",
+   "svo": [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "The country mansion is an architectural style.",
+   "label": "F"
+  },
+  {
+   "num": 50,
+   "turn": "s3a07",
+   "svo": [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "A country mansion is an instance of a type of architectural style.",
+   "label": "B"
+  },
+  {
+   "num": 51,
+   "turn": "s3a08",
+   "svo": [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   "surface": "Directeurs sportifs organisent des courses de cycle \u00e0 route.",
+   "label": "U"
+  },
+  {
+   "num": 52,
+   "turn": "s3a08",
+   "svo": [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   "surface": "Directeurs sportifs dirigeent les activit\u00e9s de course sur la route cycliste.",
+   "label": "U"
+  },
+  {
+   "num": 53,
+   "turn": "s3a08",
+   "svo": [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ],
+   "surface": "Road cycling race is a subclass of cycle races",
+   "label": "F"
+  },
+  {
+   "num": 54,
+   "turn": "s3a08",
+   "svo": [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ],
+   "surface": "Road cycling races are subclasses of cycle racing.",
+   "label": "F"
+  },
+  {
+   "num": 55,
+   "turn": "s3a08",
+   "svo": [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   "surface": "subclass_of cycle_race plays sports.",
+   "label": "U"
+  },
+  {
+   "num": 56,
+   "turn": "s3a08",
+   "svo": [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   "surface": "A cycle_race is a subclass of playing_sport.",
+   "label": "F"
+  },
+  {
+   "num": 57,
+   "turn": "s3a08",
+   "svo": [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "Directeurs sportifs are instances of expert occupations.",
+   "label": "F"
+  },
+  {
+   "num": 58,
+   "turn": "s3a08",
+   "svo": [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "Directeurs sportifs are experts in their field of sports.",
+   "label": "B"
+  },
+  {
+   "num": 59,
+   "turn": "s3a09",
+   "svo": [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   "surface": "The genre of emarcy_records is jazz_lists.",
+   "label": "F"
+  },
+  {
+   "num": 60,
+   "turn": "s3a09",
+   "svo": [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   "surface": "Emarcy's records feature jazz-listed tracks.",
+   "label": "U"
+  },
+  {
+   "num": 61,
+   "turn": "s3a09",
+   "svo": [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "Jazz lists belong to instances of music genres",
+   "label": "B"
+  },
+  {
+   "num": 62,
+   "turn": "s3a09",
+   "svo": [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "Jazz_lists are instances of music genres.",
+   "label": "F"
+  },
+  {
+   "num": 63,
+   "turn": "s3a09",
+   "svo": [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   "surface": "The genre of music is an instance of sociology.",
+   "label": "B"
+  },
+  {
+   "num": 64,
+   "turn": "s3a09",
+   "svo": [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   "surface": "Genre of music is an instance of sociological concept.",
+   "label": "F"
+  },
+  {
+   "num": 65,
+   "turn": "s3a09",
+   "svo": [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "Emarcy records belong to instance of record companies",
+   "label": "B"
+  },
+  {
+   "num": 66,
+   "turn": "s3a09",
+   "svo": [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "Emarcy Records is an instance of a record_company.",
+   "label": "F"
+  },
+  {
+   "num": 67,
+   "turn": "s3a10",
+   "svo": [
+    "fc_magna_wiener_neustadt",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The association football club plays in the Wiener Neustadt.",
+   "label": "U"
+  },
+  {
+   "num": 68,
+   "turn": "s3a10",
+   "svo": [
+    "fc_magna_wiener_neustadt",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The FC Magna Wiener Neustadt Sport Association is a football club based in Neustadt, Germany.",
+   "label": "U"
+  },
+  {
+   "num": 69,
+   "turn": "s3a10",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 70,
+   "turn": "s3a10",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 71,
+   "turn": "s3a10",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 72,
+   "turn": "s3a10",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 73,
+   "turn": "s3a10",
+   "svo": [
+    "fc_magna_wiener_neustadt",
+    "country",
+    "etymology_of_austria"
+   ],
+   "surface": "The country of Austria is named after Magna Helvetica, a famous German mathematician and philosopher.",
+   "label": "U"
+  },
+  {
+   "num": 74,
+   "turn": "s3a10",
+   "svo": [
+    "fc_magna_wiener_neustadt",
+    "country",
+    "etymology_of_austria"
+   ],
+   "surface": "FC Magna Wiener Neustadt is the country where Austria's etymology of \"et\" was derived from.",
+   "label": "U"
+  },
+  {
+   "num": 75,
+   "turn": "s3a11",
+   "svo": [
+    "french_communist_party",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The French Communist Party is a country's political party.",
+   "label": "B"
+  },
+  {
+   "num": 76,
+   "turn": "s3a11",
+   "svo": [
+    "french_communist_party",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The French Communist Party is the country's political party of choice for communism.",
+   "label": "U"
+  },
+  {
+   "num": 77,
+   "turn": "s3a11",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The French Republic shares its border with the United Kingdom.",
+   "label": "F"
+  },
+  {
+   "num": 78,
+   "turn": "s3a11",
+   "svo": [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   "surface": "The German federal republic shares borders with the United Kingdom.",
+   "label": "U"
+  },
+  {
+   "num": 79,
+   "turn": "s3a11",
+   "svo": [
+    "united_kingom",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The united kingdom shares borders with france's republic.",
+   "label": "B"
+  },
+  {
+   "num": 80,
+   "turn": "s3a11",
+   "svo": [
+    "united_kingom",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   "surface": "The United Kingdom shares borders with both France and Germany.",
+   "label": "U"
+  },
+  {
+   "num": 81,
+   "turn": "s3a11",
+   "svo": [
+    "french_communist_party",
+    "instance_of",
+    "party_member"
+   ],
+   "surface": "French Communist Party is an instance of a party member.",
+   "label": "F"
+  },
+  {
+   "num": 82,
+   "turn": "s3a11",
+   "svo": [
+    "french_communist_party",
+    "instance_of",
+    "party_member"
+   ],
+   "surface": "A French Communist Party is an instance of a party member.",
+   "label": "F"
+  },
+  {
+   "num": 83,
+   "turn": "s3a12",
+   "svo": [
+    "gorky_film_studio",
+    "headquarters_location",
+    "moscow_ussr"
+   ],
+   "surface": "The gorky film studio is located in Moscow, Russia.",
+   "label": "U"
+  },
+  {
+   "num": 84,
+   "turn": "s3a12",
+   "svo": [
+    "gorky_film_studio",
+    "headquarters_location",
+    "moscow_ussr"
+   ],
+   "surface": "The Gorky Film Studio headquarters is located in Moscow, Russia.",
+   "label": "U"
+  },
+  {
+   "num": 85,
+   "turn": "s3a12",
+   "svo": [
+    "moscow_ussr",
+    "twinned_administrative_body",
+    "england_london"
+   ],
+   "surface": "The Moscow-UK twinned administrative body is located in London.",
+   "label": "U"
+  },
+  {
+   "num": 86,
+   "turn": "s3a12",
+   "svo": [
+    "moscow_ussr",
+    "twinned_administrative_body",
+    "england_london"
+   ],
+   "surface": "The Moscow-United States twinned administrative body is based in London.",
+   "label": "U"
+  },
+  {
+   "num": 87,
+   "turn": "s3a12",
+   "svo": [
+    "england_london",
+    "twinned_administrative_body",
+    "new_york_new_york"
+   ],
+   "surface": "The London Twin City of New York is the twinned administrative body between England and the United States.",
+   "label": "U"
+  },
+  {
+   "num": 88,
+   "turn": "s3a12",
+   "svo": [
+    "england_london",
+    "twinned_administrative_body",
+    "new_york_new_york"
+   ],
+   "surface": "The United Kingdom and New York City have collaborated on creating a shared administrative body to address London's unique challenges in the context",
+   "label": "U"
+  },
+  {
+   "num": 89,
+   "turn": "s3a12",
+   "svo": [
+    "gorky_film_studio",
+    "instance_of",
+    "film_studios"
+   ],
+   "surface": "Gorky's films are instances of film studios.",
+   "label": "U"
+  },
+  {
+   "num": 90,
+   "turn": "s3a12",
+   "svo": [
+    "gorky_film_studio",
+    "instance_of",
+    "film_studios"
+   ],
+   "surface": "Gorky Film Studio is an instance of film studios.",
+   "label": "F"
+  },
+  {
+   "num": 91,
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Hertha Berlin II competes in football (soccer).",
+   "label": "B"
+  },
+  {
+   "num": 92,
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Hertha Berlin II is a football club based in Hertha, Germany.",
+   "label": "U"
+  },
+  {
+   "num": 93,
+   "turn": "s3a13",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 94,
+   "turn": "s3a13",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 95,
+   "turn": "s3a13",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 96,
+   "turn": "s3a13",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 97,
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "Hertha Berlin II is from the Federal Republic of Germany.",
+   "label": "F"
+  },
+  {
+   "num": 98,
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "Hertha Berlin II is a country federal republic of Germany.",
+   "label": "U"
+  },
+  {
+   "num": 99,
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ],
+   "surface": "Hertha Berlin II is a subclass of Hertha BSC.",
+   "label": "F"
+  },
+  {
+   "num": 100,
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   "surface": "The country of origin for indoor bandy is Sweden.",
+   "label": "B"
+  },
+  {
+   "num": 101,
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   "surface": "Indoor bandy has Sweden's country of origin and climate similar to it.",
+   "label": "U"
+  },
+  {
+   "num": 102,
+   "turn": "s3a14",
+   "svo": [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The climate of Sweden is located in the time zone of Rome.",
+   "label": "F"
+  },
+  {
+   "num": 103,
+   "turn": "s3a14",
+   "svo": [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The climate of Sweden is located in the time zone of Rome's time.",
+   "label": "B"
+  },
+  {
+   "num": 104,
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ],
+   "surface": "Indoor bandy is a subclass of ball games.",
+   "label": "F"
+  },
+  {
+   "num": 105,
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ],
+   "surface": "Indoor_bandy is a subclass of ball_games.",
+   "label": "F"
+  },
+  {
+   "num": 106,
+   "turn": "s3a15",
+   "svo": [
+    "k_v_c_westerlo",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The triple (k_v_c_westerlo, sport, association_football_club) represents a sports club based in",
+   "label": "U"
+  },
+  {
+   "num": 107,
+   "turn": "s3a15",
+   "svo": [
+    "k_v_c_westerlo",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The K_v_c_westerlo Sport Association Football Club is based in K_v_c_westerlo.",
+   "label": "U"
+  },
+  {
+   "num": 108,
+   "turn": "s3a15",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 109,
+   "turn": "s3a15",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 110,
+   "turn": "s3a15",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 111,
+   "turn": "s3a15",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 112,
+   "turn": "s3a15",
+   "svo": [
+    "k_v_c_westerlo",
+    "country",
+    "koninkrijk_belgi"
+   ],
+   "surface": "The Netherlands is a country.",
+   "label": "U"
+  },
+  {
+   "num": 113,
+   "turn": "s3a15",
+   "svo": [
+    "k_v_c_westerlo",
+    "country",
+    "koninkrijk_belgi"
+   ],
+   "surface": "K_v_c_westerlo is the capital of the country KoninkrijkBelgi.",
+   "label": "U"
+  },
+  {
+   "num": 114,
+   "turn": "s3a16",
+   "svo": [
+    "lauri_first_name",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ],
+   "surface": "The Finnish syntax of the work or name is understood.",
+   "label": "U"
+  },
+  {
+   "num": 115,
+   "turn": "s3a16",
+   "svo": [
+    "lauri_first_name",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ],
+   "surface": "Lauri's Finnish syntax is used for her work or name.",
+   "label": "U"
+  },
+  {
+   "num": 116,
+   "turn": "s3a17",
+   "svo": [
+    "madurai_india",
+    "country",
+    "bharat_ganrajya"
+   ],
+   "surface": "Madurai is a city in India, which is also known as Bharat Ganjariya.",
+   "label": "U"
+  },
+  {
+   "num": 117,
+   "turn": "s3a17",
+   "svo": [
+    "madurai_india",
+    "country",
+    "bharat_ganrajya"
+   ],
+   "surface": "Madurai is a city in India, known as Bharat Ganjira.",
+   "label": "U"
+  },
+  {
+   "num": 118,
+   "turn": "s3a17",
+   "svo": [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Bharat Ganjariyan, shares border with China Pr.",
+   "label": "U"
+  },
+  {
+   "num": 119,
+   "turn": "s3a17",
+   "svo": [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   "surface": "Bihar shares border with China Prussia",
+   "label": "U"
+  },
+  {
+   "num": 120,
+   "turn": "s3a17",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China shares borders with Bharat Ganjamya.",
+   "label": "U"
+  },
+  {
+   "num": 121,
+   "turn": "s3a17",
+   "svo": [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   "surface": "China's share of India's total stock market is about 15%.",
+   "label": "U"
+  },
+  {
+   "num": 122,
+   "turn": "s3a17",
+   "svo": [
+    "madurai_india",
+    "located_in_time_zone",
+    "kunlun_time_zone"
+   ],
+   "surface": "Madurai is located in the Kunlun time zone.",
+   "label": "F"
+  },
+  {
+   "num": 123,
+   "turn": "s3a17",
+   "svo": [
+    "madurai_india",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Madurai is an instance of a city in India.",
+   "label": "U"
+  },
+  {
+   "num": 124,
+   "turn": "s3a17",
+   "svo": [
+    "madurai_india",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Madurai India is an instance of a city-work organization.",
+   "label": "U"
+  },
+  {
+   "num": 125,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "country",
+    "canada_portal"
+   ],
+   "surface": "Milford, New Brunswick is in Canada.",
+   "label": "F"
+  },
+  {
+   "num": 126,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "country",
+    "canada_portal"
+   ],
+   "surface": "Milford New Brunswick is part of Canada's country portal.",
+   "label": "B"
+  },
+  {
+   "num": 127,
+   "turn": "s3a18",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 128,
+   "turn": "s3a18",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 129,
+   "turn": "s3a18",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The number of shares in Canada is u_s_of_a.",
+   "label": "U"
+  },
+  {
+   "num": 130,
+   "turn": "s3a18",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+   "label": "U"
+  },
+  {
+   "num": 131,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Milford, New Brunswick is an instance of a city work.",
+   "label": "F"
+  },
+  {
+   "num": 132,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The instance_of of Milford New Brunswick is a city_work.",
+   "label": "F"
+  },
+  {
+   "num": 133,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "twinned_administrative_body",
+    "newport_rhode_island"
+   ],
+   "surface": "Milford New Brunswick is twin to Newport Rhode Island.",
+   "label": "F"
+  },
+  {
+   "num": 134,
+   "turn": "s3a18",
+   "svo": [
+    "milford_new_brunswick",
+    "twinned_administrative_body",
+    "newport_rhode_island"
+   ],
+   "surface": "Milford New Brunswick has a twinned administrative body with Newport Rhode Island.",
+   "label": "F"
+  },
+  {
+   "num": 135,
+   "turn": "s3a19",
+   "svo": [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   "surface": "National coats of arms belong to specific classes or types of arms.",
+   "label": "B"
+  },
+  {
+   "num": 136,
+   "turn": "s3a19",
+   "svo": [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   "surface": "National coats of arms are subclasses of coats of arms.",
+   "label": "F"
+  },
+  {
+   "num": 137,
+   "turn": "s3a19",
+   "svo": [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ],
+   "surface": "The coat of arms is a type of cultural icon.",
+   "label": "F"
+  },
+  {
+   "num": 138,
+   "turn": "s3a19",
+   "svo": [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ],
+   "surface": "Coat_of_arms is a subclass of cultural_ikon.",
+   "label": "F"
+  },
+  {
+   "num": 139,
+   "turn": "s3a20",
+   "svo": [
+    "o_t_bonner_middle_school",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The country of o_t_bonner_middle_school is in the United States.",
+   "label": "F"
+  },
+  {
+   "num": 140,
+   "turn": "s3a20",
+   "svo": [
+    "o_t_bonner_middle_school",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The United States of America is an o_t_bonner_middle_school country.",
+   "label": "U"
+  },
+  {
+   "num": 141,
+   "turn": "s3a20",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The number of shares in Canada is u_s_of_a.",
+   "label": "U"
+  },
+  {
+   "num": 142,
+   "turn": "s3a20",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+   "label": "U"
+  },
+  {
+   "num": 143,
+   "turn": "s3a20",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 144,
+   "turn": "s3a20",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 145,
+   "turn": "s3a20",
+   "svo": [
+    "o_t_bonner_middle_school",
+    "located_in_the_administrative_territoria",
+    "religion_in_virginia"
+   ],
+   "surface": "The o_t_bonner_middle_school is located in the administrative territory of Virginia.",
+   "label": "B"
+  },
+  {
+   "num": 146,
+   "turn": "s3a20",
+   "svo": [
+    "o_t_bonner_middle_school",
+    "located_in_the_administrative_territoria",
+    "religion_in_virginia"
+   ],
+   "surface": "The O_T_BONNER Middle School is located in the administrative territory of Virginia and teaches students about Christianity.",
+   "label": "U"
+  },
+  {
+   "num": 147,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county in the country is U.S. of A.",
+   "label": "B"
+  },
+  {
+   "num": 148,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The park is located in the United States of America.",
+   "label": "U"
+  },
+  {
+   "num": 149,
+   "turn": "s3a21",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The number of shares in Canada is u_s_of_a.",
+   "label": "U"
+  },
+  {
+   "num": 150,
+   "turn": "s3a21",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+   "label": "U"
+  },
+  {
+   "num": 151,
+   "turn": "s3a21",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 152,
+   "turn": "s3a21",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 153,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "located_in_the_administrative_territoria",
+    "art_of_indiana"
+   ],
+   "surface": "The parke located_in_the_administrative_territoria is situated in Indiana.",
+   "label": "U"
+  },
+  {
+   "num": 154,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "located_in_the_administrative_territoria",
+    "art_of_indiana"
+   ],
+   "surface": "Parke County is located in Indiana, which is part of the administrative territory of the state of Indiana.",
+   "label": "U"
+  },
+  {
+   "num": 155,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "shares_border_with",
+    "vigo_county"
+   ],
+   "surface": "The county in Parke shares border with Vigo County.",
+   "label": "B"
+  },
+  {
+   "num": 156,
+   "turn": "s3a21",
+   "svo": [
+    "parke_county_in",
+    "shares_border_with",
+    "vigo_county"
+   ],
+   "surface": "Parke County is bordered by Vigo County in the north.",
+   "label": "U"
+  },
+  {
+   "num": 157,
+   "turn": "s3a22",
+   "svo": [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   "surface": "The capital of Australia is Canberra.",
+   "label": "U"
+  },
+  {
+   "num": 158,
+   "turn": "s3a22",
+   "svo": [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   "surface": "The premiers of Victoria, Australia, are part of the Commonwealth of Australia.",
+   "label": "B"
+  },
+  {
+   "num": 159,
+   "turn": "s3a22",
+   "svo": [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   "surface": "The Commonwealth of Australia participated in the War World Two.",
+   "label": "F"
+  },
+  {
+   "num": 160,
+   "turn": "s3a22",
+   "svo": [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   "surface": "Commonwealth Australia was a participant in World War Two.",
+   "label": "F"
+  },
+  {
+   "num": 161,
+   "turn": "s3a22",
+   "svo": [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   "surface": "War World Two Follows World War One",
+   "label": "F"
+  },
+  {
+   "num": 162,
+   "turn": "s3a22",
+   "svo": [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   "surface": "War World Two follows War World One in the escalation of global conflicts.",
+   "label": "U"
+  },
+  {
+   "num": 163,
+   "turn": "s3a22",
+   "svo": [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ],
+   "surface": "The prime minister of Victoria is a member of the British Parliament.",
+   "label": "U"
+  },
+  {
+   "num": 164,
+   "turn": "s3a22",
+   "svo": [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ],
+   "surface": "Premiers of Victoria is a subclass of chief administrator.",
+   "label": "F"
+  },
+  {
+   "num": 165,
+   "turn": "s3a23",
+   "svo": [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   "surface": "The renderware is an instance of the proprietary firmware.",
+   "label": "F"
+  },
+  {
+   "num": 166,
+   "turn": "s3a23",
+   "svo": [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   "surface": "Renderware is an instance of proprietary firmware.",
+   "label": "F"
+  },
+  {
+   "num": 167,
+   "turn": "s3a23",
+   "svo": [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   "surface": "proprietary firmware is a type of software technology.",
+   "label": "F"
+  },
+  {
+   "num": 168,
+   "turn": "s3a23",
+   "svo": [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   "surface": "The term \"proprietary firmware\" refers to a type of software technology where the firmware is designed or developed by a specific",
+   "label": "U"
+  },
+  {
+   "num": 169,
+   "turn": "s3a23",
+   "svo": [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Software technology is a subclass of commercial products.",
+   "label": "F"
+  },
+  {
+   "num": 170,
+   "turn": "s3a23",
+   "svo": [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Software technology is a subclass of commercial product.",
+   "label": "F"
+  },
+  {
+   "num": 171,
+   "turn": "s3a24",
+   "svo": [
+    "samut_songkhram_btu_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Samut Sengsao Batur Club is an association football club.",
+   "label": "U"
+  },
+  {
+   "num": 172,
+   "turn": "s3a24",
+   "svo": [
+    "samut_songkhram_btu_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Samut Songkhram Btu F C is an association football club.",
+   "label": "B"
+  },
+  {
+   "num": 173,
+   "turn": "s3a24",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 174,
+   "turn": "s3a24",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 175,
+   "turn": "s3a24",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 176,
+   "turn": "s3a24",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 177,
+   "turn": "s3a24",
+   "svo": [
+    "samut_songkhram_btu_f_c",
+    "country",
+    "etymology_of_thailand"
+   ],
+   "surface": "The Thai language originated in Samut Suthep, a region of northeastern Thailand.",
+   "label": "U"
+  },
+  {
+   "num": 178,
+   "turn": "s3a24",
+   "svo": [
+    "samut_songkhram_btu_f_c",
+    "country",
+    "etymology_of_thailand"
+   ],
+   "surface": "Samut Songkhram Btu F C is an etymology of Thailand.",
+   "label": "U"
+  },
+  {
+   "num": 179,
+   "turn": "s3a25",
+   "svo": [
+    "sire_records_group",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   "surface": "The country of origin is U.S.",
+   "label": "B"
+  },
+  {
+   "num": 180,
+   "turn": "s3a25",
+   "svo": [
+    "sire_records_group",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   "surface": "Sire records group's country of origin is U.S. OFA",
+   "label": "B"
+  },
+  {
+   "num": 181,
+   "turn": "s3a25",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "The number of shares in Canada is u_s_of_a.",
+   "label": "U"
+  },
+  {
+   "num": 182,
+   "turn": "s3a25",
+   "svo": [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+   "label": "U"
+  },
+  {
+   "num": 183,
+   "turn": "s3a25",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's border is shared with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 184,
+   "turn": "s3a25",
+   "svo": [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   "surface": "Canada's portal shares borders with the United States of America.",
+   "label": "F"
+  },
+  {
+   "num": 185,
+   "turn": "s3a25",
+   "svo": [
+    "sire_records_group",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "The sire records group is an instance of record companies.",
+   "label": "F"
+  },
+  {
+   "num": 186,
+   "turn": "s3a25",
+   "svo": [
+    "sire_records_group",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "Sire_records_group is an instance of record_companies.",
+   "label": "F"
+  },
+  {
+   "num": 187,
+   "turn": "s3a26",
+   "svo": [
+    "sten_first_name",
+    "language_of_work_or_name",
+    "swedish_lang"
+   ],
+   "surface": "sten_first_name Swedish is language_of_work_or_name",
+   "label": "B"
+  },
+  {
+   "num": 188,
+   "turn": "s3a26",
+   "svo": [
+    "sten_first_name",
+    "language_of_work_or_name",
+    "swedish_lang"
+   ],
+   "surface": "Sten_first_name languages of work or name is Swedish.",
+   "label": "F"
+  },
+  {
+   "num": 189,
+   "turn": "s3a26",
+   "svo": [
+    "swedish_lang",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   "surface": "The Swedish language is described by Brockhaus and Efron's Encyclop\u00e6dia Britannica.",
+   "label": "U"
+  },
+  {
+   "num": 190,
+   "turn": "s3a26",
+   "svo": [
+    "swedish_lang",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   "surface": "The description of Swedish language in Brockhaus and Efnor's Encyclop\u00e6dia was authored by Joseph Broc",
+   "label": "U"
+  },
+  {
+   "num": 191,
+   "turn": "s3a26",
+   "svo": [
+    "brockhaus_and_efron_encyclopaedia",
+    "original_language_of_film_or_tv_show",
+    "p"
+   ],
+   "surface": "The original language of the film or TV show Brockhaus and Efron's Encyclopedia is English.",
+   "label": "U"
+  },
+  {
+   "num": 192,
+   "turn": "s3a26",
+   "svo": [
+    "brockhaus_and_efron_encyclopaedia",
+    "original_language_of_film_or_tv_show",
+    "p"
+   ],
+   "surface": "The original language of film or TV show \"Brockhaus and Efron's Encyclopedie\" is",
+   "label": "U"
+  },
+  {
+   "num": 193,
+   "turn": "s3a27",
+   "svo": [
+    "the_baa_baas",
+    "sport",
+    "rugby_union_tour"
+   ],
+   "surface": "The Baa Baas rugby union tour is exciting.",
+   "label": "B"
+  },
+  {
+   "num": 194,
+   "turn": "s3a27",
+   "svo": [
+    "the_baa_baas",
+    "sport",
+    "rugby_union_tour"
+   ],
+   "surface": "The Baa Baas sports rugby union tour is an exciting event featuring top players from various countries.",
+   "label": "U"
+  },
+  {
+   "num": 195,
+   "turn": "s3a27",
+   "svo": [
+    "rugby_union_tour",
+    "country_of_origin",
+    "england_uk"
+   ],
+   "surface": "The rugby union tour originates from England and Wales.",
+   "label": "U"
+  },
+  {
+   "num": 196,
+   "turn": "s3a27",
+   "svo": [
+    "rugby_union_tour",
+    "country_of_origin",
+    "england_uk"
+   ],
+   "surface": "Rugby Union Tour is played in England, UK.",
+   "label": "B"
+  },
+  {
+   "num": 197,
+   "turn": "s3a27",
+   "svo": [
+    "england_uk",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "England is the United Kingdom.",
+   "label": "U"
+  },
+  {
+   "num": 198,
+   "turn": "s3a27",
+   "svo": [
+    "england_uk",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "England and the United Kingdom are united under the King of England.",
+   "label": "U"
+  },
+  {
+   "num": 199,
+   "turn": "s3a28",
+   "svo": [
+    "turkey_national_under_17_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The Turkish national under-17 football team competes in association football clubs.",
+   "label": "B"
+  },
+  {
+   "num": 200,
+   "turn": "s3a28",
+   "svo": [
+    "turkey_national_under_17_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "Turkey's national under-17 football team sports association has club membership.",
+   "label": "U"
+  },
+  {
+   "num": 201,
+   "turn": "s3a28",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs.",
+   "label": "U"
+  },
+  {
+   "num": 202,
+   "turn": "s3a28",
+   "svo": [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history.",
+   "label": "U"
+  },
+  {
+   "num": 203,
+   "turn": "s3a28",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun.",
+   "label": "F"
+  },
+  {
+   "num": 204,
+   "turn": "s3a28",
+   "svo": [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia.",
+   "label": "B"
+  },
+  {
+   "num": 205,
+   "turn": "s3a28",
+   "svo": [
+    "turkey_national_under_17_football_team",
+    "country",
+    "the_republic_of_turkey"
+   ],
+   "surface": "The Turkish national under 17 football team is from the Republic of Turkey.",
+   "label": "F"
+  },
+  {
+   "num": 206,
+   "turn": "s3a28",
+   "svo": [
+    "turkey_national_under_17_football_team",
+    "country",
+    "the_republic_of_turkey"
+   ],
+   "surface": "Turkey's national under-17 football team is the Republic of Turkey.",
+   "label": "U"
+  },
+  {
+   "num": 207,
+   "turn": "s3a29",
+   "svo": [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "The veterinary_physician is an expert_occupation.",
+   "label": "F"
+  },
+  {
+   "num": 208,
+   "turn": "s3a29",
+   "svo": [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "A veterinary physician is an instance of an expert occupation.",
+   "label": "F"
+  },
+  {
+   "num": 209,
+   "turn": "s3a30",
+   "svo": [
+    "worcester_rfc",
+    "sport",
+    "rugby_union_tour"
+   ],
+   "surface": "Rugby Union Tour is an event in Worcester.",
+   "label": "U"
+  },
+  {
+   "num": 210,
+   "turn": "s3a30",
+   "svo": [
+    "worcester_rfc",
+    "sport",
+    "rugby_union_tour"
+   ],
+   "surface": "Worcestershire RFC plays in the Rugby Union Tour.",
+   "label": "U"
+  },
+  {
+   "num": 211,
+   "turn": "s3a30",
+   "svo": [
+    "rugby_union_tour",
+    "country_of_origin",
+    "england_uk"
+   ],
+   "surface": "The rugby union tour originates from England and Wales.",
+   "label": "U"
+  },
+  {
+   "num": 212,
+   "turn": "s3a30",
+   "svo": [
+    "rugby_union_tour",
+    "country_of_origin",
+    "england_uk"
+   ],
+   "surface": "Rugby Union Tour is played in England, UK.",
+   "label": "B"
+  },
+  {
+   "num": 213,
+   "turn": "s3a30",
+   "svo": [
+    "england_uk",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "England is the United Kingdom.",
+   "label": "U"
+  },
+  {
+   "num": 214,
+   "turn": "s3a30",
+   "svo": [
+    "england_uk",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "England and the United Kingdom are united under the King of England.",
+   "label": "U"
+  },
+  {
+   "num": 215,
+   "turn": "s3b01",
+   "svo": [
+    "adrijan",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The language of work or name is English.",
+   "label": "B"
+  },
+  {
+   "num": 216,
+   "turn": "s3b01",
+   "svo": [
+    "adrijan",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The number of English words in an Adrijan language is significant.",
+   "label": "U"
+  },
+  {
+   "num": 217,
+   "turn": "s3b02",
+   "svo": [
+    "anita_given_name",
+    "language_of_work_or_name",
+    "modern_spanish"
+   ],
+   "surface": "The person's given name is Anita. They work or have worked in Spanish.",
+   "label": "B"
+  },
+  {
+   "num": 218,
+   "turn": "s3b02",
+   "svo": [
+    "anita_given_name",
+    "language_of_work_or_name",
+    "modern_spanish"
+   ],
+   "surface": "Anita's given name is Anita, her language of work or name is modern Spanish.",
+   "label": "U"
+  },
+  {
+   "num": 219,
+   "turn": "s3b03",
+   "svo": [
+    "badminton_at_the_2006_asian_games_women",
+    "sport",
+    "badminton_racquet"
+   ],
+   "surface": "Badminton was played at the 2006 Asian Games Women's Singles.",
+   "label": "U"
+  },
+  {
+   "num": 220,
+   "turn": "s3b03",
+   "svo": [
+    "badminton_at_the_2006_asian_games_women",
+    "sport",
+    "badminton_racquet"
+   ],
+   "surface": "Badminton was played at the 2006 Asian Games as women's sport.",
+   "label": "B"
+  },
+  {
+   "num": 221,
+   "turn": "s3b04",
+   "svo": [
+    "business_chains",
+    "subclass_of",
+    "for_profit"
+   ],
+   "surface": "Business chains subclass of enterprises for profit",
+   "label": "B"
+  },
+  {
+   "num": 222,
+   "turn": "s3b04",
+   "svo": [
+    "business_chains",
+    "subclass_of",
+    "for_profit"
+   ],
+   "surface": "Business chains are classified as for-profit entities.",
+   "label": "F"
+  },
+  {
+   "num": 223,
+   "turn": "s3b05",
+   "svo": [
+    "classical_style",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "The architectural styles of classical style.",
+   "label": "N"
+  },
+  {
+   "num": 224,
+   "turn": "s3b05",
+   "svo": [
+    "classical_style",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "A classical-style object is an instance of an architectural style.",
+   "label": "B"
+  },
+  {
+   "num": 225,
+   "turn": "s3b06",
+   "svo": [
+    "corrado_given_name",
+    "language_of_work_or_name",
+    "medieval_italian"
+   ],
+   "surface": "The given name of the person working in medieval Italian is Corrado.",
+   "label": "B"
+  },
+  {
+   "num": 226,
+   "turn": "s3b06",
+   "svo": [
+    "corrado_given_name",
+    "language_of_work_or_name",
+    "medieval_italian"
+   ],
+   "surface": "The given name \"Corrado\" is in the language of work or name \"medieval Italian\".",
+   "label": "F"
+  },
+  {
+   "num": 227,
+   "turn": "s3b07",
+   "svo": [
+    "defensive_secondary",
+    "sport",
+    "us_football"
+   ],
+   "surface": "The defensive secondary is for sports, specifically American football.",
+   "label": "B"
+  },
+  {
+   "num": 228,
+   "turn": "s3b07",
+   "svo": [
+    "defensive_secondary",
+    "sport",
+    "us_football"
+   ],
+   "surface": "Defensive secondary sport is us_football.",
+   "label": "F"
+  },
+  {
+   "num": 229,
+   "turn": "s3b08",
+   "svo": [
+    "earle_given_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "Earl's work or name was in English.",
+   "label": "U"
+  },
+  {
+   "num": 230,
+   "turn": "s3b08",
+   "svo": [
+    "earle_given_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "Earle's given name is English. He works in a language other than English. He has written approximately 10",
+   "label": "U"
+  },
+  {
+   "num": 231,
+   "turn": "s3b09",
+   "svo": [
+    "equestrian_statue",
+    "subclass_of",
+    "stone_statue"
+   ],
+   "surface": "The statue is a type of stone statue.",
+   "label": "B"
+  },
+  {
+   "num": 232,
+   "turn": "s3b09",
+   "svo": [
+    "equestrian_statue",
+    "subclass_of",
+    "stone_statue"
+   ],
+   "surface": "Equestrian_statue is a subclass of stone_statue.",
+   "label": "F"
+  },
+  {
+   "num": 233,
+   "turn": "s3b10",
+   "svo": [
+    "field_goal_kicker",
+    "sport",
+    "us_football"
+   ],
+   "surface": "The field goal kicker competes in US football.",
+   "label": "F"
+  },
+  {
+   "num": 234,
+   "turn": "s3b10",
+   "svo": [
+    "field_goal_kicker",
+    "sport",
+    "us_football"
+   ],
+   "surface": "Field goal kicker is a sport played using football as its game ball.",
+   "label": "U"
+  },
+  {
+   "num": 235,
+   "turn": "s3b11",
+   "svo": [
+    "gaclbusiness",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The language of work or name is English.",
+   "label": "B"
+  },
+  {
+   "num": 236,
+   "turn": "s3b11",
+   "svo": [
+    "gaclbusiness",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The number of English words in a GACL business's language_of_work is significant.",
+   "label": "U"
+  },
+  {
+   "num": 237,
+   "turn": "s3b12",
+   "svo": [
+    "gonzalo_given_name",
+    "language_of_work_or_name",
+    "modern_spanish"
+   ],
+   "surface": "The gonzalo given name is in Spanish.",
+   "label": "B"
+  },
+  {
+   "num": 238,
+   "turn": "s3b12",
+   "svo": [
+    "gonzalo_given_name",
+    "language_of_work_or_name",
+    "modern_spanish"
+   ],
+   "surface": "Gonzalo Gonz\u00e1lez' work or name is in modern Spanish.",
+   "label": "U"
+  },
+  {
+   "num": 239,
+   "turn": "s3b13",
+   "svo": [
+    "heikki",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ],
+   "surface": "Heikki's work or name is in Finnish syntax.",
+   "label": "F"
+  },
+  {
+   "num": 240,
+   "turn": "s3b14",
+   "svo": [
+    "independent_spirit_award_for_best_first",
+    "instance_of",
+    "movie_award"
+   ],
+   "surface": "The independent spirit award for best first is an instance of a movie award.",
+   "label": "F"
+  },
+  {
+   "num": 241,
+   "turn": "s3b14",
+   "svo": [
+    "independent_spirit_award_for_best_first",
+    "instance_of",
+    "movie_award"
+   ],
+   "surface": "The independent spirit award for best first instance of a movie was given to the film \"Inception.\"",
+   "label": "U"
+  },
+  {
+   "num": 242,
+   "turn": "s3b15",
+   "svo": [
+    "jock_first_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The jock's first name is John and his work or name is basketball.",
+   "label": "U"
+  },
+  {
+   "num": 243,
+   "turn": "s3b15",
+   "svo": [
+    "jock_first_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The number of English words in a jock's first name is influenced by their language of work or name.",
+   "label": "U"
+  },
+  {
+   "num": 244,
+   "turn": "s3b16",
+   "svo": [
+    "lady_in_waiting",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "The lady-in-waiting is an expert of her profession.",
+   "label": "B"
+  },
+  {
+   "num": 245,
+   "turn": "s3b16",
+   "svo": [
+    "lady_in_waiting",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "A lady-in-waiting is an expert in her field of expertise.",
+   "label": "B"
+  },
+  {
+   "num": 246,
+   "turn": "s3b17",
+   "svo": [
+    "london_midland_region",
+    "instance_of",
+    "matrix_organisation"
+   ],
+   "surface": "London is an instance of the matrix organisation.",
+   "label": "U"
+  },
+  {
+   "num": 247,
+   "turn": "s3b17",
+   "svo": [
+    "london_midland_region",
+    "instance_of",
+    "matrix_organisation"
+   ],
+   "surface": "Londonderry is an instance of a matrix_organisation in the London Midlands region.",
+   "label": "U"
+  },
+  {
+   "num": 248,
+   "turn": "s3b18",
+   "svo": [
+    "marvel_superhero",
+    "instance_of",
+    "fictional_worlds"
+   ],
+   "surface": "Marvel superhero belongs to fictional worlds.",
+   "label": "B"
+  },
+  {
+   "num": 249,
+   "turn": "s3b18",
+   "svo": [
+    "marvel_superhero",
+    "instance_of",
+    "fictional_worlds"
+   ],
+   "surface": "A marvel superhero is an instance of a fictional world.",
+   "label": "F"
+  },
+  {
+   "num": 250,
+   "turn": "s3b19",
+   "svo": [
+    "mikkel",
+    "language_of_work_or_name",
+    "danish_language"
+   ],
+   "surface": "The person's Danish name is their work or title.",
+   "label": "U"
+  },
+  {
+   "num": 251,
+   "turn": "s3b19",
+   "svo": [
+    "mikkel",
+    "language_of_work_or_name",
+    "danish_language"
+   ],
+   "surface": "Mikkel's Danish work or name is Danseuse.",
+   "label": "U"
+  },
+  {
+   "num": 252,
+   "turn": "s3b20",
+   "svo": [
+    "naval_artillery_support",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Naval artillery support is a subclass of commercial products.",
+   "label": "F"
+  },
+  {
+   "num": 253,
+   "turn": "s3b20",
+   "svo": [
+    "naval_artillery_support",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Naval artillery support is a subclass of commercial product.",
+   "label": "F"
+  },
+  {
+   "num": 254,
+   "turn": "s3b21",
+   "svo": [
+    "ocean_liners",
+    "subclass_of",
+    "passenger_ship"
+   ],
+   "surface": "Ocean liners are passengers on passenger ships.",
+   "label": "U"
+  },
+  {
+   "num": 255,
+   "turn": "s3b21",
+   "svo": [
+    "ocean_liners",
+    "subclass_of",
+    "passenger_ship"
+   ],
+   "surface": "Ocean liners are classified as passenger ships.",
+   "label": "F"
+  },
+  {
+   "num": 256,
+   "turn": "s3b22",
+   "svo": [
+    "paavo",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ],
+   "surface": "Finlandic is the language of work or name.",
+   "label": "U"
+  },
+  {
+   "num": 257,
+   "turn": "s3b22",
+   "svo": [
+    "paavo",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ],
+   "surface": "The Finnish syntax of Paav\u00e4en's work or name is unique.",
+   "label": "U"
+  },
+  {
+   "num": 258,
+   "turn": "s3b23",
+   "svo": [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ],
+   "surface": "Pittsburgh LRT is an instance of transportation authority.",
+   "label": "F"
+  },
+  {
+   "num": 259,
+   "turn": "s3b23",
+   "svo": [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ],
+   "surface": "Pittsburgh LRT is an instance of a transportation authority.",
+   "label": "F"
+  },
+  {
+   "num": 260,
+   "turn": "s3b24",
+   "svo": [
+    "quarter_back",
+    "sport",
+    "us_football"
+   ],
+   "surface": "Quarterbacks play for their team in American football.",
+   "label": "B"
+  },
+  {
+   "num": 261,
+   "turn": "s3b24",
+   "svo": [
+    "quarter_back",
+    "sport",
+    "us_football"
+   ],
+   "surface": "Quarter back plays for us_football team.",
+   "label": "B"
+  },
+  {
+   "num": 262,
+   "turn": "s3b25",
+   "svo": [
+    "rustic_architecture",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "Rustic architecture features unique styles.",
+   "label": "U"
+  },
+  {
+   "num": 263,
+   "turn": "s3b25",
+   "svo": [
+    "rustic_architecture",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "Rustic architecture is an instance of architectural styles.",
+   "label": "F"
+  },
+  {
+   "num": 264,
+   "turn": "s3b26",
+   "svo": [
+    "shane_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "Shane's work was in English.",
+   "label": "B"
+  },
+  {
+   "num": 265,
+   "turn": "s3b26",
+   "svo": [
+    "shane_name",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "Shane's name is in English. He has 1000 English words.",
+   "label": "U"
+  },
+  {
+   "num": 266,
+   "turn": "s3b27",
+   "svo": [
+    "supervising_direction",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "The supervising_direction is an instance_of an expert_occupation in the field of technology.",
+   "label": "U"
+  },
+  {
+   "num": 267,
+   "turn": "s3b27",
+   "svo": [
+    "supervising_direction",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "Supervising_direction is an instance of an expert_occupation.",
+   "label": "F"
+  },
+  {
+   "num": 268,
+   "turn": "s3b28",
+   "svo": [
+    "think_thank",
+    "subclass_of",
+    "matrix_organisation"
+   ],
+   "surface": "Think of yourself as a member of a matrix organisation.",
+   "label": "U"
+  },
+  {
+   "num": 269,
+   "turn": "s3b28",
+   "svo": [
+    "think_thank",
+    "subclass_of",
+    "matrix_organisation"
+   ],
+   "surface": "Think of yourself as a sub-class of a matrix_organisation system for managing information.",
+   "label": "U"
+  },
+  {
+   "num": 270,
+   "turn": "s3b29",
+   "svo": [
+    "unit_of_volume",
+    "subclass_of",
+    "units_of_measurements"
+   ],
+   "surface": "The unit of volume is subclassed under the units of measurements.",
+   "label": "F"
+  },
+  {
+   "num": 271,
+   "turn": "s3b29",
+   "svo": [
+    "unit_of_volume",
+    "subclass_of",
+    "units_of_measurements"
+   ],
+   "surface": "A unit of volume is a subclass of units of measurements.",
+   "label": "F"
+  },
+  {
+   "num": 272,
+   "turn": "s3b30",
+   "svo": [
+    "web_gallery_of_art",
+    "instance_of",
+    "internet_websites"
+   ],
+   "surface": "The web gallery of art is an instance of internet websites.",
+   "label": "F"
+  },
+  {
+   "num": 273,
+   "turn": "s3b30",
+   "svo": [
+    "web_gallery_of_art",
+    "instance_of",
+    "internet_websites"
+   ],
+   "surface": "A web gallery of art is an instance of internet websites.",
+   "label": "F"
+  },
+  {
+   "num": 274,
+   "turn": "s3b31",
+   "svo": [
+    "z_rich_sc_lions",
+    "sport",
+    "women_s_ice_hockey"
+   ],
+   "surface": "The rich and spirited lions participate in women's ice hockey.",
+   "label": "U"
+  },
+  {
+   "num": 275,
+   "turn": "s3b31",
+   "svo": [
+    "z_rich_sc_lions",
+    "sport",
+    "women_s_ice_hockey"
+   ],
+   "surface": "Z Rich Sc Lions play hockey for women's ice hockey teams.",
+   "label": "B"
+  }
+ ]
+}

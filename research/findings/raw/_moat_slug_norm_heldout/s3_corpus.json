@@ -1,0 +1,4368 @@
+{
+ "_doc": "S3 real-Qwen corpus (1-3-fact entities); no verifier verdict and no label in this file. Every turn was generated with the qwen-gpu renderer: see raw_files[].generation_device and .generation_host. extraction_host / extraction_host_gpus are where THIS extraction ran (the generation host is per raw file where it was recorded).",
+ "backend": "numpy",
+ "device": "cpu (extraction only; generation devices per raw file)",
+ "extraction_host": "dant123-wk",
+ "extraction_host_gpus": "NVIDIA GeForce RTX 3090",
+ "renderer": "qwen-gpu",
+ "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/extract_corpus_s3.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/extract_corpus_s3.py",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b1.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b2.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b3.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b4.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b5.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b6.json"
+ ],
+ "raw_files": [
+  {
+   "file": "s3_b1.json",
+   "sha256": "8eb1d0ff255ba25b21348263a6d876fdfdfbb9172b126ccb0f63b1c8559417b4",
+   "bytes": 288637,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  },
+  {
+   "file": "s3_b2.json",
+   "sha256": "5816d9733f6e3bb8806b8c2082bfc57a375e107c9db3c09d6a0198e3440dc16a",
+   "bytes": 278992,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  },
+  {
+   "file": "s3_b3.json",
+   "sha256": "45a3e34a963ae2548b4bbc28111eac9ec79232cc489b574b49f9a0468f0a8e6d",
+   "bytes": 180560,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  },
+  {
+   "file": "s3_b4.json",
+   "sha256": "59e6c1b08adc4182617a7251e11e465a7df2a57c4bde4ea6b4917543693da985",
+   "bytes": 122494,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  },
+  {
+   "file": "s3_b5.json",
+   "sha256": "11bc0fcd671bc19b5467f914804bdc82a79e53afa66552cd8b45960a558937fa",
+   "bytes": 121783,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  },
+  {
+   "file": "s3_b6.json",
+   "sha256": "17dfe7da99f145429ff49bff482952c8cf240be007e622752329ee158add10c8",
+   "bytes": 10329,
+   "renderer": "qwen-gpu",
+   "generation_device": "cuda (Qwen-0.5B fp16)",
+   "generation_host": "dant123-wk"
+  }
+ ],
+ "n_turns": 61,
+ "turns": [
+  {
+   "label": "s3a01",
+   "entity": "academica_de_coimbra",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is academica_de_coimbra?",
+   "gated": [
+    [
+     "academica_de_coimbra",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "academica_de_coimbra",
+     "country",
+     "portugal_portal"
+    ],
+    [
+     "academica_de_coimbra",
+     "headquarters_location",
+     "municipality_of_coimbra"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "academica_de_coimbra",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Academia de Coimbra is associated with the football club."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "academica_de_coimbra",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The academica_de_coimbra sports association is known for its association_football_club."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "academica_de_coimbra",
+      "country",
+      "portugal_portal"
+     ],
+     "surface": "Academia de Coimbra is located in Portugal."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "academica_de_coimbra",
+      "country",
+      "portugal_portal"
+     ],
+     "surface": "Academica de Coimbra is located in Portugal's capital city of Lisbon."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "academica_de_coimbra",
+      "headquarters_location",
+      "municipality_of_coimbra"
+     ],
+     "surface": "Academica de Coimbra is headquartered in the municipality of Coimbra."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "academica_de_coimbra",
+      "headquarters_location",
+      "municipality_of_coimbra"
+     ],
+     "surface": "The Academia de Coimbra's headquarters is located in the municipality of Coimbra."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about academica yet: what can you tell me about academica?",
+   "abstained": true
+  },
+  {
+   "label": "s3a02",
+   "entity": "angola_national_football_team",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is angola_national_football_team?",
+   "gated": [
+    [
+     "angola_national_football_team",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "angola_national_football_team",
+     "country",
+     "repubilika_ya_ngola"
+    ],
+    [
+     "angola_national_football_team",
+     "participant_of",
+     "2006_fifa_world_cup_final_positions"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "angola_national_football_team",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Angola's national football team competes in association football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "angola_national_football_team",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The Angola national football team is part of an association football club."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "angola_national_football_team",
+      "country",
+      "repubilika_ya_ngola"
+     ],
+     "surface": "Angola's national football team represents its country."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "angola_national_football_team",
+      "country",
+      "repubilika_ya_ngola"
+     ],
+     "surface": "Angola's national football team has a country representative who is called the Republic of Angola."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "angola_national_football_team",
+      "participant_of",
+      "2006_fifa_world_cup_final_positions"
+     ],
+     "surface": "In 2006, Angola's national football team participated in the FIFA World Cup final."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "angola_national_football_team",
+      "participant_of",
+      "2006_fifa_world_cup_final_positions"
+     ],
+     "surface": "Angola's national football team participated in the 2006 FIFA World Cup final positions."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about angola yet: what can you tell me about angola? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "s3a03",
+   "entity": "bac_u_county",
+   "frame": "A",
+   "n_gathered": 2,
+   "subset": "member",
+   "raw_file": "s3_b1.json",
+   "question": "What is bac_u_county?",
+   "gated": [
+    [
+     "bac_u_county",
+     "located_in_time_zone",
+     "west_africa_summer_time"
+    ],
+    [
+     "bac_u_county",
+     "country",
+     "danubian_carpathian_area"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "bac_u_county",
+      "located_in_time_zone",
+      "west_africa_summer_time"
+     ],
+     "surface": "The county located in time zone and situated in West Africa during summer time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bac_u_county",
+      "located_in_time_zone",
+      "west_africa_summer_time"
+     ],
+     "surface": "Bac_u_county is located in time_zone and situated in West Africa during summer time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bac_u_county",
+      "country",
+      "danubian_carpathian_area"
+     ],
+     "surface": "The country of Bacau County has a Danubian Carpathian area."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bac_u_county",
+      "country",
+      "danubian_carpathian_area"
+     ],
+     "surface": "The Bacu County is located in the Danubian Carpathian area."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bac yet: what can you tell me about bac?",
+   "abstained": true
+  },
+  {
+   "label": "s3a04",
+   "entity": "bobolice_commune",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b1.json",
+   "question": "What is bobolice_commune?",
+   "gated": [
+    [
+     "bobolice_commune",
+     "country",
+     "pole_land"
+    ],
+    [
+     "pole_land",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "bobolice_commune",
+     "shares_border_with",
+     "szczecinek_commune"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "bobolice_commune",
+      "country",
+      "pole_land"
+     ],
+     "surface": "Bobolice is in Pole Land."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bobolice_commune",
+      "country",
+      "pole_land"
+     ],
+     "surface": "Bobolino commune is located in the country of Pole Land."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "pole_land",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The pole is located in time zone Rome."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "pole_land",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Pole Land is located in time zone ROME_TIME."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bobolice_commune",
+      "shares_border_with",
+      "szczecinek_commune"
+     ],
+     "surface": "Bobolice commune borders Szczecinek commune."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bobolice_commune",
+      "shares_border_with",
+      "szczecinek_commune"
+     ],
+     "surface": "Bobolice commune shares border with Szczecinka commune."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bobolice yet: what can you tell me about bobolice?",
+   "abstained": true
+  },
+  {
+   "label": "s3a05",
+   "entity": "canton_of_craonne",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is canton_of_craonne?",
+   "gated": [
+    [
+     "canton_of_craonne",
+     "country",
+     "franzoesische_republik"
+    ],
+    [
+     "franzoesische_republik",
+     "shares_border_with",
+     "united_kingom"
+    ],
+    [
+     "united_kingom",
+     "shares_border_with",
+     "franzoesische_republik"
+    ],
+    [
+     "canton_of_craonne",
+     "instance_of",
+     "cantons_in_france"
+    ],
+    [
+     "canton_of_craonne",
+     "located_in_the_administrative_territoria",
+     "aisne_d_partement"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "canton_of_craonne",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "The country of France is the Federal Republic of Germany."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canton_of_craonne",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "The cantons of Switzerland and France share the same country, which is called Franche-Comt\u00e9."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The French Republic shares its border with the United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The German federal republic shares borders with the United Kingdom."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "united_kingom",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The united kingdom shares borders with france's republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "united_kingom",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The United Kingdom shares borders with both France and Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canton_of_craonne",
+      "instance_of",
+      "cantons_in_france"
+     ],
+     "surface": "The entity known as France has its instances in Canada and Switzerland."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canton_of_craonne",
+      "instance_of",
+      "cantons_in_france"
+     ],
+     "surface": "Canton_of_Craonne is an example of an instance of cantons_in_france."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canton_of_craonne",
+      "located_in_the_administrative_territoria",
+      "aisne_d_partement"
+     ],
+     "surface": "Aisne-d Parti is located in the administrative territory of Canton of Cnaan."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canton_of_craonne",
+      "located_in_the_administrative_territoria",
+      "aisne_d_partement"
+     ],
+     "surface": "Canton de la Neuf-D'\u00cele is located in the administrative territory of \u00cele-de-France."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about canton yet: what can you tell me about canton?",
+   "abstained": true
+  },
+  {
+   "label": "s3a06",
+   "entity": "city_of_district_significance_ukraine",
+   "frame": "A",
+   "n_gathered": 2,
+   "subset": "member",
+   "raw_file": "s3_b1.json",
+   "question": "What is city_of_district_significance_ukraine?",
+   "gated": [
+    [
+     "city_of_district_significance_ukraine",
+     "country",
+     "ukraine"
+    ],
+    [
+     "ukraine",
+     "located_in_time_zone",
+     "west_africa_summer_time"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "city_of_district_significance_ukraine",
+      "country",
+      "ukraine"
+     ],
+     "surface": "The city of Donetsk, Ukraine, is the capital of the Ukrainian Republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "city_of_district_significance_ukraine",
+      "country",
+      "ukraine"
+     ],
+     "surface": "The city of district significance in Ukraine is known for its rich history and cultural heritage."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ukraine",
+      "located_in_time_zone",
+      "west_africa_summer_time"
+     ],
+     "surface": "The UK is in the west of Africa during summer time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ukraine",
+      "located_in_time_zone",
+      "west_africa_summer_time"
+     ],
+     "surface": "Ukraine is located in the time zone of West Africa's summer time."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "s3a07",
+   "entity": "country_mansion",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b1.json",
+   "question": "What is country_mansion?",
+   "gated": [
+    [
+     "country_mansion",
+     "subclass_of",
+     "domestic_architecture"
+    ],
+    [
+     "domestic_architecture",
+     "has_part",
+     "box_room"
+    ],
+    [
+     "country_mansion",
+     "instance_of",
+     "architectural_styles"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "country_mansion",
+      "subclass_of",
+      "domestic_architecture"
+     ],
+     "surface": "The country mansion is classified as a domestic architecture."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "country_mansion",
+      "subclass_of",
+      "domestic_architecture"
+     ],
+     "surface": "A country mansion is a type of architectural structure designed for a specific purpose or location within a country's domestic architecture."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "domestic_architecture",
+      "has_part",
+      "box_room"
+     ],
+     "surface": "The domestic architecture has box rooms."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "domestic_architecture",
+      "has_part",
+      "box_room"
+     ],
+     "surface": "Domestic architecture includes box rooms."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "country_mansion",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "The country mansion is an architectural style."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "country_mansion",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "A country mansion is an instance of a type of architectural style."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about country yet: what can you tell me about country?",
+   "abstained": true
+  },
+  {
+   "label": "s3a08",
+   "entity": "directeurs_sportifs",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is directeurs_sportifs?",
+   "gated": [
+    [
+     "directeurs_sportifs",
+     "sport",
+     "road_cycling_race"
+    ],
+    [
+     "road_cycling_race",
+     "subclass_of",
+     "cycle_race"
+    ],
+    [
+     "cycle_race",
+     "subclass_of",
+     "playing_sport"
+    ],
+    [
+     "directeurs_sportifs",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "directeurs_sportifs",
+      "sport",
+      "road_cycling_race"
+     ],
+     "surface": "Directeurs sportifs organisent des courses de cycle \u00e0 route."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "directeurs_sportifs",
+      "sport",
+      "road_cycling_race"
+     ],
+     "surface": "Directeurs sportifs dirigeent les activit\u00e9s de course sur la route cycliste."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "road_cycling_race",
+      "subclass_of",
+      "cycle_race"
+     ],
+     "surface": "Road cycling race is a subclass of cycle races"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "road_cycling_race",
+      "subclass_of",
+      "cycle_race"
+     ],
+     "surface": "Road cycling races are subclasses of cycle racing."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "cycle_race",
+      "subclass_of",
+      "playing_sport"
+     ],
+     "surface": "subclass_of cycle_race plays sports."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "cycle_race",
+      "subclass_of",
+      "playing_sport"
+     ],
+     "surface": "A cycle_race is a subclass of playing_sport."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "directeurs_sportifs",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "Directeurs sportifs are instances of expert occupations."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "directeurs_sportifs",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "Directeurs sportifs are experts in their field of sports."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about directeurs yet: what can you tell me about directeurs?",
+   "abstained": true
+  },
+  {
+   "label": "s3a09",
+   "entity": "emarcy_records",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is emarcy_records?",
+   "gated": [
+    [
+     "emarcy_records",
+     "genre",
+     "jazz_lists"
+    ],
+    [
+     "jazz_lists",
+     "instance_of",
+     "genre_of_music"
+    ],
+    [
+     "genre_of_music",
+     "instance_of",
+     "sociological_concept"
+    ],
+    [
+     "emarcy_records",
+     "instance_of",
+     "record_companies"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "emarcy_records",
+      "genre",
+      "jazz_lists"
+     ],
+     "surface": "The genre of emarcy_records is jazz_lists."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "emarcy_records",
+      "genre",
+      "jazz_lists"
+     ],
+     "surface": "Emarcy's records feature jazz-listed tracks."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "jazz_lists",
+      "instance_of",
+      "genre_of_music"
+     ],
+     "surface": "Jazz lists belong to instances of music genres"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "jazz_lists",
+      "instance_of",
+      "genre_of_music"
+     ],
+     "surface": "Jazz_lists are instances of music genres."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "genre_of_music",
+      "instance_of",
+      "sociological_concept"
+     ],
+     "surface": "The genre of music is an instance of sociology."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "genre_of_music",
+      "instance_of",
+      "sociological_concept"
+     ],
+     "surface": "Genre of music is an instance of sociological concept."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "emarcy_records",
+      "instance_of",
+      "record_companies"
+     ],
+     "surface": "Emarcy records belong to instance of record companies"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "emarcy_records",
+      "instance_of",
+      "record_companies"
+     ],
+     "surface": "Emarcy Records is an instance of a record_company."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about emarcy yet: what can you tell me about emarcy?",
+   "abstained": true
+  },
+  {
+   "label": "s3a10",
+   "entity": "fc_magna_wiener_neustadt",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is fc_magna_wiener_neustadt?",
+   "gated": [
+    [
+     "fc_magna_wiener_neustadt",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "fc_magna_wiener_neustadt",
+     "country",
+     "etymology_of_austria"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The association football club plays in the Wiener Neustadt."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The FC Magna Wiener Neustadt Sport Association is a football club based in Neustadt, Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "country",
+      "etymology_of_austria"
+     ],
+     "surface": "The country of Austria is named after Magna Helvetica, a famous German mathematician and philosopher."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "country",
+      "etymology_of_austria"
+     ],
+     "surface": "FC Magna Wiener Neustadt is the country where Austria's etymology of \"et\" was derived from."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fc yet: what can you tell me about fc?",
+   "abstained": true
+  },
+  {
+   "label": "s3a11",
+   "entity": "french_communist_party",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is french_communist_party?",
+   "gated": [
+    [
+     "french_communist_party",
+     "country",
+     "franzoesische_republik"
+    ],
+    [
+     "franzoesische_republik",
+     "shares_border_with",
+     "united_kingom"
+    ],
+    [
+     "united_kingom",
+     "shares_border_with",
+     "franzoesische_republik"
+    ],
+    [
+     "french_communist_party",
+     "instance_of",
+     "party_member"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "french_communist_party",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "The French Communist Party is a country's political party."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "french_communist_party",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "The French Communist Party is the country's political party of choice for communism."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The French Republic shares its border with the United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The German federal republic shares borders with the United Kingdom."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "united_kingom",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The united kingdom shares borders with france's republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "united_kingom",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The United Kingdom shares borders with both France and Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "french_communist_party",
+      "instance_of",
+      "party_member"
+     ],
+     "surface": "French Communist Party is an instance of a party member."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "french_communist_party",
+      "instance_of",
+      "party_member"
+     ],
+     "surface": "A French Communist Party is an instance of a party member."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about french yet: what can you tell me about french?",
+   "abstained": true
+  },
+  {
+   "label": "s3a12",
+   "entity": "gorky_film_studio",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b1.json",
+   "question": "What is gorky_film_studio?",
+   "gated": [
+    [
+     "gorky_film_studio",
+     "headquarters_location",
+     "moscow_ussr"
+    ],
+    [
+     "moscow_ussr",
+     "twinned_administrative_body",
+     "england_london"
+    ],
+    [
+     "england_london",
+     "twinned_administrative_body",
+     "new_york_new_york"
+    ],
+    [
+     "gorky_film_studio",
+     "instance_of",
+     "film_studios"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "gorky_film_studio",
+      "headquarters_location",
+      "moscow_ussr"
+     ],
+     "surface": "The gorky film studio is located in Moscow, Russia."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "gorky_film_studio",
+      "headquarters_location",
+      "moscow_ussr"
+     ],
+     "surface": "The Gorky Film Studio headquarters is located in Moscow, Russia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "moscow_ussr",
+      "twinned_administrative_body",
+      "england_london"
+     ],
+     "surface": "The Moscow-UK twinned administrative body is located in London."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "moscow_ussr",
+      "twinned_administrative_body",
+      "england_london"
+     ],
+     "surface": "The Moscow-United States twinned administrative body is based in London."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "england_london",
+      "twinned_administrative_body",
+      "new_york_new_york"
+     ],
+     "surface": "The London Twin City of New York is the twinned administrative body between England and the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "england_london",
+      "twinned_administrative_body",
+      "new_york_new_york"
+     ],
+     "surface": "The United Kingdom and New York City have collaborated on creating a shared administrative body to address London's unique challenges in the context"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "gorky_film_studio",
+      "instance_of",
+      "film_studios"
+     ],
+     "surface": "Gorky's films are instances of film studios."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "gorky_film_studio",
+      "instance_of",
+      "film_studios"
+     ],
+     "surface": "Gorky Film Studio is an instance of film studios."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about gorky yet: what can you tell me about gorky?",
+   "abstained": true
+  },
+  {
+   "label": "s3a13",
+   "entity": "hertha_berlin_ii",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is hertha_berlin_ii?",
+   "gated": [
+    [
+     "hertha_berlin_ii",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "hertha_berlin_ii",
+     "country",
+     "federal_republic_of_germany"
+    ],
+    [
+     "hertha_berlin_ii",
+     "subclass_of",
+     "hertha_bsc"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "hertha_berlin_ii",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Hertha Berlin II competes in football (soccer)."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "hertha_berlin_ii",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Hertha Berlin II is a football club based in Hertha, Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "hertha_berlin_ii",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Hertha Berlin II is from the Federal Republic of Germany."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "hertha_berlin_ii",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Hertha Berlin II is a country federal republic of Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "hertha_berlin_ii",
+      "subclass_of",
+      "hertha_bsc"
+     ],
+     "surface": "Hertha Berlin II is a subclass of Hertha BSC."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "hertha_berlin_ii",
+      "subclass_of",
+      "hertha_bsc"
+     ],
+     "surface": "Hertha Berlin II is a subclass of Hertha BSC."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about hertha yet: what can you tell me about hertha?",
+   "abstained": true
+  },
+  {
+   "label": "s3a14",
+   "entity": "indoor_bandy",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b2.json",
+   "question": "What is indoor_bandy?",
+   "gated": [
+    [
+     "indoor_bandy",
+     "country_of_origin",
+     "climate_of_sweden"
+    ],
+    [
+     "climate_of_sweden",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "indoor_bandy",
+     "subclass_of",
+     "ball_games"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "indoor_bandy",
+      "country_of_origin",
+      "climate_of_sweden"
+     ],
+     "surface": "The country of origin for indoor bandy is Sweden."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "indoor_bandy",
+      "country_of_origin",
+      "climate_of_sweden"
+     ],
+     "surface": "Indoor bandy has Sweden's country of origin and climate similar to it."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "climate_of_sweden",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The climate of Sweden is located in the time zone of Rome."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "climate_of_sweden",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The climate of Sweden is located in the time zone of Rome's time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "indoor_bandy",
+      "subclass_of",
+      "ball_games"
+     ],
+     "surface": "Indoor bandy is a subclass of ball games."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "indoor_bandy",
+      "subclass_of",
+      "ball_games"
+     ],
+     "surface": "Indoor_bandy is a subclass of ball_games."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about indoor yet: what can you tell me about indoor?",
+   "abstained": true
+  },
+  {
+   "label": "s3a15",
+   "entity": "k_v_c_westerlo",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is k_v_c_westerlo?",
+   "gated": [
+    [
+     "k_v_c_westerlo",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "k_v_c_westerlo",
+     "country",
+     "koninkrijk_belgi"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "k_v_c_westerlo",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The triple (k_v_c_westerlo, sport, association_football_club) represents a sports club based in"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "k_v_c_westerlo",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The K_v_c_westerlo Sport Association Football Club is based in K_v_c_westerlo."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "k_v_c_westerlo",
+      "country",
+      "koninkrijk_belgi"
+     ],
+     "surface": "The Netherlands is a country."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "k_v_c_westerlo",
+      "country",
+      "koninkrijk_belgi"
+     ],
+     "surface": "K_v_c_westerlo is the capital of the country KoninkrijkBelgi."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about westerlo yet: what can you tell me about westerlo?",
+   "abstained": true
+  },
+  {
+   "label": "s3a16",
+   "entity": "lauri_first_name",
+   "frame": "A",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b2.json",
+   "question": "What is lauri_first_name?",
+   "gated": [
+    [
+     "lauri_first_name",
+     "language_of_work_or_name",
+     "finnish_syntax"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "lauri_first_name",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "The Finnish syntax of the work or name is understood."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "lauri_first_name",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "Lauri's Finnish syntax is used for her work or name."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about lauri yet: what can you tell me about lauri?",
+   "abstained": true
+  },
+  {
+   "label": "s3a17",
+   "entity": "madurai_india",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is madurai_india?",
+   "gated": [
+    [
+     "madurai_india",
+     "country",
+     "bharat_ganrajya"
+    ],
+    [
+     "bharat_ganrajya",
+     "shares_border_with",
+     "china_pr"
+    ],
+    [
+     "china_pr",
+     "shares_border_with",
+     "bharat_ganrajya"
+    ],
+    [
+     "madurai_india",
+     "located_in_time_zone",
+     "kunlun_time_zone"
+    ],
+    [
+     "madurai_india",
+     "instance_of",
+     "city_work"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "madurai_india",
+      "country",
+      "bharat_ganrajya"
+     ],
+     "surface": "Madurai is a city in India, which is also known as Bharat Ganjariya."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "madurai_india",
+      "country",
+      "bharat_ganrajya"
+     ],
+     "surface": "Madurai is a city in India, known as Bharat Ganjira."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bharat Ganjariyan, shares border with China Pr."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bihar shares border with China Prussia"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China shares borders with Bharat Ganjamya."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China's share of India's total stock market is about 15%."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "madurai_india",
+      "located_in_time_zone",
+      "kunlun_time_zone"
+     ],
+     "surface": "Madurai is located in the Kunlun time zone."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "madurai_india",
+      "located_in_time_zone",
+      "kunlun_time_zone"
+     ],
+     "surface": "Madurai is located in the Kunlun time zone."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "madurai_india",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Madurai is an instance of a city in India."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "madurai_india",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Madurai India is an instance of a city-work organization."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about madurai yet: what can you tell me about madurai?",
+   "abstained": true
+  },
+  {
+   "label": "s3a18",
+   "entity": "milford_new_brunswick",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is milford_new_brunswick?",
+   "gated": [
+    [
+     "milford_new_brunswick",
+     "country",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "milford_new_brunswick",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "milford_new_brunswick",
+     "twinned_administrative_body",
+     "newport_rhode_island"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "milford_new_brunswick",
+      "country",
+      "canada_portal"
+     ],
+     "surface": "Milford, New Brunswick is in Canada."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "milford_new_brunswick",
+      "country",
+      "canada_portal"
+     ],
+     "surface": "Milford New Brunswick is part of Canada's country portal."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The number of shares in Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "Shares of a company bordering Canada at the Port of Vancouver"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "milford_new_brunswick",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Milford, New Brunswick is an instance of a city work."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "milford_new_brunswick",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The instance_of of Milford New Brunswick is a city_work."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "milford_new_brunswick",
+      "twinned_administrative_body",
+      "newport_rhode_island"
+     ],
+     "surface": "Milford New Brunswick is twin to Newport Rhode Island."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "milford_new_brunswick",
+      "twinned_administrative_body",
+      "newport_rhode_island"
+     ],
+     "surface": "Milford New Brunswick has a twinned administrative body with Newport Rhode Island."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about milford yet: what can you tell me about milford?",
+   "abstained": true
+  },
+  {
+   "label": "s3a19",
+   "entity": "national_coat_of_arms",
+   "frame": "A",
+   "n_gathered": 2,
+   "subset": "member",
+   "raw_file": "s3_b2.json",
+   "question": "What is national_coat_of_arms?",
+   "gated": [
+    [
+     "national_coat_of_arms",
+     "subclass_of",
+     "coat_of_arms"
+    ],
+    [
+     "coat_of_arms",
+     "subclass_of",
+     "cultural_ikon"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "national_coat_of_arms",
+      "subclass_of",
+      "coat_of_arms"
+     ],
+     "surface": "National coats of arms belong to specific classes or types of arms."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "national_coat_of_arms",
+      "subclass_of",
+      "coat_of_arms"
+     ],
+     "surface": "National coats of arms are subclasses of coats of arms."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "coat_of_arms",
+      "subclass_of",
+      "cultural_ikon"
+     ],
+     "surface": "The coat of arms is a type of cultural icon."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "coat_of_arms",
+      "subclass_of",
+      "cultural_ikon"
+     ],
+     "surface": "Coat_of_arms is a subclass of cultural_ikon."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about national yet: what can you tell me about national?",
+   "abstained": true
+  },
+  {
+   "label": "s3a20",
+   "entity": "o_t_bonner_middle_school",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is o_t_bonner_middle_school?",
+   "gated": [
+    [
+     "o_t_bonner_middle_school",
+     "country",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "o_t_bonner_middle_school",
+     "located_in_the_administrative_territoria",
+     "religion_in_virginia"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "o_t_bonner_middle_school",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The country of o_t_bonner_middle_school is in the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "o_t_bonner_middle_school",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The United States of America is an o_t_bonner_middle_school country."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The number of shares in Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "Shares of a company bordering Canada at the Port of Vancouver"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "o_t_bonner_middle_school",
+      "located_in_the_administrative_territoria",
+      "religion_in_virginia"
+     ],
+     "surface": "The o_t_bonner_middle_school is located in the administrative territory of Virginia."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "o_t_bonner_middle_school",
+      "located_in_the_administrative_territoria",
+      "religion_in_virginia"
+     ],
+     "surface": "The O_T_BONNER Middle School is located in the administrative territory of Virginia and teaches students about Christianity."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bonner yet: what can you tell me about bonner?",
+   "abstained": true
+  },
+  {
+   "label": "s3a21",
+   "entity": "parke_county_in",
+   "frame": "A",
+   "n_gathered": 5,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is parke_county_in?",
+   "gated": [
+    [
+     "parke_county_in",
+     "country",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "parke_county_in",
+     "located_in_the_administrative_territoria",
+     "art_of_indiana"
+    ],
+    [
+     "parke_county_in",
+     "shares_border_with",
+     "vigo_county"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "parke_county_in",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The county in the country is U.S. of A."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "parke_county_in",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The park is located in the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The number of shares in Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "Shares of a company bordering Canada at the Port of Vancouver"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "parke_county_in",
+      "located_in_the_administrative_territoria",
+      "art_of_indiana"
+     ],
+     "surface": "The parke located_in_the_administrative_territoria is situated in Indiana."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "parke_county_in",
+      "located_in_the_administrative_territoria",
+      "art_of_indiana"
+     ],
+     "surface": "Parke County is located in Indiana, which is part of the administrative territory of the state of Indiana."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "parke_county_in",
+      "shares_border_with",
+      "vigo_county"
+     ],
+     "surface": "The county in Parke shares border with Vigo County."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "parke_county_in",
+      "shares_border_with",
+      "vigo_county"
+     ],
+     "surface": "Parke County is bordered by Vigo County in the north."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about parke yet: what can you tell me about parke?",
+   "abstained": true
+  },
+  {
+   "label": "s3a22",
+   "entity": "premiers_of_victoria",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is premiers_of_victoria?",
+   "gated": [
+    [
+     "premiers_of_victoria",
+     "country",
+     "commonwealth_australia"
+    ],
+    [
+     "commonwealth_australia",
+     "participant_of",
+     "war_world_two"
+    ],
+    [
+     "war_world_two",
+     "follows",
+     "world_war_one"
+    ],
+    [
+     "premiers_of_victoria",
+     "subclass_of",
+     "chief_administrator"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "premiers_of_victoria",
+      "country",
+      "commonwealth_australia"
+     ],
+     "surface": "The capital of Australia is Canberra."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "premiers_of_victoria",
+      "country",
+      "commonwealth_australia"
+     ],
+     "surface": "The premiers of Victoria, Australia, are part of the Commonwealth of Australia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "commonwealth_australia",
+      "participant_of",
+      "war_world_two"
+     ],
+     "surface": "The Commonwealth of Australia participated in the War World Two."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "commonwealth_australia",
+      "participant_of",
+      "war_world_two"
+     ],
+     "surface": "Commonwealth Australia was a participant in World War Two."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "war_world_two",
+      "follows",
+      "world_war_one"
+     ],
+     "surface": "War World Two Follows World War One"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "war_world_two",
+      "follows",
+      "world_war_one"
+     ],
+     "surface": "War World Two follows War World One in the escalation of global conflicts."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "premiers_of_victoria",
+      "subclass_of",
+      "chief_administrator"
+     ],
+     "surface": "The prime minister of Victoria is a member of the British Parliament."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "premiers_of_victoria",
+      "subclass_of",
+      "chief_administrator"
+     ],
+     "surface": "Premiers of Victoria is a subclass of chief administrator."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about premiers yet: what can you tell me about premiers?",
+   "abstained": true
+  },
+  {
+   "label": "s3a23",
+   "entity": "renderware",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b2.json",
+   "question": "What is renderware?",
+   "gated": [
+    [
+     "renderware",
+     "instance_of",
+     "proprietary_firmware"
+    ],
+    [
+     "proprietary_firmware",
+     "subclass_of",
+     "software_technology"
+    ],
+    [
+     "software_technology",
+     "subclass_of",
+     "commercial_product"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "renderware",
+      "instance_of",
+      "proprietary_firmware"
+     ],
+     "surface": "The renderware is an instance of the proprietary firmware."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "renderware",
+      "instance_of",
+      "proprietary_firmware"
+     ],
+     "surface": "Renderware is an instance of proprietary firmware."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "proprietary_firmware",
+      "subclass_of",
+      "software_technology"
+     ],
+     "surface": "proprietary firmware is a type of software technology."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "proprietary_firmware",
+      "subclass_of",
+      "software_technology"
+     ],
+     "surface": "The term \"proprietary firmware\" refers to a type of software technology where the firmware is designed or developed by a specific"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "software_technology",
+      "subclass_of",
+      "commercial_product"
+     ],
+     "surface": "Software technology is a subclass of commercial products."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "software_technology",
+      "subclass_of",
+      "commercial_product"
+     ],
+     "surface": "Software technology is a subclass of commercial product."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about renderware yet: what can you tell me about renderware?",
+   "abstained": true
+  },
+  {
+   "label": "s3a24",
+   "entity": "samut_songkhram_btu_f_c",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b2.json",
+   "question": "What is samut_songkhram_btu_f_c?",
+   "gated": [
+    [
+     "samut_songkhram_btu_f_c",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "samut_songkhram_btu_f_c",
+     "country",
+     "etymology_of_thailand"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "samut_songkhram_btu_f_c",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Samut Sengsao Batur Club is an association football club."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "samut_songkhram_btu_f_c",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Samut Songkhram Btu F C is an association football club."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "samut_songkhram_btu_f_c",
+      "country",
+      "etymology_of_thailand"
+     ],
+     "surface": "The Thai language originated in Samut Suthep, a region of northeastern Thailand."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "samut_songkhram_btu_f_c",
+      "country",
+      "etymology_of_thailand"
+     ],
+     "surface": "Samut Songkhram Btu F C is an etymology of Thailand."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about samut yet: what can you tell me about samut?",
+   "abstained": true
+  },
+  {
+   "label": "s3a25",
+   "entity": "sire_records_group",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b3.json",
+   "question": "What is sire_records_group?",
+   "gated": [
+    [
+     "sire_records_group",
+     "country_of_origin",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "sire_records_group",
+     "instance_of",
+     "record_companies"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "sire_records_group",
+      "country_of_origin",
+      "u_s_of_a"
+     ],
+     "surface": "The country of origin is U.S."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "sire_records_group",
+      "country_of_origin",
+      "u_s_of_a"
+     ],
+     "surface": "Sire records group's country of origin is U.S. OFA"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The number of shares in Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "Shares of a company bordering Canada at the Port of Vancouver"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "sire_records_group",
+      "instance_of",
+      "record_companies"
+     ],
+     "surface": "The sire records group is an instance of record companies."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "sire_records_group",
+      "instance_of",
+      "record_companies"
+     ],
+     "surface": "Sire_records_group is an instance of record_companies."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sire yet: what can you tell me about sire?",
+   "abstained": true
+  },
+  {
+   "label": "s3a26",
+   "entity": "sten_first_name",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b3.json",
+   "question": "What is sten_first_name?",
+   "gated": [
+    [
+     "sten_first_name",
+     "language_of_work_or_name",
+     "swedish_lang"
+    ],
+    [
+     "swedish_lang",
+     "described_by_source",
+     "brockhaus_and_efron_encyclopaedia"
+    ],
+    [
+     "brockhaus_and_efron_encyclopaedia",
+     "original_language_of_film_or_tv_show",
+     "p"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "sten_first_name",
+      "language_of_work_or_name",
+      "swedish_lang"
+     ],
+     "surface": "sten_first_name Swedish is language_of_work_or_name"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "sten_first_name",
+      "language_of_work_or_name",
+      "swedish_lang"
+     ],
+     "surface": "Sten_first_name languages of work or name is Swedish."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "swedish_lang",
+      "described_by_source",
+      "brockhaus_and_efron_encyclopaedia"
+     ],
+     "surface": "The Swedish language is described by Brockhaus and Efron's Encyclop\u00e6dia Britannica."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "swedish_lang",
+      "described_by_source",
+      "brockhaus_and_efron_encyclopaedia"
+     ],
+     "surface": "The description of Swedish language in Brockhaus and Efnor's Encyclop\u00e6dia was authored by Joseph Broc"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "brockhaus_and_efron_encyclopaedia",
+      "original_language_of_film_or_tv_show",
+      "p"
+     ],
+     "surface": "The original language of the film or TV show Brockhaus and Efron's Encyclopedia is English."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "brockhaus_and_efron_encyclopaedia",
+      "original_language_of_film_or_tv_show",
+      "p"
+     ],
+     "surface": "The original language of film or TV show \"Brockhaus and Efron's Encyclopedie\" is"
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about sten yet: what can you tell me about sten?",
+   "abstained": true
+  },
+  {
+   "label": "s3a27",
+   "entity": "the_baa_baas",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b3.json",
+   "question": "What is the_baa_baas?",
+   "gated": [
+    [
+     "the_baa_baas",
+     "sport",
+     "rugby_union_tour"
+    ],
+    [
+     "rugby_union_tour",
+     "country_of_origin",
+     "england_uk"
+    ],
+    [
+     "england_uk",
+     "country",
+     "united_kingom"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "the_baa_baas",
+      "sport",
+      "rugby_union_tour"
+     ],
+     "surface": "The Baa Baas rugby union tour is exciting."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "the_baa_baas",
+      "sport",
+      "rugby_union_tour"
+     ],
+     "surface": "The Baa Baas sports rugby union tour is an exciting event featuring top players from various countries."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "rugby_union_tour",
+      "country_of_origin",
+      "england_uk"
+     ],
+     "surface": "The rugby union tour originates from England and Wales."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rugby_union_tour",
+      "country_of_origin",
+      "england_uk"
+     ],
+     "surface": "Rugby Union Tour is played in England, UK."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "england_uk",
+      "country",
+      "united_kingom"
+     ],
+     "surface": "England is the United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "england_uk",
+      "country",
+      "united_kingom"
+     ],
+     "surface": "England and the United Kingdom are united under the King of England."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about baa yet: what can you tell me about baa?",
+   "abstained": true
+  },
+  {
+   "label": "s3a28",
+   "entity": "turkey_national_under_17_football_team",
+   "frame": "A",
+   "n_gathered": 4,
+   "subset": "overflow",
+   "raw_file": "s3_b3.json",
+   "question": "What is turkey_national_under_17_football_team?",
+   "gated": [
+    [
+     "turkey_national_under_17_football_team",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "turkey_national_under_17_football_team",
+     "country",
+     "the_republic_of_turkey"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "turkey_national_under_17_football_team",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The Turkish national under-17 football team competes in association football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "turkey_national_under_17_football_team",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Turkey's national under-17 football team sports association has club membership."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described in association with football clubs."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The association of football club in Armenian Soviet Encyclopedia was described by its description as an influential player in the sport's history."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is located in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian Soviet Encyclopedia is a Hayastani Hanrapetut Yun encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "turkey_national_under_17_football_team",
+      "country",
+      "the_republic_of_turkey"
+     ],
+     "surface": "The Turkish national under 17 football team is from the Republic of Turkey."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "turkey_national_under_17_football_team",
+      "country",
+      "the_republic_of_turkey"
+     ],
+     "surface": "Turkey's national under-17 football team is the Republic of Turkey."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about turkey yet: what can you tell me about turkey? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "s3a29",
+   "entity": "veterinary_physician",
+   "frame": "A",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is veterinary_physician?",
+   "gated": [
+    [
+     "veterinary_physician",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "veterinary_physician",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "The veterinary_physician is an expert_occupation."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "veterinary_physician",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "A veterinary physician is an instance of an expert occupation."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about veterinary yet: what can you tell me about veterinary?",
+   "abstained": true
+  },
+  {
+   "label": "s3a30",
+   "entity": "worcester_rfc",
+   "frame": "A",
+   "n_gathered": 3,
+   "subset": "member",
+   "raw_file": "s3_b3.json",
+   "question": "What is worcester_rfc?",
+   "gated": [
+    [
+     "worcester_rfc",
+     "sport",
+     "rugby_union_tour"
+    ],
+    [
+     "rugby_union_tour",
+     "country_of_origin",
+     "england_uk"
+    ],
+    [
+     "england_uk",
+     "country",
+     "united_kingom"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "worcester_rfc",
+      "sport",
+      "rugby_union_tour"
+     ],
+     "surface": "Rugby Union Tour is an event in Worcester."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "worcester_rfc",
+      "sport",
+      "rugby_union_tour"
+     ],
+     "surface": "Worcestershire RFC plays in the Rugby Union Tour."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "rugby_union_tour",
+      "country_of_origin",
+      "england_uk"
+     ],
+     "surface": "The rugby union tour originates from England and Wales."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rugby_union_tour",
+      "country_of_origin",
+      "england_uk"
+     ],
+     "surface": "Rugby Union Tour is played in England, UK."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "england_uk",
+      "country",
+      "united_kingom"
+     ],
+     "surface": "England is the United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "england_uk",
+      "country",
+      "united_kingom"
+     ],
+     "surface": "England and the United Kingdom are united under the King of England."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about worcester yet: what can you tell me about worcester?",
+   "abstained": true
+  },
+  {
+   "label": "s3b01",
+   "entity": "adrijan",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is adrijan?",
+   "gated": [
+    [
+     "adrijan",
+     "language_of_work_or_name",
+     "number_of_english_words"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "adrijan",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The language of work or name is English."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "adrijan",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The number of English words in an Adrijan language is significant."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about adrijan yet: what can you tell me about adrijan?",
+   "abstained": true
+  },
+  {
+   "label": "s3b02",
+   "entity": "anita_given_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is anita_given_name?",
+   "gated": [
+    [
+     "anita_given_name",
+     "language_of_work_or_name",
+     "modern_spanish"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "anita_given_name",
+      "language_of_work_or_name",
+      "modern_spanish"
+     ],
+     "surface": "The person's given name is Anita. They work or have worked in Spanish."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "anita_given_name",
+      "language_of_work_or_name",
+      "modern_spanish"
+     ],
+     "surface": "Anita's given name is Anita, her language of work or name is modern Spanish."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about anita yet: what can you tell me about anita?",
+   "abstained": true
+  },
+  {
+   "label": "s3b03",
+   "entity": "badminton_at_the_2006_asian_games_women",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is badminton_at_the_2006_asian_games_women?",
+   "gated": [
+    [
+     "badminton_at_the_2006_asian_games_women",
+     "sport",
+     "badminton_racquet"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "badminton_at_the_2006_asian_games_women",
+      "sport",
+      "badminton_racquet"
+     ],
+     "surface": "Badminton was played at the 2006 Asian Games Women's Singles."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "badminton_at_the_2006_asian_games_women",
+      "sport",
+      "badminton_racquet"
+     ],
+     "surface": "Badminton was played at the 2006 Asian Games as women's sport."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about badminton yet: what can you tell me about badminton? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "s3b04",
+   "entity": "business_chains",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is business_chains?",
+   "gated": [
+    [
+     "business_chains",
+     "subclass_of",
+     "for_profit"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "business_chains",
+      "subclass_of",
+      "for_profit"
+     ],
+     "surface": "Business chains subclass of enterprises for profit"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "business_chains",
+      "subclass_of",
+      "for_profit"
+     ],
+     "surface": "Business chains are classified as for-profit entities."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about business yet: what can you tell me about business?",
+   "abstained": true
+  },
+  {
+   "label": "s3b05",
+   "entity": "classical_style",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is classical_style?",
+   "gated": [
+    [
+     "classical_style",
+     "instance_of",
+     "architectural_styles"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "classical_style",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "The architectural styles of classical style."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "classical_style",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "A classical-style object is an instance of an architectural style."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about classical yet: what can you tell me about classical?",
+   "abstained": true
+  },
+  {
+   "label": "s3b06",
+   "entity": "corrado_given_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b3.json",
+   "question": "What is corrado_given_name?",
+   "gated": [
+    [
+     "corrado_given_name",
+     "language_of_work_or_name",
+     "medieval_italian"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "corrado_given_name",
+      "language_of_work_or_name",
+      "medieval_italian"
+     ],
+     "surface": "The given name of the person working in medieval Italian is Corrado."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "corrado_given_name",
+      "language_of_work_or_name",
+      "medieval_italian"
+     ],
+     "surface": "The given name \"Corrado\" is in the language of work or name \"medieval Italian\"."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about corrado yet: what can you tell me about corrado?",
+   "abstained": true
+  },
+  {
+   "label": "s3b07",
+   "entity": "defensive_secondary",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is defensive_secondary?",
+   "gated": [
+    [
+     "defensive_secondary",
+     "sport",
+     "us_football"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "defensive_secondary",
+      "sport",
+      "us_football"
+     ],
+     "surface": "The defensive secondary is for sports, specifically American football."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "defensive_secondary",
+      "sport",
+      "us_football"
+     ],
+     "surface": "Defensive secondary sport is us_football."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about defensive yet: what can you tell me about defensive?",
+   "abstained": true
+  },
+  {
+   "label": "s3b08",
+   "entity": "earle_given_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is earle_given_name?",
+   "gated": [
+    [
+     "earle_given_name",
+     "language_of_work_or_name",
+     "number_of_english_words"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "earle_given_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "Earl's work or name was in English."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "earle_given_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "Earle's given name is English. He works in a language other than English. He has written approximately 10"
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about earle yet: what can you tell me about earle?",
+   "abstained": true
+  },
+  {
+   "label": "s3b09",
+   "entity": "equestrian_statue",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is equestrian_statue?",
+   "gated": [
+    [
+     "equestrian_statue",
+     "subclass_of",
+     "stone_statue"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "equestrian_statue",
+      "subclass_of",
+      "stone_statue"
+     ],
+     "surface": "The statue is a type of stone statue."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "equestrian_statue",
+      "subclass_of",
+      "stone_statue"
+     ],
+     "surface": "Equestrian_statue is a subclass of stone_statue."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about equestrian yet: what can you tell me about equestrian?",
+   "abstained": true
+  },
+  {
+   "label": "s3b10",
+   "entity": "field_goal_kicker",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is field_goal_kicker?",
+   "gated": [
+    [
+     "field_goal_kicker",
+     "sport",
+     "us_football"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "field_goal_kicker",
+      "sport",
+      "us_football"
+     ],
+     "surface": "The field goal kicker competes in US football."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "field_goal_kicker",
+      "sport",
+      "us_football"
+     ],
+     "surface": "Field goal kicker is a sport played using football as its game ball."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about field yet: what can you tell me about field?",
+   "abstained": true
+  },
+  {
+   "label": "s3b11",
+   "entity": "gaclbusiness",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is gaclbusiness?",
+   "gated": [
+    [
+     "gaclbusiness",
+     "language_of_work_or_name",
+     "number_of_english_words"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "gaclbusiness",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The language of work or name is English."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "gaclbusiness",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The number of English words in a GACL business's language_of_work is significant."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about gaclbusiness yet: what can you tell me about gaclbusiness?",
+   "abstained": true
+  },
+  {
+   "label": "s3b12",
+   "entity": "gonzalo_given_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is gonzalo_given_name?",
+   "gated": [
+    [
+     "gonzalo_given_name",
+     "language_of_work_or_name",
+     "modern_spanish"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "gonzalo_given_name",
+      "language_of_work_or_name",
+      "modern_spanish"
+     ],
+     "surface": "The gonzalo given name is in Spanish."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "gonzalo_given_name",
+      "language_of_work_or_name",
+      "modern_spanish"
+     ],
+     "surface": "Gonzalo Gonz\u00e1lez' work or name is in modern Spanish."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about gonzalo yet: what can you tell me about gonzalo?",
+   "abstained": true
+  },
+  {
+   "label": "s3b13",
+   "entity": "heikki",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is heikki?",
+   "gated": [
+    [
+     "heikki",
+     "language_of_work_or_name",
+     "finnish_syntax"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "heikki",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "Heikki's work or name is in Finnish syntax."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "heikki",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "Heikki's work or name is in Finnish syntax."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heikki yet: what can you tell me about heikki?",
+   "abstained": true
+  },
+  {
+   "label": "s3b14",
+   "entity": "independent_spirit_award_for_best_first",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is independent_spirit_award_for_best_first?",
+   "gated": [
+    [
+     "independent_spirit_award_for_best_first",
+     "instance_of",
+     "movie_award"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "independent_spirit_award_for_best_first",
+      "instance_of",
+      "movie_award"
+     ],
+     "surface": "The independent spirit award for best first is an instance of a movie award."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "independent_spirit_award_for_best_first",
+      "instance_of",
+      "movie_award"
+     ],
+     "surface": "The independent spirit award for best first instance of a movie was given to the film \"Inception.\""
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about independent yet: what can you tell me about independent? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "s3b15",
+   "entity": "jock_first_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is jock_first_name?",
+   "gated": [
+    [
+     "jock_first_name",
+     "language_of_work_or_name",
+     "number_of_english_words"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "jock_first_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The jock's first name is John and his work or name is basketball."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "jock_first_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "The number of English words in a jock's first name is influenced by their language of work or name."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about jock yet: what can you tell me about jock?",
+   "abstained": true
+  },
+  {
+   "label": "s3b16",
+   "entity": "lady_in_waiting",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is lady_in_waiting?",
+   "gated": [
+    [
+     "lady_in_waiting",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "lady_in_waiting",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "The lady-in-waiting is an expert of her profession."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "lady_in_waiting",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "A lady-in-waiting is an expert in her field of expertise."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about lady yet: what can you tell me about lady?",
+   "abstained": true
+  },
+  {
+   "label": "s3b17",
+   "entity": "london_midland_region",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is london_midland_region?",
+   "gated": [
+    [
+     "london_midland_region",
+     "instance_of",
+     "matrix_organisation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "london_midland_region",
+      "instance_of",
+      "matrix_organisation"
+     ],
+     "surface": "London is an instance of the matrix organisation."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "london_midland_region",
+      "instance_of",
+      "matrix_organisation"
+     ],
+     "surface": "Londonderry is an instance of a matrix_organisation in the London Midlands region."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about london yet: what can you tell me about london?",
+   "abstained": true
+  },
+  {
+   "label": "s3b18",
+   "entity": "marvel_superhero",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b4.json",
+   "question": "What is marvel_superhero?",
+   "gated": [
+    [
+     "marvel_superhero",
+     "instance_of",
+     "fictional_worlds"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "marvel_superhero",
+      "instance_of",
+      "fictional_worlds"
+     ],
+     "surface": "Marvel superhero belongs to fictional worlds."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "marvel_superhero",
+      "instance_of",
+      "fictional_worlds"
+     ],
+     "surface": "A marvel superhero is an instance of a fictional world."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about marvel yet: what can you tell me about marvel?",
+   "abstained": true
+  },
+  {
+   "label": "s3b19",
+   "entity": "mikkel",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is mikkel?",
+   "gated": [
+    [
+     "mikkel",
+     "language_of_work_or_name",
+     "danish_language"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "mikkel",
+      "language_of_work_or_name",
+      "danish_language"
+     ],
+     "surface": "The person's Danish name is their work or title."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "mikkel",
+      "language_of_work_or_name",
+      "danish_language"
+     ],
+     "surface": "Mikkel's Danish work or name is Danseuse."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about mikkel yet: what can you tell me about mikkel?",
+   "abstained": true
+  },
+  {
+   "label": "s3b20",
+   "entity": "naval_artillery_support",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is naval_artillery_support?",
+   "gated": [
+    [
+     "naval_artillery_support",
+     "subclass_of",
+     "commercial_product"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "naval_artillery_support",
+      "subclass_of",
+      "commercial_product"
+     ],
+     "surface": "Naval artillery support is a subclass of commercial products."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "naval_artillery_support",
+      "subclass_of",
+      "commercial_product"
+     ],
+     "surface": "Naval artillery support is a subclass of commercial product."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about naval yet: what can you tell me about naval?",
+   "abstained": true
+  },
+  {
+   "label": "s3b21",
+   "entity": "ocean_liners",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is ocean_liners?",
+   "gated": [
+    [
+     "ocean_liners",
+     "subclass_of",
+     "passenger_ship"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "ocean_liners",
+      "subclass_of",
+      "passenger_ship"
+     ],
+     "surface": "Ocean liners are passengers on passenger ships."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ocean_liners",
+      "subclass_of",
+      "passenger_ship"
+     ],
+     "surface": "Ocean liners are classified as passenger ships."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ocean yet: what can you tell me about ocean?",
+   "abstained": true
+  },
+  {
+   "label": "s3b22",
+   "entity": "paavo",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is paavo?",
+   "gated": [
+    [
+     "paavo",
+     "language_of_work_or_name",
+     "finnish_syntax"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "paavo",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "Finlandic is the language of work or name."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "paavo",
+      "language_of_work_or_name",
+      "finnish_syntax"
+     ],
+     "surface": "The Finnish syntax of Paav\u00e4en's work or name is unique."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about paavo yet: what can you tell me about paavo?",
+   "abstained": true
+  },
+  {
+   "label": "s3b23",
+   "entity": "pittsburgh_lrt",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is pittsburgh_lrt?",
+   "gated": [
+    [
+     "pittsburgh_lrt",
+     "instance_of",
+     "transportation_authority"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "pittsburgh_lrt",
+      "instance_of",
+      "transportation_authority"
+     ],
+     "surface": "Pittsburgh LRT is an instance of transportation authority."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "pittsburgh_lrt",
+      "instance_of",
+      "transportation_authority"
+     ],
+     "surface": "Pittsburgh LRT is an instance of a transportation authority."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about pittsburgh yet: what can you tell me about pittsburgh?",
+   "abstained": true
+  },
+  {
+   "label": "s3b24",
+   "entity": "quarter_back",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is quarter_back?",
+   "gated": [
+    [
+     "quarter_back",
+     "sport",
+     "us_football"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "quarter_back",
+      "sport",
+      "us_football"
+     ],
+     "surface": "Quarterbacks play for their team in American football."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "quarter_back",
+      "sport",
+      "us_football"
+     ],
+     "surface": "Quarter back plays for us_football team."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about quarter yet: what can you tell me about quarter?",
+   "abstained": true
+  },
+  {
+   "label": "s3b25",
+   "entity": "rustic_architecture",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is rustic_architecture?",
+   "gated": [
+    [
+     "rustic_architecture",
+     "instance_of",
+     "architectural_styles"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "rustic_architecture",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "Rustic architecture features unique styles."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rustic_architecture",
+      "instance_of",
+      "architectural_styles"
+     ],
+     "surface": "Rustic architecture is an instance of architectural styles."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rustic yet: what can you tell me about rustic?",
+   "abstained": true
+  },
+  {
+   "label": "s3b26",
+   "entity": "shane_name",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is shane_name?",
+   "gated": [
+    [
+     "shane_name",
+     "language_of_work_or_name",
+     "number_of_english_words"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "shane_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "Shane's work was in English."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "shane_name",
+      "language_of_work_or_name",
+      "number_of_english_words"
+     ],
+     "surface": "Shane's name is in English. He has 1000 English words."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about shane yet: what can you tell me about shane?",
+   "abstained": true
+  },
+  {
+   "label": "s3b27",
+   "entity": "supervising_direction",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is supervising_direction?",
+   "gated": [
+    [
+     "supervising_direction",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "supervising_direction",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "The supervising_direction is an instance_of an expert_occupation in the field of technology."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "supervising_direction",
+      "instance_of",
+      "expert_occupation"
+     ],
+     "surface": "Supervising_direction is an instance of an expert_occupation."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about supervising yet: what can you tell me about supervising?",
+   "abstained": true
+  },
+  {
+   "label": "s3b28",
+   "entity": "think_thank",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is think_thank?",
+   "gated": [
+    [
+     "think_thank",
+     "subclass_of",
+     "matrix_organisation"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "think_thank",
+      "subclass_of",
+      "matrix_organisation"
+     ],
+     "surface": "Think of yourself as a member of a matrix organisation."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "think_thank",
+      "subclass_of",
+      "matrix_organisation"
+     ],
+     "surface": "Think of yourself as a sub-class of a matrix_organisation system for managing information."
+    }
+   ],
+   "answer": "That's absolutely thrilling for What -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about thank yet: what can you tell me about thank?",
+   "abstained": true
+  },
+  {
+   "label": "s3b29",
+   "entity": "unit_of_volume",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is unit_of_volume?",
+   "gated": [
+    [
+     "unit_of_volume",
+     "subclass_of",
+     "units_of_measurements"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "unit_of_volume",
+      "subclass_of",
+      "units_of_measurements"
+     ],
+     "surface": "The unit of volume is subclassed under the units of measurements."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "unit_of_volume",
+      "subclass_of",
+      "units_of_measurements"
+     ],
+     "surface": "A unit of volume is a subclass of units of measurements."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about unit yet: what can you tell me about unit?",
+   "abstained": true
+  },
+  {
+   "label": "s3b30",
+   "entity": "web_gallery_of_art",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b5.json",
+   "question": "What is web_gallery_of_art?",
+   "gated": [
+    [
+     "web_gallery_of_art",
+     "instance_of",
+     "internet_websites"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "web_gallery_of_art",
+      "instance_of",
+      "internet_websites"
+     ],
+     "surface": "The web gallery of art is an instance of internet websites."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "web_gallery_of_art",
+      "instance_of",
+      "internet_websites"
+     ],
+     "surface": "A web gallery of art is an instance of internet websites."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about web yet: what can you tell me about web?",
+   "abstained": true
+  },
+  {
+   "label": "s3b31",
+   "entity": "z_rich_sc_lions",
+   "frame": "B",
+   "n_gathered": 1,
+   "subset": "one_fact",
+   "raw_file": "s3_b6.json",
+   "question": "What is z_rich_sc_lions?",
+   "gated": [
+    [
+     "z_rich_sc_lions",
+     "sport",
+     "women_s_ice_hockey"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "z_rich_sc_lions",
+      "sport",
+      "women_s_ice_hockey"
+     ],
+     "surface": "The rich and spirited lions participate in women's ice hockey."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "z_rich_sc_lions",
+      "sport",
+      "women_s_ice_hockey"
+     ],
+     "surface": "Z Rich Sc Lions play hockey for women's ice hockey teams."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rich yet: what can you tell me about rich?",
+   "abstained": true
+  }
+ ]
+}
