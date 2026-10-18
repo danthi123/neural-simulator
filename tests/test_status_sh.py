@@ -263,3 +263,20 @@ def test_status_survives_a_watcher_that_fails_crashes_or_hangs(tmp_path):
     assert "stall_watch: UNAVAILABLE (rc=124)" in res.stdout
     res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(tmp_path / "no_such_watcher")})
     assert res.returncode == 0 and "stall_watch: UNAVAILABLE" in res.stdout
+
+
+def test_a_python_crash_of_the_watcher_is_unavailable_not_a_stall_report(tmp_path):
+    """Review 2026-10-18: a traceback exits 1, which used to be the STALL code, so it was printed under "Stalls" as a report.
+    A STALL is exit 3."""
+    crash = tmp_path / "crashing_watcher"
+    _make_stub(crash, "echo 'Traceback (most recent call last):'; echo 'ModuleNotFoundError: nonexistent'; exit 1")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(crash)})
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert res.returncode == 0 and "stall_watch: UNAVAILABLE (rc=1) Traceback" in section
+    assert "ModuleNotFoundError" not in section
+    stalled = tmp_path / "stalled_watcher"
+    _make_stub(stalled, "echo 'STALL pool41-x node=pool41 runner=r elapsed=20h00m expected=6h00m (default 6h) pin=none "
+                        "pin_age_commits=n/a out=none'; exit 3")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(stalled)})
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert res.returncode == 0 and "STALL pool41-x node=pool41" in section and "UNAVAILABLE" not in section

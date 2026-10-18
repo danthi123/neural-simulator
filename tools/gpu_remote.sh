@@ -5,6 +5,7 @@
 #   bash tools/gpu_remote.sh add --rev <sha> '<cmd>' # queue <cmd> at an older committed revision on a branch (a gate pin)
 #   bash tools/gpu_remote.sh status                  # the workstation's queue: dispatcher, current job, depth
 #   bash tools/gpu_remote.sh log [N]                 # last N (default 30) lines of the workstation's gpu_queue.log
+#   bash tools/gpu_remote.sh events [N]              # last N (default 200) START/DONE lines of that log + a `now: <epoch> <wall clock>` line
 #   bash tools/gpu_remote.sh yield [--max-hours N]   # ask the local model to yield the 3090 to the queue (llm.sh yield)
 #   bash tools/gpu_remote.sh provision <sha>         # run <sha>'s own pool_provision.sh --isolated on the workstation
 #   bash tools/gpu_remote.sh --dry-run <subcommand> ...   # print the script that would run on the workstation, run nothing
@@ -35,7 +36,7 @@ WREPO=${SIM_GPU_HOST_REPO:-'$HOME/Projects/sim'}
 DRY=0
 [ "${1:-}" = "--dry-run" ] && { DRY=1; shift; }
 
-usage() { sed -n '4,10p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+usage() { sed -n '4,11p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
 
 # mkwt <sha> <remote worktree path>: the remote lines that make a clean, sparse (no research/findings/raw) worktree.
 mkwt() {
@@ -134,6 +135,16 @@ case "${1:-}" in
   log)
     n="${2:-30}"; [[ "$n" =~ ^[0-9]+$ ]] || usage
     printf '%s\n' "tail -n $n \"$WREPO/research/queue/gpu_queue.log\"" | run_remote ;;
+  events)
+    # READ-ONLY. The START / DONE lines only, found by grep ON the workstation: a job that writes hundreds of thousands of
+    # output lines after its START pushes the START out of any `tail -n` window (tools/stall_watch.py needs it). The
+    # trailing `now:` line is the workstation's epoch AND wall clock, so the reader can tell the zone the log's stamps are in.
+    n="${2:-200}"; [[ "$n" =~ ^[0-9]+$ ]] || usage
+    run_remote <<EOF
+grep -aE '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9:]{8} (START|DONE\(rc=-?[0-9]+\)): ' "$WREPO/research/queue/gpu_queue.log" | tail -n $n
+echo "now: \$(date +%s) \$(date '+%F %T')"
+EOF
+    ;;
   yield)
     shift; args=""
     if [ "${1:-}" = "--max-hours" ]; then
