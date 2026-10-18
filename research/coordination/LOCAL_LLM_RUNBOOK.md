@@ -1411,6 +1411,12 @@ RESULT [T2]: integration wave 2 @ 2196ef6af (already merged per RULING iw2-merge
 14:45: ONE task = queue the held 49-line b2d1018 full seed-7 backlog (lanes-empty-1018 I1 branch-(a) PASS + priorities-1018: the C3 formal byte-gate lines all ran by 12:36, so the backlog is unheld).
 15:49: ONE task = commit the first-landed b2d1018 shard results (event: 99 load_bearing files).
 16:50: ONE task = commit the second b2d1018 wave (event: 85 load_bearing files).
+17:51: ONE task = commit the final b2d1018 wave + close the batch (event: 33 load_bearing files).
+BATCH COMPLETE: 49/49 lb.json on disk, zero stubs, depth 0, 49 claims since 14:45 - the 16:50 accounting gap (48 claims) closed exactly, no missing shard, nothing to requeue.
+PEAK-RSS forensics (the smoke-rss-portable watch): only ~3 of 49 wrapped jobs printed PEAK_RSS_KB to autodispatch.out (wspool 1, pool41 2, pool40 0), but the prints sit 2 lines after their own b2d1018 lb.json writes, so they bind to this batch: 5910744 / 5875500 / 5971268 KB = 5.64/5.60/5.70 GiB real shard peak.
+LESSON (next b2d-style batch): the mechanism-only smoke peak (34.6 MiB) undershoots the real lesion-shard peak by ~160x; size mem_gb from the REAL peak (battery-b2d-smoke formula ceil(1.3 x peak) -> ~8G for these shards), not the smoke number. Also: 49/49 survived at mem_gb=4 despite a 5.7G peak, so mem_gb acted as the mem_ok placement gate (needs 12G free) and was not an enforced kill cap here - do not rely on that; size it right.
+Committed the final 9 shards data-only.
+NEXT: the load-bearing read of the 49 seed-7 fractions (judgment -> one MiMo Pro delegate per RULING models, or the runbook's owning T-task), then the vocab sorted() fix + 8 method-2 dev lines (C3 thread). Delegate 1/2 this run.
 State: 40/49 lb.json landed (up from 21), zero sub-100-byte stubs; queue depth 0 (nothing left to pop); 48 dispatch claims since 14:45 (pool40 9, pool41 13, pool42 9, wspool 17) => ~8 claimed-with-no-output yet = running now. Accounting note: 40 + 8 = 48 vs 49 added - one line is unaccounted (never-claimed row or a claim lost from pool.running); close it at the next wave: if the final count lands at 48/49, locate the missing shard (which --only name has no lb.json) and check its node log before any requeue (never relaunch a job Claude moved; a missing own-job output is a legit retry).
 Committed wave 2 data-only.
 NEXT: final ~9 shards, then the vocab sorted() fix + the 8 method-2 dev lines (C3 thread). Delegate 1/2 this run.
