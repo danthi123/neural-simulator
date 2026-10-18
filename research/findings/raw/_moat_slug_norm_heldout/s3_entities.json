@@ -1,0 +1,665 @@
+{
+ "frame_a_size": 15301,
+ "N_A": 510,
+ "picks_a": [
+  "academica_de_coimbra",
+  "angola_national_football_team",
+  "bac_u_county",
+  "bobolice_commune",
+  "canton_of_craonne",
+  "city_of_district_significance_ukraine",
+  "country_mansion",
+  "directeurs_sportifs",
+  "emarcy_records",
+  "fc_magna_wiener_neustadt",
+  "french_communist_party",
+  "gorky_film_studio",
+  "hertha_berlin_ii",
+  "indoor_bandy",
+  "k_v_c_westerlo",
+  "lauri_first_name",
+  "madurai_india",
+  "milford_new_brunswick",
+  "national_coat_of_arms",
+  "o_t_bonner_middle_school",
+  "parke_county_in",
+  "premiers_of_victoria",
+  "renderware",
+  "samut_songkhram_btu_f_c",
+  "sire_records_group",
+  "sten_first_name",
+  "the_baa_baas",
+  "turkey_national_under_17_football_team",
+  "veterinary_physician",
+  "worcester_rfc"
+ ],
+ "excluded_a": [],
+ "frame_b_size": 645,
+ "N_B": 21,
+ "picks_b": [
+  "adrijan",
+  "anita_given_name",
+  "badminton_at_the_2006_asian_games_women",
+  "business_chains",
+  "classical_style",
+  "corrado_given_name",
+  "defensive_secondary",
+  "earle_given_name",
+  "equestrian_statue",
+  "field_goal_kicker",
+  "gaclbusiness",
+  "gonzalo_given_name",
+  "heikki",
+  "independent_spirit_award_for_best_first",
+  "jock_first_name",
+  "lady_in_waiting",
+  "london_midland_region",
+  "marvel_superhero",
+  "mikkel",
+  "naval_artillery_support",
+  "ocean_liners",
+  "paavo",
+  "pittsburgh_lrt",
+  "quarter_back",
+  "rustic_architecture",
+  "shane_name",
+  "supervising_direction",
+  "think_thank",
+  "unit_of_volume",
+  "web_gallery_of_art",
+  "z_rich_sc_lions"
+ ],
+ "excluded_b": [],
+ "turns": [
+  [
+   "s3a01",
+   "academica_de_coimbra",
+   "A"
+  ],
+  [
+   "s3a02",
+   "angola_national_football_team",
+   "A"
+  ],
+  [
+   "s3a03",
+   "bac_u_county",
+   "A"
+  ],
+  [
+   "s3a04",
+   "bobolice_commune",
+   "A"
+  ],
+  [
+   "s3a05",
+   "canton_of_craonne",
+   "A"
+  ],
+  [
+   "s3a06",
+   "city_of_district_significance_ukraine",
+   "A"
+  ],
+  [
+   "s3a07",
+   "country_mansion",
+   "A"
+  ],
+  [
+   "s3a08",
+   "directeurs_sportifs",
+   "A"
+  ],
+  [
+   "s3a09",
+   "emarcy_records",
+   "A"
+  ],
+  [
+   "s3a10",
+   "fc_magna_wiener_neustadt",
+   "A"
+  ],
+  [
+   "s3a11",
+   "french_communist_party",
+   "A"
+  ],
+  [
+   "s3a12",
+   "gorky_film_studio",
+   "A"
+  ],
+  [
+   "s3a13",
+   "hertha_berlin_ii",
+   "A"
+  ],
+  [
+   "s3a14",
+   "indoor_bandy",
+   "A"
+  ],
+  [
+   "s3a15",
+   "k_v_c_westerlo",
+   "A"
+  ],
+  [
+   "s3a16",
+   "lauri_first_name",
+   "A"
+  ],
+  [
+   "s3a17",
+   "madurai_india",
+   "A"
+  ],
+  [
+   "s3a18",
+   "milford_new_brunswick",
+   "A"
+  ],
+  [
+   "s3a19",
+   "national_coat_of_arms",
+   "A"
+  ],
+  [
+   "s3a20",
+   "o_t_bonner_middle_school",
+   "A"
+  ],
+  [
+   "s3a21",
+   "parke_county_in",
+   "A"
+  ],
+  [
+   "s3a22",
+   "premiers_of_victoria",
+   "A"
+  ],
+  [
+   "s3a23",
+   "renderware",
+   "A"
+  ],
+  [
+   "s3a24",
+   "samut_songkhram_btu_f_c",
+   "A"
+  ],
+  [
+   "s3a25",
+   "sire_records_group",
+   "A"
+  ],
+  [
+   "s3a26",
+   "sten_first_name",
+   "A"
+  ],
+  [
+   "s3a27",
+   "the_baa_baas",
+   "A"
+  ],
+  [
+   "s3a28",
+   "turkey_national_under_17_football_team",
+   "A"
+  ],
+  [
+   "s3a29",
+   "veterinary_physician",
+   "A"
+  ],
+  [
+   "s3a30",
+   "worcester_rfc",
+   "A"
+  ],
+  [
+   "s3b01",
+   "adrijan",
+   "B"
+  ],
+  [
+   "s3b02",
+   "anita_given_name",
+   "B"
+  ],
+  [
+   "s3b03",
+   "badminton_at_the_2006_asian_games_women",
+   "B"
+  ],
+  [
+   "s3b04",
+   "business_chains",
+   "B"
+  ],
+  [
+   "s3b05",
+   "classical_style",
+   "B"
+  ],
+  [
+   "s3b06",
+   "corrado_given_name",
+   "B"
+  ],
+  [
+   "s3b07",
+   "defensive_secondary",
+   "B"
+  ],
+  [
+   "s3b08",
+   "earle_given_name",
+   "B"
+  ],
+  [
+   "s3b09",
+   "equestrian_statue",
+   "B"
+  ],
+  [
+   "s3b10",
+   "field_goal_kicker",
+   "B"
+  ],
+  [
+   "s3b11",
+   "gaclbusiness",
+   "B"
+  ],
+  [
+   "s3b12",
+   "gonzalo_given_name",
+   "B"
+  ],
+  [
+   "s3b13",
+   "heikki",
+   "B"
+  ],
+  [
+   "s3b14",
+   "independent_spirit_award_for_best_first",
+   "B"
+  ],
+  [
+   "s3b15",
+   "jock_first_name",
+   "B"
+  ],
+  [
+   "s3b16",
+   "lady_in_waiting",
+   "B"
+  ],
+  [
+   "s3b17",
+   "london_midland_region",
+   "B"
+  ],
+  [
+   "s3b18",
+   "marvel_superhero",
+   "B"
+  ],
+  [
+   "s3b19",
+   "mikkel",
+   "B"
+  ],
+  [
+   "s3b20",
+   "naval_artillery_support",
+   "B"
+  ],
+  [
+   "s3b21",
+   "ocean_liners",
+   "B"
+  ],
+  [
+   "s3b22",
+   "paavo",
+   "B"
+  ],
+  [
+   "s3b23",
+   "pittsburgh_lrt",
+   "B"
+  ],
+  [
+   "s3b24",
+   "quarter_back",
+   "B"
+  ],
+  [
+   "s3b25",
+   "rustic_architecture",
+   "B"
+  ],
+  [
+   "s3b26",
+   "shane_name",
+   "B"
+  ],
+  [
+   "s3b27",
+   "supervising_direction",
+   "B"
+  ],
+  [
+   "s3b28",
+   "think_thank",
+   "B"
+  ],
+  [
+   "s3b29",
+   "unit_of_volume",
+   "B"
+  ],
+  [
+   "s3b30",
+   "web_gallery_of_art",
+   "B"
+  ],
+  [
+   "s3b31",
+   "z_rich_sc_lions",
+   "B"
+  ]
+ ],
+ "facts_per_entity": {
+  "academica_de_coimbra": 3,
+  "angola_national_football_team": 3,
+  "bac_u_county": 2,
+  "bobolice_commune": 2,
+  "canton_of_craonne": 3,
+  "city_of_district_significance_ukraine": 1,
+  "country_mansion": 2,
+  "directeurs_sportifs": 2,
+  "emarcy_records": 2,
+  "fc_magna_wiener_neustadt": 2,
+  "french_communist_party": 2,
+  "gorky_film_studio": 2,
+  "hertha_berlin_ii": 3,
+  "indoor_bandy": 2,
+  "k_v_c_westerlo": 2,
+  "lauri_first_name": 1,
+  "madurai_india": 3,
+  "milford_new_brunswick": 3,
+  "national_coat_of_arms": 1,
+  "o_t_bonner_middle_school": 2,
+  "parke_county_in": 3,
+  "premiers_of_victoria": 2,
+  "renderware": 1,
+  "samut_songkhram_btu_f_c": 2,
+  "sire_records_group": 2,
+  "sten_first_name": 1,
+  "the_baa_baas": 1,
+  "turkey_national_under_17_football_team": 2,
+  "veterinary_physician": 1,
+  "worcester_rfc": 1,
+  "adrijan": 1,
+  "anita_given_name": 1,
+  "badminton_at_the_2006_asian_games_women": 1,
+  "business_chains": 1,
+  "classical_style": 1,
+  "corrado_given_name": 1,
+  "defensive_secondary": 1,
+  "earle_given_name": 1,
+  "equestrian_statue": 1,
+  "field_goal_kicker": 1,
+  "gaclbusiness": 1,
+  "gonzalo_given_name": 1,
+  "heikki": 1,
+  "independent_spirit_award_for_best_first": 1,
+  "jock_first_name": 1,
+  "lady_in_waiting": 1,
+  "london_midland_region": 1,
+  "marvel_superhero": 1,
+  "mikkel": 1,
+  "naval_artillery_support": 1,
+  "ocean_liners": 1,
+  "paavo": 1,
+  "pittsburgh_lrt": 1,
+  "quarter_back": 1,
+  "rustic_architecture": 1,
+  "shane_name": 1,
+  "supervising_direction": 1,
+  "think_thank": 1,
+  "unit_of_volume": 1,
+  "web_gallery_of_art": 1,
+  "z_rich_sc_lions": 1
+ },
+ "patients": {
+  "academica_de_coimbra": [
+   "association_football_club",
+   "portugal_portal",
+   "municipality_of_coimbra"
+  ],
+  "angola_national_football_team": [
+   "association_football_club",
+   "repubilika_ya_ngola",
+   "2006_fifa_world_cup_final_positions"
+  ],
+  "bac_u_county": [
+   "west_africa_summer_time",
+   "danubian_carpathian_area"
+  ],
+  "bobolice_commune": [
+   "pole_land",
+   "szczecinek_commune"
+  ],
+  "canton_of_craonne": [
+   "franzoesische_republik",
+   "cantons_in_france",
+   "aisne_d_partement"
+  ],
+  "city_of_district_significance_ukraine": [
+   "ukraine"
+  ],
+  "country_mansion": [
+   "domestic_architecture",
+   "architectural_styles"
+  ],
+  "directeurs_sportifs": [
+   "road_cycling_race",
+   "expert_occupation"
+  ],
+  "emarcy_records": [
+   "jazz_lists",
+   "record_companies"
+  ],
+  "fc_magna_wiener_neustadt": [
+   "association_football_club",
+   "etymology_of_austria"
+  ],
+  "french_communist_party": [
+   "franzoesische_republik",
+   "party_member"
+  ],
+  "gorky_film_studio": [
+   "moscow_ussr",
+   "film_studios"
+  ],
+  "hertha_berlin_ii": [
+   "association_football_club",
+   "federal_republic_of_germany",
+   "hertha_bsc"
+  ],
+  "indoor_bandy": [
+   "climate_of_sweden",
+   "ball_games"
+  ],
+  "k_v_c_westerlo": [
+   "association_football_club",
+   "koninkrijk_belgi"
+  ],
+  "lauri_first_name": [
+   "finnish_syntax"
+  ],
+  "madurai_india": [
+   "bharat_ganrajya",
+   "kunlun_time_zone",
+   "city_work"
+  ],
+  "milford_new_brunswick": [
+   "canada_portal",
+   "city_work",
+   "newport_rhode_island"
+  ],
+  "national_coat_of_arms": [
+   "coat_of_arms"
+  ],
+  "o_t_bonner_middle_school": [
+   "u_s_of_a",
+   "religion_in_virginia"
+  ],
+  "parke_county_in": [
+   "u_s_of_a",
+   "art_of_indiana",
+   "vigo_county"
+  ],
+  "premiers_of_victoria": [
+   "commonwealth_australia",
+   "chief_administrator"
+  ],
+  "renderware": [
+   "proprietary_firmware"
+  ],
+  "samut_songkhram_btu_f_c": [
+   "association_football_club",
+   "etymology_of_thailand"
+  ],
+  "sire_records_group": [
+   "u_s_of_a",
+   "record_companies"
+  ],
+  "sten_first_name": [
+   "swedish_lang"
+  ],
+  "the_baa_baas": [
+   "rugby_union_tour"
+  ],
+  "turkey_national_under_17_football_team": [
+   "association_football_club",
+   "the_republic_of_turkey"
+  ],
+  "veterinary_physician": [
+   "expert_occupation"
+  ],
+  "worcester_rfc": [
+   "rugby_union_tour"
+  ],
+  "adrijan": [
+   "number_of_english_words"
+  ],
+  "anita_given_name": [
+   "modern_spanish"
+  ],
+  "badminton_at_the_2006_asian_games_women": [
+   "badminton_racquet"
+  ],
+  "business_chains": [
+   "for_profit"
+  ],
+  "classical_style": [
+   "architectural_styles"
+  ],
+  "corrado_given_name": [
+   "medieval_italian"
+  ],
+  "defensive_secondary": [
+   "us_football"
+  ],
+  "earle_given_name": [
+   "number_of_english_words"
+  ],
+  "equestrian_statue": [
+   "stone_statue"
+  ],
+  "field_goal_kicker": [
+   "us_football"
+  ],
+  "gaclbusiness": [
+   "number_of_english_words"
+  ],
+  "gonzalo_given_name": [
+   "modern_spanish"
+  ],
+  "heikki": [
+   "finnish_syntax"
+  ],
+  "independent_spirit_award_for_best_first": [
+   "movie_award"
+  ],
+  "jock_first_name": [
+   "number_of_english_words"
+  ],
+  "lady_in_waiting": [
+   "expert_occupation"
+  ],
+  "london_midland_region": [
+   "matrix_organisation"
+  ],
+  "marvel_superhero": [
+   "fictional_worlds"
+  ],
+  "mikkel": [
+   "danish_language"
+  ],
+  "naval_artillery_support": [
+   "commercial_product"
+  ],
+  "ocean_liners": [
+   "passenger_ship"
+  ],
+  "paavo": [
+   "finnish_syntax"
+  ],
+  "pittsburgh_lrt": [
+   "transportation_authority"
+  ],
+  "quarter_back": [
+   "us_football"
+  ],
+  "rustic_architecture": [
+   "architectural_styles"
+  ],
+  "shane_name": [
+   "number_of_english_words"
+  ],
+  "supervising_direction": [
+   "expert_occupation"
+  ],
+  "think_thank": [
+   "matrix_organisation"
+  ],
+  "unit_of_volume": [
+   "units_of_measurements"
+  ],
+  "web_gallery_of_art": [
+   "internet_websites"
+  ],
+  "z_rich_sc_lions": [
+   "women_s_ice_hockey"
+  ]
+ },
+ "backend": "numpy",
+ "device": "cpu",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/select_s3.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/select_s3.py",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_entities.json"
+ ],
+ "_doc": "output of select_s3.py (rule in its docstring); no verifier was run and no S3 sentence existed when this was written"
+}
