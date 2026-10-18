@@ -146,3 +146,48 @@ perfect 1.000 and perfect_noisy 1.000 (latched N(84, 7), the dev distribution; a
 0.000 (the 10-02 failure shape), null_unengaged 0.001, random 0.000; info_weak_latch 0.271 (a latch near 45 spikes
 crosses the x2 level, 36, often enough to fail one of 24 events). The A1 organ and C5 idle-replay records were
 re-run after their scorer files moved: identical pass rates, refreshed (commit a48cc8ba6).
+
+
+## bg-commit-next step 1 (read-only): what carries over from hsb_empty1 to hsb_empty2
+
+Sources (no runs, nothing written outside this file): the gate traces
+(`research/findings/raw/_bg_live_seam/gate/s{42,43,44,100,101,102}`: prod_a, prod_intervene,
+prod_substitute, seam_b, seam_lesion_value) and the dev sweep
+(`research/findings/raw/_bg_commit/dev_organ/`, 50 rows, probe bg_commit_organ_derisk).
+
+**The turns between them: exactly one.** The 40-turn intact script runs
+`hsb_empty1 ("...", empty) -> hsb_q (content) -> hsb_empty2 ("?", empty) -> hsb_hi (one_word) ->
+36 mostly-empty turns`, so empty2 is read in the direct aftermath of the question turn and empty1
+is read at turn 0 (seed-initial state, no probe predecessor).
+
+**The host seam input is identical at both empties.** Every gate seed, prod_intervene:
+`hsb_empty1 flip=[1.0, 0.0] consulted=True win=0` and `hsb_empty2 flip=[1.0, 0.0] consulted=True
+win=0`; at hsb_q the intervention is off-path (`flip=[0.0, 1.0], consulted=False`). Nothing in the
+seam intervention differs between the two empties.
+
+**The G/S latch state is identical at both empties too.** seam_b bg_neural latch_rates at
+empty1 = [0.0, 0.0993] on all six seeds (winner 1, S-side); at empty2 = [0.0, 0.0953-0.1293]
+(winner 1); at the intervening hsb_q the latch is on G ([0.039, 0.0], winner 0) and re-settles S by
+empty2. The latch flips across the question and re-settles cleanly -- same state at both empties.
+
+**What carries over is the value-input residue of the preceding turn, not the latch.** An empty
+turn holds iff the G slot is clear at read (slot = [0, ~80-96]); every one of the 57 failed empty
+turns across the 50 sweep rows shows both slots co-active (slot[0] ~69-92) or G drive surviving with
+slots zero: hsb_empty2 fails at op0_s3 with slot=[85, 89] gateD=[76, 140] and at op0_s6 with
+slot=[84, 74] gateD=[108, 190], while hsb_q had put gateD[0] = 322-416 on the G side one turn
+earlier; hsb_empty1 fails the same shape when the seed-initial state is already co-contaminated
+(op0_s2 slot=[72, 89], op0_s5 slot=[82, 93]). Passing empties in the same rows read gateD[0] = 0.
+
+**W_RESET**: W_RESET = 16.0 on every sweep row (it was not a swept dimension) and slot_carry =
+[0, 0] at every turn, yet the next turn still finds the prior turn's slot counts -- so the reset
+window (READ_STEPS 30, READ_FRAC 0.03, W_RESET 16) clears the carry bookkeeping without fully
+clearing the G slot's counts/drive before the next empty read, seed-dependently.
+
+**Named carry-over:** *the intervening turn's G-side drive and slot counts survive the inter-turn
+reset window and co-activate with the re-settling S latch at the next empty read.* The per-seed
+empty1/empty2 asymmetry in the gate (held 42 T/F, 43 T/F, 44 T/T, 100 T/F, 101 F/T, 102 T/T) is
+therefore carried-over value-input state, not seam input and not latch state -- consistent with G3's
+value-lesion result (7/24 lesioned events still held, hsb_empty1 on 42/43/100/102: the turn with no
+probe predecessor is the one whose reply the value lesion fails to move). Step 2/3 (tonic pallidal
+drive jointly with ldc-synzero as one investigation; flag-gated proposal, bars unchanged, dev seeds
+9-16 first) still per bg-commit-next-1014.
