@@ -1410,6 +1410,10 @@ RESULT [T2]: integration wave 2 @ 2196ef6af (already merged per RULING iw2-merge
 12:42: ONE task = the formal 3-way byte-gate read (Verdict D step 3, RULING c3-methods-1018).
 14:45: ONE task = queue the held 49-line b2d1018 full seed-7 backlog (lanes-empty-1018 I1 branch-(a) PASS + priorities-1018: the C3 formal byte-gate lines all ran by 12:36, so the backlog is unheld).
 15:49: ONE task = commit the first-landed b2d1018 shard results (event: 99 load_bearing files).
+16:50: ONE task = commit the second b2d1018 wave (event: 85 load_bearing files).
+State: 40/49 lb.json landed (up from 21), zero sub-100-byte stubs; queue depth 0 (nothing left to pop); 48 dispatch claims since 14:45 (pool40 9, pool41 13, pool42 9, wspool 17) => ~8 claimed-with-no-output yet = running now. Accounting note: 40 + 8 = 48 vs 49 added - one line is unaccounted (never-claimed row or a claim lost from pool.running); close it at the next wave: if the final count lands at 48/49, locate the missing shard (which --only name has no lb.json) and check its node log before any requeue (never relaunch a job Claude moved; a missing own-job output is a legit retry).
+Committed wave 2 data-only.
+NEXT: final ~9 shards, then the vocab sorted() fix + the 8 method-2 dev lines (C3 thread). Delegate 1/2 this run.
 State: 21/49 lb.json on disk with paired .prov.json, zero sub-100-byte stubs, pool depth 18 (rest still queued/running); dir top-level clean (PIN.txt + s7/ only). Content spot-check of s7/one-brain-substrate/lb.json sane (runner=load_bearing_fraction, seed 7, repeats 2, backend numpy, per_faculty rows).
 RSS watch: pool40's ~/derisk-pool/sim/autodispatch.out has NO PEAK_RSS_KB lines yet (the wrapper prints to stderr; either pool40 ran none of the batch or the capture lands in the revision's own autodispatch.out) - read peaks from the node that ran the shards before any b2d1012-style follow-on sizing (do NOT size off the mechanism-only 34.6MiB smoke number).
 Committed the 21-shard first wave data-only; later waves commit as they land (data-only each time).
