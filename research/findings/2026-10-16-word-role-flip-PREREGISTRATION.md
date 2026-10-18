@@ -141,3 +141,13 @@ plus NEEDS. The flip merges to main only after PASS.
   slot -> word mapping, the a==v guard, self-alias resolution and ROLE_MIN folded into W_RG.
 - No host-decision-share or ownership claim (`docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md` is
   separate); no scale or latency claim; every reply-level read-out stays within the honesty boundary.
+
+## AMENDMENT G (2026-10-17, Claude; filed AFTER the gate data were read; report-only, no registered bar changes)
+
+**Why.** The verify-go panel on the gate data (four lenses, all CAVEAT, none refuted) found an answer-rate exposure the registered check cannot see. The registered answer-rate read covers one probe ("what do you usually use?", two byte-identical replicates) on which the flag-off arm abstains by design. At the gate's own default arm, iw1 turn 5 "what does the cat eat" reads `wr_route` declined and abstains on seeds 42, 43, 44 and 101 (it engages and answers "The cat eats fish." on 100 and 102), while the dev-seed-7 `off:word-role` arm answered it. No flag-off arm exists on the gate seeds for the battery turns, so FLIP-HURTS-ANSWERS there is UNMEASURED, and RULING `flip-hurts-answers` says "UNMEASURED means not checked: queue the flag-off cells first".
+
+**Arms.** `off:word-role` (only the two word-role flags `=0`, every other flag at its default) for both iw1 and iw2 at F (572bec7219e479aaffa8a5dcb5f45774b0f1ee1d), gate seeds 42, 43, 44, 100, 101, 102: 12 lines, job file `research/queue/wrc_amendG_572bec72.tsv`, outputs `research/findings/raw/_iw{1,2}/flip-gate/572bec72/s<seed>__off_wordrole.json`. Same commands as the F4 intact lines apart from the arm (iw2 keeps PYTHONHASHSEED=0).
+
+**Read.** For every script turn of iw1 and iw2 on every gate seed, compare `abstained` (and an empty answer) in the existing intact-at-default F4 file against the new `off:word-role` file. A HURTS turn: the default abstains where off answers. A HELPS turn: the reverse. Both are listed per seed with the default arm's `wr_route`.
+
+**Decision, fixed before these arms run (Claude).** Zero HURTS turns on all six seeds: no FLIP-HURTS-ANSWERS on the battery, the PASS stands and the flip merges to main. Any HURTS turn on any seed: the flip is HELD (a decision not to flip, recorded as a deviation from the PASS, as in RULING `iw1-wmf-hold`; no registered verdict changes), both defaults stay OFF on main, and the next method (no-defer) targets the case behind each HURTS turn. HELPS turns are reported and never offset a HURTS turn. A missing or failed off arm is re-run once; a seed still unmeasured keeps the flip held.

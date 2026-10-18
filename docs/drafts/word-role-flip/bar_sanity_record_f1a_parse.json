@@ -68,14 +68,14 @@
    0.0056
   ]
  },
- "repo_head": "b8106e51153d9dcc87053184c9e496e15e4a9b02",
+ "repo_head": "9fb3fe8f4a8e837bb7ff8bac9dbb9aa4403d66b2",
  "scorer_files": {
   "docs/drafts/word-role-flip/bar_sanity_spec_f1a_parse.py": "1dfeb97d8bbb4e0b4089f85df5e8e1beb841d5e02880aecff330b6e0c8298c92",
   "tools/b2d_score.py": "700c1530d37631d7e23c16d2d16f42b28276b15672b1053d1945196574e0d5b2",
   "tools/iw2_score.py": "440e9e82b62f5f06398bf6468434aebb969fee2468c215e53008ac7b4dd658cf",
-  "tools/s2p_score.py": "49360330df2a6b7520a853b7c0dbe193ec5aefd72b15d0033fffb617ef9abc3d"
+  "tools/s2p_score.py": "d2000e6c24eb0247c977fcc0ac22164c61588a1743c7babd637944c6994fd1fe"
  },
- "scorer_sha256": "48f9ff4c42495b83d22e10e1cddd6a266cbd271b4c93fcd014b5531b85d784fe",
+ "scorer_sha256": "1ae6f4cfa4f8515ce361d9ee06609f6138ff1ceba1a50c2b89aad708d0c32790",
  "seed": 0,
  "spec": "docs/drafts/word-role-flip/bar_sanity_spec_f1a_parse.py",
  "spec_sha256": "1dfeb97d8bbb4e0b4089f85df5e8e1beb841d5e02880aecff330b6e0c8298c92",
@@ -86,5 +86,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 16.9
+ "wall_s": 17.2
 }
