@@ -117,6 +117,22 @@ def test_no_stall_prints_clean_and_exits_zero(env):
     assert (rc, lines) == (0, ["stall_watch: CLEAN"])
 
 
+
+def test_claims_on_a_retired_node_are_skipped(env, monkeypatch):
+    # 2026-10-18 first run on the server: 85 claims from the retired 09-24 nodes pool1/pool2 printed two permanent
+    # "unreachable" UNKNOWN lines every heartbeat. Only nodes in the live list can hold a stalled line.
+    monkeypatch.setenv("POOL_NODES", "pool41 pool42")
+    env.canary(RUNNER, 2 * H)
+    env.claim("pool1", 50, job(), live=False)         # retired, unreachable, long overdue: skipped
+    (env.stub / "pool1.down").write_text("")          # without the skip this prints "node pool1 unreachable"
+    env.claim("pool41", 3, job())
+    rc, lines = env.run()
+    assert (rc, lines) == (0, ["stall_watch: CLEAN"])
+    j = job()
+    env.claim("pool42", 5, j)                         # a live node still stalls
+    rc, lines = env.run()
+    assert rc == SW.STALL_RC and len(stall_lines(lines)) == 1 and " node=pool42 " in stall_lines(lines)[0]
+
 def test_stall_by_canary_wall(env):
     env.canary(RUNNER, 2 * H)
     j = job()
