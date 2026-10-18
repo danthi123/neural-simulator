@@ -1919,6 +1919,14 @@ class ChatBrain:
         -- the production default, so genuinely free-form MULTI-CLAUSE grounded prose survives the moat."""
         return os.environ.get("BRAIN_CLAIM_MOAT", "1") != "0"
 
+    @staticmethod
+    def _moat_slug_norm_enabled():
+        """`BRAIN_MOAT_SLUG_NORM` truthy -> build the claim verifier with slug normalisation ("B2h": prose spellings of
+        a gathered slug read as that slug, digits kept, the article/relation-name guard, a hedge never licenses an
+        ungrounded proposition). Default OFF (unset/0/false/off/no): the stock verifier, byte-identical. The same
+        truthy/falsy contract as `_moat_claim_entailment_derisk.slug_norm_enabled` (a test pins the two together)."""
+        return os.environ.get("BRAIN_MOAT_SLUG_NORM", "0").strip().lower() in ("1", "true", "on", "yes")
+
     def _build_claim_verifier(self, gated_facts):
         """Build (and lazily cache on the gated SET) the de-risked ClaimEntailmentVerifier, REUSED BY IMPORT --
         NOT reimplemented. It decomposes multi-clause prose into its asserted proposition set, role-parses EACH
@@ -1935,8 +1943,10 @@ class ChatBrain:
         cache = getattr(self, "_claim_verifier_cache", None)
         if cache is None:
             cache = self._claim_verifier_cache = {}
-        if key in cache:
-            return cache[key]
+        slug_norm = self._moat_slug_norm_enabled()
+        ckey = (key, "slug_norm") if slug_norm else key        # flag OFF: the cache key is exactly as before
+        if ckey in cache:
+            return cache[ckey]
         from research.runners._moat_claim_entailment_derisk import (
             ClaimEntailmentVerifier, VERB_SYNONYMS, _build_inflection_map)
         gated = [list(f) for f in key]
@@ -1944,10 +1954,13 @@ class ChatBrain:
         verbs = {f[1] for f in gated}
         inflect = _build_inflection_map(sorted(verbs))
         try:
-            ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect)
+            if slug_norm:
+                ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect, slug_norm=True)
+            else:
+                ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect)
         except AssertionError:
             ver = None                                   # role-permutation collision -> fall back (SAFE)
-        cache[key] = ver
+        cache[ckey] = ver
         return ver
 
     def _verify_claim_set(self, surface, gated_facts):

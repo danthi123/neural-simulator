@@ -164,6 +164,34 @@ def old_single_triple_moat_accepts(prose):
 
 
 # =================================================================================================
+# SLUG NORMALISATION ("B2h", default OFF, `BRAIN_MOAT_SLUG_NORM`). 2026-10-18 memo (moat-memo/MEMO.md): the production
+# rich path over the imported wikidata store hands this verifier real-LLM prose ("Angora turkey is an instance of city
+# work."), while the gathered facts are underscore slugs (`angora_turkey`, `instance_of`, `city_work`). The stock
+# tokenizer needs the literal slug, so every real-Qwen sentence is rejected `unknown_content` (610/610 on the memo corpus)
+# and rich replies abstain. B2h reads a prose spelling of a gathered slug (space/hyphen/underscore, case, possessive 's)
+# as that slug, keeps digits in the tokenizer, and adds the memo's two guards. It is a TIGHTENING in two places (a digit
+# claim, and a hedge word, no longer slip through) and a loosening only in how a slug may be SPELLED: the vocabulary is
+# still exactly the turn's gathered slugs, and every proposition is still adjudicated by set membership.
+# =================================================================================================
+SLUG_NORM_ENV = "BRAIN_MOAT_SLUG_NORM"
+
+
+def slug_norm_enabled():
+    """`BRAIN_MOAT_SLUG_NORM` truthy (1/true/on/yes) -> the production verifier is built with `slug_norm=True`.
+    Default OFF (unset/0/false/off/no): the verifier is exactly the stock one. Same truthy/falsy contract as this
+    repo's other default-OFF BRAIN_* flags (e.g. `BRAIN_TOUCHPOINT_A_FACT_CLAUSE`)."""
+    return os.environ.get(SLUG_NORM_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _slug_phrase_re(slug):
+    """Regex matching any space/hyphen/underscore spelling of a multi-word slug (+ an optional possessive 's), bounded so
+    it never matches inside a longer word or an already-substituted slug token."""
+    words = [w for w in slug.split("_") if w]
+    body = r"[\s\-_]+".join(re.escape(w) for w in words)
+    return re.compile(r"(?<![a-z0-9_])" + body + r"(?:'s)?(?![a-z0-9_])")
+
+
+# =================================================================================================
 # The CLAIM-LEVEL entailment verifier -- the generalization of ChatBrain._verify.
 # =================================================================================================
 class ClaimEntailmentVerifier:
@@ -178,7 +206,7 @@ class ClaimEntailmentVerifier:
       trace           : per-clause diagnostic list
     """
 
-    def __init__(self, parser, gated, nouns, verbs, synonyms, inflect):
+    def __init__(self, parser, gated, nouns, verbs, synonyms, inflect, slug_norm=False):
         self.parser = parser
         self.gated = [list(f) for f in gated]
         self.gated_set = {tuple(f) for f in gated}
@@ -194,6 +222,33 @@ class ClaimEntailmentVerifier:
                 if cand != (a, v, p) and cand in self.gated_set:
                     raise AssertionError(f"gated set has a role-permutation collision: {(a, v, p)} vs {cand}")
             perms.add((a, v, p))
+        # B2h slug normalisation (default OFF -> every code path below is the stock one). Vocabulary = every slug of the
+        # gathered set (a, v and p of every fact), longest phrase first so a longer slug is never split by a shorter one.
+        self.slug_norm = bool(slug_norm)
+        self._slug_pats = []
+        if self.slug_norm:
+            slugs = {t for f in self.gated for t in f if "_" in t}
+            self._slug_pats = [(s, _slug_phrase_re(s)) for s in sorted(slugs, key=lambda x: (-len(x), x))]
+
+    # ---- B2h helpers (used only when slug_norm) -------------------------------------------------------------
+    def _normalise_slugs(self, prose):
+        """Lowercase the prose and replace every space/hyphen/underscore spelling of a gathered multi-word slug by the
+        slug token itself. Single-word slugs are already one token and need no rewrite."""
+        t = prose.lower().replace("\u2019", "'")
+        for slug, rx in self._slug_pats:
+            t = rx.sub(" " + slug + " ", t)
+        return t
+
+    def _article_relation_guard(self, prose):
+        """The memo's article/relation-name guard: a single-word RELATION name (e.g. `country`) used right after an
+        article ("X is a country in Y") is a common noun in the prose, not the relation, and must not be read as the
+        gated fact (country, ...). -> the offending relation, or None."""
+        t = self._normalise_slugs(prose)
+        for rel in sorted(self.verbs):
+            if "_" not in rel and re.search(
+                    r"(?<![a-z0-9_])(?:a|an|the)\s+" + re.escape(rel) + r"(?:s|es)?(?![a-z0-9_])", t):
+                return rel
+        return None
 
     # ---- lexical classification --------------------------------------------------------------------------
     def _base_verb(self, tok):
@@ -239,7 +294,16 @@ class ClaimEntailmentVerifier:
         built-in vocabulary is single English words with no underscores) and only ADDS recognition for the
         underscored multi-word case this project's LTM shard actually uses."""
         # normalize: lowercase, turn sentence/segment punctuation into a boundary token, drop other punctuation
-        text = prose.lower().replace("'", "")
+        if self.slug_norm:
+            # B2h: (i) prose spellings of a gathered slug become the slug token, (ii) DIGITS are kept (a stock tokenizer
+            # drops them, so "in 1998" was invisible), (iii) a hedge word is dropped, so a hedged clause is adjudicated
+            # AS ASSERTED and an ungrounded in-vocabulary triple prefixed "Perhaps" is rejected, not passed unflagged.
+            text = self._normalise_slugs(prose)
+            keep = r"[^a-z0-9_]"
+        else:
+            text = prose.lower()
+            keep = r"[^a-z_]"
+        text = text.replace("'", "")
         text = re.sub(r"[.!?;:,]", " __b__ ", text)
         raw = text.split()
         clauses, cur = [], []
@@ -248,12 +312,14 @@ class ClaimEntailmentVerifier:
                 if cur:
                     clauses.append(cur); cur = []
                 continue
-            tok = re.sub(r"[^a-z_]", "", w)
+            tok = re.sub(keep, "", w)
             if not tok:
                 continue
             if tok in BOUNDARY_WORDS:
                 if cur:
                     clauses.append(cur); cur = []
+                continue
+            if self.slug_norm and tok in HEDGE_MARKERS:
                 continue
             cur.append(tok)
         if cur:
@@ -299,6 +365,10 @@ class ClaimEntailmentVerifier:
 
     # ---- the top-level gate ------------------------------------------------------------------------------
     def verify(self, prose):
+        if self.slug_norm:
+            rel = self._article_relation_guard(prose)
+            if rel is not None:
+                return self._reject("relation word %r used as a common noun after an article" % rel, [], [], [])
         clauses = self._clauses(prose)
         grounded, hypotheses, trace = [], [], []
         last_agent = None           # antecedent for a subjectless coordinated/relative clause
@@ -343,8 +413,9 @@ class ClaimEntailmentVerifier:
                     # active: a noun before the verb is the explicit subject; nouns after are objects. A
                     # subjectless clause (coordinated VP / relative clause) carries the antecedent subject
                     # (a stranded leading NP first, else the previous clause's substrate-assigned agent).
-                    explicit = (nouns[0] if len(nouns) >= 1 and self._noun_is_before(toks, nouns[0], verb)
-                                else None)
+                    explicit = (nouns[0] if len(nouns) >= 1 and (
+                        self._noun_is_before(toks, nouns[0], verb, r"[^a-z0-9_]") if self.slug_norm
+                        else self._noun_is_before(toks, nouns[0], verb)) else None)
                     if explicit is not None:
                         if pending_subject is not None:      # a leading NP that never got its predicate
                             entry["verdict"] = "reject:orphan_subject"
@@ -433,7 +504,7 @@ class ClaimEntailmentVerifier:
                 "hypotheses": hypotheses, "trace": trace}
 
     @staticmethod
-    def _noun_is_before(toks, noun, verb_base):
+    def _noun_is_before(toks, noun, verb_base, keep=r"[^a-z_]"):
         """True iff `noun` first appears before the (possibly inflected) verb in the surface clause.
 
         `toks` are already-tokenized by `_clauses` (underscore-preserving as of the 2026-09-04 fix above), so
@@ -442,7 +513,7 @@ class ClaimEntailmentVerifier:
         Keeping '_' matches `_clauses` and is byte-identical for every underscore-free token."""
         n_i = v_i = None
         for i, t in enumerate(toks):
-            tt = re.sub(r"[^a-z_]", "", t)
+            tt = re.sub(keep, "", t)
             if n_i is None and tt == noun:
                 n_i = i
             if v_i is None and (tt == verb_base or tt.startswith(verb_base[:3])):
