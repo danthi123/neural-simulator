@@ -7,11 +7,14 @@ import collections, hashlib, json, os, sys
 out_path, raw_paths = sys.argv[1], sys.argv[2:]
 raw_hashes = []
 d = {"responses": {}, "trace": [], "renderer": None, "ltm_bundle": None}
+src_of = {}
 for rp in raw_paths:
     rb = open(rp, "rb").read()
     raw_hashes.append({"file": os.path.basename(rp), "sha256": hashlib.sha256(rb).hexdigest(), "bytes": len(rb)})
     part = json.loads(rb)
     d["responses"].update(part["responses"]); d["trace"] += part["trace"]
+    for lab_ in part["responses"]:
+        src_of[lab_] = os.path.basename(rp)
     d["renderer"] = part.get("renderer"); d["ltm_bundle"] = part.get("ltm_bundle")
 ents = json.load(open("research/findings/raw/_moat_slug_norm_heldout/entities.json"))["entities"]
 paras = collections.defaultdict(list)
@@ -30,7 +33,7 @@ for i, ent in enumerate(ents, 1):
     for c in calls:
         if c["svo"] not in seen: seen.append(c["svo"])
     gated = paras[lab][0] if paras.get(lab) else None
-    turns.append({"label": lab, "entity": ent, "question": "What is %s?" % ent, "gated": gated if gated is not None else seen,
+    turns.append({"label": lab, "entity": ent, "raw_file": src_of.get(lab), "question": "What is %s?" % ent, "gated": gated if gated is not None else seen,
                   "gated_source": "render_paragraph.facts" if gated is not None else "mouth_trace svo (no render_paragraph)",
                   "gated_equals_calls_svo": (gated == seen) if gated is not None else True,
                   "n_paragraph_calls": len(paras.get(lab, [])), "calls": calls,

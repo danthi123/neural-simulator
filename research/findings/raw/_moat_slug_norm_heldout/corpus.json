@@ -1,0 +1,3650 @@
+{
+ "_doc": "held-out real-Qwen corpus; no verifier verdict and no label in this file",
+ "backend": "numpy",
+ "device": "cpu",
+ "renderer": "qwen-gpu",
+ "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/extract_corpus.py",
+ "argv": [
+  "research/findings/raw/_moat_slug_norm_heldout/extract_corpus.py",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "/home/dant123/Projects/sim-rev/moat-build/hb1.json",
+  "/home/dant123/Projects/sim-rev/moat-build/hb2.json",
+  "/home/dant123/Projects/sim-rev/moat-build/hb5.json"
+ ],
+ "raw_files": [
+  {
+   "file": "hb1.json",
+   "sha256": "feeaeb8f522559a913360ad16f1a3414bca5c875fa2ce3985f4c299babda9437",
+   "bytes": 191557
+  },
+  {
+   "file": "hb2.json",
+   "sha256": "72f0db7526a7954120b134fa2e4518bf81257fb8da6351ef25ec5802cf51b160",
+   "bytes": 189868
+  },
+  {
+   "file": "hb5.json",
+   "sha256": "706ab97723fc0495796cfb26df150b2d97eaab0834ad78503cf614d47a5eece5",
+   "bytes": 305477
+  }
+ ],
+ "n_turns": 29,
+ "turns": [
+  {
+   "label": "h01",
+   "entity": "1962_asian_games",
+   "raw_file": "hb1.json",
+   "question": "What is 1962_asian_games?",
+   "gated": [
+    [
+     "1962_asian_games",
+     "country",
+     "etymology_of_indonesia"
+    ],
+    [
+     "etymology_of_indonesia",
+     "shares_border_with",
+     "commonwealth_australia"
+    ],
+    [
+     "commonwealth_australia",
+     "shares_border_with",
+     "new_zealnd"
+    ],
+    [
+     "1962_asian_games",
+     "instance_of",
+     "asian_summer_games"
+    ],
+    [
+     "1962_asian_games",
+     "follows",
+     "third_asian_games"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "1962_asian_games",
+      "country",
+      "etymology_of_indonesia"
+     ],
+     "surface": "The country of Indonesia is Asian Games."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "1962_asian_games",
+      "country",
+      "etymology_of_indonesia"
+     ],
+     "surface": "The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "etymology_of_indonesia",
+      "shares_border_with",
+      "commonwealth_australia"
+     ],
+     "surface": "The etymology of Indonesia shares borders with Australia and New Zealand."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "etymology_of_indonesia",
+      "shares_border_with",
+      "commonwealth_australia"
+     ],
+     "surface": "The etymology of Indonesia shares its borders with Australia's continent."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "commonwealth_australia",
+      "shares_border_with",
+      "new_zealnd"
+     ],
+     "surface": "The shares of Commonwealth Australia border New Zealand."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "commonwealth_australia",
+      "shares_border_with",
+      "new_zealnd"
+     ],
+     "surface": "The Commonwealth of Australia shares borders with New Zealand."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "1962_asian_games",
+      "instance_of",
+      "asian_summer_games"
+     ],
+     "surface": "The triple (1962_asian_summer_games) refers to an instance of the 1962"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "1962_asian_games",
+      "instance_of",
+      "asian_summer_games"
+     ],
+     "surface": "The 1962 Asian Games were an instance of the Asian Summer Games."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "1962_asian_games",
+      "follows",
+      "third_asian_games"
+     ],
+     "surface": "The 3rd Asian Games followed closely on the heels of the 1962 Asian Games."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "1962_asian_games",
+      "follows",
+      "third_asian_games"
+     ],
+     "surface": "In 1962, Asian Games followed Third Asian Games."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about asian yet: what can you tell me about asian?",
+   "abstained": true
+  },
+  {
+   "label": "h02",
+   "entity": "almer_a_spain",
+   "raw_file": "hb1.json",
+   "question": "What is almer_a_spain?",
+   "gated": [
+    [
+     "almer_a_spain",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "almer_a_spain",
+     "country",
+     "kingdom_of_the_spains"
+    ],
+    [
+     "almer_a_spain",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "almer_a_spain",
+     "twinned_administrative_body",
+     "buenos_aires_city"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "almer_a_spain",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The Almera is located in Rome time zone."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "almer_a_spain",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Almer A Spain is located in the Time Zone of Rome Time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "almer_a_spain",
+      "country",
+      "kingdom_of_the_spains"
+     ],
+     "surface": "Almer A from Spain is the country of the Kingdom of Spain."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "almer_a_spain",
+      "country",
+      "kingdom_of_the_spains"
+     ],
+     "surface": "Almera Spain is a country within the Kingdom of the Spains."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "almer_a_spain",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Almera is an instance of a city in Spain."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "almer_a_spain",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Almera A is an instance of a city-work."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "almer_a_spain",
+      "twinned_administrative_body",
+      "buenos_aires_city"
+     ],
+     "surface": "Almer is twinned with Barcelona in Spain."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "almer_a_spain",
+      "twinned_administrative_body",
+      "buenos_aires_city"
+     ],
+     "surface": "Almera, a city in Spain, has been twinned with Buenos Aires City."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about almer yet: what can you tell me about almer?",
+   "abstained": true
+  },
+  {
+   "label": "h03",
+   "entity": "aus_fb_a_league_br",
+   "raw_file": "hb1.json",
+   "question": "What is aus_fb_a_league_br?",
+   "gated": [
+    [
+     "aus_fb_a_league_br",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "aus_fb_a_league_br",
+     "country",
+     "commonwealth_australia"
+    ],
+    [
+     "aus_fb_a_league_br",
+     "located_in_the_administrative_territoria",
+     "constitution_of_queensland"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "aus_fb_a_league_br",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Sport is an association football club."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "aus_fb_a_league_br",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The Aus FB A League Br sports association football club is based in London."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is described by association football club."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "association_football_club",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is associated with the description of the association football club in its sources."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "aus_fb_a_league_br",
+      "country",
+      "commonwealth_australia"
+     ],
+     "surface": "The Commonwealth of Australia is a country."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "aus_fb_a_league_br",
+      "country",
+      "commonwealth_australia"
+     ],
+     "surface": "Australia is a Commonwealth member and AusFB is a league in Australia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "aus_fb_a_league_br",
+      "located_in_the_administrative_territoria",
+      "constitution_of_queensland"
+     ],
+     "surface": "The constitution of Queensland is located in the administrative territory."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "aus_fb_a_league_br",
+      "located_in_the_administrative_territoria",
+      "constitution_of_queensland"
+     ],
+     "surface": "Aus Facebook League is located in the administrative territory of Queensland's constitution."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about aus yet: what can you tell me about aus?",
+   "abstained": true
+  },
+  {
+   "label": "h04",
+   "entity": "bison_ravi",
+   "raw_file": "hb1.json",
+   "question": "What is bison_ravi?",
+   "gated": [
+    [
+     "bison_ravi",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "bison_ravi",
+     "country_of_citizenship",
+     "franzoesische_republik"
+    ],
+    [
+     "bison_ravi",
+     "occupation",
+     "writter"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "bison_ravi",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Bison Ravi is of the human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bison_ravi",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Bison Ravi is an instance of the human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bison_ravi",
+      "country_of_citizenship",
+      "franzoesische_republik"
+     ],
+     "surface": "The bison ravi lives in the country of the franzoesische republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bison_ravi",
+      "country_of_citizenship",
+      "franzoesische_republik"
+     ],
+     "surface": "Bison Ravi lives in the country of Franzosenische Republik."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bison_ravi",
+      "occupation",
+      "writter"
+     ],
+     "surface": "The bison ravi is a writer."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bison_ravi",
+      "occupation",
+      "writter"
+     ],
+     "surface": "Bison Ravi, the famous writer of bison stories, is known for his unique style in writing."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bison yet: what can you tell me about bison?",
+   "abstained": true
+  },
+  {
+   "label": "h05",
+   "entity": "carl_lamarc",
+   "raw_file": "hb1.json",
+   "question": "What is carl_lamarc?",
+   "gated": [
+    [
+     "carl_lamarc",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "carl_lamarc",
+     "occupation",
+     "television_actor"
+    ],
+    [
+     "carl_lamarc",
+     "languages_spoken_written_or_signed",
+     "wie_gehts"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "carl_lamarc",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Carl Lamarc is a human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "carl_lamarc",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Carl Lamarc is an instance of the human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "carl_lamarc",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Carl Lamarc is an actor in television."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "carl_lamarc",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Carl Lamarc is an actor known for his work in television."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "carl_lamarc",
+      "languages_spoken_written_or_signed",
+      "wie_gehts"
+     ],
+     "surface": "Languages spoken written or signed."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "carl_lamarc",
+      "languages_spoken_written_or_signed",
+      "wie_gehts"
+     ],
+     "surface": "The German language spoken in Germany is written or signed using Latin alphabet characters."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about carl yet: what can you tell me about carl?",
+   "abstained": true
+  },
+  {
+   "label": "h06",
+   "entity": "city_of_green_bay",
+   "raw_file": "hb1.json",
+   "question": "What is city_of_green_bay?",
+   "gated": [
+    [
+     "city_of_green_bay",
+     "country",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "city_of_green_bay",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "city_of_green_bay",
+     "located_in_time_zone",
+     "utc_06"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "city_of_green_bay",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The city of Green Bay is in the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "city_of_green_bay",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The city of Green Bay is in the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The share bordering Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The U.S. stock market borders Canada's portal portal."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada Portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "city_of_green_bay",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The city of Green Bay is an instance of a city."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "city_of_green_bay",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "CityOfGreenBay is an instance of CityWork."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "city_of_green_bay",
+      "located_in_time_zone",
+      "utc_06"
+     ],
+     "surface": "The city of Green Bay is located in the time zone of UTC 06."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "city_of_green_bay",
+      "located_in_time_zone",
+      "utc_06"
+     ],
+     "surface": "The city of Green Bay is located in the time zone UTC 06."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city?",
+   "abstained": true
+  },
+  {
+   "label": "h07",
+   "entity": "danny_lanois",
+   "raw_file": "hb1.json",
+   "question": "What is danny_lanois?",
+   "gated": [
+    [
+     "danny_lanois",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "danny_lanois",
+     "country_of_citizenship",
+     "canada_portal"
+    ],
+    [
+     "danny_lanois",
+     "occupation",
+     "non_degreed_engineer"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "danny_lanois",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Danny Lanois is a human-specie."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "danny_lanois",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Danny Lanois is an instance of the human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "danny_lanois",
+      "country_of_citizenship",
+      "canada_portal"
+     ],
+     "surface": "Canada is Danny's country of citizenship."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "danny_lanois",
+      "country_of_citizenship",
+      "canada_portal"
+     ],
+     "surface": "Danny Lanois is from Canada's country of citizenship, where he operates his portal."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "danny_lanois",
+      "occupation",
+      "non_degreed_engineer"
+     ],
+     "surface": "Danny Lanois is an experienced non-degreed engineer."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "danny_lanois",
+      "occupation",
+      "non_degreed_engineer"
+     ],
+     "surface": "Danny Lanois is an engineer who works without a degree."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about danny yet: what can you tell me about danny?",
+   "abstained": true
+  },
+  {
+   "label": "h08",
+   "entity": "e_e_horton",
+   "raw_file": "hb1.json",
+   "question": "What is e_e_horton?",
+   "gated": [
+    [
+     "e_e_horton",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "e_e_horton",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "e_e_horton",
+     "manner_of_death",
+     "death_by_natural_cause"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "e_e_horton",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "The entity \"e\" is an example of the species \"human\"."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "e_e_horton",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Ee Horton is an instance of human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "e_e_horton",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "The country of citizenship is e_s_horton."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "e_e_horton",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "The United States of America is the country of citizenship for all citizens in Ee Horton country."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "e_e_horton",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     "surface": "The manner of death is natural cause."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "e_e_horton",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     "surface": "E-E Horton's manner of death was through natural causes."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about horton yet: what can you tell me about horton?",
+   "abstained": true
+  },
+  {
+   "label": "h09",
+   "entity": "fernand_joseph_desire_contandin",
+   "raw_file": "hb2.json",
+   "question": "What is fernand_joseph_desire_contandin?",
+   "gated": [
+    [
+     "fernand_joseph_desire_contandin",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "fernand_joseph_desire_contandin",
+     "country_of_citizenship",
+     "franzoesische_republik"
+    ],
+    [
+     "fernand_joseph_desire_contandin",
+     "occupation",
+     "television_actor"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Fernand Joseph Desire Contandin is of the human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Fernand Joseph Desire Contandin is an instance of human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "country_of_citizenship",
+      "franzoesische_republik"
+     ],
+     "surface": "fernand joseph desire to belong to the franzoesische republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "country_of_citizenship",
+      "franzoesische_republik"
+     ],
+     "surface": "Fernand Joseph Desire Contandin is a citizen of the Federal Republic of Germany."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Fernando Joseph Desire Contandin is an television actor."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "fernand_joseph_desire_contandin",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Fernand Joseph Desire Contandin is an actor known for his work in television."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fernand yet: what can you tell me about fernand? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "h10",
+   "entity": "geography_of_adana",
+   "raw_file": "hb2.json",
+   "question": "What is geography_of_adana?",
+   "gated": [
+    [
+     "geography_of_adana",
+     "located_in_time_zone",
+     "kaliningrad_time"
+    ],
+    [
+     "geography_of_adana",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "geography_of_adana",
+     "country",
+     "the_republic_of_turkey"
+    ],
+    [
+     "geography_of_adana",
+     "twinned_administrative_body",
+     "saint_petersburg_city"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "geography_of_adana",
+      "located_in_time_zone",
+      "kaliningrad_time"
+     ],
+     "surface": "Located in Kaliningrad Time, Adana is situated within its geographical location."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "geography_of_adana",
+      "located_in_time_zone",
+      "kaliningrad_time"
+     ],
+     "surface": "Geography of Adana is located in time zone Kaliningrad's time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "geography_of_adana",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The geography of Adana is an instance of a city work."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "geography_of_adana",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "Geography of Adana is an instance of city work."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "geography_of_adana",
+      "country",
+      "the_republic_of_turkey"
+     ],
+     "surface": "The geography of Adana is in Turkey."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "geography_of_adana",
+      "country",
+      "the_republic_of_turkey"
+     ],
+     "surface": "The geography of Adana is part of Turkey's country."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "geography_of_adana",
+      "twinned_administrative_body",
+      "saint_petersburg_city"
+     ],
+     "surface": "The geography of Adana is twin to Saint Petersburg City."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "geography_of_adana",
+      "twinned_administrative_body",
+      "saint_petersburg_city"
+     ],
+     "surface": "Geography_of_adana and Saint_Petersburg_city have been twinned for administrative purposes since their creation in 1"
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about geography yet: what can you tell me about geography?",
+   "abstained": true
+  },
+  {
+   "label": "h11",
+   "entity": "ha_noi_vietnam",
+   "raw_file": "hb2.json",
+   "question": "What is ha_noi_vietnam?",
+   "gated": [
+    [
+     "ha_noi_vietnam",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ],
+    [
+     "armenian_soviet_encyclopedia",
+     "country",
+     "hayastani_hanrapetut_yun"
+    ],
+    [
+     "hayastani_hanrapetut_yun",
+     "shares_border_with",
+     "persian_state_of_iran"
+    ],
+    [
+     "ha_noi_vietnam",
+     "twinned_administrative_body",
+     "montr_al_canada"
+    ],
+    [
+     "ha_noi_vietnam",
+     "country",
+     "chxhcn_vietnam"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "ha_noi_vietnam",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "The Vietnam War was described in the Armenian Soviet Encyclopedia."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ha_noi_vietnam",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "armenian_soviet_encyclopedia",
+      "country",
+      "hayastani_hanrapetut_yun"
+     ],
+     "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "hayastani_hanrapetut_yun",
+      "shares_border_with",
+      "persian_state_of_iran"
+     ],
+     "surface": "The Persian Empire shared its border with the Sassanid Persia of Iran."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "hayastani_hanrapetut_yun",
+      "shares_border_with",
+      "persian_state_of_iran"
+     ],
+     "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ha_noi_vietnam",
+      "twinned_administrative_body",
+      "montr_al_canada"
+     ],
+     "surface": "The twinned administrative body is Montr\u00e9al and Ottawa."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ha_noi_vietnam",
+      "twinned_administrative_body",
+      "montr_al_canada"
+     ],
+     "surface": "Ha noi vietnam twinned administrative body Montrer al canada."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ha_noi_vietnam",
+      "country",
+      "chxhcn_vietnam"
+     ],
+     "surface": "The Ha Noi Vietnam is a country."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ha_noi_vietnam",
+      "country",
+      "chxhcn_vietnam"
+     ],
+     "surface": "Ha noi vietnam is a country in China."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ha yet: what can you tell me about ha?",
+   "abstained": true
+  },
+  {
+   "label": "h12",
+   "entity": "history_of_ferrara",
+   "raw_file": "hb2.json",
+   "question": "What is history_of_ferrara?",
+   "gated": [
+    [
+     "history_of_ferrara",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "history_of_ferrara",
+     "country",
+     "italian_republic"
+    ],
+    [
+     "history_of_ferrara",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "history_of_ferrara",
+     "described_by_source",
+     "nordisk_familjebok"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "history_of_ferrara",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The history of Ferrara is located in Rome time zone."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "history_of_ferrara",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "History_of_Ferrara is located in the Time_Zone of_Rome_Time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "history_of_ferrara",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "The history of Ferrara is Italian."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "history_of_ferrara",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "The history of Ferrara, a city in Italy, was influenced by the Italian Republic."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "history_of_ferrara",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The history of Ferrara is an instance of its city work."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "history_of_ferrara",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "History_of_Ferrara is an instance of Ferrara's work."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "history_of_ferrara",
+      "described_by_source",
+      "nordisk_familjebok"
+     ],
+     "surface": "The history of Ferrara was described by Nordisk familjebok."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "history_of_ferrara",
+      "described_by_source",
+      "nordisk_familjebok"
+     ],
+     "surface": "The history of Ferrara was described by source Nordisk familjebok."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about history yet: what can you tell me about history?",
+   "abstained": true
+  },
+  {
+   "label": "h13",
+   "entity": "ida_lundgren",
+   "raw_file": "hb2.json",
+   "question": "What is ida_lundgren?",
+   "gated": [
+    [
+     "ida_lundgren",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "ida_lundgren",
+     "occupation",
+     "television_actor"
+    ],
+    [
+     "ida_lundgren",
+     "country_of_citizenship",
+     "climate_of_sweden"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "ida_lundgren",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "The ida lundgren is an instance of a human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ida_lundgren",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Ida Lundgren is an instance of a human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ida_lundgren",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Ida Lundgren is a television actor."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ida_lundgren",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Ida Lundgren is an occupation television actor."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ida_lundgren",
+      "country_of_citizenship",
+      "climate_of_sweden"
+     ],
+     "surface": "Sweden is a country of citizenship."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ida_lundgren",
+      "country_of_citizenship",
+      "climate_of_sweden"
+     ],
+     "surface": "Ida Lundgren is from Sweden's climate of peace and stability."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ida yet: what can you tell me about ida?",
+   "abstained": true
+  },
+  {
+   "label": "h14",
+   "entity": "ji_nan_city",
+   "raw_file": "hb2.json",
+   "question": "What is ji_nan_city?",
+   "gated": [
+    [
+     "ji_nan_city",
+     "country",
+     "china_pr"
+    ],
+    [
+     "china_pr",
+     "shares_border_with",
+     "bharat_ganrajya"
+    ],
+    [
+     "bharat_ganrajya",
+     "shares_border_with",
+     "china_pr"
+    ],
+    [
+     "ji_nan_city",
+     "located_in_time_zone",
+     "australian_western_standard_time"
+    ],
+    [
+     "ji_nan_city",
+     "twinned_administrative_body",
+     "ciudad_aztl_n"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "ji_nan_city",
+      "country",
+      "china_pr"
+     ],
+     "surface": "China is located in Japan."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ji_nan_city",
+      "country",
+      "china_pr"
+     ],
+     "surface": "The Ji Nan City is located in China's country."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China shares border with Bharat Ganjariya."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China Pr shares borders with Bharat Ganjera."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bharat Ganjariya shares border with China Pr."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bharat Ganjariya shares border with China Pr."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ji_nan_city",
+      "located_in_time_zone",
+      "australian_western_standard_time"
+     ],
+     "surface": "The city of Ji Nan is located in Australian Western Standard Time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ji_nan_city",
+      "located_in_time_zone",
+      "australian_western_standard_time"
+     ],
+     "surface": "The Ji Nan City is located in the Australian Western Standard Time zone."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ji_nan_city",
+      "twinned_administrative_body",
+      "ciudad_aztl_n"
+     ],
+     "surface": "The city of Ji-Nan has its own administrative body."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ji_nan_city",
+      "twinned_administrative_body",
+      "ciudad_aztl_n"
+     ],
+     "surface": "The city of Ji-Nan is twinned with Ciudad Aztl\u00e1n, which is an administrative body in Mexico."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ji yet: what can you tell me about ji?",
+   "abstained": true
+  },
+  {
+   "label": "h15",
+   "entity": "keifer_sutherland",
+   "raw_file": "hb2.json",
+   "question": "What is keifer_sutherland?",
+   "gated": [
+    [
+     "keifer_sutherland",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "keifer_sutherland",
+     "country_of_citizenship",
+     "united_kingom"
+    ],
+    [
+     "keifer_sutherland",
+     "occupation",
+     "television_actor"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "keifer_sutherland",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Keifer Sutherland is of human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "keifer_sutherland",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Keifer Sutherland is an instance of the human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "keifer_sutherland",
+      "country_of_citizenship",
+      "united_kingom"
+     ],
+     "surface": "The country of citizenship for Keifer Sutherland is United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "keifer_sutherland",
+      "country_of_citizenship",
+      "united_kingom"
+     ],
+     "surface": "Keifer Sutherland's citizenship is in the United Kingdom of Great Britain and Northern Ireland."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "keifer_sutherland",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Keifer Sutherland is an actor."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "keifer_sutherland",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Keifer Sutherland is an actor who has appeared in numerous television shows and films."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about keifer yet: what can you tell me about keifer?",
+   "abstained": true
+  },
+  {
+   "label": "h16",
+   "entity": "larry_shaw_director",
+   "raw_file": "hb2.json",
+   "question": "What is larry_shaw_director?",
+   "gated": [
+    [
+     "larry_shaw_director",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "larry_shaw_director",
+     "place_of_birth",
+     "u_s_of_a"
+    ],
+    [
+     "larry_shaw_director",
+     "occupation",
+     "film_directors"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "larry_shaw_director",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Larry Shaw is an instance of a human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "larry_shaw_director",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Larry Shaw is an instance of the human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The human species has common names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an instance of common names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "The common names subclass of the subclass of meanings of names."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "larry_shaw_director",
+      "place_of_birth",
+      "u_s_of_a"
+     ],
+     "surface": "Larry Shaw was born in the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "larry_shaw_director",
+      "place_of_birth",
+      "u_s_of_a"
+     ],
+     "surface": "Larry Shaw was born in the United States."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "larry_shaw_director",
+      "occupation",
+      "film_directors"
+     ],
+     "surface": "Larry Shaw is an occupation in the film directors' field."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "larry_shaw_director",
+      "occupation",
+      "film_directors"
+     ],
+     "surface": "Larry Shaw was an occupation for film directors."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about larry yet: what can you tell me about larry?",
+   "abstained": true
+  },
+  {
+   "label": "h17",
+   "entity": "luk_cs_p_l",
+   "raw_file": "hb5.json",
+   "question": "What is luk_cs_p_l?",
+   "gated": [
+    [
+     "luk_cs_p_l",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "luk_cs_p_l",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "luk_cs_p_l",
+     "occupation",
+     "television_actor"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "luk_cs_p_l",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "The triple (luk_cs_p_l, instance_of, human_specie)."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "luk_cs_p_l",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Luk_cs_p_l is an instance of human_specie."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The entity is human."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an example of the common names system."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Commonly known as subclasses of names"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "luk_cs_p_l",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "The United States of America is the country of citizenship for Luk CS P L."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "luk_cs_p_l",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "Luk_cs_p_l is from the country of citizenship U.S."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "luk_cs_p_l",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Occupation is a television actor."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "luk_cs_p_l",
+      "occupation",
+      "television_actor"
+     ],
+     "surface": "Luk Cs P L is a television actor."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about luk yet: what can you tell me about luk?",
+   "abstained": true
+  },
+  {
+   "label": "h18",
+   "entity": "merano_italy",
+   "raw_file": "hb5.json",
+   "question": "What is merano_italy?",
+   "gated": [
+    [
+     "merano_italy",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "merano_italy",
+     "country",
+     "italian_republic"
+    ],
+    [
+     "merano_italy",
+     "instance_of",
+     "italian_communes"
+    ],
+    [
+     "merano_italy",
+     "twinned_administrative_body",
+     "historic_centre_of_salzburg"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "merano_italy",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The city of Rome is located in the time zone of Italy."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "merano_italy",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Merano, Italy is located in the time zone of Rome."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "merano_italy",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "Merano is located in Italy."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "merano_italy",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "Merano, Italy is the country's Italian republic."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "merano_italy",
+      "instance_of",
+      "italian_communes"
+     ],
+     "surface": "The Merano is an Italian commune."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "merano_italy",
+      "instance_of",
+      "italian_communes"
+     ],
+     "surface": "Merano, Italy is an instance of Italian Communes."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "merano_italy",
+      "twinned_administrative_body",
+      "historic_centre_of_salzburg"
+     ],
+     "surface": "The historic centre of Salzburg and its twinned administrative body were both tamed in 1972."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "merano_italy",
+      "twinned_administrative_body",
+      "historic_centre_of_salzburg"
+     ],
+     "surface": "Merano, Italy, has two administrative bodies: the Municipality of Merano and the Historic Centre of Salzburg."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about merano yet: what can you tell me about merano?",
+   "abstained": true
+  },
+  {
+   "label": "h19",
+   "entity": "nc_arts",
+   "raw_file": "hb5.json",
+   "question": "What is nc_arts?",
+   "gated": [
+    [
+     "nc_arts",
+     "country",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "nc_arts",
+     "instance_of",
+     "higher_general_education"
+    ],
+    [
+     "nc_arts",
+     "located_in_the_administrative_territoria",
+     "the_tar_heel_state"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "nc_arts",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The country of China is the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "nc_arts",
+      "country",
+      "u_s_of_a"
+     ],
+     "surface": "The United States of America is known as the \"NC-Artists\" country."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "The number of shares in Canada is u_s_of_a."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "u_s_of_a",
+      "shares_border_with",
+      "canada_portal"
+     ],
+     "surface": "Shares of a company bordering Canada at the Port of Vancouver"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's border is shared with the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "canada_portal",
+      "shares_border_with",
+      "u_s_of_a"
+     ],
+     "surface": "Canada's portal shares borders with the United States of America."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "nc_arts",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "The NCAT is an instance of higher general education."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "nc_arts",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "Ancillary college or university is an example of a higher general education institution."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "nc_arts",
+      "located_in_the_administrative_territoria",
+      "the_tar_heel_state"
+     ],
+     "surface": "The Tar Heel State is located in the administrative territory of the United States."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "nc_arts",
+      "located_in_the_administrative_territoria",
+      "the_tar_heel_state"
+     ],
+     "surface": "The NC-ARTS is located in the administrative territory of the Tarheel State."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about nc yet: what can you tell me about nc?",
+   "abstained": true
+  },
+  {
+   "label": "h20",
+   "entity": "ousepachan",
+   "raw_file": "hb5.json",
+   "question": "What is ousepachan?",
+   "gated": [
+    [
+     "ousepachan",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "ousepachan",
+     "country_of_citizenship",
+     "bharat_ganrajya"
+    ],
+    [
+     "ousepachan",
+     "occupation",
+     "music_composer"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "ousepachan",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Use a human species as an instance of the use."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ousepachan",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "The instance_of human_specie is a unique species within its own domain."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The entity is human."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an example of the common names system."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Commonly known as subclasses of names"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ousepachan",
+      "country_of_citizenship",
+      "bharat_ganrajya"
+     ],
+     "surface": "Bharat Ganjam is the country of citizenship for India."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ousepachan",
+      "country_of_citizenship",
+      "bharat_ganrajya"
+     ],
+     "surface": "Bharat Ganjira is a country of citizenship in India."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "ousepachan",
+      "occupation",
+      "music_composer"
+     ],
+     "surface": "Occupied musician."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "ousepachan",
+      "occupation",
+      "music_composer"
+     ],
+     "surface": "Pechan, a musician, is also an occupation who creates music compositions."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ousepachan yet: what can you tell me about ousepachan?",
+   "abstained": true
+  },
+  {
+   "label": "h21",
+   "entity": "prefecture_of_nagasaki",
+   "raw_file": "hb5.json",
+   "question": "What is prefecture_of_nagasaki?",
+   "gated": [
+    [
+     "prefecture_of_nagasaki",
+     "country",
+     "modern_era_japan"
+    ],
+    [
+     "modern_era_japan",
+     "shares_border_with",
+     "china_pr"
+    ],
+    [
+     "china_pr",
+     "shares_border_with",
+     "bharat_ganrajya"
+    ],
+    [
+     "prefecture_of_nagasaki",
+     "located_in_time_zone",
+     "korea_standard_time"
+    ],
+    [
+     "prefecture_of_nagasaki",
+     "twinned_administrative_body",
+     "districts_of_busan"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "country",
+      "modern_era_japan"
+     ],
+     "surface": "Nagasaki is located in Japan."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "country",
+      "modern_era_japan"
+     ],
+     "surface": "Prefectures of Nagasaki in the modern era of Japan."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "modern_era_japan",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "China's border with Japan is shared with Taiwan Province of China."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "modern_era_japan",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Modern-era Japan shares borders with China Pr."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China shares borders with Bharat Ganjamya."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China's share of India's total stock market is about 15%."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "located_in_time_zone",
+      "korea_standard_time"
+     ],
+     "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "located_in_time_zone",
+      "korea_standard_time"
+     ],
+     "surface": "The prefecture of Nagasaki is located in the Korea Standard Time time zone."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "twinned_administrative_body",
+      "districts_of_busan"
+     ],
+     "surface": "Nagasaki Prefecture and Busan Districts of Busan have been twinned administratively since their establishment."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "twinned_administrative_body",
+      "districts_of_busan"
+     ],
+     "surface": "The prefecture of Nagasaki has partnered with Busan to establish a twinned administrative body for their districts."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about prefecture yet: what can you tell me about prefecture?",
+   "abstained": true
+  },
+  {
+   "label": "h22",
+   "entity": "rep_blica_del_paraguay",
+   "raw_file": "hb5.json",
+   "question": "What is rep_blica_del_paraguay?",
+   "gated": [
+    [
+     "rep_blica_del_paraguay",
+     "shares_border_with",
+     "republic_of_brazil"
+    ],
+    [
+     "republic_of_brazil",
+     "shares_border_with",
+     "franzoesische_republik"
+    ],
+    [
+     "franzoesische_republik",
+     "shares_border_with",
+     "united_kingom"
+    ],
+    [
+     "rep_blica_del_paraguay",
+     "described_by_source",
+     "brockhaus_and_efron_encyclopaedia"
+    ],
+    [
+     "rep_blica_del_paraguay",
+     "member_of",
+     "united_nations"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "shares_border_with",
+      "republic_of_brazil"
+     ],
+     "surface": "The Republic of Brazil has shares bordering Paraguay."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "shares_border_with",
+      "republic_of_brazil"
+     ],
+     "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "republic_of_brazil",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The republic of Brazil shares borders with the Federal Republic of Germany."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "republic_of_brazil",
+      "shares_border_with",
+      "franzoesische_republik"
+     ],
+     "surface": "The Republic of Brazil shares borders with France's Republic."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The French Republic shares its border with the United Kingdom."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "franzoesische_republik",
+      "shares_border_with",
+      "united_kingom"
+     ],
+     "surface": "The German federal republic shares borders with the United Kingdom."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "described_by_source",
+      "brockhaus_and_efron_encyclopaedia"
+     ],
+     "surface": "The Repartition of Paraguay was described by Broccohaus and Efron Encyclopedia."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "described_by_source",
+      "brockhaus_and_efron_encyclopaedia"
+     ],
+     "surface": "Replica of Paraguay described by source Brockhaus & Efron Encyclopedie."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "member_of",
+      "united_nations"
+     ],
+     "surface": "Rep Blica del Paraguay es parte de la Uni\u00f3n Nacional."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "rep_blica_del_paraguay",
+      "member_of",
+      "united_nations"
+     ],
+     "surface": "Rep_blica_del_paraguay is a member of the United Nations."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rep yet: what can you tell me about rep? \u2014 worth going further here.",
+   "abstained": true
+  },
+  {
+   "label": "h23",
+   "entity": "s_te_france",
+   "raw_file": "hb5.json",
+   "question": "What is s_te_france?",
+   "gated": [
+    [
+     "s_te_france",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "s_te_france",
+     "country",
+     "franzoesische_republik"
+    ],
+    [
+     "s_te_france",
+     "instance_of",
+     "communes_in_france"
+    ],
+    [
+     "s_te_france",
+     "located_in_the_administrative_territoria",
+     "department_of_herault"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "s_te_france",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The person is located in time zone Rome."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "s_te_france",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "S_Te_France is located in Rome's time zone."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "s_te_france",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "The country of France is the country of the French Republic."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "s_te_france",
+      "country",
+      "franzoesische_republik"
+     ],
+     "surface": "France is a country in Europe, known as the \"country\" of Germany's republic."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "s_te_france",
+      "instance_of",
+      "communes_in_france"
+     ],
+     "surface": "The French commune of Montmartre is an instance of a historical district in Paris."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "s_te_france",
+      "instance_of",
+      "communes_in_france"
+     ],
+     "surface": "The S_Te_France instance_of communes_in_france."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "s_te_france",
+      "located_in_the_administrative_territoria",
+      "department_of_herault"
+     ],
+     "surface": "The S\u00e8te is located in Herault's administrative territory."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "s_te_france",
+      "located_in_the_administrative_territoria",
+      "department_of_herault"
+     ],
+     "surface": "S_T_E_France is located in the administrative territory of the Department of Herault."
+    }
+   ],
+   "answer": "The S_Te_France instance_of communes_in_france.",
+   "abstained": false
+  },
+  {
+   "label": "h24",
+   "entity": "shelley_winters",
+   "raw_file": "hb5.json",
+   "question": "What is shelley_winters?",
+   "gated": [
+    [
+     "shelley_winters",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "shelley_winters",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "shelley_winters",
+     "occupation",
+     "writter"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "shelley_winters",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Shelley winters is an instance of human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "shelley_winters",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Shelly Winters is an instance of a human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The entity is human."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an example of the common names system."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Commonly known as subclasses of names"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "shelley_winters",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "Shellieth winters lives in the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "shelley_winters",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "Shelli Winter's citizenship is in the United States of America (U.S.)."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "shelley_winters",
+      "occupation",
+      "writter"
+     ],
+     "surface": "Shelli Winter's occupation is a writer."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "shelley_winters",
+      "occupation",
+      "writter"
+     ],
+     "surface": "Shelly Winter's occupation is a writer."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about shelley yet: what can you tell me about shelley?",
+   "abstained": true
+  },
+  {
+   "label": "h25",
+   "entity": "steven_lipson",
+   "raw_file": "hb5.json",
+   "question": "What is steven_lipson?",
+   "gated": [
+    [
+     "steven_lipson",
+     "instance_of",
+     "human_specie"
+    ],
+    [
+     "human_specie",
+     "instance_of",
+     "common_names"
+    ],
+    [
+     "common_names",
+     "subclass_of",
+     "meaning_of_names"
+    ],
+    [
+     "steven_lipson",
+     "country_of_citizenship",
+     "u_s_of_a"
+    ],
+    [
+     "steven_lipson",
+     "occupation",
+     "non_degreed_engineer"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "steven_lipson",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Steven Lipson is an instance of a human species."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "steven_lipson",
+      "instance_of",
+      "human_specie"
+     ],
+     "surface": "Steven Lipson is an instance of human species."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "The entity is human."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "human_specie",
+      "instance_of",
+      "common_names"
+     ],
+     "surface": "Human species is an example of the common names system."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Commonly known as subclasses of names"
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "common_names",
+      "subclass_of",
+      "meaning_of_names"
+     ],
+     "surface": "Common names are subclasses of meanings of names."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "steven_lipson",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "Steven Lipson is from the United States of America."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "steven_lipson",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "Steven Lipson is from the United States of America (U.S.)."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "steven_lipson",
+      "occupation",
+      "non_degreed_engineer"
+     ],
+     "surface": "Steven Lipson is an engineer."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "steven_lipson",
+      "occupation",
+      "non_degreed_engineer"
+     ],
+     "surface": "Steven Lipson is an engineer who has not completed a degree."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about steven yet: what can you tell me about steven?",
+   "abstained": true
+  },
+  {
+   "label": "h26",
+   "entity": "the_weather_in_stavenger",
+   "raw_file": "hb5.json",
+   "question": "What is the_weather_in_stavenger?",
+   "gated": [
+    [
+     "the_weather_in_stavenger",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "the_weather_in_stavenger",
+     "country",
+     "royal_kingdom_of_norway"
+    ],
+    [
+     "the_weather_in_stavenger",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "the_weather_in_stavenger",
+     "twinned_administrative_body",
+     "city_of_houston_texas"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "the_weather_in_stavenger",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The weather in Stavenger is located in Rome time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "the_weather_in_stavenger",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The weather in Stavenger is similar to Rome's time zone."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "the_weather_in_stavenger",
+      "country",
+      "royal_kingdom_of_norway"
+     ],
+     "surface": "The weather in Stavanger is in the royal kingdom of Norway."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "the_weather_in_stavenger",
+      "country",
+      "royal_kingdom_of_norway"
+     ],
+     "surface": "The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "the_weather_in_stavenger",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The weather in Stavenger is an instance of the city work."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "the_weather_in_stavenger",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The weather in Stavanger is of the city's work."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "the_weather_in_stavenger",
+      "twinned_administrative_body",
+      "city_of_houston_texas"
+     ],
+     "surface": "The weather in Stavenger is similar to Houston's administrative body."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "the_weather_in_stavenger",
+      "twinned_administrative_body",
+      "city_of_houston_texas"
+     ],
+     "surface": "The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement"
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?",
+   "abstained": true
+  },
+  {
+   "label": "h27",
+   "entity": "universitat_des_saarlandes",
+   "raw_file": "hb5.json",
+   "question": "What is universitat_des_saarlandes?",
+   "gated": [
+    [
+     "universitat_des_saarlandes",
+     "country",
+     "federal_republic_of_germany"
+    ],
+    [
+     "federal_republic_of_germany",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "universitat_des_saarlandes",
+     "instance_of",
+     "higher_general_education"
+    ],
+    [
+     "universitat_des_saarlandes",
+     "located_in_the_administrative_territoria",
+     "county_of_saarbruecken"
+    ],
+    [
+     "universitat_des_saarlandes",
+     "member_of",
+     "german_research_network"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "universitat_des_saarlandes",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "The University of Saarland is a federal republic of Germany."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "universitat_des_saarlandes",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Universitetsdagsasaila saarela eesti kehitys."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "federal_republic_of_germany",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The federal republic of germany is located in time zone Rome."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "federal_republic_of_germany",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The federal republic of germany is located in time zone rome time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "universitat_des_saarlandes",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "Universit\u00e4t f\u00fcr Schiedsrichter ist eine Instanz der h\u00f6heren allgemeinen Bildung."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "universitat_des_saarlandes",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "Universit\u0103\u021bii de Saarbr\u00fccken se afl\u0103 \u00een classificarea unei institu\u021biilor de"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "universitat_des_saarlandes",
+      "located_in_the_administrative_territoria",
+      "county_of_saarbruecken"
+     ],
+     "surface": "The university is located in the administrative territory of Saarbruecken."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "universitat_des_saarlandes",
+      "located_in_the_administrative_territoria",
+      "county_of_saarbruecken"
+     ],
+     "surface": "Universitetsgeb\u00e4\u00fc in der administrat\u00fcrreiton der Stadt Saarbr\u00fccken."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "universitat_des_saarlandes",
+      "member_of",
+      "german_research_network"
+     ],
+     "surface": "The university of Saarland is a member of the German Research Network."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "universitat_des_saarlandes",
+      "member_of",
+      "german_research_network"
+     ],
+     "surface": "Universit\u00e4t des Saarlandes is a member of the German Research Network."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about universitat yet: what can you tell me about universitat?",
+   "abstained": true
+  },
+  {
+   "label": "h28",
+   "entity": "waadt_canton_of",
+   "raw_file": "hb5.json",
+   "question": "What is waadt_canton_of?",
+   "gated": [
+    [
+     "waadt_canton_of",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "waadt_canton_of",
+     "country",
+     "conf_d_ration_suisse"
+    ],
+    [
+     "waadt_canton_of",
+     "shares_border_with",
+     "canton_de_berne"
+    ],
+    [
+     "waadt_canton_of",
+     "contains_administrative_territorial_enti",
+     "jura_nord_vaudois_district"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "waadt_canton_of",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The Rome time zone is located in the Canton of Italy."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "waadt_canton_of",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "waadt_canton_of",
+      "country",
+      "conf_d_ration_suisse"
+     ],
+     "surface": "The capital city of Canton is Switzerland."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "waadt_canton_of",
+      "country",
+      "conf_d_ration_suisse"
+     ],
+     "surface": "Waadt Canton of Switzerland is a canton in the Confederation of Switzerland."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "waadt_canton_of",
+      "shares_border_with",
+      "canton_de_berne"
+     ],
+     "surface": "Canton de Berne shares its border with Canton of Switzerland."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "waadt_canton_of",
+      "shares_border_with",
+      "canton_de_berne"
+     ],
+     "surface": "Waadt Canton of shares borders with Canton de Berne."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "waadt_canton_of",
+      "contains_administrative_territorial_enti",
+      "jura_nord_vaudois_district"
+     ],
+     "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "waadt_canton_of",
+      "contains_administrative_territorial_enti",
+      "jura_nord_vaudois_district"
+     ],
+     "surface": "The Waadt Canton of contains administrative territorial jurisdiction in Nord-Vaud district."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about waadt yet: what can you tell me about waadt?",
+   "abstained": true
+  },
+  {
+   "label": "h29",
+   "entity": "zhejiang_province",
+   "raw_file": "hb5.json",
+   "question": "What is zhejiang_province?",
+   "gated": [
+    [
+     "zhejiang_province",
+     "country",
+     "china_pr"
+    ],
+    [
+     "china_pr",
+     "shares_border_with",
+     "bharat_ganrajya"
+    ],
+    [
+     "bharat_ganrajya",
+     "shares_border_with",
+     "china_pr"
+    ],
+    [
+     "zhejiang_province",
+     "located_in_time_zone",
+     "australian_western_standard_time"
+    ],
+    [
+     "zhejiang_province",
+     "shares_border_with",
+     "air_pollution_in_shanghai"
+    ]
+   ],
+   "gated_source": "render_paragraph.facts",
+   "gated_equals_calls_svo": true,
+   "n_paragraph_calls": 1,
+   "calls": [
+    {
+     "method": "render_svo",
+     "svo": [
+      "zhejiang_province",
+      "country",
+      "china_pr"
+     ],
+     "surface": "Zhejiang Province is a country in China."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "zhejiang_province",
+      "country",
+      "china_pr"
+     ],
+     "surface": "Zhejiang Province is a country in China."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China shares borders with Bharat Ganjamya."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China's share of India's total stock market is about 15%."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bharat Ganjariyan, shares border with China Pr."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "bharat_ganrajya",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Bihar shares border with China Prussia"
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "zhejiang_province",
+      "located_in_time_zone",
+      "australian_western_standard_time"
+     ],
+     "surface": "Zhejiang province is located in time zone Australia's Western Standard Time."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "zhejiang_province",
+      "located_in_time_zone",
+      "australian_western_standard_time"
+     ],
+     "surface": "Zhejiang Province is located in the Time Zone of Australia's Western Standard Time."
+    },
+    {
+     "method": "render_svo",
+     "svo": [
+      "zhejiang_province",
+      "shares_border_with",
+      "air_pollution_in_shanghai"
+     ],
+     "surface": "Zhejiang Province shares air pollution with Shanghai."
+    },
+    {
+     "method": "render_svo_regen",
+     "svo": [
+      "zhejiang_province",
+      "shares_border_with",
+      "air_pollution_in_shanghai"
+     ],
+     "surface": "Zhejiang Province shares border with Shanghai for air pollution."
+    }
+   ],
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zhejiang yet: what can you tell me about zhejiang?",
+   "abstained": true
+  }
+ ],
+ "generation": {
+  "h01-h08": "hb1.json: Qwen-0.5B fp32 on CPU (CUDA hidden), batch 1-8",
+  "h09-h16": "hb2.json: Qwen-0.5B fp32 on CPU, batch 9-16",
+  "h17-h29": "hb5.json: Qwen-0.5B fp16 on the GPU via tools/gpu_queue.sh (qwen-gpu), after the 2026-10-18 reboot killed batches 17-29",
+  "flag": "BRAIN_MOAT_SLUG_NORM unset in every generation process (both render_svo and render_svo_regen recorded per fact)"
+ }
+}

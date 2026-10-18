@@ -48,9 +48,12 @@ def run(seed, flag_on):
 
 def summarise(verdict):
     raw = collections.Counter(); uni = collections.Counter(); seen = set(); kept_rows = []
+    dist = collections.Counter(); seen2 = set()          # distinct (svo, surface) regardless of turn (shared facts repeat across turns)
     for (turn, svo, surface, method), (acc, why) in verdict.items():
         l = lab[(turn, svo, surface)]
         raw[(l, bool(acc))] += 1
+        if (svo, surface, bool(acc)) not in seen2:
+            seen2.add((svo, surface, bool(acc))); dist[(l, bool(acc))] += 1
         if (turn, svo, surface) not in seen:
             seen.add((turn, svo, surface)); uni[(l, bool(acc))] += 1
             if acc:
@@ -76,6 +79,8 @@ def summarise(verdict):
     return {"raw_rows": sum(tot_raw.values()), "unique_sentences": sum(tot_uni.values()),
             "label_totals_raw": dict(tot_raw), "label_totals_unique": dict(tot_uni),
             "kept_raw": {l: raw[(l, True)] for l in "FBUN"}, "kept_unique": {l: uni[(l, True)] for l in "FBUN"},
+            "distinct_svo_surface_kept": {l: dist[(l, True)] for l in "FBUN"},
+            "distinct_svo_surface_total": sum(n for (l, a), n in dist.items()),
             "kept_raw_total": sum(raw[(l, True)] for l in "FBUN"), "kept_unique_total": sum(uni[(l, True)] for l in "FBUN"),
             "facts": facts, "facts_kept": kept_facts, "facts_kept_by_label": dict(kept_fact_labels),
             "turns": len(turns), "turns_answered": turns_answered, "kept_sentences": kept_rows}
