@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import asdict, dataclass
 import json
+import os
 from pathlib import Path
 import time
 
@@ -48,6 +49,9 @@ class SelectorConfig:
     reset_pA: float = 1200.0
     gpi_tonic_pA: float = 1000.0
     thalamus_tonic_pA: float = 900.0
+    # amendment 2 (tonic pallidal drive, RULING bg-tonic-ok-1019): DEFAULT 0 -> flag-off byte identity.
+    gpe_tonic_pA: float = 0.0
+    stn_tonic_pA: float = 0.0
     arousal_to_proposal_weight: float = 1.0
     proposal_to_fsi_weight: float = 100.0
     fsi_to_msn_weight: float = 10.0
@@ -401,6 +405,44 @@ def _set_equal_tonic_current(bridge, config):
         bridge.cp_external_input_current[
             xp.asarray(_indices(bridge, f"thal_{channel}"))
         ] = xp.float32(config.thalamus_tonic_pA)
+    # amendment 2 (tonic pallidal drive): DEFAULT-OFF. With BRAIN_BG_TONIC_DRIVE off (or unset) the block
+    # above is byte-identical to the amendment-1 build; with it on, one constant pacemaking current on
+    # gpe_{ch} and selector_stn (RULING bg-tonic-ok-1019: no weight/read change; currents env-overridable
+    # for the dev operating point, chosen only by the physiological rule declared in the packet WORKLOG).
+    gpe_pA, stn_pA = tonic_drive_pA(config)
+    if gpe_pA:
+        for channel in CHANNELS:
+            bridge.cp_external_input_current[
+                xp.asarray(_indices(bridge, f"gpe_{channel}"))
+            ] = xp.float32(gpe_pA)
+    if stn_pA:
+        bridge.cp_external_input_current[
+            xp.asarray(_indices(bridge, "selector_stn"))
+        ] = xp.float32(stn_pA)
+
+
+TONIC_DRIVE_FLAG = "BRAIN_BG_TONIC_DRIVE"
+TONIC_DRIVE_GPE_FLAG = "BRAIN_BG_TONIC_GPE_PA"
+TONIC_DRIVE_STN_FLAG = "BRAIN_BG_TONIC_STN_PA"
+
+
+def tonic_drive_enabled() -> bool:
+    """DEFAULT-OFF. `BRAIN_BG_TONIC_DRIVE` in {1,true,yes,on} -> the pacemaking currents are applied."""
+    return (os.environ.get(TONIC_DRIVE_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def tonic_drive_pA(config):
+    """(gpe_pA, stn_pA) to apply: (0.0, 0.0) whenever the flag is off (byte identity), else config values
+    overridable per population by BRAIN_BG_TONIC_GPE_PA / BRAIN_BG_TONIC_STN_PA (the dev operating point)."""
+    if not tonic_drive_enabled():
+        return 0.0, 0.0
+
+    def _ov(flag, fallback):
+        raw = (os.environ.get(flag) or "").strip()
+        if not raw:
+            return float(fallback)
+        return float(raw)
+    return _ov(TONIC_DRIVE_GPE_FLAG, config.gpe_tonic_pA), _ov(TONIC_DRIVE_STN_FLAG, config.stn_tonic_pA)
 
 
 def _run_trial(bridge, config, *, arousal=True):

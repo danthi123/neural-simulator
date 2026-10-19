@@ -191,3 +191,40 @@ value-lesion result (7/24 lesioned events still held, hsb_empty1 on 42/43/100/10
 probe predecessor is the one whose reply the value lesion fails to move). Step 2/3 (tonic pallidal
 drive jointly with ldc-synzero as one investigation; flag-gated proposal, bars unchanged, dev seeds
 9-16 first) still per bg-commit-next-1014.
+
+## 2026-10-19: AMENDMENT 2 approved - flag built; I_tonic physiological rule declared BEFORE any run
+
+RULINGS bg-tonic-ok-1019/-1019b: APPROVED as drafted (one flag `BRAIN_BG_TONIC_DRIVE`, default OFF,
+constant pacemaking current to gpe_{ch} + selector_stn, no weight/read change, bars unchanged, flag-off
+byte identity first, then bg dev seeds 9-16 and the ldc dev-7 GPe probe). Built on `research/bg-tonic-drive`:
+gate `tonic_drive_enabled()/tonic_drive_pA()` + `gpe_tonic_pA/stn_tonic_pA` (default 0.0) applied inside
+`_set_equal_tonic_current` (the single site the organ and de-risk runner share), env overrides
+`BRAIN_BG_TONIC_GPE_PA/BRAIN_BG_TONIC_STN_PA`, organ reports `tonic_rates_hz` (gpe_0/gpe_1/selector_stn,
+drive window) flag-ON only. Flag-off suites: 43 passed incl `test_flag_off_is_byte_identical`.
+
+**I_tonic selection rule (condition 1, declared before the first calibration or dev run):** scope first -
+calibration probe (flag-ON, seed 9): tonic currents + the network's own baseline (gpi/thal tonic as
+configured) with arousal/hold/stimulus/practice drive OFF, OU background left as configured (sigma=40 pA);
+1000 ms per trial; rates = per-neuron mean Hz over the trial. Grid (declared range): GPe at
+{25, 50, 100, 200, 400, 700, 1000} pA, STN at the same grid, scanned INDEPENDENTLY (the other population
+held at its current pick, GPe starting at 0). Pick: the SMALLEST pA whose mean rate lands IN band - GPe
+20-60 Hz, STN 10-30 Hz; ties -> smallest. If 1000 pA does not reach a band, extend ONCE with
+{1400, 1800, 2400} pA, appending a WORKLOG line BEFORE running the extension. Chosen (gpe_pA, stn_pA)
+pinned for dev seeds 9-16 via the env overrides. No bar is read in this decision (a bar-driven pick voids
+the amendment). Pick + per-point Hz appended below before the first dev cell runs.
+[rule-declared 2026-10-19 06:5x]
+[pre-run addendum: each grid point gets a 200-step equilibration (discarded, NOT counted in the 1000 ms
+measured window) so the previous point's state does not bias the next rate; scan order as declared.
+[pre-run addendum-declared 2026-10-19 06:5x]]
+
+## 2026-10-19: CALIBRATION PICK (rule applied; no bar read; before the first dev cell)
+
+Probe `_bg_tonic_calibration.py` (flag-ON, seed 9, 200-step equilibration + 1000 ms measured per point,
+14 points, ~80 s local, rc=0; raw JSON `/opt/data/cache/scratch/bg_tonic_calibration.json`).
+GPe scan (STN 0): 25 pA 0.0 Hz | 50 pA 10.7 | **100 pA 30.4/31.9 IN BAND** | 200 pA 56.4/58.9 (also in) |
+400 pA 89.1/93.6 | 700 pA 127.8/132.6 | 1000 pA 159.4/164.4 (all out). STN scan (GPe 100): 25 pA 0.0 |
+**50 pA 18.2 IN BAND** | 100 pA 43.2 | 200 pA 75.5 | 400 pA 111.7 | 700 pA 152.4 | 1000 pA 185.1 (out).
+**PICK = gpe 100 pA, stn 50 pA** (smallest in band for both; bands GPe 20-60 / STN 10-30; no extension
+needed; GPe held 30-32 Hz stable across the whole STN scan). No completion/evidence/motor bar was read.
+Pinned for dev seeds 9-16 via `BRAIN_BG_TONIC_GPE_PA=100 BRAIN_BG_TONIC_STN_PA=50`.
+[pick-declared 2026-10-19 06:5x]

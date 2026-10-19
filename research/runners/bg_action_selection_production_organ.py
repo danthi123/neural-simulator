@@ -62,6 +62,8 @@ from research.runners._vocal_action_selector_gate import (
     _indices,
     _step,
     _set_equal_tonic_current,
+    tonic_drive_enabled,
+    tonic_drive_pA,
 )
 from sim.backend import get_backend, to_host
 # reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
@@ -476,6 +478,13 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
         cidx = bg_commit_indices(bridge)
         gate_t = np.zeros((T, 2), dtype=np.int32)
         slot_t = np.zeros((T, 2), dtype=np.int32)
+    # amendment 2 report-only diagnostics: gpe_{ch} and selector_stn spike counts per step, reported as
+    # baseline Hz over the drive window in `out` -- accumulation and reporting are flag-ON only.
+    tonic_on = tonic_drive_enabled()
+    gpe_idx = {c: _indices(bridge, f"gpe_{c}") for c in CHANNELS}
+    stn_idx = _indices(bridge, "selector_stn")
+    gpe_t = np.zeros((T, 2), dtype=np.int32)
+    stn_t = np.zeros(T, dtype=np.int32)
     v_lo, v_hi = np.inf, -np.inf
     drive_on()
     for t in range(T):
@@ -489,6 +498,10 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
             if commit is not None:
                 gate_t[t, c] = int(f[cidx["gate"][c]].sum())
                 slot_t[t, c] = int(f[cidx["slot"][c]].sum())
+            if tonic_on:
+                gpe_t[t, c] = int(f[gpe_idx[c]].sum())
+        if tonic_on:
+            stn_t[t] = int(f[stn_idx].sum())
         if v_check:
             v = to_host(bridge.cp_membrane_potential_v)
             v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
@@ -539,6 +552,13 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
     out = {"winner": winner, "committed": winner is not None, "latch_rates": latch_rates, "readouts": readouts,
            "motor_total": motor_t.sum(axis=0).tolist(), "v_min": v_lo, "v_max": v_hi,
            "latch_onset_ms": [int(np.argmax(latch_t[:, c] > 0)) if latch_t[:, c].any() else None for c in CHANNELS]}
+    if tonic_on:               # report-only (flag-ON): baseline firing over the drive window, diagnostics 3(a)/(b)
+        dt_ms = float(bridge.core_config.dt_ms)
+        out["tonic_rates_hz"] = {
+            **{f"gpe_{c}": round(float(gpe_t[:T_DRIVE, c].sum()) / (float(config.n_gpe) * T_DRIVE * dt_ms) * 1000.0, 2)
+               for c in CHANNELS},
+            "selector_stn": round(float(stn_t[:T_DRIVE].sum()) / (float(config.n_stn) * T_DRIVE * dt_ms) * 1000.0, 2),
+            "window": "drive", "drive_steps": int(T_DRIVE)}
     if commit is not None:                            # the commit read decides; the old latch read is reported only
         cm = bg_commit_read(commit, gate_t, slot_t, motor_t)
         cm.update({"old_latch_winner": winner, "old_latch_rates": latch_rates,
