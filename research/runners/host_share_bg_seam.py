@@ -122,7 +122,8 @@ def install(mode):
         rd = dict(t.get("readouts") or {})
         extra = {"commit": t["commit"]} if t.get("commit") is not None else {}   # BRAIN_BG_COMMIT (amendment)
         _rec(kind="bg_neural", winner=t.get("winner"), latch_rates=t.get("latch_rates"), readouts=rd,
-             v_range=[t.get("v_min"), t.get("v_max")], **extra)
+             v_range=[t.get("v_min"), t.get("v_max")], **extra,
+             **({"tonic_rates_hz": t["tonic_rates_hz"]} if t.get("tonic_rates_hz") else {}))   # RULING bg-tonic-persist-1019
         if mode == "readout" and _EV["label"]:
             alt = rd.get("first_to_12_motor (production rule)")
             _rec(kind="bg_readout", applied=True, latch_winner=t.get("winner"), alt_winner=alt)
