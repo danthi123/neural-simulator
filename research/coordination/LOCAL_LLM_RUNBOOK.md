@@ -2028,3 +2028,14 @@ Ask: review the branch; until then nobody enables `BRAIN_ONE_BRAIN=1` outside te
 - 2026-10-18 23:12 [preread-c] INFO: before_you_build+rag top5: claim-entailment moat wired 08-12, multiclause derisk 08-12 (fronted-object edge), extract-then-entail 08-20, productive-syntax scoping 06-17, verify-postfilter 08-21. Allowlist acceptance UNSCOPED = fresh gap.
 - 2026-10-19 04:22 [lbf-head] RESULT: b2d_score tag b2d1018 seeds 7+8: verdict COMPLETE 0 fail cells; S0 core 33/40 fac = 0.825 (sd 0), S2 22/40 = 0.537, S1 null, stop-gate not blocked. WORKLOG 04:15 = detail.
 - 2026-10-19 04:22 [lbf-prov] INFO: [b2d1018] 8 prov sidecars of the 4 mem_gb=12 reruns are rewritten vs my wave-4 partial commit -> editing existing results = Claude's; unstaged-modified on main for Claude to land. WORKLOG 04:15.
+- 2026-10-19 06:10 [bg-commit-next] ASK: [bg-commit-next] Approve the flag-gated default-OFF tonic pallidal drive amendment: one investigation with ldc-gpe-tonic, bars unchanged, bg dev seeds 9-16 first. Full draft: docs/drafts/bg-commit/tonic-drive-proposal-ASK.md
+
+05:47: ONE task = bg-commit-next steps 2+3 (priorities-1018 (3) critical path; wrc smoke HELD ->
+priority active; step 1 was already committed 140f63c0e):
+step-1 carry-over (G-side drive/slot residue across the W_RESET=16 window) + ldc-synzero evidence (GPe 0
+spikes both arms = missing tonic pacemaking) fused into ONE flag-gated default-OFF proposal by one MiMo Pro
+delegate (RULING models) -> docs/drafts/bg-commit/tonic-drive-proposal-ASK.md (amendment-2 draft, bars
+unchanged, bg dev 9-16 first, ldc dev-7 probe, A0.2-style risks R1-R6), ASK [bg-commit-next] filed; the
+[ldc-gpe-tonic] ask rides the same draft (one investigation). Also this wake: Claude landed the 8 rerun
+prov sidecars (2947759b0, [lbf-prov] answered); T1 re-checked = ladder blocked by ldc-synzero-1014
+(queued behind bg-commit), T2 confirmed already closed (RESULT line 1352). Stop: ASK awaits Claude.
