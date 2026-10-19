@@ -1420,6 +1420,8 @@ RESULT [T2]: integration wave 2 @ 2196ef6af (already merged per RULING iw2-merge
 23:07: CONTINUE from 22:35 (early-failure watch) + the claude-quiet-1018 optional pre-read = [preread-c].
 00:07: ONE task = commit the first s8 wave (event: 30 load_bearing files). 11/49 lb.json landed, zero sub-100-byte stubs, depth 31 (~7 running after 18 popped). mem_gb=8 lines placing fine on all nodes so far.
 01:09: ONE task = commit the second s8 wave (event: 21 load_bearing files). 16/49 lb.json, zero stubs, depth 26 (33 popped = 16 done + ~17 in flight). Still no death signature.
+02:09: ONE task = commit the third s8 wave (event: 57 load_bearing files). 28/49 lb.json, zero stubs, depth 13 (36 popped = 28 done + ~8 in flight). Still no death signature at mem_gb=8.
+NEXT: final waves -> [lbf-head] RESULT + b2d_score read for BOTH seeds. Delegate 2/2 this run.
 NEXT: completion wave -> [lbf-head] RESULT + b2d_score read for BOTH seeds (claude-quiet-1018 trigger). Delegate 2/2 this run.
 NEXT: s8 waves as events; the [lbf-head] RESULT + b2d_score read fires when 49/49 s7 + 49/49 s8 both sit in the repo (claude-quiet-1018). Delegate 2/2 this run.
 Watch: s8 at 6/49 landed zero stubs, depth 37, 12 claims spread pool40 3 / pool41 2 / pool42 2 / wspool 5 - all four nodes healthy, no death signature (pool41 claims OK at mem_gb=8 despite its 15G nominal; recheck its outputs first if a claimed line yields nothing).
