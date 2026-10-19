@@ -1,15 +1,15 @@
 {
- "run_id": "1792379337-13",
+ "run_id": "1792394355-13",
  "runner": "research/runners/onebrain_regression_battery.py",
  "argv": [
-  "/srv/simpool/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/runners/onebrain_regression_battery.py",
+  "/home/node/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/runners/onebrain_regression_battery.py",
   "--worker",
   "--env",
   "{}",
   "--turns",
   "cg_mention1,cg_mention2",
   "--out",
-  "/srv/simpool/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/findings/raw/_load_bearing/_shards/b2d1018/s8/common-ground-drives/intact_b_cg_mention1_cg_mention2_s8.json"
+  "/home/node/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/findings/raw/_load_bearing/_shards/b2d1018/s8/common-ground-drives/intact_b_cg_mention1_cg_mention2_s8.json"
  ],
  "git_sha": "f2885df70cfb99a8715c376bca12ac3c2134ef46",
  "git_dirty": false,
@@ -19,10 +19,10 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-10-18T23:08:57",
+ "started": "2026-10-19T03:19:15",
  "env": {
   "NUMEXPR_NUM_THREADS": "1",
-  "POOL_JOB_ID": "1792379136657419853-25654",
+  "POOL_JOB_ID": "1792394060383029486-6126",
   "OPENBLAS_NUM_THREADS": "1",
   "POOL_JOB_MEM_GB": "8",
   "OMP_NUM_THREADS": "1",
@@ -38,10 +38,10 @@
   "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
   "LB_PMEM_DRIVE_PROBE": "1",
   "LB_SURPRISE_CONFIRM_PROBE": "1",
-  "SIM_RUN_ID": "1792379136-4",
+  "SIM_RUN_ID": "1792394060-4",
   "BRAIN_CHAT_SEED": "8"
  },
- "host": "dant123-wk",
+ "host": "node-mxl1462drl",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": false,
