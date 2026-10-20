@@ -769,11 +769,14 @@ def test_slug_spellings_and_the_store_accent_form():
     for p in ("Ha noi vietnam twinned administrative body Montreal Canada.", "United States capital Charlotte Amalie.",
               "United States Virgin Islands shares border with Canada.", "Ha noi vietnam twinned administrative body 安 Canada."):
         assert not A.allowlist_keep(p, g)[0], p
+    # build 4 F2: montr_al_canada's store name is "Montréal, Canada" (with a comma), so the table also holds "montréal canada"; NFC
+    # makes the decomposed spelling the same text
+    for p in ("Ha noi vietnam twinned administrative body Montréal Canada.",
+              "Ha noi vietnam twinned administrative body Montre\u0301al Canada."):
+        assert A.allowlist_keep(p, g) == (True, "ok"), p
     # build 4 (fold to find, exact to accept): the fold still FINDS these spans, but each is rejected because its text is not an
-    # exact canonical surface (montr_al_canada's store name is "Montréal, Canada", with a comma; NFC makes the decomposed spelling
-    # the same text; no hyphen/space equivalence; no fold on relation words)
-    for p, span in (("Ha noi vietnam twinned administrative body Montréal Canada.", "'Montréal Canada'"),
-                    ("Ha noi vietnam twinned administrative body Montre\u0301al Canada.", "'Montréal Canada'"),
+    # exact canonical surface (another accent; no hyphen/space equivalence; no fold on relation words)
+    for p, span in (("Ha noi vietnam twinned administrative body Montrèal Canada.", "'Montrèal Canada'"),
                     ("Ha-Noi-Vietnam twinned administrative body montr_al_canada.", "'Ha-Noi-Vietnam'"),
                     ("Ha noi vietnam twinned-administrative-body montr_al_canada.", "'twinned-administrative-body'")):
         keep, why = A.allowlist_keep(p, g)
@@ -821,8 +824,9 @@ _STORE_RULE_NAMES = ["Montr\u00e9al Canada", "Rep\u00fablica del Paraguay", "\u0
                      "Jos\u00e9 Mar\u00eda Aznar", "Stra\u00dfe des 17 Juni"]
 
 
-# of these, the build-4 names table holds exactly these as store names spelling their slug (the rest are not store entities)
-_STORE_RULE_NAMES_IN_TABLE = {"Rep\u00fablica del Paraguay", "\u00c9cole Sup\u00e9rieur des Beaux-Arts", "The weather in Bod\u00f8",
+# of these, the build-4 names table holds exactly these as store names spelling their slug (the rest are not store entities);
+# "Montréal Canada" is the F2 row of the store name "Montréal, Canada"
+_STORE_RULE_NAMES_IN_TABLE = {"Montr\u00e9al Canada", "Rep\u00fablica del Paraguay", "\u00c9cole Sup\u00e9rieur des Beaux-Arts", "The weather in Bod\u00f8",
                               "Koninkrijk Belgi\u00eb", "\u0130stanbul Ba\u015fak\u015fehir", "Historia Regum Britanni\u00e6", "Canon Yaound\u00e9"}
 
 

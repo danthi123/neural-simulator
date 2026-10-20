@@ -13,6 +13,9 @@ These tests pin: the 24 round-5 leaks rejected with the span and slug named (pur
 parser seeds); real accented / hyphenated store names accepted when written exactly as a store name and rejected when one character
 differs; the de-slugged form and the slug verbatim accepted; hyphen-for-space rejected unless a store name has the hyphen; non-ASCII text
 in the relation words or between words rejected; a missing table fails closed; the table's shape.
+Review rulings (2026-10-20): F1 rows only from the ONE Wikidata id carrying a slug's store facts (the demonstrated j_n / saint_cloud leaks
+rejected at seven seeds through the claim gate and the composer entry; the table's own id data checked, and against wikidata5m where
+present); F2 the ", " -> " " rows (Z39 kept); F3 the whitespace rule, every listed character inside and outside a span; F4 no Cf/Cc surface.
 
 Run: CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m pytest tests/test_moat_allowlist_exact.py -q
 """
@@ -275,7 +278,7 @@ def test_an_unreadable_names_table_fails_closed(monkeypatch, tmp_path):
 # ============================================================================================================ the table
 def test_the_names_table_is_small_exceptions_only_and_spells_its_slugs():
     path = Path(A.NAMES_TABLE_PATH)
-    assert path.stat().st_size < 600_000
+    assert path.stat().st_size < 800_000                 # with row_ids and multi_id_slugs (F1) and the comma rows (F2)
     assert (path.parent / (path.name + ".prov.json")).exists()
     doc = json.loads(path.read_text(encoding="utf-8"))
     assert doc["reproduction"]["identical"] is True and doc["reproduction"]["store_facts"] == 78857
@@ -335,15 +338,17 @@ def test_every_f1_leak_is_rejected_at_all_seven_seeds_through_both_entries(seed_
     assert [_composer_entry(seed_chats[sd], sentence, gathered) for sd in SEEDS] == [False] * len(SEEDS)
 
 
-def test_the_merged_slugs_accept_only_their_slug_and_de_slugged_form():
-    """F1: j_n (Jan with an acute, Q6319579; Jon with an acute, Q1715043) and saint_cloud (the French commune Q189153 and St. Cloud,
-    Minnesota Q736834) carry store facts from two ids, so neither has a row."""
+def test_the_demonstrated_merges_follow_the_carrier_rule():
+    """F1. saint_cloud: the store facts under it come from two ids (the French commune Q189153, St. Cloud, Minnesota Q736834), so it has
+    no row and accepts only its slug and de-slugged form. j_n: the alias map gave it two ids (Jan with an acute, Q6319579; Jon with an
+    acute, Q1715043) but only Q1715043 carries store facts, so its one row is that id's name and the other id's spelling rejects."""
     t = A.names_table()
-    for slug in ("j_n", "saint_cloud"):
-        assert slug not in t.entities and t.surfaces(slug) == frozenset((slug, A.deslug(slug)))
+    assert "saint_cloud" not in t.entities and t.surfaces("saint_cloud") == frozenset(("saint_cloud", "saint cloud"))
     assert A.allowlist_keep("Saint Cloud country u s of a.", [SC]) == (True, "ok")
+    assert sorted(t.entities["j_n"]) == ["jón"]
+    assert A.allowlist_keep("Jón language of work or name Íslenska language.", [J]) == (True, "ok")
     assert A.allowlist_keep("j n language of work or name slenska_language.", [J]) == (True, "ok")
-    assert not A.allowlist_keep("Jón language of work or name slenska_language.", [J])[0]
+    assert not A.allowlist_keep("Jân language of work or name slenska_language.", [J])[0]
 
 
 def test_the_table_records_its_carrier_ids_and_no_row_comes_from_a_multi_id_slug():
@@ -355,7 +360,8 @@ def test_the_table_records_its_carrier_ids_and_no_row_comes_from_a_multi_id_slug
     assert all(isinstance(v, str) and re.fullmatch(r"Q\d+", v) for v in row_ids.values())
     assert not set(ents) & set(multi)
     assert all(len(v) >= 2 and v == sorted(set(v)) for v in multi.values())
-    assert {"Q6319579", "Q1715043"} <= set(multi["j_n"]) and {"Q189153", "Q736834"} <= set(multi["saint_cloud"])
+    assert multi["saint_cloud"] == ["Q189153", "Q736834"] and "j_n" not in multi
+    assert row_ids["j_n"] == "Q1715043"                    # Q6319579 (Jan with an acute) carries no store fact under j_n
     rep = doc["reproduction"]
     assert rep["identical"] and rep["carriers_cover_every_store_slug"] and rep["carrier_winners_rebuild_the_store"]
     assert doc["steps"]["n_multi_id_slugs"] == len(multi) and doc["steps"]["no_carrier"] == []
