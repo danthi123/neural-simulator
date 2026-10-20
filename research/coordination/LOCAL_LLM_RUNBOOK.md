@@ -2206,3 +2206,8 @@ pA points straddle the cliff and decide the continuation; re-pick/re-design stay
   (0 dispatched; 98 lb.json = legacy dev read). NEXT: when all 32 point cells land, apply
   -1020 decision tree (a)/(b) and file [bg-tonic-stn] RESULT with the rate-by-current table
   (syn-input report withdrawn per -1020f); gate seeds still wait for Claude.
+
+- 2026-10-20 15:1x CORRECTION to the 15:10 census: the `sN:0` counts were my glob bug
+  (cells nest `stn<cur>/sN/sN/*.json`; I counted only the first level). TRUE new-point
+  census: stn32 s9:7 s10:7 s11:7 s12:7 s13:7 s14:7 s15:7 s16:4; stn34 s9:4 s10:3 s11:2 s12:0 s13:0; stn36 not-started; stn38 not-started. Queue figure (313 = 19 STN + 294 LBF) was read from
+  `wc -l` and is unaffected. Everything else in the 15:10 entry stands.
