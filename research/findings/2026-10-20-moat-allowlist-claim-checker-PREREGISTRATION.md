@@ -147,3 +147,32 @@ The round-3 cases shaped build 2, so they are no longer blind. Build 2 is re-run
 
 **If build 2 misses any bar, it is a NO-GO.** The method continues with the next build and a fresh round-5 hunt (no defer). No case of a
 hunt that has been run is ever used to tune the build it scores.
+
+## AMENDMENT 3 (2026-10-20, Claude; filed after build 2's round-4 result and build 3's build, before any build-3 measurement)
+
+**Build 2 fails bar 3 as registered.** Round 4 (`research/findings/raw/_moat_allowlist_hunt4/r4/`, cases at `4d9de76e3`,
+blind two-judge adjudication at `3a008dbf3`, both committed before the run) has 110 U cases. Build 2 kept one at all seven
+seeds through both entries: R4-DT02 "Peter Dennis Blandford Townshend is a member of the WHO." (`fb1417ba7`). <!--derived-->
+Build 2 is a NO-GO; its other measurements are reported in its verdict section as registered.
+
+**What build 3 changes** (`e87a7e9b9`, `4cf910ad6`, `95de4db59`). Rule: no invented acronyms.
+- A token of two or more capital letters inside an entity span is kept only if the entity's own store names write it in
+  capitals.
+- The table is generated from the store's own alias source and checked to rebuild all 78,857 store facts; a slug with no
+  row allows no all-caps token.
+- A malformed gathered set is now a clean reject.
+- Witness tests from the mutation report pin every non-equivalent survivor of build 1. The rerun on build 3 leaves no
+  survivor that changes a verdict.
+
+The round-3 and round-4 cases shaped builds 2 and 3. They are re-run and reported, never a bar.
+
+**Bars for build 3.** Sections 2.1-2.6 as amended by Amendments 1 and 2, with bar 3 on a NEW round-5 hunt under round 4's
+protocol:
+- at least 100 new expect-U inputs plus supported twins;
+- written by a fresh skeptic under the same blindness rule, who may read SPEC.md, this prereg with all three amendments,
+  the held-out corpora, the store, and the round-3 and round-4 case files, so as not to repeat them;
+- two blind judges per case on an anonymised, label-free copy, with the same mechanical relabel rule as round 4, and labels
+  and adjudication committed before the run;
+- 0 U kept at all seven seeds through both entries, with every arm VALID.
+
+If build 3 misses any bar it is a NO-GO, and the method continues with build 4 and a round-6 hunt.
