@@ -1141,6 +1141,25 @@ def test_node_limit_refusal_is_logged_once_per_node_per_ten_minutes(tmp_path: Pa
     assert res.stdout.split() == ["1", "1"] and "per-node limit" not in res.stderr, res.stderr
 
 
+def test_fill_node_logs_when_every_queued_job_is_larger_than_a_node_without_an_entry(tmp_path: Path) -> None:
+    # 2026-10-20 (RULING pool-stall-1020): pool41/42 sat idle ~30 h under 12 GB lines with no log line, because a
+    # node with no POOL_NODE_LIMITS entry refused SILENTLY. Now one rate-limited line names the sizes.
+    now = int(time.time())
+    queue = tmp_path / "pool.queue"
+    queue.write_text(f"{now}\tpython -m research.runners.huge  #checked:r mem_gb=40\n")
+    res = _limits_run(tmp_path, "--fill-node", "pool40", probe="8 1 0 20 1 32", limits="wspool:mem_gb=4")
+    assert res.returncode == 0, res.stderr
+    assert "research.runners.huge" in queue.read_text()       # still queued
+    lines = [ln for ln in res.stderr.splitlines() if "exceeds this node's memory budget" in ln]
+    assert len(lines) == 1 and "pool40" in lines[0] and "40 GB" in lines[0], res.stderr
+    assert "per-node limit" not in res.stderr, res.stderr
+    # A job that fits is dispatched with no such line.
+    queue.write_text(f"{now}\tpython -m research.runners.small  #checked:r mem_gb=2\n")
+    res = _limits_run(tmp_path, "--fill-node", "pool40", probe="8 1 0 20 1 32", limits="wspool:mem_gb=4")
+    assert res.returncode == 0 and queue.read_text().strip() == "", res.stderr
+    assert "memory budget" not in res.stderr, res.stderr
+
+
 def test_fill_node_logs_when_the_per_node_memory_budget_is_why_a_job_stays_queued(tmp_path: Path) -> None:
     now = int(time.time())
     queue = tmp_path / "pool.queue"
