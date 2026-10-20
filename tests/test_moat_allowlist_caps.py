@@ -221,6 +221,16 @@ def test_tokens_outside_the_spans_are_not_read(prose):
     assert A.allowlist_keep(prose, _ES) == (True, "ok"), prose
 
 
+def test_every_parse_of_an_ambiguous_sentence_is_case_checked():
+    """With gathered nouns spelled 'the' and 'is', "The IS member of x." has two parses: shape 3 (the, member_of, x), where "IS" is the
+    copula (outside every span), and shape 1 (is, member_of, x), where "IS" is the SUBJ span of the slug is (no row: no all-caps token
+    allowed). The sentence is kept only if EVERY parse passes, so it is rejected naming 'IS' (a check of the first parse only keeps it)."""
+    g = [["the", "member_of", "x"], ["is", "member_of", "x"]]
+    assert A.allowlist_keep("The is member of x.", g) == (True, "ok")
+    keep, why = A.allowlist_keep("The IS member of x.", g)
+    assert not keep and "'IS'" in why and " of is:" in why, why
+
+
 def test_a_slug_outside_the_table_allows_no_all_caps_token():
     g = [["nato_x", "has_part", "zeta_q"]]
     assert "nato_x" not in TABLE["entities"]
