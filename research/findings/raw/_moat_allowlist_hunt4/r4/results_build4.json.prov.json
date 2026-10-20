@@ -1,12 +1,12 @@
 {
- "run_id": "1792533610-2616475",
+ "run_id": "1792538143-2809696",
  "runner": "research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
  "argv": [
   "/home/dant123/Projects/sim-rev/wt-allow4/research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
   "research/findings/raw/_moat_allowlist_hunt4/r4",
   "research/findings/raw/_moat_allowlist_hunt4/r4/results_build4.json"
  ],
- "git_sha": "b69c6e9ef",
+ "git_sha": "6f0fbcfe3",
  "git_dirty": false,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,13 +14,13 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-10-20T18:00:10",
+ "started": "2026-10-20T19:15:43",
  "env": {},
  "host": "dant123-wk",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 5414.7,
+ "corpus_check_age_s": 9947.8,
  "corpus_check_query": "claim checker span matcher accepts Unicode confusable letters and separator characters because it compares spans through a lossy slug fold (sanitize) instead of exact canonical surface forms",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build4.json"

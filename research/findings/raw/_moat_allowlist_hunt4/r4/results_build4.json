@@ -23,7 +23,7 @@
  "xp": "numpy",
  "device": "cpu (numpy)",
  "cuda_visible_devices": "",
- "elapsed_seconds": 164.6,
+ "elapsed_seconds": 169.5,
  "exit_code": 0,
  "construction": {
   "real_constructors": "BrainConversationalAgent(seed, composer=KBHolder), ChatBrain(agent), RichAnswerComposer(chat)",
