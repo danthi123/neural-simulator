@@ -144,4 +144,24 @@ assigns it, so the bridge runs with heterogeneity ON unless its config comes fro
 
 The census scripts (recorder, static scan, reachability closure) and their outputs were run from the session
 scratchpad and are not committed. The facts above are reproducible with the warning added in this branch: a build
-that overwrites region presets now logs one `preset-centred heterogeneity` warning naming the regions.
+that overwrites region presets now logs one WARNING ("parameter heterogeneity is centred on the global defaults
+... and overwrites the presets of N region(s): ...") naming the regions and the parameters.
+
+## Opting in (after this branch)
+
+An organ keeps its presets by setting the flag on the config it builds, before `_initialize_simulation_data`:
+
+```python
+cfg.enable_parameter_heterogeneity = True            # unchanged: heterogeneity stays on
+cfg.preset_centred_parameter_heterogeneity = True    # jitter a/b/d/C around each region's own preset
+```
+
+or, for a builder that takes config overrides (`build_selector_bridge(seed, core_config_updates=...)`):
+
+```python
+build_selector_bridge(seed, core_config_updates={"preset_centred_parameter_heterogeneity": True})
+```
+
+The draws, their order and the RNG state after the build are unchanged; only region-preset neurons move (value =
+ratio x preset, ratio = sample / centre). Flipping it on for an organ changes that organ's dynamics, so each flip
+needs its own six-seed gate; no organ is flipped in this branch.
