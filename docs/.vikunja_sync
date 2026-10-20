@@ -289,3 +289,13 @@ Added #251-#257 (derived honesty done; questions not stored done; neural questio
 
 ## 2026-10-15  emotion-category flip
 Task #262 created and closed (emotion category default ON, Stage-2 C4). Ledger row emotion-category added.
+
+## 2026-10-16  stage-1 PASSED docs sync (driver)
+Stage 1 PASSED 10-16 (attempt 2) synced across GAP CURRENT STATE (RESUME 2026-10-16), master roadmap §7/§8,
+AUTONOMOUS_STATE, and ROADMAP (parked on docs/roadmap-sync-1015 under ASK [roadmap-sync]); four caveats copied
+verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING s1-verified-1016).
+
+## 2026-10-20 stn-drive-sweep-sync
+- Board #261 rung appended: pacemaker drive sweep STOP
+  (PROVISIONAL bg-tonic-stn-1019-RESULT, 8519f1174; cliff points 32/34/36/38 queued);
+  GAP_CLOSURE live header + ROADMAP.md + AUTONOMOUS_STATE verified clean (check_docs rc=0).

@@ -2170,3 +2170,9 @@ not add T-type for overshoot), :116 equation-seed not closure (Phillips 2020); [
 
 13:19: extraction complete for bg-tonic-stn-1019's pick rule (tonic_rates_hz.selector_stn in each cell's seam_* artifacts; GPe cross-checked healthy 27-38 Hz in every zero-STN cell, so silence is genuine). VERDICT: NO current in the original set has all 8 seeds in 10-30 Hz - 40 pA means span 7.3-32.7 (6/8 in band, s12 low, s14 high), every current <=30 pA = STN 0.0 Hz (cliff between 30 and 40, GPe unaffected); stn10 6/8 complete zeros, remaining 2 cells cannot flip any current. Per the ruling's else-branch = STOP with a variance RESULT: filed research/coordination/bg-tonic-stn-1019-RESULT.md (PROVISIONAL, agent-drafted by one MiMo delegate per RULING models, every number re-verified against my extraction; cliff = open question, not asserted). The 32 queued 32/34/36/38
 pA points straddle the cliff and decide the continuation; re-pick/re-design stays Claude's (NEEDS stands). Queue: 28 STN + 294 LBF; census 46/48. -1020b preread-d closed earlier today (45a8a1d94).
+
+- 2026-10-20 14:21 — same-cycle doc-sync (sync-documentation Check I + vikunja) after
+  `bg-tonic-stn-1019-RESULT`: board #261 rung appended (drive-sweep STOP, cliff points
+  32/34/36/38 queued), `docs/.vikunja_sync` stamped; GAP_CLOSURE live header / ROADMAP.md /
+  AUTONOMOUS_STATE verified clean (no stale next-action; check_docs rc=0). Original sweep now
+  48/48 (stn10 s15+s16 = 0.0, verdict unchanged); queue 317 = 23 STN (32/34 running) + 294 LBF.
