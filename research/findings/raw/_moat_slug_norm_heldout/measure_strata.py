@@ -43,7 +43,7 @@ def bucket(why, acc):
         return "?"
     if why.startswith("allowlist:"):                       # the allowlist arm's reasons (research/runners/_moat_allowlist.py)
         body = why[len("allowlist:"):].strip()
-        for key in ("no shape", "not gathered", "apostrophe", "non-Latin", "empty", "nothing gathered"):
+        for key in ("no shape", "not gathered", "apostrophe", "non-Latin", "empty", "nothing gathered", "all-caps"):
             if body.startswith(key):
                 return "allowlist: " + key
         return "allowlist: " + body[:40]

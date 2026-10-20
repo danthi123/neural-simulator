@@ -21,7 +21,9 @@ triple of this turn; everything else is rejected. These tests pin:
     one takes no verb reading and no shape 3;
   - build 2: shape 3 takes only a / an or no determiner before the relation noun ("X is the member of Y" asserts uniqueness), and
     SUBJ / OBJ are spelled by the store's own slug rule (`sanitize` in research/runners/_knowledge_core_curate.py), including an
-    accented letter at the start or end of a name.
+    accented letter at the start or end of a name;
+  - build 3 (no invented acronyms, the case fidelity of entity spans) is pinned in tests/test_moat_allowlist_caps.py; three
+    assertions here that kept an all-caps span of a name whose store names do not write it so were moved to that rule.
 The matcher is a pure host function: its verdict cannot depend on the parser seed. Where a test goes through the production
 `ChatBrain` (which carries a seeded BridgeParser) it runs at all seven parser seeds 42, 43, 44, 100, 101, 102, 1.
 
@@ -758,12 +760,15 @@ def test_slug_spellings_and_the_store_accent_form():
          ["united_states", "shares_border_with", "canada"]]
     for p in ("Ha noi vietnam twinned administrative body Montréal Canada.",
               "Ha noi vietnam twinned administrative body Montréal Canada.",
-              "HA-NOI-VIETNAM twinned_administrative_body montr_al_canada.",
+              "Ha-Noi-Vietnam twinned_administrative_body montr_al_canada.",
               "United States Virgin Islands capital Charlotte Amalie.", "United States shares border with Canada."):
         assert A.allowlist_keep(p, g)[0], p
     for p in ("Ha noi vietnam twinned administrative body Montreal Canada.", "United States capital Charlotte Amalie.",
               "United States Virgin Islands shares border with Canada.", "Ha noi vietnam twinned administrative body 安 Canada."):
         assert not A.allowlist_keep(p, g)[0], p
+    # build 3 (no invented acronyms): HA / NOI / VIETNAM are not written in capitals in any store name of ha_noi_vietnam
+    keep, why = A.allowlist_keep("HA-NOI-VIETNAM twinned_administrative_body montr_al_canada.", g)
+    assert not keep and "'HA'" in why and "ha_noi_vietnam" in why, why
 
 
 @pytest.mark.parametrize("prose", ["Spain shares \u4e0d border with France.", "Spain shares\u4e0dborder with France.",
@@ -785,15 +790,18 @@ def test_non_latin_or_free_standing_non_ascii_text_cannot_hide_between_slug_word
 def test_accented_latin_inside_a_word_still_reads_as_the_store_slug():
     g = [["jos_mar_a_aznar", "member_of", "partido_popular"], ["rep_blica_del_paraguay", "member_of", "united_nations"]]
     for p in ("Jos\u00e9 Mar\u00eda Aznar is a member of Partido Popular.", "Rep\u00fablica del Paraguay is a member of the United Nations.",
-              "REP\u00daBLICA DEL PARAGUAY member of united nations."):
+              "Rep\u00dablica del Paraguay member of united nations."):
         assert A.allowlist_keep(p, g)[0], p
+    # build 3 (no invented acronyms): an all-caps rendering is held to the store names of rep_blica_del_paraguay (ISO, PAR, PY only)
+    keep, why = A.allowlist_keep("REP\u00daBLICA DEL PARAGUAY member of united nations.", g)
+    assert not keep and "'REP\u00daBLICA'" in why and "rep_blica_del_paraguay" in why, why
 
 
 # names chosen to cover each place an accented letter can sit (middle, start, end, whole first word, a combining mark after
 # lowercasing, a ligature); the slug each one must spell is computed by the STORE's own function, not written here
 _STORE_RULE_NAMES = ["Montr\u00e9al Canada", "Rep\u00fablica del Paraguay", "\u00c9cole Sup\u00e9rieur des Beaux-Arts",
                      "The weather in Bod\u00f8", "Koninkrijk Belgi\u00eb", "\u0130stanbul Ba\u015fak\u015fehir", "Historia Regum Britanni\u00e6",
-                     "Universit\u00e4t des Saarlandes", "Canon Yaound\u00e9", "\u00c5l", "\u00cele de France", "S\u00e3o Paulo FC",
+                     "Universit\u00e4t des Saarlandes", "Canon Yaound\u00e9", "\u00c5l", "\u00cele de France", "S\u00e3o Paulo Futebol Clube",
                      "Jos\u00e9 Mar\u00eda Aznar", "Stra\u00dfe des 17 Juni"]
 
 
