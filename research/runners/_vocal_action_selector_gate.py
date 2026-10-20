@@ -358,7 +358,17 @@ def build_selector_bridge(
 
     regions.extend(list(extra_regions))
     pathways.extend(list(extra_pathways))
-    for name, value in (core_config_updates or {}).items():
+    # step 0a (docs/drafts/bg-tonic-loop/PACKET.md, RULING bg-tonic-loop-1020): the two DEFAULT-OFF env
+    # switches ride this same core_config_updates path, so both build paths (a direct call and
+    # NeuralSeamSelector) are covered; with either switch unset the loop is byte-identical to the
+    # pre-switch build (tests/test_bg_tonic_loop_identity.py pins that against the golden captured on
+    # the unedited merged tree).
+    updates = dict(core_config_updates or {})
+    if bg_preset_cells_enabled():
+        updates["preset_centred_parameter_heterogeneity"] = True
+    if bg_bounded_cond_enabled():
+        updates["enable_bounded_conductance_integration"] = True
+    for name, value in updates.items():
         if not hasattr(cfg, name):
             raise AttributeError(f"CoreSimConfig has no field {name!r}")
         setattr(cfg, name, value)
@@ -429,6 +439,25 @@ TONIC_DRIVE_STN_FLAG = "BRAIN_BG_TONIC_STN_PA"
 def tonic_drive_enabled() -> bool:
     """DEFAULT-OFF. `BRAIN_BG_TONIC_DRIVE` in {1,true,yes,on} -> the pacemaking currents are applied."""
     return (os.environ.get(TONIC_DRIVE_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+BG_PRESET_CELLS_FLAG = "BRAIN_BG_PRESET_CELLS"
+BG_BOUNDED_COND_FLAG = "BRAIN_BG_BOUNDED_COND"
+
+
+def bg_preset_cells_enabled() -> bool:
+    """DEFAULT-OFF step 0a (docs/drafts/bg-tonic-loop/PACKET.md, RULING bg-tonic-loop-1020).
+    `BRAIN_BG_PRESET_CELLS` in {1,true,yes,on} -> build_selector_bridge passes
+    preset_centred_parameter_heterogeneity=True through core_config_updates, including when
+    NeuralSeamSelector builds the bridge."""
+    return (os.environ.get(BG_PRESET_CELLS_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def bg_bounded_cond_enabled() -> bool:
+    """DEFAULT-OFF step 0a (same packet). `BRAIN_BG_BOUNDED_COND` in {1,true,yes,on} -> the bridge is
+    built with enable_bounded_conductance_integration=True (bounds synaptic integration one term at a
+    time; it does not touch the Izhikevich quadratic term)."""
+    return (os.environ.get(BG_BOUNDED_COND_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
 
 
 def tonic_drive_pA(config):
