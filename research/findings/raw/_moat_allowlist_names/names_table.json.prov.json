@@ -1,26 +1,27 @@
 {
- "run_id": "1792529939-2452753",
+ "run_id": "1792533306-2598422",
  "runner": "research/runners/_moat_allowlist_names_build.py",
  "argv": [
   "/home/dant123/Projects/sim-rev/wt-allow4/research/runners/_moat_allowlist_names_build.py",
   "--out",
-  "research/findings/raw/_moat_allowlist_names/names_table.json"
+  "research/findings/raw/_moat_allowlist_names/names_table.json",
+  "--overwrite"
  ],
- "git_sha": "027c1c9cb",
- "git_dirty": true,
+ "git_sha": "fa979e63c",
+ "git_dirty": false,
  "source_kind": null,
  "source_manifest_sha256": null,
  "source_manifest_verified_at_start": null,
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-10-20T16:58:59",
+ "started": "2026-10-20T17:55:06",
  "env": {},
  "host": "dant123-wk",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 1743.4,
+ "corpus_check_age_s": 5111.0,
  "corpus_check_query": "claim checker span matcher accepts Unicode confusable letters and separator characters because it compares spans through a lossy slug fold (sanitize) instead of exact canonical surface forms",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_moat_allowlist_names/names_table.json"
