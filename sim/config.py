@@ -226,6 +226,22 @@ class CoreSimConfig:
     # stream reset to position 0, keyed on a stable per-region + per-parameter
     # index); the global draw runs FIRST so global-RNG consumption is preserved.
     per_region_parameter_heterogeneity: bool = False
+    # PRESET-CENTRED PARAMETER HETEROGENEITY (2026-10-20; DEFAULT OFF). The heterogeneity draws
+    # (_get_default_heterogeneity_distributions) are centred on the GLOBAL cfg.izh_*_val / cfg.hh_*
+    # values (the RS cortical / L5 defaults), so with heterogeneity on, a region's per-region preset
+    # (BrainRegion.izh_neuron_type: STN, GPe, MSN, FS, ...; or its hh_*_override values) is OVERWRITTEN
+    # by RS-centred a/b/d/C (HH: C_m/g_Na/g_K/g_L) and the region runs as an RS-centred hybrid
+    # (docs/drafts/preset-centred-het/CENSUS.md). When ON, each neuron's jittered value is centred on
+    # THAT neuron's preset (what _apply_per_region_neuron_types wrote) with the same relative spread:
+    # the SAME samples are drawn in the SAME order (RNG consumption unchanged), each draw becomes a ratio
+    # against its distribution's own centre (gaussian: sample / mean, kept in today's [0.1, 3.0] clip;
+    # lognormal: sample / exp(mean_log) = exp of the normal draw), and the ratio multiplies the preset.
+    # A zero preset therefore gets no jitter (ratio x 0 = 0); a zero-mean gaussian (no ratio exists)
+    # shifts additively instead. Neurons with no region preset keep the global-centred draw unchanged.
+    # Applies to the global draw, the per-region mask path (BrainRegion.enable_heterogeneity) and the
+    # region-scoped redraw (per_region_parameter_heterogeneity). DEFAULT OFF is byte-identical to the
+    # pre-flag code (tests/test_preset_centred_heterogeneity.py, pre-edit golden).
+    preset_centred_parameter_heterogeneity: bool = False
     # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; the one-substrate 2-organ
     # merge's SECOND byte-identity cause). Homeostatic threshold adaptation is a
     # CONTINUOUS companion process: `fused_homeostasis_update` pulls every
