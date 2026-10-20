@@ -107,3 +107,23 @@ def test_worklog_conflicts_keep_both_sides(tmp_path):
     assert r.returncode == 0, r.stderr
     out = git("show", "research/wl:docs/drafts/pkt/SPIKING-WORKLOG.md").stdout
     assert "branch entry" in out and "main entry" in out and "<<<" not in out
+
+
+def test_lane_builds_conflicts_keep_both_sides(tmp_path):
+    """Claude 2026-10-20 ([bg-tonic-loop-0] STOP): lane_builds.jsonl is an append-only registration log that
+    gates/lane_starvation reads row by row, so a conflict keeps both sides' rows and every row stays valid JSON."""
+    import json
+    git = _repo(tmp_path)
+    lb = tmp_path / "research" / "coordination" / "lane_builds.jsonl"
+    row = lambda w, t: json.dumps({"lane": "C", "workflow": w, "branch": "research/x", "started": t}) + "\n"
+    lb.write_text(row("base", 1.0)); git("add", "-A"); git("commit", "-q", "-m", "lanes")
+    git("checkout", "-q", "-b", "research/lanes")
+    lb.write_text(row("base", 1.0) + row("branch", 2.0)); git("commit", "-q", "-am", "branch lane")
+    git("checkout", "-q", "main")
+    lb.write_text(row("base", 1.0) + row("main", 3.0)); git("commit", "-q", "-am", "main lane")
+
+    r = _run(tmp_path, "research/lanes")
+    assert r.returncode == 0, r.stderr
+    out = git("show", "research/lanes:research/coordination/lane_builds.jsonl").stdout
+    rows = [json.loads(ln) for ln in out.splitlines() if ln.strip()]
+    assert sorted(x["workflow"] for x in rows) == ["base", "branch", "main"]
