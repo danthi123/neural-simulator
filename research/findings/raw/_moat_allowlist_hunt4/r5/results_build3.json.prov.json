@@ -1,0 +1,27 @@
+{
+ "run_id": "1792527869-2368226",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-hunt5/research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
+  "research/findings/raw/_moat_allowlist_hunt4/r5",
+  "research/findings/raw/_moat_allowlist_hunt4/r5/results_build3.json"
+ ],
+ "git_sha": "15e29c991",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T16:24:29",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5493.9,
+ "corpus_check_query": "STN GPe reciprocal loop rate stabilization tonic firing variance negative feedback",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build3.json"
+}
