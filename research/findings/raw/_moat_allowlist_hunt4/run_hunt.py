@@ -25,6 +25,9 @@ WHAT ROUND 3 GOT WRONG (the defects this runner removes; diagnosed 2026-10-20 fr
   (3) The composer entry coerced a None allowlist verdict to False (`bool(accepted)`); here the raw gate return is recorded.
 Every verdict is a bool; anything else (None, an exception) is recorded per case-seed with its reason and makes that arm UNDEFINED for
 that case (AMENDMENT 2), never "kept 0".
+INSTRUMENT (build 4, F6): each allowlist-arm record of a reject carries `reason`, the claim gate's reject_reason string (gate entry: the
+gate's result; composer entry: what the traced gate returned), and the allowlist arm's summary carries `reject_reason_tags`, per entry the
+count of those case-seed reasons by leading tag (`reason_tag`). No verdict and no other summary field depends on them.
 """
 import research.runners  # noqa: F401  (the provenance door; stdlib-only, must be first)
 import os
@@ -34,6 +37,7 @@ os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")       # a hunt is CPU work; ne
 
 import contextlib
 import json
+import re
 import socket
 import sys
 import time
@@ -99,6 +103,24 @@ def case_status(recs, key="v"):
     return "kept" if any(vals) else "not_kept"
 
 
+def reject_reason(r):
+    """The claim gate's reject reason from its return `(accepted, result)`: result["reject_reason"] when the result is a dict, else None
+    (a keep, or a gate that gave no dict). Recorded on the allowlist arm's records only (field `reason`; a keep carries none)."""
+    if isinstance(r, tuple) and len(r) > 1 and isinstance(r[1], dict):
+        return r[1].get("reject_reason")
+    return None
+
+
+_REASON_TAG = re.compile(r"^allowlist: ([^:'\"(\[]*)")
+
+
+def reason_tag(reason):
+    """The leading tag of an allowlist reject reason: the words after "allowlist: " up to the first ':', quote, '(' or '[' ("no shape",
+    "not gathered", "entity span", "all-caps token", "non-ASCII character", ...); "other" for a reason not in that form."""
+    m = _REASON_TAG.match(reason or "")
+    return m.group(1).strip() if m and m.group(1).strip() else "other"
+
+
 # ---------------------------------------------------------------------------------------------------------------------------------
 # instrumentation of one chat object: record what the claim gate and the single-triple `_verify` were asked and answered
 # ---------------------------------------------------------------------------------------------------------------------------------
@@ -115,7 +137,7 @@ class Trace:
         except BaseException:
             self.events.append(("claim", "raised"))
             raise
-        self.events.append(("claim", r[0] if isinstance(r, tuple) and r else r))
+        self.events.append(("claim", r[0] if isinstance(r, tuple) and r else r, reject_reason(r)))
         return r
 
     def single(self, surface, asserted, svo):
@@ -205,7 +227,7 @@ def gate_entry(chat, arm, surface, g, alt_vocab=True):
     try:
         acc, _res = chat._verify_claim_set(surface, g)
         if isinstance(acc, bool):
-            return _rec(acc, "claim")
+            return _rec(acc, "claim", reason=reject_reason((acc, _res)) if arm == STRICT_ARM else None)
         if acc is None and arm != STRICT_ARM:
             return fallback_rec(chat, surface, g, "fallback", why=unbuildable_reason(chat, g), alt_vocab=alt_vocab)
         return _undefined("claim gate returned %r" % (acc,))
@@ -221,6 +243,7 @@ def composer_entry(rc, chat, trace, arm, surface, g, alt_vocab=True):
         v = rc._verify_rendered(surface, None, tuple(g[0]), g)
         ev = list(trace.events)
         claim = [e[1] for e in ev if e[0] == "claim"]
+        claim_why = [e[2] for e in ev if e[0] == "claim"]
         single = [e for e in ev if e[0] == "single"]
         if not isinstance(v, bool):
             return _undefined("composer verdict %r is not a bool" % (v,))
@@ -231,7 +254,7 @@ def composer_entry(rc, chat, trace, arm, surface, g, alt_vocab=True):
                 return _undefined("the allowlist arm did not consult the claim gate")
             if not isinstance(claim[0], bool):
                 return _undefined("claim gate returned %r (the composer coerced it to %r)" % (claim[0], v))
-            return _rec(v, "claim")
+            return _rec(v, "claim", reason=claim_why[0])
         if not single:
             if claim and isinstance(claim[0], bool):
                 return _rec(v, "claim")
@@ -310,6 +333,11 @@ def summarise(rows, arms=None):
             a["fallback_case_seeds"][entry] = dict(fb)
         a["n_undefined_case_entries"] = n_undef_cases
         a["VALID"] = n_undef_cases == 0
+        if arm == STRICT_ARM:      # the gate's reject reasons, per case-seed record, counted by leading tag (instrument only)
+            a["reject_reason_tags"] = {entry: dict(sorted(Counter(reason_tag(x["reason"]) for r in rows for x in r[entry][arm]
+                                                                  if isinstance(x, dict) and x.get("reason")).items(),
+                                                          key=lambda kv: (-kv[1], kv[0])))
+                                       for entry in ENTRIES}
         out[arm] = a
     return out
 

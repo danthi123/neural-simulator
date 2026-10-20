@@ -259,3 +259,47 @@ def test_main_exits_zero_when_every_arm_is_valid(tmp_path):
     assert all(d["summary"][a]["VALID"] for a in H.ARMS)
     assert d["summary"]["allowlist"]["entries"]["composer"]["U"]["kept"] == 1                 # X1 kept; X3 was relabelled B
     assert d["summary"]["allowlist"]["entries"]["composer"]["B"]["kept"] == 1
+
+
+# ---- the allowlist reject reason (instrument only: no verdict or existing summary field changes) ----------------------------------
+WHY = "allowlist: entity span 'Ján' is not an exact store surface of j_n (fold to find, exact to accept: accepted 'j n') [sentence 1 of 1]"
+
+
+def test_the_allowlist_arm_records_the_gates_reject_reason_in_both_entries(monkeypatch):
+    set_arm(monkeypatch, "allowlist")
+    chat = FakeChat(gate={"allowlist": (False, {"accepted": False, "reject_reason": WHY})})
+    assert H.gate_entry(chat, "allowlist", SENT, GATHERED, alt_vocab=False) == {"v": False, "src": "claim", "reason": WHY}
+    c = H.composer_entry(composer_over(chat), chat, H.Trace(chat), "allowlist", SENT, GATHERED, alt_vocab=False)
+    assert c == {"v": False, "src": "claim", "reason": WHY}
+    keep = FakeChat(gate={"allowlist": (True, {"accepted": True, "reject_reason": None})})
+    assert H.gate_entry(keep, "allowlist", SENT, GATHERED, alt_vocab=False) == {"v": True, "src": "claim"}     # a keep carries none
+    for k in H.FLAGS:
+        monkeypatch.delenv(k, raising=False)
+    set_arm(monkeypatch, "b2h")
+    other = FakeChat(gate={"b2h": (False, {"accepted": False, "reject_reason": "b2h: x"})})
+    assert H.gate_entry(other, "b2h", SENT, GATHERED, alt_vocab=False) == {"v": False, "src": "claim"}         # allowlist arm only
+
+
+@pytest.mark.parametrize("reason,tag", [
+    (WHY, "entity span"), ("allowlist: no shape: at token 2 'x' expected y", "no shape"),
+    ("allowlist: not gathered: (a, b, c)", "not gathered"), ("allowlist: all-caps token 'WHO' in the SUBJ/OBJ span", "all-caps token"),
+    ("allowlist: apostrophe (possessive or contraction) in 'x'", "apostrophe"),
+    ("allowlist: non-ASCII character 'é' (U+00E9) at 3 outside", "non-ASCII character"),
+    ("allowlist: nothing gathered", "nothing gathered"), ("something else", "other"), (None, "other")])
+def test_reason_tag_is_the_leading_words(reason, tag):
+    assert H.reason_tag(reason) == tag
+
+
+def test_the_summary_counts_allowlist_reasons_by_tag_and_nothing_else_changes():
+    r1 = {"v": False, "src": "claim", "reason": WHY}
+    r2 = {"v": False, "src": "claim", "reason": "allowlist: no shape: at token 1"}
+    rows = [_row("U1", "U", {"stock": [F, F], "b2h": [F, F], "allowlist": [r1, r2]}),
+            _row("F1", "F", {"stock": [T, T], "b2h": [T, T], "allowlist": [T, r1]})]
+    bare = [_row("U1", "U", {"stock": [F, F], "b2h": [F, F], "allowlist": [F, F]}),
+            _row("F1", "F", {"stock": [T, T], "b2h": [T, T], "allowlist": [T, F]})]
+    s, b = H.summarise(rows), H.summarise(bare)
+    assert s["allowlist"]["reject_reason_tags"] == {"gate": {"entity span": 2, "no shape": 1}, "composer": {"entity span": 2, "no shape": 1}}
+    assert b["allowlist"]["reject_reason_tags"] == {"gate": {}, "composer": {}}
+    for arm in s:
+        assert {k: v for k, v in s[arm].items() if k != "reject_reason_tags"} == {k: v for k, v in b[arm].items() if k != "reject_reason_tags"}
+    assert "reject_reason_tags" not in s["stock"] and "reject_reason_tags" not in s["b2h"]
