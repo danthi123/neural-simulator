@@ -650,10 +650,31 @@ def allowlist_keep(sentence, gathered):
     return bool(r["keep"]), r["reason"]
 
 
+def _bad_gap(surface):
+    """build 4 F3 (Claude ruling after the correctness re-review): the whitespace `split_sentences` consumes (before the first
+    sentence, after the last, and between sentences) may only be U+0020, LF or CR -> the first other character there, else None.
+    Inside a sentence `_bad_space` rules."""
+    gaps = [surface[:len(surface) - len(surface.lstrip())], surface[len(surface.rstrip()):]]
+    gaps.extend(m.group(0) for m in _SENTENCE_SPLIT.finditer(surface.strip()))
+    for gap in gaps:
+        for ch in gap:
+            if ch not in _GAP_OK:
+                return ch
+    return None
+
+
+_GAP_OK = " \n\r"
+
+
 def allowlist_verify(surface, gathered):
     """A rendered candidate (one or more sentences) -> the verifier result dict `ChatBrain._verify_claim_set` returns
     (accepted, reject_reason, grounded, hypotheses, trace). Accepted iff it has a sentence and EVERY sentence is kept."""
     key = _key_of(gathered)
+    gap = _bad_gap(surface) if isinstance(surface, str) else None
+    if gap is not None:
+        return {"accepted": False, "grounded": [], "hypotheses": [], "trace": [], "allowlist": True,
+                "reject_reason": "allowlist: whitespace or control character U+%04X between sentences or at an edge of the "
+                                 "reply (only U+0020, LF and CR are allowed there)" % ord(gap)}
     sentences = split_sentences(surface)
     trace = [allowlist_check(s, key) for s in sentences]
     grounded = [[a, v, p, [a, v, p]] for t in trace if t["keep"] for a, v, p in t["props"]]

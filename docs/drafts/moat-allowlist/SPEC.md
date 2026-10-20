@@ -53,7 +53,9 @@ every proposition it encodes is a gathered triple of this turn:
   an entity name, the ordinary space and exactly four spaces that look the same on screen (U+00A0 no-break, U+2007
   figure, U+2009 thin, U+202F narrow no-break) each count as one space. Any other whitespace or control character
   anywhere in a sentence (tab, vertical tab, form feed, U+001C to U+001F, U+0085, U+1680, U+2028, U+2029, U+3000 and
-  the rest) rejects the sentence. How a surface is split into sentences is unchanged.
+  the rest) rejects the sentence. How a surface is split into sentences is unchanged, but the whitespace the split
+  consumes (before the first sentence, after the last, and between sentences) may only be the ordinary space, a line
+  feed or a carriage return; anything else there rejects the whole reply (Claude ruling after the correctness re-review).
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

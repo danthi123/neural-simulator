@@ -214,10 +214,28 @@ def test_any_other_whitespace_or_control_character_rejects_inside_or_outside_a_s
 
 def test_sentence_splitting_is_unchanged_by_f3():
     """Whitespace after a sentence-final '.' is consumed by the splitter (unchanged), and each piece is stripped."""
-    g = ES
     assert A.split_sentences("Spain shares border with France.\tSpain is a member of the European Union.") == [
         "Spain shares border with France.", "Spain is a member of the European Union."]
-    assert A.allowlist_verify("Spain shares border with France.\u3000Spain is a member of the European Union.", g)["accepted"] is True
+
+
+_TWO = ("Spain shares border with France.", "Spain is a member of the European Union.")
+
+
+@pytest.mark.parametrize("gap", [" ", "\n", "\r\n", " \n ", "\n\n"])
+def test_plain_space_and_line_breaks_between_sentences_are_kept(gap):
+    """F3 (Claude ruling after the correctness re-review): between sentences and at the reply's edges, U+0020, LF and CR are
+    allowed (real mouth output breaks lines between sentences)."""
+    assert A.allowlist_verify(_TWO[0] + gap + _TWO[1], ES)["accepted"] is True
+    assert A.allowlist_verify(gap + _TWO[0] + gap, ES)["accepted"] is True
+
+
+@pytest.mark.parametrize("ch", ["\t", "\x0b", "\x0c", "\x1c", "\x1f", "\u0085", "\u1680", "\u2028", "\u2029", "\u3000",
+                                "\u00a0", "\u2009"])
+def test_other_whitespace_between_sentences_or_at_an_edge_rejects(ch):
+    """F3: any other whitespace or control character the splitter would consume rejects the reply, wherever it sits."""
+    for prose in (_TWO[0] + ch + _TWO[1], _TWO[0] + " " + ch + _TWO[1], ch + _TWO[0], _TWO[0] + ch):
+        r = A.allowlist_verify(prose, ES)
+        assert r["accepted"] is False and "between sentences or at an edge" in r["reject_reason"], (repr(prose), r)
 
 
 # ========================================================================================= no fold on relation words, ASCII outside
