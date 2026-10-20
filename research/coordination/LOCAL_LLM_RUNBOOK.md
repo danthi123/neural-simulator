@@ -2194,3 +2194,15 @@ pA points straddle the cliff and decide the continuation; re-pick/re-design stay
   too. NEEDS STOP [bg-tonic-stn-cliff] filed: instrument now (research branch + re-run) vs fold
   the report into Claude's packet; nothing built meanwhile per -1020b/-1020d(2). Queue 314 =
   20 STN + 294 LBF (LBF 0 dispatched).
+
+- 2026-10-20 15:10 — read RULINGS bg-tonic-stn-cliff-1020e/-1020f/-1020g (commit
+  1f8d30fc7, answers my [bg-tonic-stn-cliff] STOP): the seam's STN cells are RS-centred
+  hybrids (global parameter heterogeneity overwrites a/b/d/C after the preset), so -1020's
+  32.7 pA saddle-node and -1020c's 3.6 Hz isolated-cell are VOID. **-1020d(1) is WITHDRAWN —
+  no instrumentation, no new run**; the queued 32-38 pA points may finish (no bar); nothing
+  built for bg-tonic until Claude's packet lands; FAILURE_LOG row + default-OFF jitter + packet
+  revision = Claude's (-1020g). NEEDS line left for Claude to delete per convention.
+  New-point census: stn32 s9:0 s10:0 s11:0 s12:0 s13:0 s14:0 s15:0 s16:0; stn34 s9:0 s10:0 s11:0 s12:0 s13:0; stn36 not-started; stn38 not-started. Queue 313 = 19 STN (3x stn34 + 16x stn36/38) + 294 LBF
+  (0 dispatched; 98 lb.json = legacy dev read). NEXT: when all 32 point cells land, apply
+  -1020 decision tree (a)/(b) and file [bg-tonic-stn] RESULT with the rate-by-current table
+  (syn-input report withdrawn per -1020f); gate seeds still wait for Claude.
