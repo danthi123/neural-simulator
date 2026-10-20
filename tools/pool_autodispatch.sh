@@ -777,19 +777,28 @@ min_queued_est_gb() {   # smallest declared size among fresh #checked queued job
   echo "$m"
 }
 
+declare -A NODE_BUDGET_LOGGED_AT=()
 note_budget_limit_refusal() {
-  # note_budget_limit_refusal <node> -- pop_job found nothing for a node node_is_idle passed. When the node has a
-  # POOL_NODE_LIMITS entry whose limits shrank its budget, and the smallest queued job fits the budget the global
-  # settings alone would give but not the per-node one, the limit is what refused it: log (rate-limited). Read-only;
-  # the size test ignores pool_node/revision pins, so it can only say a job of that size was waiting.
-  local node="$1" m
-  [ -n "${NODE_LIM_SET[$node]:-}" ] || return 0
-  [ "$NODE_LIMIT_GLOBAL_BUDGET" -gt "$NODE_BUDGET" ] || return 0
+  # note_budget_limit_refusal <node> -- pop_job found nothing for a node node_is_idle passed. Read-only, rate-limited
+  # per node; the size test ignores pool_node/revision pins, so it can only say a job of that size was waiting.
+  # (1) The node has a POOL_NODE_LIMITS entry whose limits shrank its budget, and the smallest queued job fits the
+  #     budget the global settings alone would give but not the per-node one: the limit is what refused it.
+  # (2) Otherwise, when even the smallest queued job is larger than this node's budget, say so too. Before
+  #     2026-10-20 this case was SILENT for a node with no entry: every STN-sweep line reserved 12 GB, pool41/42 had
+  #     less, and the two nodes sat idle about 30 h with 32 lines queued and no log line (RULING pool-stall-1020).
+  local node="$1" m now last
   m=$(min_queued_est_gb)
   [[ $m =~ ^[0-9]+$ ]] || return 0
-  if [ "$m" -gt "$NODE_BUDGET" ] && [ "$m" -le "$NODE_LIMIT_GLOBAL_BUDGET" ]; then
+  [ "$m" -gt "$NODE_BUDGET" ] || return 0     # a job of a size that fits was waiting: pins, not size, held it
+  if [ -n "${NODE_LIM_SET[$node]:-}" ] && [ "$NODE_LIMIT_GLOBAL_BUDGET" -gt "$NODE_BUDGET" ] \
+     && [ "$m" -le "$NODE_LIMIT_GLOBAL_BUDGET" ]; then
     log_node_limit_refusal "$node" "the smallest queued job (${m} GB) exceeds the per-node memory budget (${NODE_BUDGET} GB; the global budget is ${NODE_LIMIT_GLOBAL_BUDGET} GB)"
+    return 0
   fi
+  now=$(date +%s); last="${NODE_BUDGET_LOGGED_AT[$node]:-}"
+  if [ -n "$last" ] && [ $(( now - last )) -lt "$NODE_LIMIT_LOG_RATE_S" ]; then return 0; fi
+  NODE_BUDGET_LOGGED_AT[$node]=$now
+  echo "[pool-dispatch] $(date '+%H:%M:%S') $node: idle, but the smallest queued job (${m} GB) exceeds this node's memory budget (${NODE_BUDGET} GB), so nothing can dispatch here; size each line's mem_gb from a measured peak x1.3 (next such line for $node in >= ${NODE_LIMIT_LOG_RATE_S}s)" >&2
 }
 
 fill_node() {
