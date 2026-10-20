@@ -20,7 +20,10 @@ THE SHAPES (after normalisation; N = one gathered slug, Det = a | an | the, dire
      ankara)) never takes shape 3, so the reversal that sentence would need is impossible. Pinned in
      tests/test_moat_allowlist.py (test_shape3_*).
   VERB(rel) = a token whose `_classify` reading is ('verb', rel) for a relation gathered THIS turn: the same verb-form table
-  `_noun_before_verb` uses (stock inflections, the tight synonyms, the guarded -es / -ies readings of commit 1b67eef9b).
+  `_noun_before_verb` uses (stock inflections, the tight synonyms, the guarded -es / -ies readings of commit 1b67eef9b), and ONLY for
+  a relation classified VERB-SAFE or NOT-A-VERB in the reviewed table research/runners/_moat_allowlist_relations.py (prereg
+  AMENDMENT 1 item 2). A ROLE-REVERSING relation ("The book authors Moses." for (book, author, moses)) and a relation with no row
+  take no verb reading and no shape 3, so every sentence on them is rejected (reason names the class).
   SUBJ / OBJ = a token equal to a gathered subject/object slug after B2h normalisation (`_normalise_slugs`: case, NFC, spaces /
   hyphens / underscores, the store's "_" for accented letters). A token made only of underscores is never a noun.
 
@@ -53,6 +56,7 @@ import os
 import re
 import unicodedata
 
+from research.runners._moat_allowlist_relations import has_verb_reading, relation_class
 from research.runners._moat_claim_entailment_derisk import (
     _NONASCII_ALNUM_RUN, NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map, _slug_phrase_re)
 
@@ -113,18 +117,32 @@ class _Lexicon:
         # can never be a SUBJ/OBJ/VERB here, so it is left out of the spellings)
         slugs = {t for f in self.gated for t in f if "_" in t and _HAS_ALNUM.search(t)}
         self._slug_pats = [(s, _slug_phrase_re(s)) for s in sorted(slugs, key=lambda x: (-len(x), x))]
-        # shape-3 relation nouns: a gathered relation slug ending in "_of" with a real noun before it
-        self.of_relations = frozenset(r for r in self.verbs if r.endswith("_of") and _HAS_ALNUM.search(r[:-3]))
+        # the gathered relations allowed a verb reading / shape 3 (the reviewed table: VERB-SAFE or NOT-A-VERB; a ROLE-REVERSING or
+        # unclassified relation gets none)
+        self.verb_ok = frozenset(r for r in self.verbs if has_verb_reading(r))
+        # shape-3 relation nouns: a gathered, verb-reading relation slug ending in "_of" with a real noun before it
+        self.of_relations = frozenset(r for r in self.verb_ok if r.endswith("_of") and _HAS_ALNUM.search(r[:-3]))
 
     def is_noun(self, tok):
         return tok in self.nouns and tok not in NEG_MARKERS and _HAS_ALNUM.search(tok) is not None
 
     def verb_rel(self, tok):
-        """-> the gathered relation `tok` is a verb form of, or None."""
+        """-> the gathered relation `tok` is a verb form of, or None (also None for a relation with no verb reading)."""
         if _HAS_ALNUM.search(tok) is None:
             return None
         kind, val = self._classify(tok)
-        return val if kind == "verb" and val in self.verbs else None
+        return val if kind == "verb" and val in self.verb_ok else None
+
+    def blocked_rel(self, tok):
+        """-> (relation, class) when `tok` is a reading of a GATHERED relation that the table denies a verb reading, else None."""
+        if _HAS_ALNUM.search(tok) is None:
+            return None
+        kind, val = self._classify(tok)
+        if kind == "verb" and val in self.verbs and val not in self.verb_ok:
+            return val, relation_class(val)
+        if tok in self.verbs and tok not in self.verb_ok:                  # e.g. an unclassified `_of` slug after "is"
+            return tok, relation_class(tok)
+        return None
 
 
 def _key_of(gathered):
@@ -195,6 +213,12 @@ def _object_lists(toks, k, lex, fail):
     return done
 
 
+def _no_reading(tok, blocked):
+    rel, cls = blocked
+    return ("a relation with a verb reading (%r reads %s, classified %s in _moat_allowlist_relations: no verb reading)"
+            % (tok, rel, cls))
+
+
 def _parses(toks, lex, fail):
     """Every complete parse of `toks` -> [(shape, [(s, r, o), ...])]."""
     n = len(toks)
@@ -220,9 +244,12 @@ def _parses(toks, lex, fail):
                         else:
                             fail.at(end, "end of sentence (shape 3)")
                 else:
-                    fail.at(ri, "a gathered relation slug ending in _of (shape 3)")
+                    blocked = lex.blocked_rel(toks[ri]) if ri < n else None
+                    fail.at(ri, _no_reading(toks[ri], blocked) if blocked else "a gathered relation slug ending in _of (shape 3)")
         elif rel is None:
-            fail.at(j, "a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)")
+            blocked = lex.blocked_rel(toks[j])
+            fail.at(j, _no_reading(toks[j], blocked) if blocked
+                    else "a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)")
     return out
 
 

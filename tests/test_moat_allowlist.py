@@ -14,7 +14,10 @@ triple of this turn; everything else is rejected. These tests pin:
   - MUST KEEP: the supported twins of cases_b.py (the twin clause as its own sentence; the literal ", and" twin is two
     subjects in one sentence, a multi-clause shape the spec excludes, pinned as an expected loss) and every F-labelled S1/S3
     sentence B2h kept that grounds exactly one triple (tests/fixtures/moat_allowlist_must_keep.json), except the listed losses;
-  - shape 3 cannot reverse roles; nothing is dropped; one sentence, one shape.
+  - shape 3 cannot reverse roles; nothing is dropped; one sentence, one shape;
+  - the reviewed per-relation verb-reading table (research/runners/_moat_allowlist_relations.py, prereg AMENDMENT 1 item 2): every
+    store relation has a row, the rows' readings are the live verb-form table's, and a ROLE-REVERSING relation (author, father,
+    child, parent_taxon, platform) or an unclassified one takes no verb reading and no shape 3.
 The matcher is a pure host function: its verdict cannot depend on the parser seed. Where a test goes through the production
 `ChatBrain` (which carries a seeded BridgeParser) it runs at all seven parser seeds 42, 43, 44, 100, 101, 102, 1.
 
@@ -32,6 +35,7 @@ os.environ.setdefault("SIM_BACKEND", "numpy")
 import pytest
 
 from research.runners import _moat_allowlist as A
+from research.runners import _moat_allowlist_relations as T
 from research.runners import _moat_claim_entailment_derisk as M
 from research.runners.brain_conversational_agent import BridgeParser
 
@@ -410,13 +414,129 @@ def test_no_multi_triple_f_sentence_was_kept_by_b2h():
 
 
 @pytest.mark.parametrize("fact", KEEP["stub_one_per_relation"], ids=lambda f: f[1])
-def test_the_stub_mouth_sentence_of_every_store_relation_is_kept_and_its_role_swap_is_not(fact):
-    """One real fact per relation of the production LTM store (60 relations): the template stub's one-fact sentence is kept (the
-    stock path keeps all of them, so a rejection here would be a stub HURTS), and the same sentence with the roles swapped is
+def test_the_stub_mouth_sentence_of_every_store_relation_is_kept_iff_its_relation_has_a_verb_reading(fact):
+    """One real fact per relation of the production LTM store (60 relations). The template stub's one-fact sentence is kept exactly
+    when the relation's table row allows a verb reading (VERB-SAFE / NOT-A-VERB); for a ROLE-REVERSING relation it is rejected with
+    the class in the reason (stock keeps it: a stock leak, prereg AMENDMENT 1, not a HURTS). The roles-swapped sentence is always
     rejected."""
     s, r, o = fact
-    assert A.allowlist_verify(_stub(fact), [fact])["accepted"], _stub(fact)
+    res = A.allowlist_verify(_stub(fact), [fact])
+    assert res["accepted"] == T.has_verb_reading(r), (_stub(fact), res["reject_reason"])
+    if T.relation_class(r) == T.ROLE_REVERSING:
+        assert "ROLE-REVERSING" in res["reject_reason"], res["reject_reason"]
     assert not A.allowlist_verify(_stub([o, r, s]), [fact])["accepted"], _stub([o, r, s])
+
+
+# =========================================================================================================== the relation table
+_STORE_ROWS = sorted(r for r, row in T.RELATIONS.items() if "store" in row.sources)
+_RR = sorted(r for r, row in T.RELATIONS.items() if row.cls == T.ROLE_REVERSING)
+
+
+def test_every_store_relation_has_a_row_in_the_table():
+    """AMENDMENT 1: a store relation missing from the table fails here. The fixture's one-fact-per-relation list was drawn from the
+    whole store (tests/fixtures/build_moat_allowlist_fixtures.py); when the store file is on this machine its full inventory and
+    fact counts are checked too."""
+    store_rels = sorted({f[1] for f in KEEP["stub_one_per_relation"]})
+    assert len(store_rels) == 60
+    missing = [r for r in store_rels if r not in T.RELATIONS]
+    assert not missing, "store relations with no row in research/runners/_moat_allowlist_relations.py: %s" % missing
+    assert _STORE_ROWS == store_rels
+    if os.path.exists(T.STORE_FACTS):
+        from collections import Counter
+        n = Counter(r["fact"]["action"] for r in json.load(open(T.STORE_FACTS)))
+        assert sorted(n) == store_rels, sorted(set(n) ^ set(store_rels))
+        assert {r: T.RELATIONS[r].n_store for r in n} == dict(n)
+
+
+def test_every_row_is_well_formed():
+    for rel, row in T.RELATIONS.items():
+        assert row.cls in T.CLASSES, rel
+        assert row.sources and set(row.sources) <= {"store", "tiny_demo", "self_knowledge", "leak_hunt"}, rel
+        assert row.why.strip() and row.readings and rel in row.readings, rel
+        assert (row.n_store > 0) == ("store" in row.sources), rel
+    assert T.relation_class("no_such_relation_x") == T.UNCLASSIFIED and not T.has_verb_reading("no_such_relation_x")
+
+
+@pytest.mark.parametrize("rel", sorted(T.RELATIONS))
+def test_a_rows_readings_are_exactly_what_the_verb_form_table_accepts(rel):
+    """The `readings` column is the live table's: every token the matcher's lexicon (B2h `_classify`: inflections, synonyms, guarded
+    -es / -ies) maps to the relation when it alone is gathered, over every inflection / synonym candidate."""
+    lex = A._Lexicon(frozenset({("subj_x", rel, "obj_y")}))
+    cand = set(M._build_inflection_map([rel])) | set(M.VERB_SYNONYMS) | {rel + "es", rel[:-1] + "ies"}
+    live = sorted(t for t in cand if lex._classify(t) == ("verb", rel))
+    assert tuple(live) == T.RELATIONS[rel].readings
+
+
+def test_the_role_reversing_relations():
+    """The reviewed ROLE-REVERSING rows (a change here is a change of the reviewed table, not of a test)."""
+    assert _RR == ["author", "child", "father", "parent_taxon", "platform"]
+    assert all("store" in T.RELATIONS[r].sources for r in _RR)
+
+
+_FATHER = ["albert_prince_of_wales", "father", "albert_prince_consort"]
+_AUTHOR = ["book_of_gen", "author", "moshe_rabbenu"]
+
+
+@pytest.mark.parametrize("fact,prose", [
+    (_AUTHOR, "The book_of_gen authors moshe_rabbenu."),                       # the stub mouth's own sentence
+    (_AUTHOR, "The book_of_gen authors the moshe_rabbenu."),
+    (_AUTHOR, "Book of Gen authors Moshe Rabbenu."),
+    (_AUTHOR, "Book of Gen authored Moshe Rabbenu."),
+    (_AUTHOR, "The Book of Gen author Moshe Rabbenu."),
+    (_AUTHOR, "Book of Gen authoring Moshe Rabbenu."),
+    (_FATHER, "The albert_prince_of_wales fathers albert_prince_consort."),   # the stub mouth's own sentence
+    (_FATHER, "Albert Prince of Wales fathers Albert Prince Consort."),
+    (_FATHER, "Albert Prince of Wales fathered Albert Prince Consort."),
+    (_FATHER, "Albert Prince of Wales father Albert Prince Consort."),
+    (_FATHER, "The Albert Prince of Wales fathering the Albert Prince Consort."),
+])
+def test_father_and_author_sentences_are_rejected_at_every_seed(seed_chats, fact, prose):
+    """'X authors Y' says X wrote Y and 'X fathers Y' says X is Y's father: the reverse of (X, author, Y) / (X, father, Y). Rejected
+    through the production claim gate at every parser seed, with the class in the reason."""
+    for sd in SEEDS:
+        acc, res = _on(seed_chats[sd], prose, [fact])
+        assert acc is False, (sd, prose)
+        assert "ROLE-REVERSING" in res["reject_reason"], (sd, res["reject_reason"])
+
+
+def test_the_english_true_reading_of_a_father_or_author_fact_is_not_gathered_either():
+    """'Moshe Rabbenu authored Book of Gen.' is what (book_of_gen, author, moshe_rabbenu) means in English, but it encodes the
+    ungathered (moshe_rabbenu, author, book_of_gen): no verb reading of a ROLE-REVERSING relation is ever kept, in either order."""
+    for fact, prose in ((_AUTHOR, "Moshe Rabbenu authored Book of Gen."), (_FATHER, "Albert Prince Consort fathered Albert Prince of Wales.")):
+        assert not A.allowlist_keep(prose, [fact])[0]
+        assert not A.allowlist_keep(prose, [fact, [fact[2], fact[1], fact[0]]])[0]
+
+
+@pytest.mark.parametrize("rel", _RR)
+def test_no_reading_of_a_role_reversing_relation_is_ever_kept(rel):
+    """Every reading in the row, in shapes 1 and 2, with and without determiners, slug or spaced spelling of the nouns."""
+    g = [["red_fox", rel, "canid_group"], ["red_fox", rel, "blue_jay"]]
+    for tok in T.RELATIONS[rel].readings:
+        for p in ("Red Fox %s Canid Group." % tok, "The red_fox %s the canid_group." % tok,
+                  "Red Fox %s Canid Group and Blue Jay." % tok, "Red Fox %s Canid Group, and Blue Jay." % tok,
+                  "Red Fox %s Canid Group." % tok.replace("_", " ")):
+            assert not A.allowlist_keep(p, g)[0], p
+
+
+def test_a_role_reversing_sentence_fails_its_candidate_but_not_the_other_facts_sentence():
+    g = [_FATHER, ["albert_prince_of_wales", "country", "united_kingdom"]]
+    assert A.allowlist_verify("The albert_prince_of_wales countrys united_kingdom.", g)["accepted"]
+    both = A.allowlist_verify("The albert_prince_of_wales countrys united_kingdom. The albert_prince_of_wales fathers "
+                              "albert_prince_consort.", g)
+    assert not both["accepted"] and "[sentence 2 of 2]" in both["reject_reason"]
+
+
+@pytest.mark.parametrize("rel", ["founded_by", "owner_of", "capital_of", "student_of", "mother"])
+def test_an_unclassified_relation_gets_no_verb_reading_and_no_shape_3(rel):
+    """Relations of the larger bundles (wikidata_500k_fast / 1M_fast) that have no row: fail closed."""
+    assert rel not in T.RELATIONS
+    g = [["acme_co", rel, "john_q"]]
+    noun = rel.replace("_", " ")
+    for p in ("Acme Co %s John Q." % rel, "Acme Co %s John Q." % noun, "Acme Co %ss John Q." % rel, "Acme Co is the %s John Q." % noun,
+              "Acme Co is %s John Q." % noun):
+        keep, why = A.allowlist_keep(p, g)
+        assert not keep, p
+    assert "UNCLASSIFIED" in A.allowlist_keep("Acme Co %s John Q." % rel, g)[1]
 
 
 # =========================================================================================================== shape 3
@@ -427,6 +547,7 @@ _OTHER_RELATIONS = sorted({f[1] for f in KEEP["stub_one_per_relation"] if not f[
 def test_the_store_relations_that_take_shape_3():
     assert _OF_RELATIONS == ["instance_of", "is_a_list_of", "member_of", "part_of", "participant_of", "subclass_of"]
     assert len(_OTHER_RELATIONS) == 54
+    assert all(T.has_verb_reading(r) for r in _OF_RELATIONS)
 
 
 @pytest.mark.parametrize("rel", _OF_RELATIONS)
@@ -561,7 +682,12 @@ def test_slug_spellings_and_the_store_accent_form():
 @pytest.mark.parametrize("prose", ["Spain shares \u4e0d border with France.", "Spain shares\u4e0dborder with France.",
                                    "Spain shares \u00e0 border with France.", "Spain shares border with \u0444 France.",
                                    "Spain shares border with France \u0663.", "Spain shares border with France\u00b2.",
-                                   "Spain shares border \u00e9 with France.", "\u4e0d Spain shares border with France."])
+                                   "Spain shares border \u00e9 with France.", "\u4e0d Spain shares border with France.",
+                                   # literal-slug spellings: the STOCK claim gate (flag off, seed 42) accepts each of these (the
+                                   # stock tokenizer drops the non-ASCII word; reported for the board, stock unchanged)
+                                   "spain shares_border_with \u4e0d france.", "spain \u4e0d shares_border_with france.",
+                                   "spain member_of \u4e0d european_union.", "spain \u6ca1\u6709 shares_border_with france.",
+                                   "spain shares_border_with \u043d\u0435 france.", "spain shares_border_with \u0644\u064a\u0633 france."])
 def test_non_latin_or_free_standing_non_ascii_text_cannot_hide_between_slug_words(prose):
     """B2h's slug spelling joins slug words with [\\s\\-_]+ AFTER mapping non-ASCII runs to "_", so a free-standing non-Latin word
     between two slug words (\u4e0d = 'not') would vanish into the relation's spelling. Rejected before normalisation."""
