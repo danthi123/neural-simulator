@@ -9,10 +9,14 @@ decided by ChatBrain._verify_claim_set with BRAIN_MOAT_ALLOWLIST=1 (BRAIN_MOAT_S
 _verify, so a None verdict counts as a rejection.  HURTS_allowlist = stock answers, allowlist abstains.  --arms b2h,allowlist (default)
 computes both flag arms; --arms allowlist skips the B2h arm (measured at c6bf28cb7: stub_population_exhaustive_after.json) and leaves its
 keys null.  --limit N takes the first N facts (smoke only).
+ROLE-REVERSED STOCK LEAKS (prereg AMENDMENT 1): a fact whose relation is ROLE-REVERSING in the reviewed table
+(research/runners/_moat_allowlist_relations.py: author, child, father, parent_taxon, platform) has a stub sentence that reads reversed in
+English ("The book_of_gen authors moshe_rabbenu."). When stock keeps it and the allowlist rejects it, it is counted under
+allowlist_role_reversed_stock_leaks (by relation, with rows), NOT under HURTS_allowlist; the table file's sha256 is recorded.
 usage (cwd = worktree, as a module; refuses to overwrite an existing <out.json>):
   python -m research.findings.raw._moat_slug_norm_heldout.stub_population_exhaustive <out.json> [parser_seed=1] [composer_sweep_sample.json] [--arms b2h,allowlist] [--limit N]
 """
-import collections, json, os, random, socket, sys, time
+import collections, hashlib, json, os, random, socket, sys, time
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -20,6 +24,9 @@ sys.path.insert(0, os.getcwd())
 import research.runners  # noqa: F401,E402  (provenance door)
 from research.runners.brain_chat_tui import ChatBrain, StubRenderer           # noqa: E402
 from research.runners.brain_conversational_agent import BridgeParser          # noqa: E402
+from research.runners._moat_allowlist_relations import ROLE_REVERSING, relation_class   # noqa: E402
+
+RELATION_TABLE = "research/runners/_moat_allowlist_relations.py"
 
 FACTS = "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k/facts.json"
 FLAG = "BRAIN_MOAT_SLUG_NORM"
@@ -43,6 +50,7 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
     stub = StubRenderer()
     cells = collections.Counter(); hurts = []; helps = []; why = collections.Counter(); by_rel = collections.Counter(); fb = 0
     acells = collections.Counter(); ahurts = []; ahelps = []; awhy = collections.Counter(); aby_rel = collections.Counter(); anone = 0
+    arr = []; arr_rel = collections.Counter(); arr_stock_rejected = collections.Counter()
     t0 = time.time()
     for i, svo in enumerate(aff):
         surf, asserted = stub.render_svo(*svo)
@@ -72,10 +80,16 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
                 anone += 1                                 # flag on: no fallback, the composer rejects
             aon = bool(aacc)
             acells[(off, aon)] += 1
+            role_reversed = relation_class(svo[1]) == ROLE_REVERSING
+            if role_reversed and not off:
+                arr_stock_rejected[svo[1]] += 1
             if off and not aon:
                 r = (ares or {}).get("reject_reason") or "?"
-                ahurts.append({"svo": list(svo), "surface": surf, "reject": r})
-                awhy[r[:70]] += 1; aby_rel[svo[1]] += 1
+                if role_reversed:                          # a stock leak (reversed English reading), not an answer lost
+                    arr.append({"svo": list(svo), "surface": surf, "reject": r}); arr_rel[svo[1]] += 1
+                else:
+                    ahurts.append({"svo": list(svo), "surface": surf, "reject": r})
+                    awhy[r[:70]] += 1; aby_rel[svo[1]] += 1
             elif aon and not off:
                 ahelps.append({"svo": list(svo), "surface": surf})
         if (i + 1) % 10000 == 0:
@@ -107,9 +121,15 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
            "HURTS_allowlist": len(ahurts) if do_al else None, "HELPS_allowlist": len(ahelps) if do_al else None,
            "allowlist_unbuildable_rejected": anone if do_al else None,
            "allowlist_hurts_reasons": dict(awhy), "allowlist_hurts_by_relation": dict(aby_rel.most_common()),
+           "allowlist_role_reversed_stock_leaks": len(arr) if do_al else None,
+           "allowlist_role_reversed_by_relation": dict(arr_rel.most_common()),
+           "allowlist_role_reversed_stock_rejected_by_relation": dict(arr_stock_rejected.most_common()),
+           "relation_table": RELATION_TABLE, "relation_table_sha256": hashlib.sha256(open(RELATION_TABLE, "rb").read()).hexdigest(),
+           "allowlist_role_reversed_rows": arr,
            "hurts_rows": hurts, "helps_rows": helps[:200], "allowlist_hurts_rows": ahurts, "allowlist_helps_rows": ahelps[:200]}
     json.dump(out, open(out_path, "w"), indent=1)
-    print(json.dumps({k: v for k, v in out.items() if k not in ("hurts_rows", "helps_rows", "allowlist_hurts_rows", "allowlist_helps_rows", "argv")}, indent=1)[:3000])
+    print(json.dumps({k: v for k, v in out.items() if k not in ("hurts_rows", "helps_rows", "allowlist_hurts_rows", "allowlist_helps_rows",
+                                                                "allowlist_role_reversed_rows", "argv")}, indent=1)[:3000])
 
 
 if __name__ == "__main__":

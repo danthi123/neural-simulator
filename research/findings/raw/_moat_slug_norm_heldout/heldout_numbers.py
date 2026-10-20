@@ -8,8 +8,8 @@ the numbers the report quotes, so nothing in the report is typed by hand.  Reads
 ALLOWLIST MODE (--allowlist, 2026-10-20, prereg 2026-10-20-moat-allowlist-claim-checker): reads the *_allowlist.json files instead
 (results_strata_s1_s2_allowlist.json, results_strata_s3_allowlist.json, composer_records_s1_allowlist.json,
 composer_records_s3_allowlist.json, stub_population_exhaustive_allowlist.json; a missing file is skipped) and reports the three arms
-stock / b2h / allowlist side by side, the prereg's bar-4 rows and the allowlist stub-population HURTS.  Without the flag the output
-is exactly as before.
+stock / b2h / allowlist side by side, the prereg's bar-4 rows, the allowlist stub-population HURTS and, apart from them, its
+role-reversed stock leaks (AMENDMENT 1).  Without the flag the output is exactly as before.
 usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.heldout_numbers <out.json> [--allowlist]
 """
 import collections, json, os, socket, sys
@@ -135,7 +135,9 @@ def main(out, allowlist=False):
             if allowlist:
                 out_d["stub_one_fact"][nm].update({k: d.get(k) for k in (
                     "arms", "limit", "n_population", "cells(stock_ok,allowlist_ok)", "allowlist_answer_rate", "HURTS_allowlist",
-                    "HELPS_allowlist", "allowlist_unbuildable_rejected", "allowlist_hurts_reasons", "allowlist_hurts_by_relation")})
+                    "HELPS_allowlist", "allowlist_unbuildable_rejected", "allowlist_hurts_reasons", "allowlist_hurts_by_relation",
+                    "allowlist_role_reversed_stock_leaks", "allowlist_role_reversed_by_relation",
+                    "allowlist_role_reversed_stock_rejected_by_relation", "relation_table_sha256")})
                 out_d["stub_one_fact"][nm]["allowlist_hurts_surfaces"] = [h["surface"] for h in d.get("allowlist_hurts_rows", [])]
     json.dump(out_d, open(out, "w"), indent=1, default=str)
     print(json.dumps({k: v for k, v in out_d.items() if k not in ("verifier_level",)}, indent=1, default=str)[:6000])
