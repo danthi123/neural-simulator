@@ -73,3 +73,29 @@ check of the numbers, mutation testing of the matcher (each surviving mutant lis
   safety and answer loss, nothing about language ability; its English shapes are not a language criterion.
 - **No flip.** A pass here leaves the flag OFF. Turning it on needs a flip prereg that passes the smoke-first gate.
 - **No mouth-arm number.** A pass unblocks queuing the B2d mouth arm; it is not that arm's result.
+
+## AMENDMENT 1 (2026-10-20, Claude; filed after the build, before any measurement of sections 2.1-2.5)
+
+The build agent reported two defects in this registration before any held-out stratum was measured. The only
+allowlist verdicts on held-out sentences so far are a 2-turn smoke slice and the bar-4 keep set, which the spec made a
+build test fixture. Both defects are fixed here, before the measurement runs.
+
+1. **Bar 4 was not blind.** The spec listed the B2h-kept, F-labelled, one-triple sentences as a pinned "must keep"
+   test, so the builder saw the outcome while building: the allowlist keeps 31 of the 38 <!--derived-->. The 7 losses
+   are single-clause sentences outside shapes 1-3 (a past-tense copula, an auxiliary before the relation, `is` before
+   a relation not ending in `_of`, a copula after a noun relation), not the multi-clause sentences section 2.4
+   predicted. No shape is added to recover them: they were seen during the build, so adding shapes for them would
+   tune the matcher to its own test. Bar 4 becomes a reported number (31 of 38, with each loss and its failed shape
+   listed). Answer loss against the SHIPPED default stays a bar (bar 5). A retention bar on fresh, unseen supported
+   sentences is added to the fresh hunt: bar 3 also reports how many of the skeptic's supported twins are kept.
+2. **Role-reversing verb readings.** The verb-form table reads a noun relation's `-s`/`-ed` form as the relation. For
+   relations whose noun is also an English verb with the opposite agent, the sentence means the reverse of the triple
+   ("The book authors Moses." for (book, author, Moses)). The stub mouth renders such sentences, and stock keeps them.
+   - Under the flag, a relation may take a verb reading only if it is classified VERB-SAFE in an exhaustive,
+     committed table over the store's whole relation inventory, built before the measurement and reviewed by Claude.
+     Each relation is classified VERB-SAFE, ROLE-REVERSING (no verb reading) or NOT-A-VERB (inflection kept only if it
+     forms no English verb). An unclassified relation gets no verb reading, and a test fails on any store relation
+     missing from the table.
+   - Bar 5 then counts, separately from HURTS, the stub-population facts whose stock-kept sentence is a role-reversed
+     English reading. They are listed by relation with counts, as stock leaks, not as answers lost. The stub renderer's
+     reversed sentences are filed as their own defect.
