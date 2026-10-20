@@ -13,6 +13,8 @@ ROLE-REVERSED STOCK LEAKS (prereg AMENDMENT 1): a fact whose relation is ROLE-RE
 (research/runners/_moat_allowlist_relations.py: author, child, father, parent_taxon, platform) has a stub sentence that reads reversed in
 English ("The book_of_gen authors moshe_rabbenu."). When stock keeps it and the allowlist rejects it, it is counted under
 allowlist_role_reversed_stock_leaks (by relation, with rows), NOT under HURTS_allowlist; the table file's sha256 is recorded.
+MEANING-DRIFT STOCK LEAKS (build 2): the same for a MEANING-DRIFT relation (sport, conflict, instrument, spouse, eat: "The X sports Y." = X
+wears Y): counted under allowlist_meaning_drift_stock_leaks, beside the role-reversed ones, not under HURTS_allowlist.
 usage (cwd = worktree, as a module; refuses to overwrite an existing <out.json>):
   python -m research.findings.raw._moat_slug_norm_heldout.stub_population_exhaustive <out.json> [parser_seed=1] [composer_sweep_sample.json] [--arms b2h,allowlist] [--limit N]
 """
@@ -24,7 +26,7 @@ sys.path.insert(0, os.getcwd())
 import research.runners  # noqa: F401,E402  (provenance door)
 from research.runners.brain_chat_tui import ChatBrain, StubRenderer           # noqa: E402
 from research.runners.brain_conversational_agent import BridgeParser          # noqa: E402
-from research.runners._moat_allowlist_relations import ROLE_REVERSING, relation_class   # noqa: E402
+from research.runners._moat_allowlist_relations import MEANING_DRIFT, ROLE_REVERSING, relation_class   # noqa: E402
 
 RELATION_TABLE = "research/runners/_moat_allowlist_relations.py"
 
@@ -51,6 +53,7 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
     cells = collections.Counter(); hurts = []; helps = []; why = collections.Counter(); by_rel = collections.Counter(); fb = 0
     acells = collections.Counter(); ahurts = []; ahelps = []; awhy = collections.Counter(); aby_rel = collections.Counter(); anone = 0
     arr = []; arr_rel = collections.Counter(); arr_stock_rejected = collections.Counter()
+    amd = []; amd_rel = collections.Counter(); amd_stock_rejected = collections.Counter()
     t0 = time.time()
     for i, svo in enumerate(aff):
         surf, asserted = stub.render_svo(*svo)
@@ -80,13 +83,17 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
                 anone += 1                                 # flag on: no fallback, the composer rejects
             aon = bool(aacc)
             acells[(off, aon)] += 1
-            role_reversed = relation_class(svo[1]) == ROLE_REVERSING
-            if role_reversed and not off:
+            cls = relation_class(svo[1])
+            if cls == ROLE_REVERSING and not off:
                 arr_stock_rejected[svo[1]] += 1
+            if cls == MEANING_DRIFT and not off:
+                amd_stock_rejected[svo[1]] += 1
             if off and not aon:
                 r = (ares or {}).get("reject_reason") or "?"
-                if role_reversed:                          # a stock leak (reversed English reading), not an answer lost
+                if cls == ROLE_REVERSING:                  # a stock leak (reversed English reading), not an answer lost
                     arr.append({"svo": list(svo), "surface": surf, "reject": r}); arr_rel[svo[1]] += 1
+                elif cls == MEANING_DRIFT:                 # a stock leak (an English reading of another relation), not an answer lost
+                    amd.append({"svo": list(svo), "surface": surf, "reject": r}); amd_rel[svo[1]] += 1
                 else:
                     ahurts.append({"svo": list(svo), "surface": surf, "reject": r})
                     awhy[r[:70]] += 1; aby_rel[svo[1]] += 1
@@ -124,12 +131,15 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
            "allowlist_role_reversed_stock_leaks": len(arr) if do_al else None,
            "allowlist_role_reversed_by_relation": dict(arr_rel.most_common()),
            "allowlist_role_reversed_stock_rejected_by_relation": dict(arr_stock_rejected.most_common()),
+           "allowlist_meaning_drift_stock_leaks": len(amd) if do_al else None,
+           "allowlist_meaning_drift_by_relation": dict(amd_rel.most_common()),
+           "allowlist_meaning_drift_stock_rejected_by_relation": dict(amd_stock_rejected.most_common()),
            "relation_table": RELATION_TABLE, "relation_table_sha256": hashlib.sha256(open(RELATION_TABLE, "rb").read()).hexdigest(),
-           "allowlist_role_reversed_rows": arr,
+           "allowlist_role_reversed_rows": arr, "allowlist_meaning_drift_rows": amd,
            "hurts_rows": hurts, "helps_rows": helps[:200], "allowlist_hurts_rows": ahurts, "allowlist_helps_rows": ahelps[:200]}
     json.dump(out, open(out_path, "w"), indent=1)
     print(json.dumps({k: v for k, v in out.items() if k not in ("hurts_rows", "helps_rows", "allowlist_hurts_rows", "allowlist_helps_rows",
-                                                                "allowlist_role_reversed_rows", "argv")}, indent=1)[:3000])
+                                                                "allowlist_role_reversed_rows", "allowlist_meaning_drift_rows", "argv")}, indent=1)[:3000])
 
 
 if __name__ == "__main__":

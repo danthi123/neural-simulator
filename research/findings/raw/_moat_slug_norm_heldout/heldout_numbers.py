@@ -9,8 +9,9 @@ ALLOWLIST MODE (--allowlist, 2026-10-20, prereg 2026-10-20-moat-allowlist-claim-
 (results_strata_s1_s2_allowlist.json, results_strata_s3_allowlist.json, composer_records_s1_allowlist.json,
 composer_records_s3_allowlist.json, stub_population_exhaustive_allowlist.json; a missing file is skipped) and reports the three arms
 stock / b2h / allowlist side by side, the prereg's bar-4 rows, the allowlist stub-population HURTS and, apart from them, its
-role-reversed stock leaks (AMENDMENT 1).  Without the flag the output is exactly as before.
-usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.heldout_numbers <out.json> [--allowlist]
+role-reversed and meaning-drift stock leaks (AMENDMENT 1; build 2).  Without the flag the output is exactly as before.
+--suffix S (with --allowlist; default _allowlist) reads the *S.json files instead: build 2 of the allowlist writes *_allowlist2.json.
+usage (cwd = worktree, as a module): python -m research.findings.raw._moat_slug_norm_heldout.heldout_numbers <out.json> [--allowlist [--suffix S]]
 """
 import collections, json, os, socket, sys
 
@@ -61,9 +62,9 @@ def raw_rows_in_turns(corpus, turns):
     return sum(len(t.get("calls", [])) for t in corpus["turns"] if t["label"] in turns)
 
 
-def main(out, allowlist=False):
+def main(out, allowlist=False, suffix="_allowlist"):
     global ARMS
-    sfx = "_allowlist" if allowlist else ""
+    sfx = suffix if allowlist else ""
     if allowlist:
         ARMS = ("stock", "b2h", "allowlist")
     r12 = load("results_strata_s1_s2%s.json" % sfx); r3 = load("results_strata_s3%s.json" % sfx)
@@ -105,7 +106,7 @@ def main(out, allowlist=False):
     for nm, fn in (("S1", "composer_records_s1.json"), ("S3", "composer_records_s3.json"), ("S3_stub", "composer_records_s3_stub.json"),
                    ("S1_stub", "composer_records_s1_stub.json")):
         if allowlist:
-            fn = fn.replace(".json", "_allowlist.json")
+            fn = fn.replace(".json", sfx + ".json")
         d = load(fn)
         if d:
             out_d["composer_path"][nm] = {k: d[k] for k in ("n_turns", "status_counts", "status_by_gathered_size", "stock_answered", "flag_on_answered",
@@ -121,7 +122,7 @@ def main(out, allowlist=False):
                 out_d["composer_path"][nm]["b2h_answered"] = d.get("b2h_answered")
                 out_d["composer_path"][nm]["LOSES_vs_b2h_turns"] = [t["label"] for t in d.get("LOSES_vs_b2h_turns", [])]
     sw = None if allowlist else load("composer_stub_sweep_3000.json")
-    pop = load("stub_population_exhaustive_allowlist.json" if allowlist else "stub_population_exhaustive.json")
+    pop = load("stub_population_exhaustive%s.json" % sfx if allowlist else "stub_population_exhaustive.json")
     out_d["stub_one_fact"] = {}
     for nm, d in (("composer_sweep_3000", sw), ("population_exhaustive", pop)):
         if d:
@@ -137,7 +138,8 @@ def main(out, allowlist=False):
                     "arms", "limit", "n_population", "cells(stock_ok,allowlist_ok)", "allowlist_answer_rate", "HURTS_allowlist",
                     "HELPS_allowlist", "allowlist_unbuildable_rejected", "allowlist_hurts_reasons", "allowlist_hurts_by_relation",
                     "allowlist_role_reversed_stock_leaks", "allowlist_role_reversed_by_relation",
-                    "allowlist_role_reversed_stock_rejected_by_relation", "relation_table_sha256")})
+                    "allowlist_role_reversed_stock_rejected_by_relation", "allowlist_meaning_drift_stock_leaks",
+                    "allowlist_meaning_drift_by_relation", "allowlist_meaning_drift_stock_rejected_by_relation", "relation_table_sha256")})
                 out_d["stub_one_fact"][nm]["allowlist_hurts_surfaces"] = [h["surface"] for h in d.get("allowlist_hurts_rows", [])]
     json.dump(out_d, open(out, "w"), indent=1, default=str)
     print(json.dumps({k: v for k, v in out_d.items() if k not in ("verifier_level",)}, indent=1, default=str)[:6000])
@@ -158,4 +160,6 @@ def main(out, allowlist=False):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], allowlist="--allowlist" in sys.argv[2:])
+    _rest = sys.argv[2:]
+    main(sys.argv[1], allowlist="--allowlist" in _rest,
+         suffix=_rest[_rest.index("--suffix") + 1] if "--suffix" in _rest else "_allowlist")
